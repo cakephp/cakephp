@@ -27,15 +27,34 @@
  */
 class ConsoleInputSubcommand {
 
-	protected $_name, $_help, $_parser;
+/**
+ * Name of the subcommand
+ *
+ * @var string
+ */
+	protected $_name;
+
+/**
+ * Help string for the subcommand
+ *
+ * @var string
+ */
+	protected $_help; 
+
+/**
+ * The ConsoleOptionParser for this subcommand.
+ *
+ * @var ConsoleOptionParser
+ */
+	protected $_parser;
 
 /**
  * Make a new Subcommand
  *
  * @param mixed $name The long name of the subcommand, or an array with all the properites.
  * @param string $help The help text for this option
- * @param ConsoleOptionParser $parser A parser for this subcommand.
- * @return void
+ * @param mixed $parser A parser for this subcommand. Either a ConsoleOptionParser, or an array that can be 
+ *   used with ConsoleOptionParser::buildFromArray()
  */
 	public function __construct($name, $help = '', $parser = null) {
 		if (is_array($name) && isset($name['name'])) {

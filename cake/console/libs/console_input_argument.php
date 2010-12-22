@@ -25,8 +25,33 @@
  * @package cake.console
  */
 class ConsoleInputArgument {
+/**
+ * Name of the argument.
+ *
+ * @var string
+ */
+	protected $_name;
 
-	protected $_name, $_help, $_required, $_choices;
+/**
+ * Help string
+ *
+ * @var string
+ */
+	protected $_help;
+
+/**
+ * Is this option required?
+ *
+ * @var boolean
+ */
+	protected $_required;
+
+/**
+ * An array of valid choices for this argument.
+ *
+ * @var array
+ */
+	protected $_choices;
 
 /**
  * Make a new Input Argument
@@ -34,8 +59,7 @@ class ConsoleInputArgument {
  * @param mixed $name The long name of the option, or an array with all the properites.
  * @param string $help The help text for this option
  * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
- * @param arraty $choices Valid choices for this option.
- * @return void
+ * @param array $choices Valid choices for this option.
  */
 	public function __construct($name, $help = '', $required = false, $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
@@ -60,7 +84,7 @@ class ConsoleInputArgument {
 	}
 
 /**
- * Generate the help for this this argument.
+ * Generate the help for this argument.
  *
  * @param int $width The width to make the name of the option.
  * @return string 
@@ -125,7 +149,7 @@ class ConsoleInputArgument {
 	}
 
 /**
- * Append this argument to the passed in SimpleXml object.
+ * Append this arguments XML representation to the passed in SimpleXml object.
  *
  * @param SimpleXmlElement The parent element.
  * @return SimpleXmlElement The parent with this argument appended.

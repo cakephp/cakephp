@@ -26,8 +26,47 @@
  * @package cake.console
  */
 class ConsoleInputOption {
+/**
+ * Name of the option
+ *
+ * @var string
+ */
+	protected $_name;
 
-	protected $_name, $_short, $_help, $_boolean, $_default, $_choices;
+/**
+ * Short (1 character) alias for the option.
+ *
+ * @var string
+ */
+	protected $_short;
+
+/**
+ * Help text for the option.
+ *
+ * @var string
+ */
+	protected $_help;
+
+/**
+ * Is the option a boolean option.  Boolean options do not consume a parameter.
+ *
+ * @var boolean
+ */
+	protected $_boolean;
+
+/**
+ * Default value for the option
+ *
+ * @var mixed
+ */
+	protected $_default;
+
+/**
+ * An array of choices for the option.
+ *
+ * @var array
+ */
+	protected $_choices;
 
 /**
  * Make a new Input Option
@@ -37,8 +76,7 @@ class ConsoleInputOption {
  * @param string $help The help text for this option
  * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
- * @param arraty $choices Valid choices for this option.
- * @return void
+ * @param array $choices Valid choices for this option.
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
@@ -117,7 +155,7 @@ class ConsoleInputOption {
 /**
  * Get the default value for this option
  *
- * @return void
+ * @return mixed
  */
 	public function defaultValue() {
 		return $this->_default;

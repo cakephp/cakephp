@@ -88,7 +88,7 @@ class ConsoleOptionParser {
  * preceeded by one - and are only one character long.  They usually match with a long option,
  * and provide a more terse alternative.
  *
- * #### Using Options
+ * ### Using Options
  *
  * Options can be defined with both long and short forms.  By using `$parser->addOption()`
  * you can define new options.  The name of the option is used as its long form, and you
@@ -195,7 +195,7 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Get or set the command name for shell/task
+ * Get or set the command name for shell/task.
  *
  * @param string $text The text to set, or null if you want to read
  * @return mixed If reading, the value of the command. If setting $this will be returned
@@ -209,7 +209,7 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Get or set the description text for shell/task
+ * Get or set the description text for shell/task.
  *
  * @param mixed $text The text to set, or null if you want to read. . If an array the text will be imploded with "\n"
  * @return mixed If reading, the value of the description. If setting $this will be returned
@@ -247,7 +247,7 @@ class ConsoleOptionParser {
  * Add an option to the option parser. Options allow you to define optional or required
  * parameters for your console application. Options are defined by the parameters they use.
  *
- * ### Params
+ * ### Options
  *
  * - `short` - The single letter variant for this option, leave undefined for none.
  * - `help` - Help text for this option.  Used when generating help for the option.
@@ -260,11 +260,12 @@ class ConsoleOptionParser {
  * - `choices` A list of valid choices for this option.  If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param string $name The long name you want to the value to be parsed out as when options are parsed.
+ * @param mixed $name The long name you want to the value to be parsed out as when options are parsed.
+ *   Will also accept an instance of ConsoleInputOption
  * @param array $params An array of parameters that define the behavior of the option
  * @return returns $this.
  */
-	public function addOption($name, $params = array()) {
+	public function addOption($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
 			$option = $name;
 			$name = $option->name();
@@ -277,7 +278,7 @@ class ConsoleOptionParser {
 				'boolean' => false,
 				'choices' => array()
 			);
-			$options = array_merge($defaults, $params);
+			$options = array_merge($defaults, $options);
 			$option = new ConsoleInputOption($options);
 		}
 		$this->_options[$name] = $option;
@@ -300,7 +301,7 @@ class ConsoleOptionParser {
  * - `choices` A list of valid choices for this argument.  If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param string $name The name of the argument.
+ * @param mixed $name The name of the argument.  Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
  * @return $this.
  */
@@ -357,21 +358,20 @@ class ConsoleOptionParser {
 
 /**
  * Append a subcommand to the subcommand list.
- * Subcommands are usually methods on your Shell, but can also be used to document
- * Tasks
+ * Subcommands are usually methods on your Shell, but can also be used to document Tasks.
  *
- * ### Params
+ * ### Options
  *
  * - `help` - Help text for the subcommand.
  * - `parser` - A ConsoleOptionParser for the subcommand.  This allows you to create method
  *    specific option parsers.  When help is generated for a subcommand, if a parser is present
  *    it will be used.
  *
- * @param string $name Name of the subcommand
+ * @param mixed $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
  * @param array $params Array of params, see above.
  * @return $this.
  */
-	public function addSubcommand($name, $params = array()) {
+	public function addSubcommand($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
 			$command = $name;
 			$name = $command->name();
@@ -381,7 +381,7 @@ class ConsoleOptionParser {
 				'help' => '',
 				'parser' => null
 			);
-			$options = array_merge($defaults, $params);
+			$options = array_merge($defaults, $options);
 			$command = new ConsoleInputSubcommand($options);
 		}
 		$this->_subcommands[$name] = $command;

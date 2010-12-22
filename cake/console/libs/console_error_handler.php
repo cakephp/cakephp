@@ -51,8 +51,9 @@ class ConsoleErrorHandler extends ErrorHandler {
 	}
 
 /**
- * Handle a exception in the console environment.
+ * Handle a exception in the console environment. Prints a message to stderr.
  *
+ * @param Exception $exception The exception to handle
  * @return void
  */
 	public static function handleException(Exception $exception) {
@@ -67,6 +68,11 @@ class ConsoleErrorHandler extends ErrorHandler {
 /**
  * Handle errors in the console environment.
  *
+ * @param int $code Error code
+ * @param string $description Description of the error.
+ * @param string $file The file the error occurred in.
+ * @param int $line The line the error ocurrred on.
+ * @param array $context The backtrace of the error.
  * @return void
  */
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
@@ -82,19 +88,6 @@ class ConsoleErrorHandler extends ErrorHandler {
 			App::import('Core', 'CakeLog');
 			CakeLog::write($log, $message);
 		}
-	}
-
-/**
- * undocumented function
- *
- * @return void
- */
-	public function render() {
-		$this->stderr->write(sprintf(
-			__("<error>Error:</error> %s\n%s"), 
-			$this->error->getMessage(), 
-			$this->error->getTraceAsString()
-		));
 	}
 
 }

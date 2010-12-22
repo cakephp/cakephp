@@ -33,7 +33,7 @@ class ConsoleInput {
 /**
  * Constructor
  *
- * @return void
+ * @param string $handle The location of the stream to use as input.
  */
 	public function __construct($handle = 'php://stdin') {
 		$this->_input = fopen($handle, 'r');

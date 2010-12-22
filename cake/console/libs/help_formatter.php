@@ -12,9 +12,6 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console
- * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'String', false);
@@ -28,12 +25,14 @@ App::import('Core', 'String', false);
  *
  * Xml output is useful for intergration with other tools like IDE's or other build tools.
  *
+ * @package    cake.console
+ * @since      CakePHP(tm) v 2.0
  */
 class HelpFormatter {
 /**
  * Build the help formatter for a an OptionParser
  *
- * @return void
+ * @param ConsoleOptionParser $parser The option parser help is being generated for.
  */
 	public function __construct(ConsoleOptionParser $parser) {
 		$this->_parser = $parser;
