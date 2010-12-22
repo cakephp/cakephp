@@ -25,12 +25,16 @@ App::import('View', 'HelperCollection', false);
 App::import('View', 'Helper', false);
 
 /**
- * View, the V in the MVC triad.
+ * View, the V in the MVC triad. View interacts with Helpers and view variables passed
+ * in from the controller to render the results of the controller action.  Often this is HTML,
+ * but can also take the form of JSON, XML, PDF's or streaming files.
  *
- * Class holding methods for displaying presentation data.
+ * CakePHP uses a two-step-view pattern.  This means that the view content is rendered first, 
+ * and then inserted into the selected layout.  A special `$content_for_layout` variable is available
+ * in the layout, and it contains the rendered view.  This also means you can pass data from the view to the 
+ * layout using `$this->set()`
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package    cake.libs.view
  */
 class View extends Object {
 
@@ -53,7 +57,6 @@ class View extends Object {
  * Name of the controller.
  *
  * @var string Name of controller
- * @access public
  */
 	public $name = null;
 
@@ -68,7 +71,6 @@ class View extends Object {
  * An array of names of built-in helpers to include.
  *
  * @var mixed A single name as a string or a list of names as an array.
- * @access public
  */
 	public $helpers = array('Html');
 
@@ -83,7 +85,6 @@ class View extends Object {
  * Variables for the view
  *
  * @var array
- * @access public
  */
 	public $viewVars = array();
 
@@ -91,7 +92,6 @@ class View extends Object {
  * Name of layout to use with this View.
  *
  * @var string
- * @access public
  */
 	public $layout = 'default';
 
@@ -103,18 +103,10 @@ class View extends Object {
 	public $layoutPath = null;
 
 /**
- * Turns on or off Cake's conventional mode of rendering views. On by default.
+ * Turns on or off Cake's conventional mode of applying layout files. On by default.
+ * Setting to off means that layouts will not be automatically applied to rendered views.
  *
  * @var boolean
- * @access public
- */
-	public $autoRender = true;
-
-/**
- * Turns on or off Cake's conventional mode of finding layout files. On by default.
- *
- * @var boolean
- * @access public
  */
 	public $autoLayout = true;
 
@@ -122,23 +114,21 @@ class View extends Object {
  * File extension. Defaults to Cake's template ".ctp".
  *
  * @var string
- * @access public
  */
 	public $ext = '.ctp';
 
 /**
- * Sub-directory for this view file.
+ * Sub-directory for this view file.  This is often used for extension based routing.
+ * for example with an `xml` extension, $subDir would be `xml/`
  *
  * @var string
- * @access public
  */
 	public $subDir = null;
 	
 /**
- * Theme name.
+ * Theme name.  If you are using themes, you should remember to use ThemeView as well.
  *
  * @var string
- * @access public
  */
 	public $theme = null;
 
@@ -147,7 +137,6 @@ class View extends Object {
  *
  * @see Controller::$cacheAction
  * @var mixed
- * @access public
  */
 	public $cacheAction = false;
 
@@ -155,7 +144,6 @@ class View extends Object {
  * holds current errors for the model validation
  *
  * @var array
- * @access public
  */
 	public $validationErrors = array();
 
@@ -163,7 +151,6 @@ class View extends Object {
  * True when the view has been rendered.
  *
  * @var boolean
- * @access public
  */
 	public $hasRendered = false;
 
@@ -171,7 +158,6 @@ class View extends Object {
  * True if in scope of model-specific region
  *
  * @var boolean
- * @access public
  */
 	public $modelScope = false;
 
@@ -179,7 +165,6 @@ class View extends Object {
  * Name of current model this view context is attached to
  *
  * @var string
- * @access public
  */
 	public $model = null;
 
@@ -187,7 +172,6 @@ class View extends Object {
  * Name of association model this view context is attached to
  *
  * @var string
- * @access public
  */
 	public $association = null;
 
@@ -195,7 +179,6 @@ class View extends Object {
  * Name of current model field this view context is attached to
  *
  * @var string
- * @access public
  */
 	public $field = null;
 
@@ -203,7 +186,6 @@ class View extends Object {
  * Suffix of current field this view context is attached to
  *
  * @var string
- * @access public
  */
 	public $fieldSuffix = null;
 
@@ -211,7 +193,6 @@ class View extends Object {
  * The current model ID this view context is attached to
  *
  * @var mixed
- * @access public
  */
 	public $modelId = null;
 
@@ -219,7 +200,6 @@ class View extends Object {
  * List of generated DOM UUIDs
  *
  * @var array
- * @access public
  */
 	public $uuids = array();
 
@@ -227,7 +207,6 @@ class View extends Object {
  * Holds View output.
  *
  * @var string
- * @access public
  */
 	public $output = false;
 
@@ -254,10 +233,9 @@ class View extends Object {
  * List of variables to collect from the associated controller
  *
  * @var array
- * @access protected
  */
 	private $__passedVars = array(
-		'viewVars', 'autoLayout', 'autoRender', 'ext', 'helpers', 'layout', 'name',
+		'viewVars', 'autoLayout', 'ext', 'helpers', 'layout', 'name',
 		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
@@ -265,7 +243,6 @@ class View extends Object {
  * Scripts (and/or other <head /> tags) for the layout
  *
  * @var array
- * @access protected
  */
 	protected $_scripts = array();
 
@@ -273,7 +250,6 @@ class View extends Object {
  * Holds an array of paths.
  *
  * @var array
- * @access private
  */
 	private $__paths = array();
 
@@ -304,9 +280,8 @@ class View extends Object {
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
- * This realizes the concept of Elements, (or "partial layouts")
- * and the $params array is used to send data to be used in the
- * Element.  Elements can be cached through use of the cache key.
+ * This realizes the concept of Elements, (or "partial layouts")  and the $params array is used to send 
+ * data to be used in the element.  Elements can be cached improving performance by using the `cache` option.
  *
  * ### Special params
  *
@@ -381,9 +356,20 @@ class View extends Object {
  * Renders view for given action and layout. If $file is given, that is used
  * for a view filename (e.g. customFunkyView.ctp).
  *
- * @param string $action Name of action to render for
- * @param string $layout Layout to use
- * @param string $file Custom filename for view
+ * Render triggers helper callbacks, which are fired before and after the view are rendered,
+ * as well as before and after the layout.  The helper callbacks are called
+ *
+ * - `beforeRender`
+ * - `afterRender`
+ * - `beforeLayout`
+ * - `afterLayout`
+ *
+ * If View::$autoRender is false and no `$layout` is provided, the view will be returned bare.
+ *
+ * @param string $action Name of action to render for, this will be used as the filename to render, unless
+ *   $file is give as well.
+ * @param string $layout Layout to use.
+ * @param string $file Custom filename for view. Providing this will render a specific file for the given action.
  * @return string Rendered Element
  * @throws CakeException if there is an error in the view.
  */
@@ -582,7 +568,7 @@ class View extends Object {
 
 /**
  * Allows a template or element to set a variable that will be available in
- * a layout or other element. Analagous to Controller::set.
+ * a layout or other element. Analagous to Controller::set().
  *
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
@@ -648,12 +634,10 @@ class View extends Object {
  * array of data.
  *
  * @param string $___viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view
- * @param boolean $loadHelpers Boolean to indicate that helpers should be loaded.
- * @param boolean $cached Whether or not to trigger the creation of a cache file.
+ * @param array $___dataForView Data to include in rendered view. If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
-	protected function _render($___viewFn, $___dataForView = array(), $loadHelpers = true, $cached = false) {
+	protected function _render($___viewFn, $___dataForView = array()) {
 		if (empty($___dataForView)) {
 			$___dataForView = $this->viewVars;
 		}
