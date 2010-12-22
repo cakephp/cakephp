@@ -20,8 +20,13 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
+App::uses('DataSource', 'Model/Datasource');
 App::uses('DboSource', 'Model/Datasource');
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
+
+class MockDataSource extends DataSource {
+	
+}
 
 /**
  * DboSourceTest class
@@ -783,7 +788,7 @@ class DboSourceTest extends CakeTestCase {
 	function testReadOnlyCallingQueryAssociationWhenDefined() {
 		$this->loadFixtures('Article', 'User', 'ArticlesTag', 'Tag');
 		ConnectionManager::create('test_no_queryAssociation', array(
-			'datasource' => 'data'
+			'datasource' => 'MockDataSource'
 		));
 		$Article = ClassRegistry::init('Article');
 		$Article->Comment->useDbConfig = 'test_no_queryAssociation';
