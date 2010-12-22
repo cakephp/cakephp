@@ -554,7 +554,7 @@ class HelperTest extends CakeTestCase {
 		Configure::write('Asset.timestamp', 'force');
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS),
 		));
 
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
@@ -793,7 +793,7 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->theme = 'test_theme';
 
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');

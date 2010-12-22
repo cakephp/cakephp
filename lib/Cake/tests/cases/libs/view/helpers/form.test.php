@@ -25,6 +25,7 @@ App::uses('Security', 'Utility');
 App::uses('CakeRequest', 'Network');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('FormHelper', 'View/Helper');
+App::uses('Router', 'Routing');
 
 /**
  * ContactTestController class
