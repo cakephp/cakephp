@@ -421,13 +421,27 @@ class App {
  */
 	public static function objects($type, $path = null, $cache = true) {
 		$objects = array();
-		$extension = false;
+		$extension = '/\.php$/';
+		$directories = false;
 		$name = $type;
+
+		if (isset(self::$legacy[$type . 's'])) {
+			$type = self::$legacy[$type . 's'];
+		}
+
+		if ($type === 'plugin') {
+			$type = 'plugins';
+		}
+
+		if ($type == 'plugins') {
+			$extension = '/.*/';
+			$includeDirectories = true;
+		}
 
 		if ($type === 'file' && !$path) {
 			return false;
 		} elseif ($type === 'file') {
-			$extension = true;
+			$extension = '/.*/';
 			$name = $type . str_replace(DS, '', $path);
 		}
 
@@ -436,25 +450,21 @@ class App {
 		}
 
 		if (!isset(self::$__objects[$name]) || $cache !== true) {
-			$types = self::$types;
-
-			if (!isset($types[$type])) {
-				return false;
-			}
 			$objects = array();
 
 			if (empty($path)) {
-				$path = self::${"{$type}s"};
-				if (isset($types[$type]['core']) && $types[$type]['core'] === false) {
-					array_pop($path);
-				}
+				$path = self::path($type);
 			}
 			$items = array();
 
 			foreach ((array)$path as $dir) {
 				if ($dir != APP) {
-					$items = self::__list($dir, $types[$type]['suffix'], $extension);
-					$objects = array_merge($items, array_diff($objects, $items));
+					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
+					foreach ($files as $file) {
+						if (!$file->isDot() && (!$file->isDir() || $includeDirectories)) {
+							$objects[] = basename($file);
+						}
+					}
 				}
 			}
 
