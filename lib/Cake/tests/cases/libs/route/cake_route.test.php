@@ -1,6 +1,6 @@
 <?php
 
-App::uses('CakeRoute', 'Routing');
+App::uses('CakeRoute', 'Routing/Route');
 App::uses('Router', 'Routing');
 
 /**
