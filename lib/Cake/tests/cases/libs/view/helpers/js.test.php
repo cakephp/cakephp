@@ -21,6 +21,7 @@
  */
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('JsHelper', 'View/Helper');
+App::uses('JsBaseEngineHelper', 'View/Helper');
 App::uses('FormHelper', 'View/Helper');
 App::uses('View', 'View');
 App::uses('ClassRegistry', 'Utility');

@@ -21,7 +21,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('JsHelper', 'Helper');
+App::uses('JsBaseEngineHelper', 'View/Helper');
 
 class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
