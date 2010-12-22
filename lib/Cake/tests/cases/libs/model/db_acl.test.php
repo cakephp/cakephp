@@ -19,7 +19,8 @@
  */
 
 App::uses('AclComponent', 'Controller/Component');
-App::uses('DbAcl', 'Model');
+App::uses('AclNode', 'Model');
+class_exists('AclComponent');
 
 /**
  * DB ACL wrapper test class
