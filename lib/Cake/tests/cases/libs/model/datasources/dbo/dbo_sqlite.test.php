@@ -27,7 +27,7 @@ App::uses('Sqlite', 'Model/Datasource/Database');
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
-class DboSqliteTestDb extends DboSqlite {
+class DboSqliteTestDb extends Sqlite {
 
 /**
  * simulated property
@@ -99,7 +99,7 @@ class DboSqliteTest extends CakeTestCase {
 	public function setUp() {
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
-		if ($this->Dbo->config['driver'] !== 'sqlite') {
+		if (!$this->Dbo instanceof Sqlite) {
 			$this->markTestSkipped('The Sqlite extension is not available.');
 		}
 	}
@@ -170,7 +170,7 @@ class DboSqliteTest extends CakeTestCase {
 		$this->assertFalse(file_exists(TMP . $dbName));
 
 		$config = $this->Dbo->config;
-		$db = new DboSqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
+		$db = new Sqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
 		$this->assertTrue(file_exists(TMP . $dbName));
 
 		$db->execute("CREATE TABLE test_list (id VARCHAR(255));");
