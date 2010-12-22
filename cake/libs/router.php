@@ -711,6 +711,7 @@ class Router {
 	public static function reload() {
 		if (empty(self::$_initialState)) {
 			self::$_initialState = get_class_vars('Router');
+			self::_setPrefixes();
 			return;
 		}
 		foreach (self::$_initialState as $key => $val) {
