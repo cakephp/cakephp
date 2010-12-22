@@ -519,7 +519,8 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Add parameters to the request's parsed parameter set. This will overwrite any existing parameters
+ * Add parameters to the request's parsed parameter set. This will overwrite any existing parameters.
+ * This modifies the parameters available through `$request->params`.
  *
  * @param array $params Array of parameters to merge in
  * @return The current object, you can chain this method.
@@ -531,6 +532,7 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Add paths to the requests' paths vars.  This will overwrite any existing paths.
+ * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
  * @return the current object, you can chain this method.
@@ -605,11 +607,11 @@ class CakeRequest implements ArrayAccess {
  *
  * #### Get all types:
  *
- * `$request->accepts();`
+ * `$this->request->accepts();`
  *
  * #### Check for a single type:
  *
- * `$request->accepts('json');`
+ * `$this->request->accepts('json');`
  *
  * @param string $type The content type to check for.  Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
@@ -631,6 +633,14 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Get the lanaguages accepted by the client, or check if a specific language is accepted.
+ *
+ * Get the list of accepted languages:
+ *
+ * {{{ CakeRequest::acceptLanguage(); }}}
+ *
+ * Check if a specific language is accepted:
+ *
+ * {{{ CakeRequest::acceptLanguage('es-es'); }}}
  *
  * @param string $language The language to test.
  * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
