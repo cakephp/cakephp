@@ -370,7 +370,7 @@ class Helper extends Object {
  */
 	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (!is_string($options)) {
-			$options = $options + array('escape' => true);
+			$options = (array) $options + array('escape' => true);
 
 			if (!is_array($exclude)) {
 				$exclude = array();
