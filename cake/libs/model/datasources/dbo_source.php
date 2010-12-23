@@ -253,9 +253,10 @@ class DboSource extends DataSource {
 
 
 /**
- * Returns an object to represent a database identifier in a query
+ * Returns an object to represent a database identifier in a query. Expression objects
+ * are not sanitized or esacped.
  *
- * @param string $identifier
+ * @param string $identifier A SQL expression to be used as an identifier
  * @return object An object representing a database identifier to be used in a query
  */
 	public function identifier($identifier) {
@@ -266,9 +267,10 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Returns an object to represent a database expression in a query
+ * Returns an object to represent a database expression in a query.  Expression objects
+ * are not sanitized or esacped.
  *
- * @param string $expression
+ * @param string $expression An arbitrary SQL expression to be inserted into a query.
  * @return object An object representing a database expression to be used in a query
  */
 	public function expression($expression) {
@@ -282,6 +284,7 @@ class DboSource extends DataSource {
  * Executes given SQL statement.
  *
  * @param string $sql SQL statement
+ * @param array $params Additional options for the query.
  * @return boolean
  */
 	public function rawQuery($sql, $params = array()) {
@@ -381,6 +384,7 @@ class DboSource extends DataSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
+ * @param string $source
  * @return integer Number of affected rows
  */
 	function lastAffected($source = null) {
@@ -394,6 +398,7 @@ class DboSource extends DataSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
+ * @param string $source
  * @return integer Number of rows in resultset
  */
 	function lastNumRows($source = null) {
@@ -498,6 +503,7 @@ class DboSource extends DataSource {
 /**
  * Returns a row from current resultset as an array
  *
+ * @param string $sql Some SQL to be executed.
  * @return array The fetched row as an array
  */
 	public function fetchRow($sql = null) {
@@ -575,7 +581,7 @@ class DboSource extends DataSource {
 /**
  * Modifies $result array to place virtual fields in model entry where they belongs to
  *
- * @param array $resut REference to the fetched row
+ * @param array $resut Reference to the fetched row
  * @return void
  */
 	public function fetchVirtualField(&$result) {
@@ -736,6 +742,7 @@ class DboSource extends DataSource {
  * Get the query log as an array.
  *
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
+ * @param boolean $clear If True the existing log will cleared.
  * @return array Array of queries run as an array
  */
 	public function getLog($sorted = false, $clear = true) {
