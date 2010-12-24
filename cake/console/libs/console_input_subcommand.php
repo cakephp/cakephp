@@ -22,7 +22,7 @@
  * ConsoleOptionParser creates these when you use addSubcommand()
  *
  * @see ConsoleOptionParser::addSubcommand()
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleInputSubcommand {
 

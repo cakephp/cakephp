@@ -26,7 +26,7 @@ require_once CONSOLE_LIBS . 'help_formatter.php';
  * for GetOpt compatible option definition.  Provides a builder pattern implementation
  * for creating shell option parsers.
  *
- * @package       cake.console
+ * @package       cake.console.libs
  */
 class ConsoleOptionParser {
 

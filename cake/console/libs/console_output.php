@@ -41,7 +41,7 @@
  * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
  * at this time.
  *
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleOutput {
 /**

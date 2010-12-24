@@ -22,7 +22,6 @@
  *
  * A DboSource adapter for SQLite 3 using PDO
  *
- * @package datasources
  * @package       cake.libs.model.datasources.dbo
  */
 class DboSqlite extends DboSource {

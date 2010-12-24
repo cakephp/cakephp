@@ -26,8 +26,7 @@ if (!class_exists('File')) {
 /**
  * A class to parse and use the MagicDb for file type analysis
  *
- * @package       cake.tests
- * @package       cake.tests.cases.libs
+ * @package       cake.libs
  */
 class MagicDb extends Object {
 
@@ -171,8 +170,7 @@ class MagicDb extends Object {
 /**
  * undocumented class
  *
- * @package       cake.tests
- * @package       cake.tests.cases.libs
+ * @package       cake.libs
  */
 class MagicFileResource extends Object{
 

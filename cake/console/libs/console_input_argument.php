@@ -21,7 +21,7 @@
  * ConsoleOptionParser creates these when you use addArgument()
  *
  * @see ConsoleOptionParser::addArgument()
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleInputArgument {
 /**

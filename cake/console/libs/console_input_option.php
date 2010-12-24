@@ -22,7 +22,7 @@
  * ConsoleOptionParser creates these when you use addOption()
  *
  * @see ConsoleOptionParser::addOption()
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleInputOption {
 /**

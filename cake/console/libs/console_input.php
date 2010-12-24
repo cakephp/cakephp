@@ -19,7 +19,7 @@
 /**
  * Object wrapper for interacting with stdin 
  *
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleInput {
 /**
