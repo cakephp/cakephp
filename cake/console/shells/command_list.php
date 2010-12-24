@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.tests.cases.console.libs
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -20,7 +19,7 @@
 /**
  * Shows a list of commands available from the console.
  *
- * @package cake.console.libs
+ * @package cake.console.shells
  */
 class CommandListShell extends Shell {
 

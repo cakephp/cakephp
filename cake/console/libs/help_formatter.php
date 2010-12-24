@@ -25,7 +25,7 @@ App::import('Core', 'String', false);
  *
  * Xml output is useful for intergration with other tools like IDE's or other build tools.
  *
- * @package    cake.console
+ * @package    cake.console.libs
  * @since      CakePHP(tm) v 2.0
  */
 class HelpFormatter {

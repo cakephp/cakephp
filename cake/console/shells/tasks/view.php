@@ -22,7 +22,7 @@ include_once dirname(__FILE__) . DS . 'bake.php';
 /**
  * Task class for creating and updating view files.
  *
- * @package       cake.console.libs.tasks
+ * @package       cake.console.shells.tasks
  */
 class ViewTask extends BakeTask {
 

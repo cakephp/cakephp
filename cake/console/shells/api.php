@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.libs
+ * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
