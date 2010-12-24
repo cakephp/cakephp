@@ -14,8 +14,7 @@
  *
  * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  * @since         1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ require_once dirname(__FILE__) . DS . 'models.php';
 /**
  * TestBehavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TestBehavior extends ModelBehavior {
 
@@ -340,8 +338,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * Test2Behavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test2Behavior extends TestBehavior{
 }
@@ -349,8 +346,7 @@ class Test2Behavior extends TestBehavior{
 /**
  * Test3Behavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test3Behavior extends TestBehavior{
 }
@@ -358,8 +354,7 @@ class Test3Behavior extends TestBehavior{
 /**
  * Test4Behavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test4Behavior extends ModelBehavior{
 	function setup($model, $config = null) {
@@ -372,8 +367,7 @@ class Test4Behavior extends ModelBehavior{
 /**
  * Test5Behavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test5Behavior extends ModelBehavior{
 	function setup($model, $config = null) {
@@ -386,8 +380,7 @@ class Test5Behavior extends ModelBehavior{
 /**
  * Test6Behavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test6Behavior extends ModelBehavior{
 	function setup($model, $config = null) {
@@ -400,8 +393,7 @@ class Test6Behavior extends ModelBehavior{
 /**
  * Test7Behavior class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test7Behavior extends ModelBehavior{
 	function setup($model, $config = null) {
@@ -414,8 +406,7 @@ class Test7Behavior extends ModelBehavior{
 /**
  * BehaviorCollection class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class BehaviorCollectionTest extends CakeTestCase {
 

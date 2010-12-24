@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -49,8 +48,7 @@ if (!$imported) {
 /**
  * ControllerTaskTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  */
 class ControllerTaskTest extends CakeTestCase {
 

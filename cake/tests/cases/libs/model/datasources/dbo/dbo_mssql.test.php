@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
 /**
  * DboMssqlTestDb class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources.dbo
+ * @package       cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTestDb extends DboMssql {
 
@@ -130,8 +128,7 @@ class DboMssqlTestDb extends DboMssql {
 /**
  * MssqlTestModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
+ * @package       cake.tests.cases.libs.model.datasources
  */
 class MssqlTestModel extends Model {
 
@@ -232,8 +229,7 @@ class MssqlTestModel extends Model {
 /**
  * MssqlClientTestModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
+ * @package       cake.tests.cases.libs.model.datasources
  */
 class MssqlClientTestModel extends Model {
 /**
@@ -267,8 +263,7 @@ class MssqlClientTestModel extends Model {
 /**
  * DboMssqlTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources.dbo
+ * @package       cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTest extends CakeTestCase {
 

@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,8 +27,7 @@ if (!class_exists('Router')) {
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  */
 class Helper extends Object {
 

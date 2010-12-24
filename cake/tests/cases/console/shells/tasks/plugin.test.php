@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -32,8 +31,7 @@ require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 /**
  * PluginTaskPlugin class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  */
 class PluginTaskTest extends CakeTestCase {
 

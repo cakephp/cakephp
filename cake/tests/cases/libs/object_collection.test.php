@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -98,8 +97,8 @@ class ObjectCollectionTest extends CakeTestCase {
  */
 	function testLoad() {
 		$result = $this->Objects->load('First');
-		$this->assertType('FirstGenericObject', $result);
-		$this->assertType('FirstGenericObject', $this->Objects->First);
+		$this->assertInstanceOf('FirstGenericObject', $result);
+		$this->assertInstanceOf('FirstGenericObject', $this->Objects->First);
 
 		$result = $this->Objects->attached();
 		$this->assertEquals(array('First'), $result, 'attached() results are wrong.');

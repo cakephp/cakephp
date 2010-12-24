@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @since         CakePHP(tm) v 1.1.7.3328
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ if (!class_exists('CakeSession')) {
  *
  * Session reading from the view.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1465/Session
  */
 class SessionHelper extends AppHelper {

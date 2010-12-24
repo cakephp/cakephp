@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * Long description for class
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  */
 class DboMssql extends DboSource {
 

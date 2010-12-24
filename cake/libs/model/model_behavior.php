@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  * @since         CakePHP(tm) v 1.2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,10 +22,26 @@
 /**
  * Model behavior base class.
  *
- * Defines the Behavior interface, and contains common model interaction functionality.
+ * Defines the Behavior interface, and contains common model interaction functionality.  Behaviors
+ * allow you to simulate mixins, and create resuable blocks of application logic, that can be reused across
+ * several models.  Behaviors also provide a way to hook into model callbacks and augment their behavior.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * ### Mixin methods
+ *
+ * Behaviors can provide mixin like features by declaring public methods.  These methods should expect
+ * the model instance to be shifted onto the parameter list.
+ *
+ * {{{
+ * function doSomething($model, $arg1, $arg2) {
+ *		//do something
+ * }
+ * }}}
+ * 
+ * Would be called like `$this->Model->doSomething($arg1, $arg2);`.
+ *
+ * @package    cake.libs.model
+ * @see Model::$actsAs
+ * @see BehaviorCollection::load()
  */
 class ModelBehavior extends Object {
 
@@ -37,7 +52,6 @@ class ModelBehavior extends Object {
  * associative array, keyed off of the model name.
  *
  * @var array
- * @access public
  * @see Model::$alias
  */
 	public $settings = array();
@@ -49,7 +63,6 @@ class ModelBehavior extends Object {
  * the findBy* / findAllBy* magic methods.
  *
  * @var array
- * @access public
  */
 	public $mapMethods = array();
 
@@ -66,7 +79,6 @@ class ModelBehavior extends Object {
  * detached from a model using Model::detach().
  *
  * @param object $model Model using this behavior
- * @access public
  * @see BehaviorCollection::detach()
  */
 	function cleanup($model) {
@@ -76,31 +88,33 @@ class ModelBehavior extends Object {
 	}
 
 /**
- * Before find callback
+ * beforeFind can be used to cancel find operations, or modify the query that will be executed.
+ * By returning null/false you can abort a find.  By returning an array you can modify/replace the query
+ * that is going to be run.
  *
  * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return mixed False or null will abort the operation. You can return an array to replace the 
  *   $query that will be eventually run.
- * @access public
  */
 	public function beforeFind($model, $query) {
 		return true;
 	}
 
 /**
- * After find callback. Can be used to modify any results returned by find and findAll.
+ * After find callback. Can be used to modify any results returned by find.
  *
  * @param object $model Model using this behavior
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
- * @access public
  */
 	public function afterFind($model, $results, $primary) { }
 
 /**
- * Before validate callback
+ * beforeValidate is called before a model is validated, you can use this callback to 
+ * add behavior validation rules into a models validate array.  Returning false
+ * will allow you to make the validation fail.
  *
  * @param object $model Model using this behavior
  * @return mixed False or null will abort the operation. Any other result will continue.
@@ -111,18 +125,18 @@ class ModelBehavior extends Object {
 	}
 
 /**
- * Before save callback
+ * beforeSave is called before a model is saved.  Returning false from a beforeSave callback
+ * will abort the save operation.
  *
  * @param object $model Model using this behavior
  * @return mixed False if the operation should abort. Any other result will continue.
- * @access public
  */
 	public function beforeSave($model) { 
 		return true;
 	}
 
 /**
- * After save callback
+ * afterSave is called after a model is saved.
  *
  * @param object $model Model using this behavior
  * @param boolean $created True if this save created a new record
@@ -132,7 +146,8 @@ class ModelBehavior extends Object {
 	}
 
 /**
- * Before delete callback
+ * Before delete is called before any delete occurs on the attached model, but after the model's
+ * beforeDelete is called.  Returning false from a beforeDelete will abort the delete.
  *
  * @param object $model Model using this behavior
  * @param boolean $cascade If true records that depend on this record will also be deleted
@@ -144,7 +159,7 @@ class ModelBehavior extends Object {
 	}
 
 /**
- * After delete callback
+ * After delete is called after any delete occurs on the attached model.
  *
  * @param object $model Model using this behavior
  */
@@ -166,7 +181,6 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param string $field Field to be added to $model's whitelist
- * @access protected
  * @return void
  */
 	function _addToWhitelist($model, $field) {

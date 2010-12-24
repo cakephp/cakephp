@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.http
+ * @package       cake.libs.http
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * Basic authentication
  *
- * @package       cake
- * @subpackage    cake.cake.libs.http
+ * @package       cake.libs.http
  */
 class BasicAuthentication {
 

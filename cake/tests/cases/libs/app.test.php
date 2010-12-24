@@ -3,8 +3,7 @@
 /**
  * AppImportTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class AppImportTest extends CakeTestCase {
 

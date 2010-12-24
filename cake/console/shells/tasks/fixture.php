@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@ include_once dirname(__FILE__) . DS . 'bake.php';
 /**
  * Task class for creating and updating fixtures files.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.shells.tasks
  */
 class FixtureTask extends BakeTask {
 

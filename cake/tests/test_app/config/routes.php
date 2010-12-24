@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.test_app.config
+ * @package       cake.tests.test_app.config
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

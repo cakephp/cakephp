@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * Shell for I18N management.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.shells
  */
 class I18nShell extends Shell {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboSqlite'));
 /**
  * DboSqliteTestDb class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
+ * @package       cake.tests.cases.libs.model.datasources
  */
 class DboSqliteTestDb extends DboSqlite {
 
@@ -61,8 +59,7 @@ class DboSqliteTestDb extends DboSqlite {
 /**
  * DboSqliteTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources.dbo
+ * @package       cake.tests.cases.libs.model.datasources.dbo
  */
 class DboSqliteTest extends CakeTestCase {
 

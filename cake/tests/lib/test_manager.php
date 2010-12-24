@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.cake.tests.lib
+ * @package       cake.tests.lib
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +28,7 @@ require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
  * TestManager is the base class that handles loading and initiating the running
  * of TestCase and TestSuite classes that the user has selected.
  *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
+ * @package       cake.tests.lib
  */
 class TestManager {
 /**

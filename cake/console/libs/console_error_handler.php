@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ require_once 'console_output.php';
  * Error Handler for Cake console. Does simple printing of the 
  * exception that occurred and the stack trace of the error.
  *
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console.libs
  */
 class ConsoleErrorHandler extends ErrorHandler {
 
@@ -51,8 +49,9 @@ class ConsoleErrorHandler extends ErrorHandler {
 	}
 
 /**
- * Handle a exception in the console environment.
+ * Handle a exception in the console environment. Prints a message to stderr.
  *
+ * @param Exception $exception The exception to handle
  * @return void
  */
 	public static function handleException(Exception $exception) {
@@ -67,6 +66,11 @@ class ConsoleErrorHandler extends ErrorHandler {
 /**
  * Handle errors in the console environment.
  *
+ * @param int $code Error code
+ * @param string $description Description of the error.
+ * @param string $file The file the error occurred in.
+ * @param int $line The line the error ocurrred on.
+ * @param array $context The backtrace of the error.
  * @return void
  */
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
@@ -82,19 +86,6 @@ class ConsoleErrorHandler extends ErrorHandler {
 			App::import('Core', 'CakeLog');
 			CakeLog::write($log, $message);
 		}
-	}
-
-/**
- * undocumented function
- *
- * @return void
- */
-	public function render() {
-		$this->stderr->write(sprintf(
-			__("<error>Error:</error> %s\n%s"), 
-			$this->error->getMessage(), 
-			$this->error->getTraceAsString()
-		));
 	}
 
 }

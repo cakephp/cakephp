@@ -12,15 +12,15 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with CakeSession
  *
- * @package cake.libs
+ * @package cake.libs.session
+ * @see CakeSession for configuration information.
  */
 class CacheSession implements CakeSessionHandlerInterface {
 /**

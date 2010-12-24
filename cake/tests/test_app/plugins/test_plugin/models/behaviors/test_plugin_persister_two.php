@@ -15,8 +15,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.test_app.models
+ * @package       cake.tests.test_app.models
  * @since         CakePHP(tm) v 1.2.0.5669
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
@@ -27,8 +26,7 @@
  * Behavior to allow for dynamic and atomic manipulation of a Model's associations used for a find call. Most useful for limiting
  * the amount of associations and data returned.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.libs
  */
 class TestPluginPersisterTwoBehavior extends ModelBehavior {
 }

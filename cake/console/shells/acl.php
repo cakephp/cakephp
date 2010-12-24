@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ App::import('Model', 'DbAcl');
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode 
  * being enabled.  Be sure to turn it off when using this shell.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.libs
  */
 class AclShell extends Shell {
 

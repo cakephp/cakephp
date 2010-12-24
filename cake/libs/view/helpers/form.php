@@ -12,12 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @package	   cake
- * @subpackage	cake.cake.libs.view.helpers
- * @since		 CakePHP(tm) v 0.10.0.1076
- * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright   Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link        http://cakephp.org CakePHP(tm) Project
+ * @package     cake.libs.view.helpers
+ * @since       CakePHP(tm) v 0.10.0.1076
+ * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -25,8 +24,7 @@
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @package	   cake
- * @subpackage	cake.cake.libs.view.helpers
+ * @package     cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1383/Form
  */
 class FormHelper extends AppHelper {
@@ -210,11 +208,13 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$object = $this->_introspectModel($model);
-		$this->setEntity($model . '.', true);
+		if ($model !== false) {
+			$object = $this->_introspectModel($model);
+			$this->setEntity($model . '.', true);
+		}
 
 		$modelEntity = $this->model();
-		if (isset($this->fieldset[$modelEntity]['key'])) {
+		if ($model !== false && isset($this->fieldset[$modelEntity]['key'])) {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->request->data[$model]) &&
@@ -1322,6 +1322,7 @@ class FormHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 
+		$url = $this->url($url);
 		$formName = uniqid('post_');
 		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {

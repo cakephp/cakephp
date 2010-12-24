@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +28,7 @@ App::import('View', 'View');
  *
  * Example of theme path with `$this->theme = 'super_hot';` Would be `app/views/themed/super_hot/posts`
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  */
 class ThemeView extends View {
 /**

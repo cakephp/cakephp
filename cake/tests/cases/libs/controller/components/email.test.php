@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@ App::import('Core', 'CakeSocket');
 /**
  * EmailTestComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class EmailTestComponent extends EmailComponent {
 
@@ -153,8 +151,7 @@ class EmailTestComponent extends EmailComponent {
 /**
  * EmailTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class EmailTestController extends Controller {
 
@@ -194,8 +191,7 @@ class EmailTestController extends Controller {
 /**
  * EmailTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class EmailComponentTest extends CakeTestCase {
 

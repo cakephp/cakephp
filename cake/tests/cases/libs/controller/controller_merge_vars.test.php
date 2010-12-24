@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +24,7 @@ App::import('Core', 'Controller');
  * Test case AppController
  *
  * @package cake
- * @subpackage cake.tests.cases.libs.controller
+ * @package    cake.tests.cases.libs.controller
  */
 class MergeVarsAppController extends Controller {
 

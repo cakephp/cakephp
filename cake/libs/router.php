@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,10 +21,23 @@ App::import('Core', 'CakeRequest');
 App::import('Core', 'route/CakeRoute');
 
 /**
- * Parses the request URL into controller, action, and parameters.
+ * Parses the request URL into controller, action, and parameters.  Uses the connected routes
+ * to match the incoming url string to parameters that will allow the request to be dispatched.  Also
+ * handles converting parameter lists into url strings, using the connected routes.  Routing allows you to decouple
+ * the way the world interacts with your application (urls) and the implementation (controllers and actions).
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * ### Connecting routes
+ *
+ * Connecting routes is done using Router::connect().  When parsing incoming requests or reverse matching
+ * parameters, routes are enumerated in the order they were connected.  You can modify the order of connected
+ * routes using Router::promote().  For more information on routes and how to connect them see Router::connect().
+ *
+ * ### Named parameters
+ *
+ * Named parameters allow you to embed key:value pairs into path segments.  This allows you create hash
+ * structures using urls.  You can define how named parameters work in your application using Router::connectNamed()
+ *
+ * @package       cake.libs
  */
 class Router {
 
@@ -703,6 +715,7 @@ class Router {
 	public static function reload() {
 		if (empty(self::$_initialState)) {
 			self::$_initialState = get_class_vars('Router');
+			self::_setPrefixes();
 			return;
 		}
 		foreach (self::$_initialState as $key => $val) {
