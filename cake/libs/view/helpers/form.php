@@ -210,11 +210,13 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$object = $this->_introspectModel($model);
-		$this->setEntity($model . '.', true);
+		if ($model !== false) {
+			$object = $this->_introspectModel($model);
+			$this->setEntity($model . '.', true);
+		}
 
 		$modelEntity = $this->model();
-		if (isset($this->fieldset[$modelEntity]['key'])) {
+		if ($model !== false && isset($this->fieldset[$modelEntity]['key'])) {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->request->data[$model]) &&
@@ -1322,6 +1324,7 @@ class FormHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 
+		$url = $this->url($url);
 		$formName = uniqid('post_');
 		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
