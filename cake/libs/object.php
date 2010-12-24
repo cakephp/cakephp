@@ -26,8 +26,7 @@
  * Also includes methods for logging and the special method RequestAction,
  * to call other Controllers' Actions from anywhere.
  *
- * @package cake
- * @package    cake.cake.libs
+ * @package    cake.libs
  */
 class Object {
 
