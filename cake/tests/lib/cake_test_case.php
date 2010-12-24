@@ -494,7 +494,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected function assertIsA($object, $type, $message = '') {
-		return $this->assertType($type, $object, $message);
+		return $this->assertInstanceOf($type, $object, $message);
 	}
 
 /**

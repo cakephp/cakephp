@@ -65,10 +65,9 @@ class ControllerTestDispatcher extends Dispatcher {
  * Loads routes and resets if the test case dictates it should
  * 
  * @return void
- * @access private
  */
-	protected function __loadRoutes() {
-		parent::__loadRoutes();
+	protected function _loadRoutes() {
+		parent::_loadRoutes();
 		if (!$this->loadRoutes) {
 			Router::reload();
 		}

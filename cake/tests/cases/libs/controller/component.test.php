@@ -284,7 +284,7 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Component = new AppleComponent($Collection);
 
-		$this->assertType('OrangeComponent', $Component->Orange, 'class is wrong');
+		$this->assertInstanceOf('OrangeComponent', $Component->Orange, 'class is wrong');
 	}
 
 /**
@@ -296,8 +296,8 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Apple = new AppleComponent($Collection);
 
-		$this->assertType('OrangeComponent', $Apple->Orange, 'class is wrong');
-		$this->assertType('BananaComponent', $Apple->Orange->Banana, 'class is wrong');
+		$this->assertInstanceOf('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertInstanceOf('BananaComponent', $Apple->Orange->Banana, 'class is wrong');
 		$this->assertTrue(empty($Apple->Session));
 		$this->assertTrue(empty($Apple->Orange->Session));
 	}
@@ -311,7 +311,7 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Apple = $Collection->load('Apple');
 
-		$this->assertType('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertInstanceOf('OrangeComponent', $Apple->Orange, 'class is wrong');
 		$result = $Collection->enabled();
 		$this->assertEquals(array('Apple'), $result, 'Too many components enabled.');
 	}
@@ -346,9 +346,9 @@ class ComponentTest extends CakeTestCase {
 		$Controller->beforeFilter();
 		$Controller->Components->trigger('startup', array(&$Controller));
 
-		$this->assertType('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
-		$this->assertType('EmailComponent', $Controller->SomethingWithEmail->Email);
-		$this->assertType('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
+		$this->assertInstanceOf('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
+		$this->assertInstanceOf('EmailComponent', $Controller->SomethingWithEmail->Email);
+		$this->assertInstanceOf('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
 	}
 
 }

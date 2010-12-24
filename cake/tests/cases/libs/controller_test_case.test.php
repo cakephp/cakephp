@@ -171,7 +171,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 			)
 		));
 		$this->assertNull($Posts->Post->save(array()));
-		$this->assertIsA($Posts->Post->find('all'), 'array');
+		$this->assertInternalType('array', $Posts->Post->find('all'));
 
 		$Posts = $this->Case->generate('Posts', array(
 			'models' => array('Post'),
@@ -198,7 +198,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 	function testTestAction() {
 		$Controller = $this->Case->generate('TestsApps');
 		$this->Case->testAction('/tests_apps/index');
-		$this->assertIsA($this->Case->controller->viewVars, 'array');
+		$this->assertInternalType('array', $this->Case->controller->viewVars);
 
 		$this->Case->testAction('/tests_apps/set_action');
 		$results = $this->Case->controller->viewVars;
@@ -254,8 +254,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		include TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
 
 		$this->Case->loadRoutes = false;
-
-		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
+		$result = $this->Case->testAction('/tests_apps/missing_action.json', array('return' => 'view'));
 	}
 
 /**

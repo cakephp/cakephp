@@ -232,7 +232,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$viewVars = array
 		View::$layout = "default"
 		View::$layoutPath = NULL
-		View::$autoRender = true
 		View::$autoLayout = true
 		View::$ext = ".ctp"
 		View::$subDir = NULL
@@ -250,8 +249,9 @@ class DebuggerTest extends CakeTestCase {
 		View::$output = false
 		View::$request = NULL
 		View::$elementCache = "default"';
-		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
 

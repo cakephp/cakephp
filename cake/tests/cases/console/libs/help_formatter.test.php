@@ -435,6 +435,6 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->xml(false);
-		$this->assertType('SimpleXmlElement', $result);
+		$this->assertInstanceOf('SimpleXmlElement', $result);
 	}
 }

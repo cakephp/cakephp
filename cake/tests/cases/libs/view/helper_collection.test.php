@@ -48,8 +48,8 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	function testLoad() {
 		$result = $this->Helpers->load('Html');
-		$this->assertType('HtmlHelper', $result);
-		$this->assertType('HtmlHelper', $this->Helpers->Html);
+		$this->assertInstanceOf('HtmlHelper', $result);
+		$this->assertInstanceOf('HtmlHelper', $this->Helpers->Html);
 
 		$result = $this->Helpers->attached();
 		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
@@ -64,8 +64,8 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	function testLoadWithEnabledFalse() {
 		$result = $this->Helpers->load('Html', array('enabled' => false));
-		$this->assertType('HtmlHelper', $result);
-		$this->assertType('HtmlHelper', $this->Helpers->Html);
+		$this->assertInstanceOf('HtmlHelper', $result);
+		$this->assertInstanceOf('HtmlHelper', $this->Helpers->Html);
 
 		$this->assertFalse($this->Helpers->enabled('Html'), 'Html should be disabled');
 	}
@@ -90,8 +90,8 @@ class HelperCollectionTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		));
 		$result = $this->Helpers->load('TestPlugin.OtherHelper');
-		$this->assertType('OtherHelperHelper', $result, 'Helper class is wrong.');
-		$this->assertType('OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
+		$this->assertInstanceOf('OtherHelperHelper', $result, 'Helper class is wrong.');
+		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
 
 		App::build();
 	}

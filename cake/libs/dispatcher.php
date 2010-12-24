@@ -198,7 +198,7 @@ class Dispatcher {
 		if (count(Router::$routes) == 0) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
-			$this->__loadRoutes();
+			$this->_loadRoutes();
 		}
 
 		$params = Router::parse($request->url);
@@ -254,9 +254,8 @@ class Dispatcher {
  * Loads route configuration
  *
  * @return void
- * @access protected
  */
-	protected function __loadRoutes() {
+	protected function _loadRoutes() {
 		include CONFIGS . 'routes.php';
 	}
 

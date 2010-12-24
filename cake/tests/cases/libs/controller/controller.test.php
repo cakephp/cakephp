@@ -462,7 +462,7 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->loadModel('Comment');
 		$this->assertTrue($result);
-		$this->assertType('Comment', $Controller->Comment);
+		$this->assertInstanceOf('Comment', $Controller->Comment);
 		$this->assertTrue(in_array('Comment', $Controller->modelNames));
 
 		ClassRegistry::flush();
@@ -1248,8 +1248,8 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new TestController($request);
 		$Controller->constructClasses();
-		$this->assertType('SecurityComponent', $Controller->Security);
-		$this->assertType('ControllerComment', $Controller->ControllerComment);
+		$this->assertInstanceOf('SecurityComponent', $Controller->Security);
+		$this->assertInstanceOf('ControllerComment', $Controller->ControllerComment);
 	}
 
 /**

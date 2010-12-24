@@ -61,27 +61,27 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article = new ArticleFeatured();
 		$this->assertTrue(isset($Article->belongsTo['User']));
 		$this->assertFalse(property_exists($Article, 'User'));
-		$this->assertType('User', $Article->User);
+		$this->assertInstanceOf('User', $Article->User);
 
 		$this->assertTrue(isset($Article->belongsTo['Category']));
 		$this->assertFalse(property_exists($Article, 'Category'));
 		$this->assertTrue(isset($Article->Category));
-		$this->assertType('Category', $Article->Category);
+		$this->assertInstanceOf('Category', $Article->Category);
 
 		$this->assertTrue(isset($Article->hasMany['Comment']));
 		$this->assertFalse(property_exists($Article, 'Comment'));
 		$this->assertTrue(isset($Article->Comment));
-		$this->assertType('Comment', $Article->Comment);
+		$this->assertInstanceOf('Comment', $Article->Comment);
 
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['Tag']));
 		//There was not enough information to setup the association (joinTable and associationForeignKey)
 		//so the model was not lazy loaded
 		$this->assertTrue(property_exists($Article, 'Tag'));
 		$this->assertTrue(isset($Article->Tag));
-		$this->assertType('Tag', $Article->Tag);
+		$this->assertInstanceOf('Tag', $Article->Tag);
 
 		$this->assertFalse(property_exists($Article, 'ArticleFeaturedsTag'));
-		$this->assertType('AppModel', $Article->ArticleFeaturedsTag);
+		$this->assertInstanceOf('AppModel', $Article->ArticleFeaturedsTag);
 		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['joinTable'], 'article_featureds_tags');
 		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['associationForeignKey'], 'tag_id');
 	}
@@ -97,10 +97,10 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article = new ArticleB();
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['TagB']));
 		$this->assertFalse(property_exists($Article, 'TagB'));
-		$this->assertType('TagB', $Article->TagB);
+		$this->assertInstanceOf('TagB', $Article->TagB);
 
 		$this->assertFalse(property_exists($Article, 'ArticlesTag'));
-		$this->assertType('AppModel', $Article->ArticlesTag);
+		$this->assertInstanceOf('AppModel', $Article->ArticlesTag);
 
 		$UuidTag = new UuidTag();
 		$this->assertTrue(isset($UuidTag->hasAndBelongsToMany['Fruit']));
@@ -110,7 +110,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertFalse(property_exists($UuidTag, 'FruitsUuidTag'));
 		$this->assertTrue(isset($UuidTag->FruitsUuidTag));
-		$this->assertType('FruitsUuidTag', $UuidTag->FruitsUuidTag);
+		$this->assertInstanceOf('FruitsUuidTag', $UuidTag->FruitsUuidTag);
 	}
 
 /**
@@ -129,7 +129,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article->bindModel(array('belongsTo' => array('User')));
 		$this->assertTrue(isset($Article->belongsTo['User']));
 		$this->assertFalse(property_exists($Article, 'User'));
-		$this->assertType('User', $Article->User);
+		$this->assertInstanceOf('User', $Article->User);
 	}
 
 /**

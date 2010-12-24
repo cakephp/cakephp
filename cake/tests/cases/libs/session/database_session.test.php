@@ -96,7 +96,7 @@ class DatabaseSessionTest extends CakeTestCase {
 		$storage = new DatabaseSession();
 
 		$session = ClassRegistry::getObject('session');
-		$this->assertType('SessionTestModel', $session);
+		$this->assertInstanceOf('SessionTestModel', $session);
 		$this->assertEquals('Session', $session->alias);
 		$this->assertEquals('test', $session->useDbConfig);
 	}

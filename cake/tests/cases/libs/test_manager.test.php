@@ -106,7 +106,7 @@ class TestManagerTest extends CakeTestCase {
 		$file = 'libs/test_manager.test.php';
 		$result = $this->TestManager->runTestCase($file, $this->Reporter, true);
 		$this->assertEquals(1, $this->_countFiles);
-		$this->assertType('PHPUnit_Framework_TestResult', $result);
+		$this->assertInstanceOf('PHPUnit_Framework_TestResult', $result);
 	}
 
 }

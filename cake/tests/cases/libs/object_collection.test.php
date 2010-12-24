@@ -98,8 +98,8 @@ class ObjectCollectionTest extends CakeTestCase {
  */
 	function testLoad() {
 		$result = $this->Objects->load('First');
-		$this->assertType('FirstGenericObject', $result);
-		$this->assertType('FirstGenericObject', $this->Objects->First);
+		$this->assertInstanceOf('FirstGenericObject', $result);
+		$this->assertInstanceOf('FirstGenericObject', $this->Objects->First);
 
 		$result = $this->Objects->attached();
 		$this->assertEquals(array('First'), $result, 'attached() results are wrong.');

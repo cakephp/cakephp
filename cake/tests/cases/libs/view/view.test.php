@@ -546,7 +546,7 @@ class ViewTest extends CakeTestCase {
 	function test__get() {
 		$View = new View($this->PostsController);
 		$View->loadHelper('Html');
-		$this->assertType('HtmlHelper', $View->Html);
+		$this->assertInstanceOf('HtmlHelper', $View->Html);
 	}
 
 /**
@@ -561,8 +561,8 @@ class ViewTest extends CakeTestCase {
 		$View->helpers = array('Html', 'Form');
 		$View->loadHelpers();
 
-		$this->assertType('HtmlHelper', $View->Html, 'Object type is wrong.');
-		$this->assertType('FormHelper', $View->Form, 'Object type is wrong.');
+		$this->assertInstanceOf('HtmlHelper', $View->Html, 'Object type is wrong.');
+		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
 /**

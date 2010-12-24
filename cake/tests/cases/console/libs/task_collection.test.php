@@ -49,8 +49,8 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	function testLoad() {
 		$result = $this->Tasks->load('DbConfig');
-		$this->assertType('DbConfigTask', $result);
-		$this->assertType('DbConfigTask', $this->Tasks->DbConfig);
+		$this->assertInstanceOf('DbConfigTask', $result);
+		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
@@ -65,8 +65,8 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	function testLoadWithEnableFalse() {
 		$result = $this->Tasks->load('DbConfig', array(), false);
-		$this->assertType('DbConfigTask', $result);
-		$this->assertType('DbConfigTask', $this->Tasks->DbConfig);
+		$this->assertInstanceOf('DbConfigTask', $result);
+		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
 
 		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
@@ -94,8 +94,8 @@ class TaskCollectionTest extends CakeTestCase {
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
-		$this->assertType('OtherTaskTask', $result, 'Task class is wrong.');
-		$this->assertType('OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
+		$this->assertInstanceOf('OtherTaskTask', $result, 'Task class is wrong.');
+		$this->assertInstanceOf('OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
 	}
 
 /**
