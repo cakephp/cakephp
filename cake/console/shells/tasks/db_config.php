@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * Task class for creating and updating the database configuration file.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.libs.tasks
  */
 class DbConfigTask extends Shell {
 

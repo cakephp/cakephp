@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ require_once 'console_output.php';
  * Error Handler for Cake console. Does simple printing of the 
  * exception that occurred and the stack trace of the error.
  *
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console
  */
 class ConsoleErrorHandler extends ErrorHandler {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @package       cake.tests.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,8 +26,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 /**
  * Class to customize loading of test suites from CLI
  *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
+ * @package       cake.tests.lib
  */
 class TestRunner extends PHPUnit_TextUI_Command {
 

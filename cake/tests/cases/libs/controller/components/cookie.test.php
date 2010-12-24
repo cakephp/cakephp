@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Component', 'Cookie');
 /**
  * CookieComponentTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class CookieComponentTestController extends Controller {
 
@@ -55,8 +53,7 @@ class CookieComponentTestController extends Controller {
 /**
  * CookieComponentTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class CookieComponentTest extends CakeTestCase {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,7 +27,7 @@ if (!class_exists('File')) {
  * A class to parse and use the MagicDb for file type analysis
  *
  * @package       cake.tests
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class MagicDb extends Object {
 
@@ -173,7 +172,7 @@ class MagicDb extends Object {
  * undocumented class
  *
  * @package       cake.tests
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class MagicFileResource extends Object{
 

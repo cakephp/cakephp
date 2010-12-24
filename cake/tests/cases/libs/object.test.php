@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::import('Core', array('Object', 'Controller', 'Model'));
 /**
  * RequestActionPost class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.object
+ * @package       cake.tests.cases.libs.object
  */
 class RequestActionPost extends CakeTestModel {
 
@@ -47,8 +45,7 @@ class RequestActionPost extends CakeTestModel {
 /**
  * RequestActionController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RequestActionController extends Controller {
 
@@ -134,8 +131,7 @@ class RequestActionController extends Controller {
 /**
  * RequestActionPersistentController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RequestActionPersistentController extends Controller {
 
@@ -168,8 +164,7 @@ class RequestActionPersistentController extends Controller {
 /**
  * TestObject class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class TestObject extends Object {
 
@@ -319,8 +314,7 @@ class TestObject extends Object {
 /**
  * ObjectTestModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ObjectTestModel extends CakeTestModel {
 	public $useTable = false;
@@ -330,8 +324,7 @@ class ObjectTestModel extends CakeTestModel {
 /**
  * Object Test class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ObjectTest extends CakeTestCase {
 

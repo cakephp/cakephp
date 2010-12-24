@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -40,8 +39,7 @@ class DispatcherMockCakeResponse extends CakeResponse {
 /**
  * TestDispatcher class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class TestDispatcher extends Dispatcher {
 
@@ -75,8 +73,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * MyPluginAppController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class MyPluginAppController extends AppController {
 }
@@ -84,8 +81,7 @@ class MyPluginAppController extends AppController {
 /**
  * MyPluginController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class MyPluginController extends MyPluginAppController {
 
@@ -137,8 +133,7 @@ class MyPluginController extends MyPluginAppController {
 /**
  * SomePagesController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class SomePagesController extends AppController {
 
@@ -199,8 +194,7 @@ class SomePagesController extends AppController {
 /**
  * OtherPagesController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class OtherPagesController extends MyPluginAppController {
 
@@ -243,8 +237,7 @@ class OtherPagesController extends MyPluginAppController {
 /**
  * TestDispatchPagesController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class TestDispatchPagesController extends AppController {
 
@@ -286,8 +279,7 @@ class TestDispatchPagesController extends AppController {
 /**
  * ArticlesTestAppController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class ArticlesTestAppController extends AppController {
 }
@@ -295,8 +287,7 @@ class ArticlesTestAppController extends AppController {
 /**
  * ArticlesTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class ArticlesTestController extends ArticlesTestAppController {
 
@@ -337,8 +328,7 @@ class ArticlesTestController extends ArticlesTestAppController {
 /**
  * SomePostsController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class SomePostsController extends AppController {
 
@@ -402,8 +392,7 @@ class SomePostsController extends AppController {
 /**
  * TestCachedPagesController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class TestCachedPagesController extends Controller {
 
@@ -498,8 +487,7 @@ class TestCachedPagesController extends Controller {
 /**
  * TimesheetsController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class TimesheetsController extends Controller {
 
@@ -532,8 +520,7 @@ class TimesheetsController extends Controller {
 /**
  * DispatcherTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class DispatcherTest extends CakeTestCase {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.behaviors
+ * @package       cake.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.4525
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * Translate behavior
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.behaviors
+ * @package       cake.libs.model.behaviors
  * @link http://book.cakephp.org/view/1328/Translate
  */
 class TranslateBehavior extends ModelBehavior {
@@ -501,8 +499,7 @@ class TranslateBehavior extends ModelBehavior {
 }
 
 /**
- * @package       cake
- * @subpackage    cake.cake.libs.model.behaviors
+ * @package       cake.libs.model.behaviors
  */
 class I18nModel extends AppModel {
 	public $name = 'I18nModel';

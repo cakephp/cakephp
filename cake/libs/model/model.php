@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -38,8 +37,7 @@ App::import('Model', 'ConnectionManager', false);
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment' primary key.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  * @link          http://book.cakephp.org/view/1000/Models
  */
 class Model extends Object {

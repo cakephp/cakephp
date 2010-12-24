@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::import('Core', array('ErrorHandler'));
 /**
  * ViewPostsController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class ViewPostsController extends Controller {
 
@@ -74,8 +72,7 @@ class ViewPostsController extends Controller {
 /**
  * TestView class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class TestView extends View {
 
@@ -139,8 +136,7 @@ class TestView extends View {
 /**
  * TestAfterHelper class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class TestAfterHelper extends Helper {
 
@@ -176,8 +172,7 @@ class TestAfterHelper extends Helper {
 /**
  * ViewTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ViewTest extends CakeTestCase {
 

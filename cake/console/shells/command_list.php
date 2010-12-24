@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

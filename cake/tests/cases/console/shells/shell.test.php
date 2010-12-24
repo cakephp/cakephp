@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,8 +26,7 @@ require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 /**
  * ShellTestShell class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class ShellTestShell extends Shell {
 
@@ -88,8 +86,7 @@ class TestMergeShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class TestAppleTask extends Shell {
 }
@@ -97,8 +94,7 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class TestBananaTask extends Shell {
 }
@@ -106,8 +102,7 @@ class TestBananaTask extends Shell {
 /**
  * ShellTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class ShellTest extends CakeTestCase {
 

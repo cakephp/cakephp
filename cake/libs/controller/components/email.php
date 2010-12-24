@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.3467
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::import('Core', 'Multibyte');
  * This component is used for handling Internet Message Format based
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1283/Email
  *
  */

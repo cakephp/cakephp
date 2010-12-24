@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * This component is used to handle automatic model data pagination
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  *
  */
 class PaginatorComponent extends Component {

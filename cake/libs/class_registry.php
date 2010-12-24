@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.9.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,8 +26,7 @@
  * If you try to add an object with the same key twice, nothing will come of it.
  * If you need a second instance of an object, give it another key.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 class ClassRegistry {
 

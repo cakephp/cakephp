@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.console
+ * @package       cake.tests.cases.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

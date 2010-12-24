@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ if (!class_exists('MagicDb')) {
 /**
  * The test class for the MagicDb class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class MagicDbTest extends UnitTestCase {
 /**
@@ -144,14 +142,12 @@ class MagicDbTest extends UnitTestCase {
 /**
  * Test data holding object for MagicDb tests
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 /**
  * MagicDbTestData class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class MagicDbTestData extends Object {
 /**

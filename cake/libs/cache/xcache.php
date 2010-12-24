@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.cache
+ * @package       cake.libs.cache
  * @since         CakePHP(tm) v 1.2.0.4947
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@
  * Xcache storage engine for cache
  *
  * @link          http://trac.lighttpd.net/xcache/ Xcache
- * @package       cake
- * @subpackage    cake.cake.libs.cache
+ * @package       cake.libs.cache
  */
 class XcacheEngine extends CacheEngine {
 

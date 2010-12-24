@@ -472,8 +472,7 @@ class Cache {
 /**
  * Storage engine for CakePHP caching
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 abstract class CacheEngine {
 

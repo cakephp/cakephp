@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Controller', 'Component', false);
 /**
  * ParamTestComponent
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ParamTestComponent extends Component {
 
@@ -66,8 +64,7 @@ class ParamTestComponent extends Component {
 /**
  * ComponentTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ComponentTestController extends Controller {
 
@@ -92,8 +89,7 @@ class ComponentTestController extends Controller {
 /**
  * AppleComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class AppleComponent extends Component {
 
@@ -128,8 +124,7 @@ class AppleComponent extends Component {
 /**
  * OrangeComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class OrangeComponent extends Component {
 
@@ -167,8 +162,7 @@ class OrangeComponent extends Component {
 /**
  * BananaComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class BananaComponent extends Component {
 
@@ -194,8 +188,7 @@ class BananaComponent extends Component {
 /**
  * MutuallyReferencingOneComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class MutuallyReferencingOneComponent extends Component {
 
@@ -211,8 +204,7 @@ class MutuallyReferencingOneComponent extends Component {
 /**
  * MutuallyReferencingTwoComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class MutuallyReferencingTwoComponent extends Component {
 
@@ -228,8 +220,7 @@ class MutuallyReferencingTwoComponent extends Component {
 /**
  * SomethingWithEmailComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class SomethingWithEmailComponent extends Component {
 
@@ -246,8 +237,7 @@ class SomethingWithEmailComponent extends Component {
 /**
  * ComponentTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ComponentTest extends CakeTestCase {
 
