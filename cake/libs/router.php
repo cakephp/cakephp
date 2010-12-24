@@ -353,8 +353,6 @@ class Router {
  * @return array
  */
 	public static function connectNamed($named, $options = array()) {
-		
-
 		if (isset($options['argSeparator'])) {
 			self::$named['separator'] = $options['argSeparator'];
 			unset($options['argSeparator']);
@@ -396,7 +394,6 @@ class Router {
  * @return void
  */
 	public static function defaults($connect = true) {
-		
 		self::$_connectDefaults = $connect;
 	}
 
@@ -414,7 +411,6 @@ class Router {
  * @return array Array of mapped resources
  */
 	public static function mapResources($controller, $options = array()) {
-		
 		$options = array_merge(array('prefix' => '/', 'id' => self::$__named['ID'] . '|' . self::$__named['UUID']), $options);
 		$prefix = $options['prefix'];
 
@@ -441,7 +437,6 @@ class Router {
  * @return array A list of prefixes used in connected routes
  */
 	public static function prefixes() {
-		
 		return self::$_prefixes;
 	}
 
@@ -452,8 +447,6 @@ class Router {
  * @return array Parsed elements from URL
  */
 	public static function parse($url) {
-
-		
 		if (!self::$_defaultsMapped && self::$_connectDefaults) {
 			self::__connectDefaultRoutes();
 		}
