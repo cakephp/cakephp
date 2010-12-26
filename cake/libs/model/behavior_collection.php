@@ -237,4 +237,23 @@ class BehaviorCollection extends ObjectCollection {
 		return $this->__methods;
 	}
 
+/**
+ * Check to see if a behavior in this collection implements the provided method.  Will
+ * also check mappedMethods.
+ *
+ * @param string $method The method to find.
+ * @return boolean Method was found.
+ */
+	public function hasMethod($method) {
+		if (isset($this->__methods[$method])) {
+			return true;
+		}
+		foreach ($this->__mappedMethods as $pattern => $target) {
+			if (preg_match($pattern . 'i', $method)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

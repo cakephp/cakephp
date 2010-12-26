@@ -340,7 +340,16 @@ class TestBehavior extends ModelBehavior {
  *
  * @package       cake.tests.cases.libs.model
  */
-class Test2Behavior extends TestBehavior{
+class Test2Behavior extends TestBehavior {
+	public $mapMethods = array('/mappingRobot(\w+)/' => 'mapped');
+
+	function resolveMethod($model, $stuff) {
+		
+	}
+	
+	function mapped($model, $method, $query) {
+		
+	}
 }
 
 /**
@@ -1115,5 +1124,35 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Sample->Behaviors->detach('Test3');
 
 		$Sample->Behaviors->trigger('beforeTest', array(&$Sample));
+	}
+
+/**
+ * test that hasMethod works with basic functions.
+ *
+ * @return void
+ */
+	function testHasMethodBasic() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection();
+		$Collection->init('Sample', array('Test', 'Test2'));
+	
+		$this->assertTrue($Collection->hasMethod('testMethod'));
+		$this->assertTrue($Collection->hasMethod('resolveMethod'));
+
+		$this->assertFalse($Collection->hasMethod('No method'));
+	}
+
+/**
+ * test that hasMethod works with mapped methods.
+ *
+ * @return void
+ */
+	function testHasMethodMappedMethods() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection();
+		$Collection->init('Sample', array('Test', 'Test2'));
+		
+		$this->assertTrue($Collection->hasMethod('look for the remote in the couch'));
+		$this->assertTrue($Collection->hasMethod('mappingRobotOnTheRoof'));
 	}
 }
