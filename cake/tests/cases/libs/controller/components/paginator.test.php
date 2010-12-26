@@ -313,10 +313,20 @@ class PaginatorTest extends CakeTestCase {
  */
 	function testPageParamCasting() {
 		$this->Controller->Post->expects($this->at(0))
+			->method('hasMethod')
+			->with('paginateCount')
+			->will($this->returnValue(false));
+	
+		$this->Controller->Post->expects($this->at(1))
 			->method('find')
 			->will($this->returnValue(2));
 		
-		$this->Controller->Post->expects($this->at(1))
+		$this->Controller->Post->expects($this->at(2))
+			->method('hasMethod')
+			->with('paginate')
+			->will($this->returnValue(false));
+		
+		$this->Controller->Post->expects($this->at(3))
 			->method('find')
 			->will($this->returnValue(array('stuff')));
 	

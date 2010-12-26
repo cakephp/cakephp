@@ -152,7 +152,7 @@ class PaginatorComponent extends Component {
 			$extra['type'] = $type;
 		}
 
-		if (method_exists($object, 'paginateCount')) {
+		if ($object->hasMethod('paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions');
@@ -170,7 +170,7 @@ class PaginatorComponent extends Component {
 		}
 		$page = $options['page'] = (int)$page;
 
-		if (method_exists($object, 'paginate')) {
+		if ($object->hasMethod('paginate')) {
 			$results = $object->paginate(
 				$conditions, $fields, $order, $limit, $page, $recursive, $extra
 			);
