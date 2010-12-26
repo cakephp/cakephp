@@ -42,14 +42,14 @@ class BehaviorCollection extends ObjectCollection {
  *
  * @var array
  */
-	private $__methods = array();
+	protected $_methods = array();
 
 /**
  * Keeps a list of all methods which have been mapped with regular expressions
  *
  * @var array
  */
-	private $__mappedMethods = array();
+	protected $_mappedMethods = array();
 
 /**
  * Attaches a model object and loads a list of behaviors
@@ -128,7 +128,7 @@ class BehaviorCollection extends ObjectCollection {
 		$this->_loaded[$name]->setup(ClassRegistry::getObject($this->modelName), $config);
 
 		foreach ($this->_loaded[$name]->mapMethods as $method => $alias) {
-			$this->__mappedMethods[$method] = array($name, $alias);
+			$this->_mappedMethods[$method] = array($name, $alias);
 		}
 		$methods = get_class_methods($this->_loaded[$name]);
 		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
@@ -140,11 +140,11 @@ class BehaviorCollection extends ObjectCollection {
 		foreach ($methods as $m) {
 			if (!isset($parentMethods[$m])) {
 				$methodAllowed = (
-					$m[0] != '_' && !array_key_exists($m, $this->__methods) &&
+					$m[0] != '_' && !array_key_exists($m, $this->_methods) &&
 					!in_array($m, $callbacks)
 				);
 				if ($methodAllowed) {
-					$this->__methods[$m] = array($name, $m);
+					$this->_methods[$m] = array($name, $m);
 				}
 			}
 		}
@@ -170,9 +170,9 @@ class BehaviorCollection extends ObjectCollection {
 			$this->_loaded[$name]->cleanup(ClassRegistry::getObject($this->modelName));
 			unset($this->_loaded[$name]);
 		}
-		foreach ($this->__methods as $m => $callback) {
+		foreach ($this->_methods as $m => $callback) {
 			if (is_array($callback) && $callback[0] == $name) {
-				unset($this->__methods[$m]);
+				unset($this->_methods[$m]);
 			}
 		}
 		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
@@ -221,7 +221,7 @@ class BehaviorCollection extends ObjectCollection {
  * @return array All public methods for all behaviors attached to this collection
  */
 	public function methods() {
-		return $this->__methods;
+		return $this->_methods;
 	}
 
 /**
@@ -234,10 +234,10 @@ class BehaviorCollection extends ObjectCollection {
  *   containing callback information will be returnned.  For mapped methods the array will have 3 elements.
  */
 	public function hasMethod($method, $callback = false) {
-		if (isset($this->__methods[$method])) {
-			return $callback ? $this->__methods[$method] : true;
+		if (isset($this->_methods[$method])) {
+			return $callback ? $this->_methods[$method] : true;
 		}
-		foreach ($this->__mappedMethods as $pattern => $target) {
+		foreach ($this->_mappedMethods as $pattern => $target) {
 			if (preg_match($pattern . 'i', $method)) {
 				if ($callback) {
 					$target[] = $method;
