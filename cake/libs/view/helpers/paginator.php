@@ -53,34 +53,30 @@ class PaginatorHelper extends AppHelper {
  *
  * The values that may be specified are:
  *
- *  - `$options['format']` Format of the counter. Supported formats are 'range' and 'pages'
+ * - `$options['format']` Format of the counter. Supported formats are 'range' and 'pages'
  *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
  *    by their actual values.
  *    Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
- *  - `$options['separator']` The separator of the actual page and number of pages (default: ' of ').
- *  - `$options['url']` Url of the action. See Router::url()
- *  - `$options['url']['sort']`  the key that the recordset is sorted.
- *  - `$options['url']['direction']` Direction of the sorting (default: 'asc').
- *  - `$options['url']['page']` Page # to display.
- *  - `$options['model']` The name of the model.
- *  - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
- *  - `$options['update']` DOM id of the element updated with the results of the AJAX call.
+ * - `$options['separator']` The separator of the actual page and number of pages (default: ' of ').
+ * - `$options['url']` Url of the action. See Router::url()
+ * - `$options['url']['sort']`  the key that the recordset is sorted.
+ * - `$options['url']['direction']` Direction of the sorting (default: 'asc').
+ * - `$options['url']['page']` Page # to display.
+ * - `$options['model']` The name of the model.
+ * - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
+ * - `$options['update']` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- *  - `$options['paramType']` The type of parameters to use when creating links.  Valid options are 
+ * - `$options['paramType']` The type of parameters to use when creating links.  Valid options are 
  *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
+ * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
+ *    if paramType == 'querystring'.
  *
  * @var array
  * @access public
  */
-	public $options = array();
-
-/**
- * A list of keys that will be turned into `$this->options['paramType']` url parameters when links
- * are generated
- *
- * @var array
- */
-	public $convertKeys = array('page', 'limit', 'sort', 'direction');
+	public $options = array(
+		'convertKeys' => array('page', 'limit', 'sort', 'direction')
+	);
 
 /**
  * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
@@ -355,6 +351,7 @@ class PaginatorHelper extends AppHelper {
 			$url = array_merge((array)$options['url'], (array)$url);
 			unset($options['url']);
 		}
+		unset($options['convertKeys']);
 
 		$url = $this->url($url, true, $model);
 
@@ -403,7 +400,7 @@ class PaginatorHelper extends AppHelper {
 		if (!isset($url['?'])) {
 			$url['?'] = array();
 		}
-		foreach ($this->convertKeys as $key) {
+		foreach ($this->options['convertKeys'] as $key) {
 			if (isset($url[$key])) {
 				$url['?'][$key] = $url[$key];
 				unset($url[$key]);
