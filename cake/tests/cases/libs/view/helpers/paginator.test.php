@@ -2243,6 +2243,22 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that additional keys can be flagged as query string args.
+ *
+ * @return void
+ */
+	function testOptionsConvertKeys() {
+		$this->Paginator->options(array(
+			'convertKeys' => array('something'),
+			'Article' => array('paramType' => 'querystring')
+		));
+		$result = $this->Paginator->url(array('page' => '4', 'something' => 'bar'));
+		$expected = '/?page=4&amp;something=bar';
+		$this->assertEquals($expected, $result);
+	}
+
+
+/**
  * test the current() method
  *
  * @return void

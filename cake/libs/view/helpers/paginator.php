@@ -66,7 +66,7 @@ class PaginatorHelper extends AppHelper {
  * - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
  * - `$options['update']` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- * - `$options['paramType']` The type of parameters to use when creating links.  Valid options are 
+ * - `$options['paging']['paramType']` The type of parameters to use when creating links.  Valid options are 
  *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
  * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
  *    if paramType == 'querystring'.
@@ -162,6 +162,9 @@ class PaginatorHelper extends AppHelper {
 				$this->request->params['paging'][$model], $options[$model]
 			);
 			unset($options[$model]);
+		}
+		if (!empty($options['convertKeys'])) {
+			$options['convertKeys'] = array_merge($this->options['convertKeys'], $options['convertKeys']);
 		}
 		$this->options = array_filter(array_merge($this->options, $options));
 	}
