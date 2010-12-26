@@ -1036,34 +1036,6 @@ class BehaviorCollectionTest extends CakeTestCase {
 	}
 
 /**
- * testBehaviorTrigger method
- *
- * @access public
- * @return void
- */
-	function testBehaviorTrigger() {
-		$Apple = new Apple();
-		$Apple->Behaviors->attach('Test');
-		$Apple->Behaviors->attach('Test2');
-		$Apple->Behaviors->attach('Test3');
-
-		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger('beforeTest', array(&$Apple));
-		$expected = array('testbehavior', 'test2behavior', 'test3behavior');
-		$this->assertIdentical($Apple->beforeTestResult, $expected);
-
-		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger('beforeTest', array(&$Apple), array('break' => true, 'breakOn' => 'test2behavior'));
-		$expected = array('testbehavior', 'test2behavior');
-		$this->assertIdentical($Apple->beforeTestResult, $expected);
-
-		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger('beforeTest', array($Apple), array('break' => true, 'breakOn' => array('test2behavior', 'test3behavior')));
-		$expected = array('testbehavior', 'test2behavior');
-		$this->assertIdentical($Apple->beforeTestResult, $expected);
-	}
-
-/**
  * undocumented function
  *
  * @return void
