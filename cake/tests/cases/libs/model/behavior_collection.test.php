@@ -1151,8 +1151,33 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Sample = new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));
-		
+
 		$this->assertTrue($Collection->hasMethod('look for the remote in the couch'));
 		$this->assertTrue($Collection->hasMethod('mappingRobotOnTheRoof'));
 	}
+
+/**
+ * test hasMethod returrning a 'callback'
+ *
+ * @return void
+ */
+	function testHasMethodAsCallback() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection();
+		$Collection->init('Sample', array('Test', 'Test2'));
+
+		$result = $Collection->hasMethod('testMethod', true);
+		$expected = array('Test', 'testMethod');
+		$this->assertEquals($expected, $result);
+
+		$result = $Collection->hasMethod('resolveMethod', true);
+		$expected = array('Test2', 'resolveMethod');
+		$this->assertEquals($expected, $result);
+
+		$result = $Collection->hasMethod('mappingRobotOnTheRoof', true);
+		$expected = array('Test2', 'mapped', 'mappingRobotOnTheRoof');
+		$this->assertEquals($expected, $result);
+	}
+
+
 }

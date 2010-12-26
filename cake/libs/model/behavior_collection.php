@@ -128,7 +128,7 @@ class BehaviorCollection extends ObjectCollection {
 		$this->_loaded[$name]->setup(ClassRegistry::getObject($this->modelName), $config);
 
 		foreach ($this->_loaded[$name]->mapMethods as $method => $alias) {
-			$this->__mappedMethods[$method] = array($alias, $name);
+			$this->__mappedMethods[$method] = array($name, $alias);
 		}
 		$methods = get_class_methods($this->_loaded[$name]);
 		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
@@ -144,7 +144,7 @@ class BehaviorCollection extends ObjectCollection {
 					!in_array($m, $callbacks)
 				);
 				if ($methodAllowed) {
-					$this->__methods[$m] = array($m, $name);
+					$this->__methods[$m] = array($name, $m);
 				}
 			}
 		}
@@ -171,7 +171,7 @@ class BehaviorCollection extends ObjectCollection {
 			unset($this->_loaded[$name]);
 		}
 		foreach ($this->__methods as $m => $callback) {
-			if (is_array($callback) && $callback[1] == $name) {
+			if (is_array($callback) && $callback[0] == $name) {
 				unset($this->__methods[$m]);
 			}
 		}
@@ -194,42 +194,29 @@ class BehaviorCollection extends ObjectCollection {
  *
  * @return array All methods for all behaviors attached to this object
  */
-	public function dispatchMethod(&$model, $method, $params = array(), $strict = false) {
-		$methods = array_keys($this->__methods);
-		$check = array_flip($methods);
-		$found = isset($check[$method]);
-		$call = null;
-
-		if ($strict && !$found) {
+	public function dispatchMethod($model, $method, $params = array(), $strict = false) {
+		$method = $this->hasMethod($method, true);
+		
+		if ($strict && empty($method)) {
 			trigger_error(__("BehaviorCollection::dispatchMethod() - Method %s not found in any attached behavior", $method), E_USER_WARNING);
 			return null;
-		} elseif ($found) {
-			$methods = array_combine($methods, array_values($this->__methods));
-			$call = $methods[$method];
-		} else {
-			$count = count($this->__mappedMethods);
-			$mapped = array_keys($this->__mappedMethods);
-
-			for ($i = 0; $i < $count; $i++) {
-				if (preg_match($mapped[$i] . 'i', $method)) {
-					$call = $this->__mappedMethods[$mapped[$i]];
-					array_unshift($params, $method);
-					break;
-				}
-			}
 		}
-
-		if (!empty($call)) {
-			return call_user_func_array(
-				array(&$this->_loaded[$call[1]], $call[0]),
-				array_merge(array(&$model), $params)
-			);
+		if (empty($method)) {
+			return array('unhandled');
 		}
-		return array('unhandled');
+		if (count($method) === 3) {
+			array_unshift($params, $method[2]);
+			unset($method[2]);
+		}
+		return call_user_func_array(
+			array($this->_loaded[$method[0]], $method[1]),
+			array_merge(array(&$model), $params)
+		);
 	}
 
 /**
- * Gets the method list for attached behaviors, i.e. all public, non-callback methods
+ * Gets the method list for attached behaviors, i.e. all public, non-callback methods. 
+ * This does not include mappedMethods.
  *
  * @return array All public methods for all behaviors attached to this collection
  */
@@ -242,14 +229,20 @@ class BehaviorCollection extends ObjectCollection {
  * also check mappedMethods.
  *
  * @param string $method The method to find.
- * @return boolean Method was found.
+ * @param boolean $callback Return the callback for the method.
+ * @return mixed If $callback is false, a boolean will be returnned, if its true, an array
+ *   containing callback information will be returnned.  For mapped methods the array will have 3 elements.
  */
-	public function hasMethod($method) {
+	public function hasMethod($method, $callback = false) {
 		if (isset($this->__methods[$method])) {
-			return true;
+			return $callback ? $this->__methods[$method] : true;
 		}
 		foreach ($this->__mappedMethods as $pattern => $target) {
 			if (preg_match($pattern . 'i', $method)) {
+				if ($callback) {
+					$target[] = $method;
+					return $target;
+				}
 				return true;
 			}
 		}
