@@ -190,8 +190,15 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 /**
- * Dispatches a behavior method
+ * Dispatches a behavior method.  Will call either normal methods or mapped methods.
  *
+ * If a method is not handeled by the BehaviorCollection, and $strict is false, a 
+ * special return of `array('unhandled')` will be returned to signal the method was not found.
+ *
+ * @param Model $model The model the method was originally called on.
+ * @param string $method The method called.
+ * @param array $params Parameters for the called method.
+ * @param boolean $strict If methods are not found, trigger an error.
  * @return array All methods for all behaviors attached to this object
  */
 	public function dispatchMethod($model, $method, $params = array(), $strict = false) {
