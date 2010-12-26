@@ -1067,6 +1067,23 @@ class Model extends Object {
 	}
 
 /**
+ * Check that a method is callable on a model.  This will check both the model's own methods, its 
+ * inherited methods and methods that could be callable through behaviors.
+ *
+ * @param string $method The method to be called.
+ * @return boolean True on method being callable.
+ */
+	public function hasMethod($method) {
+		if (method_exists($this, $method)) {
+			return true;
+		}
+		if ($this->Behaviors->hasMethod($method)) {
+			return true;
+		}
+		return false;
+	}
+
+/**
  * Returns true if the supplied field is a model Virtual Field
  *
  * @param mixed $name Name of field to look for
