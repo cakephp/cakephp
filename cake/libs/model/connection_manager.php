@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
-include_once CONFIGS . 'database.php';
+config('database');
 
 /**
  * Manages loaded instances of DataSource objects
