@@ -454,6 +454,7 @@ class PaginatorHelper extends AppHelper {
 		if ($this->{$check}($model)) {
 			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'class'))));
 		} else {
+			unset($options['rel']);
 			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
 		}
 	}
