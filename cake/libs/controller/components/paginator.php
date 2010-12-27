@@ -74,7 +74,7 @@ class PaginatorComponent extends Component {
 	);
 
 /**
- * A list of request parameters users are allowed to set.  Modifying
+ * A list of parameters users are allowed to set using request parameters.  Modifying
  * this list will allow users to have more influence over pagination,
  * be careful with what you permit.
  *
@@ -101,7 +101,8 @@ class PaginatorComponent extends Component {
  *
  * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param mixed $scope Additional find conditions to use while paginating
- * @param array $whitelist List of allowed options for paging
+ * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering 
+ *   on non-indexed, or undesirable columns.
  * @return array Model query results
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
@@ -117,8 +118,8 @@ class PaginatorComponent extends Component {
 			throw new MissingModelException($object);
 		}
 
-		$options = $this->mergeOptions($object->alias, $whitelist);
-		$options = $this->validateSort($object, $options);
+		$options = $this->mergeOptions($object->alias);
+		$options = $this->validateSort($object, $options, $whitelist);
 		$options = $this->checkLimit($options);
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
@@ -272,11 +273,9 @@ class PaginatorComponent extends Component {
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
  *   that key's settings will be used for pagination instead of the general ones.
- * @param string $whitelist A whitelist of options that are allowed from the request parameters.  Modifying
- *   this array will allow you to permit more or less input from the user.
  * @return array Array of merged options.
  */
-	public function mergeOptions($alias, $whitelist = array()) {
+	public function mergeOptions($alias) {
 		$defaults = $this->getDefaults($alias);
 		switch ($defaults['paramType']) {
 			case 'named':
@@ -285,14 +284,8 @@ class PaginatorComponent extends Component {
 			case 'querystring':
 				$request = $this->Controller->request->query;
 				break;
-			case 'route':
-				$request = $this->Controller->request->params;
-				unset($request['pass'], $request['named']);
 		}
-
-		$whitelist = array_flip(array_merge($this->whitelist, $whitelist));
-		$request = array_intersect_key($request, $whitelist);
-
+		$request = array_intersect_key($request, array_flip($this->whitelist));
 		return array_merge($defaults, $request);
 	}
 
@@ -322,9 +315,10 @@ class PaginatorComponent extends Component {
  *
  * @param Model $object The model being paginated.
  * @param array $options The pagination options being used for this request.
+ * @param array $whitelist The list of columns that can be used for sorting.  If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
-	public function validateSort($object, $options) {
+	public function validateSort($object, $options, $whitelist = array()) {
 		if (isset($options['sort'])) {
 			$direction = null;
 			if (isset($options['direction'])) {
@@ -334,6 +328,13 @@ class PaginatorComponent extends Component {
 				$direction = 'asc';
 			}
 			$options['order'] = array($options['sort'] => $direction);
+		}
+		
+		if (!empty($whitelist)) {
+			$field = key($options['order']);
+			if (!in_array($field, $whitelist)) {
+				$options['order'] = null;
+			}
 		}
 	
 		if (!empty($options['order']) && is_array($options['order'])) {

@@ -635,7 +635,8 @@ class PaginatorTest extends CakeTestCase {
 			'maxLimit' => 100,
 			'paramType' => 'named',
 		);
-		$result = $this->Paginator->mergeOptions('Post', array('fields'));
+		$this->Paginator->whitelist[] = 'fields';
+		$result = $this->Paginator->mergeOptions('Post');
 		$expected = array(
 			'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named', 'fields' => array('bad.stuff')
 		);
@@ -656,6 +657,22 @@ class PaginatorTest extends CakeTestCase {
 		$result = $this->Paginator->validateSort($model, $options);
 
 		$this->assertEquals('asc', $result['order']['model.something']);
+	}
+
+/**
+ * test that fields not in whitelist won't be part of order conditions.
+ *
+ * @return void
+ */
+	function testValidateSortWhitelistFailure() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('sort' => 'body', 'direction' => 'asc');
+		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
+
+		$this->assertNull($result['order']);
 	}
 
 /**
