@@ -18,6 +18,7 @@
 if (Configure::read() == 0):
 	throw new NotFoundException();
 endif;
+App::import('Core', 'Debugger');
 ?>
 <h2><?php echo __('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <a href="http://cakephp.org/changelogs/1.3.6"><?php __('Read the changelog'); ?> </a>
