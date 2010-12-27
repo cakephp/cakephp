@@ -391,7 +391,7 @@ class EmailComponent extends Object{
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->Controller->view);
 		}
-		$View = new $viewClass($this->Controller, false);
+		$View = new $viewClass($this->Controller);
 		$View->layout = $this->layout;
 		$msg = array();
 
@@ -428,6 +428,7 @@ class EmailComponent extends Object{
 			$msg[] = '--alt-' . $this->__boundary . '--';
 			$msg[] = '';
 
+			ClassRegistry::removeObject('view');
 			return $msg;
 		}
 
@@ -450,6 +451,7 @@ class EmailComponent extends Object{
 		$View->layoutPath = 'email' . DS . $this->sendAs;
 		$content = explode("\n", str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
 		$msg = array_merge($msg, $content);
+		ClassRegistry::removeObject('view');
 
 		return $msg;
 	}

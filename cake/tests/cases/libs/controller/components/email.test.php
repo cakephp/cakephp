@@ -359,7 +359,8 @@ MSGBLOC;
  * @return void
  */
 	function testTemplates() {
-		$this->Controller->EmailTest->reset();
+		ClassRegistry::flush();
+
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -453,25 +454,11 @@ HTMLBLOC;
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . "\n" . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
-
-		return;
-
-		$text = <<<TEXTBLOC
-
-This element has some text that is just too wide to comply with email
-standards.
-This is the body of the message
-
-This email was sent using the CakePHP Framework, http://cakephp.org.
-
-
-TEXTBLOC;
-
-		$this->Controller->EmailTest->sendAs = 'text';
-		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
-		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'wide', 'default'));
-		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		
+		$result = ClassRegistry::getObject('view');
+		$this->assertFalse($result);
 	}
+
 /**
  * testSmtpSendSocket method
  *
