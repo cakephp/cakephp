@@ -85,7 +85,7 @@
 <?php endif; ?>
 			}
 		} else {
-			$this->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
+			$this->request->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
 		}
 <?php
 		foreach (array('belongsTo', 'hasAndBelongsToMany') as $assoc):
