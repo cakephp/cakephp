@@ -538,6 +538,8 @@ MSGBLOC;
  * @return void
  */
 	function testTemplates() {
+		ClassRegistry::flush();
+
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -629,6 +631,9 @@ HTMLBLOC;
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		
+		$result = ClassRegistry::getObject('view');
+		$this->assertFalse($result);
 	}
 
 /**
