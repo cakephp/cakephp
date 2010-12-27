@@ -743,14 +743,14 @@ class PaginatorHelper extends AppHelper {
 		$options = array_merge(
 			array(
 				'tag' => 'span',
-				'after'=> null,
+				'after' => null,
 				'model' => $this->defaultModel(),
 				'separator' => ' | ',
-				'ellipsis' => '...',
+				'ellipsis' => '...'
 			),
 		(array)$options);
 
-		$params = array_merge(array('page'=> 1), (array)$this->params($options['model']));
+		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
@@ -773,6 +773,7 @@ class PaginatorHelper extends AppHelper {
 			}
 			$out .= $after;
 		} elseif ($params['page'] > 1) {
+			$options += array('rel' => 'first');
 			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options))
 				. $after;
 		}
@@ -830,6 +831,7 @@ class PaginatorHelper extends AppHelper {
 			}
 			$out = $before . $out;
 		} elseif ($params['page'] < $params['pageCount']) {
+			$options += array('rel' => 'last');
 			$out = $before . $this->Html->tag(
 				$tag, $this->link($last, array('page' => $params['pageCount']), $options
 			));
