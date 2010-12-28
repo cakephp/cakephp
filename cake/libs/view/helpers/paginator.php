@@ -602,7 +602,12 @@ class PaginatorHelper extends AppHelper {
 
 /**
  * Returns a set of numbers for the paged result set
- * uses a modulus to decide how many numbers to show on each side of the current page (default: 8)
+ * uses a modulus to decide how many numbers to show on each side of the current page (default: 8). 
+ *
+ * `$this->Paginator->numbers(array('first' => 2, 'last' => 2));`
+ *
+ * Using the first and last options you can create links to the beginning and end of the page set.
+ * 
  *
  * ### Options
  *
@@ -613,9 +618,9 @@ class PaginatorHelper extends AppHelper {
  * - `separator` Separator content defaults to ' | '
  * - `tag` The tag to wrap links in, defaults to 'span'
  * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
- *    links to generate
+ *    links to generate.
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
- *    links to generate
+ *    links to generate.
  * - `ellipsis` Ellipsis content, defaults to '...'
  *
  * @param mixed $options Options for the numbers, (before, after, model, modulus, separator)
