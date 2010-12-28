@@ -1878,6 +1878,10 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/span'
 		);
 		$this->assertTags($result, $expected);
+		
+		$this->Paginator->request->params['paging']['Article']['page'] = 2;
+		$result = $this->Paginator->first(3);
+		$this->assertEquals('', $result, 'When inside the first links range, no links should be made');
 	}
 
 /**
@@ -1922,6 +1926,9 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/span',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->last(3);
+		$this->assertEquals('', $result, 'When inside the last links range, no links should be made');
 	}
 	
 /**
