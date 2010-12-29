@@ -218,6 +218,7 @@ class Shell extends Object {
 		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
+		App::import('Core', 'ClassRegistry');
 
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
