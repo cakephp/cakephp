@@ -267,9 +267,9 @@ class PaginatorComponent extends Component {
  * - General pagination settings
  * - Model specific settings.
  * - Request parameters
- * - $options argument.
  *
- * The result of this method is the aggregate of all the option sets combined together.
+ * The result of this method is the aggregate of all the option sets combined together.  You can change
+ * PaginatorComponent::$whitelist to modify which options/values can be set using request parameters.
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
  *   that key's settings will be used for pagination instead of the general ones.
@@ -294,7 +294,7 @@ class PaginatorComponent extends Component {
  * will be used.
  *
  * @param string $alias Model name to get default settings for.
- * @return array
+ * @return array An array of pagination defaults for a model, or the general settings.
  */
 	public function getDefaults($alias) {
 		if (isset($this->settings[$alias])) {
@@ -312,6 +312,9 @@ class PaginatorComponent extends Component {
  * Validate that the desired sorting can be performed on the $object.  Only fields or 
  * virtualFields can be sorted on.  The direction param will also be sanitized.  Lastly
  * sort + direction keys will be converted into the model friendly order key.
+ *
+ * You can use the whitelist parameter to control which columns/fields are available for sorting.
+ * This helps prevent users from ordering large result sets on un-indexed values.
  *
  * @param Model $object The model being paginated.
  * @param array $options The pagination options being used for this request.

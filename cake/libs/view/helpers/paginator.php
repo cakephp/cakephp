@@ -42,7 +42,8 @@ class PaginatorHelper extends AppHelper {
 	private $__defaultModel = null;
 
 /**
- * The class used for 'Ajax' pagination links.
+ * The class used for 'Ajax' pagination links. Defaults to JsHelper.  You should make sure
+ * that JsHelper is defined as a helper before PaginatorHelper, if you want to customize the JsHelper.
  *
  * @var string
  */
@@ -53,20 +54,20 @@ class PaginatorHelper extends AppHelper {
  *
  * The values that may be specified are:
  *
- * - `$options['format']` Format of the counter. Supported formats are 'range' and 'pages'
+ * - `format` Format of the counter. Supported formats are 'range' and 'pages'
  *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
  *    by their actual values.
- *    Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
- * - `$options['separator']` The separator of the actual page and number of pages (default: ' of ').
- * - `$options['url']` Url of the action. See Router::url()
- * - `$options['url']['sort']`  the key that the recordset is sorted.
- * - `$options['url']['direction']` Direction of the sorting (default: 'asc').
- * - `$options['url']['page']` Page # to display.
- * - `$options['model']` The name of the model.
- * - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
- * - `$options['update']` DOM id of the element updated with the results of the AJAX call.
+ *    placeholders: %page%, %pages%, %current%, %count%, %start%, %end% .
+ * - `separator` The separator of the actual page and number of pages (default: ' of ').
+ * - `url` Url of the action. See Router::url()
+ * - `url['sort']`  the key that the recordset is sorted.
+ * - `url['direction']` Direction of the sorting (default: 'asc').
+ * - `url['page']` Page number to use in links.
+ * - `model` The name of the model.
+ * - `escape` Defines if the title field for the link should be escaped (default: true).
+ * - `update` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- * - `$options['paging']['paramType']` The type of parameters to use when creating links.  Valid options are 
+ * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are 
  *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
  * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
  *    if paramType == 'querystring'.
