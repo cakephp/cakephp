@@ -340,7 +340,16 @@ class TestBehavior extends ModelBehavior {
  *
  * @package       cake.tests.cases.libs.model
  */
-class Test2Behavior extends TestBehavior{
+class Test2Behavior extends TestBehavior {
+	public $mapMethods = array('/mappingRobot(\w+)/' => 'mapped');
+
+	function resolveMethod($model, $stuff) {
+		
+	}
+	
+	function mapped($model, $method, $query) {
+		
+	}
 }
 
 /**
@@ -1027,34 +1036,6 @@ class BehaviorCollectionTest extends CakeTestCase {
 	}
 
 /**
- * testBehaviorTrigger method
- *
- * @access public
- * @return void
- */
-	function testBehaviorTrigger() {
-		$Apple = new Apple();
-		$Apple->Behaviors->attach('Test');
-		$Apple->Behaviors->attach('Test2');
-		$Apple->Behaviors->attach('Test3');
-
-		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger('beforeTest', array(&$Apple));
-		$expected = array('testbehavior', 'test2behavior', 'test3behavior');
-		$this->assertIdentical($Apple->beforeTestResult, $expected);
-
-		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger('beforeTest', array(&$Apple), array('break' => true, 'breakOn' => 'test2behavior'));
-		$expected = array('testbehavior', 'test2behavior');
-		$this->assertIdentical($Apple->beforeTestResult, $expected);
-
-		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger('beforeTest', array($Apple), array('break' => true, 'breakOn' => array('test2behavior', 'test3behavior')));
-		$expected = array('testbehavior', 'test2behavior');
-		$this->assertIdentical($Apple->beforeTestResult, $expected);
-	}
-
-/**
  * undocumented function
  *
  * @return void
@@ -1116,4 +1097,59 @@ class BehaviorCollectionTest extends CakeTestCase {
 
 		$Sample->Behaviors->trigger('beforeTest', array(&$Sample));
 	}
+
+/**
+ * test that hasMethod works with basic functions.
+ *
+ * @return void
+ */
+	function testHasMethodBasic() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection();
+		$Collection->init('Sample', array('Test', 'Test2'));
+	
+		$this->assertTrue($Collection->hasMethod('testMethod'));
+		$this->assertTrue($Collection->hasMethod('resolveMethod'));
+
+		$this->assertFalse($Collection->hasMethod('No method'));
+	}
+
+/**
+ * test that hasMethod works with mapped methods.
+ *
+ * @return void
+ */
+	function testHasMethodMappedMethods() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection();
+		$Collection->init('Sample', array('Test', 'Test2'));
+
+		$this->assertTrue($Collection->hasMethod('look for the remote in the couch'));
+		$this->assertTrue($Collection->hasMethod('mappingRobotOnTheRoof'));
+	}
+
+/**
+ * test hasMethod returrning a 'callback'
+ *
+ * @return void
+ */
+	function testHasMethodAsCallback() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection();
+		$Collection->init('Sample', array('Test', 'Test2'));
+
+		$result = $Collection->hasMethod('testMethod', true);
+		$expected = array('Test', 'testMethod');
+		$this->assertEquals($expected, $result);
+
+		$result = $Collection->hasMethod('resolveMethod', true);
+		$expected = array('Test2', 'resolveMethod');
+		$this->assertEquals($expected, $result);
+
+		$result = $Collection->hasMethod('mappingRobotOnTheRoof', true);
+		$expected = array('Test2', 'mapped', 'mappingRobotOnTheRoof');
+		$this->assertEquals($expected, $result);
+	}
+
+
 }

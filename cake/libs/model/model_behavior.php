@@ -39,6 +39,25 @@
  * 
  * Would be called like `$this->Model->doSomething($arg1, $arg2);`.
  *
+ * ### Mapped methods
+ *
+ * Behaviors can also define mapped methods.  Mapped methods use pattern matching for method invocation. This
+ * allows you to create methods similar to Model::findAllByXXX methods on your behaviors.  Mapped methods need to 
+ * be declared in your behaviors `$mapMethods` array.  The method signature for a mapped method is slightly different
+ * than a normal behavior mixin method.
+ *
+ * {{{
+ * var $mapMethods = array('/do(\w+)/' => 'doSomething');
+ *
+ * function doSomething($model, $method, $arg1, $arg2) {
+ *		//do something
+ * }
+ * }}}
+ *
+ * The above will map every doXXX() method call to the behavior.  As you can see, the model is
+ * still the first parameter, but the called method name will be the 2nd parameter.  This allows
+ * you to munge the method name for additional information, much like Model::findAllByXX.
+ *
  * @package    cake.libs.model
  * @see Model::$actsAs
  * @see BehaviorCollection::load()

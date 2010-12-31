@@ -137,7 +137,6 @@ class Helper extends Object {
  */
 	public function __construct(View $View, $settings = array()) {
 		$this->_View = $View;
-		$this->params = $View->params;
 		$this->request = $View->request;
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);

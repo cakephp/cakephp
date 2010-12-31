@@ -281,7 +281,8 @@ class Router {
  *
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
  *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the 
+ * redirect destination allows you to use other routes to define where a url string should be redirected ot.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
  *
@@ -290,7 +291,8 @@ class Router {
  * ### Options:
  *
  * - `status` Sets the HTTP status (default 301)
- * - `persist` Passes the params to the redirected route, if it can
+ * - `persist` Passes the params to the redirected route, if it can.  This is useful with greedy routes,
+ *   routes that end in `*` are greedy.  As you can remap urls and not loose any passed/named args.
  *
  * @param string $route A string describing the template of the route
  * @param array $url A url to redirect to. Can be a string or a Cake array-based url
@@ -310,7 +312,9 @@ class Router {
 	}
 
 /**
- * Specifies what named parameters CakePHP should be parsing. The most common setups are:
+ * Specifies what named parameters CakePHP should be parsing out of incoming urls. By default
+ * CakePHP will parse every named parameter out of incoming URLs.  However, if you want to take more
+ * control over how named parameters are parsed you can use one of the following setups:
  *
  * Do not parse any named parameters:
  *
@@ -324,7 +328,7 @@ class Router {
  *
  * {{{ Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); }}}
  *
- * Parse only the page parameter no mater what.
+ * Parse only the page parameter no matter what.
  *
  * {{{ Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); }}}
  *
@@ -346,15 +350,23 @@ class Router {
  * ); 
  * }}}
  *
+ * ### Options
+ *
+ * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will 
+ *    parse only the connected named params.
+ * - `default` Set this to true to merge in the default set of named parameters.
+ * - `reset` Set to true to clear existing rules and start fresh.
+ * - `separator` Change the string used to separate the key & value in a named parameter.  Defaults to `:`
+ *
  * @param array $named A list of named parameters. Key value pairs are accepted where values are 
  *    either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @return array
  */
 	public static function connectNamed($named, $options = array()) {
-		if (isset($options['argSeparator'])) {
-			self::$named['separator'] = $options['argSeparator'];
-			unset($options['argSeparator']);
+		if (isset($options['separator'])) {
+			self::$named['separator'] = $options['separator'];
+			unset($options['separator']);
 		}
 
 		if ($named === true || $named === false) {
@@ -901,7 +913,7 @@ class Router {
  * @see Router::url()
  */
 	protected static function _handleNoRoute($url) {
-		$named = $args = array();
+		$named = $args = $query = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
 			self::$_prefixes
@@ -912,10 +924,11 @@ class Router {
 
 		// Remove this once parsed URL parameters can be inserted into 'pass'
 		for ($i = 0; $i < $count; $i++) {
+			$key = $keys[$i];
 			if (is_numeric($keys[$i])) {
-				$args[] = $url[$keys[$i]];
+				$args[] = $url[$key];
 			} else {
-				$named[$keys[$i]] = $url[$keys[$i]];
+				$named[$key] = $url[$key];
 			}
 		}
 
@@ -927,7 +940,7 @@ class Router {
 			}
 		}
 
-		if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
+		if (empty($named) && empty($args) && empty($query) && (!isset($url['action']) || $url['action'] === 'index')) {
 			$url['action'] = null;
 		}
 
@@ -950,7 +963,7 @@ class Router {
 		}
 
 		if (!empty($named)) {
-			foreach ($named as $name => $value) {				
+			foreach ($named as $name => $value) {
 				if (is_array($value)) {
 					$flattend = Set::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {
@@ -960,6 +973,9 @@ class Router {
 					$output .= '/' . $name . self::$named['separator'] . $value;
 				}
 			}
+		}
+		if (!empty($query)) {
+			$output .= Router::queryString($query);
 		}
 		return $output;
 	}
@@ -979,7 +995,7 @@ class Router {
 			if (isset(self::$named['rules'][$param])) {
 				$rule = self::$named['rules'][$param];
 				if (Router::matchNamed($param, $val, $rule, compact('controller', 'action'))) {
-					$named[$param] = $val;
+					$named[substr($param, 1)] = $val;
 					unset($params[$param]);
 				}
 			}

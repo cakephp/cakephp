@@ -2008,4 +2008,27 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that model->hasMethod checks self and behaviors.
+ *
+ * @return void
+ */
+	function testHasMethod() {
+		$Article = new Article();
+		$Article->Behaviors = $this->getMock('BehaviorCollection');
+
+		$Article->Behaviors->expects($this->at(0))
+			->method('hasMethod')
+			->will($this->returnValue(true));
+
+		$Article->Behaviors->expects($this->at(1))
+			->method('hasMethod')
+			->will($this->returnValue(false));
+
+		$this->assertTrue($Article->hasMethod('find'));
+
+		$this->assertTrue($Article->hasMethod('pass'));
+		$this->assertFalse($Article->hasMethod('fail'));
+	}
 }

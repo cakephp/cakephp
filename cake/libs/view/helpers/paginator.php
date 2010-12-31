@@ -42,7 +42,8 @@ class PaginatorHelper extends AppHelper {
 	private $__defaultModel = null;
 
 /**
- * The class used for 'Ajax' pagination links.
+ * The class used for 'Ajax' pagination links. Defaults to JsHelper.  You should make sure
+ * that JsHelper is defined as a helper before PaginatorHelper, if you want to customize the JsHelper.
  *
  * @var string
  */
@@ -53,26 +54,30 @@ class PaginatorHelper extends AppHelper {
  *
  * The values that may be specified are:
  *
- *  - `$options['format']` Format of the counter. Supported formats are 'range' and 'pages'
+ * - `format` Format of the counter. Supported formats are 'range' and 'pages'
  *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
  *    by their actual values.
- *    Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
- *  - `$options['separator']` The separator of the actual page and number of pages (default: ' of ').
- *  - `$options['url']` Url of the action. See Router::url()
- *  - `$options['url']['sort']`  the key that the recordset is sorted.
- *  - `$options['url']['direction']` Direction of the sorting (default: 'asc').
- *  - `$options['url']['page']` Page # to display.
- *  - `$options['model']` The name of the model.
- *  - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
- *  - `$options['update']` DOM id of the element updated with the results of the AJAX call.
+ *    placeholders: %page%, %pages%, %current%, %count%, %start%, %end% .
+ * - `separator` The separator of the actual page and number of pages (default: ' of ').
+ * - `url` Url of the action. See Router::url()
+ * - `url['sort']`  the key that the recordset is sorted.
+ * - `url['direction']` Direction of the sorting (default: 'asc').
+ * - `url['page']` Page number to use in links.
+ * - `model` The name of the model.
+ * - `escape` Defines if the title field for the link should be escaped (default: true).
+ * - `update` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- *  - `$options['indicator']` DOM id of the element that will be shown when doing AJAX requests. **Only supported by
- *     AjaxHelper**
+ * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are 
+ *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
+ * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
+ *    if paramType == 'querystring'.
  *
  * @var array
  * @access public
  */
-	public $options = array();
+	public $options = array(
+		'convertKeys' => array('page', 'limit', 'sort', 'direction')
+	);
 
 /**
  * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
@@ -110,7 +115,6 @@ class PaginatorHelper extends AppHelper {
  */
 	public function beforeRender($viewFile) {
 		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
-
 		parent::beforeRender($viewFile);
 	}
 
@@ -160,6 +164,9 @@ class PaginatorHelper extends AppHelper {
 			);
 			unset($options[$model]);
 		}
+		if (!empty($options['convertKeys'])) {
+			$options['convertKeys'] = array_merge($this->options['convertKeys'], $options['convertKeys']);
+		}
 		$this->options = array_filter(array_merge($this->options, $options));
 	}
 
@@ -189,7 +196,7 @@ class PaginatorHelper extends AppHelper {
 	public function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
 			$params = $this->params($model);
-			$options = array_merge($params['defaults'], $params['options']);
+			$options = $params['options'];
 		}
 
 		if (isset($options['sort']) && !empty($options['sort'])) {
@@ -215,7 +222,7 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($options)) {
 			$params = $this->params($model);
-			$options = array_merge($params['defaults'], $params['options']);
+			$options = $params['options'];
 		}
 
 		if (isset($options['direction'])) {
@@ -246,6 +253,10 @@ class PaginatorHelper extends AppHelper {
  * @return string A "previous" link or $disabledTitle text if the link is disabled.
  */
 	public function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+		$defaults = array(
+			'rel' => 'prev'
+		);
+		$options = array_merge($defaults, (array)$options);
 		return $this->__pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
@@ -265,6 +276,10 @@ class PaginatorHelper extends AppHelper {
  * @return string A "next" link or or $disabledTitle text if the link is disabled.
  */
 	public function next($title = 'Next >>', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+		$defaults = array(
+			'rel' => 'next'
+		);
+		$options = array_merge($defaults, (array)$options);
 		return $this->__pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
@@ -348,11 +363,11 @@ class PaginatorHelper extends AppHelper {
 			$url = array_merge((array)$options['url'], (array)$url);
 			unset($options['url']);
 		}
+		unset($options['convertKeys']);
+
 		$url = $this->url($url, true, $model);
 
 		$obj = isset($options['update']) ? $this->_ajaxHelperClass : 'Html';
-		$url = array_merge(array('page' => $this->current($model)), $url);
-		$url = array_merge(Set::filter($url, true), array_intersect_key($url, array('plugin' => true)));
 		return $this->{$obj}->link($title, $url, $options);
 	}
 
@@ -366,9 +381,7 @@ class PaginatorHelper extends AppHelper {
  */
 	public function url($options = array(), $asArray = false, $model = null) {
 		$paging = $this->params($model);
-		$url = array_merge(array_filter(Set::diff(array_merge(
-			$paging['defaults'], $paging['options']), $paging['defaults'])), $options
-		);
+		$url = array_merge(array_filter($paging['options']), $options);
 
 		if (isset($url['order'])) {
 			$sort = $direction = null;
@@ -378,11 +391,34 @@ class PaginatorHelper extends AppHelper {
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
+		$url = $this->_convertUrlKeys($url, $paging['paramType']);
 
 		if ($asArray) {
 			return $url;
 		}
 		return parent::url($url);
+	}
+
+/**
+ * Converts the keys being used into the format set by options.paramType
+ *
+ * @param array $url Array of url params to convert
+ * @return converted url params.
+ */
+	protected function _convertUrlKeys($url, $type) {
+		if ($type == 'named') {
+			return $url;
+		}
+		if (!isset($url['?'])) {
+			$url['?'] = array();
+		}
+		foreach ($this->options['convertKeys'] as $key) {
+			if (isset($url[$key])) {
+				$url['?'][$key] = $url[$key];
+				unset($url[$key]);
+			}
+		}
+		return $url;
 	}
 
 /**
@@ -419,6 +455,7 @@ class PaginatorHelper extends AppHelper {
 		if ($this->{$check}($model)) {
 			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'class'))));
 		} else {
+			unset($options['rel']);
 			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
 		}
 	}
@@ -526,9 +563,9 @@ class PaginatorHelper extends AppHelper {
 		}
 		$start = 0;
 		if ($paging['count'] >= 1) {
-			$start = (($paging['page'] - 1) * $paging['options']['limit']) + 1;
+			$start = (($paging['page'] - 1) * $paging['limit']) + 1;
 		}
-		$end = $start + $paging['options']['limit'] - 1;
+		$end = $start + $paging['limit'] - 1;
 		if ($paging['count'] < $end) {
 			$end = $paging['count'];
 		}
@@ -566,7 +603,12 @@ class PaginatorHelper extends AppHelper {
 
 /**
  * Returns a set of numbers for the paged result set
- * uses a modulus to decide how many numbers to show on each side of the current page (default: 8)
+ * uses a modulus to decide how many numbers to show on each side of the current page (default: 8). 
+ *
+ * `$this->Paginator->numbers(array('first' => 2, 'last' => 2));`
+ *
+ * Using the first and last options you can create links to the beginning and end of the page set.
+ * 
  *
  * ### Options
  *
@@ -577,9 +619,9 @@ class PaginatorHelper extends AppHelper {
  * - `separator` Separator content defaults to ' | '
  * - `tag` The tag to wrap links in, defaults to 'span'
  * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
- *    links to generate
+ *    links to generate.
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
- *    links to generate
+ *    links to generate.
  * - `ellipsis` Ellipsis content, defaults to '...'
  *
  * @param mixed $options Options for the numbers, (before, after, model, modulus, separator)
@@ -689,32 +731,42 @@ class PaginatorHelper extends AppHelper {
 	}
 
 /**
- * Returns a first or set of numbers for the first pages
+ * Returns a first or set of numbers for the first pages.
+ *
+ * `echo $this->Paginator->first('< first');`
+ *
+ * Creates a single link for the first page.  Will output nothing if you are on the first page.
+ *
+ * `echo $this->Paginator->first(3);`
+ *
+ * Will create links for the first 3 pages, once you get to the third or greater page. Prior to that
+ * nothing will be output.
  *
  * ### Options:
  *
  * - `tag` The tag wrapping tag you want to use, defaults to 'span'
- * - `before` Content to insert before the link/tag
+ * - `after` Content to insert after the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
  * - `separator` Content between the generated links, defaults to ' | '
  * - `ellipsis` Content for ellipsis, defaults to '...'
  *
- * @param mixed $first if string use as label for the link, if numeric print page numbers
- * @param mixed $options
+ * @param mixed $first if string use as label for the link. If numeric, the number of page links
+ *   you want at the beginning of the range.
+ * @param mixed $options An array of options.
  * @return string numbers string.
  */
 	public function first($first = '<< first', $options = array()) {
 		$options = array_merge(
 			array(
 				'tag' => 'span',
-				'after'=> null,
+				'after' => null,
 				'model' => $this->defaultModel(),
 				'separator' => ' | ',
-				'ellipsis' => '...',
+				'ellipsis' => '...'
 			),
 		(array)$options);
 
-		$params = array_merge(array('page'=> 1), (array)$this->params($options['model']));
+		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
@@ -725,7 +777,7 @@ class PaginatorHelper extends AppHelper {
 
 		$out = '';
 
-		if (is_int($first) && $params['page'] > $first) {
+		if (is_int($first) && $params['page'] >= $first) {
 			if ($after === null) {
 				$after = $ellipsis;
 			}
@@ -736,7 +788,8 @@ class PaginatorHelper extends AppHelper {
 				}
 			}
 			$out .= $after;
-		} elseif ($params['page'] > 1) {
+		} elseif ($params['page'] > 1 && is_string($first)) {
+			$options += array('rel' => 'first');
 			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options))
 				. $after;
 		}
@@ -744,7 +797,15 @@ class PaginatorHelper extends AppHelper {
 	}
 
 /**
- * Returns a last or set of numbers for the last pages
+ * Returns a last or set of numbers for the last pages.
+ *
+ * `echo $this->Paginator->last('last >');`
+ *
+ * Creates a single link for the last page.  Will output nothing if you are on the last page.
+ *
+ * `echo $this->Paginator->last(3);`
+ *
+ * Will create links for the last 3 pages.  Once you enter the page range, no output will be created.
  *
  * ### Options:
  *
@@ -782,7 +843,7 @@ class PaginatorHelper extends AppHelper {
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
 
-		if (is_int($last) && $params['page'] < $lower) {
+		if (is_int($last) && $params['page'] <= $lower) {
 			if ($before === null) {
 				$before = $ellipsis;
 			}
@@ -793,7 +854,8 @@ class PaginatorHelper extends AppHelper {
 				}
 			}
 			$out = $before . $out;
-		} elseif ($params['page'] < $params['pageCount']) {
+		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
+			$options += array('rel' => 'last');
 			$out = $before . $this->Html->tag(
 				$tag, $this->link($last, array('page' => $params['pageCount']), $options
 			));
