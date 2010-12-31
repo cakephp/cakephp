@@ -282,7 +282,8 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Returns true if given datetime string is within this week
+ * Returns true if given datetime string is within this week.
+ *
  * @param string $dateString
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current week
@@ -291,7 +292,7 @@ class TimeHelper extends AppHelper {
  */
 	public function isThisWeek($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		return date('W Y', $date) == date('W Y', time());
+		return date('W o', $date) == date('W o', time());
 	}
 
 /**
