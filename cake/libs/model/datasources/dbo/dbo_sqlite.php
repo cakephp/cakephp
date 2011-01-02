@@ -308,11 +308,19 @@ class DboSqlite extends DboSource {
 				$columnName = str_ireplace('DISTINCT', '', $columnName);
 			}
 
+			$metaType = false;
+			try {
+				$metaData = (array)$results->getColumnMeta($j);
+				if (!empty($metaData['sqlite:decl_type'])) {
+					$metaType = trim($metaData['sqlite:decl_type']);
+				}
+			} catch (Exception $e) {}
+
 			if (strpos($columnName, '.')) {
 				$parts = explode('.', $columnName);
-				$this->map[$index++] = array(trim($parts[0]), trim($parts[1]));
+				$this->map[$index++] = array(trim($parts[0]), trim($parts[1]), $metaType);
 			} else {
-				$this->map[$index++] = array(0, $columnName);
+				$this->map[$index++] = array(0, $columnName, $metaType);
 			}
 			$j++;
 		}
