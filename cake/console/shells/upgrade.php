@@ -175,32 +175,32 @@ class UpgradeShell extends Shell {
 		$patterns = array(
 			array(
 				'$this->data -> $this->request->data',
-				'/(\$this->data)/',
+				'/(\$this->data\b(?!\())/',
 				'$this->request->data'
 			),
 			array(
 				'$this->params -> $this->request->params',
-				'/(\$this->params)/',
+				'/(\$this->params\b(?!\())/',
 				'$this->request->params'
 			),
 			array(
 				'$this->webroot -> $this->request->webroot',
-				'/(\$this->webroot)/',
+				'/(\$this->webroot\b(?!\())/',
 				'$this->request->webroot'
 			),
 			array(
 				'$this->base -> $this->request->base',
-				'/(\$this->base)/',
+				'/(\$this->base\b(?!\())/',
 				'$this->request->base'
 			),
 			array(
 				'$this->here -> $this->request->here',
-				'/(\$this->here)/',
+				'/(\$this->here\b(?!\())/',
 				'$this->request->here'
 			),
 			array(
 				'$this->action -> $this->request->action',
-				'/(\$this->action)/',
+				'/(\$this->action\b(?!\())/',
 				'$this->request->action'
 			),
 		);
