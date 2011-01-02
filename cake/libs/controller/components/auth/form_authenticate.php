@@ -30,6 +30,7 @@
  *
  * @package cake.libs.controller.components.auth
  * @since 2.0
+ * @see AuthComponent::$authenticate
  */
 class FormAuthenticate {
 

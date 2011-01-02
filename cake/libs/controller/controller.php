@@ -757,20 +757,6 @@ class Controller extends Object {
 	}
 
 /**
- * Controller callback to tie into Auth component.
- * Only called when AuthComponent::$authorize is set to 'controller'.
- *
- * @return bool true if authorized, false otherwise
- * @link http://book.cakephp.org/view/1275/authorize
- */
-	public function isAuthorized() {
-		trigger_error(sprintf(
-			__('%sController::isAuthorized() is not defined.'), $this->name
-		), E_USER_WARNING);
-		return false;
-	}
-
-/**
  * Returns number of errors in a submitted FORM.
  *
  * @return integer Number of errors
