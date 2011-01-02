@@ -12,6 +12,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Component', 'auth/base_authorize');
 
 /**
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using a controller callback.
@@ -33,22 +34,21 @@
  * @since 2.0
  * @see AuthComponent::$authenticate
  */
-class ControllerAuthorize {
-/**
- * Controller for the request.
- *
- * @var Controller
- */
-	protected $_controller = null;
+class ControllerAuthorize extends BaseAuthorize {
 
 /**
- * Constructor
+ * Get/set the controller this authorize object will be working with.  Also checks that isAuthorized is implemented.
  *
- * @param Controller $controller The controller for this request.
- * @param string $settings An array of settings.  This class does not use any settings.
+ * @param mixed $controller null to get, a controller to set.
+ * @return mixed.
  */
-	public function __construct(Controller $controller, $settings = array()) {
-		$this->controller($controller);
+	public function controller($controller = null) {
+		if ($controller) {
+			if (!method_exists($controller, 'isAuthorized')) {
+				throw new CakeException(__('$controller does not implement an isAuthorized() method.'));
+			}
+		}
+		return parent::controller($controller);
 	}
 
 /**
@@ -62,23 +62,4 @@ class ControllerAuthorize {
 		return (bool) $this->_controller->isAuthorized($user);
 	}
 
-/**
- * Accessor to the controller object.
- *
- * @param mixed $controller null to get, a controller to set.
- * @return mixed.
- */
-	public function controller($controller = null) {
-		if ($controller) {
-			if (!$controller instanceof Controller) {
-				throw new CakeException(__('$controller needs to be an instance of Controller'));
-			}
-			if (!method_exists($controller, 'isAuthorized')) {
-				throw new CakeException(__('$controller does not implement an isAuthorized() method.'));
-			}
-			$this->_controller = $controller;
-			return true;
-		}
-		return $this->_controller;
-	}
 }
