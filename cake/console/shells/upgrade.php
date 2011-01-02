@@ -10,6 +10,17 @@ class UpgradeShell extends Shell {
 	protected $_paths = array();
 
 /**
+ * Shell startup, prints info message about dry run.
+ *
+ * @return void
+ */
+	function startup() {
+		parent::startup();
+		if ($this->params['dry-run']) {
+			$this->out('<warning>Dry-run mode enabled!</warning>', 1, Shell::QUIET);
+		}
+	}
+/**
  * Update helpers.
  *
  * - Converts helpers usage to new format.
@@ -17,9 +28,8 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	function helpers() {
-		$this->_paths = array(
-			VIEWS
-		);
+		$this->_paths = array_diff(App::path('views'), App::core('views'));
+
 		if (!empty($this->params['plugin'])) {
 			$this->_paths = array(App::pluginPath($this->params['plugin']) . 'views' . DS);
 		}
@@ -147,11 +157,20 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	public function request() {
-		$this->_paths = array(
-			APP
-		);
+		$core = App::core();
+		$views = array_diff(App::path('views'), App::core('views'));
+		$controllers = array_diff(App::path('controllers'), App::core('controllers'), array(APP));
+		$components = array_diff(App::path('components'), App::core('components'));
+
+		$this->_paths = array_merge($views, $controllers, $components);
+
 		if (!empty($this->params['plugin'])) {
-			$this->_paths = array(App::pluginPath($this->params['plugin']));
+			$pluginPath = App::pluginPath($this->params['plugin']);
+			$this->_paths = array(
+				$pluginPath . 'controllers' . DS,
+				$pluginPath . 'controllers' . DS . 'components' .DS,
+				$pluginPath . 'views' . DS,
+			);
 		}
 		$patterns = array(
 			array(
@@ -263,7 +282,9 @@ class UpgradeShell extends Shell {
 		}
 
 		$this->out('Done updating ' . $file, 1);
-		file_put_contents($file, $contents);
+		if (!$this->params['dry-run']) {
+			file_put_contents($file, $contents);
+		}
 	}
 
 /**
@@ -283,6 +304,11 @@ class UpgradeShell extends Shell {
 					'help' => __('The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
 					'default' => 'php|ctp|thtml|inc|tpl'
 				),
+				'dry-run'=> array(
+					'short' => 'd',
+					'help' => __('Dry run the update, no files will actually be modified.'),
+					'boolean' => true
+				)
 			)
 		);
 
