@@ -1,5 +1,36 @@
 <?php
+/**
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
+/**
+ * An authentication adapter for AuthComponent.  Provides the ability to authenticate using POST
+ * data.  Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
+ *
+ * {{{
+ *	$this->Auth->authenticate = array(
+ *		'Form' => array(
+ *			'scope' => array('User.active' => 1)
+ *		)
+ *	)
+ * }}}
+ *
+ * When configuring FormAuthenticate you can pass in settings to which fields, model and additional conditions
+ * are used. See FormAuthenticate::$settings for more information.
+ *
+ * @package cake.libs.controller.components.auth
+ * @since 2.0
+ */
 class FormAuthenticate {
 
 /**
