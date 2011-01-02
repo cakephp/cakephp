@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.cache
+ * @package       cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ if (!class_exists('Cache')) {
 /**
  * FileEngineTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.cache
+ * @package       cake.tests.cases.libs.cache
  */
 class FileEngineTest extends CakeTestCase {
 

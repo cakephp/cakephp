@@ -15,8 +15,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       cake.tests.fixtures
  * @since         CakePHP(tm) v 1.2.0.5669
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
@@ -26,8 +25,7 @@
 /**
  * Short description for class.
  *
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       cake.tests.fixtures
  */
 class TranslateWithPrefixFixture extends CakeTestFixture {
 /**

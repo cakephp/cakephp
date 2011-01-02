@@ -15,8 +15,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -35,7 +34,6 @@ App::import('Controller', 'Controller', false);
  * the controller.
  *
  * @package       cake
- * @subpackage    cake.cake
  */
 class Dispatcher {
 
@@ -99,8 +97,8 @@ class Dispatcher {
 			return;
 		}
 
-		$request = $this->parseParams($request, $additionalParams);
-		$controller = $this->_getController($request);
+		$this->request = $this->parseParams($request, $additionalParams);
+		$controller = $this->_getController($this->request);
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
@@ -195,10 +193,10 @@ class Dispatcher {
  * @return CakeRequest The request object with routing params set.
  */
 	public function parseParams(CakeRequest $request, $additionalParams = array()) {
-		if (count(Router::$routes) > 0) {
+		if (count(Router::$routes) == 0) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
-			include CONFIGS . 'routes.php';
+			$this->_loadRoutes();
 		}
 
 		$params = Router::parse($request->url);
@@ -248,6 +246,15 @@ class Dispatcher {
 			}
 		}
 		return false;
+	}
+
+/**
+ * Loads route configuration
+ *
+ * @return void
+ */
+	protected function _loadRoutes() {
+		include CONFIGS . 'routes.php';
 	}
 
 /**
@@ -315,7 +322,8 @@ class Dispatcher {
 			$this->_stop();
 		}
 		$controller = null;
-		$ext = array_pop(explode('.', $url));
+		$pathSegments = explode('.', $url);
+		$ext = array_pop($pathSegments);
 		$parts = explode('/', $url);
 		$assetFile = null;
 

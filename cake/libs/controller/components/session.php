@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.0.1232
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,23 +25,11 @@ if (!class_exists('cakesession')) {
  *
  * Session handling from the controller.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1310/Sessions
  *
  */
 class SessionComponent extends Component {
-
-/**
- * Constructor automatically starts the session.
- *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
- * @param array $settings Array of configuration settings.
- */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
-		CakeSession::start();
-	}
 
 /**
  * Get / Set the userAgent 

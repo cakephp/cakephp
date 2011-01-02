@@ -11,8 +11,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.templates.scaffolds
+ * @package       cake.libs.view.templates.scaffolds
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,10 +26,15 @@
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-<?php if ($this->action != 'add'):?>
-		<li><?php echo $this->Html->link(__('Delete'), array('action' => 'delete', $this->Form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete').' #' . $this->Form->value($modelClass.'.'.$primaryKey)); ?></li>
+<?php if ($this->request->action != 'add'): ?>
+		<li><?php echo $this->Form->postLink(
+			__('Delete'),
+			array('action' => 'delete', $this->Form->value($modelClass . '.' . $primaryKey)),
+			null,
+			__('Are you sure you want to delete # %s?', $this->Form->value($modelClass . '.' . $primaryKey)));
+		?></li>
 <?php endif;?>
-		<li><?php echo $this->Html->link(__('List').' '.$pluralHumanName, array('action' => 'index'));?></li>
+		<li><?php echo $this->Html->link(__('List') . ' ' . $pluralHumanName, array('action' => 'index'));?></li>
 <?php
 		$done = array();
 		foreach ($associations as $_type => $_data) {

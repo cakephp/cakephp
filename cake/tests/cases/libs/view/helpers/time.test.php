@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Core', 'View');
 /**
  * TimeHelperTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  */
 class TimeHelperTest extends CakeTestCase {
 
@@ -339,14 +337,14 @@ class TimeHelperTest extends CakeTestCase {
 		if (date('Y', $time) == date('Y')) {
 			$this->assertEqual(date('M jS, H:i', $time), $this->Time->niceShort($time));
 		} else {
-			$this->assertEqual(date('M jSY, H:i', $time), $this->Time->niceShort($time));
+			$this->assertEqual(date('M jS Y, H:i', $time), $this->Time->niceShort($time));
 		}
 
 		$time = time();
-		$this->assertEqual('Today, '.date('H:i', $time), $this->Time->niceShort($time));
+		$this->assertEqual('Today, ' . date('H:i', $time), $this->Time->niceShort($time));
 
 		$time = time() - DAY;
-		$this->assertEqual('Yesterday, '.date('H:i', $time), $this->Time->niceShort($time));
+		$this->assertEqual('Yesterday, ' . date('H:i', $time), $this->Time->niceShort($time));
 	}
 
 /**

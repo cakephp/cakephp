@@ -14,16 +14,14 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.app.config
+ * @package       app.config
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * In this file you set up your database connection details.
  *
- * @package       cake
- * @subpackage    cake.config
+ * @package       cake.config
  */
 /**
  * Database configuration class.
@@ -31,7 +29,6 @@
  *
  * driver => The name of a supported driver; valid options are as follows:
  *		mysql 		- MySQL 4 & 5,
- *		mysqli 		- MySQL 4 & 5 Improved Interface (PHP5 only),
  *		sqlite		- SQLite (PHP5 only),
  *		postgres	- PostgreSQL 7 and higher,
  *		mssql		- Microsoft SQL Server 2000 and higher,
@@ -56,7 +53,7 @@
  * 'public', DB2 defaults to empty.
  *
  * encoding =>
- * For MySQL, MySQLi, Postgres specifies the character encoding to use when connecting to the
+ * For MySQL, Postgres and Sqlite, specifies the character encoding to use when connecting to the
  * database.  Uses database default.
  *
  */

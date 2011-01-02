@@ -11,14 +11,14 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.templates.pages
+ * @package       cake.libs.view.templates.pages
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (Configure::read() == 0):
-	$this->cakeError('error404');
+	throw new NotFoundException();
 endif;
+App::import('Core', 'Debugger');
 ?>
 <h2><?php echo __('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <a href="http://cakephp.org/changelogs/1.3.6"><?php __('Read the changelog'); ?> </a>

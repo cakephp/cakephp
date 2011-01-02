@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.0.0.2363
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@
  * as methods for loading additional configuration files or storing runtime configuration 
  * for future use.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @link          http://book.cakephp.org/view/924/The-Configuration-Class
  */
 class Configure {
@@ -39,6 +37,14 @@ class Configure {
 	protected static $_values = array(
 		'debug' => 0
 	);
+
+/**
+ * Configured reader classes, used to load config files from resources
+ *
+ * @var array
+ * @see Configure::load()
+ */
+	protected static $_readers = array();
 
 /**
  * Initializes configure and runs the bootstrap process.
@@ -55,13 +61,19 @@ class Configure {
  */
 	public static function bootstrap($boot = true) {
 		if ($boot) {
-			self::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
+			self::write('App', array(
+				'base' => false,
+				'baseUrl' => false,
+				'dir' => APP_DIR,
+				'webroot' => WEBROOT_DIR,
+				'www_root' => WWW_ROOT
+			));
 
 			if (!include(CONFIGS . 'core.php')) {
 				trigger_error(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
 			}
 
-			if (Configure::read('Cache.disable') !== true) {
+			if (empty(self::$_values['Cache']['disable'])) {
 				$cache = Cache::config('default');
 
 				if (empty($cache['settings'])) {
@@ -76,7 +88,7 @@ class Configure {
 					$prefix = $cache['settings']['prefix'];
 				}
 
-				if (Configure::read('debug') >= 1) {
+				if (self::$_values['debug'] >= 1) {
 					$duration = '+10 seconds';
 				} else {
 					$duration = '+999 days';
@@ -167,13 +179,11 @@ class Configure {
 			}
 		}
 
-		if (isset($config['debug']) || isset($config['log'])) {
-			if (function_exists('ini_set')) {
-				if (self::$_values['debug']) {
-					ini_set('display_errors', 1);
-				} else {
-					ini_set('display_errors', 0);
-				}
+		if (isset($config['debug']) && function_exists('ini_set')) {
+			if (self::$_values['debug']) {
+				ini_set('display_errors', 1);
+			} else {
+				ini_set('display_errors', 0);
 			}
 		}
 		return true;
@@ -250,59 +260,77 @@ class Configure {
 	}
 
 /**
- * Loads a file from app/config/configure_file.php.
+ * Add a new reader to Configure.  Readers allow you to read configuration 
+ * files in various formats/storage locations.  CakePHP comes with two built-in readers
+ * PhpReader and IniReader.  You can also implement your own reader classes in your application.
  *
- * Config file variables should be formated like:
- *  `$config['name'] = 'value';`
- * These will be used to create dynamic Configure vars. load() is also used to
- * load stored config files created with Configure::store()
+ * To add a new reader to Configure:
  *
- * - To load config files from app/config use `Configure::load('configure_file');`.
- * - To load config files from a plugin `Configure::load('plugin.configure_file');`.
+ * `Configure::config('ini', new IniReader());`
+ *
+ * @param string $name The name of the reader being configured.  This alias is used later to 
+ *   read values from a specific reader.
+ * @param ConfigReaderInterface $reader The reader to append.
+ * @return void
+ */
+	public static function config($name, ConfigReaderInterface $reader) {
+		self::$_readers[$name] = $reader;
+	}
+
+/**
+ * Gets the names of the configured reader objects.
+ *
+ * @return array Array of the configured reader objects.
+ */
+	public static function configured($name = null) {
+		if ($name) {
+			return isset(self::$_readers[$name]);
+		}
+		return array_keys(self::$_readers);
+	}
+
+/**
+ * Remove a configured reader.  This will unset the reader 
+ * and make any future attempts to use it cause an Exception.
+ *
+ * @param string $name Name of the reader to drop.
+ * @return boolean Success
+ */
+	public static function drop($name) {
+		if (!isset(self::$_readers[$name])) {
+			return false;
+		}
+		unset(self::$_readers[$name]);
+		return true;
+	}
+
+/**
+ * Loads stored configuration information from a resource.  You can add
+ * config file resource readers with `Configure::config()`.
+ *
+ * Loaded configuration infomration will be merged with the current
+ * runtime configuration. You can load configuration files from plugins
+ * by preceeding the filename with the plugin name.
+ *
+ * `Configure::load('Users.user', 'default')` 
+ *
+ * Would load the 'user' config file using the default config reader.  You can load
+ * app config files by giving the name of the resource you want loaded.
+ *
+ * `Configure::load('setup', 'default');`
  *
  * @link http://book.cakephp.org/view/929/load
- * @param string $fileName name of file to load, extension must be .php and only the name
- *     should be used, not the extenstion
- * @return mixed false if file not found, void if load successful
+ * @param string $key name of configuration resource to load.
+ * @param string $config Name of the configured reader to use to read the resource identfied by $key.
+ * @return mixed false if file not found, void if load successful.
+ * @throws ConfigureException Will throw any exceptions the reader raises.
  */
-	public static function load($fileName) {
-		$found = $plugin = $pluginPath = false;
-		list($plugin, $fileName) = pluginSplit($fileName);
-		if ($plugin) {
-			$pluginPath = App::pluginPath($plugin);
-		}
-		$pos = strpos($fileName, '..');
-
-		if ($pos === false) {
-			if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
-				include($pluginPath . 'config' . DS . $fileName . '.php');
-				$found = true;
-			} elseif (file_exists(CONFIGS . $fileName . '.php')) {
-				include(CONFIGS . $fileName . '.php');
-				$found = true;
-			} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
-				include(CACHE . 'persistent' . DS . $fileName . '.php');
-				$found = true;
-			} else {
-				foreach (App::core('cake') as $key => $path) {
-					if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
-						include($path . DS . 'config' . DS . $fileName . '.php');
-						$found = true;
-						break;
-					}
-				}
-			}
-		}
-
-		if (!$found) {
+	public static function load($key, $config = 'default') {
+		if (!isset(self::$_readers[$config])) {
 			return false;
 		}
-
-		if (!isset($config)) {
-			trigger_error(__('Configure::load() - no variable $config found in %s.php', $fileName), E_USER_WARNING);
-			return false;
-		}
-		return self::write($config);
+		$values = self::$_readers[$config]->read($key);
+		return self::write($values);
 	}
 
 /**
@@ -322,62 +350,52 @@ class Configure {
 	}
 
 /**
- * Used to write a config file to disk.
+ * Used to write runtime configuration into Cache.  Stored runtime configuration can be
+ * restored using `Configure::restore()`.  These methods can be used to enable configuration managers
+ * frontends, or other GUI type interfaces for configuration.
  *
- * {{{
- * Configure::store('Model', 'class_paths', array('Users' => array(
- *      'path' => 'users', 'plugin' => true
- * )));
- * }}}
- *
- * @param string $type Type of config file to write, ex: Models, Controllers, Helpers, Components
- * @param string $name file name.
- * @param array $data array of values to store.
- * @return void
+ * @param string $name The storage name for the saved configuration.
+ * @param string $cacheConfig The cache configuration to save into.  Defaults to 'default'
+ * @param array $data Either an array of data to store, or leave empty to store all values.
+ * @return boolean Success
  */
-	public static function store($type, $name, $data = array()) {
-		$write = true;
-		$content = '';
-
-		foreach ($data as $key => $value) {
-			$content .= "\$config['$type']['$key'] = " . var_export($value, true) . ";\n";
+	public static function store($name, $cacheConfig = 'default', $data = null) {
+		if ($data === null) {
+			$data = self::$_values;
 		}
-		if (is_null($type)) {
-			$write = false;
-		}
-		self::__writeConfig($content, $name, $write);
+		return Cache::write($name, $data, $cacheConfig);
 	}
 
 /**
- * Creates a cached version of a configuration file.
- * Appends values passed from Configure::store() to the cached file
+ * Restores configuration data stored in the Cache into configure.  Restored
+ * values will overwrite existing ones.
  *
- * @param string $content Content to write on file
- * @param string $name Name to use for cache file
- * @param boolean $write true if content should be written, false otherwise
- * @return void
- * @access private
+ * @param string $name Name of the stored config file to load.
+ * @param string $cacheConfig Name of the Cache configuration to read from.
+ * @return boolean Success.
  */
-	private static function __writeConfig($content, $name, $write = true) {
-		$file = CACHE . 'persistent' . DS . $name . '.php';
-
-		if (self::read('debug') > 0) {
-			$expires = "+10 seconds";
-		} else {
-			$expires = "+999 days";
+	public static function restore($name, $cacheConfig = 'default') {
+		$values = Cache::read($name, $cacheConfig);
+		if ($values) {
+			return self::write($values);
 		}
-		$cache = cache('persistent' . DS . $name . '.php', null, $expires);
-
-		if ($cache === null) {
-			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n", $expires);
-		}
-
-		if ($write === true) {
-			$fileClass = new SplFileObject($file, 'a');
-			if ($fileClass->isWritable()) {
-				$fileClass->fwrite($content);
-			}
-		}
+		return false;
 	}
+}
 
+/**
+ * An interface for creating objects compatible with Configure::load()
+ *
+ * @package cake.libs
+ */
+interface ConfigReaderInterface {
+/**
+ * Read method is used for reading configuration information from sources.
+ * These sources can either be static resources like files, or dynamic ones like
+ * a database, or other datasource.
+ *
+ * @param string $key 
+ * @return array An array of data to merge into the runtime configuration
+ */
+	function read($key);
 }

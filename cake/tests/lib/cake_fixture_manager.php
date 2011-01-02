@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @package       cake.tests.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -177,8 +176,8 @@ class CakeFixtureManager {
 
 		$cacheSources = $db->cacheSources;
 		$db->cacheSources = false;
-		$db->cacheSources = $cacheSources;
 		$sources = $db->listSources();
+		$db->cacheSources = $cacheSources;
 		$table = $db->config['prefix'] . $fixture->table;
 
 		if ($drop && in_array($table, $sources)) {
@@ -206,6 +205,7 @@ class CakeFixtureManager {
 			return;
 		}
 
+		$test->db->begin();
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -213,6 +213,7 @@ class CakeFixtureManager {
 				$fixture->insert($test->db);
 			}
 		}
+		$test->db->commit();
 	}
 
 /**

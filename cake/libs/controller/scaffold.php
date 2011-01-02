@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @package       cake.libs.controller
  * @since         Cake v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +28,7 @@ App::import('View', 'Scaffold');
  * and afford the web developer an early look at the data, and the possibility to over-ride
  * scaffolded actions with custom-made ones.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @package       cake.libs.controller
  */
 class Scaffold {
 
@@ -172,15 +170,14 @@ class Scaffold {
  */
 	protected function _scaffoldView(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('view')) {
-
-			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey)));
 			if (isset($request->params['pass'][0])) {
 				$this->ScaffoldModel->id = $request->params['pass'][0];
-			} else {
-				return $this->_sendMessage($message);
+			}
+			if (!$this->ScaffoldModel->exists()) {
+				throw new NotFoundException(__('Invalid %s', Inflector::humanize($this->modelKey)));
 			}
 			$this->ScaffoldModel->recursive = 1;
-			$this->controller->request->data = $this->controller->data = $this->ScaffoldModel->read();
+			$this->controller->request->data = $this->ScaffoldModel->read();
 			$this->controller->set(
 				Inflector::variable($this->controller->modelClass), $this->request->data
 			);
@@ -245,10 +242,8 @@ class Scaffold {
 				if (isset($request->params['pass'][0])) {
 					$this->ScaffoldModel->id = $request['pass'][0];
 				}
-
 				if (!$this->ScaffoldModel->exists()) {
-					$message = __(sprintf("Invalid id for %s::edit()", Inflector::humanize($this->modelKey)));
-					return $this->_sendMessage($message);
+					throw new NotFoundException(__('Invalid %s', Inflector::humanize($this->modelKey)));
 				}
 			}
 
@@ -260,7 +255,9 @@ class Scaffold {
 				if ($this->ScaffoldModel->save($request->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
 						$message = __(
-							sprintf('The %1$s has been %2$s', Inflector::humanize($this->modelKey), $success)
+							'The %1$s has been %2$s',
+							Inflector::humanize($this->modelKey),
+							$success
 						);
 						return $this->_sendMessage($message);
 					} else {
@@ -306,25 +303,26 @@ class Scaffold {
  */
 	protected function _scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {
-			$message = __(
-				sprintf("No id set for %s::delete()", Inflector::humanize($this->modelKey))
-			);
+			if (!$request->is('post')) {
+				throw new MethodNotAllowedException();
+			}
+			$id = false;
 			if (isset($request->params['pass'][0])) {
 				$id = $request->params['pass'][0];
-			} else {
-				return $this->_sendMessage($message);
 			}
-
-			if ($this->ScaffoldModel->delete($id)) {
-				$message = __(
-					sprintf('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id)
-				);
+			$this->ScaffoldModel->id = $id;
+			if (!$this->ScaffoldModel->exists()) {
+				throw new NotFoundException(__('Invalid %s', Inflector::humanize($this->modelClass)));
+			}
+			if ($this->ScaffoldModel->delete()) {
+				$message = __('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id);
 				return $this->_sendMessage($message);
 			} else {
-				$message = __(sprintf(
-					'There was an error deleting the %1$s with id: %2$d',
-					Inflector::humanize($this->modelClass), $id
-				));
+				$message = __(
+					'There was an error deleting the %1$s with id: %2$d', 
+					Inflector::humanize($this->modelClass), 
+					$id
+				);
 				return $this->_sendMessage($message);
 			}
 		} elseif ($this->controller->_scaffoldError('delete') === false) {

@@ -191,8 +191,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($route->options, array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'));
 		$expected = array(
 			'controller' => 'pages',
-			'action' => 'view',
-			'extra' => null,
+			'action' => 'view'
 		);
 		$this->assertEqual($route->defaults, $expected);
 
@@ -290,6 +289,45 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that non-greedy routes fail with extra passed args
+ *
+ * @return void
+ */
+	function testGreedyRouteFailurePassedArg() {
+		$route = new CakeRoute('/:controller/:action', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', '0'));
+		$this->assertFalse($result);
+
+		$route = new CakeRoute('/:controller/:action', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'test'));
+		$this->assertFalse($result);
+	}
+
+/**
+ * test that non-greedy routes fail with extra passed args
+ *
+ * @return void
+ */
+	function testGreedyRouteFailureNamedParam() {
+		$route = new CakeRoute('/:controller/:action', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'page' => 1));
+		$this->assertFalse($result);
+	}
+
+/**
+ * test that falsey values do not interrupt a match.
+ *
+ * @return void
+ */
+	function testMatchWithFalseyValues() {
+		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
+		$result = $route->match(array(
+			'controller' => 'posts', 'action' => 'index', 'plugin' => null, 'admin' => false
+		));
+		$this->assertEqual($result, '/posts/index/');
+	}
+
+/**
  * test match() with greedy routes, named parameters and passed args.
  *
  * @return void
@@ -304,6 +342,12 @@ class CakeRouteTestCase extends CakeTestCase {
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5));
 		$this->assertEqual($result, '/posts/view/5');
 
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 0));
+		$this->assertEqual($result, '/posts/view/0');
+
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, '0'));
+		$this->assertEqual($result, '/posts/view/0');
+
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, 'page' => 1, 'limit' => 20, 'order' => 'title'));
 		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
 
@@ -317,6 +361,17 @@ class CakeRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 5, 'something'));
 		$this->assertFalse($result);
+	}
+
+/**
+ * test that named params with null/false are excluded
+ *
+ * @return void
+ */
+	function testNamedParamsWithNullFalse() {
+		$route = new CakeRoute('/:controller/:action/*');
+		$result = $route->match(array('controller' => 'posts', 'action' => 'index', 'page' => null, 'sort' => false));
+		$this->assertEquals('/posts/index/', $result);
 	}
 
 /**
@@ -417,4 +472,5 @@ class CakeRouteTestCase extends CakeTestCase {
 		$result = $route->parse('/blog/foobar');
 		$this->assertFalse($result);
 	}
+
 }

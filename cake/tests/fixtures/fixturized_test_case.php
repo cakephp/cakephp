@@ -5,8 +5,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 /**
  * This class helps in testing the life-cycle of fixtures inside a CakeTestCase
  *
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       cake.tests.fixtures
  */
 class FixturizedTestCase extends CakeTestCase {
 
@@ -22,7 +21,7 @@ class FixturizedTestCase extends CakeTestCase {
  * @return void
  */
 	public function testFixturePresent() {
-		$this->assertType('CakeFixtureManager', $this->fixtureManager);
+		$this->assertInstanceOf('CakeFixtureManager', $this->fixtureManager);
 	}
 
 /**

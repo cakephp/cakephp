@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console
  */
 class ShellDispatcher {
 
@@ -102,7 +100,7 @@ class ShellDispatcher {
 	protected function _initEnvironment() {
 		if (!$this->__bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH;
-			throw new RuntimeException($message);
+			throw new CakeException($message);
 		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
@@ -110,7 +108,7 @@ class ShellDispatcher {
 				"Please make sure that " . DIRECTORY_SEPARATOR . "cake" . DIRECTORY_SEPARATOR . "console is in your system path,\n" . 
 				"and check the cookbook for the correct usage of this command.\n" .
 				"(http://book.cakephp.org/)";
-			throw new RuntimeException($message);
+			throw new CakeException($message);
 		}
 
 		$this->shiftArgs();

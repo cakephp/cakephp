@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@ require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 /**
  * ApiShellTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  */
 class ApiShellTest extends CakeTestCase {
 
@@ -76,15 +74,16 @@ class ApiShellTest extends CakeTestCase {
 			'16. render($action = NULL, $layout = NULL, $file = NULL)',
 			'17. set($one, $two = NULL)',
 			'18. setAction($action)',
-			'19. shutdownProcess()',
-			'20. startupProcess()',
-			'21. validate()',
-			'22. validateErrors()'
+			'19. setRequest($request)',
+			'20. shutdownProcess()',
+			'21. startupProcess()',
+			'22. validate()',
+			'23. validateErrors()'
 		);
 		$this->Shell->expects($this->at(2))->method('out')->with($expected);
 
 		$this->Shell->args = array('controller');
-		$this->Shell->paths['controller'] = CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'controller' . DS;
+		$this->Shell->paths['controller'] = LIBS . 'controller' . DS;
 		$this->Shell->main();
 	}
 }

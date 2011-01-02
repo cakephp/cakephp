@@ -2,6 +2,7 @@
 $output = "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
 $output .="
 <?php
+App::import('Core', 'Debugger');
 if (Configure::read() > 0):
 	Debugger::checkSecurityKeys();
 endif;

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.Shells
+ * @package       cake.tests.cases.console.libs.Shells
  * @since         CakePHP v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,8 +27,7 @@ require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 /**
  * Test for Schema database management
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class SchemaShellTestSchema extends CakeSchema {
 
@@ -89,8 +87,7 @@ class SchemaShellTestSchema extends CakeSchema {
 /**
  * SchemaShellTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.Shells
+ * @package       cake.tests.cases.console.libs.Shells
  */
 class SchemaShellTest extends CakeTestCase {
 
@@ -223,7 +220,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'i18n.sql');
 		$contents = $this->file->read();
 		$this->assertPattern('/DROP TABLE/', $contents);
-		$this->assertPattern('/CREATE TABLE `i18n`/', $contents);
+		$this->assertPattern('/CREATE TABLE.*?i18n/', $contents);
 		$this->assertPattern('/id/', $contents);
 		$this->assertPattern('/model/', $contents);
 		$this->assertPattern('/field/', $contents);
@@ -253,7 +250,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'dump_test.sql');
 		$contents = $this->file->read();
 
-		$this->assertPattern('/CREATE TABLE `test_plugin_acos`/', $contents);
+		$this->assertPattern('/CREATE TABLE.*?test_plugin_acos/', $contents);
 		$this->assertPattern('/id/', $contents);
 		$this->assertPattern('/model/', $contents);
 
@@ -339,6 +336,7 @@ class SchemaShellTest extends CakeTestCase {
 		), true);
 		App::objects('plugin', null, false);
 
+		$this->db->cacheSources = false;
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
 			'connection' => 'test'
@@ -366,8 +364,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testCreateNoArgs() {
 		$this->Shell->params = array(
-			'connection' => 'test',
-			'path' => APP . 'config' . DS . 'sql'
+			'connection' => 'test'
 		);
 		$this->Shell->args = array('i18n');
 		$this->Shell->startup();
@@ -375,6 +372,8 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->create();
 
 		$db = ConnectionManager::getDataSource('test');
+		
+		$db->cacheSources = false;
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
 
@@ -396,7 +395,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'name' => 'DbAcl',
-			'path' => APP . 'config' . DS . 'schema'
+			'path' => CONFIGS . 'schema'
 		);
 		$this->Shell->args = array('DbAcl', 'acos');
 		$this->Shell->startup();
@@ -404,6 +403,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->create();
 
 		$db = ConnectionManager::getDataSource('test');
+		$db->cacheSources = false;
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources), 'acos should be present.');
 		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources), 'aros should not be found.');

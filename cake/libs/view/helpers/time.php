@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * Manipulation of time data.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1470/Time
  */
 class TimeHelper extends AppHelper {
@@ -284,7 +282,8 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Returns true if given datetime string is within this week
+ * Returns true if given datetime string is within this week.
+ *
  * @param string $dateString
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current week
@@ -293,7 +292,7 @@ class TimeHelper extends AppHelper {
  */
 	public function isThisWeek($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		return date('W Y', $date) == date('W Y', time());
+		return date('W o', $date) == date('W o', time());
 	}
 
 /**

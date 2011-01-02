@@ -11,8 +11,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.libs.controller
+ * @package       cake.libs.controller
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -78,7 +77,7 @@ class ComponentCollection extends ObjectCollection {
 				));
 			}
 			if (!class_exists($componentClass)) {
-				throw new MissingComponentFileException(array(
+				throw new MissingComponentClassException(array(
 					'file' => Inflector::underscore($component) . '.php',
 					'class' => $componentClass
 				));

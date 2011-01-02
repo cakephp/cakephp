@@ -15,7 +15,7 @@
  * @copyright       Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link            http://cakephp.org CakePHP Project
  * @package         cake.tests
- * @subpackage      cake.tests.cases.views.helpers
+ * @package         cake.tests.cases.views.helpers
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', array('Html', 'Js', 'JqueryEngine'));

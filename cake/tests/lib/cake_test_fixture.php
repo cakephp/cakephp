@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @package       cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 /**
  * Short description for class.
  *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
+ * @package       cake.tests.lib
  */
 class CakeTestFixture {
 
@@ -165,11 +163,10 @@ class CakeTestFixture {
 	public function insert(&$db) {
 		if (!isset($this->_insert)) {
 			$values = array();
-
 			if (isset($this->records) && !empty($this->records)) {
 				foreach ($this->records as $record) {
 					$fields = array_keys($record);
-					$values[] = '(' . implode(', ', array_map(array(&$db, 'value'), array_values($record))) . ')';
+					$values[] = array_values($record);
 				}
 				return $db->insertMulti($this->table, $fields, $values);
 			}

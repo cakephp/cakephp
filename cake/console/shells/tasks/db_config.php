@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * Task class for creating and updating the database configuration file.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.shells.tasks
  */
 class DbConfigTask extends Shell {
 
@@ -106,7 +104,7 @@ class DbConfigTask extends Shell {
 				}
 			}
 
-			$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'mysqli', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
+			$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
 
 			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
 			if (strtolower($persistent) == 'n') {

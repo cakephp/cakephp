@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.behaviors
+ * @package       cake.libs.model.behaviors
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@
  * Enables a model object to act as a node-based tree. Using Modified Preorder Tree Traversal
  *
  * @see http://en.wikipedia.org/wiki/Tree_traversal
- * @package       cake
- * @subpackage    cake.cake.libs.model.behaviors
+ * @package       cake.libs.model.behaviors
  * @link http://book.cakephp.org/view/1339/Tree
  */
 class TreeBehavior extends ModelBehavior {
@@ -57,7 +55,7 @@ class TreeBehavior extends ModelBehavior {
  * @param array $config array of configuration settings.
  * @return void
  */
-	public function setup(&$Model, $config = array()) {
+	public function setup($Model, $config = array()) {
 		if (!is_array($config)) {
 			$config = array('type' => $config);
 		}
@@ -65,7 +63,7 @@ class TreeBehavior extends ModelBehavior {
 
 		if (in_array($settings['scope'], $Model->getAssociated('belongsTo'))) {
 			$data = $Model->getAssociated($settings['scope']);
-			$parent =& $Model->{$settings['scope']};
+			$parent = $Model->{$settings['scope']};
 			$settings['scope'] = $Model->alias . '.' . $data['foreignKey'] . ' = ' . $parent->alias . '.' . $parent->primaryKey;
 			$settings['recursive'] = 0;
 		}
@@ -82,7 +80,7 @@ class TreeBehavior extends ModelBehavior {
  * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
  */
-	public function afterSave(&$Model, $created) {
+	public function afterSave($Model, $created) {
 		extract($this->settings[$Model->alias]);
 		if ($created) {
 			if ((isset($Model->data[$Model->alias][$parent])) && $Model->data[$Model->alias][$parent]) {
@@ -102,7 +100,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $Model Model instance
  * @return boolean true to continue, false to abort the delete
  */
-	public function beforeDelete(&$Model) {
+	public function beforeDelete($Model, $cascade = true) {
 		extract($this->settings[$Model->alias]);
 		list($name, $data) = array($Model->alias, $Model->read());
 		$data = $data[$name];
@@ -134,7 +132,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $Model Model instance
  * @return boolean true to continue, false to abort the save
  */
-	public function beforeSave(&$Model) {
+	public function beforeSave($Model) {
 		extract($this->settings[$Model->alias]);
 
 		$this->_addToWhitelist($Model, array($left, $right));
@@ -204,7 +202,7 @@ class TreeBehavior extends ModelBehavior {
  * @return integer number of child nodes
  * @link http://book.cakephp.org/view/1347/Counting-children
  */
-	public function childCount(&$Model, $id = null, $direct = false) {
+	public function childCount($Model, $id = null, $direct = false) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -250,7 +248,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array Array of child nodes
  * @link http://book.cakephp.org/view/1346/Children
  */
-	public function children(&$Model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
+	public function children($Model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -307,7 +305,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array An associative array of records, where the id is the key, and the display field is the value
  * @link http://book.cakephp.org/view/1348/generatetreelist
  */
-	public function generateTreeList(&$Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
+	public function generateTreeList($Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
 		$overrideRecursive = $recursive;
 		extract($this->settings[$Model->alias]);
 		if (!is_null($overrideRecursive)) {
@@ -362,7 +360,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array Array of data for the parent node
  * @link http://book.cakephp.org/view/1349/getparentnode
  */
-	public function getParentNode(&$Model, $id = null, $fields = null, $recursive = null) {
+	public function getParentNode($Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -395,7 +393,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array Array of nodes from top most parent to current node
  * @link http://book.cakephp.org/view/1350/getpath
  */
-	public function getPath(&$Model, $id = null, $fields = null, $recursive = null) {
+	public function getPath($Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -432,7 +430,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1352/moveDown
  */
-	public function moveDown(&$Model, $id = null, $number = 1) {
+	public function moveDown($Model, $id = null, $number = 1) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -490,7 +488,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1353/moveUp
  */
-	public function moveUp(&$Model, $id = null, $number = 1) {
+	public function moveUp($Model, $id = null, $number = 1) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -554,7 +552,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1628/Recover
  */
-	public function recover(&$Model, $mode = 'parent', $missingParentAction = null) {
+	public function recover($Model, $mode = 'parent', $missingParentAction = null) {
 		if (is_array($mode)) {
 			extract (array_merge(array('mode' => 'parent'), $mode));
 		}
@@ -599,7 +597,7 @@ class TreeBehavior extends ModelBehavior {
 				$this->_setParent($Model, $array[$Model->alias][$parent]);
 			}
 		} else {
-			$db =& ConnectionManager::getDataSource($Model->useDbConfig);
+			$db = ConnectionManager::getDataSource($Model->useDbConfig);
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$path = $this->getPath($Model, $array[$Model->alias][$Model->primaryKey]);
 				if ($path == null || count($path) < 2) {
@@ -634,7 +632,7 @@ class TreeBehavior extends ModelBehavior {
  * @link http://book.cakephp.org/view/1355/reorder
  * @link http://book.cakephp.org/view/1629/Reorder
  */
-	function reorder(&$Model, $options = array()) {
+	function reorder($Model, $options = array()) {
 		$options = array_merge(array('id' => null, 'field' => $Model->displayField, 'order' => 'ASC', 'verify' => true), $options);
 		extract($options);
 		if ($verify && !$this->verify($Model)) {
@@ -673,7 +671,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1354/removeFromTree
  */
-	public function removeFromTree(&$Model, $id = null, $delete = false) {
+	public function removeFromTree($Model, $id = null, $delete = false) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -702,7 +700,7 @@ class TreeBehavior extends ModelBehavior {
 			$parentNode[$right] = $node[$right] + 1;
 		}
 
-		$db =& ConnectionManager::getDataSource($Model->useDbConfig);
+		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$Model->updateAll(
 			array($parent => $db->value($node[$parent], $parent)), 
 			array($Model->escapeField($parent) => $node[$Model->primaryKey])
@@ -744,7 +742,7 @@ class TreeBehavior extends ModelBehavior {
  *  [incorrect left/right index,node id], message)
  * @link http://book.cakephp.org/view/1630/Verify
  */
-	public function verify(&$Model) {
+	public function verify($Model) {
 		extract($this->settings[$Model->alias]);
 		if (!$Model->find('count', array('conditions' => $scope))) {
 			return true;
@@ -815,7 +813,7 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $parentId
  * @return boolean true on success, false on failure
  */
-	protected function _setParent(&$Model, $parentId = null, $created = false) {
+	protected function _setParent($Model, $parentId = null, $created = false) {
 		extract($this->settings[$Model->alias]);
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $Model->id),
@@ -888,7 +886,7 @@ class TreeBehavior extends ModelBehavior {
  * @access private
  */
 	function __getMax($Model, $scope, $right, $recursive = -1, $created = false) {
-		$db =& ConnectionManager::getDataSource($Model->useDbConfig);
+		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		if ($created) {
 			if (is_string($scope)) {
 				$scope .= " AND {$Model->alias}.{$Model->primaryKey} <> ";
@@ -916,7 +914,7 @@ class TreeBehavior extends ModelBehavior {
  * @access private
  */
 	function __getMin($Model, $scope, $left, $recursive = -1) {
-		$db =& ConnectionManager::getDataSource($Model->useDbConfig);
+		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$name = $Model->alias . '.' . $left;
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
@@ -938,7 +936,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string $field
  * @access private
  */
-	function __sync(&$Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
+	function __sync($Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
 		$ModelRecursive = $Model->recursive;
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;

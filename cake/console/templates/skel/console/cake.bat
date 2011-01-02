@@ -11,8 +11,7 @@
 ::
 :: @copyright		Copyright 2005-2010, Cake Software Foundation, Inc.
 :: @link			http://cakephp.org CakePHP(tm) Project
-:: @package			cake
-:: @subpackage		cake.app.console
+:: @package   		app.console
 :: @since			CakePHP(tm) v 2.0
 :: @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
 ::

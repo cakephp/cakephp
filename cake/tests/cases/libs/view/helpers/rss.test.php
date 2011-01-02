@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Helper', array('Rss', 'Time'));
 /**
  * RssHelperTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  */
 class RssHelperTest extends CakeTestCase {
 
@@ -108,7 +106,7 @@ class RssHelperTest extends CakeTestCase {
 			'title',
 			'/title',
 			'<link',
-			RssHelper::url('/', true),
+			$this->Rss->url('/', true),
 			'/link',
 			'<description',
 			'content',
@@ -462,7 +460,7 @@ class RssHelperTest extends CakeTestCase {
 			'<description',
 			'<![CDATA[descriptive words]]',
 			'/description',
-			'enclosure' => array('url' => RssHelper::url('/test.flv', true)),
+			'enclosure' => array('url' => $this->Rss->url('/test.flv', true)),
 			'<pubDate',
 			date('r', strtotime('2008-05-31 12:00:00')),
 			'/pubDate',

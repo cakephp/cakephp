@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -50,7 +49,6 @@ interface CakeLogInterface {
  * @param string $type 
  * @param string $message 
  * @return void
- * @author Mark Story
  */
 	public function write($type, $message);
 }
@@ -60,8 +58,7 @@ interface CakeLogInterface {
  * using CakeLogs's methods.  If you don't configure any adapters, and write to the logs
  * a default FileLog will be autoconfigured for you.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 class CakeLog {
 
@@ -97,18 +94,18 @@ class CakeLog {
  * @param string $key The keyname for this logger, used to remove the logger later.
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
- * @throws Exception
+ * @throws CakeLogException
  */
 	public static function config($key, $config) {
 		if (empty($config['engine'])) {
-			throw new Exception(__('Missing logger classname'));
+			throw new CakeLogException(__('Missing logger classname'));
 		}
 		$loggerName = $config['engine'];
 		unset($config['engine']);
 		$className = self::_getLogger($loggerName);
 		$logger = new $className($config);
 		if (!$logger instanceof CakeLogInterface) {
-			throw new Exception(sprintf(
+			throw new CakeLogException(sprintf(
 				__('logger class %s does not implement a write method.'), $loggerName
 			));
 		}
@@ -134,7 +131,7 @@ class CakeLog {
 			}
 		}
 		if (!class_exists($loggerName)) {
-			throw new Exception(__('Could not load class %s', $loggerName));
+			throw new CakeLogException(__('Could not load class %s', $loggerName));
 		}
 		return $loggerName;
 	}

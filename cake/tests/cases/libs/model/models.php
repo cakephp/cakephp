@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.6464
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 /**
  * Test class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Test extends CakeTestModel {
 
@@ -65,8 +63,7 @@ class Test extends CakeTestModel {
 /**
  * TestAlias class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TestAlias extends CakeTestModel {
 
@@ -113,8 +110,7 @@ class TestAlias extends CakeTestModel {
 /**
  * TestValidate class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TestValidate extends CakeTestModel {
 
@@ -178,8 +174,7 @@ class TestValidate extends CakeTestModel {
 /**
  * User class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class User extends CakeTestModel {
 
@@ -203,8 +198,7 @@ class User extends CakeTestModel {
 /**
  * Article class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Article extends CakeTestModel {
 
@@ -262,7 +256,7 @@ class Article extends CakeTestModel {
  * @access public
  * @return void
  */
-	function beforeSave() {
+	function beforeSave($options = array()) {
 		return $this->beforeSaveReturn;
 	}
 
@@ -273,7 +267,7 @@ class Article extends CakeTestModel {
  * @access public
  * @return void
  */
-	function titleDuplicate ($title) {
+	static function titleDuplicate ($title) {
 		if ($title === 'My Article Title') {
 			return false;
 		}
@@ -293,7 +287,7 @@ class BeforeDeleteComment extends CakeTestModel {
 	var $useTable = 'comments';
 
 	function beforeDelete($cascade = true) {
-		$db =& $this->getDataSource();
+		$db = $this->getDataSource();
 		$db->delete($this, array($this->alias . '.' . $this->primaryKey => array(1, 3)));
 		return true;
 	}
@@ -302,8 +296,7 @@ class BeforeDeleteComment extends CakeTestModel {
 /**
  * NumericArticle class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class NumericArticle extends CakeTestModel {
 
@@ -327,8 +320,7 @@ class NumericArticle extends CakeTestModel {
 /**
  * Article10 class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Article10 extends CakeTestModel {
 
@@ -360,8 +352,7 @@ class Article10 extends CakeTestModel {
 /**
  * ArticleFeatured class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ArticleFeatured extends CakeTestModel {
 
@@ -417,8 +408,7 @@ class ArticleFeatured extends CakeTestModel {
 /**
  * Featured class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Featured extends CakeTestModel {
 
@@ -442,8 +432,7 @@ class Featured extends CakeTestModel {
 /**
  * Tag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Tag extends CakeTestModel {
 
@@ -459,8 +448,7 @@ class Tag extends CakeTestModel {
 /**
  * ArticlesTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ArticlesTag extends CakeTestModel {
 
@@ -476,8 +464,7 @@ class ArticlesTag extends CakeTestModel {
 /**
  * ArticleFeaturedsTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ArticleFeaturedsTag extends CakeTestModel {
 
@@ -493,8 +480,7 @@ class ArticleFeaturedsTag extends CakeTestModel {
 /**
  * Comment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Comment extends CakeTestModel {
 
@@ -526,8 +512,7 @@ class Comment extends CakeTestModel {
 /**
  * Modified Comment Class has afterFind Callback
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ModifiedComment extends CakeTestModel {
 
@@ -560,7 +545,7 @@ class ModifiedComment extends CakeTestModel {
  *
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
 		}
@@ -571,8 +556,7 @@ class ModifiedComment extends CakeTestModel {
 /**
  * Modified Comment Class has afterFind Callback
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class AgainModifiedComment extends CakeTestModel {
 
@@ -605,7 +589,7 @@ class AgainModifiedComment extends CakeTestModel {
  *
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['querytype'] = $this->findQueryType;
 		}
@@ -616,8 +600,7 @@ class AgainModifiedComment extends CakeTestModel {
 /**
  * MergeVarPluginAppModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MergeVarPluginAppModel extends AppModel {
 
@@ -634,8 +617,7 @@ class MergeVarPluginAppModel extends AppModel {
 /**
  * MergeVarPluginPost class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MergeVarPluginPost extends MergeVarPluginAppModel {
 
@@ -659,8 +641,7 @@ class MergeVarPluginPost extends MergeVarPluginAppModel {
 /**
  * MergeVarPluginComment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MergeVarPluginComment extends MergeVarPluginAppModel {
 
@@ -685,8 +666,7 @@ class MergeVarPluginComment extends MergeVarPluginAppModel {
 /**
  * Attachment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Attachment extends CakeTestModel {
 
@@ -702,8 +682,7 @@ class Attachment extends CakeTestModel {
 /**
  * Category class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Category extends CakeTestModel {
 
@@ -719,8 +698,7 @@ class Category extends CakeTestModel {
 /**
  * CategoryThread class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class CategoryThread extends CakeTestModel {
 
@@ -744,8 +722,7 @@ class CategoryThread extends CakeTestModel {
 /**
  * Apple class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Apple extends CakeTestModel {
 
@@ -793,8 +770,7 @@ class Apple extends CakeTestModel {
 /**
  * Sample class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Sample extends CakeTestModel {
 
@@ -818,8 +794,7 @@ class Sample extends CakeTestModel {
 /**
  * AnotherArticle class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class AnotherArticle extends CakeTestModel {
 
@@ -843,8 +818,7 @@ class AnotherArticle extends CakeTestModel {
 /**
  * Advertisement class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Advertisement extends CakeTestModel {
 
@@ -868,8 +842,7 @@ class Advertisement extends CakeTestModel {
 /**
  * Home class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Home extends CakeTestModel {
 
@@ -893,8 +866,7 @@ class Home extends CakeTestModel {
 /**
  * Post class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Post extends CakeTestModel {
 
@@ -921,7 +893,7 @@ class Post extends CakeTestModel {
 		return true;
 	}
 
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		$this->useDbConfig = 'test';
 		return $results;
 	}
@@ -930,8 +902,7 @@ class Post extends CakeTestModel {
 /**
  * Author class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Author extends CakeTestModel {
 
@@ -958,7 +929,7 @@ class Author extends CakeTestModel {
  * @access public
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		$results[0]['Author']['test'] = 'working';
 		return $results;
 	}
@@ -967,8 +938,7 @@ class Author extends CakeTestModel {
 /**
  * ModifiedAuthor class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ModifiedAuthor extends Author {
 
@@ -987,7 +957,7 @@ class ModifiedAuthor extends Author {
  * @access public
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		foreach($results as $index => $result) {
 			$results[$index]['Author']['user'] .= ' (CakePHP)';
 		}
@@ -998,8 +968,7 @@ class ModifiedAuthor extends Author {
 /**
  * Project class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Project extends CakeTestModel {
 
@@ -1023,8 +992,7 @@ class Project extends CakeTestModel {
 /**
  * Thread class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Thread extends CakeTestModel {
 
@@ -1056,8 +1024,7 @@ class Thread extends CakeTestModel {
 /**
  * Message class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Message extends CakeTestModel {
 
@@ -1081,8 +1048,7 @@ class Message extends CakeTestModel {
 /**
  * Bid class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Bid extends CakeTestModel {
 
@@ -1106,8 +1072,7 @@ class Bid extends CakeTestModel {
 /**
  * NodeAfterFind class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class NodeAfterFind extends CakeTestModel {
 
@@ -1166,7 +1131,7 @@ class NodeAfterFind extends CakeTestModel {
  * @access public
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		return $results;
 	}
 }
@@ -1174,8 +1139,7 @@ class NodeAfterFind extends CakeTestModel {
 /**
  * NodeAfterFindSample class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class NodeAfterFindSample extends CakeTestModel {
 
@@ -1207,8 +1171,7 @@ class NodeAfterFindSample extends CakeTestModel {
 /**
  * NodeNoAfterFind class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class NodeNoAfterFind extends CakeTestModel {
 
@@ -1264,8 +1227,7 @@ class NodeNoAfterFind extends CakeTestModel {
 /**
  * Node class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Node extends CakeTestModel{
 
@@ -1297,8 +1259,7 @@ class Node extends CakeTestModel{
 /**
  * Dependency class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Dependency extends CakeTestModel {
 
@@ -1314,8 +1275,7 @@ class Dependency extends CakeTestModel {
 /**
  * ModelA class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ModelA extends CakeTestModel {
 
@@ -1347,8 +1307,7 @@ class ModelA extends CakeTestModel {
 /**
  * ModelB class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ModelB extends CakeTestModel {
 
@@ -1380,8 +1339,7 @@ class ModelB extends CakeTestModel {
 /**
  * ModelC class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ModelC extends CakeTestModel {
 
@@ -1413,8 +1371,7 @@ class ModelC extends CakeTestModel {
 /**
  * ModelD class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ModelD extends CakeTestModel {
 
@@ -1438,8 +1395,7 @@ class ModelD extends CakeTestModel {
 /**
  * Something class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Something extends CakeTestModel {
 
@@ -1463,8 +1419,7 @@ class Something extends CakeTestModel {
 /**
  * SomethingElse class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class SomethingElse extends CakeTestModel {
 
@@ -1488,8 +1443,7 @@ class SomethingElse extends CakeTestModel {
 /**
  * JoinThing class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class JoinThing extends CakeTestModel {
 
@@ -1513,8 +1467,7 @@ class JoinThing extends CakeTestModel {
 /**
  * Portfolio class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Portfolio extends CakeTestModel {
 
@@ -1538,8 +1491,7 @@ class Portfolio extends CakeTestModel {
 /**
  * Item class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Item extends CakeTestModel {
 
@@ -1571,8 +1523,7 @@ class Item extends CakeTestModel {
 /**
  * ItemsPortfolio class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ItemsPortfolio extends CakeTestModel {
 
@@ -1588,8 +1539,7 @@ class ItemsPortfolio extends CakeTestModel {
 /**
  * Syfile class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Syfile extends CakeTestModel {
 
@@ -1613,8 +1563,7 @@ class Syfile extends CakeTestModel {
 /**
  * Image class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Image extends CakeTestModel {
 
@@ -1630,8 +1579,7 @@ class Image extends CakeTestModel {
 /**
  * DeviceType class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class DeviceType extends CakeTestModel {
 
@@ -1675,8 +1623,7 @@ class DeviceType extends CakeTestModel {
 /**
  * DeviceTypeCategory class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class DeviceTypeCategory extends CakeTestModel {
 
@@ -1692,8 +1639,7 @@ class DeviceTypeCategory extends CakeTestModel {
 /**
  * FeatureSet class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class FeatureSet extends CakeTestModel {
 
@@ -1709,8 +1655,7 @@ class FeatureSet extends CakeTestModel {
 /**
  * ExteriorTypeCategory class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ExteriorTypeCategory extends CakeTestModel {
 
@@ -1734,8 +1679,7 @@ class ExteriorTypeCategory extends CakeTestModel {
 /**
  * Document class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Document extends CakeTestModel {
 
@@ -1759,8 +1703,7 @@ class Document extends CakeTestModel {
 /**
  * Device class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Device extends CakeTestModel {
 
@@ -1776,8 +1719,7 @@ class Device extends CakeTestModel {
 /**
  * DocumentDirectory class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class DocumentDirectory extends CakeTestModel {
 
@@ -1793,8 +1735,7 @@ class DocumentDirectory extends CakeTestModel {
 /**
  * PrimaryModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class PrimaryModel extends CakeTestModel {
 
@@ -1810,8 +1751,7 @@ class PrimaryModel extends CakeTestModel {
 /**
  * SecondaryModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class SecondaryModel extends CakeTestModel {
 
@@ -1827,8 +1767,7 @@ class SecondaryModel extends CakeTestModel {
 /**
  * JoinA class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class JoinA extends CakeTestModel {
 
@@ -1852,8 +1791,7 @@ class JoinA extends CakeTestModel {
 /**
  * JoinB class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class JoinB extends CakeTestModel {
 
@@ -1877,8 +1815,7 @@ class JoinB extends CakeTestModel {
 /**
  * JoinC class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class JoinC extends CakeTestModel {
 
@@ -1902,8 +1839,7 @@ class JoinC extends CakeTestModel {
 /**
  * ThePaper class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ThePaper extends CakeTestModel {
 
@@ -1943,8 +1879,7 @@ class ThePaper extends CakeTestModel {
 /**
  * Monkey class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Monkey extends CakeTestModel {
 
@@ -1968,8 +1903,7 @@ class Monkey extends CakeTestModel {
 /**
  * AssociationTest1 class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class AssociationTest1 extends CakeTestModel {
 
@@ -2003,8 +1937,7 @@ class AssociationTest1 extends CakeTestModel {
 /**
  * AssociationTest2 class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class AssociationTest2 extends CakeTestModel {
 
@@ -2038,8 +1971,7 @@ class AssociationTest2 extends CakeTestModel {
 /**
  * Callback class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Callback extends CakeTestModel {
 
@@ -2047,8 +1979,7 @@ class Callback extends CakeTestModel {
 /**
  * CallbackPostTestModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class CallbackPostTestModel extends CakeTestModel {
 	public $useTable = 'posts';
@@ -2075,7 +2006,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeSave($options) {
+	function beforeSave($options = array()) {
 		return $this->beforeSaveReturn;
 	}
 /**
@@ -2083,7 +2014,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeValidate($options) {
+	function beforeValidate($options = array()) {
 		return $this->beforeValidateReturn;
 	}
 /**
@@ -2099,8 +2030,7 @@ class CallbackPostTestModel extends CakeTestModel {
 /**
  * Uuid class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Uuid extends CakeTestModel {
 
@@ -2116,8 +2046,7 @@ class Uuid extends CakeTestModel {
 /**
  * DataTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class DataTest extends CakeTestModel {
 
@@ -2133,8 +2062,7 @@ class DataTest extends CakeTestModel {
 /**
  * TheVoid class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TheVoid extends CakeTestModel {
 
@@ -2158,8 +2086,7 @@ class TheVoid extends CakeTestModel {
 /**
  * ValidationTest1 class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ValidationTest1 extends CakeTestModel {
 
@@ -2250,8 +2177,7 @@ class ValidationTest1 extends CakeTestModel {
 /**
  * ValidationTest2 class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ValidationTest2 extends CakeTestModel {
 
@@ -2304,7 +2230,7 @@ class ValidationTest2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		return array();
 	}
 }
@@ -2312,8 +2238,7 @@ class ValidationTest2 extends CakeTestModel {
 /**
  * Person class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Person extends CakeTestModel {
 
@@ -2343,8 +2268,7 @@ class Person extends CakeTestModel {
 /**
  * UnderscoreField class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class UnderscoreField extends CakeTestModel {
 
@@ -2360,8 +2284,7 @@ class UnderscoreField extends CakeTestModel {
 /**
  * Product class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Product extends CakeTestModel {
 
@@ -2377,8 +2300,7 @@ class Product extends CakeTestModel {
 /**
  * Story class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Story extends CakeTestModel {
 
@@ -2418,8 +2340,7 @@ class Story extends CakeTestModel {
 /**
  * Cd class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Cd extends CakeTestModel {
 
@@ -2443,8 +2364,7 @@ class Cd extends CakeTestModel {
 /**
  * Book class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Book extends CakeTestModel {
 
@@ -2468,8 +2388,7 @@ class Book extends CakeTestModel {
 /**
  * OverallFavorite class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class OverallFavorite extends CakeTestModel {
 
@@ -2485,8 +2404,7 @@ class OverallFavorite extends CakeTestModel {
 /**
  * MyUser class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MyUser extends CakeTestModel {
 
@@ -2510,8 +2428,7 @@ class MyUser extends CakeTestModel {
 /**
  * MyCategory class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MyCategory extends CakeTestModel {
 
@@ -2535,8 +2452,7 @@ class MyCategory extends CakeTestModel {
 /**
  * MyProduct class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MyProduct extends CakeTestModel {
 
@@ -2560,8 +2476,7 @@ class MyProduct extends CakeTestModel {
 /**
  * MyCategoriesMyUser class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MyCategoriesMyUser extends CakeTestModel {
 
@@ -2577,8 +2492,7 @@ class MyCategoriesMyUser extends CakeTestModel {
 /**
  * MyCategoriesMyProduct class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class MyCategoriesMyProduct extends CakeTestModel {
 
@@ -2591,44 +2505,11 @@ class MyCategoriesMyProduct extends CakeTestModel {
 	public $name = 'MyCategoriesMyProduct';
 }
 
-/**
- * I18nModel class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
- */
-class I18nModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'I18nModel'
- * @access public
- */
-	public $name = 'I18nModel';
-
-/**
- * useTable property
- *
- * @var string 'i18n'
- * @access public
- */
-	public $useTable = 'i18n';
-
-/**
- * displayField property
- *
- * @var string 'field'
- * @access public
- */
-	public $displayField = 'field';
-}
 
 /**
  * NumberTree class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class NumberTree extends CakeTestModel {
 
@@ -2662,7 +2543,7 @@ class NumberTree extends CakeTestModel {
  */
 	function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = ConnectionManager::getDataSource($this->useDbConfig);
 			$db->truncate($this->table);
 			$this->save(array($this->name => array('name' => '1. Root')));
 			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
@@ -2694,8 +2575,7 @@ class NumberTree extends CakeTestModel {
 /**
  * NumberTreeTwo class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class NumberTreeTwo extends NumberTree {
 
@@ -2719,8 +2599,7 @@ class NumberTreeTwo extends NumberTree {
 /**
  * FlagTree class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class FlagTree extends NumberTree {
 
@@ -2736,8 +2615,7 @@ class FlagTree extends NumberTree {
 /**
  * UnconventionalTree class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class UnconventionalTree extends NumberTree {
 
@@ -2760,8 +2638,7 @@ class UnconventionalTree extends NumberTree {
 /**
  * UuidTree class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class UuidTree extends NumberTree {
 
@@ -2777,8 +2654,7 @@ class UuidTree extends NumberTree {
 /**
  * Campaign class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Campaign extends CakeTestModel {
 
@@ -2802,8 +2678,7 @@ class Campaign extends CakeTestModel {
 /**
  * Ad class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Ad extends CakeTestModel {
 
@@ -2835,8 +2710,7 @@ class Ad extends CakeTestModel {
 /**
  * AfterTree class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class AfterTree extends NumberTree {
 
@@ -2866,8 +2740,7 @@ class AfterTree extends NumberTree {
 /**
  * Nonconformant Content class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Content extends CakeTestModel {
 
@@ -2907,8 +2780,7 @@ class Content extends CakeTestModel {
 /**
  * Nonconformant Account class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Account extends CakeTestModel {
 
@@ -2940,8 +2812,7 @@ class Account extends CakeTestModel {
 /**
  * Nonconformant ContentAccount class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class ContentAccount extends CakeTestModel {
 
@@ -2973,8 +2844,7 @@ class ContentAccount extends CakeTestModel {
 /**
  * FilmFile class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class FilmFile extends CakeTestModel {
 	public $name = 'FilmFile';
@@ -2983,8 +2853,7 @@ class FilmFile extends CakeTestModel {
 /**
  * Basket test model
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Basket extends CakeTestModel {
 	public $name = 'Basket';
@@ -3003,8 +2872,7 @@ class Basket extends CakeTestModel {
 /**
  * TestPluginArticle class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TestPluginArticle extends CakeTestModel {
 
@@ -3042,8 +2910,7 @@ class TestPluginArticle extends CakeTestModel {
 /**
  * TestPluginComment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TestPluginComment extends CakeTestModel {
 
@@ -3073,8 +2940,7 @@ class TestPluginComment extends CakeTestModel {
 /**
  * Uuidportfolio class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Uuidportfolio extends CakeTestModel {
 
@@ -3098,8 +2964,7 @@ class Uuidportfolio extends CakeTestModel {
 /**
  * Uuiditem class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class Uuiditem extends CakeTestModel {
 
@@ -3124,8 +2989,7 @@ class Uuiditem extends CakeTestModel {
 /**
  * UuiditemsPortfolio class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class UuiditemsUuidportfolio extends CakeTestModel {
 
@@ -3141,8 +3005,7 @@ class UuiditemsUuidportfolio extends CakeTestModel {
 /**
  * UuiditemsPortfolioNumericid class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class UuiditemsUuidportfolioNumericid extends CakeTestModel {
 
@@ -3158,8 +3021,7 @@ class UuiditemsUuidportfolioNumericid extends CakeTestModel {
 /**
  * TranslateTestModel class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslateTestModel extends CakeTestModel {
 
@@ -3191,8 +3053,7 @@ class TranslateTestModel extends CakeTestModel {
 /**
  * TranslateTestModel class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslateWithPrefix extends CakeTestModel {
 /**
@@ -3220,8 +3081,7 @@ class TranslateWithPrefix extends CakeTestModel {
 /**
  * TranslatedItem class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslatedItem extends CakeTestModel {
 
@@ -3261,8 +3121,7 @@ class TranslatedItem extends CakeTestModel {
 /**
  * TranslatedItem class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslatedItem2 extends CakeTestModel {
 /**
@@ -3297,8 +3156,7 @@ class TranslatedItem2 extends CakeTestModel {
 /**
  * TranslatedItemWithTable class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslatedItemWithTable extends CakeTestModel {
 
@@ -3354,8 +3212,7 @@ class TranslatedItemWithTable extends CakeTestModel {
 /**
  * TranslateArticleModel class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslateArticleModel extends CakeTestModel {
 
@@ -3387,8 +3244,7 @@ class TranslateArticleModel extends CakeTestModel {
 /**
  * TranslatedArticle class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  */
 class TranslatedArticle extends CakeTestModel {
 
@@ -3590,5 +3446,1291 @@ class TransactionTestModel extends CakeTestModel {
 			array('apple_id' => 1, 'name' => 'sample6'),
 		);
 		$this->saveAll($data, array('atomic' => true, 'callbacks' => false));
+	}
+}
+
+/**
+ * TestModel class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel'
+ * @access public
+ */
+	public $name = 'TestModel';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * schema property
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_schema = array(
+		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'client_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
+		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'login' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'passwd' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_1' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_2' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+		'zip_code' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'city' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'country' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'phone' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'fax' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'url' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => '155'),
+		'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
+
+/**
+ * find method
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
+ * @access public
+ * @return void
+ */
+	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return array($conditions, $fields);
+	}
+
+/**
+ * findAll method
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
+ * @access public
+ * @return void
+ */
+	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return $conditions;
+	}
+}
+
+/**
+ * TestModel2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel2'
+ * @access public
+ */
+	public $name = 'TestModel2';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+}
+
+/**
+ * TestModel4 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel3 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel3'
+ * @access public
+ */
+	public $name = 'TestModel3';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+}
+
+/**
+ * TestModel4 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel4 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel4'
+ * @access public
+ */
+	public $name = 'TestModel4';
+
+/**
+ * table property
+ *
+ * @var string 'test_model4'
+ * @access public
+ */
+	public $table = 'test_model4';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array(
+		'TestModel4Parent' => array(
+			'className' => 'TestModel4',
+			'foreignKey' => 'parent_id'
+		)
+	);
+
+/**
+ * hasOne property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasOne = array(
+		'TestModel5' => array(
+			'className' => 'TestModel5',
+			'foreignKey' => 'test_model4_id'
+		)
+	);
+
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasAndBelongsToMany = array('TestModel7' => array(
+		'className' => 'TestModel7',
+		'joinTable' => 'test_model4_test_model7',
+		'foreignKey' => 'test_model4_id',
+		'associationForeignKey' => 'test_model7_id',
+		'with' => 'TestModel4TestModel7'
+	));
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * TestModel4TestModel7 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel4TestModel7 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel4TestModel7'
+ * @access public
+ */
+	public $name = 'TestModel4TestModel7';
+
+/**
+ * table property
+ *
+ * @var string 'test_model4_test_model7'
+ * @access public
+ */
+	public $table = 'test_model4_test_model7';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'test_model4_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model7_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8')
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * TestModel5 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel5 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel5'
+ * @access public
+ */
+	public $name = 'TestModel5';
+
+/**
+ * table property
+ *
+ * @var string 'test_model5'
+ * @access public
+ */
+	public $table = 'test_model5';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('TestModel4' => array(
+		'className' => 'TestModel4',
+		'foreignKey' => 'test_model4_id'
+	));
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasMany = array('TestModel6' => array(
+		'className' => 'TestModel6',
+		'foreignKey' => 'test_model5_id'
+	));
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model4_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * TestModel6 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel6 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel6'
+ * @access public
+ */
+	public $name = 'TestModel6';
+
+/**
+ * table property
+ *
+ * @var string 'test_model6'
+ * @access public
+ */
+	public $table = 'test_model6';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('TestModel5' => array(
+		'className' => 'TestModel5',
+		'foreignKey' => 'test_model5_id'
+	));
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model5_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * TestModel7 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel7 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel7'
+ * @access public
+ */
+	public $name = 'TestModel7';
+
+/**
+ * table property
+ *
+ * @var string 'test_model7'
+ * @access public
+ */
+	public $table = 'test_model7';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * TestModel8 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel8 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel8'
+ * @access public
+ */
+	public $name = 'TestModel8';
+
+/**
+ * table property
+ *
+ * @var string 'test_model8'
+ * @access public
+ */
+	public $table = 'test_model8';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * hasOne property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasOne = array(
+		'TestModel9' => array(
+			'className' => 'TestModel9',
+			'foreignKey' => 'test_model8_id',
+			'conditions' => 'TestModel9.name != \'mariano\''
+		)
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model9_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * TestModel9 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class TestModel9 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'TestModel9'
+ * @access public
+ */
+	public $name = 'TestModel9';
+
+/**
+ * table property
+ *
+ * @var string 'test_model9'
+ * @access public
+ */
+	public $table = 'test_model9';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('TestModel8' => array(
+		'className' => 'TestModel8',
+		'foreignKey' => 'test_model8_id',
+		'conditions' => 'TestModel8.name != \'larry\''
+	));
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model8_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * Level class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class Level extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Level'
+ * @access public
+ */
+	public $name = 'Level';
+
+/**
+ * table property
+ *
+ * @var string 'level'
+ * @access public
+ */
+	public $table = 'level';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasMany = array(
+		'Group'=> array(
+			'className' => 'Group'
+		),
+		'User2' => array(
+			'className' => 'User2'
+		)
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * Group class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class Group extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Group'
+ * @access public
+ */
+	public $name = 'Group';
+
+/**
+ * table property
+ *
+ * @var string 'group'
+ * @access public
+ */
+	public $table = 'group';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('Level');
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasMany = array('Category2', 'User2');
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'level_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+			);
+		}
+		return $this->_schema;
+	}
+
+}
+
+/**
+ * User2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class User2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'User2'
+ * @access public
+ */
+	public $name = 'User2';
+
+/**
+ * table property
+ *
+ * @var string 'user'
+ * @access public
+ */
+	public $table = 'user';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array(
+		'Group' => array(
+			'className' => 'Group'
+		),
+		'Level' => array(
+			'className' => 'Level'
+		)
+	);
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasMany = array(
+		'Article2' => array(
+			'className' => 'Article2'
+		),
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'level_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * Category2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class Category2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Category2'
+ * @access public
+ */
+	public $name = 'Category2';
+
+/**
+ * table property
+ *
+ * @var string 'category'
+ * @access public
+ */
+	public $table = 'category';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array(
+		'Group' => array(
+			'className' => 'Group',
+			'foreignKey' => 'group_id'
+		),
+		'ParentCat' => array(
+			'className' => 'Category2',
+			'foreignKey' => 'parent_id'
+		)
+	);
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasMany = array(
+		'ChildCat' => array(
+			'className' => 'Category2',
+			'foreignKey' => 'parent_id'
+		),
+		'Article2' => array(
+			'className' => 'Article2',
+			'order'=>'Article2.published_date DESC',
+			'foreignKey' => 'category_id',
+			'limit'=>'3')
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'group_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'parent_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'icon' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'description' => array('type' => 'text', 'null' => false, 'default' => '', 'length' => null),
+
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * Article2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class Article2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Article2'
+ * @access public
+ */
+	public $name = 'Article2';
+
+/**
+ * table property
+ *
+ * @var string 'article'
+ * @access public
+ */
+	public $table = 'articles';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array(
+		'Category2' => array('className' => 'Category2'),
+		'User2' => array('className' => 'User2')
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'category_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'user_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'rate_count' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'rate_sum' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'viewed' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'version' => array('type' => 'string', 'null' => true, 'default' => '', 'length' => '45'),
+				'title' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '200'),
+				'intro' => array('text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				'comments' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '4'),
+				'body' => array('text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				'isdraft' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'allow_comments' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
+				'moderate_comments' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
+				'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'multipage' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				'created' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
+				'modified' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * CategoryFeatured2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class CategoryFeatured2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'CategoryFeatured2'
+ * @access public
+ */
+	public $name = 'CategoryFeatured2';
+
+/**
+ * table property
+ *
+ * @var string 'category_featured'
+ * @access public
+ */
+	public $table = 'category_featured';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'parent_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'icon' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'description' => array('text' => 'string', 'null' => false, 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * Featured2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class Featured2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Featured2'
+ * @access public
+ */
+	public $name = 'Featured2';
+
+/**
+ * table property
+ *
+ * @var string 'featured2'
+ * @access public
+ */
+	public $table = 'featured2';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array(
+		'CategoryFeatured2' => array(
+			'className' => 'CategoryFeatured2'
+		)
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'article_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'category_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * Comment2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class Comment2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Comment2'
+ * @access public
+ */
+	public $name = 'Comment2';
+
+/**
+ * table property
+ *
+ * @var string 'comment'
+ * @access public
+ */
+	public $table = 'comment';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('ArticleFeatured2', 'User2');
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'article_featured_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'user_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * ArticleFeatured2 class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class ArticleFeatured2 extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'ArticleFeatured2'
+ * @access public
+ */
+	public $name = 'ArticleFeatured2';
+
+/**
+ * table property
+ *
+ * @var string 'article_featured'
+ * @access public
+ */
+	public $table = 'article_featured';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array(
+		'CategoryFeatured2' => array('className' => 'CategoryFeatured2'),
+		'User2' => array('className' => 'User2')
+	);
+
+/**
+ * hasOne property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasOne = array(
+		'Featured2' => array('className' => 'Featured2')
+	);
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $hasMany = array(
+		'Comment2' => array('className'=>'Comment2', 'dependent' => true)
+	);
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'category_featured_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'user_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'title' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+				'body' => array('text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				'created' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
+				'modified' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+
+/**
+ * MysqlTestModel class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class MysqlTestModel extends Model {
+
+/**
+ * name property
+ *
+ * @var string 'MysqlTestModel'
+ * @access public
+ */
+	public $name = 'MysqlTestModel';
+
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	public $useTable = false;
+
+/**
+ * find method
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
+ * @access public
+ * @return void
+ */
+	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return $conditions;
+	}
+
+/**
+ * findAll method
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
+ * @access public
+ * @return void
+ */
+	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return $conditions;
+	}
+
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	public function schema($field = false) {
+		return array(
+			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
+			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+			'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
+			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 }

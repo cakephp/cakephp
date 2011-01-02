@@ -1,10 +1,5 @@
 <?php
 /**
- * Deals with Collections of objects.  Keeping registries of those objects,
- * loading and constructing new objects and triggering callbacks.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,10 +8,20 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
- * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+/**
+ * Deals with Collections of objects.  Keeping registries of those objects,
+ * loading and constructing new objects and triggering callbacks. Each subclass needs
+ * to implement its own load() functionality.
+ *
+ * All core subclasses of ObjectCollection by convention loaded objects are stored
+ * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`.  In addition
+ * the all support an `enabled` option that controls the enabled/disabled state of the object
+ * when loaded.
+ *
+ * @package cake.libs
+ * @since CakePHP(tm) v 2.0
  */
 abstract class ObjectCollection {
 
@@ -55,25 +60,43 @@ abstract class ObjectCollection {
  * ### Options
  *
  * - `breakOn` Set to the value or values you want the callback propagation to stop on.
- *    Defaults to `false`
- * - `break` Set to true to enabled breaking. Defaults to `false`.
+ *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
+ *
+ * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
+ *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
+ *    Defaults to `false`.
+ *
  * - `collectReturn` Set to true to collect the return of each object into an array.
  *    This array of return values will be returned from the trigger() call. Defaults to `false`.
+ *
  * - `triggerDisabled` Will trigger the callback on all objects in the collection even the non-enabled
- *   objects. Defaults to false.
+ *    objects. Defaults to false.
+ *
+ * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
+ *    Setting modParams to an integer value will allow you to modify the parameter with that index.
+ *    Any non-null value will modify the parameter index indicated.
+ *    Defaults to false.
+ *   
  * 
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
- * @return mixed true.
+ * @return mixed Either the last result or all results if collectReturn is on.
+ * @throws CakeException when modParams is used with an index that does not exist.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_enabled)) {
 			return true;
 		}
 		$options = array_merge(
-			array('break' => false, 'breakOn' => false, 'collectReturn' => false, 'triggerDisabled' => false),
+			array(
+				'break' => false,
+				'breakOn' => false,
+				'collectReturn' => false,
+				'triggerDisabled' => false,
+				'modParams' => false
+			),
 			$options
 		);
 		$collected = array();
@@ -81,19 +104,27 @@ abstract class ObjectCollection {
 		if ($options['triggerDisabled'] === true) {
 			$list = array_keys($this->_loaded);
 		}
+		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
+			throw new CakeException(__('Cannot use modParams with indexes that do not exist.'));
+		}
 		foreach ($list as $name) {
-			$result = call_user_func_array(array(&$this->_loaded[$name], $callback), $params);
+			$result = call_user_func_array(array($this->_loaded[$name], $callback), $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}
 			if (
-				$options['break'] && ($result === $options['breakOn'] || 
+				$options['break'] && ($result === $options['breakOn'] ||
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
-				return ($options['collectReturn'] === true) ? $collected : $result;
+				return $result;
+			} elseif ($options['modParams'] !== false && is_array($result)) {
+				$params[$options['modParams']] = $result;
 			}
 		}
-		return $options['collectReturn'] ? $collected : true;
+		if ($options['modParams'] !== false) {
+			return $params[$options['modParams']];
+		}
+		return $options['collectReturn'] ? $collected : $result;
 	}
 
 /**
@@ -188,6 +219,20 @@ abstract class ObjectCollection {
 		list($plugin, $name) = pluginSplit($name);
 		unset($this->_loaded[$name]);
 		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
+	}
+
+/**
+ * Adds or overwrites an instatiated object to the collection
+ *
+ * @param string $name Name of the object
+ * @param Object $object The object to use
+ */
+	public function set($name = null, $object = null) {
+		if (!empty($name) && !empty($object)) {
+			list($plugin, $name) = pluginSplit($name);
+			$this->_loaded[$name] = $object;
+		}
+		return $this->_loaded;
 	}
 
 /**

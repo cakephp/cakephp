@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboSqlite'));
 /**
  * DboSqliteTestDb class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
+ * @package       cake.tests.cases.libs.model.datasources
  */
 class DboSqliteTestDb extends DboSqlite {
 
@@ -42,7 +40,7 @@ class DboSqliteTestDb extends DboSqlite {
  * @access protected
  * @return void
  */
-	function _execute($sql) {
+	function _execute($sql, $params = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}
@@ -61,8 +59,7 @@ class DboSqliteTestDb extends DboSqlite {
 /**
  * DboSqliteTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources.dbo
+ * @package       cake.tests.cases.libs.model.datasources.dbo
  */
 class DboSqliteTest extends CakeTestCase {
 
@@ -91,14 +88,6 @@ class DboSqliteTest extends CakeTestCase {
 	public $Dbo = null;
 
 /**
- * Simulated DB connection used in testing
- *
- * @var DboSource
- * @access public
- */
-	public $Dbo2 = null;
-
-/**
  * Sets up a Dbo class instance for testing
  *
  */
@@ -108,7 +97,6 @@ class DboSqliteTest extends CakeTestCase {
 		if ($this->Dbo->config['driver'] !== 'sqlite') {
 			$this->markTestSkipped('The Sqlite extension is not available.');
 		}
-		$this->Dbo2 = new DboSqliteTestDb($this->Dbo->config, false);
 	}
 
 /**
@@ -117,7 +105,6 @@ class DboSqliteTest extends CakeTestCase {
  */
 	public function tearDown() {
 		Configure::write('Cache.disable', false);
-		unset($this->Dbo2);
 	}
 
 /**
@@ -127,10 +114,11 @@ class DboSqliteTest extends CakeTestCase {
 	public function testTableListCacheDisabling() {
 		$this->assertFalse(in_array('foo_test', $this->Dbo->listSources()));
 
-		$this->Dbo->query('CREATE TABLE foo_test (test VARCHAR(255));');
+		$this->Dbo->query('CREATE TABLE foo_test (test VARCHAR(255))');
 		$this->assertTrue(in_array('foo_test', $this->Dbo->listSources()));
 
-		$this->Dbo->query('DROP TABLE foo_test;');
+		$this->Dbo->cacheSources = false;
+		$this->Dbo->query('DROP TABLE foo_test');
 		$this->assertFalse(in_array('foo_test', $this->Dbo->listSources()));
 	}
 
@@ -207,7 +195,7 @@ class DboSqliteTest extends CakeTestCase {
 			'null' => false,
 		);
 		$result = $this->Dbo->buildColumn($data);
-		$expected = '"int_field" integer(11) NOT NULL';
+		$expected = '"int_field" integer NOT NULL';
 		$this->assertEqual($result, $expected);
 
 		$data = array(
@@ -251,7 +239,7 @@ class DboSqliteTest extends CakeTestCase {
 			'null' => false,
 		);
 		$result = $this->Dbo->buildColumn($data);
-		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
+		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
 		$this->assertEqual($result, $expected);
 		
 		$data = array(
@@ -263,7 +251,7 @@ class DboSqliteTest extends CakeTestCase {
 			'collate' => 'BADVALUE'
 		);
 		$result = $this->Dbo->buildColumn($data);
-		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
+		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
 		$this->assertEqual($result, $expected);
 	}
 

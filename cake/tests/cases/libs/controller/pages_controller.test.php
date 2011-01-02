@@ -12,35 +12,18 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('AppController')) {
-	require_once LIBS . 'controller' . DS . 'app_controller.php';
-} elseif (!defined('APP_CONTROLLER_EXISTS')) {
-	define('APP_CONTROLLER_EXISTS', true);
-}
 App::import('Controller', 'Pages');
 
 /**
  * PagesControllerTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class PagesControllerTest extends CakeTestCase {
-
-/**
- * endTest method
- *
- * @access public
- * @return void
- */
-	function endTest() {
-		App::build();
-	}
 
 /**
  * testDisplay method
@@ -49,10 +32,6 @@ class PagesControllerTest extends CakeTestCase {
  * @return void
  */
 	function testDisplay() {
-		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
-			return;
-		}
-
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
 		));

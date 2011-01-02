@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.console.shells
+ * @package       cake.console.shells
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@
  * Add your application-wide methods in the class below, your shells
  * will inherit them.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.libs
  */
 class AppShell extends Shell {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.app.webroot
+ * @package       app.webroot
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,9 +24,7 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 /**
  * Ensure required classes are available.
  */
-if (!class_exists('File')) {
-	uses('file');
-}
+App::import('Core', 'File');
 
 /**
  * Make clean CSS

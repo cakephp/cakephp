@@ -15,8 +15,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,8 +27,7 @@ require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 /**
  * TemplateTaskTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  */
 class TemplateTaskTest extends CakeTestCase {
 
@@ -88,7 +86,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testFindingInstalledThemesForBake() {
-		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS;
+		$consoleLibs = CAKE . 'console' . DS;
 		$this->Task->initialize();
 		$this->assertEqual($this->Task->templatePaths, array('default' => $consoleLibs . 'templates' . DS . 'default' . DS));
 	}

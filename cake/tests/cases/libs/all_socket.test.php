@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * This test group will run socket class tests
  *
- * @package       cake
- * @subpackage    cake.tests.groups
+ * @package       cake.tests.groups
  */
 class AllSocketTest extends PHPUnit_Framework_TestSuite {
 
@@ -34,10 +32,12 @@ class AllSocketTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Socket related class tests');
+		$suite = new CakeTestSuite('All Socket related class tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_socket.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'http_socket.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'http_response.test.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'http');
 		return $suite;
 	}
 }

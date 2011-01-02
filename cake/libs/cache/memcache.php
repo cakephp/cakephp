@@ -13,8 +13,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.cache
+ * @package       cake.libs.cache
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@
  * control you have over expire times far in the future.  See MemcacheEngine::write() for
  * more information.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.cache
+ * @package       cake.libs.cache
  */
 class MemcacheEngine extends CacheEngine {
 
@@ -148,11 +146,11 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $offset How much to increment
  * @param integer $duration How long to cache the data, in seconds
  * @return New incremented value, false otherwise
- * @throws RuntimeException when you try to increment with compress = true
+ * @throws CacheException when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new RuntimeException(
+			throw new CacheException(
 				__('Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
@@ -166,11 +164,11 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $offset How much to substract
  * @param integer $duration How long to cache the data, in seconds
  * @return New decremented value, false otherwise
- * @throws RuntimeException when you try to decrement with compress = true
+ * @throws CacheException when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new RuntimeException(
+			throw new CacheException(
 				__('Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}

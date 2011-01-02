@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::import('Core', 'CakeSocket');
 /**
  * SocketTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class CakeSocketTest extends CakeTestCase {
 
@@ -34,7 +32,8 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Socket = new CakeSocket();
+		parent::setUp();
+		$this->Socket = new CakeSocket(array('timeout' => 1));
 	}
 
 /**
@@ -44,6 +43,7 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		unset($this->Socket);
 	}
 
@@ -54,7 +54,7 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	function testConstruct() {
-		$this->Socket->__construct();
+		$this->Socket = new CakeSocket();
 		$config = $this->Socket->config;
 		$this->assertIdentical($config, array(
 			'persistent'	=> false,
@@ -99,6 +99,30 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket = new CakeSocket($config);
 		$this->Socket->connect();
 		$this->assertTrue($this->Socket->connected);
+	}
+
+/**
+ * data provider function for testInvalidConnection
+ *
+ * @return array
+ */
+	public static function invalidConnections() {
+		return array(
+			array(array('host' => 'invalid.host', 'timeout' => 1)),
+			array(array('host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1))
+		);
+	}
+
+/**
+ * testInvalidConnection method
+ *
+ * @dataProvider invalidConnections
+ * @expectedException SocketException
+ * return void
+ */
+	public function testInvalidConnection($data) {
+		$this->Socket->config = array_merge($this->Socket->config, $data);
+		$this->Socket->connect();
 	}
 
 /**

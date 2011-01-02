@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Core', 'Controller', false);
 /**
  * ScaffoldMockController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldMockController extends Controller {
 
@@ -48,8 +46,7 @@ class ScaffoldMockController extends Controller {
 /**
  * ScaffoldMockControllerWithFields class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldMockControllerWithFields extends Controller {
 
@@ -83,8 +80,7 @@ class ScaffoldMockControllerWithFields extends Controller {
 /**
  * TestScaffoldMock class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class TestScaffoldMock extends Scaffold {
 
@@ -93,8 +89,8 @@ class TestScaffoldMock extends Scaffold {
  *
  * @param unknown_type $params
  */
-    function _scaffold($params) {
-        $this->_params = $params;
+    function _scaffold(CakeRequest $request) {
+        $this->_params = $request;
     }
 
 /**
@@ -110,8 +106,7 @@ class TestScaffoldMock extends Scaffold {
 /**
  * ScaffoldMock class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldMock extends CakeTestModel {
 
@@ -166,8 +161,7 @@ class ScaffoldMock extends CakeTestModel {
 /**
  * ScaffoldUser class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldUser extends CakeTestModel {
 
@@ -196,8 +190,7 @@ class ScaffoldUser extends CakeTestModel {
 /**
  * ScaffoldComment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldComment extends CakeTestModel {
 
@@ -226,8 +219,7 @@ class ScaffoldComment extends CakeTestModel {
 /**
  * ScaffoldTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldTag extends CakeTestModel {
 /**
@@ -241,8 +233,7 @@ class ScaffoldTag extends CakeTestModel {
 /**
  * TestScaffoldView class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class TestScaffoldView extends ScaffoldView {
 
@@ -261,8 +252,7 @@ class TestScaffoldView extends ScaffoldView {
 /**
  * ScaffoldViewTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldViewTest extends CakeTestCase {
 
@@ -319,11 +309,11 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('edit');
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'edit.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('add');
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'edit.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('view');
@@ -339,15 +329,15 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('admin_edit');
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'edit.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('admin_add');
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'edit.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('error');
-		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
+		$expected = CAKE . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 
 		$Controller = new ScaffoldMockController($this->request);
@@ -357,11 +347,11 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$ScaffoldView = new TestScaffoldView($Controller);
 		$result = $ScaffoldView->testGetFilename('admin_edit');
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' .DS . 'views' . DS . 'posts' . DS . 'scaffold.edit.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' .DS . 'views' . DS . 'posts' . DS . 'scaffold.form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('edit');
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' .DS . 'views' . DS . 'posts' . DS . 'scaffold.edit.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' .DS . 'views' . DS . 'posts' . DS . 'scaffold.form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$Controller = new ScaffoldMockController($this->request);
@@ -377,12 +367,12 @@ class ScaffoldViewTest extends CakeTestCase {
 		$ScaffoldView = new TestScaffoldView($Controller);
 		$result = $ScaffoldView->testGetFilename('admin_add');
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'
-			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.edit.ctp';
+			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.form.ctp';
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('add');
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'
-			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.edit.ctp';
+			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.form.ctp';
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.prefixes', $_admin);
@@ -524,7 +514,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertContains('input name="data[ScaffoldMock][title]" maxlength="255" type="text" value="First Article" id="ScaffoldMockTitle"', $result);
 		$this->assertContains('input name="data[ScaffoldMock][published]" maxlength="1" type="text" value="Y" id="ScaffoldMockPublished"', $result);
 		$this->assertContains('textarea name="data[ScaffoldMock][body]" cols="30" rows="6" id="ScaffoldMockBody"', $result);
-		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete<\/a>\s*<\/li>/', $result);
+		$this->assertPattern('/<a href="\#" onclick="if[^>]*>Delete<\/a><\/li>/', $result);
 	}
 
 /**
@@ -661,8 +651,7 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * Scaffold Test class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldTest extends CakeTestCase {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.libs.reporter
+ * @package       cake.tests.libs.reporter
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +25,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  * in an HTML format / context.
  *
  * @package cake
- * @subpackage cake.tests.lib
+ * @package    cake.tests.lib
  */
 class CakeHtmlReporter extends CakeBaseReporter {
 
@@ -62,7 +61,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintTestMenu() {
 		$cases = $this->baseUrl() . '?show=cases';
-		$plugins = App::objects('plugin');
+		$plugins = App::objects('plugin', null, false);
 		sort($plugins);
 		include CAKE_TESTS_LIB . 'templates' . DS . 'menu.php';
 	}

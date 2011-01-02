@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::import('Core', array('ErrorHandler'));
 /**
  * ViewPostsController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class ViewPostsController extends Controller {
 
@@ -74,8 +72,7 @@ class ViewPostsController extends Controller {
 /**
  * TestView class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class TestView extends View {
 
@@ -121,7 +118,6 @@ class TestView extends View {
  * @param string $loadHelpers 
  * @param string $cached 
  * @return void
- * @author Mark Story
  */
 	function render_($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
 		return $this->_render($___viewFn, $___dataForView, $loadHelpers, $cached);
@@ -140,8 +136,7 @@ class TestView extends View {
 /**
  * TestAfterHelper class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class TestAfterHelper extends Helper {
 
@@ -177,8 +172,7 @@ class TestAfterHelper extends Helper {
 /**
  * ViewTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ViewTest extends CakeTestCase {
 
@@ -456,6 +450,24 @@ class ViewTest extends CakeTestCase {
 		$this->mockObjects[] = $this->View->ElementCallbackMockHtml;
 	}
 /**
+ * test that additional element viewVars don't get overwritten with helpers.
+ *
+ * @return void
+ */
+	function testElementParamsDontOverwriteHelpers() {
+		$Controller = new ViewPostsController();
+		$Controller->helpers = array('Form');
+
+		$View = new View($Controller);
+		$result = $View->element('type_check', array('form' => 'string'), true);
+		$this->assertEqual('string', $result);
+
+		$View->set('form', 'string');
+		$result = $View->element('type_check', array(), true);
+		$this->assertEqual('string', $result);
+	}
+
+/**
  * testElementCacheHelperNoCache method
  *
  * @access public
@@ -529,7 +541,7 @@ class ViewTest extends CakeTestCase {
 	function test__get() {
 		$View = new View($this->PostsController);
 		$View->loadHelper('Html');
-		$this->assertType('HtmlHelper', $View->Html);
+		$this->assertInstanceOf('HtmlHelper', $View->Html);
 	}
 
 /**
@@ -544,8 +556,8 @@ class ViewTest extends CakeTestCase {
 		$View->helpers = array('Html', 'Form');
 		$View->loadHelpers();
 
-		$this->assertType('HtmlHelper', $View->Html, 'Object type is wrong.');
-		$this->assertType('FormHelper', $View->Form, 'Object type is wrong.');
+		$this->assertInstanceOf('HtmlHelper', $View->Html, 'Object type is wrong.');
+		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
 /**

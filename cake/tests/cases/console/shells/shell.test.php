@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,12 +24,11 @@ App::import('Shell', 'Shell', false);
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 
 /**
- * TestShell class
+ * ShellTestShell class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
-class TestShell extends Shell {
+class ShellTestShell extends Shell {
 
 /**
  * name property
@@ -38,7 +36,7 @@ class TestShell extends Shell {
  * @var name
  * @access public
  */
-	public $name = 'TestShell';
+	public $name = 'ShellTestShell';
 
 /**
  * stopped property
@@ -88,8 +86,7 @@ class TestMergeShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class TestAppleTask extends Shell {
 }
@@ -97,8 +94,7 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class TestBananaTask extends Shell {
 }
@@ -106,8 +102,7 @@ class TestBananaTask extends Shell {
 /**
  * ShellTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class ShellTest extends CakeTestCase {
 
@@ -133,7 +128,7 @@ class ShellTest extends CakeTestCase {
 		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Shell = new TestShell($output, $error, $in);
+		$this->Shell = new ShellTestShell($output, $error, $in);
 	}
 
 /**
@@ -142,10 +137,10 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$this->assertEqual($this->Shell->name, 'TestShell');
-		$this->assertType('ConsoleInput', $this->Shell->stdin);
-		$this->assertType('ConsoleOutput', $this->Shell->stdout);
-		$this->assertType('ConsoleOutput', $this->Shell->stderr);
+		$this->assertEqual($this->Shell->name, 'ShellTestShell');
+		$this->assertInstanceOf('ConsoleInput', $this->Shell->stdin);
+		$this->assertInstanceOf('ConsoleOutput', $this->Shell->stdout);
+		$this->assertInstanceOf('ConsoleOutput', $this->Shell->stderr);
 	}
 
 /**

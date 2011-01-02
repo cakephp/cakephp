@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,8 +27,7 @@ if (!class_exists('Router')) {
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  */
 class Helper extends Object {
 
@@ -108,6 +106,30 @@ class Helper extends Object {
 	protected $_View;
 
 /**
+ * Minimized attributes
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array(
+		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
+		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize'
+	);
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_attributeFormat = '%s="%s"';
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s="%s"';
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -115,7 +137,6 @@ class Helper extends Object {
  */
 	public function __construct(View $View, $settings = array()) {
 		$this->_View = $View;
-		$this->params = $View->params;
 		$this->request = $View->request;
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
@@ -361,7 +382,7 @@ class Helper extends Object {
 
 			foreach ($filtered as $key => $value) {
 				if ($value !== false && $value !== null) {
-					$attributes[] = $this->__formatAttribute($key, $value, $escape);
+					$attributes[] = $this->_formatAttribute($key, $value, $escape);
 				}
 			}
 			$out = implode(' ', $attributes);
@@ -378,23 +399,21 @@ class Helper extends Object {
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.
  * @return string The composed attribute.
- * @access private
  */
-	function __formatAttribute($key, $value, $escape = true) {
+	protected function _formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
-		$attributeFormat = '%s="%s"';
-		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled',
-			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
 		if (is_array($value)) {
 			$value = '';
 		}
 
-		if (in_array($key, $minimizedAttributes)) {
+		if (is_numeric($key)) {
+			$attribute = sprintf($this->_minimizedAttributeFormat, $value, $value);
+		} elseif (in_array($key, $this->_minimizedAttributes)) {
 			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
-				$attribute = sprintf($attributeFormat, $key, $key);
+				$attribute = sprintf($this->_minimizedAttributeFormat, $key, $key);
 			}
 		} else {
-			$attribute = sprintf($attributeFormat, $key, ($escape ? h($value) : $value));
+			$attribute = sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
 		}
 		return $attribute;
 	}

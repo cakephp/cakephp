@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::import('Core', 'Validation');
 /**
  * CustomValidator class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class CustomValidator {
 
@@ -34,7 +32,7 @@ class CustomValidator {
  * @return boolean
  * @access public
  */
-	function customValidate($check) {
+	static function customValidate($check) {
 		return (bool)preg_match('/^[0-9]{3}$/', $check);
 	}
 }
@@ -53,7 +51,7 @@ class TestNlValidation {
  * @param string $check
  * @return void
  */
-	function postal($check) {
+	static function postal($check) {
 		return true;
 	}
 /**
@@ -61,7 +59,7 @@ class TestNlValidation {
  *
  * @return void
  */
-	function ssn($check) {
+	static function ssn($check) {
 		return true;
 	}
 }
@@ -80,7 +78,7 @@ class TestDeValidation {
  * @param string $check
  * @return void
  */
-	function phone($check) {
+	static function phone($check) {
 		return true;
 	}
 }
@@ -88,8 +86,7 @@ class TestDeValidation {
 /**
  * Test Case for Validation Class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ValidationTest extends CakeTestCase {
 
@@ -1813,6 +1810,39 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
+
+		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
+		$this->assertTrue(Validation::url('http://www.zwischenraume.de'));
+		$this->assertTrue(Validation::url('http://www.zwischenraume.cz'));
+		$this->assertTrue(Validation::url('http://www.last.fm/music/浜崎あゆみ'), 'utf8 path failed');
+
+		$this->assertTrue(Validation::url('http://cakephp.org:80'));
+		$this->assertTrue(Validation::url('http://cakephp.org:443'));
+		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
+
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('[::1]'));
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('[::1]:80'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('http://[::1]'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('http://[::1]:80'));
+
+		$this->assertFalse(Validation::url('[1::2::3]'));
+	}
+
+	function testUuid() {
+		$this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
+		$this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b11d4-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a716-4466440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29-11d4-a716-446655440000'));
 	}
 
 /**

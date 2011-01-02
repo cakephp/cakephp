@@ -13,16 +13,15 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
 App::import('Shell', 'Bake', false);
-App::import('Shell', 'tasks/model', false);
-App::import('Shell', 'tasks/controller', false);
-App::import('Shell', 'tasks/db_config', false);
+App::import('Shell', 'tasks/model');
+App::import('Shell', 'tasks/controller');
+App::import('Shell', 'tasks/db_config');
 
 App::import('Core', 'Controller');
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
@@ -94,12 +93,11 @@ class BakeShellTest extends CakeTestCase {
 		$this->Shell->Controller->expects($this->once())->method('bake')->will($this->returnValue(true));
 		$this->Shell->View->expects($this->once())->method('execute');
 
-		$this->Shell->expects($this->at(1))->method('out')->with('Bake All');
-		$this->Shell->expects($this->at(3))->method('out')->with('User Model was baked.');
-		$this->Shell->expects($this->at(5))->method('out')->with('User Controller was baked.');
-		$this->Shell->expects($this->at(7))->method('out')->with('User Views were baked.');
-		$this->Shell->expects($this->at(8))->method('out')->with('Bake All complete');
+		$this->Shell->expects($this->once())->method('_stop');
+		$this->Shell->expects($this->at(0))->method('out')->with('Bake All');
+		$this->Shell->expects($this->at(5))->method('out')->with('<success>Bake All complete</success>');
 
+		$this->Shell->connection = '';
 		$this->Shell->params = array();
 		$this->Shell->args = array('User');
 		$this->Shell->all();

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @since         CakePHP v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@
  * JsHelper provides an abstract interface for authoring JavaScript with a
  * given client-side library.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  */
 class JsHelper extends AppHelper {
 /**
@@ -156,20 +154,6 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Workaround for Object::Object() existing. Since Object::object exists, it does not
- * fall into call__ and is not passed onto the engine helper. See JsBaseEngineHelper::object() for
- * more information on this method.
- *
- * @param mixed $data Data to convert into JSON
- * @param array $options Options to use for encoding JSON.  See JsBaseEngineHelper::object() for more details.
- * @return string encoded JSON
- * @deprecated Remove when support for PHP4 and Object::object are removed.
- */
-	public function object($data = array(), $options = array()) {
-		return $this->{$this->__engineName}->object($data, $options);
-	}
-
-/**
  * Overwrite inherited Helper::value()
  * See JsBaseEngineHelper::value() for more information on this method.
  *
@@ -203,7 +187,6 @@ class JsHelper extends AppHelper {
  */
 	public function writeBuffer($options = array()) {
 		$domReady = $this->request->is('ajax');
-		// $domReady = isset($this->params['isAjax']) ? !$this->params['isAjax'] : true;
 		$defaults = array(
 			'onDomReady' => $domReady, 'inline' => true, 
 			'cache' => false, 'clear' => true, 'safe' => true

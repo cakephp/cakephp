@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5428
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::import('Core', 'Sanitize');
 /**
  * DataTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class SanitizeDataTest extends CakeTestModel {
 
@@ -47,8 +45,7 @@ class SanitizeDataTest extends CakeTestModel {
 /**
  * Article class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class SanitizeArticle extends CakeTestModel {
 
@@ -72,8 +69,7 @@ class SanitizeArticle extends CakeTestModel {
 /**
  * SanitizeTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class SanitizeTest extends CakeTestCase {
 

@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,8 +26,7 @@
  * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your core.php. Concrete ACL
  * implementations should extend `AclBase` and implement the methods it defines.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1242/Access-Control-Lists
  */
 class AclComponent extends Component {
@@ -58,7 +56,7 @@ class AclComponent extends Component {
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
- * @throws Exception when Acl.classname could not be loaded.
+ * @throws CakeException when Acl.classname could not be loaded.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
@@ -68,7 +66,7 @@ class AclComponent extends Component {
 				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
-				throw new Exception(__('Could not find %s.', $name));
+				throw new CakeException(__('Could not find %s.', $name));
 			}
 		}
 		$this->adapter($name);
@@ -84,7 +82,7 @@ class AclComponent extends Component {
  *
  * @param mixed $adapter Instance of AclBase or a string name of the class to use. (optional)
  * @return mixed either null, or instance of AclBase
- * @throws Exception when the given class is not an AclBase
+ * @throws CakeException when the given class is not an AclBase
  */
 	public function adapter($adapter = null) {
 		if ($adapter) {
@@ -92,7 +90,7 @@ class AclComponent extends Component {
 				$adapter = new $adapter();
 			}
 			if (!$adapter instanceof AclInterface) {
-				throw new Exception(__('AclComponent adapters must implement AclInterface'));
+				throw new CakeException(__('AclComponent adapters must implement AclInterface'));
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);
@@ -186,8 +184,7 @@ class AclComponent extends Component {
  * Access Control List interface.
  * Implementing classes are used by AclComponent to perform ACL checks in Cake.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  */
 interface AclInterface {
 
@@ -255,8 +252,7 @@ interface AclInterface {
  *			edit
  * }}}
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class DbAcl extends Object implements AclInterface {
 
@@ -525,8 +521,7 @@ class DbAcl extends Object implements AclInterface {
  * IniAcl implements an access control system using an INI file.  An example 
  * of the ini file used can be found in /config/acl.ini.php.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.iniacl
+ * @package       cake.libs.model.iniacl
  */
 class IniAcl extends Object implements AclInterface {
 
@@ -662,9 +657,9 @@ class IniAcl extends Object implements AclInterface {
  * @return array INI section structure
  */
 	public function readConfigFile($filename) {
-		App::import('Core', 'config/IniFile');
-		$iniFile = new IniFile($filename);
-		return $iniFile->asArray();
+		App::import('Core', 'config/IniReader');
+		$iniFile = new IniReader(dirname($filename) . DS);
+		return $iniFile->read(basename($filename));
 	}
 
 /**

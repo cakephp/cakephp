@@ -13,18 +13,26 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.libs
+ * @package       cake.libs.error
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+/**
+ * Parent class for all of the HTTP related exceptions in CakePHP.
+ * All HTTP status/error related exceptions should extend this class so 
+ * catch blocks can be specifically typed.
+ *
+ * @package cake.libs
+ */
+class HttpException extends RuntimeException { }
 
 /**
  * Represents an HTTP 400 error.
  *
  * @package cake.libs
  */
-class BadRequestException extends RuntimeException {
+class BadRequestException extends HttpException {
 /**
  * Constructor
  *
@@ -44,7 +52,7 @@ class BadRequestException extends RuntimeException {
  *
  * @package cake.libs
  */
-class UnauthorizedException extends RuntimeException {
+class UnauthorizedException extends HttpException {
 /**
  * Constructor
  *
@@ -64,7 +72,7 @@ class UnauthorizedException extends RuntimeException {
  *
  * @package cake.libs
  */
-class ForbiddenException extends RuntimeException {
+class ForbiddenException extends HttpException {
 /**
  * Constructor
  *
@@ -84,7 +92,7 @@ class ForbiddenException extends RuntimeException {
  *
  * @package cake.libs
  */
-class NotFoundException extends RuntimeException {
+class NotFoundException extends HttpException {
 /**
  * Constructor
  *
@@ -104,7 +112,7 @@ class NotFoundException extends RuntimeException {
  *
  * @package cake.libs
  */
-class MethodNotAllowedException extends RuntimeException {
+class MethodNotAllowedException extends HttpException {
 /**
  * Constructor
  *
@@ -124,7 +132,7 @@ class MethodNotAllowedException extends RuntimeException {
  *
  * @package cake.libs
  */
-class InternalErrorException extends CakeException {
+class InternalErrorException extends HttpException {
 /**
  * Constructor
  *
@@ -379,3 +387,69 @@ class MissingTableException extends CakeException {
 class MissingModelException extends CakeException {
 	protected $_messageTemplate = 'Model %s could not be found.';
 }
+
+
+/**
+ * Exception class for Cache.  This exception will be thrown from Cache when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class CacheException extends CakeException { }
+
+/**
+ * Exception class for Router.  This exception will be thrown from Router when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class RouterException extends CakeException { }
+
+/**
+ * Exception class for CakeLog.  This exception will be thrown from CakeLog when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class CakeLogException extends CakeException { }
+
+/**
+ * Exception class for CakeSession.  This exception will be thrown from CakeSession when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class CakeSessionException extends CakeException { }
+
+/**
+ * Exception class for Configure.  This exception will be thrown from Configure when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class ConfigureException extends CakeException { }
+
+/**
+ * Exception class for Socket. This exception will be thrown from CakeSocket, HttpSocket and HttpResponse when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class SocketException extends CakeException { }
+
+/**
+ * Exception class for Xml.  This exception will be thrown from Xml when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class XmlException extends CakeException { }
+
+/**
+ * Exception class for Console libraries.  This exception will be thrown from Console library
+ * classes when they encounter an error.
+ *
+ * @package cake.libs
+ */
+class ConsoleException extends CakeException { }
+

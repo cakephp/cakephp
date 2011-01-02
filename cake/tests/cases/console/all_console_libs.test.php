@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * This test group will run all console lib classes.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console
+ * @package       cake.tests.cases.console
  */
 class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
 

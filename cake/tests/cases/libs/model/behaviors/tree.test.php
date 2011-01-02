@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5330
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
  * NumberTreeTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  */
 class NumberTreeTest extends CakeTestCase {
 
@@ -1279,8 +1277,7 @@ class NumberTreeTest extends CakeTestCase {
 /**
  * ScopedTreeTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  */
 class ScopedTreeTest extends CakeTestCase {
 
@@ -1431,7 +1428,6 @@ class ScopedTreeTest extends CakeTestCase {
 	function testTranslatingTree() {
 		$this->Tree = new FlagTree();
 		$this->Tree->cacheQueries = false;
-		$this->Tree->translateModel = 'TranslateTreeTestModel';
 		$this->Tree->Behaviors->attach('Translate', array('name'));
 
 		//Save
@@ -1581,8 +1577,7 @@ class ScopedTreeTest extends CakeTestCase {
 /**
  * AfterTreeTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  */
 class AfterTreeTest extends CakeTestCase {
 
@@ -1637,8 +1632,7 @@ class AfterTreeTest extends CakeTestCase {
 /**
  * UuidTreeTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  */
 class UuidTreeTest extends CakeTestCase {
 

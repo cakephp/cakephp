@@ -12,12 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @package	   cake
- * @subpackage	cake.cake.libs.view.helpers
- * @since		 CakePHP(tm) v 0.10.0.1076
- * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright   Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link        http://cakephp.org CakePHP(tm) Project
+ * @package     cake.libs.view.helpers
+ * @since       CakePHP(tm) v 0.10.0.1076
+ * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -25,8 +24,7 @@
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @package	   cake
- * @subpackage	cake.cake.libs.view.helpers
+ * @package     cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1383/Form
  */
 class FormHelper extends AppHelper {
@@ -210,11 +208,13 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$object = $this->_introspectModel($model);
-		$this->setEntity($model . '.', true);
+		if ($model !== false) {
+			$object = $this->_introspectModel($model);
+			$this->setEntity($model . '.', true);
+		}
 
 		$modelEntity = $this->model();
-		if (isset($this->fieldset[$modelEntity]['key'])) {
+		if ($model !== false && isset($this->fieldset[$modelEntity]['key'])) {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->request->data[$model]) &&
@@ -401,7 +401,7 @@ class FormHelper extends AppHelper {
 		$fields += $locked;
 
 		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
-		$locked = str_rot13(serialize(array_keys($locked)));
+		$locked = implode(array_keys($locked), '|');
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
@@ -540,7 +540,8 @@ class FormHelper extends AppHelper {
 
 		if ($text === null) {
 			if (strpos($fieldName, '.') !== false) {
-				$text = array_pop(explode('.', $fieldName));
+				$fieldElements = explode('.', $fieldName);
+				$text = array_pop($fieldElements);
 			} else {
 				$text = $fieldName;
 			}
@@ -1133,14 +1134,15 @@ class FormHelper extends AppHelper {
  * The first argument to an input type should always be the fieldname, in `Model.field` format.
  * The second argument should always be an array of attributes for the input.
  *
- * @param string $method Method name / input type to make. 
+ * @param string $method Method name / input type to make.
  * @param array $params Parameters for the method call
  * @return string Formatted input method.
+ * @throws CakeException When there are no params for the method call.
  */
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new Exception(__('Missing field name for FormHelper::%s', $method));
+			throw new CakeException(__('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];
@@ -1320,6 +1322,7 @@ class FormHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 
+		$url = $this->url($url);
 		$formName = uniqid('post_');
 		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {

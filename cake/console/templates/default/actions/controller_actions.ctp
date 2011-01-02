@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.console.libs.template.objects
+ * @package       cake.console.libs.template.objects
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,13 +24,9 @@
 	}
 
 	public function <?php echo $admin ?>view($id = null) {
-		if (!$id) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName) ?>'));
-			$this->redirect(array('action' => 'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
 		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->read(null, $id));
 	}
@@ -72,15 +67,11 @@
 
 <?php $compact = array(); ?>
 	public function <?php echo $admin; ?>edit($id = null) {
-		if (!$id && empty($this->request->data)) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
-			$this->redirect(array('action' => 'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
@@ -93,9 +84,8 @@
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php endif; ?>
 			}
-		}
-		if (!$this->request->is('post')) {
-			$this->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
+		} else {
+			$this->request->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
 		}
 <?php
 		foreach (array('belongsTo', 'hasAndBelongsToMany') as $assoc):
@@ -118,15 +108,11 @@
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		if (!$id) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid id for <?php echo strtolower($singularHumanName); ?>'));
-			$this->redirect(array('action'=>'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this-><?php echo $currentModelName; ?>->delete($id)) {
+		if ($this-><?php echo $currentModelName; ?>->delete()) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'));
 			$this->redirect(array('action'=>'index'));

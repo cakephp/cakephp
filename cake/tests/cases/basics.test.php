@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Core', 'Folder');
 /**
  * BasicsTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  */
 class BasicsTest extends CakeTestCase {
 
@@ -165,25 +163,6 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER = $__SERVER;
 		$_ENV = $__ENV;
-	}
-
-/**
- * test uses()
- *
- * @return void
- * @access public
- * @deprecated
- */
-	function testUses() {
-		$this->skipIf(class_exists('Security') || class_exists('Sanitize'), '%s Security and/or Sanitize class already loaded');
-
-		$this->assertFalse(class_exists('Security'));
-		$this->assertFalse(class_exists('Sanitize'));
-
-		uses('Security', 'Sanitize');
-
-		$this->assertTrue(class_exists('Security'));
-		$this->assertTrue(class_exists('Sanitize'));
 	}
 
 /**
@@ -686,11 +665,19 @@ class BasicsTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', true);
+			debug('<div>this-is-a-test</div>');
 		$result = ob_get_clean();
 		$pattern = '/(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
 		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
 		$pattern .=	'.*line.*' . (__LINE__ - 4) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
+		$this->assertPattern($pattern, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', false);
+		$result = ob_get_clean();
+		$pattern = '/(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
+		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
+		$pattern .=	'.*line.*' . (__LINE__ - 4) . '.*\<div\>this-is-a-test\<\/div\>.*/s';
 		$this->assertPattern($pattern, $result);
 	}
 

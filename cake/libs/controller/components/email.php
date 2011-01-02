@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.3467
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::import('Core', 'Multibyte');
  * This component is used for handling Internet Message Format based
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1283/Email
  *
  */
@@ -98,6 +96,15 @@ class EmailComponent extends Component {
 	public $bcc = array();
 
 /**
+ * The date to put in the Date: header.  This should be a date
+ * conformant with the RFC2822 standard.  Leave null, to have
+ * today's date generated.
+ *
+ * @var string
+ */
+	var $date = null;
+
+/**
  * The subject of the email
  *
  * @var string
@@ -147,6 +154,18 @@ class EmailComponent extends Component {
  * @access public
  */
 	public $lineLength = 70;
+
+/**
+ * Line feed character(s) to be used when sending using mail() function
+ * If null PHP_EOL is used.
+ * RFC2822 requires it to be CRLF but some Unix
+ * mail transfer agents replace LF by CRLF automatically
+ * (which leads to doubling CR if CRLF is used).
+ *
+ * @var string
+ * @access public
+ */
+	var $lineFeed = null;
 
 /**
  * @deprecated see lineLength
@@ -261,6 +280,9 @@ class EmailComponent extends Component {
  * it be handled by sendmail (or similar) or a string
  * to completely override the Message-ID.
  *
+ * If you are sending Email from a shell, be sure to set this value.  As you
+ * could encounter delivery issues if you do not.
+ *
  * @var mixed
  * @access public
  */
@@ -314,7 +336,7 @@ class EmailComponent extends Component {
  *
  * @param object $controller Instantiating controller
  */
-	public function initialize(&$controller) {
+	public function initialize($controller) {
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
@@ -325,7 +347,7 @@ class EmailComponent extends Component {
  *
  * @param object $controller Instantiating controller
  */
-	public function startup(&$controller) {}
+	public function startup($controller) {}
 
 /**
  * Send an email using the specified content, template and layout
@@ -412,6 +434,7 @@ class EmailComponent extends Component {
 		$this->bcc = array();
 		$this->subject = null;
 		$this->additionalParams = null;
+		$this->date = null;
 		$this->smtpError = null;
 		$this->attachments = array();
 		$this->htmlMessage = null;
@@ -575,6 +598,12 @@ class EmailComponent extends Component {
 				$headers['Message-ID'] = $this->messageId;
 			}
 		}
+
+		$date = $this->date;
+		if ($date == false) {
+			$date = date(DATE_RFC2822);
+		}
+		$headers['Date'] = $date;
 
 		$headers['X-Mailer'] = $this->xMailer;
 
@@ -790,8 +819,13 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _mail() {
-		$header = implode("\r\n", $this->_header);
-		$message = implode("\r\n", $this->_message);
+		if ($this->lineFeed === null) {
+			$lineFeed = PHP_EOL;
+		} else {
+			$lineFeed = $this->lineFeed;
+		}
+		$header = implode($lineFeed, $this->_header);
+		$message = implode($lineFeed, $this->_message);
 		if (is_array($this->to)) {
 			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {
@@ -861,7 +895,7 @@ class EmailComponent extends Component {
 		}
 
 		if (!is_array($this->to)) {
-			$tos = array($this->to);
+			$tos = array_map('trim', explode(',', $this->to));
 		} else {
 			$tos = $this->to;
 		}

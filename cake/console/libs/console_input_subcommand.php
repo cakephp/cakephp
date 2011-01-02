@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,19 +22,38 @@
  * ConsoleOptionParser creates these when you use addSubcommand()
  *
  * @see ConsoleOptionParser::addSubcommand()
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleInputSubcommand {
 
-	protected $_name, $_help, $_parser;
+/**
+ * Name of the subcommand
+ *
+ * @var string
+ */
+	protected $_name;
+
+/**
+ * Help string for the subcommand
+ *
+ * @var string
+ */
+	protected $_help; 
+
+/**
+ * The ConsoleOptionParser for this subcommand.
+ *
+ * @var ConsoleOptionParser
+ */
+	protected $_parser;
 
 /**
  * Make a new Subcommand
  *
  * @param mixed $name The long name of the subcommand, or an array with all the properites.
  * @param string $help The help text for this option
- * @param ConsoleOptionParser $parser A parser for this subcommand.
- * @return void
+ * @param mixed $parser A parser for this subcommand. Either a ConsoleOptionParser, or an array that can be 
+ *   used with ConsoleOptionParser::buildFromArray()
  */
 	public function __construct($name, $help = '', $parser = null) {
 		if (is_array($name) && isset($name['name'])) {

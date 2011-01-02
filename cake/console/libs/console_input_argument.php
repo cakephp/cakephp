@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console
+ * @package       cake.console.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,11 +21,36 @@
  * ConsoleOptionParser creates these when you use addArgument()
  *
  * @see ConsoleOptionParser::addArgument()
- * @package cake.console
+ * @package cake.console.libs
  */
 class ConsoleInputArgument {
+/**
+ * Name of the argument.
+ *
+ * @var string
+ */
+	protected $_name;
 
-	protected $_name, $_help, $_required, $_choices;
+/**
+ * Help string
+ *
+ * @var string
+ */
+	protected $_help;
+
+/**
+ * Is this option required?
+ *
+ * @var boolean
+ */
+	protected $_required;
+
+/**
+ * An array of valid choices for this argument.
+ *
+ * @var array
+ */
+	protected $_choices;
 
 /**
  * Make a new Input Argument
@@ -34,8 +58,7 @@ class ConsoleInputArgument {
  * @param mixed $name The long name of the option, or an array with all the properites.
  * @param string $help The help text for this option
  * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
- * @param arraty $choices Valid choices for this option.
- * @return void
+ * @param array $choices Valid choices for this option.
  */
 	public function __construct($name, $help = '', $required = false, $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
@@ -60,7 +83,7 @@ class ConsoleInputArgument {
 	}
 
 /**
- * Generate the help for this this argument.
+ * Generate the help for this argument.
  *
  * @param int $width The width to make the name of the option.
  * @return string 
@@ -116,7 +139,7 @@ class ConsoleInputArgument {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new InvalidArgumentException(sprintf(
+			throw new ConsoleException(sprintf(
 				__('"%s" is not a valid value for %s.  Please use one of "%s"'), 
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
@@ -125,7 +148,7 @@ class ConsoleInputArgument {
 	}
 
 /**
- * Append this argument to the passed in SimpleXml object.
+ * Append this arguments XML representation to the passed in SimpleXml object.
  *
  * @param SimpleXmlElement The parent element.
  * @return SimpleXmlElement The parent with this argument appended.

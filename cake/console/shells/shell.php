@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ require_once CONSOLE_LIBS . 'console_option_parser.php';
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs
+ * @package       cake.console.shells
  */
 class Shell extends Object {
 
@@ -220,6 +218,7 @@ class Shell extends Object {
 		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
+		App::import('Core', 'ClassRegistry');
 
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);

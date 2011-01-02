@@ -14,17 +14,16 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'config/PhpReader');
 
 /**
  * ConfigureTest
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ConfigureTest extends CakeTestCase {
 
@@ -70,6 +69,7 @@ class ConfigureTest extends CakeTestCase {
 		}
 		Configure::write('debug', $this->_debug);
 		Configure::write('Cache.disable', $this->_cacheDisable);
+		Configure::drop('test');
 	}
 
 /**
@@ -184,18 +184,26 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testLoad method
  *
- * @access public
+ * @expectedException RuntimeException
+ * @return void
+ */
+	function testLoadExceptionOnNonExistantFile() {
+		Configure::config('test', new PhpReader());
+		$result = Configure::load('non_existing_configuration_file', 'test');
+	}
+
+/**
+ * test load
+ *
  * @return void
  */
 	function testLoad() {
-		$result = Configure::load('non_existing_configuration_file');
-		$this->assertFalse($result);
+		Configure::config('test', new PhpReader(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS));
 
-		$result = Configure::load('config');
+		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
-
-		$result = Configure::load('../../index');
-		$this->assertFalse($result);
+		
+		$this->assertEquals('value', Configure::read('Read'));
 	}
 
 /**
@@ -206,13 +214,15 @@ class ConfigureTest extends CakeTestCase {
  */
 	function testLoadPlugin() {
 		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
-		$result = Configure::load('test_plugin.load');
+		Configure::config('test', new PhpReader());
+
+		$result = Configure::load('test_plugin.load', 'test');
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/load.php';
 		$config = Configure::read('plugin_load');
 		$this->assertEqual($config, $expected);
 
-		$result = Configure::load('test_plugin.more.load');
+		$result = Configure::load('test_plugin.more.load', 'test');
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
 		$config = Configure::read('plugin_more_load');
@@ -225,25 +235,39 @@ class ConfigureTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStoreAndLoad() {
+	function testStoreAndRestore() {
 		Configure::write('Cache.disable', false);
 
-		$expected = array('data' => 'value with backslash \, \'singlequote\' and "doublequotes"');
-		Configure::store('SomeExample', 'test', $expected);
+		Configure::write('Testing', 'yummy');
+		$this->assertTrue(Configure::store('store_test', 'default'));
 
-		Configure::load('test');
-		$config = Configure::read('SomeExample');
-		$this->assertEqual($config, $expected);
+		Configure::delete('Testing');
+		$this->assertNull(Configure::read('Testing'));
 
-		$expected = array(
-			'data' => array('first' => 'value with backslash \, \'singlequote\' and "doublequotes"', 'second' => 'value2'),
-			'data2' => 'value'
-		);
-		Configure::store('AnotherExample', 'test_config', $expected);
+		Configure::restore('store_test', 'default');
+		$this->assertEquals('yummy', Configure::read('Testing'));
 
-		Configure::load('test_config');
-		$config = Configure::read('AnotherExample');
-		$this->assertEqual($config, $expected);
+		Cache::delete('store_test', 'default');
+	}
+
+/**
+ * test that store and restore only store/restore the provided data.
+ *
+ * @return void
+ */
+	function testStoreAndRestoreWithData() {
+		Configure::write('Cache.disable', false);
+
+		Configure::write('testing', 'value');
+		Configure::store('store_test', 'default', array('store_test' => 'one'));
+		Configure::delete('testing');
+		$this->assertNull(Configure::read('store_test'), 'Calling store with data shouldnt modify runtime.');
+
+		Configure::restore('store_test', 'default');
+		$this->assertEquals('one', Configure::read('store_test'));
+		$this->assertNull(Configure::read('testing'), 'Values that were not stored are not restored.');
+
+		Cache::delete('store_test', 'default');
 	}
 
 /**
@@ -255,6 +279,36 @@ class ConfigureTest extends CakeTestCase {
 	function testVersion() {
 		$result = Configure::version();
 		$this->assertTrue(version_compare($result, '1.2', '>='));
+	}
+
+/**
+ * test adding new readers.
+ *
+ * @return void
+ */
+	function testReaderSetup() {
+		$reader = new PhpReader();
+		Configure::config('test', $reader);
+		$configured = Configure::configured();
+
+		$this->assertTrue(in_array('test', $configured));
+
+		$this->assertTrue(Configure::configured('test'));
+		$this->assertFalse(Configure::configured('fake_garbage'));
+
+		$this->assertTrue(Configure::drop('test'));
+		$this->assertFalse(Configure::drop('test'), 'dropping things that do not exist should return false.');
+	}
+
+/**
+ * test reader() throwing exceptions on missing interface.
+ *
+ * @expectedException Exception
+ * @return void
+ */
+	function testReaderExceptionOnIncorrectClass() {
+		$reader = new StdClass();
+		Configure::config('test', $reader);
 	}
 }
 

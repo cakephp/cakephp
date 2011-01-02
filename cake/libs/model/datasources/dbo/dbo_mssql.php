@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * Long description for class
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  */
 class DboMssql extends DboSource {
 
@@ -227,7 +225,7 @@ class DboMssql extends DboSource {
  * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
  */
-	function describe(&$model) {
+	function describe($model) {
 		$cache = parent::describe($model);
 
 		if ($cache != null) {
@@ -317,7 +315,7 @@ class DboMssql extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
+	function fields($model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -383,7 +381,7 @@ class DboMssql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function create(&$model, $fields = null, $values = null) {
+	function create($model, $fields = null, $values = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -413,7 +411,7 @@ class DboMssql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -667,7 +665,7 @@ class DboMssql extends DboSource {
  * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
-	function read(&$model, $queryData = array(), $recursive = null) {
+	function read($model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
 		$this->__fieldMappings = array();
 		return $results;

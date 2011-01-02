@@ -1,9 +1,6 @@
 <?php
 /**
- * CakeResponse is responsible for managing the response text, status and headers of a HTTP response.
- * 
- * By default controllers will use this class to render their response. If you are going to use 
- * a custom response class it should subclass this object in order to ensure compatibility.
+ * CakeResponse 
  *
  * PHP 5
  *
@@ -15,10 +12,17 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+/**
+ * CakeResponse is responsible for managing the response text, status and headers of a HTTP response.
+ * 
+ * By default controllers will use this class to render their response. If you are going to use 
+ * a custom response class it should subclass this object in order to ensure compatibility.
+ *
+ * @package cake.libs
  */
 class CakeResponse {
 
@@ -448,13 +452,14 @@ class CakeResponse {
  *
  * @param integer $code
  * @return integer current status code
+ * @throws CakeException When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if (is_null($code)) {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new OutOfRangeException(__('Unknown status code'));
+			throw new CakeException(__('Unknown status code'));
 		}
 		return $this->_status = $code;
 	}
@@ -500,15 +505,19 @@ class CakeResponse {
  * if $contentType is an associative array, it will be stored as a content type definition
  *
  * ### Setting the content type
+ *
  * e.g `type('jpg');`
  *
  * ### Returning the current content type
+ *
  * e.g `type();`
  *
  * ### Storing a content type definition
+ *
  * e.g `type(array('keynote' => 'application/keynote'));`
  *
  * ### Replacing a content type definition
+ *
  * e.g `type(array('jpg' => 'text/plain'));`
  *
  * @param string $contentType
@@ -623,7 +632,8 @@ class CakeResponse {
 	}
 
 /**
- * Sets the correct output buffering handler to send a compressed response
+ * Sets the correct output buffering handler to send a compressed response. Responses will
+ * be compressed with zlib, if the extension is available.
  *
  * @return boolean false if client does not accept compressed responses or no handler is available, true otherwise
  */
@@ -635,7 +645,7 @@ class CakeResponse {
 	}
 
 /**
- * Sets the correct headers to instruct the browser to dowload the response as a file
+ * Sets the correct headers to instruct the browser to dowload the response as a file.
  *
  * @param string $filename the name of the file as the browser will download the response
  * @return void

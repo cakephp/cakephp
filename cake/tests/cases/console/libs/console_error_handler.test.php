@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.tests.cases.console
+ * @package       cake.tests.cases.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -43,7 +42,6 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
-		ConsoleErrorHandler::$stderr = null;
 	}
 
 /**
@@ -52,7 +50,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testHandleError() {
-		$content = '<error>Notice Error:</error> This is a notice error in [/some/file, line 275]';
+		$content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($content);
 

@@ -12,18 +12,17 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', 'Number');
+App::import('View', 'View');
 
 /**
  * NumberHelperTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  */
 class NumberHelperTest extends CakeTestCase {
 
@@ -320,6 +319,14 @@ class NumberHelperTest extends CakeTestCase {
 
 		$result = $this->Number->currency($value, 'GBP', array('places' => 0));
 		$expected = '&#163;1,234,568';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->currency('1234567.8912345', null, array('before' => 'GBP', 'places' => 3));
+		$expected = 'GBP1,234,567.891';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->currency('650.120001', null, array('before' => 'GBP', 'places' => 4));
+		$expected = 'GBP650.1200';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP', array('escape' => true));

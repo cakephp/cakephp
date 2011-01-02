@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Core', array('ErrorHandler', 'Controller', 'Router'));
 /**
  * ErrorHandlerTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ErrorHandlerTest extends CakeTestCase {
 
@@ -220,6 +218,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$log = file(LOGS . 'error.log');
 		$this->assertPattern('/\[NotFoundException\] Kaboom!/', $log[0], 'message missing.');
+		$this->assertPattern('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[1], 'Stack trace missing.');
 	}
 
 }

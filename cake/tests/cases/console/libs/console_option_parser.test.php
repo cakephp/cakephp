@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.console
+ * @package       cake.tests.cases.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -230,7 +229,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test parsing options that do not exist.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException ConsoleException
  */
 	function testOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -242,7 +241,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test that options with choices enforce them.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException ConsoleException
  * @return void
  */
 	function testOptionWithChoices() {
@@ -297,7 +296,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test parsing arguments.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException ConsoleException
  * @return void
  */
 	function testParseArgumentTooMany() {
@@ -315,7 +314,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test that when there are not enough arguments an exception is raised
  *
- * @expectedException RuntimeException
+ * @expectedException ConsoleException
  * @return void
  */
 	function testPositionalArgNotEnough() {
@@ -329,7 +328,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test that arguments with choices enforce them.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException ConsoleException
  * @return void
  */
 	function testPositionalArgWithChoices() {

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +28,7 @@ if (!class_exists('Folder')) {
 /**
  * Convenience class for reading, writing and appending to files.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 class File {
 
@@ -90,7 +88,6 @@ class File {
  * @param string $path Path to file
  * @param boolean $create Create file if it does not exist (if true)
  * @param integer $mode Mode to apply to the folder holding the file
- * @access private
  */
 	function __construct($path, $create = false, $mode = 0755) {
 		$this->Folder = new Folder(dirname($path), $create, $mode);
@@ -104,7 +101,6 @@ class File {
 /**
  * Closes the current file if it is opened
  *
- * @access private
  */
 	function __destruct() {
 		$this->close();
@@ -214,7 +210,7 @@ class File {
  * @param string $data Data to prepare for writing.
  * @return string The with converted line endings.
  */
-	public function prepare($data, $forceWindows = false) {
+	public static function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
 		if (DIRECTORY_SEPARATOR == '\\' || $forceWindows === true) {
 			$lineBreak = "\r\n";

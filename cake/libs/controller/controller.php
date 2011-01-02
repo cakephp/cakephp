@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @package       cake.libs.controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,15 +26,28 @@ App::import('Controller', 'Component', false);
 App::import('View', 'View', false);
 
 /**
- * Controller
- *
  * Application controller class for organization of business logic.
  * Provides basic functionality, such as rendering views inside layouts,
  * automatic model availability, redirection, callbacks, and more.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller
- * @link          http://book.cakephp.org/view/956/Introduction
+ * Controllers should provide a number of 'action' methods.  These are public methods on the controller
+ * that are not prefixed with a '_' and not part of Controller.  Each action serves as an endpoint for 
+ * performing a specific action on a resource or collection of resources.  For example adding or editing a new
+ * object, or listing a set of objects.
+ *
+ * You can access request parameters, using `$this->request`.  The request object contains all the POST, GET and FILES
+ * that were part of the request. 
+ *
+ * After performing the required actions, controllers are responsible for creating a response.  This usually
+ * takes the form of a generated View, or possibly a redirection to another controller action.  In either case
+ * `$this->response` allows you to manipulate all aspects of the response.
+ *
+ * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
+ * use conventional names.  For example `/posts/index` maps to `PostsController::index()`.  You can re-map urls
+ * using Router::connect().
+ *
+ * @package    cake.libs.controller
+ * @link       http://book.cakephp.org/view/956/Introduction
  */
 class Controller extends Object {
 
@@ -95,26 +107,6 @@ class Controller extends Object {
 	protected $_responseClass = 'CakeResponse';
 
 /**
- * Holds pagination defaults for controller actions. The keys that can be included
- * in this array are: 'conditions', 'fields', 'order', 'limit', 'page', and 'recursive',
- * similar to the keys in the second parameter of Model::find().
- *
- * Pagination defaults can also be supplied in a model-by-model basis by using
- * the name of the model as a key for a pagination array:
- *
- * {{{
- * public $paginate = array(
- * 		'Post' => array(...),
- * 		'Comment' => array(...)
- * 	);
- * }}}
- *
- * @var array
- * @link http://book.cakephp.org/view/1231/Pagination
- */
-	public $paginate = array('limit' => 20, 'page' => 1);
-
-/**
  * The name of the views subfolder containing views for this controller.
  *
  * @var string
@@ -168,7 +160,7 @@ class Controller extends Object {
 	public $autoLayout = true;
 
 /**
- * Instance of Component used to handle callbacks.
+ * Instance of ComponentCollection used to handle callbacks.
  *
  * @var string
  */
@@ -260,7 +252,8 @@ class Controller extends Object {
 	public $scaffold = false;
 
 /**
- * Holds current methods of the controller
+ * Holds current methods of the controller.  This is a list of all the methods reachable
+ * via url.  Modifying this array, will allow you to change which methods can be reached.
  *
  * @var array
  */
@@ -293,6 +286,15 @@ class Controller extends Object {
 	public $validationErrors = null;
 
 /**
+ * The class name of the parent class you wish to merge with.
+ * Typically this is AppController, but you may wish to merge vars with a different
+ * parent class.
+ *
+ * @var string
+ */
+	protected $_mergeParent = 'AppController';
+
+/**
  * Constructor.
  *
  * @param CakeRequest $request Request object for this controller can be null for testing.
@@ -321,7 +323,7 @@ class Controller extends Object {
 		$this->methods = array_diff($childMethods, $parentMethods);
 
 		if ($request instanceof CakeRequest) {
-			$this->_setRequest($request);
+			$this->setRequest($request);
 		}
 		$this->getResponse();
 		parent::__construct();
@@ -362,6 +364,8 @@ class Controller extends Object {
 				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
 			case 'params':
 				return $this->request;
+			case 'paginate':
+				return $this->Components->load('Paginator')->settings;
 		}
 		return null;
 	}
@@ -382,6 +386,8 @@ class Controller extends Object {
 				return $this->request->params['action'] = $value;
 			case 'params':
 				return $this->request->params = $value;
+			case 'paginate':
+				return $this->Components->load('Paginator')->settings = $value;
 		}
 		return $this->{$name} = $value;
 	}
@@ -393,7 +399,7 @@ class Controller extends Object {
  * @param CakeRequest $request
  * @return void
  */
-	protected function _setRequest(CakeRequest $request) {
+	public function setRequest(CakeRequest $request) {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
 
@@ -410,7 +416,7 @@ class Controller extends Object {
 	}
 
 /**
- * Merge components, helpers, and uses vars from AppController and PluginAppController.
+ * Merge components, helpers, and uses vars from Controller::$_mergeParent and PluginAppController.
  *
  * @return void
  */
@@ -426,8 +432,8 @@ class Controller extends Object {
 			$plugin = $pluginName . '.';
 		}
 		
-		if (is_subclass_of($this, 'AppController') || !empty($pluginController)) {
-			$appVars = get_class_vars('AppController');
+		if (is_subclass_of($this, $this->_mergeParent) || !empty($pluginController)) {
+			$appVars = get_class_vars($this->_mergeParent);
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
@@ -440,17 +446,23 @@ class Controller extends Object {
 					$this->uses = array_flip($this->uses);
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
-			} elseif ($this->uses !== null || $this->uses !== false) {
-				$this->_mergeVars(array('uses'), 'AppController', false);
+			} elseif (
+				($this->uses !== null || $this->uses !== false) && 
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
-			$this->_mergeVars($merge, 'AppController', true);
+			$this->_mergeVars($merge, $this->_mergeParent, true);
 		}
 
 		if ($pluginController && $pluginName != null) {
 			$merge = array('components', 'helpers');
-
-			if ($this->uses !== null || $this->uses !== false) {
-				$this->_mergeVars(array('uses'), $pluginController, false);
+			$appVars = get_class_vars($pluginController);
+			if (
+				($this->uses !== null || $this->uses !== false) && 
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
 			$this->_mergeVars($merge, $pluginController);
 		}
@@ -476,9 +488,10 @@ class Controller extends Object {
 			} else {
 				$id = $this->passedArgs['0'];
 			}
+			$plugin = $this->plugin ? $this->plugin . '.' : null;
 
 			if ($this->uses === false) {
-				$this->loadModel($this->modelClass, $id);
+				$this->loadModel($plugin . $this->modelClass, $id);
 			} elseif ($this->uses) {
 				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 				list($plugin, $modelClassName) = pluginSplit($uses[0]);
@@ -550,7 +563,7 @@ class Controller extends Object {
  *
  * @return mixed Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @deprecated
+ * @deprecated Use CakeResponse::httpCodes();
  */
 	public function httpCodes($code = null) {
 		return $this->response->httpCodes($code);
@@ -671,7 +684,7 @@ class Controller extends Object {
  *
  * @param string $status The header message that is being set.
  * @return void
- * @deprecated
+ * @deprecated Use CakeResponse::header()
  */
 	public function header($status) {
 		$this->response->header($status);
@@ -859,7 +872,7 @@ class Controller extends Object {
  *
  * @return void
  * @link http://book.cakephp.org/view/988/disableCache
- * @deprecated
+ * @deprecated Use CakeResponse::disableCache()
  */
 	public function disableCache() {
 		$this->response->disableCache();
@@ -953,205 +966,15 @@ class Controller extends Object {
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  * @link http://book.cakephp.org/view/1232/Controller-Setup
+ * @deprecated Use PaginatorComponent instead
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
-		if (is_array($object)) {
-			$whitelist = $scope;
-			$scope = $object;
-			$object = null;
-		}
-		$assoc = null;
-
-		if (is_string($object)) {
-			$assoc = null;
-			if (strpos($object, '.')  !== false) {
-				list($object, $assoc) = pluginSplit($object);
-			}
-
-			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object = $this->{$object}->{$assoc};
-			} elseif (
-				$assoc && isset($this->{$this->modelClass}) &&
-				isset($this->{$this->modelClass}->{$assoc}
-			)) {
-				$object = $this->{$this->modelClass}->{$assoc};
-			} elseif (isset($this->{$object})) {
-				$object = $this->{$object};
-			} elseif (
-				isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object}
-			)) {
-				$object = $this->{$this->modelClass}->{$object};
-			}
-		} elseif (empty($object) || $object === null) {
-			if (isset($this->{$this->modelClass})) {
-				$object = $this->{$this->modelClass};
-			} else {
-				$className = null;
-				$name = $this->uses[0];
-				if (strpos($this->uses[0], '.') !== false) {
-					list($name, $className) = explode('.', $this->uses[0]);
-				}
-				if ($className) {
-					$object = $this->{$className};
-				} else {
-					$object = $this->{$name};
-				}
-			}
-		}
-
-		if (!is_object($object)) {
-			trigger_error(sprintf(
-				__('Controller::paginate() - can\'t find model %1$s in controller %2$sController'), $object, $this->name
-			), E_USER_WARNING);
-			return array();
-		}
-		$options = array_merge($this->request->params, $this->request->query, $this->passedArgs);
-
-		if (isset($this->paginate[$object->alias])) {
-			$defaults = $this->paginate[$object->alias];
-		} else {
-			$defaults = $this->paginate;
-		}
-
-		if (isset($options['show'])) {
-			$options['limit'] = $options['show'];
-		}
-
-		if (isset($options['sort'])) {
-			$direction = null;
-			if (isset($options['direction'])) {
-				$direction = strtolower($options['direction']);
-			}
-			if ($direction != 'asc' && $direction != 'desc') {
-				$direction = 'asc';
-			}
-			$options['order'] = array($options['sort'] => $direction);
-		}
-
-		if (!empty($options['order']) && is_array($options['order'])) {
-			$alias = $object->alias ;
-			$key = $field = key($options['order']);
-
-			if (strpos($key, '.') !== false) {
-				list($alias, $field) = explode('.', $key);
-			}
-			$value = $options['order'][$key];
-			unset($options['order'][$key]);
-
-			if ($object->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field, true)) {
-				$options['order'][$field] = $value;
-			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			}
-		}
-		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
-		$keys = array_keys($options);
-		$count = count($keys);
-
-		for ($i = 0; $i < $count; $i++) {
-			if (!in_array($keys[$i], $vars, true)) {
-				unset($options[$keys[$i]]);
-			}
-			if (empty($whitelist) && ($keys[$i] === 'fields' || $keys[$i] === 'recursive')) {
-				unset($options[$keys[$i]]);
-			} elseif (!empty($whitelist) && !in_array($keys[$i], $whitelist)) {
-				unset($options[$keys[$i]]);
-			}
-		}
-		$conditions = $fields = $order = $limit = $page = $recursive = null;
-
-		if (!isset($defaults['conditions'])) {
-			$defaults['conditions'] = array();
-		}
-
-		$type = 'all';
-
-		if (isset($defaults[0])) {
-			$type = $defaults[0];
-			unset($defaults[0]);
-		}
-
-		$options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options);
-		$options['limit'] = (int) $options['limit'];
-		if (empty($options['limit']) || $options['limit'] < 1) {
-			$options['limit'] = 1;
-		}
-
-		extract($options);
-
-		if (is_array($scope) && !empty($scope)) {
-			$conditions = array_merge($conditions, $scope);
-		} elseif (is_string($scope)) {
-			$conditions = array($conditions, $scope);
-		}
-		if ($recursive === null) {
-			$recursive = $object->recursive;
-		}
-
-		$extra = array_diff_key($defaults, compact(
-			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
-		));
-		if ($type !== 'all') {
-			$extra['type'] = $type;
-		}
-
-		if (method_exists($object, 'paginateCount')) {
-			$count = $object->paginateCount($conditions, $recursive, $extra);
-		} else {
-			$parameters = compact('conditions');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$count = $object->find('count', array_merge($parameters, $extra));
-		}
-		$pageCount = intval(ceil($count / $limit));
-
-		if ($page === 'last' || $page >= $pageCount) {
-			$options['page'] = $page = $pageCount;
-		} elseif (intval($page) < 1) {
-			$options['page'] = $page = 1;
-		}
-		$page = $options['page'] = (integer)$page;
-
-		if (method_exists($object, 'paginate')) {
-			$results = $object->paginate(
-				$conditions, $fields, $order, $limit, $page, $recursive, $extra
-			);
-		} else {
-			$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$results = $object->find($type, array_merge($parameters, $extra));
-		}
-		$paging = array(
-			'page'		=> $page,
-			'current'	=> count($results),
-			'count'		=> $count,
-			'prevPage'	=> ($page > 1),
-			'nextPage'	=> ($count > ($page * $limit)),
-			'pageCount'	=> $pageCount,
-			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
-			'options'	=> $options
-		);
-		if (!isset($this->request->params['paging'])) {
-			$this->request->params['paging'] = array();
-		}
-		$this->request->params['paging'] = array_merge(
-			(array)$this->request->params['paging'],
-			array($object->alias => $paging)
-		);
-
-		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
-			$this->helpers[] = 'Paginator';
-		}
-		return $results;
+		return $this->Components->load('Paginator', $this->paginate)->paginate($object, $scope, $whitelist);
 	}
 
 /**
- * Called before the controller action.
+ * Called before the controller action.  You can use this method to configure and customize components
+ * or perform logic that needs to happen before each controller action.
  *
  * @link http://book.cakephp.org/view/984/Callbacks
  */
@@ -1159,7 +982,8 @@ class Controller extends Object {
 	}
 
 /**
- * Called after the controller action is run, but before the view is rendered.
+ * Called after the controller action is run, but before the view is rendered. You can use this method
+ * to perform logic or set view variables that are required on every request.
  *
  * @link http://book.cakephp.org/view/984/Callbacks
  */

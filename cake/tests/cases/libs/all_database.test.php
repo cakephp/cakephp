@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases
+ * @package       cake.tests.cases
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * This test group will run database tests not in model or behavior group.
  *
- * @package       cake
- * @subpackage    cake.tests.groups
+ * @package       cake.tests.groups
  */
 class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 
@@ -37,8 +35,15 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 		$suite = new PHPUnit_Framework_TestSuite('Datasources, Schema and DbAcl tests');
 
 		$path = CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS;
-
-		$tasks = array('db_acl', 'cake_schema', 'connection_manager', 'datasources' . DS . 'dbo_source');
+		$tasks = array(
+			'db_acl',
+			'cake_schema',
+			'connection_manager',
+			'datasources' . DS . 'dbo_source',
+			'datasources' . DS . 'dbo' . DS . 'dbo_mysql',
+			'datasources' . DS . 'dbo' . DS . 'dbo_postgres',
+			'datasources' . DS . 'dbo' . DS . 'dbo_sqlite'
+		);
 		foreach ($tasks as $task) {
 			$suite->addTestFile($path . $task . '.test.php');
 		}

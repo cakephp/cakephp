@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -38,8 +37,7 @@ App::import('Model', 'ConnectionManager', false);
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment' primary key.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  * @link          http://book.cakephp.org/view/1000/Models
  */
 class Model extends Object {
@@ -330,7 +328,13 @@ class Model extends Object {
  * @var array
  * @access private
  */
-	private $__backAssociation = array();
+	public $__backAssociation = array();
+
+	public $__backInnerAssociation = array();
+	
+	public $__backOriginalAssociation = array();
+	
+	public $__backContainableAssociation = array();
 
 /**
  * The ID of the model record that was last inserted.
@@ -904,9 +908,6 @@ class Model extends Object {
 
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
-
-			$db = $this->getDataSource();
-			$format = $db->columns[$type]['format'];
 			$date = array();
 
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
@@ -949,9 +950,13 @@ class Model extends Object {
 					}
 				}
 			}
-			$date = str_replace(array_keys($date), array_values($date), $format);
+
+			$format = $this->getDataSource()->columns[$type]['format'];
+			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
+			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
+			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date;
+				return $date->format($format);
 			}
 		}
 		return $data;
@@ -1057,6 +1062,23 @@ class Model extends Object {
 
 		if ($this->_schema != null) {
 			return isset($this->_schema[$name]);
+		}
+		return false;
+	}
+
+/**
+ * Check that a method is callable on a model.  This will check both the model's own methods, its 
+ * inherited methods and methods that could be callable through behaviors.
+ *
+ * @param string $method The method to be called.
+ * @return boolean True on method being callable.
+ */
+	public function hasMethod($method) {
+		if (method_exists($this, $method)) {
+			return true;
+		}
+		if ($this->Behaviors->hasMethod($method)) {
+			return true;
 		}
 		return false;
 	}
@@ -1314,8 +1336,8 @@ class Model extends Object {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
-			$result = $this->Behaviors->trigger($this, 'beforeSave', array($options), array(
-				'break' => true, 'breakOn' => false
+			$result = $this->Behaviors->trigger('beforeSave', array(&$this, $options), array(
+				'break' => true, 'breakOn' => array(false, null)
 			));
 			if (!$result || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
@@ -1398,7 +1420,7 @@ class Model extends Object {
 				$success = $this->data;
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
-				$this->Behaviors->trigger($this, 'afterSave', array($created, $options));
+				$this->Behaviors->trigger('afterSave', array(&$this, $created, $options));
 				$this->afterSave($created);
 			}
 			if (!empty($this->data)) {
@@ -1449,15 +1471,11 @@ class Model extends Object {
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
-						$values = array(
-							$db->value($id, $this->getColumnType($this->primaryKey)),
-							$db->value($row)
-						);
+						$values = array($id, $row);
 						if ($isUUID && $primaryAdded) {
-							$values[] = $db->value(String::uuid());
+							$values[] = String::uuid();
 						}
-						$values = implode(',', $values);
-						$newValues[] = "({$values})";
+						$newValues[] = $values;
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
@@ -1496,7 +1514,6 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$fields = implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
@@ -1849,13 +1866,15 @@ class Model extends Object {
 		$id = $this->id;
 
 		if ($this->beforeDelete($cascade)) {
-			$filters = $this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array(
-				'break' => true, 'breakOn' => false
-			));
+			$filters = $this->Behaviors->trigger(
+				'beforeDelete',
+				array(&$this, $cascade),
+				array('break' => true, 'breakOn' => array(false, null))
+			);
 			if (!$filters || !$this->exists()) {
 				return false;
 			}
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = ConnectionManager::getDataSource($this->useDbConfig);
 
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);
@@ -1872,7 +1891,7 @@ class Model extends Object {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				$this->Behaviors->trigger($this, 'afterDelete');
+				$this->Behaviors->trigger('afterDelete', array(&$this));
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
@@ -2136,9 +2155,12 @@ class Model extends Object {
 		$query['order'] = array($query['order']);
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
-			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array(
-				'break' => true, 'breakOn' => false, 'modParams' => true
-			));
+			$return = $this->Behaviors->trigger(
+				'beforeFind', 
+				array(&$this, $query),
+				array('break' => true, 'breakOn' => array(false, null), 'modParams' => 1)
+			);
+
 			$query = (is_array($return)) ? $return : $query;
 
 			if ($return === false) {
@@ -2401,7 +2423,11 @@ class Model extends Object {
  * @access private
  */
 	function __filterResults($results, $primary = true) {
-		$return = $this->Behaviors->trigger($this, 'afterFind', array($results, $primary), array('modParams' => true));
+		$return = $this->Behaviors->trigger(
+			'afterFind',
+			array(&$this, $results, $primary),
+			array('modParams' => 1)
+		);
 		if ($return !== true) {
 			$results = $return;
 		}
@@ -2526,9 +2552,8 @@ class Model extends Object {
 	function invalidFields($options = array()) {
 		if (
 			!$this->Behaviors->trigger(
-				$this,
 				'beforeValidate',
-				array($options),
+				array(&$this, $options),
 				array('break' => true, 'breakOn' => false)
 			) ||
 			$this->beforeValidate($options) === false

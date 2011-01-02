@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 class Folder {
 
@@ -240,10 +238,8 @@ class Folder {
  *
  * @param string $path Path to check
  * @return boolean true if windows path, false otherwise
- * @access public
- * @static
  */
-	function isWindowsPath($path) {
+	public static function isWindowsPath($path) {
 		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
@@ -252,10 +248,8 @@ class Folder {
  *
  * @param string $path Path to check
  * @return bool true if path is absolute.
- * @access public
- * @static
  */
-	function isAbsolute($path) {
+	public static function isAbsolute($path) {
 		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
@@ -264,10 +258,8 @@ class Folder {
  *
  * @param string $path Path to check
  * @return string Set of slashes ("\\" or "/")
- * @access public
- * @static
  */
-	function normalizePath($path) {
+	public static function normalizePath($path) {
 		return Folder::correctSlashFor($path);
 	}
 
@@ -276,10 +268,8 @@ class Folder {
  *
  * @param string $path Path to check
  * @return string Set of slashes ("\\" or "/")
- * @access public
- * @static
  */
-	function correctSlashFor($path) {
+	public static function correctSlashFor($path) {
 		return (Folder::isWindowsPath($path)) ? '\\' : '/';
 	}
 
@@ -288,10 +278,8 @@ class Folder {
  *
  * @param string $path Path to check
  * @return string Path with ending slash
- * @access public
- * @static
  */
-	function slashTerm($path) {
+	public static function slashTerm($path) {
 		if (Folder::isSlashTerm($path)) {
 			return $path;
 		}
@@ -304,10 +292,8 @@ class Folder {
  * @param string $path Path
  * @param string $element Element to and at end of path
  * @return string Combined path
- * @access public
- * @static
  */
-	function addPathElement($path, $element) {
+	public static function addPathElement($path, $element) {
 		return rtrim($path, DS) . DS . $element;
 	}
 
@@ -755,10 +741,8 @@ class Folder {
  *
  * @param string $path Path to check
  * @return boolean true if path ends with slash, false otherwise
- * @access public
- * @static
  */
-	function isSlashTerm($path) {
+	public static function isSlashTerm($path) {
 		$lastChar = $path[strlen($path) - 1];
 		return $lastChar === '/' || $lastChar === '\\';
 	}

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.8.2156
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::import('Core', 'Security', false);
 /**
  * SecurityComponent
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1296/Security-Component
  */
 class SecurityComponent extends Component {
@@ -211,7 +209,7 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return void
  */
-	public function startup(&$controller) {
+	public function startup($controller) {
 		$this->request = $controller->request;
 		$this->_action = strtolower($this->request->params['action']);
 		$this->_methodsRequired($controller);
@@ -319,7 +317,6 @@ class SecurityComponent extends Component {
 		}
 		$this->loginOptions = array_merge($base, $this->loginOptions);
 		$this->_requireMethod('Login', $args);
-
 		if (isset($this->loginOptions['users'])) {
 			$this->loginUsers =& $this->loginOptions['users'];
 		}
@@ -441,7 +438,7 @@ class SecurityComponent extends Component {
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/view/1307/blackHole-object-controller-string-error
  */
-	function blackHole(&$controller, $error = '') {
+	function blackHole($controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
 			if ($error == 'login') {
@@ -474,7 +471,7 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return bool true if $method is required
  */
-	protected function _methodsRequired(&$controller) {
+	protected function _methodsRequired($controller) {
 		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
 			$property = 'require' . $method;
 			if (is_array($this->$property) && !empty($this->$property)) {
@@ -497,7 +494,7 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return bool true if secure connection required
  */
-	protected function _secureRequired(&$controller) {
+	protected function _secureRequired($controller) {
 		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
 			$requireSecure = array_map('strtolower', $this->requireSecure);
 
@@ -518,7 +515,7 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return bool true if authentication required
  */
-	protected function _authRequired(&$controller) {
+	protected function _authRequired($controller) {
 		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
 			$requireAuth = array_map('strtolower', $this->requireAuth);
 
@@ -553,11 +550,11 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return bool true if login is required
  */
-	protected function _loginRequired(&$controller) {
+	protected function _loginRequired($controller) {
 		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
-			$requireLogin = array_map('strtolower', $this->requireLogin);
+			$requireLogin = $this->requireLogin;
 
-			if (in_array($this->_action, $requireLogin) || $this->requireLogin == array('*')) {
+			if (in_array($this->_action, $this->requireLogin) || $this->requireLogin == array('*')) {
 				$login = $this->loginCredentials($this->loginOptions['type']);
 
 				if ($login == null) {
@@ -600,7 +597,7 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return bool true if submitted form is valid
  */
-	protected function _validatePost(&$controller) {
+	protected function _validatePost($controller) {
 		if (empty($controller->request->data)) {
 			return true;
 		}
@@ -619,15 +616,11 @@ class SecurityComponent extends Component {
 		}
 		unset($check['_Token']);
 
-		$locked = str_rot13($locked);
-		if (preg_match('/(\A|;|{|})O\:[0-9]+/', $locked)) {
-			return false;
-		}
+		$locked = explode('|', $locked);
 
 		$lockedFields = array();
 		$fields = Set::flatten($check);
 		$fieldList = array_keys($fields);
-		$locked = unserialize($locked);
 		$multi = array();
 
 		foreach ($fieldList as $i => $key) {
@@ -676,7 +669,7 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @return bool Success
  */
-	protected function _generateToken(&$controller) {
+	protected function _generateToken($controller) {
 		if (isset($controller->request->params['requested']) && $controller->request->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
 				$tokenData = $this->Session->read('_Token');
@@ -769,7 +762,7 @@ class SecurityComponent extends Component {
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response
  */
-	protected function _callback(&$controller, $method, $params = array()) {
+	protected function _callback($controller, $method, $params = array()) {
 		if (is_callable(array($controller, $method))) {
 			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 		} else {

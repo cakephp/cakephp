@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources
+ * @package       cake.libs.model.datasources
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@
 /**
  * DataSource base class
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources
+ * @package       cake.libs.model.datasources
  */
 class DataSource extends Object {
 
@@ -263,7 +261,7 @@ class DataSource extends Object {
  * @param Model $model
  * @return array Array of Metadata for the $model
  */
-	public function describe(&$model) {
+	public function describe($model) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
@@ -286,7 +284,7 @@ class DataSource extends Object {
  *
  * @return boolean Returns true if a transaction is not in progress
  */
-	public function begin(&$model) {
+	public function begin() {
 		return !$this->_transactionStarted;
 	}
 
@@ -295,7 +293,7 @@ class DataSource extends Object {
  *
  * @return boolean Returns true if a transaction is in progress
  */
-	public function commit(&$model) {
+	public function commit() {
 		return $this->_transactionStarted;
 	}
 
@@ -304,7 +302,7 @@ class DataSource extends Object {
  *
  * @return boolean Returns true if a transaction is in progress
  */
-	public function rollback(&$model) {
+	public function rollback() {
 		return $this->_transactionStarted;
 	}
 
@@ -328,7 +326,7 @@ class DataSource extends Object {
  * @param array $values An Array of values to save.
  * @return boolean success
  */
-	public function create(&$model, $fields = null, $values = null) {
+	public function create($model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -341,7 +339,7 @@ class DataSource extends Object {
  * @param array $queryData An array of query data used to find the data you want
  * @return mixed
  */
-	public function read(&$model, $queryData = array()) {
+	public function read($model, $queryData = array()) {
 		return false;
 	}
 
@@ -355,7 +353,7 @@ class DataSource extends Object {
  * @param array $values Array of values to be update $fields to.
  * @return boolean Success
  */
-	public function update(&$model, $fields = null, $values = null) {
+	public function update($model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -367,7 +365,7 @@ class DataSource extends Object {
  * @param Model $model The model class having record(s) deleted
  * @param mixed $id Primary key of the model
  */
-	public function delete(&$model, $id = null) {
+	public function delete($model, $id = null) {
 		if ($id == null) {
 			$id = $model->id;
 		}
@@ -384,7 +382,7 @@ class DataSource extends Object {
 	}
 
 /**
- * Returns the ID generated from the previous INSERT operation.
+ * Returns the number of rows returned by last operation.
  *
  * @param unknown_type $source
  * @return integer Number of rows returned by last operation
@@ -394,7 +392,7 @@ class DataSource extends Object {
 	}
 
 /**
- * Returns the ID generated from the previous INSERT operation.
+ * Returns the number of rows affected by last query.
  *
  * @param unknown_type $source
  * @return integer Number of rows affected by last query.
@@ -413,6 +411,7 @@ class DataSource extends Object {
 	public function enabled() {
 		return true;
 	}
+
 /**
  * Returns true if the DataSource supports the given interface (method)
  *
@@ -556,7 +555,7 @@ class DataSource extends Object {
  * @param string $key Key name to make
  * @return string Key name for model.
  */
-	public function resolveKey(&$model, $key) {
+	public function resolveKey($model, $key) {
 		return $model->alias . $key;
 	}
 

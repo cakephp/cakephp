@@ -13,17 +13,33 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
- * Caching for CakePHP.
+ * Cache provides a consistent interface to Caching in your application. It allows you
+ * to use several different Cache engines, without coupling your application to a specific 
+ * implementation.  It also allows you to change out cache storage or configuration without effecting 
+ * the rest of your application.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * You can configure Cache engines in your application's `bootstrap.php` file.  A sample configuration would 
+ * be 
+ *
+ * {{{
+ *	Cache::config('shared', array(
+ *		'engine' => 'Apc',
+ *		'prefix' => 'my_app_'
+ *  ));
+ * }}}
+ *
+ * This would configure an APC cache engine to the 'shared' alias.  You could then read and write
+ * to that cache alias by using it for the `$config` parameter in the various Cache methods.  In 
+ * general all Cache operations are supported by all cache engines.  However, Cache::increment() and
+ * Cache::decrement() are not supported by File caching.
+ *
+ * @package    cake.libs
  */
 class Cache {
 
@@ -67,7 +83,7 @@ class Cache {
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
  * @return array(engine, settings) on success, false on failure
- * @throws Exception
+ * @throws CacheException
  */
 	public static function config($name = null, $settings = array()) {
 		if (is_array($name)) {
@@ -113,10 +129,10 @@ class Cache {
 			return false;
 		}
 		$cacheClass = $class . 'Engine';
-		self::$_engines[$name] = new $cacheClass();
-		if (!self::$_engines[$name] instanceof CacheEngine) {
-			throw new Exception(__('Cache engines must use CacheEngine as a base class.'));
+		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
+			throw new CacheException(__('Cache engines must use CacheEngine as a base class.'));
 		}
+		self::$_engines[$name] = new $cacheClass();
 		if (self::$_engines[$name]->init($config)) {
 			if (time() % self::$_engines[$name]->settings['probability'] === 0) {
 				self::$_engines[$name]->gc();
@@ -456,8 +472,7 @@ class Cache {
 /**
  * Storage engine for CakePHP caching
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 abstract class CacheEngine {
 

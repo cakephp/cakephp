@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0.3830
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ if (!class_exists('Multibyte')) {
 /**
  * Offers different validation methods.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP v 1.2.0.3830
  */
 class Validation {
@@ -415,7 +413,8 @@ class Validation {
 		if (is_array($check)) {
 			return self::extension(array_shift($check), $extensions);
 		}
-		$extension = strtolower(array_pop(explode('.', $check)));
+		$pathSegments = explode('.', $check);
+		$extension = strtolower(array_pop($pathSegments));
 		foreach ($extensions as $value) {
 			if ($extension == strtolower($value)) {
 				return true;
@@ -431,7 +430,7 @@ class Validation {
  * @param string $ipVersion The IP Protocol version to validate against
  * @return boolean Success
  */
-	public function ip($check, $type = 'both') {
+	public static function ip($check, $type = 'both') {
 		$type = strtolower($type);
 		$flags = array();
 		if ($type === 'ipv4' || $type === 'both') {
@@ -668,12 +667,12 @@ class Validation {
  */
 	public static function url($check, $strict = false) {
 		self::__populateIp();
-		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z]|(%[0-9a-f]{2}))';
+		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z\p{L}\p{N}]|(%[0-9a-f]{2}))';
 		$regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
-			'(?:' . self::$__pattern['IPv4'] . '|' . self::$__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
+			'(?:' . self::$__pattern['IPv4'] . '|\[' . self::$__pattern['IPv6'] . '\]|' . self::$__pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
-			'(?:#' . $validChars . '*)?$/i';
+			'(?:#' . $validChars . '*)?$/iu';
 		return self::_check($check, $regex);
 	}
 
@@ -699,6 +698,18 @@ class Validation {
  */
 	public static function userDefined($check, $object, $method, $args = null) {
 		return call_user_func_array(array($object, $method), array($check, $args));
+	}
+
+/**
+ * Checks that a value is a valid uuid - http://tools.ietf.org/html/rfc4122
+ * 
+ * @param string $check Value to check
+ * @return boolean Success
+ * @access public
+ */
+	public static function uuid($check) {
+		$regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
+		return self::_check($check, $regex);
 	}
 
 /**

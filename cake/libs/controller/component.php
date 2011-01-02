@@ -11,8 +11,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @package       cake.libs.controller
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -35,8 +34,7 @@ App::import('Controller', 'ComponentCollection', false);
  *    but before Controller::afterFilter(). 
  * - `beforeRedirect()` - Fired before a redirect() is done.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @package       cake.libs.controller
  * @link          http://book.cakephp.org/view/993/Components
  * @see Controller::$components
  */
@@ -108,7 +106,7 @@ class Component extends Object {
  * @return void
  * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
-	public function initialize(&$controller) { }
+	public function initialize($controller) { }
 
 /**
  * Called after the Controller::beforeFilter() and before the controller action
@@ -117,7 +115,7 @@ class Component extends Object {
  * @return void
  * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
-	public function startup(&$controller) { }
+	public function startup($controller) { }
 
 /**
  * Called after the Controller::beforeRender(), after the view class is loaded, and before the
@@ -126,7 +124,7 @@ class Component extends Object {
  * @param object $controller Controller with components to beforeRender
  * @return void
  */
-	public function beforeRender(&$controller) { }
+	public function beforeRender($controller) { }
 
 /**
  * Called after Controller::render() and before the output is printed to the browser.
@@ -134,7 +132,7 @@ class Component extends Object {
  * @param object $controller Controller with components to shutdown
  * @return void
  */
-	function shutdown(&$controller) { }
+	function shutdown($controller) { }
 
 /**
  * Called before Controller::redirect().  Allows you to replace the url that will
@@ -154,6 +152,6 @@ class Component extends Object {
  * @param bool $exit Will the script exit.
  * @return mixed Either an array or null.
  */
-	public function beforeRedirect(&$controller, $url, $status = null, $exit = true) {}
+	public function beforeRedirect($controller, $url, $status = null, $exit = true) {}
 
 }

@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +28,7 @@ App::import('Model', 'App');
  * ACL Node
  *
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class AclNode extends AppModel {
 
@@ -193,8 +191,7 @@ class AclNode extends AppModel {
 /**
  * Access Control Object
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class Aco extends AclNode {
 
@@ -218,8 +215,7 @@ class Aco extends AclNode {
 /**
  * Action for Access Control Object
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class AcoAction extends AppModel {
 
@@ -243,8 +239,7 @@ class AcoAction extends AppModel {
 /**
  * Access Request Object
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class Aro extends AclNode {
 
@@ -268,8 +263,7 @@ class Aro extends AclNode {
 /**
  * Permissions linking AROs with ACOs
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class Permission extends AppModel {
 

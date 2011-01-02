@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @since         CakePHP(tm) v 1.1.7.3328
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,25 +24,11 @@ if (!class_exists('CakeSession')) {
  *
  * Session reading from the view.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1465/Session
  */
 class SessionHelper extends AppHelper {
 
-/**
- * Constructor.  Starts the session if it has not already been started
- *
- * @param View $view View instance for this helper
- * @param array $settings Settings for the helper.
- * @return void
- */
-	public function __construct(View $view, $settings = array()) {
-		parent::__construct($view, $settings);
-		if (!CakeSession::started()) {
-			CakeSession::start();
-		}
-	}
 /**
  * Used to read a session values set in a controller for a key or return values for all keys.
  *
