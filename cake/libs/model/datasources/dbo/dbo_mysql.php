@@ -213,10 +213,15 @@ class DboMysql extends DboSource {
 
 		while ($j < $numFields) {
 			$column = $results->getColumnMeta($j);
-			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
-				$this->map[$index++] = array($column['table'], $column['name']);
+			if (!empty($column['native_type'])) {
+				$type = $column['native_type'];
 			} else {
-				$this->map[$index++] = array(0, $column['name']);
+				$type = ($column['len'] == 1) ? 'boolean' : 'string';
+			}
+			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
+				$this->map[$index++] = array($column['table'], $column['name'], $type);
+			} else {
+				$this->map[$index++] = array(0, $column['name'], $type);
 			}
 			$j++;
 		}
@@ -231,8 +236,11 @@ class DboMysql extends DboSource {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
-				list($table, $column) = $meta;
+				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
+				if ($type == 'boolean') {
+					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
+				}
 			}
 			return $resultRow;
 		} else {

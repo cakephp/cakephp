@@ -194,14 +194,13 @@ class DboSource extends DataSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
-	function value($data, $column = null, $safe = false) {
+	function value($data, $column = null) {
 		if (is_array($data) && !empty($data)) {
 			return array_map(
 				array(&$this, 'value'),
-				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $safe)
+				$data, array_fill(0, count($data), $column)
 			);
 		} elseif (is_object($data) && isset($data->type)) {
 			if ($data->type == 'identifier') {
@@ -226,7 +225,7 @@ class DboSource extends DataSource {
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
 			break;
 			case 'boolean':
-				return $this->_connection->quote($this->boolean($data), PDO::PARAM_BOOL);
+				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
 			break;
 			case 'string':
 			case 'text':
@@ -2698,15 +2697,11 @@ class DboSource extends DataSource {
  * @param mixed $data Value to be translated
  * @return int Converted boolean value
  */
-	public function boolean($data) {
-		if ($data === true || $data === false) {
-			if ($data === true) {
-				return 1;
-			}
-			return 0;
-		} else {
-			return (int) !empty($data);
+	public function boolean($data, $quote = false) {
+		if ($quote) {
+			return !empty($data) ? '1' : '0';
 		}
+		return !empty($data);
 	}
 
 /**

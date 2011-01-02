@@ -1421,7 +1421,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'id' => '3',
 							'something_id' => '3',
 							'something_else_id' => '1',
-							'doomed' => '1',
+							'doomed' => true,
 							'created' => '2007-03-18 10:43:23',
 							'updated' => '2007-03-18 10:45:31'
 			)))),
@@ -1446,7 +1446,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'id' => '1',
 							'something_id' => '1',
 							'something_else_id' => '2',
-							'doomed' => '1',
+							'doomed' => true,
 							'created' => '2007-03-18 10:39:23',
 							'updated' => '2007-03-18 10:41:31'
 			)))),
@@ -1471,7 +1471,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'id' => '2',
 							'something_id' => '2',
 							'something_else_id' => '3',
-							'doomed' => '0',
+							'doomed' => false,
 							'created' => '2007-03-18 10:41:23',
 							'updated' => '2007-03-18 10:43:31'
 		)))));
@@ -1497,7 +1497,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:41:23',
 						'updated' => '2007-03-18 10:43:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '2'
 			)))),
@@ -1519,7 +1519,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:43:23',
 						'updated' => '2007-03-18 10:45:31',
 						'JoinThing' => array(
-							'doomed' => '0',
+							'doomed' => false,
 							'something_id' => '2',
 							'something_else_id' => '3'
 			)))),
@@ -1541,7 +1541,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '3',
 							'something_else_id' => '1'
 		)))));
@@ -1566,7 +1566,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'created' => '2007-03-18 10:41:23',
 					'updated' => '2007-03-18 10:43:31',
 					'JoinThing' => array(
-						'doomed' => '1',
+						'doomed' => true,
 						'something_id' => '1',
 						'something_else_id' => '2'
 		))));
@@ -1583,7 +1583,7 @@ class ModelIntegrationTest extends BaseModelTest {
 			'Something' => array('id' => 1),
 			'SomethingElse' => array(3, array(
 				'something_else_id' => 1,
-				'doomed' => '1'
+				'doomed' => true
 		))));
 
 		$ts = date('Y-m-d H:i:s');
@@ -1608,7 +1608,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '1'
 					)),
@@ -1620,7 +1620,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:41:23',
 						'updated' => '2007-03-18 10:43:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '2'
 					)),
@@ -1632,7 +1632,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:43:23',
 						'updated' => '2007-03-18 10:45:31',
 						'JoinThing' => array(
-							'doomed' => '0',
+							'doomed' => false,
 							'something_id' => '1',
 							'something_else_id' => '3'
 		))));
