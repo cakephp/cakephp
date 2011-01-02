@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +28,7 @@ App::uses('Component', 'Controller');
  * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your core.php. Concrete ACL
  * implementations should extend `AclBase` and implement the methods it defines.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1242/Access-Control-Lists
  */
 class AclComponent extends Component {
@@ -188,8 +186,7 @@ class AclComponent extends Component {
  * Access Control List interface.
  * Implementing classes are used by AclComponent to perform ACL checks in Cake.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller.components
+ * @package       cake.libs.controller.components
  */
 interface AclInterface {
 
@@ -257,8 +254,7 @@ interface AclInterface {
  *			edit
  * }}}
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model
+ * @package       cake.libs.model
  */
 class DbAcl extends Object implements AclInterface {
 
@@ -527,8 +523,7 @@ class DbAcl extends Object implements AclInterface {
  * IniAcl implements an access control system using an INI file.  An example 
  * of the ini file used can be found in /config/acl.ini.php.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.iniacl
+ * @package       cake.libs.model.iniacl
  */
 class IniAcl extends Object implements AclInterface {
 

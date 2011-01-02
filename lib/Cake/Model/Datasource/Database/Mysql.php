@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::uses('DboSource', 'Model/Datasource');
  *
  * Provides connection and SQL generation for MySQL RDMS
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  */
 class Mysql extends DboSource {
 
@@ -217,10 +215,15 @@ class Mysql extends DboSource {
 
 		while ($j < $numFields) {
 			$column = $results->getColumnMeta($j);
-			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
-				$this->map[$index++] = array($column['table'], $column['name']);
+			if (!empty($column['native_type'])) {
+				$type = $column['native_type'];
 			} else {
-				$this->map[$index++] = array(0, $column['name']);
+				$type = ($column['len'] == 1) ? 'boolean' : 'string';
+			}
+			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
+				$this->map[$index++] = array($column['table'], $column['name'], $type);
+			} else {
+				$this->map[$index++] = array(0, $column['name'], $type);
 			}
 			$j++;
 		}
@@ -235,8 +238,11 @@ class Mysql extends DboSource {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
-				list($table, $column) = $meta;
+				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
+				if ($type == 'boolean') {
+					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
+				}
 			}
 			return $resultRow;
 		} else {

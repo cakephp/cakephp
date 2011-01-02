@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.view.helpers
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,6 +20,7 @@
 App::uses('AppHelper', 'View/Helper');
 
 /**
+ * JsEngineBaseClass
  *
  * Abstract Base Class for All JsEngines to extend. Provides generic methods.
  *

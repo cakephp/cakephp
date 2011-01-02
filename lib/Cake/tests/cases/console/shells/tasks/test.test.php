@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +30,7 @@ App::uses('Model', 'Model');
  * Test Article model
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class TestTaskArticle extends Model {
 
@@ -108,7 +107,7 @@ class TestTaskArticle extends Model {
  * Tag Testing Model
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class TestTaskTag extends Model {
 
@@ -148,7 +147,7 @@ class TestTaskTag extends Model {
  * Simulated plugin
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class TestTaskAppModel extends Model {
 }
@@ -157,7 +156,7 @@ class TestTaskAppModel extends Model {
  * Testing AppMode (TaskComment)
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class TestTaskComment extends TestTaskAppModel {
 
@@ -195,7 +194,7 @@ class TestTaskComment extends TestTaskAppModel {
  * Test Task Comments Controller
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class TestTaskCommentsController extends Controller {
 
@@ -219,8 +218,7 @@ class TestTaskCommentsController extends Controller {
 /**
  * TestTaskTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  */
 class TestTaskTest extends CakeTestCase {
 

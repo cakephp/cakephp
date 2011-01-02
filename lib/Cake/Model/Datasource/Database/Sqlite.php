@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.9.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::uses('DboSource', 'Model/Datasource');
  *
  * A DboSource adapter for SQLite 3 using PDO
  *
- * @package datasources
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  */
 class Sqlite extends DboSource {
 
@@ -312,11 +310,19 @@ class Sqlite extends DboSource {
 				$columnName = str_ireplace('DISTINCT', '', $columnName);
 			}
 
+			$metaType = false;
+			try {
+				$metaData = (array)$results->getColumnMeta($j);
+				if (!empty($metaData['sqlite:decl_type'])) {
+					$metaType = trim($metaData['sqlite:decl_type']);
+				}
+			} catch (Exception $e) {}
+
 			if (strpos($columnName, '.')) {
 				$parts = explode('.', $columnName);
-				$this->map[$index++] = array(trim($parts[0]), trim($parts[1]));
+				$this->map[$index++] = array(trim($parts[0]), trim($parts[1]), $metaType);
 			} else {
-				$this->map[$index++] = array(0, $columnName);
+				$this->map[$index++] = array(0, $columnName, $metaType);
 			}
 			$j++;
 		}
@@ -331,8 +337,11 @@ class Sqlite extends DboSource {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
-				list($table, $column) = $meta;
+				list($table, $column, $tpye) = $meta;
 				$resultRow[$table][$column] = $row[$col];
+				if ($type === 'boolean') {
+					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
+				}
 			}
 			return $resultRow;
 		} else {

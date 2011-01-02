@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,6 +22,11 @@ App::uses('CakeResponse', 'Network');
 App::uses('SecurityComponent', 'Controller/Component');
 App::uses('CookieComponent', 'Controller/Component');
 
+/**
+ * AppController class
+ *
+ * @package       cake.tests.cases.libs.controller
+ */
 class ControllerTestAppController extends Controller {
 /**
  * helpers property
@@ -51,8 +55,7 @@ class ControllerTestAppController extends Controller {
 /**
  * ControllerPost class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ControllerPost extends CakeTestModel {
 
@@ -120,8 +123,7 @@ class ControllerPost extends CakeTestModel {
 /**
  * ControllerPostsController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ControllerCommentsController extends ControllerTestAppController {
 
@@ -139,8 +141,7 @@ class ControllerCommentsController extends ControllerTestAppController {
 /**
  * ControllerComment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ControllerComment extends CakeTestModel {
 
@@ -180,8 +181,7 @@ class ControllerComment extends CakeTestModel {
 /**
  * ControllerAlias class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ControllerAlias extends CakeTestModel {
 
@@ -213,8 +213,7 @@ class ControllerAlias extends CakeTestModel {
 /**
  * NameTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class NameTest extends CakeTestModel {
 
@@ -244,8 +243,7 @@ class NameTest extends CakeTestModel {
 /**
  * TestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class TestController extends ControllerTestAppController {
 
@@ -301,8 +299,7 @@ class TestController extends ControllerTestAppController {
 /**
  * TestComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class TestComponent extends Object {
 
@@ -354,8 +351,7 @@ class TestComponent extends Object {
 /**
  * AnotherTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class AnotherTestController extends ControllerTestAppController {
 
@@ -379,8 +375,7 @@ class AnotherTestController extends ControllerTestAppController {
 /**
  * ControllerTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ControllerTest extends CakeTestCase {
 
@@ -456,7 +451,7 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->loadModel('Comment');
 		$this->assertTrue($result);
-		$this->assertType('Comment', $Controller->Comment);
+		$this->assertInstanceOf('Comment', $Controller->Comment);
 		$this->assertTrue(in_array('Comment', $Controller->modelNames));
 
 		ClassRegistry::flush();
@@ -1242,8 +1237,8 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new TestController($request);
 		$Controller->constructClasses();
-		$this->assertType('SecurityComponent', $Controller->Security);
-		$this->assertType('ControllerComment', $Controller->ControllerComment);
+		$this->assertInstanceOf('SecurityComponent', $Controller->Security);
+		$this->assertInstanceOf('ControllerComment', $Controller->ControllerComment);
 	}
 
 /**
@@ -1260,7 +1255,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
-		$this->assertEqual($Controller->paginate, array('page' => 1, 'limit' => 20));
+		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
+		$this->assertEqual($Controller->paginate, $expected);
 
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($results, array(1, 2, 3));

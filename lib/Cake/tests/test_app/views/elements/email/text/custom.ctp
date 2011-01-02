@@ -13,8 +13,7 @@
  *
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.templates.elements.email.text
+ * @package       cake.libs.view.templates.elements.email.text
  * @since         CakePHP(tm) v 0.10.0.1076
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$

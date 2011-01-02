@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components.dbacl.models
+ * @package       cake.tests.cases.libs.controller.components.dbacl.models
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ class_exists('AclComponent');
 /**
  * DB ACL wrapper test class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbAclNodeTestBase extends AclNode {
 
@@ -50,8 +48,7 @@ class DbAclNodeTestBase extends AclNode {
 /**
  * Aro Test Wrapper
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbAroTest extends DbAclNodeTestBase {
 
@@ -83,8 +80,7 @@ class DbAroTest extends DbAclNodeTestBase {
 /**
  * Aco Test Wrapper
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbAcoTest extends DbAclNodeTestBase {
 
@@ -116,8 +112,7 @@ class DbAcoTest extends DbAclNodeTestBase {
 /**
  * Permission Test Wrapper
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbPermissionTest extends CakeTestModel {
 
@@ -157,8 +152,7 @@ class DbPermissionTest extends CakeTestModel {
 /**
  * DboActionTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbAcoActionTest extends CakeTestModel {
 
@@ -190,8 +184,7 @@ class DbAcoActionTest extends CakeTestModel {
 /**
  * DbAroUserTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbAroUserTest extends CakeTestModel {
 
@@ -229,8 +222,7 @@ class DbAroUserTest extends CakeTestModel {
 /**
  * TestDbAcl class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class TestDbAcl extends DbAcl {
 
@@ -251,8 +243,7 @@ class TestDbAcl extends DbAcl {
 /**
  * AclNodeTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components.dbacl.models
+ * @package       cake.tests.cases.libs.controller.components.dbacl.models
  */
 class AclNodeTest extends CakeTestCase {
 

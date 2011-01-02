@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,8 +20,7 @@ require_once dirname(__FILE__) . DS . 'model.test.php';
 /**
  * ModelReadTest
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.operations
+ * @package       cake.tests.cases.libs.model.operations
  */
 class ModelReadTest extends BaseModelTest {
 
@@ -58,8 +56,8 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $Something->JoinThing->find('all', array('conditions' => array('something_else_id' => 2)));
 
-		$this->assertEqual((bool)$result[0]['JoinThing']['doomed'], true);
-		$this->assertEqual((bool)$result[1]['JoinThing']['doomed'], false);
+		$this->assertEqual($result[0]['JoinThing']['doomed'], true);
+		$this->assertEqual($result[1]['JoinThing']['doomed'], false);
 
 		$result = $Something->find('first');
 
@@ -5102,7 +5100,7 @@ class ModelReadTest extends BaseModelTest {
 				array(
 					'id' => 2,
 					'syfile_id' => 2,
-					'published' => 0,
+					'published' => false,
 					'name' => 'Item 2',
 					'ItemsPortfolio' => array(
 						'id' => 2,
@@ -5122,7 +5120,7 @@ class ModelReadTest extends BaseModelTest {
 				array(
 					'id' => 6,
 					'syfile_id' => 6,
-					'published' => 0,
+					'published' => false,
 					'name' => 'Item 6',
 					'ItemsPortfolio' => array(
 						'id' => 6,
@@ -7405,7 +7403,7 @@ class ModelReadTest extends BaseModelTest {
 		$Post->Author->virtualFields = array('false' => '1 = 2');
 		$result = $Post->find('first');
 		$this->assertEqual($result['Post']['two'], 2);
-		$this->assertEqual($result['Author']['false'], '0');
+		$this->assertFalse((bool)$result['Author']['false']);
 
 		$result = $Post->find('first',array('fields' => array('author_id')));
 		$this->assertFalse(isset($result['Post']['two']));
@@ -7464,11 +7462,20 @@ class ModelReadTest extends BaseModelTest {
 		$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
 		$result = $Post->field('other_field');
 		$this->assertEqual($result, 4);
+	}
 
+/**
+ * testVirtualFieldsMysql()
+ *
+ * Test correct fetching of virtual fields
+ * currently is not possible to do Relation.virtualField
+ *
+ */
+	public function testVirtualFieldsMysql() {
 		if ($this->skipIf($this->db->config['driver'] != 'mysql', 'The rest of virtualFieds test is not compatible with Postgres')) {
 			return;
 		}
-		ClassRegistry::flush();
+		$this->loadFixtures('Post', 'Author');
 		$Post = ClassRegistry::init('Post');
 
 		$Post->create();

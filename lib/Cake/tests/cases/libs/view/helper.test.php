@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@ App::uses('Router', 'Routing');
 /**
  * HelperTestPost class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class HelperTestPost extends Model {
 
@@ -70,8 +68,7 @@ class HelperTestPost extends Model {
 /**
  * HelperTestComment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class HelperTestComment extends Model {
 
@@ -105,8 +102,7 @@ class HelperTestComment extends Model {
 /**
  * HelperTestTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class HelperTestTag extends Model {
 
@@ -138,8 +134,7 @@ class HelperTestTag extends Model {
 /**
  * HelperTestPostsTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class HelperTestPostsTag extends Model {
 
@@ -191,8 +186,7 @@ class TestHelper extends Helper {
 /**
  * Html5TestHelper class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class Html5TestHelper extends TestHelper {
 
@@ -221,8 +215,7 @@ class Html5TestHelper extends TestHelper {
 /**
  * HelperTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class HelperTest extends CakeTestCase {
 
@@ -862,8 +855,8 @@ class HelperTest extends CakeTestCase {
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),	
 		));
 		$Helper = new TestHelper($this->View);
-		$this->assertType('OtherHelperHelper', $Helper->OtherHelper);
-		$this->assertType('HtmlHelper', $Helper->Html);
+		$this->assertInstanceOf('OtherHelperHelper', $Helper->OtherHelper);
+		$this->assertInstanceOf('HtmlHelper', $Helper->Html);
 		App::build();
 	}
 

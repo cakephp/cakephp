@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::uses('ClassRegistry', 'Utility');
 /**
  * ClassRegisterModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ClassRegisterModel extends CakeTestModel {
 
@@ -39,8 +37,7 @@ class ClassRegisterModel extends CakeTestModel {
 /**
  * RegisterArticle class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RegisterArticle extends ClassRegisterModel {
 
@@ -56,8 +53,7 @@ class RegisterArticle extends ClassRegisterModel {
 /**
  * RegisterArticleFeatured class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RegisterArticleFeatured extends ClassRegisterModel {
 
@@ -73,8 +69,7 @@ class RegisterArticleFeatured extends ClassRegisterModel {
 /**
  * RegisterArticleTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RegisterArticleTag extends ClassRegisterModel {
 
@@ -90,8 +85,7 @@ class RegisterArticleTag extends ClassRegisterModel {
 /**
  * RegistryPluginAppModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RegistryPluginAppModel extends ClassRegisterModel {
 
@@ -107,8 +101,7 @@ class RegistryPluginAppModel extends ClassRegisterModel {
 /**
  * TestRegistryPluginModel class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class TestRegistryPluginModel extends RegistryPluginAppModel {
 
@@ -124,8 +117,7 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
 /**
  * RegisterCategory class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class RegisterCategory extends ClassRegisterModel {
 
@@ -141,8 +133,7 @@ class RegisterCategory extends ClassRegisterModel {
 /**
  * ClassRegistryTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ClassRegistryTest extends CakeTestCase {
 

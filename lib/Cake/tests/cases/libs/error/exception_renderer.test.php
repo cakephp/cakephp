@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::uses('Component', 'Controller');
 /**
  * Short description for class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class AuthBlueberryUser extends CakeTestModel {
 
@@ -50,8 +48,7 @@ class AuthBlueberryUser extends CakeTestModel {
 /**
  * BlueberryComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class BlueberryComponent extends Component {
 
@@ -77,8 +74,7 @@ class BlueberryComponent extends Component {
 /**
  * TestErrorController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class TestErrorController extends Controller {
 
@@ -123,8 +119,7 @@ class TestErrorController extends Controller {
 /**
  * MyCustomExceptionRenderer class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer {
 
@@ -148,8 +143,7 @@ class MissingWidgetThingException extends NotFoundException { }
 /**
  * ExceptionRendererTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ExceptionRendererTest extends CakeTestCase {
 
@@ -267,7 +261,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$exception = new NotFoundException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
-		$this->assertType('CakeErrorController', $ExceptionRenderer->controller);
+		$this->assertInstanceOf('CakeErrorController', $ExceptionRenderer->controller);
 		$this->assertEquals('error400', $ExceptionRenderer->method);
 		$this->assertEquals($exception, $ExceptionRenderer->error);
 	}
@@ -282,7 +276,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$exception = new MissingActionException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
-		$this->assertType('CakeErrorController', $ExceptionRenderer->controller);
+		$this->assertInstanceOf('CakeErrorController', $ExceptionRenderer->controller);
 		$this->assertEquals('error400', $ExceptionRenderer->method);
 		$this->assertEquals($exception, $ExceptionRenderer->error);
 	}

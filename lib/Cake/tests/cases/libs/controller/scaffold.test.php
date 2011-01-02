@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::uses('Controller', 'Controller');
 /**
  * ScaffoldMockController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldMockController extends Controller {
 
@@ -48,8 +46,7 @@ class ScaffoldMockController extends Controller {
 /**
  * ScaffoldMockControllerWithFields class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldMockControllerWithFields extends Controller {
 
@@ -83,8 +80,7 @@ class ScaffoldMockControllerWithFields extends Controller {
 /**
  * TestScaffoldMock class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class TestScaffoldMock extends Scaffold {
 
@@ -110,8 +106,7 @@ class TestScaffoldMock extends Scaffold {
 /**
  * ScaffoldMock class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldMock extends CakeTestModel {
 
@@ -166,8 +161,7 @@ class ScaffoldMock extends CakeTestModel {
 /**
  * ScaffoldUser class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldUser extends CakeTestModel {
 
@@ -196,8 +190,7 @@ class ScaffoldUser extends CakeTestModel {
 /**
  * ScaffoldComment class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldComment extends CakeTestModel {
 
@@ -226,8 +219,7 @@ class ScaffoldComment extends CakeTestModel {
 /**
  * ScaffoldTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldTag extends CakeTestModel {
 /**
@@ -241,8 +233,7 @@ class ScaffoldTag extends CakeTestModel {
 /**
  * TestScaffoldView class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class TestScaffoldView extends ScaffoldView {
 
@@ -261,8 +252,7 @@ class TestScaffoldView extends ScaffoldView {
 /**
  * ScaffoldViewTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldViewTest extends CakeTestCase {
 
@@ -661,8 +651,7 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * Scaffold Test class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ScaffoldTest extends CakeTestCase {
 

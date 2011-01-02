@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ App::uses('BakeTask', 'Console/Command/Task');
 /**
  * Task class for creating and updating view files.
  *
- * @package       cake
- * @subpackage    cake.cake.console.libs.tasks
+ * @package       cake.console.shells.tasks
  */
 class ViewTask extends BakeTask {
 

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package       cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +30,7 @@ App::uses('Router', 'Routing');
  * ContactTestController class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ContactTestController extends Controller {
 
@@ -56,7 +55,7 @@ class ContactTestController extends Controller {
  * Contact class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class Contact extends CakeTestModel {
 
@@ -153,7 +152,7 @@ class Contact extends CakeTestModel {
  * ContactTagsContact class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ContactTagsContact extends CakeTestModel {
 
@@ -201,7 +200,7 @@ class ContactTagsContact extends CakeTestModel {
  * ContactNonStandardPk class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ContactNonStandardPk extends Contact {
 
@@ -239,7 +238,7 @@ class ContactNonStandardPk extends Contact {
  * ContactTag class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ContactTag extends Model {
 
@@ -269,7 +268,7 @@ class ContactTag extends Model {
  * UserForm class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class UserForm extends CakeTestModel {
 
@@ -329,7 +328,7 @@ class UserForm extends CakeTestModel {
  * OpenidUrl class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class OpenidUrl extends CakeTestModel {
 
@@ -405,7 +404,7 @@ class OpenidUrl extends CakeTestModel {
  * ValidateUser class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ValidateUser extends CakeTestModel {
 
@@ -474,7 +473,7 @@ class ValidateUser extends CakeTestModel {
  * ValidateProfile class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ValidateProfile extends CakeTestModel {
 
@@ -554,7 +553,7 @@ class ValidateProfile extends CakeTestModel {
  * ValidateItem class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class ValidateItem extends CakeTestModel {
 
@@ -623,7 +622,7 @@ class ValidateItem extends CakeTestModel {
  * TestMail class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class TestMail extends CakeTestModel {
 
@@ -656,7 +655,7 @@ class TestMail extends CakeTestModel {
  * FormHelperTest class
  *
  * @package	   cake
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package   	cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
 

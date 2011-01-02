@@ -15,8 +15,7 @@
  *
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          http://cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.
+ * @package       cake.libs.
  * @since         CakePHP v 1.2.0.7726
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$

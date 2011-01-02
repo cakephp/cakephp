@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  * @since         CakePHP v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,8 +27,7 @@ App::uses('Multibyte', 'I18n');
  * JsHelper provides an abstract interface for authoring JavaScript with a
  * given client-side library.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package       cake.libs.view.helpers
  */
 class JsHelper extends AppHelper {
 /**

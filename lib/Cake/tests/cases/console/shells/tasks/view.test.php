@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -32,7 +31,7 @@ App::uses('DbConfigTask', 'Console/Command/Task');
  * Test View Task Comment Model
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class ViewTaskComment extends Model {
 
@@ -70,7 +69,7 @@ class ViewTaskComment extends Model {
  * Test View Task Article Model
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class ViewTaskArticle extends Model {
 
@@ -95,7 +94,7 @@ class ViewTaskArticle extends Model {
  * Test View Task Comments Controller
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class ViewTaskCommentsController extends Controller {
 
@@ -128,7 +127,7 @@ class ViewTaskCommentsController extends Controller {
  * Test View Task Articles Controller
  *
  * @package cake
- * @subpackage cake.tests.cases.console.libs.tasks
+ * @package    cake.tests.cases.console.libs.tasks
  */
 class ViewTaskArticlesController extends Controller {
 
@@ -200,8 +199,7 @@ class ViewTaskArticlesController extends Controller {
 /**
  * ViewTaskTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs.tasks
+ * @package       cake.tests.cases.console.libs.tasks
  */
 class ViewTaskTest extends CakeTestCase {
 

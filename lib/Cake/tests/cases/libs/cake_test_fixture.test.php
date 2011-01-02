@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @package       cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@ App::uses('Model', 'Model');
 /**
  * CakeTestFixtureTestFixture class
  *
- * @package       cake
- * @subpackage    cake.cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class CakeTestFixtureTestFixture extends CakeTestFixture {
 
@@ -68,8 +66,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
 /**
  * CakeTestFixtureImportFixture class
  *
- * @package       cake
- * @subpackage    cake.cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class CakeTestFixtureImportFixture extends CakeTestFixture {
 
@@ -91,8 +88,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
 /**
  * CakeTestFixtureDefaultImportFixture class
  *
- * @package       cake
- * @subpackage    cake.cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 
@@ -108,7 +104,7 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
  * FixtureImportTestModel class
  *
  * @package       default
- * @subpackage    cake.cake.tests.cases.libs.
+ * @package       cake.tests.cases.libs.
  */
 class FixtureImportTestModel extends Model {
 	public $name = 'FixtureImport';
@@ -126,8 +122,7 @@ class FixturePrefixTest extends Model {
 /**
  * Test case for CakeTestFixture
  *
- * @package       cake
- * @subpackage    cake.cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class CakeTestFixtureTest extends CakeTestCase {
 

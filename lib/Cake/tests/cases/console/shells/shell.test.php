@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,8 +26,7 @@ App::uses('Folder', 'Utility');
 /**
  * ShellTestShell class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class ShellTestShell extends Shell {
 
@@ -88,8 +86,7 @@ class TestMergeShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class TestAppleTask extends Shell {
 }
@@ -97,8 +94,7 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class TestBananaTask extends Shell {
 }
@@ -106,8 +102,7 @@ class TestBananaTask extends Shell {
 /**
  * ShellTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console.libs
+ * @package       cake.tests.cases.console.libs
  */
 class ShellTest extends CakeTestCase {
 
@@ -143,9 +138,9 @@ class ShellTest extends CakeTestCase {
  */
 	public function testConstruct() {
 		$this->assertEqual($this->Shell->name, 'ShellTestShell');
-		$this->assertType('ConsoleInput', $this->Shell->stdin);
-		$this->assertType('ConsoleOutput', $this->Shell->stdout);
-		$this->assertType('ConsoleOutput', $this->Shell->stderr);
+		$this->assertInstanceOf('ConsoleInput', $this->Shell->stdin);
+		$this->assertInstanceOf('ConsoleOutput', $this->Shell->stdout);
+		$this->assertInstanceOf('ConsoleOutput', $this->Shell->stderr);
 	}
 
 /**

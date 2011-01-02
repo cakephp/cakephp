@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
+ * @package       cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -46,8 +45,7 @@ class DboMock extends DboSource {
 /**
  * ModelIntegrationTest
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.operations
+ * @package       cake.tests.cases.libs.model.operations
  */
 class ModelIntegrationTest extends BaseModelTest {
 
@@ -62,27 +60,27 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article = new ArticleFeatured();
 		$this->assertTrue(isset($Article->belongsTo['User']));
 		$this->assertFalse(property_exists($Article, 'User'));
-		$this->assertType('User', $Article->User);
+		$this->assertInstanceOf('User', $Article->User);
 
 		$this->assertTrue(isset($Article->belongsTo['Category']));
 		$this->assertFalse(property_exists($Article, 'Category'));
 		$this->assertTrue(isset($Article->Category));
-		$this->assertType('Category', $Article->Category);
+		$this->assertInstanceOf('Category', $Article->Category);
 
 		$this->assertTrue(isset($Article->hasMany['Comment']));
 		$this->assertFalse(property_exists($Article, 'Comment'));
 		$this->assertTrue(isset($Article->Comment));
-		$this->assertType('Comment', $Article->Comment);
+		$this->assertInstanceOf('Comment', $Article->Comment);
 
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['Tag']));
 		//There was not enough information to setup the association (joinTable and associationForeignKey)
 		//so the model was not lazy loaded
 		$this->assertTrue(property_exists($Article, 'Tag'));
 		$this->assertTrue(isset($Article->Tag));
-		$this->assertType('Tag', $Article->Tag);
+		$this->assertInstanceOf('Tag', $Article->Tag);
 
 		$this->assertFalse(property_exists($Article, 'ArticleFeaturedsTag'));
-		$this->assertType('AppModel', $Article->ArticleFeaturedsTag);
+		$this->assertInstanceOf('AppModel', $Article->ArticleFeaturedsTag);
 		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['joinTable'], 'article_featureds_tags');
 		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['associationForeignKey'], 'tag_id');
 	}
@@ -98,10 +96,10 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article = new ArticleB();
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['TagB']));
 		$this->assertFalse(property_exists($Article, 'TagB'));
-		$this->assertType('TagB', $Article->TagB);
+		$this->assertInstanceOf('TagB', $Article->TagB);
 
 		$this->assertFalse(property_exists($Article, 'ArticlesTag'));
-		$this->assertType('AppModel', $Article->ArticlesTag);
+		$this->assertInstanceOf('AppModel', $Article->ArticlesTag);
 
 		$UuidTag = new UuidTag();
 		$this->assertTrue(isset($UuidTag->hasAndBelongsToMany['Fruit']));
@@ -111,7 +109,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertFalse(property_exists($UuidTag, 'FruitsUuidTag'));
 		$this->assertTrue(isset($UuidTag->FruitsUuidTag));
-		$this->assertType('FruitsUuidTag', $UuidTag->FruitsUuidTag);
+		$this->assertInstanceOf('FruitsUuidTag', $UuidTag->FruitsUuidTag);
 	}
 
 /**
@@ -130,7 +128,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article->bindModel(array('belongsTo' => array('User')));
 		$this->assertTrue(isset($Article->belongsTo['User']));
 		$this->assertFalse(property_exists($Article, 'User'));
-		$this->assertType('User', $Article->User);
+		$this->assertInstanceOf('User', $Article->User);
 	}
 
 /**
@@ -1424,7 +1422,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'id' => '3',
 							'something_id' => '3',
 							'something_else_id' => '1',
-							'doomed' => '1',
+							'doomed' => true,
 							'created' => '2007-03-18 10:43:23',
 							'updated' => '2007-03-18 10:45:31'
 			)))),
@@ -1449,7 +1447,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'id' => '1',
 							'something_id' => '1',
 							'something_else_id' => '2',
-							'doomed' => '1',
+							'doomed' => true,
 							'created' => '2007-03-18 10:39:23',
 							'updated' => '2007-03-18 10:41:31'
 			)))),
@@ -1474,7 +1472,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'id' => '2',
 							'something_id' => '2',
 							'something_else_id' => '3',
-							'doomed' => '0',
+							'doomed' => false,
 							'created' => '2007-03-18 10:41:23',
 							'updated' => '2007-03-18 10:43:31'
 		)))));
@@ -1500,7 +1498,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:41:23',
 						'updated' => '2007-03-18 10:43:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '2'
 			)))),
@@ -1522,7 +1520,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:43:23',
 						'updated' => '2007-03-18 10:45:31',
 						'JoinThing' => array(
-							'doomed' => '0',
+							'doomed' => false,
 							'something_id' => '2',
 							'something_else_id' => '3'
 			)))),
@@ -1544,7 +1542,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '3',
 							'something_else_id' => '1'
 		)))));
@@ -1569,7 +1567,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'created' => '2007-03-18 10:41:23',
 					'updated' => '2007-03-18 10:43:31',
 					'JoinThing' => array(
-						'doomed' => '1',
+						'doomed' => true,
 						'something_id' => '1',
 						'something_else_id' => '2'
 		))));
@@ -1586,7 +1584,7 @@ class ModelIntegrationTest extends BaseModelTest {
 			'Something' => array('id' => 1),
 			'SomethingElse' => array(3, array(
 				'something_else_id' => 1,
-				'doomed' => '1'
+				'doomed' => true
 		))));
 
 		$ts = date('Y-m-d H:i:s');
@@ -1611,7 +1609,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '1'
 					)),
@@ -1623,7 +1621,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:41:23',
 						'updated' => '2007-03-18 10:43:31',
 						'JoinThing' => array(
-							'doomed' => '1',
+							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '2'
 					)),
@@ -1635,7 +1633,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'created' => '2007-03-18 10:43:23',
 						'updated' => '2007-03-18 10:45:31',
 						'JoinThing' => array(
-							'doomed' => '0',
+							'doomed' => false,
 							'something_id' => '1',
 							'something_else_id' => '3'
 		))));
@@ -2010,5 +2008,28 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $TestModel->escapeField('DomainHandle', 'Domain');
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that model->hasMethod checks self and behaviors.
+ *
+ * @return void
+ */
+	function testHasMethod() {
+		$Article = new Article();
+		$Article->Behaviors = $this->getMock('BehaviorCollection');
+
+		$Article->Behaviors->expects($this->at(0))
+			->method('hasMethod')
+			->will($this->returnValue(true));
+
+		$Article->Behaviors->expects($this->at(1))
+			->method('hasMethod')
+			->will($this->returnValue(false));
+
+		$this->assertTrue($Article->hasMethod('find'));
+
+		$this->assertTrue($Article->hasMethod('pass'));
+		$this->assertFalse($Article->hasMethod('fail'));
 	}
 }

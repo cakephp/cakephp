@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ App::uses('Debugger', 'Utility');
 /**
  * DebugggerTestCaseDebuggger class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class DebuggerTestCaseDebugger extends Debugger {
 }
@@ -31,8 +29,7 @@ class DebuggerTestCaseDebugger extends Debugger {
 /**
  * DebuggerTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class DebuggerTest extends CakeTestCase {
 // !!!
@@ -232,7 +229,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$viewVars = array
 		View::$layout = "default"
 		View::$layoutPath = NULL
-		View::$autoRender = true
 		View::$autoLayout = true
 		View::$ext = ".ctp"
 		View::$subDir = NULL
@@ -250,8 +246,9 @@ class DebuggerTest extends CakeTestCase {
 		View::$output = false
 		View::$request = NULL
 		View::$elementCache = "default"';
-		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
 

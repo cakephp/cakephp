@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ App::uses('Controller', 'Controller');
 /**
  * ThemePostsController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class ThemePostsController extends Controller {
 
@@ -57,8 +55,7 @@ class ThemePostsController extends Controller {
 /**
  * TestThemeView class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
+ * @package       cake.tests.cases.libs.view
  */
 class TestThemeView extends ThemeView {
 
@@ -101,8 +98,7 @@ class TestThemeView extends ThemeView {
 /**
  * ThemeViewTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ThemeViewTest extends CakeTestCase {
 

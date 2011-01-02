@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -50,7 +49,6 @@ interface CakeLogInterface {
  * @param string $type 
  * @param string $message 
  * @return void
- * @author Mark Story
  */
 	public function write($type, $message);
 }
@@ -60,8 +58,7 @@ interface CakeLogInterface {
  * using CakeLogs's methods.  If you don't configure any adapters, and write to the logs
  * a default FileLog will be autoconfigured for you.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 class CakeLog {
 

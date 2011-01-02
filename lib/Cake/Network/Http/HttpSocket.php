@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@ App::uses('Router', 'Routing');
  * Core base class for HTTP network communication. HttpSocket can be used as an
  * Object Oriented replacement for cURL in many places.
  *
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs
  */
 class HttpSocket extends CakeSocket {
 
@@ -539,7 +537,7 @@ class HttpSocket extends CakeSocket {
 		if (!method_exists($authClass, 'authentication')) {
 			throw new SocketException(sprintf(__('The %s do not support authentication.'), $authClass));
 		}
-		call_user_func("$authClass::authentication", $this, &$this->_auth[$method]);
+		call_user_func_array("$authClass::authentication", array($this, &$this->_auth[$method]));
 	}
 
 /**
@@ -565,7 +563,7 @@ class HttpSocket extends CakeSocket {
 		if (!method_exists($authClass, 'proxyAuthentication')) {
 			throw new SocketException(sprintf(__('The %s do not support proxy authentication.'), $authClass));
 		}
-		call_user_func("$authClass::proxyAuthentication", $this, &$this->_proxy);
+		call_user_func_array("$authClass::proxyAuthentication", array($this, &$this->_proxy));
 	}
 
 /**

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.console
+ * @package       cake.tests.cases.console
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,8 +21,7 @@ require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 /**
  * TestShellDispatcher class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.console
+ * @package       cake.tests.cases.console
  */
 class TestShellDispatcher extends ShellDispatcher {
 
@@ -105,8 +103,7 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * ShellDispatcherTest
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  */
 class ShellDispatcherTest extends CakeTestCase {
 

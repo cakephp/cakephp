@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources
+ * @package       cake.libs.model.datasources
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,8 +26,7 @@ App::uses('View', 'View');
  *
  * Creates DBO-descendant objects from a given db connection configuration
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources
+ * @package       cake.libs.model.datasources
  */
 class DboSource extends DataSource {
 
@@ -199,14 +197,13 @@ class DboSource extends DataSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
-	function value($data, $column = null, $safe = false) {
+	function value($data, $column = null) {
 		if (is_array($data) && !empty($data)) {
 			return array_map(
 				array(&$this, 'value'),
-				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $safe)
+				$data, array_fill(0, count($data), $column)
 			);
 		} elseif (is_object($data) && isset($data->type)) {
 			if ($data->type == 'identifier') {
@@ -231,7 +228,7 @@ class DboSource extends DataSource {
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
 			break;
 			case 'boolean':
-				return $this->_connection->quote($this->boolean($data), PDO::PARAM_BOOL);
+				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
 			break;
 			case 'string':
 			case 'text':
@@ -256,9 +253,10 @@ class DboSource extends DataSource {
 
 
 /**
- * Returns an object to represent a database identifier in a query
+ * Returns an object to represent a database identifier in a query. Expression objects
+ * are not sanitized or esacped.
  *
- * @param string $identifier
+ * @param string $identifier A SQL expression to be used as an identifier
  * @return object An object representing a database identifier to be used in a query
  */
 	public function identifier($identifier) {
@@ -269,9 +267,10 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Returns an object to represent a database expression in a query
+ * Returns an object to represent a database expression in a query.  Expression objects
+ * are not sanitized or esacped.
  *
- * @param string $expression
+ * @param string $expression An arbitrary SQL expression to be inserted into a query.
  * @return object An object representing a database expression to be used in a query
  */
 	public function expression($expression) {
@@ -285,6 +284,7 @@ class DboSource extends DataSource {
  * Executes given SQL statement.
  *
  * @param string $sql SQL statement
+ * @param array $params Additional options for the query.
  * @return boolean
  */
 	public function rawQuery($sql, $params = array()) {
@@ -384,6 +384,7 @@ class DboSource extends DataSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
+ * @param string $source
  * @return integer Number of affected rows
  */
 	function lastAffected($source = null) {
@@ -397,6 +398,7 @@ class DboSource extends DataSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
+ * @param string $source
  * @return integer Number of rows in resultset
  */
 	function lastNumRows($source = null) {
@@ -501,6 +503,7 @@ class DboSource extends DataSource {
 /**
  * Returns a row from current resultset as an array
  *
+ * @param string $sql Some SQL to be executed.
  * @return array The fetched row as an array
  */
 	public function fetchRow($sql = null) {
@@ -578,7 +581,7 @@ class DboSource extends DataSource {
 /**
  * Modifies $result array to place virtual fields in model entry where they belongs to
  *
- * @param array $resut REference to the fetched row
+ * @param array $resut Reference to the fetched row
  * @return void
  */
 	public function fetchVirtualField(&$result) {
@@ -739,6 +742,7 @@ class DboSource extends DataSource {
  * Get the query log as an array.
  *
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
+ * @param boolean $clear If True the existing log will cleared.
  * @return array Array of queries run as an array
  */
 	public function getLog($sorted = false, $clear = true) {
@@ -2695,15 +2699,11 @@ class DboSource extends DataSource {
  * @param mixed $data Value to be translated
  * @return int Converted boolean value
  */
-	public function boolean($data) {
-		if ($data === true || $data === false) {
-			if ($data === true) {
-				return 1;
-			}
-			return 0;
-		} else {
-			return (int) !empty($data);
+	public function boolean($data, $quote = false) {
+		if ($quote) {
+			return !empty($data) ? '1' : '0';
 		}
+		return !empty($data);
 	}
 
 /**

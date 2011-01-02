@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @package       cake.libs.controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,15 +26,28 @@ App::uses('ComponentCollection', 'Controller');
 App::uses('View', 'View');
 
 /**
- * Controller
- *
  * Application controller class for organization of business logic.
  * Provides basic functionality, such as rendering views inside layouts,
  * automatic model availability, redirection, callbacks, and more.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.controller
- * @link          http://book.cakephp.org/view/956/Introduction
+ * Controllers should provide a number of 'action' methods.  These are public methods on the controller
+ * that are not prefixed with a '_' and not part of Controller.  Each action serves as an endpoint for 
+ * performing a specific action on a resource or collection of resources.  For example adding or editing a new
+ * object, or listing a set of objects.
+ *
+ * You can access request parameters, using `$this->request`.  The request object contains all the POST, GET and FILES
+ * that were part of the request. 
+ *
+ * After performing the required actions, controllers are responsible for creating a response.  This usually
+ * takes the form of a generated View, or possibly a redirection to another controller action.  In either case
+ * `$this->response` allows you to manipulate all aspects of the response.
+ *
+ * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
+ * use conventional names.  For example `/posts/index` maps to `PostsController::index()`.  You can re-map urls
+ * using Router::connect().
+ *
+ * @package    cake.libs.controller
+ * @link       http://book.cakephp.org/view/956/Introduction
  */
 class Controller extends Object {
 
@@ -148,7 +160,7 @@ class Controller extends Object {
 	public $autoLayout = true;
 
 /**
- * Instance of Component used to handle callbacks.
+ * Instance of ComponentCollection used to handle callbacks.
  *
  * @var string
  */
@@ -240,7 +252,8 @@ class Controller extends Object {
 	public $scaffold = false;
 
 /**
- * Holds current methods of the controller
+ * Holds current methods of the controller.  This is a list of all the methods reachable
+ * via url.  Modifying this array, will allow you to change which methods can be reached.
  *
  * @var array
  */
@@ -544,7 +557,7 @@ class Controller extends Object {
  *
  * @return mixed Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @deprecated
+ * @deprecated Use CakeResponse::httpCodes();
  */
 	public function httpCodes($code = null) {
 		return $this->response->httpCodes($code);
@@ -665,7 +678,7 @@ class Controller extends Object {
  *
  * @param string $status The header message that is being set.
  * @return void
- * @deprecated
+ * @deprecated Use CakeResponse::header()
  */
 	public function header($status) {
 		$this->response->header($status);
@@ -853,7 +866,7 @@ class Controller extends Object {
  *
  * @return void
  * @link http://book.cakephp.org/view/988/disableCache
- * @deprecated
+ * @deprecated Use CakeResponse::disableCache()
  */
 	public function disableCache() {
 		$this->response->disableCache();
@@ -954,7 +967,8 @@ class Controller extends Object {
 	}
 
 /**
- * Called before the controller action.
+ * Called before the controller action.  You can use this method to configure and customize components
+ * or perform logic that needs to happen before each controller action.
  *
  * @link http://book.cakephp.org/view/984/Callbacks
  */
@@ -962,7 +976,8 @@ class Controller extends Object {
 	}
 
 /**
- * Called after the controller action is run, but before the view is rendered.
+ * Called after the controller action is run, but before the view is rendered. You can use this method
+ * to perform logic or set view variables that are required on every request.
  *
  * @link http://book.cakephp.org/view/984/Callbacks
  */

@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ App::uses('DbAcl', 'Model');
 /**
  * AclNodeTwoTestBase class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class AclNodeTwoTestBase extends AclNode {
 
@@ -49,8 +47,7 @@ class AclNodeTwoTestBase extends AclNode {
 /**
  * AroTwoTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class AroTwoTest extends AclNodeTwoTestBase {
 
@@ -82,8 +79,7 @@ class AroTwoTest extends AclNodeTwoTestBase {
 /**
  * AcoTwoTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class AcoTwoTest extends AclNodeTwoTestBase {
 
@@ -115,8 +111,7 @@ class AcoTwoTest extends AclNodeTwoTestBase {
 /**
  * PermissionTwoTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class PermissionTwoTest extends CakeTestModel {
 
@@ -164,8 +159,7 @@ class PermissionTwoTest extends CakeTestModel {
 /**
  * DbAclTwoTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class DbAclTwoTest extends DbAcl {
 
@@ -186,8 +180,7 @@ class DbAclTwoTest extends DbAcl {
 /**
  * Short description for class.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class AclComponentTest extends CakeTestCase {
 /**

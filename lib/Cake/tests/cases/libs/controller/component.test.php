@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +23,7 @@ App::uses('Component', 'Controller');
 /**
  * ParamTestComponent
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ParamTestComponent extends Component {
 
@@ -67,8 +65,7 @@ class ParamTestComponent extends Component {
 /**
  * ComponentTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ComponentTestController extends Controller {
 
@@ -93,8 +90,7 @@ class ComponentTestController extends Controller {
 /**
  * AppleComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class AppleComponent extends Component {
 
@@ -129,8 +125,7 @@ class AppleComponent extends Component {
 /**
  * OrangeComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class OrangeComponent extends Component {
 
@@ -168,8 +163,7 @@ class OrangeComponent extends Component {
 /**
  * BananaComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class BananaComponent extends Component {
 
@@ -195,8 +189,7 @@ class BananaComponent extends Component {
 /**
  * MutuallyReferencingOneComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class MutuallyReferencingOneComponent extends Component {
 
@@ -212,8 +205,7 @@ class MutuallyReferencingOneComponent extends Component {
 /**
  * MutuallyReferencingTwoComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class MutuallyReferencingTwoComponent extends Component {
 
@@ -229,8 +221,7 @@ class MutuallyReferencingTwoComponent extends Component {
 /**
  * SomethingWithEmailComponent class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class SomethingWithEmailComponent extends Component {
 
@@ -247,8 +238,7 @@ class SomethingWithEmailComponent extends Component {
 /**
  * ComponentTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @package       cake.tests.cases.libs.controller
  */
 class ComponentTest extends CakeTestCase {
 
@@ -285,7 +275,7 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Component = new AppleComponent($Collection);
 
-		$this->assertType('OrangeComponent', $Component->Orange, 'class is wrong');
+		$this->assertInstanceOf('OrangeComponent', $Component->Orange, 'class is wrong');
 	}
 
 /**
@@ -297,8 +287,8 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Apple = new AppleComponent($Collection);
 
-		$this->assertType('OrangeComponent', $Apple->Orange, 'class is wrong');
-		$this->assertType('BananaComponent', $Apple->Orange->Banana, 'class is wrong');
+		$this->assertInstanceOf('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertInstanceOf('BananaComponent', $Apple->Orange->Banana, 'class is wrong');
 		$this->assertTrue(empty($Apple->Session));
 		$this->assertTrue(empty($Apple->Orange->Session));
 	}
@@ -312,7 +302,7 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Apple = $Collection->load('Apple');
 
-		$this->assertType('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertInstanceOf('OrangeComponent', $Apple->Orange, 'class is wrong');
 		$result = $Collection->enabled();
 		$this->assertEquals(array('Apple'), $result, 'Too many components enabled.');
 	}
@@ -347,9 +337,9 @@ class ComponentTest extends CakeTestCase {
 		$Controller->beforeFilter();
 		$Controller->Components->trigger('startup', array(&$Controller));
 
-		$this->assertType('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
-		$this->assertType('EmailComponent', $Controller->SomethingWithEmail->Email);
-		$this->assertType('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
+		$this->assertInstanceOf('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
+		$this->assertInstanceOf('EmailComponent', $Controller->SomethingWithEmail->Email);
+		$this->assertInstanceOf('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
 	}
 
 }

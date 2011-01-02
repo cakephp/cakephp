@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,7 +26,7 @@ App::uses('Xml', 'Utility');
 * TestAuthComponent class
 *
 * @package       cake
-* @subpackage    cake.tests.cases.libs.controller.components
+* @package       cake.tests.cases.libs.controller.components
 */
 class TestAuthComponent extends AuthComponent {
 
@@ -62,7 +61,7 @@ class TestAuthComponent extends AuthComponent {
 * AuthUser class
 *
 * @package       cake
-* @subpackage    cake.tests.cases.libs.controller.components
+* @package       cake.tests.cases.libs.controller.components
 */
 class AuthUser extends CakeTestModel {
 
@@ -123,8 +122,7 @@ class AuthUser extends CakeTestModel {
 /**
  * AuthUserCustomField class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class AuthUserCustomField extends AuthUser {
 
@@ -141,7 +139,7 @@ class AuthUserCustomField extends AuthUser {
 * UuidUser class
 *
 * @package       cake
-* @subpackage    cake.tests.cases.libs.controller.components
+* @package       cake.tests.cases.libs.controller.components
 */
 class UuidUser extends CakeTestModel {
 
@@ -211,7 +209,7 @@ class UuidUser extends CakeTestModel {
 * AuthTestController class
 *
 * @package       cake
-* @subpackage    cake.tests.cases.libs.controller.components
+* @package       cake.tests.cases.libs.controller.components
 */
 class AuthTestController extends Controller {
 
@@ -365,8 +363,7 @@ class AuthTestController extends Controller {
 /**
  * AjaxAuthController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
+ * @package       cake.tests.cases.libs.controller.components
  */
 class AjaxAuthController extends Controller {
 
@@ -445,7 +442,7 @@ class AjaxAuthController extends Controller {
 * AuthTest class
 *
 * @package       cake
-* @subpackage    cake.tests.cases.libs.controller.components
+* @package       cake.tests.cases.libs.controller.components
 */
 class AuthTest extends CakeTestCase {
 

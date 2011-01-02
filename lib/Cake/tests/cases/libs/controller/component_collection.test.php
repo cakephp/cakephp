@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package       cake.tests.cases.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -48,8 +47,8 @@ class ComponentCollectionTest extends CakeTestCase {
  */
 	function testLoad() {
 		$result = $this->Components->load('Cookie');
-		$this->assertType('CookieComponent', $result);
-		$this->assertType('CookieComponent', $this->Components->Cookie);
+		$this->assertInstanceOf('CookieComponent', $result);
+		$this->assertInstanceOf('CookieComponent', $this->Components->Cookie);
 
 		$result = $this->Components->attached();
 		$this->assertEquals(array('Cookie'), $result, 'attached() results are wrong.');
@@ -67,8 +66,8 @@ class ComponentCollectionTest extends CakeTestCase {
  */
 	function testLoadWithEnableFalse() {
 		$result = $this->Components->load('Cookie', array('enabled' => false));
-		$this->assertType('CookieComponent', $result);
-		$this->assertType('CookieComponent', $this->Components->Cookie);
+		$this->assertInstanceOf('CookieComponent', $result);
+		$this->assertInstanceOf('CookieComponent', $this->Components->Cookie);
 
 		$this->assertFalse($this->Components->enabled('Cookie'), 'Cookie should be disabled');
 	}
@@ -92,8 +91,8 @@ class ComponentCollectionTest extends CakeTestCase {
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		));
 		$result = $this->Components->load('TestPlugin.OtherComponent');
-		$this->assertType('OtherComponentComponent', $result, 'Component class is wrong.');
-		$this->assertType('OtherComponentComponent', $this->Components->OtherComponent, 'Class is wrong');
+		$this->assertInstanceOf('OtherComponentComponent', $result, 'Component class is wrong.');
+		$this->assertInstanceOf('OtherComponentComponent', $this->Components->OtherComponent, 'Class is wrong');
 		App::build();
 	}
 

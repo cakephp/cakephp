@@ -12,14 +12,48 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  * @since         CakePHP(tm) v 1.2.0.5714
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('View', 'View');
 App::uses('CakeRequest', 'Network');
 
+/**
+ * Media View provides a custom view implementation for sending files to visitors.  Its great
+ * for making the response of a controller action be a file that is saved somewhere on the filesystem.
+ *
+ * An example use comes from the CakePHP internals. MediaView is used to serve plugin and theme assets,
+ * as they are not normally accessible from an application's webroot.  Unlike other views, MediaView
+ * uses several viewVars that have special meaning:
+ *
+ * - `id` The filename on the server's filesystem, including extension.
+ * - `name` The filename that will be sent to the user, specified without the extension.
+ * - `download` Set to true to set a `Content-Disposition` header.  This is ideal for file downloads.
+ * - `extension` The extension of the file being served.  This is used to set the mimetype
+ * - `path` The absolute path, including the trailing / on the server's filesystem to `id`.
+ * - `mimeType` The mime type of the file if CakeResponse doesn't know about it.
+ *
+ * ### Usage
+ *
+ * {{{
+ * class ExampleController extends AppController {
+ *		function download () {
+ *			$this->view = 'Media';
+ *			$params = array(
+ *				'id' => 'example.zip',
+ *				'name' => 'example',
+ *				'download' => true,
+ *				'extension' => 'zip',
+ *				'path' => APP . 'files' . DS
+ *			);
+ *			$this->set($params);
+ *		}
+ * }
+ * }}}
+ *
+ * @package cake.libs.view
+ */
 class MediaView extends View {
 /**
  * Indicates whether response gzip compression was enabled for this class
@@ -35,11 +69,10 @@ class MediaView extends View {
  */
 	public $response = null;
 
-
 /**
  * Constructor
  *
- * @param object $controller
+ * @param object $controller The controller with viewVars
  */
 	function __construct($controller = null) {
 		parent::__construct($controller);
@@ -53,7 +86,7 @@ class MediaView extends View {
 /**
  * Display or download the given file
  *
- * @return unknown
+ * @return mixed
  */
 	function render() {
 		$name = $download = $extension = $id = $modified = $path = $size = $cache = $mimeType = $compress = null;
@@ -160,6 +193,12 @@ class MediaView extends View {
 		return false;
 	}
 
+/**
+ * Reads out a file handle, and echos the content to the client.
+ *
+ * @param resource $handle A file handle or stream
+ * @return void
+ */
 	protected function _sendFile($handle) {
 		$chunkSize = 8192;
 		$buffer = '';
@@ -180,6 +219,7 @@ class MediaView extends View {
 
 /**
  * Returns true if connection is still active
+ *
  * @return boolean
  */
 	protected function _isActive() {
@@ -188,6 +228,7 @@ class MediaView extends View {
 
 /**
  * Clears the contents of the topmost output buffer and discards them
+ *
  * @return boolean
  */
 	protected function _clearBuffer() {
@@ -196,6 +237,8 @@ class MediaView extends View {
 
 /**
  * Flushes the contents of the output buffer
+ * 
+ * @return void
  */
 	protected function _flushBuffer() {
 		@flush();

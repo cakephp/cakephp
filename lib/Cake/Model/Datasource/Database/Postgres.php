@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.9.1.114
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +22,7 @@
  *
  * Long description for class
  *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @package       cake.libs.model.datasources.dbo
  */
 class DboPostgres extends DboSource {
 
@@ -164,7 +162,6 @@ class DboPostgres extends DboSource {
 		$result = $this->_execute($sql, array($schema));
 
 		if (!$result) {
-			$result->closeCursor();
 			return array();
 		} else {
 			$tables = array();
@@ -250,7 +247,9 @@ class DboPostgres extends DboSource {
 			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;
 		}
 
-		$cols->closeCursor();
+		if ($cols) {
+			$cols->closeCursor();	
+		}
 		return $fields;
 	}
 
@@ -708,7 +707,7 @@ class DboPostgres extends DboSource {
 
 				switch ($type) {
 					case 'bool':
-						$resultRow[$table][$column] = $this->boolean($row[$index], false);
+						$resultRow[$table][$column] = $this->boolean($row[$index]);
 					break;
 					case 'binary':
 					case 'bytea':
@@ -733,7 +732,7 @@ class DboPostgres extends DboSource {
  * @param boolean $quote true to quote a boolean to be used in a query, flase to return the boolean value
  * @return boolean Converted boolean value
  */
-	function boolean($data, $quote = true) {
+	function boolean($data, $quote = false) {
 		switch (true) {
 			case ($data === true || $data === false):
 				$result = $data;
@@ -755,7 +754,7 @@ class DboPostgres extends DboSource {
 		if ($quote) {
 			return ($result) ? 'TRUE' : 'FALSE';
 		}
-		return (int) $result;
+		return (bool) $result;
 	}
 
 /**

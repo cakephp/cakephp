@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +24,7 @@ require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
  * ContainableTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.behaviors
+ * @package       cake.tests.cases.libs.model.behaviors
  */
 class ContainableBehaviorTest extends CakeTestCase {
 
@@ -3191,112 +3189,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 			3 => 'Third Article'
 		);
 		$this->assertEqual($result, $expected);
-	}
-
-/**
- * testPaginate method
- *
- * @access public
- * @return void
- */
-	function testPaginate() {
-		App::import('Core', 'Controller');
-		$Controller = new Controller($this->getMock('CakeRequest'));
-		$Controller->uses = array('Article');
-		$Controller->passedArgs[] = '1';
-		$Controller->request->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->paginate = array('Article' => array('fields' => array('title'), 'contain' => array('User(user)')));
-		$result = $Controller->paginate('Article');
-		$expected = array(
-			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
-			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry', 'id' => 3)),
-			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
-		);
-		$this->assertEqual($result, $expected);
-
-		$r = $Controller->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertTrue(Set::matches('/Tag[id=1]', $r));
-
-		$Controller->paginate = array('Article' => array('contain' => array('Comment(comment)' => 'User(user)'), 'fields' => array('title')));
-		$result = $Controller->paginate('Article');
-		$expected = array(
-			array(
-				'Article' => array('title' => 'First Article', 'id' => 1),
-				'Comment' => array(
-					array(
-						'comment' => 'First Comment for First Article',
-						'user_id' => 2,
-						'article_id' => 1,
-						'User' => array('user' => 'nate')
-					),
-					array(
-						'comment' => 'Second Comment for First Article',
-						'user_id' => 4,
-						'article_id' => 1,
-						'User' => array('user' => 'garrett')
-					),
-					array(
-						'comment' => 'Third Comment for First Article',
-						'user_id' => 1,
-						'article_id' => 1,
-						'User' => array('user' => 'mariano')
-					),
-					array(
-						'comment' => 'Fourth Comment for First Article',
-						'user_id' => 1,
-						'article_id' => 1,
-						'User' => array('user' => 'mariano')
-					)
-				)
-			),
-			array(
-				'Article' => array('title' => 'Second Article', 'id' => 2),
-				'Comment' => array(
-					array(
-						'comment' => 'First Comment for Second Article',
-						'user_id' => 1,
-						'article_id' => 2,
-						'User' => array('user' => 'mariano')
-					),
-					array(
-						'comment' => 'Second Comment for Second Article',
-						'user_id' => 2,
-						'article_id' => 2,
-						'User' => array('user' => 'nate')
-					)
-				)
-			),
-			array(
-				'Article' => array('title' => 'Third Article', 'id' => 3),
-				'Comment' => array()
-			),
-		);
-		$this->assertEqual($result, $expected);
-
-		$r = $Controller->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertTrue(Set::matches('/Tag[id=1]', $r));
-
-		$Controller->Article->unbindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User'), 'hasAndBelongsToMany' => array('Tag')), false);
-		$Controller->Article->bindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User')), false);
-
-		$Controller->paginate = array('Article' => array('contain' => array('Comment(comment)', 'User(user)'), 'fields' => array('title')));
-		$r = $Controller->paginate('Article');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
-		$this->assertFalse(Set::matches('/Comment[id=1]', $r));
-
-		$r = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
-		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
 	}
 
 /**

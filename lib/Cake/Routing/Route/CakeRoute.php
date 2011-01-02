@@ -16,8 +16,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
+ * @package       cake.libs.route
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -165,6 +164,11 @@ class CakeRoute {
 		$parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
+
+		//remove defaults that are also keys. They can cause match failures
+		foreach ($this->keys as $key) {
+			unset($this->defaults[$key]);
+		}
 	}
 
 /**
@@ -260,53 +264,62 @@ class CakeRoute {
 
 		//check that all the key names are in the url
 		$keyNames = array_flip($this->keys);
-		if (array_intersect_key($keyNames, $url) != $keyNames) {
+		if (array_intersect_key($keyNames, $url) !== $keyNames) {
 			return false;
 		}
 
-		$diffUnfiltered = Set::diff($url, $defaults);
-		$diff = array();
+		// Missing defaults is a fail.
+		if (array_diff_key($defaults, $url) !== array()) {
+			return false;
+		}
 
-		foreach ($diffUnfiltered as $key => $var) {
-			if ($var === 0 || $var === '0' || !empty($var)) {
-				$diff[$key] = $var;
+		$greedyNamed = Router::$named['greedy'];
+		$allowedNamedParams = Router::$named['rules'];
+
+		$named = $pass = $_query = array();
+
+		foreach ($url as $key => $value) {
+
+			// keys that exist in the defaults and have different values is a match failure.
+			$defaultExists = array_key_exists($key, $defaults);
+			if ($defaultExists && $defaults[$key] != $value) {
+				return false;
+			} elseif ($defaultExists) {
+				continue;
+			}
+			
+			// If the key is a routed key, its not different yet.
+			if (array_key_exists($key, $keyNames)) {
+				continue;
+			}
+
+			// pull out passed args
+			$numeric = is_numeric($key);
+			if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
+				continue;
+			} elseif ($numeric) {
+				$pass[] = $value;
+				unset($url[$key]);
+				continue;
+			}
+
+			// pull out named params if named params are greedy or a rule exists.
+			if (
+				($greedyNamed || isset($allowedNamedParams[$key])) &&
+				($value !== false && $value !== null)
+			) {
+				$named[$key] = $value;
+				continue;
+			}
+
+			// keys that don't exist are different.
+			if (!$defaultExists && !empty($value)) {
+				return false;
 			}
 		}
 
 		//if a not a greedy route, no extra params are allowed.
-		if (!$this->_greedy && array_diff_key($diff, $keyNames) != array()) {
-			return false;
-		}
-
-		//remove defaults that are also keys. They can cause match failures
-		foreach ($this->keys as $key) {
-			unset($defaults[$key]);
-		}
-		$filteredDefaults = array_filter($defaults);
-
-		//if the difference between the url diff and defaults contains keys from defaults its not a match
-		if (array_intersect_key($filteredDefaults, $diffUnfiltered) !== array()) {
-			return false;
-		}
-
-		$passedArgsAndParams = array_diff_key($diff, $filteredDefaults, $keyNames);
-		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
-
-		//remove any pass params, they have numeric indexes, skip any params that are in the defaults
-		$pass = array();
-		$i = 0;
-		while (isset($url[$i])) {
-			if (!isset($diff[$i])) {
-				$i++;
-				continue;
-			}
-			$pass[] = $url[$i];
-			unset($url[$i], $params[$i]);
-			$i++;
-		}
-
-		//still some left over parameters that weren't named or passed args, bail.
-		if (!empty($params)) {
+		if (!$this->_greedy && (!empty($pass) || !empty($named))) {
 			return false;
 		}
 
@@ -318,7 +331,7 @@ class CakeRoute {
 				}
 			}
 		}
-		return $this->_writeUrl(array_merge($url, compact('pass', 'named')));
+		return $this->_writeUrl(array_merge($url, compact('pass', 'named', '_query')));
 	}
 
 /**
@@ -373,5 +386,22 @@ class CakeRoute {
 		}
 		$out = str_replace('//', '/', $out);
 		return $out;
+	}
+
+/**
+ * Generates a well-formed querystring from $q
+ * 
+ * Will compose an array or nested array into a proper querystring.
+ *
+ * @param mixed $q An array of parameters to compose into a query string.
+ * @param bool $escape Whether or not to use escaped &
+ * @return string
+ */
+	public function queryString($q, $escape = false) {
+		$join = '&';
+		if ($escape === true) {
+			$join = '&amp;';
+		}
+		return '?' . http_build_query($q, null, $join);
 	}
 }

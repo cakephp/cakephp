@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.tests.cases.libs.session
+ * @package       cake.tests.cases.libs.session
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -97,7 +96,7 @@ class DatabaseSessionTest extends CakeTestCase {
 		$storage = new DatabaseSession();
 
 		$session = ClassRegistry::getObject('session');
-		$this->assertType('SessionTestModel', $session);
+		$this->assertInstanceOf('SessionTestModel', $session);
 		$this->assertEquals('Session', $session->alias);
 		$this->assertEquals('test', $session->useDbConfig);
 	}

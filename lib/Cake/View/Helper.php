@@ -14,8 +14,7 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,8 +25,7 @@ App::uses('Router', 'Routing');
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view
+ * @package       cake.libs.view
  */
 class Helper extends Object {
 
@@ -137,7 +135,6 @@ class Helper extends Object {
  */
 	public function __construct(View $View, $settings = array()) {
 		$this->_View = $View;
-		$this->params = $View->params;
 		$this->request = $View->request;
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
