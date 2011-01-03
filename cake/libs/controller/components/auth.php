@@ -48,20 +48,36 @@ class AuthComponent extends Component {
 	public $components = array('Session', 'RequestHandler');
 
 /**
- * A reference to the object used for authentication
+ * An array of authentication objects to use for authenticating users.  You can configure
+ * multiple adapters and they will be checked sequentially when users are identified.
  *
  * @var object
  * @link http://book.cakephp.org/view/1278/authenticate
  */
-	public $authenticate = null;
+	public $authenticate = array('Form');
 
 /**
- * The name of the component to use for Authorization or set this to
- * 'controller' will validate against Controller::isAuthorized()
- * 'actions' will validate Controller::action against an AclComponent::check()
- * 'crud' will validate mapActions against an AclComponent::check()
- * array('model'=> 'name'); will validate mapActions against model $name::isAuthorized(user, controller, mapAction)
- * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
+ * Objects that will be used for authentication checks.
+ *
+ * @var array
+ */
+	protected $_authenticateObjects = array();
+
+/**
+ * A hash mapping legacy properties => to settings passed into Authenticate objects.
+ *
+ * @var string
+ * @deprecated Will be removed in 2.1+
+ */
+	protected $_authenticateLegacyMap = array(
+		'userModel' => 'userModel',
+		'userScope' => 'scope',
+		'fields' => 'fields'
+	);
+
+/**
+ * An array of authorization objects to use for authorizing users.  You can configure
+ * multiple adapters and they will be checked sequentially when authorization checks are done.
  *
  * @var mixed
  * @link http://book.cakephp.org/view/1275/authorize
@@ -363,15 +379,7 @@ class AuthComponent extends Component {
 				!empty($request->data[$model->alias][$this->fields['password']]);
 
 			if ($isValid) {
-				$username = $request->data[$model->alias][$this->fields['username']];
-				$password = $request->data[$model->alias][$this->fields['password']];
-
-				$data = array(
-					$model->alias . '.' . $this->fields['username'] => $username,
-					$model->alias . '.' . $this->fields['password'] => $password
-				);
-
-				if ($this->login($data)) {
+				if ($this->login()) {
 					if ($this->autoRedirect) {
 						$controller->redirect($this->redirect(), null, true);
 					}
@@ -456,18 +464,24 @@ class AuthComponent extends Component {
  * Each adapter will be checked in sequence, if any of them return true, then the user will 
  * be authorized for the request.
  *
- * @param mixed $user The user to check the authorization of, if empty the user in the session will be used.
+ * @param mixed $user The user to check the authorization of. If empty the user in the session will be used.
+ * @param CakeRequest $request The request to authenticate for.  If empty, the current request will be used.
  * @return boolean True if $user is authorized, otherwise false
  */
-	public function isAuthorized($user = null) {
+	public function isAuthorized($user = null, $request = null) {
 		if (empty($user) && !$this->user()) {
 			return false;
 		} elseif (empty($user)) {
 			$user = $this->user();
 		}
-		$this->loadAuthorizeObjects();
+		if (empty($request)) {
+			$request = $this->request;
+		}
+		if (empty($this->_authorizeObjects)) {
+			$this->loadAuthorizeObjects();
+		}
 		foreach ($this->_authorizeObjects as $authorizer) {
-			if ($authorizer->authorize($user, $this->request) === true) {
+			if ($authorizer->authorize($user, $request) === true) {
 				return true;
 			}
 		}
@@ -483,6 +497,7 @@ class AuthComponent extends Component {
 		if (empty($this->authorize)) {
 			return;
 		}
+		$this->_authorizeObjects = array();
 		foreach (Set::normalize($this->authorize) as $class => $settings) {
 			$className = $class . 'Authorize';
 			if (!class_exists($className) && !App::import('Component', 'auth/' . $class . '_authorize')) {
@@ -596,15 +611,14 @@ class AuthComponent extends Component {
  * @return boolean True on login success, false on failure
  * @link http://book.cakephp.org/view/1261/login
  */
-	public function login($data = null) {
+	public function login($request = null) {
 		$this->__setDefaults();
 		$this->_loggedIn = false;
 
-		if (empty($data)) {
-			$data = $this->data;
+		if (empty($request)) {
+			$request = $this->request;
 		}
-
-		if ($user = $this->identify($data)) {
+		if ($user = $this->identify($request)) {
 			$this->Session->write($this->sessionKey, $user);
 			$this->_loggedIn = true;
 		}
@@ -739,80 +753,51 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Identifies a user based on specific criteria.
+ * Use the configured authentication adapters, and attempt to identify the user
+ * by credentials contained in $request.
  *
- * @param mixed $user Optional. The identity of the user to be validated.
- *              Uses the current user session if none specified.
- * @param array $conditions Optional. Additional conditions to a find.
- * @return array User record data, or null, if the user could not be identified.
+ * @param CakeRequest $request The request that contains authentication data.
+ * @return array User record data, or false, if the user could not be identified.
  */
-	public function identify($user = null, $conditions = null) {
-		if ($conditions === false) {
-			$conditions = null;
-		} elseif (is_array($conditions)) {
-			$conditions = array_merge((array)$this->userScope, $conditions);
-		} else {
-			$conditions = $this->userScope;
+	public function identify(CakeRequest $request) {
+		if (empty($this->_authenticateObjects)) {
+			$this->loadAuthenticateObjects();
 		}
-		$model = $this->getModel();
-		if (empty($user)) {
-			$user = $this->user();
-			if (empty($user)) {
-				return null;
+		foreach ($this->_authenticateObjects as $auth) {
+			$result = $auth->authenticate($request);
+			if (!empty($result) && is_array($result)) {
+				return $result;
 			}
-		} elseif (is_object($user) && is_a($user, 'Model')) {
-			if (!$user->exists()) {
-				return null;
-			}
-			$user = $user->read();
-			$user = $user[$model->alias];
-		} elseif (is_array($user) && isset($user[$model->alias])) {
-			$user = $user[$model->alias];
 		}
+		return false;
+	}
 
-		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$model->alias . '.' . $this->fields['username']]))) {
-			if (isset($user[$this->fields['username']]) && !empty($user[$this->fields['username']])  && !empty($user[$this->fields['password']])) {
-				if (trim($user[$this->fields['username']]) == '=' || trim($user[$this->fields['password']]) == '=') {
-					return false;
-				}
-				$find = array(
-					$model->alias.'.'.$this->fields['username'] => $user[$this->fields['username']],
-					$model->alias.'.'.$this->fields['password'] => $user[$this->fields['password']]
-				);
-			} elseif (isset($user[$model->alias . '.' . $this->fields['username']]) && !empty($user[$model->alias . '.' . $this->fields['username']])) {
-				if (trim($user[$model->alias . '.' . $this->fields['username']]) == '=' || trim($user[$model->alias . '.' . $this->fields['password']]) == '=') {
-					return false;
-				}
-				$find = array(
-					$model->alias.'.'.$this->fields['username'] => $user[$model->alias . '.' . $this->fields['username']],
-					$model->alias.'.'.$this->fields['password'] => $user[$model->alias . '.' . $this->fields['password']]
-				);
-			} else {
-				return false;
-			}
-			$data = $model->find('first', array(
-				'conditions' => array_merge($find, $conditions),
-				'recursive' => 0
-			));
-			if (empty($data) || empty($data[$model->alias])) {
-				return null;
-			}
-		} elseif (!empty($user) && is_string($user)) {
-			$data = $model->find('first', array(
-				'conditions' => array_merge(array($model->escapeField() => $user), $conditions),
-			));
-			if (empty($data) || empty($data[$model->alias])) {
-				return null;
-			}
+/**
+ * loads the configured authentication objects.
+ *
+ * @return mixed either null on empty authenticate value, or an array of loaded objects.
+ */
+	public function loadAuthenticateObjects() {
+		if (empty($this->authenticate)) {
+			return;
 		}
-
-		if (!empty($data)) {
-			if (!empty($data[$model->alias][$this->fields['password']])) {
-				unset($data[$model->alias][$this->fields['password']]);
+		$this->_authenticateObjects = array();
+		foreach (Set::normalize($this->authenticate) as $class => $settings) {
+			$className = $class . 'Authenticate';
+			if (!class_exists($className) && !App::import('Component', 'auth/' . $class . '_authenticate')) {
+				throw new CakeException(__('Authentication adapter "%s" was not found.', $class));
 			}
-			return $data[$model->alias];
+			if (!method_exists($className, 'authenticate')) {
+				throw new CakeException(__('Authentication objects must implement an authenticate method.'));
+			}
+			foreach ($this->_authenticateLegacyMap as $old => $new) {
+				if (empty($settings[$new]) && !empty($this->{$old})) {
+					$settings[$new] = $this->{$old};
+				}
+			}
+			$this->_authenticateObjects[] = new $className($settings);
 		}
-		return null;
+		return $this->_authenticateObjects;
 	}
 
 /**

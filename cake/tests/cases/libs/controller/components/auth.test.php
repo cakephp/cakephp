@@ -582,13 +582,17 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
 		$expected = array('AuthUser' => array(
-			'id' => 1, 'username' => 'mariano', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
+			'id' => 1, 
+			'username' => 'mariano', 
+			'created' => '2007-03-17 01:16:23',
+			'updated' => date('Y-m-d H:i:s')
 		));
 		$this->assertEqual($user, $expected);
 		$this->Controller->Session->delete('Auth');
 
 		$this->Controller->request->data['AuthUser'] = array(
-			'username' => 'blah', 'password' => ''
+			'username' => 'blah', 
+			'password' => ''
 		);
 
 		$this->Controller->Auth->startup($this->Controller);
@@ -598,7 +602,8 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->delete('Auth');
 
 		$this->Controller->request->data['AuthUser'] = array(
-			'username' => 'now() or 1=1 --', 'password' => ''
+			'username' => 'now() or 1=1 --', 
+			'password' => ''
 		);
 
 		$this->Controller->Auth->startup($this->Controller);
@@ -608,7 +613,8 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->delete('Auth');
 
 		$this->Controller->request->data['AuthUser'] = array(
-			'username' => 'now() or 1=1 #something', 'password' => ''
+			'username' => 'now() or 1=1 #something', 
+			'password' => ''
 		);
 
 		$this->Controller->Auth->startup($this->Controller);
@@ -617,14 +623,6 @@ class AuthTest extends CakeTestCase {
 		$this->assertNull($user);
 		$this->Controller->Session->delete('Auth');
 
-		$this->Controller->Auth->userModel = 'UuidUser';
-		$this->Controller->Auth->login('47c36f9c-bc00-4d17-9626-4e183ca6822b');
-
-		$user = $this->Controller->Auth->user();
-		$expected = array('UuidUser' => array(
-			'id' => '47c36f9c-bc00-4d17-9626-4e183ca6822b', 'title' => 'Unique record 1', 'count' => 2, 'created' => '2008-03-13 01:16:23', 'updated' => '2008-03-13 01:18:31'
-		));
-		$this->assertEqual($user, $expected);
 		$this->Controller->Session->delete('Auth');
 	}
 
@@ -850,22 +848,80 @@ class AuthTest extends CakeTestCase {
 			'AuthMockThree'
 		);
 		$mocks = $this->Controller->Auth->loadAuthorizeObjects();
+		$request = $this->Controller->request;
 
 		$this->assertEquals(3, count($mocks));
 		$mocks[0]->expects($this->once())
 			->method('authorize')
-			->with(array('User'))
+			->with(array('User'), $request)
 			->will($this->returnValue(false));
-		
+
 		$mocks[1]->expects($this->once())
 			->method('authorize')
-			->with(array('User'))
+			->with(array('User'), $request)
 			->will($this->returnValue(true));
-		
+
 		$mocks[2]->expects($this->never())
 			->method('authorize');
-	
-		$this->assertTrue($this->Controller->Auth->isAuthorized(array('User')));
+
+		$this->assertTrue($this->Controller->Auth->isAuthorized(array('User'), $request));
+	}
+
+/**
+ * test that loadAuthorize resets the loaded objects each time.
+ *
+ * @return void
+ */
+	function testLoadAuthorizeResets() {
+		$this->Controller->Auth->authorize = array(
+			'Controller'
+		);
+		$result = $this->Controller->Auth->loadAuthorizeObjects();
+		$this->assertEquals(1, count($result));
+
+		$result = $this->Controller->Auth->loadAuthorizeObjects();
+		$this->assertEquals(1, count($result));
+	}
+
+/**
+ * @expectedException CakeException
+ * @return void
+ */
+	function testLoadAuthenticateNoFile() {
+		$this->Controller->Auth->authenticate = 'Missing';
+		$this->Controller->Auth->identify($this->Controller->request);
+	}
+
+/**
+ * test that loadAuthorize resets the loaded objects each time.
+ *
+ * @return void
+ */
+	function testLoadAuthenticateResets() {
+		$this->Controller->Auth->authenticate = array(
+			'Form'
+		);
+		$result = $this->Controller->Auth->loadAuthenticateObjects();
+		$this->assertEquals(1, count($result));
+
+		$result = $this->Controller->Auth->loadAuthenticateObjects();
+		$this->assertEquals(1, count($result));
+	}
+
+/**
+ * test that loadAuthenticate merges in legacy authentication settings.
+ *
+ * @return void
+ */
+	function testLoadAuthenticateSettingsPass() {
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->userScope = array('AuthUser.active' => 1);
+		$this->Controller->Auth->fields = array('username' => 'user', 'password' => 'passwd');
+
+		$this->Controller->Auth->authenticate = array('Form');
+		$objects = $this->Controller->Auth->loadAuthenticateObjects();
+		$result = $objects[0];
+		$this->assertEquals($result->settings['userModel'], 'AuthUser');
 	}
 
 /**
@@ -1463,7 +1519,8 @@ class AuthTest extends CakeTestCase {
 		$authUser = $PluginModel->find();
 
 		$this->Controller->request->data['TestPluginAuthUser'] = array(
-			'username' => $authUser['TestPluginAuthUser']['username'], 'password' => 'cake'
+			'username' => $authUser['TestPluginAuthUser']['username'],
+			'password' => 'cake'
 		);
 
 		$this->Controller->request->addParams(Router::parse('auth_test/login'));
@@ -1476,8 +1533,12 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
-		$expected = array('TestPluginAuthUser' => array(
-			'id' => 1, 'username' => 'gwoo', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
+		$expected = array(
+			'TestPluginAuthUser' => array(
+				'id' => 1,
+				'username' => 'gwoo',
+				'created' => '2007-03-17 01:16:23',
+				'updated' => date('Y-m-d H:i:s')
 		));
 		$this->assertEqual($user, $expected);
 		$sessionKey = $this->Controller->Auth->sessionKey;
