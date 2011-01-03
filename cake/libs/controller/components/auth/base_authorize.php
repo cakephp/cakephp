@@ -37,6 +37,21 @@ abstract class BaseAuthorize {
 	public $actionPath = null;
 
 /**
+ * Action -> crud mappings. Used by authorization objects that want to map actions to CRUD roles.
+ *
+ * @var array
+ * @see CrudAuthorize
+ */
+	protected $_actionMap = array(
+		'index' => 'read',
+		'add' => 'create',
+		'edit' => 'update',
+		'view' => 'read',
+		'delete' => 'delete',
+		'remove' => 'delete'
+	);
+
+/**
  * Constructor
  *
  * @param Controller $controller The controller for this request.
@@ -86,5 +101,27 @@ abstract class BaseAuthorize {
 			array(Inflector::camelize($request['controller']), $request['action'], $plugin),
 			$this->actionPath . $path
 		);
+	}
+
+/**
+ * Maps crud actions to actual controller names.  Used to modify or get the current mapped actions.
+ *
+ * @param mixed $map Either an array of mappings, or undefined to get current values.
+ * @return mixed Either the current mappings or null when setting.
+ */
+	public function mapActions($map = array()) {
+		if (empty($map)) {
+			return $this->_actionMap;
+		}
+		$crud = array('create', 'read', 'update', 'delete');
+		foreach ($map as $action => $type) {
+			if (in_array($action, $crud) && is_array($type)) {
+				foreach ($type as $typedAction) {
+					$this->_actionMap[$typedAction] = $action;
+				}
+			} else {
+				$this->_actionMap[$action] = $type;
+			}
+		}
 	}
 }
