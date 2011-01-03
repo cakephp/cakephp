@@ -6,7 +6,7 @@ App::import('Component', 'Acl');
 App::import('Core', 'CakeRequest');
 App::import('Core', 'Controller');
 
-class ActionsAuthorizeTest extends CakeTestCase {
+class CrudAuthorizeTest extends CakeTestCase {
 
 /**
  * setup
