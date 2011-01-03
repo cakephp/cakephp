@@ -21,6 +21,7 @@
 
 App::import('Core', 'Router', false);
 App::import('Core', 'Security', false);
+App::import('Component', 'auth/base_authorize');
 
 /**
  * Authentication control component class
@@ -66,6 +67,13 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/view/1275/authorize
  */
 	public $authorize = false;
+
+/**
+ * Objects that will be used for authorization checks.
+ *
+ * @var array
+ */
+	protected $_authorizeObjects = array();
 
 /**
  * The name of an optional view element to render when an Ajax request is made
@@ -400,42 +408,8 @@ class AuthComponent extends Component {
 		if (!$this->authorize) {
 			return true;
 		}
-
-		extract($this->__authType());
-		switch ($type) {
-			case 'controller':
-				$this->object = $controller;
-			break;
-			case 'crud':
-			case 'actions':
-				if (isset($controller->Acl)) {
-					$this->Acl = $controller->Acl;
-				} else {
-					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.'), E_USER_WARNING);
-				}
-			break;
-			case 'model':
-				if (!isset($object)) {
-					$hasModel = (
-						isset($controller->{$controller->modelClass}) &&
-						is_object($controller->{$controller->modelClass})
-					);
-					$isUses = (
-						!empty($controller->uses) && isset($controller->{$controller->uses[0]}) &&
-						is_object($controller->{$controller->uses[0]})
-					);
-
-					if ($hasModel) {
-						$object = $controller->modelClass;
-					} elseif ($isUses) {
-						$object = $controller->uses[0];
-					}
-				}
-				$type = array('model' => $object);
-			break;
-		}
-
-		if ($this->isAuthorized($type)) {
+		
+		if ($this->isAuthorized()) {
 			return true;
 		}
 
@@ -478,91 +452,48 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Determines whether the given user is authorized to perform an action.  The type of
- * authorization used is based on the value of AuthComponent::$authorize or the
- * passed $type param.
+ * Uses the configured Authorization adapters to check whether or not a user is authorized.
+ * Each adapter will be checked in sequence, if any of them return true, then the user will 
+ * be authorized for the request.
  *
- * Types:
- * 'controller' will validate against Controller::isAuthorized() if controller instance is
- * 				passed in $object
- * 'actions' will validate Controller::action against an AclComponent::check()
- * 'crud' will validate mapActions against an AclComponent::check()
- * 		array('model'=> 'name'); will validate mapActions against model
- * 		$name::isAuthorized(user, controller, mapAction)
- * 'object' will validate Controller::action against
- * 		object::isAuthorized(user, controller, action)
- *
- * @param string $type Type of authorization
- * @param mixed $object object, model object, or model name
- * @param mixed $user The user to check the authorization of
+ * @param mixed $user The user to check the authorization of, if empty the user in the session will be used.
  * @return boolean True if $user is authorized, otherwise false
  */
-	public function isAuthorized($type = null, $object = null, $user = null) {
+	public function isAuthorized($user = null) {
 		if (empty($user) && !$this->user()) {
 			return false;
 		} elseif (empty($user)) {
 			$user = $this->user();
 		}
-
-		extract($this->__authType($type));
-
-		if (!$object) {
-			$object = $this->object;
-		}
-
-		$valid = false;
-		switch ($type) {
-			case 'controller':
-				$valid = $object->isAuthorized();
-			break;
-			case 'actions':
-				$valid = $this->Acl->check($user, $this->action());
-			break;
-			case 'crud':
-				if (!isset($this->actionMap[$this->request['action']])) {
-					trigger_error(
-						__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', $this->request['action'], $this->request['controller']),
-						E_USER_WARNING
-					);
-				} else {
-					$valid = $this->Acl->check(
-						$user,
-						$this->action(':controller'),
-						$this->actionMap[$this->request['action']]
-					);
-				}
-			break;
-			case 'model':
-				$action = $this->request['action'];
-				if (isset($this->actionMap[$action])) {
-					$action = $this->actionMap[$action];
-				}
-				if (is_string($object)) {
-					$object = $this->getModel($object);
-				}
-			case 'object':
-				if (!isset($action)) {
-					$action = $this->action(':action');
-				}
-				if (empty($object)) {
-					trigger_error(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', get_class($object)), E_USER_WARNING);
-					return;
-				}
-				if (method_exists($object, 'isAuthorized')) {
-					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
-				} elseif ($object) {
-					trigger_error(__('%s::isAuthorized() is not defined.', get_class($object)), E_USER_WARNING);
-				}
-			break;
-			case null:
-			case false:
+		$this->loadAuthorizeObjects();
+		foreach ($this->_authorizeObjects as $authorizer) {
+			if ($authorizer->authorize($user, $this->request) === true) {
 				return true;
-			break;
-			default:
-				trigger_error(__('Auth::isAuthorized() - $authorize is set to an incorrect value.  Allowed settings are: "actions", "crud", "model" or null.'), E_USER_WARNING);
-			break;
+			}
 		}
-		return $valid;
+		return false;
+	}
+
+/**
+ * Loads the authorization objects configured.
+ *
+ * @return mixed Either null when authorize is empty, or the loaded authorization objects.
+ */
+	public function loadAuthorizeObjects() {
+		if (empty($this->authorize)) {
+			return;
+		}
+		foreach (Set::normalize($this->authorize) as $class => $settings) {
+			$className = $class . 'Authorize';
+			if (!class_exists($className) && !App::import('Component', 'auth/' . $class . '_authorize')) {
+				throw new CakeException(__('Authorization adapter "%s" was not found.', $class));
+			}
+			if (!method_exists($className, 'authorize')) {
+				throw new CakeException(__('Authorization objects must implement an authorize method.'));
+			}
+			$this->_authorizeObjects[] = new $className($this->_Collection->getController(), $settings);
+		}
+		return $this->_authorizeObjects;
 	}
 
 /**

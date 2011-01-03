@@ -54,6 +54,7 @@ class TestAuthComponent extends AuthComponent {
 	function _stop($status = 0) {
 		$this->testStop = true;
 	}
+
 }
 
 /**
@@ -684,6 +685,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAuthorizeController() {
+		$this->markTestSkipped('This is already tested in ControllerAuthorizeTest');
+
 		$this->AuthUser = new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -708,6 +711,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAuthorizeModel() {
+		$this->markTestSkipped('This is not implemented');
+		
 		$this->AuthUser = new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -734,6 +739,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAuthorizeCrud() {
+		$this->markTestSkipped('This is already tested in CrudAuthorizeTest');
+
 		$this->AuthUser = new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -795,6 +802,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAuthorizeActions() {
+		$this->markTestSkipped('This is already tested in ActionsAuthorizeTest');
+
 		$this->AuthUser = new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -814,6 +823,49 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($this->Controller->Auth->isAuthorized());
+	}
+
+/**
+ * @expectedException CakeException
+ * @return void
+ */
+	function testIsAuthorizedMissingFile() {
+		$this->Controller->Auth->authorize = 'Missing';
+		$this->Controller->Auth->isAuthorized(array('User' => array('id' => 1)));
+	}
+
+/**
+ * test that isAuthroized calls methods correctly
+ *
+ * @return void
+ */
+	function testIsAuthorizedDelegation() {
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockOneAuthorize', false);
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockTwoAuthorize', false);
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockThreeAuthorize', false);
+
+		$this->Controller->Auth->authorize = array(
+			'AuthMockOne',
+			'AuthMockTwo',
+			'AuthMockThree'
+		);
+		$mocks = $this->Controller->Auth->loadAuthorizeObjects();
+
+		$this->assertEquals(3, count($mocks));
+		$mocks[0]->expects($this->once())
+			->method('authorize')
+			->with(array('User'))
+			->will($this->returnValue(false));
+		
+		$mocks[1]->expects($this->once())
+			->method('authorize')
+			->with(array('User'))
+			->will($this->returnValue(true));
+		
+		$mocks[2]->expects($this->never())
+			->method('authorize');
+	
+		$this->assertTrue($this->Controller->Auth->isAuthorized(array('User')));
 	}
 
 /**
@@ -1136,6 +1188,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testEmptyUsernameOrPassword() {
+		$this->markTestSkipped('This is already tested in FormAuthenticateTest');
+
 		$this->AuthUser = new AuthUser();
 		$user['id'] = 1;
 		$user['username'] = 'mariano';
@@ -1168,6 +1222,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testInjection() {
+		$this->markTestSkipped('This is already tested in FormAuthenticateTest');
+		
 		$this->AuthUser = new AuthUser();
 		$this->AuthUser->id = 2;
 		$this->AuthUser->saveField('password', Security::hash(Configure::read('Security.salt') . 'cake'));
@@ -1326,6 +1382,7 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testCustomField() {
+		$this->markTestSkipped('This is already tested in FormAuthenticateTest');
 		Router::reload();
 
 		$this->AuthUserCustomField = new AuthUserCustomField();
@@ -1544,7 +1601,6 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testComponentSettings() {
-
 		$request = new CakeRequest(null, false);
 		$this->Controller = new AuthTestController($request);
 
