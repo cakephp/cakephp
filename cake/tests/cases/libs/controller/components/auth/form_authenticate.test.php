@@ -28,7 +28,7 @@ require_once  CAKE_TESTS . 'cases' . DS . 'libs' . DS . 'model' . DS . 'models.p
  */
 class FormAuthenticateTest extends CakeTestCase {
 
-	public $fixtures = array('core.user');
+	public $fixtures = array('core.user', 'core.auth_user');
 
 /**
  * setup
@@ -142,6 +142,43 @@ class FormAuthenticateTest extends CakeTestCase {
 		));
 
 		$this->assertFalse($this->auth->authenticate($request));
+	}
+
+/**
+ * test a model in a plugin.
+ *
+ * @return void
+ */
+	function testPluginModel() {
+		Cache::delete('object_map', '_cake_core_');
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+		), true);
+		App::objects('plugin', null, false);
+
+		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
+		$user['id'] = 1;
+		$user['username'] = 'gwoo';
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$PluginModel->save($user, false);
+	
+		$this->auth->settings['userModel'] = 'TestPlugin.TestPluginAuthUser';
+		$this->auth->settings['fields']['username'] = 'username';
+	
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array('TestPluginAuthUser' => array(
+			'username' => 'gwoo',
+			'password' => Security::hash('cake', null, true)
+		));
+
+		$result = $this->auth->authenticate($request);
+		$expected = array(
+			'id' => 1,
+			'username' => 'gwoo',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => date('Y-m-d H:i:s')
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 }

@@ -72,19 +72,21 @@ class FormAuthenticate {
  */
 	public function authenticate(CakeRequest $request) {
 		$userModel = $this->settings['userModel'];
+		list($plugin, $model) = pluginSplit($userModel);
+
 		$fields = $this->settings['fields'];
-		if (empty($request->data[$userModel])) {
+		if (empty($request->data[$model])) {
 			return false;
 		}
 		if (
-			empty($request->data[$userModel][$fields['username']]) || 
-			empty($request->data[$userModel][$fields['password']])
+			empty($request->data[$model][$fields['username']]) ||
+			empty($request->data[$model][$fields['password']])
 		) {
 			return false;
 		}
 		$conditions = array(
-			$userModel . '.' . $fields['username'] => $request->data[$userModel][$fields['username']],
-			$userModel . '.' . $fields['password'] => $request->data[$userModel][$fields['password']],
+			$model . '.' . $fields['username'] => $request->data[$model][$fields['username']],
+			$model . '.' . $fields['password'] => $request->data[$model][$fields['password']],
 		);
 		if (!empty($this->settings['scope'])) {
 			$conditions = array_merge($conditions, $this->settings['scope']);
@@ -93,10 +95,10 @@ class FormAuthenticate {
 			'conditions' => $conditions,
 			'recursive' => 0
 		));
-		if (empty($result) || empty($result[$userModel])) {
+		if (empty($result) || empty($result[$model])) {
 			return false;
 		}
-		unset($result[$userModel][$fields['password']]);
-		return $result[$userModel];
+		unset($result[$model][$fields['password']]);
+		return $result[$model];
 	}
 }
