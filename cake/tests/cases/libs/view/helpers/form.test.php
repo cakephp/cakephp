@@ -654,14 +654,6 @@ class TestMail extends CakeTestModel {
 class FormHelperTest extends CakeTestCase {
 
 /**
- * fixtures property
- *
- * @var array
- * @access public
- */
-	public $fixtures = array(null);
-
-/**
  * setUp method
  *
  * @access public
