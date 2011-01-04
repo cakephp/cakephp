@@ -3367,4 +3367,18 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
 		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
 	}
+
+/**
+ * @expectedException MissingConnectionException
+ * @return void
+ */
+	function testExceptionOnBrokenConnection() {
+		$dbo = new DboMysql(array(
+			'driver' => 'mysql',
+			'host' => 'imaginary_host',
+			'login' => 'mark',
+			'password' => 'inyurdatabase',
+			'database' => 'imaginary'
+		));
+	}
 }

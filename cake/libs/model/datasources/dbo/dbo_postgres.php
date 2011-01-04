@@ -130,7 +130,7 @@ class DboPostgres extends DboSource {
 				 $this->_execute('SET search_path TO ' . $config['schema']);
 			}
 		} catch (PDOException $e) {
-			$this->errors[] = $e->getMessage();
+			throw new MissingConnectionException(array('class' => $e->getMessage()));
 		}
 
 		return $this->connected;
