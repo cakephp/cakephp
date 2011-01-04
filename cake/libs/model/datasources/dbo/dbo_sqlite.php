@@ -284,7 +284,7 @@ class DboSqlite extends DboSource {
 		//	so try to figure it out based on the querystring
 		$querystring = $results->queryString;
 		if (stripos($querystring, 'SELECT') === 0) {
-			$last = stripos($querystring, 'FROM');
+			$last = strripos($querystring, 'FROM');
 			if ($last !== false) {
 				$selectpart = substr($querystring, 7, $last - 8);
 				$selects = explode(',', $selectpart);
