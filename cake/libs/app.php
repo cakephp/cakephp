@@ -356,6 +356,11 @@ class App {
  *
  * `App::objects('plugin');` returns `array('DebugKit', 'Blog', 'User');`
  *
+ * You can also search only within a plugin's objects by using the plugin dot
+ * syntax (these objects are not cached):
+ * 
+ * `App::objects('MyPlugin.model');` returns `array('Post', 'Comment');`
+ *
  * @param string $type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
  * @param mixed $path Optional Scan only the path given. If null, paths for the chosen
  *   type will be used.
@@ -365,7 +370,21 @@ class App {
 	public static function objects($type, $path = null, $cache = true) {
 		$objects = array();
 		$extension = false;
+		list($plugin, $type) = pluginSplit($type);
 		$name = $type;
+
+		if ($plugin) {
+			$path = Inflector::pluralize($type);
+			if ($path == 'helpers') {
+				$path = 'views' . DS .$path;
+			} elseif ($path == 'behaviors') {
+				$path = 'models' . DS .$path;
+			} elseif ($path == 'components') {
+				$path = 'controllers' . DS .$path;
+			}
+			$path = self::pluginPath($plugin) . $path;
+			$cache = false;
+		}
 
 		if ($type === 'file' && !$path) {
 			return false;
@@ -409,6 +428,9 @@ class App {
 
 			if ($cache === true) {
 				self::$__cache = true;
+			}
+			if ($plugin) {
+				return $objects;
 			}
 			self::$__objects[$name] = $objects;
 		}
