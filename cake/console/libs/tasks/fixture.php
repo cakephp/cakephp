@@ -161,7 +161,9 @@ class FixtureTask extends BakeTask {
 		if (!class_exists('CakeSchema')) {
 			App::import('Model', 'CakeSchema', false);
 		}
-		$table = $schema = $records = $import = $modelImport = $recordImport = null;
+		$table = $schema = $records = $import = $modelImport = null;
+		$importBits = array();
+
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
 		} elseif ($useTable != Inflector::tableize($model)) {
@@ -170,16 +172,17 @@ class FixtureTask extends BakeTask {
 
 		if (!empty($importOptions)) {
 			if (isset($importOptions['schema'])) {
-				$modelImport = "'model' => '{$importOptions['schema']}'";
+				$modelImport = true;
+				$importBits[] = "'model' => '{$importOptions['schema']}'";
 			}
 			if (isset($importOptions['records'])) {
-				$recordImport = "'records' => true";
+				$importBits[] = "'records' => true";
 			}
-			if ($modelImport && $recordImport) {
-				$modelImport .= ', ';
+			if ($this->connection != 'default') {
+				$importBits[] .= "'connection' => '{$this->connection}'";
 			}
-			if (!empty($modelImport) || !empty($recordImport)) {
-				$import = sprintf("array(%s%s)", $modelImport, $recordImport);
+			if (!empty($importBits)) {
+				$import = sprintf("array(%s)", implode(', ', $importBits));
 			}
 		}
 

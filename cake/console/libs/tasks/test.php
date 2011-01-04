@@ -181,7 +181,20 @@ class TestTask extends BakeTask {
  * @access public
  */
 	function getClassName($objectType) {
-		$options = App::objects(strtolower($objectType));
+		$type = strtolower($objectType);
+		if ($this->plugin) {
+			$path = Inflector::pluralize($type);
+			if ($type === 'helper') {
+				$path = 'views' . DS . $path;
+			} elseif ($type === 'component') {
+				$path = 'controllers' . DS . $path;
+			} elseif ($type === 'behavior') {
+				$path = 'models' . DS . $path;
+			}
+			$options = App::objects($type, App::pluginPath($this->plugin) . $path, false);
+		} else {
+			$options = App::objects($type);
+		}
 		$this->out(sprintf(__('Choose a %s class', true), $objectType));
 		$keys = array();
 		foreach ($options as $key => $option) {

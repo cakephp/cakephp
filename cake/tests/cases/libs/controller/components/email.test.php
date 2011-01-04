@@ -538,6 +538,8 @@ MSGBLOC;
  * @return void
  */
 	function testTemplates() {
+		ClassRegistry::flush();
+
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -629,22 +631,33 @@ HTMLBLOC;
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		
+		$result = ClassRegistry::getObject('view');
+		$this->assertFalse($result);
+	}
 
-		return;
+/**
+ * test that elements used in email templates get helpers.
+ *
+ * @return void
+ */
+	function testTemplateNestedElements() {
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake SMTP test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 
-		$text = <<<TEXTBLOC
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->messageId = false;
+		$this->Controller->EmailTest->layout = 'default';
+		$this->Controller->EmailTest->template = 'nested_element';
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->Controller->helpers = array('Html');
 
-This element has some text that is just too wide to comply with email
-standards.
-This is the body of the message
-
-This email was sent using the CakePHP Framework, http://cakephp.org.
-TEXTBLOC;
-
-		$this->Controller->EmailTest->sendAs = 'text';
-		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
-		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'wide', 'default'));
-		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->EmailTest->send();
+		$result = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/Test/', $result);
+		$this->assertPattern('/http\:\/\/example\.com/', $result);
 	}
 
 /**
@@ -693,7 +706,7 @@ TEXTBLOC;
 		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
 		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
 		$this->assertPattern('/From: noreply@example.com\n/', $result);
-		$this->assertPattern('/Date: ' . date(DATE_RFC2822) . '\n/', $result);
+		$this->assertPattern('/Date: ' . preg_quote(date(DATE_RFC2822)) . '\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
 		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
@@ -721,7 +734,7 @@ TEXTBLOC;
 		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
 		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
 		$this->assertPattern('/From: noreply@example.com\n/', $result);
-		$this->assertPattern('/Date: ' . date(DATE_RFC2822) . '\n/', $result);
+		$this->assertPattern('/Date: ' . preg_quote(date(DATE_RFC2822)) . '\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
 		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
@@ -1208,6 +1221,9 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('alias <email@example.com>');
 		$this->assertEqual($result, 'alias <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('alias<email@example.com>');
+		$this->assertEqual($result, 'alias <email@example.com>');
 
 		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
 		$this->assertEqual($result, 'email@example.com');
@@ -1217,11 +1233,28 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('email@example.com', true);
 		$this->assertEqual($result, '<email@example.com>');
-		
+
 		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>', true);
 		$this->assertEqual($result, '<email@example.com>');
-		
+
 		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
 		$this->assertEqual($result, '<email@example.com>');
+	}
+
+/**
+ * test formatting addresses with multibyte chars
+ *
+ * @return void
+ */
+	function testFormatAddressMultibyte() {
+		$this->Controller->EmailTest->charset = 'UTF-8';
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdCA=?= <email@domain.de>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest<email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdA==?= <email@domain.de>');
+
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>', true);
+		$this->assertEqual($result, '<email@domain.de>');
 	}
 }

@@ -88,6 +88,7 @@ class PaginatorHelper extends AppHelper {
  * @return void
  */
 	function __construct($config = array()) {
+		parent::__construct($config);
 		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
@@ -706,7 +707,7 @@ class PaginatorHelper extends AppHelper {
  * ### Options:
  *
  * - `tag` The tag wrapping tag you want to use, defaults to 'span'
- * - `before` Content to insert before the link/tag
+ * - `after` Content to insert after the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
  * - `separator` Content between the generated links, defaults to ' | '
  *
