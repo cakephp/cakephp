@@ -334,7 +334,7 @@ class DboSqlite extends DboSource {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
-				list($table, $column, $tpye) = $meta;
+				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
 				if ($type == 'boolean' && !is_null($row[$col])) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
