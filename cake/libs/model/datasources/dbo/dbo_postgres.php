@@ -707,7 +707,7 @@ class DboPostgres extends DboSource {
 
 				switch ($type) {
 					case 'bool':
-						$resultRow[$table][$column] = $this->boolean($row[$index]);
+						$resultRow[$table][$column] = is_null($row[$index]) ? null : $this->boolean($row[$index]);
 					break;
 					case 'binary':
 					case 'bytea':
