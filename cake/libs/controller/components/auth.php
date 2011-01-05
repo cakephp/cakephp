@@ -265,13 +265,6 @@ class AuthComponent extends Component {
 	public $params = array();
 
 /**
- * AclComponent instance if using Acl + Auth
- *
- * @var AclComponent
- */
-	public $Acl;
-
-/**
  * Method list for bound controller
  *
  * @var array
@@ -576,25 +569,22 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Manually log-in a user with the given parameter data.  The $data provided can be any data
- * structure used to identify a user in AuthComponent::identify().  If $data is empty or not
- * specified, POST data from Controller::$data will be used automatically.
+ * Log a user in. If a $user is provided that data will be stored as the logged in user.  If `$user` is empty or not
+ * specified, POST data from the current request will be used to identify a user. If the login was successful, 
+ * the user record is written to the session key specified in AuthComponent::$sessionKey.
  *
- * After (if) login is successful, the user record is written to the session key specified in
- * AuthComponent::$sessionKey.
- *
- * @param mixed $data User object
+ * @param mixed $user Either an array of user data, or null to identify a user using the current request.
  * @return boolean True on login success, false on failure
  * @link http://book.cakephp.org/view/1261/login
  */
-	public function login($request = null) {
+	public function login($user = null) {
 		$this->__setDefaults();
 		$this->_loggedIn = false;
 
-		if (empty($request)) {
-			$request = $this->request;
+		if (empty($user)) {
+			$user = $this->identify($this->request);
 		}
-		if ($user = $this->identify($request)) {
+		if ($user) {
 			$this->Session->write($this->sessionKey, $user);
 			$this->_loggedIn = true;
 		}

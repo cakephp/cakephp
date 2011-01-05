@@ -1486,4 +1486,23 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->mapActions(array('create' => array('my_action')));
 	}
+
+/**
+ * test login() with user data
+ *
+ * @return void
+ */
+	function testLoginWithUserData() {
+		$this->assertFalse($this->Controller->Auth->loggedIn());
+
+		$user = array(
+			'username' => 'mariano',
+			'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		);
+		$this->assertTrue($this->Controller->Auth->login($user));
+		$this->assertTrue($this->Controller->Auth->loggedIn());
+		$this->assertEquals($user['username'], $this->Controller->Auth->user('username'));
+	}
 }
