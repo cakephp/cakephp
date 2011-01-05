@@ -32,7 +32,7 @@ abstract class BaseAuthorize {
  * Settings for authorize objects.
  *
  * - `actionPath` - The path to ACO nodes that contains the nodes for controllers.  Used as a prefix
- * when calling $this->action();
+ *    when calling $this->action();
  * - `actionMap` - Action -> crud mappings. Used by authorization objects that want to map actions to CRUD roles.
  *
  * @var array

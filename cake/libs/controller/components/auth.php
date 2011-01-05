@@ -259,22 +259,6 @@ class AuthComponent extends Component {
 	public $request;
 
 /**
- * Form data from Controller::$data
- *
- * @deprecated Use $this->request->data instead
- * @var array
- */
-	public $data = array();
-
-/**
- * Parameter data from Controller::$params
- *
- * @deprecated Use $this->request instead
- * @var array
- */
-	public $params = array();
-
-/**
  * Method list for bound controller
  *
  * @var array
