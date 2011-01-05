@@ -512,28 +512,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Get authorization type
- *
- * @param string $auth Type of authorization
- * @return array Associative array with: type, object
- * @access private
- */
-	function __authType($auth = null) {
-		if ($auth == null) {
-			$auth = $this->authorize;
-		}
-		$object = null;
-		if (is_array($auth)) {
-			$type = key($auth);
-			$object = $auth[$type];
-		} else {
-			$type = $auth;
-			return compact('type');
-		}
-		return compact('type', 'object');
-	}
-
-/**
  * Takes a list of actions in the current controller for which authentication is not required, or
  * no parameters to allow all actions.
  *
@@ -580,22 +558,20 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Maps action names to CRUD operations. Used for controller-based authentication.
+ * Maps action names to CRUD operations. Used for controller-based authentication.  Make sure
+ * to configure the authorize property before calling this method. As it delegates $map to all the
+ * attached authorize objects.
  *
  * @param array $map Actions to map
  * @return void
  * @link http://book.cakephp.org/view/1260/mapActions
  */
 	public function mapActions($map = array()) {
-		$crud = array('create', 'read', 'update', 'delete');
-		foreach ($map as $action => $type) {
-			if (in_array($action, $crud) && is_array($type)) {
-				foreach ($type as $typedAction) {
-					$this->actionMap[$typedAction] = $action;
-				}
-			} else {
-				$this->actionMap[$action] = $type;
-			}
+		if (empty($this->_authorizeObjects)) {
+			$this->loadAuthorizeObjects();
+		}
+		foreach ($this->_authorizeObjects as $auth) {
+			$auth->mapActions($map);
 		}
 	}
 

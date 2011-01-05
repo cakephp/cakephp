@@ -1470,4 +1470,20 @@ class AuthTest extends CakeTestCase {
 		$this->assertNull($this->Controller->Session->read('Auth.AuthUser'));
 		$this->assertNull($this->Controller->Session->read('Auth.redirect'));
 	}
+
+/**
+ * test mapActions loading and delegating to authorize objects.
+ *
+ * @return void
+ */
+	function testMapActionsDelegation() {
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'MapActionMockAuthorize', false);
+		$this->Controller->Auth->authorize = array('MapActionMock');
+		$mock = $this->Controller->Auth->loadAuthorizeObjects();
+		$mock[0]->expects($this->once())
+			->method('mapActions')
+			->with(array('create' => array('my_action')));
+
+		$this->Controller->Auth->mapActions(array('create' => array('my_action')));
+	}
 }
