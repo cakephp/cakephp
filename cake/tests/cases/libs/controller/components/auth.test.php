@@ -776,6 +776,20 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test that loadAuthorize merges in legacy authorize settings.
+ *
+ * @return void
+ */
+	function testLoadAuthorizeSettingsPass() {
+		$this->Controller->Auth->actionPath = 'controllers/';
+
+		$this->Controller->Auth->authorize = array('Actions');
+		$objects = $this->Controller->Auth->loadAuthorizeObjects();
+		$result = $objects[0];
+		$this->assertEquals($result->settings['actionPath'], 'controllers/');
+	}
+
+/**
  * test that loadAuthorize resets the loaded objects each time.
  *
  * @return void

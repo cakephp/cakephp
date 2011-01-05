@@ -92,6 +92,16 @@ class AuthComponent extends Component {
 	protected $_authorizeObjects = array();
 
 /**
+ * A hash mapping legacy properties => to settings passed into Authorize objects.
+ *
+ * @var string
+ * @deprecated Will be removed in 2.1+
+ */
+	protected $_authorizeLegacyMap = array(
+		'actionPath' => 'actionPath',
+	);
+
+/**
  * The name of an optional view element to render when an Ajax request is made
  * with an invalid or expired session
  *
@@ -498,6 +508,11 @@ class AuthComponent extends Component {
 			}
 			if (!method_exists($className, 'authorize')) {
 				throw new CakeException(__('Authorization objects must implement an authorize method.'));
+			}
+			foreach ($this->_authorizeLegacyMap as $old => $new) {
+				if (empty($settings[$new]) && !empty($this->{$old})) {
+					$settings[$new] = $this->{$old};
+				}
 			}
 			$this->_authorizeObjects[] = new $className($this->_Collection->getController(), $settings);
 		}
