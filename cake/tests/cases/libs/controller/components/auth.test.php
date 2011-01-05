@@ -18,6 +18,7 @@
  */
 App::import('Core', 'Controller');
 App::import('Component', array('Auth', 'Acl'));
+App::import('Component', 'auth/form_authenticate');
 App::import('Model', 'DbAcl');
 App::import('Core', 'Xml');
 
@@ -1485,6 +1486,28 @@ class AuthTest extends CakeTestCase {
 			->with(array('create' => array('my_action')));
 
 		$this->Controller->Auth->mapActions(array('create' => array('my_action')));
+	}
+
+/**
+ * test logging in with a request.
+ *
+ * @return void
+ */
+	function testLoginWithRequestData() {
+		$this->getMock('FormAuthenticate', array(), array(), 'RequestLoginMockAuthenticate', false);
+		$request = new CakeRequest('users/login', false);
+		$user = array('username' => 'mark', 'role' => 'admin');
+
+		$this->Controller->Auth->request = $request;
+		$this->Controller->Auth->authenticate = array('RequestLoginMock');
+		$mock = $this->Controller->Auth->loadAuthenticateObjects();
+		$mock[0]->expects($this->once())
+			->method('authenticate')
+			->with($request)
+			->will($this->returnValue($user));
+
+		$this->assertTrue($this->Controller->Auth->login());
+		$this->assertEquals($user['username'], $this->Controller->Auth->user('username'));
 	}
 
 /**
