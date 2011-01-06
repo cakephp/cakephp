@@ -238,20 +238,6 @@ class AuthComponent extends Component {
 	public $allowedActions = array();
 
 /**
- * Maps actions to CRUD operations.  Used for controller-based validation ($validate = 'controller').
- *
- * @var array
- * @see AuthComponent::mapActions()
- */
-	public $actionMap = array(
-		'index'		=> 'read',
-		'add'		=> 'create',
-		'edit'		=> 'update',
-		'view'		=> 'read',
-		'remove'	=> 'delete'
-	);
-
-/**
  * Request object
  *
  * @var CakeRequest
@@ -275,26 +261,8 @@ class AuthComponent extends Component {
 		$this->request = $controller->request;
 		$this->params = $this->request;
 
-		$crud = array('create', 'read', 'update', 'delete');
-		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
 		$this->_methods = $controller->methods;
 
-		$prefixes = Router::prefixes();
-		if (!empty($prefixes)) {
-			foreach ($prefixes as $prefix) {
-				$this->actionMap = array_merge($this->actionMap, array(
-					$prefix . '_index' => 'read',
-					$prefix . '_add' => 'create',
-					$prefix . '_edit' => 'update',
-					$prefix . '_view' => 'read',
-					$prefix . '_remove' => 'delete',
-					$prefix . '_create' => 'create',
-					$prefix . '_read' => 'read',
-					$prefix . '_update' => 'update',
-					$prefix . '_delete' => 'delete'
-				));
-			}
-		}
 		if (Configure::read('debug') > 0) {
 			App::import('Debugger');
 			Debugger::checkSecurityKeys();

@@ -32,6 +32,45 @@ App::import('Component', 'auth/base_authorize');
 class CrudAuthorize extends BaseAuthorize {
 
 /**
+ * Sets up additional actionMap values that match the configured `Routing.prefixes`.
+ *
+ * @param Controller $controller The controller for this request.
+ * @param string $settings An array of settings.  This class does not use any settings.
+ */
+	public function __construct(Controller $controller, $settings = array()) {
+		parent::__construct($controller, $settings);
+		$this->_setPrefixMappings();
+	}
+
+/**
+ * sets the crud mappings for prefix routes.
+ *
+ * @return void
+ */
+	protected function _setPrefixMappings() {
+		$crud = array('create', 'read', 'update', 'delete');
+		$map = array_combine($crud, $crud);
+
+		$prefixes = Router::prefixes();
+		if (!empty($prefixes)) {
+			foreach ($prefixes as $prefix) {
+				$map = array_merge($map, array(
+					$prefix . '_index' => 'read',
+					$prefix . '_add' => 'create',
+					$prefix . '_edit' => 'update',
+					$prefix . '_view' => 'read',
+					$prefix . '_remove' => 'delete',
+					$prefix . '_create' => 'create',
+					$prefix . '_read' => 'read',
+					$prefix . '_update' => 'update',
+					$prefix . '_delete' => 'delete'
+				));
+			}
+		}
+		$this->mapActions($map);
+	}
+
+/**
  * Authorize a user using the mapped actions and the AclComponent.
  *
  * @param array $user The user to authorize
@@ -39,7 +78,7 @@ class CrudAuthorize extends BaseAuthorize {
  * @return boolean
  */
 	public function authorize($user, CakeRequest $request) {
-		if (!isset($this->_actionMap[$request->params['action']])) {
+		if (!isset($this->settings['actionMap'][$request->params['action']])) {
 			trigger_error(__(
 				'CrudAuthorize::authorize() - Attempted access of un-mapped action "%1$s" in controller "%2$s"',
 				$request->action, 
@@ -53,7 +92,7 @@ class CrudAuthorize extends BaseAuthorize {
 		return $Acl->check(
 			$user,
 			$this->action($request, ':controller'),
-			$this->_actionMap[$request->params['action']]
+			$this->settings['actionMap'][$request->params['action']]
 		);
 	}
 }

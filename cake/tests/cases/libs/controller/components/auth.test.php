@@ -1394,26 +1394,6 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
- * test the initialize callback and its interactions with Router::prefixes()
- *
- * @return void
- */
-	function testInitializeAndRoutingPrefixes() {
-		$restore = Configure::read('Routing');
-		Configure::write('Routing.prefixes', array('admin', 'super_user'));
-		Router::reload();
-		$this->Controller->Auth->initialize($this->Controller);
-
-		$this->assertTrue(isset($this->Controller->Auth->actionMap['delete']));
-		$this->assertTrue(isset($this->Controller->Auth->actionMap['view']));
-		$this->assertTrue(isset($this->Controller->Auth->actionMap['add']));
-		$this->assertTrue(isset($this->Controller->Auth->actionMap['admin_view']));
-		$this->assertTrue(isset($this->Controller->Auth->actionMap['super_user_delete']));
-
-		Configure::write('Routing', $restore);
-	}
-
-/**
  * test $settings in Controller::$components
  *
  * @access public

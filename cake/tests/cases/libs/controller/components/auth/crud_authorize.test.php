@@ -117,11 +117,14 @@ class CrudAuthorizeTest extends CakeTestCase {
 	function testMapActionsGet() {
 		$result = $this->auth->mapActions();
 		$expected = array(
+			'create' => 'create',
+			'read' => 'read',
+			'update' => 'update',
+			'delete' => 'delete',
 			'index' => 'read',
 			'add' => 'create',
 			'edit' => 'update',
 			'view' => 'read',
-			'delete' => 'delete',
 			'remove' => 'delete'
 		);
 		$this->assertEquals($expected, $result);
@@ -144,6 +147,9 @@ class CrudAuthorizeTest extends CakeTestCase {
 
 		$result = $this->auth->mapActions();
 		$expected = array(
+			'add' => 'create',
+			'create' => 'create',
+			'read' => 'read',
 			'index' => 'read',
 			'add' => 'create',
 			'edit' => 'update',
@@ -154,9 +160,22 @@ class CrudAuthorizeTest extends CakeTestCase {
 			'listing' => 'read',
 			'show' => 'read',
 			'update' => 'update',
-			'random' => 'custom'
+			'random' => 'custom',
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test prefix routes getting auto mapped.
+ *
+ * @return void
+ */
+	function testAutoPrefixMapActions() {
+		Configure::write('Routing.prefixes', array('admin', 'manager'));
+		Router::reload();
+		
+		$auth = new CrudAuthorize($this->controller);
+		$this->assertTrue(isset($auth->settings['actionMap']['admin_index']));
 	}
 
 }
