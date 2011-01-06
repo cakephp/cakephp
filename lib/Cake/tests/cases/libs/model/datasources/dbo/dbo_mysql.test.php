@@ -63,8 +63,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	public function setUp() {
 		$this->Dbo = ConnectionManager::getDataSource('test');
-		$this->skipIf(!($this->Dbo instanceof DboMysql));
-		if ($this->Dbo->config['driver'] !== 'mysql') {
+		if (!($this->Dbo instanceof Mysql)) {
 			$this->markTestSkipped('The MySQL extension is not available.');
 		}
 		$this->_debug = Configure::read('debug');
@@ -309,7 +308,7 @@ class DboMysqlTest extends CakeTestCase {
 	function testIndexOnMySQL4Output() {
 		$name = $this->Dbo->fullTableName('simple');
 
-		$mockDbo = $this->getMock('DboMysql', array('connect', '_execute', 'getVersion'));
+		$mockDbo = $this->getMock('Mysql', array('connect', '_execute', 'getVersion'));
 		$columnData = array(
 			array('0' => array(
 				'Table' => 'with_compound_keys',
@@ -776,7 +775,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testListSources() {
-		$db = $this->getMock('DboMysql', array('connect', '_execute'));
+		$db = $this->getMock('Mysql', array('connect', '_execute'));
 		$queryResult = $this->getMock('PDOStatement');
 		$db->expects($this->once())
 			->method('_execute')
@@ -810,7 +809,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testGetEncoding() {
-		$db = $this->getMock('DboMysql', array('connect', '_execute'));
+		$db = $this->getMock('Mysql', array('connect', '_execute'));
 		$queryResult = $this->getMock('PDOStatement');
 
 		$db->expects($this->once())
@@ -834,7 +833,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testFieldDoubleEscaping() {
-		$test = $this->getMock('DboMysql', array('connect', '_execute', 'execute'));
+		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
 		$this->Model = $this->getMock('Article2', array('getDataSource'));
 		$this->Model->alias = 'Article';
 		$this->Model->expects($this->any())
@@ -876,7 +875,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testGenerateAssociationQuerySelfJoin() {
-		$this->Dbo = $this->getMock('DboMysql', array('connect', '_execute', 'execute'));
+		$this->Dbo = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
 		$this->startTime = microtime(true);
 		$this->Model = new Article2();
 		$this->_buildRelatedModels($this->Model);
@@ -1012,7 +1011,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testGenerateInnerJoinAssociationQuery() {
-		$test = $this->getMock('DboMysql', array('connect', '_execute', 'execute'));
+		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
 		$this->Model = $this->getMock('TestModel9', array('getDataSource'));
 		$this->Model->expects($this->any())
 			->method('getDataSource')
@@ -2829,7 +2828,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testHasAny() {
-		$this->Dbo = $this->getMock('DboMysql', array('connect', '_execute', 'execute', 'value'));
+		$this->Dbo = $this->getMock('Mysql', array('connect', '_execute', 'execute', 'value'));
 		$this->Model = $this->getMock('TestModel', array('getDataSource'));
 		$this->Model->expects($this->any())
 			->method('getDataSource')
@@ -3374,7 +3373,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testExceptionOnBrokenConnection() {
-		$dbo = new DboMysql(array(
+		$dbo = new Mysql(array(
 			'driver' => 'mysql',
 			'host' => 'imaginary_host',
 			'login' => 'mark',
