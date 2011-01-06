@@ -695,15 +695,15 @@ class DboPostgresTest extends CakeTestCase {
 			'name' => 'AlterTest2',
 			'connection' => 'test',
 			'altertest' => array(
-				'id' => array('type' => 'integer', 'null' => 0, 'default' => 0),
-				'name' => array('type' => 'string', 'null' => 0, 'length' => 50),
-				'group1' => array('type' => 'integer', 'null' => 1),
-				'group2' => array('type' => 'integer', 'null' => 1),
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => 0),
-					'group_idx' => array('column' => 'group1', 'unique' => 0),
-					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
-					'PRIMARY' => array('column' => 'id', 'unique' => 1)
+					'name_idx' => array('column' => 'name', 'unique' => false),
+					'group_idx' => array('column' => 'group1', 'unique' => false),
+					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => false),
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
 				)
 			)
 		));
@@ -717,15 +717,15 @@ class DboPostgresTest extends CakeTestCase {
 			'name' => 'AlterTest3',
 			'connection' => 'test',
 			'altertest' => array(
-				'id' => array('type' => 'integer', 'null' => 0, 'default' => 0),
-				'name' => array('type' => 'string', 'null' => 0, 'length' => 50),
-				'group1' => array('type' => 'integer', 'null' => 1),
-				'group2' => array('type' => 'integer', 'null' => 1),
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => 1),
-					'group_idx' => array('column' => 'group2', 'unique' => 0),
-					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
-					'another_idx' => array('column' => array('group1', 'name'), 'unique' => 0))
+					'name_idx' => array('column' => 'name', 'unique' => true),
+					'group_idx' => array('column' => 'group2', 'unique' => false),
+					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => false),
+					'another_idx' => array('column' => array('group1', 'name'), 'unique' => false))
 		)));
 
 		$this->Dbo->query($this->Dbo->alterSchema($schema3->compare($schema2)));
