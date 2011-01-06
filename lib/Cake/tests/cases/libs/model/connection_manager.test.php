@@ -26,36 +26,6 @@ App::uses('ConnectionManager', 'Model');
 class ConnectionManagerTest extends CakeTestCase {
 
 /**
- * setUp method
- *
- * @access public
- * @return void
- */
-	function setUp() {
-		$this->ConnectionManager = ConnectionManager::getInstance();
-	}
-
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->ConnectionManager);
-	}
-
-/**
- * testInstantiation method
- *
- * @access public
- * @return void
- */
-	function testInstantiation() {
-		$this->assertTrue(is_a($this->ConnectionManager, 'ConnectionManager'));
-	}
-
-/**
  * testEnumConnectionObjects method
  *
  * @access public
@@ -123,7 +93,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		));
 
 		$name = 'test_plugin_source_and_driver';
-		$config = array('datasource' => 'TestPlugin.TestSource', 'driver' => 'TestPlugin.TestDriver');
+		$config = array('datasource' => 'TestPlugin.Database/TestDriver');
 
 		$connection = ConnectionManager::create($name, $config);
 
@@ -147,7 +117,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		));
 
 		$name = 'test_local_source_and_plugin_driver';
-		$config = array('datasource' => 'dbo', 'driver' => 'TestPlugin.DboDummy');
+		$config = array('datasource' => 'TestPlugin.Database/DboDummy');
 
 		$connection = ConnectionManager::create($name, $config);
 
@@ -167,11 +137,11 @@ class ConnectionManagerTest extends CakeTestCase {
 	function testGetPluginDataSourceAndLocalDriver() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'datasources' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+			'Model/Datasource' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
 		));
 
 		$name = 'test_plugin_source_and_local_driver';
-		$config = array('datasource' => 'TestPlugin.TestSource', 'driver' => 'local_driver');
+		$config = array('datasource' => 'Database/TestLocalDriver');
 
 		$connection = ConnectionManager::create($name, $config);
 
@@ -283,17 +253,14 @@ class ConnectionManagerTest extends CakeTestCase {
 	function testConnectionData() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'datasources' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+			'Model/Datasource' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
 		));
 
 		$expected = array(
-		    'filename' => 'test2_source',
-		    'classname' => 'Test2Source',
-		    'parent' => '',
-		    'plugin' => ''
+		    'datasource' => 'Test2Source'
 		);
 
-		ConnectionManager::create('connection1', array('datasource' => 'Test2'));
+		ConnectionManager::create('connection1', array('datasource' => 'Test2Source'));
 		$connections = ConnectionManager::enumConnectionObjects();
 		$this->assertEqual($expected, $connections['connection1']);
 
@@ -301,33 +268,29 @@ class ConnectionManagerTest extends CakeTestCase {
 		$connections = ConnectionManager::enumConnectionObjects();
 		$this->assertEqual($expected, $connections['connection2']);
 
-		ConnectionManager::create('connection3', array('datasource' => 'TestPlugin.Test'));
+		ConnectionManager::create('connection3', array('datasource' => 'TestPlugin.TestSource'));
 		$connections = ConnectionManager::enumConnectionObjects();
-		$expected['filename'] = 'test_source';
-		$expected['classname'] = 'TestSource';
-		$expected['plugin'] = 'TestPlugin';
+		$expected['datasource'] = 'TestPlugin.TestSource';
 		$this->assertEqual($expected, $connections['connection3']);
 
 		ConnectionManager::create('connection4', array('datasource' => 'TestPlugin.TestSource'));
 		$connections = ConnectionManager::enumConnectionObjects();
 		$this->assertEqual($expected, $connections['connection4']);
 
-		ConnectionManager::create('connection5', array('datasource' => 'Test2Other'));
+		ConnectionManager::create('connection5', array('datasource' => 'Test2OtherSource'));
 		$connections = ConnectionManager::enumConnectionObjects();
-		$expected['filename'] = 'test2_other_source';
-		$expected['classname'] = 'Test2OtherSource';
-		$expected['plugin'] = '';
+		$expected['datasource'] = 'Test2OtherSource';
+
 		$this->assertEqual($expected, $connections['connection5']);
 
 		ConnectionManager::create('connection6', array('datasource' => 'Test2OtherSource'));
 		$connections = ConnectionManager::enumConnectionObjects();
 		$this->assertEqual($expected, $connections['connection6']);
 
-		ConnectionManager::create('connection7', array('datasource' => 'TestPlugin.TestOther'));
+		ConnectionManager::create('connection7', array('datasource' => 'TestPlugin.TestOtherSource'));
 		$connections = ConnectionManager::enumConnectionObjects();
-		$expected['filename'] = 'test_other_source';
-		$expected['classname'] = 'TestOtherSource';
-		$expected['plugin'] = 'TestPlugin';
+		$expected['datasource'] = 'TestPlugin.TestOtherSource';
+
 		$this->assertEqual($expected, $connections['connection7']);
 
 		ConnectionManager::create('connection8', array('datasource' => 'TestPlugin.TestOtherSource'));

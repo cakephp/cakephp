@@ -128,18 +128,16 @@ class ConnectionManager {
 /**
  * Gets a DataSource name from an object reference.
  *
- * **Warning** this method may cause fatal errors in PHP4.
- *
  * @param object $source DataSource object
  * @return string Datasource name, or null if source is not present
  *    in the ConnectionManager.
  */
-	public static function getSourceName(&$source) {
+	public static function getSourceName($source) {
 		if (empty(self::$_init)) {
 			self::init();
 		}
 		foreach (self::$_dataSources as $name => $ds) {
-			if ($ds == $source) {
+			if ($ds === $source) {
 				return $name;
 			}
 		}
@@ -171,7 +169,7 @@ class ConnectionManager {
 
 		$plugin = $package = null;
 		if (!empty($conn['plugin'])) {
-			$plugin .= '.';
+			$plugin = $conn['plugin'] . '.';
 		}
 		if (!empty($conn['package'])) {
 			$package = '/' . $conn['package'];
@@ -195,7 +193,7 @@ class ConnectionManager {
 		if (empty(self::$_init)) {
 			self::init();
 		}
-		return self::$_connectionsEnum;
+		return (array) self::$config;
 	}
 
 /**
