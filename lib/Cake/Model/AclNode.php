@@ -183,9 +183,6 @@ class AclNode extends AppModel {
 		}
 		return $result;
 	}
-<<<<<<< HEAD:lib/Cake/Model/AclNode.php
-}
-=======
 }
 
 /**
