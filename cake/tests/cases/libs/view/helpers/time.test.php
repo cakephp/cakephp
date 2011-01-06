@@ -324,6 +324,13 @@ class TimeHelperTest extends CakeTestCase {
 
 		$time = null;
 		$this->assertEqual(date('D, M jS Y, H:i', time()), $this->Time->nice($time));
+
+		$time = time();
+		$this->assertEqual(date('D', $time), $this->Time->nice($time, null, '%a'));
+		$this->assertEqual(date('M d, Y', $time), $this->Time->nice($time, null, '%b %d, %Y'));
+
+		$this->Time->niceFormat = '%Y-%d-%m';
+		$this->assertEqual(date('Y-d-m', $time), $this->Time->nice($time));
 	}
 
 /**
