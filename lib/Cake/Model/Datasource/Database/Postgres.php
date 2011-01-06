@@ -17,6 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('DboSource', 'Model/Datasource');
+
 /**
  * PostgreSQL layer for DBO.
  *
@@ -24,7 +26,7 @@
  *
  * @package       cake.libs.model.datasources.dbo
  */
-class DboPostgres extends DboSource {
+class Postgres extends DboSource {
 
 /**
  * Driver description

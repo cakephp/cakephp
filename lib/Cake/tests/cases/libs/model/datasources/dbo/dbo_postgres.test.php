@@ -28,7 +28,7 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
  *
  * @package       cake.tests.cases.libs.model.datasources
  */
-class DboPostgresTestDb extends DboPostgres {
+class DboPostgresTestDb extends Postgres {
 
 /**
  * simulated property
@@ -242,9 +242,8 @@ class DboPostgresTest extends CakeTestCase {
 	public function setUp() {
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
-		$this->skipIf(!($this->Dbo instanceof DboPostgres));
+		$this->skipIf(!($this->Dbo instanceof Postgres));
 		$this->Dbo2 = new DboPostgresTestDb($this->Dbo->config, false);
-		$this->skipUnless($this->Dbo->config['driver'] == 'postgres', 'PostgreSQL connection not available');
 		$this->model = new PostgresTestModel();
 	}
 
@@ -399,19 +398,19 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testBooleanNormalization() {
-		$this->assertEquals(1, $this->Dbo2->boolean('t', false));
-		$this->assertEquals(1, $this->Dbo2->boolean('true', false));
-		$this->assertEquals(1, $this->Dbo2->boolean('TRUE', false));
-		$this->assertEquals(1, $this->Dbo2->boolean(true, false));
-		$this->assertEquals(1, $this->Dbo2->boolean(1, false));
-		$this->assertEquals(1, $this->Dbo2->boolean(" ", false));
+		$this->assertEquals(true, $this->Dbo2->boolean('t', false));
+		$this->assertEquals(true, $this->Dbo2->boolean('true', false));
+		$this->assertEquals(true, $this->Dbo2->boolean('TRUE', false));
+		$this->assertEquals(true, $this->Dbo2->boolean(true, false));
+		$this->assertEquals(true, $this->Dbo2->boolean(1, false));
+		$this->assertEquals(true, $this->Dbo2->boolean(" ", false));
 
-		$this->assertEquals(0, $this->Dbo2->boolean('f', false));
-		$this->assertEquals(0, $this->Dbo2->boolean('false', false));
-		$this->assertEquals(0, $this->Dbo2->boolean('FALSE', false));
-		$this->assertEquals(0, $this->Dbo2->boolean(false, false));
-		$this->assertEquals(0, $this->Dbo2->boolean(0, false));
-		$this->assertEquals(0, $this->Dbo2->boolean('', false));
+		$this->assertEquals(false, $this->Dbo2->boolean('f', false));
+		$this->assertEquals(false, $this->Dbo2->boolean('false', false));
+		$this->assertEquals(false, $this->Dbo2->boolean('FALSE', false));
+		$this->assertEquals(false, $this->Dbo2->boolean(false, false));
+		$this->assertEquals(false, $this->Dbo2->boolean(0, false));
+		$this->assertEquals(false, $this->Dbo2->boolean('', false));
 	}
 
 /**
@@ -601,9 +600,9 @@ class DboPostgresTest extends CakeTestCase {
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
 		$expected = array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
-			'char_index' => array('column' => 'small_char', 'unique' => 1),
+			'PRIMARY' => array('column' => 'id', 'unique' => true),
+			'pointless_bool' => array('column' => 'bool', 'unique' => false),
+			'char_index' => array('column' => 'small_char', 'unique' => true),
 
 		);
 		$result = $this->Dbo->index($name);
@@ -614,8 +613,8 @@ class DboPostgresTest extends CakeTestCase {
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
+			'PRIMARY' => array('column' => 'id', 'unique' => true),
+			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => true),
 		);
 		$result = $this->Dbo->index($name);
 		$this->Dbo->query('DROP TABLE ' . $name);
