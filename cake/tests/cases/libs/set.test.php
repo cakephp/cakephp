@@ -88,8 +88,20 @@ class SetTest extends CakeTestCase {
  */
 	function testFilter() {
 		$result = Set::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
-		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be', false));
+		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be'));
 		$this->assertIdentical($result, $expected);
+
+		$result = Set::filter(array(1, array(false)));
+		$expected = array(1);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::filter(array(1, array(false, false)));
+		$expected = array(1);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::filter(array(1, array('empty', false)));
+		$expected = array(1, array('empty'));
+		$this->assertEqual($expected, $result);
 	}
 
 /**
