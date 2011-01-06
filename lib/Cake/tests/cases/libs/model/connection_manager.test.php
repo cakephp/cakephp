@@ -137,7 +137,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	function testGetPluginDataSourceAndLocalDriver() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'Model/Datasource' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+			'Model/Datasource/Database' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS . 'Database' . DS)
 		));
 
 		$name = 'test_plugin_source_and_local_driver';
@@ -193,15 +193,15 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testLoadDataSource() {
 		$connections = array(
-			array('classname' => 'DboMysql', 'filename' => 'dbo' . DS . 'dbo_mysql'),
-			array('classname' => 'DboMssql', 'filename' => 'dbo' . DS . 'dbo_mssql'),
-			array('classname' => 'DboOracle', 'filename' => 'dbo' . DS . 'dbo_oracle'),
+			array('classname' => 'Mysql', 'filename' =>  'Mysql', 'package' => 'Database'),
+			array('classname' => 'Postgres', 'filename' =>  'Postgres', 'package' => 'Database'),
+			array('classname' => 'Sqlite', 'filename' => 'Sqlite', 'package' => 'Database'),
 		);
 
 		foreach ($connections as $connection) {
 			$exists = class_exists($connection['classname']);
 			$loaded = ConnectionManager::loadDataSource($connection);
-			$this->assertEqual($loaded, !$exists, "%s Failed loading the {$connection['classname']} datasource");
+			$this->assertEqual($loaded, !$exists, "Failed loading the {$connection['classname']} datasource");
 		}
 
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');

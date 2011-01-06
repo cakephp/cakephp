@@ -533,7 +533,7 @@ class App {
 			$paths = self::path($package, $plugin);
 
 			if (empty($plugin)) {
-				$appLibs = empty(self::$__packages['libs']) ? APPLIBS : self::$__packages['libs'];
+				$appLibs = empty(self::$__packages['libs']) ? APPLIBS : current(self::$__packages['libs']);
 				$paths[] =  $appLibs . self::$__classMap[$className] . DS;
 				$paths[] = LIBS . self::$__classMap[$className] . DS;	
 			}
