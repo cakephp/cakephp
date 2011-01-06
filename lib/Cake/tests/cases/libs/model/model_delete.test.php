@@ -44,7 +44,7 @@ class ModelDeleteTest extends BaseModelTest {
 			array(
 				'id' => 3,
 				'syfile_id' => 3,
-				'published' => 0,
+				'published' => false,
 				'name' => 'Item 3',
 				'ItemsPortfolio' => array(
 					'id' => 3,
@@ -54,7 +54,7 @@ class ModelDeleteTest extends BaseModelTest {
 			array(
 				'id' => 4,
 				'syfile_id' => 4,
-				'published' => 0,
+				'published' => false,
 				'name' => 'Item 4',
 				'ItemsPortfolio' => array(
 					'id' => 4,
@@ -64,7 +64,7 @@ class ModelDeleteTest extends BaseModelTest {
 			array(
 				'id' => 5,
 				'syfile_id' => 5,
-				'published' => 0,
+				'published' => false,
 				'name' => 'Item 5',
 				'ItemsPortfolio' => array(
 					'id' => 5,
