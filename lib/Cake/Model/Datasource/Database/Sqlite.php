@@ -116,9 +116,8 @@ class Sqlite extends DboSource {
 			$this->_connection = new PDO('sqlite:' . $config['database'], null, null, $flags);
 			$this->_connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->connected = true;
-		}
-		catch(PDOException $e) {
-			$this->errors[] = $e->getMessage();
+		} catch(PDOException $e) {
+			throw new MissingConnectionException(array('class' => $e->getMessage()));
 		}
 		return $this->connected;
 	}
@@ -287,7 +286,7 @@ class Sqlite extends DboSource {
 		//	so try to figure it out based on the querystring
 		$querystring = $results->queryString;
 		if (stripos($querystring, 'SELECT') === 0) {
-			$last = stripos($querystring, 'FROM');
+			$last = strripos($querystring, 'FROM');
 			if ($last !== false) {
 				$selectpart = substr($querystring, 7, $last - 8);
 				$selects = explode(',', $selectpart);
@@ -337,9 +336,9 @@ class Sqlite extends DboSource {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
-				list($table, $column, $tpye) = $meta;
+				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
-				if ($type === 'boolean') {
+				if ($type == 'boolean' && !is_null($row[$col])) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
 				}
 			}

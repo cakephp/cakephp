@@ -176,6 +176,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
 
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
+
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
 			->will($this->returnValue(true));
@@ -195,6 +198,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst', array(), false);
 		$this->Objects->load('TriggerMockSecond');
+
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
@@ -217,6 +223,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
 
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
+
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
 			->will($this->returnValue(true));
@@ -238,6 +247,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
+
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
@@ -264,6 +276,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
 
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
+
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
 			->will($this->returnValue(false));
@@ -287,6 +302,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
+
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
@@ -317,15 +335,14 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
 
-		$this->Objects->TriggerMockFirst->expects($this->once())
-			->method('callback')
-			->with(array('value'))
-			->will($this->returnValue(array('new value')));
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
 
-		$this->Objects->TriggerMockSecond->expects($this->once())
-			->method('callback')
-			->with(array('value'))
-			->will($this->returnValue(array('newer value')));
+		$this->Objects->TriggerMockFirst->expects($this->never())
+			->method('callback');
+
+		$this->Objects->TriggerMockSecond->expects($this->never())
+			->method('callback');
 
 		$result = $this->Objects->trigger(
 			'callback',
@@ -337,13 +354,15 @@ class ObjectCollectionTest extends CakeTestCase {
 /**
  * test that returrning null doesn't modify parameters.
  *
- * @expectedException CakeException
  * @return void
  */
 	function testTriggerModParamsNullIgnored() {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
+
+		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
+		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
@@ -358,9 +377,9 @@ class ObjectCollectionTest extends CakeTestCase {
 		$result = $this->Objects->trigger(
 			'callback',
 			array(array('value')),
-			array('modParams' => 2)
+			array('modParams' => 0)
 		);
-		$this->assertEquals('new value', $result);
+		$this->assertEquals(array('new value'), $result);
 	}
 
 /**

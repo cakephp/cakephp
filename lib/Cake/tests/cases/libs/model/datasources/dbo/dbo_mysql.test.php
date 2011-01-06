@@ -181,19 +181,19 @@ class DboMysqlTest extends CakeTestCase {
 
 		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'small_int' => 5)));
 		$result = $this->model->find('first');
-		$this->assertIdentical($result['Tinyint']['bool'], '1');
+		$this->assertIdentical($result['Tinyint']['bool'], true);
 		$this->assertIdentical($result['Tinyint']['small_int'], '5');
 		$this->model->deleteAll(true);
 
 		$this->assertTrue((bool)$this->model->save(array('bool' => 0, 'small_int' => 100)));
 		$result = $this->model->find('first');
-		$this->assertIdentical($result['Tinyint']['bool'], '0');
+		$this->assertIdentical($result['Tinyint']['bool'], false);
 		$this->assertIdentical($result['Tinyint']['small_int'], '100');
 		$this->model->deleteAll(true);
 
 		$this->assertTrue((bool)$this->model->save(array('bool' => true, 'small_int' => 0)));
 		$result = $this->model->find('first');
-		$this->assertIdentical($result['Tinyint']['bool'], '1');
+		$this->assertIdentical($result['Tinyint']['bool'], true);
 		$this->assertIdentical($result['Tinyint']['small_int'], '0');
 		$this->model->deleteAll(true);
 
@@ -3367,5 +3367,19 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[id=1]', $result));
 		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
 		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
+	}
+
+/**
+ * @expectedException MissingConnectionException
+ * @return void
+ */
+	function testExceptionOnBrokenConnection() {
+		$dbo = new DboMysql(array(
+			'driver' => 'mysql',
+			'host' => 'imaginary_host',
+			'login' => 'mark',
+			'password' => 'inyurdatabase',
+			'database' => 'imaginary'
+		));
 	}
 }

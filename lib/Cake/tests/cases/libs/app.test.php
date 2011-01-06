@@ -142,6 +142,42 @@ class AppImportTest extends CakeTestCase {
 	}
 
 /**
+ * Tests listing objects within a plugin
+ *
+ * @return void
+ */
+	function testListObjectsInPlugin() {
+		App::build(array(
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+
+		$oldCache = App::$models;
+		$result = App::objects('TestPlugin.model');
+		$this->assertTrue(in_array('TestPluginPost', $result));
+		$this->assertEquals($oldCache, App::$models);
+
+		$result = App::objects('TestPlugin.behavior');
+		$this->assertTrue(in_array('TestPluginPersisterOne', $result));
+
+		$result = App::objects('TestPlugin.helper');
+		$expected = array('OtherHelper', 'PluggedHelper', 'TestPluginApp');
+		$this->assertEquals($result, $expected);
+
+		$result = App::objects('TestPlugin.component');
+		$this->assertTrue(in_array('OtherComponent', $result));
+
+		$result = App::objects('TestPluginTwo.behavior');
+		$this->assertEquals($result, array());
+
+		$result = App::objects('model', null, false);
+		$this->assertTrue(in_array('Comment', $result));
+		$this->assertTrue(in_array('Post', $result));
+
+		App::build();
+	}
+
+/**
  * test that pluginPath can find paths for plugins.
  *
  * @return void
