@@ -106,9 +106,9 @@ class TimeHelper extends AppHelper {
 
 		$y = $this->isThisYear($date) ? '' : ' Y';
 
-		if ($this->isToday($date)) {
+		if ($this->isToday($dateString, $userOffset)) {
 			$ret = sprintf(__('Today, %s',true), date("H:i", $date));
-		} elseif ($this->wasYesterday($date)) {
+		} elseif ($this->wasYesterday($dateString, $userOffset)) {
 			$ret = sprintf(__('Yesterday, %s',true), date("H:i", $date));
 		} else {
 			$ret = date("M jS{$y}, H:i", $date);
