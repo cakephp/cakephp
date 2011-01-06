@@ -79,8 +79,8 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle', 'sqlite'));
-		$message = '%s Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
+		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle; 
+		$message = 'Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
 			return;
@@ -367,10 +367,10 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testVeryStrangeUseCase() {
-		$message = "%s skipping SELECT * FROM ? WHERE ? = ? AND ? = ?; prepared query.";
+		$message = "skipping SELECT * FROM ? WHERE ? = ? AND ? = ?; prepared query.";
 		$message .= " MSSQL is incompatible with this test.";
 
-		if ($this->skipIf($this->db->config['driver'] == 'mssql', $message)) {
+		if ($this->skipIf($this->db instanceof Mssql, $message)) {
 			return;
 		}
 
@@ -4021,7 +4021,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
 		$this->assertEqual($result, $expected);
 
-		if ($this->skipIf($this->db->config['driver'] == 'postgres', 'The rest of testFindAllWithConditionsHavingMixedDataTypes test is not compatible with Postgres')) {
+		if ($this->skipIf($this->db instanceof Postgres, 'The rest of testFindAllWithConditionsHavingMixedDataTypes test is not compatible with Postgres')) {
 			return;
 		}
 		$conditions = array('id' => array('1', 2, '3.0'));
@@ -6229,7 +6229,7 @@ class ModelReadTest extends BaseModelTest {
 
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
-		if ($this->db->config['driver'] != 'mssql') {
+		if ($this->db instanceof Mssql) {
 			$result = $TestModel->find('all', array('limit' => 3, 'page' => 2));
 			$expected = array(
 				array(
@@ -6255,7 +6255,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testGenerateFindList() {
-		$this->loadFixtures('Article', 'Apple', 'Post', 'Author', 'User');
+		$this->loadFixtures('Article', 'Apple', 'Post', 'Author', 'User', 'Comment');
 
 		$TestModel = new Article();
 		$TestModel->displayField = 'title';
@@ -6272,7 +6272,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($result, $expected);
 
 		$db = ConnectionManager::getDataSource('test');
-		if ($db->config['driver'] == 'mysql') {
+		if ($db instanceof Mysql) {
 			$result = $TestModel->find('list', array(
 				'order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')
 			));
@@ -6624,7 +6624,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testFindCountDistinct() {
 		$skip = $this->skipIf(
-			$this->db->config['driver'] == 'sqlite',
+			$this->db instanceof Sqlite,
 			'SELECT COUNT(DISTINCT field) is not compatible with SQLite'
 		);
 		if ($skip) {
@@ -6647,7 +6647,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testFindCountWithDbExpressions() {
-		if ($this->skipIf($this->db->config['driver'] == 'postgres', '%s testFindCountWithExpressions is not compatible with Postgres')) {
+		if ($this->skipIf($this->db instanceof Postgres, 'testFindCountWithExpressions is not compatible with Postgres')) {
 			return;
 		}
 		$this->loadFixtures('Project');
@@ -7472,7 +7472,7 @@ class ModelReadTest extends BaseModelTest {
  *
  */
 	public function testVirtualFieldsMysql() {
-		if ($this->skipIf($this->db->config['driver'] != 'mysql', 'The rest of virtualFieds test is not compatible with Postgres')) {
+		if ($this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test is not compatible with Postgres')) {
 			return;
 		}
 		$this->loadFixtures('Post', 'Author');
