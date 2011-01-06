@@ -432,7 +432,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		// MSSQL trigger an error and stops the page even if the debug = 0
-		if ($this->db->config['driver'] != 'mssql') {
+		if ($this->db instanceof Mssql) {
 			$debug = Configure::read('debug');
 			Configure::write('debug', 0);
 
