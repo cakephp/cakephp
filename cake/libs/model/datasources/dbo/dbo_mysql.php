@@ -148,14 +148,14 @@ class DboMysql extends DboSource {
 				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
 			}
 			$this->_connection = new PDO(
-				"mysql:{$config['host']};port={$config['port']};dbname={$config['database']}",
+				"mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}",
 				$config['login'],
 				$config['password'],
 				$flags
 			);
 			$this->connected = true;
 		} catch (PDOException $e) {
-			$this->errors[] = $e->getMessage();
+			throw new MissingConnectionException(array('class' => $e->getMessage()));
 		}
 
 		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
@@ -238,7 +238,7 @@ class DboMysql extends DboSource {
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
-				if ($type == 'boolean') {
+				if ($type == 'boolean' && !is_null($row[$col])) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
 				}
 			}
