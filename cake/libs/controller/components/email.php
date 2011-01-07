@@ -702,6 +702,16 @@ class EmailComponent extends Object{
 		return @mail($this->to, $this->__encode($this->subject), $message, $header, $this->additionalParams);
 	}
 /**
+ * Helper method to get socket, overridden in tests
+ *
+ * @param array $config Config data for the socket.
+ * @return void
+ * @access protected
+ */
+	function _getSocket($config) {
+		$this->__smtpConnection =& new CakeSocket($config);
+	}
+/**
  * Sends out email via SMTP
  *
  * @return bool Success
@@ -710,7 +720,14 @@ class EmailComponent extends Object{
 	function __smtp() {
 		App::import('Core', array('Socket'));
 
-		$this->__smtpConnection =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
+		$defaults = array(
+			'host' => 'localhost',
+			'port' => 25,
+			'protocol' => 'smtp',
+			'timeout' => 30
+		);
+		$this->smtpOptions = array_merge($defaults, $this->smtpOptions);
+		$this->_getSocket($this->smtpOptions);
 
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
@@ -724,7 +741,7 @@ class EmailComponent extends Object{
 		if (isset($this->smtpOptions['client'])) {
 			$host = $this->smtpOptions['client'];
 		} elseif (!empty($httpHost)) {
-			$host = $httpHost;
+			list($host) = explode(':', $httpHost);
 		} else {
 			$host = 'localhost';
 		}
