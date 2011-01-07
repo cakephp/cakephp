@@ -20,6 +20,9 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Component', 'Email');
+App::import('Core', 'CakeSocket');
+
+Mock::generate('CakeSocket', 'MockEmailSocket');
 
 /**
  * EmailTestComponent class
@@ -29,6 +32,7 @@ App::import('Component', 'Email');
  */
 class EmailTestComponent extends EmailComponent {
 
+	var $smtpSend = '';
 /**
  * smtpSend method override for testing
  *
@@ -40,6 +44,19 @@ class EmailTestComponent extends EmailComponent {
 	}
 
 /**
+ * undocumented function
+ *
+ * @return void
+ */
+	function _smtpSend($data, $code = '250') {
+		if ($this->_debug) {
+			$this->smtpSend .= $data . "\n";
+			return true;
+		}
+		return parent::_smtpSend($data, $code);
+	}
+
+/**
  * Convenience setter method for testing.
  *
  * @access public
@@ -47,6 +64,18 @@ class EmailTestComponent extends EmailComponent {
  */
 	function setConnectionSocket(&$socket) {
 		$this->__smtpConnection = $socket;
+	}
+
+/**
+ * Allows mocks to be used with tests.
+ *
+ * @param array $config 
+ * @return void
+ */
+	function _getSocket($config) {
+		if (empty($this->__smtpConnection)) {
+			parent::_getSocket($config);
+		}
 	}
 
 /**
@@ -408,46 +437,60 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpSendMultipleTo() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
-			return;
-		}
 		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = array('postmaster@localhost', 'root@localhost');
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP multiple To test';
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 		$this->Controller->EmailTest->template = null;
-
-		$this->Controller->EmailTest->delivery = 'smtp';
-		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-
 		$this->Controller->EmailTest->_debug = true;
 		$this->Controller->EmailTest->sendAs = 'text';
-		$expect = <<<TEMPDOC
-<pre>Host: localhost
-Port: 25
-Timeout: 30
-To: postmaster@localhost, root@localhost
-From: noreply@example.com
-Subject: Cake SMTP multiple To test
-Header:
+		$this->Controller->EmailTest->delivery = 'smtp';
+		
+		$socket = new MockEmailSocket();
+		$socket->setReturnValue('connect', true);
+		$this->Controller->EmailTest->setConnectionSocket($socket);
 
-To: postmaster@localhost, root@localhost
-From: noreply@example.com
-Reply-To: noreply@example.com
-Subject: Cake SMTP multiple To test
-X-Mailer: CakePHP Email Component
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bitParameters:
-
-Message:
-
-This is the body of the message
-
-</pre>
-TEMPDOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+
+		$this->assertPattern('/EHLO localhost\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern('/MAIL FROM: <noreply@example\.com>\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern('/RCPT TO: <postmaster@localhost>\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern('/RCPT TO: <root@localhost>\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern(
+			'/To: postmaster@localhost, root@localhost[\n\r]/', 
+			$this->Controller->EmailTest->smtpSend
+		);
+	}
+
+/**
+ * test sending smtp from a host using a port.
+ *
+ * @return void
+ */
+	function testSmtpSendHostWithPort() {
+		$bkp = env('HTTP_HOST');
+		$_SERVER['HTTP_HOST'] = 'localhost:8080';
+
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = array('root@localhost');
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake SMTP host test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->Controller->EmailTest->_debug = true;
+
+		$socket = new MockEmailSocket();
+		$socket->setReturnValue('connect', true);
+
+		$this->Controller->EmailTest->setConnectionSocket($socket);
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+
+		$this->assertPattern('/EHLO localhost\n/', $this->Controller->EmailTest->smtpSend);
+
+		$_SERVER['HTTP_HOST'] = $bkp;
 	}
 
 /**

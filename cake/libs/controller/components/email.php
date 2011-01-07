@@ -837,6 +837,18 @@ class EmailComponent extends Object{
 		return @mail($to, $this->_encode($this->subject), $message, $header, $this->additionalParams);
 	}
 
+
+/**
+ * Helper method to get socket, overridden in tests
+ *
+ * @param array $config Config data for the socket.
+ * @return void
+ * @access protected
+ */
+	function _getSocket($config) {
+		$this->__smtpConnection =& new CakeSocket($config);
+	}
+
 /**
  * Sends out email via SMTP
  *
@@ -853,7 +865,7 @@ class EmailComponent extends Object{
 			'timeout' => 30
 		);
 		$this->smtpOptions = array_merge($defaults, $this->smtpOptions);
-		$this->__smtpConnection =& new CakeSocket($this->smtpOptions);
+		$this->_getSocket($this->smtpOptions);
 
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
@@ -867,7 +879,7 @@ class EmailComponent extends Object{
 		if (isset($this->smtpOptions['client'])) {
 			$host = $this->smtpOptions['client'];
 		} elseif (!empty($httpHost)) {
-			$host = $httpHost;
+			list($host) = explode(':', $httpHost);
 		} else {
 			$host = 'localhost';
 		}
