@@ -30,6 +30,31 @@ App::uses('AppHelper', 'View/Helper');
 class TimeHelper extends AppHelper {
 
 /**
+ * The format to use when formatting a time using `TimeHelper::nice()`
+ *
+ * The format should use the locale strings as defined in the PHP docs under
+ * `strftime` (http://php.net/manual/en/function.strftime.php)
+ *
+ * @var string
+ * @see TimeHelper::format()
+ */
+	public $niceFormat = '%a, %b %eS %Y, %H:%M';
+
+/**
+ * Constructor
+ *
+ * @param View $View the view object the helper is attached to.
+ * @param array $settings Settings array Settings array
+ * @return void
+ */
+	public function __construct(View $View, $settings = array()) {
+		if (isset($settings['niceFormat'])) {
+			$this->niceFormat = $settings['niceFormat'];
+		}
+		parent::__construct($View, $settings);
+	}
+
+/**
  * Converts a string representing the format for the function strftime and returns a
  * windows safe and i18n aware format.
  *
@@ -188,19 +213,26 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a nicely formatted date string for given Datetime string.
  *
+ * See http://php.net/manual/en/function.strftime.php for information on formatting
+ * using locale strings.
+ *
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
+ * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
  * @return string Formatted date string
  * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
-	public function nice($dateString = null, $userOffset = null) {
+	public function nice($dateString = null, $userOffset = null, $format = null) {
 		if ($dateString != null) {
 			$date = $this->fromString($dateString, $userOffset);
 		} else {
 			$date = time();
 		}
-		$format = $this->convertSpecifiers('%a, %b %eS %Y, %H:%M', $date);
+		if (!$format) {
+			$format = $this->niceFormat;
+		}
+		$format = $this->convertSpecifiers($format, $date);
 		return strftime($format, $date);
 	}
 
