@@ -411,7 +411,7 @@ class App {
  * `App::objects('plugin');` returns `array('DebugKit', 'Blog', 'User');`
  *
  * You can also search only within a plugin's objects by using the plugin dot
- * syntax (these objects are not cached):
+ * syntax.
  * 
  * `App::objects('MyPlugin.model');` returns `array('Post', 'Comment');`
  *
@@ -453,7 +453,9 @@ class App {
 			self::$__objects = Cache::read('object_map', '_cake_core_');
 		}
 
-		if (!isset(self::$__objects[$name]) || $cache !== true) {
+		$cacheLocation = empty($plugin) ? 'app' : $plugin;
+
+		if ($cache !== true || !isset(self::$__objects[$cacheLocation][$name])) {
 			$objects = array();
 
 			if (empty($path)) {
@@ -484,11 +486,11 @@ class App {
 			if ($plugin) {
 				return $objects;
 			}
-			self::$__objects[$name] = $objects;
+			self::$__objects[$cacheLocation][$name] = $objects;
 			self::$_objectCacheChange = true;
 		}
 
-		return self::$__objects[$name];
+		return self::$__objects[$cacheLocation][$name];
 	}
 
 /**
