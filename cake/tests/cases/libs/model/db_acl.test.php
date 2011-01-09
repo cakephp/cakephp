@@ -201,7 +201,7 @@ class DbAroUserTest extends CakeTestModel {
  * @access public
  */
 	public $useTable = 'auth_users';
-	/**
+/**
  * bindNode method
  *
  * @param mixed $ref

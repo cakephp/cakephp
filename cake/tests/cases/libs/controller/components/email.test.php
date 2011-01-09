@@ -29,6 +29,7 @@ App::import('Core', 'CakeSocket');
  */
 class EmailTestComponent extends EmailComponent {
 
+	var $smtpSend = '';
 /**
  * smtpSend method override for testing
  *
@@ -40,6 +41,19 @@ class EmailTestComponent extends EmailComponent {
 	}
 
 /**
+ * undocumented function
+ *
+ * @return void
+ */
+	function _smtpSend($data, $code = '250') {
+		if ($this->_debug) {
+			$this->smtpSend .= $data . "\n";
+			return true;
+		}
+		return parent::_smtpSend($data, $code);
+	}
+
+/**
  * Convenience setter method for testing.
  *
  * @access public
@@ -47,6 +61,18 @@ class EmailTestComponent extends EmailComponent {
  */
 	function setConnectionSocket($socket) {
 		$this->_smtpConnection = $socket;
+	}
+
+/**
+ * Allows mocks to be used with tests.
+ *
+ * @param array $config 
+ * @return void
+ */
+	function _getSocket($config) {
+		if (empty($this->_smtpConnection)) {
+			parent::_getSocket($config);
+		}
 	}
 
 /**
@@ -413,46 +439,64 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpSendMultipleTo() {
-		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
-			return;
-		}
 		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = array('postmaster@localhost', 'root@localhost');
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP multiple To test';
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 		$this->Controller->EmailTest->template = null;
-
-		$this->Controller->EmailTest->delivery = 'smtp';
-		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-
 		$this->Controller->EmailTest->_debug = true;
 		$this->Controller->EmailTest->sendAs = 'text';
-		$expect = <<<TEMPDOC
-<pre>Host: localhost
-Port: 25
-Timeout: 30
-To: postmaster@localhost, root@localhost
-From: noreply@example.com
-Subject: Cake SMTP multiple To test
-Header:
+		$this->Controller->EmailTest->delivery = 'smtp';
 
-To: postmaster@localhost, root@localhost
-From: noreply@example.com
-Reply-To: noreply@example.com
-Subject: Cake SMTP multiple To test
-X-Mailer: CakePHP Email Component
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bitParameters:
+		$socket = $this->getMock('CakeSocket');
+		$socket->expects($this->any())
+			->method('connect')
+			->will($this->returnValue(true));
+		$this->Controller->EmailTest->setConnectionSocket($socket);
 
-Message:
-
-This is the body of the message
-
-</pre>
-TEMPDOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+
+		$this->assertPattern('/EHLO localhost\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern('/MAIL FROM: <noreply@example\.com>\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern('/RCPT TO: <postmaster@localhost>\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern('/RCPT TO: <root@localhost>\n/', $this->Controller->EmailTest->smtpSend);
+		$this->assertPattern(
+			'/To: postmaster@localhost, root@localhost[\n\r]/', 
+			$this->Controller->EmailTest->smtpSend
+		);
+	}
+
+/**
+ * test sending smtp from a host using a port.
+ *
+ * @return void
+ */
+	function testSmtpSendHostWithPort() {
+		$bkp = env('HTTP_HOST');
+		$_SERVER['HTTP_HOST'] = 'localhost:8080';
+
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = array('root@localhost');
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake SMTP host test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->Controller->EmailTest->_debug = true;
+
+		$socket = $this->getMock('CakeSocket');
+		$socket->expects($this->any())
+			->method('connect')
+			->will($this->returnValue(true));
+
+		$this->Controller->EmailTest->setConnectionSocket($socket);
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+
+		$this->assertPattern('/EHLO localhost\n/', $this->Controller->EmailTest->smtpSend);
+
+		$_SERVER['HTTP_HOST'] = $bkp;
 	}
 
 /**
@@ -543,6 +587,8 @@ MSGBLOC;
  * @return void
  */
 	function testTemplates() {
+		ClassRegistry::flush();
+
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -634,6 +680,9 @@ HTMLBLOC;
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		
+		$result = ClassRegistry::getObject('view');
+		$this->assertFalse($result);
 	}
 
 /**
@@ -1226,6 +1275,9 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('alias <email@example.com>');
 		$this->assertEqual($result, 'alias <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('alias<email@example.com>');
+		$this->assertEqual($result, 'alias <email@example.com>');
 
 		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
 		$this->assertEqual($result, 'email@example.com');
@@ -1241,5 +1293,22 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
 		$this->assertEqual($result, '<email@example.com>');
+	}
+
+/**
+ * test formatting addresses with multibyte chars
+ *
+ * @return void
+ */
+	function testFormatAddressMultibyte() {
+		$this->Controller->EmailTest->charset = 'UTF-8';
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdCA=?= <email@domain.de>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest<email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdA==?= <email@domain.de>');
+
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>', true);
+		$this->assertEqual($result, '<email@domain.de>');
 	}
 }

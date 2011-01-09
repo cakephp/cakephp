@@ -461,7 +461,7 @@ class EmailComponent extends Component {
 			App::import('View', $this->Controller->view);
 		}
 
-		$View = new $viewClass($this->Controller, false);
+		$View = new $viewClass($this->Controller);
 		$View->layout = $this->layout;
 		$msg = array();
 
@@ -499,6 +499,7 @@ class EmailComponent extends Component {
 			$msg[] = '--alt-' . $this->_boundary . '--';
 			$msg[] = '';
 
+			ClassRegistry::removeObject('view');
 			return $msg;
 		}
 
@@ -528,6 +529,7 @@ class EmailComponent extends Component {
 		}
 
 		$msg = array_merge($msg, $content);
+		ClassRegistry::removeObject('view');
 
 		return $msg;
 	}
@@ -777,14 +779,15 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _formatAddress($string, $smtp = false) {
-		$hasAlias = preg_match('/((.*)\s)?<(.+)>/', $string, $matches);
+		$hasAlias = preg_match('/((.*))?\s?<(.+)>/', $string, $matches);
 		if ($smtp && $hasAlias) {
 			return $this->_strip('<' .  $matches[3] . '>');
 		} elseif ($smtp) {
 			return $this->_strip('<' . $string . '>');
 		}
+
 		if ($hasAlias && !empty($matches[2])) {
-			return $this->_strip($matches[2] . ' <' . $matches[3] . '>');
+			return $this->_encode($matches[2]) . $this->_strip(' <' . $matches[3] . '>');
 		}
 		return $this->_strip($string);
 	}
@@ -837,6 +840,18 @@ class EmailComponent extends Component {
 		return @mail($to, $this->_encode($this->subject), $message, $header, $this->additionalParams);
 	}
 
+
+/**
+ * Helper method to get socket, overridden in tests
+ *
+ * @param array $config Config data for the socket.
+ * @return void
+ * @access protected
+ */
+	function _getSocket($config) {
+		$this->_smtpConnection = new CakeSocket($config);
+	}
+
 /**
  * Sends out email via SMTP
  *
@@ -853,7 +868,7 @@ class EmailComponent extends Component {
 			'timeout' => 30
 		);
 		$this->smtpOptions = array_merge($defaults, $this->smtpOptions);
-		$this->_smtpConnection = new CakeSocket($this->smtpOptions);
+		$this->_getSocket($this->smtpOptions);
 
 		if (!$this->_smtpConnection->connect()) {
 			$this->smtpError = $this->_smtpConnection->lastError();
@@ -867,7 +882,7 @@ class EmailComponent extends Component {
 		if (isset($this->smtpOptions['client'])) {
 			$host = $this->smtpOptions['client'];
 		} elseif (!empty($httpHost)) {
-			$host = $httpHost;
+			list($host) = explode(':', $httpHost);
 		} else {
 			$host = 'localhost';
 		}
