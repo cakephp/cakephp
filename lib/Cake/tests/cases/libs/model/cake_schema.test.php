@@ -19,6 +19,7 @@
  */
 
 App::uses('CakeSchema', 'Model');
+App::uses('CakeTestFixture', 'TestSuite/Fixture');
 
 /**
  * Test for Schema database management
@@ -632,7 +633,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaReadWithConfigPrefix() {
-		$db =& ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::getDataSource('test');
 		$config = $db->config;
 		$config['prefix'] = 'schema_test_prefix_';
 		ConnectionManager::create('schema_prefix', $config);

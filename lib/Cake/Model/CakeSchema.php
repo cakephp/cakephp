@@ -219,19 +219,21 @@ class CakeSchema extends Object {
 
 		if (!is_array($models) && $models !== false) {
 			if (isset($this->plugin)) {
-				$models = App::objects('model', App::pluginPath($this->plugin) . 'models' . DS, false);
+				$models = App::objects($this->plugin . '.Model', null, false);
 			} else {
-				$models = App::objects('model');
+				$models = App::objects('Model');
 			}
 		}
 
 		if (is_array($models)) {
 			foreach ($models as $model) {
 				$importModel = $model;
+				$plugin = null;
 				if (isset($this->plugin)) {
-					$importModel = $this->plugin . '.' . $model;
+					$importModel = $model;
+					$plugin = $this->plugin . '.';
 				}
-				App::uses($importModel, 'Model');
+				App::uses($importModel, $plugin . 'Model');
 				if (!class_exists($importModel)) {
 					continue;
 				}
