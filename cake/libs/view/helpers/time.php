@@ -253,10 +253,10 @@ class TimeHelper extends AppHelper {
 
 		$y = $this->isThisYear($date) ? '' : ' %Y';
 
-		if ($this->isToday($date)) {
-			$ret = __('Today, %s', strftime("%H:%M", $date));
-		} elseif ($this->wasYesterday($date)) {
-			$ret = __('Yesterday, %s', strftime("%H:%M", $date));
+		if ($this->isToday($dateString, $userOffset)) {
+			$ret = sprintf(__('Today, %s', strftime("%H:%M", $date));
+		} elseif ($this->wasYesterday($dateString, $userOffset)) {
+			$ret = sprintf(__('Yesterday, %s', strftime("%H:%M", $date));
 		} else {
 			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = strftime($format, $date);
