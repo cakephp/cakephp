@@ -730,7 +730,7 @@ class AuthTest extends CakeTestCase {
 			'AuthMockTwo',
 			'AuthMockThree'
 		);
-		$mocks = $this->Controller->Auth->loadAuthorizeObjects();
+		$mocks = $this->Controller->Auth->constructAuthorize();
 		$request = $this->Controller->request;
 
 		$this->assertEquals(3, count($mocks));
@@ -759,10 +759,10 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->authorize = array(
 			'Controller'
 		);
-		$result = $this->Controller->Auth->loadAuthorizeObjects();
+		$result = $this->Controller->Auth->constructAuthorize();
 		$this->assertEquals(1, count($result));
 
-		$result = $this->Controller->Auth->loadAuthorizeObjects();
+		$result = $this->Controller->Auth->constructAuthorize();
 		$this->assertEquals(1, count($result));
 	}
 
@@ -784,7 +784,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->actionPath = 'controllers/';
 
 		$this->Controller->Auth->authorize = array('Actions');
-		$objects = $this->Controller->Auth->loadAuthorizeObjects();
+		$objects = $this->Controller->Auth->constructAuthorize();
 		$result = $objects[0];
 		$this->assertEquals($result->settings['actionPath'], 'controllers/');
 	}
@@ -798,10 +798,10 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->authenticate = array(
 			'Form'
 		);
-		$result = $this->Controller->Auth->loadAuthenticateObjects();
+		$result = $this->Controller->Auth->constructAuthenticate();
 		$this->assertEquals(1, count($result));
 
-		$result = $this->Controller->Auth->loadAuthenticateObjects();
+		$result = $this->Controller->Auth->constructAuthenticate();
 		$this->assertEquals(1, count($result));
 	}
 
@@ -816,7 +816,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->fields = array('username' => 'user', 'password' => 'passwd');
 
 		$this->Controller->Auth->authenticate = array('Form');
-		$objects = $this->Controller->Auth->loadAuthenticateObjects();
+		$objects = $this->Controller->Auth->constructAuthenticate();
 		$result = $objects[0];
 		$this->assertEquals($result->settings['userModel'], 'AuthUser');
 	}
@@ -1474,7 +1474,7 @@ class AuthTest extends CakeTestCase {
 	function testMapActionsDelegation() {
 		$this->getMock('BaseAuthorize', array('authorize'), array(), 'MapActionMockAuthorize', false);
 		$this->Controller->Auth->authorize = array('MapActionMock');
-		$mock = $this->Controller->Auth->loadAuthorizeObjects();
+		$mock = $this->Controller->Auth->constructAuthorize();
 		$mock[0]->expects($this->once())
 			->method('mapActions')
 			->with(array('create' => array('my_action')));
@@ -1494,7 +1494,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->request = $request;
 		$this->Controller->Auth->authenticate = array('RequestLoginMock');
-		$mock = $this->Controller->Auth->loadAuthenticateObjects();
+		$mock = $this->Controller->Auth->constructAuthenticate();
 		$mock[0]->expects($this->once())
 			->method('authenticate')
 			->with($request)

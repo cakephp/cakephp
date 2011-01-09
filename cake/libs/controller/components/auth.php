@@ -433,7 +433,7 @@ class AuthComponent extends Component {
 			$request = $this->request;
 		}
 		if (empty($this->_authorizeObjects)) {
-			$this->loadAuthorizeObjects();
+			$this->constructAuthorize();
 		}
 		foreach ($this->_authorizeObjects as $authorizer) {
 			if ($authorizer->authorize($user, $request) === true) {
@@ -448,7 +448,7 @@ class AuthComponent extends Component {
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
  */
-	public function loadAuthorizeObjects() {
+	public function constructAuthorize() {
 		if (empty($this->authorize)) {
 			return;
 		}
@@ -528,7 +528,7 @@ class AuthComponent extends Component {
  */
 	public function mapActions($map = array()) {
 		if (empty($this->_authorizeObjects)) {
-			$this->loadAuthorizeObjects();
+			$this->constructAuthorize();
 		}
 		foreach ($this->_authorizeObjects as $auth) {
 			$auth->mapActions($map);
@@ -694,7 +694,7 @@ class AuthComponent extends Component {
  */
 	public function identify(CakeRequest $request) {
 		if (empty($this->_authenticateObjects)) {
-			$this->loadAuthenticateObjects();
+			$this->constructAuthenticate();
 		}
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->authenticate($request);
@@ -710,7 +710,7 @@ class AuthComponent extends Component {
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
  */
-	public function loadAuthenticateObjects() {
+	public function constructAuthenticate() {
 		if (empty($this->authenticate)) {
 			return;
 		}
