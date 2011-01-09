@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Dispatcher', 'Routing')
+App::uses('Dispatcher', 'Routing');
 App::uses('CakeRequest', 'Network');
 
 class CakeRequestTestCase extends CakeTestCase {

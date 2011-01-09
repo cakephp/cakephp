@@ -17,7 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('HttpSocket', 'Network');
+App::uses('HttpSocket', 'Network/Http');
+App::uses('HttpResponse', 'Network/Http');
 
 /**
  * TestAuthentication class
