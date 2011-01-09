@@ -266,10 +266,9 @@ class App {
 				foreach (self::$__packageFormat[$type] as $f) {
 					$path[] = sprintf($f, $pluginPath);
 				}
-				return $path;
 			}
-
-			return $pluginPath . 'libs' . DS . $type;
+			$path[] = $pluginPath . 'libs' . DS . $type . DS;
+			return $path;
 		}
 
 		if (!isset(self::$__packages[$type])) {
@@ -439,23 +438,9 @@ class App {
 		if ($type == 'plugins') {
 			$extension = '/.*/';
 			$includeDirectories = true;
-
-/*		$extension = false;
-		list($plugin, $type) = pluginSplit($type);
-		$name = $type;
-
-		if ($plugin) {
-			$path = Inflector::pluralize($type);
-			if ($path == 'helpers') {
-				$path = 'views' . DS .$path;
-			} elseif ($path == 'behaviors') {
-				$path = 'models' . DS .$path;
-			} elseif ($path == 'components') {
-				$path = 'controllers' . DS .$path;
-			}
-			$path = self::pluginPath($plugin) . $path;
-			$cache = false; */
 		}
+
+		list($plugin, $type) = pluginSplit($type);
 
 		if ($type === 'file' && !$path) {
 			return false;
@@ -472,16 +457,16 @@ class App {
 			$objects = array();
 
 			if (empty($path)) {
-				$path = self::path($type);
+				$path = self::path($type, $plugin);
 			}
 			$items = array();
 
 			foreach ((array)$path as $dir) {
-				if ($dir != APP) {
+				if ($dir != APP && is_dir($dir)) {
 					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
 					foreach ($files as $file) {
 						if (!$file->isDot() && (!$file->isDir() || $includeDirectories)) {
-							$objects[] = basename($file);
+							$objects[] = substr(basename($file), 0, -4);
 						}
 					}
 				}
@@ -524,7 +509,6 @@ class App {
 
 	public static function load($className) {
 		if (isset(self::$__classMap[$className])) {
-
 			if ($file = self::__mapped($className)) {
 				return include $file;
 			}
