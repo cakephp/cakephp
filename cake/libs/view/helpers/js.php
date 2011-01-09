@@ -474,10 +474,11 @@ abstract class JsBaseEngineHelper extends AppHelper {
 /**
  * Constructor.
  *
- * @return void
+ * @param View $View The View this helper is attached to.
+ * @param array $settings An array of settings.
  */
-	function __construct() {
-		parent::__construct();
+	function __construct($View, $settings = array()) {
+		parent::__construct($View, $settings);
 		$this->useNative = function_exists('json_encode');
 	}
 

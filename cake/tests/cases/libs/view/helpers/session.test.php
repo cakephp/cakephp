@@ -38,6 +38,10 @@ class SessionHelperTest extends CakeTestCase {
 		$this->View = new View($controller);
 		$this->Session = new SessionHelper($this->View);
 
+		if (!CakeSession::started()) {
+			CakeSession::start();
+		}
+
 		$_SESSION = array(
 			'test' => 'info',
 			'Message' => array(

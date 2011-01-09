@@ -30,7 +30,9 @@ class MooEngineHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->Moo = new MootoolsEngineHelper();
+		$controller = null;
+		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->Moo = new MootoolsEngineHelper($this->View);
 	}
 
 /**
