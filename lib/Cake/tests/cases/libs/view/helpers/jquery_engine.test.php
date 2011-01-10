@@ -33,8 +33,8 @@ class JqueryEngineHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$controller = null;
-		$View = new View($controller);
-		$this->Jquery = new JqueryEngineHelper($View);
+		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->Jquery = new JqueryEngineHelper($this->View);
 	}
 
 /**

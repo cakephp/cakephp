@@ -243,6 +243,7 @@ class CacheHelper extends AppHelper {
 				$controller->layout = $this->layout = \'' . $this->_View->layout. '\';
 				$controller->request = $this->request = unserialize(\'' . str_replace("'", "\\'", serialize($this->request)) . '\');
 				$controller->theme = $this->theme = \'' . $this->_View->theme . '\';
+				$controller->viewVars = $this->viewVars = ' . var_export($this->_View->viewVars, true) . ';
 				Router::setRequestInfo($controller->request);';
 
 		if ($useCallbacks == true) {
@@ -253,6 +254,7 @@ class CacheHelper extends AppHelper {
 
 		$file .= '
 				$this->loadHelpers();
+				extract($this->viewVars, EXTR_SKIP);
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
 		$file .= $content;

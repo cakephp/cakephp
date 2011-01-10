@@ -531,6 +531,37 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test interactive with plugins lists from the plugin
+ *
+ * @return void
+ */
+	function testInteractiveWithPlugin() {
+		$testApp = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS;
+		App::build(array(
+			'plugins' => array($testApp)
+		), true);
+
+		$this->Task->plugin = 'TestPlugin';
+		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'other_helper.test.php';
+		$this->Task->expects($this->any())
+			->method('in')
+			->will($this->onConsecutiveCalls(
+				5, //helper
+				1 //OtherHelper
+			)); 
+		
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->with($path, $this->anything());
+
+		$this->Task->stdout->expects($this->at(21))
+			->method('write')
+			->with('1. OtherHelper');
+	
+		$this->Task->execute();
+	}
+
+/**
  * Test filename generation for each type + plugins
  *
  * @return void

@@ -31,7 +31,9 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->Proto = new PrototypeEngineHelper();
+		$controller = null;
+		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->Proto = new PrototypeEngineHelper($this->View);
 	}
 
 /**

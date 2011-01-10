@@ -153,6 +153,17 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test that connection gets set to the import options when a different connection is used.
+ *
+ * @return void
+ */
+	function testImportOptionsAlternateConnection() {
+		$this->Task->connection = 'test';
+		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
+		$this->assertPattern("/'connection' => 'test'/", $result);
+	}
+
+/**
  * test that execute passes runs bake depending with named model.
  *
  * @return void
@@ -291,15 +302,15 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->assertPattern('/public \$fields = array\(/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertPattern("/public \\\$import \= array\('records' \=\> true\);/", $result);
+		$this->assertPattern("/public \\\$import \= array\('records' \=\> true, 'connection' => 'test'\);/", $result);
 		$this->assertNoPattern('/public \$records/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\);/", $result);
+		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\, 'connection' => 'test'\);/", $result);
 		$this->assertNoPattern('/public \$fields/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\);/", $result);
+		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\, 'connection' => 'test'\);/", $result);
 		$this->assertNoPattern('/public \$fields/', $result);
 		$this->assertNoPattern('/public \$records/', $result);
 	}
@@ -357,4 +368,5 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
+
 }

@@ -106,9 +106,7 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->Form->request = $request;
 		$this->Js->Form->Html = $this->Js->Html;
-		$this->Js->OptionEngine = new OptionEngineHelper();
-
-		ClassRegistry::addObject('view', $this->View);
+		$this->Js->OptionEngine = new OptionEngineHelper($this->View);
 	}
 
 /**
@@ -119,7 +117,6 @@ class JsHelperTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('Asset.timestamp', $this->_asset);
-		ClassRegistry::removeObject('view');
 		unset($this->Js);
 	}
 
@@ -132,7 +129,7 @@ class JsHelperTest extends CakeTestCase {
 		$request = new CakeRequest(null, false);
 
 		if (!class_exists('TestJsEngineHelper', false)) {
-			$this->getMock('JsBaseEngineHelper', array(), array(), 'TestJsEngineHelper');
+			$this->getMock('JsBaseEngineHelper', array(), array($this->View), 'TestJsEngineHelper');
 		}
 
 		$this->Js = new JsHelper($this->View, array('TestJs'));
@@ -316,7 +313,7 @@ class JsHelperTest extends CakeTestCase {
 			return;
 		}
 		$this->Js->request->webroot = '/';
-		$this->Js->JsBaseEngine = new TestJsEngineHelper();
+		$this->Js->JsBaseEngine = new TestJsEngineHelper($this->View);
 		$this->Js->buffer('one = 1;');
 		$this->Js->buffer('two = 2;');
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => true));
@@ -694,7 +691,7 @@ class JsBaseEngineTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$controller = null;
-		$this->View = new View($controller);
+		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
 		$this->JsEngine = new OptionEngineHelper($this->View);
 	}
 /**
@@ -915,7 +912,7 @@ class JsBaseEngineTest extends CakeTestCase {
  * @return void
  */
 	function testOptionMapping() {
-		$JsEngine = new OptionEngineHelper();
+		$JsEngine = new OptionEngineHelper($this->View);
 		$result = $JsEngine->testMap();
 		$this->assertEqual($result, array());
 
@@ -935,7 +932,7 @@ class JsBaseEngineTest extends CakeTestCase {
  * @return void
  */
 	function testOptionParsing() {
-		$JsEngine = new OptionEngineHelper();
+		$JsEngine = new OptionEngineHelper($this->View);
 
 		$result = $JsEngine->testParseOptions(array('url' => '/posts/view/1', 'key' => 1));
 		$expected = 'key:1, url:"\\/posts\\/view\\/1"';
