@@ -40,6 +40,16 @@ class HelperCollection extends ObjectCollection {
  * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you 
  * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
+ *
+ * You can alias your helper as an existing helper by setting the 'alias' key, i.e.,
+ * {{{
+ * public $components = array(
+ *   'AliasedHtml' => array(
+ *     'alias' => 'Html'
+ *   );
+ * );
+ * }}}
+ * All calls to the `Html` helper would use `AliasedHtml` instead.
  * 
  * @param string $helper Helper name to load
  * @param array $settings Settings for the helper.
@@ -49,8 +59,13 @@ class HelperCollection extends ObjectCollection {
 	public function load($helper, $settings = array()) {
 		list($plugin, $name) = pluginSplit($helper, true);
 
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
+		$alias = $name;
+		if (isset($settings['alias'])) {
+			$alias = $settings['alias'];
+		}
+		
+		if (isset($this->_loaded[$alias])) {
+			return $this->_loaded[$alias];
 		}
 		$helperClass = $name . 'Helper';
 		if (!class_exists($helperClass)) {
@@ -67,17 +82,17 @@ class HelperCollection extends ObjectCollection {
 				));
 			}
 		}
-		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
+		$this->_loaded[$alias] = new $helperClass($this->_View, $settings);
 
 		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {
-			$this->_loaded[$name]->{$var} = $this->_View->{$var};
+			$this->_loaded[$alias]->{$var} = $this->_View->{$var};
 		}
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
-			$this->_enabled[] = $name;
+			$this->_enabled[] = $alias;
 		}
-		return $this->_loaded[$name];
+		return $this->_loaded[$alias];
 	}
 
 }
