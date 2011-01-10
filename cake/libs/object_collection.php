@@ -222,7 +222,7 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Adds or overwrites an instatiated object to the collection
+ * Adds or overwrites an instantiated object to the collection
  *
  * @param string $name Name of the object
  * @param Object $object The object to use
