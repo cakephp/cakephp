@@ -68,22 +68,10 @@ class Set {
  * @static
  */
 	function filter($var, $isArray = false) {
-		foreach ((array)$var as $k => $v) {
-			if (!empty($v) && is_array($v)) {
-				$var[$k] = array_filter($v, array('Set', '_filter'));
-			}
+		if (is_array($var) && (!empty($var) || $isArray)) {
+			return array_filter($var, array('Set', 'filter'));
 		}
-		return array_filter($var, array('Set', '_filter'));
-	}
 
-/**
- * Set::filter callback function
- *
- * @param array $var Array to filter.
- * @return boolean
- * @access protected
- */
-	function _filter($var) {
 		if ($var === 0 || $var === '0' || !empty($var)) {
 			return true;
 		}
