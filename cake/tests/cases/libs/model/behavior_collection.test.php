@@ -413,6 +413,12 @@ class Test7Behavior extends ModelBehavior{
 }
 
 /**
+ * Extended TestBehavior
+ */
+class TestAliasBehavior extends TestBehavior {
+}
+
+/**
  * BehaviorCollection class
  *
  * @package       cake.tests.cases.libs.model
@@ -429,6 +435,23 @@ class BehaviorCollectionTest extends CakeTestCase {
 		'core.apple', 'core.sample', 'core.article', 'core.user', 'core.comment',
 		'core.attachment', 'core.tag', 'core.articles_tag'
 	);
+
+/**
+ * Tests loading aliased behaviors
+ */
+	function testLoadAlias() {
+		$Apple = new Apple();
+		$this->assertIdentical($Apple->Behaviors->attached(), array());
+
+		$Apple->Behaviors->load('TestAlias', array('alias' => 'Test', 'somesetting' => true));
+		$this->assertIdentical($Apple->Behaviors->attached(), array('Test'));
+		$this->assertInstanceOf('TestAliasBehavior', $Apple->Behaviors->Test);
+		$this->assertTrue($Apple->Behaviors->Test->settings['Apple']['somesetting']);
+
+		$this->assertEquals($Apple->Behaviors->Test->testMethod($Apple, true), 'working');
+		$this->assertEquals($Apple->testMethod(true), 'working');
+		$this->assertEquals($Apple->Behaviors->dispatchMethod($Apple, 'testMethod'), 'working');
+	}
 
 /**
  * testBehaviorBinding method
