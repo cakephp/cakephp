@@ -20,6 +20,12 @@
 App::import('Component', array('Cookie', 'Security'));
 App::import('Core', 'ComponentCollection');
 
+/**
+ * Extended CookieComponent
+ */
+class CookieAliasComponent extends CookieComponent {
+}
+
 class ComponentCollectionTest extends CakeTestCase {
 /**
  * setup
@@ -56,6 +62,26 @@ class ComponentCollectionTest extends CakeTestCase {
 
 		$result = $this->Components->load('Cookie');
 		$this->assertSame($result, $this->Components->Cookie);
+	}
+
+/**
+ * Tests loading as an alias
+ *
+ * @return void
+ */
+	function testLoadWithAlias() {
+		$result = $this->Components->load('CookieAlias', array('alias' => 'Cookie', 'somesetting' => true));
+		$this->assertInstanceOf('CookieAliasComponent', $result);
+		$this->assertInstanceOf('CookieAliasComponent', $this->Components->Cookie);
+		$this->assertTrue($this->Components->Cookie->settings['somesetting']);
+
+		$result = $this->Components->attached();
+		$this->assertEquals(array('Cookie'), $result, 'attached() results are wrong.');
+
+		$this->assertTrue($this->Components->enabled('Cookie'));
+
+		$result = $this->Components->load('Cookie');
+		$this->assertInstanceOf('CookieAliasComponent', $result);
 	}
 
 /**
