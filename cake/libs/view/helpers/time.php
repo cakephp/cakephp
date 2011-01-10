@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+if (!class_exists('Multibyte')) {
+	App::import('Core', 'Multibyte');
+}
 
 /**
  * Time Helper class for easy use of time data.
@@ -204,7 +207,7 @@ class TimeHelper extends AppHelper {
 			$date = time();
 		}
 		$format = $this->convertSpecifiers('%a, %b %eS %Y, %H:%M', $date);
-		return strftime($format, $date);
+		return Multibyte::strftime($format, $date);
 	}
 
 /**
@@ -227,12 +230,12 @@ class TimeHelper extends AppHelper {
 		$y = $this->isThisYear($date) ? '' : ' %Y';
 
 		if ($this->isToday($dateString, $userOffset)) {
-			$ret = sprintf(__('Today, %s',true), strftime("%H:%M", $date));
+			$ret = sprintf(__('Today, %s',true), Multibyte::strftime("%H:%M", $date));
 		} elseif ($this->wasYesterday($dateString, $userOffset)) {
-			$ret = sprintf(__('Yesterday, %s',true), strftime("%H:%M", $date));
+			$ret = sprintf(__('Yesterday, %s',true), Multibyte::strftime("%H:%M", $date));
 		} else {
 			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
-			$ret = strftime($format, $date);
+			$ret = Multibyte::strftime($format, $date);
 		}
 
 		return $ret;
@@ -730,6 +733,6 @@ class TimeHelper extends AppHelper {
 			$format = '%x';
 		}
 		$format = $this->convertSpecifiers($format, $date);
-		return strftime($format, $date);
+		return Multibyte::strftime($format, $date);
 	}
 }

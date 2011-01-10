@@ -751,6 +751,7 @@ class TimeHelperTest extends CakeTestCase {
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
 		), true);
 		Configure::write('Config.language', 'time_test');
+
 		$time = strtotime('Thu Jan 14 13:59:28 2010');
 
 		$result = $this->Time->i18nFormat($time);
@@ -763,6 +764,20 @@ class TimeHelperTest extends CakeTestCase {
 
 		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
 		$expected = 'Time is 01:59:28 PM, and date is 14/01/10';
+		$this->assertEqual($result, $expected);
+
+		$time = strtotime('Wed Jan 13 13:59:28 2010');
+
+		$result = $this->Time->i18nFormat($time);
+		$expected = '13/01/10';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->i18nFormat($time, '%c');
+		$expected = 'mié 13 ene 2010 13:59:28 ' . strftime('%Z', $time);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
+		$expected = 'Time is 01:59:28 PM, and date is 13/01/10';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Time->i18nFormat('invalid date', '%x', 'Date invalid');
