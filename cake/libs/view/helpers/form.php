@@ -19,6 +19,9 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+if (!class_exists('Multibyte')) {
+	App::import('Core', 'Multibyte');
+}
 
 /**
  * Form helper library.
@@ -1811,7 +1814,7 @@ class FormHelper extends AppHelper {
 				extract($selected);
 			} else {
 				if (is_numeric($selected)) {
-					$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
+					$selected = Multibyte::strftime('%Y-%m-%d %H:%M:%S', $selected);
 				}
 				$meridian = 'am';
 				$pos = strpos($selected, '-');
@@ -2135,7 +2138,7 @@ class FormHelper extends AppHelper {
 					$data = $options['monthNames'];
 				} else {
 					for ($m = 1; $m <= 12; $m++) {
-						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
+						$data[sprintf("%02s", $m)] = Multibyte::strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
 					}
 				}
 			break;
