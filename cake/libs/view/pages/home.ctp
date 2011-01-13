@@ -87,11 +87,15 @@ if (isset($filePresent)):
 		require LIBS . 'model' . DS . 'connection_manager.php';
 	}
 	$db = ConnectionManager::getInstance();
-	@$connected = $db->getDataSource('default');
+	try {
+		$connected = $db->getDataSource('default');
+	} catch (Exception $e) {
+		$connected = false;
+	}
 ?>
 <p>
 	<?php
-		if ($connected->isConnected()):
+		if ($connected && $connected->isConnected()):
 			echo '<span class="notice success">';
 	 			echo __('Cake is able to connect to the database.');
 			echo '</span>';
