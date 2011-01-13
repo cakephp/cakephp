@@ -458,7 +458,7 @@ class EmailComponent extends Object{
 			App::import('View', $this->Controller->view);
 		}
 
-		$View = new $viewClass($this->Controller, false);
+		$View = new $viewClass($this->Controller);
 		$View->layout = $this->layout;
 		$msg = array();
 
@@ -496,6 +496,7 @@ class EmailComponent extends Object{
 			$msg[] = '--alt-' . $this->__boundary . '--';
 			$msg[] = '';
 
+			ClassRegistry::removeObject('view');
 			return $msg;
 		}
 
@@ -525,6 +526,7 @@ class EmailComponent extends Object{
 		}
 
 		$msg = array_merge($msg, $content);
+		ClassRegistry::removeObject('view');
 
 		return $msg;
 	}
@@ -835,6 +837,18 @@ class EmailComponent extends Object{
 		return @mail($to, $this->_encode($this->subject), $message, $header, $this->additionalParams);
 	}
 
+
+/**
+ * Helper method to get socket, overridden in tests
+ *
+ * @param array $config Config data for the socket.
+ * @return void
+ * @access protected
+ */
+	function _getSocket($config) {
+		$this->__smtpConnection =& new CakeSocket($config);
+	}
+
 /**
  * Sends out email via SMTP
  *
@@ -851,7 +865,7 @@ class EmailComponent extends Object{
 			'timeout' => 30
 		);
 		$this->smtpOptions = array_merge($defaults, $this->smtpOptions);
-		$this->__smtpConnection =& new CakeSocket($this->smtpOptions);
+		$this->_getSocket($this->smtpOptions);
 
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
@@ -865,7 +879,7 @@ class EmailComponent extends Object{
 		if (isset($this->smtpOptions['client'])) {
 			$host = $this->smtpOptions['client'];
 		} elseif (!empty($httpHost)) {
-			$host = $httpHost;
+			list($host) = explode(':', $httpHost);
 		} else {
 			$host = 'localhost';
 		}
@@ -893,7 +907,7 @@ class EmailComponent extends Object{
 		}
 
 		if (!is_array($this->to)) {
-			$tos = array($this->to);
+			$tos = array_map('trim', explode(',', $this->to));
 		} else {
 			$tos = $this->to;
 		}

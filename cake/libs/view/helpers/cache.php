@@ -225,14 +225,15 @@ class CacheHelper extends AppHelper {
 
 		$file .= '$controller =& new ' . $this->controllerName . 'Controller();
 				$controller->plugin = $this->plugin = \''.$this->plugin.'\';
-				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->helpers) . '\');
+				$controller->helpers = $this->helpers = ' . var_export($this->helpers, true) . ';
 				$controller->base = $this->base = \'' . $this->base . '\';
 				$controller->layout = $this->layout = \'' . $this->layout. '\';
 				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
 				$controller->here = $this->here = \'' . $this->here . '\';
-				$controller->params = $this->params = unserialize(stripslashes(\'' . addslashes(serialize($this->params)) . '\'));
-				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
-				$controller->data = $this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
+				$controller->params = $this->params = ' . var_export($this->params, true) . ';
+				$controller->action = $this->action = ' . var_export($this->action, true) . ';
+				$controller->data = $this->data = ' . var_export($this->data, true) . ';
+				$controller->viewVars = $this->viewVars = ' . var_export($this->viewVars, true) . ';
 				$controller->theme = $this->theme = \'' . $this->theme . '\';
 				Router::setRequestInfo(array($this->params, array(\'base\' => $this->base, \'webroot\' => $this->webroot)));';
 
@@ -253,6 +254,7 @@ class CacheHelper extends AppHelper {
 					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 					$this->{$helper} =& $loadedHelpers[$helper];
 				}
+				extract($this->viewVars, EXTR_SKIP);
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
 		$file .= $content;

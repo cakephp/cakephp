@@ -309,6 +309,42 @@ class CacheHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test cache of view vars
+ *
+ * @access public
+ * @return void
+ */
+	function testCacheViewVars() {
+		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->Controller->cacheAction = 21600;
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+
+		$contents = file_get_contents($filename);
+		$this->assertPattern('/\$this\-\>viewVars/', $contents);
+		$this->assertPattern('/extract\(\$this\-\>viewVars, EXTR_SKIP\);/', $contents);
+		$this->assertPattern('/php echo \$variable/', $contents);
+		$this->assertPattern('/variableValue/', $contents);
+
+		@unlink($filename);
+	}
+
+/**
  * test cacheAction set to a boolean
  *
  * @return void

@@ -372,11 +372,13 @@ class View extends Object {
 			}
 		}
 		$paths = $this->_paths($plugin);
-
-		foreach ($paths as $path) {
-			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-				$file = $path . 'elements' . DS . $name . $this->ext;
-				break;
+		$exts = $this->_getExtensions();
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
+				if (file_exists($path . 'elements' . DS . $name . $ext)) {
+					$file = $path . 'elements' . DS . $name . $ext;
+					break;
+				}
 			}
 		}
 
@@ -751,6 +753,7 @@ class View extends Object {
 				$cache->controllerName = $this->name;
 				$cache->layout = $this->layout;
 				$cache->cacheAction = $this->cacheAction;
+				$cache->viewVars = $this->viewVars;
 				$cache->cache($___viewFn, $out, $cached);
 			}
 		}
@@ -861,10 +864,7 @@ class View extends Object {
 		}
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		
-		$exts = array($this->ext);
-		if ($this->ext !== '.ctp') {
-			array_push($exts, '.ctp');
-		}
+		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
 				if (file_exists($path . $name . $ext)) {
@@ -904,11 +904,8 @@ class View extends Object {
 		}
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
-		
-		$exts = array($this->ext);
-		if ($this->ext !== '.ctp') {
-			array_push($exts, '.ctp');
-		}
+
+		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
 				if (file_exists($path . $file . $ext)) {
@@ -917,6 +914,21 @@ class View extends Object {
 			}
 		}
 		return $this->_missingView($paths[0] . $file . $this->ext, 'missingLayout');
+	}
+
+
+/**
+ * Get the extensions that view files can use.
+ *
+ * @return array Array of extensions view files use.
+ * @access protected
+ */
+	function _getExtensions() {
+		$exts = array($this->ext);
+		if ($this->ext !== '.ctp') {
+			array_push($exts, '.ctp');
+		}
+		return $exts;
 	}
 
 /**
