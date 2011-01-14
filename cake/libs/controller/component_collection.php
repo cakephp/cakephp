@@ -76,8 +76,8 @@ class ComponentCollection extends ObjectCollection {
 	public function load($component, $settings = array()) {
 		list($plugin, $name) = pluginSplit($component);
 		$alias = $name;
-		if (isset($settings['alias'])) {
-			$alias = $settings['alias'];
+		if (isset($settings['className'])) {
+			$name = $settings['className'];
 		}
 		if (isset($this->_loaded[$alias])) {
 			return $this->_loaded[$alias];

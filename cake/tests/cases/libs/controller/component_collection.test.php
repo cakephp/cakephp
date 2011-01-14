@@ -70,7 +70,7 @@ class ComponentCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadWithAlias() {
-		$result = $this->Components->load('CookieAlias', array('alias' => 'Cookie', 'somesetting' => true));
+		$result = $this->Components->load('Cookie', array('className' => 'CookieAlias', 'somesetting' => true));
 		$this->assertInstanceOf('CookieAliasComponent', $result);
 		$this->assertInstanceOf('CookieAliasComponent', $this->Components->Cookie);
 		$this->assertTrue($this->Components->Cookie->settings['somesetting']);

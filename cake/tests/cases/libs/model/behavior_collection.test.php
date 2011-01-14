@@ -443,7 +443,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Apple = new Apple();
 		$this->assertIdentical($Apple->Behaviors->attached(), array());
 
-		$Apple->Behaviors->load('TestAlias', array('alias' => 'Test', 'somesetting' => true));
+		$Apple->Behaviors->load('Test', array('className' => 'TestAlias', 'somesetting' => true));
 		$this->assertIdentical($Apple->Behaviors->attached(), array('Test'));
 		$this->assertInstanceOf('TestAliasBehavior', $Apple->Behaviors->Test);
 		$this->assertTrue($Apple->Behaviors->Test->settings['Apple']['somesetting']);

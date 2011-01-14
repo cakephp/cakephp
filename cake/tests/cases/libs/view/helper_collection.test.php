@@ -69,7 +69,7 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadWithAlias() {
-		$result = $this->Helpers->load('HtmlAlias', array('alias' => 'Html'));
+		$result = $this->Helpers->load('Html', array('className' => 'HtmlAlias'));
 		$this->assertInstanceOf('HtmlAliasHelper', $result);
 		$this->assertInstanceOf('HtmlAliasHelper', $this->Helpers->Html);
 

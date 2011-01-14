@@ -60,8 +60,8 @@ class HelperCollection extends ObjectCollection {
 		list($plugin, $name) = pluginSplit($helper, true);
 
 		$alias = $name;
-		if (isset($settings['alias'])) {
-			$alias = $settings['alias'];
+		if (isset($settings['className'])) {
+			$name = $settings['className'];
 		}
 		
 		if (isset($this->_loaded[$alias])) {

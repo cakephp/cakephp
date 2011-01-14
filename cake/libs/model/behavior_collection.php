@@ -100,11 +100,12 @@ class BehaviorCollection extends ObjectCollection {
  */
 	public function load($behavior, $config = array()) {
 		list($plugin, $name) = pluginSplit($behavior);
-		$class = $name . 'Behavior';
+
 		$alias = $name;
-		if (isset($config['alias'])) {
-			$alias = $config['alias'];
+		if (isset($config['className'])) {
+			$name = $config['className'];
 		}
+		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
 			throw new MissingBehaviorFileException(array(
