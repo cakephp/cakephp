@@ -464,17 +464,21 @@ if (!function_exists('array_combine')) {
 				break;
 			case 'HTTP_BASE':
 				$host = env('HTTP_HOST');
-				$count = substr_count($host, '.');
-				if ($count <= 1) {
+				$parts = explode('.', $host);
+				$count = count($parts);
+
+				if ($count === 1) {
 					return '.' . $host;
 				} elseif ($count === 2) {
+					return '.' . $host;
+				} elseif ($count === 3) {
 					$gTLD = array('aero', 'asia', 'biz', 'cat', 'com', 'coop', 'edu', 'gov', 'info', 'int', 'jobs', 'mil', 'mobi', 'museum', 'name', 'net', 'org', 'pro', 'tel', 'travel', 'xxx');
-					$domainName = explode('.', $host);
-					if (in_array($domainName[1], $gTLD)) {
-						$host = '.' . $host;
+					if (in_array($parts[1], $gTLD)) {
+						return '.' . $host;
 					}
 				}
-				return preg_replace('/^([^.])*/i', null, $host);
+				array_shift($parts);
+				return '.' . implode('.', $parts);
 				break;
 		}
 		return null;
