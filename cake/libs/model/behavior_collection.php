@@ -83,11 +83,11 @@ class BehaviorCollection extends ObjectCollection {
  * to load a behavior with callbacks disabled. By default callbacks are enabled. Disable behaviors
  * can still be used as normal.
  *
- * You can alias your behavior as an existing behavior by setting the 'alias' key, i.e.,
+ * You can alias your behavior as an existing behavior by setting the 'className' key, i.e.,
  * {{{
  * public $actsAs = array(
- *   'AliasedTree' => array(
- *     'alias' => 'Tree'
+ *   'Tree' => array(
+ *     'className' => 'AliasedTree'
  *   );
  * );
  * }}}

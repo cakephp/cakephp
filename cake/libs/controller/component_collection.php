@@ -58,11 +58,11 @@ class ComponentCollection extends ObjectCollection {
  * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
  * Callbacks default to on.  Disabled component methods work as normal, only callbacks are disabled.
  *
- * You can alias your component as an existing component by setting the 'alias' key, i.e.,
+ * You can alias your component as an existing component by setting the 'className' key, i.e.,
  * {{{
  * public $components = array(
- *   'AliasedEmail' => array(
- *     'alias' => 'Email'
+ *   'Email' => array(
+ *     'className' => 'AliasedEmail'
  *   );
  * );
  * }}}

@@ -41,11 +41,11 @@ class HelperCollection extends ObjectCollection {
  * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
  *
- * You can alias your helper as an existing helper by setting the 'alias' key, i.e.,
+ * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
  * {{{
  * public $components = array(
- *   'AliasedHtml' => array(
- *     'alias' => 'Html'
+ *   'Html' => array(
+ *     'className' => 'AliasedHtml'
  *   );
  * );
  * }}}
