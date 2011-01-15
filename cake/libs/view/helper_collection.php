@@ -57,11 +57,13 @@ class HelperCollection extends ObjectCollection {
  * @throws MissingHelperFileException, MissingHelperClassException when the helper could not be found
  */
 	public function load($helper, $settings = array()) {
-		list($plugin, $name) = pluginSplit($helper, true);
-
-		$alias = $name;
 		if (isset($settings['className'])) {
-			$name = $settings['className'];
+			$alias = $helper;
+			$helper = $settings['className'];
+		}
+		list($plugin, $name) = pluginSplit($helper);
+		if (!isset($alias)) {
+			$alias = $name;
 		}
 		
 		if (isset($this->_loaded[$alias])) {

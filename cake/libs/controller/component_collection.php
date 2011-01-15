@@ -74,10 +74,13 @@ class ComponentCollection extends ObjectCollection {
  * @throws MissingComponentFileException, MissingComponentClassException when the component could not be found
  */
 	public function load($component, $settings = array()) {
-		list($plugin, $name) = pluginSplit($component);
-		$alias = $name;
 		if (isset($settings['className'])) {
-			$name = $settings['className'];
+			$alias = $component;
+			$component = $settings['className'];
+		}
+		list($plugin, $name) = pluginSplit($component);
+		if (!isset($alias)) {
+			$alias = $name;
 		}
 		if (isset($this->_loaded[$alias])) {
 			return $this->_loaded[$alias];
@@ -86,13 +89,13 @@ class ComponentCollection extends ObjectCollection {
 		if (!class_exists($componentClass)) {
 			if (!App::import('Component', $component)) {
 				throw new MissingComponentFileException(array(
-					'file' => Inflector::underscore($component) . '.php',
+					'file' => Inflector::underscore($componentClass) . '.php',
 					'class' => $componentClass
 				));
 			}
 			if (!class_exists($componentClass)) {
 				throw new MissingComponentClassException(array(
-					'file' => Inflector::underscore($component) . '.php',
+					'file' => Inflector::underscore($componentClass) . '.php',
 					'class' => $componentClass
 				));
 			}

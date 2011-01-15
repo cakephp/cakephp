@@ -80,6 +80,15 @@ class HelperCollectionTest extends CakeTestCase {
 
 		$result = $this->Helpers->load('Html');
 		$this->assertInstanceOf('HtmlAliasHelper', $result);
+
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
+		$this->assertInstanceOf('OtherHelperHelper', $result);
+		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->SomeOther);
+
+		$result = $this->Helpers->attached();
+		$this->assertEquals(array('Html', 'SomeOther'), $result, 'attached() results are wrong.');
+		App::build();
 	}
 
 /**

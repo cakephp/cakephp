@@ -82,6 +82,15 @@ class ComponentCollectionTest extends CakeTestCase {
 
 		$result = $this->Components->load('Cookie');
 		$this->assertInstanceOf('CookieAliasComponent', $result);
+
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		$result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.OtherComponent'));
+		$this->assertInstanceOf('OtherComponentComponent', $result);
+		$this->assertInstanceOf('OtherComponentComponent', $this->Components->SomeOther);
+
+		$result = $this->Components->attached();
+		$this->assertEquals(array('Cookie', 'SomeOther'), $result, 'attached() results are wrong.');
+		App::build();
 	}
 
 /**
