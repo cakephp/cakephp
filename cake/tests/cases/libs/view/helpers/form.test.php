@@ -5730,6 +5730,28 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test get form, and inputs when the model param is false
+ *
+ * @return void
+ */
+	function testGetFormWithFalseModel() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$result = $this->Form->create(false, array('type' => 'get'));
+
+		$expected = array('form' => array(
+			'id' => 'addForm', 'method' => 'get', 'action' => '/contact_test/add',
+			'accept-charset' => $encoding
+		));
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->text('reason');
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'reason', 'id' => 'reason')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that datetime() works with GET style forms.
  *
  * @return void

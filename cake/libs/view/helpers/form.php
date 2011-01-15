@@ -1960,7 +1960,7 @@ class FormHelper extends AppHelper {
 			}
 
 			$view = ClassRegistry::getObject('view');
-			$name = $view->field;
+			$name = !empty($view->field) ? $view->field : $view->model;
 			if (!empty($view->fieldSuffix)) {
 				$name .= '[' . $view->fieldSuffix . ']';
 			}
