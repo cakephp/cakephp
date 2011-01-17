@@ -288,6 +288,11 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with <a href="mailto:email@example.com"\s*>email@example.com</a> address';
 		$result = $this->Text->autoLinkEmails($text);
 		$this->assertPattern('#^' . $expected . '$#', $result);
+		
+		$text = "Text with o'hare._-bob@example.com address";
+		$expected = 'Text with <a href="mailto:o&#039;hare._-bob@example.com">o&#039;hare._-bob@example.com</a> address';
+		$result = $this->Text->autoLinkEmails($text);
+		$this->assertEqual($expected, $result);
 
 		$text = 'Text with email@example.com address';
 		$expected = 'Text with <a href="mailto:email@example.com" \s*class="link">email@example.com</a> address';

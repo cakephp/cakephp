@@ -125,8 +125,9 @@ class TextHelper extends AppHelper {
 			$options .= "'$option' => '$value', ";
 		}
 		$options .= ')';
+		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
 
-		return preg_replace_callback('#([_A-Za-z0-9+-]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
+		return preg_replace_callback('/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*)/i',
 						create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "mailto:" . $matches[0],' . $options . ');'), $text);
 	}
 /**
