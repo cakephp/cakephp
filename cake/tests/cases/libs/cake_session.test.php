@@ -474,4 +474,35 @@ class CakeSessionTest extends CakeTestCase {
 		$this->setUp();
 	}
 
+/**
+ * testReadAndWriteWithDatabaseStorage method
+ *
+ * @access public
+ * @return void
+ */
+	function testDatabaseStorageEmptySessionId() {
+		unset($_SESSION);
+		session_destroy();
+		Configure::write('Session.table', 'sessions');
+		Configure::write('Session.model', 'Session');
+		Configure::write('Session.database', 'test_suite');
+		Configure::write('Session.save', 'database');
+		$this->setUp();
+		$id = $this->Session->id();
+
+		$this->Session->id = '';
+		session_id('');
+
+		$this->Session->write('SessionTestCase', 'This is a Test');
+		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
+
+		session_write_close();
+
+		unset($_SESSION);
+		ini_set('session.save_handler', 'files');
+		Configure::write('Session.save', 'php');
+		session_id($id);
+		$this->setUp();
+	}
+
 }
