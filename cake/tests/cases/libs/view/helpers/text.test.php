@@ -280,6 +280,16 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a url <a href="http://www.cot.ag/cuIb2Q">www.cot.ag/cuIb2Q</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEqual($expected, $result);
+		
+		$text = 'Text with a url http://www.does--not--work.com and more';
+		$expected = 'Text with a url <a href="http://www.does--not--work.com">http://www.does--not--work.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEqual($expected, $result);
+		
+		$text = 'Text with a url http://www.not--work.com and more';
+		$expected = 'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
