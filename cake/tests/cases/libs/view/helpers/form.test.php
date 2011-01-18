@@ -2173,6 +2173,35 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array();
+		$result = $this->Form->input('Publisher.id', array(
+				'label'		=> 'Publisher',
+				'type'		=> 'select',
+				'multiple'	=> 'checkbox',
+				'options'	=> array('Value 1' => 'Label 1', 'Value 2' => 'Label 2')
+		));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+				array('label' => array('for' => 'PublisherId')),
+				'Publisher',
+				'/label',
+				'input' => array('type' => 'hidden', 'name' => 'data[Publisher][id]', 'value' => '', 'id' => 'PublisherId'),
+				array('div' => array('class' => 'checkbox')),
+				array('input' => array('type' => 'checkbox', 'name' => 'data[Publisher][id][]', 'value' => 'Value 1', 'id' => 'PublisherIdValue1')),
+				array('label' => array('for' => 'PublisherIdValue1')),
+				'Label 1',
+				'/label',
+				'/div',
+				array('div' => array('class' => 'checkbox')),
+				array('input' => array('type' => 'checkbox', 'name' => 'data[Publisher][id][]', 'value' => 'Value 2', 'id' => 'PublisherIdValue2')),
+				array('label' => array('for' => 'PublisherIdValue2')),
+				'Label 2',
+				'/label',
+				'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -3132,7 +3161,7 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$options = array(
 			'>< Key' => array(
 				1 => 'One',
@@ -3510,7 +3539,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testSelectMultipleCheckboxDiv() {
 		$result = $this->Form->select(
-			'Model.tags', 
+			'Model.tags',
 			array('first', 'second'),
 			null,
 			array('multiple' => 'checkbox', 'class' => 'my-class')
@@ -3539,7 +3568,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model.tags', array(
 			'options' => array('first', 'second'),
-			'multiple' => 'checkbox', 
+			'multiple' => 'checkbox',
 			'class' => 'my-class',
 			'div' => false,
 			'label' => false
@@ -5743,7 +5772,7 @@ class FormHelperTest extends CakeTestCase {
 			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->text('reason');
 		$expected = array(
 			'input' => array('type' => 'text', 'name' => 'reason', 'id' => 'reason')
