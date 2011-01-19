@@ -247,7 +247,7 @@ class Validation {
 				}
 				break;
 			default:
-				self::$errors[] = __('You must define the $operator parameter for Validation::comparison()', true);
+				self::$errors[] = __('You must define the $operator parameter for Validation::comparison()');
 				break;
 		}
 		return false;
@@ -266,7 +266,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 		if ($regex === null) {
-			self::$errors[] = __('You must define a regular expression for Validation::custom()', true);
+			self::$errors[] = __('You must define a regular expression for Validation::custom()');
 			return false;
 		}
 		return self::_check($check, $regex);
