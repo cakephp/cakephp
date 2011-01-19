@@ -668,7 +668,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$result = $this->Task->bake('BakeArticle', compact('validate'));
 		$this->assertPattern('/class BakeArticle extends AppModel \{/', $result);
-		$this->assertPattern('/\$name \= \'BakeArticle\'/', $result);
 		$this->assertPattern('/\$validate \= array\(/', $result);
 		$expected = <<< STRINGEND
 array(

@@ -23,7 +23,6 @@ echo "<?php\n";
 ?>
 class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
 
-	public $name = '<?php echo $controllerName; ?>';
 <?php if ($isScaffold): ?>
 	public $scaffold;
 <?php else: ?>

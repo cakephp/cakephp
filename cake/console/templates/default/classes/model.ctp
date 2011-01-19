@@ -21,7 +21,6 @@
 
 echo "<?php\n"; ?>
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
-	public $name = '<?php echo $name; ?>';
 <?php if ($useDbConfig != 'default'): ?>
 	public $useDbConfig = '<?php echo $useDbConfig; ?>';
 <?php endif;?>

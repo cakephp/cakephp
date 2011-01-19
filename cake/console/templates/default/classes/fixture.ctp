@@ -22,7 +22,6 @@
 <?php echo '<?php' . "\n"; ?>
 /* <?php echo $model; ?> Fixture generated on: <?php echo  date('Y-m-d H:i:s') . " : ". time(); ?> */
 class <?php echo $model; ?>Fixture extends CakeTestFixture {
-	public $name = '<?php echo $model; ?>';
 <?php if ($table): ?>
 	public $table = '<?php echo $table; ?>';
 <?php endif; ?>
