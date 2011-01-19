@@ -127,6 +127,16 @@ class DatabaseSessionTest extends CakeTestCase {
 	}
 
 /**
+ * testReadAndWriteWithDatabaseStorage method
+ *
+ * @access public
+ * @return void
+ */
+	function testWriteEmptySessionId() {
+		$result = $this->storage->write('', 'This is a Test');
+		$this->assertFalse($result);
+	}
+/**
  * test read()
  *
  * @return void

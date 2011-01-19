@@ -32,12 +32,10 @@ class TestMemcacheEngine extends MemcacheEngine {
 		return $this->_parseServerString($server);
 	}
 	
-	function setMemcache(&$memcache) {
-		$this->__Memcache = $memcache;
+	function setMemcache($memcache) {
+		$this->_Memcache = $memcache;
 	}
 }
-
-Mock::generate('Memcache', 'MemcacheMockMemcache');
 
 /**
  * MemcacheEngineTest class
@@ -374,9 +372,11 @@ class MemcacheEngineTest extends CakeTestCase {
 		$memcache =& new TestMemcacheEngine();
 		$memcache->settings['compress'] = false;
 
-		$mock = new MemcacheMockMemcache();
+		$mock = $this->getMock('Memcache');
 		$memcache->setMemcache($mock);
-		$mock->expectAt(0, 'set', array('key', 'value', false, 0));
+		$mock->expects($this->once())
+			->method('set')
+			->with('key', 'value', false, 0);
 
 		$value = 'value';
 		$memcache->write('key', $value, 50 * DAY);

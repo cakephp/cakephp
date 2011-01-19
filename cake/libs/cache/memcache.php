@@ -33,7 +33,7 @@ class MemcacheEngine extends CacheEngine {
  * @var Memcache
  * @access private
  */
-	private $__Memcache = null;
+	protected $_Memcache = null;
 
 /**
  * Settings
@@ -74,12 +74,12 @@ class MemcacheEngine extends CacheEngine {
 		if (!is_array($this->settings['servers'])) {
 			$this->settings['servers'] = array($this->settings['servers']);
 		}
-		if (!isset($this->__Memcache)) {
+		if (!isset($this->_Memcache)) {
 			$return = false;
-			$this->__Memcache = new Memcache();
+			$this->_Memcache = new Memcache();
 			foreach ($this->settings['servers'] as $server) {
 				list($host, $port) = $this->_parseServerString($server);
-				if ($this->__Memcache->addServer($host, $port)) {
+				if ($this->_Memcache->addServer($host, $port)) {
 					$return = true;
 				}
 			}
@@ -128,7 +128,7 @@ class MemcacheEngine extends CacheEngine {
 		if ($duration > 30 * DAY) {
 			$duration = 0;
 		}
-		return $this->__Memcache->set($key, $value, $this->settings['compress'], $duration);
+		return $this->_Memcache->set($key, $value, $this->settings['compress'], $duration);
 	}
 
 /**
@@ -138,7 +138,7 @@ class MemcacheEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
-		return $this->__Memcache->get($key);
+		return $this->_Memcache->get($key);
 	}
 
 /**
@@ -156,7 +156,7 @@ class MemcacheEngine extends CacheEngine {
 				__('Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
-		return $this->__Memcache->increment($key, $offset);
+		return $this->_Memcache->increment($key, $offset);
 	}
 
 /**
@@ -174,7 +174,7 @@ class MemcacheEngine extends CacheEngine {
 				__('Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
-		return $this->__Memcache->decrement($key, $offset);
+		return $this->_Memcache->decrement($key, $offset);
 	}
 
 /**
@@ -184,7 +184,7 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
-		return $this->__Memcache->delete($key);
+		return $this->_Memcache->delete($key);
 	}
 
 /**
@@ -193,7 +193,7 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */
 	public function clear($check) {
-		return $this->__Memcache->flush();
+		return $this->_Memcache->flush();
 	}
 
 /**
@@ -204,8 +204,8 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if memcache server was connected
  */
 	public function connect($host, $port = 11211) {
-		if ($this->__Memcache->getServerStatus($host, $port) === 0) {
-			if ($this->__Memcache->connect($host, $port)) {
+		if ($this->_Memcache->getServerStatus($host, $port) === 0) {
+			if ($this->_Memcache->connect($host, $port)) {
 				return true;
 			}
 			return false;

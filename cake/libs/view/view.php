@@ -778,8 +778,8 @@ class View extends Object {
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-					return $path . 'elements' . DS . $name . $this->ext;
+				if (file_exists($path . 'elements' . DS . $name . $ext)) {
+					return $path . 'elements' . DS . $name . $ext;
 				}
 			}
 		}
