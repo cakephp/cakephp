@@ -1522,4 +1522,23 @@ class AuthTest extends CakeTestCase {
 		$this->assertTrue($this->Controller->Auth->loggedIn());
 		$this->assertEquals($user['username'], $this->Controller->Auth->user('username'));
 	}
+
+/**
+ * test flash settings.
+ *
+ * @return void
+ */
+	function testFlashSettings() {
+		$this->Controller->Auth->Session = $this->getMock('SessionComponent', array(), array(), '', zfalse);
+		$this->Controller->Auth->Session->expects($this->once())
+			->method('setFlash')
+			->with('Auth failure', 'custom', array(1), 'auth-key');
+		
+		$this->Controller->Auth->flash = array(
+			'element' => 'custom',
+			'params' => array(1),
+			'key' => 'auth-key'
+		);
+		$this->Controller->Auth->flash('Auth failure');
+	}
 }

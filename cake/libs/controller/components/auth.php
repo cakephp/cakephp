@@ -111,11 +111,20 @@ class AuthComponent extends Component {
 	public $ajaxLogin = null;
 
 /**
- * The name of the element used for SessionComponent::setFlash
+ * Settings to use when Auth needs to do a flash message with SessionComponent::setFlash().
+ * Available keys are:
  *
- * @var string
+ * - `element` - The element to use, defaults to 'default'.
+ * - `key` - The key to use, defaults to 'auth'
+ * - `params` - The array of additional params to use, defaults to array()
+ *
+ * @var array
  */
-	public $flashElement = 'default';
+	public $flash = array(
+		'element' => 'default',
+		'key' => 'auth',
+		'params' => array()
+	);
 
 /**
  * The name of the model that represents users which will be authenticated.  Defaults to 'User'.
@@ -342,13 +351,13 @@ class AuthComponent extends Component {
 				}
 			}
 
-			$this->Session->setFlash($this->loginError, $this->flashElement, array(), 'auth');
+			$this->flash($this->loginError);
 			$request->data[$model->alias][$this->fields['password']] = null;
 			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$request->is('ajax')) {
-					$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
+					$this->flash($this->authError);
 					if (!empty($request->query) && count($request->query) >= 2) {
 						$query = $request->query;
 						unset($query['url'], $query['ext']);
@@ -376,7 +385,7 @@ class AuthComponent extends Component {
 			return true;
 		}
 
-		$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
+		$this->flash($this->authError);
 		$controller->redirect($controller->referer(), null, true);
 		return false;
 	}
@@ -791,5 +800,15 @@ class AuthComponent extends Component {
 			$this->_loggedIn = $logged;
 		}
 		return $this->_loggedIn;
+	}
+
+/**
+ * Set a flash message.  Uses the Session component, and values from AuthComponent::$flash.
+ *
+ * @param string $message The message to set.
+ * @return void
+ */
+	public function flash($message) {
+		$this->Session->setFlash($message, $this->flash['element'], $this->flash['params'], $this->flash['key']);
 	}
 }
