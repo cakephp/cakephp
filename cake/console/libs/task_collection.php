@@ -48,11 +48,10 @@ class TaskCollection extends ObjectCollection {
  * 
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
- * @param boolean $enable Whether or not this task should be enabled by default
  * @return Task A task object, Either the existing loaded task or a new one.
  * @throws MissingTaskFileException, MissingTaskClassException when the task could not be found
  */
-	public function load($task, $settings = array(), $enable = true) {
+	public function load($task, $settings = array()) {
 		list($plugin, $name) = pluginSplit($task, true);
 
 		if (isset($this->_loaded[$name])) {
@@ -72,6 +71,7 @@ class TaskCollection extends ObjectCollection {
 		$this->_loaded[$name] = new $taskClass(
 			$this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
+		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}

@@ -623,7 +623,7 @@ class View extends Object {
 	public function loadHelpers() {
 		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
 		foreach ($helpers as $name => $properties) {
-			$this->Helpers->load($properties['class'], $properties['settings'], true);
+			$this->Helpers->load($properties['class'], $properties['settings']);
 		}
 		$this->_helpersLoaded = true;
 	}

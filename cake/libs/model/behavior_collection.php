@@ -99,7 +99,7 @@ class BehaviorCollection extends ObjectCollection {
  * @throws MissingBehaviorFileException or MissingBehaviorClassException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
-		if (isset($config['className'])) {
+		if (is_array($config) && isset($config['className'])) {
 			$alias = $behavior;
 			$behavior = $config['className'];
 		}

@@ -74,7 +74,7 @@ class ComponentCollection extends ObjectCollection {
  * @throws MissingComponentFileException, MissingComponentClassException when the component could not be found
  */
 	public function load($component, $settings = array()) {
-		if (isset($settings['className'])) {
+		if (is_array($settings) && isset($settings['className'])) {
 			$alias = $component;
 			$component = $settings['className'];
 		}
