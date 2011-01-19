@@ -20,7 +20,7 @@
  */
 ?>
 <?php echo '<?php' . "\n"; ?>
-/* <?php echo $model; ?> Fixture generated on: <?php echo  date('Y-m-d H:m:s') . " : ". time(); ?> */
+/* <?php echo $model; ?> Fixture generated on: <?php echo  date('Y-m-d H:i:s') . " : ". time(); ?> */
 class <?php echo $model; ?>Fixture extends CakeTestFixture {
 	public $name = '<?php echo $model; ?>';
 <?php if ($table): ?>

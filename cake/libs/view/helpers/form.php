@@ -1001,7 +1001,10 @@ class FormHelper extends AppHelper {
 
 		if (empty($options['value'])) {
 			$options['value'] = 1;
-		} elseif (!empty($value) && $value === $options['value']) {
+		} elseif (
+			(!isset($options['checked']) && !empty($value) && $value === $options['value']) ||
+			!empty($options['checked'])
+		) {
 			$options['checked'] = 'checked';
 		}
 		if ($options['hiddenField']) {
@@ -1322,7 +1325,6 @@ class FormHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 
-		$url = $this->url($url);
 		$formName = uniqid('post_');
 		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
@@ -2021,7 +2023,7 @@ class FormHelper extends AppHelper {
 				return $options;
 			}
 
-			$name = $this->_View->field;
+			$name = !empty($this->_View->field) ? $this->_View->field : $this->_View->model;
 			if (!empty($this->_View->fieldSuffix)) {
 				$name .= '[' . $this->_View->fieldSuffix . ']';
 			}

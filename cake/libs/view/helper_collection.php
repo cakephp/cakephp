@@ -57,7 +57,7 @@ class HelperCollection extends ObjectCollection {
  * @throws MissingHelperFileException, MissingHelperClassException when the helper could not be found
  */
 	public function load($helper, $settings = array()) {
-		if (isset($settings['className'])) {
+		if (is_array($settings) && isset($settings['className'])) {
 			$alias = $helper;
 			$helper = $settings['className'];
 		}

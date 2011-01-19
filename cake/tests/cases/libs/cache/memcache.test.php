@@ -31,6 +31,10 @@ class TestMemcacheEngine extends MemcacheEngine {
 	function parseServerString($server) {
 		return $this->_parseServerString($server);
 	}
+	
+	function setMemcache($memcache) {
+		$this->_Memcache = $memcache;
+	}
 }
 
 /**
@@ -357,7 +361,25 @@ class MemcacheEngineTest extends CakeTestCase {
 		$this->assertTrue($result, 'Could not write with duration 0');
 		$result = Cache::read('test_key', 'memcache');
 		$this->assertEqual($result, 'written!');
-		
+	}
+
+/**
+ * test that durations greater than 30 days never expire
+ *
+ * @return void
+ */
+	function testLongDurationEqualToZero() {
+		$memcache =& new TestMemcacheEngine();
+		$memcache->settings['compress'] = false;
+
+		$mock = $this->getMock('Memcache');
+		$memcache->setMemcache($mock);
+		$mock->expects($this->once())
+			->method('set')
+			->with('key', 'value', false, 0);
+
+		$value = 'value';
+		$memcache->write('key', $value, 50 * DAY);
 	}
 
 }

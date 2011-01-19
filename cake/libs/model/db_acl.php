@@ -46,7 +46,7 @@ class AclNode extends AppModel {
  * @var array
  * @access public
  */
-	public $actsAs = array('Tree' => 'nested');
+	public $actsAs = array('Tree' => array('nested'));
 
 /**
  * Constructor
