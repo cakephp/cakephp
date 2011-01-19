@@ -154,12 +154,12 @@ class AuthComponent extends Component {
 
 /**
  * The session key name where the record of the current user is stored.  If
- * unspecified, it will be "Auth.{$userModel name}".
+ * unspecified, it will be "Auth.User".
  *
  * @var string
  * @link http://book.cakephp.org/view/1276/sessionKey
  */
-	public $sessionKey = null;
+	public $sessionKey = 'Auth.User';
 
 /**
  * If using action-based access control, this defines how the paths to action
@@ -174,12 +174,16 @@ class AuthComponent extends Component {
 
 /**
  * A URL (defined as a string or array) to the controller action that handles
- * logins.
+ * logins.  Defaults to `/users/login`
  *
  * @var mixed
  * @link http://book.cakephp.org/view/1269/loginAction
  */
-	public $loginAction = null;
+	public $loginAction = array(
+		'controller' => 'users',
+		'action' => 'login',
+		'plugin' => null
+	);
 
 /**
  * Normally, if a user is redirected to the $loginAction page, the location they
@@ -268,8 +272,6 @@ class AuthComponent extends Component {
  */
 	public function initialize($controller) {
 		$this->request = $controller->request;
-		$this->params = $this->request;
-
 		$this->_methods = $controller->methods;
 
 		if (Configure::read('debug') > 0) {
@@ -399,18 +401,7 @@ class AuthComponent extends Component {
  * @access private
  */
 	function __setDefaults() {
-		if (empty($this->userModel)) {
-			trigger_error(__("Could not find \$userModel. Please set AuthComponent::\$userModel in beforeFilter()."), E_USER_WARNING);
-			return false;
-		}
-		list($plugin, $model) = pluginSplit($this->userModel);
 		$defaults = array(
-			'loginAction' => array(
-				'controller' => Inflector::underscore(Inflector::pluralize($model)),
-				'action' => 'login',
-				'plugin' => Inflector::underscore($plugin),
-			),
-			'sessionKey' => 'Auth.' . $model,
 			'logoutRedirect' => $this->loginAction,
 			'loginError' => __('Login failed. Invalid username or password.'),
 			'authError' => __('You are not authorized to access that location.')
@@ -597,8 +588,7 @@ class AuthComponent extends Component {
 		}
 
 		if ($key == null) {
-			$model = $this->getModel();
-			return array($model->alias => $this->Session->read($this->sessionKey));
+			return $this->Session->read($this->sessionKey);
 		} else {
 			$user = $this->Session->read($this->sessionKey);
 			if (isset($user[$key])) {

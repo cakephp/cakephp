@@ -582,12 +582,12 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
-		$expected = array('AuthUser' => array(
+		$expected = array(
 			'id' => 1, 
 			'username' => 'mariano', 
 			'created' => '2007-03-17 01:16:23',
 			'updated' => date('Y-m-d H:i:s')
-		));
+		);
 		$this->assertEqual($user, $expected);
 		$this->Controller->Session->delete('Auth');
 
@@ -660,7 +660,7 @@ class AuthTest extends CakeTestCase {
 	function testAuthorizeFalse() {
 		$this->AuthUser = new AuthUser();
 		$user = $this->AuthUser->find();
-		$this->Controller->Session->write('Auth', $user);
+		$this->Controller->Session->write('Auth.User', $user['AuthUser']);
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->authorize = false;
 		$this->Controller->request->addParams(Router::parse('auth_test/add'));
@@ -1008,7 +1008,7 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = Router::normalize('/');
+		$expected = Router::normalize('/AuthTest/login');
 		$this->assertEqual($expected, $this->Controller->testUrl);
 
 		$this->Controller->Session->delete('Auth');
@@ -1292,25 +1292,14 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
 		$expected = array(
-			'TestPluginAuthUser' => array(
-				'id' => 1,
-				'username' => 'gwoo',
-				'created' => '2007-03-17 01:16:23',
-				'updated' => date('Y-m-d H:i:s')
-		));
+			'id' => 1,
+			'username' => 'gwoo',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => date('Y-m-d H:i:s')
+		);
 		$this->assertEqual($user, $expected);
 		$sessionKey = $this->Controller->Auth->sessionKey;
-		$this->assertEqual('Auth.TestPluginAuthUser', $sessionKey);
-		
-		$this->Controller->Auth->loginAction = null;
-		$this->Controller->Auth->__setDefaults();
-		$loginAction = $this->Controller->Auth->loginAction;
-		$expected = array(
-		    'controller'	=> 'test_plugin_auth_users',
-		    'action'		=> 'login',
-		    'plugin'		=> 'test_plugin'
-		);
-		$this->assertEqual($loginAction, $expected);
+		$this->assertEqual('Auth.User', $sessionKey);
 
 		// Reverting changes
 		Cache::delete('object_map', '_cake_core_');
@@ -1529,7 +1518,7 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testFlashSettings() {
-		$this->Controller->Auth->Session = $this->getMock('SessionComponent', array(), array(), '', zfalse);
+		$this->Controller->Auth->Session = $this->getMock('SessionComponent', array(), array(), '', false);
 		$this->Controller->Auth->Session->expects($this->once())
 			->method('setFlash')
 			->with('Auth failure', 'custom', array(1), 'auth-key');
