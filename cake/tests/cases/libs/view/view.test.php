@@ -545,6 +545,21 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * test that ctp is used as a fallback file extension for elements
+ *
+ * @return void
+ */
+	function testElementCtpFallback() {
+		$View = new TestView($this->PostsController);
+		$View->ext = '.missing';
+		$element = 'test_element';
+		$expected = 'this is the test element';
+		$result = $View->element($element);
+
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testLoadHelpers method
  *
  * @access public
