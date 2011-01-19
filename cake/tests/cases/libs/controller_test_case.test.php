@@ -189,6 +189,25 @@ class ControllerTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * Tests ControllerTestCase::generate() using classes from plugins
+ */
+	function testGenerateWithPlugin() {
+		$Tests = $this->Case->generate('TestPlugin.Tests', array(
+			'models' => array(
+				'TestPlugin.TestPluginComment'
+			),
+			'components' => array(
+				'TestPlugin.PluginsComponent'
+			)
+		));
+		$this->assertEquals($Tests->name, 'Tests');
+		$this->assertInstanceOf('PluginsComponentComponent', $Tests->PluginsComponent);
+
+		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
+		$this->assertInstanceOf('TestPluginComment', $result);
+	}
+
+/**
  * Tests testAction
  */
 	function testTestAction() {
