@@ -1325,7 +1325,6 @@ class FormHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 
-		$url = $this->url($url);
 		$formName = uniqid('post_');
 		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
