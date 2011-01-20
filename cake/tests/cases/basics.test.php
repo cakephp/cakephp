@@ -96,7 +96,13 @@ class BasicsTest extends CakeTestCase {
 		$__ENV = $_ENV;
 
 		$_SERVER['HTTP_HOST'] = 'localhost';
-		$this->assertEqual(env('HTTP_BASE'), '');
+		$this->assertEqual(env('HTTP_BASE'), '.localhost');
+
+		$_SERVER['HTTP_HOST'] = 'com.ar';
+		$this->assertEqual(env('HTTP_BASE'), '.com.ar');
+
+		$_SERVER['HTTP_HOST'] = 'example.ar';
+		$this->assertEqual(env('HTTP_BASE'), '.example.ar');
 
 		$_SERVER['HTTP_HOST'] = 'example.com';
 		$this->assertEqual(env('HTTP_BASE'), '.example.com');
@@ -107,8 +113,20 @@ class BasicsTest extends CakeTestCase {
 		$_SERVER['HTTP_HOST'] = 'subdomain.example.com';
 		$this->assertEqual(env('HTTP_BASE'), '.example.com');
 
+		$_SERVER['HTTP_HOST'] = 'example.com.ar';
+		$this->assertEqual(env('HTTP_BASE'), '.example.com.ar');
+
+		$_SERVER['HTTP_HOST'] = 'www.example.com.ar';
+		$this->assertEqual(env('HTTP_BASE'), '.example.com.ar');
+
+		$_SERVER['HTTP_HOST'] = 'subdomain.example.com.ar';
+		$this->assertEqual(env('HTTP_BASE'), '.example.com.ar');
+
 		$_SERVER['HTTP_HOST'] = 'double.subdomain.example.com';
 		$this->assertEqual(env('HTTP_BASE'), '.subdomain.example.com');
+
+		$_SERVER['HTTP_HOST'] = 'double.subdomain.example.com.ar';
+		$this->assertEqual(env('HTTP_BASE'), '.subdomain.example.com.ar');
 
 		$_SERVER = $_ENV = array();
 
