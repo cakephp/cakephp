@@ -333,29 +333,11 @@ class AuthComponent extends Component {
 		}
 
 		if ($loginAction == $url) {
-			$model = $this->getModel();
-			if (empty($request->data) || !isset($request->data[$model->alias])) {
+			if (empty($request->data)) {
 				if (!$this->Session->check('Auth.redirect') && !$this->loginRedirect && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer(null, true));
 				}
-				return false;
 			}
-
-			$isValid = !empty($request->data[$model->alias][$this->fields['username']]) &&
-				!empty($request->data[$model->alias][$this->fields['password']]);
-
-			if ($isValid) {
-				if ($this->login()) {
-					if ($this->autoRedirect) {
-						$controller->redirect($this->redirect(), null, true);
-					}
-					return true;
-				}
-			}
-
-			$this->flash($this->loginError);
-			$request->data[$model->alias][$this->fields['password']] = null;
-			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$request->is('ajax')) {

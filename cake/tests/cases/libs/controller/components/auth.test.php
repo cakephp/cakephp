@@ -505,6 +505,8 @@ class AuthTest extends CakeTestCase {
 
 		$this->initialized = true;
 		Router::reload();
+
+		ClassRegistry::init('AuthUser')->updateAll(array('password' => '"' . Security::hash('cake', null, true) . '"'));
 	}
 
 /**
@@ -560,71 +562,37 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testLogin() {
-		$this->AuthUser = new AuthUser();
-		$user['id'] = 1;
-		$user['username'] = 'mariano';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
-		$this->AuthUser->save($user, false);
+		$this->getMock('FormAuthenticate', array(), array(), 'AuthLoginFormAuthenticate', false);
+		$this->Controller->Auth->authenticate = array(
+			'AuthLoginForm' => array(
+				'userModel' => 'AuthUser'
+			)
+		);
+		$mocks = $this->Controller->Auth->constructAuthenticate();
+		$this->mockObjects[] = $mocks[0];
 
-		$authUser = $this->AuthUser->find();
-
-		$this->Controller->request->data['AuthUser'] = array(
-			'username' => $authUser['AuthUser']['username'], 'password' => 'cake'
+		$this->Controller->Auth->request->data = array(
+			'AuthUser' => array(
+				'username' => 'mark',
+				'password' => Security::hash('cake', null, true)
+			)
 		);
 
-		$this->Controller->request->addParams(Router::parse('auth_test/login'));
-		$this->Controller->request->query['url'] = 'auth_test/login';
-
-		$this->Controller->Auth->initialize($this->Controller);
-
-		$this->Controller->Auth->loginAction = 'auth_test/login';
-		$this->Controller->Auth->userModel = 'AuthUser';
-
-		$this->Controller->Auth->startup($this->Controller);
-		$user = $this->Controller->Auth->user();
-		$expected = array(
-			'id' => 1, 
-			'username' => 'mariano', 
-			'created' => '2007-03-17 01:16:23',
-			'updated' => date('Y-m-d H:i:s')
-		);
-		$this->assertEqual($user, $expected);
-		$this->Controller->Session->delete('Auth');
-
-		$this->Controller->request->data['AuthUser'] = array(
-			'username' => 'blah', 
-			'password' => ''
+		$user = array(
+			'id' => 1,
+			'username' => 'mark'
 		);
 
-		$this->Controller->Auth->startup($this->Controller);
+		$mocks[0]->expects($this->once())
+			->method('authenticate')
+			->with($this->Controller->Auth->request)
+			->will($this->returnValue($user));
 
-		$user = $this->Controller->Auth->user();
-		$this->assertNull($user);
-		$this->Controller->Session->delete('Auth');
+		$result = $this->Controller->Auth->login();
+		$this->assertTrue($result);
 
-		$this->Controller->request->data['AuthUser'] = array(
-			'username' => 'now() or 1=1 --', 
-			'password' => ''
-		);
-
-		$this->Controller->Auth->startup($this->Controller);
-
-		$user = $this->Controller->Auth->user();
-		$this->assertNull($user);
-		$this->Controller->Session->delete('Auth');
-
-		$this->Controller->request->data['AuthUser'] = array(
-			'username' => 'now() or 1=1 #something', 
-			'password' => ''
-		);
-
-		$this->Controller->Auth->startup($this->Controller);
-
-		$user = $this->Controller->Auth->user();
-		$this->assertNull($user);
-		$this->Controller->Session->delete('Auth');
-
-		$this->Controller->Session->delete('Auth');
+		$this->assertTrue($this->Controller->Auth->loggedIn());
+		$this->assertEquals($user, $this->Controller->Auth->user());
 	}
 
 /**
