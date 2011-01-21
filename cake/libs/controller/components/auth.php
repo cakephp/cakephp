@@ -606,28 +606,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Validates a user against an abstract object.
- *
- * @param mixed $object  The object to validate the user against.
- * @param mixed $user    Optional.  The identity of the user to be validated.
- *                       Uses the current user session if none specified.  For
- *                       valid forms of identifying users, see
- *                       AuthComponent::identify().
- * @param string $action Optional. The action to validate against.
- * @see AuthComponent::identify()
- * @return boolean True if the user validates, false otherwise.
- */
-	public function validate($object, $user = null, $action = null) {
-		if (empty($user)) {
-			$user = $this->user();
-		}
-		if (empty($user)) {
-			return false;
-		}
-		return $this->Acl->check($user, $object, $action);
-	}
-
-/**
  * Returns a reference to the model object specified, and attempts
  * to load it if it is not found.
  *
