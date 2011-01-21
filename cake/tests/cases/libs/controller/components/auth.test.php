@@ -1090,42 +1090,6 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
- * test Hashing of passwords
- *
- * @return void
- */
-	function testHashPasswords() {
-		$this->Controller->Auth->userModel = 'AuthUser';
-
-		$data['AuthUser']['password'] = 'superSecret';
-		$data['AuthUser']['username'] = 'superman@dailyplanet.com';
-		$return = $this->Controller->Auth->hashPasswords($data);
-		$expected = $data;
-		$expected['AuthUser']['password'] = Security::hash($expected['AuthUser']['password'], null, true);
-		$this->assertEqual($return, $expected);
-
-		$data['Wrong']['password'] = 'superSecret';
-		$data['Wrong']['username'] = 'superman@dailyplanet.com';
-		$data['AuthUser']['password'] = 'IcantTellYou';
-		$return = $this->Controller->Auth->hashPasswords($data);
-		$expected = $data;
-		$expected['AuthUser']['password'] = Security::hash($expected['AuthUser']['password'], null, true);
-		$this->assertEqual($return, $expected);
-
-		$xml = array(
-			'User' => array(
-				'username' => 'batman@batcave.com',
-				'password' => 'bruceWayne',
-			)
-		);
-		$data = new Xml($xml);
-		$return = $this->Controller->Auth->hashPasswords($data);
-		$expected = $data;
-		$this->assertEqual($return, $expected);
-	}
-
-
-/**
  * testAdminRoute method
  *
  * @access public

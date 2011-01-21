@@ -308,8 +308,7 @@ class AuthComponent extends Component {
 			return false;
 		}
 		$request = $controller->request;
-		
-		$this->request->data = $controller->request->data = $this->hashPasswords($request->data);
+
 		$url = '';
 
 		if (isset($request->query['url'])) {
@@ -715,30 +714,6 @@ class AuthComponent extends Component {
 			$this->_authenticateObjects[] = new $className($settings);
 		}
 		return $this->_authenticateObjects;
-	}
-
-/**
- * Hash any passwords found in $data using $userModel and $fields['password']
- *
- * @param array $data Set of data to look for passwords
- * @return array Data with passwords hashed
- * @link http://book.cakephp.org/view/1259/hashPasswords
- */
-	public function hashPasswords($data) {
-		if (is_object($this->authenticate) && method_exists($this->authenticate, 'hashPasswords')) {
-			return $this->authenticate->hashPasswords($data);
-		}
-
-		if (is_array($data)) {
-			$model = $this->getModel();
-			
-			if(isset($data[$model->alias])) {
-				if (isset($data[$model->alias][$this->fields['username']]) && isset($data[$model->alias][$this->fields['password']])) {
-					$data[$model->alias][$this->fields['password']] = $this->password($data[$model->alias][$this->fields['password']]);
-				}
-			}
-		}
-		return $data;
 	}
 
 /**

@@ -86,7 +86,7 @@ class FormAuthenticate {
 		}
 		$conditions = array(
 			$model . '.' . $fields['username'] => $request->data[$model][$fields['username']],
-			$model . '.' . $fields['password'] => $request->data[$model][$fields['password']],
+			$model . '.' . $fields['password'] => $this->hash($request->data[$model][$fields['password']]),
 		);
 		if (!empty($this->settings['scope'])) {
 			$conditions = array_merge($conditions, $this->settings['scope']);
@@ -100,5 +100,15 @@ class FormAuthenticate {
 		}
 		unset($result[$model][$fields['password']]);
 		return $result[$model];
+	}
+
+/**
+ * Hash the supplied password using the configured hashing method.
+ *
+ * @param string $password The password to hash.
+ * @return string Hashed string
+ */
+	public function hash($password) {
+		return Security::hash($password, null, true);
 	}
 }

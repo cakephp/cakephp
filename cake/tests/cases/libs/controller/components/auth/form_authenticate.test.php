@@ -41,8 +41,8 @@ class FormAuthenticateTest extends CakeTestCase {
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User'
 		));
-		$this->password = Security::hash('password', null, true);
-		ClassRegistry::init('User')->updateAll(array('password' => '"' . $this->password . '"'));
+		$password = Security::hash('password', null, true);
+		ClassRegistry::init('User')->updateAll(array('password' => '"' . $password . '"'));
 	}
 
 /**
@@ -116,7 +116,7 @@ class FormAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->data = array('User' => array(
 			'user' => 'mariano',
-			'password' => $this->password
+			'password' => 'password'
 		));
 		$result = $this->auth->authenticate($request);
 		$expected = array(
@@ -138,7 +138,7 @@ class FormAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->data = array('User' => array(
 			'user' => 'mariano',
-			'password' => $this->password
+			'password' => 'password'
 		));
 
 		$this->assertFalse($this->auth->authenticate($request));
@@ -168,7 +168,7 @@ class FormAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->data = array('TestPluginAuthUser' => array(
 			'username' => 'gwoo',
-			'password' => Security::hash('cake', null, true)
+			'password' => 'cake'
 		));
 
 		$result = $this->auth->authenticate($request);
