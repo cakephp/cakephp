@@ -1407,6 +1407,26 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
+ * test that a garbage url doesn't cause errors.
+ *
+ * @return void
+ */
+	function testDispatchWithGarbageUrl() {
+		Configure::write('App.baseUrl', '/index.php');
+
+		$Dispatcher =& new TestDispatcher();
+		$url = 'http://google.com';
+		$result = $Dispatcher->dispatch($url);
+		$expected = array('missingController', array(array(
+			'className' => 'Controller',
+			'webroot' => '/',
+			'url' => 'http://google.com',
+			'base' => '/index.php'
+		)));
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testAdminDispatch method
  *
  * @return void
