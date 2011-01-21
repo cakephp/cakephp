@@ -628,24 +628,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Returns the path to the ACO node bound to a controller/action.
- *
- * @param string $action  Optional.  The controller/action path to validate the
- *                        user against.  The current request action is used if
- *                        none is specified.
- * @return boolean ACO node path
- * @link http://book.cakephp.org/view/1256/action
- */
-	public function action($action = ':plugin/:controller/:action') {
-		$plugin = empty($this->request['plugin']) ? null : Inflector::camelize($this->request['plugin']) . '/';
-		return str_replace(
-			array(':controller', ':action', ':plugin/'),
-			array(Inflector::camelize($this->request['controller']), $this->request['action'], $plugin),
-			$this->actionPath . $action
-		);
-	}
-
-/**
  * Returns a reference to the model object specified, and attempts
  * to load it if it is not found.
  *
