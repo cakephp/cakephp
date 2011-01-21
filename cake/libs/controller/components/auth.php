@@ -288,11 +288,7 @@ class AuthComponent extends Component {
  * @return boolean
  */
 	public function startup($controller) {
-		$isErrorOrTests = (
-			strtolower($controller->name) == 'cakeerror' ||
-			(strtolower($controller->name) == 'tests' && Configure::read('debug') > 0)
-		);
-		if ($isErrorOrTests) {
+		if ($controller->name == 'CakeError') {
 			return true;
 		}
 
@@ -342,12 +338,7 @@ class AuthComponent extends Component {
 			if (!$this->user()) {
 				if (!$request->is('ajax')) {
 					$this->flash($this->authError);
-					if (!empty($request->query) && count($request->query) >= 2) {
-						$query = $request->query;
-						unset($query['url'], $query['ext']);
-						$url .= Router::queryString($query, array());
-					}
-					$this->Session->write('Auth.redirect', $url);
+					$this->Session->write('Auth.redirect', Router::reverse($request));
 					$controller->redirect($loginAction);
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
@@ -361,11 +352,7 @@ class AuthComponent extends Component {
 			}
 		}
 
-		if (!$this->authorize) {
-			return true;
-		}
-		
-		if ($this->isAuthorized()) {
+		if (empty($this->authorize) || $this->isAuthorized()) {
 			return true;
 		}
 
@@ -519,7 +506,7 @@ class AuthComponent extends Component {
 
 /**
  * Log a user in. If a $user is provided that data will be stored as the logged in user.  If `$user` is empty or not
- * specified, POST data from the current request will be used to identify a user. If the login was successful, 
+ * specified, the request will be used to identify a user. If the identification was successful,
  * the user record is written to the session key specified in AuthComponent::$sessionKey.
  *
  * @param mixed $user Either an array of user data, or null to identify a user using the current request.

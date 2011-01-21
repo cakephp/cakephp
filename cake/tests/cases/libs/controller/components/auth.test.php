@@ -943,17 +943,6 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Session->delete('Auth');
 
-		$this->Controller->request->query['url'] = 'admin/';
-		$this->Controller->Auth->initialize($this->Controller);
-		$this->Controller->Auth->userModel = 'AuthUser';
-		$this->Controller->Auth->loginRedirect = null;
-		$this->Controller->Auth->startup($this->Controller);
-		$expected = Router::normalize('admin/');
-		$this->assertTrue($this->Controller->Session->check('Message.auth'));
-		$this->assertEqual($expected, $this->Controller->Auth->redirect());
-
-		$this->Controller->Session->delete('Auth');
-
 		//empty referer no session
 		$_SERVER['HTTP_REFERER'] = false;
 		$_ENV['HTTP_REFERER'] = false;
@@ -969,7 +958,6 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->authorize = 'controller';
-		$this->Controller->request['testControllerAuth'] = true;
 
 		$this->Controller->Auth->loginAction = array(
 			'controller' => 'AuthTest', 'action' => 'login'
@@ -1041,8 +1029,7 @@ class AuthTest extends CakeTestCase {
 		$_GET = array(
 			'url' => '/posts/index/29',
 			'print' => 'true',
-			'refer' => 'menu',
-			'ext' => 'html'
+			'refer' => 'menu'
 		);
 		$this->Controller->Session->delete('Auth');
 		$url = '/posts/index/29';
