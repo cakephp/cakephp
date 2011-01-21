@@ -1137,60 +1137,6 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($return, $expected);
 	}
 
-/**
- * testCustomRoute method
- *
- * @access public
- * @return void
- */
-	function testCustomRoute() {
-		Router::reload();
-		Router::connect(
-			'/:lang/:controller/:action/*',
-			array('lang' => null),
-			array('lang' => '[a-z]{2,3}')
-		);
-
-		$url = '/en/users/login';
-		$this->Controller->request->addParams(Router::parse($url));
-		Router::setRequestInfo($this->Controller->request);
-
-		$this->AuthUser = new AuthUser();
-		$user = array(
-			'id' => 1, 'username' => 'felix',
-			'password' => Security::hash(Configure::read('Security.salt') . 'cake'
-		));
-		$user = $this->AuthUser->save($user, false);
-
-		$this->Controller->request->data['AuthUser'] = array('username' => 'felix', 'password' => 'cake');
-		$this->Controller->request->query['url'] = substr($url, 1);
-		$this->Controller->Auth->initialize($this->Controller);
-		$this->Controller->Auth->loginAction = array('lang' => 'en', 'controller' => 'users', 'action' => 'login');
-		$this->Controller->Auth->userModel = 'AuthUser';
-
-		$this->Controller->Auth->startup($this->Controller);
-		$user = $this->Controller->Auth->user();
-		$this->assertTrue(!!$user);
-
-		$this->Controller->Session->delete('Auth');
-		Router::reload();
-		Router::connect('/', array('controller' => 'people', 'action' => 'login'));
-		$url = '/';
-		$this->Controller->request->addParams(Router::parse($url));
-		Router::setRequestInfo(array($this->Controller->passedArgs, array(
-			'base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(),
-			'argSeparator' => ':', 'namedArgs' => array()
-		)));
-		$this->Controller->request->data['AuthUser'] = array('username' => 'felix', 'password' => 'cake');
-		$this->Controller->request->query['url'] = substr($url, 1);
-		$this->Controller->Auth->initialize($this->Controller);
-		$this->Controller->Auth->loginAction = array('controller' => 'people', 'action' => 'login');
-		$this->Controller->Auth->userModel = 'AuthUser';
-
-		$this->Controller->Auth->startup($this->Controller);
-		$user = $this->Controller->Auth->user();
-		$this->assertTrue(!!$user);
-	}
 
 /**
  * testAdminRoute method
@@ -1219,60 +1165,6 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
 		Configure::write('Routing.prefixes', $prefixes);
-	}
-
-/**
- * testPluginModel method
- *
- * @access public
- * @return void
- */
-	function testPluginModel() {
-		// Adding plugins
-		Cache::delete('object_map', '_cake_core_');
-		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
-		), true);
-		App::objects('plugin', null, false);
-
-		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
-		$user['id'] = 1;
-		$user['username'] = 'gwoo';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
-		$PluginModel->save($user, false);
-
-		$authUser = $PluginModel->find();
-
-		$this->Controller->request->data['TestPluginAuthUser'] = array(
-			'username' => $authUser['TestPluginAuthUser']['username'],
-			'password' => 'cake'
-		);
-
-		$this->Controller->request->addParams(Router::parse('auth_test/login'));
-		$this->Controller->request->query['url'] = 'auth_test/login';
-
-		$this->Controller->Auth->initialize($this->Controller);
-
-		$this->Controller->Auth->loginAction = 'auth_test/login';
-		$this->Controller->Auth->userModel = 'TestPlugin.TestPluginAuthUser';
-
-		$this->Controller->Auth->startup($this->Controller);
-		$user = $this->Controller->Auth->user();
-		$expected = array(
-			'id' => 1,
-			'username' => 'gwoo',
-			'created' => '2007-03-17 01:16:23',
-			'updated' => date('Y-m-d H:i:s')
-		);
-		$this->assertEqual($user, $expected);
-		$sessionKey = $this->Controller->Auth->sessionKey;
-		$this->assertEqual('Auth.User', $sessionKey);
-
-		// Reverting changes
-		Cache::delete('object_map', '_cake_core_');
-		App::build();
-		App::objects('plugin', null, false);
 	}
 
 /**
@@ -1389,6 +1281,7 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->request->query['url'] = substr($url, 1);
 		$this->Controller->Auth->startup($this->Controller);
+		$this->Controller->Auth->login();
 
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
