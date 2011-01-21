@@ -12,7 +12,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Security');
+App::import('Component', 'auth/base_authenticate');
 
 /**
  * An authentication adapter for AuthComponent.  Provides the ability to authenticate using POST
@@ -33,35 +33,7 @@ App::import('Core', 'Security');
  * @since 2.0
  * @see AuthComponent::$authenticate
  */
-class FormAuthenticate {
-
-/**
- * Settings for this object.
- *
- * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to User.
- * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
- *
- * @var array
- */
-	public $settings = array(
-		'fields' => array(
-			'username' => 'username',
-			'password' => 'password'
-		),
-		'userModel' => 'User',
-		'scope' => array()
-	);
-
-/**
- * Constructor
- *
- * @param array $settings Array of settings to use.
- */
-	public function __construct($settings) {
-		$this->settings = Set::merge($this->settings, $settings);
-	}
+class FormAuthenticate extends BaseAuthenticate {
 
 /**
  * Authenticates the identity contained in a request.  Will use the `settings.userModel`, and `settings.fields`
@@ -103,13 +75,4 @@ class FormAuthenticate {
 		return $result[$model];
 	}
 
-/**
- * Hash the supplied password using the configured hashing method.
- *
- * @param string $password The password to hash.
- * @return string Hashed string
- */
-	public function hash($password) {
-		return Security::hash($password, null, true);
-	}
 }
