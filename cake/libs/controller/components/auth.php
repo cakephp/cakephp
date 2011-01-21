@@ -444,6 +444,15 @@ class AuthComponent extends Component {
  * Takes a list of actions in the current controller for which authentication is not required, or
  * no parameters to allow all actions.
  *
+ * You can use allow with either an array, or var args.
+ *
+ * `$this->Auth->allow(array('edit', 'add'));`
+ * `$this->Auth->allow('edit', 'add');`
+ *
+ * allow() also supports '*' as a wildcard to mean all actions.
+ *
+ * `$this->Auth->allow('*');`
+ *
  * @param mixed $action Controller action name or array of actions
  * @param string $action Controller action name
  * @param string ... etc.
@@ -463,7 +472,12 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Removes items from the list of allowed actions.
+ * Removes items from the list of allowed/no authentication required actions.
+ *
+ * You can use deny with either an array, or var args.
+ *
+ * `$this->Auth->deny(array('edit', 'add'));`
+ * `$this->Auth->deny('edit', 'add');`
  *
  * @param mixed $action Controller action name or array of actions
  * @param string $action Controller action name
