@@ -17,7 +17,6 @@
 App::import('Component', 'auth/form_authenticate');
 App::import('Model', 'AppModel');
 App::import('Core', 'CakeRequest');
-App::import('Core', 'Security');
 
 require_once  CAKE_TESTS . 'cases' . DS . 'libs' . DS . 'model' . DS . 'models.php';
 
