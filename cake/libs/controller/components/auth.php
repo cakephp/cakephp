@@ -209,12 +209,6 @@ class AuthComponent extends Component {
  */
 	public $logoutRedirect = null;
 
-/**
- * The name of model or model object, or any other object has an isAuthorized method.
- *
- * @var string
- */
-	public $object = null;
 
 /**
  * Error to display when user login fails.  For security purposes, only one error is used for all
