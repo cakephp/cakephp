@@ -744,14 +744,15 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
- * test that loadAuthorize merges in legacy authorize settings.
+ * test the * key with authenticate
  *
  * @return void
  */
-	function testLoadAuthorizeSettingsPass() {
-		$this->Controller->Auth->actionPath = 'controllers/';
-
-		$this->Controller->Auth->authorize = array('Actions');
+	function testAllConfigWithAuthorize() {
+		$this->Controller->Auth->authorize = array(
+			AuthComponent::ALL => array('actionPath' => 'controllers/'),
+			'Actions'
+		);
 		$objects = $this->Controller->Auth->constructAuthorize();
 		$result = $objects[0];
 		$this->assertEquals($result->settings['actionPath'], 'controllers/');
@@ -774,16 +775,15 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
- * test that loadAuthenticate merges in legacy authentication settings.
+ * test the * key with authenticate
  *
  * @return void
  */
-	function testLoadAuthenticateSettingsPass() {
-		$this->Controller->Auth->userModel = 'AuthUser';
-		$this->Controller->Auth->userScope = array('AuthUser.active' => 1);
-		$this->Controller->Auth->fields = array('username' => 'user', 'password' => 'passwd');
-
-		$this->Controller->Auth->authenticate = array('Form');
+	function testAllConfigWithAuthenticate() {
+		$this->Controller->Auth->authenticate = array(
+			AuthComponent::ALL => array('userModel' => 'AuthUser'),
+			'Form'
+		);
 		$objects = $this->Controller->Auth->constructAuthenticate();
 		$result = $objects[0];
 		$this->assertEquals($result->settings['userModel'], 'AuthUser');

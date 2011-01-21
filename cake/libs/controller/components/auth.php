@@ -34,6 +34,8 @@ App::import('Component', 'auth/base_authorize');
  */
 class AuthComponent extends Component {
 
+	const ALL = '*';
+
 /**
  * Maintains current user login state.
  *
@@ -52,7 +54,30 @@ class AuthComponent extends Component {
  * An array of authentication objects to use for authenticating users.  You can configure
  * multiple adapters and they will be checked sequentially when users are identified.
  *
- * @var object
+ * {{{
+ *	$this->Auth->authenticate = array(
+ *		'Form' => array(
+ *			'userModel' => 'Users.User'
+ *		)
+ *	);
+ * }}}
+ *
+ * Using the class name without 'Authenticate' as the key, you can pass in an array of settings for each
+ * authentication object.  Additionally you can define settings that should be set to all authentications objects
+ * using the '*' key:
+ *
+ * {{{
+ *	$this->Auth->authenticate = array(
+ *		'*' => array(
+ *			'userModel' => 'Users.User',
+ *			'scope' => array('User.active' => 1)
+ *		),
+ *		'Form',
+ *		'Basic'
+ *	);
+ * }}}
+ *
+ * @var array
  * @link http://book.cakephp.org/view/1278/authenticate
  */
 	public $authenticate = array('Form');
@@ -65,20 +90,30 @@ class AuthComponent extends Component {
 	protected $_authenticateObjects = array();
 
 /**
- * A hash mapping legacy properties => to settings passed into Authenticate objects.
- *
- * @var string
- * @deprecated Will be removed in 2.1+
- */
-	protected $_authenticateLegacyMap = array(
-		'userModel' => 'userModel',
-		'userScope' => 'scope',
-		'fields' => 'fields'
-	);
-
-/**
  * An array of authorization objects to use for authorizing users.  You can configure
  * multiple adapters and they will be checked sequentially when authorization checks are done.
+ *
+ * {{{
+ *	$this->Auth->authorize = array(
+ *		'Crud' => array(
+ *			'actionPath' => 'controllers/'
+ *		)
+ *	);
+ * }}}
+ *
+ * Using the class name without 'Authorize' as the key, you can pass in an array of settings for each
+ * authorization object.  Additionally you can define settings that should be set to all authorization objects
+ * using the '*' key:
+ *
+ * {{{
+ *	$this->Auth->authorize = array(
+ *		'*' => array(
+ *			'actionPath' => 'controllers/'
+ *		),
+ *		'Crud',
+ *		'CustomAuth'
+ *	);
+ * }}}
  *
  * @var mixed
  * @link http://book.cakephp.org/view/1275/authorize
@@ -91,16 +126,6 @@ class AuthComponent extends Component {
  * @var array
  */
 	protected $_authorizeObjects = array();
-
-/**
- * A hash mapping legacy properties => to settings passed into Authorize objects.
- *
- * @var string
- * @deprecated Will be removed in 2.1+
- */
-	protected $_authorizeLegacyMap = array(
-		'actionPath' => 'actionPath',
-	);
 
 /**
  * The name of an optional view element to render when an Ajax request is made
@@ -128,32 +153,6 @@ class AuthComponent extends Component {
 	);
 
 /**
- * The name of the model that represents users which will be authenticated.  Defaults to 'User'.
- *
- * @var string
- * @link http://book.cakephp.org/view/1266/userModel
- */
-	public $userModel = 'User';
-
-/**
- * Additional query conditions to use when looking up and authenticating users,
- * i.e. array('User.is_active' => 1).
- *
- * @var array
- * @link http://book.cakephp.org/view/1268/userScope
- */
-	public $userScope = array();
-
-/**
- * Allows you to specify non-default login name and password fields used in
- * $userModel, i.e. array('username' => 'login_name', 'password' => 'passwd').
- *
- * @var array
- * @link http://book.cakephp.org/view/1267/fields
- */
-	public $fields = array('username' => 'username', 'password' => 'password');
-
-/**
  * The session key name where the record of the current user is stored.  If
  * unspecified, it will be "Auth.User".
  *
@@ -161,17 +160,6 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/view/1276/sessionKey
  */
 	public static $sessionKey = 'Auth.User';
-
-/**
- * If using action-based access control, this defines how the paths to action
- * ACO nodes is computed.  If, for example, all controller nodes are nested
- * under an ACO node named 'Controllers', $actionPath should be set to
- * "Controllers/".
- *
- * @var string
- * @link http://book.cakephp.org/view/1279/actionPath
- */
-	public $actionPath = null;
 
 /**
  * A URL (defined as a string or array) to the controller action that handles
@@ -209,7 +197,6 @@ class AuthComponent extends Component {
  */
 	public $logoutRedirect = null;
 
-
 /**
  * Error to display when user login fails.  For security purposes, only one error is used for all
  * login failures, so as not to expose information on why the login failed.
@@ -227,14 +214,6 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/view/1273/authError
  */
 	public $authError = null;
-
-/**
- * Determines whether AuthComponent will automatically redirect and exit if login is successful.
- *
- * @var boolean
- * @link http://book.cakephp.org/view/1274/autoRedirect
- */
-	public $autoRedirect = true;
 
 /**
  * Controller actions for which user validation is not required.
@@ -416,7 +395,13 @@ class AuthComponent extends Component {
 			return;
 		}
 		$this->_authorizeObjects = array();
-		foreach (Set::normalize($this->authorize) as $class => $settings) {
+		$config = Set::normalize($this->authorize);
+		$global = array();
+		if (isset($config[AuthComponent::ALL])) {
+			$global = $config[AuthComponent::ALL];
+			unset($config[AuthComponent::ALL]);
+		}
+		foreach ($config as $class => $settings) {
 			$className = $class . 'Authorize';
 			if (!class_exists($className) && !App::import('Component', 'auth/' . $class . '_authorize')) {
 				throw new CakeException(__('Authorization adapter "%s" was not found.', $class));
@@ -424,11 +409,7 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authorize')) {
 				throw new CakeException(__('Authorization objects must implement an authorize method.'));
 			}
-			foreach ($this->_authorizeLegacyMap as $old => $new) {
-				if (empty($settings[$new]) && !empty($this->{$old})) {
-					$settings[$new] = $this->{$old};
-				}
-			}
+			$settings = array_merge($global, (array)$settings);
 			$this->_authorizeObjects[] = new $className($this->_Collection->getController(), $settings);
 		}
 		return $this->_authorizeObjects;
@@ -629,7 +610,13 @@ class AuthComponent extends Component {
 			return;
 		}
 		$this->_authenticateObjects = array();
-		foreach (Set::normalize($this->authenticate) as $class => $settings) {
+		$config = Set::normalize($this->authenticate);
+		$global = array();
+		if (isset($config[AuthComponent::ALL])) {
+			$global = $config[AuthComponent::ALL];
+			unset($config[AuthComponent::ALL]);
+		}
+		foreach ($config as $class => $settings) {
 			$className = $class . 'Authenticate';
 			if (!class_exists($className) && !App::import('Component', 'auth/' . $class . '_authenticate')) {
 				throw new CakeException(__('Authentication adapter "%s" was not found.', $class));
@@ -637,11 +624,7 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authenticate')) {
 				throw new CakeException(__('Authentication objects must implement an authenticate method.'));
 			}
-			foreach ($this->_authenticateLegacyMap as $old => $new) {
-				if (empty($settings[$new]) && !empty($this->{$old})) {
-					$settings[$new] = $this->{$old};
-				}
-			}
+			$settings = array_merge((array)$settings, $global);
 			$this->_authenticateObjects[] = new $className($settings);
 		}
 		return $this->_authenticateObjects;
