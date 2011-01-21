@@ -582,7 +582,9 @@ class AuthComponent extends Component {
 	}
 
 /**
- * If no parameter is passed, gets the authentication redirect URL.
+ * If no parameter is passed, gets the authentication redirect URL.  Pass a url in to 
+ * set the destination a user should be redirected to upon logging in.  Will fallback to 
+ * AuthComponent::$loginRedirect if there is no stored redirect value.
  *
  * @param mixed $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
