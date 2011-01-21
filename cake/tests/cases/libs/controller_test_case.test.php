@@ -18,10 +18,6 @@
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Core', array('AppModel', 'Model'));
-require_once TEST_CAKE_CORE_INCLUDE_PATH  . 'tests' . DS . 'lib' . DS . 'reporter' . DS . 'cake_html_reporter.php';
-require_once dirname(__FILE__) . DS . 'model' . DS . 'models.php';
 
 /**
  * AppController class
