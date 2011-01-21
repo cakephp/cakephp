@@ -1391,4 +1391,46 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->Auth->flash('Auth failure');
 	}
+
+/**
+ * test the various states of Auth::redirect()
+ *
+ * @return void
+ */
+	function testRedirectSet() {
+		$value = array('controller' => 'users', 'action' => 'home');
+		$result = $this->Controller->Auth->redirect($value);
+		$this->assertEquals('/users/home', $result);
+		$this->assertEquals($value, $this->Controller->Session->read('Auth.redirect'));
+	}
+
+/**
+ * test redirect using Auth.redirect from the session.
+ *
+ * @return void
+ */
+	function testRedirectSessionRead() {
+		$this->Controller->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+		$this->Controller->Session->write('Auth.redirect', '/users/home');
+
+		$result = $this->Controller->Auth->redirect();
+		$this->assertEquals('/users/home', $result);
+		$this->assertFalse($this->Controller->Session->check('Auth.redirect'));
+	}
+
+/**
+ * test that redirect does not return loginAction if that is what's stored in Auth.redirect.
+ * instead loginRedirect should be used.
+ *
+ * @return void
+ */
+	function testRedirectSessionReadEqualToLoginAction() {
+		$this->Controller->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+		$this->Controller->Auth->loginRedirect = array('controller' => 'users', 'action' => 'home');
+		$this->Controller->Session->write('Auth.redirect', array('controller' => 'users', 'action' => 'login'));
+
+		$result = $this->Controller->Auth->redirect();
+		$this->assertEquals('/users/home', $result);
+		$this->assertFalse($this->Controller->Session->check('Auth.redirect'));
+	}
 }
