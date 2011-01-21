@@ -606,29 +606,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Returns a reference to the model object specified, and attempts
- * to load it if it is not found.
- *
- * @param string $name Model name (defaults to AuthComponent::$userModel)
- * @return object A reference to a model object
- */
-	public function &getModel($name = null) {
-		$model = null;
-		if (!$name) {
-			$name = $this->userModel;
-		}
-
-		$model = ClassRegistry::init($name);
-
-		if (empty($model)) {
-			trigger_error(__('Auth::getModel() - Model is not set or could not be found'), E_USER_WARNING);
-			return null;
-		}
-
-		return $model;
-	}
-
-/**
  * Use the configured authentication adapters, and attempt to identify the user
  * by credentials contained in $request.
  *
