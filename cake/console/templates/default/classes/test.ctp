@@ -64,22 +64,26 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 
 <?php endif; ?>
 /**
- * startTest method
+ * setUp method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
+
 		$this-><?php echo $className . ' = ' . $construction; ?>
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
  * @return void
  */
-	public function endTest() {
+	public function tearDown() {
 		unset($this-><?php echo $className;?>);
 		ClassRegistry::flush();
+
+		parent::tearDown();
 	}
 
 <?php foreach ($methods as $method): ?>
