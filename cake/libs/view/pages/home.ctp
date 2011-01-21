@@ -120,7 +120,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 	<?php
 		echo $this->Html->link(
-			sprintf('<strong>%s</strong> %s', __('New', true), __('CakePHP 1.3 Docs', true)),
+			sprintf('<strong>%s</strong> %s', __('New'), __('CakePHP 1.3 Docs')),
 			'http://book.cakephp.org/view/875/x1-3-Collection',
 			array('target' => '_blank', 'escape' => false)
 		);
@@ -129,7 +129,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 	<?php
 		echo $this->Html->link(
-			__('The 15 min Blog Tutorial', true),
+			__('The 15 min Blog Tutorial'),
 			'http://book.cakephp.org/view/1528/Blog',
 			array('target' => '_blank', 'escape' => false)
 		);

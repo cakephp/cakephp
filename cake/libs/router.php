@@ -1084,11 +1084,14 @@ class Router {
  */
 	public static function reverse($params) {
 		if ($params instanceof CakeRequest) {
+			$url = $params->query;
 			$params = $params->params;
+		} else {
+			$url = $params['url'];
 		}
 		$pass = $params['pass'];
 		$named = $params['named'];
-		$url = $params['url'];
+
 		unset(
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
 			$params['autoRender'], $params['bare'], $params['requested'], $params['return']

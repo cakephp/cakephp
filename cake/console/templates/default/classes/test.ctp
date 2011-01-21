@@ -23,30 +23,75 @@ echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " :
 App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
+/**
+ * Test<?php echo $fullClassName; ?> 
+ *
+ */
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
+/**
+ * Auto render
+ *
+ * @var boolean
+ */
 	public $autoRender = false;
 
+/**
+ * Redirect action
+ *
+ * @param mixed $url
+ * @param mixed $status
+ * @param boolean $exit
+ * @return void
+ */
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
 }
 
 <?php endif; ?>
+/**
+ * <?php echo $fullClassName; ?> Test Case
+ *
+ */
 class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 <?php if (!empty($fixtures)): ?>
+/**
+ * Fixtures
+ *
+ * @var array
+ */
 	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
 
 <?php endif; ?>
-	public function startTest() {
+/**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
 		$this-><?php echo $className . ' = ' . $construction; ?>
 	}
 
-	public function endTest() {
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
 		unset($this-><?php echo $className;?>);
 		ClassRegistry::flush();
+
+		parent::tearDown();
 	}
 
 <?php foreach ($methods as $method): ?>
+/**
+ * test<?php echo Inflector::classify($method); ?> method
+ *
+ * @return void
+ */
 	public function test<?php echo Inflector::classify($method); ?>() {
 
 	}

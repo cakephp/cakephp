@@ -50,6 +50,13 @@ class CakeTestFixture {
  *
  */
 	public function __construct() {
+		if ($this->name === null) {
+			if (preg_match('/^(.*)Fixture$/', get_class($this), $matches)) {
+				$this->name = $matches[1];
+			} else {
+				$this->name = get_class($this);
+			}
+		}
 		App::import('Model', 'CakeSchema');
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test'));
 		$this->init();

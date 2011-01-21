@@ -644,15 +644,13 @@ class Controller extends Object {
 		if ($response === false) {
 			return;
 		}
-		if (is_array($response)) {
-			foreach ($response as $resp) {
-				if (is_array($resp) && isset($resp['url'])) {
-					extract($resp, EXTR_OVERWRITE);
-				} elseif ($resp !== null) {
-					$url = $resp;
-				}
-			}
+		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
+
+		$response = $this->beforeRedirect($url, $status, $exit);
+		if ($response === false) {
+			return;
 		}
+		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
 		if (function_exists('session_write_close')) {
 			session_write_close();
@@ -677,6 +675,28 @@ class Controller extends Object {
 			$this->response->send();
 			$this->_stop();
 		}
+	}
+
+/**
+ * Parse beforeRedirect Response
+ *
+ * @param mixed $response Response from beforeRedirect callback
+ * @param mixed $url The same value of beforeRedirect
+ * @param integer $status The same value of beforeRedirect
+ * @param boolean $exit The same value of beforeRedirect
+ * @return array Array with keys url, status and exit
+ */
+	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
+		if (is_array($response)) {
+			foreach ($response as $resp) {
+				if (is_array($resp) && isset($resp['url'])) {
+					extract($resp, EXTR_OVERWRITE);
+				} elseif ($resp !== null) {
+					$url = $resp;
+				}
+			}
+		}
+		return compact('url', 'status', 'exit');
 	}
 
 /**
@@ -988,6 +1008,23 @@ class Controller extends Object {
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function beforeRender() {
+	}
+
+/**
+ * The beforeRedirect method is invoked when the controller's redirect method is called but before any
+ * further action. If this method returns false the controller will not continue on to redirect the request.
+ * The $url, $status and $exit variables have same meaning as for the controller's method. You can also
+ * return a string which will be interpreted as the url to redirect to or return associative array with
+ * key 'url' and optionally 'status' and 'exit'.
+ *
+ * @param mixed $url A string or array-based URL pointing to another location within the app,
+ *     or an absolute URL
+ * @param integer $status Optional HTTP status code (eg: 404)
+ * @param boolean $exit If true, exit() will be called after the redirect
+ * @return boolean
+ */
+	public function beforeRedirect($url, $status = null, $exit = true) {
+		return true;
 	}
 
 /**

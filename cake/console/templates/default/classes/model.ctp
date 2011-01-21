@@ -20,23 +20,43 @@
  */
 
 echo "<?php\n"; ?>
+/**
+ * <?php echo $name ?> Model
+ *
+ */
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
-	public $name = '<?php echo $name; ?>';
 <?php if ($useDbConfig != 'default'): ?>
+/**
+ * Use database config
+ *
+ * @var string
+ */
 	public $useDbConfig = '<?php echo $useDbConfig; ?>';
 <?php endif;?>
 <?php if ($useTable && $useTable !== Inflector::tableize($name)):
 	$table = "'$useTable'";
+	echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
 	echo "\tpublic \$useTable = $table;\n";
 endif;
 if ($primaryKey !== 'id'): ?>
+/**
+ * Primary key field
+ *
+ * @var string
+ */
 	public $primaryKey = '<?php echo $primaryKey; ?>';
 <?php endif;
 if ($displayField): ?>
+/**
+ * Display field
+ *
+ * @var string
+ */
 	public $displayField = '<?php echo $displayField; ?>';
 <?php endif;
 
 if (!empty($validate)):
+	echo "/**\n * Validation rules\n *\n * @var array\n */\n";
 	echo "\tpublic \$validate = array(\n";
 	foreach ($validate as $field => $validations):
 		echo "\t\t'$field' => array(\n";
@@ -58,6 +78,7 @@ endif;
 foreach ($associations as $assoc):
 	if (!empty($assoc)):
 ?>
+
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 <?php
 		break;
@@ -67,6 +88,7 @@ endforeach;
 foreach (array('hasOne', 'belongsTo') as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);
+		echo "\n/**\n * $assocType associations\n *\n * @var array\n */";
 		echo "\n\tpublic \$$assocType = array(";
 		foreach ($associations[$assocType] as $i => $relation):
 			$out = "\n\t\t'{$relation['alias']}' => array(\n";
@@ -87,6 +109,7 @@ endforeach;
 
 if (!empty($associations['hasMany'])):
 	$belongsToCount = count($associations['hasMany']);
+	echo "\n/**\n * hasMany associations\n *\n * @var array\n */";
 	echo "\n\tpublic \$hasMany = array(";
 	foreach ($associations['hasMany'] as $i => $relation):
 		$out = "\n\t\t'{$relation['alias']}' => array(\n";
@@ -112,6 +135,7 @@ endif;
 
 if (!empty($associations['hasAndBelongsToMany'])):
 	$habtmCount = count($associations['hasAndBelongsToMany']);
+	echo "\n/**\n * hasAndBelongsToMany associations\n *\n * @var array\n */";
 	echo "\n\tpublic \$hasAndBelongsToMany = array(";
 	foreach ($associations['hasAndBelongsToMany'] as $i => $relation):
 		$out = "\n\t\t'{$relation['alias']}' => array(\n";
