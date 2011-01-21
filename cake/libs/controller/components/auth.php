@@ -21,6 +21,7 @@
 
 App::import('Core', 'Router', false);
 App::import('Core', 'Security', false);
+App::import('Core', 'CakeSession', false);
 App::import('Component', 'auth/base_authorize');
 
 /**
@@ -159,7 +160,7 @@ class AuthComponent extends Component {
  * @var string
  * @link http://book.cakephp.org/view/1276/sessionKey
  */
-	public $sessionKey = 'Auth.User';
+	public static $sessionKey = 'Auth.User';
 
 /**
  * If using action-based access control, this defines how the paths to action
@@ -445,7 +446,7 @@ class AuthComponent extends Component {
  *
  * You can use allow with either an array, or var args.
  *
- * `$this->Auth->allow(array('edit', 'add'));`
+ * `$this->Auth->allow(array('edit', 'add'));` or 
  * `$this->Auth->allow('edit', 'add');`
  *
  * allow() also supports '*' as a wildcard to mean all actions.
@@ -475,7 +476,7 @@ class AuthComponent extends Component {
  *
  * You can use deny with either an array, or var args.
  *
- * `$this->Auth->deny(array('edit', 'add'));`
+ * `$this->Auth->deny(array('edit', 'add'));` or 
  * `$this->Auth->deny('edit', 'add');`
  *
  * @param mixed $action Controller action name or array of actions
@@ -534,7 +535,7 @@ class AuthComponent extends Component {
 			$user = $this->identify($this->request);
 		}
 		if ($user) {
-			$this->Session->write($this->sessionKey, $user);
+			$this->Session->write(self::$sessionKey, $user);
 			$this->_loggedIn = true;
 		}
 		return $this->_loggedIn;
@@ -550,7 +551,7 @@ class AuthComponent extends Component {
  */
 	public function logout() {
 		$this->__setDefaults();
-		$this->Session->delete($this->sessionKey);
+		$this->Session->delete(self::$sessionKey);
 		$this->Session->delete('Auth.redirect');
 		$this->_loggedIn = false;
 		return Router::normalize($this->logoutRedirect);
@@ -563,16 +564,15 @@ class AuthComponent extends Component {
  * @return mixed User record. or null if no user is logged in.
  * @link http://book.cakephp.org/view/1264/user
  */
-	public function user($key = null) {
-		$this->__setDefaults();
-		if (!$this->Session->check($this->sessionKey)) {
+	public static function user($key = null) {
+		if (!CakeSession::check(self::$sessionKey)) {
 			return null;
 		}
 
 		if ($key == null) {
-			return $this->Session->read($this->sessionKey);
+			return CakeSession::read(self::$sessionKey);
 		} else {
-			$user = $this->Session->read($this->sessionKey);
+			$user = CakeSession::read(self::$sessionKey);
 			if (isset($user[$key])) {
 				return $user[$key];
 			}

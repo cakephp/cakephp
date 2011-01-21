@@ -1178,8 +1178,7 @@ class AuthTest extends CakeTestCase {
 			'Auth' => array(
 				'fields' => array('username' => 'email', 'password' => 'password'),
 				'loginAction' => array('controller' => 'people', 'action' => 'login'),
-				'userModel' => 'AuthUserCustomField',
-				'sessionKey' => 'AltAuth.AuthUserCustomField'
+				'userModel' => 'AuthUserCustomField'
 			),
 			'Session'
 		);
@@ -1212,14 +1211,12 @@ class AuthTest extends CakeTestCase {
 			'fields' => array('username' => 'email', 'password' => 'password'),
 			'loginAction' => array('controller' => 'people', 'action' => 'login'),
 			'logoutRedirect' => array('controller' => 'people', 'action' => 'login'),
-			'userModel' => 'AuthUserCustomField',
-			'sessionKey' => 'AltAuth.AuthUserCustomField'
+			'userModel' => 'AuthUserCustomField'
 		);
 		$this->assertEqual($expected['fields'], $this->Controller->Auth->fields);
 		$this->assertEqual($expected['loginAction'], $this->Controller->Auth->loginAction);
 		$this->assertEqual($expected['logoutRedirect'], $this->Controller->Auth->logoutRedirect);
 		$this->assertEqual($expected['userModel'], $this->Controller->Auth->userModel);
-		$this->assertEqual($expected['sessionKey'], $this->Controller->Auth->sessionKey);
 	}
 
 /**
