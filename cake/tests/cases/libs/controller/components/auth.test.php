@@ -740,7 +740,7 @@ class AuthTest extends CakeTestCase {
  */
 	function testLoadAuthenticateNoFile() {
 		$this->Controller->Auth->authenticate = 'Missing';
-		$this->Controller->Auth->identify($this->Controller->request);
+		$this->Controller->Auth->identify($this->Controller->request, $this->Controller->response);
 	}
 
 /**
@@ -1176,9 +1176,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->components = array(
 			'Auth' => array(
-				'fields' => array('username' => 'email', 'password' => 'password'),
 				'loginAction' => array('controller' => 'people', 'action' => 'login'),
-				'userModel' => 'AuthUserCustomField'
 			),
 			'Session'
 		);
@@ -1186,37 +1184,12 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Components->trigger('initialize', array(&$this->Controller));
 		Router::reload();
 
-		$this->AuthUserCustomField = new AuthUserCustomField();
-		$user = array(
-			'id' => 1, 'email' => 'harking@example.com',
-			'password' => Security::hash(Configure::read('Security.salt') . 'cake'
-		));
-		$user = $this->AuthUserCustomField->save($user, false);
-
-		Router::connect('/', array('controller' => 'people', 'action' => 'login'));
-		$url = '/';
-		$this->Controller->request->addParams(Router::parse($url));
-		Router::setRequestInfo($this->Controller->request);
-		$this->Controller->request->data['AuthUserCustomField'] = array(
-			'email' => 'harking@example.com', 'password' => 'cake'
-		);
-		$this->Controller->request->query['url'] = substr($url, 1);
-		$this->Controller->Auth->startup($this->Controller);
-		$this->Controller->Auth->login();
-
-		$user = $this->Controller->Auth->user();
-		$this->assertTrue(!!$user);
-
 		$expected = array(
-			'fields' => array('username' => 'email', 'password' => 'password'),
 			'loginAction' => array('controller' => 'people', 'action' => 'login'),
 			'logoutRedirect' => array('controller' => 'people', 'action' => 'login'),
-			'userModel' => 'AuthUserCustomField'
 		);
-		$this->assertEqual($expected['fields'], $this->Controller->Auth->fields);
 		$this->assertEqual($expected['loginAction'], $this->Controller->Auth->loginAction);
 		$this->assertEqual($expected['logoutRedirect'], $this->Controller->Auth->logoutRedirect);
-		$this->assertEqual($expected['userModel'], $this->Controller->Auth->userModel);
 	}
 
 /**
