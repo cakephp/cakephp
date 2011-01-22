@@ -15,7 +15,45 @@
 App::import('Component', 'auth/base_authenticate');
 App::import('Core', 'String');
 
-
+/**
+ * Digest Authentication adapter for AuthComponent.
+ *
+ * Provides Digest HTTP authentication support for AuthComponent.  Unlike most AuthComponent adapters,
+ * DigestAuthenticate requires a special password hash that conforms to RFC2617.  You can create this
+ * password using `DigestAuthenticate::password()`.  If you wish to use digest authentication alongside other 
+ * authentication methods, its recommended that you store the digest authentication separately.
+ *
+ * Clients using Digest Authentication  must support cookies.  Since AuthComponent identifies users based
+ * on Session contents, clients without support for cookies will not function properly.
+ *
+ * ### Using Digest auth
+ * 
+ * In your controller's components array, add auth + the required settings.
+ * {{{
+ *	var $components = array(
+ *		'Auth' => array(
+ *			'authenticate' => array('Digest')
+ *		)
+ *	);
+ * }}}
+ *
+ * In your login function just call `$this->Auth->login()` without any checks for POST data.  This
+ * will send the authentication headers, and trigger the login dialog in the browser/client.
+ *
+ * ### Generating passwords compatible with Digest authentication.
+ *
+ * Due to the Digest authentication specification, digest auth requires a special password value.  You
+ * can generate this password using `DigestAuthenticate::password()`
+ *
+ * `$digestPass = DigestAuthenticate::password($username, env('SERVER_NAME'), $password);`
+ *
+ * Its recommended that you store this digest auth only password separate from password hashes used for other 
+ * login methods.  For example `User.digest_pass` could be used for a digest password, while `User.password` would
+ * store the password hash for use with other methods like Basic or Form.
+ *
+ * @package cake.libs.controller.components.auth
+ * @since 2.0
+ */
 class DigestAuthenticate extends BaseAuthenticate {
 /**
  * Settings for this object.
@@ -24,6 +62,10 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `userModel` The model name of the User, defaults to User.
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `array('User.is_active' => 1).`
+ * - `realm` The realm authentication is for, Defaults to the servername.
+ * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
+ * - `qop` Defaults to auth, no other values are supported at this time.
+ * - `opaque` A string that must be returned unchanged by clients. Defaults to `md5($settings['realm'])`
  *
  * @var array
  */
@@ -43,6 +85,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 /**
  * Constructor, completes configuration for digest authentication.
  *
+ * @param array $settings An array of settings.
  * @return void
  */
 	public function __construct($settings) {

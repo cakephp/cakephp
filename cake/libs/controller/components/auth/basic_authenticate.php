@@ -13,9 +13,32 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Component', 'auth/base_authenticate');
-App::import('Core', 'String');
 
-
+/**
+ * Basic Authentication adapter for AuthComponent.
+ *
+ * Provides Basic HTTP authentication support for AuthComponent.  Basic Auth will authenticate users
+ * against the configured userModel and verify the username and passwords match.  Clients using Basic Authentication
+ * must support cookies.  Since AuthComponent identifies users based on Session contents, clients using Basic
+ * Auth must support cookies.
+ *
+ * ### Using Basic auth
+ * 
+ * In your controller's components array, add auth + the required settings.
+ * {{{
+ *	var $components = array(
+ *		'Auth' => array(
+ *			'authenticate' => array('Basic')
+ *		)
+ *	);
+ * }}}
+ *
+ * In your login function just call `$this->Auth->login()` without any checks for POST data.  This
+ * will send the authentication headers, and trigger the login dialog in the browser/client.
+ *
+ * @package cake.libs.controller.components.auth
+ * @since 2.0
+ */
 class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Settings for this object.
@@ -24,6 +47,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  * - `userModel` The model name of the User, defaults to User.
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `array('User.is_active' => 1).`
+ * - `realm` The realm authentication is for.  Defaults the server name.
  *
  * @var array
  */
@@ -40,6 +64,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Constructor, completes configuration for basic authentication.
  *
+ * @param array $settings An array of settings.
  * @return void
  */
 	public function __construct($settings) {
@@ -48,6 +73,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 			$this->settings['realm'] = env('SERVER_NAME');
 		}
 	}
+
 /**
  * Authenticate a user using basic HTTP auth.  Will use the configured User model and attempt a 
  * login using basic HTTP auth.
