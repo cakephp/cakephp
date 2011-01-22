@@ -60,6 +60,36 @@ abstract class BaseAuthenticate {
 	}
 
 /**
+ * Find a user record using the standard options.
+ *
+ * @param string $username The username/identifier.
+ * @param string $password The unhashed password.
+ * @return Mixed Either false on failure, or an array of user data.
+ */
+	protected function _findUser($username, $password) {
+		$userModel = $this->settings['userModel'];
+		list($plugin, $model) = pluginSplit($userModel);
+		$fields = $this->settings['fields'];
+
+		$conditions = array(
+			$model . '.' . $fields['username'] => $username,
+			$model . '.' . $fields['password'] => $this->hash($password),
+		);
+		if (!empty($this->settings['scope'])) {
+			$conditions = array_merge($conditions, $this->settings['scope']);
+		}
+		$result = ClassRegistry::init($userModel)->find('first', array(
+			'conditions' => $conditions,
+			'recursive' => 0
+		));
+		if (empty($result) || empty($result[$model])) {
+			return false;
+		}
+		unset($result[$model][$fields['password']]);
+		return $result[$model];
+	}
+
+/**
  * Authenticate a user based on the request information.
  *
  * @param CakeRequest $request Request to get authentication information from.

@@ -58,22 +58,10 @@ class FormAuthenticate extends BaseAuthenticate {
 		) {
 			return false;
 		}
-		$conditions = array(
-			$model . '.' . $fields['username'] => $request->data[$model][$fields['username']],
-			$model . '.' . $fields['password'] => $this->hash($request->data[$model][$fields['password']]),
+		return $this->_findUser(
+			$request->data[$model][$fields['username']],
+			$request->data[$model][$fields['password']]
 		);
-		if (!empty($this->settings['scope'])) {
-			$conditions = array_merge($conditions, $this->settings['scope']);
-		}
-		$result = ClassRegistry::init($userModel)->find('first', array(
-			'conditions' => $conditions,
-			'recursive' => 0
-		));
-		if (empty($result) || empty($result[$model])) {
-			return false;
-		}
-		unset($result[$model][$fields['password']]);
-		return $result[$model];
 	}
 
 }

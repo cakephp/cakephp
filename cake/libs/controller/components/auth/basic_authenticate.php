@@ -66,30 +66,16 @@ class BasicAuthenticate extends BaseAuthenticate {
 			return false;
 		}
 
-		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
-		$fields = $this->settings['fields'];
+		$result = $this->_findUser($username, $pass);
 
-		$conditions = array(
-			$model . '.' . $fields['username'] => $username,
-			$model . '.' . $fields['password'] => $this->hash($pass),
-		);
-		if (!empty($this->settings['scope'])) {
-			$conditions = array_merge($conditions, $this->settings['scope']);
-		}
-		$result = ClassRegistry::init($userModel)->find('first', array(
-			'conditions' => $conditions,
-			'recursive' => 0
-		));
-		if (empty($result) || empty($result[$model])) {
+		if (empty($result)) {
 			$response->header($this->loginHeaders());
 			$response->header('Location', Router::reverse($request));
 			$response->statusCode(401);
 			$response->send();
 			return false;
 		}
-		unset($result[$model][$fields['password']]);
-		return $result[$model];
+		return $result;
 	}
 
 /**
