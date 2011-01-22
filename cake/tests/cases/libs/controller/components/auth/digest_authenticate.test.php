@@ -38,6 +38,7 @@ class DigestAuthenticateTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
+		$this->server = $_SERVER;
 		$this->auth = new DigestAuthenticate(array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User',
@@ -48,7 +49,8 @@ class DigestAuthenticateTest extends CakeTestCase {
 
 		$password = DigestAuthenticate::password('mariano', 'localhost', 'cake');
 		ClassRegistry::init('User')->updateAll(array('password' => '"' . $password . '"'));
-		$this->server = $_SERVER;
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->response = $this->getMock('CakeResponse');
 	}
 
@@ -170,7 +172,7 @@ uri="/dir/index.html",
 qop=auth,
 nc=1,
 cnonce="123",
-response="5e064cc2f3b20894a806b2de3edf9536",
+response="06b257a54befa2ddfb9bfa134224aa29",
 opaque="123abc"
 DIGEST;
 
