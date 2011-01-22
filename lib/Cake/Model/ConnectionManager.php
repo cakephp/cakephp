@@ -95,10 +95,7 @@ class ConnectionManager {
 			self::_getConnectionObject($name);
 		}
 
-		if (empty(self::$_connectionsEnum[$name])) {
-			throw new MissingDatasourceConfigException(array('config' => $name));
-		}
-
+		self::loadDataSource($name);
 		$conn = self::$_connectionsEnum[$name];
 		$class = $conn['classname'];
 
@@ -173,7 +170,7 @@ class ConnectionManager {
 
 		App::uses($conn['classname'], $plugin . 'Model/Datasource' . $package);
 		if (!class_exists($conn['classname'])) {
-			throw new MissingDatasourceFileException(array('class' => $conn['classname'], 'plugin' => $conn['plugin']));
+			throw new MissingDatasourceFileException(array('class' => $conn['classname'], 'plugin' => $plugin));
 		}
 		return true;
 	}
@@ -222,7 +219,7 @@ class ConnectionManager {
 		if (!empty(self::$config->{$name})) {
 			self::$_connectionsEnum[$name] = self::_connectionData(self::$config->{$name});
 		} else {
-			throw new MissingConnectionException(array('class' => $name));
+			throw new MissingDatasourceConfigException(array('config' => $name));
 		}
 	}
 
