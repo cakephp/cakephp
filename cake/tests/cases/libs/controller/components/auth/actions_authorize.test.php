@@ -33,7 +33,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 		$this->controller->Components = $this->getMock('ComponentCollection');
 
 		$this->auth = new ActionsAuthorize($this->controller);
-		$this->auth->actionPath = '/controllers';
+		$this->auth->settings['actionPath'] = '/controllers';
 	}
 
 /**
