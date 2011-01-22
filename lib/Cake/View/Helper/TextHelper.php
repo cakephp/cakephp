@@ -177,8 +177,9 @@ class TextHelper extends AppHelper {
  */
 	public function autoLinkEmails($text, $options = array()) {
 		$this->_linkOptions = $options;
+		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
 		return preg_replace_callback(
-			'#([_A-Za-z0-9+-]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
+			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*)/i',
 			array(&$this, '_linkEmails'),
 			$text
 		);

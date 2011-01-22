@@ -72,7 +72,7 @@ if (!include(CORE_PATH . 'Cake' . DS . 'bootstrap.php')) {
 }
 
 if (Configure::read('debug') < 1) {
-	die(__('Debug setting does not allow access to this url.', true));
+	die(__('Debug setting does not allow access to this url.'));
 }
 
 require_once CAKE_TESTS_LIB . 'CakeTestSuiteDispatcher.php';

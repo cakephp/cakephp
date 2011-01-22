@@ -63,7 +63,7 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadWithEnableFalse() {
-		$result = $this->Tasks->load('DbConfig', array(), false);
+		$result = $this->Tasks->load('DbConfig', array('enabled' => false));
 		$this->assertInstanceOf('DbConfigTask', $result);
 		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
 

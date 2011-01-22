@@ -21,14 +21,23 @@
 
 echo "<?php\n";
 ?>
+/**
+ * <?php echo $controllerName; ?> Controller
+ *
+ */
 class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
 
-	public $name = '<?php echo $controllerName; ?>';
 <?php if ($isScaffold): ?>
+/**
+ * Scaffold
+ *
+ * @var mixed
+ */
 	public $scaffold;
 <?php else: ?>
 <?php
 if (count($helpers)):
+	echo "/**\n * Helpers\n *\n * @var array\n */\n";
 	echo "\tvar \$helpers = array(";
 	for ($i = 0, $len = count($helpers); $i < $len; $i++):
 		if ($i != $len - 1):
@@ -41,6 +50,7 @@ if (count($helpers)):
 endif;
 
 if (count($components)):
+	echo "/**\n * Components\n *\n * @var array\n */\n";
 	echo "\tpublic \$components = array(";
 	for ($i = 0, $len = count($components); $i < $len; $i++):
 		if ($i != $len - 1):

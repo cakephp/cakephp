@@ -83,13 +83,31 @@ class BehaviorCollection extends ObjectCollection {
  * to load a behavior with callbacks disabled. By default callbacks are enabled. Disable behaviors
  * can still be used as normal.
  *
+ * You can alias your behavior as an existing behavior by setting the 'className' key, i.e.,
+ * {{{
+ * public $actsAs = array(
+ *   'Tree' => array(
+ *     'className' => 'AliasedTree'
+ *   );
+ * );
+ * }}}
+ * All calls to the `Tree` behavior would use `AliasedTree` instead.
+ *
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
  * @return boolean True on success, false on failure
  * @throws MissingBehaviorFileException or MissingBehaviorClassException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
+		if (is_array($config) && isset($config['className'])) {
+			$alias = $behavior;
+			$behavior = $config['className'];
+		}
 		list($plugin, $name) = pluginSplit($behavior);
+		if (!isset($alias)) {
+			$alias = $name;
+		}
+
 		$class = $name . 'Behavior';
 
 		App::uses($class, 'Model/Behavior');
@@ -100,19 +118,19 @@ class BehaviorCollection extends ObjectCollection {
 			));
 		}
 
-		if (!isset($this->{$name})) {
+		if (!isset($this->{$alias})) {
 			if (ClassRegistry::isKeySet($class)) {
-				$this->_loaded[$name] = ClassRegistry::getObject($class);
+				$this->_loaded[$alias] = ClassRegistry::getObject($class);
 			} else {
-				$this->_loaded[$name] = new $class();
-				ClassRegistry::addObject($class, $this->_loaded[$name]);
+				$this->_loaded[$alias] = new $class();
+				ClassRegistry::addObject($class, $this->_loaded[$alias]);
 				if (!empty($plugin)) {
-					ClassRegistry::addObject($plugin . '.' . $class, $this->_loaded[$name]);
+					ClassRegistry::addObject($plugin . '.' . $class, $this->_loaded[$alias]);
 				}
 			}
-		} elseif (isset($this->_loaded[$name]->settings) && isset($this->_loaded[$name]->settings[$this->modelName])) {
+		} elseif (isset($this->_loaded[$alias]->settings) && isset($this->_loaded[$alias]->settings[$this->modelName])) {
 			if ($config !== null && $config !== false) {
-				$config = array_merge($this->_loaded[$name]->settings[$this->modelName], $config);
+				$config = array_merge($this->_loaded[$alias]->settings[$this->modelName], $config);
 			} else {
 				$config = array();
 			}
@@ -120,12 +138,12 @@ class BehaviorCollection extends ObjectCollection {
 		if (empty($config)) {
 			$config = array();
 		}
-		$this->_loaded[$name]->setup(ClassRegistry::getObject($this->modelName), $config);
+		$this->_loaded[$alias]->setup(ClassRegistry::getObject($this->modelName), $config);
 
-		foreach ($this->_loaded[$name]->mapMethods as $method => $alias) {
-			$this->_mappedMethods[$method] = array($name, $alias);
+		foreach ($this->_loaded[$alias]->mapMethods as $method => $methodAlias) {
+			$this->_mappedMethods[$method] = array($alias, $methodAlias);
 		}
-		$methods = get_class_methods($this->_loaded[$name]);
+		$methods = get_class_methods($this->_loaded[$alias]);
 		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
 		$callbacks = array(
 			'setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave',
@@ -139,16 +157,16 @@ class BehaviorCollection extends ObjectCollection {
 					!in_array($m, $callbacks)
 				);
 				if ($methodAllowed) {
-					$this->_methods[$m] = array($name, $m);
+					$this->_methods[$m] = array($alias, $m);
 				}
 			}
 		}
 
 		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
-		if (!in_array($name, $this->_enabled) && !$configDisabled) {
-			$this->enable($name);
+		if (!in_array($alias, $this->_enabled) && !$configDisabled) {
+			$this->enable($alias);
 		} elseif ($configDisabled) {
-			$this->disable($name);
+			$this->disable($alias);
 		}
 		return true;
 	}

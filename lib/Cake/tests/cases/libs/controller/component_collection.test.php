@@ -21,6 +21,12 @@ App::uses('CookieComponent', 'Controller/Component');
 App::uses('SecurityComponent', 'Controller/Component');
 App::uses('ComponentCollection', 'Controller');
 
+/**
+ * Extended CookieComponent
+ */
+class CookieAliasComponent extends CookieComponent {
+}
+
 class ComponentCollectionTest extends CakeTestCase {
 /**
  * setup
@@ -57,6 +63,35 @@ class ComponentCollectionTest extends CakeTestCase {
 
 		$result = $this->Components->load('Cookie');
 		$this->assertSame($result, $this->Components->Cookie);
+	}
+
+/**
+ * Tests loading as an alias
+ *
+ * @return void
+ */
+	function testLoadWithAlias() {
+		$result = $this->Components->load('Cookie', array('className' => 'CookieAlias', 'somesetting' => true));
+		$this->assertInstanceOf('CookieAliasComponent', $result);
+		$this->assertInstanceOf('CookieAliasComponent', $this->Components->Cookie);
+		$this->assertTrue($this->Components->Cookie->settings['somesetting']);
+
+		$result = $this->Components->attached();
+		$this->assertEquals(array('Cookie'), $result, 'attached() results are wrong.');
+
+		$this->assertTrue($this->Components->enabled('Cookie'));
+
+		$result = $this->Components->load('Cookie');
+		$this->assertInstanceOf('CookieAliasComponent', $result);
+
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		$result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.OtherComponent'));
+		$this->assertInstanceOf('OtherComponentComponent', $result);
+		$this->assertInstanceOf('OtherComponentComponent', $this->Components->SomeOther);
+
+		$result = $this->Components->attached();
+		$this->assertEquals(array('Cookie', 'SomeOther'), $result, 'attached() results are wrong.');
+		App::build();
 	}
 
 /**

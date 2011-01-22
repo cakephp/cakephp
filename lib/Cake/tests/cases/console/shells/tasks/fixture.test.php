@@ -297,7 +297,6 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Article', 'comments');
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/public \$name \= \'Article\';/', $result);
 		$this->assertPattern('/public \$table \= \'comments\';/', $result);
 		$this->assertPattern('/public \$fields = array\(/', $result);
 

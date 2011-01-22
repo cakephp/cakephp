@@ -18,17 +18,21 @@
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Core', array('AppModel', 'Model'));
-require_once LIBS  . 'tests' . DS . 'lib' . DS . 'reporter' . DS . 'cake_html_reporter.php';
+
+App::uses('Controller', 'Controller');
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
+
 require_once dirname(__FILE__) . DS . 'model' . DS . 'models.php';
+
 
 /**
  * AppController class
  *
  * @package       cake.tests.cases.libs.controller
  */
-if (!class_exists('AppController')) {
+if (!class_exists('AppController', false)) {
 	/**
 	 * AppController class
 	 *
@@ -186,6 +190,25 @@ class ControllerTestCaseTest extends CakeTestCase {
 			->method('write')
 			->will($this->returnValue('written!'));
 		$this->assertEquals($Posts->Auth->Session->write('something'), 'written!');
+	}
+
+/**
+ * Tests ControllerTestCase::generate() using classes from plugins
+ */
+	function testGenerateWithPlugin() {
+		$Tests = $this->Case->generate('TestPlugin.Tests', array(
+			'models' => array(
+				'TestPlugin.TestPluginComment'
+			),
+			'components' => array(
+				'TestPlugin.PluginsComponent'
+			)
+		));
+		$this->assertEquals($Tests->name, 'Tests');
+		$this->assertInstanceOf('PluginsComponentComponent', $Tests->PluginsComponent);
+
+		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
+		$this->assertInstanceOf('TestPluginComment', $result);
 	}
 
 /**

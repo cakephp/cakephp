@@ -78,6 +78,8 @@ class ConnectionManager {
  *
  * @param string $name The name of the DataSource, as defined in app/config/database.php
  * @return object Instance
+ * @throws MissingDatasourceConfigException
+ * @throws MissingDatasourceFileException
  */
 	public static function getDataSource($name) {
 		if (empty(self::$_init)) {
@@ -94,19 +96,12 @@ class ConnectionManager {
 		}
 
 		if (empty(self::$_connectionsEnum[$name])) {
-			trigger_error(__("ConnectionManager::getDataSource - Non-existent data source %s", $name), E_USER_ERROR);
-			$null = null;
-			return $null;
+			throw new MissingDatasourceConfigException(array('config' => $name));
 		}
 
 		$conn = self::$_connectionsEnum[$name];
 		$class = $conn['classname'];
 
-		if (self::loadDataSource($name) === null) {
-			trigger_error(__("ConnectionManager::getDataSource - Could not load class %s", $class), E_USER_ERROR);
-			$null = null;
-			return $null;
-		}
 		self::$_dataSources[$name] = new $class(self::$config->{$name});
 		self::$_dataSources[$name]->configKeyName = $name;
 
@@ -151,6 +146,7 @@ class ConnectionManager {
  *                        or an array containing the filename (without extension) and class name of the object,
  *                        to be found in app/models/datasources/ or cake/libs/model/datasources/.
  * @return boolean True on success, null on failure or false if the class is already loaded
+ * @throws MissingDatasourceFileException
  */
 	public static function loadDataSource($connName) {
 		if (empty(self::$_init)) {
@@ -177,8 +173,7 @@ class ConnectionManager {
 
 		App::uses($conn['classname'], $plugin . 'Model/Datasource' . $package);
 		if (!class_exists($conn['classname'])) {
-			trigger_error(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s', $conn['classname']), E_USER_ERROR);
-			return null;
+			throw new MissingDatasourceFileException(array('class' => $conn['classname'], 'plugin' => $conn['plugin']));
 		}
 		return true;
 	}

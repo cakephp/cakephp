@@ -134,6 +134,7 @@ class RequestHandlerComponent extends Component {
 				}
 			}
 		}
+		$this->params = $controller->params;
 		$this->_set($settings);
 	}
 
@@ -585,7 +586,9 @@ class RequestHandlerComponent extends Component {
 		}
 
 		if ($cType != null) {
-			$this->response->type($cType);
+			if (empty($this->request->params['requested'])) {
+				$this->response->type($cType);
+			}
 
 			if (!empty($options['charset'])) {
 				$this->response->charset($options['charset']);

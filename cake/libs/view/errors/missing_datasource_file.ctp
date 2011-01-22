@@ -12,17 +12,18 @@
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake.libs.view.templates.errors
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo $name; ?></h2>
+<h2><?php echo __('Missing Datasource Class'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php echo __('An Internal Error Has Occurred.'); ?>
+	<?php echo __('Datasource class %1$s was not found.', '<em>' . $class . '</em>'); ?>
 </p>
-<?php 
-if (Configure::read('debug') > 0 ):
-	echo $this->element('exception_stack_trace');
-endif;
-?>
+<p class="notice">
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_datasource_file.ctp'); ?>
+</p>
+
+<?php echo $this->element('exception_stack_trace'); ?>

@@ -18,11 +18,22 @@
  */
 ?>
 
+/**
+ * <?php echo $admin ?>index method
+ *
+ * @return void
+ */
 	public function <?php echo $admin ?>index() {
 		$this-><?php echo $currentModelName ?>->recursive = 0;
 		$this->set('<?php echo $pluralName ?>', $this->paginate());
 	}
 
+/**
+ * <?php echo $admin ?>view method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function <?php echo $admin ?>view($id = null) {
 		$this-><?php echo $currentModelName; ?>->id = $id;
 		if (!$this-><?php echo $currentModelName; ?>->exists()) {
@@ -32,6 +43,11 @@
 	}
 
 <?php $compact = array(); ?>
+/**
+ * <?php echo $admin ?>add method
+ *
+ * @return void
+ */
 	public function <?php echo $admin ?>add() {
 		if ($this->request->is('post')) {
 			$this-><?php echo $currentModelName; ?>->create();
@@ -66,6 +82,12 @@
 	}
 
 <?php $compact = array(); ?>
+/**
+ * <?php echo $admin ?>edit method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function <?php echo $admin; ?>edit($id = null) {
 		$this-><?php echo $currentModelName; ?>->id = $id;
 		if (!$this-><?php echo $currentModelName; ?>->exists()) {
@@ -104,6 +126,12 @@
 	?>
 	}
 
+/**
+ * <?php echo $admin ?>delete method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function <?php echo $admin; ?>delete($id = null) {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();

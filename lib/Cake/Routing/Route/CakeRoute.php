@@ -173,7 +173,7 @@ class CakeRoute {
 
 /**
  * Checks to see if the given URL can be parsed by this route.
- * If the route can be parsed an array of parameters will be returned if not
+ * If the route can be parsed an array of parameters will be returned; if not
  * false will be returned. String urls are parsed if they match a routes regular expression.
  *
  * @param string $url The url to attempt to parse.
@@ -245,8 +245,8 @@ class CakeRoute {
 	}
 
 /**
- * Attempt to match a url array.  If the url matches the route parameters + settings, then
- * return a generated string url.  If the url doesn't match the route parameters false will be returned.
+ * Attempt to match a url array.  If the url matches the route parameters and settings, then
+ * return a generated string url.  If the url doesn't match the route parameters, false will be returned.
  * This method handles the reverse routing or conversion of url arrays into string urls.
  *
  * @param array $url An array of parameters to check matching with.

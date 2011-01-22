@@ -371,6 +371,24 @@ class MissingShellFileException extends CakeException {
 }
 
 /**
+ * Exception class to be thrown when a database file is not found
+ *
+ * @package cake.libs
+ */
+class MissingDatasourceConfigException extends CakeException {
+	protected $_messageTemplate = 'Database connection "%s" could not be loaded.';
+}
+
+/**
+ * Exception class to be thrown when a database file is not found
+ *
+ * @package cake.libs
+ */
+class MissingDatasourceFileException extends CakeException {
+	protected $_messageTemplate = 'Database connection "%s" could not be loaded.';
+}
+
+/**
  * Exception class to be thrown when a database table is not found in the datasource
  *
  * @package cake.libs

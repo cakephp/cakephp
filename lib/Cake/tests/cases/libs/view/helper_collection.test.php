@@ -20,6 +20,13 @@
 App::uses('HelperCollection', 'View/Helper');
 App::uses('View', 'View');
 
+/**
+ * Extended HtmlHelper
+ */
+App::import('Helper', 'Html');
+class HtmlAliasHelper extends HtmlHelper {
+}
+
 class HelperCollectionTest extends CakeTestCase {
 /**
  * setup
@@ -54,6 +61,34 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
 
 		$this->assertTrue($this->Helpers->enabled('Html'));
+	}
+
+/**
+ * Tests loading as an alias
+ *
+ * @return void
+ */
+	function testLoadWithAlias() {
+		$result = $this->Helpers->load('Html', array('className' => 'HtmlAlias'));
+		$this->assertInstanceOf('HtmlAliasHelper', $result);
+		$this->assertInstanceOf('HtmlAliasHelper', $this->Helpers->Html);
+
+		$result = $this->Helpers->attached();
+		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
+
+		$this->assertTrue($this->Helpers->enabled('Html'));
+
+		$result = $this->Helpers->load('Html');
+		$this->assertInstanceOf('HtmlAliasHelper', $result);
+
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
+		$this->assertInstanceOf('OtherHelperHelper', $result);
+		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->SomeOther);
+
+		$result = $this->Helpers->attached();
+		$this->assertEquals(array('Html', 'SomeOther'), $result, 'attached() results are wrong.');
+		App::build();
 	}
 
 /**

@@ -851,6 +851,23 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * test that beforeRedirect callback returnning false in controller
+ *
+ * @return void
+ */
+	function testRedirectBeforeRedirectInController() {
+		$Controller = $this->getMock('Controller', array('_stop', 'beforeRedirect'));
+		$Controller->response = $this->getMock('CakeResponse', array('header'));
+		$Controller->Components = $this->getMock('ComponentCollection');
+
+		$Controller->expects($this->once())->method('beforeRedirect')
+			->will($this->returnValue(false));
+		$Controller->response->expects($this->never())->method('header');
+		$Controller->expects($this->never())->method('_stop');
+		$Controller->redirect('http://cakephp.org');
+	}
+
+/**
  * testMergeVars method
  *
  * @access public

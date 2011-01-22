@@ -51,12 +51,16 @@ class ConnectionManagerTest extends CakeTestCase {
 
 		$source = ConnectionManager::getDataSource(key($connections));
 		$this->assertTrue(is_object($source));
+	}
 
-		$this->expectError();
-
-		$source = ConnectionManager::getDataSource('non_existent_source');
-		$this->assertEqual($source, null);
-
+/**
+ * testGetDataSourceException() method
+ *
+ * @return void
+ * @expectedException MissingDatasourceConfigException
+ */
+	public function testGetDataSourceException() {
+		ConnectionManager::getDataSource('non_existent_source');
 	}
 
 /**
@@ -203,12 +207,17 @@ class ConnectionManagerTest extends CakeTestCase {
 			$loaded = ConnectionManager::loadDataSource($connection);
 			$this->assertEqual($loaded, !$exists, "Failed loading the {$connection['classname']} datasource");
 		}
+	}
 
+/**
+ * testLoadDataSourceException() method
+ *
+ * @return void
+ * @expectedException MissingDatasourceFileException
+ */
+	public function testLoadDataSourceException() {
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');
-		$this->expectError();
-
 		$loaded = ConnectionManager::loadDataSource($connection);
-		$this->assertEqual($loaded, null);
 	}
 
 /**

@@ -326,6 +326,7 @@ class View extends Object {
 				return $contents;
 			}
 		}
+
 		$file = $this->_getElementFilename($name, $plugin);
 
 		if ($file) {
@@ -623,7 +624,7 @@ class View extends Object {
 	public function loadHelpers() {
 		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
 		foreach ($helpers as $name => $properties) {
-			$this->Helpers->load($properties['class'], $properties['settings'], true);
+			$this->Helpers->load($properties['class'], $properties['settings']);
 		}
 		$this->_helpersLoaded = true;
 	}
@@ -698,10 +699,7 @@ class View extends Object {
 		}
 		$paths = $this->_paths($this->plugin);
 		
-		$exts = array($this->ext);
-		if ($this->ext !== '.ctp') {
-			array_push($exts, '.ctp');
-		}
+		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
 				if (file_exists($path . $name . $ext)) {
@@ -741,11 +739,8 @@ class View extends Object {
 		}
 		$paths = $this->_paths($this->plugin);
 		$file = 'layouts' . DS . $subDir . $name;
-		
-		$exts = array($this->ext);
-		if ($this->ext !== '.ctp') {
-			array_push($exts, '.ctp');
-		}
+
+		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
 				if (file_exists($path . $file . $ext)) {
@@ -754,6 +749,21 @@ class View extends Object {
 			}
 		}
 		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
+	}
+
+
+/**
+ * Get the extensions that view files can use.
+ *
+ * @return array Array of extensions view files use.
+ * @access protected
+ */
+	function _getExtensions() {
+		$exts = array($this->ext);
+		if ($this->ext !== '.ctp') {
+			array_push($exts, '.ctp');
+		}
+		return $exts;
 	}
 
 /**
@@ -765,9 +775,12 @@ class View extends Object {
  */
 	protected function _getElementFileName($name, $plugin = null) {
 		$paths = $this->_paths($plugin);
-		foreach ($paths as $path) {
-			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-				return $path . 'elements' . DS . $name . $this->ext;
+		$exts = $this->_getExtensions();
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
+				if (file_exists($path . 'elements' . DS . $name . $ext)) {
+					return $path . 'elements' . DS . $name . $ext;
+				}
 			}
 		}
 		return false;

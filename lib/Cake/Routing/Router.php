@@ -221,21 +221,25 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
- * $options offers two 'special' keys. `pass` and `persist` have special meaning in the $options array.
+ * $options offers three 'special' keys. `pass`, `persist` and `routeClass` have special meaning in the $options array.
  *
  * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
  * parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
  *
  * `persist` is used to define which route parameters should be automatically included when generating
- * new urls. You can override peristent parameters by redifining them in a url or remove them by
+ * new urls. You can override persistent parameters by redefining them in a url or remove them by
  * setting the parameter to `false`.  Ex. `'persist' => array('lang')`
+ *
+ * `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
+ * via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
  *   and can supply routing parameters that are not dynamic. See above.
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match.  Also contains additional parameters such as which routed parameters should be
- *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
+ *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
+ *   custom routing class.
  * @see routes
  * @return array Array of routes
  * @throws RouterException
@@ -731,7 +735,7 @@ class Router {
  *
  * @param $which A zero-based array index representing the route to move. For example,
  *    if 3 routes have been added, the last route would be 2.
- * @return boolean Retuns false if no route exists at the position specified by $which.
+ * @return boolean Returns false if no route exists at the position specified by $which.
  */
 	public static function promote($which = null) {
 		if ($which === null) {
@@ -752,7 +756,7 @@ class Router {
  * Returns an URL pointing to a combination of controller and action. Param
  * $url can be:
  *
- * - Empty - the method will find address to actuall controller/action.
+ * - Empty - the method will find address to actual controller/action.
  * - '/' - the method will find base URL of application.
  * - A combination of controller/action - the method will find url for it.
  *
@@ -1068,7 +1072,7 @@ class Router {
 	}
 
 /**
- * Reverses a parsed parameter array into a string. Works similarily to Router::url(), but
+ * Reverses a parsed parameter array into a string. Works similarly to Router::url(), but
  * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
  * Those keys need to be specially handled in order to reverse a params array into a string url.
  *
@@ -1080,11 +1084,14 @@ class Router {
  */
 	public static function reverse($params) {
 		if ($params instanceof CakeRequest) {
+			$url = $params->query;
 			$params = $params->params;
+		} else {
+			$url = $params['url'];
 		}
 		$pass = $params['pass'];
 		$named = $params['named'];
-		$url = $params['url'];
+
 		unset(
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
 			$params['autoRender'], $params['bare'], $params['requested'], $params['return']
@@ -1199,7 +1206,7 @@ class Router {
 	}
 
 /**
- * Takes an passed params and converts it to args
+ * Takes a passed params and converts it to args
  *
  * @param array $params
  * @return array Array containing passed and named parameters
@@ -1263,5 +1270,6 @@ class Router {
 		return compact('pass', 'named');
 	}
 }
+
 //Save the initial state
 Router::reload();

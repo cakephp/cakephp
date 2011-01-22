@@ -40,6 +40,16 @@ class HelperCollection extends ObjectCollection {
  * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you 
  * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
+ *
+ * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
+ * {{{
+ * public $components = array(
+ *   'Html' => array(
+ *     'className' => 'AliasedHtml'
+ *   );
+ * );
+ * }}}
+ * All calls to the `Html` helper would use `AliasedHtml` instead.
  * 
  * @param string $helper Helper name to load
  * @param array $settings Settings for the helper.
@@ -47,10 +57,17 @@ class HelperCollection extends ObjectCollection {
  * @throws MissingHelperFileException, MissingHelperClassException when the helper could not be found
  */
 	public function load($helper, $settings = array()) {
-		list($plugin, $name) = pluginSplit($helper, true);
-
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
+		if (is_array($settings) && isset($settings['className'])) {
+			$alias = $helper;
+			$helper = $settings['className'];
+		}
+		list($plugin, $name) = pluginSplit($helper);
+		if (!isset($alias)) {
+			$alias = $name;
+		}
+		
+		if (isset($this->_loaded[$alias])) {
+			return $this->_loaded[$alias];
 		}
 		$helperClass = $name . 'Helper';
 		App::uses($helperClass, $plugin . 'View/Helper');
@@ -60,17 +77,17 @@ class HelperCollection extends ObjectCollection {
 				'file' => $helperClass . '.php'
 			));
 		}
-		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
+		$this->_loaded[$alias] = new $helperClass($this->_View, $settings);
 
 		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {
-			$this->_loaded[$name]->{$var} = $this->_View->{$var};
+			$this->_loaded[$alias]->{$var} = $this->_View->{$var};
 		}
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
-			$this->_enabled[] = $name;
+			$this->_enabled[] = $alias;
 		}
-		return $this->_loaded[$name];
+		return $this->_loaded[$alias];
 	}
 
 }

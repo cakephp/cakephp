@@ -262,8 +262,9 @@ class ControllerTestCase extends CakeTestCase {
 			'components' => array()
 		), (array)$mocks);
 
-		$_controller = $this->getMock($controller.'Controller', $mocks['methods'], array(), '', false);
-		$_controller->name = $controller;
+		list($plugin, $name) = pluginSplit($controller);
+		$_controller = $this->getMock($name.'Controller', $mocks['methods'], array(), '', false);
+		$_controller->name = $name;
 		$_controller->__construct();
 
 		$config = ClassRegistry::config('Model');
@@ -275,8 +276,10 @@ class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
+			ClassRegistry::init($model);
+			list($plugin, $name) = pluginSplit($model);
 			$config = array_merge((array)$config, array('name' => $model));
-			$_model = $this->getMock($model, $methods, array($config));
+			$_model = $this->getMock($name, $methods, array($config));
 			ClassRegistry::removeObject($model);
 			ClassRegistry::addObject($model, $_model);
 		}
@@ -289,14 +292,15 @@ class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
+			list($plugin, $name) = pluginSplit($component);
 			if (!App::import('Component', $component)) {
 				throw new MissingComponentFileException(array(
-					'file' => Inflector::underscore($component) . '.php',
-					'class' => $componentClass
+					'file' => Inflector::underscore($name) . '.php',
+					'class' => $name.'Component'
 				));
-			}
-			$_component = $this->getMock($component.'Component', $methods, array(), '', false);
-			$_controller->Components->set($component, $_component);
+			}			
+			$_component = $this->getMock($name.'Component', $methods, array(), '', false);
+			$_controller->Components->set($name, $_component);
 		}
 
 		$_controller->constructClasses();

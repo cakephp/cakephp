@@ -101,7 +101,14 @@ class SetTest extends CakeTestCase {
 		$result = Set::filter(array(1, array('empty', false)));
 		$expected = array(1, array('empty'));
 		$this->assertEqual($expected, $result);
+
+		$result = Set::filter(array(1, array('2', false, array(3, null))));
+		$expected = array(1, array('2', 2 => array(3)));
+		$this->assertEqual($expected, $result);
+
+		$this->assertSame(array(), Set::filter(array()));
 	}
+
 
 /**
  * testNumericArrayCheck method

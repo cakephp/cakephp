@@ -63,10 +63,10 @@ class Set {
  * @param boolean $isArray Force to tell $var is an array when $var is empty
  * @return mixed Either filtered array, or true/false when in callback
  */
-	public static function filter($var, $isArray = false) {
-		foreach ((array)$var as $k => $v) {
-			if (!empty($v) && is_array($v)) {
-				$var[$k] = array_filter($v, array('Set', '_filter'));
+	public static function filter(array $var) {
+		foreach ($var as $k => $v) {
+			if (is_array($v)) {
+				$var[$k] = Set::filter($v);
 			}
 		}
 		return array_filter($var, array('Set', '_filter'));

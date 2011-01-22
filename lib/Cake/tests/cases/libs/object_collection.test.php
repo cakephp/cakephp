@@ -54,16 +54,16 @@ class GenericObjectCollection extends ObjectCollection {
  *
  * @param string $object Object name
  * @param array $settings Settings array
- * @param boolean $enable Start object as enabled
  * @return array List of loaded objects
  */
-	public function load($object, $settings = array(), $enable = true) {
+	public function load($object, $settings = array()) {
 		list($plugin, $name) = pluginSplit($object);
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
 		$objectClass = $name . 'GenericObject';
 		$this->_loaded[$name] = new $objectClass($this, $settings);
+		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}

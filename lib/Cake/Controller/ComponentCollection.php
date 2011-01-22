@@ -58,6 +58,16 @@ class ComponentCollection extends ObjectCollection {
  * Loads/constructs a component.  Will return the instance in the registry if it already exists.
  * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
  * Callbacks default to on.  Disabled component methods work as normal, only callbacks are disabled.
+ *
+ * You can alias your component as an existing component by setting the 'className' key, i.e.,
+ * {{{
+ * public $components = array(
+ *   'Email' => array(
+ *     'className' => 'AliasedEmail'
+ *   );
+ * );
+ * }}}
+ * All calls to the `Email` component would use `AliasedEmail` instead.
  * 
  * @param string $component Component name to load
  * @param array $settings Settings for the component.
@@ -65,26 +75,31 @@ class ComponentCollection extends ObjectCollection {
  * @throws MissingComponentFileException, MissingComponentClassException when the component could not be found
  */
 	public function load($component, $settings = array()) {
+		if (is_array($settings) && isset($settings['className'])) {
+			$alias = $component;
+			$component = $settings['className'];
+		}
 		list($plugin, $name) = pluginSplit($component);
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
+		if (!isset($alias)) {
+			$alias = $name;
+		}
+		if (isset($this->_loaded[$alias])) {
+			return $this->_loaded[$alias];
 		}
 		$componentClass = $name . 'Component';
 		App::uses($componentClass, 'Controller/Component');
 		if (!class_exists($componentClass)) {
-			if (!class_exists($componentClass)) {
-				throw new MissingComponentClassException(array(
-					'file' => Inflector::underscore($component) . '.php',
-					'class' => $componentClass
-				));
-			}
+			throw new MissingComponentClassException(array(
+				'file' => Inflector::underscore($componentClass) . '.php',
+				'class' => $componentClass
+			));
 		}
-		$this->_loaded[$name] = new $componentClass($this, $settings);
+		$this->_loaded[$alias] = new $componentClass($this, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
-			$this->_enabled[] = $name;
+			$this->_enabled[] = $alias;
 		}
-		return $this->_loaded[$name];
+		return $this->_loaded[$alias];
 	}
 
 }

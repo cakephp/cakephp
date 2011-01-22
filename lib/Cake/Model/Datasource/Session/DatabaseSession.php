@@ -106,6 +106,9 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public function write($id, $data) {
+		if (!$id) {
+			return false;
+		}
 		$expires = time() + (Configure::read('Session.timeout') * 60);
 		return ClassRegistry::getObject('Session')->save(compact('id', 'data', 'expires'));
 	}
