@@ -51,7 +51,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 			$this->settings['realm'] = env('SERVER_NAME');
 		}
 		if (empty($this->settings['nonce'])) {
-			$this->settings['realm'] = uniqid('');
+			$this->settings['nonce'] = uniqid('');
 		}
 		if (empty($this->settings['opaque'])) {
 			$this->settings['opaque'] = md5($this->settings['realm']);

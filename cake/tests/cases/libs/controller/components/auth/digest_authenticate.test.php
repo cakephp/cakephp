@@ -292,4 +292,14 @@ DIGEST;
 		$this->assertIdentical($expected, $result);
 	}
 
+/**
+ * test password hashing
+ *
+ * @return void
+ */
+	function testPassword() {
+		$result = DigestAuthenticate::password('mark', 'localhost', 'password');
+		$expected = md5('mark:localhost:password');
+		$this->assertEquals($expected, $result);
+	}
 }
