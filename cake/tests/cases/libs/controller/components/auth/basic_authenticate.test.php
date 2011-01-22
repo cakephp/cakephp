@@ -146,9 +146,12 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
-		$this->response->expects($this->once())
+		$this->response->expects($this->at(0))
 			->method('header')
 			->with('WWW-Authenticate: Basic realm="localhost"');
+		
+		$this->response->expects($this->at(1))
+			->method('send');
 		
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertFalse($result);

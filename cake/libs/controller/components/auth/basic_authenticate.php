@@ -59,10 +59,13 @@ class BasicAuthenticate extends BaseAuthenticate {
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
 		$username = env('PHP_AUTH_USER');
 		$pass = env('PHP_AUTH_PW');
+
 		if (empty($username) || empty($pass)) {
 			$response->header($this->loginHeaders());
+			$response->send();
 			return false;
 		}
+
 		$userModel = $this->settings['userModel'];
 		list($plugin, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
