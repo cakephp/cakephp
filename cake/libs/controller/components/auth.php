@@ -34,7 +34,7 @@ App::import('Component', 'auth/base_authorize');
  */
 class AuthComponent extends Component {
 
-	const ALL = '*';
+	const ALL = 'all';
 
 /**
  * Maintains current user login state.
@@ -232,6 +232,13 @@ class AuthComponent extends Component {
 	public $request;
 
 /**
+ * Response object
+ *
+ * @var CakeResponse
+ */
+	public $response;
+
+/**
  * Method list for bound controller
  *
  * @var array
@@ -246,6 +253,7 @@ class AuthComponent extends Component {
  */
 	public function initialize($controller) {
 		$this->request = $controller->request;
+		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
 
 		if (Configure::read('debug') > 0) {
@@ -507,7 +515,7 @@ class AuthComponent extends Component {
 		$this->_loggedIn = false;
 
 		if (empty($user)) {
-			$user = $this->identify($this->request);
+			$user = $this->identify($this->request, $this->response);
 		}
 		if ($user) {
 			$this->Session->write(self::$sessionKey, $user);
@@ -587,12 +595,12 @@ class AuthComponent extends Component {
  * @param CakeRequest $request The request that contains authentication data.
  * @return array User record data, or false, if the user could not be identified.
  */
-	public function identify(CakeRequest $request) {
+	public function identify(CakeRequest $request, CakeResponse $response) {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
 		foreach ($this->_authenticateObjects as $auth) {
-			$result = $auth->authenticate($request);
+			$result = $auth->authenticate($request, $response);
 			if (!empty($result) && is_array($result)) {
 				return $result;
 			}

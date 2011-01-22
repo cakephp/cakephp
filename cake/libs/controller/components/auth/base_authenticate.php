@@ -63,7 +63,8 @@ abstract class BaseAuthenticate {
  * Authenticate a user based on the request information.
  *
  * @param CakeRequest $request Request to get authentication information from.
+ * @param CakeResponse $response A response object that can have headers added.
  * @return mixed Either false on failure, or an array of user data on success.
  */
-	abstract public function authenticate(CakeRequest $request);
+	abstract public function authenticate(CakeRequest $request, CakeResponse $response);
 }
