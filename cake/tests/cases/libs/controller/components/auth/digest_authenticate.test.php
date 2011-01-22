@@ -46,7 +46,7 @@ class DigestAuthenticateTest extends CakeTestCase {
 			'opaque' => '123abc'
 		));
 
-		$password = Security::hash('password', null, true);
+		$password = DigestAuthenticate::password('mariano', 'localhost', 'cake');
 		ClassRegistry::init('User')->updateAll(array('password' => '"' . $password . '"'));
 		$this->server = $_SERVER;
 		$this->response = $this->getMock('CakeResponse');
@@ -99,44 +99,36 @@ class DigestAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateNoUsername() {
-		$request = new CakeRequest('posts/index', false);
-		$_SERVER['PHP_AUTH_PW'] = 'foobar';
-		
-		$this->response->expects($this->once())
-			->method('header')
-			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-
-		$this->assertFalse($this->auth->authenticate($request, $this->response));
-	}
-
-/**
- * test the authenticate method
- *
- * @return void
- */
-	function testAuthenticateNoPassword() {
-		$request = new CakeRequest('posts/index', false);
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		
-		$this->response->expects($this->once())
-			->method('header')
-			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-
-		$this->assertFalse($this->auth->authenticate($request, $this->response));
-	}
-
-/**
- * test the authenticate method
- *
- * @return void
- */
-	function testAuthenticateInjection() {
+	function testAuthenticateWrongUsername() {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
-		$_SERVER['PHP_AUTH_USER'] = '> 1';
-		$_SERVER['PHP_AUTH_PW'] = "' OR 1 = 1";
+		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
+Digest username="incorrect_user",
+realm="localhost",
+nonce="123456",
+uri="/dir/index.html",
+qop=auth,
+nc=00000001,
+cnonce="0a4f113b",
+response="6629fae49393a05397450978507c4ef1",
+opaque="123abc"
+DIGEST;
+		
+		$this->response->expects($this->at(0))
+			->method('header')
+			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
+
+		$this->response->expects($this->at(1))
+			->method('header')
+			->with('Location', Router::reverse($request));
+		
+		$this->response->expects($this->at(2))
+			->method('statusCode')
+			->with(401);
+		
+		$this->response->expects($this->at(3))
+			->method('send');
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
@@ -160,6 +152,7 @@ class DigestAuthenticateTest extends CakeTestCase {
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertFalse($result);
 	}
+
 /**
  * test authenticate sucesss
  *
@@ -169,8 +162,17 @@ class DigestAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
+		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
+Digest username="mariano",
+realm="localhost",
+nonce="123",
+uri="/dir/index.html",
+qop=auth,
+nc=1,
+cnonce="123",
+response="5e064cc2f3b20894a806b2de3edf9536",
+opaque="123abc"
+DIGEST;
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
@@ -192,8 +194,17 @@ class DigestAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
+		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
+Digest username="mariano",
+realm="localhost",
+nonce="123",
+uri="/dir/index.html",
+qop=auth,
+nc=1,
+cnonce="123",
+response="6629fae49393a05397450978507c4ef1",
+opaque="123abc"
+DIGEST;
 
 		$this->response->expects($this->at(0))
 			->method('header')
@@ -211,6 +222,74 @@ class DigestAuthenticateTest extends CakeTestCase {
 			->method('send');
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
+ * testParseDigestAuthData method
+ *
+ * @access public
+ * @return void
+ */
+	function testParseAuthData() {
+		$digest = <<<DIGEST
+			Digest username="Mufasa",
+			realm="testrealm@host.com",
+			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+			uri="/dir/index.html",
+			qop=auth,
+			nc=00000001,
+			cnonce="0a4f113b",
+			response="6629fae49393a05397450978507c4ef1",
+			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+DIGEST;
+		$expected = array(
+			'username' => 'Mufasa',
+			'realm' => 'testrealm@host.com',
+			'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
+			'uri' => '/dir/index.html',
+			'qop' => 'auth',
+			'nc' => '00000001',
+			'cnonce' => '0a4f113b',
+			'response' => '6629fae49393a05397450978507c4ef1',
+			'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
+		);
+		$result = $this->auth->parseAuthData($digest);
+		$this->assertSame($expected, $result);
+
+		$result = $this->auth->parseAuthData('');
+		$this->assertNull($result);
+	}
+
+/**
+ * test parsing digest information with email addresses
+ *
+ * @return void
+ */
+	function testParseAuthEmailAddress() {
+		$digest = <<<DIGEST
+			Digest username="mark@example.com",
+			realm="testrealm@host.com",
+			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+			uri="/dir/index.html",
+			qop=auth,
+			nc=00000001,
+			cnonce="0a4f113b",
+			response="6629fae49393a05397450978507c4ef1",
+			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+DIGEST;
+		$expected = array(
+			'username' => 'mark@example.com',
+			'realm' => 'testrealm@host.com',
+			'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
+			'uri' => '/dir/index.html',
+			'qop' => 'auth',
+			'nc' => '00000001',
+			'cnonce' => '0a4f113b',
+			'response' => '6629fae49393a05397450978507c4ef1',
+			'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
+		);
+		$result = $this->auth->parseAuthData($digest);
+		$this->assertIdentical($expected, $result);
 	}
 
 }

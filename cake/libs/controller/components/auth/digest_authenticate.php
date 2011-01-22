@@ -66,18 +66,19 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$username = env('PHP_AUTH_USER');
-		$pass = env('PHP_AUTH_PW');
+		$digest = $this->_getDigest();
 
-		if (empty($username) || empty($pass)) {
+		if (empty($digest)) {
 			$response->header($this->loginHeaders());
 			$response->send();
 			return false;
 		}
 
-		$result = $this->_findUser($username, $pass);
+		$result = $this->_findUser($digest['username'], null);
+		$password = $result[$this->settings['fields']['password']];
+		unset($result[$this->settings['fields']['password']]);
 
-		if (empty($result)) {
+		if (empty($result) || $digest['response'] !== $this->generateResponseHash($digest, $password)) {
 			$response->header($this->loginHeaders());
 			$response->header('Location', Router::reverse($request));
 			$response->statusCode(401);
@@ -85,6 +86,103 @@ class DigestAuthenticate extends BaseAuthenticate {
 			return false;
 		}
 		return $result;
+	}
+
+/**
+ * Find a user record using the standard options.
+ *
+ * @param string $username The username/identifier.
+ * @param string $password Unused password, digest doesn't require passwords.
+ * @return Mixed Either false on failure, or an array of user data.
+ */
+	protected function _findUser($username, $password) {
+		$userModel = $this->settings['userModel'];
+		list($plugin, $model) = pluginSplit($userModel);
+		$fields = $this->settings['fields'];
+
+		$conditions = array(
+			$model . '.' . $fields['username'] => $username,
+		);
+		if (!empty($this->settings['scope'])) {
+			$conditions = array_merge($conditions, $this->settings['scope']);
+		}
+		$result = ClassRegistry::init($userModel)->find('first', array(
+			'conditions' => $conditions,
+			'recursive' => 0
+		));
+		if (empty($result) || empty($result[$model])) {
+			return false;
+		}
+		return $result[$model];
+	}
+
+/**
+ * Gets the digest headers from the request/environment.
+ *
+ * @return array Array of digest information.
+ */
+	protected function _getDigest() {
+		$digest = env('PHP_AUTH_DIGEST');
+		if (empty($digest) && function_exists('apache_request_headers')) {
+			$headers = apache_request_headers();
+			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
+				$digest = substr($headers['Authorization'], 7);
+			}
+		}
+		if (empty($digest)) {
+			return false;
+		}
+		return $this->parseAuthData($digest);
+	}
+
+/**
+ * Parse the digest authentication headers and split them up.
+ *
+ * @param string $digest The raw digest authentication headers.
+ * @return array An array of digest authentication headers
+ */
+	public function parseAuthData($digest) {
+		if (substr($digest, 0, 7) == 'Digest ') {
+			$digest = substr($digest, 7);
+		}
+		$keys = $match = array();
+		$req = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1);
+		preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9@=.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
+
+		foreach ($match as $i) {
+			$keys[$i[1]] = $i[3];
+			unset($req[$i[1]]);
+		}
+
+		if (empty($req)) {
+			return $keys;
+		}
+		return null;
+	}
+
+/**
+ * Generate the response hash for a given digest array.
+ *
+ * @param array $digest Digest information containing data from DigestAuthenticate::parseAuthData().
+ * @param string $password The digest hash password generated with DigestAuthenticate::password()
+ * @return string Response hash
+ */
+	public function generateResponseHash($digest, $password) {
+		return md5(
+			$password .
+			':' . $digest['nonce'] . ':' . $digest['nc'] . ':' . $digest['cnonce'] . ':' . $digest['qop'] . ':' .
+			md5(env('REQUEST_METHOD') . ':' . $digest['uri'])
+		);
+	}
+
+/**
+ * Creates an auth digest password hash to store 
+ *
+ * @param string $password The unhashed password to make a digest hash for.
+ * @return string the hashed password that can later be used with Digest authentication.
+ */
+	public static function password($username, $realm, $password) {
+		return md5($username . ':' . $realm . ':' . $password);
 	}
 
 /**
