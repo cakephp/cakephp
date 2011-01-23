@@ -175,22 +175,6 @@ class Helper extends Object {
 	}
 
 /**
- * Parses tag templates into $this->tags.
- *
- * @param $name file name inside app/config to load.
- * @return array merged tags from config/$name.php
- */
-	public function loadConfig($name = 'tags') {
-		if (file_exists(CONFIGS . $name .'.php')) {
-			require(CONFIGS . $name .'.php');
-			if (isset($tags)) {
-				$this->tags = array_merge($this->tags, $tags);
-			}
-		}
-		return $this->tags;
-	}
-
-/**
  * Finds URL for specified action.
  *
  * Returns a URL pointing at the provided parameters.

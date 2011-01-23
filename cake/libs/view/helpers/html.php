@@ -906,6 +906,22 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
+ * Parses tag templates into $this->tags.
+ *
+ * @param $name file name inside app/config to load.
+ * @return array merged tags from config/$name.php
+ */
+	public function loadConfig($name = 'tags') {
+		if (file_exists(CONFIGS . $name .'.php')) {
+			require(CONFIGS . $name .'.php');
+			if (isset($tags)) {
+				$this->_tags = array_merge($this->_tags, $tags);
+			}
+		}
+		return $this->_tags;
+	}
+
+/**
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
  *
