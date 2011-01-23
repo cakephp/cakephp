@@ -764,6 +764,26 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
+ * Returns a formatted existent block of $tags
+ *
+ * @param string $tag Tag name
+ * @return string Formatted block
+ */
+	public function useTag($tag) {
+		if (!isset($this->tags[$tag])) {
+			return '';
+		}
+		$args = func_get_args();
+		array_shift($args);
+		foreach ($args as &$arg) {
+			if (is_array($arg)) {
+				$arg = $this->_parseAttributes($arg, null, ' ', '');
+			}
+		}
+		return vsprintf($this->tags[$tag], $args);
+	}
+
+/**
  * Returns a formatted DIV tag for HTML FORMs.
  *
  * ### Options
