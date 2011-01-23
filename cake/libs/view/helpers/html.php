@@ -153,6 +153,19 @@ class HtmlHelper extends AppHelper {
 	);
 
 /**
+ * Default Constructor
+ *
+ * @param View $View The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper.
+ */
+	public function __construct(View $View, $settings = array()) {
+		parent::__construct($View, $settings);
+		if (!empty($settings['configFile'])) {
+			$this->loadConfig($settings['configFile']);
+		}
+	}
+
+/**
  * Adds a link to the breadcrumbs array.
  *
  * @param string $name Text for link
@@ -906,19 +919,54 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Parses tag templates into $this->tags.
+ * Load Html configs
  *
- * @param $name file name inside app/config to load.
- * @return array merged tags from config/$name.php
+ * @param mixed $configFile String with the config file (load using PhpReader) or an array with file and reader name
+ * @param string $path Path with config file
+ * @return mixed False to error or loaded configs
  */
-	public function loadConfig($name = 'tags') {
-		if (file_exists(CONFIGS . $name .'.php')) {
-			require(CONFIGS . $name .'.php');
-			if (isset($tags)) {
-				$this->_tags = array_merge($this->_tags, $tags);
+	public function loadConfig($configFile, $path = CONFIGS) {
+		$file = null;
+		$reader = 'php';
+
+		if (!is_array($configFile)) {
+			$file = $configFile;
+		} elseif (isset($configFile[0])) {
+			$file = $configFile[0];
+			if (isset($configFile[1])) {
+				$reader = $configFile[1];
 			}
+		} else {
+			return trigger_error(__('Cannot load the configuration file. Wrong "configFile" configuration.'), E_USER_NOTICE);
 		}
-		return $this->_tags;
+
+		$readerClass = Inflector::camelize($reader) . 'Reader';
+		if (!App::import('Lib', 'config/' . $readerClass)) {
+			return trigger_error(__('Cannot load the configuration file. Unknown reader.'), E_USER_NOTICE);
+		}
+
+		try {
+			$readerObj = new $readerClass($path);
+			$configs = $readerObj->read($file);
+			if (isset($configs['tags']) && is_array($configs['tags'])) {
+				$this->_tags = array_merge($this->_tags, $configs['tags']);
+			}
+			if (isset($configs['minimizedAttributes']) && is_array($configs['minimizedAttributes'])) {
+				$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
+			}
+			if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
+				$this->__docTypes = array_merge($this->__docTypes, $configs['docTypes']);
+			}
+			if (isset($configs['attributeFormat'])) {
+				$this->_attributeFormat = $configs['attributeFormat'];
+			}
+			if (isset($configs['minimizedAttributeFormat'])) {
+				$this->_minimizedAttributeFormat = $configs['minimizedAttributeFormat'];
+			}
+		} catch (Exception $e) {
+			return trigger_error(__('Cannot load the configuration file. Failed to load the file.'), E_USER_NOTICE);
+		}
+		return $configs;
 	}
 
 /**

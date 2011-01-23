@@ -60,6 +60,20 @@ class TestHtmlHelper extends HtmlHelper {
 	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
 	}
+
+/**
+ * Get a protected attribute value
+ *
+ * @param string $attribute
+ * @return mixed
+ */
+	public function getAttribute($attribute) {
+		if (!isset($this->{$attribute})) {
+			return null;
+		}
+		return $this->{$attribute};
+	}
+
 }
 
 /**
@@ -128,7 +142,7 @@ class HtmlHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
-		$this->Html = new HtmlHelper($this->View);
+		$this->Html = new TestHtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
 
@@ -1355,6 +1369,44 @@ class HtmlHelperTest extends CakeTestCase {
 				'/ul'
 			)
 		);
+	}
+
+/**
+ * testLoadConfig method
+ *
+ * @return void
+ */
+
+	public function testLoadConfig() {
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
+
+		$result = $this->Html->loadConfig('htmlhelper_tags', $path);
+		$expected = array(
+			'tags' => array(
+				'form' => 'start form',
+				'formend' => 'finish form'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		$tags = $this->Html->getAttribute('_tags');
+		$this->assertEqual($tags['form'], 'start form');
+		$this->assertEqual($tags['formend'], 'finish form');
+		$this->assertEqual($tags['selectend'], '</select>');
+
+		$result = $this->Html->loadConfig(array('htmlhelper_minimized.ini', 'ini'), $path);
+		$expected = array(
+			'minimizedAttributeFormat' => 'format'
+		);
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->Html->getAttribute('_minimizedAttributeFormat'), 'format');
+
+		$this->expectError();
+		$result = $this->Html->loadConfig('wrong_file');
+		$this->assertFalse($result);
+
+		$this->expectError();
+		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+		$this->assertFalse($result);
 	}
 
 /**
