@@ -13,7 +13,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Component', 'auth/base_authenticate');
-App::import('Core', 'String');
 
 /**
  * Digest Authentication adapter for AuthComponent.

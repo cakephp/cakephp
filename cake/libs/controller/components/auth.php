@@ -23,6 +23,7 @@ App::import('Core', 'Router', false);
 App::import('Core', 'Security', false);
 App::import('Core', 'CakeSession', false);
 App::import('Component', 'auth/base_authorize');
+App::import('Component', 'auth/base_authenticate');
 
 /**
  * Authentication control component class
