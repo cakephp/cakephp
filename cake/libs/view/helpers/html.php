@@ -29,9 +29,8 @@ class HtmlHelper extends AppHelper {
  * html tags used by this helper.
  *
  * @var array
- * @access public
  */
-	public $tags = array(
+	protected $_tags = array(
 		'meta' => '<meta%s/>',
 		'metalink' => '<link href="%s"%s/>',
 		'link' => '<a href="%s"%s>%s</a>',
@@ -246,14 +245,14 @@ class HtmlHelper extends AppHelper {
 
 		if (isset($options['link'])) {
 			if (isset($options['rel']) && $options['rel'] === 'icon') {
-				$out = sprintf($this->tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+				$out = sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
 				$options['rel'] = 'shortcut icon';
 			} else {
 				$options['link'] = $this->url($options['link'], true);
 			}
-			$out .= sprintf($this->tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+			$out .= sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
 		} else {
-			$out = sprintf($this->tags['meta'], $this->_parseAttributes($options, array('type'), ' ', ' '));
+			$out = sprintf($this->_tags['meta'], $this->_parseAttributes($options, array('type'), ' ', ' '));
 		}
 
 		if ($inline) {
@@ -276,7 +275,7 @@ class HtmlHelper extends AppHelper {
 		if (empty($charset)) {
 			$charset = strtolower(Configure::read('App.encoding'));
 		}
-		return sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
+		return sprintf($this->_tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
 	}
 
 /**
@@ -336,7 +335,7 @@ class HtmlHelper extends AppHelper {
 			}
 			unset($options['default']);
 		}
-		return sprintf($this->tags['link'], $url, $this->_parseAttributes($options), $title);
+		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
 	}
 
 /**
@@ -391,12 +390,12 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
+			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
 		}
 
 		if ($options['inline']) {
@@ -462,7 +461,7 @@ class HtmlHelper extends AppHelper {
 			}
 		}
 		$attributes = $this->_parseAttributes($options, array('inline', 'once'), ' ');
-		$out = sprintf($this->tags['javascriptlink'], $url, $attributes);
+		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);
 
 		if ($options['inline']) {
 			return $out;
@@ -494,9 +493,9 @@ class HtmlHelper extends AppHelper {
 		unset($options['inline'], $options['safe']);
 		$attributes = $this->_parseAttributes($options, ' ', ' ');
 		if ($inline) {
-			return sprintf($this->tags['javascriptblock'], $attributes, $script);
+			return sprintf($this->_tags['javascriptblock'], $attributes, $script);
 		} else {
-			$this->_View->addScript(sprintf($this->tags['javascriptblock'], $attributes, $script));
+			$this->_View->addScript(sprintf($this->_tags['javascriptblock'], $attributes, $script));
 			return null;
 		}
 	}
@@ -675,10 +674,10 @@ class HtmlHelper extends AppHelper {
 			unset($options['url']);
 		}
 
-		$image = sprintf($this->tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
+		$image = sprintf($this->_tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
 
 		if ($url) {
-			return sprintf($this->tags['link'], $this->url($url), null, $image);
+			return sprintf($this->_tags['link'], $this->url($url), null, $image);
 		}
 		return $image;
 	}
@@ -696,9 +695,9 @@ class HtmlHelper extends AppHelper {
 	public function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach ($names as $arg) {
-			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+			$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
 		}
-		return sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
+		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 	}
 
 /**
@@ -748,10 +747,10 @@ class HtmlHelper extends AppHelper {
 				} elseif ($useCount) {
 					$cellOptions['class'] = 'column-' . ++$i;
 				}
-				$cellsOut[] = sprintf($this->tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
+				$cellsOut[] = sprintf($this->_tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
-			$out[] = sprintf($this->tags['tablerow'], $options, implode(' ', $cellsOut));
+			$out[] = sprintf($this->_tags['tablerow'], $options, implode(' ', $cellsOut));
 		}
 		return implode("\n", $out);
 	}
@@ -784,7 +783,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'tag';
 		}
-		return sprintf($this->tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name);
+		return sprintf($this->_tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name);
 	}
 
 /**
@@ -794,7 +793,7 @@ class HtmlHelper extends AppHelper {
  * @return string Formatted block
  */
 	public function useTag($tag) {
-		if (!isset($this->tags[$tag])) {
+		if (!isset($this->_tags[$tag])) {
 			return '';
 		}
 		$args = func_get_args();
@@ -804,7 +803,7 @@ class HtmlHelper extends AppHelper {
 				$arg = $this->_parseAttributes($arg, null, ' ', '');
 			}
 		}
-		return vsprintf($this->tags[$tag], $args);
+		return vsprintf($this->_tags[$tag], $args);
 	}
 
 /**
@@ -855,7 +854,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'para';
 		}
-		return sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
+		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
 	}
 
 /**
@@ -873,7 +872,7 @@ class HtmlHelper extends AppHelper {
 			$options = array();
 		}
 		$items = $this->__nestedListItem($list, $options, $itemOptions, $tag);
-		return sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
+		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
 	}
 
 /**
@@ -900,7 +899,7 @@ class HtmlHelper extends AppHelper {
 			} else if (isset($itemOptions['odd']) && $index % 2 != 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
-			$out .= sprintf($this->tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);
+			$out .= sprintf($this->_tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);
 			$index++;
 		}
 		return $out;
