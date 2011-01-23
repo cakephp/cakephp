@@ -5253,7 +5253,7 @@ class FormHelperTest extends CakeTestCase {
 		));
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="data[extra]" value="value" />') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="data[extra]"  value="value"/>') !== false);
 	}
 
 /**
@@ -5293,7 +5293,7 @@ class FormHelperTest extends CakeTestCase {
 		));
 
 		$result = $this->Form->postLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="data[id]" value="1" />') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="data[id]"  value="1"/>') !== false);
 	}
 
 /**

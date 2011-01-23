@@ -314,12 +314,11 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($append)) {
-			$append = sprintf($this->Html->tags['block'], ' style="display:none;"', $append);
+			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
 		}
 
 		$this->setEntity($model . '.', true);
-		$attributes = $this->_parseAttributes($htmlAttributes, null, '');
-		return sprintf($this->Html->tags['form'], $attributes) . $append;
+		return $this->Html->useTag('form', $htmlAttributes) . $append;
 	}
 
 /**
@@ -372,7 +371,7 @@ class FormHelper extends AppHelper {
 			$this->fields = array();
 		}
 		$this->setEntity(null);
-		$out .= $this->Html->tags['formend'];
+		$out .= $this->Html->useTag('formend');
 
 		$this->_View->modelScope = false;
 		return $out;
@@ -407,8 +406,7 @@ class FormHelper extends AppHelper {
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand()
 		));
-		$out = sprintf($this->Html->tags['block'], ' style="display:none;"', $out);
-		return $out;
+		return $this->Html->useTag('block', ' style="display:none;"', $out);
 	}
 
 /**
@@ -562,11 +560,7 @@ class FormHelper extends AppHelper {
 			$labelFor = $this->domId($fieldName);
 		}
 
-		return sprintf(
-			$this->Html->tags['label'],
-			$labelFor,
-			$this->_parseAttributes($options), $text
-		);
+		return $this->Html->useTag('label', $labelFor, $options, $text);
 	}
 
 /**
@@ -657,13 +651,9 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($fieldset && $legend) {
-			return sprintf(
-				$this->Html->tags['fieldset'],
-				$fieldsetClass,
-				sprintf($this->Html->tags['legend'], $legend) . $out
-			);
+			return $this->Html->useTag('fieldset', $fieldsetClass, $this->Html->useTag('legend', $legend) . $out);
 		} elseif ($fieldset) {
-			return sprintf($this->Html->tags['fieldset'], $fieldsetClass, $out);
+			return $this->Html->useTag('fieldset', $fieldsetClass, $out);
 		} else {
 			return $out;
 		}
@@ -1019,11 +1009,7 @@ class FormHelper extends AppHelper {
 		}
 		unset($options['hiddenField']);
 
-		return $output . sprintf(
-			$this->Html->tags['checkbox'],
-			$options['name'],
-			$this->_parseAttributes($options, array('name'), null, ' ')
-		);
+		return $output . $this->Html->useTag('checkbox', $options['name'], array_diff_key($options, array('name' => '')));
 	}
 
 /**
@@ -1085,20 +1071,17 @@ class FormHelper extends AppHelper {
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
-			$parsedOptions = $this->_parseAttributes(
-				array_merge($attributes, $optionsHere),
-				array('name', 'type', 'id'), '', ' '
-			);
 			$tagName = Inflector::camelize(
 				$attributes['id'] . '_' . Inflector::slug($optValue)
 			);
 
 			if ($label) {
-				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optTitle);
+				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
 			}
-			$out[] =  sprintf(
-				$this->Html->tags['radio'], $attributes['name'],
-				$tagName, $parsedOptions, $optTitle
+			$allOptions = array_merge($attributes, $optionsHere);
+			$out[] = $this->Html->useTag('radio', $attributes['name'], $tagName,
+				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
+				$optTitle
 			);
 		}
 		$hidden = null;
@@ -1113,10 +1096,7 @@ class FormHelper extends AppHelper {
 		$out = $hidden . implode($inbetween, $out);
 
 		if ($legend) {
-			$out = sprintf(
-				$this->Html->tags['fieldset'], '',
-				sprintf($this->Html->tags['legend'], $legend) . $out
-			);
+			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $out);
 		}
 		return $out;
 	}
@@ -1154,11 +1134,7 @@ class FormHelper extends AppHelper {
 			$options['type'] = $method;
 		}
 		$options = $this->_initInputField($params[0], $options);
-		return sprintf(
-			$this->Html->tags['input'],
-			$options['name'],
-			$this->_parseAttributes($options, array('name'), null, ' ')
-		);
+		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => '')));
 	}
 
 /**
@@ -1185,12 +1161,7 @@ class FormHelper extends AppHelper {
 			}
 			unset($options['value']);
 		}
-		return sprintf(
-			$this->Html->tags['textarea'],
-			$options['name'],
-			$this->_parseAttributes($options, array('type', 'name'), null, ' '),
-			$value
-		);
+		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => '', 'name' => '')), $value);
 	}
 
 /**
@@ -1218,11 +1189,7 @@ class FormHelper extends AppHelper {
 			$this->__secure(null, '' . $options['value']);
 		}
 
-		return sprintf(
-			$this->Html->tags['hidden'],
-			$options['name'],
-			$this->_parseAttributes($options, array('name', 'class'), '', ' ')
-		);
+		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '', 'class' => '')));
 	}
 
 /**
@@ -1243,8 +1210,7 @@ class FormHelper extends AppHelper {
 			$this->__secure(array_merge($field, array($suffix)));
 		}
 
-		$attributes = $this->_parseAttributes($options, array('name'), '', ' ');
-		return sprintf($this->Html->tags['file'], $options['name'], $attributes);
+		return $this->Html->useTag('file', $options['name'], array_diff_key($options, array('name' => '')));
 	}
 
 /**
@@ -1266,12 +1232,7 @@ class FormHelper extends AppHelper {
 		if ($options['escape']) {
 			$title = h($title);
 		}
-		return sprintf(
-			$this->Html->tags['button'],
-			$options['type'],
-			$this->_parseAttributes($options, array('type'), ' ', ''),
-			$title
-		);
+		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
 	}
 
 /**
@@ -1408,11 +1369,7 @@ class FormHelper extends AppHelper {
 
 		if (strpos($caption, '://') !== false) {
 			unset($options['type']);
-			$out .=  $before . sprintf(
-				$this->Html->tags['submitimage'],
-				$caption,
-				$this->_parseAttributes($options, null, '', ' ')
-			) . $after;
+			$out .= $before . $this->Html->useTag('submitimage', $caption, $options) . $after;
 		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption)) {
 			unset($options['type']);
 			if ($caption{0} !== '/') {
@@ -1421,17 +1378,10 @@ class FormHelper extends AppHelper {
 				$caption = trim($caption, '/');
 				$url = $this->webroot($caption);
 			}
-			$out .= $before . sprintf(
-				$this->Html->tags['submitimage'],
-				$url,
-				$this->_parseAttributes($options, null, '', ' ')
-			) . $after;
+			$out .= $before . $this->Html->useTag('submitimage', $url, $options) . $after;
 		} else {
 			$options['value'] = $caption;
-			$out .= $before . sprintf(
-				$this->Html->tags['submit'],
-				$this->_parseAttributes($options, null, '', ' ')
-			). $after;
+			$out .= $before . $this->Html->useTag('submit', $options) . $after;
 		}
 
 		if (isset($divOptions)) {
@@ -1524,7 +1474,7 @@ class FormHelper extends AppHelper {
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
 			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
 			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
-			$tag = $this->Html->tags[$template];
+			$tag = $template;
 			$hiddenAttributes = array(
 				'value' => '',
 				'id' => $attributes['id'] . ($style ? '' : '_'),
@@ -1533,16 +1483,14 @@ class FormHelper extends AppHelper {
 			);
 			$select[] = $this->hidden(null, $hiddenAttributes);
 		} else {
-			$tag = $this->Html->tags['selectstart'];
+			$tag = 'selectstart';
 		}
 
 		if (!empty($tag) || isset($template)) {
 			if (!isset($secure) || $secure == true) {
 				$this->__secure();
 			}
-			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes(
-				$attributes, array('name', 'value'))
-			);
+			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
 		}
 		$emptyMulti = (
 			$showEmpty !== null && $showEmpty !== false && !(
@@ -1566,7 +1514,7 @@ class FormHelper extends AppHelper {
 		));
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
-		$select[] = $this->Html->tags[$template];
+		$select[] = $this->Html->useTag($template);
 		return implode("\n", $select);
 	}
 
@@ -2057,9 +2005,9 @@ class FormHelper extends AppHelper {
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
 				if (!empty($name)) {
 					if ($attributes['style'] === 'checkbox') {
-						$select[] = $this->Html->tags['fieldsetend'];
+						$select[] = $this->Html->useTag('fieldsetend');
 					} else {
-						$select[] = $this->Html->tags['optiongroupend'];
+						$select[] = $this->Html->useTag('optiongroupend');
 					}
 					$parents[] = $name;
 				}
@@ -2070,9 +2018,9 @@ class FormHelper extends AppHelper {
 				if (!empty($name)) {
 					$name = $attributes['escape'] ? h($name) : $name;
 					if ($attributes['style'] === 'checkbox') {
-						$select[] = sprintf($this->Html->tags['fieldsetstart'], $name);
+						$select[] = $this->Html->useTag('fieldsetstart', $name);
 					} else {
-						$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
+						$select[] = $this->Html->useTag('optiongroup', $name, '');
 					}
 				}
 				$name = null;
@@ -2117,16 +2065,10 @@ class FormHelper extends AppHelper {
 							$attributes['class'] = 'checkbox';
 						}
 						$label = $this->label(null, $title, $label);
-						$item = sprintf(
-							$this->Html->tags['checkboxmultiple'], $name,
-							$this->_parseAttributes($htmlOptions)
-						);
+						$item = $this->Html->useTag('checkboxmultiple', $name, $htmlOptions);
 						$select[] = $this->Html->div($attributes['class'], $item . $label);
 					} else {
-						$select[] = sprintf(
-							$this->Html->tags['selectoption'],
-							$name, $this->_parseAttributes($htmlOptions), $title
-						);
+						$select[] = $this->Html->useTag('selectoption', $name, $htmlOptions, $title);
 					}
 				}
 			}
