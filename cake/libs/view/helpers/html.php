@@ -122,6 +122,7 @@ class HtmlHelper extends AppHelper {
 		'html4-strict'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
 		'html4-trans'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
 		'html4-frame'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
+		'html5' => '<!DOCTYPE html>',
 		'xhtml-strict' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
 		'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
 		'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
@@ -149,6 +150,7 @@ class HtmlHelper extends AppHelper {
  *  - html4-strict:  HTML4 Strict.
  *  - html4-trans:  HTML4 Transitional.
  *  - html4-frame:  HTML4 Frameset.
+ *  - html5: HTML5.
  *  - xhtml-strict: XHTML1 Strict.
  *  - xhtml-trans: XHTML1 Transitional.
  *  - xhtml-frame: XHTML1 Frameset.
