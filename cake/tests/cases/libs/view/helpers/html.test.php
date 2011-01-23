@@ -47,6 +47,50 @@ class TheHtmlTestController extends Controller {
 	public $uses = null;
 }
 
+class TestHtmlHelper extends HtmlHelper {
+/**
+ * expose a method as public
+ *
+ * @param string $options 
+ * @param string $exclude 
+ * @param string $insertBefore 
+ * @param string $insertAfter 
+ * @return void
+ */
+	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
+	}
+}
+
+/**
+ * Html5TestHelper class
+ *
+ * @package       cake.tests.cases.libs.view.helpers
+ */
+class Html5TestHelper extends TestHtmlHelper {
+
+/**
+ * Minimized
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array('require', 'checked');
+
+/**
+ * Allow compact use in HTML
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s';
+
+/**
+ * Test to attribute format
+ *
+ * @var string
+ */
+	protected $_attributeFormat = 'data-%s="%s"';
+}
+
 /**
  * HtmlHelperTest class
  *
@@ -1312,4 +1356,31 @@ class HtmlHelperTest extends CakeTestCase {
 			)
 		);
 	}
+
+/**
+ * test parsing attributes.
+ *
+ * @return void
+ */
+	function testParseAttributeCompact() {
+		$helper = new TestHtmlHelper($this->View);
+		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
+			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+		
+		foreach ($compact as $attribute) {
+			foreach (array('true', true, 1, '1', $attribute) as $value) {
+				$attrs = array($attribute => $value);
+				$expected = ' ' . $attribute . '="' . $attribute . '"';
+				$this->assertEqual($helper->parseAttributes($attrs), $expected, '%s Failed on ' . $value);
+			}
+		}
+		$this->assertEqual($helper->parseAttributes(array('compact')), ' compact="compact"');
+
+		$helper = new Html5TestHelper($this->View);
+		$expected = ' require';
+		$this->assertEqual($helper->parseAttributes(array('require')), $expected);
+		$this->assertEqual($helper->parseAttributes(array('require' => true)), $expected);
+		$this->assertEqual($helper->parseAttributes(array('require' => false)), '');
+	}
+
 }
