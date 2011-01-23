@@ -106,30 +106,6 @@ class Helper extends Object {
 	protected $_View;
 
 /**
- * Minimized attributes
- *
- * @var array
- */
-	protected $_minimizedAttributes = array(
-		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
-		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize'
-	);
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_attributeFormat = '%s="%s"';
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_minimizedAttributeFormat = '%s="%s"';
-
-/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -196,22 +172,6 @@ class Helper extends Object {
 				return $this->request->params['action'] = $value;
 		}
 		return $this->{$name} = $value;
-	}
-
-/**
- * Parses tag templates into $this->tags.
- *
- * @param $name file name inside app/config to load.
- * @return array merged tags from config/$name.php
- */
-	public function loadConfig($name = 'tags') {
-		if (file_exists(CONFIGS . $name .'.php')) {
-			require(CONFIGS . $name .'.php');
-			if (isset($tags)) {
-				$this->tags = array_merge($this->tags, $tags);
-			}
-		}
-		return $this->tags;
 	}
 
 /**
@@ -328,94 +288,6 @@ class Helper extends Object {
 		$this->__tainted = $output;
 		$this->__clean();
 		return $this->__cleaned;
-	}
-
-/**
- * Returns a space-delimited string with items of the $options array. If a
- * key of $options array happens to be one of:
- *
- * - 'compact'
- * - 'checked'
- * - 'declare'
- * - 'readonly'
- * - 'disabled'
- * - 'selected'
- * - 'defer'
- * - 'ismap'
- * - 'nohref'
- * - 'noshade'
- * - 'nowrap'
- * - 'multiple'
- * - 'noresize'
- *
- * And its value is one of:
- *
- * - '1' (string)
- * - 1 (integer)
- * - true (boolean)
- * - 'true' (string)
- *
- * Then the value will be reset to be identical with key's name.
- * If the value is not one of these 3, the parameter is not output.
- *
- * 'escape' is a special option in that it controls the conversion of
- *  attributes to their html-entity encoded equivalents.  Set to false to disable html-encoding.
- *
- * If value for any option key is set to `null` or `false`, that option will be excluded from output.
- *
- * @param array $options Array of options.
- * @param array $exclude Array of options to be excluded, the options here will not be part of the return.
- * @param string $insertBefore String to be inserted before options.
- * @param string $insertAfter String to be inserted after options.
- * @return string Composed attributes.
- */
-	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		if (is_array($options)) {
-			$options = array_merge(array('escape' => true), $options);
-
-			if (!is_array($exclude)) {
-				$exclude = array();
-			}
-			$filtered = array_diff_key($options, array_merge(array_flip($exclude), array('escape' => true)));
-			$escape = $options['escape'];
-			$attributes = array();
-
-			foreach ($filtered as $key => $value) {
-				if ($value !== false && $value !== null) {
-					$attributes[] = $this->_formatAttribute($key, $value, $escape);
-				}
-			}
-			$out = implode(' ', $attributes);
-		} else {
-			$out = $options;
-		}
-		return $out ? $insertBefore . $out . $insertAfter : '';
-	}
-
-/**
- * Formats an individual attribute, and returns the string value of the composed attribute.
- * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
- *
- * @param string $key The name of the attribute to create
- * @param string $value The value of the attribute to create.
- * @return string The composed attribute.
- */
-	protected function _formatAttribute($key, $value, $escape = true) {
-		$attribute = '';
-		if (is_array($value)) {
-			$value = '';
-		}
-
-		if (is_numeric($key)) {
-			$attribute = sprintf($this->_minimizedAttributeFormat, $value, $value);
-		} elseif (in_array($key, $this->_minimizedAttributes)) {
-			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
-				$attribute = sprintf($this->_minimizedAttributeFormat, $key, $key);
-			}
-		} else {
-			$attribute = sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
-		}
-		return $attribute;
 	}
 
 /**
