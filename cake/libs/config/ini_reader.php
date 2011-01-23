@@ -77,7 +77,12 @@ class IniReader implements ConfigReaderInterface {
 		} else {
 			$values = array();
 			foreach ($contents as $section => $attribs) {
-				$values[$section] = $this->_parseNestedValues($attribs);
+				if (is_array($attribs)) {
+					$values[$section] = $this->_parseNestedValues($attribs);
+				} else {
+					$parse = $this->_parseNestedValues(array($attribs));
+					$values[$section] = array_shift($parse);
+				}
 			}
 		}
 		return $values;
