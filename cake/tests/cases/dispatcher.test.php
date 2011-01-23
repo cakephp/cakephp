@@ -1143,6 +1143,42 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 	}
 /**
+ * test baseUrl with no rewrite and using the top level index.php.
+ *
+ * @return void
+ */
+	function testBaseUrlNoRewriteTopLevelIndex() {
+		$Dispatcher =& new Dispatcher();
+
+		Configure::write('App.baseUrl', '/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
+
+		$result = $Dispatcher->baseUrl();
+		$this->assertEqual('/index.php', $result);
+		$this->assertEqual('/app/webroot/', $Dispatcher->webroot);
+		$this->assertEqual('', $Dispatcher->base);
+	}
+
+/**
+ * test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
+ *
+ * @return void
+ */
+	function testBaseUrlNoRewriteWebrootIndex() {
+		$Dispatcher =& new Dispatcher();
+
+		Configure::write('App.baseUrl', '/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/app/webroot';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/app/webroot/index.php';
+
+		$result = $Dispatcher->baseUrl();
+		$this->assertEqual('/index.php', $result);
+		$this->assertEqual('/', $Dispatcher->webroot);
+		$this->assertEqual('', $Dispatcher->base);
+	}
+
+/**
  * testBaseUrlAndWebrootWithBase method
  *
  * @access public
@@ -2045,7 +2081,7 @@ class DispatcherTest extends CakeTestCase {
 			'IIS' => array(
 				'No rewrite base path' => array(
 					'App' => array('base' => false, 'baseUrl' => '/index.php?', 'server' => 'IIS'),
-					'SERVER' => array('HTTPS' => 'off', 'SCRIPT_NAME' => '/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '', 'REMOTE_ADDR' => '127.0.0.1', 'REMOTE_HOST' => '127.0.0.1', 'REQUEST_METHOD' => 'GET', 'SERVER_NAME' => 'localhost', 'SERVER_PORT' => '80', 'SERVER_PROTOCOL' => 'HTTP/1.1', 'SERVER_SOFTWARE' => 'Microsoft-IIS/5.1', 'APPL_PHYSICAL_PATH' => 'C:\\Inetpub\\wwwroot\\', 'REQUEST_URI' => '/index.php', 'URL' => '/index.php', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'ORIG_PATH_INFO' => '/index.php', 'PATH_INFO' => '', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/index.php', 'HTTP_ACCEPT' => '*/*', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_CONNECTION' => 'Keep-Alive', 'HTTP_HOST' => 'localhost', 'HTTP_USER_AGENT' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'argv' => array(), 'argc' => 0),
+					'SERVER' => array('HTTPS' => 'off', 'SCRIPT_NAME' => '/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '', 'REMOTE_ADDR' => '127.0.0.1', 'REMOTE_HOST' => '127.0.0.1', 'REQUEST_METHOD' => 'GET', 'SERVER_NAME' => 'localhost', 'SERVER_PORT' => '80', 'SERVER_PROTOCOL' => 'HTTP/1.1', 'APPL_PHYSICAL_PATH' => 'C:\\Inetpub\\wwwroot\\', 'REQUEST_URI' => '/index.php', 'URL' => '/index.php', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'ORIG_PATH_INFO' => '/index.php', 'PATH_INFO' => '', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/index.php', 'HTTP_HOST' => 'localhost', 'argv' => array(), 'argc' => 0),
 					'reload' => true,
 					'path' => ''
 				),
@@ -2084,18 +2120,54 @@ class DispatcherTest extends CakeTestCase {
 			'Apache' => array(
 				'No rewrite base path' => array(
 					'App' => array('base' => false, 'baseUrl' => '/index.php', 'dir' => 'app', 'webroot' => 'webroot'),
-					'SERVER' => array('SERVER_NAME' => 'localhost', 'SERVER_ADDR' => '::1', 'SERVER_PORT' => '80', 'REMOTE_ADDR' => '::1', 'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 'REQUEST_METHOD' => 'GET', 'QUERY_STRING' => '', 'REQUEST_URI' => '/', 'SCRIPT_NAME' => '/index.php', 'PHP_SELF' => '/index.php', 'argv' => array(), 'argc' => 0),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost',
+						'SERVER_ADDR' => '::1',
+						'SERVER_PORT' => '80',
+						'REMOTE_ADDR' => '::1',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php',
+						'QUERY_STRING' => '',
+						'REQUEST_URI' => '/',
+						'SCRIPT_NAME' => '/index.php',
+						'PHP_SELF' => '/index.php',
+						'argv' => array(),
+						'argc' => 0
+					),
 					'reload' => true,
 					'path' => ''
 				),
 				'No rewrite with path' => array(
-					'SERVER' => array('UNIQUE_ID' => 'VardGqn@17IAAAu7LY8AAAAK', 'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) AppleWebKit/523.10.5 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6', 'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'HTTP_CONNECTION' => 'keep-alive', 'HTTP_HOST' => 'localhost', 'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php', 'QUERY_STRING' => '', 'REQUEST_URI' => '/index.php/posts/add', 'SCRIPT_NAME' => '/index.php', 'PATH_INFO' => '/posts/add', 'PHP_SELF' => '/index.php/posts/add', 'argv' => array(), 'argc' => 0),
+					'SERVER' => array(
+						'HTTP_HOST' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php',
+						'QUERY_STRING' => '',
+						'REQUEST_URI' => '/index.php/posts/add',
+						'SCRIPT_NAME' => '/index.php',
+						'PATH_INFO' => '/posts/add',
+						'PHP_SELF' => '/index.php/posts/add', 
+						'argv' => array(),
+						'argc' => 0),
 					'reload' => false,
 					'path' => '/posts/add'
 				),
 				'GET Request at base domain' => array(
 					'App' => array('base' => false, 'baseUrl' => null, 'dir' => 'app', 'webroot' => 'webroot'),
-					'SERVER'	=> array('UNIQUE_ID' => '2A-v8sCoAQ8AAAc-2xUAAAAB', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'HTTP_COOKIE' => 'CAKEPHP=jcbv51apn84kd9ucv5aj2ln3t3', 'HTTP_CONNECTION' => 'keep-alive', 'HTTP_HOST' => 'cake.1.2', 'SERVER_NAME' => 'cake.1.2', 'SERVER_ADDR' => '127.0.0.1', 'SERVER_PORT' => '80', 'REMOTE_ADDR' => '127.0.0.1', 'DOCUMENT_ROOT' => '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x/app/webroot', 'SERVER_ADMIN' => 'you@example.com', 'SCRIPT_FILENAME' => '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x/app/webroot/index.php', 'REMOTE_PORT' => '53550', 'GATEWAY_INTERFACE' => 'CGI/1.1', 'SERVER_PROTOCOL' => 'HTTP/1.1', 'REQUEST_METHOD' => 'GET', 'QUERY_STRING' => 'a=b', 'REQUEST_URI' => '/?a=b', 'SCRIPT_NAME' => '/index.php', 'PHP_SELF' => '/index.php'),
+					'SERVER'	=> array(
+						'HTTP_HOST' => 'cake.1.2',
+						'SERVER_NAME' => 'cake.1.2',
+						'SERVER_ADDR' => '127.0.0.1',
+						'SERVER_PORT' => '80',
+						'REMOTE_ADDR' => '127.0.0.1',
+						'DOCUMENT_ROOT' => '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x/app/webroot',
+						'SCRIPT_FILENAME' => '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x/app/webroot/index.php',
+						'REMOTE_PORT' => '53550',
+						'QUERY_STRING' => 'a=b',
+						'REQUEST_URI' => '/?a=b',
+						'SCRIPT_NAME' => '/index.php',
+						'PHP_SELF' => '/index.php'
+					),
 					'GET' => array('a' => 'b'),
 					'POST' => array(),
 					'reload' => true,
@@ -2105,7 +2177,19 @@ class DispatcherTest extends CakeTestCase {
 				),
 				'New CGI no mod_rewrite' => array(
 					'App' => array('base' => false, 'baseUrl' => '/limesurvey20/index.php', 'dir' => 'app', 'webroot' => 'webroot'),
-					'SERVER' => array('DOCUMENT_ROOT' => '/home/.sites/110/site313/web', 'PATH_INFO' => '/installations', 'PATH_TRANSLATED' => '/home/.sites/110/site313/web/limesurvey20/index.php', 'PHPRC' => '/home/.sites/110/site313', 'QUERY_STRING' => '', 'REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/limesurvey20/index.php/installations', 'SCRIPT_FILENAME' => '/home/.sites/110/site313/web/limesurvey20/index.php', 'SCRIPT_NAME' => '/limesurvey20/index.php', 'SCRIPT_URI' => 'http://www.gisdat-umfragen.at/limesurvey20/index.php/installations', 'PHP_SELF' => '/limesurvey20/index.php/installations', 'CGI_MODE' => true),
+					'SERVER' => array(
+						'DOCUMENT_ROOT' => '/home/.sites/110/site313/web',
+						'PATH_INFO' => '/installations',
+						'PATH_TRANSLATED' => '/home/.sites/110/site313/web/limesurvey20/index.php',
+						'PHPRC' => '/home/.sites/110/site313',
+						'QUERY_STRING' => '',
+						'REQUEST_URI' => '/limesurvey20/index.php/installations',
+						'SCRIPT_FILENAME' => '/home/.sites/110/site313/web/limesurvey20/index.php',
+						'SCRIPT_NAME' => '/limesurvey20/index.php',
+						'SCRIPT_URI' => 'http://www.gisdat-umfragen.at/limesurvey20/index.php/installations',
+						'PHP_SELF' => '/limesurvey20/index.php/installations',
+						'CGI_MODE' => true
+					),
 					'GET' => array(),
 					'POST' => array(),
 					'reload' => true,
