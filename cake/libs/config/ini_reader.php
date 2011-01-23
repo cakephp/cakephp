@@ -71,6 +71,12 @@ class IniReader implements ConfigReaderInterface {
  */
 	public function read($file) {
 		$filename = $this->_path . $file;
+		if (!file_exists($filename)) {
+			$filename .= '.ini';
+			if (!file_exists($filename)) {
+				throw new ConfigureException(__('Could not load configuration files: %s or %s', substr($filename, 0, -4), $filename));
+			}
+		}
 		$contents = parse_ini_file($filename, true);
 		if (!empty($this->_section) && isset($contents[$this->_section])) {
 			$values = $this->_parseNestedValues($contents[$this->_section]);

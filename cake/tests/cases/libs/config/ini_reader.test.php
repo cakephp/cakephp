@@ -114,4 +114,15 @@ class IniReaderTest extends CakeTestCase {
 
 		$this->assertFalse($config['bools']['test_null']);
 	}
+
+/**
+ * test read file without extension
+ *
+ * @return void
+ */
+	public function testReadingWithoutExtension() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('nested');
+		$this->assertTrue($config['bools']['test_on']);
+	}
 }
