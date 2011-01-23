@@ -1400,11 +1400,11 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->Html->getAttribute('_minimizedAttributeFormat'), 'format');
 
-		$this->expectError();
+		$this->expectException('ConfigureException');
 		$result = $this->Html->loadConfig('wrong_file');
 		$this->assertFalse($result);
 
-		$this->expectError();
+		$this->expectException('ConfigureException');
 		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 		$this->assertFalse($result);
 	}

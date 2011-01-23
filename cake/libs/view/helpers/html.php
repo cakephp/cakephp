@@ -937,34 +937,30 @@ class HtmlHelper extends AppHelper {
 				$reader = $configFile[1];
 			}
 		} else {
-			return trigger_error(__('Cannot load the configuration file. Wrong "configFile" configuration.'), E_USER_NOTICE);
+			throw new ConfigureException(__('Cannot load the configuration file. Wrong "configFile" configuration.'));
 		}
 
 		$readerClass = Inflector::camelize($reader) . 'Reader';
 		if (!App::import('Lib', 'config/' . $readerClass)) {
-			return trigger_error(__('Cannot load the configuration file. Unknown reader.'), E_USER_NOTICE);
+			throw new ConfigureException(__('Cannot load the configuration file. Unknown reader.'));
 		}
 
-		try {
-			$readerObj = new $readerClass($path);
-			$configs = $readerObj->read($file);
-			if (isset($configs['tags']) && is_array($configs['tags'])) {
-				$this->_tags = array_merge($this->_tags, $configs['tags']);
-			}
-			if (isset($configs['minimizedAttributes']) && is_array($configs['minimizedAttributes'])) {
-				$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
-			}
-			if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
-				$this->__docTypes = array_merge($this->__docTypes, $configs['docTypes']);
-			}
-			if (isset($configs['attributeFormat'])) {
-				$this->_attributeFormat = $configs['attributeFormat'];
-			}
-			if (isset($configs['minimizedAttributeFormat'])) {
-				$this->_minimizedAttributeFormat = $configs['minimizedAttributeFormat'];
-			}
-		} catch (Exception $e) {
-			return trigger_error(__('Cannot load the configuration file. Failed to load the file.'), E_USER_NOTICE);
+		$readerObj = new $readerClass($path);
+		$configs = $readerObj->read($file);
+		if (isset($configs['tags']) && is_array($configs['tags'])) {
+			$this->_tags = array_merge($this->_tags, $configs['tags']);
+		}
+		if (isset($configs['minimizedAttributes']) && is_array($configs['minimizedAttributes'])) {
+			$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
+		}
+		if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
+			$this->__docTypes = array_merge($this->__docTypes, $configs['docTypes']);
+		}
+		if (isset($configs['attributeFormat'])) {
+			$this->_attributeFormat = $configs['attributeFormat'];
+		}
+		if (isset($configs['minimizedAttributeFormat'])) {
+			$this->_minimizedAttributeFormat = $configs['minimizedAttributeFormat'];
 		}
 		return $configs;
 	}
