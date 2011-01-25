@@ -1399,14 +1399,27 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->Html->getAttribute('_minimizedAttributeFormat'), 'format');
+	}
 
-		$this->expectException('ConfigureException');
+/**
+ * testLoadConfigWrongFile method
+ *
+ * @return void
+ * @expectedException ConfigureException
+ */
+	public function testLoadConfigWrongFile() {
 		$result = $this->Html->loadConfig('wrong_file');
-		$this->assertFalse($result);
+	}
 
-		$this->expectException('ConfigureException');
+/**
+ * testLoadConfigWrongReader method
+ *
+ * @return void
+ * @expectedException ConfigureException
+ */
+	public function testLoadConfigWrongReader() {
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
 		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
-		$this->assertFalse($result);
 	}
 
 /**
