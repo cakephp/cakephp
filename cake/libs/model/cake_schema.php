@@ -27,14 +27,6 @@ App::import('Core', 'ConnectionManager');
 class CakeSchema extends Object {
 
 /**
- * Name of the App Schema
- *
- * @var string
- * @access public
- */
-	public $name = null;
-
-/**
  * Path to write location
  *
  * @var string
@@ -337,8 +329,6 @@ class CakeSchema extends Object {
 
 		$out = "class {$name}Schema extends CakeSchema {\n";
 
-		$out .= "\tvar \$name = '{$name}';\n\n";
-
 		if ($path !== $this->path) {
 			$out .= "\tvar \$path = '{$path}';\n\n";
 		}
@@ -350,8 +340,6 @@ class CakeSchema extends Object {
 		if ($connection !== 'default') {
 			$out .= "\tvar \$connection = '{$connection}';\n\n";
 		}
-
-		$out .= "\tfunction before(\$event = array()) {\n\t\treturn true;\n\t}\n\n\tfunction after(\$event = array()) {\n\t}\n\n";
 
 		if (empty($tables)) {
 			$this->read();
