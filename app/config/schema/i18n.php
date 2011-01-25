@@ -27,15 +27,6 @@
  */
 class i18nSchema extends CakeSchema {
 
-	public $name = 'i18n';
-
-	function before($event = array()) {
-		return true;
-	}
-
-	function after($event = array()) {
-	}
-
 	public $i18n = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 			'locale' => array('type'=>'string', 'null' => false, 'length' => 6, 'key' => 'index'),

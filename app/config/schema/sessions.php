@@ -27,15 +27,6 @@
  */
 class SessionsSchema extends CakeSchema {
 
-	public $name = 'Sessions';
-
-	function before($event = array()) {
-		return true;
-	}
-
-	function after($event = array()) {
-	}
-
 	public $cake_sessions = array(
 			'id' => array('type'=>'string', 'null' => false, 'key' => 'primary'),
 			'data' => array('type'=>'text', 'null' => true, 'default' => NULL),

@@ -27,14 +27,6 @@ App::import('Core', 'ConnectionManager');
 class CakeSchema extends Object {
 
 /**
- * Name of the App Schema
- *
- * @var string
- * @access public
- */
-	public $name = null;
-
-/**
  * Path to write location
  *
  * @var string
@@ -336,8 +328,6 @@ class CakeSchema extends Object {
 		));
 
 		$out = "class {$name}Schema extends CakeSchema {\n";
-
-		$out .= "\tvar \$name = '{$name}';\n\n";
 
 		if ($path !== $this->path) {
 			$out .= "\tvar \$path = '{$path}';\n\n";
