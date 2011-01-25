@@ -65,11 +65,11 @@ class AuthComponent extends Component {
  *
  * Using the class name without 'Authenticate' as the key, you can pass in an array of settings for each
  * authentication object.  Additionally you can define settings that should be set to all authentications objects
- * using the '*' key:
+ * using the 'all' key:
  *
  * {{{
  *	$this->Auth->authenticate = array(
- *		'*' => array(
+ *		'all' => array(
  *			'userModel' => 'Users.User',
  *			'scope' => array('User.active' => 1)
  *		),
@@ -77,6 +77,8 @@ class AuthComponent extends Component {
  *		'Basic'
  *	);
  * }}}
+ *
+ * You can also use AuthComponent::ALL instead of the string 'all'.
  *
  * @var array
  * @link http://book.cakephp.org/view/1278/authenticate
@@ -104,17 +106,19 @@ class AuthComponent extends Component {
  *
  * Using the class name without 'Authorize' as the key, you can pass in an array of settings for each
  * authorization object.  Additionally you can define settings that should be set to all authorization objects
- * using the '*' key:
+ * using the 'all' key:
  *
  * {{{
  *	$this->Auth->authorize = array(
- *		'*' => array(
+ *		'all' => array(
  *			'actionPath' => 'controllers/'
  *		),
  *		'Crud',
  *		'CustomAuth'
  *	);
  * }}}
+ *
+ * You can also use AuthComponent::ALL instead of the string 'all'
  *
  * @var mixed
  * @link http://book.cakephp.org/view/1275/authorize
