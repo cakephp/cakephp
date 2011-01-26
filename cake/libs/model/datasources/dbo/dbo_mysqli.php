@@ -59,13 +59,6 @@ class DboMysqli extends DboMysqlBase {
 		$config = $this->config;
 		$this->connected = false;
 
-		if (is_numeric($config['port'])) {
-			$config['socket'] = null;
-		} else {
-			$config['socket'] = $config['port'];
-			$config['port'] = null;
-		}
-
 		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port'], $config['socket']);
 
 		if ($this->connection !== false) {

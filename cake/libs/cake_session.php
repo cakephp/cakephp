@@ -751,6 +751,9 @@ class CakeSession extends Object {
  * @access private
  */
 	function __write($id, $data) {
+		if (!$id) {
+			return false;
+		}
 		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins();
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(array($model->primaryKey => $id) + compact('data', 'expires'));

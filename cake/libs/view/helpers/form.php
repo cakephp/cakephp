@@ -1007,7 +1007,10 @@ class FormHelper extends AppHelper {
 
 		if (empty($options['value'])) {
 			$options['value'] = 1;
-		} elseif (!empty($value) && $value === $options['value']) {
+		} elseif (
+			(!isset($options['checked']) && !empty($value) && $value === $options['value']) ||
+			!empty($options['checked'])
+		) {
 			$options['checked'] = 'checked';
 		}
 		if ($options['hiddenField']) {
@@ -1957,7 +1960,7 @@ class FormHelper extends AppHelper {
 			}
 
 			$view = ClassRegistry::getObject('view');
-			$name = $view->field;
+			$name = !empty($view->field) ? $view->field : $view->model;
 			if (!empty($view->fieldSuffix)) {
 				$name .= '[' . $view->fieldSuffix . ']';
 			}

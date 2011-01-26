@@ -202,6 +202,7 @@ class RequestHandlerComponent extends Object {
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
+		$this->params = $controller->params;
 		$this->_set($settings);
 	}
 
@@ -738,7 +739,7 @@ class RequestHandlerComponent extends Object {
 			if (!empty($options['attachment'])) {
 				$this->_header("Content-Disposition: attachment; filename=\"{$options['attachment']}\"");
 			}
-			if (Configure::read() < 2 && !defined('CAKEPHP_SHELL')) {
+			if (Configure::read() < 2 && !defined('CAKEPHP_SHELL') && empty($this->params['requested'])) {
 				$this->_header($header);
 			}
 			$this->__responseTypeSet = $cType;

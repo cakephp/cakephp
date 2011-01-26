@@ -264,9 +264,9 @@ class Dispatcher extends Object {
 		$namedExpressions = Router::getNamedExpressions();
 		extract($namedExpressions);
 		include CONFIGS . 'routes.php';
-		$params = array_merge(Router::parse($fromUrl), $params);
+		$params = array_merge(array('controller' => '', 'action' => ''), Router::parse($fromUrl), $params);
 
-		if (strlen($params['action']) === 0) {
+		if (empty($params['action'])) {
 			$params['action'] = 'index';
 		}
 		if (isset($params['form']['data'])) {
@@ -357,9 +357,13 @@ class Dispatcher extends Object {
 		if ($base === DS || $base === '.') {
 			$base = '';
 		}
-		$this->webroot = $base .'/';
+		$this->webroot = $base . '/';
 
-		if (!empty($base)) {
+		$docRoot = env('DOCUMENT_ROOT');
+		$script = realpath(env('SCRIPT_FILENAME'));
+		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
+
+		if (!empty($base) || !$docRootContainsWebroot) {
 			if (strpos($this->webroot, $dir) === false) {
 				$this->webroot .= $dir . '/' ;
 			}
