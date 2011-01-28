@@ -53,6 +53,64 @@ class TheHtmlTestController extends Controller {
 	public $uses = null;
 }
 
+class TestHtmlHelper extends HtmlHelper {
+/**
+ * expose a method as public
+ *
+ * @param string $options 
+ * @param string $exclude 
+ * @param string $insertBefore 
+ * @param string $insertAfter 
+ * @return void
+ */
+	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
+	}
+
+/**
+ * Get a protected attribute value
+ *
+ * @param string $attribute
+ * @return mixed
+ */
+	public function getAttribute($attribute) {
+		if (!isset($this->{$attribute})) {
+			return null;
+		}
+		return $this->{$attribute};
+	}
+
+}
+
+/**
+ * Html5TestHelper class
+ *
+ * @package       cake.tests.cases.libs.view.helpers
+ */
+class Html5TestHelper extends TestHtmlHelper {
+
+/**
+ * Minimized
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array('require', 'checked');
+
+/**
+ * Allow compact use in HTML
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s';
+
+/**
+ * Test to attribute format
+ *
+ * @var string
+ */
+	protected $_attributeFormat = 'data-%s="%s"';
+}
+
 /**
  * HtmlHelperTest class
  *
@@ -90,7 +148,7 @@ class HtmlHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
-		$this->Html = new HtmlHelper($this->View);
+		$this->Html = new TestHtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
 
@@ -1238,6 +1296,22 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testUseTag method
+ *
+ * @return void
+ */
+	public function testUseTag() {
+		$result = $this->Html->useTag('formend');
+		$this->assertTags($result, '/form');
+
+		$result = $this->Html->useTag('form', 'test');
+		$this->assertEqual($result, '<form test>');
+
+		$result = $this->Html->useTag('form', array('test' => 'ok'));
+		$this->assertTags($result, array('form' => array('test' => 'ok')));
+	}
+
+/**
  * testDiv method
  *
  * @access public
@@ -1302,4 +1376,82 @@ class HtmlHelperTest extends CakeTestCase {
 			)
 		);
 	}
+
+/**
+ * testLoadConfig method
+ *
+ * @return void
+ */
+
+	public function testLoadConfig() {
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
+
+		$result = $this->Html->loadConfig('htmlhelper_tags', $path);
+		$expected = array(
+			'tags' => array(
+				'form' => 'start form',
+				'formend' => 'finish form'
+			)
+		);
+		$this->assertEqual($result, $expected);
+		$tags = $this->Html->getAttribute('_tags');
+		$this->assertEqual($tags['form'], 'start form');
+		$this->assertEqual($tags['formend'], 'finish form');
+		$this->assertEqual($tags['selectend'], '</select>');
+
+		$result = $this->Html->loadConfig(array('htmlhelper_minimized.ini', 'ini'), $path);
+		$expected = array(
+			'minimizedAttributeFormat' => 'format'
+		);
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->Html->getAttribute('_minimizedAttributeFormat'), 'format');
+	}
+
+/**
+ * testLoadConfigWrongFile method
+ *
+ * @return void
+ * @expectedException ConfigureException
+ */
+	public function testLoadConfigWrongFile() {
+		$result = $this->Html->loadConfig('wrong_file');
+	}
+
+/**
+ * testLoadConfigWrongReader method
+ *
+ * @return void
+ * @expectedException ConfigureException
+ */
+	public function testLoadConfigWrongReader() {
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
+		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+	}
+
+/**
+ * test parsing attributes.
+ *
+ * @return void
+ */
+	function testParseAttributeCompact() {
+		$helper = new TestHtmlHelper($this->View);
+		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
+			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+		
+		foreach ($compact as $attribute) {
+			foreach (array('true', true, 1, '1', $attribute) as $value) {
+				$attrs = array($attribute => $value);
+				$expected = ' ' . $attribute . '="' . $attribute . '"';
+				$this->assertEqual($helper->parseAttributes($attrs), $expected, '%s Failed on ' . $value);
+			}
+		}
+		$this->assertEqual($helper->parseAttributes(array('compact')), ' compact="compact"');
+
+		$helper = new Html5TestHelper($this->View);
+		$expected = ' require';
+		$this->assertEqual($helper->parseAttributes(array('require')), $expected);
+		$this->assertEqual($helper->parseAttributes(array('require' => true)), $expected);
+		$this->assertEqual($helper->parseAttributes(array('require' => false)), '');
+	}
+
 }

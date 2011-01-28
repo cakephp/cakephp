@@ -280,8 +280,8 @@ class ControllerTestCase extends CakeTestCase {
 			list($plugin, $name) = pluginSplit($model);
 			$config = array_merge((array)$config, array('name' => $model));
 			$_model = $this->getMock($name, $methods, array($config));
-			ClassRegistry::removeObject($model);
-			ClassRegistry::addObject($model, $_model);
+			ClassRegistry::removeObject($name);
+			ClassRegistry::addObject($name, $_model);
 		}
 
 		foreach ($mocks['components'] as $component => $methods) {

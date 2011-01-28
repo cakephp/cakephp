@@ -84,6 +84,20 @@ if (!class_exists('PostsController')) {
 	}
 }
 
+/**
+ * ControllerTestCaseTest controller
+ */
+class ControllerTestCaseTestController extends AppController {
+
+/**
+ * Uses array
+ *
+ * @param array
+ */
+	public $uses = array('TestPlugin.TestPluginComment');
+
+}
+
 
 /**
  * ControllerTestCaseTest
@@ -98,7 +112,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	public $fixtures = array('core.post', 'core.author');
+	public $fixtures = array('core.post', 'core.author', 'core.test_plugin_comment');
 
 /**
  * reset environment.
@@ -209,6 +223,22 @@ class ControllerTestCaseTest extends CakeTestCase {
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPluginComment', $result);
+
+		$Tests = $this->Case->generate('ControllerTestCaseTest', array(
+			'models' => array(
+				'TestPlugin.TestPluginComment' => array('save')
+			)
+		));
+		$this->assertInstanceOf('TestPluginComment', $Tests->TestPluginComment);
+		$Tests->TestPluginComment->expects($this->at(0))
+			->method('save')
+			->will($this->returnValue(true));
+		$Tests->TestPluginComment->expects($this->at(1))
+			->method('save')
+			->will($this->returnValue(false));
+		$this->assertTrue($Tests->TestPluginComment->save(array()));
+		$this->assertFalse($Tests->TestPluginComment->save(array()));
+
 	}
 
 /**

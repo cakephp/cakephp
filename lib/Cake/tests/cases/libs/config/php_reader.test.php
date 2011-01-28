@@ -38,6 +38,9 @@ class PhpReaderTest extends CakeTestCase {
 		$values = $reader->read('var_test');
 		$this->assertEquals('value', $values['Read']);
 		$this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
+
+		$values = $reader->read('var_test.php');
+		$this->assertEquals('value', $values['Read']);
 	}
 
 /**
@@ -84,7 +87,9 @@ class PhpReaderTest extends CakeTestCase {
 		), true);
 		$reader = new PhpReader($this->path);
 		$result = $reader->read('TestPlugin.load');
+		$this->assertTrue(isset($result['plugin_load']));
 
+		$result = $reader->read('TestPlugin.load.php');
 		$this->assertTrue(isset($result['plugin_load']));
 	}
 }

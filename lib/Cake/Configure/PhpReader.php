@@ -57,15 +57,21 @@ class PhpReader implements ConfigReaderInterface {
 		if (strpos($key, '..') !== false) {
 			throw new ConfigureException(__('Cannot load configuration files with ../ in them.'));
 		}
+		if (substr($key, -4) === '.php') {
+			$key = substr($key, 0, -4);
+		}
 		list($plugin, $key) = pluginSplit($key);
 		
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'config' . DS . $key . '.php';
+			$file = App::pluginPath($plugin) . 'config' . DS . $key;
 		} else {
-			$file = $this->_path . $key . '.php';
+			$file = $this->_path . $key;
 		}
 		if (!file_exists($file)) {
-			throw new ConfigureException(__('Could not load configuration file: ') . $file);
+			$file .= '.php';
+			if (!file_exists($file)) {
+				throw new ConfigureException(__('Could not load configuration files: %s or %s', substr($file, 0, -4), $file));
+			}
 		}
 		include $file;
 		if (!isset($config)) {

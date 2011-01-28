@@ -104,30 +104,6 @@ class Helper extends Object {
 	protected $_View;
 
 /**
- * Minimized attributes
- *
- * @var array
- */
-	protected $_minimizedAttributes = array(
-		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
-		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize'
-	);
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_attributeFormat = '%s="%s"';
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_minimizedAttributeFormat = '%s="%s"';
-
-/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -194,22 +170,6 @@ class Helper extends Object {
 				return $this->request->params['action'] = $value;
 		}
 		return $this->{$name} = $value;
-	}
-
-/**
- * Parses tag templates into $this->tags.
- *
- * @param $name file name inside app/config to load.
- * @return array merged tags from config/$name.php
- */
-	public function loadConfig($name = 'tags') {
-		if (file_exists(CONFIGS . $name .'.php')) {
-			require(CONFIGS . $name .'.php');
-			if (isset($tags)) {
-				$this->tags = array_merge($this->tags, $tags);
-			}
-		}
-		return $this->tags;
 	}
 
 /**
@@ -327,6 +287,7 @@ class Helper extends Object {
 	}
 
 /**
+<<<<<<< HEAD:lib/Cake/View/Helper.php
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
  *
@@ -423,7 +384,7 @@ class Helper extends Object {
  * @return void
  */
 	public function setEntity($entity, $setScope = false) {
-		$view =& $this->_View;
+		$view = $this->_View;
 		if ($setScope) {
 			$view->modelScope = false;
 		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
@@ -470,7 +431,7 @@ class Helper extends Object {
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
-			$ModelObj =& ClassRegistry::getObject($model);
+			$ModelObj = ClassRegistry::getObject($model);
 			for ($i = 0; $i < $count; $i++) {
 				if (
 					is_a($ModelObj, 'Model') && 

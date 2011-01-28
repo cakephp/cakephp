@@ -32,9 +32,8 @@ class HtmlHelper extends AppHelper {
  * html tags used by this helper.
  *
  * @var array
- * @access public
  */
-	public $tags = array(
+	protected $_tags = array(
 		'meta' => '<meta%s/>',
 		'metalink' => '<link href="%s"%s/>',
 		'link' => '<a href="%s"%s>%s</a>',
@@ -94,6 +93,30 @@ class HtmlHelper extends AppHelper {
 	);
 
 /**
+ * Minimized attributes
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array(
+		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
+		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize'
+	);
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_attributeFormat = '%s="%s"';
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s="%s"';
+
+/**
  * Breadcrumbs.
  *
  * @var array
@@ -125,11 +148,25 @@ class HtmlHelper extends AppHelper {
 		'html4-strict'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
 		'html4-trans'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
 		'html4-frame'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
+		'html5' => '<!DOCTYPE html>',
 		'xhtml-strict' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
 		'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
 		'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
 		'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
 	);
+
+/**
+ * Default Constructor
+ *
+ * @param View $View The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper.
+ */
+	public function __construct(View $View, $settings = array()) {
+		parent::__construct($View, $settings);
+		if (!empty($settings['configFile'])) {
+			$this->loadConfig($settings['configFile']);
+		}
+	}
 
 /**
  * Adds a link to the breadcrumbs array.
@@ -152,6 +189,7 @@ class HtmlHelper extends AppHelper {
  *  - html4-strict:  HTML4 Strict.
  *  - html4-trans:  HTML4 Transitional.
  *  - html4-frame:  HTML4 Frameset.
+ *  - html5: HTML5.
  *  - xhtml-strict: XHTML1 Strict.
  *  - xhtml-trans: XHTML1 Transitional.
  *  - xhtml-frame: XHTML1 Frameset.
@@ -223,14 +261,14 @@ class HtmlHelper extends AppHelper {
 
 		if (isset($options['link'])) {
 			if (isset($options['rel']) && $options['rel'] === 'icon') {
-				$out = sprintf($this->tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+				$out = sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
 				$options['rel'] = 'shortcut icon';
 			} else {
 				$options['link'] = $this->url($options['link'], true);
 			}
-			$out .= sprintf($this->tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+			$out .= sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
 		} else {
-			$out = sprintf($this->tags['meta'], $this->_parseAttributes($options, array('type'), ' ', ' '));
+			$out = sprintf($this->_tags['meta'], $this->_parseAttributes($options, array('type'), ' ', ' '));
 		}
 
 		if ($inline) {
@@ -253,7 +291,7 @@ class HtmlHelper extends AppHelper {
 		if (empty($charset)) {
 			$charset = strtolower(Configure::read('App.encoding'));
 		}
-		return sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
+		return sprintf($this->_tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
 	}
 
 /**
@@ -313,7 +351,7 @@ class HtmlHelper extends AppHelper {
 			}
 			unset($options['default']);
 		}
-		return sprintf($this->tags['link'], $url, $this->_parseAttributes($options), $title);
+		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
 	}
 
 /**
@@ -368,12 +406,12 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
+			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
 		}
 
 		if ($options['inline']) {
@@ -439,7 +477,7 @@ class HtmlHelper extends AppHelper {
 			}
 		}
 		$attributes = $this->_parseAttributes($options, array('inline', 'once'), ' ');
-		$out = sprintf($this->tags['javascriptlink'], $url, $attributes);
+		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);
 
 		if ($options['inline']) {
 			return $out;
@@ -471,9 +509,9 @@ class HtmlHelper extends AppHelper {
 		unset($options['inline'], $options['safe']);
 		$attributes = $this->_parseAttributes($options, ' ', ' ');
 		if ($inline) {
-			return sprintf($this->tags['javascriptblock'], $attributes, $script);
+			return sprintf($this->_tags['javascriptblock'], $attributes, $script);
 		} else {
-			$this->_View->addScript(sprintf($this->tags['javascriptblock'], $attributes, $script));
+			$this->_View->addScript(sprintf($this->_tags['javascriptblock'], $attributes, $script));
 			return null;
 		}
 	}
@@ -652,10 +690,10 @@ class HtmlHelper extends AppHelper {
 			unset($options['url']);
 		}
 
-		$image = sprintf($this->tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
+		$image = sprintf($this->_tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
 
 		if ($url) {
-			return sprintf($this->tags['link'], $this->url($url), null, $image);
+			return sprintf($this->_tags['link'], $this->url($url), null, $image);
 		}
 		return $image;
 	}
@@ -673,9 +711,9 @@ class HtmlHelper extends AppHelper {
 	public function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach ($names as $arg) {
-			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+			$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
 		}
-		return sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
+		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 	}
 
 /**
@@ -725,10 +763,10 @@ class HtmlHelper extends AppHelper {
 				} elseif ($useCount) {
 					$cellOptions['class'] = 'column-' . ++$i;
 				}
-				$cellsOut[] = sprintf($this->tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
+				$cellsOut[] = sprintf($this->_tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
-			$out[] = sprintf($this->tags['tablerow'], $options, implode(' ', $cellsOut));
+			$out[] = sprintf($this->_tags['tablerow'], $options, implode(' ', $cellsOut));
 		}
 		return implode("\n", $out);
 	}
@@ -761,7 +799,27 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'tag';
 		}
-		return sprintf($this->tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name);
+		return sprintf($this->_tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name);
+	}
+
+/**
+ * Returns a formatted existent block of $tags
+ *
+ * @param string $tag Tag name
+ * @return string Formatted block
+ */
+	public function useTag($tag) {
+		if (!isset($this->_tags[$tag])) {
+			return '';
+		}
+		$args = func_get_args();
+		array_shift($args);
+		foreach ($args as &$arg) {
+			if (is_array($arg)) {
+				$arg = $this->_parseAttributes($arg, null, ' ', '');
+			}
+		}
+		return vsprintf($this->_tags[$tag], $args);
 	}
 
 /**
@@ -812,7 +870,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'para';
 		}
-		return sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
+		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
 	}
 
 /**
@@ -830,7 +888,7 @@ class HtmlHelper extends AppHelper {
 			$options = array();
 		}
 		$items = $this->__nestedListItem($list, $options, $itemOptions, $tag);
-		return sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
+		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
 	}
 
 /**
@@ -857,9 +915,145 @@ class HtmlHelper extends AppHelper {
 			} else if (isset($itemOptions['odd']) && $index % 2 != 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
-			$out .= sprintf($this->tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);
+			$out .= sprintf($this->_tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);
 			$index++;
 		}
 		return $out;
 	}
+
+/**
+ * Load Html configs
+ *
+ * @param mixed $configFile String with the config file (load using PhpReader) or an array with file and reader name
+ * @param string $path Path with config file
+ * @return mixed False to error or loaded configs
+ */
+	public function loadConfig($configFile, $path = CONFIGS) {
+		$file = null;
+		$reader = 'php';
+
+		if (!is_array($configFile)) {
+			$file = $configFile;
+		} elseif (isset($configFile[0])) {
+			$file = $configFile[0];
+			if (isset($configFile[1])) {
+				$reader = $configFile[1];
+			}
+		} else {
+			throw new ConfigureException(__('Cannot load the configuration file. Wrong "configFile" configuration.'));
+		}
+
+		$readerClass = Inflector::camelize($reader) . 'Reader';
+		if (!App::import('Lib', 'config/' . $readerClass)) {
+			throw new ConfigureException(__('Cannot load the configuration file. Unknown reader.'));
+		}
+
+		$readerObj = new $readerClass($path);
+		$configs = $readerObj->read($file);
+		if (isset($configs['tags']) && is_array($configs['tags'])) {
+			$this->_tags = array_merge($this->_tags, $configs['tags']);
+		}
+		if (isset($configs['minimizedAttributes']) && is_array($configs['minimizedAttributes'])) {
+			$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
+		}
+		if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
+			$this->__docTypes = array_merge($this->__docTypes, $configs['docTypes']);
+		}
+		if (isset($configs['attributeFormat'])) {
+			$this->_attributeFormat = $configs['attributeFormat'];
+		}
+		if (isset($configs['minimizedAttributeFormat'])) {
+			$this->_minimizedAttributeFormat = $configs['minimizedAttributeFormat'];
+		}
+		return $configs;
+	}
+
+/**
+ * Returns a space-delimited string with items of the $options array. If a
+ * key of $options array happens to be one of:
+ *
+ * - 'compact'
+ * - 'checked'
+ * - 'declare'
+ * - 'readonly'
+ * - 'disabled'
+ * - 'selected'
+ * - 'defer'
+ * - 'ismap'
+ * - 'nohref'
+ * - 'noshade'
+ * - 'nowrap'
+ * - 'multiple'
+ * - 'noresize'
+ *
+ * And its value is one of:
+ *
+ * - '1' (string)
+ * - 1 (integer)
+ * - true (boolean)
+ * - 'true' (string)
+ *
+ * Then the value will be reset to be identical with key's name.
+ * If the value is not one of these 3, the parameter is not output.
+ *
+ * 'escape' is a special option in that it controls the conversion of
+ *  attributes to their html-entity encoded equivalents.  Set to false to disable html-encoding.
+ *
+ * If value for any option key is set to `null` or `false`, that option will be excluded from output.
+ *
+ * @param array $options Array of options.
+ * @param array $exclude Array of options to be excluded, the options here will not be part of the return.
+ * @param string $insertBefore String to be inserted before options.
+ * @param string $insertAfter String to be inserted after options.
+ * @return string Composed attributes.
+ */
+	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+		if (is_array($options)) {
+			$options = array_merge(array('escape' => true), $options);
+
+			if (!is_array($exclude)) {
+				$exclude = array();
+			}
+			$filtered = array_diff_key($options, array_merge(array_flip($exclude), array('escape' => true)));
+			$escape = $options['escape'];
+			$attributes = array();
+
+			foreach ($filtered as $key => $value) {
+				if ($value !== false && $value !== null) {
+					$attributes[] = $this->_formatAttribute($key, $value, $escape);
+				}
+			}
+			$out = implode(' ', $attributes);
+		} else {
+			$out = $options;
+		}
+		return $out ? $insertBefore . $out . $insertAfter : '';
+	}
+
+/**
+ * Formats an individual attribute, and returns the string value of the composed attribute.
+ * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
+ *
+ * @param string $key The name of the attribute to create
+ * @param string $value The value of the attribute to create.
+ * @return string The composed attribute.
+ */
+	protected function _formatAttribute($key, $value, $escape = true) {
+		$attribute = '';
+		if (is_array($value)) {
+			$value = '';
+		}
+
+		if (is_numeric($key)) {
+			$attribute = sprintf($this->_minimizedAttributeFormat, $value, $value);
+		} elseif (in_array($key, $this->_minimizedAttributes)) {
+			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
+				$attribute = sprintf($this->_minimizedAttributeFormat, $key, $key);
+			}
+		} else {
+			$attribute = sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
+		}
+		return $attribute;
+	}
+
 }
