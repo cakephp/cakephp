@@ -66,9 +66,7 @@ class Object {
 		if (empty($url)) {
 			return false;
 		}
-		if (!class_exists('dispatcher')) {
-			require LIBS . 'dispatcher.php';
-		}
+		App::uses('Dispatcher', 'Routing');
 		if (in_array('return', $extra, true)) {
 			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
 		}

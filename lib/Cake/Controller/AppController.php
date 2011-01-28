@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Controller', 'Controller');
+
 /**
  * This is a placeholder class.
  * Create the same file in app/app_controller.php
