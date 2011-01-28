@@ -453,7 +453,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertEquals($Apple->testMethod(true), 'working');
 		$this->assertEquals($Apple->Behaviors->dispatchMethod($Apple, 'testMethod'), 'working');
 
-		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
 		$this->assertTrue($Apple->Behaviors->load('SomeOther', array('className' => 'TestPlugin.TestPluginPersisterOne')));
 		$this->assertInstanceOf('TestPluginPersisterOneBehavior', $Apple->Behaviors->SomeOther);
 
@@ -553,7 +553,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 /**
  * test that attaching a non existant Behavior triggers a cake error.
  *
- * @expectedException MissingBehaviorFileException
+ * @expectedException MissingBehaviorClassException
  * @return void
  */
 	function testInvalidBehaviorCausingCakeError() {

@@ -96,21 +96,21 @@ class BehaviorCollection extends ObjectCollection {
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
  * @return boolean True on success, false on failure
- * @throws MissingBehaviorFileException or MissingBehaviorClassException when a behavior could not be found.
+ * @throws MissingBehaviorClassException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
 		if (is_array($config) && isset($config['className'])) {
 			$alias = $behavior;
 			$behavior = $config['className'];
 		}
-		list($plugin, $name) = pluginSplit($behavior);
+		list($plugin, $name) = pluginSplit($behavior, true);
 		if (!isset($alias)) {
 			$alias = $name;
 		}
 
 		$class = $name . 'Behavior';
 
-		App::uses($class, 'Model/Behavior');
+		App::uses($class, $plugin . 'Model/Behavior');
 		if (!class_exists($class)) {
 			throw new MissingBehaviorClassException(array(
 				'file' => Inflector::underscore($behavior) . '.php',
