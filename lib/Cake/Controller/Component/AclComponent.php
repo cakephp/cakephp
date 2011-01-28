@@ -264,9 +264,7 @@ class DbAcl extends Object implements AclInterface {
  */
 	function __construct() {
 		parent::__construct();
-		if (!class_exists('AclNode')) {
-			require LIBS . 'model' . DS . 'db_acl.php';
-		}
+		App::uses('AclNode', 'Model');
 		$this->Aro = ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));
 		$this->Aco = ClassRegistry::init(array('class' => 'Aco', 'alias' => 'Aco'));
 	}

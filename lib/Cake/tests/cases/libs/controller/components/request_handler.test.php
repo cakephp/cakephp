@@ -20,6 +20,7 @@ App::uses('Controller', 'Controller');
 App::uses('RequestHandlerComponent', 'Controller/Component');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
+App::uses('Router', 'Routing');
 
 /**
  * RequestHandlerTestController class

@@ -17,9 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Load Security class
- */
+App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
 
 /**
