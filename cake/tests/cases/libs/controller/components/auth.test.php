@@ -73,42 +73,6 @@ class AuthUser extends CakeTestModel {
  */
 	public $useDbConfig = 'test';
 
-/**
- * parentNode method
- *
- * @access public
- * @return void
- */
-	function parentNode() {
-		return true;
-	}
-
-/**
- * bindNode method
- *
- * @param mixed $object
- * @access public
- * @return void
- */
-	function bindNode($object) {
-		return 'Roles/Admin';
-	}
-
-/**
- * isAuthorized method
- *
- * @param mixed $user
- * @param mixed $controller
- * @param mixed $action
- * @access public
- * @return void
- */
-	function isAuthorized($user, $controller = null, $action = null) {
-		if (!empty($user)) {
-			return true;
-		}
-		return false;
-	}
 }
 
 /**
@@ -244,26 +208,9 @@ class AuthTestController extends Controller {
  * @return void
  */
 	function isAuthorized() {
-		if (isset($this->request['testControllerAuth'])) {
-			return false;
-		}
-		return true;
+
 	}
 
-/**
- * Mock delete method
- *
- * @param mixed $url
- * @param mixed $status
- * @param mixed $exit
- * @access public
- * @return void
- */
-	function delete($id = null) {
-		if ($this->TestAuth->testStop !== true && $id !== null) {
-			echo 'Deleted Record: ' . var_export($id, true);
-		}
-	}
 }
 
 /**
