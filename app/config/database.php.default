@@ -29,7 +29,6 @@
  *
  * driver => The name of a supported driver; valid options are as follows:
  *		mysql 		- MySQL 4 & 5,
- *		mysqli 		- MySQL 4 & 5 Improved Interface (PHP5 only),
  *		sqlite		- SQLite (PHP5 only),
  *		postgres	- PostgreSQL 7 and higher,
  *		mssql		- Microsoft SQL Server 2000 and higher,
@@ -43,19 +42,18 @@
  * Determines whether or not the database should use a persistent connection
  *
  * host =>
- * the host you connect to the database.  To add a socket or port number, use 'port' => #
+ * the host you connect to the database. To add a socket or port number, use 'port' => #
  *
  * prefix =>
  * Uses the given prefix for all the tables in this database.  This setting can be overridden
  * on a per-table basis with the Model::$tablePrefix property.
  *
  * schema =>
- * For Postgresspecifies which schema you would like to use the tables in. Postgres defaults to
- * 'public', DB2 defaults to empty.
+ * For Postgres specifies which schema you would like to use the tables in. Postgres defaults to 'public'.
  *
  * encoding =>
- * For MySQL, MySQLi, Postgres specifies the character encoding to use when connecting to the
- * database.  Uses database default.
+ * For MySQL, Postgres specifies the character encoding to use when connecting to the
+ * database. Uses database default not specified.
  *
  */
 class DATABASE_CONFIG {

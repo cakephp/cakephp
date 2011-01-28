@@ -65,6 +65,22 @@ class IniReaderTest extends CakeTestCase {
 	}
 
 /**
+ * test without section
+ *
+ * @return void
+ */
+	public function testReadingWithoutSection() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('no_section.ini');
+
+		$expected = array(
+			'some_key' => 'some_value',
+			'bool_key' => true
+		);
+		$this->assertEquals($config, $expected);
+	}
+
+/**
  * test that names with .'s get exploded into arrays.
  *
  * @return void
@@ -97,5 +113,16 @@ class IniReaderTest extends CakeTestCase {
 		$this->assertFalse($config['bools']['test_false']);
 
 		$this->assertFalse($config['bools']['test_null']);
+	}
+
+/**
+ * test read file without extension
+ *
+ * @return void
+ */
+	public function testReadingWithoutExtension() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('nested');
+		$this->assertTrue($config['bools']['test_on']);
 	}
 }
