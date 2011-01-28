@@ -16,8 +16,9 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('SecurityComponent', 'Controller/Component');
 App::uses('Controller', 'Controller');
-App::uses('SecurityComponent', 'Component');
 
 /**
 * TestSecurityComponent
