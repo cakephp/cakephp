@@ -515,7 +515,8 @@ class App {
 				return include $file;
 			}
 
-			list($plugin, $package) = pluginSplit(self::$__classMap[$className]);
+			$parts = explode('.', self::$__classMap[$className], 2);
+			list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
 			$paths = self::path($package, $plugin);
 
 			if (empty($plugin)) {

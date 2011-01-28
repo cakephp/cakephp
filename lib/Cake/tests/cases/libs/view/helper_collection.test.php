@@ -18,12 +18,12 @@
  */
 
 App::uses('HelperCollection', 'View/Helper');
+App::uses('HtmlHelper', 'View/Helper');
 App::uses('View', 'View');
 
 /**
  * Extended HtmlHelper
  */
-App::import('Helper', 'Html');
 class HtmlAliasHelper extends HtmlHelper {
 }
 
@@ -81,7 +81,7 @@ class HelperCollectionTest extends CakeTestCase {
 		$result = $this->Helpers->load('Html');
 		$this->assertInstanceOf('HtmlAliasHelper', $result);
 
-		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
 		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
 		$this->assertInstanceOf('OtherHelperHelper', $result);
 		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->SomeOther);
