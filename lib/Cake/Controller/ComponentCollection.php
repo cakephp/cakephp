@@ -79,7 +79,7 @@ class ComponentCollection extends ObjectCollection {
 			$alias = $component;
 			$component = $settings['className'];
 		}
-		list($plugin, $name) = pluginSplit($component);
+		list($plugin, $name) = pluginSplit($component, true);
 		if (!isset($alias)) {
 			$alias = $name;
 		}
@@ -87,7 +87,7 @@ class ComponentCollection extends ObjectCollection {
 			return $this->_loaded[$alias];
 		}
 		$componentClass = $name . 'Component';
-		App::uses($componentClass, 'Controller/Component');
+		App::uses($componentClass, $plugin . 'Controller/Component');
 		if (!class_exists($componentClass)) {
 			throw new MissingComponentClassException(array(
 				'file' => Inflector::underscore($componentClass) . '.php',
