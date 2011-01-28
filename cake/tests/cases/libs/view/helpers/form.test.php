@@ -1084,6 +1084,21 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test securing inputs with custom name attributes.
+ *
+ * @return void
+ */
+	function testFormSecureWithCustomNameAttribute() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+
+		$this->Form->text('UserForm.published', array('name' => 'data[User][custom]'));
+		$this->assertEqual('User.custom', $this->Form->fields[0]);
+
+		$this->Form->text('UserForm.published', array('name' => 'data[User][custom][another][value]'));
+		$this->assertEqual('User.custom.another.value', $this->Form->fields[1]);
+	}
+
+/**
  * testFormSecuredInput method
  *
  * Test generation of entire secure form, assertions made on input() output.
