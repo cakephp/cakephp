@@ -17,6 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('CakeLogInterface', 'Log');
+
+
 /**
  * File Storage stream for Logging.  Writes logs to different files
  * based on the type of log it is.
