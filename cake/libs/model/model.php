@@ -331,9 +331,9 @@ class Model extends Object {
 	public $__backAssociation = array();
 
 	public $__backInnerAssociation = array();
-	
+
 	public $__backOriginalAssociation = array();
-	
+
 	public $__backContainableAssociation = array();
 
 /**
@@ -1067,7 +1067,7 @@ class Model extends Object {
 	}
 
 /**
- * Check that a method is callable on a model.  This will check both the model's own methods, its 
+ * Check that a method is callable on a model.  This will check both the model's own methods, its
  * inherited methods and methods that could be callable through behaviors.
  *
  * @param string $method The method to be called.
@@ -2156,7 +2156,7 @@ class Model extends Object {
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
 			$return = $this->Behaviors->trigger(
-				'beforeFind', 
+				'beforeFind',
 				array(&$this, $query),
 				array('break' => true, 'breakOn' => array(false, null), 'modParams' => 1)
 			);
@@ -2321,7 +2321,6 @@ class Model extends Object {
  */
 	protected function _findNeighbors($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$query = array_merge(array('recursive' => 0), $query);
 			extract($query);
 			$conditions = (array)$conditions;
 			if (isset($field) && isset($value)) {
