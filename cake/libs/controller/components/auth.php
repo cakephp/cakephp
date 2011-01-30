@@ -203,15 +203,6 @@ class AuthComponent extends Component {
 	public $logoutRedirect = null;
 
 /**
- * Error to display when user login fails.  For security purposes, only one error is used for all
- * login failures, so as not to expose information on why the login failed.
- *
- * @var string
- * @link http://book.cakephp.org/view/1272/loginError
- */
-	public $loginError = null;
-
-/**
  * Error to display when user attempts to access an object or action to which they do not have
  * acccess.
  *
@@ -358,7 +349,6 @@ class AuthComponent extends Component {
 	function __setDefaults() {
 		$defaults = array(
 			'logoutRedirect' => $this->loginAction,
-			'loginError' => __('Login failed. Invalid username or password.'),
 			'authError' => __('You are not authorized to access that location.')
 		);
 		foreach ($defaults as $key => $value) {
