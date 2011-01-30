@@ -27,6 +27,14 @@ App::import('Core', 'ConnectionManager');
 class CakeSchema extends Object {
 
 /**
+ * Name of the schema
+ *
+ * @var string
+ * @access public
+ */
+	public $name = null;
+
+/**
  * Path to write location
  *
  * @var string
