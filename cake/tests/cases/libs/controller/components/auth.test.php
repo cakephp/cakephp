@@ -500,13 +500,13 @@ class AuthTest extends CakeTestCase {
 		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockTwoAuthorize', false);
 		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockThreeAuthorize', false);
 
-		$this->Controller->Auth->authorize = array(
+		$this->Auth->authorize = array(
 			'AuthMockOne',
 			'AuthMockTwo',
 			'AuthMockThree'
 		);
-		$mocks = $this->Controller->Auth->constructAuthorize();
-		$request = $this->Controller->request;
+		$mocks = $this->Auth->constructAuthorize();
+		$request = $this->Auth->request;
 
 		$this->assertEquals(3, count($mocks));
 		$mocks[0]->expects($this->once())
@@ -522,7 +522,29 @@ class AuthTest extends CakeTestCase {
 		$mocks[2]->expects($this->never())
 			->method('authorize');
 
-		$this->assertTrue($this->Controller->Auth->isAuthorized(array('User'), $request));
+		$this->assertTrue($this->Auth->isAuthorized(array('User'), $request));
+	}
+
+/**
+ * test that isAuthorized will use the session user if none is given.
+ *
+ * @return void
+ */
+	function testIsAuthorizedUsingUserInSession() {
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockFourAuthorize', false);
+		$this->Auth->authorize = array('AuthMockFour');
+
+		$user = array('user' => 'mark');
+		$this->Auth->Session->write('Auth.User', $user);
+		$mocks = $this->Auth->constructAuthorize();
+		$request = $this->Controller->request;
+
+		$mocks[0]->expects($this->once())
+			->method('authorize')
+			->with($user, $request)
+			->will($this->returnValue(true));
+
+		$this->assertTrue($this->Auth->isAuthorized(null, $request));
 	}
 
 /**
@@ -1119,5 +1141,17 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Auth->redirect();
 		$this->assertEquals('/users/home', $result);
 		$this->assertFalse($this->Auth->Session->check('Auth.redirect'));
+	}
+
+/**
+ * test password hashing
+ *
+ * @return void
+ */
+	function testPassword() {
+		$result = $this->Auth->password('password');
+		$expected = Security::hash('password', null, true);
+		$this->assertEquals($expected, $result);
+		
 	}
 }
