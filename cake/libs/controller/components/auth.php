@@ -640,7 +640,7 @@ class AuthComponent extends Component {
  * @return string Hashed password
  * @link http://book.cakephp.org/view/1263/password
  */
-	public function password($password) {
+	public static function password($password) {
 		return Security::hash($password, null, true);
 	}
 
