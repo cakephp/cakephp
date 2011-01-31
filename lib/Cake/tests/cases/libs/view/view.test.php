@@ -261,6 +261,7 @@ class ViewTest extends CakeTestCase {
 		$expected = array(
 			LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'plugins' . DS . 'test_plugin' . DS,
 			LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'views' . DS,
+			LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'libs' . DS . 'View' . DS,
 			LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS,
 			LIBS . 'View' . DS
 		);

@@ -18,6 +18,7 @@
  */
 App::uses('DboSource', 'Model/Datasource');
 App::uses('Model', 'Model');
+App::uses('CakeTestFixture', 'TestSuite/Fixture');
 
 /**
  * CakeTestFixtureTestFixture class
