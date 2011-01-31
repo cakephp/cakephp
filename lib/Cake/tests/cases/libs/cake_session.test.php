@@ -527,7 +527,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testUsingAppLibsHandler() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'Model/Datasource/Session' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS . 'Session' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 		Configure::write('Session', array(
@@ -549,7 +549,6 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testUsingPluginHandler() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 		
