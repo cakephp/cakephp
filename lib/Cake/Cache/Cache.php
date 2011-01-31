@@ -125,9 +125,9 @@ class Cache {
 	protected static function _buildEngine($name) {
 		$config = self::$_config[$name];
 
-		list($plugin, $class) = pluginSplit($config['engine']);
+		list($plugin, $class) = pluginSplit($config['engine'], true);
 		$cacheClass = $class . 'Engine';
-		App::uses($cacheClass, 'Cache/Engine');
+		App::uses($cacheClass, $plugin . 'Cache/Engine');
 		if (!class_exists($cacheClass)) {
 			return false;
 		}

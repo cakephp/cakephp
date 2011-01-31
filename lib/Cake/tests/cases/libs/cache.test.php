@@ -16,9 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('Cache')) {
-	require LIBS . 'cache.php';
-}
+
+App::uses('Cache', 'Cache');
 
 /**
  * CacheTest class
@@ -234,19 +233,12 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testInitSettings() {
-		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
+		$initial = Cache::settings();
+		$override = array('engine' => 'File', 'path' => TMP . 'tests');
+		Cache::config('default', $override);
 
 		$settings = Cache::settings();
-		$expecting = array(
-			'engine' => 'File',
-			'duration'=> 3600,
-			'probability' => 100,
-			'path'=> TMP . 'tests',
-			'prefix'=> 'cake_',
-			'lock' => false,
-			'serialize'=> true,
-			'isWindows' => DIRECTORY_SEPARATOR == '\\'
-		);
+		$expecting = $override + $initial;
 		$this->assertEqual($settings, $expecting);
 	}
 
