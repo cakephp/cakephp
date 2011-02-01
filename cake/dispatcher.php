@@ -621,6 +621,12 @@ class Dispatcher extends Object {
  * @access protected
  */
 	function _deliverAsset($assetFile, $ext) {
+		
+		if($ext == 'php') {
+			include($assetFile);
+			return;
+		}
+		
 		$ob = @ini_get("zlib.output_compression") !== '1' && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 		$compressionEnabled = $ob && Configure::read('Asset.compress');
 		if ($compressionEnabled) {
