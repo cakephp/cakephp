@@ -627,7 +627,7 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authenticate')) {
 				throw new CakeException(__('Authentication objects must implement an authenticate method.'));
 			}
-			$settings = array_merge((array)$settings, $global);
+			$settings = array_merge($global, (array)$settings);
 			$this->_authenticateObjects[] = new $className($settings);
 		}
 		return $this->_authenticateObjects;
