@@ -661,8 +661,6 @@ class FormHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		Router::reload();
-
 
 		$this->Controller = new ContactTestController();
 		$this->View = new View($this->Controller);
@@ -703,7 +701,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		ClassRegistry::flush();
+		parent::tearDown();
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
@@ -5632,6 +5630,28 @@ class FormHelperTest extends CakeTestCase {
 			'form' => array(
 				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
 				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test create() with a custom route
+ *
+ * @return void
+ */
+	function testCreateCustomRoute() {
+		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+		$encoding = strtolower(Configure::read('App.encoding'));
+
+		$result = $this->Form->create('User', array('action' => 'login'));
+		$expected = array(
+			'form' => array(
+				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/login',
+				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
