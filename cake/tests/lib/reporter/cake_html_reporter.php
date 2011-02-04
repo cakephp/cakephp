@@ -271,7 +271,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		echo "<li class='fail'>\n";
-		echo "<span>Exception</span>";
+		echo "<span>" . get_class($message) . "</span>";
 
 		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
 		echo "<div class='msg'>" . __('Test case: %s', $testName) . "</div>\n";
