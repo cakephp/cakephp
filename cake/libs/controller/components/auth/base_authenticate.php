@@ -50,16 +50,6 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Hash the supplied password using the configured hashing method.
- *
- * @param string $password The password to hash.
- * @return string Hashed string
- */
-	public function hash($password) {
-		return Security::hash($password, null, true);
-	}
-
-/**
  * Find a user record using the standard options.
  *
  * @param string $username The username/identifier.
@@ -73,7 +63,7 @@ abstract class BaseAuthenticate {
 
 		$conditions = array(
 			$model . '.' . $fields['username'] => $username,
-			$model . '.' . $fields['password'] => $this->hash($password),
+			$model . '.' . $fields['password'] => AuthComponent::password($password),
 		);
 		if (!empty($this->settings['scope'])) {
 			$conditions = array_merge($conditions, $this->settings['scope']);
