@@ -57,8 +57,9 @@ class TemplateTask extends Shell {
 		$core = array_pop($paths);
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
-		$paths[] = $core;
+
 		$Folder = new Folder($core . 'templates' . DS . 'default');
+
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
 
@@ -67,6 +68,7 @@ class TemplateTask extends Shell {
 			$paths[] = $this->_pluginPath($plugin) . 'console' . DS . 'shells' . DS;
 			$paths[] = $this->_pluginPath($plugin) . 'vendors' . DS . 'shells' . DS;
 		}
+		$paths[] = $core;
 
 		// TEMPORARY TODO remove when all paths are DS terminated
 		foreach ($paths as $i => $path) {

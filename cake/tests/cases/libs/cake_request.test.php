@@ -926,12 +926,6 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEqual($request->base, '/app/index.php');
 		$this->assertEqual($request->webroot, '/app/webroot/');
 
-		Configure::write('App.baseUrl', '/index.php');
-		$request = new CakeRequest();
-
-		$this->assertEqual($request->base, '/index.php');
-		$this->assertEqual($request->webroot, '/');
-
 		Configure::write('App.baseUrl', '/CakeBB/app/webroot/index.php');
 		$request = new CakeRequest();
 		$this->assertEqual($request->base, '/CakeBB/app/webroot/index.php');
@@ -956,6 +950,36 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$this->assertEqual($request->base, '/dbhauser/index.php');
 		$this->assertEqual($request->webroot, '/dbhauser/app/webroot/');
+	}
+
+/**
+ * test baseUrl with no rewrite and using the top level index.php.
+ *
+ * @return void
+ */
+	function testBaseUrlNoRewriteTopLevelIndex() {
+		Configure::write('App.baseUrl', '/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEqual('/index.php', $request->base);
+		$this->assertEqual('/app/webroot/', $request->webroot);
+	}
+
+/**
+ * test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
+ *
+ * @return void
+ */
+	function testBaseUrlNoRewriteWebrootIndex() {
+		Configure::write('App.baseUrl', '/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/app/webroot';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/app/webroot/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEqual('/index.php', $request->base);
+		$this->assertEqual('/', $request->webroot);
 	}
 
 /**

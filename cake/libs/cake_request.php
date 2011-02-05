@@ -274,10 +274,9 @@ class CakeRequest implements ArrayAccess {
 		if (!$base) {
 			$base = $this->base;
 		}
-
 		if ($base !== false) {
 			$this->webroot = $base . '/';
-			return $base;
+			return $this->base = $base;
 		}
 		if (!$baseUrl) {
 			$replace = array('<', '>', '*', '\'', '"');
@@ -304,9 +303,13 @@ class CakeRequest implements ArrayAccess {
 		if ($base === DS || $base === '.') {
 			$base = '';
 		}
-		$this->webroot = $base .'/';
+		$this->webroot = $base . '/';
 
-		if (!empty($base)) {
+		$docRoot = env('DOCUMENT_ROOT');
+		$script = realpath(env('SCRIPT_FILENAME'));
+		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
+
+		if (!empty($base) || !$docRootContainsWebroot) {
 			if (strpos($this->webroot, $dir) === false) {
 				$this->webroot .= $dir . '/' ;
 			}

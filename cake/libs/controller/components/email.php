@@ -157,7 +157,7 @@ class EmailComponent extends Component {
 
 /**
  * Line feed character(s) to be used when sending using mail() function
- * If null PHP_EOL is used.
+ * By default PHP_EOL is used.
  * RFC2822 requires it to be CRLF but some Unix
  * mail transfer agents replace LF by CRLF automatically
  * (which leads to doubling CR if CRLF is used).
@@ -165,7 +165,7 @@ class EmailComponent extends Component {
  * @var string
  * @access public
  */
-	var $lineFeed = null;
+	var $lineFeed = PHP_EOL;
 
 /**
  * @deprecated see lineLength
@@ -822,13 +822,8 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _mail() {
-		if ($this->lineFeed === null) {
-			$lineFeed = PHP_EOL;
-		} else {
-			$lineFeed = $this->lineFeed;
-		}
-		$header = implode($lineFeed, $this->_header);
-		$message = implode($lineFeed, $this->_message);
+		$header = implode($this->lineFeed, $this->_header);
+		$message = implode($this->lineFeed, $this->_message);
 		if (is_array($this->to)) {
 			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {

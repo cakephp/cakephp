@@ -1074,6 +1074,21 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test securing inputs with custom name attributes.
+ *
+ * @return void
+ */
+	function testFormSecureWithCustomNameAttribute() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+
+		$this->Form->text('UserForm.published', array('name' => 'data[User][custom]'));
+		$this->assertEqual('User.custom', $this->Form->fields[0]);
+
+		$this->Form->text('UserForm.published', array('name' => 'data[User][custom][another][value]'));
+		$this->assertEqual('User.custom.another.value', $this->Form->fields[1]);
+	}
+
+/**
  * testFormSecuredInput method
  *
  * Test generation of entire secure form, assertions made on input() output.
@@ -4464,6 +4479,16 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="06"[^<>]+selected="selected"[^>]*>June<\/option>/', $result);
+	}
+
+/**
+ * test that bogus non-date time data doesn't cause errors.
+ *
+ * @return void
+ */
+	function testDateTimeWithBogusData() {
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', 'CURRENT_TIMESTAMP');
+		$this->assertNoPattern('/selected="selected">\d/', $result);
 	}
 
 /**
