@@ -4495,6 +4495,16 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that bogus non-date time data doesn't cause errors.
+ *
+ * @return void
+ */
+	function testDateTimeWithBogusData() {
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', 'CURRENT_TIMESTAMP');
+		$this->assertNoPattern('/selected="selected">\d/', $result);
+	}
+
+/**
  * testFormDateTimeMulti method
  *
  * test multiple datetime element generation

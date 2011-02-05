@@ -1843,8 +1843,11 @@ class FormHelper extends AppHelper {
 					if ($time[0] == 0 && $timeFormat == '12') {
 						$time[0] = 12;
 					}
-					$hour = $time[0];
-					$min = $time[1];
+					$hour = $min = null;
+					if (isset($time[1])) {
+						$hour = $time[0];
+						$min = $time[1];
+					}
 				}
 			}
 		}
