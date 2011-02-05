@@ -988,15 +988,15 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEnvironmentDetection() {
-		$dispatcher = new Dispatcher();
-
 		$environments = array(
 			'IIS' => array(
 				'No rewrite base path' => array(
 					'App' => array(
 						'base' => false, 
 						'baseUrl' => '/index.php?',
-						'server' => 'IIS'
+						'server' => 'IIS',
+						'dir' => 'app',
+						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
 						'HTTPS' => 'off',
@@ -1008,29 +1008,24 @@ class CakeRequestTestCase extends CakeTestCase {
 						'REQUEST_METHOD' => 'GET',
 						'SERVER_NAME' => 'localhost',
 						'SERVER_PORT' => '80',
-						'SERVER_PROTOCOL' => 'HTTP/1.1', 
-						'SERVER_SOFTWARE' => 'Microsoft-IIS/5.1', 
-						'APPL_PHYSICAL_PATH' => 'C:\\Inetpub\\wwwroot\\', 
-						'REQUEST_URI' => '/index.php', 
-						'URL' => '/index.php', 
-						'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'ORIG_PATH_INFO' => '/index.php', 
-						'PATH_INFO' => '', 
-						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 
-						'PHP_SELF' => '/index.php', 
-						'HTTP_ACCEPT' => '*/*', 
-						'HTTP_ACCEPT_LANGUAGE' => 'en-us', 
-						'HTTP_CONNECTION' => 'Keep-Alive', 
-						'HTTP_HOST' => 'localhost', 
-						'HTTP_USER_AGENT' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)', 
-						'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 
+						'SERVER_PROTOCOL' => 'HTTP/1.1',
+						'SERVER_SOFTWARE' => 'Microsoft-IIS/5.1',
+						'APPL_PHYSICAL_PATH' => 'C:\\Inetpub\\wwwroot\\',
+						'REQUEST_URI' => '/index.php',
+						'URL' => '/index.php',
+						'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php',
+						'ORIG_PATH_INFO' => '/index.php',
+						'PATH_INFO' => '',
+						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php',
+						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
+						'PHP_SELF' => '/index.php',
+						'HTTP_HOST' => 'localhost',
 						'argv' => array(), 
 						'argc' => 0
 					),
 					'reload' => true,
 					'base' => '/index.php?',
-					'webroot' => '/',
+					'webroot' => '/app/webroot/',
 					'url' => ''
 				),
 				'No rewrite with path' => array(
@@ -1044,7 +1039,7 @@ class CakeRequestTestCase extends CakeTestCase {
 					'reload' => false,
 					'url' => 'posts/add',
 					'base' => '/index.php?',
-					'webroot' => '/'
+					'webroot' => '/app/webroot/'
 				),
 				'No rewrite sub dir 1' => array(
 					'GET' => array(),
@@ -1064,7 +1059,7 @@ class CakeRequestTestCase extends CakeTestCase {
 					'reload' => false,
 					'url' => '',
 					'base' => '/index.php?',
-					'webroot' => '/'
+					'webroot' => '/app/webroot/'
 				),
 				'No rewrite sub dir 1 with path' => array(
 					'GET' => array('/posts/add' => ''),
@@ -1079,7 +1074,7 @@ class CakeRequestTestCase extends CakeTestCase {
 					'reload' => false,
 					'url' => 'posts/add',
 					'base' => '/index.php?',
-					'webroot' => '/'
+					'webroot' => '/app/webroot/'
 				),
 				'No rewrite sub dir 2' => array(
 					'App' => array(
@@ -1141,7 +1136,7 @@ class CakeRequestTestCase extends CakeTestCase {
 						'SERVER_ADDR' => '::1', 
 						'SERVER_PORT' => '80', 
 						'REMOTE_ADDR' => '::1', 
-						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
 						'REQUEST_METHOD' => 'GET', 
 						'QUERY_STRING' => '', 
@@ -1158,15 +1153,9 @@ class CakeRequestTestCase extends CakeTestCase {
 				),
 				'No rewrite with path' => array(
 					'SERVER' => array(
-						'UNIQUE_ID' => 'VardGqn@17IAAAu7LY8AAAAK', 
-						'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) AppleWebKit/523.10.5 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6', 
-						'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', 
-						'HTTP_ACCEPT_LANGUAGE' => 'en-us', 
-						'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 
-						'HTTP_CONNECTION' => 'keep-alive', 
 						'HTTP_HOST' => 'localhost', 
-						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 
-						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
 						'QUERY_STRING' => '', 
 						'REQUEST_URI' => '/index.php/posts/add', 
 						'SCRIPT_NAME' => '/index.php', 
@@ -1188,11 +1177,6 @@ class CakeRequestTestCase extends CakeTestCase {
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
-						'UNIQUE_ID' => '2A-v8sCoAQ8AAAc-2xUAAAAB', 
-						'HTTP_ACCEPT_LANGUAGE' => 'en-us', 
-						'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 
-						'HTTP_COOKIE' => 'CAKEPHP=jcbv51apn84kd9ucv5aj2ln3t3', 
-						'HTTP_CONNECTION' => 'keep-alive', 
 						'HTTP_HOST' => 'cake.1.2', 
 						'SERVER_NAME' => 'cake.1.2', 
 						'SERVER_ADDR' => '127.0.0.1', 
