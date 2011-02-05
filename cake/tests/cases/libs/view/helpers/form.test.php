@@ -1079,7 +1079,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormSecureWithCustomNameAttribute() {
-		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->request->params['_Token']['key'] = 'testKey';
 
 		$this->Form->text('UserForm.published', array('name' => 'data[User][custom]'));
 		$this->assertEqual('User.custom', $this->Form->fields[0]);
@@ -4487,7 +4487,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDateTimeWithBogusData() {
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', 'CURRENT_TIMESTAMP');
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => 'CURRENT_TIMESTAMP'));
 		$this->assertNoPattern('/selected="selected">\d/', $result);
 	}
 

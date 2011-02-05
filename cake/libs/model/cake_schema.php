@@ -577,6 +577,7 @@ class CakeSchema extends Object {
 	public function __columns(&$Obj) {
 		$db = ConnectionManager::getDataSource($Obj->useDbConfig);
 		$fields = $Obj->schema(true);
+
 		$columns = $props = array();
 		foreach ($fields as $name => $value) {
 			if ($Obj->primaryKey == $name) {
