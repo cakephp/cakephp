@@ -41,7 +41,7 @@ class HelperCollection extends ObjectCollection {
  *
  * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
  * {{{
- * public $components = array(
+ * public $helpers = array(
  *   'Html' => array(
  *     'className' => 'AliasedHtml'
  *   );
