@@ -18,8 +18,6 @@
  * @since         CakePHP(tm) v 1.2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'ObjectCollection');
-
 /**
  * Model behavior collection class.
  *

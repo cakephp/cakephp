@@ -15,7 +15,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Set');
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
