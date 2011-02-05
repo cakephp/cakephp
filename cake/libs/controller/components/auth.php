@@ -312,7 +312,7 @@ class AuthComponent extends Component {
 				}
 			}
 		} else {
-			if (!$this->user()) {
+			if (!$this->_getUser()) {
 				if (!$request->is('ajax')) {
 					$this->flash($this->authError);
 					$this->Session->write('Auth.redirect', Router::reverse($request));
@@ -556,6 +556,29 @@ class AuthComponent extends Component {
 			}
 			return null;
 		}
+	}
+
+/**
+ * Similar to AuthComponent::user() except if the session user cannot be found, connected authentication
+ * objects will have their getUser() methods called.  This lets stateless authentication methods function correctly.
+ *
+ * @return boolean true if a user can be found, false if one cannot.
+ */
+	protected function _getUser() {
+		$user = $this->user();
+		if ($user) {
+			return true;
+		}
+		if (empty($this->_authenticateObjects)) {
+			$this->constructAuthenticate();
+		}
+		foreach ($this->_authenticateObjects as $auth) {
+			$result = $auth->getUser($this->request);
+			if (!empty($result) && is_array($result)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 /**

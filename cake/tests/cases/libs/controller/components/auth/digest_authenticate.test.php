@@ -122,14 +122,10 @@ DIGEST;
 			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
 
 		$this->response->expects($this->at(1))
-			->method('header')
-			->with('Location', Router::reverse($request));
-		
-		$this->response->expects($this->at(2))
 			->method('statusCode')
 			->with(401);
 		
-		$this->response->expects($this->at(3))
+		$this->response->expects($this->at(2))
 			->method('send');
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -149,6 +145,10 @@ DIGEST;
 			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
 		
 		$this->response->expects($this->at(1))
+			->method('statusCode')
+			->with(401);
+		
+		$this->response->expects($this->at(2))
 			->method('send');
 		
 		$result = $this->auth->authenticate($request, $this->response);
@@ -211,16 +211,12 @@ DIGEST;
 		$this->response->expects($this->at(0))
 			->method('header')
 			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-
-		$this->response->expects($this->at(1))
-			->method('header')
-			->with('Location', Router::reverse($request));
 		
-		$this->response->expects($this->at(2))
+		$this->response->expects($this->at(1))
 			->method('statusCode')
 			->with(401);
 		
-		$this->response->expects($this->at(3))
+		$this->response->expects($this->at(2))
 			->method('send');
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));

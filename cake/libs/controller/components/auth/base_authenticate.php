@@ -87,4 +87,15 @@ abstract class BaseAuthenticate {
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	abstract public function authenticate(CakeRequest $request, CakeResponse $response);
+
+/**
+ * Get a user based on information in the request.  Primarily used by stateless authentication
+ * systems like basic and digest auth.
+ *
+ * @param CakeRequest $request Request object.
+ * @return mixed Either false or an array of user information
+ */
+	public function getUser($request) {
+		return false;
+	}
 }

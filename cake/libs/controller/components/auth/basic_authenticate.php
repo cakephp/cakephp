@@ -83,25 +83,32 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$username = env('PHP_AUTH_USER');
-		$pass = env('PHP_AUTH_PW');
-
-		if (empty($username) || empty($pass)) {
-			$response->header($this->loginHeaders());
-			$response->send();
-			return false;
-		}
-
-		$result = $this->_findUser($username, $pass);
+		$result = $this->getUser($request);
 
 		if (empty($result)) {
 			$response->header($this->loginHeaders());
-			$response->header('Location', Router::reverse($request));
 			$response->statusCode(401);
 			$response->send();
 			return false;
 		}
 		return $result;
+	}
+
+/**
+ * Get a user based on information in the request.  Primarily used by stateless authentication
+ * systems like basic and digest auth.
+ *
+ * @param CakeRequest $request Request object.
+ * @return mixed Either false or an array of user information
+ */
+	public function getUser($request) {
+		$username = env('PHP_AUTH_USER');
+		$pass = env('PHP_AUTH_PW');
+		
+		if (empty($username) || empty($pass)) {
+			return false;
+		}
+		return $this->_findUser($username, $pass);
 	}
 
 /**

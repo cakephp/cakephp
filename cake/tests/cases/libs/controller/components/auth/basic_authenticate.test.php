@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::import('Component', 'Auth');
 App::import('Component', 'auth/basic_authenticate');
 App::import('Model', 'AppModel');
 App::import('Core', 'CakeRequest');
@@ -114,6 +115,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 	function testAuthenticateNoPassword() {
 		$request = new CakeRequest('posts/index', false);
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = null;
 		
 		$this->response->expects($this->once())
 			->method('header')
@@ -196,14 +198,10 @@ class BasicAuthenticateTest extends CakeTestCase {
 			->with('WWW-Authenticate: Basic realm="localhost"');
 
 		$this->response->expects($this->at(1))
-			->method('header')
-			->with('Location', Router::reverse($request));
-		
-		$this->response->expects($this->at(2))
 			->method('statusCode')
 			->with(401);
 		
-		$this->response->expects($this->at(3))
+		$this->response->expects($this->at(2))
 			->method('send');
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));

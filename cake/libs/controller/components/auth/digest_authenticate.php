@@ -108,28 +108,40 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$digest = $this->_getDigest();
+		$user = $this->getUser($request);
 
-		if (empty($digest)) {
+		if (empty($user)) {
 			$response->header($this->loginHeaders());
-			$response->send();
-			return false;
-		}
-
-		$result = $this->_findUser($digest['username'], null);
-		$password = $result[$this->settings['fields']['password']];
-		unset($result[$this->settings['fields']['password']]);
-
-		if (empty($result) || $digest['response'] !== $this->generateResponseHash($digest, $password)) {
-			$response->header($this->loginHeaders());
-			$response->header('Location', Router::reverse($request));
 			$response->statusCode(401);
 			$response->send();
 			return false;
 		}
-		return $result;
+		return $user;
 	}
 
+/**
+ * Get a user based on information in the request.  Primarily used by stateless authentication
+ * systems like basic and digest auth.
+ *
+ * @param CakeRequest $request Request object.
+ * @return mixed Either false or an array of user information
+ */
+	public function getUser($request) {
+		$digest = $this->_getDigest();
+		if (empty($digest)) {
+			return false;
+		}
+		$user = $this->_findUser($digest['username'], null);
+		if (empty($user)) {
+			return false;
+		}
+		$password = $user[$this->settings['fields']['password']];
+		unset($user[$this->settings['fields']['password']]);
+		if ($digest['response'] === $this->generateResponseHash($digest, $password)) {
+			return $user;
+		}
+		return false;
+	}
 /**
  * Find a user record using the standard options.
  *
