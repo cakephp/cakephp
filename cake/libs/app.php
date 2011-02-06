@@ -604,7 +604,7 @@ class App {
 		if (empty(self::$search)) {
 			return null;
 		} elseif (is_string(self::$search)) {
-			$this->search = array(self::$search);
+			self::$search = array(self::$search);
 		}
 
 		if (empty(self::$__paths)) {
