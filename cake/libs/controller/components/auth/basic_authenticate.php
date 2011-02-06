@@ -95,8 +95,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Primarily used by stateless authentication
- * systems like basic and digest auth.
+ * Get a user based on information in the request.  Used by cookie-less auth for stateless clients.
  *
  * @param CakeRequest $request Request object.
  * @return mixed Either false or an array of user information
