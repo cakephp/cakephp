@@ -47,7 +47,7 @@ class DigestAuthenticateTest extends CakeTestCase {
 			'opaque' => '123abc'
 		));
 
-		$password = DigestAuthenticate::password('mariano', 'localhost', 'cake');
+		$password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
 		ClassRegistry::init('User')->updateAll(array('password' => '"' . $password . '"'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -296,7 +296,7 @@ DIGEST;
  * @return void
  */
 	function testPassword() {
-		$result = DigestAuthenticate::password('mark', 'localhost', 'password');
+		$result = DigestAuthenticate::password('mark', 'password', 'localhost');
 		$expected = md5('mark:localhost:password');
 		$this->assertEquals($expected, $result);
 	}
