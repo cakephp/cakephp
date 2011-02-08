@@ -45,10 +45,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'error' => 'onFailure'
 		),
 		'sortable' => array(
-			'start' => 'onStart',
 			'sort' => 'onChange',
 			'complete' => 'onUpdate',
-			'distance' => 'snap',
 		),
 		'drag' => array(
 			'snapGrid' => 'snap',
@@ -261,6 +259,9 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * Create a sortable element.
  *
  * #### Note: Requires scriptaculous to be loaded.
+ *
+ * The scriptaculous implementation of sortables does not suppot the 'start'
+ * and 'distance' options.
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
