@@ -348,9 +348,11 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'handle' => '#handle',
 			'change' => 'change();',
 			'complete' => 'complete();',
-			'value' => 4
+			'value' => 4,
+			'min' => 10,
+			'max' => 100
 		));
-		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {onChange:function (value) {complete();}, onSlide:function (value) {change();}, sliderValue:4});';
+		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {onChange:function (value) {complete();}, onSlide:function (value) {change();}, range:$R(10,100), sliderValue:4});';
 		$this->assertEqual($result, $expected);
 	}
 

@@ -330,10 +330,14 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		unset($options['handle']);
 
 		if (isset($options['min']) && isset($options['max'])) {
-			$options['range'] = array($options['min'], $options['max']);
+			$options['range'] = sprintf('$R(%s,%s)', $options['min'], $options['max']);
 			unset($options['min'], $options['max']);
 		}
-		$optionString = $this->_processOptions('slider', $options);
+		$options = $this->_mapOptions('slider', $options);
+		$options = $this->_prepareCallbacks('slider', $options);
+		$optionString = $this->_parseOptions(
+			$options, array_merge(array_keys($this->_callbackArguments['slider']), array('range'))
+		);
 		if (!empty($optionString)) {
 			$optionString = ', {' . $optionString . '}';
 		}
