@@ -166,6 +166,9 @@ class CookieComponent extends Object {
 	function initialize(&$controller, $settings) {
 		$this->key = Configure::read('Security.salt');
 		$this->_set($settings);
+		if (isset($this->time)) {
+			$this->__expire($this->time);
+		}
 	}
 
 /**
