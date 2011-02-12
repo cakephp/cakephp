@@ -40,13 +40,6 @@ class CakeTestSuiteDispatcher {
 	);
 
 /**
- * The classname for the TestManager being used
- *
- * @var string
- */
-	protected $_managerClass = 'TestManager';
-
-/**
  * The Instance of the Manager being used.
  *
  * @var TestManager subclass
@@ -260,9 +253,11 @@ class CakeTestSuiteDispatcher {
 				$this->_checkXdebug();
 			}
 		}
+		if (empty($this->params['plugin']) && empty($this->params['app'])) {
+			$this->params['core'] = true;
+		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
-		$this->getManager();
 	}
 
 /**
@@ -271,9 +266,28 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runTestCase() {
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
+
+		$Reporter = CakeTestSuiteDispatcher::getReporter();
+
+		$commandArgs = array(
+			'case' => $this->params['case'],
+			'core' =>$this->params['core'],
+			'app' => $this->params['app'],
+			'plugin' => $this->params['plugin'],
+			'codeCoverage' => $this->params['codeCoverage'],
+			'baseUrl' => $this->_baseUrl,
+			'baseDir' => $this->_baseDir,
+		);
+		
+		$options = array(
+			'--filter', $this->params['filter'],
+			'--output', $this->params['output']
+		);
+
 		try {
-			$Reporter = CakeTestSuiteDispatcher::getReporter();
-			return $this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
+			$command = new CakeTestSuiteCommand('CakeTestLoader', $commandArgs);
+			$result = $command->run($options);
 		} catch (MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;

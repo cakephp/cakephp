@@ -35,6 +35,10 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  * @return void
  */
 	public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array()) {
+		if (isset($arguments['printer'])) {
+			self::$versionStringPrinted = true;
+		}
+
 		$fixture = $this->_getFixtureManager($arguments);
 		foreach ($suite->getIterator() as $test) {
 			if ($test instanceof CakeTestCase) {
@@ -42,6 +46,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 				$test->fixtureManager = $fixture;
 			}
 		}
+
 		$return = parent::doRun($suite, $arguments);
 		$fixture->shutdown();
 		return $return;

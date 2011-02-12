@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+require_once 'PHPUnit/TextUi/ResultPrinter.php';
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -25,7 +26,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  * @package cake
  * @package    cake.tests.lib
  */
-class CakeBaseReporter implements PHPUnit_Framework_TestListener {
+class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 
 /**
  * Time the test runs started.
@@ -144,6 +145,10 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 			return $_SERVER['PHP_SELF'];
 		}
 		return '';
+	}
+
+	public function printResult(PHPUnit_Framework_TestResult $result) {
+		$this->paintFooter($result);
 	}
 
 	public function paintResult(PHPUnit_Framework_TestResult $result) {

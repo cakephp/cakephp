@@ -340,6 +340,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		echo $this->paintHeader();
 		echo '<h2>' . __('Running  %s', $suite->getName())  . '</h2>';
 	}
 }

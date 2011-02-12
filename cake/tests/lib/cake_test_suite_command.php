@@ -49,6 +49,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		$this->_params = $params;
 
 		$this->longOptions['fixture='] = 'handleFixture';
+		$this->longOptions['output='] = 'handleReporter';
 	}
 
 	/**
@@ -139,5 +140,27 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  */
 	function handleFixture($class) {
 		$this->arguments['fixtureManager'] = $class;
+	}
+
+/**
+ * Handles output flag used to change printing on webrunner.
+ *
+ * @return void
+ */
+	public function handleReporter($reporter) {
+		$object = null;
+
+		$type = strtolower($reporter);
+		$coreClass = 'Cake' . ucwords($reporter) . 'Reporter';
+		$coreFile = CAKE_TESTS_LIB . 'reporter/cake_' . $type . '_reporter.php';
+
+		$appClass = $reporter . 'Reporter';
+		$appFile = APPLIBS . 'test_suite/reporter/' . $type . '_reporter.php';
+		if (include_once $coreFile) {
+			$object = new $coreClass(null, $this->_params);
+		} elseif (include_once $appFile) {
+			$object = new $appClass(null, $this->_params);
+		}
+		$this->arguments['printer'] = $object;
 	}
 }
