@@ -27,14 +27,16 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  */
 class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 
-
-/**
- * Sets the proper test suite to use and loads the test file in it.
- * this method gets called as a callback from the parent class
- *
- * @return void
- */
-	protected function handleCustomTestSuite() {
-		
+	public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array()) {
+		$fixture = new CakeFixtureManager;
+		foreach ($suite->getIterator() as $test) {
+			if ($test instanceof CakeTestCase) {
+				$fixture->fixturize($test);
+				$test->fixtureManager = $fixture;
+			}
+		}
+		$r = parent::doRun($suite, $arguments);
+		$fixture->shutdown();
+		return $r;
 	}
 }
