@@ -165,7 +165,6 @@ class TestSuiteShell extends Shell {
 
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 	}
 
 /**
@@ -178,6 +177,7 @@ class TestSuiteShell extends Shell {
 			return;
 		}
 		$params = array(
+			'core' => false,
 			'app' => false,
 			'plugin' => null,
 			'output' => 'text',
@@ -185,7 +185,9 @@ class TestSuiteShell extends Shell {
 
 		$category = $this->args[0];
 
-		if ($category == 'app') {
+		if ($category == 'core') {
+			$params['core'] = true;
+		} elseif ($category == 'app') {
 			$params['app'] = true;
 		} elseif ($category != 'core') {
 			$params['plugin'] = $category;
@@ -252,11 +254,12 @@ class TestSuiteShell extends Shell {
  */
 	protected function run($runnerArgs, $options = array()) {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_loader.php';
 
 		restore_error_handler();
 		restore_error_handler();
 
-		$testCli = new TestRunner($runnerArgs);
+		$testCli = new TestRunner('CakeTestLoader', $runnerArgs);
 		$testCli->run($options);
 	}
 

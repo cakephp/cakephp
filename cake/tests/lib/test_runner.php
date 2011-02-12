@@ -16,10 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+define('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
+define('APP_TEST_CASES', TESTS . 'cases');
 
 require 'PHPUnit/TextUI/Command.php';
-require_once 'test_manager.php';
+
+require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
+require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
+require_once(CAKE_TESTS_LIB . 'controller_test_case.php');
+
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -35,7 +40,10 @@ class TestRunner extends PHPUnit_TextUI_Command {
  *
  * @param array $params list of options to be used for this run
  */
-	public function __construct($params = array()) {
+	public function __construct($loader, $params = array()) {
+		$this->arguments['loader'] = $loader;
+		$this->arguments['test'] = $params['case'];
+		$this->arguments['testFile'] = $params;
 		$this->_params = $params;
 	}
 
@@ -46,12 +54,12 @@ class TestRunner extends PHPUnit_TextUI_Command {
  * @return void
  */
 	protected function handleCustomTestSuite() {
-		$manager = new TestManager($this->_params);
+		/*$manager = new TestManager($this->_params);
 
 		if (!empty($this->_params['case'])) {
 			$this->arguments['test'] = $manager->getTestSuite();
 			$this->arguments['test']->setFixtureManager($manager->getFixtureManager());
 			$manager->loadCase($this->_params['case'] . '.test.php', $this->arguments['test']);
-		}
+		}*/
 	}
 }
