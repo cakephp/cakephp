@@ -253,13 +253,12 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	protected function run($runnerArgs, $options = array()) {
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_loader.php';
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 
 		restore_error_handler();
 		restore_error_handler();
 
-		$testCli = new TestRunner('CakeTestLoader', $runnerArgs);
+		$testCli = new CakeTestSuiteCommand('CakeTestLoader', $runnerArgs);
 		$testCli->run($options);
 	}
 
