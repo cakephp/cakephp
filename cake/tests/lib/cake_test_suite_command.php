@@ -47,6 +47,8 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		$this->arguments['test'] = $params['case'];
 		$this->arguments['testFile'] = $params;
 		$this->_params = $params;
+
+		$this->longOptions['fixture='] = 'handleFixture';
 	}
 
 	/**
@@ -127,4 +129,13 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
         }
     }
 
+/**
+ * Handler for customizing the FixtureManager class/
+ *
+ * @param string $class Name of the class that will be the fixture manager
+ * @return void
+ */
+	function handleFixture($class) {
+		$this->arguments['fixtureManager'] = $class;
+	}
 }

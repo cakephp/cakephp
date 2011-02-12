@@ -143,6 +143,8 @@ class TestSuiteShell extends Shell {
 		))->addOption('directive', array(
 			'help' => __('key[=value] Sets a php.ini value.'),
 			'default' => false
+		))->addOption('fixture', array(
+			'help' => __('Choose a custom fixture manager.'),
 		));
 
 		return $parser;
