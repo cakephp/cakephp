@@ -298,6 +298,9 @@ class DboMysql extends DboSource {
 		}
 		$fields = false;
 		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
+		if (!$cols) {
+			throw new CakeException(__('Could not describe table for %s', $model->name));
+		}
 
 		foreach ($cols as $column) {
 			$fields[$column->Field] = array(
@@ -609,7 +612,7 @@ class DboMysql extends DboSource {
 				}
 			}
 			$result->closeCursor();
-			if (is_string($name)) {
+			if (is_string($name) && isset($tables[$name])) {
 				return $tables[$name];
 			}
 			return $tables;

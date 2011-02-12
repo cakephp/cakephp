@@ -796,6 +796,21 @@ class DboMysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test that listDetailedSources with a named table that doesn't exist.
+ *
+ * @return void
+ */
+	function testListDetailedSourcesNamed() {
+		$this->loadFixtures('Apple');
+
+		$result = $this->Dbo->listDetailedSources('imaginary');
+		$this->assertEquals(array(), $result, 'Should be empty when table does not exist.');
+
+		$result = $this->Dbo->listDetailedSources();
+		$this->assertTrue(isset($result['apples']), 'Key should exist');
+	}
+
+/**
  * Tests that getVersion method sends the correct query for getting the mysql version
  * @return void
  */
