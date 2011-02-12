@@ -361,6 +361,14 @@ class Model extends Object {
 	private $__affectedRows = null;
 
 /**
+ * Has the datasource been configured.
+ *
+ * @var boolean
+ * @see Model::getDataSource
+ */
+	private $__sourceConfigured = false;
+
+/**
  * List of valid finder method options, supplied as the first parameter to find().
  *
  * @var array
@@ -2888,14 +2896,12 @@ class Model extends Object {
 
 /**
  * Gets the DataSource to which this model is bound.
- * Not safe for use with some versions of PHP4, because this class is overloaded.
  *
  * @return object A DataSource object
  */
 	public function getDataSource() {
-		static $configured = false;
-		if (!$configured && $this->useTable !== false) {
-			$configured = true;
+		if (!$this->__sourceConfigured && $this->useTable !== false) {
+			$this->__sourceConfigured = true;
 			$this->setSource($this->useTable);
 		}
 		return ConnectionManager::getDataSource($this->useDbConfig);
