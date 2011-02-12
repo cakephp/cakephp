@@ -127,13 +127,4 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
         }
     }
 
-/**
- * Sets the proper test suite to use and loads the test file in it.
- * this method gets called as a callback from the parent class
- *
- * @return void
- */
-	protected function handleCustomTestSuite() {
-		
-	}
 }
