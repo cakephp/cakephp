@@ -172,34 +172,12 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _testCaseList() {
-		$Reporter =& $this->getReporter();
+		$command = new CakeTestSuiteCommand('', $this->params);
+		$Reporter = $command->handleReporter($this->params['output']);
 		$Reporter->paintDocumentStart();
 		$Reporter->paintTestMenu();
 		$Reporter->testCaseList();
 		$Reporter->paintDocumentEnd();
-	}
-
-/**
- * Gets the reporter based on the request parameters
- *
- * @return void
- * @static
- */
-	function &getReporter() {
-		if (!self::$_Reporter) {
-			$type = strtolower($this->params['output']);
-			$coreClass = 'Cake' . ucwords($this->params['output']) . 'Reporter';
-			$coreFile = CAKE_TESTS_LIB . 'reporter/cake_' . $type . '_reporter.php';
-
-			$appClass = $this->params['output'] . 'Reporter';
-			$appFile = APPLIBS . 'test_suite/reporter/' . $type . '_reporter.php';
-			if (include_once $coreFile) {
-				self::$_Reporter = new $coreClass(null, $this->params);
-			} elseif (include_once $appFile) {
-				self::$_Reporter = new $appClass(null, $this->params);
-			}
-		}
-		return self::$_Reporter;
 	}
 
 /**

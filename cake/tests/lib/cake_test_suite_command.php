@@ -161,6 +161,6 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		} elseif (include_once $appFile) {
 			$object = new $appClass(null, $this->_params);
 		}
-		$this->arguments['printer'] = $object;
+		return $this->arguments['printer'] = $object;
 	}
 }
