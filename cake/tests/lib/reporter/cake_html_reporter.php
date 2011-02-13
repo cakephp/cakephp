@@ -29,8 +29,6 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  */
 class CakeHtmlReporter extends CakeBaseReporter {
 
-	protected $_headerSent = false;
-
 /**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
@@ -142,10 +140,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<strong>" . $result->errorCount() . "</strong> exceptions.";
 		echo "</div>\n";
 		echo '<div style="padding:0 0 5px;">';
-		echo '<p><strong>Time taken by tests (in seconds):</strong> ' . $result->time() . '</p>';
-		if (function_exists('memory_get_peak_usage')) {
-			echo '<p><strong>Peak memory use: (in bytes):</strong> ' . number_format(memory_get_peak_usage()) . '</p>';
-		}
+		echo '<p><strong>' . PHP_Timer::resourceUsage() . '</strong>';
 		echo $this->_paintLinks();
 		echo '</div>';
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {

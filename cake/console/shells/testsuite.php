@@ -167,6 +167,7 @@ class TestSuiteShell extends Shell {
 
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 	}
 
 /**
@@ -255,7 +256,6 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	protected function run($runnerArgs, $options = array()) {
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 
 		restore_error_handler();
 		restore_error_handler();
@@ -271,7 +271,7 @@ class TestSuiteShell extends Shell {
  */
 	public function available() {
 		$params = $this->parseArgs();
-		$testCases = TestManager::getTestCaseList($params);
+		$testCases = CakeTestLoader::generateTestList($params);
 		$app = $params['app'];
 		$plugin = $params['plugin'];
 

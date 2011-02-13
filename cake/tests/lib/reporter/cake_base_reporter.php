@@ -28,29 +28,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  */
 class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 
-/**
- * Time the test runs started.
- *
- * @var integer
- * @access protected
- */
-	protected $_timeStart = 0;
-
-/**
- * Time the test runs ended
- *
- * @var integer
- * @access protected
- */
-	protected $_timeEnd = 0;
-
-/**
- * Duration of all test methods.
- *
- * @var integer
- * @access protected
- */
-	protected $_timeDuration = 0;
+	protected $_headerSent = false;
 
 /**
  * Array of request parameters.  Usually parsed GET params.
@@ -71,6 +49,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 * The number of assertions done for a test suite
 */
 	protected $numAssertions = 0;
+
 /**
  * Does nothing yet. The first output will
  * be sent on the first test start.
@@ -205,6 +184,9 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		if (!$this->_headerSent) {
+			echo $this->paintHeader();
+		}
 		echo __('Running  %s', $suite->getName()) . "\n";
 	}
 
