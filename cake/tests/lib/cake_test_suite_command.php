@@ -61,7 +61,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 	public function run(array $argv, $exit = true) {
 		$this->handleArguments($argv);
 
-		$runner = new CakeTestRunner($this->arguments['loader'], $this->_params);
+		$runner = $this->getRunner($this->arguments['loader']);
 
 		if (is_object($this->arguments['test']) &&
 			$this->arguments['test'] instanceof PHPUnit_Framework_Test) {
@@ -132,12 +132,22 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 	}
 
 /**
+ * Create a runner for the command.
+ *
+ * @param $loader The loader to be used for the test run.
+ * @return CakeTestRunner
+ */
+	public function getRunner($loader) {
+ 		return new CakeTestRunner($loader, $this->_params);
+	}
+
+/**
  * Handler for customizing the FixtureManager class/
  *
  * @param string $class Name of the class that will be the fixture manager
  * @return void
  */
-	function handleFixture($class) {
+	public function handleFixture($class) {
 		$this->arguments['fixtureManager'] = $class;
 	}
 
