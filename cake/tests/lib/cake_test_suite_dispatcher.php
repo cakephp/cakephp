@@ -86,6 +86,8 @@ class CakeTestSuiteDispatcher {
 		$this->_checkPHPUnit();
 		$this->_parseParams();
 
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
+
 		if ($this->params['case']) {
 			$value = $this->_runTestCase();
 		} else {
@@ -244,8 +246,6 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runTestCase() {
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
-
 		$commandArgs = array(
 			'case' => $this->params['case'],
 			'core' =>$this->params['core'],

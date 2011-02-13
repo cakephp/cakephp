@@ -2,6 +2,13 @@
 
 class CakeTestLoader implements PHPUnit_Runner_TestSuiteLoader {
 
+/**
+ * Load a file and find the first test case / suite in that file.
+ *
+ * @param string $filePath 
+ * @param string $params 
+ * @return ReflectionClass
+ */
 	public function load($filePath, $params = '') {
 		$file = $this->_resolveTestFile($filePath, $params);
 
@@ -50,7 +57,13 @@ class CakeTestLoader implements PHPUnit_Runner_TestSuiteLoader {
 			}
 		}
 	}
-	
+
+/**
+ * Reload method.
+ *
+ * @param ReflectionClass $aClass 
+ * @return void
+ */
 	public function reload(ReflectionClass $aClass) {
 		return $aClass;
 	}
@@ -61,10 +74,17 @@ class CakeTestLoader implements PHPUnit_Runner_TestSuiteLoader {
  * @return void
  */
 	protected function _resolveTestFile($filePath, $params) {
-		$basePath = $this->_basePath($params);
-	 	return $basePath . DS . $filePath . '.test.php';
+		$basePath = $this->_basePath($params) . DS . $filePath;
+		$ending = '.test.php';
+		return (strpos($basePath, $ending) === (strlen($basePath) - strlen($ending))) ? $basePath : $basePath . $ending;
 	}
-	
+
+/**
+ * Generates the base path to a set of tests based on the parameters.
+ *
+ * @param array $params 
+ * @return string The base path.
+ */
 	protected function _basePath($params) {
 		$result = null;
 		if (!empty($params['core'])) {
@@ -77,4 +97,5 @@ class CakeTestLoader implements PHPUnit_Runner_TestSuiteLoader {
 		}
 		return $result;
 	}
+
 }
