@@ -140,7 +140,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<strong>" . $result->errorCount() . "</strong> exceptions.";
 		echo "</div>\n";
 		echo '<div style="padding:0 0 5px;">';
-		echo '<p><strong>' . PHP_Timer::resourceUsage() . '</strong>';
+		echo '<p><strong>Time:</strong> ' . $result->time() . ' seconds</p>';
+        echo '<p><strong>Peak memory:</strong> ' . number_format(memory_get_peak_usage()) . ' bytes</p>';
 		echo $this->_paintLinks();
 		echo '</div>';
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
