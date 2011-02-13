@@ -34,7 +34,6 @@ class AllTestSuiteTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All Test Suite classes tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'test_manager.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_case.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_fixture.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'html_coverage_report.test.php');

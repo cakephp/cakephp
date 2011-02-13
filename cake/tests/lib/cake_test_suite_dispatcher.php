@@ -238,6 +238,7 @@ class CakeTestSuiteDispatcher {
 			'--filter', $this->params['filter'],
 			'--output', $this->params['output']
 		);
+		restore_error_handler();
 
 		try {
 			$command = new CakeTestSuiteCommand('CakeTestLoader', $commandArgs);
