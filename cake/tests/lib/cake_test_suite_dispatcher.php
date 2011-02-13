@@ -36,7 +36,8 @@ class CakeTestSuiteDispatcher {
 		'output' => 'html',
 		'show' => 'groups',
 		'show_passes' => false,
-		'filter' => false
+		'filter' => false,
+		'fixture' => null
 	);
 /**
  * Baseurl for the request
@@ -236,7 +237,8 @@ class CakeTestSuiteDispatcher {
 		
 		$options = array(
 			'--filter', $this->params['filter'],
-			'--output', $this->params['output']
+			'--output', $this->params['output'],
+			'--fixture', $this->params['fixture']
 		);
 		restore_error_handler();
 
