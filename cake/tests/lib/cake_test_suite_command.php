@@ -52,14 +52,13 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		$this->longOptions['output='] = 'handleReporter';
 	}
 
-	/**
-	 * Ugly hack to get around PHPUnit having a hard coded classname for the Runner. :(
-	 *
-	 * @param array   $argv
-	 * @param boolean $exit
-	 */
-	public function run(array $argv, $exit = TRUE)
-	{
+/**
+ * Ugly hack to get around PHPUnit having a hard coded classname for the Runner. :(
+ *
+ * @param array   $argv
+ * @param boolean $exit
+ */
+	public function run(array $argv, $exit = true) {
 		$this->handleArguments($argv);
 
 		$runner = new CakeTestRunner($this->arguments['loader'], $this->_params);
@@ -81,7 +80,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 			  $this->arguments['testFile']
 			);
 
-			$result = $skeleton->generate(TRUE);
+			$result = $skeleton->generate(true);
 
 			if (!$result['incomplete']) {
 				eval(str_replace(array('<?php', '?>'), '', $result['code']));
