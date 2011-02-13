@@ -21,11 +21,20 @@ require 'PHPUnit/TextUI/TestRunner.php';
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 /**
- * Class to customize loading of test suites from CLI
+ * A custom test runner for Cake's use of PHPUnit.
  *
  * @package       cake.tests.lib
  */
 class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
+/**
+ * Lets us pass in some options needed for cake's webrunner.
+ *
+ * @return void
+ */
+	public function __construct($loader, $params) {
+		parent::__construct($loader);
+		$this->_params = $params;
+	}
 
 /**
  * Actually run a suite of tests.  Cake initializes fixtures here using the chosen fixture manager
@@ -51,6 +60,19 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 		$fixture->shutdown();
 		return $return;
 	}
+
+/**
+ * Create the test result and splice on our code coverage reports.
+ *
+ * @return PHPUnit_Framework_TestResult
+ */
+	protected function createTestResult() {
+		$result = new PHPUnit_Framework_TestResult;
+		if (isset($this->_params['codeCoverage'])) {
+			$result->collectCodeCoverageInformation(true);
+		}
+		return $result;
+    }
 
 /**
  * Get the fixture manager class specified or use the default one.

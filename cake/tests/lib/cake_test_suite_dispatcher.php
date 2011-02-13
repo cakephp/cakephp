@@ -38,14 +38,6 @@ class CakeTestSuiteDispatcher {
 		'show_passes' => false,
 		'filter' => false
 	);
-
-/**
- * The Instance of the Manager being used.
- *
- * @var TestManager subclass
- */
-	public $Manager;
-
 /**
  * Baseurl for the request
  *
@@ -186,20 +178,6 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Sets the Manager to use for the request.
- *
- * @return string The manager class name
- * @static
- */
-	function &getManager() {
-		if (empty($this->Manager)) {
-			require_once CAKE_TESTS_LIB . 'test_manager.php';
-			$this->Manager = new $this->_managerClass($this->params);
-		}
-		return $this->Manager;
-	}
-
-/**
  * Gets the reporter based on the request parameters
  *
  * @return void
@@ -267,8 +245,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _runTestCase() {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
-
-		$Reporter = CakeTestSuiteDispatcher::getReporter();
 
 		$commandArgs = array(
 			'case' => $this->params['case'],

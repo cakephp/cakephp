@@ -62,7 +62,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 	{
 		$this->handleArguments($argv);
 
-		$runner = new CakeTestRunner($this->arguments['loader']);
+		$runner = new CakeTestRunner($this->arguments['loader'], $this->_params);
 
 		if (is_object($this->arguments['test']) &&
 			$this->arguments['test'] instanceof PHPUnit_Framework_Test) {
