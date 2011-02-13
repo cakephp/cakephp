@@ -29,6 +29,8 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  */
 class CakeHtmlReporter extends CakeBaseReporter {
 
+	protected $_headerSent = false;
+
 /**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
@@ -36,6 +38,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintHeader() {
+		$this->_headerSent = true;
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
@@ -340,7 +343,9 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
-		echo $this->paintHeader();
+		if (!$this->_headerSent) {
+			echo $this->paintHeader();
+		}
 		echo '<h2>' . __('Running  %s', $suite->getName())  . '</h2>';
 	}
 }
