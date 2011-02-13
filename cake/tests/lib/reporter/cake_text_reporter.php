@@ -35,9 +35,9 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintDocumentStart() {
-		// if (!headers_sent()) {
+		if (!headers_sent()) {
 			header('Content-type: text/plain');
-		// }
+		}
 	}
 
 /**
