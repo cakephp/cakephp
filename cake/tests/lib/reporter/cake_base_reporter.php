@@ -101,8 +101,123 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @return mixed
  */
 	public function testCaseList() {
-		$testList = TestManager::getTestCaseList($this->params);
+		$testList = $this->_generateTestList($this->params);
 		return $testList;
+	}
+
+/**
+ * Get the list of files for the test listing.
+ *
+ * @return void
+ */
+	protected function _generateTestList($params) {
+		$directory = self::_getTestsPath($params);
+		$fileList = self::_getTestFileList($directory);
+
+		$testCases = array();
+		foreach ($fileList as $testCaseFile) {
+			$testCases[$testCaseFile] = str_replace($directory . DS, '', $testCaseFile);
+		}
+		return $testCases;
+	}
+
+/**
+ * Returns a list of test files from a given directory
+ *
+ * @param string $directory Directory to get test case files from.
+ * @static
+ */
+	protected static function &_getTestFileList($directory = '.') {
+		$return = self::_getRecursiveFileList($directory, array('self', '_isTestCaseFile'));
+		return $return;
+	}
+
+/**
+ * Gets a recursive list of files from a given directory and matches then against
+ * a given fileTestFunction, like isTestCaseFile()
+ *
+ * @param string $directory The directory to scan for files.
+ * @param mixed $fileTestFunction
+ * @static
+ */
+	protected static function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
+		$fileList = array();
+		if (!is_dir($directory)) {
+			return $fileList;
+		}
+
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+
+		foreach ($files as $file) {
+			if (!$file->isFile()) {
+				continue;
+			}
+			$file = $file->getRealPath();
+
+			if (call_user_func_array($fileTestFunction, array($file))) {
+				$fileList[] = $file;
+			}
+		}
+		return $fileList;
+	}
+/**
+ * Extension suffix for test case files.
+ *
+ * @var string
+ */
+	protected static $_testExtension = '.test.php';
+/**
+ * Tests if a file has the correct test case extension
+ *
+ * @param string $file
+ * @return boolean Whether $file is a test case.
+ * @static
+ */
+	protected static function _isTestCaseFile($file) {
+		return self::_hasExpectedExtension($file, self::$_testExtension);
+	}
+
+/**
+ * Check if a file has a specific extension
+ *
+ * @param string $file
+ * @param string $extension
+ * @return void
+ * @static
+ */
+	protected static function _hasExpectedExtension($file, $extension) {
+		return $extension == strtolower(substr($file, (0 - strlen($extension))));
+	}
+
+/**
+ * Returns the given path to the test files depending on a given type of tests (core, app, plugin)
+ *
+ * @param array $params Array of parameters for getting test paths.
+ *   Can contain app, type, and plugin params.
+ * @return string The path tests are located on
+ * @static
+ */
+	protected static function _getTestsPath($params) {
+		$result = null;
+		if (!empty($params['app'])) {
+			$result = APP_TEST_CASES;
+		} else if (!empty($params['plugin'])) {
+			$pluginPath = App::pluginPath($params['plugin']);
+			$result = $pluginPath . 'tests' . DS . 'cases';
+		} else {
+			$result = CORE_TEST_CASES;
+		}
+		return $result;
+	}
+
+/**
+ * Get the extension for either 'group' or 'test' types.
+ *
+ * @param string $type Type of test to get, either 'test' or 'group'
+ * @return string Extension suffix for test.
+ */
+	public static function getExtension($type = 'test') {
+		return self::$_testExtension;
 	}
 
 /**
