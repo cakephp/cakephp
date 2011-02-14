@@ -15,11 +15,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-<<<<<<< HEAD:lib/Cake/Console/TaskCollection.php
+
 App::uses('ObjectCollection', 'Utility');
 
-=======
->>>>>>> origin/2.0:cake/console/libs/task_collection.php
 class TaskCollection extends ObjectCollection {
 /**
  * Shell to use to set params to tasks.
