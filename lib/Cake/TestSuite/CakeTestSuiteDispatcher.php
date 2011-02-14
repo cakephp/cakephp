@@ -17,6 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+define('CORE_TEST_CASES', LIBS . 'tests' . DS . 'cases');
+define('APP_TEST_CASES', TESTS . 'cases');
+
+App::uses('CakeTestSuiteCommand', 'TestSuite');
+
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
@@ -86,8 +91,6 @@ class CakeTestSuiteDispatcher {
 	function dispatch() {
 		$this->_checkPHPUnit();
 		$this->_parseParams();
-
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 
 		if ($this->params['case']) {
 			$value = $this->_runTestCase();

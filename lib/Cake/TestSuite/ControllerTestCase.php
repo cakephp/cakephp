@@ -19,9 +19,12 @@
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
-require_once CAKE . 'libs' . DS . 'dispatcher.php';
-require_once CAKE_TESTS_LIB . 'cake_test_case.php';
-App::import('Core', array('Router', 'CakeRequest', 'CakeResponse', 'Helper'));
+App::uses('Dispatcher', 'Routing');
+App::uses('CakeTestCase', 'TestSuite');
+App::uses('Router', 'Routing');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
+App::uses('Helper', 'View');
 
 /**
  * ControllerTestDispatcher class

@@ -16,17 +16,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-define('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
-define('APP_TEST_CASES', TESTS . 'cases');
 
 require 'PHPUnit/TextUI/Command.php';
 
-require_once CAKE_TESTS_LIB . 'cake_test_runner.php';
-require_once CAKE_TESTS_LIB . 'cake_test_loader.php';
-require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
-require_once CAKE_TESTS_LIB . 'cake_test_case.php';
-require_once CAKE_TESTS_LIB . 'controller_test_case.php';
-
+App::uses('CakeTestRunner', 'TestSuite');
+App::uses('CakeTestLoader', 'TestSuite');
+App::uses('CakeTestSuite', 'TestSuite');
+App::uses('CakeTestCase', 'TestSuite');
+App::uses('ControllerTestCase', 'TestSuite');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -43,6 +40,9 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  * @param array $params list of options to be used for this run
  */
 	public function __construct($loader, $params = array()) {
+	    if (!class_exists($loader)) {
+	        throw new MissingTestLoaderException;
+	    }
 		$this->arguments['loader'] = $loader;
 		$this->arguments['test'] = $params['case'];
 		$this->arguments['testFile'] = $params;
@@ -161,13 +161,14 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 
 		$type = strtolower($reporter);
 		$coreClass = 'Cake' . ucwords($reporter) . 'Reporter';
-		$coreFile = CAKE_TESTS_LIB . 'reporter/cake_' . $type . '_reporter.php';
+		App::uses($coreClass, 'TestSuite/Reporter');
 
 		$appClass = $reporter . 'Reporter';
-		$appFile = APPLIBS . 'test_suite/reporter/' . $type . '_reporter.php';
-		if (include_once $coreFile) {
+		App::uses($appClass, 'TestSuite/Reporter');
+
+		if (!class_exists($appClass)) {
 			$object = new $coreClass(null, $this->_params);
-		} elseif (include_once $appFile) {
+		} else {
 			$object = new $appClass(null, $this->_params);
 		}
 		return $this->arguments['printer'] = $object;

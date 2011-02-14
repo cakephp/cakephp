@@ -20,8 +20,8 @@
  */
 
 App::uses('CakeTestSuiteDispatcher', 'TestSuite');
-App::uses('TestRunner', 'TestSuite');
-App::uses('TestManager', 'TestSuite');
+App::uses('CakeTestSuiteCommand', 'TestSuite');
+App::uses('CakeTestLoader', 'TestSuite');
 
 class TestSuiteShell extends Shell {
 
@@ -163,7 +163,6 @@ class TestSuiteShell extends Shell {
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 	}
 
 /**

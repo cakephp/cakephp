@@ -30,7 +30,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
- * The class responsible for managinf the creation, loading and removing of fixtures
+ * The class responsible for managing the creation, loading and removing of fixtures
  *
  * @var CakeFixtureManager
  * @access public
