@@ -560,8 +560,21 @@ class ExceptionRendererTest extends CakeTestCase {
 					'/(\/|\\\)sidebox.php/'
 				),
 				500
+			),
+			array(
+				new Exception('boom'),
+				array(
+					'/Internal Error/'
+				),
+				500
+			),
+			array(
+				new RuntimeException('another boom'),
+				array(
+					'/Internal Error/'
+				),
+				500
 			)
-			
 		);
 	}
 

@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+require_once 'PHPUnit/TextUi/ResultPrinter.php';
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -25,31 +26,9 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  * @package cake
  * @package    cake.tests.lib
  */
-class CakeBaseReporter implements PHPUnit_Framework_TestListener {
+class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 
-/**
- * Time the test runs started.
- *
- * @var integer
- * @access protected
- */
-	protected $_timeStart = 0;
-
-/**
- * Time the test runs ended
- *
- * @var integer
- * @access protected
- */
-	protected $_timeEnd = 0;
-
-/**
- * Duration of all test methods.
- *
- * @var integer
- * @access protected
- */
-	protected $_timeDuration = 0;
+	protected $_headerSent = false;
 
 /**
  * Array of request parameters.  Usually parsed GET params.
@@ -70,6 +49,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 * The number of assertions done for a test suite
 */
 	protected $numAssertions = 0;
+
 /**
  * Does nothing yet. The first output will
  * be sent on the first test start.
@@ -100,7 +80,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
  * @return mixed
  */
 	public function testCaseList() {
-		$testList = TestManager::getTestCaseList($this->params);
+		$testList = CakeTestLoader::generateTestList($this->params);
 		return $testList;
 	}
 
@@ -144,6 +124,10 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 			return $_SERVER['PHP_SELF'];
 		}
 		return '';
+	}
+
+	public function printResult(PHPUnit_Framework_TestResult $result) {
+		$this->paintFooter($result);
 	}
 
 	public function paintResult(PHPUnit_Framework_TestResult $result) {
@@ -200,6 +184,9 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		if (!$this->_headerSent) {
+			echo $this->paintHeader();
+		}
 		echo __('Running  %s', $suite->getName()) . "\n";
 	}
 

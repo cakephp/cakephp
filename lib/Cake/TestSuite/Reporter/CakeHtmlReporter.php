@@ -36,6 +36,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintHeader() {
+		$this->_headerSent = true;
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
@@ -139,10 +140,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<strong>" . $result->errorCount() . "</strong> exceptions.";
 		echo "</div>\n";
 		echo '<div style="padding:0 0 5px;">';
-		echo '<p><strong>Time taken by tests (in seconds):</strong> ' . $result->time() . '</p>';
-		if (function_exists('memory_get_peak_usage')) {
-			echo '<p><strong>Peak memory use: (in bytes):</strong> ' . number_format(memory_get_peak_usage()) . '</p>';
-		}
+		echo '<p><strong>Time:</strong> ' . $result->time() . ' seconds</p>';
+        echo '<p><strong>Peak memory:</strong> ' . number_format(memory_get_peak_usage()) . ' bytes</p>';
 		echo $this->_paintLinks();
 		echo '</div>';
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
@@ -271,7 +270,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		echo "<li class='fail'>\n";
-		echo "<span>Exception</span>";
+		echo "<span>" . get_class($message) . "</span>";
 
 		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
 		echo "<div class='msg'>" . __('Test case: %s', $testName) . "</div>\n";
@@ -340,6 +339,9 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		if (!$this->_headerSent) {
+			echo $this->paintHeader();
+		}
 		echo '<h2>' . __('Running  %s', $suite->getName())  . '</h2>';
 	}
 }

@@ -28,7 +28,7 @@ App::uses('ConnectionManager', 'Model');
 class CakeSchema extends Object {
 
 /**
- * Name of the App Schema
+ * Name of the schema
  *
  * @var string
  * @access public
@@ -266,11 +266,16 @@ class CakeSchema extends Object {
 								}
 								if (is_object($Object->$class)) {
 									$withTable = $db->fullTableName($Object->$class, false);
+									if ($prefix && strpos($withTable, $prefix) !== 0) {
+										continue;
+									}
 									if (in_array($withTable, $currentTables)) {
 										$key = array_search($withTable, $currentTables);
-										$tables[$withTable] = $this->__columns($Object->$class);
-										$tables[$withTable]['indexes'] = $db->index($Object->$class);
-										$tables[$withTable]['tableParameters'] = $db->readTableParameters($withTable);
+										$noPrefixWith = str_replace($prefix, '', $withTable);
+	
+										$tables[$noPrefixWith] = $this->__columns($Object->$class);
+										$tables[$noPrefixWith]['indexes'] = $db->index($Object->$class);
+										$tables[$noPrefixWith]['tableParameters'] = $db->readTableParameters($withTable);
 										unset($currentTables[$key]);
 									}
 								}
@@ -339,8 +344,6 @@ class CakeSchema extends Object {
 		));
 
 		$out = "class {$name}Schema extends CakeSchema {\n";
-
-		$out .= "\tvar \$name = '{$name}';\n\n";
 
 		if ($path !== $this->path) {
 			$out .= "\tvar \$path = '{$path}';\n\n";
@@ -577,6 +580,7 @@ class CakeSchema extends Object {
 	public function __columns(&$Obj) {
 		$db = ConnectionManager::getDataSource($Obj->useDbConfig);
 		$fields = $Obj->schema(true);
+
 		$columns = $props = array();
 		foreach ($fields as $name => $value) {
 			if ($Obj->primaryKey == $name) {

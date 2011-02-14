@@ -101,6 +101,9 @@ class ExceptionRenderer {
 
 		if ($exception instanceof CakeException && !$methodExists) {
 			$method = '_cakeError';
+			if (empty($template)) {
+				$template = 'error500';
+			}
 			if ($template == 'internalError') {
 				$template = 'error500';
 			}

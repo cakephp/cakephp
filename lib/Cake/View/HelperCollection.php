@@ -15,6 +15,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+ 
 App::uses('ObjectCollection', 'Utility');
 
 class HelperCollection extends ObjectCollection {
@@ -43,7 +44,7 @@ class HelperCollection extends ObjectCollection {
  *
  * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
  * {{{
- * public $components = array(
+ * public $helpers = array(
  *   'Html' => array(
  *     'className' => 'AliasedHtml'
  *   );

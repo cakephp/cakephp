@@ -3504,11 +3504,14 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array(
 			'prev' => null,
 			'next' => array(
-				'Article' => array('id' => 2)
+				'Article' => array('id' => 2),
+				'Comment' => array(),
+				'Tag' => array()
 		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->id = 2;
+		$TestModel->recursive = 0;
 		$result = $TestModel->find('neighbors', array(
 			'fields' => array('id')
 		));
@@ -3525,12 +3528,14 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($result, $expected);
 
 		$TestModel->id = 3;
+		$TestModel->recursive = 1;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
 		$expected = array(
 			'prev' => array(
-				'Article' => array(
-					'id' => 2
-			)),
+				'Article' => array('id' => 2),
+				'Comment' => array(),
+				'Tag' => array()
+			),
 			'next' => null
 		);
 		$this->assertEqual($result, $expected);
@@ -4793,7 +4798,7 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
- * test that calling unbindModel() with reset == true multiple times 
+ * test that calling unbindModel() with reset == true multiple times
  * leaves associations in the correct state.
  *
  * @return void

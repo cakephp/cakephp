@@ -148,6 +148,8 @@ class TestSuiteShell extends Shell {
 		))->addOption('directive', array(
 			'help' => __('key[=value] Sets a php.ini value.'),
 			'default' => false
+		))->addOption('fixture', array(
+			'help' => __('Choose a custom fixture manager.'),
 		));
 
 		return $parser;
@@ -161,6 +163,7 @@ class TestSuiteShell extends Shell {
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 	}
 
 /**
@@ -173,6 +176,7 @@ class TestSuiteShell extends Shell {
 			return;
 		}
 		$params = array(
+			'core' => false,
 			'app' => false,
 			'plugin' => null,
 			'output' => 'text',
@@ -180,7 +184,9 @@ class TestSuiteShell extends Shell {
 
 		$category = $this->args[0];
 
-		if ($category == 'app') {
+		if ($category == 'core') {
+			$params['core'] = true;
+		} elseif ($category == 'app') {
 			$params['app'] = true;
 		} elseif ($category != 'core') {
 			$params['plugin'] = $category;
@@ -249,7 +255,7 @@ class TestSuiteShell extends Shell {
 		restore_error_handler();
 		restore_error_handler();
 
-		$testCli = new TestRunner($runnerArgs);
+		$testCli = new CakeTestSuiteCommand('CakeTestLoader', $runnerArgs);
 		$testCli->run($options);
 	}
 
@@ -260,7 +266,7 @@ class TestSuiteShell extends Shell {
  */
 	public function available() {
 		$params = $this->parseArgs();
-		$testCases = TestManager::getTestCaseList($params);
+		$testCases = CakeTestLoader::generateTestList($params);
 		$app = $params['app'];
 		$plugin = $params['plugin'];
 

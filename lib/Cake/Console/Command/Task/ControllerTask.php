@@ -284,9 +284,13 @@ class ControllerTask extends BakeTask {
 		$singularName = Inflector::variable($currentModelName);
 		$singularHumanName = $this->_singularHumanName($controllerName);
 		$pluralHumanName = $this->_pluralName($controllerName);
+		$displayField = $modelObj->displayField;
+		$primaryKey = $modelObj->primaryKey;
 
-		$this->Template->set(compact('plugin', 'admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
-			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
+		$this->Template->set(compact('plugin', 'admin', 'controllerPath', 'pluralName', 'singularName',
+			'singularHumanName', 'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName', 
+			'displayField', 'primaryKey'
+		));
 		$actions = $this->Template->generate('actions', 'controller_actions');
 		return $actions;
 	}

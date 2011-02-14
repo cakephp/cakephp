@@ -134,7 +134,7 @@ class ControllerCommentsController extends ControllerTestAppController {
  * @access public
  */
 	public $name = 'ControllerComments';
-	
+
 	protected $_mergeParent = 'ControllerTestAppController';
 }
 
@@ -277,7 +277,7 @@ class TestController extends ControllerTestAppController {
  * @access public
  */
 	public $uses = array('ControllerComment', 'ControllerAlias');
-	
+
 	protected $_mergeParent = 'ControllerTestAppController';
 
 /**
@@ -343,7 +343,7 @@ class TestComponent extends Object {
  */
 	function beforeRender(&$controller) {
 		if ($this->viewclass) {
-			$controller->view = $this->viewclass;
+			$controller->viewClass = $this->viewclass;
 		}
 	}
 }
@@ -368,7 +368,7 @@ class AnotherTestController extends ControllerTestAppController {
  * @access public
  */
 	public $uses = null;
-	
+
 	protected $_mergeParent = 'ControllerTestAppController';
 }
 
@@ -627,7 +627,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->set(array(1 => 'one', 2 => 'two'));
 		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
 		$this->assertEqual($Controller->viewVars, $expected);
-		
+
 	}
 
 /**
@@ -641,7 +641,7 @@ class ControllerTest extends CakeTestCase {
 			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
 		$request = new CakeRequest('controller_posts/index');
-
+		$request->params['action'] = 'index';
 
 		$Controller = new Controller($request, $this->getMock('CakeResponse'));
 		$Controller->viewPath = 'posts';
@@ -649,8 +649,13 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->render('index');
 		$this->assertPattern('/posts index/', $result);
 
+		$Controller->view = 'index';
+		$result = $Controller->render();
+		$this->assertPattern('/posts index/', $result);
+
 		$result = $Controller->render('/elements/test_element');
 		$this->assertPattern('/this is the test element/', $result);
+		$Controller->view = null;
 
 		$Controller = new TestController($request);
 		$Controller->helpers = array('Html');
@@ -986,7 +991,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($result, '/posts/index');
 
 		$request = $this->getMock('CakeRequest');
-	
+
 		$request->expects($this->any())->method('referer')
 			->with(false)
 			->will($this->returnValue('http://localhost/posts/index'));

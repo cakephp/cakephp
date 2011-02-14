@@ -28,9 +28,9 @@ App::uses('Router', 'Routing');
  * in from the controller to render the results of the controller action.  Often this is HTML,
  * but can also take the form of JSON, XML, PDF's or streaming files.
  *
- * CakePHP uses a two-step-view pattern.  This means that the view content is rendered first, 
+ * CakePHP uses a two-step-view pattern.  This means that the view content is rendered first,
  * and then inserted into the selected layout.  A special `$content_for_layout` variable is available
- * in the layout, and it contains the rendered view.  This also means you can pass data from the view to the 
+ * in the layout, and it contains the rendered view.  This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
  * @package    cake.libs.view
@@ -88,6 +88,13 @@ class View extends Object {
 	public $viewVars = array();
 
 /**
+ * Name of view to use with this View.
+ *
+ * @var string
+ */
+	public $view = null;
+
+/**
  * Name of layout to use with this View.
  *
  * @var string
@@ -123,7 +130,7 @@ class View extends Object {
  * @var string
  */
 	public $subDir = null;
-	
+
 /**
  * Theme name.  If you are using themes, you should remember to use ThemeView as well.
  *
@@ -212,7 +219,7 @@ class View extends Object {
 /**
  * An instance of a CakeRequest object that contains information about the current request.
  * This object contains all the information about a request and several methods for reading
- * additional information about the request. 
+ * additional information about the request.
  *
  * @var CakeRequest
  */
@@ -234,7 +241,7 @@ class View extends Object {
  * @var array
  */
 	private $__passedVars = array(
-		'viewVars', 'autoLayout', 'ext', 'helpers', 'layout', 'name',
+		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name',
 		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
@@ -279,7 +286,7 @@ class View extends Object {
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
- * This realizes the concept of Elements, (or "partial layouts")  and the $params array is used to send 
+ * This realizes the concept of Elements, (or "partial layouts")  and the $params array is used to send
  * data to be used in the element.  Elements can be cached improving performance by using the `cache` option.
  *
  * ### Special params
@@ -353,8 +360,7 @@ class View extends Object {
 	}
 
 /**
- * Renders view for given action and layout. If $file is given, that is used
- * for a view filename (e.g. customFunkyView.ctp).
+ * Renders view for given view file and layout.
  *
  * Render triggers helper callbacks, which are fired before and after the view are rendered,
  * as well as before and after the layout.  The helper callbacks are called
@@ -366,14 +372,12 @@ class View extends Object {
  *
  * If View::$autoRender is false and no `$layout` is provided, the view will be returned bare.
  *
- * @param string $action Name of action to render for, this will be used as the filename to render, unless
- *   $file is give as well.
+ * @param string $view Name of view file to use
  * @param string $layout Layout to use.
- * @param string $file Custom filename for view. Providing this will render a specific file for the given action.
  * @return string Rendered Element
  * @throws CakeException if there is an error in the view.
  */
-	public function render($action = null, $layout = null, $file = null) {
+	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
 			return true;
 		}
@@ -382,11 +386,7 @@ class View extends Object {
 		}
 		$this->output = null;
 
-		if ($file != null) {
-			$action = $file;
-		}
-
-		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
+		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->Helpers->trigger('beforeRender', array($viewFileName));
 			$this->output = $this->_render($viewFileName);
 			$this->Helpers->trigger('afterRender', array($viewFileName));
@@ -447,7 +447,7 @@ class View extends Object {
 	}
 
 /**
- * Render cached view. Works in concert with CacheHelper and Dispatcher to 
+ * Render cached view. Works in concert with CacheHelper and Dispatcher to
  * render cached view files.
  *
  * @param string $filename the cache file to include
@@ -699,7 +699,7 @@ class View extends Object {
 			}
 		}
 		$paths = $this->_paths($this->plugin);
-		
+
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {

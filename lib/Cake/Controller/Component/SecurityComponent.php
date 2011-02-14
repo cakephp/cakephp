@@ -691,7 +691,7 @@ class SecurityComponent extends Component {
 		$tokenData = array();
 		if ($this->Session->check('_Token')) {
 			$tokenData = $this->Session->read('_Token');
-			if (!empty($tokenData['csrfTokens'])) {
+			if (!empty($tokenData['csrfTokens']) && is_array($tokenData['csrfTokens'])) {
 				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
 			}
 		} 

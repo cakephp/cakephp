@@ -16,24 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
+
 class CakeTestSuite extends PHPUnit_Framework_TestSuite {
-
-/**
- * Instance of a fixture manager
- * @var CakeFixtureManager
- */
-	protected $_fixtureManager = null;
-
-/**
- * Sets the intances for the fixture manager that will be used by this class.
- *
- * @param CakeFixtureManager $manager the instance of the manager class
- * @return void
- * @access public
- */
-	public function setFixtureManager(CakeFixtureManager $manager) {
-		$this->_fixtureManager = $manager;
-	}
 
 /**
  * Adds all the files in a directory to the test suite. Does not recurse through directories.
@@ -71,36 +56,4 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 		}
 	}
 
-/**
- * Method that is called before the tests of this test suite are run.
- * It will load fixtures accordingly for each test.
- *
- * @return void
- * @access protected
- */
-	protected function setUp() {
-		parent::setUp();
-		if (!$this->_fixtureManager) {
-			return;
-		}
-		foreach ($this->getIterator() as $test) {
-			if ($test instanceof CakeTestCase) {
-				$this->_fixtureManager->fixturize($test);
-				$test->fixtureManager = $this->_fixtureManager;
-			}
-		}
-	}
-
-/**
- * Method that is called after all the tests of this test suite are run.
- *
- * @return void
- * @access protected
- */
-	protected function tearDown() {
-		parent::tearDown();
-		if ($this->_fixtureManager) {
-			$this->_fixtureManager->shutDown();
-		}
-	}
 }

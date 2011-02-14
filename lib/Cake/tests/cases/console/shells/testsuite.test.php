@@ -97,7 +97,7 @@ class TestSuiteShellTest extends CakeTestCase {
 
 		$this->Shell->expects($this->once())->method('run')
 			->with(
-				array('app' => false, 'plugin' => null, 'output' => 'text', 'case' => 'basics'),
+				array('app' => false, 'plugin' => null, 'core' => true, 'output' => 'text', 'case' => 'basics'),
 				array('--filter', 'myFilter', '--colors', '--verbose')
 			);
 		$this->Shell->main();

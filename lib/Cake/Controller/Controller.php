@@ -31,12 +31,12 @@ App::uses('View', 'View');
  * automatic model availability, redirection, callbacks, and more.
  *
  * Controllers should provide a number of 'action' methods.  These are public methods on the controller
- * that are not prefixed with a '_' and not part of Controller.  Each action serves as an endpoint for 
+ * that are not prefixed with a '_' and not part of Controller.  Each action serves as an endpoint for
  * performing a specific action on a resource or collection of resources.  For example adding or editing a new
  * object, or listing a set of objects.
  *
  * You can access request parameters, using `$this->request`.  The request object contains all the POST, GET and FILES
- * that were part of the request. 
+ * that were part of the request.
  *
  * After performing the required actions, controllers are responsible for creating a response.  This usually
  * takes the form of a generated View, or possibly a redirection to another controller action.  In either case
@@ -86,7 +86,7 @@ class Controller extends Object {
 /**
  * An instance of a CakeRequest object that contains information about the current request.
  * This object contains all the information about a request and several methods for reading
- * additional information about the request. 
+ * additional information about the request.
  *
  * @var CakeRequest
  */
@@ -133,6 +133,15 @@ class Controller extends Object {
  * @var array Array of model objects.
  */
 	public $modelNames = array();
+
+/**
+ * The name of the view file to render. The name specified
+ * is the filename in /app/views/<sub_folder> without the .ctp extension.
+ *
+ * @var string
+ * @link http://book.cakephp.org/view/962/Page-related-Attributes-layout-and-pageTitle
+ */
+	public $view = null;
 
 /**
  * The name of the layout file to render the view inside of. The name specified
@@ -182,7 +191,7 @@ class Controller extends Object {
  *
  * @var string
  */
-	public $view = 'View';
+	public $viewClass = 'View';
 
 /**
  * Instance of the View created during rendering. Won't be set until after Controller::render() is called.
@@ -425,7 +434,7 @@ class Controller extends Object {
 			}
 			$plugin = $pluginName . '.';
 		}
-		
+
 		if (is_subclass_of($this, $this->_mergeParent) || !empty($pluginController)) {
 			$appVars = get_class_vars($this->_mergeParent);
 			$uses = $appVars['uses'];
@@ -441,7 +450,7 @@ class Controller extends Object {
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
 			} elseif (
-				($this->uses !== null || $this->uses !== false) && 
+				($this->uses !== null || $this->uses !== false) &&
 				is_array($this->uses) && !empty($appVars['uses'])
 			) {
 				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
@@ -453,7 +462,7 @@ class Controller extends Object {
 			$merge = array('components', 'helpers');
 			$appVars = get_class_vars($pluginController);
 			if (
-				($this->uses !== null || $this->uses !== false) && 
+				($this->uses !== null || $this->uses !== false) &&
 				is_array($this->uses) && !empty($appVars['uses'])
 			) {
 				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
@@ -630,7 +639,7 @@ class Controller extends Object {
 			extract($status, EXTR_OVERWRITE);
 		}
 		$response = $this->Components->trigger(
-			'beforeRedirect', 
+			'beforeRedirect',
 			array(&$this, $url, $status, $exit),
 			array('break' => true, 'breakOn' => false, 'collectReturn' => true)
 		);
@@ -809,18 +818,17 @@ class Controller extends Object {
 /**
  * Instantiates the correct view class, hands it its data, and uses it to render the view output.
  *
- * @param string $action Action name to render
+ * @param string $view View to use for rendering
  * @param string $layout Layout to use
- * @param string $file File to use for rendering
  * @return string Full output string of view contents
  * @link http://book.cakephp.org/view/980/render
  */
-	public function render($action = null, $layout = null, $file = null) {
+	public function render($view = null, $layout = null) {
 		$this->beforeRender();
 		$this->Components->trigger('beforeRender', array(&$this));
 
-		$viewClass = $this->view;
-		if ($this->view != 'View') {
+		$viewClass = $this->viewClass;
+		if ($this->viewClass != 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass = $viewClass . 'View';
 			App::uses($viewClass, $plugin . 'View');
@@ -859,7 +867,7 @@ class Controller extends Object {
 
 		$this->autoRender = false;
 		$this->View = $View;
-		return $this->response->body($View->render($action, $layout, $file));
+		return $this->response->body($View->render($view, $layout));
 	}
 
 /**

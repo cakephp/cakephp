@@ -332,9 +332,9 @@ class Model extends Object {
 	public $__backAssociation = array();
 
 	public $__backInnerAssociation = array();
-	
+
 	public $__backOriginalAssociation = array();
-	
+
 	public $__backContainableAssociation = array();
 
 /**
@@ -360,6 +360,14 @@ class Model extends Object {
  * @access private
  */
 	private $__affectedRows = null;
+
+/**
+ * Has the datasource been configured.
+ *
+ * @var boolean
+ * @see Model::getDataSource
+ */
+	private $__sourceConfigured = false;
 
 /**
  * List of valid finder method options, supplied as the first parameter to find().
@@ -458,16 +466,14 @@ class Model extends Object {
 		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
-
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
+			$this->setSource($this->useTable);
 
 			if ($this->displayField == null) {
 				unset($this->displayField);
 			}
-			$this->table = $this->useTable;
-			$this->tableToModel[$this->table] = $this->alias;
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
@@ -1067,7 +1073,7 @@ class Model extends Object {
 	}
 
 /**
- * Check that a method is callable on a model.  This will check both the model's own methods, its 
+ * Check that a method is callable on a model.  This will check both the model's own methods, its
  * inherited methods and methods that could be callable through behaviors.
  *
  * @param string $method The method to be called.
@@ -1146,11 +1152,11 @@ class Model extends Object {
 
 		if ($data !== null && $data !== false) {
 			foreach ($this->schema() as $field => $properties) {
-				if ($this->primaryKey !== $field && isset($properties['default'])) {
+				if ($this->primaryKey !== $field && isset($properties['default']) && $properties['default'] !== '') {
 					$defaults[$field] = $properties['default'];
 				}
 			}
-			$this->set(Set::filter($defaults));
+			$this->set($defaults);
 			$this->set($data);
 		}
 		if ($filterKey) {
@@ -2156,7 +2162,7 @@ class Model extends Object {
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
 			$return = $this->Behaviors->trigger(
-				'beforeFind', 
+				'beforeFind',
 				array(&$this, $query),
 				array('break' => true, 'breakOn' => array(false, null), 'modParams' => 1)
 			);
@@ -2321,7 +2327,6 @@ class Model extends Object {
  */
 	protected function _findNeighbors($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$query = array_merge(array('recursive' => 0), $query);
 			extract($query);
 			$conditions = (array)$conditions;
 			if (isset($field) && isset($value)) {
@@ -2889,14 +2894,12 @@ class Model extends Object {
 
 /**
  * Gets the DataSource to which this model is bound.
- * Not safe for use with some versions of PHP4, because this class is overloaded.
  *
  * @return object A DataSource object
  */
 	public function getDataSource() {
-		static $configured = false;
-		if (!$configured && $this->useTable !== false) {
-			$configured = true;
+		if (!$this->__sourceConfigured && $this->useTable !== false) {
+			$this->__sourceConfigured = true;
 			$this->setSource($this->useTable);
 		}
 		return ConnectionManager::getDataSource($this->useDbConfig);

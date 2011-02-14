@@ -17,7 +17,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('TestManager', 'TestSuite');
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
@@ -37,23 +36,9 @@ class CakeTestSuiteDispatcher {
 		'output' => 'html',
 		'show' => 'groups',
 		'show_passes' => false,
-		'filter' => false
+		'filter' => false,
+		'fixture' => null
 	);
-
-/**
- * The classname for the TestManager being used
- *
- * @var string
- */
-	protected $_managerClass = 'TestManager';
-
-/**
- * The Instance of the Manager being used.
- *
- * @var TestManager subclass
- */
-	public $Manager;
-
 /**
  * Baseurl for the request
  *
@@ -101,6 +86,8 @@ class CakeTestSuiteDispatcher {
 	function dispatch() {
 		$this->_checkPHPUnit();
 		$this->_parseParams();
+
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_command.php';
 
 		if ($this->params['case']) {
 			$value = $this->_runTestCase();
@@ -186,47 +173,12 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _testCaseList() {
-		$Reporter =& $this->getReporter();
+		$command = new CakeTestSuiteCommand('', $this->params);
+		$Reporter = $command->handleReporter($this->params['output']);
 		$Reporter->paintDocumentStart();
 		$Reporter->paintTestMenu();
 		$Reporter->testCaseList();
 		$Reporter->paintDocumentEnd();
-	}
-
-/**
- * Sets the Manager to use for the request.
- *
- * @return string The manager class name
- * @static
- */
-	function &getManager() {
-		if (empty($this->Manager)) {
-			$this->Manager = new $this->_managerClass($this->params);
-		}
-		return $this->Manager;
-	}
-
-/**
- * Gets the reporter based on the request parameters
- *
- * @return void
- * @static
- */
-	function &getReporter() {
-		if (!self::$_Reporter) {
-			$type = strtolower($this->params['output']);
-			$coreClass = 'Cake' . ucwords($this->params['output']) . 'Reporter';
-			$appClass = $this->params['output'] . 'Reporter';
-			App::uses($coreClass, 'TestSuite/Reporter');
-			App::uses($appClass, 'TestSuite/Reporter');
-
-			if (class_exists($coreClass)) {
-				self::$_Reporter = new $coreClass(null, $this->params);
-			} elseif (class_exists($appClass)) {
-				self::$_Reporter = new $appClass(null, $this->params);
-			}
-		}
-		return self::$_Reporter;
 	}
 
 /**
@@ -260,9 +212,11 @@ class CakeTestSuiteDispatcher {
 				$this->_checkXdebug();
 			}
 		}
+		if (empty($this->params['plugin']) && empty($this->params['app'])) {
+			$this->params['core'] = true;
+		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
-		$this->getManager();
 	}
 
 /**
@@ -271,9 +225,26 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runTestCase() {
+		$commandArgs = array(
+			'case' => $this->params['case'],
+			'core' =>$this->params['core'],
+			'app' => $this->params['app'],
+			'plugin' => $this->params['plugin'],
+			'codeCoverage' => $this->params['codeCoverage'],
+			'baseUrl' => $this->_baseUrl,
+			'baseDir' => $this->_baseDir,
+		);
+		
+		$options = array(
+			'--filter', $this->params['filter'],
+			'--output', $this->params['output'],
+			'--fixture', $this->params['fixture']
+		);
+		restore_error_handler();
+
 		try {
-			$Reporter = CakeTestSuiteDispatcher::getReporter();
-			return $this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
+			$command = new CakeTestSuiteCommand('CakeTestLoader', $commandArgs);
+			$result = $command->run($options);
 		} catch (MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;

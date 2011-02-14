@@ -93,15 +93,16 @@ class Configure {
 				} else {
 					$duration = '+999 days';
 				}
+				$cacheConfigs = Cache::configured();
 
-				if (Cache::config('_cake_core_') === false) {
+				if (!in_array('_cake_core_', $cacheConfigs)) {
 					Cache::config('_cake_core_', array_merge((array)$cache['settings'], array(
 						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
 						'serialize' => true, 'duration' => $duration
 					)));
 				}
 
-				if (Cache::config('_cake_model_') === false) {
+				if (!in_array('_cake_model_', $cacheConfigs)) {
 					Cache::config('_cake_model_', array_merge((array)$cache['settings'], array(
 						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
 						'serialize' => true, 'duration' => $duration

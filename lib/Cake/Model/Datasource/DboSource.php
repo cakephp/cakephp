@@ -705,7 +705,7 @@ class DboSource extends DataSource {
 			);
 		}
 		if (
-			preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*([\w-]+)$/', $data, $matches
+			preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*([\w-]+)$/i', $data, $matches
 		)) {
 			return $this->cacheMethod(
 				__FUNCTION__, $cacheKey,

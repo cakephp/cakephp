@@ -145,8 +145,13 @@ class SchemaShell extends Shell {
 			}
 		}
 
+		$cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', true);
+
 		$content = $this->Schema->read($options);
 		$content['file'] = $this->params['file'];
+		
+		Configure::write('Cache.disable', $cacheDisable);
 
 		if ($snapshot === true) {
 			$Folder = new Folder($this->Schema->path);
