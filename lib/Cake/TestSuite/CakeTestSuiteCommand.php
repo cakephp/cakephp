@@ -24,6 +24,7 @@ App::uses('CakeTestLoader', 'TestSuite');
 App::uses('CakeTestSuite', 'TestSuite');
 App::uses('CakeTestCase', 'TestSuite');
 App::uses('ControllerTestCase', 'TestSuite');
+App::uses('CakeTestModel', 'TestSuite/Fixture');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
