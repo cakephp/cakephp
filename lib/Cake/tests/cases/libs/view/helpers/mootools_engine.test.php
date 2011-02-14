@@ -21,6 +21,7 @@
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('View', 'View');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('JsHelper', 'View/Helper');
 App::uses('MootoolsEngineHelper', 'View/Helper');
