@@ -1,6 +1,23 @@
 <?php
-
-class CakeTestLoader implements PHPUnit_Runner_TestSuiteLoader {
+/**
+ * TestLoader for CakePHP Test suite.
+ *
+ * Turns partial paths used on the testsuite console and web UI into full file paths.
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 2.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 
 /**
  * Load a file and find the first test case / suite in that file.
@@ -11,61 +28,7 @@ class CakeTestLoader implements PHPUnit_Runner_TestSuiteLoader {
  */
 	public function load($filePath, $params = '') {
 		$file = $this->_resolveTestFile($filePath, $params);
-
-		PHPUnit_Util_Class::collectStart();
-		PHPUnit_Util_Fileloader::checkAndLoad($file, false);
-		$loadedClasses = PHPUnit_Util_Class::collectEnd();
-
-		if (!empty($loadedClasses)) {
-			$testCaseClass = 'PHPUnit_Framework_TestCase';
-
-			foreach ($loadedClasses as $loadedClass) {
-				$class = new ReflectionClass($loadedClass);
-				$classFile = $class->getFileName();
-
-				if ($class->isSubclassOf($testCaseClass) &&
-					!$class->isAbstract()) {
-					$suiteClassName = $loadedClass;
-					$testCaseClass = $loadedClass;
-
-					if ($classFile == realpath($file)) {
-						break;
-					}
-				}
-
-				if ($class->hasMethod('suite')) {
-					$method = $class->getMethod('suite');
-
-					if (!$method->isAbstract() &&
-						$method->isPublic() &&
-						$method->isStatic()) {
-						$suiteClassName = $loadedClass;
-
-						if ($classFile == realpath($file)) {
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		if (class_exists($suiteClassName, FALSE)) {
-			$class = new ReflectionClass($suiteClassName);
-
-			if ($class->getFileName() == realpath($file)) {
-				return $class;
-			}
-		}
-	}
-
-/**
- * Reload method.
- *
- * @param ReflectionClass $aClass 
- * @return void
- */
-	public function reload(ReflectionClass $aClass) {
-		return $aClass;
+		return parent::load('', $file);
 	}
 
 /**
