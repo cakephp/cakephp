@@ -16,7 +16,6 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller'));
 
 App::uses('Helper', 'View');
 App::uses('AppHelper', 'View/Helper');
@@ -1384,7 +1383,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 
 	public function testLoadConfig() {
-		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
+		$path = LIBS . 'tests' . DS . 'test_app' . DS . 'config'. DS;
 
 		$result = $this->Html->loadConfig('htmlhelper_tags', $path);
 		$expected = array(
@@ -1424,7 +1423,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @expectedException ConfigureException
  */
 	public function testLoadConfigWrongReader() {
-		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
+		$path = LIBS . 'tests' . DS . 'test_app' . DS . 'config'. DS;
 		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 	}
 

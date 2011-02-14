@@ -944,7 +944,8 @@ class HtmlHelper extends AppHelper {
 		}
 
 		$readerClass = Inflector::camelize($reader) . 'Reader';
-		if (!App::import('Lib', 'config/' . $readerClass)) {
+		App::uses($readerClass, 'Configure');
+		if (!class_exists($readerClass)) {
 			throw new ConfigureException(__('Cannot load the configuration file. Unknown reader.'));
 		}
 
