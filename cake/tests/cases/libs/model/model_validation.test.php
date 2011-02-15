@@ -131,13 +131,14 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel =& new ValidationTest1();
 		$TestModel->validate = $validate = array(
 			'title' => array(
-				'rule' => 'customValidator',
+				'rule' => 'alphaNumeric',
 				'required' => true
 			),
 			'name' => array(
-				'rule' => 'allowEmpty',
+				'rule' => 'alphaNumeric',
 				'required' => true
 		));
+		$TestModel->set(array('title' => '$$', 'name' => '##'));
 		$TestModel->invalidFields(array('fieldList' => array('title')));
 		$expected = array(
 			'title' => 'This field cannot be left blank'
@@ -175,9 +176,9 @@ class ModelValidationTest extends BaseModelTest {
  */
 	function testInvalidFieldsWhitelist() {
 		$TestModel =& new ValidationTest1();
-		$TestModel->validate = $validate = array(
+		$TestModel->validate = array(
 			'title' => array(
-				'rule' => 'customValidator',
+				'rule' => 'alphaNumeric',
 				'required' => true
 			),
 			'name' => array(
@@ -186,7 +187,7 @@ class ModelValidationTest extends BaseModelTest {
 		));
 
 		$TestModel->whitelist = array('name');
-		$TestModel->save(array('name' => '#$$#'));
+		$TestModel->save(array('name' => '#$$#', 'title' => '$$$$'));
 
 		$expected = array('name' => 'This field cannot be left blank');
 		$this->assertEqual($TestModel->validationErrors, $expected);

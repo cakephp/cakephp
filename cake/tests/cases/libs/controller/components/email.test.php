@@ -437,6 +437,9 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpSendMultipleTo() {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
 		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = array('postmaster@localhost', 'root@localhost');
 		$this->Controller->EmailTest->from = 'noreply@example.com';

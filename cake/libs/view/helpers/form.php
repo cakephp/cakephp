@@ -1843,8 +1843,11 @@ class FormHelper extends AppHelper {
 					if ($time[0] == 0 && $timeFormat == '12') {
 						$time[0] = 12;
 					}
-					$hour = $time[0];
-					$min = $time[1];
+					$hour = $min = null;
+					if (isset($time[1])) {
+						$hour = $time[0];
+						$min = $time[1];
+					}
 				}
 			}
 		}
@@ -2190,10 +2193,19 @@ class FormHelper extends AppHelper {
 		} else {
 			$secure = (isset($this->params['_Token']) && !empty($this->params['_Token']));
 		}
+		
+		$fieldName = null;
+		if ($secure && !empty($options['name'])) {
+			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
+			if (isset($matches[1])) {
+				$fieldName = $matches[1];
+			}
+		}
+
 		$result = parent::_initInputField($field, $options);
 
 		if ($secure) {
-			$this->__secure();
+			$this->__secure($fieldName);
 		}
 		return $result;
 	}

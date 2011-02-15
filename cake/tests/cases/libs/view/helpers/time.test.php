@@ -731,6 +731,14 @@ class TimeHelperTest extends CakeTestCase {
 		$expected = 4;
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Time->convertSpecifiers('%e', $time);
+		$expected = '14';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%e', strtotime('2011-01-01'));
+		$expected = ' 1';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Time->convertSpecifiers('%x', $time);
 		$expected = '%d/%m/%y';
 		$this->assertEqual($result, $expected);
