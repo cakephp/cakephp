@@ -311,6 +311,7 @@ class AuthComponent extends Component {
 					$this->Session->write('Auth.redirect', $controller->referer(null, true));
 				}
 			}
+			return true;
 		} else {
 			if (!$this->_getUser()) {
 				if (!$request->is('ajax')) {
@@ -328,7 +329,6 @@ class AuthComponent extends Component {
 				}
 			}
 		}
-
 		if (empty($this->authorize) || $this->isAuthorized()) {
 			return true;
 		}

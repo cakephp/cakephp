@@ -867,6 +867,27 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test that no redirects or authoization tests occur on the loginAction
+ *
+ * @return void
+ */
+	function testNoRedirectOnLoginAction() {
+		$controller = $this->getMock('Controller');
+		$controller->methods = array('login');
+		
+		$url = '/AuthTest/login';
+		$this->Auth->request = $controller->request = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Auth->authorize = array('Controller');
+
+		$controller->expects($this->never())
+			->method('redirect');
+
+		$this->Auth->startup($controller);
+	}
+
+/**
  * Ensure that no redirect is performed when a 404 is reached
  * And the user doesn't have a session.
  *
