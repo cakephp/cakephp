@@ -80,6 +80,13 @@ class CakeRequest implements ArrayAccess {
 	public $here = null;
 
 /**
+ * The key to look for inside $_GET
+ *
+ * @var string
+ */
+	public static $urlKey = 'url';
+
+/**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
  * There are several ways to specify a detector, see CakeRequest::addDetector() for the 
@@ -231,7 +238,7 @@ class CakeRequest implements ArrayAccess {
  * @return string URL
  */
 	protected function _url() {
-		if (empty($_GET['url'])) {
+		if (empty($_GET[self::$urlKey])) {
 			$uri = $this->_uri();
 			$base = $this->base;
 
@@ -256,7 +263,7 @@ class CakeRequest implements ArrayAccess {
 				}
 			}
 		} else {
-			$url = $_GET['url'];
+			$url = $_GET[self::$urlKey];
 		}
 		return $url;
 	}
@@ -306,7 +313,6 @@ class CakeRequest implements ArrayAccess {
 		$this->webroot = $base . '/';
 
 		$docRoot = env('DOCUMENT_ROOT');
-		$script = realpath(env('SCRIPT_FILENAME'));
 		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
 
 		if (!empty($base) || !$docRootContainsWebroot) {
