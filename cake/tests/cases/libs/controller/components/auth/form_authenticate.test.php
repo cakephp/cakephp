@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::import('Component', 'Auth');
 App::import('Component', 'auth/form_authenticate');
 App::import('Model', 'AppModel');
 App::import('Core', 'CakeRequest');
@@ -37,7 +38,8 @@ class FormAuthenticateTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->auth = new FormAuthenticate(array(
+		$this->Collection = $this->getMock('ComponentCollection');
+		$this->auth = new FormAuthenticate($this->Collection, array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User'
 		));
@@ -52,7 +54,7 @@ class FormAuthenticateTest extends CakeTestCase {
  * @return void
  */
 	function testConstructor() {
-		$object = new FormAuthenticate(array(
+		$object = new FormAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
 			'fields' => array('username' => 'user', 'password' => 'password')
 		));

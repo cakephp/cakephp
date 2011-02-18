@@ -30,9 +30,9 @@ class ActionsAuthorizeTest extends CakeTestCase {
 		parent::setUp();
 		$this->controller = $this->getMock('Controller', array(), array(), '', false);
 		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
-		$this->controller->Components = $this->getMock('ComponentCollection');
+		$this->Collection = $this->getMock('ComponentCollection');
 
-		$this->auth = new ActionsAuthorize($this->controller);
+		$this->auth = new ActionsAuthorize($this->Collection);
 		$this->auth->settings['actionPath'] = '/controllers';
 	}
 
@@ -42,7 +42,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  * @return void
  */
 	protected function _mockAcl() {
-		$this->controller->Components->expects($this->any())
+		$this->Collection->expects($this->any())
 			->method('load')
 			->with('Acl')
 			->will($this->returnValue($this->Acl));

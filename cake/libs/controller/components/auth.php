@@ -413,7 +413,7 @@ class AuthComponent extends Component {
 				throw new CakeException(__('Authorization objects must implement an authorize method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authorizeObjects[] = new $className($this->_Collection->getController(), $settings);
+			$this->_authorizeObjects[] = new $className($this->_Collection, $settings);
 		}
 		return $this->_authorizeObjects;
 	}
@@ -651,7 +651,7 @@ class AuthComponent extends Component {
 				throw new CakeException(__('Authentication objects must implement an authenticate method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authenticateObjects[] = new $className($settings);
+			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);
 		}
 		return $this->_authenticateObjects;
 	}

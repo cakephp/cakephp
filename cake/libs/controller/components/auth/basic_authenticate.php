@@ -64,11 +64,11 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Constructor, completes configuration for basic authentication.
  *
+ * @param ComponentCollection $collection The Component collection used on this request.
  * @param array $settings An array of settings.
- * @return void
  */
-	public function __construct($settings) {
-		parent::__construct($settings);
+	public function __construct(ComponentCollection $collection, $settings) {
+		parent::__construct($collection, $settings);
 		if (empty($this->settings['realm'])) {
 			$this->settings['realm'] = env('SERVER_NAME');
 		}

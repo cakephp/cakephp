@@ -27,7 +27,12 @@ class ControllerAuthorizeTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->controller = $this->getMock('Controller', array('isAuthorized'), array(), '', false);
-		$this->auth = new ControllerAuthorize($this->controller);
+		$this->components = $this->getMock('ComponentCollection');
+		$this->components->expects($this->any())
+			->method('getController')
+			->will($this->returnValue($this->controller));
+		
+		$this->auth = new ControllerAuthorize($this->components);
 	}
 
 /**

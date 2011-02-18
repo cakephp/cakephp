@@ -39,7 +39,8 @@ class BasicAuthenticateTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->auth = new BasicAuthenticate(array(
+		$this->Collection = $this->getMock('ComponentCollection');
+		$this->auth = new BasicAuthenticate($this->Collection, array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User',
 			'realm' => 'localhost',
@@ -67,7 +68,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  * @return void
  */
 	function testConstructor() {
-		$object = new BasicAuthenticate(array(
+		$object = new BasicAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
 			'fields' => array('username' => 'user', 'password' => 'password')
 		));

@@ -28,11 +28,11 @@ class CrudAuthorizeTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->controller = $this->getMock('Controller', array(), array(), '', false);
-		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
-		$this->controller->Components = $this->getMock('ComponentCollection');
 
-		$this->auth = new CrudAuthorize($this->controller);
+		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
+		$this->Components = $this->getMock('ComponentCollection');
+
+		$this->auth = new CrudAuthorize($this->Components);
 	}
 
 /**
@@ -41,7 +41,7 @@ class CrudAuthorizeTest extends CakeTestCase {
  * @return void
  */
 	protected function _mockAcl() {
-		$this->controller->Components->expects($this->any())
+		$this->Components->expects($this->any())
 			->method('load')
 			->with('Acl')
 			->will($this->returnValue($this->Acl));
@@ -174,7 +174,7 @@ class CrudAuthorizeTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin', 'manager'));
 		Router::reload();
 		
-		$auth = new CrudAuthorize($this->controller);
+		$auth = new CrudAuthorize($this->Components);
 		$this->assertTrue(isset($auth->settings['actionMap']['admin_index']));
 	}
 

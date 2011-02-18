@@ -26,8 +26,15 @@ abstract class BaseAuthorize {
  *
  * @var Controller
  */
-	protected $_controller = null;
+	protected $_Controller = null;
 
+/**
+ * Component collection instance for getting more components.
+ *
+ * @var ComponentCollection
+ */
+	protected $_Collection;
+	
 /**
  * Settings for authorize objects.
  *
@@ -55,7 +62,9 @@ abstract class BaseAuthorize {
  * @param Controller $controller The controller for this request.
  * @param string $settings An array of settings.  This class does not use any settings.
  */
-	public function __construct(Controller $controller, $settings = array()) {
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		$this->_Collection = $collection;
+		$controller = $collection->getController();
 		$this->controller($controller);
 		$this->settings = Set::merge($this->settings, $settings);
 	}
@@ -80,10 +89,10 @@ abstract class BaseAuthorize {
 			if (!$controller instanceof Controller) {
 				throw new CakeException(__('$controller needs to be an instance of Controller'));
 			}
-			$this->_controller = $controller;
+			$this->_Controller = $controller;
 			return true;
 		}
-		return $this->_controller;
+		return $this->_Controller;
 	}
 
 /**

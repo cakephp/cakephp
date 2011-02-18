@@ -41,11 +41,20 @@ abstract class BaseAuthenticate {
 	);
 
 /**
+ * A Component collection, used to get more components.
+ *
+ * @var ComponentCollection
+ */
+	protected $_Collection;
+
+/**
  * Constructor
  *
+ * @param ComponentCollection $collection The Component collection used on this request.
  * @param array $settings Array of settings to use.
  */
-	public function __construct($settings) {
+	public function __construct(ComponentCollection $collection, $settings) {
+		$this->_Collection = $collection;
 		$this->settings = Set::merge($this->settings, $settings);
 	}
 

@@ -33,7 +33,7 @@ class ActionsAuthorize extends BaseAuthorize {
  * @return boolean
  */
 	public function authorize($user, CakeRequest $request) {
-		$Acl = $this->_controller->Components->load('Acl');
+		$Acl = $this->_Collection->load('Acl');
 		return $Acl->check($user, $this->action($request));
 	}
 }

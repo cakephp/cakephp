@@ -38,8 +38,9 @@ class DigestAuthenticateTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
+		$this->Collection = $this->getMock('ComponentCollection');
 		$this->server = $_SERVER;
-		$this->auth = new DigestAuthenticate(array(
+		$this->auth = new DigestAuthenticate($this->Collection, array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User',
 			'realm' => 'localhost',
@@ -70,7 +71,7 @@ class DigestAuthenticateTest extends CakeTestCase {
  * @return void
  */
 	function testConstructor() {
-		$object = new DigestAuthenticate(array(
+		$object = new DigestAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'nonce' => 123456

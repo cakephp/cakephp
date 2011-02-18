@@ -34,11 +34,11 @@ class CrudAuthorize extends BaseAuthorize {
 /**
  * Sets up additional actionMap values that match the configured `Routing.prefixes`.
  *
- * @param Controller $controller The controller for this request.
+ * @param ComponentCollection $collection The component collection from the controller.
  * @param string $settings An array of settings.  This class does not use any settings.
  */
-	public function __construct(Controller $controller, $settings = array()) {
-		parent::__construct($controller, $settings);
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		parent::__construct($collection, $settings);
 		$this->_setPrefixMappings();
 	}
 
@@ -88,7 +88,7 @@ class CrudAuthorize extends BaseAuthorize {
 			);
 			return false;
 		}
-		$Acl = $this->_controller->Components->load('Acl');
+		$Acl = $this->_Collection->load('Acl');
 		return $Acl->check(
 			$user,
 			$this->action($request, ':controller'),
