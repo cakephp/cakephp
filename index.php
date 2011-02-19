@@ -1,5 +1,6 @@
 <?php
 /**
+ * insert a line
  * Requests collector.
  *
  *  This file collects requests if:
