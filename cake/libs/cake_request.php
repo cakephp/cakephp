@@ -119,7 +119,7 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	public function __construct($url = null, $parseEnvironment = true) {
-		$this->base = $this->_base();
+		$this->_base();
 		if (empty($url)) {
 			$url = $this->_url();
 		}
@@ -301,7 +301,7 @@ class CakeRequest implements ArrayAccess {
 			}
 
 			$this->webroot = $base .'/';
-			return $base;
+			return $this->base = $base;
 		}
 
 		$file = '/' . basename($baseUrl);
@@ -323,7 +323,7 @@ class CakeRequest implements ArrayAccess {
 				$this->webroot .= $webroot . '/';
 			}
 		}
-		return $base . $file;
+		return $this->base = $base . $file;
 	}
 
 /**
