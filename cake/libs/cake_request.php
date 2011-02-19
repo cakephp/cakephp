@@ -187,49 +187,37 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Returns the REQUEST_URI from the server environment, or, failing that,
- * constructs a new one, using the PHP_SELF constant and other variables.
+ * Get the request uri.  Looks in PATH_INFO first, as this is the exact value we need prepared
+ * by PHP.  Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
+ * Each of these server variables have the base path, and query strings stripped off
  *
- * @return string URI
+ * @return string URI The CakePHP request path that is being accessed.
  */
 	protected function _uri() {
-		foreach (array('HTTP_X_REWRITE_URL', 'REQUEST_URI', 'argv') as $var) {
+		$pathInfo = env('PATH_INFO');
+		if (!empty($pathInfo)) {
+			return $pathInfo;
+		}
+		foreach (array('PHP_SELF', 'REQUEST_URI', 'HTTP_X_REWRITE_URL', 'argv') as $var) {
 			if ($uri = env($var)) {
 				if ($var == 'argv') {
-					$uri = $uri[0];
+					$uri = $url[0];
 				}
 				break;
 			}
 		}
+		$base = $this->base;
 
-		$base = trim(Configure::read('App.baseUrl'), '/');
-
-		if ($base) {
-			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
+		if (strpos($uri, $base) === 0) {
+			$uri = substr($uri, strlen($base));
 		}
-		if (PHP_SAPI == 'isapi') {
-			$uri = preg_replace('/^(?:\/)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
-		}
-		if (!empty($uri)) {
-			if (key($_GET) && strpos(key($_GET), '?') !== false) {
-				unset($_GET[key($_GET)]);
-			}
-			$uri = explode('?', $uri, 2);
-
-			if (isset($uri[1])) {
-				parse_str($uri[1], $_GET);
-			}
-			$uri = $uri[0];
-		} else {
-			$uri = env('QUERY_STRING');
-		}
-		if (is_string($uri) && strpos($uri, 'index.php') !== false) {
-			list(, $uri) = explode('index.php', $uri, 2);
+		if (strpos($uri, '?') !== false) {
+			$uri = parse_url($uri, PHP_URL_PATH);
 		}
 		if (empty($uri) || $uri == '/' || $uri == '//') {
-			return '';
+			return '/';
 		}
-		return str_replace('//', '/', '/' . $uri);
+		return $uri;
 	}
 
 /**
@@ -239,29 +227,7 @@ class CakeRequest implements ArrayAccess {
  */
 	protected function _url() {
 		if (empty($_GET[self::$urlKey])) {
-			$uri = $this->_uri();
-			$base = $this->base;
-
-			$url = null;
-			$tmpUri = preg_replace('/^(?:\?)?(?:\/)?/', '', $uri);
-			$baseDir = trim(dirname($base) . '/', '/');
-
-			if ($tmpUri === '/' || $tmpUri == $baseDir || $tmpUri == $base) {
-				$url = '/';
-			} else {
-				$elements = array();
-				if ($base && strpos($uri, $base) !== false) {
-					$elements = explode($base, $uri);
-				} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
-					$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
-				}
-
-				if (!empty($elements[1])) {
-					$url = $elements[1];
-				} else {
-					$url = '/';
-				}
-			}
+			$url = $this->_uri();
 		} else {
 			$url = $_GET[self::$urlKey];
 		}

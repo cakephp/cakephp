@@ -998,7 +998,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				 array(
 					'App' => array(
 						'base' => false, 
-						'baseUrl' => '/index.php?',
+						'baseUrl' => '/index.php',
 						'dir' => 'app',
 						'webroot' => 'webroot'
 					),
@@ -1017,13 +1017,13 @@ class CakeRequestTestCase extends CakeTestCase {
 					),
 				),
 				array(
-					'base' => '/index.php?',
+					'base' => '/index.php',
 					'webroot' => '/app/webroot/',
 					'url' => ''
 				),
 			),
 			array(
-				'IIS - No rewrite with path',
+				'IIS - No rewrite with path, no PHP_SELF',
 				array(
 					'App' => array(
 						'base' => false, 
@@ -1034,6 +1034,7 @@ class CakeRequestTestCase extends CakeTestCase {
 					'SERVER' => array(
 						'QUERY_STRING' => '/posts/add',
 						'REQUEST_URI' => '/index.php?/posts/add',
+						'PHP_SELF' => '',
 						'URL' => '/index.php?/posts/add',
 						'argv' => array('/posts/add'),
 						'argc' => 1
@@ -1050,7 +1051,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				array(
 					'App' => array(
 						'base' => false, 
-						'baseUrl' => '/site/index.php?', 
+						'baseUrl' => '/site/index.php', 
 						'dir' => 'app', 
 						'webroot' => 'webroot', 
 					),
@@ -1069,7 +1070,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				),
 				array(
 					'url' => '',
-					'base' => '/site/index.php?',
+					'base' => '/site/index.php',
 					'webroot' => '/site/app/webroot/'
 				),
 			),
@@ -1078,7 +1079,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				array(
 					'App' => array(
 						'base' => false, 
-						'baseUrl' => '/site/index.php?',
+						'baseUrl' => '/site/index.php',
 						'dir' => 'app',
 						'webroot' => 'webroot'
 					),
@@ -1087,18 +1088,18 @@ class CakeRequestTestCase extends CakeTestCase {
 						'SCRIPT_NAME' => '/site/index.php', 
 						'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 
 						'QUERY_STRING' => '/posts/add', 
-						'REQUEST_URI' => '/site/index.php?/posts/add', 
-						'URL' => '/site/index.php?/posts/add', 
+						'REQUEST_URI' => '/site/index.php/posts/add', 
+						'URL' => '/site/index.php/posts/add', 
 						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php', 
 						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 
-						'PHP_SELF' => '/site/index.php', 
+						'PHP_SELF' => '/site/index.php/posts/add', 
 						'argv' => array('/posts/add'), 
 						'argc' => 1
 					),
 				),
 				array(
 					'url' => 'posts/add',
-					'base' => '/site/index.php?',
+					'base' => '/site/index.php',
 					'webroot' => '/site/app/webroot/'
 				)
 			),
@@ -1211,6 +1212,7 @@ class CakeRequestTestCase extends CakeTestCase {
 						'dir' => 'app', 
 						'webroot' => 'webroot'
 					),
+					'GET' => array('a' => 'b', 'c' => 'd'),
 					'SERVER' => array(
 						'SERVER_NAME' => 'localhost', 
 						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
