@@ -1,6 +1,6 @@
 <?php
 /**
- * Requests collector.
+ * Requests collectors.
  *
  *  This file collects requests if:
  *	- no mod_rewrite is avilable or .htaccess files are not supported
