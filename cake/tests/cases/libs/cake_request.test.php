@@ -1228,13 +1228,9 @@ class CakeRequestTestCase extends CakeTestCase {
 				),
 			)
 		);
-		$backup = $this->__backupEnvironment();
 
 		foreach ($environments as $name => $env) {
 			foreach ($env as $descrip => $settings) {
-				if ($settings['reload']) {
-					$this->__reloadEnvironment();
-				}
 				$this->__loadEnvironment($settings);
 		
 				$request = new CakeRequest();
@@ -1255,7 +1251,6 @@ class CakeRequestTestCase extends CakeTestCase {
 				}
 			}
 		}
-		$this->__loadEnvironment(array_merge(array('reload' => true), $backup));
 	}
 
 /**
