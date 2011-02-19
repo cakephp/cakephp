@@ -1,6 +1,5 @@
 <?php
 /**
- * test commit
  * Requests collector.
  *
  *  This file collects requests if:
