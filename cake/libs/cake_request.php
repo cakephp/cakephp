@@ -193,7 +193,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @return string URI The CakePHP request path that is being accessed.
  */
-	protected function _uri() {
+	protected function _url() {
 		$pathInfo = env('PATH_INFO');
 		if (!empty($pathInfo)) {
 			return $pathInfo;
@@ -218,16 +218,6 @@ class CakeRequest implements ArrayAccess {
 			return '/';
 		}
 		return $uri;
-	}
-
-/**
- * Returns and sets the $_GET[url] derived from the REQUEST_URI
- *
- * @return string URL
- */
-	protected function _url() {
-		$url = $this->_uri();
-		return $url;
 	}
 
 /**
