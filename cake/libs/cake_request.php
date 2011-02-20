@@ -226,11 +226,7 @@ class CakeRequest implements ArrayAccess {
  * @return string URL
  */
 	protected function _url() {
-		if (empty($_GET[self::$urlKey])) {
-			$url = $this->_uri();
-		} else {
-			$url = $_GET[self::$urlKey];
-		}
+		$url = $this->_uri();
 		return $url;
 	}
 
@@ -252,8 +248,7 @@ class CakeRequest implements ArrayAccess {
 			return $this->base = $base;
 		}
 		if (!$baseUrl) {
-			$replace = array('<', '>', '*', '\'', '"');
-			$base = str_replace($replace, '', dirname(env('PHP_SELF')));
+			$base = dirname(env('SCRIPT_NAME'));
 
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base = dirname($base);

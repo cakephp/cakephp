@@ -794,9 +794,8 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.baseUrl', false);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
-		$_GET['url'] = 'posts/view/1';
+		$_SERVER['SCRIPT_NAME'] = '/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = new CakeRequest();
 		$this->assertEqual($request->base, '/1.2.x.x');
@@ -805,9 +804,8 @@ class CakeRequestTestCase extends CakeTestCase {
 
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/index.php';
-		$_GET['url'] = 'posts/add';
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$_SERVER['PATH_INFO'] = '/posts/add';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '');
@@ -815,8 +813,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEqual($request->url, 'posts/add');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/test/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEqual('', $request->base);
@@ -824,18 +821,16 @@ class CakeRequestTestCase extends CakeTestCase {
 
 
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
-		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/some/apps/where/app/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/app/webroot/index.php';
 		$request = new CakeRequest();
 
-		$this->assertEqual($request->base, '/some/apps/where');
-		$this->assertEqual($request->webroot, '/some/apps/where/');
+		$this->assertEqual($request->base, '');
+		$this->assertEqual($request->webroot, '/');
 
 		Configure::write('App.dir', 'auth');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/demos/auth/webroot/index.php';
 
 		$request = new CakeRequest();
 
@@ -845,8 +840,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.dir', 'code');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
-		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/clients/PewterReport/code/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '/clients/PewterReport/code');
@@ -860,8 +854,7 @@ class CakeRequestTestCase extends CakeTestCase {
  */
 	public function testBaseUrlwithModRewriteAlias() {
 		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
-		$_SERVER['SCRIPT_FILENAME'] = '/home/aplusnur/cake2/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/control/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/control/index.php';
 
 		Configure::write('App.base', '/control');
 
@@ -875,8 +868,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.webroot', 'newaffiliate');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
-		$_SERVER['SCRIPT_FILENAME'] = '/var/www/abtravaff/html/newaffiliate/index.php';
-		$_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/newaffiliate/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '/newaffiliate');
@@ -1250,21 +1242,6 @@ class CakeRequestTestCase extends CakeTestCase {
 		if (isset($expected['urlParams'])) {
 			$this->assertEqual($_GET, $expected['urlParams'], "GET param mismatch");
 		}
-	}
-
-/**
- * test that XSS can't be performed against the base path.
- *
- * @return void
- */
-	function testBasePathInjection() {
-		$_SERVER['PHP_SELF'] = urldecode(
-			"/index.php/%22%3E%3Ch1%20onclick=%22alert('xss');%22%3Eheya%3C/h1%3E"
-		);
-
-		$request = new CakeRequest();
-		$expected = '/index.php/h1 onclick=alert(xss);heya';
-		$this->assertEqual($request->base, $expected);
 	}
 
 /**
