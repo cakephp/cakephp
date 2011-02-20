@@ -80,13 +80,6 @@ class CakeRequest implements ArrayAccess {
 	public $here = null;
 
 /**
- * The key to look for inside $_GET
- *
- * @var string
- */
-	public static $urlKey = 'url';
-
-/**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
  * There are several ways to specify a detector, see CakeRequest::addDetector() for the 
