@@ -167,15 +167,15 @@ class CakeRequest implements ArrayAccess {
 		} else {
 			$query = $_GET;
 		}
+
 		if (strpos($this->url, '?') !== false) {
 			list(, $querystr) = explode('?', $this->url);
 			parse_str($querystr, $queryArgs);
-			$query += $queryArgs;	
+			$query += $queryArgs;
 		}
 		if (isset($this->params['url'])) {
 			$query = array_merge($this->params['url'], $query);
 		}
-		$query['url'] = $this->url;
 		$this->query = $query;
 	}
 

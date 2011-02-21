@@ -289,8 +289,8 @@ class AuthComponent extends Component {
 
 		$url = '';
 
-		if (isset($request->query['url'])) {
-			$url = $request->query['url'];
+		if (isset($request->url)) {
+			$url = $request->url;
 		}
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
