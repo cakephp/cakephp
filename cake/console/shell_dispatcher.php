@@ -244,6 +244,9 @@ class ShellDispatcher {
 		}
 		$params = str_replace('\\', '/', $params);
 
+		if (isset($params['working'])) {
+			$params['working'] = trim($params['working']);
+		}
 		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
 			if (empty($this->params['app']) && $params['working'] != $params['root']) {
 				$params['root'] = dirname($params['working']);
