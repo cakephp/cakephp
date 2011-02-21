@@ -113,7 +113,9 @@ class SessionComponent extends Component {
  *
  * In your controller: $this->Session->setFlash('This has been saved');
  *
- * Additional params below can be passed to customize the output, or the Message.[key]
+ * Additional params below can be passed to customize the output, or the Message.[key].
+ * You can also set additional parameters when rendering flash messages. See SessionHelper::flash()
+ * for more information on how to do that.
  *
  * @param string $message Message to be flashed
  * @param string $element Element to wrap flash message in.
