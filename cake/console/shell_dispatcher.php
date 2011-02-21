@@ -263,7 +263,10 @@ class ShellDispatcher {
 		}
 
 		$params['app'] = basename($params['app']);
-		$params['working'] = rtrim($params['root'], '/') . '/' . $params['app'];
+		$params['working'] = rtrim($params['root'], '/');
+		if (!$isWin || !preg_match('/^[A-Z]:$/i', $params['app'])) {
+			$params['working'] .= '/' . $params['app'];
+		}
 
 		if (!empty($matches[0]) || !empty($isWin)) {
 			$params = str_replace('/', '\\', $params);
