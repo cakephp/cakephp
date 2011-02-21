@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once 'PHPUnit/TextUi/ResultPrinter.php';
+require_once 'PHPUnit/TextUI/ResultPrinter.php';
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -61,7 +61,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * - app - App test being run.
  * - case - The case being run
  * - codeCoverage - Whether the case/group being run is being code covered.
- * 
+ *
  * @param string $charset The character set to output with. Defaults to UTF-8
  * @param array $params Array of request parameters the reporter should use. See above.
  */
@@ -101,7 +101,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @return void
  */
 	public function paintDocumentEnd() {
-		
+
 	}
 
 /**
@@ -111,7 +111,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @return void
  */
 	public function paintTestMenu() {
-		
+
 	}
 
 /**
