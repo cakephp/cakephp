@@ -70,10 +70,11 @@
 	if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
 		trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 	}
-	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
+
+	if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] == '/favicon.ico') {
 		return;
-	} else {
-		require LIBS . 'dispatcher.php';
-		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch(new CakeRequest(isset($_GET['url']) ? $_GET['url'] : null));
 	}
+
+	require LIBS . 'dispatcher.php';
+	$Dispatcher = new Dispatcher();
+	$Dispatcher->dispatch(new CakeRequest());

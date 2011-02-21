@@ -771,11 +771,11 @@ class ScaffoldTest extends CakeTestCase {
 	function testScaffoldChangingViewProperty() {
 		$this->Controller->action = 'edit';
 		$this->Controller->theme = 'test_theme';
-		$this->Controller->view = 'Theme';
+		$this->Controller->viewClass = 'Theme';
 		$this->Controller->constructClasses();
 		$Scaffold = new TestScaffoldMock($this->Controller, $this->Controller->request);
 
-		$this->assertEqual($this->Controller->view, 'Scaffold');
+		$this->assertEqual($this->Controller->viewClass, 'Scaffold');
 	}
 
 /**
