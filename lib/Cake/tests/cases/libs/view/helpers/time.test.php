@@ -84,6 +84,12 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	function testTimeAgoInWords() {
+		$result = $this->Time->timeAgoInWords('-1 week');
+		$this->assertEqual($result, '1 week ago');
+
+		$result = $this->Time->timeAgoInWords('+1 week');
+		$this->assertEqual($result, '1 week');
+
 		$result = $this->Time->timeAgoInWords(strtotime('+4 months +2 weeks +3 days'), array('end' => '8 years'), true);
 		$this->assertEqual($result, '4 months, 2 weeks, 3 days');
 
@@ -288,19 +294,6 @@ class TimeHelperTest extends CakeTestCase {
 		$result = $this->Time->timeAgoInWords($time);
 		$expected = 'on ' . date('j/n/y', $time);
 		$this->assertEqual($expected, $result);
-	}
-
-/**
- * testRelative method
- *
- * @access public
- * @return void
- */
-	function testRelative() {
-		$result = $this->Time->relativeTime('-1 week');
-		$this->assertEqual($result, '1 week ago');
-		$result = $this->Time->relativeTime('+1 week');
-		$this->assertEqual($result, '1 week');
 	}
 
 /**

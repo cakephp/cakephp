@@ -1021,20 +1021,6 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * testUnimplementedIsAuthorized method
- *
- * @expectedException PHPUnit_Framework_Error
- * @access public
- * @return void
- */
-	function testUnimplementedIsAuthorized() {
-		$request = new CakeRequest('controller_posts/index');
-
-		$TestController = new TestController($request);
-		$TestController->isAuthorized();
-	}
-
-/**
  * testValidateErrors method
  *
  * @access public

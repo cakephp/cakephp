@@ -49,7 +49,7 @@
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS .'lib');
+		define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
 
 /**
@@ -65,15 +65,16 @@
 	}
 	if (!defined('CORE_PATH')) {
 		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS . 'lib' . DS);
 	}
 	if (!include(CORE_PATH . 'Cake' . DS . 'bootstrap.php')) {
 		trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 	}
-	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
+
+	if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] == '/favicon.ico') {
 		return;
-	} else {
-		require LIBS .  'Routing' . DS .'Dispatcher.php';
-		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch(new CakeRequest(isset($_GET['url']) ? $_GET['url'] : null));
 	}
+
+	require LIBS .  'Routing' . DS .'Dispatcher.php';
+	$Dispatcher = new Dispatcher();
+	$Dispatcher->dispatch(new CakeRequest());

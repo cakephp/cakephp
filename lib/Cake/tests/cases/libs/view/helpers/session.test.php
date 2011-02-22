@@ -122,19 +122,19 @@ class SessionHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFlash() {
-		$result = $this->Session->flash('flash', true);
+		$result = $this->Session->flash('flash');
 		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.flash'));
 
 		$expected = '<div id="classyMessage" class="positive">Recorded</div>';
-		$result = $this->Session->flash('classy', true);
+		$result = $this->Session->flash('classy');
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
-		$result = $this->Session->flash('notification', true);
+		$result = $this->Session->flash('notification');
 		$result = str_replace("\r\n", "\n", $result);
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertEqual($result, $expected);
@@ -146,4 +146,31 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('Message.bare'));
 	}
 
+/**
+ * test flash() with the attributes.
+ *
+ * @return void
+ */
+	function testFlashAttributes() {
+		$result = $this->Session->flash('flash', array('params' => array('class' => 'test-message')));
+		$expected = '<div id="flashMessage" class="test-message">This is a calling</div>';
+		$this->assertEqual($result, $expected);
+		$this->assertFalse($this->Session->check('Message.flash'));
+	}
+
+/**
+ * test setting the element from the attrs.
+ *
+ * @return void
+ */
+	function testFlashElementInAttrs() {
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+		$result = $this->Session->flash('flash', array(
+			'element' => 'session_helper', 
+			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
+		));
+		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a calling</p>\n</div>";
+	}
 }

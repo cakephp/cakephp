@@ -862,7 +862,6 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testPluginDispatch() {
 		$_POST = array();
-		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$Dispatcher = new TestDispatcher();
@@ -879,7 +878,6 @@ class DispatcherTest extends CakeTestCase {
 			'pass' => array('home'),
 			'named' => array('param'=> 'value', 'param2'=> 'value2'), 'plugin'=> 'my_plugin',
 			'controller'=> 'some_pages', 'action'=> 'display', 'form'=> array(),
-			'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
 		);
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch ' . $key . ' %');
@@ -889,12 +887,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertIdentical($controller->name, 'SomePages');
 		$this->assertIdentical($controller->params['controller'], 'some_pages');
 		$this->assertIdentical($controller->passedArgs, array('0' => 'home', 'param'=>'value', 'param2'=>'value2'));
-
-		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/some_pages/home/param:value/param2:value2';
-		$this->assertIdentical($expected, $controller->here);
-
-		$expected = '/cake/repo/branches/1.2.x.x';
-		$this->assertIdentical($expected, $controller->base);
 	}
 
 /**
@@ -904,7 +896,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testAutomaticPluginDispatch() {
 		$_POST = array();
-		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$Dispatcher = new TestDispatcher();
@@ -1018,11 +1010,10 @@ class DispatcherTest extends CakeTestCase {
 			'prefix' => 'admin',
 			'admin' =>  true,
 			'form' => array(), 
-			'url' => array('url' => 'admin/articles_test'),
 			'return' => 1
 		);
 		foreach ($expected as $key => $value) {
-			$this->assertEqual($controller->params[$key], $expected[$key], 'Value mismatch ' . $key . ' %s');
+			$this->assertEqual($controller->request[$key], $expected[$key], 'Value mismatch ' . $key . ' %s');
 		}
 	}
 

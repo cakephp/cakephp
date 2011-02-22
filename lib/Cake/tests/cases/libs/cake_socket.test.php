@@ -109,7 +109,7 @@ class CakeSocketTest extends CakeTestCase {
  */
 	public static function invalidConnections() {
 		return array(
-			array(array('host' => 'invalid.host', 'timeout' => 1)),
+			array(array('host' => 'invalid.host', 'port' => 9999, 'timeout' => 1)),
 			array(array('host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1))
 		);
 	}

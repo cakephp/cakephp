@@ -92,33 +92,6 @@ class SecurityComponent extends Component {
 	public $requireAuth = array();
 
 /**
- * List of actions that require an HTTP-authenticated login (basic or digest)
- *
- * @var array
- * @access public
- * @see SecurityComponent::requireLogin()
- */
-	public $requireLogin = array();
-
-/**
- * Login options for SecurityComponent::requireLogin()
- *
- * @var array
- * @access public
- * @see SecurityComponent::requireLogin()
- */
-	public $loginOptions = array('type' => '', 'prompt' => null);
-
-/**
- * An associative array of usernames/passwords used for HTTP-authenticated logins.
- *
- * @var array
- * @access public
- * @see SecurityComponent::requireLogin()
- */
-	public $loginUsers = array();
-
-/**
  * Controllers from which actions of the current controller are allowed to receive
  * requests.
  *
@@ -217,7 +190,6 @@ class SecurityComponent extends Component {
 		$this->_methodsRequired($controller);
 		$this->_secureRequired($controller);
 		$this->_authRequired($controller);
-		$this->_loginRequired($controller);
 
 		$isPost = ($this->request->is('post') || $this->request->is('put'));
 		$isRequestAction = (
@@ -299,134 +271,6 @@ class SecurityComponent extends Component {
 	public function requireAuth() {
 		$args = func_get_args();
 		$this->_requireMethod('Auth', $args);
-	}
-
-/**
- * Sets the actions that require an HTTP-authenticated request, or empty for all actions
- *
- * @return void
- * @link http://book.cakephp.org/view/1302/requireLogin
- */
-	public function requireLogin() {
-		$args = func_get_args();
-		$base = $this->loginOptions;
-
-		foreach ($args as $i => $arg) {
-			if (is_array($arg)) {
-				$this->loginOptions = $arg;
-				unset($args[$i]);
-			}
-		}
-		$this->loginOptions = array_merge($base, $this->loginOptions);
-		$this->_requireMethod('Login', $args);
-		if (isset($this->loginOptions['users'])) {
-			$this->loginUsers =& $this->loginOptions['users'];
-		}
-	}
-
-/**
- * Attempts to validate the login credentials for an HTTP-authenticated request
- *
- * @param string $type Either 'basic', 'digest', or null. If null/empty, will try both.
- * @return mixed If successful, returns an array with login name and password, otherwise null.
- * @link http://book.cakephp.org/view/1303/loginCredentials-string-type
- */
-	public function loginCredentials($type = null) {
-		switch (strtolower($type)) {
-			case 'basic':
-				$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
-				if (!empty($login['username'])) {
-					return $login;
-				}
-			break;
-			case 'digest':
-			default:
-				$digest = null;
-
-				if (version_compare(PHP_VERSION, '5.1') != -1) {
-					$digest = env('PHP_AUTH_DIGEST');
-				} elseif (function_exists('apache_request_headers')) {
-					$headers = apache_request_headers();
-					if (isset($headers['Authorization']) && !empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
-						$digest = substr($headers['Authorization'], 7);
-					}
-				} else {
-					// Server doesn't support digest-auth headers
-					trigger_error(__('SecurityComponent::loginCredentials() - Server does not support digest authentication'), E_USER_WARNING);
-				}
-
-				if (!empty($digest)) {
-					return $this->parseDigestAuthData($digest);
-				}
-			break;
-		}
-		return null;
-	}
-
-/**
- * Generates the text of an HTTP-authentication request header from an array of options.
- *
- * @param array $options Set of options for header
- * @return string HTTP-authentication request header
- * @link http://book.cakephp.org/view/1304/loginRequest-array-options
- */
-	public function loginRequest($options = array()) {
-		$options = array_merge($this->loginOptions, $options);
-		$this->_setLoginDefaults($options);
-		$auth = 'WWW-Authenticate: ' . ucfirst($options['type']);
-		$out = array('realm="' . $options['realm'] . '"');
-
-		if (strtolower($options['type']) == 'digest') {
-			$out[] = 'qop="auth"';
-			$out[] = 'nonce="' . uniqid("") . '"';
-			$out[] = 'opaque="' . md5($options['realm']) . '"';
-		}
-
-		return $auth . ' ' . implode(',', $out);
-	}
-
-/**
- * Parses an HTTP digest authentication response, and returns an array of the data, or null on failure.
- *
- * @param string $digest Digest authentication response
- * @return array Digest authentication parameters
- * @link http://book.cakephp.org/view/1305/parseDigestAuthData-string-digest
- */
-	public function parseDigestAuthData($digest) {
-		if (substr($digest, 0, 7) == 'Digest ') {
-			$digest = substr($digest, 7);
-		}
-		$keys = array();
-		$match = array();
-		$req = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1);
-		preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9@=.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
-
-		foreach ($match as $i) {
-			$keys[$i[1]] = $i[3];
-			unset($req[$i[1]]);
-		}
-
-		if (empty($req)) {
-			return $keys;
-		}
-		return null;
-	}
-
-/**
- * Generates a hash to be compared with an HTTP digest-authenticated response
- *
- * @param array $data HTTP digest response data, as parsed by SecurityComponent::parseDigestAuthData()
- * @return string Digest authentication hash
- * @access public
- * @see SecurityComponent::parseDigestAuthData()
- * @link http://book.cakephp.org/view/1306/generateDigestResponseHash-array-data
- */
-	function generateDigestResponseHash($data) {
-		return md5(
-			md5($data['username'] . ':' . $this->loginOptions['realm'] . ':' . $this->loginUsers[$data['username']]) .
-			':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' .
-			md5(env('REQUEST_METHOD') . ':' . $data['uri'])
-		);
 	}
 
 /**
@@ -539,53 +383,6 @@ class SecurityComponent extends Component {
 				} else {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-/**
- * Check if login is required
- *
- * @param object $controller Instantiating controller
- * @return bool true if login is required
- */
-	protected function _loginRequired($controller) {
-		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
-			$requireLogin = $this->requireLogin;
-
-			if (in_array($this->_action, $this->requireLogin) || $this->requireLogin == array('*')) {
-				$login = $this->loginCredentials($this->loginOptions['type']);
-
-				if ($login == null) {
-					$controller->header($this->loginRequest());
-
-					if (!empty($this->loginOptions['prompt'])) {
-						$this->_callback($controller, $this->loginOptions['prompt']);
-					} else {
-						$this->blackHole($controller, 'login');
-					}
-				} else {
-					if (isset($this->loginOptions['login'])) {
-						$this->_callback($controller, $this->loginOptions['login'], array($login));
-					} else {
-						if (strtolower($this->loginOptions['type']) == 'digest') {
-							if ($login && isset($this->loginUsers[$login['username']])) {
-								if ($login['response'] == $this->generateDigestResponseHash($login)) {
-									return true;
-								}
-							}
-							$this->blackHole($controller, 'login');
-						} else {
-							if (
-								!(in_array($login['username'], array_keys($this->loginUsers)) &&
-								$this->loginUsers[$login['username']] == $login['password'])
-							) {
-								$this->blackHole($controller, 'login');
-							}
-						}
 					}
 				}
 			}
@@ -738,22 +535,6 @@ class SecurityComponent extends Component {
 			}
 		}
 		return $tokens;
-	}
-
-/**
- * Sets the default login options for an HTTP-authenticated request
- *
- * @param array $options Default login options
- * @return void
- */
-	protected function _setLoginDefaults(&$options) {
-		$options = array_merge(array(
-			'type' => 'basic',
-			'realm' => env('SERVER_NAME'),
-			'qop' => 'auth',
-			'nonce' => String::uuid()
-		), array_filter($options));
-		$options = array_merge(array('opaque' => md5($options['realm'])), $options);
 	}
 
 /**

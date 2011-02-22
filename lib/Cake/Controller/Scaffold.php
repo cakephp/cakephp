@@ -143,8 +143,8 @@ class Scaffold {
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
 
-		if ($this->controller->view) {
-			$this->controller->view = 'Scaffold';
+		if ($this->controller->viewClass) {
+			$this->controller->viewClass = 'Scaffold';
 		}
 		$this->_validSession = (
 			isset($this->controller->Session) && $this->controller->Session->valid() != false

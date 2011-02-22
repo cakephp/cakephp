@@ -181,10 +181,6 @@ class SecurityComponentTest extends CakeTestCase {
 			'requireSecure' => array('update_account'),
 			'requireGet' => array('index'),
 			'validatePost' => false,
-			'loginUsers' => array(
-				'mark' => 'password'
-			),
-			'requireLogin' => array('login'),
 		);
 		$Security = new SecurityComponent($this->Controller->Components, $settings);
 		$this->Controller->Security->initialize($this->Controller, $settings);
@@ -192,8 +188,6 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->assertEqual($Security->requireSecure, $settings['requireSecure']);
 		$this->assertEqual($Security->requireGet, $settings['requireGet']);
 		$this->assertEqual($Security->validatePost, $settings['validatePost']);
-		$this->assertEqual($Security->loginUsers, $settings['loginUsers']);
-		$this->assertEqual($Security->requireLogin, $settings['requireLogin']);
 	}
 
 /**
@@ -369,80 +363,6 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * testRequireLogin method
- *
- * @access public
- * @return void
- */
-	function testRequireLogin() {
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requireLogin(
-			'posted',
-			array('type' => 'basic', 'users' => array('admin' => 'password'))
-		);
-		$_SERVER['PHP_AUTH_USER'] = 'admin';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
-		$this->Controller->Security->startup($this->Controller);
-		$this->assertFalse($this->Controller->failed);
-
-
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requireLogin(
-			array('posted'),
-			array('type' => 'basic', 'users' => array('admin' => 'password'))
-		);
-		$_SERVER['PHP_AUTH_USER'] = 'admin2';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
-		$this->Controller->Security->startup($this->Controller);
-		$this->assertTrue($this->Controller->failed);
-
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requireLogin(
-			'posted',
-			array('type' => 'basic', 'users' => array('admin' => 'password'))
-		);
-		$_SERVER['PHP_AUTH_USER'] = 'admin';
-		$_SERVER['PHP_AUTH_PW'] = 'password2';
-		$this->Controller->Security->startup($this->Controller);
-		$this->assertTrue($this->Controller->failed);
-	}
-
-/**
- * testDigestAuth method
- *
- * @access public
- * @return void
- */
-	function testDigestAuth() {
-		$skip = $this->skipIf((version_compare(PHP_VERSION, '5.1') == -1) XOR (!function_exists('apache_request_headers')),
-			"%s Cannot run Digest Auth test for PHP versions < 5.1"
-		);
-
-		if ($skip) {
-			return;
-		}
-
-		$this->Controller->request['action'] = 'posted';
-		$_SERVER['PHP_AUTH_DIGEST'] = $digest = <<<DIGEST
-		Digest username="Mufasa",
-		realm="testrealm@host.com",
-		nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-		uri="/dir/index.html",
-		qop=auth,
-		nc=00000001,
-		cnonce="0a4f113b",
-		response="460d0d3c6867c2f1ab85b1ada1aece48",
-		opaque="5ccc069c403ebaf9f0171e9517f40e41"
-DIGEST;
-		$this->Controller->Security->requireLogin('posted', array(
-			'type' => 'digest', 'users' => array('Mufasa' => 'password'),
-			'realm' => 'testrealm@host.com'
-		));
-		$this->Controller->Security->startup($this->Controller);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
  * testRequireGetSucceedWrongMethod method
  *
  * @access public
@@ -538,35 +458,6 @@ DIGEST;
 		$this->Controller->Security->requireDelete('deleted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequireLoginSettings method
- *
- * @access public
- * @return void
- */
-	function testRequireLoginSettings() {
-		$this->Controller->Security->requireLogin(
-			'add', 'edit',
-			array('type' => 'basic', 'users' => array('admin' => 'password'))
-		);
-		$this->assertEqual($this->Controller->Security->requireLogin, array('add', 'edit'));
-		$this->assertEqual($this->Controller->Security->loginUsers, array('admin' => 'password'));
-	}
-
-/**
- * testRequireLoginAllActions method
- *
- * @access public
- * @return void
- */
-	function testRequireLoginAllActions() {
-		$this->Controller->Security->requireLogin(
-			array('type' => 'basic', 'users' => array('admin' => 'password'))
-		);
-		$this->assertEqual($this->Controller->Security->requireLogin, array('*'));
-		$this->assertEqual($this->Controller->Security->loginUsers, array('admin' => 'password'));
 	}
 
 /**
@@ -990,173 +881,6 @@ DIGEST;
 	}
 
 /**
- * testLoginRequest method
- *
- * @access public
- * @return void
- */
-	function testLoginRequest() {
-		$this->Controller->Security->startup($this->Controller);
-		$realm = 'cakephp.org';
-		$options = array('realm' => $realm, 'type' => 'basic');
-		$result = $this->Controller->Security->loginRequest($options);
-		$expected = 'WWW-Authenticate: Basic realm="'.$realm.'"';
-		$this->assertEqual($result, $expected);
-
-		$this->Controller->Security->startup($this->Controller);
-		$options = array('realm' => $realm, 'type' => 'digest');
-		$result = $this->Controller->Security->loginRequest($options);
-		$this->assertPattern('/realm="'.$realm.'"/', $result);
-		$this->assertPattern('/qop="auth"/', $result);
-	}
-
-/**
- * testGenerateDigestResponseHash method
- *
- * @access public
- * @return void
- */
-	function testGenerateDigestResponseHash() {
-		$this->Controller->Security->startup($this->Controller);
-		$realm = 'cakephp.org';
-		$loginData = array('realm' => $realm, 'users' => array('Willy Smith' => 'password'));
-		$this->Controller->Security->requireLogin($loginData);
-
-		$data = array(
-			'username' => 'Willy Smith',
-			'password' => 'password',
-			'nonce' => String::uuid(),
-			'nc' => 1,
-			'cnonce' => 1,
-			'realm' => $realm,
-			'uri' => 'path_to_identifier',
-			'qop' => 'testme'
-		);
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-
-		$result = $this->Controller->Security->generateDigestResponseHash($data);
-		$expected = md5(
-			md5($data['username'] . ':' . $loginData['realm'] . ':' . $data['password']) . ':' .
-			$data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' .
-			md5(env('REQUEST_METHOD') . ':' . $data['uri'])
-		);
-		$this->assertIdentical($result, $expected);
-	}
-
-/**
- * testLoginCredentials method
- *
- * @access public
- * @return void
- */
-	function testLoginCredentials() {
-		$this->Controller->Security->startup($this->Controller);
-		$_SERVER['PHP_AUTH_USER'] = $user = 'Willy Test';
-		$_SERVER['PHP_AUTH_PW'] = $pw = 'some password for the nice test';
-
-		$result = $this->Controller->Security->loginCredentials('basic');
-		$expected = array('username' => $user, 'password' => $pw);
-		$this->assertIdentical($result, $expected);
-
-		if (version_compare(PHP_VERSION, '5.1') != -1) {
-			$_SERVER['PHP_AUTH_DIGEST'] = $digest = <<<DIGEST
-				Digest username="Mufasa",
-				realm="testrealm@host.com",
-				nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-				uri="/dir/index.html",
-				qop=auth,
-				nc=00000001,
-				cnonce="0a4f113b",
-				response="6629fae49393a05397450978507c4ef1",
-				opaque="5ccc069c403ebaf9f0171e9517f40e41"
-DIGEST;
-			$expected = array(
-				'username' => 'Mufasa',
-				'realm' => 'testrealm@host.com',
-				'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
-				'uri' => '/dir/index.html',
-				'qop' => 'auth',
-				'nc' => '00000001',
-				'cnonce' => '0a4f113b',
-				'response' => '6629fae49393a05397450978507c4ef1',
-				'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
-			);
-			$result = $this->Controller->Security->loginCredentials('digest');
-			$this->assertIdentical($result, $expected);
-		}
-	}
-
-/**
- * testParseDigestAuthData method
- *
- * @access public
- * @return void
- */
-	function testParseDigestAuthData() {
-		$this->Controller->Security->startup($this->Controller);
-		$digest = <<<DIGEST
-			Digest username="Mufasa",
-			realm="testrealm@host.com",
-			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-			uri="/dir/index.html",
-			qop=auth,
-			nc=00000001,
-			cnonce="0a4f113b",
-			response="6629fae49393a05397450978507c4ef1",
-			opaque="5ccc069c403ebaf9f0171e9517f40e41"
-DIGEST;
-		$expected = array(
-			'username' => 'Mufasa',
-			'realm' => 'testrealm@host.com',
-			'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
-			'uri' => '/dir/index.html',
-			'qop' => 'auth',
-			'nc' => '00000001',
-			'cnonce' => '0a4f113b',
-			'response' => '6629fae49393a05397450978507c4ef1',
-			'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
-		);
-		$result = $this->Controller->Security->parseDigestAuthData($digest);
-		$this->assertIdentical($result, $expected);
-
-		$result = $this->Controller->Security->parseDigestAuthData('');
-		$this->assertNull($result);
-	}
-
-/**
- * test parsing digest information with email addresses
- *
- * @return void
- */
-	function testParseDigestAuthEmailAddress() {
-		$this->Controller->Security->startup($this->Controller);
-		$digest = <<<DIGEST
-			Digest username="mark@example.com",
-			realm="testrealm@host.com",
-			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-			uri="/dir/index.html",
-			qop=auth,
-			nc=00000001,
-			cnonce="0a4f113b",
-			response="6629fae49393a05397450978507c4ef1",
-			opaque="5ccc069c403ebaf9f0171e9517f40e41"
-DIGEST;
-		$expected = array(
-			'username' => 'mark@example.com',
-			'realm' => 'testrealm@host.com',
-			'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
-			'uri' => '/dir/index.html',
-			'qop' => 'auth',
-			'nc' => '00000001',
-			'cnonce' => '0a4f113b',
-			'response' => '6629fae49393a05397450978507c4ef1',
-			'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
-		);
-		$result = $this->Controller->Security->parseDigestAuthData($digest);
-		$this->assertIdentical($result, $expected);
-	}
-
-/**
  * testFormDisabledFields method
  *
  * @access public
@@ -1224,26 +948,6 @@ DIGEST;
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
-	}
-
-/**
- * testInvalidAuthHeaders method
- *
- * @access public
- * @return void
- */
-	function testInvalidAuthHeaders() {
-		$this->Controller->Security->blackHoleCallback = null;
-		$_SERVER['PHP_AUTH_USER'] = 'admin';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
-		$realm = 'cakephp.org';
-		$loginData = array('type' => 'basic', 'realm' => $realm);
-		$this->Controller->Security->requireLogin($loginData);
-		$this->Controller->Security->startup($this->Controller);
-
-		$expected = 'WWW-Authenticate: Basic realm="'.$realm.'"';
-		$this->assertEqual(count($this->Controller->testHeaders), 1);
-		$this->assertEqual(current($this->Controller->testHeaders), $expected);
 	}
 
 /**
