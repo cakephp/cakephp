@@ -530,8 +530,11 @@ class HttpSocket extends CakeSocket {
 			return;
 		}
 		$method = key($this->_auth);
-		$authClass = Inflector::camelize($method) . 'Authentication';
-		if (!App::import('Lib', 'http/' . $authClass)) {
+		list($plugin, $authClass) = pluginSplit($method, true);
+		$authClass = Inflector::camelize($authClass) . 'Authentication';
+		App::uses($authClass, $plugin . 'Network/Http');
+
+		if (!class_exists($authClass)) {
 			throw new SocketException(__('Unknown authentication method.'));
 		}
 		if (!method_exists($authClass, 'authentication')) {
@@ -556,8 +559,11 @@ class HttpSocket extends CakeSocket {
 		if (empty($this->_proxy['method']) || !isset($this->_proxy['user'], $this->_proxy['pass'])) {
 			return;
 		}
-		$authClass = Inflector::camelize($this->_proxy['method']) . 'Authentication';
-		if (!App::import('Lib', 'http/' . $authClass)) {
+		list($plugin, $authClass) = pluginSplit($this->_proxy['method'], true);
+		$authClass = Inflector::camelize($authClass) . 'Authentication';
+		App::uses($authClass, $plugin. 'Network/Http');
+
+		if (!class_exists($authClass)) {
 			throw new SocketException(__('Unknown authentication method for proxy.'));
 		}
 		if (!method_exists($authClass, 'proxyAuthentication')) {
