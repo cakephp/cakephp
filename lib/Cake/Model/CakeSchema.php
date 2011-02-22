@@ -230,13 +230,18 @@ class CakeSchema extends Object {
 				$importModel = $model;
 				$plugin = null;
 				if (isset($this->plugin)) {
+					if ($model == $this->plugin . 'AppModel') {
+						continue;
+					}
 					$importModel = $model;
 					$plugin = $this->plugin . '.';
 				}
+
 				App::uses($importModel, $plugin . 'Model');
 				if (!class_exists($importModel)) {
 					continue;
 				}
+
 				$vars = get_class_vars($model);
 				if (empty($vars['useDbConfig']) || $vars['useDbConfig'] != $connection) {
 					continue;
