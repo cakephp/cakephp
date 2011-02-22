@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'HttpSocket');
-App::import('Lib', 'http/BasicAuthentication');
+App::uses('HttpSocket', 'Network/Http');
+App::uses('BasicAuthentication', 'Network/Http');
 
 /**
  * BasicMethodTest class
