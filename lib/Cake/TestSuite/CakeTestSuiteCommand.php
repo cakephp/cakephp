@@ -41,8 +41,8 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  * @param array $params list of options to be used for this run
  */
 	public function __construct($loader, $params = array()) {
-	    if (!class_exists($loader)) {
-	        throw new MissingTestLoaderException;
+	    if ($loader && !class_exists($loader)) {
+	        throw new MissingTestLoaderException(array('class' => $loader));
 	    }
 		$this->arguments['loader'] = $loader;
 		$this->arguments['test'] = $params['case'];
