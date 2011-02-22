@@ -1216,7 +1216,7 @@ class DispatcherTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 
 		$Dispatcher = new TestDispatcher();

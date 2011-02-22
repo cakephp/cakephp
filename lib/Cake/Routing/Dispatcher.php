@@ -243,6 +243,7 @@ class Dispatcher {
 		if ($pluginPath . $controller) {
 			$class = $controller . 'Controller';
 			App::uses('AppController', 'Controller');
+			App::uses($pluginName . 'AppController', $pluginPath . 'Controller');
 			App::uses($class, $pluginPath . 'Controller');
 			if (class_exists($class)) {
 				return $class;

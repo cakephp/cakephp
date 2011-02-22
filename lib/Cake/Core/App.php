@@ -19,7 +19,7 @@
 /**
  * App is responsible for path managment, class location and class loading.
  *
- * ### Adding paths 
+ * ### Adding paths
  *
  * You can add paths to the search indexes App uses to find classes using `App::build()`.  Adding
  * additional controller paths for example would alter where CakePHP looks for controllers.
@@ -33,7 +33,7 @@
  * ### Locating plugins and themes
  *
  * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
- * give you the full path to the DebugKit plugin.  App::themePath('purple'), would give the full path to the 
+ * give you the full path to the DebugKit plugin.  App::themePath('purple'), would give the full path to the
  * `purple` theme.
  *
  * ### Inspecting known objects
@@ -212,7 +212,7 @@ class App {
 	private static $__packages = array();
 
 /**
- * 
+ *
  *
  */
 	private static $__packageFormat = array();
@@ -299,7 +299,7 @@ class App {
 				'View/Helper' => array('%s' . 'views' . DS . 'helpers' . DS),
 				'Console' => array(
 					'%s' . 'console' . DS . 'shells' . DS,
-					'%s' . 'vendors' . DS . 'shells' . DS, 
+					'%s' . 'vendors' . DS . 'shells' . DS,
 					VENDORS . 'shells' . DS
 				),
 				'libs' => array('%s' . 'libs' . DS),
@@ -413,7 +413,7 @@ class App {
  *
  * You can also search only within a plugin's objects by using the plugin dot
  * syntax.
- * 
+ *
  * `App::objects('MyPlugin.model');` returns `array('Post', 'Comment');`
  *
  * @param string $type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
@@ -468,8 +468,12 @@ class App {
 				if ($dir != APP && is_dir($dir)) {
 					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
 					foreach ($files as $file) {
-						if (!$file->isDot() && (!$file->isDir() || $includeDirectories)) {
-							$objects[] = substr(basename($file), 0, -4);
+						if (!$file->isDot()) {
+							if ($file->isDir() && $includeDirectories) {
+								$objects[] = basename($file);
+							} elseif (!$includeDirectories) {
+								$objects[] = substr(basename($file), 0, -4);
+							}
 						}
 					}
 				}
@@ -496,14 +500,16 @@ class App {
 
 /**
  * Allows you to modify the object listings that App maintains inside of it
- * Useful for testing 
+ * Useful for testing
  *
  * @param string $type Type of object listing you are changing
  * @param array $values The values $type should be set to.
  * @return void
  */
 	public static function setObjects($type, $values) {
-		self::$__objects[$type] = $values;
+		list($plugin, $type) = pluginSplit($type);
+		$cacheLocation = empty($plugin) ? 'app' : $plugin;
+		self::$__objects[$cacheLocation][$type] = $values;
 	}
 
 	public static function uses($className, $location) {
@@ -523,7 +529,7 @@ class App {
 			if (empty($plugin)) {
 				$appLibs = empty(self::$__packages['libs']) ? APPLIBS : current(self::$__packages['libs']);
 				$paths[] =  $appLibs . self::$__classMap[$className] . DS;
-				$paths[] = LIBS . self::$__classMap[$className] . DS;	
+				$paths[] = LIBS . self::$__classMap[$className] . DS;
 			}
 
 			foreach ($paths as $path) {
