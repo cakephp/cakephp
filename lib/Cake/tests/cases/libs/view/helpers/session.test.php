@@ -165,7 +165,7 @@ class SessionHelperTest extends CakeTestCase {
  */
 	function testFlashElementInAttrs() {
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$result = $this->Session->flash('flash', array(
 			'element' => 'session_helper', 
