@@ -189,18 +189,18 @@ class CakeRequest implements ArrayAccess {
  * @return string URI The CakePHP request path that is being accessed.
  */
 	protected function _url() {
-		$pathInfo = env('PATH_INFO');
-		if (!empty($pathInfo)) {
-			return $pathInfo;
+		if (!empty($_SERVER['PATH_INFO'])) {
+			return $_SERVER['PATH_INFO'];
+		} elseif (isset($_SERVER['REQUEST_URI'])) {
+			$uri = $_SERVER['REQUEST_URI'];
+		} elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
+			$uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
+		} elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
+			$uri = $_SERVER['HTTP_X_REWRITE_URL'];
+		} elseif ($var = env('argv')) {
+			$uri = $var[0];
 		}
-		foreach (array('PHP_SELF', 'REQUEST_URI', 'HTTP_X_REWRITE_URL', 'argv') as $var) {
-			if ($uri = env($var)) {
-				if ($var == 'argv') {
-					$uri = $url[0];
-				}
-				break;
-			}
-		}
+
 		$base = $this->base;
 
 		if (strpos($uri, $base) === 0) {

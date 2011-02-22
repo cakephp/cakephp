@@ -1173,7 +1173,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				),
 			),
 			array(
-				'Apache - No rewrite, document root set above top level cake dir, requesting root',
+				'Apache - No rewrite, document root set above top level cake dir, reques root, no PATH_INFO',
 				array(
 					'App' => array(
 						'base' => false, 
@@ -1185,9 +1185,8 @@ class CakeRequestTestCase extends CakeTestCase {
 						'SERVER_NAME' => 'localhost', 
 						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
-						'REQUEST_URI' => '/site/index.php/', 
+						'REQUEST_URI' => '/site/index.php/',
 						'SCRIPT_NAME' => '/site/index.php',
-						'PATH_INFO' => '',
 						'PHP_SELF' => '/site/index.php/',
 					),
 				),
@@ -1224,7 +1223,56 @@ class CakeRequestTestCase extends CakeTestCase {
 					'base' => '/site/index.php',
 					'webroot' => '/site/app/webroot/',
 				),
-			)
+			),
+			array(
+				'Apache - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'REQUEST_URI' => '/site/',
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'PHP_SELF' => '/site/app/webroot/index.php',
+					),
+				),
+				array(
+					'url' => '',
+					'base' => '/site',
+					'webroot' => '/site/',
+				),
+			),
+			array(
+				'Apache - w/rewrite, document root above top level cake dir, request root, no PATH_INFO/REQUEST_URI',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'PHP_SELF' => '/site/app/webroot/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => null,
+					),
+				),
+				array(
+					'url' => '',
+					'base' => '/site',
+					'webroot' => '/site/',
+				),
+			),
 		);
 	}
 
@@ -1240,7 +1288,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$request = new CakeRequest();
 		$this->assertEquals($expected['url'], $request->url, "url error");
 		$this->assertEquals($expected['base'], $request->base, "base error");
-		$this->assertEquals($expected['webroot'],$request->webroot, "webroot error");
+		$this->assertEquals($expected['webroot'], $request->webroot, "webroot error");
 		if (isset($expected['urlParams'])) {
 			$this->assertEqual($_GET, $expected['urlParams'], "GET param mismatch");
 		}
