@@ -317,9 +317,8 @@ class Controller extends Object {
 		if ($this->viewPath == null) {
 			$this->viewPath = Inflector::underscore($this->name);
 		}
-		if (empty($this->uses)) {
-			$this->modelClass = Inflector::singularize($this->name);
-		}
+
+		$this->modelClass = Inflector::singularize($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
 		$this->Components = new ComponentCollection();
 
@@ -336,7 +335,7 @@ class Controller extends Object {
 	}
 
 /**
- * Provides backwards compatbility avoid problems with empty and isset to alias properties.
+ * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
  *
  * @return void
  */

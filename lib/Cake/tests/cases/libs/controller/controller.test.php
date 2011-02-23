@@ -578,7 +578,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
