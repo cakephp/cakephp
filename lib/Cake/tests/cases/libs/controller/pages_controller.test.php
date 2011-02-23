@@ -44,7 +44,7 @@ class PagesControllerTest extends CakeTestCase {
  */
 	function testDisplay() {
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS, LIBS . 'libs' . DS . 'view' . DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS, LIBS . 'libs' . DS . 'view' . DS)
 		));
 		$Pages = new PagesController(new CakeRequest(null, false));
 
