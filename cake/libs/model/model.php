@@ -2128,12 +2128,12 @@ class Model extends Object {
 		$query = array_merge(
 			array(
 				'conditions' => null, 'fields' => null, 'joins' => array(), 'limit' => null,
-				'offset' => null, 'order' => null, 'page' => null, 'group' => null, 'callbacks' => true
+				'offset' => null, 'order' => null, 'page' => 1, 'group' => null, 'callbacks' => true
 			),
 			(array)$query
 		);
 
-		if ($type != 'all') {
+		if ($type !== 'all') {
 			if ($this->_findMethods[$type] === true) {
 				$query = $this->{'_find' . ucfirst($type)}('before', $query);
 			}
@@ -2171,10 +2171,7 @@ class Model extends Object {
 			}
 		}
 
-		if (!$db = $this->getDataSource()) {
-			return false;
-		}
-
+		$db = $this->getDataSource();
 		$results = $db->read($this, $query);
 		$this->resetAssociations();
 
@@ -2203,10 +2200,10 @@ class Model extends Object {
  * @see Model::find()
  */
 	protected function _findFirst($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			if (empty($results[0])) {
 				return false;
 			}
@@ -2224,7 +2221,7 @@ class Model extends Object {
  * @see Model::find()
  */
 	protected function _findCount($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			$db = $this->getDataSource();
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
@@ -2235,7 +2232,7 @@ class Model extends Object {
 			}
 			$query['order'] = false;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			if (isset($results[0][0]['count'])) {
 				return intval($results[0][0]['count']);
 			} elseif (isset($results[0][$this->alias]['count'])) {
@@ -2255,7 +2252,7 @@ class Model extends Object {
  * @see Model::find()
  */
 	protected function _findList($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			if (empty($query['fields'])) {
 				$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
 				$list = array("{n}.{$this->alias}.{$this->primaryKey}", "{n}.{$this->alias}.{$this->displayField}", null);
@@ -2264,14 +2261,14 @@ class Model extends Object {
 					$query['fields'] = String::tokenize($query['fields']);
 				}
 
-				if (count($query['fields']) == 1) {
+				if (count($query['fields']) === 1) {
 					if (strpos($query['fields'][0], '.') === false) {
 						$query['fields'][0] = $this->alias . '.' . $query['fields'][0];
 					}
 
 					$list = array("{n}.{$this->alias}.{$this->primaryKey}", '{n}.' . $query['fields'][0], null);
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
-				} elseif (count($query['fields']) == 3) {
+				} elseif (count($query['fields']) === 3) {
 					for ($i = 0; $i < 3; $i++) {
 						if (strpos($query['fields'][$i], '.') === false) {
 							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
@@ -2294,7 +2291,7 @@ class Model extends Object {
 			}
 			list($query['list']['keyPath'], $query['list']['valuePath'], $query['list']['groupPath']) = $list;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			if (empty($results)) {
 				return array();
 			}
@@ -2313,7 +2310,7 @@ class Model extends Object {
  * @return array
  */
 	protected function _findNeighbors($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			extract($query);
 			$conditions = (array)$conditions;
 			if (isset($field) && isset($value)) {
@@ -2330,7 +2327,7 @@ class Model extends Object {
 			$query['field'] = $field;
 			$query['value'] = $value;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			extract($query);
 			unset($query['conditions'][$field . ' <']);
 			$return = array();
@@ -2349,9 +2346,9 @@ class Model extends Object {
 			if (!array_key_exists('prev', $return)) {
 				$return['prev'] = $return2[0];
 			}
-			if (count($return2) == 2) {
+			if (count($return2) === 2) {
 				$return['next'] = $return2[1];
-			} elseif (count($return2) == 1 && !$return['prev']) {
+			} elseif (count($return2) === 1 && !$return['prev']) {
 				$return['next'] = $return2[0];
 			} else {
 				$return['next'] = null;
@@ -2370,9 +2367,9 @@ class Model extends Object {
  * @return array Threaded results
  */
 	protected function _findThreaded($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			$return = $idMap = array();
 			$ids = Set::extract($results, '{n}.' . $this->alias . '.' . $this->primaryKey);
 
