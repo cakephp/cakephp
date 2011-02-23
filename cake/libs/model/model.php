@@ -2073,7 +2073,7 @@ class Model extends Object {
 /**
  * Queries the datasource and returns a result set array.
  *
- * Also used to perform new-notation finds, where the first argument is type of find operation to perform
+ * Also used to perform notation finds, where the first argument is type of find operation to perform
  * (all / first / count / neighbors / list / threaded ),
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
@@ -2109,30 +2109,19 @@ class Model extends Object {
  *
  * Behaviors and find types can also define custom finder keys which are passed into find().
  *
- * Specifying 'fields' for new-notation 'list':
+ * Specifying 'fields' for notation 'list':
  *
  *  - If no fields are specified, then 'id' is used for key and 'model->displayField' is used for value.
  *  - If a single field is specified, 'id' is used for key and specified field is used for value.
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
- * @param array $conditions SQL conditions array, or type of find operation (all / first / count /
- *    neighbors / list / threaded)
- * @param mixed $fields Either a single string of a field name, or an array of field names, or
- *    options for matching
- * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param integer $recursive The number of levels deep to fetch associated records
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array Array of records
  * @link http://book.cakephp.org/view/1018/find
  */
-	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
-		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->_findMethods))) {
-			$type = 'first';
-			$query = array_merge(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
-		} else {
-			list($type, $query) = array($conditions, $fields);
-		}
-
+	public function find($type = 'first', $query = array()) {
 		$this->findQueryType = $type;
 		$this->id = $this->getID();
 
