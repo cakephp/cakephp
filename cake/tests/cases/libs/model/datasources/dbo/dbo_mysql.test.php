@@ -779,7 +779,7 @@ class DboMysqlTest extends CakeTestCase {
 		$queryResult = $this->getMock('PDOStatement');
 		$db->expects($this->once())
 			->method('_execute')
-			->with('SHOW TABLES FROM cake')
+			->with('SHOW TABLES FROM `cake`')
 			->will($this->returnValue($queryResult));
 		$queryResult->expects($this->at(0))
 			->method('fetch')
@@ -2869,7 +2869,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFields() {
-		$this->loadFixtures('Article', 'Comment');
+		$this->loadFixtures('Article', 'Comment', 'Tag');
 		$this->Dbo->virtualFieldSeparator = '__';
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
@@ -2939,7 +2939,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInConditions() {
-		$Article = ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article', 'Comment', 'Tag');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -2973,7 +2973,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testConditionsWithComplexVirtualFields() {
-		$Article = ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article', 'Comment', 'Tag');
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
 					* SIN(Article.latitude * PI() / 180)

@@ -182,7 +182,7 @@ class DboMysql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
+		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']));
 
 		if (!$result) {
 			$result->closeCursor();
