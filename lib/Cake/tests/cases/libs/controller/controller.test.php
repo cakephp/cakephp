@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
+App::uses('Router', 'Routing');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 App::uses('SecurityComponent', 'Controller/Component');
@@ -438,9 +439,10 @@ class ControllerTest extends CakeTestCase {
 	function testLoadModelInPlugins() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
 		));
+		App::uses('TestPluginAppController', 'TestPlugin.Controller');
 		App::uses('TestPluginController', 'TestPlugin.Controller');
 
 		$Controller = new TestPluginController();

@@ -134,6 +134,7 @@ class ClassRegistry {
 
 				App::uses('Model', 'Model');
 				App::uses('AppModel', 'Model');
+				App::uses($plugin . 'AppModel', $pluginPath . $type);
 				App::uses($class, $pluginPath . $type);
 				if (class_exists($class)) {
 					${$class} = new $class($settings);
