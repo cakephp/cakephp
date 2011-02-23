@@ -944,6 +944,7 @@ class DboSource extends DataSource {
 				$linkModel = $model->{$assoc};
 				$external = isset($assocData['external']);
 
+				$linkModel->getDataSource();
 				if ($model->useDbConfig == $linkModel->useDbConfig) {
 					if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
 						$linkedModels[$type . '/' . $assoc] = true;

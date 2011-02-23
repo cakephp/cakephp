@@ -3496,19 +3496,16 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindNeighbors() {
-		$this->loadFixtures('User', 'Article');
+		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment');
 		$TestModel = new Article();
 
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array(
-			'prev' => null,
-			'next' => array(
-				'Article' => array('id' => 2),
-				'Comment' => array(),
-				'Tag' => array()
-		));
-		$this->assertEqual($result, $expected);
+
+		$this->assertNull($result['prev']);
+		$this->assertEqual($result['next']['Article'], array('id' => 2));
+		$this->assertEqual(count($result['next']['Comment']), 2);
+		$this->assertEqual(count($result['next']['Tag']), 2);
 
 		$TestModel->id = 2;
 		$TestModel->recursive = 0;
@@ -3530,15 +3527,11 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel->id = 3;
 		$TestModel->recursive = 1;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array(
-			'prev' => array(
-				'Article' => array('id' => 2),
-				'Comment' => array(),
-				'Tag' => array()
-			),
-			'next' => null
-		);
-		$this->assertEqual($result, $expected);
+
+		$this->assertNull($result['next']);
+		$this->assertEqual($result['prev']['Article'], array('id' => 2));
+		$this->assertEqual(count($result['prev']['Comment']), 2);
+		$this->assertEqual(count($result['prev']['Tag']), 2);
 
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors', array('recursive' => -1));
