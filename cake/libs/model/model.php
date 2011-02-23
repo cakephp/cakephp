@@ -465,14 +465,16 @@ class Model extends Object {
 		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
+
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
-			$this->setSource($this->useTable);
 
 			if ($this->displayField == null) {
 				unset($this->displayField);
 			}
+			$this->table = $this->useTable;
+			$this->tableToModel[$this->table] = $this->alias;
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
