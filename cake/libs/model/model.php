@@ -1882,7 +1882,7 @@ class Model extends Object {
 			if (!$filters || !$this->exists()) {
 				return false;
 			}
-			$db = ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);

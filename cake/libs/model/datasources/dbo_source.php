@@ -1852,7 +1852,7 @@ class DboSource extends DataSource {
 		$joins = array_merge($model->getAssociated('hasOne'), $model->getAssociated('belongsTo'));
 
 		foreach ($joins as $assoc) {
-			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig) {
+			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig && $model->{$assoc}->getDataSource()) {
 				$assocData = $model->getAssociated($assoc);
 				$join[] = $this->buildJoinStatement(array(
 					'table' => $this->fullTableName($model->{$assoc}),
