@@ -2123,10 +2123,9 @@ class Model extends Object {
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of records
- * @access public
  * @link http://book.cakephp.org/view/1018/find
  */
-	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
+	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
 		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->_findMethods))) {
 			$type = 'first';
 			$query = array_merge(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
@@ -2212,10 +2211,9 @@ class Model extends Object {
  * @param array $query
  * @param array $data
  * @return array
- * @access protected
  * @see Model::find()
  */
-	function _findFirst($state, $query, $results = array()) {
+	protected function _findFirst($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['limit'] = 1;
 			return $query;
@@ -2234,10 +2232,9 @@ class Model extends Object {
  * @param array $query
  * @param array $data
  * @return int The number of records found, or false
- * @access protected
  * @see Model::find()
  */
-	function _findCount($state, $query, $results = array()) {
+	protected function _findCount($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$db = $this->getDataSource();
 			if (empty($query['fields'])) {
@@ -2266,10 +2263,9 @@ class Model extends Object {
  * @param array $query
  * @param array $data
  * @return array Key/value pairs of primary keys/display field values of all records found
- * @access protected
  * @see Model::find()
  */
-	function _findList($state, $query, $results = array()) {
+	protected function _findList($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['fields'])) {
 				$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
@@ -2427,9 +2423,8 @@ class Model extends Object {
  * @param array Results to filter
  * @param boolean $primary If this is the primary model results (results from model where the find operation was performed)
  * @return array Set of filtered results
- * @access private
  */
-	function __filterResults($results, $primary = true) {
+	private function __filterResults($results, $primary = true) {
 		$return = $this->Behaviors->trigger(
 			'afterFind',
 			array(&$this, $results, $primary),
