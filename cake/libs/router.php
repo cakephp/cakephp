@@ -822,7 +822,7 @@ class Router {
 				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
 					unset($url[$prefix]);
 				}
-				if (isset($url[$prefix]) && strpos($url['action'], $prefix) === 0) {
+				if (isset($url[$prefix]) && strpos($url['action'], $prefix . '_') === 0) {
 					$url['action'] = substr($url['action'], strlen($prefix) + 1);
 				}
 			}
