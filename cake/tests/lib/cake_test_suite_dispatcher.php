@@ -31,6 +31,7 @@ class CakeTestSuiteDispatcher {
 	public $params = array(
 		'codeCoverage' => false,
 		'case' => null,
+		'core' => false,
 		'app' => false,
 		'plugin' => null,
 		'output' => 'html',
