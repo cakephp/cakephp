@@ -244,7 +244,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		$safe = array_keys($this->_callbackArguments['request']);
 		$options = $this->_prepareCallbacks('request', $options, $safe);
-		if (isset($options['dataExpression'])) {
+		if (!empty($options['dataExpression'])) {
 			$safe[] = 'parameters';
 			unset($options['dataExpression']);
 		}
