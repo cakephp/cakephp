@@ -2171,8 +2171,7 @@ class Model extends Object {
 			}
 		}
 
-		$db = $this->getDataSource();
-		$results = $db->read($this, $query);
+		$results = $this->getDataSource()->read($this, $query);
 		$this->resetAssociations();
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
