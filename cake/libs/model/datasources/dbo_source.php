@@ -1081,7 +1081,7 @@ class DboSource extends DataSource {
 			return false;
 		}
 
-		$filtered = $this->__filterResults($resultSet, $model);
+		$filtered = $this->_filterResults($resultSet, $model);
 
 		if ($model->recursive > -1) {
 			foreach ($_associations as $type) {
@@ -1109,7 +1109,7 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-			$this->__filterResults($resultSet, $model, $filtered);
+			$this->_filterResults($resultSet, $model, $filtered);
 		}
 
 		if (!is_null($recursive)) {
@@ -1125,9 +1125,8 @@ class DboSource extends DataSource {
  * @param object $model Instance of model to operate against
  * @param array $filtered List of classes already filtered, to be skipped
  * @return array Array of results that have been filtered through $model->afterFind
- * @access private
  */
-	function __filterResults(&$results, &$model, $filtered = array()) {
+	protected function _filterResults(&$results, &$model, $filtered = array()) {
 		$filtering = array();
 		$count = count($results);
 
@@ -1215,7 +1214,7 @@ class DboSource extends DataSource {
 						}
 					}
 				}
-				$this->__filterResults($fetch, $model);
+				$this->_filterResults($fetch, $model);
 				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();

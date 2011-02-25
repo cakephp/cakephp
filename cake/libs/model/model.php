@@ -2175,7 +2175,7 @@ class Model extends Object {
 		$this->resetAssociations();
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
-			$results = $this->__filterResults($results);
+			$results = $this->_filterResults($results);
 		}
 
 		$this->findQueryType = null;
@@ -2409,7 +2409,7 @@ class Model extends Object {
  * @param boolean $primary If this is the primary model results (results from model where the find operation was performed)
  * @return array Set of filtered results
  */
-	private function __filterResults($results, $primary = true) {
+	protected function _filterResults($results, $primary = true) {
 		$return = $this->Behaviors->trigger(
 			'afterFind',
 			array(&$this, $results, $primary),
