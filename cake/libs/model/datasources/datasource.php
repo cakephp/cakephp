@@ -120,19 +120,6 @@ class DataSource extends Object {
 	}
 
 /**
- * Convenience method for DboSource::listSources().  Returns source names in lowercase.
- *
- * @param boolean $reset Whether or not the source list should be reset.
- * @return array Array of sources available in this datasource
- */
-	public function sources($reset = false) {
-		if ($reset === true) {
-			$this->_sources = null;
-		}
-		return array_map('strtolower', $this->listSources());
-	}
-
-/**
  * Returns a Model description (metadata) or null if none found.
  *
  * @param Model $model
@@ -298,9 +285,9 @@ class DataSource extends Object {
 	public function isInterfaceSupported($interface) {
 		static $methods = false;
 		if ($methods === false) {
-			$methods = array_map('strtolower', get_class_methods($this));
+			$methods = get_class_methods($this);
 		}
-		return in_array(strtolower($interface), $methods);
+		return in_array($interface, $methods);
 	}
 
 /**
