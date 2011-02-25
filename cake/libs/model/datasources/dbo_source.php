@@ -68,7 +68,7 @@ class DboSource extends DataSource {
  * @var boolean.
  * @access public
  */
-	public $cacheMethods = true ;
+	public $cacheMethods = true;
 
 /**
  * Print full query debug info?
@@ -332,7 +332,7 @@ class DboSource extends DataSource {
 			}
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
-		} 
+		}
 
 		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
@@ -482,7 +482,7 @@ class DboSource extends DataSource {
 			$this->error = $e->getMessage();
 			return false;
 		}
-		
+
 	}
 
 /**
