@@ -666,7 +666,7 @@ class DboSource extends DataSource {
 
 			if ($this->hasResult()) {
 				$first = $this->fetchRow();
-				if ($first !== null) {
+				if ($first != null) {
 					$out[] = $first;
 				}
 				while ($item = $this->fetchResult()) {
@@ -2944,7 +2944,7 @@ class DboSource extends DataSource {
 			$length = $column['limit'];
 		} elseif (isset($real['length'])) {
 			$length = $real['length'];
-		} else {
+		} elseif (isset($real['limit'])) {
 			$length = $real['limit'];
 		}
 		if (isset($length)) {
