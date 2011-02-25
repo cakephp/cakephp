@@ -625,7 +625,7 @@ class DboSource extends DataSource {
 		if ($this->hasResult()) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();
-			if (!empty($resultRow)) {
+			if (isset($resultRow[0])) {
 				$this->fetchVirtualField($resultRow);
 			}
 			return $resultRow;
@@ -666,11 +666,13 @@ class DboSource extends DataSource {
 
 			if ($this->hasResult()) {
 				$first = $this->fetchRow();
-				if ($first != null) {
+				if ($first !== null) {
 					$out[] = $first;
 				}
 				while ($item = $this->fetchResult()) {
-					$this->fetchVirtualField($item);
+					if (isset($item[0])) {
+						$this->fetchVirtualField($item);
+					}
 					$out[] = $item;
 				}
 			}
