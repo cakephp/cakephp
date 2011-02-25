@@ -116,8 +116,7 @@ class DataSource extends Object {
 			Cache::write($key, $data, '_cake_model_');
 		}
 
-		$this->_sources = $sources;
-		return $sources;
+		return $this->_sources = $sources;
 	}
 
 /**
@@ -139,7 +138,7 @@ class DataSource extends Object {
  * @param Model $model
  * @return array Array of Metadata for the $model
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
@@ -204,7 +203,7 @@ class DataSource extends Object {
  * @param array $values An Array of values to save.
  * @return boolean success
  */
-	public function create($model, $fields = null, $values = null) {
+	public function create(Model $model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -217,7 +216,7 @@ class DataSource extends Object {
  * @param array $queryData An array of query data used to find the data you want
  * @return mixed
  */
-	public function read($model, $queryData = array()) {
+	public function read(Model $model, $queryData = array()) {
 		return false;
 	}
 
@@ -231,7 +230,7 @@ class DataSource extends Object {
  * @param array $values Array of values to be update $fields to.
  * @return boolean Success
  */
-	public function update($model, $fields = null, $values = null) {
+	public function update(Model $model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -243,7 +242,7 @@ class DataSource extends Object {
  * @param Model $model The model class having record(s) deleted
  * @param mixed $id Primary key of the model
  */
-	public function delete($model, $id = null) {
+	public function delete(Model $model, $id = null) {
 		if ($id == null) {
 			$id = $model->id;
 		}
@@ -357,7 +356,7 @@ class DataSource extends Object {
  * @access public
  * @todo Remove and refactor $assocData, ensure uses of the method have the param removed too.
  */
-	function insertQueryData($query, $data, $association, $assocData, &$model, &$linkModel, $stack) {
+	function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {
 		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
 
 		foreach ($keys as $key) {
@@ -437,7 +436,7 @@ class DataSource extends Object {
  * @param string $key Key name to make
  * @return string Key name for model.
  */
-	public function resolveKey($model, $key) {
+	public function resolveKey(Model $model, $key) {
 		return $model->alias . $key;
 	}
 
@@ -448,8 +447,7 @@ class DataSource extends Object {
  */
 	public function __destruct() {
 		if ($this->_transactionStarted) {
-			$null = null;
-			$this->rollback($null);
+			$this->rollback();
 		}
 		if ($this->connected) {
 			$this->close();
