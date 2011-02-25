@@ -2744,7 +2744,7 @@ class DboSource extends DataSource {
 			if (strpos($col, '(') !== false) {
 				list($col, $limit) = explode('(', $col);
 			}
-			if ($limit != null) {
+			if ($limit !== null) {
 				return intval($limit);
 			}
 			return null;
@@ -2762,10 +2762,10 @@ class DboSource extends DataSource {
 
 		$isFloat = in_array($type, array('dec', 'decimal', 'float', 'numeric', 'double'));
 		if ($isFloat && $offset) {
-			return $length.','.$offset;
+			return $length . ',' . $offset;
 		}
 
-		if (($real[0] == $type) && (count($real) == 1)) {
+		if (($real[0] == $type) && (count($real) === 1)) {
 			return null;
 		}
 
@@ -2777,7 +2777,7 @@ class DboSource extends DataSource {
 		} elseif (in_array($type, array('enum', 'set'))) {
 			$length = 0;
 			foreach ($typeArr as $key => $enumValue) {
-				if ($key == 0) {
+				if ($key === 0) {
 					continue;
 				}
 				$tmpLength = strlen($enumValue);
