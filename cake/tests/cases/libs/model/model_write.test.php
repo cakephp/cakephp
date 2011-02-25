@@ -2987,10 +2987,6 @@ class ModelWriteTest extends BaseModelTest {
 		$db = ConnectionManager::create('mock_transaction', array(
 			'datasource' => 'MockTransactionDbo',
 		));
-		$db->expects($this->at(2))
-			->method('isInterfaceSupported')
-			->with('describe')
-			->will($this->returnValue(true));
 
 		$db->expects($this->once())
 			->method('describe')
@@ -3026,8 +3022,6 @@ class ModelWriteTest extends BaseModelTest {
 		$db->columns = $testDb->columns;
 
 		$db->expects($this->once())->method('rollback');
-		$db->expects($this->any())->method('isInterfaceSupported')
-			->will($this->returnValue(true));
 		$db->expects($this->any())->method('describe')
 			->will($this->returnValue(array(
 				'id' => array('type' => 'integer'),

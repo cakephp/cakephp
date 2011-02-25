@@ -3065,7 +3065,7 @@ class DboSource extends DataSource {
  */
 	public function readTableParameters($name) {
 		$parameters = array();
-		if ($this->isInterfaceSupported('listDetailedSources')) {
+		if (method_exists($this, 'listDetailedSources')) {
 			$currentTableDetails = $this->listDetailedSources($name);
 			foreach ($this->tableParameters as $paramName => $parameter) {
 				if (!empty($parameter['column']) && !empty($currentTableDetails[$parameter['column']])) {

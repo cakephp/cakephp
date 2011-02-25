@@ -277,20 +277,6 @@ class DataSource extends Object {
 	}
 
 /**
- * Returns true if the DataSource supports the given interface (method)
- *
- * @param string $interface The name of the interface (method)
- * @return boolean True on success
- */
-	public function isInterfaceSupported($interface) {
-		static $methods = false;
-		if ($methods === false) {
-			$methods = get_class_methods($this);
-		}
-		return in_array($interface, $methods);
-	}
-
-/**
  * Sets the configuration for the DataSource.
  * Merges the $config information with the _baseConfig and the existing $config property.
  *

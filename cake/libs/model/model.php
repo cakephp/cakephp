@@ -798,7 +798,7 @@ class Model extends Object {
 		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 
-		if ($db->isInterfaceSupported('listSources')) {
+		if (method_exists($db, 'listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
 				throw new MissingTableException(array(
@@ -981,7 +981,7 @@ class Model extends Object {
 		if (!is_array($this->_schema) || $field === true) {
 			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
-			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
+			if (method_exists($db, 'describe') && $this->useTable !== false) {
 				$this->_schema = $db->describe($this, $field);
 			} elseif ($this->useTable === false) {
 				$this->_schema = array();
