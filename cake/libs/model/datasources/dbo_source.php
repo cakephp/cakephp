@@ -515,7 +515,7 @@ class DboSource extends DataSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		return $this->lastAffected($source);
+		return $this->lastAffected();
 	}
 
 /**
