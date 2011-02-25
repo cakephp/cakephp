@@ -264,12 +264,10 @@ class DboSource extends DataSource {
 		parent::__construct($config);
 		$this->fullDebug = Configure::read('debug') > 1;
 		if (!$this->enabled()) {
-			return false;
+			return;
 		}
 		if ($autoConnect) {
-			return $this->connect();
-		} else {
-			return true;
+			$this->connect();
 		}
 	}
 
