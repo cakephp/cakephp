@@ -1126,33 +1126,30 @@ class DboSource extends DataSource {
  * @param array $filtered List of classes already filtered, to be skipped
  * @return array Array of results that have been filtered through $model->afterFind
  */
-	protected function _filterResults(&$results, &$model, $filtered = array()) {
+	protected function _filterResults(&$results, Model $model, $filtered = array()) {
 		$filtering = array();
-		$count = count($results);
+		$_filtered = array_flip($filtered);
 
-		for ($i = 0; $i < $count; $i++) {
-			if (is_array($results[$i])) {
-				$classNames = array_keys($results[$i]);
-				$count2 = count($classNames);
-
-				for ($j = 0; $j < $count2; $j++) {
-					$className = $classNames[$j];
-					if ($model->alias != $className && !in_array($className, $filtered)) {
-						if (!in_array($className, $filtering)) {
-							$filtering[] = $className;
-						}
+		foreach ($results as &$result) {
+			if (is_array($result)) {
+				if (!isset($keys)) {
+					$keys = array_keys($result);
+				}
+				foreach ($keys as $className) {
+					if ($model->alias !== $className && !isset($_filtered[$className])) {
+						$filtering[] = $className;
 
 						if (isset($model->{$className}) && is_object($model->{$className})) {
-							$data = $model->{$className}->afterFind(array(array($className => $results[$i][$className])), false);
+							$data = $model->{$className}->afterFind(array(array($className => $result[$className])), false);
 						}
 						if (isset($data[0][$className])) {
-							$results[$i][$className] = $data[0][$className];
+							$result[$className] = $data[0][$className];
 						}
 					}
 				}
 			}
 		}
-		return $filtering;
+		return array_unique($filtering);
 	}
 
 /**
