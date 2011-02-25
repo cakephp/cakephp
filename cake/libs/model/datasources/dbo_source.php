@@ -71,6 +71,128 @@ class DboSource extends DataSource {
 	public $cacheMethods = true ;
 
 /**
+ * Print full query debug info?
+ *
+ * @var boolean
+ * @access public
+ */
+	public $fullDebug = false;
+
+/**
+ * Error description of last query
+ *
+ * @var unknown_type
+ * @access public
+ */
+	public $error = null;
+
+/**
+ * String to hold how many rows were affected by the last SQL operation.
+ *
+ * @var string
+ * @access public
+ */
+	public $affected = null;
+
+/**
+ * Number of rows in current resultset
+ *
+ * @var int
+ * @access public
+ */
+	public $numRows = null;
+
+/**
+ * Time the last query took
+ *
+ * @var int
+ * @access public
+ */
+	public $took = null;
+
+/**
+ * Result
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_result = null;
+
+/**
+ * Queries count.
+ *
+ * @var int
+ * @access protected
+ */
+	protected $_queriesCnt = 0;
+
+/**
+ * Total duration of all queries.
+ *
+ * @var unknown_type
+ * @access protected
+ */
+	protected $_queriesTime = null;
+
+/**
+ * Log of queries executed by this DataSource
+ *
+ * @var unknown_type
+ * @access protected
+ */
+	protected $_queriesLog = array();
+
+/**
+ * Maximum number of items in query log
+ *
+ * This is to prevent query log taking over too much memory.
+ *
+ * @var int Maximum number of queries in the queries log.
+ * @access protected
+ */
+	protected $_queriesLogMax = 200;
+
+/**
+ * Caches serialzed results of executed queries
+ *
+ * @var array Maximum number of queries in the queries log.
+ * @access protected
+ */
+	protected $_queryCache = array();
+
+/**
+ * A reference to the physical connection of this DataSource
+ *
+ * @var array
+ * @access public
+ */
+	public $connection = null;
+
+/**
+ * The DataSource configuration key name
+ *
+ * @var string
+ * @access public
+ */
+	public $configKeyName = null;
+
+/**
+ * The starting character that this DataSource uses for quoted identifiers.
+ *
+ * @var string
+ * @access public
+ */
+	public $startQuote = null;
+
+/**
+ * The ending character that this DataSource uses for quoted identifiers.
+ *
+ * @var string
+ * @access public
+ */
+	public $endQuote = null;
+
+/**
  * Bypass automatic adding of joined fields/associations.
  *
  * @var boolean
