@@ -1189,8 +1189,8 @@ class DboSource extends DataSource {
 
 			if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
 				$ins = $fetch = array();
-				for ($i = 0; $i < $count; $i++) {
-					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
+				foreach ($resultSet as &$result) {
+					if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $model, $linkModel, $stack)) {
 						$ins[] = $in;
 					}
 				}
@@ -1222,8 +1222,8 @@ class DboSource extends DataSource {
 				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
-				for ($i = 0; $i < $count; $i++) {
-					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
+				foreach ($resultSet as &$result) {
+					if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $model, $linkModel, $stack)) {
 						$ins[] = $in;
 					}
 				}
@@ -1252,22 +1252,16 @@ class DboSource extends DataSource {
 				}
 			}
 
-			for ($i = 0; $i < $count; $i++) {
-				$row =& $resultSet[$i];
-
+			foreach ($resultSet as &$row) {
 				if ($type !== 'hasAndBelongsToMany') {
-					$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+					$q = $this->insertQueryData($query, $row, $association, $assocData, $model, $linkModel, $stack);
 					if ($q !== false) {
 						$fetch = $this->fetchAll($q, $model->cacheQueries);
 					} else {
 						$fetch = null;
 					}
 				}
-				$selfJoin = false;
-
-				if ($linkModel->name === $model->name) {
-					$selfJoin = true;
-				}
+				$selfJoin = $linkModel->name === $model->name;
 
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
@@ -1275,7 +1269,7 @@ class DboSource extends DataSource {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel = $linkModel->{$assoc1};
 
-								if (($type1 === 'belongsTo') || ($deepModel->alias === $model->alias && $type === 'belongsTo') || ($deepModel->alias != $model->alias)) {
+								if ($type1 === 'belongsTo' || ($deepModel->alias === $model->alias && $type === 'belongsTo') || ($deepModel->alias != $model->alias)) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
 									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
@@ -1288,7 +1282,7 @@ class DboSource extends DataSource {
 							}
 						}
 					}
-					if ($type == 'hasAndBelongsToMany') {
+					if ($type === 'hasAndBelongsToMany') {
 						$uniqueIds = $merge = array();
 
 						foreach ($fetch as $j => $data) {
@@ -1302,17 +1296,17 @@ class DboSource extends DataSource {
 						if (empty($merge) && !isset($row[$association])) {
 							$row[$association] = $merge;
 						} else {
-							$this->__mergeAssociation($resultSet[$i], $merge, $association, $type);
+							$this->__mergeAssociation($row, $merge, $association, $type);
 						}
 					} else {
-						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type, $selfJoin);
+						$this->__mergeAssociation($row, $fetch, $association, $type, $selfJoin);
 					}
-					if (isset($resultSet[$i][$association])) {
-						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association], false);
+					if (isset($row[$association])) {
+						$row[$association] = $linkModel->afterFind($row[$association], false);
 					}
 				} else {
 					$tempArray[0][$association] = false;
-					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type, $selfJoin);
+					$this->__mergeAssociation($row, $tempArray, $association, $type, $selfJoin);
 				}
 			}
 		}
