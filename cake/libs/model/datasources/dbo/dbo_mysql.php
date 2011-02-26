@@ -363,7 +363,7 @@ class DboMysql extends DboSource {
 			return false;
 		}
 
-		if ($this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions'))) === false) {
+		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
 			$model->onError();
 			return false;
 		}
