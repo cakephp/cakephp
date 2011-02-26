@@ -2143,12 +2143,11 @@ class DboSource extends DataSource {
  * @return array
  */
 	public function __scrubQueryData($data) {
-		foreach (array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group') as $key) {
-			if (empty($data[$key])) {
-				$data[$key] = array();
-			}
+		static $base = null;
+		if ($base === null) {
+			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());
 		}
-		return $data;
+		return (array)$data + $base;
 	}
 
 /**
