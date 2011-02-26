@@ -963,7 +963,7 @@ class DboSource extends DataSource {
 			$table = strval($model);
 		}
 		if ($quote) {
-			return $this->startQuote . $table . $this->endQuote;
+			return $this->name($table);
 		}
 		return $table;
 	}
