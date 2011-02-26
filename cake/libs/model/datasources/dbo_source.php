@@ -321,7 +321,7 @@ class DboSource extends DataSource {
 				array(&$this, 'value'),
 				$data, array_fill(0, count($data), $column)
 			);
-		} elseif (is_object($data) && isset($data->type, $data->type)) {
+		} elseif (is_object($data) && isset($data->type, $data->value)) {
 			if ($data->type == 'identifier') {
 				return $this->name($data->value);
 			} elseif ($data->type == 'expression') {
