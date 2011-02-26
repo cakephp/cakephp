@@ -1127,8 +1127,6 @@ class DboSource extends DataSource {
  * @return array Array of results that have been filtered through $model->afterFind
  */
 	protected function _filterResults(&$results, Model $model, $filtered = array()) {
-		static $haveCallback = array();
-
 		$current = current($results);
 		if (!is_array($current)) {
 			return array();
@@ -1140,14 +1138,6 @@ class DboSource extends DataSource {
 				continue;
 			}
 			$linkedModel = $model->{$className};
-			$linkedClass = get_class($linkedModel);
-			if (!isset($haveCallback[$linkedClass])) {
-				$ref = new ReflectionClass($linkedModel);
-				$haveCallback[$linkedClass] = $ref->getMethod('afterFind')->class !== 'Model';
-			}
-			if ($haveCallback[$linkedClass] !== true) {
-				continue;
-			}
 			$filtering[] = $className;
 			foreach ($results as &$result) {
 				$data = $linkedModel->afterFind(array(array($className => $result[$className])), false);
