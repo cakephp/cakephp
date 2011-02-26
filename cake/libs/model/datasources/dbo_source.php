@@ -1034,7 +1034,6 @@ class DboSource extends DataSource {
 		$array = array();
 		$linkedModels = array();
 		$this->__bypass = false;
-		$this->__booleans = array();
 
 		if ($recursive === null && isset($queryData['recursive'])) {
 			$recursive = $queryData['recursive'];
