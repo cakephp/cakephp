@@ -1185,7 +1185,6 @@ class DboSource extends DataSource {
 				}
 				return null;
 			}
-			$count = count($resultSet);
 
 			if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
 				$ins = $fetch = array();
@@ -1219,7 +1218,7 @@ class DboSource extends DataSource {
 					}
 				}
 				$this->_filterResults($fetch, $model);
-				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
+				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
 				foreach ($resultSet as &$result) {
@@ -1252,6 +1251,8 @@ class DboSource extends DataSource {
 				}
 			}
 
+			$modelAlias = $model->alias;
+			$modelPK = $model->primaryKey;
 			foreach ($resultSet as &$row) {
 				if ($type !== 'hasAndBelongsToMany') {
 					$q = $this->insertQueryData($query, $row, $association, $assocData, $model, $linkModel, $stack);
@@ -1269,7 +1270,7 @@ class DboSource extends DataSource {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel = $linkModel->{$assoc1};
 
-								if ($type1 === 'belongsTo' || ($deepModel->alias === $model->alias && $type === 'belongsTo') || ($deepModel->alias != $model->alias)) {
+								if ($type1 === 'belongsTo' || ($deepModel->alias === $modelAlias && $type === 'belongsTo') || ($deepModel->alias !== $modelAlias)) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
 									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
@@ -1286,7 +1287,7 @@ class DboSource extends DataSource {
 						$uniqueIds = $merge = array();
 
 						foreach ($fetch as $j => $data) {
-							if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) {
+							if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$modelAlias][$modelPK]) {
 								if ($habtmFieldsCount <= 2) {
 									unset($data[$with]);
 								}
@@ -1339,12 +1340,17 @@ class DboSource extends DataSource {
  * @param object $linkModel Model being merged
  * @return void
  */
-	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
-		foreach ($resultSet as $i => $value) {
-			$count = 0;
-			$merged[$association] = array();
-			foreach ($merge as $j => $data) {
-				if (isset($value[$model->alias]) && $value[$model->alias][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
+	function __mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
+		$modelAlias = $model->alias;
+		$modelPK = $model->primaryKey;
+		$modelFK = $model->hasMany[$association]['foreignKey'];
+		foreach ($resultSet as &$result) {
+			if (!isset($result[$modelAlias])) {
+				continue;
+			}
+			$merged = array();
+			foreach ($merge as $data) {
+				if ($result[$modelAlias][$modelPK] === $data[$association][$modelFK]) {
 					if (count($data) > 1) {
 						$data = array_merge($data[$association], $data);
 						unset($data[$association]);
@@ -1354,17 +1360,13 @@ class DboSource extends DataSource {
 								unset($data[$key]);
 							}
 						}
-						$merged[$association][] = $data;
+						$merged[] = $data;
 					} else {
-						$merged[$association][] = $data[$association];
+						$merged[] = $data[$association];
 					}
 				}
-				$count++;
 			}
-			if (isset($value[$model->alias])) {
-				$resultSet[$i] = Set::pushDiff($resultSet[$i], $merged);
-				unset($merged);
-			}
+			$result = Set::pushDiff($result, array($association => $merged));
 		}
 	}
 
@@ -1378,18 +1380,18 @@ class DboSource extends DataSource {
  * @param boolean $selfJoin
  * @access private
  */
-	function __mergeAssociation(&$data, $merge, $association, $type, $selfJoin = false) {
+	function __mergeAssociation(&$data, &$merge, $association, $type, $selfJoin = false) {
 		if (isset($merge[0]) && !isset($merge[0][$association])) {
 			$association = Inflector::pluralize($association);
 		}
 
-		if ($type == 'belongsTo' || $type == 'hasOne') {
+		if ($type === 'belongsTo' || $type === 'hasOne') {
 			if (isset($merge[$association])) {
 				$data[$association] = $merge[$association][0];
 			} else {
 				if (count($merge[0][$association]) > 1) {
 					foreach ($merge[0] as $assoc => $data2) {
-						if ($assoc != $association) {
+						if ($assoc !== $association) {
 							$merge[0][$association][$assoc] = $data2;
 						}
 					}
