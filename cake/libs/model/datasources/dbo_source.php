@@ -1077,7 +1077,6 @@ class DboSource extends DataSource {
 		$query = trim($this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null));
 
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
-
 		if ($resultSet === false) {
 			$model->onError();
 			return false;
@@ -1090,13 +1089,13 @@ class DboSource extends DataSource {
 				foreach ($model->{$type} as $assoc => $assocData) {
 					$linkModel = $model->{$assoc};
 
-					if (empty($linkedModels[$type . '/' . $assoc])) {
-						if ($model->useDbConfig == $linkModel->useDbConfig) {
+					if (!isset($linkedModels[$type . '/' . $assoc])) {
+						if ($model->useDbConfig === $linkModel->useDbConfig) {
 							$db = $this;
 						} else {
 							$db = ConnectionManager::getDataSource($linkModel->useDbConfig);
 						}
-					} elseif ($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne')) {
+					} elseif ($model->recursive > 1 && ($type === 'belongsTo' || $type === 'hasOne')) {
 						$db = $this;
 					}
 
@@ -1106,7 +1105,7 @@ class DboSource extends DataSource {
 						unset($db);
 
 						if ($type === 'hasMany') {
-							$filtered []= $assoc;
+							$filtered[] = $assoc;
 						}
 					}
 				}
