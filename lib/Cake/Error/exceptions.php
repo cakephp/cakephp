@@ -459,8 +459,8 @@ class CakeSessionException extends CakeException { }
 class ConfigureException extends CakeException { }
 
 /**
- * Exception class for Socket. This exception will be thrown from CakeSocket, HttpSocket and HttpResponse when it
- * encounters an error.
+ * Exception class for Socket. This exception will be thrown from CakeSocket, CakeEmail, HttpSocket
+ * and HttpResponse when it encounters an error.
  *
  * @package cake.libs
  */

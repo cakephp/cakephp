@@ -231,6 +231,9 @@ class CakeEmail {
  * @return void
  */
 	public function header($headers) {
+		if (!is_array($headers)) {
+			throw new SocketException(__('$headers should be an array.'));
+		}
 		foreach ($headers as $header => $value) {
 			$this->_header[] = sprintf('%s: %s', trim($header), trim($value));
 		}
