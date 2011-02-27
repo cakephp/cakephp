@@ -52,7 +52,7 @@ class AclPerson extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $actsAs = array('Acl' => 'requester');
+	var $actsAs = array('Acl' => 'both');
 
 /**
  * belongsTo property
@@ -133,7 +133,7 @@ class AclUser extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $actsAs = array('Acl');
+	var $actsAs = array('Acl' => 'requester');
 
 /**
  * parentNode
@@ -262,6 +262,20 @@ class AclBehaviorTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test Setup of AclBehavior as both requester and controlled
+ *
+ * @return void
+ * @access public
+ */
+	function testSetupMulti() {
+		$User =& new AclPerson();
+		$this->assertTrue(isset($User->Behaviors->Acl->settings['AclPerson']));
+		$this->assertEqual($User->Behaviors->Acl->settings['AclPerson']['type'], 'both');
+		$this->assertTrue(is_object($User->Aro));
+		$this->assertTrue(is_object($User->Aco));
+	}
+
+/**
  * test After Save
  *
  * @return void
@@ -294,6 +308,15 @@ class AclBehaviorTestCase extends CakeTestCase {
 		);
 		$this->Aro->save($aroData);
 
+		$acoData = array(
+			'Aco' => array(
+				'model' => 'AclPerson',
+				'foreign_key' => 2,
+				'parent_id' => null
+			)
+		);
+		$this->Aco->save($acoData);
+
 		$Person =& new AclPerson();
 		$data = array(
 			'AclPerson' => array(
@@ -309,7 +332,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result['Aro']['parent_id'], 5);
 
-		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8));
+		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8), 'Aro');
 		$this->assertEqual(count($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
@@ -323,17 +346,24 @@ class AclBehaviorTestCase extends CakeTestCase {
 		);
 		$this->Aro->create();
 		$this->Aro->save($aroData);
- 
+		$acoData = array(
+			'Aco' => array(
+				'model' => 'AclPerson',
+				'foreign_key' => 1,
+				'parent_id' => null
+		));
+		$this->Aco->create();
+		$this->Aco->save($acoData);
 		$Person->read(null, 8);
 		$Person->set('mother_id', 1);
 		$Person->save();
 		$result = $this->Aro->find('first', array(
 			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)
 		));
-		 $this->assertTrue(is_array($result));
-		 $this->assertEqual($result['Aro']['parent_id'], 7);
- 
-		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8));
+		$this->assertTrue(is_array($result));
+		$this->assertEqual($result['Aro']['parent_id'], 7);
+
+		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8), 'Aro');
 		$this->assertEqual(sizeof($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 7);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
@@ -353,6 +383,15 @@ class AclBehaviorTestCase extends CakeTestCase {
 			)
 		);
 		$this->Aro->save($aroData);
+
+		$acoData = array(
+			'Aco' => array(
+				'model' => 'AclPerson',
+				'foreign_key' => 2,
+				'parent_id' => null
+			)
+		);
+		$this->Aco->save($acoData);
 
 		$Person =& new AclPerson();
 		$data = array(
@@ -391,6 +430,14 @@ class AclBehaviorTestCase extends CakeTestCase {
 			)
 		);
 		$this->Aro->save($aroData);
+		$acoData = array(
+			'Aco' => array(
+				'model' => 'AclPerson',
+				'foreign_key' => 2,
+				'parent_id' => null
+			)
+		);
+		$this->Aco->save($acoData);
 		$Person =& new AclPerson();
 		$data = array(
 			'AclPerson' => array(
@@ -401,7 +448,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		);
 		$Person->save($data);
 		$id = $Person->id;
-		$node = $Person->node();
+		$node = $Person->node(null, 'Aro');
 		$this->assertEqual(count($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
@@ -455,7 +502,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->Aro->save($aroData);
 
 		$Person->id = 2;
-		$result = $Person->node();
+		$result = $Person->node(null, 'Aro');
 		$this->assertTrue(is_array($result));
 		$this->assertEqual(count($result), 1);
 	}

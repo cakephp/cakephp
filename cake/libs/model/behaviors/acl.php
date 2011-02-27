@@ -35,7 +35,7 @@ class AclBehavior extends ModelBehavior {
  * @var array
  * @access protected
  */
-	var $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco');
+	var $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco', 'both' => array('Aro', 'Aco'));
 
 /**
  * Sets up the configuation for the model, and loads ACL models if they haven't been already
@@ -48,17 +48,22 @@ class AclBehavior extends ModelBehavior {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->name] = array_merge(array('type' => 'requester'), (array)$config);
-		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
+		$this->settings[$model->alias] = array_merge(array('type' => 'controlled'), (array)$config);
+		$this->settings[$model->alias]['type'] = strtolower($this->settings[$model->alias]['type']);
 
-		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->__typeMaps[$this->settings[$model->alias]['type']];
 		if (!class_exists('AclNode')) {
 			require LIBS . 'model' . DS . 'db_acl.php';
 		}
-		if (PHP5) {
-			$model->{$type} = ClassRegistry::init($type);
-		} else {
-			$model->{$type} =& ClassRegistry::init($type);
+		if (!is_array($types)) {
+			$types = array($types);
+		}
+		foreach($types as $type) {
+			if (PHP5) {
+				$model->{$type} = ClassRegistry::init($type);
+			} else {
+				$model->{$type} =& ClassRegistry::init($type);
+			}
 		}
 		if (!method_exists($model, 'parentNode')) {
 			trigger_error(sprintf(__('Callback parentNode() not defined in %s', true), $model->alias), E_USER_WARNING);
@@ -69,14 +74,21 @@ class AclBehavior extends ModelBehavior {
  * Retrieves the Aro/Aco node for this model
  *
  * @param mixed $ref
+ * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
  * @access public
  * @link http://book.cakephp.org/view/1322/node
  */
-	function node(&$model, $ref = null) {
-		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
+	function node(&$model, $ref = null, $type = null) {
+		if (empty($type)) {
+			$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
+			if (is_array($type)) {
+				trigger_error(__('AclBehavior is setup with more then one type, please specify type parameter for node()', true), E_USER_WARNING);
+				return null;
+			}
+		}
 		if (empty($ref)) {
-			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
+			$ref = array('model' => $model->alias, 'foreign_key' => $model->id);
 		}
 		return $model->{$type}->node($ref);
 	}
@@ -89,22 +101,27 @@ class AclBehavior extends ModelBehavior {
  * @access public
  */
 	function afterSave(&$model, $created) {
-		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
-		$parent = $model->parentNode();
-		if (!empty($parent)) {
-			$parent = $this->node($model, $parent);
+		$types = $this->__typeMaps[$this->settings[$model->alias]['type']];
+		if (!is_array($types)) {
+			$types = array($types);
 		}
-		$data = array(
-			'parent_id' => isset($parent[0][$type]['id']) ? $parent[0][$type]['id'] : null,
-			'model' => $model->alias,
-			'foreign_key' => $model->id
-		);
-		if (!$created) {
-			$node = $this->node($model);
-			$data['id'] = isset($node[0][$type]['id']) ? $node[0][$type]['id'] : null;
+		foreach ($types as $type) {
+			$parent = $model->parentNode();
+			if (!empty($parent)) {
+				$parent = $this->node($model, $parent, $type);
+			}
+			$data = array(
+				'parent_id' => isset($parent[0][$type]['id']) ? $parent[0][$type]['id'] : null,
+				'model' => $model->alias,
+				'foreign_key' => $model->id
+			);
+			if (!$created) {
+				$node = $this->node($model, null, $type);
+				$data['id'] = isset($node[0][$type]['id']) ? $node[0][$type]['id'] : null;
+			}
+			$model->{$type}->create();
+			$model->{$type}->save($data);
 		}
-		$model->{$type}->create();
-		$model->{$type}->save($data);
 	}
 
 /**
@@ -114,10 +131,15 @@ class AclBehavior extends ModelBehavior {
  * @access public
  */
 	function afterDelete(&$model) {
-		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
-		$node = Set::extract($this->node($model), "0.{$type}.id");
-		if (!empty($node)) {
-			$model->{$type}->delete($node);
+		$types = $this->__typeMaps[$this->settings[$model->alias]['type']];
+		if (!is_array($types)) {
+			$types = array($types);
+		}
+		foreach ($types as $type) {
+			$node = Set::extract($this->node($model, null, $type), "0.{$type}.id");
+			if (!empty($node)) {
+				$model->{$type}->delete($node);
+			}
 		}
 	}
 }
