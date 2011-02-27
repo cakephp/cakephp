@@ -48,10 +48,10 @@ class AclBehavior extends ModelBehavior {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->alias] = array_merge(array('type' => 'controlled'), (array)$config);
-		$this->settings[$model->alias]['type'] = strtolower($this->settings[$model->alias]['type']);
+		$this->settings[$model->name] = array_merge(array('type' => 'controlled'), (array)$config);
+		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
 
-		$types = $this->__typeMaps[$this->settings[$model->alias]['type']];
+		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!class_exists('AclNode')) {
 			require LIBS . 'model' . DS . 'db_acl.php';
 		}
@@ -81,14 +81,14 @@ class AclBehavior extends ModelBehavior {
  */
 	function node(&$model, $ref = null, $type = null) {
 		if (empty($type)) {
-			$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
+			$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 			if (is_array($type)) {
 				trigger_error(__('AclBehavior is setup with more then one type, please specify type parameter for node()', true), E_USER_WARNING);
 				return null;
 			}
 		}
 		if (empty($ref)) {
-			$ref = array('model' => $model->alias, 'foreign_key' => $model->id);
+			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
 		}
 		return $model->{$type}->node($ref);
 	}
@@ -101,7 +101,7 @@ class AclBehavior extends ModelBehavior {
  * @access public
  */
 	function afterSave(&$model, $created) {
-		$types = $this->__typeMaps[$this->settings[$model->alias]['type']];
+		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!is_array($types)) {
 			$types = array($types);
 		}
@@ -131,7 +131,7 @@ class AclBehavior extends ModelBehavior {
  * @access public
  */
 	function afterDelete(&$model) {
-		$types = $this->__typeMaps[$this->settings[$model->alias]['type']];
+		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!is_array($types)) {
 			$types = array($types);
 		}
