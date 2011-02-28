@@ -18,9 +18,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Component', 'Paginator');
-App::import('Core', array('CakeRequest', 'CakeResponse'));
+
+App::uses('Controller', 'Controller');
+App::uses('PaginatorComponent', 'Controller/Component');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 
 /**
  * PaginatorTestController class
