@@ -317,8 +317,8 @@ class ProjectTask extends Shell {
 		$path = (empty($this->configPath)) ? CONFIGS : $this->configPath;
 		$File = new File($path . 'core.php');
 		$contents = $File->read();
-		if (preg_match('%([/\s]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
-			$result = str_replace($match[0], "\t" . 'Configure::write(\'Routing.prefixes\', array(\''.$name.'\'));', $contents);
+		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
+			$result = str_replace($match[0], "\n" . 'Configure::write(\'Routing.prefixes\', array(\''.$name.'\'));', $contents);
 			if ($File->write($result)) {
 				Configure::write('Routing.prefixes', array($name));
 				return true;

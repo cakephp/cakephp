@@ -591,22 +591,33 @@ class CakeSchemaTest extends CakeTestCase {
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
 
-		$SchemaPost = ClassRegistry::init('SchemaPost');
-		$SchemaPost->table = 'sts';
-		$SchemaPost->tablePrefix = 'po';
-		$read = $this->Schema->read(array(
-			'connection' => 'test',
-			'name' => 'TestApp',
-			'models' => array('SchemaPost')
-		));
-		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
-
 		$read = $this->Schema->read(array(
 			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaComment', 'SchemaTag', 'SchemaPost')
 		));
-		$this->assertFalse(isset($read['tables']['missing']['posts_tags']), 'Join table marked as missing %s');
+		$this->assertFalse(isset($read['tables']['missing']['posts_tags']), 'Join table marked as missing');
+	}
+
+/**
+ * testSchemaReadWithOddTablePrefix method
+ *
+ * @access public
+ * @return void
+ */
+	function testSchemaReadWithOddTablePrefix() {
+		$config = ConnectionManager::getDataSource('test')->config;
+		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set');
+		$SchemaPost = ClassRegistry::init('SchemaPost');
+		$SchemaPost->tablePrefix = 'po';
+		$SchemaPost->useTable = 'sts';
+		$read = $this->Schema->read(array(
+			'connection' => 'test',
+			'name' => 'TestApp',
+			'models' => array('SchemaPost')
+		));
+
+		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix');
 	}
 
 /**
@@ -615,6 +626,9 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaReadWithTablePrefix() {
+		$config = ConnectionManager::getDataSource('test')->config;
+		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set');
+
 		$model = new SchemaPrefixAuthUser();
 
 		$Schema = new CakeSchema();

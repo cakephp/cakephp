@@ -105,7 +105,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Article->save($data);
 		$this->assertFalse(empty($result));
 
-		$testResult = $Article->find(array('Article.title' => 'Test Title'));
+		$testResult = $Article->find('first', array('conditions' => array('Article.title' => 'Test Title')));
 
 		$this->assertEqual($testResult['Article']['title'], $data['Article']['title']);
 		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
@@ -1019,17 +1019,17 @@ class ModelWriteTest extends BaseModelTest {
 		$Article = new Article();
 		$result = $Article->save(Xml::build('<article title="test xml" user_id="5" />'));
 		$this->assertFalse(empty($result));
-		$results = $Article->find(array('Article.title' => 'test xml'));
+		$results = $Article->find('first', array('conditions' => array('Article.title' => 'test xml')));
 		$this->assertFalse(empty($results));
 
 		$result = $Article->save(Xml::build('<article><title>testing</title><user_id>6</user_id></article>'));
 		$this->assertFalse(empty($result));
-		$results = $Article->find(array('Article.title' => 'testing'));
+		$results = $Article->find('first', array('conditions' => array('Article.title' => 'testing')));
 		$this->assertFalse(empty($results));
 
 		$result = $Article->save(Xml::build('<article><title>testing with DOMDocument</title><user_id>7</user_id></article>', array('return' => 'domdocument')));
 		$this->assertFalse(empty($result));
-		$results = $Article->find(array('Article.title' => 'testing with DOMDocument'));
+		$results = $Article->find('first', array('conditions' => array('Article.title' => 'testing with DOMDocument')));
 		$this->assertFalse(empty($results));
 	}
 
@@ -1111,7 +1111,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
-		$result = $TestModel->find(array('Article.id' => 2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1145,7 +1145,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1180,7 +1180,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id' => 2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1227,7 +1227,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1250,7 +1250,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1290,7 +1290,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1330,7 +1330,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1372,7 +1372,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1414,7 +1414,7 @@ class ModelWriteTest extends BaseModelTest {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -2987,10 +2987,6 @@ class ModelWriteTest extends BaseModelTest {
 		$db = ConnectionManager::create('mock_transaction', array(
 			'datasource' => 'MockTransactionDboSource',
 		));
-		$db->expects($this->at(2))
-			->method('isInterfaceSupported')
-			->with('describe')
-			->will($this->returnValue(true));
 
 		$db->expects($this->once())
 			->method('describe')
@@ -3026,8 +3022,6 @@ class ModelWriteTest extends BaseModelTest {
 		$db->columns = $testDb->columns;
 
 		$db->expects($this->once())->method('rollback');
-		$db->expects($this->any())->method('isInterfaceSupported')
-			->will($this->returnValue(true));
 		$db->expects($this->any())->method('describe')
 			->will($this->returnValue(array(
 				'id' => array('type' => 'integer'),

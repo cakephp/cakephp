@@ -89,12 +89,8 @@ class MediaView extends View {
  * @return mixed
  */
 	function render() {
-		$name = $download = $extension = $id = $modified = $path = $size = $cache = $mimeType = $compress = null;
+		$name = $download = $extension = $id = $modified = $path = $cache = $mimeType = $compress = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
-
-		if ($size) {
-			$id = $id . '_' . $size;
-		}
 
 		if (is_dir($path)) {
 			$path = $path . $id;
@@ -109,15 +105,12 @@ class MediaView extends View {
 			throw new NotFoundException('The requested file was not found');
 		}
 
-		if (is_null($name)) {
-			$name = $id;
-		}
-
 		if (is_array($mimeType)) {
 			$this->response->type($mimeType);
 		}
 
-		if (isset($extension) && $this->response->type($extension) && $this->_isActive()) {
+		if (isset($extension) && $this->_isActive()) {
+			$extension = strtolower($extension);
 			$chunkSize = 8192;
 			$buffer = '';
 			$fileSize = @filesize($path);
@@ -130,6 +123,9 @@ class MediaView extends View {
 				$modified = strtotime($modified, time());
 			} else {
 				$modified = time();
+			}
+			if ($this->response->type($extension) === false) {
+				$download = true;
 			}
 
 			if ($cache) {
@@ -155,7 +151,10 @@ class MediaView extends View {
 				if (!empty($contentType)) {
 					$this->response->type($contentType);
 				}
-				$this->response->download($name . '.' . $extension);
+				if (is_null($name)) {
+					$name = $id;
+				}
+				$this->response->download($name);
 				$this->response->header(array('Accept-Ranges' => 'bytes'));
 
 				$httpRange = env('HTTP_RANGE');
@@ -176,7 +175,6 @@ class MediaView extends View {
 					$this->response->header('Content-Length', $fileSize);
 				}
 			} else {
-				$this->response->type($extension);
 				$this->response->header(array(
 					'Content-Length' => $fileSize
 				));
@@ -237,7 +235,7 @@ class MediaView extends View {
 
 /**
  * Flushes the contents of the output buffer
- * 
+ *
  * @return void
  */
 	protected function _flushBuffer() {

@@ -290,7 +290,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
-		$result = $this->Tree->find(null, array('name', $parentField), $modelClass . '.' . $leftField . ' desc');
+		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddOrphan', $parentField => null));
 		$this->assertEqual($result, $expected);
 
@@ -309,7 +309,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data= $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1')));
 		$initialCount = $this->Tree->find('count');
 
 		$this->Tree->create();
@@ -369,7 +369,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->save(array('name' => 'testAddNotIndexed', $parentField => null));
-		$result = $this->Tree->find(null, array('name', $parentField), $modelClass . '.' . $leftField . ' desc');
+		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddNotIndexed', $parentField => null));
 		$this->assertEqual($result, $expected);
 
@@ -389,10 +389,10 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
 		$this->Tree->id= $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, $parent_id);
 		$direct = $this->Tree->children($parent_id, true, array('id', 'name', $parentField, $leftField, $rightField));
@@ -416,10 +416,10 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->whitelist = array($parentField, 'name', 'description');
 		$this->Tree->saveField($parentField, $parent_id);
@@ -463,10 +463,10 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1.1'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1.1')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data= $this->Tree->find(array($modelClass . '.name' => '1.2'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.2')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, $parent_id);
 
@@ -492,10 +492,10 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1.2'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1.2')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data= $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
+		$data= $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, $parent_id);
 
@@ -521,10 +521,10 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
 
 		$expects = $this->Tree->find('all');
 		$before = $this->Tree->read(null, $data[$modelClass]['id']);
@@ -608,7 +608,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.2'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.2')));
 		$this->Tree->moveUp($data[$modelClass]['id']);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -630,7 +630,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1.1')));
 
 		$this->Tree->moveUp($data[$modelClass]['id']);
 
@@ -653,7 +653,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.5')));
 		$this->Tree->moveUp($data[$modelClass]['id'], 2);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -684,7 +684,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.5')));
 		$this->Tree->moveUp($data[$modelClass]['id'], true);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -715,7 +715,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1')));
 		$this->Tree->moveDown($data[$modelClass]['id']);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -737,7 +737,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.2'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1.2')));
 		$this->Tree->moveDown($data[$modelClass]['id']);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -759,7 +759,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.5')));
 		$this->Tree->moveDown($data[$modelClass]['id'], true);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -790,7 +790,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.5')));
 		$this->Tree->moveDown($data[$modelClass]['id'], 2);
 
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -821,7 +821,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.5')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->saveField('name', 'renamed');
 		$parent = $this->Tree->findByName('1. Root', array('id'));
@@ -851,7 +851,7 @@ class NumberTreeTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 1);
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->save(array($parentField => null));
 
@@ -1079,7 +1079,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$this->Tree->id= $data[$modelClass]['id'];
 
 		$direct = $this->Tree->children(null, true, array('id', 'name', $parentField, $leftField, $rightField));
@@ -1110,7 +1110,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$this->Tree->id = $data[$modelClass]['id'];
 
 		$direct = $this->Tree->childCount(null, true);
@@ -1131,7 +1131,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.2.2'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1.2.2')));
 		$this->Tree->id= $data[$modelClass]['id'];
 
 		$result = $this->Tree->getParentNode(null, array('name'));
@@ -1150,7 +1150,7 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.2.2'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1.2.2')));
 		$this->Tree->id= $data[$modelClass]['id'];
 
 		$result = $this->Tree->getPath(null, array('name'));
@@ -1173,7 +1173,7 @@ class NumberTreeTest extends CakeTestCase {
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$this->Tree->id= $data[$modelClass]['id'];
 
 		$direct = $this->Tree->children(null, true, array('id', 'name', $parentField, $leftField, $rightField));
@@ -1205,13 +1205,13 @@ class NumberTreeTest extends CakeTestCase {
 		$this->Tree->initialize(3, 3);
 		$nodes = $this->Tree->find('list', array('order' => $leftField));
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1')));
 		$this->Tree->moveDown($data[$modelClass]['id']);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.2.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.2.1')));
 		$this->Tree->moveDown($data[$modelClass]['id']);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.3.2.2'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.3.2.2')));
 		$this->Tree->moveDown($data[$modelClass]['id']);
 
 		$unsortedNodes = $this->Tree->find('list', array('order' => $leftField));
@@ -1678,10 +1678,10 @@ class UuidTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
 		$this->Tree->id= $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, $parent_id);
 		$direct = $this->Tree->children($parent_id, true, array('name', $leftField, $rightField));
@@ -1704,10 +1704,10 @@ class UuidTreeTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
-		$parent = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$parent_id = $parent[$modelClass]['id'];
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1.1.1'), array('id'));
+		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->whitelist = array($parentField, 'name', 'description');
 		$this->Tree->saveField($parentField, $parent_id);
@@ -1796,7 +1796,7 @@ class UuidTreeTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$this->Tree->id = $data[$modelClass]['id'];
 
 		$direct = $this->Tree->children(null, true, array('name', $leftField, $rightField));
@@ -1827,7 +1827,7 @@ class UuidTreeTest extends CakeTestCase {
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
 		$this->Tree->id = $data[$modelClass]['id'];
 
 		$direct = $this->Tree->children(null, true, array('name', $leftField, $rightField));

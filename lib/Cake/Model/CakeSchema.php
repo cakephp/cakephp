@@ -248,7 +248,7 @@ class CakeSchema extends Object {
 				}
 
 				$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
-
+				$db = $Object->getDataSource();
 				if (is_object($Object) && $Object->useTable !== false) {
 					$fulltable = $table = $db->fullTableName($Object, false);
 					if ($prefix && strpos($table, $prefix) !== 0) {
@@ -583,7 +583,7 @@ class CakeSchema extends Object {
  * @return array Formatted columns
  */
 	public function __columns(&$Obj) {
-		$db = ConnectionManager::getDataSource($Obj->useDbConfig);
+		$db = $Obj->getDataSource();
 		$fields = $Obj->schema(true);
 
 		$columns = $props = array();

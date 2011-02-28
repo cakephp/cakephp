@@ -458,6 +458,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function testAlterSchemaIndexes() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
+		$table = $this->Dbo->fullTableName('altertest');
 
 		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
@@ -494,7 +495,7 @@ class DboMysqlTest extends CakeTestCase {
 		)));
 
 		$result = $this->Dbo->alterSchema($schema2->compare($schema1));
-		$this->assertContains('ALTER TABLE `altertest`', $result);
+		$this->assertContains("ALTER TABLE $table", $result);
 		$this->assertContains('ADD KEY name_idx (`name`),', $result);
 		$this->assertContains('ADD KEY group_idx (`group1`),', $result);
 		$this->assertContains('ADD KEY compound_idx (`group1`, `group2`),', $result);
@@ -521,7 +522,7 @@ class DboMysqlTest extends CakeTestCase {
 		)));
 
 		$result = $this->Dbo->alterSchema($schema3->compare($schema2));
-		$this->assertContains('ALTER TABLE `altertest`', $result);
+		$this->assertContains("ALTER TABLE $table", $result);
 		$this->assertContains('DROP PRIMARY KEY,', $result);
 		$this->assertContains('DROP KEY name_idx,', $result);
 		$this->assertContains('DROP KEY group_idx,', $result);
@@ -540,7 +541,7 @@ class DboMysqlTest extends CakeTestCase {
 		// Drop the indexes
 		$result = $this->Dbo->alterSchema($schema1->compare($schema3));
 
-		$this->assertContains('ALTER TABLE `altertest`', $result);
+		$this->assertContains("ALTER TABLE $table", $result);
 		$this->assertContains('DROP KEY name_idx,', $result);
 		$this->assertContains('DROP KEY group_idx,', $result);
 		$this->assertContains('DROP KEY compound_idx,', $result);
@@ -611,11 +612,11 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertContains('COLLATE=utf8_general_ci', $result);
 
 		$this->Dbo->rawQuery($result);
-		$result = $this->Dbo->listDetailedSources('altertest');
+		$result = $this->Dbo->listDetailedSources($this->Dbo->fullTableName('altertest', false));
 		$this->assertEqual($result['Collation'], 'utf8_general_ci');
 		$this->assertEqual($result['Engine'], 'InnoDB');
 		$this->assertEqual($result['charset'], 'utf8');
-
+		
 		$this->Dbo->rawQuery($this->Dbo->dropSchema($schema1));
 	}
 
@@ -662,18 +663,20 @@ class DboMysqlTest extends CakeTestCase {
 	function testReadTableParameters() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$tableName = 'tinyint_' . uniqid();
-		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
-		$result = $this->Dbo->readTableParameters($tableName);
-		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
+		$table = $this->Dbo->fullTableName($tableName);
+		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
+		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false));
+		$this->Dbo->rawQuery('DROP TABLE ' . $table);
 		$expected = array(
 			'charset' => 'utf8',
 			'collate' => 'utf8_unicode_ci',
 			'engine' => 'InnoDB');
 		$this->assertEqual($result, $expected);
 
-		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
-		$result = $this->Dbo->readTableParameters($tableName);
-		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
+		$table = $this->Dbo->fullTableName($tableName);
+		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false));
+		$this->Dbo->rawQuery('DROP TABLE ' . $table);
 		$expected = array(
 			'charset' => 'cp1250',
 			'collate' => 'cp1250_general_ci',
@@ -762,7 +765,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$this->Dbo->execute($this->Dbo->createSchema($schema));
 		$model = new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
-		$result = $this->Dbo->describe($model);
+		$result = $model->getDataSource()->describe($model);
 		$this->Dbo->execute($this->Dbo->dropSchema($schema));
 
 		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
@@ -779,7 +782,7 @@ class DboMysqlTest extends CakeTestCase {
 		$queryResult = $this->getMock('PDOStatement');
 		$db->expects($this->once())
 			->method('_execute')
-			->with('SHOW TABLES FROM cake')
+			->with('SHOW TABLES FROM `cake`')
 			->will($this->returnValue($queryResult));
 		$queryResult->expects($this->at(0))
 			->method('fetch')
@@ -807,7 +810,8 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEquals(array(), $result, 'Should be empty when table does not exist.');
 
 		$result = $this->Dbo->listDetailedSources();
-		$this->assertTrue(isset($result['apples']), 'Key should exist');
+		$tableName = $this->Dbo->fullTableName('apples', false);
+		$this->assertTrue(isset($result[$tableName]), 'Key should exist');
 	}
 
 /**
@@ -1633,8 +1637,9 @@ class DboMysqlTest extends CakeTestCase {
 		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+		$assocTable = $this->Dbo->fullTableName($this->Model->TestModel4TestModel7, false);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
-		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->Dbo->fullTableName('test_model4_test_model7', false) . '`/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $assocTable . '`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel4TestModel7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+AND/', $result);
 		$this->assertPattern('/\s+AND\s+`TestModel4TestModel7`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)/', $result);
 		$this->assertPattern('/WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
@@ -2869,14 +2874,15 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFields() {
-		$this->loadFixtures('Article', 'Comment');
+		$this->loadFixtures('Article', 'Comment', 'Tag');
 		$this->Dbo->virtualFieldSeparator = '__';
 		$Article = ClassRegistry::init('Article');
+		$commentsTable = $this->Dbo->fullTableName('comments', false);
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->Dbo->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->Dbo->fullTableName('comments') . '.article_id'
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentsTable .
+				' WHERE Article.id = ' . $commentsTable . '.article_id'
 		);
 		$result = $this->Dbo->fields($Article);
 		$expected = array(
@@ -2889,8 +2895,9 @@ class DboMysqlTest extends CakeTestCase {
 			'`Article`.`updated`',
 			'(NOW()) AS  `Article__this_moment`',
 			'(1 + 1) AS  `Article__two`',
-			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
 		);
+
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('this_moment', 'title'));
@@ -2919,7 +2926,7 @@ class DboMysqlTest extends CakeTestCase {
 			'`Article`.*',
 			'(NOW()) AS  `Article__this_moment`',
 			'(1 + 1) AS  `Article__two`',
-			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
 		);
 		$this->assertEqual($expected, $result);
 
@@ -2928,7 +2935,7 @@ class DboMysqlTest extends CakeTestCase {
 			'*',
 			'(NOW()) AS  `Article__this_moment`',
 			'(1 + 1) AS  `Article__two`',
-			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
 		);
 		$this->assertEqual($expected, $result);
 	}
@@ -2940,11 +2947,13 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function testVirtualFieldsInConditions() {
 		$Article = ClassRegistry::init('Article');
+		$commentsTable = $this->Dbo->fullTableName('comments', false);
+
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->Dbo->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->Dbo->fullTableName('comments') . '.article_id'
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentsTable .
+				' WHERE Article.id = ' . $commentsTable . '.article_id'
 		);
 		$conditions = array('two' => 2);
 		$result = $this->Dbo->conditions($conditions, true, false, $Article);
@@ -2957,7 +2966,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$conditions = array('comment_count >' => 5);
-		$expected = '(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) > 5';
+		$expected = "(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) > 5";
 		$result = $this->Dbo->conditions($conditions, true, false, $Article);
 		$this->assertEqual($expected, $result);
 
@@ -2973,7 +2982,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testConditionsWithComplexVirtualFields() {
-		$Article = ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article', 'Comment', 'Tag');
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
 					* SIN(Article.latitude * PI() / 180)
@@ -2997,11 +3006,12 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function testVirtualFieldsInCalculate() {
 		$Article = ClassRegistry::init('Article');
+		$commentsTable = $this->Dbo->fullTableName('comments', false);
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->Dbo->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->Dbo->fullTableName('comments'). '.article_id'
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentsTable .
+				' WHERE Article.id = ' . $commentsTable . '.article_id'
 		);
 
 		$result = $this->Dbo->calculate($Article, 'count', array('this_moment'));
@@ -3009,7 +3019,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->calculate($Article, 'max', array('comment_count'));
-		$expected = 'MAX(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS `comment_count`';
+		$expected = "MAX(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS `comment_count`";
 		$this->assertEqual($expected, $result);
 	}
 

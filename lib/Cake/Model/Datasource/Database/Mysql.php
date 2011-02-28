@@ -184,7 +184,7 @@ class Mysql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
+		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']));
 
 		if (!$result) {
 			$result->closeCursor();
@@ -211,21 +211,19 @@ class Mysql extends DboSource {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
-		$j = 0;
 
-		while ($j < $numFields) {
-			$column = $results->getColumnMeta($j);
-			if (!empty($column['native_type'])) {
-				$type = $column['native_type'];
-			} else {
+		while ($numFields-- > 0) {
+			$column = $results->getColumnMeta($index);
+			if (empty($column['native_type'])) {
 				$type = ($column['len'] == 1) ? 'boolean' : 'string';
+			} else {
+				$type = $column['native_type'];
 			}
 			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
 				$this->map[$index++] = array($column['table'], $column['name'], $type);
 			} else {
 				$this->map[$index++] = array(0, $column['name'], $type);
 			}
-			$j++;
 		}
 	}
 
@@ -240,15 +238,14 @@ class Mysql extends DboSource {
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
-				if ($type == 'boolean' && !is_null($row[$col])) {
+				if ($type === 'boolean' && !is_null($row[$col])) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
 				}
 			}
 			return $resultRow;
-		} else {
-			$this->_result->closeCursor();
-			return false;
 		}
+		$this->_result->closeCursor();
+		return false;
 	}
 
 /**
@@ -307,7 +304,7 @@ class Mysql extends DboSource {
 		foreach ($cols as $column) {
 			$fields[$column->Field] = array(
 				'type' => $this->column($column->Type),
-				'null' => ($column->Null == 'YES' ? true : false),
+				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => $column->Default,
 				'length' => $this->length($column->Type),
 			);
@@ -412,7 +409,7 @@ class Mysql extends DboSource {
  * @param string $enc Database encoding
  */
 	function setEncoding($enc) {
-		return $this->_execute('SET NAMES ' . $enc) != false;
+		return $this->_execute('SET NAMES ' . $enc) !== false;
 	}
 
 /**
@@ -502,7 +499,7 @@ class Mysql extends DboSource {
 				}
 				$colList = array_merge($colList, $this->_alterIndexes($curTable, $indexes));
 				$colList = array_merge($colList, $this->_alterTableParameters($curTable, $tableParameters));
-				$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
+				$out .= "\t" . implode(",\n\t", $colList) . ";\n\n";
 			}
 		}
 		return $out;
@@ -519,7 +516,7 @@ class Mysql extends DboSource {
 	function dropSchema(CakeSchema $schema, $table = null) {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
+			if (!$table || $table === $curTable) {
 				$out .= 'DROP TABLE IF EXISTS ' . $this->fullTableName($curTable) . ";\n";
 			}
 		}
@@ -586,7 +583,7 @@ class Mysql extends DboSource {
 /**
  * Returns an detailed array of sources (tables) in the database.
  *
- * @param string $name Table name to get parameters 
+ * @param string $name Table name to get parameters
  * @return array Array of tablenames in the database
  */
 	function listDetailedSources($name = null) {
@@ -631,7 +628,7 @@ class Mysql extends DboSource {
 		if (is_array($real)) {
 			$col = $real['name'];
 			if (isset($real['limit'])) {
-				$col .= '('.$real['limit'].')';
+				$col .= '(' . $real['limit'] . ')';
 			}
 			return $col;
 		}
@@ -645,19 +642,19 @@ class Mysql extends DboSource {
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if (($col == 'tinyint' && $limit == 1) || $col == 'boolean') {
+		if (($col === 'tinyint' && $limit == 1) || $col === 'boolean') {
 			return 'boolean';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
 		}
-		if (strpos($col, 'char') !== false || $col == 'tinytext') {
+		if (strpos($col, 'char') !== false || $col === 'tinytext') {
 			return 'string';
 		}
 		if (strpos($col, 'text') !== false) {
 			return 'text';
 		}
-		if (strpos($col, 'blob') !== false || $col == 'binary') {
+		if (strpos($col, 'blob') !== false || $col === 'binary') {
 			return 'binary';
 		}
 		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {

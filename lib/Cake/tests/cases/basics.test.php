@@ -684,7 +684,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>');
+			debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
 		$pattern = '/(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
 		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
@@ -762,7 +762,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function testStripslashesDeepSybase() {
-		$this->skipUnless(ini_get('magic_quotes_sybase') === '1', '%s magic_quotes_sybase is off');
+		$this->skipUnless(ini_get('magic_quotes_sybase') === '1', 'magic_quotes_sybase is off');
 
 		$this->assertEqual(stripslashes_deep("tes\'t"), "tes\'t");
 

@@ -80,7 +80,7 @@ class MediaViewTest extends CakeTestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$this->MediaView->response->expects($this->exactly(2))
+		$this->MediaView->response->expects($this->exactly(1))
 			->method('type')
 			->with('css')
 			->will($this->returnArgument(0));
@@ -94,7 +94,7 @@ class MediaViewTest extends CakeTestCase {
 				'Pragma' => 'no-cache'
 			));
 
-		$this->MediaView->response->expects($this->at(3))
+		$this->MediaView->response->expects($this->at(2))
 			->method('header')
 			->with(array(
 				'Content-Length' => 31
@@ -107,6 +107,61 @@ class MediaViewTest extends CakeTestCase {
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
 		$this->assertEqual('this is the test asset css file', $output);
+		$this->assertTrue($result !== false);
+	}
+
+/**
+ * testRenderWithUnknownFileType method
+ *
+ * @access public
+ * @return void
+ */
+	function testRenderWithUnknownFileType() {
+		$this->MediaView->viewVars = array(
+			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS,
+			'id' => 'no_section.ini',
+			'extension' => 'ini',
+		);
+		$this->MediaView->expects($this->exactly(2))
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$this->MediaView->response->expects($this->exactly(1))
+			->method('type')
+			->with('ini')
+			->will($this->returnValue(false));
+
+		$this->MediaView->response->expects($this->at(1))
+			->method('header')
+			->with(array(
+				'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
+				'Expires' => '0',
+				'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
+				'Pragma' => 'no-cache'
+			));
+
+		$this->MediaView->response->expects($this->once())
+			->method('download')
+			->with('no_section.ini');
+
+		$this->MediaView->response->expects($this->at(3))
+			->method('header')
+			->with(array(
+				'Accept-Ranges' => 'bytes'
+			));
+
+		$this->MediaView->response->expects($this->at(4))
+			->method('header')
+			->with('Content-Length', 35);
+
+		$this->MediaView->response->expects($this->once())->method('send');
+		$this->MediaView->expects($this->once())->method('_clearBuffer');
+		$this->MediaView->expects($this->once())->method('_flushBuffer');
+
+		ob_start();
+		$result = $this->MediaView->render();
+		$output = ob_get_clean();
+		$this->assertEqual("some_key = some_value\nbool_key = 1\n", $output);
 		$this->assertTrue($result !== false);
 	}
 
@@ -127,10 +182,8 @@ class MediaViewTest extends CakeTestCase {
 			->method('_isActive')
 			->will($this->returnValue(false));
 
-		$this->MediaView->response->expects($this->once())
-			->method('type')
-			->with('css')
-			->will($this->returnArgument(0));
+		$this->MediaView->response->expects($this->never())
+			->method('type');
 
 		$result = $this->MediaView->render();
 		$this->assertFalse($result);

@@ -466,14 +466,16 @@ class Model extends Object {
 		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
+
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
-			$this->setSource($this->useTable);
 
 			if ($this->displayField == null) {
 				unset($this->displayField);
 			}
+			$this->table = $this->useTable;
+			$this->tableToModel[$this->table] = $this->alias;
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
@@ -797,7 +799,7 @@ class Model extends Object {
 		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 
-		if ($db->isInterfaceSupported('listSources')) {
+		if (method_exists($db, 'listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
 				throw new MissingTableException(array(
@@ -979,7 +981,7 @@ class Model extends Object {
 		if (!is_array($this->_schema) || $field === true) {
 			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
-			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
+			if (method_exists($db, 'describe') && $this->useTable !== false) {
 				$this->_schema = $db->describe($this, $field);
 			} elseif ($this->useTable === false) {
 				$this->_schema = array();
@@ -1880,7 +1882,7 @@ class Model extends Object {
 			if (!$filters || !$this->exists()) {
 				return false;
 			}
-			$db = ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);
@@ -2071,7 +2073,7 @@ class Model extends Object {
 /**
  * Queries the datasource and returns a result set array.
  *
- * Also used to perform new-notation finds, where the first argument is type of find operation to perform
+ * Also used to perform notation finds, where the first argument is type of find operation to perform
  * (all / first / count / neighbors / list / threaded ),
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
@@ -2107,43 +2109,31 @@ class Model extends Object {
  *
  * Behaviors and find types can also define custom finder keys which are passed into find().
  *
- * Specifying 'fields' for new-notation 'list':
+ * Specifying 'fields' for notation 'list':
  *
  *  - If no fields are specified, then 'id' is used for key and 'model->displayField' is used for value.
  *  - If a single field is specified, 'id' is used for key and specified field is used for value.
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
- * @param array $conditions SQL conditions array, or type of find operation (all / first / count /
- *    neighbors / list / threaded)
- * @param mixed $fields Either a single string of a field name, or an array of field names, or
- *    options for matching
- * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param integer $recursive The number of levels deep to fetch associated records
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array Array of records
- * @access public
  * @link http://book.cakephp.org/view/1018/find
  */
-	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
-		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->_findMethods))) {
-			$type = 'first';
-			$query = array_merge(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
-		} else {
-			list($type, $query) = array($conditions, $fields);
-		}
-
+	public function find($type = 'first', $query = array()) {
 		$this->findQueryType = $type;
 		$this->id = $this->getID();
 
 		$query = array_merge(
 			array(
 				'conditions' => null, 'fields' => null, 'joins' => array(), 'limit' => null,
-				'offset' => null, 'order' => null, 'page' => null, 'group' => null, 'callbacks' => true
+				'offset' => null, 'order' => null, 'page' => 1, 'group' => null, 'callbacks' => true
 			),
 			(array)$query
 		);
 
-		if ($type != 'all') {
+		if ($type !== 'all') {
 			if ($this->_findMethods[$type] === true) {
 				$query = $this->{'_find' . ucfirst($type)}('before', $query);
 			}
@@ -2181,15 +2171,11 @@ class Model extends Object {
 			}
 		}
 
-		if (!$db = $this->getDataSource()) {
-			return false;
-		}
-
-		$results = $db->read($this, $query);
+		$results = $this->getDataSource()->read($this, $query);
 		$this->resetAssociations();
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
-			$results = $this->__filterResults($results);
+			$results = $this->_filterResults($results);
 		}
 
 		$this->findQueryType = null;
@@ -2210,14 +2196,13 @@ class Model extends Object {
  * @param array $query
  * @param array $data
  * @return array
- * @access protected
  * @see Model::find()
  */
-	function _findFirst($state, $query, $results = array()) {
-		if ($state == 'before') {
+	protected function _findFirst($state, $query, $results = array()) {
+		if ($state === 'before') {
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			if (empty($results[0])) {
 				return false;
 			}
@@ -2232,11 +2217,10 @@ class Model extends Object {
  * @param array $query
  * @param array $data
  * @return int The number of records found, or false
- * @access protected
  * @see Model::find()
  */
-	function _findCount($state, $query, $results = array()) {
-		if ($state == 'before') {
+	protected function _findCount($state, $query, $results = array()) {
+		if ($state === 'before') {
 			$db = $this->getDataSource();
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
@@ -2247,7 +2231,7 @@ class Model extends Object {
 			}
 			$query['order'] = false;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			if (isset($results[0][0]['count'])) {
 				return intval($results[0][0]['count']);
 			} elseif (isset($results[0][$this->alias]['count'])) {
@@ -2264,11 +2248,10 @@ class Model extends Object {
  * @param array $query
  * @param array $data
  * @return array Key/value pairs of primary keys/display field values of all records found
- * @access protected
  * @see Model::find()
  */
-	function _findList($state, $query, $results = array()) {
-		if ($state == 'before') {
+	protected function _findList($state, $query, $results = array()) {
+		if ($state === 'before') {
 			if (empty($query['fields'])) {
 				$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
 				$list = array("{n}.{$this->alias}.{$this->primaryKey}", "{n}.{$this->alias}.{$this->displayField}", null);
@@ -2277,14 +2260,14 @@ class Model extends Object {
 					$query['fields'] = String::tokenize($query['fields']);
 				}
 
-				if (count($query['fields']) == 1) {
+				if (count($query['fields']) === 1) {
 					if (strpos($query['fields'][0], '.') === false) {
 						$query['fields'][0] = $this->alias . '.' . $query['fields'][0];
 					}
 
 					$list = array("{n}.{$this->alias}.{$this->primaryKey}", '{n}.' . $query['fields'][0], null);
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
-				} elseif (count($query['fields']) == 3) {
+				} elseif (count($query['fields']) === 3) {
 					for ($i = 0; $i < 3; $i++) {
 						if (strpos($query['fields'][$i], '.') === false) {
 							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
@@ -2307,7 +2290,7 @@ class Model extends Object {
 			}
 			list($query['list']['keyPath'], $query['list']['valuePath'], $query['list']['groupPath']) = $list;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			if (empty($results)) {
 				return array();
 			}
@@ -2326,7 +2309,7 @@ class Model extends Object {
  * @return array
  */
 	protected function _findNeighbors($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			extract($query);
 			$conditions = (array)$conditions;
 			if (isset($field) && isset($value)) {
@@ -2343,7 +2326,7 @@ class Model extends Object {
 			$query['field'] = $field;
 			$query['value'] = $value;
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			extract($query);
 			unset($query['conditions'][$field . ' <']);
 			$return = array();
@@ -2362,9 +2345,9 @@ class Model extends Object {
 			if (!array_key_exists('prev', $return)) {
 				$return['prev'] = $return2[0];
 			}
-			if (count($return2) == 2) {
+			if (count($return2) === 2) {
 				$return['next'] = $return2[1];
-			} elseif (count($return2) == 1 && !$return['prev']) {
+			} elseif (count($return2) === 1 && !$return['prev']) {
 				$return['next'] = $return2[0];
 			} else {
 				$return['next'] = null;
@@ -2383,9 +2366,9 @@ class Model extends Object {
  * @return array Threaded results
  */
 	protected function _findThreaded($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			return $query;
-		} elseif ($state == 'after') {
+		} elseif ($state === 'after') {
 			$return = $idMap = array();
 			$ids = Set::extract($results, '{n}.' . $this->alias . '.' . $this->primaryKey);
 
@@ -2425,9 +2408,8 @@ class Model extends Object {
  * @param array Results to filter
  * @param boolean $primary If this is the primary model results (results from model where the find operation was performed)
  * @return array Set of filtered results
- * @access private
  */
-	function __filterResults($results, $primary = true) {
+	protected function _filterResults($results, $primary = true) {
 		$return = $this->Behaviors->trigger(
 			'afterFind',
 			array(&$this, $results, $primary),

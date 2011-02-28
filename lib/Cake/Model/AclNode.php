@@ -64,7 +64,7 @@ class AclNode extends AppModel {
  * @return array Node found in database
  */
 	public function node($ref = null) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		$type = $this->alias;
 		$result = null;
 

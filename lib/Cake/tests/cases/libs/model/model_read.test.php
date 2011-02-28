@@ -3496,19 +3496,16 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindNeighbors() {
-		$this->loadFixtures('User', 'Article');
+		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment');
 		$TestModel = new Article();
 
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array(
-			'prev' => null,
-			'next' => array(
-				'Article' => array('id' => 2),
-				'Comment' => array(),
-				'Tag' => array()
-		));
-		$this->assertEqual($result, $expected);
+
+		$this->assertNull($result['prev']);
+		$this->assertEqual($result['next']['Article'], array('id' => 2));
+		$this->assertEqual(count($result['next']['Comment']), 2);
+		$this->assertEqual(count($result['next']['Tag']), 2);
 
 		$TestModel->id = 2;
 		$TestModel->recursive = 0;
@@ -3530,15 +3527,11 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel->id = 3;
 		$TestModel->recursive = 1;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array(
-			'prev' => array(
-				'Article' => array('id' => 2),
-				'Comment' => array(),
-				'Tag' => array()
-			),
-			'next' => null
-		);
-		$this->assertEqual($result, $expected);
+
+		$this->assertNull($result['next']);
+		$this->assertEqual($result['prev']['Article'], array('id' => 2));
+		$this->assertEqual(count($result['prev']['Comment']), 2);
+		$this->assertEqual(count($result['prev']['Tag']), 2);
 
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors', array('recursive' => -1));
@@ -5094,7 +5087,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Portfolio', 'Item', 'ItemsPortfolio', 'Syfile', 'Image');
 		$Portfolio = new Portfolio();
 
-		$result = $Portfolio->find(array('id' => 2), null, null, 3);
+		$result = $Portfolio->find('first', array('conditions' => array('id' => 2), 'recursive' => 3));
 		$expected = array(
 			'Portfolio' => array(
 				'id' => 2,
@@ -5732,7 +5725,7 @@ class ModelReadTest extends BaseModelTest {
 		$fullDebug = $this->db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->recursive = 6;
-		$result = $TestModel->find(array('CategoryThread.id' => 7));
+		$result = $TestModel->find('first', array('conditions' => array('CategoryThread.id' => 7)));
 
 		$expected = array(
 			'CategoryThread' => array(
@@ -6014,12 +6007,12 @@ class ModelReadTest extends BaseModelTest {
 	function testConditionalNumerics() {
 		$this->loadFixtures('NumericArticle');
 		$NumericArticle = new NumericArticle();
-		$data = array('title' => '12345abcde');
-		$result = $NumericArticle->find($data);
+		$data = array('conditions' => array('title' => '12345abcde'));
+		$result = $NumericArticle->find('first', $data);
 		$this->assertTrue(!empty($result));
 
-		$data = array('title' => '12345');
-		$result = $NumericArticle->find($data);
+		$data = array('conditions' => array('title' => '12345'));
+		$result = $NumericArticle->find('first', $data);
 		$this->assertTrue(empty($result));
 	}
 

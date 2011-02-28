@@ -1273,6 +1273,31 @@ class CakeRequestTestCase extends CakeTestCase {
 					'webroot' => '/site/',
 				),
 			),
+			array(
+				'Apache - w/rewrite, document root set to webroot, request root, no PATH_INFO/REQUEST_URI',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
+						'SCRIPT_NAME' => '/index.php',
+						'PHP_SELF' => '/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => null,
+					),
+				),
+				array(
+					'url' => '',
+					'base' => '',
+					'webroot' => '/',
+				),
+			),
 		);
 	}
 

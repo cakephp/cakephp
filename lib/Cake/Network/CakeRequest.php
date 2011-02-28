@@ -203,7 +203,7 @@ class CakeRequest implements ArrayAccess {
 
 		$base = $this->base;
 
-		if (strpos($uri, $base) === 0) {
+		if (strlen($base) > 0 && strpos($uri, $base) === 0) {
 			$uri = substr($uri, strlen($base));
 		}
 		if (strpos($uri, '?') !== false) {

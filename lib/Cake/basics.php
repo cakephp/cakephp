@@ -98,7 +98,7 @@ TEXT;
 			if (php_sapi_name() == 'cli') {
 				$template = $text;
 			}
-			if ($showHtml === null) {
+			if ($showHtml === null && $template !== $text) {
 				$showHtml = true;
 			}
 			$var = print_r($var, true);
