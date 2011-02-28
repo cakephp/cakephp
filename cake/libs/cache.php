@@ -149,7 +149,7 @@ class Cache {
 		$cacheClass = $class . 'Engine';
 		$this->_engines[$name] =& new $cacheClass();
 		if ($this->_engines[$name]->init($config)) {
-			if (time() % $this->_engines[$name]->settings['probability'] === 0) {
+			if ($this->_engines[$name]->settings['probability'] && time() % $this->_engines[$name]->settings['probability'] === 0) {
 				$this->_engines[$name]->gc();
 			}
 			return true;
