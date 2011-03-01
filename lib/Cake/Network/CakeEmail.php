@@ -147,7 +147,7 @@ class CakeEmail {
  *
  * @var string
  */
-	public $delivery = 'mail';
+	protected $_transportName = 'mail';
 
 /**
  * charset the email is sent in
@@ -604,6 +604,16 @@ class CakeEmail {
 	}
 
 /**
+ * Set transport name
+ *
+ * @param string $name
+ * @return void
+ */
+	public function setTransport($name) {
+		$this->_transportName = (string)$name;
+	}
+
+/**
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
@@ -629,6 +639,7 @@ class CakeEmail {
 		$this->_layout = 'default';
 		$this->_template = '';
 		$this->_emailFormat = 'text';
+		$this->_transportName = 'mail';
 	}
 
 }
