@@ -129,16 +129,18 @@ class CakeEmail {
 	public $lineLength = 70;
 
 /**
- * What format should the email be sent in
+ * Available formats to be sent.
  *
- * Supported formats:
- * - text
- * - html
- * - both
+ * @var array
+ */
+	protected $_emailFormatAvailable = array('text', 'html', 'both');
+
+/**
+ * What format should the email be sent in
  *
  * @var string
  */
-	public $sendAs = 'text';
+	protected $_emailFormat = 'text';
 
 /**
  * What method should the email be sent
@@ -588,6 +590,20 @@ class CakeEmail {
 	}
 
 /**
+ * Set the email format
+ *
+ * @param string $format
+ * @return void
+ * @thrown SocketException
+ */
+	public function setEmailFormat($format) {
+		if (!in_array($format, $this->_emailFormatAvailable)) {
+			throw new SocketException(__('Format not available.'));
+		}
+		$this->_emailFormat = $format;
+	}
+
+/**
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
@@ -610,6 +626,9 @@ class CakeEmail {
 		$this->_bcc = array();
 		$this->_subject = '';
 		$this->_headers = array();
+		$this->_layout = 'default';
+		$this->_template = '';
+		$this->_emailFormat = 'text';
 	}
 
 }
