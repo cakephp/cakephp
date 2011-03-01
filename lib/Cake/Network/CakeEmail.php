@@ -53,14 +53,14 @@ class CakeEmail {
  *
  * @var string
  */
-	protected $_replyTo = null;
+	protected $_replyTo = array();
 
 /**
  * The read receipt email
  *
  * @var string
  */
-	protected $_readReceipt = null;
+	protected $_readReceipt = array();
 
 /**
  * The mail that will be used in case of any errors like
@@ -70,7 +70,7 @@ class CakeEmail {
  *
  * @var string
  */
-	protected $_return = null;
+	protected $_returnPath = array();
 
 /**
  * Carbon Copy
@@ -202,18 +202,13 @@ class CakeEmail {
 /**
  * Set From
  *
- * @param string $email
+ * @param mixed $email
  * @param string $name
  * @return void
  * @thrown SocketException
  */
 	public function setFrom($email, $name = null) {
-		$oldFrom = $this->_from;
-		$this->_setEmail('_from', $email, $name);
-		if (count($this->_from) !== 1) {
-			$this->_from = $oldFrom;
-			throw new SocketException(__('From requires only 1 email address.'));
-		}
+		$this->_setEmail1('_from', $email, $name, __('From requires only 1 email address.'));
 	}
 
 /**
@@ -223,6 +218,69 @@ class CakeEmail {
  */
 	public function getFrom() {
 		return $this->_from;
+	}
+
+/**
+ * Set Reply-To
+ *
+ * @param mixed $email
+ * @param string $name
+ * @return void
+ * @thrown SocketException
+ */
+	public function setReplyTo($email, $name = null) {
+		$this->_setEmail1('_replyTo', $email, $name, __('Reply-To requires only 1 email address.'));
+	}
+
+/**
+ * Get the ReplyTo information
+ *
+ * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
+ */
+	public function getReplyTo() {
+		return $this->_replyTo;
+	}
+
+/**
+ * Set Read Receipt (Disposition-Notification-To header)
+ *
+ * @param mixed $email
+ * @param string $name
+ * @return void
+ * @thrown SocketException
+ */
+	public function setReadReceipt($email, $name = null) {
+		$this->_setEmail1('_readReceipt', $email, $name, __('Disposition-Notification-To requires only 1 email address.'));
+	}
+
+/**
+ * Get the Read Receipt (Disposition-Notification-To header) information
+ *
+ * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
+ */
+	public function getReadReceipt() {
+		return $this->_readReceipt;
+	}
+
+/**
+ * Set Return Path
+ *
+ * @param mixed $email
+ * @param string $name
+ * @return void
+ * @thrown SocketException
+ */
+	public function setReturnPath($email, $name = null) {
+		$this->_setEmail1('_returnPath', $email, $name, __('Return-Path requires only 1 email address.'));
+	}
+
+/**
+ * Get the Return Path information
+ *
+ * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
+ */
+	public function getReturnPath() {
+		return $this->_returnPath;
 	}
 
 /**
@@ -344,6 +402,25 @@ class CakeEmail {
 			}
 		}
 		$this->{$varName} = $list;
+	}
+
+/**
+ * Set only 1 email
+ *
+ * @param string $varName
+ * @param mixed $email
+ * @param string $name
+ * @param string $throwMessage
+ * @return void
+ * @thrown SocketExpceiton
+ */
+	protected function _setEmail1($varName, $email, $name, $throwMessage) {
+		$current = $this->{$varName};
+		$this->_setEmail($varName, $email, $name);
+		if (count($this->{$varName}) !== 1) {
+			$this->{$varName} = $current;
+			throw new SocketException($throwMessage);
+		}
 	}
 
 /**
