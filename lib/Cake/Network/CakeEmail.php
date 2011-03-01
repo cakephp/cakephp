@@ -28,32 +28,39 @@ App::import('Core', array('Validation', 'Multibyte'));
  */
 class CakeEmail {
 /**
+ * What mailer should EmailComponent identify itself as
+ *
+ * @constant EMAIL_CLIENT
+ */
+	const EMAIL_CLIENT = 'CakePHP Email Component';
+
+/**
  * Recipient of the email
  *
  * @var string
  */
-	public $to = null;
+	protected $_to = array();
 
 /**
  * The mail which the email is sent from
  *
  * @var string
  */
-	public $from = null;
+	protected $_from = array();
 
 /**
  * The email the recipient will reply to
  *
  * @var string
  */
-	public $replyTo = null;
+	protected $_replyTo = null;
 
 /**
  * The read receipt email
  *
  * @var string
  */
-	public $readReceipt = null;
+	protected $_readReceipt = null;
 
 /**
  * The mail that will be used in case of any errors like
@@ -63,7 +70,7 @@ class CakeEmail {
  *
  * @var string
  */
-	public $return = null;
+	protected $_return = null;
 
 /**
  * Carbon Copy
@@ -73,7 +80,7 @@ class CakeEmail {
  *
  * @var array
  */
-	public $cc = array();
+	protected $_cc = array();
 
 /**
  * Blind Carbon Copy
@@ -83,23 +90,14 @@ class CakeEmail {
  *
  * @var array
  */
-	public $bcc = array();
-
-/**
- * The date to put in the Date: header.  This should be a date
- * conformant with the RFC2822 standard.  Leave null, to have
- * today's date generated.
- *
- * @var string
- */
-	var $date = null;
+	protected $_bcc = array();
 
 /**
  * The subject of the email
  *
  * @var string
  */
-	public $subject = null;
+	protected $_subject = null;
 
 /**
  * Associative array of a user defined headers
@@ -107,16 +105,7 @@ class CakeEmail {
  *
  * @var array
  */
-	public $headers = array();
-
-/**
- * List of additional headers
- *
- * These will NOT be used if you are using safemode and mail()
- *
- * @var string
- */
-	public $additionalParams = null;
+	protected $_headers = array();
 
 /**
  * Layout for the View
@@ -186,25 +175,11 @@ class CakeEmail {
 	public $attachments = array();
 
 /**
- * What mailer should EmailComponent identify itself as
- *
- * @var string
- */
-	public $xMailer = 'CakePHP Email Component';
-
-/**
  * The list of paths to search if an attachment isnt absolute
  *
  * @var array
  */
 	public $filePaths = array();
-
-/**
- * Temporary store of message header lines
- *
- * @var array
- */
-	protected $_header = array();
 
 /**
  * If set, boundary to use for multipart mime messages
@@ -229,14 +204,51 @@ class CakeEmail {
  *
  * @param array Associative array containing headers to be set.
  * @return void
+ * @thrown SocketException
  */
-	public function header($headers) {
+	public function setHeaders($headers) {
 		if (!is_array($headers)) {
 			throw new SocketException(__('$headers should be an array.'));
 		}
-		foreach ($headers as $header => $value) {
-			$this->_header[] = sprintf('%s: %s', trim($header), trim($value));
+		$this->_headers = $headers;
+	}
+
+/**
+ * Add header for the message
+ *
+ * @param array $headers
+ * @return void
+ * @thrown SocketException
+ */
+	public function addHeaders($headers) {
+		if (!is_array($headers)) {
+			throw new SocketException(__('$headers should be an array.'));
 		}
+		$this->_headers = array_merge($this->_headers, $headers);
+	}
+
+/**
+ * Get list of headers
+ *
+ * @param boolean $includeToAndCc
+ * @param boolean $includeBcc
+ * @param boolean $includeSubject
+ * @return array
+ */
+	public function getHeaders($includeToAndCc = false, $includeBcc = false, $includeSubject = false) {
+		if (!isset($this->_headers['X-Mailer'])) {
+			$this->_headers['X-Mailer'] = Configure::read('Email.XMailer');
+			if (empty($this->_headers['X-Mailer'])) {
+				$this->_headers['X-Mailer'] = self::EMAIL_CLIENT;
+			}
+		}
+		if (!isset($this->_headers['Date'])) {
+			$this->_headers['Date'] = date(DATE_RFC2822);
+		}
+		if ($includeSubject) {
+			$this->_headers['Subject'] = $this->_subject;
+		}
+		return $this->_headers;
 	}
 
 /**

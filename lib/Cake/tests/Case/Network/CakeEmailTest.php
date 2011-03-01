@@ -26,11 +26,11 @@ App::import('Core', 'CakeEmail');
 class CakeEmailTest extends CakeTestCase {
 
 /**
- * testHeader method
+ * testHeaders method
  *
  * @return void
  */
-	public function testHeader() {
+	public function testHeaders() {
 	}
 
 /**
