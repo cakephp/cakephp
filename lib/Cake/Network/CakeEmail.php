@@ -112,14 +112,14 @@ class CakeEmail {
  *
  * @var string
  */
-	public $layout = 'default';
+	protected $_layout = 'default';
 
 /**
  * Template for the view
  *
  * @var string
  */
-	public $template = null;
+	protected $_template = '';
 
 /**
  * as per RFC2822 Section 2.1.1
@@ -582,6 +582,20 @@ class CakeEmail {
 			}
 		}
 		return $return;
+	}
+
+/**
+ * Set the layout and template
+ *
+ * @param string $layout
+ * @param string $template
+ * @return void
+ */
+	public function setLayout($layout, $template = null) {
+		$this->_layout = (string)$layout;
+		if ($template !== null) {
+			$this->_template = (string)$template;
+		}
 	}
 
 /**
