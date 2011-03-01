@@ -562,7 +562,7 @@ class CakeEmail {
 			if ($email === $alias) {
 				$return[] = $email;
 			} else {
-				$return[] = sprintf('%s <%s>', $alias, $email);
+				$return[] = sprintf('%s <%s>', $this->_encode($alias), $email);
 			}
 		}
 		return $return;
@@ -676,6 +676,25 @@ class CakeEmail {
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'mail';
 		$this->_attachments = array();
+	}
+
+/**
+ * Encode the specified string using the current charset
+ *
+ * @param string $text String to encode
+ * @return string Encoded string
+ */
+	protected function _encode($text) {
+		$internalEncoding = function_exists('mb_internal_encoding');
+		if ($internalEncoding) {
+			$restore = mb_internal_encoding();
+			mb_internal_encoding($this->charset);
+		}
+		$return = mb_encode_mimeheader($text, $this->charset, 'B');
+		if ($internalEncoding) {
+			mb_internal_encoding($restore);
+		}
+		return $return;
 	}
 
 }

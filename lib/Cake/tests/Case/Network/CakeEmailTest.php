@@ -19,6 +19,22 @@
 App::import('Core', 'CakeEmail');
 
 /**
+ * Help to test CakeEmail
+ *
+ */
+class TestCakeEmail extends CakeEmail {
+
+/**
+ * Wrap to protected method
+ *
+ */
+	public function formatAddress($address) {
+		return $this->_formatAddress($address);
+	}
+
+}
+
+/**
  * CakeEmailTest class
  *
  * @package       cake.tests.cases.libs
@@ -32,7 +48,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->CakeEmail = new CakeEmail();
+		$this->CakeEmail = new TestCakeEmail();
 	}
 
 /**
@@ -100,6 +116,29 @@ class CakeEmailTest extends CakeTestCase {
 			'jose_zap@cakephp.org' => 'jose_zap@cakephp.org'
 		);
 		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+	}
+
+/**
+ * testFormatAddress method
+ *
+ * @return void
+ */
+	public function testFormatAddress() {
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'cake@cakephp.org'));
+		$expected = array('cake@cakephp.org');
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'cake@cakephp.org', 'php@cakephp.org' => 'php@cakephp.org'));
+		$expected = array('cake@cakephp.org', 'php@cakephp.org');
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'CakePHP', 'php@cakephp.org' => 'Cake'));
+		$expected = array('CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>');
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'ÄÖÜTest'));
+		$expected = array('=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>');
+		$this->assertIdentical($result, $expected);
 	}
 
 /**
