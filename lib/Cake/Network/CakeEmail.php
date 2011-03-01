@@ -129,17 +129,6 @@ class CakeEmail {
 	public $lineLength = 70;
 
 /**
- * Line feed character(s) to be used when sending using mail() function
- * By default PHP_EOL is used.
- * RFC2822 requires it to be CRLF but some Unix
- * mail transfer agents replace LF by CRLF automatically
- * (which leads to doubling CR if CRLF is used).
- *
- * @var string
- */
-	public $lineFeed = PHP_EOL;
-
-/**
  * What format should the email be sent in
  *
  * Supported formats:
