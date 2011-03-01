@@ -47,8 +47,14 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array('cake@cakephp.org' => 'cake@cakephp.org');
 		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
 
+		$this->CakeEmail->setFrom(array('cake@cakephp.org'));
+		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+
 		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
 		$expected = array('cake@cakephp.org' => 'CakePHP');
+		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+
+		$this->CakeEmail->setFrom(array('cake@cakephp.org' => 'CakePHP'));
 		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
 	}
 
