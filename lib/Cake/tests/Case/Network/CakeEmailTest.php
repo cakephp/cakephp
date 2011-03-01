@@ -119,6 +119,33 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * Data provider function for testBuildInvalidData
+ *
+ * @return array
+ */
+	public static function invalidEmails() {
+		return array(
+			array(1.0),
+			array(''),
+			array('string'),
+			array('<tag>'),
+			array('some@one.whereis'),
+			array(array('ok@cakephp.org', 1.0, '', 'string'))
+		);
+	}
+
+/**
+ * testBuildInvalidData
+ *
+ * @dataProvider invalidEmails
+ * @expectedException SocketException
+ * return void
+ */
+	public function testInvalidEmail($value) {
+		$this->CakeEmail->setTo($value);
+	}
+
+/**
  * testFormatAddress method
  *
  * @return void

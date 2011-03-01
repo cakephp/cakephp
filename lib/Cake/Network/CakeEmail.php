@@ -367,9 +367,13 @@ class CakeEmail {
  * @param mixed $email
  * @param mixed $name
  * @return void
+ * @thrown SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
+			if (!Validation::email($email)) {
+				throw new SocketException(__('Invalid email: "%s"', $email));
+			}
 			if ($name === null) {
 				$this->{$varName} = array($email => $email);
 			} else {
@@ -380,8 +384,14 @@ class CakeEmail {
 		$list = array();
 		foreach ($email as $key => $value) {
 			if (is_int($key)) {
+				if (!Validation::email($value)) {
+					throw new SocketException(__('Invalid email: "%s"', $value));
+				}
 				$list[$value] = $value;
 			} else {
+				if (!Validation::email($key)) {
+					throw new SocketException(__('Invalid email: "%s"', $key));
+				}
 				$list[$key] = $value;
 			}
 		}
@@ -417,6 +427,9 @@ class CakeEmail {
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
+			if (!Validation::email($email)) {
+				throw new SocketException(__('Invalid email: "%s"', $email));
+			}
 			if ($name === null) {
 				$this->{$varName}[$email] = $email;
 			} else {
@@ -427,8 +440,14 @@ class CakeEmail {
 		$list = array();
 		foreach ($email as $key => $value) {
 			if (is_int($key)) {
+				if (!Validation::email($value)) {
+					throw new SocketException(__('Invalid email: "%s"', $value));
+				}
 				$list[$value] = $value;
 			} else {
+				if (!Validation::email($key)) {
+					throw new SocketException(__('Invalid email: "%s"', $key));
+				}
 				$list[$key] = $value;
 			}
 		}
