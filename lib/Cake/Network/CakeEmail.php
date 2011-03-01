@@ -536,6 +536,15 @@ class CakeEmail {
  * @return void
  */
 	public function reset() {
+		$this->_to = array();
+		$this->_from = array();
+		$this->_replyTo = array();
+		$this->_readReceipt = array();
+		$this->_returnPath = array();
+		$this->_cc = array();
+		$this->_bcc = array();
+		$this->_subject = '';
+		$this->_headers = array();
 	}
 
 }

@@ -140,6 +140,11 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testReset() {
+		$this->CakeEmail->setTo('cake@cakephp.org');
+		$this->assertIdentical($this->CakeEmail->getTo(), array('cake@cakephp.org' => 'cake@cakephp.org'));
+
+		$this->CakeEmail->reset();
+		$this->assertIdentical($this->CakeEmail->getTo(), array());
 	}
 
 }
