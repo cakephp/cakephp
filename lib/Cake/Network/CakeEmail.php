@@ -93,6 +93,13 @@ class CakeEmail {
 	protected $_bcc = array();
 
 /**
+ * Message ID
+ *
+ * @var mixed True to generate, False to ignore, String with value
+ */
+	protected $_messageId = true;
+
+/**
  * The subject of the email
  *
  * @var string
@@ -531,6 +538,13 @@ class CakeEmail {
 		if (!isset($headers['Date'])) {
 			$headers['Date'] = date(DATE_RFC2822);
 		}
+		if ($this->_messageId !== false) {
+			if ($this->_messageId === true) {
+				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
+			} else {
+				$headers['Message-ID'] = $this->_messageId;
+			}
+		}
 
 		$relation = array(
 			'from' => 'From',
@@ -616,6 +630,24 @@ class CakeEmail {
 	}
 
 /**
+ * Set Message-ID
+ *
+ * @param mixed $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
+ * @return void
+ * @thrown SocketException
+ */
+	public function setMessageID($message) {
+		if (is_bool($message)) {
+			$this->_messageId = $message;
+		} else {
+			if (!preg_match('/^\<.+@.+\>$/', $message)) {
+				throw new SocketException(__('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
+			}
+			$this->_messageId = $message;
+		}
+	}
+
+/**
  * Set attachments
  *
  * @param mixed $attachments String with the filename or array with filenames
@@ -678,6 +710,7 @@ class CakeEmail {
 		$this->_returnPath = array();
 		$this->_cc = array();
 		$this->_bcc = array();
+		$this->_messageId = true;
 		$this->_subject = '';
 		$this->_headers = array();
 		$this->_layout = 'default';

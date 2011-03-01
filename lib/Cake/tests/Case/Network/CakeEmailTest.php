@@ -139,7 +139,7 @@ class CakeEmailTest extends CakeTestCase {
  *
  * @dataProvider invalidEmails
  * @expectedException SocketException
- * return void
+ * @return void
  */
 	public function testInvalidEmail($value) {
 		$this->CakeEmail->setTo($value);
@@ -169,6 +169,35 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testMessageId method
+ *
+ * @return void
+ */
+	public function testMessageId() {
+		$this->CakeEmail->setMessageId(true);
+		$result = $this->CakeEmail->getHeaders();
+		$this->assertTrue(isset($result['Message-ID']));
+
+		$this->CakeEmail->setMessageId(false);
+		$result = $this->CakeEmail->getHeaders();
+		$this->assertFalse(isset($result['Message-ID']));
+
+		$this->CakeEmail->setMessageId('<my-email@localhost>');
+		$result = $this->CakeEmail->getHeaders();
+		$this->assertIdentical($result['Message-ID'], '<my-email@localhost>');
+	}
+
+/**
+ * testMessageIdInvalid method
+ *
+ * @return void
+ * @expectedException SocketException
+ */
+	public function testMessageIdInvalid() {
+		$this->CakeEmail->setMessageId('my-email@localhost');
+	}
+
+/**
  * testSubject method
  *
  * @return void
@@ -190,6 +219,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testHeaders() {
+		$this->CakeEmail->setMessageId(false);
 		$this->CakeEmail->setHeaders(array('X-Something' => 'nice'));
 		$expected = array(
 			'X-Something' => 'nice',
