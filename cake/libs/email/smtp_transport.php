@@ -160,9 +160,10 @@ class SmtpTransport extends AbstractTransport {
 	protected function _sendData() {
 		$this->_smtpSend('DATA', '354');
 
-		$header = $this->_headersToString($this->_cakeEmail->getHeaders(true, false, true));
+		$headers = $this->_cakeEmail->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'), true));
+		$headers = $this->_headersToString($headers);
 		$message = implode("\r\n", $this->_cakeEmail->getMessage());
-		$this->_smtpSend($header . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
+		$this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
 	}
 
 /**

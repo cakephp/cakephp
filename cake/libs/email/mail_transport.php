@@ -35,9 +35,11 @@ class MailTransport extends AbstractTransport {
 		if (!$eol) {
 			$eol = PHP_EOL;
 		}
-		$header = $this->_headersToString($email->getHeaders(true, true, false), $eol);
+		$headers = $email->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true));
+		$to = $headers['To'];
+		unset($headers['To']);
+		$header = $this->_headersToString($headers, $eol);
 		$message = implode($eol, $email->getMessage());
-		$to = key($email->getTo());
 		if (ini_get('safe_mode')) {
 			return @mail($to, $email->getSubject(), $message, $header);
 		}
