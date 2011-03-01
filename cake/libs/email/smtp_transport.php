@@ -140,14 +140,14 @@ class SmtpTransport extends AbstractTransport {
  */
 	protected function _sendRcpt() {
 		$from = $this->_cakeEmail->getFrom();
-		$this->_smtpSend('MAIL FROM: ' . key($from));
+		$this->_smtpSend('MAIL FROM:<' . key($from) . '>');
 
 		$to = $this->_cakeEmail->getTo();
 		$cc = $this->_cakeEmail->getCc();
 		$bcc = $this->_cakeEmail->getBcc();
 		$emails = array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
 		foreach ($emails as $email) {
-			$this->_smtpSend('RCPT TO: ' . $email);
+			$this->_smtpSend('RCPT TO:<' . $email . '>');
 		}
 	}
 
