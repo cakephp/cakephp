@@ -224,6 +224,93 @@ class CakeEmail {
 	}
 
 /**
+ * Set To
+ *
+ * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param string $name
+ * @return void
+ */
+	public function setTo($email, $name = null) {
+		$this->_setEmail('_to', $email, $name);
+	}
+
+/**
+ * Add To
+ *
+ * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param string $name
+ * @return void
+ */
+	public function addTo($email, $name = null) {
+		$this->_addEmail('_to', $email, $name);
+	}
+
+/**
+ * Get To
+ *
+ * @return array
+ */
+	public function getTo() {
+		return $this->_to;
+	}
+
+/**
+ * Set email
+ *
+ * @param string $varName
+ * @param mixed $email
+ * @param mixed $name
+ * @return void
+ */
+	protected function _setEmail($varName, $email, $name) {
+		if (!is_array($email)) {
+			if ($name === null) {
+				$this->{$varName} = array($email => $email);
+			} else {
+				$this->{$varName} = array($email => $name);
+			}
+			return;
+		}
+		$list = array();
+		foreach ($email as $key => $value) {
+			if (is_int($key)) {
+				$list[$value] = $value;
+			} else {
+				$list[$key] = $value;
+			}
+		}
+		$this->{$varName} = $list;
+	}
+
+/**
+ * Add email
+ *
+ * @param string $varName
+ * @param mixed $email
+ * @param mixed $name
+ * @return void
+ */
+	protected function _addEmail($varName, $email, $name) {
+		if (!is_array($email)) {
+			if ($name === null) {
+				$this->{$varName}[$email] = $email;
+			} else {
+				$this->{$varName}[$email] = $name;
+			}
+			return;
+		}
+		$list = array();
+		foreach ($email as $key => $value) {
+			if (is_int($key)) {
+				$list[$value] = $value;
+			} else {
+				$list[$key] = $value;
+			}
+		}
+		$this->{$varName} = array_merge($this->{$varName}, $list);
+	}
+
+/**
  * Sets headers for the message
  *
  * @param array Associative array containing headers to be set.

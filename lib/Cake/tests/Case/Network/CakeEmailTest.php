@@ -53,6 +53,50 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testTo method
+ *
+ * @return void
+ */
+	public function testTo() {
+		$this->assertIdentical($this->CakeEmail->getTo(), array());
+
+		$this->CakeEmail->setTo('cake@cakephp.org');
+		$expected = array('cake@cakephp.org' => 'cake@cakephp.org');
+		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+
+		$this->CakeEmail->setTo('cake@cakephp.org', 'CakePHP');
+		$expected = array('cake@cakephp.org' => 'CakePHP');
+		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+
+		$list = array(
+			'cake@cakephp.org' => 'Cake PHP',
+			'cake-php@googlegroups.com' => 'Cake Groups',
+			'root@cakephp.org'
+		);
+		$this->CakeEmail->setTo($list);
+		$expected = array(
+			'cake@cakephp.org' => 'Cake PHP',
+			'cake-php@googlegroups.com' => 'Cake Groups',
+			'root@cakephp.org' => 'root@cakephp.org'
+		);
+		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+
+		$this->CakeEmail->addTo('jrbasso@cakephp.org');
+		$this->CakeEmail->addTo('mark_story@cakephp.org', 'Mark Story');
+		$this->CakeEmail->addTo(array('phpnut@cakephp.org' => 'PhpNut', 'jose_zap@cakephp.org'));
+		$expected = array(
+			'cake@cakephp.org' => 'Cake PHP',
+			'cake-php@googlegroups.com' => 'Cake Groups',
+			'root@cakephp.org' => 'root@cakephp.org',
+			'jrbasso@cakephp.org' => 'jrbasso@cakephp.org',
+			'mark_story@cakephp.org' => 'Mark Story',
+			'phpnut@cakephp.org' => 'PhpNut',
+			'jose_zap@cakephp.org' => 'jose_zap@cakephp.org'
+		);
+		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+	}
+
+/**
  * testHeaders method
  *
  * @return void
