@@ -205,12 +205,14 @@ class CakeEmail {
  * @param string $email
  * @param string $name
  * @return void
+ * @thrown SocketException
  */
 	public function setFrom($email, $name = null) {
-		if ($name !== null) {
-			$this->_from = array($email => $name);
-		} else {
-			$this->_from = array($email => $email);
+		$oldFrom = $this->_from;
+		$this->_setEmail('_from', $email, $name);
+		if (count($this->_from) !== 1) {
+			$this->_from = $oldFrom;
+			throw new SocketException(__('From requires only 1 email address.'));
 		}
 	}
 
