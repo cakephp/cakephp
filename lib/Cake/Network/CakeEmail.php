@@ -159,18 +159,11 @@ class CakeEmail {
 /**
  * List of files that should be attached to the email.
  *
- * Can be both absolute and relative paths
+ * Only absolute paths
  *
  * @var array
  */
-	public $attachments = array();
-
-/**
- * The list of paths to search if an attachment isnt absolute
- *
- * @var array
- */
-	public $filePaths = array();
+	protected $_attachments = array();
 
 /**
  * If set, boundary to use for multipart mime messages
@@ -614,6 +607,48 @@ class CakeEmail {
 	}
 
 /**
+ * Set attachments
+ *
+ * @param mixed $attachments String with the filename or array with filenames
+ * @return void
+ * @thrown SocketException
+ */
+	public function setAttachments($attachments) {
+		$attachments = (array)$attachments;
+		foreach ($attachments as &$attach) {
+			$path = realpath($attach);
+			if ($path === false) {
+				throw new SocketException(__('File not found: "%s"', $attach));
+			}
+			$attach = $path;
+		}
+		$this->_attachments = $attachments;
+	}
+
+/**
+ * Add attachments
+ *
+ * @param mixed $attachments String with the filename or array with filenames
+ * @return void
+ * @thrown SocketException
+ */
+	public function addAttachments($attachments) {
+		$current = $this->_attachments;
+		$this->setAttachments($attachments);
+		$this->_attachments = array_unique(array_merge($current, $this->_attachments));
+	}
+
+/**
+ * Get attachments
+ *
+ * @return array
+ */
+	public function getAttachments() {
+		return $this->_attachments;
+	}
+
+
+/**
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
@@ -640,6 +675,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'mail';
+		$this->_attachments = array();
 	}
 
 }

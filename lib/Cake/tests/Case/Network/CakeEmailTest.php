@@ -157,6 +157,26 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testAttachments
+ *
+ * @return void
+ */
+	public function testAttachments() {
+		$this->CakeEmail->setAttachments(WWW_ROOT . 'index.php');
+		$expected = array(WWW_ROOT . 'index.php');
+		$this->assertIdentical($this->CakeEmail->getAttachments(), $expected);
+
+		$this->CakeEmail->setAttachments(array());
+		$this->assertIdentical($this->CakeEmail->getAttachments(), array());
+
+		$this->CakeEmail->setAttachments(WWW_ROOT . 'index.php');
+		$this->CakeEmail->addAttachments(WWW_ROOT . 'test.php');
+		$this->CakeEmail->addAttachments(array(WWW_ROOT . 'test.php', WWW_ROOT . '.htaccess'));
+		$expected = array(WWW_ROOT . 'index.php', WWW_ROOT . 'test.php', WWW_ROOT . '.htaccess');
+		$this->assertIdentical(array_values($this->CakeEmail->getAttachments()), $expected);
+	}
+
+/**
  * testSend method
  *
  * @return void
