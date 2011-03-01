@@ -501,25 +501,87 @@ class CakeEmail {
 /**
  * Get list of headers
  *
- * @param boolean $includeToAndCc
- * @param boolean $includeBcc
- * @param boolean $includeSubject
+ * ### Includes:
+ *
+ * - `from`
+ * - `replyTo`
+ * - `readReceipt`
+ * - `returnPath`
+ * - `to`
+ * - `cc`
+ * - `bcc`
+ * - `subject`
+ *
+ * @param array $include
  * @return array
  */
-	public function getHeaders($includeToAndCc = false, $includeBcc = false, $includeSubject = false) {
-		if (!isset($this->_headers['X-Mailer'])) {
-			$this->_headers['X-Mailer'] = Configure::read('Email.XMailer');
-			if (empty($this->_headers['X-Mailer'])) {
-				$this->_headers['X-Mailer'] = self::EMAIL_CLIENT;
+	public function getHeaders($include = array()) {
+		$defaults = array(
+			'from' => false,
+			'replyTo' => false,
+			'readReceipt' => false,
+			'returnPath' => false,
+			'to' => false,
+			'cc' => false,
+			'bcc' => false,
+			'subject' => false
+		);
+		$include += $defaults;
+
+		$headers = $this->_headers;
+		if (!isset($headers['X-Mailer'])) {
+			$headers['X-Mailer'] = Configure::read('Email.XMailer');
+			if (empty($headers['X-Mailer'])) {
+				$headers['X-Mailer'] = self::EMAIL_CLIENT;
 			}
 		}
-		if (!isset($this->_headers['Date'])) {
-			$this->_headers['Date'] = date(DATE_RFC2822);
+		if (!isset($headers['Date'])) {
+			$headers['Date'] = date(DATE_RFC2822);
 		}
-		if ($includeSubject) {
-			$this->_headers['Subject'] = $this->_subject;
+
+		$relation = array(
+			'from' => 'From',
+			'replyTo' => 'Reply-To',
+			'readReceipt' => 'Disposition-Notification-To',
+			'returnPath' => 'Return-Path'
+		);
+		foreach ($relation as $var => $header) {
+			if ($include[$var]) {
+				$var = '_' . $var;
+				$headers[$header] = current($this->_formatAddress($this->{$var}));
+			}
 		}
-		return $this->_headers;
+
+		foreach (array('to', 'cc', 'bcc') as $var) {
+			if ($include[$var]) {
+				$classVar = '_' . $var;
+				$headers[ucfirst($var)] = implode(', ', $this->_formatAddress($this->{$classVar}));
+			}
+		}
+
+		if ($include['subject']) {
+			$headers['Subject'] = $this->_subject;
+		}
+
+		return $headers;
+	}
+
+/**
+ * Format addresses
+ *
+ * @param array $address
+ * @return array
+ */
+	protected function _formatAddress($address) {
+		$return = array();
+		foreach ($address as $email => $alias) {
+			if ($email === $alias) {
+				$return[] = $email;
+			} else {
+				$return[] = sprintf('%s <%s>', $alias, $email);
+			}
+		}
+		return $return;
 	}
 
 /**

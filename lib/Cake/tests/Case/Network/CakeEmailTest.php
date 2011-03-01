@@ -124,6 +124,36 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testHeaders() {
+		$this->CakeEmail->setHeaders(array('X-Something' => 'nice'));
+		$expected = array(
+			'X-Something' => 'nice',
+			'X-Mailer' => 'CakePHP Email Component',
+			'Date' => date(DATE_RFC2822)
+		);
+		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
+
+		$this->CakeEmail->addHeaders(array('X-Something' => 'very nice', 'X-Other' => 'cool'));
+		$expected = array(
+			'X-Something' => 'very nice',
+			'X-Other' => 'cool',
+			'X-Mailer' => 'CakePHP Email Component',
+			'Date' => date(DATE_RFC2822)
+		);
+		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
+
+		$this->CakeEmail->setFrom('cake@cakephp.org');
+		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
+
+		$expected['From'] = 'cake@cakephp.org';
+		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
+
+		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
+		$expected['From'] = 'CakePHP <cake@cakephp.org>';
+		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
+
+		$this->CakeEmail->setTo(array('cake@cakephp.org', 'php@cakephp.org' => 'CakePHP'));
+		$expected['To'] = 'cake@cakephp.org, CakePHP <php@cakephp.org>';
+		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
 	}
 
 /**
