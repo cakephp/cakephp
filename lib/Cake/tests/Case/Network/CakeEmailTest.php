@@ -26,6 +26,33 @@ App::import('Core', 'CakeEmail');
 class CakeEmailTest extends CakeTestCase {
 
 /**
+ * setUp
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->CakeEmail = new CakeEmail();
+	}
+
+/**
+ * testFrom method
+ *
+ * @return void
+ */
+	public function testFrom() {
+		$this->assertIdentical($this->CakeEmail->getFrom(), array());
+
+		$this->CakeEmail->setFrom('cake@cakephp.org');
+		$expected = array('cake@cakephp.org' => 'cake@cakephp.org');
+		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+
+		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
+		$expected = array('cake@cakephp.org' => 'CakePHP');
+		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+	}
+
+/**
  * testHeaders method
  *
  * @return void

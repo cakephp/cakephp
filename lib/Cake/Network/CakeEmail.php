@@ -200,6 +200,30 @@ class CakeEmail {
 	}
 
 /**
+ * Set From
+ *
+ * @param string $email
+ * @param string $name
+ * @return void
+ */
+	public function setFrom($email, $name = null) {
+		if ($name !== null) {
+			$this->_from = array($email => $name);
+		} else {
+			$this->_from = array($email => $email);
+		}
+	}
+
+/**
+ * Get the From information
+ *
+ * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
+ */
+	public function getFrom() {
+		return $this->_from;
+	}
+
+/**
  * Sets headers for the message
  *
  * @param array Associative array containing headers to be set.
