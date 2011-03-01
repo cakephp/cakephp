@@ -97,7 +97,7 @@ class CakeEmail {
  *
  * @var string
  */
-	protected $_subject = null;
+	protected $_subject = '';
 
 /**
  * Associative array of a user defined headers
@@ -449,6 +449,25 @@ class CakeEmail {
 			}
 		}
 		$this->{$varName} = array_merge($this->{$varName}, $list);
+	}
+
+/**
+ * Set Subject
+ *
+ * @param string $subject
+ * @return void
+ */
+	public function setSubject($subject) {
+		$this->_subject = (string)$subject;
+	}
+
+/**
+ * Get Subject
+ *
+ * @return string
+ */
+	public function getSubject() {
+		return $this->_subject;
 	}
 
 /**

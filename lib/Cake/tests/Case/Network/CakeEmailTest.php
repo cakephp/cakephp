@@ -103,6 +103,22 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSubject method
+ *
+ * @return void
+ */
+	public function testSubject() {
+		$this->CakeEmail->setSubject('You have a new message.');
+		$this->assertIdentical($this->CakeEmail->getSubject(), 'You have a new message.');
+
+		$this->CakeEmail->setSubject(1);
+		$this->assertIdentical($this->CakeEmail->getSubject(), '1');
+
+		$this->CakeEmail->setSubject(array('something'));
+		$this->assertIdentical($this->CakeEmail->getSubject(), 'Array');
+	}
+
+/**
  * testHeaders method
  *
  * @return void
