@@ -255,6 +255,68 @@ class CakeEmail {
 	}
 
 /**
+ * Set Cc
+ *
+ * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param string $name
+ * @return void
+ */
+	public function setCc($email, $name = null) {
+		$this->_setEmail('_cc', $email, $name);
+	}
+
+/**
+ * Add Cc
+ *
+ * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param string $name
+ * @return void
+ */
+	public function addCc($email, $name = null) {
+		$this->_addEmail('_cc', $email, $name);
+	}
+
+/**
+ * Get Cc
+ *
+ * @return array
+ */
+	public function getCc() {
+		return $this->_cc;
+	}
+
+/**
+ * Set Bcc
+ *
+ * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param string $name
+ * @return void
+ */
+	public function setBcc($email, $name = null) {
+		$this->_setEmail('_bcc', $email, $name);
+	}
+
+/**
+ * Add Bcc
+ *
+ * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param string $name
+ * @return void
+ */
+	public function addBcc($email, $name = null) {
+		$this->_addEmail('_bcc', $email, $name);
+	}
+
+/**
+ * Get Bcc
+ *
+ * @return array
+ */
+	public function getBcc() {
+		return $this->_bcc;
+	}
+
+/**
  * Set email
  *
  * @param string $varName
