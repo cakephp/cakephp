@@ -375,25 +375,20 @@ class CakeEmail {
 				throw new SocketException(__('Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
-				$this->{$varName} = array($email => $email);
-			} else {
-				$this->{$varName} = array($email => $name);
+				$name = $email;
 			}
+			$this->{$varName} = array($email => $name);
 			return;
 		}
 		$list = array();
 		foreach ($email as $key => $value) {
 			if (is_int($key)) {
-				if (!Validation::email($value)) {
-					throw new SocketException(__('Invalid email: "%s"', $value));
-				}
-				$list[$value] = $value;
-			} else {
-				if (!Validation::email($key)) {
-					throw new SocketException(__('Invalid email: "%s"', $key));
-				}
-				$list[$key] = $value;
+				$key = $value;
 			}
+			if (!Validation::email($key)) {
+				throw new SocketException(__('Invalid email: "%s"', $key));
+			}
+			$list[$key] = $value;
 		}
 		$this->{$varName} = $list;
 	}
@@ -431,25 +426,20 @@ class CakeEmail {
 				throw new SocketException(__('Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
-				$this->{$varName}[$email] = $email;
-			} else {
-				$this->{$varName}[$email] = $name;
+				$name = $email;
 			}
+			$this->{$varName}[$email] = $name;
 			return;
 		}
 		$list = array();
 		foreach ($email as $key => $value) {
 			if (is_int($key)) {
-				if (!Validation::email($value)) {
-					throw new SocketException(__('Invalid email: "%s"', $value));
-				}
-				$list[$value] = $value;
-			} else {
-				if (!Validation::email($key)) {
-					throw new SocketException(__('Invalid email: "%s"', $key));
-				}
-				$list[$key] = $value;
+				$key = $value;
 			}
+			if (!Validation::email($key)) {
+				throw new SocketException(__('Invalid email: "%s"', $key));
+			}
+			$list[$key] = $value;
 		}
 		$this->{$varName} = array_merge($this->{$varName}, $list);
 	}
