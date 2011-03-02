@@ -401,6 +401,6 @@ class CacheTest extends CakeTestCase {
 		$settings = Cache::settings('file_config');
 		
 		$this->assertEquals('test_file_', $settings['prefix']);
-		$this->assertEquals(31536000, $settings['duration']);
+		$this->assertEquals(strtotime('+1 year') - time(), $settings['duration']);
 	}
 }

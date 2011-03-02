@@ -22,4 +22,3 @@
 require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR. 'ShellDispatcher.php');
 
 return ShellDispatcher::run($argv);
-

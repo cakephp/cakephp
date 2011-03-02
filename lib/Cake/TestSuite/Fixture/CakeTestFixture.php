@@ -158,6 +158,9 @@ class CakeTestFixture {
  * @return boolean True on success, false on failure
  */
 	public function drop(&$db) {
+		if (empty($this->fields)) {
+			return false;
+		}
 		$this->Schema->build(array($this->table => $this->fields));
 		return (
 			$db->execute($db->dropSchema($this->Schema), array('log' => false)) !== false

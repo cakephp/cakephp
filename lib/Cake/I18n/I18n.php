@@ -319,8 +319,10 @@ class I18n {
 			$this->__domains[$domain][$this->__lang][$this->category] = array();
 			return $domain;
 		}
-
-		if ($head = $this->__domains[$domain][$this->__lang][$this->category][""]) {
+		
+		if (isset($this->__domains[$domain][$this->__lang][$this->category][""])) {
+			$head = $this->__domains[$domain][$this->__lang][$this->category][""];
+			
 			foreach (explode("\n", $head) as $line) {
 				$header = strtok($line,":");
 				$line = trim(strtok("\n"));

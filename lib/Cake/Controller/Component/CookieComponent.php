@@ -172,6 +172,9 @@ class CookieComponent extends Component {
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->key = Configure::read('Security.salt');
 		parent::__construct($collection, $settings);
+		if (isset($this->time)) {
+			$this->_expire($this->time);
+		}
 	}
 
 /**

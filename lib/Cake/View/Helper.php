@@ -688,7 +688,7 @@ class Helper extends Object {
 		}
 
 		$habtmKey = $this->field();
-		if (empty($result) && isset($data[$habtmKey][$habtmKey])) {
+		if (empty($result) && isset($data[$habtmKey][$habtmKey]) && is_array($data[$habtmKey])) {
 			$result = $data[$habtmKey][$habtmKey];
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {

@@ -566,11 +566,7 @@ class EmailComponent extends Component {
         $headers = array();
 
 		if ($this->delivery == 'smtp') {
-			if (is_array($this->to)) {
-				$headers['To'] = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
-			} else {
-				$headers['To'] = $this->_formatAddress($this->to);
-			}
+			$headers['To'] = implode(', ', array_map(array($this, '_formatAddress'), (array)$this->to));
 		}
 		$headers['From'] = $this->_formatAddress($this->from);
 
@@ -585,11 +581,11 @@ class EmailComponent extends Component {
 		}
 
 		if (!empty($this->cc)) {
-			$headers['cc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->cc));
+			$headers['Cc'] = implode(', ', array_map(array($this, '_formatAddress'), (array)$this->cc));
 		}
 
 		if (!empty($this->bcc) && $this->delivery != 'smtp') {
-			$headers['Bcc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->bcc));
+			$headers['Bcc'] = implode(', ', array_map(array($this, '_formatAddress'), (array)$this->bcc));
 		}
 		if ($this->delivery == 'smtp') {
 			$headers['Subject'] = $this->_encode($this->subject);
