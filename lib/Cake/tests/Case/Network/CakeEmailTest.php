@@ -240,7 +240,13 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->setFrom('cake@cakephp.org');
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
-		$expected['From'] = 'cake@cakephp.org';
+		$expected = array(
+			'From' => 'cake@cakephp.org',
+			'X-Something' => 'very nice',
+			'X-Other' => 'cool',
+			'X-Mailer' => 'CakePHP Email Component',
+			'Date' => date(DATE_RFC2822)
+		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
 		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
@@ -248,7 +254,14 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
 		$this->CakeEmail->setTo(array('cake@cakephp.org', 'php@cakephp.org' => 'CakePHP'));
-		$expected['To'] = 'cake@cakephp.org, CakePHP <php@cakephp.org>';
+		$expected = array(
+			'From' => 'CakePHP <cake@cakephp.org>',
+			'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
+			'X-Something' => 'very nice',
+			'X-Other' => 'cool',
+			'X-Mailer' => 'CakePHP Email Component',
+			'Date' => date(DATE_RFC2822)
+		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
 	}
 

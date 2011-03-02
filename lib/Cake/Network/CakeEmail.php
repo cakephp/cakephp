@@ -528,24 +528,7 @@ class CakeEmail {
 		);
 		$include += $defaults;
 
-		$headers = $this->_headers;
-		if (!isset($headers['X-Mailer'])) {
-			$headers['X-Mailer'] = Configure::read('Email.XMailer');
-			if (empty($headers['X-Mailer'])) {
-				$headers['X-Mailer'] = self::EMAIL_CLIENT;
-			}
-		}
-		if (!isset($headers['Date'])) {
-			$headers['Date'] = date(DATE_RFC2822);
-		}
-		if ($this->_messageId !== false) {
-			if ($this->_messageId === true) {
-				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
-			} else {
-				$headers['Message-ID'] = $this->_messageId;
-			}
-		}
-
+		$headers = array();
 		$relation = array(
 			'from' => 'From',
 			'replyTo' => 'Reply-To',
@@ -563,6 +546,24 @@ class CakeEmail {
 			if ($include[$var]) {
 				$classVar = '_' . $var;
 				$headers[ucfirst($var)] = implode(', ', $this->_formatAddress($this->{$classVar}));
+			}
+		}
+
+		$headers += $this->_headers;
+		if (!isset($headers['X-Mailer'])) {
+			$headers['X-Mailer'] = Configure::read('Email.XMailer');
+			if (empty($headers['X-Mailer'])) {
+				$headers['X-Mailer'] = self::EMAIL_CLIENT;
+			}
+		}
+		if (!isset($headers['Date'])) {
+			$headers['Date'] = date(DATE_RFC2822);
+		}
+		if ($this->_messageId !== false) {
+			if ($this->_messageId === true) {
+				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
+			} else {
+				$headers['Message-ID'] = $this->_messageId;
 			}
 		}
 
