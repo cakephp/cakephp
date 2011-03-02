@@ -274,8 +274,9 @@ class CakeRoute {
 			return false;
 		}
 
-		$greedyNamed = Router::$named['greedy'];
-		$allowedNamedParams = Router::$named['rules'];
+		$namedConfig = Router::namedConfig();
+		$greedyNamed = $namedConfig['greedy'];
+		$allowedNamedParams = $namedConfig['rules'];
 
 		$named = $pass = $_query = array();
 
@@ -352,7 +353,8 @@ class CakeRoute {
 			$params['pass'] = implode('/', $params['pass']);
 		}
 
-		$separator = Router::$named['separator'];
+		$namedConfig = Router::namedConfig();
+		$separator = $namedConfig['separator'];
 
 		if (!empty($params['named']) && is_array($params['named'])) {
 			$named = array();

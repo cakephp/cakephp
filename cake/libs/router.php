@@ -85,7 +85,7 @@ class Router {
 	const ID = '[0-9]+';
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
-	private static $__named = array(
+	private static $__namedExpressions = array(
 		'Action' => Router::ACTION,
 		'Year' => Router::YEAR,
 		'Month' => Router::MONTH,
@@ -100,7 +100,7 @@ class Router {
  * @var string
  * @access public
  */
-	public static $named = array(
+	protected static $_namedConfig = array(
 		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
 		'greedy' => true,
 		'separator' => ':',
@@ -186,10 +186,10 @@ class Router {
  * Gets the named route elements for use in app/config/routes.php
  *
  * @return array Named route elements
- * @see Router::$__named
+ * @see Router::$__namedExpressions
  */
 	public static function getNamedExpressions() {
-		return self::$__named;
+		return self::$__namedExpressions;
 	}
 
 /**
@@ -369,7 +369,7 @@ class Router {
  */
 	public static function connectNamed($named, $options = array()) {
 		if (isset($options['separator'])) {
-			self::$named['separator'] = $options['separator'];
+			self::$_namedConfig['separator'] = $options['separator'];
 			unset($options['separator']);
 		}
 
@@ -380,23 +380,33 @@ class Router {
 			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 		}
 
-		if ($options['reset'] == true || self::$named['rules'] === false) {
-			self::$named['rules'] = array();
+		if ($options['reset'] == true || self::$_namedConfig['rules'] === false) {
+			self::$_namedConfig['rules'] = array();
 		}
 
 		if ($options['default']) {
-			$named = array_merge($named, self::$named['default']);
+			$named = array_merge($named, self::$_namedConfig['default']);
 		}
 
 		foreach ($named as $key => $val) {
 			if (is_numeric($key)) {
-				self::$named['rules'][$val] = true;
+				self::$_namedConfig['rules'][$val] = true;
 			} else {
-				self::$named['rules'][$key] = $val;
+				self::$_namedConfig['rules'][$key] = $val;
 			}
 		}
-		self::$named['greedy'] = $options['greedy'];
-		return self::$named;
+		self::$_namedConfig['greedy'] = $options['greedy'];
+		return self::$_namedConfig;
+	}
+
+/**
+ * Gets the current named parameter configuration values.
+ *
+ * @return array
+ * @see Router::$_namedConfig
+ */
+	public static function namedConfig() {
+		return self::$_namedConfig;
 	}
 
 /**
@@ -426,7 +436,10 @@ class Router {
  * @return array Array of mapped resources
  */
 	public static function mapResources($controller, $options = array()) {
-		$options = array_merge(array('prefix' => '/', 'id' => self::$__named['ID'] . '|' . self::$__named['UUID']), $options);
+		$options = array_merge(array(
+			'prefix' => '/',
+			'id' => self::ID . '|' . self::UUID
+		), $options);
 		$prefix = $options['prefix'];
 
 		foreach ((array)$controller as $ctlName) {
@@ -621,7 +634,7 @@ class Router {
 		self::connect('/:controller', array('action' => 'index'));
 		self::connect('/:controller/:action/*');
 
-		if (self::$named['rules'] === false) {
+		if (self::$_namedConfig['rules'] === false) {
 			self::connectNamed(true);
 		}
 		self::$_defaultsMapped = true;
@@ -971,10 +984,10 @@ class Router {
 				if (is_array($value)) {
 					$flattend = Set::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {
-						$output .= '/' . $name . "[$namedKey]" . self::$named['separator'] . $namedValue;
+						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . $namedValue;
 					}
 				} else {
-					$output .= '/' . $name . self::$named['separator'] . $value;
+					$output .= '/' . $name . self::$_namedConfig['separator'] . $value;
 				}
 			}
 		}
@@ -996,8 +1009,8 @@ class Router {
 		$named = array();
 
 		foreach ($params as $param => $val) {
-			if (isset(self::$named['rules'][$param])) {
-				$rule = self::$named['rules'][$param];
+			if (isset(self::$_namedConfig['rules'][$param])) {
+				$rule = self::$_namedConfig['rules'][$param];
 				if (Router::matchNamed($param, $val, $rule, compact('controller', 'action'))) {
 					$named[substr($param, 1)] = $val;
 					unset($params[$param]);
@@ -1215,12 +1228,12 @@ class Router {
 		$pass = $named = array();
 		$args = explode('/', $args);
 
-		$greedy = isset($options['greedy']) ? $options['greedy'] : self::$named['greedy'];
+		$greedy = isset($options['greedy']) ? $options['greedy'] : self::$_namedConfig['greedy'];
 		$context = array();
 		if (isset($options['context'])) {
 			$context = $options['context'];
 		}
-		$rules = self::$named['rules'];
+		$rules = self::$_namedConfig['rules'];
 		if (isset($options['named'])) {
 			$greedy = isset($options['greedy']) && $options['greedy'] === true;
 			foreach ((array)$options['named'] as $key => $val) {
@@ -1237,9 +1250,9 @@ class Router {
 				continue;
 			}
 
-			$separatorIsPresent = strpos($param, self::$named['separator']) !== false;
+			$separatorIsPresent = strpos($param, self::$_namedConfig['separator']) !== false;
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
-				list($key, $val) = explode(self::$named['separator'], $param, 2);
+				list($key, $val) = explode(self::$_namedConfig['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !self::matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
