@@ -35,6 +35,20 @@ class CakeEmail {
 	const EMAIL_CLIENT = 'CakePHP Email Component';
 
 /**
+ * Line length - no should more - RFC 2822 - 2.1.1
+ *
+ * @constant LINE_LENGTH_SHOULD
+ */
+	const LINE_LENGTH_SHOULD = 78;
+
+/**
+ * Line length - no must more - RFC 2822 - 2.1.1 
+ *
+ * @constant LINE_LENGTH_MUST
+ */
+	const LINE_LENGTH_MUST = 998;
+
+/**
  * Recipient of the email
  *
  * @var string
@@ -127,6 +141,27 @@ class CakeEmail {
  * @var string
  */
 	protected $_template = '';
+
+/**
+ * Text message
+ *
+ * @var string
+ */
+	protected $_textMessage = '';
+
+/**
+ * Html message
+ *
+ * @var string
+ */
+	protected $_htmlMessage = '';
+
+/**
+ * Final message to send
+ *
+ * @var array
+ */
+	protected $_message = array();
 
 /**
  * as per RFC2822 Section 2.1.1
@@ -689,13 +724,72 @@ class CakeEmail {
 		return $this->_attachments;
 	}
 
+/**
+ * Get generated message (used by transport classes)
+ *
+ * @return array
+ */
+	public function getMessage() {
+		return $this->_message;
+	}
 
 /**
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
+ * @thrown SocketExpcetion
  */
-	public function send() {
+	public function send($content = null) {
+		if (empty($this->_from)) {
+			throw new SocketException(__('From is not specified.'));
+		}
+		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
+			throw new SocketExpcetion(__('You need specify one destination on to, cc or bcc.'));
+		}
+
+		if (is_array($content)) {
+			$content = implode("\n", $content) . "\n";
+		}
+
+		$this->_textMessage = $this->_htmlMessage = '';
+		if ($content !== null) {
+			if ($this->_emailFormat === 'text') {
+				$this->_textMessage = $content;
+			} elseif ($this->_emailFormat === 'html') {
+				$this->_htmlMessage = $content;
+			} elseif ($this->_emailFormat === 'both') {
+				$this->_textMessage = $this->_htmlMessage = $content;
+			}
+		}
+
+		$message = $this->_wrap($content);
+		if (empty($this->template)) {
+			//$message = $this->_formatMessage($message);
+		} else {
+			//$message = $this->_render($message);
+		}
+		$message[] = '';
+		$this->_message = $message;
+
+		if (!empty($this->attachments)) {
+			//$this->_attachFiles();
+		}
+
+		if (!is_null($this->_boundary)) {
+			$this->_message[] = '';
+			$this->_message[] = '--' . $this->_boundary . '--';
+			$this->_message[] = '';
+		}
+
+		$transportClassname = Inflector::camelize($this->_transportName) . 'Transport';
+		if (!App::import('Lib', 'email/' . $transportClassname)) {
+			throw new SocketException(__('Class "%s" not found.', $transportClassname));
+		} elseif (!method_exists($transportClassname, 'send')) {
+			throw new SocketException(__('The "%s" do not have send method.', $transportClassname));
+		}
+
+		$transport = new $transportClassname();
+		return $transport->send($this);
 	}
 
 /**
@@ -716,6 +810,9 @@ class CakeEmail {
 		$this->_headers = array();
 		$this->_layout = 'default';
 		$this->_template = '';
+		$this->_textMessage = '';
+		$this->_htmlMessage = '';
+		$this->_message = '';
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'mail';
 		$this->_attachments = array();
@@ -738,6 +835,29 @@ class CakeEmail {
 			mb_internal_encoding($restore);
 		}
 		return $return;
+	}
+
+/**
+ * Wrap the message to follow the RFC 2822 - 2.1.1
+ *
+ * @param string $message Message to wrap
+ * @return array Wrapped message
+ * @access protected
+ * @TODO Do not wrap tags
+ */
+	function _wrap($message) {
+		$message = str_replace(array("\r\n", "\r"), "\n", $message);
+		$lines = explode("\n", $message);
+		$formatted = array();
+
+		foreach ($lines as $line) {
+			if ($line[0] === '.') {
+				$line = '.' . $line;
+			}
+			$formatted = array_merge($formatted, explode("\n", wordwrap($line, self::LINE_LENGTH_SHOULD, "\n", true)));
+		}
+		$formatted[] = '';
+		return $formatted;
 	}
 
 }
