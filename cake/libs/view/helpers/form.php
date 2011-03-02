@@ -238,8 +238,12 @@ class FormHelper extends AppHelper {
 		$options);
 		$this->_inputDefaults = $options['inputDefaults'];
 		unset($options['inputDefaults']);
-
-		if (empty($options['url']) || is_array($options['url'])) {
+		if ($options['action'] === null && $options['url'] === null) {
+			$options['action'] = $this->request->here;
+			if (!isset($options['id'])) {
+				$options['id'] = $this->domId($this->request['action'] . 'Form');
+			}
+		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model) && $model != $this->defaultModel) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
