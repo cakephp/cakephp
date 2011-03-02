@@ -668,6 +668,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form = new FormHelper($this->View);
 		$this->Form->Html = new HtmlHelper($this->View);
 		$this->Form->request = new CakeRequest(null, false);
+		$this->Form->request->here = '/contacts/add';
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';
 		$this->Form->request->base = '';
@@ -5547,6 +5548,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['id'] = 1;
+		$this->Form->request->here = '/contacts/edit/1';
 		$this->Form->request['action'] = 'edit';
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -5561,6 +5563,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['id'] = 1;
+		$this->Form->request->here = '/contacts/edit/1';
 		$this->Form->request['action'] = 'edit';
 		$result = $this->Form->create('Contact', array('type' => 'file'));
 		$expected = array(
@@ -5575,7 +5578,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['ContactNonStandardPk']['pk'] = 1;
-		$result = $this->Form->create('ContactNonStandardPk');
+		$result = $this->Form->create('ContactNonStandardPk', array('url' => array('action' => 'edit')));
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
@@ -5654,6 +5657,33 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
+				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->here = '/contacts/add/Contact:1';
+		$result = $this->Form->create();
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/Contact:1',
+				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request['action'] = 'delete';
+		$this->Form->request->here = '/contacts/delete/10/User:42';
+		$result = $this->Form->create();
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/contacts/delete/10/User:42',
 				'accept-charset' => 'utf-8'
 			),
 			'div' => array('style' => 'display:none;'),
@@ -5854,7 +5884,8 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testGetFormWithFalseModel() {
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create(false, array('type' => 'get'));
+		$this->Form->request['controller'] = 'contact_test';
+		$result = $this->Form->create(false, array('type' => 'get', 'url' => array('controller' => 'contact_test')));
 
 		$expected = array('form' => array(
 			'id' => 'addForm', 'method' => 'get', 'action' => '/contact_test/add',

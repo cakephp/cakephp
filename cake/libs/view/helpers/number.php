@@ -38,16 +38,16 @@ class NumberHelper extends AppHelper {
  */
 	protected $_currencies = array(
 		'USD' => array(
-			'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
-			'decimals' => '.', 'negative' => '()', 'escape' => true
+			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
 		),
 		'GBP' => array(
-			'before'=>'&#163;', 'after' => 'p', 'zero' => 0, 'places' => 2, 'thousands' => ',',
-			'decimals' => '.', 'negative' => '()','escape' => false
+			'wholeSymbol'=>'&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => false
 		),
 		'EUR' => array(
-			'before'=>'&#8364;', 'after' => false, 'zero' => 0, 'places' => 2, 'thousands' => '.',
-			'decimals' => ',', 'negative' => '()', 'escape' => false
+			'wholeSymbol'=>'&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => false
 		)
 	);
 
@@ -58,8 +58,8 @@ class NumberHelper extends AppHelper {
  * @access protected
  */
 	protected $_currencyDefaults = array(
-		'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
-		'decimals' => '.','negative' => '()', 'escape' => true
+		'wholeSymbol'=>'', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
+		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true
 	);
 
 /**
@@ -190,25 +190,31 @@ class NumberHelper extends AppHelper {
 
 		$options = array_merge($default, $options);
 
-		$result = null;
+		if (isset($options['before']) && $options['before'] !== '') {
+			$options['wholeSymbol'] = $options['before'];
+		}
+		if (isset($options['after']) && !$options['after'] !== '') {
+			$options['fractionSymbol'] = $options['after'];
+		}
 
+		$result = $options['before'] = $options['after'] = null;
+
+		$symbolKey = 'whole';
 		if ($number == 0 ) {
 			if ($options['zero'] !== 0 ) {
 				return $options['zero'];
 			}
-			$options['after'] = null;
 		} elseif ($number < 1 && $number > -1 ) {
-			if ($options['after'] !== false) {
+			if ($options['fractionSymbol'] !== false) {
 				$multiply = intval('1' . str_pad('', $options['places'], '0'));
 				$number = $number * $multiply;
-				$options['before'] = null;
 				$options['places'] = null;
+				$symbolKey = 'fraction';
 			}
-		} elseif (empty($options['before'])) {
-			$options['before'] = null;
-		} else {
-			$options['after'] = null;
 		}
+
+		$position = $options[$symbolKey.'Position'] != 'after' ? 'before' : 'after';		
+		$options[$position] = $options[$symbolKey.'Symbol'];
 
 		$abs = abs($number);
 		$result = $this->format($abs, $options);
