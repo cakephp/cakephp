@@ -31,6 +31,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->_get = $_GET;
 		$this->_post = $_POST;
 		$this->_files = $_FILES;
+		$this->_app = Configure::read('App');
+
+		Configure::write('App.baseUrl', false);
 	}
 
 /**
@@ -44,6 +47,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
+		Configure::write('App', $this->_app);
 	}
 
 /**
@@ -70,12 +74,11 @@ class CakeRequestTestCase extends CakeTestCase {
 			'two' => 'banana'
 		);
 		$request = new CakeRequest('some/path');
-		$this->assertEqual($request->query, $_GET + array('url' => 'some/path'));
+		$this->assertEqual($request->query, $_GET);
 		
 		$_GET = array(
 			'one' => 'param',
 			'two' => 'banana',
-			'url' => 'some/path'
 		);
 		$request = new CakeRequest('some/path');
 		$this->assertEqual($request->query, $_GET);
@@ -90,8 +93,10 @@ class CakeRequestTestCase extends CakeTestCase {
 	function testQueryStringParsingFromInputUrl() {
 		$_GET = array();
 		$request = new CakeRequest('some/path?one=something&two=else');
-		$expected = array('one' => 'something', 'two' => 'else', 'url' => 'some/path?one=something&two=else');
+		$expected = array('one' => 'something', 'two' => 'else');
 		$this->assertEqual($request->query, $expected);
+		$this->assertEquals('some/path?one=something&two=else', $request->url);
+		
 	}
 
 /**
@@ -790,9 +795,8 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.baseUrl', false);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
-		$_GET['url'] = 'posts/view/1';
+		$_SERVER['SCRIPT_NAME'] = '/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = new CakeRequest();
 		$this->assertEqual($request->base, '/1.2.x.x');
@@ -801,9 +805,8 @@ class CakeRequestTestCase extends CakeTestCase {
 
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/index.php';
-		$_GET['url'] = 'posts/add';
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$_SERVER['PATH_INFO'] = '/posts/add';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '');
@@ -811,8 +814,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEqual($request->url, 'posts/add');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/test/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEqual('', $request->base);
@@ -820,18 +822,16 @@ class CakeRequestTestCase extends CakeTestCase {
 
 
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
-		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/some/apps/where/app/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/app/webroot/index.php';
 		$request = new CakeRequest();
 
-		$this->assertEqual($request->base, '/some/apps/where');
-		$this->assertEqual($request->webroot, '/some/apps/where/');
+		$this->assertEqual($request->base, '');
+		$this->assertEqual($request->webroot, '/');
 
 		Configure::write('App.dir', 'auth');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/demos/auth/webroot/index.php';
 
 		$request = new CakeRequest();
 
@@ -841,8 +841,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.dir', 'code');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
-		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/clients/PewterReport/code/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '/clients/PewterReport/code');
@@ -856,8 +855,7 @@ class CakeRequestTestCase extends CakeTestCase {
  */
 	public function testBaseUrlwithModRewriteAlias() {
 		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
-		$_SERVER['SCRIPT_FILENAME'] = '/home/aplusnur/cake2/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/control/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/control/index.php';
 
 		Configure::write('App.base', '/control');
 
@@ -871,8 +869,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.webroot', 'newaffiliate');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
-		$_SERVER['SCRIPT_FILENAME'] = '/var/www/abtravaff/html/newaffiliate/index.php';
-		$_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/newaffiliate/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '/newaffiliate');
@@ -926,12 +923,6 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEqual($request->base, '/app/index.php');
 		$this->assertEqual($request->webroot, '/app/webroot/');
 
-		Configure::write('App.baseUrl', '/index.php');
-		$request = new CakeRequest();
-
-		$this->assertEqual($request->base, '/index.php');
-		$this->assertEqual($request->webroot, '/');
-
 		Configure::write('App.baseUrl', '/CakeBB/app/webroot/index.php');
 		$request = new CakeRequest();
 		$this->assertEqual($request->base, '/CakeBB/app/webroot/index.php');
@@ -959,114 +950,104 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
- * testEnvironmentDetection method
+ * test baseUrl with no rewrite and using the top level index.php.
  *
  * @return void
  */
-	public function testEnvironmentDetection() {
-		$dispatcher = new Dispatcher();
+	function testBaseUrlNoRewriteTopLevelIndex() {
+		Configure::write('App.baseUrl', '/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
 
-		$environments = array(
-			'IIS' => array(
-				'No rewrite base path' => array(
+		$request = new CakeRequest();
+		$this->assertEqual('/index.php', $request->base);
+		$this->assertEqual('/app/webroot/', $request->webroot);
+	}
+
+/**
+ * test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
+ *
+ * @return void
+ */
+	function testBaseUrlNoRewriteWebrootIndex() {
+		Configure::write('App.baseUrl', '/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/app/webroot';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/app/webroot/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEqual('/index.php', $request->base);
+		$this->assertEqual('/', $request->webroot);
+	}
+
+/**
+ * generator for environment configurations
+ *
+ * @return void
+ */
+	public static function environmentGenerator() {
+		return array(
+			array(
+				'IIS - No rewrite base path',
+				 array(
 					'App' => array(
 						'base' => false, 
-						'baseUrl' => '/index.php?',
-						'server' => 'IIS'
+						'baseUrl' => '/index.php',
+						'dir' => 'app',
+						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
-						'HTTPS' => 'off',
 						'SCRIPT_NAME' => '/index.php',
 						'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
 						'QUERY_STRING' => '',
-						'REMOTE_ADDR' => '127.0.0.1',
-						'REMOTE_HOST' => '127.0.0.1',
-						'REQUEST_METHOD' => 'GET',
-						'SERVER_NAME' => 'localhost',
-						'SERVER_PORT' => '80',
-						'SERVER_PROTOCOL' => 'HTTP/1.1', 
-						'SERVER_SOFTWARE' => 'Microsoft-IIS/5.1', 
-						'APPL_PHYSICAL_PATH' => 'C:\\Inetpub\\wwwroot\\', 
-						'REQUEST_URI' => '/index.php', 
-						'URL' => '/index.php', 
-						'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'ORIG_PATH_INFO' => '/index.php', 
-						'PATH_INFO' => '', 
-						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 
-						'PHP_SELF' => '/index.php', 
-						'HTTP_ACCEPT' => '*/*', 
-						'HTTP_ACCEPT_LANGUAGE' => 'en-us', 
-						'HTTP_CONNECTION' => 'Keep-Alive', 
-						'HTTP_HOST' => 'localhost', 
-						'HTTP_USER_AGENT' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)', 
-						'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 
-						'argv' => array(), 
-						'argc' => 0
+						'REQUEST_URI' => '/index.php',
+						'URL' => '/index.php',
+						'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php',
+						'ORIG_PATH_INFO' => '/index.php',
+						'PATH_INFO' => '',
+						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php',
+						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
+						'PHP_SELF' => '/index.php',
 					),
-					'reload' => true,
-					'base' => '/index.php?',
-					'webroot' => '/',
+				),
+				array(
+					'base' => '/index.php',
+					'webroot' => '/app/webroot/',
 					'url' => ''
 				),
-				'No rewrite with path' => array(
+			),
+			array(
+				'IIS - No rewrite with path, no PHP_SELF',
+				array(
+					'App' => array(
+						'base' => false, 
+						'baseUrl' => '/index.php?',
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
 					'SERVER' => array(
 						'QUERY_STRING' => '/posts/add',
 						'REQUEST_URI' => '/index.php?/posts/add',
+						'PHP_SELF' => '',
 						'URL' => '/index.php?/posts/add',
 						'argv' => array('/posts/add'),
 						'argc' => 1
 					),
-					'reload' => false,
+				),
+				array(
 					'url' => 'posts/add',
 					'base' => '/index.php?',
-					'webroot' => '/'
-				),
-				'No rewrite sub dir 1' => array(
-					'GET' => array(),
-					'SERVER' => array(
-						'QUERY_STRING' => '',  
-						'REQUEST_URI' => '/index.php', 
-						'URL' => '/index.php', 
-						'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'ORIG_PATH_INFO' => '/index.php', 
-						'PATH_INFO' => '', 
-						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 
-						'PHP_SELF' => '/index.php', 
-						'argv' => array(), 
-						'argc' => 0
-					),
-					'reload' => false,
-					'url' => '',
-					'base' => '/index.php?',
-					'webroot' => '/'
-				),
-				'No rewrite sub dir 1 with path' => array(
-					'GET' => array('/posts/add' => ''),
-					'SERVER' => array(
-						'QUERY_STRING' => '/posts/add', 
-						'REQUEST_URI' => '/index.php?/posts/add', 
-						'URL' => '/index.php?/posts/add', 
-						'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 
-						'argv' => array('/posts/add'), 
-						'argc' => 1
-					),
-					'reload' => false,
-					'url' => 'posts/add',
-					'base' => '/index.php?',
-					'webroot' => '/'
-				),
-				'No rewrite sub dir 2' => array(
+					'webroot' => '/app/webroot/'
+				)
+			),
+			array(
+				'IIS - No rewrite sub dir 2',
+				array(
 					'App' => array(
 						'base' => false, 
-						'baseUrl' => '/site/index.php?', 
+						'baseUrl' => '/site/index.php', 
 						'dir' => 'app', 
 						'webroot' => 'webroot', 
-						'server' => 'IIS'
 					),
-					'GET' => array(),
-					'POST' => array(),
 					'SERVER' => array(
 						'SCRIPT_NAME' => '/site/index.php', 
 						'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 
@@ -1079,33 +1060,45 @@ class CakeRequestTestCase extends CakeTestCase {
 						'argv' => array(), 
 						'argc' => 0
 					),
-					'reload' => false,
+				),
+				array(
 					'url' => '',
-					'base' => '/site/index.php?',
+					'base' => '/site/index.php',
 					'webroot' => '/site/app/webroot/'
 				),
-				'No rewrite sub dir 2 with path' => array(
+			),
+			array(
+				'IIS - No rewrite sub dir 2 with path',
+				array(
+					'App' => array(
+						'base' => false, 
+						'baseUrl' => '/site/index.php',
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
 					'GET' => array('/posts/add' => ''),
 					'SERVER' => array(
 						'SCRIPT_NAME' => '/site/index.php', 
 						'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 
 						'QUERY_STRING' => '/posts/add', 
-						'REQUEST_URI' => '/site/index.php?/posts/add', 
-						'URL' => '/site/index.php?/posts/add', 
+						'REQUEST_URI' => '/site/index.php/posts/add', 
+						'URL' => '/site/index.php/posts/add', 
 						'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php', 
 						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 
-						'PHP_SELF' => '/site/index.php', 
+						'PHP_SELF' => '/site/index.php/posts/add', 
 						'argv' => array('/posts/add'), 
 						'argc' => 1
 					),
-					'reload' => false,
+				),
+				array(
 					'url' => 'posts/add',
-					'base' => '/site/index.php?',
+					'base' => '/site/index.php',
 					'webroot' => '/site/app/webroot/'
 				)
 			),
-			'Apache' => array(
-				'No rewrite base path' => array(
+			array(
+				'Apache - No rewrite, document root set to webroot, requesting path',
+				array(
 					'App' => array(
 						'base' => false, 
 						'baseUrl' => '/index.php', 
@@ -1113,164 +1106,216 @@ class CakeRequestTestCase extends CakeTestCase {
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
-						'SERVER_NAME' => 'localhost', 
-						'SERVER_ADDR' => '::1', 
-						'SERVER_PORT' => '80', 
-						'REMOTE_ADDR' => '::1', 
-						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
-						'REQUEST_METHOD' => 'GET', 
 						'QUERY_STRING' => '', 
-						'REQUEST_URI' => '/', 
-						'SCRIPT_NAME' => '/index.php', 
-						'PHP_SELF' => '/index.php', 
-						'argv' => array(), 
-						'argc' => 0
+						'REQUEST_URI' => '/index.php/posts/index', 
+						'SCRIPT_NAME' => '/index.php',
+						'PATH_INFO' => '/posts/index',
+						'PHP_SELF' => '/index.php/posts/index',
 					),
-					'reload' => true,
-					'url' => '',
+				),
+				array(
+					'url' => 'posts/index',
 					'base' => '/index.php',
 					'webroot' => '/'
 				),
-				'No rewrite with path' => array(
-					'SERVER' => array(
-						'UNIQUE_ID' => 'VardGqn@17IAAAu7LY8AAAAK', 
-						'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) AppleWebKit/523.10.5 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6', 
-						'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', 
-						'HTTP_ACCEPT_LANGUAGE' => 'en-us', 
-						'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 
-						'HTTP_CONNECTION' => 'keep-alive', 
-						'HTTP_HOST' => 'localhost', 
-						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 
-						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php', 
-						'QUERY_STRING' => '', 
-						'REQUEST_URI' => '/index.php/posts/add', 
-						'SCRIPT_NAME' => '/index.php', 
-						'PATH_INFO' => '/posts/add', 
-						'PHP_SELF' => '/index.php/posts/add', 
-						'argv' => array(), 
-						'argc' => 0
-					),
-					'reload' => false,
-					'url' => 'posts/add',
-					'base' => '/index.php',
-					'webroot' => '/'
-				),
-				'GET Request at base domain' => array(
+			),
+			array(
+				'Apache - No rewrite, document root set to webroot, requesting root',
+				array(
 					'App' => array(
 						'base' => false, 
-						'baseUrl' => null, 
+						'baseUrl' => '/index.php', 
 						'dir' => 'app', 
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
-						'UNIQUE_ID' => '2A-v8sCoAQ8AAAc-2xUAAAAB', 
-						'HTTP_ACCEPT_LANGUAGE' => 'en-us', 
-						'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 
-						'HTTP_COOKIE' => 'CAKEPHP=jcbv51apn84kd9ucv5aj2ln3t3', 
-						'HTTP_CONNECTION' => 'keep-alive', 
-						'HTTP_HOST' => 'cake.1.2', 
-						'SERVER_NAME' => 'cake.1.2', 
-						'SERVER_ADDR' => '127.0.0.1', 
-						'SERVER_PORT' => '80', 
-						'REMOTE_ADDR' => '127.0.0.1', 
-						'DOCUMENT_ROOT' => '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x/app/webroot', 
-						'SERVER_ADMIN' => 'you@example.com', 
-						'SCRIPT_FILENAME' => '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x/app/webroot/index.php', 
-						'REMOTE_PORT' => '53550', 
-						'GATEWAY_INTERFACE' => 'CGI/1.1', 
-						'SERVER_PROTOCOL' => 'HTTP/1.1', 
-						'REQUEST_METHOD' => 'GET', 
-						'QUERY_STRING' => 'a=b', 
-						'REQUEST_URI' => '/?a=b', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
+						'QUERY_STRING' => '', 
+						'REQUEST_URI' => '/index.php', 
 						'SCRIPT_NAME' => '/index.php', 
-						'PHP_SELF' => '/index.php'
+						'PATH_INFO' => '', 
+						'PHP_SELF' => '/index.php', 
 					),
-					'GET' => array('a' => 'b'),
-					'POST' => array(),
-					'reload' => true,
+				),
+				array(
+					'url' => '',
+					'base' => '/index.php',
+					'webroot' => '/'
+				),
+			),
+			array(
+				'Apache - No rewrite, document root set above top level cake dir, requesting path',
+				array(
+					'App' => array(
+						'base' => false, 
+						'baseUrl' => '/site/index.php', 
+						'dir' => 'app', 
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'REQUEST_URI' => '/site/index.php/posts/index', 
+						'SCRIPT_NAME' => '/site/index.php',
+						'PATH_INFO' => '/posts/index',
+						'PHP_SELF' => '/site/index.php/posts/index',
+					),
+				),
+				array(
+					'url' => 'posts/index',
+					'base' => '/site/index.php',
+					'webroot' => '/site/app/webroot/',
+				),
+			),
+			array(
+				'Apache - No rewrite, document root set above top level cake dir, reques root, no PATH_INFO',
+				array(
+					'App' => array(
+						'base' => false, 
+						'baseUrl' => '/site/index.php', 
+						'dir' => 'app', 
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'REQUEST_URI' => '/site/index.php/',
+						'SCRIPT_NAME' => '/site/index.php',
+						'PHP_SELF' => '/site/index.php/',
+					),
+				),
+				array(
+					'url' => '',
+					'base' => '/site/index.php',
+					'webroot' => '/site/app/webroot/',
+				),
+			),
+			array(
+				'Apache - No rewrite, document root set above top level cake dir, request path, with GET',
+				array(
+					'App' => array(
+						'base' => false, 
+						'baseUrl' => '/site/index.php', 
+						'dir' => 'app', 
+						'webroot' => 'webroot'
+					),
+					'GET' => array('a' => 'b', 'c' => 'd'),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'REQUEST_URI' => '/site/index.php/posts/index?a=b&c=d', 
+						'SCRIPT_NAME' => '/site/index.php',
+						'PATH_INFO' => '/posts/index',
+						'PHP_SELF' => '/site/index.php/posts/index',
+						'QUERY_STRING' => 'a=b&c=d'
+					),
+				),
+				array(
+					'urlParams' => array('a' => 'b', 'c' => 'd'),
+					'url' => 'posts/index',
+					'base' => '/site/index.php',
+					'webroot' => '/site/app/webroot/',
+				),
+			),
+			array(
+				'Apache - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'REQUEST_URI' => '/site/',
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'PHP_SELF' => '/site/app/webroot/index.php',
+					),
+				),
+				array(
+					'url' => '',
+					'base' => '/site',
+					'webroot' => '/site/',
+				),
+			),
+			array(
+				'Apache - w/rewrite, document root above top level cake dir, request root, no PATH_INFO/REQUEST_URI',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php', 
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'PHP_SELF' => '/site/app/webroot/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => null,
+					),
+				),
+				array(
+					'url' => '',
+					'base' => '/site',
+					'webroot' => '/site/',
+				),
+			),
+			array(
+				'Apache - w/rewrite, document root set to webroot, request root, no PATH_INFO/REQUEST_URI',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
+						'SCRIPT_NAME' => '/index.php',
+						'PHP_SELF' => '/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => null,
+					),
+				),
+				array(
 					'url' => '',
 					'base' => '',
 					'webroot' => '/',
-					'urlParams' => array('a' => 'b'),
-					'environment' => array('CGI_MODE' => false)
 				),
-				'New CGI no mod_rewrite' => array(
-					'App' => array(
-						'base' => false, 
-						'baseUrl' => '/limesurvey20/index.php', 
-						'dir' => 'app', 
-						'webroot' => 'webroot'
-					),
-					'SERVER' => array(
-						'DOCUMENT_ROOT' => '/home/.sites/110/site313/web', 
-						'PATH_INFO' => '/installations', 
-						'PATH_TRANSLATED' => '/home/.sites/110/site313/web/limesurvey20/index.php', 
-						'PHPRC' => '/home/.sites/110/site313', 
-						'QUERY_STRING' => '', 
-						'REQUEST_METHOD' => 'GET', 
-						'REQUEST_URI' => '/limesurvey20/index.php/installations', 
-						'SCRIPT_FILENAME' => '/home/.sites/110/site313/web/limesurvey20/index.php', 
-						'SCRIPT_NAME' => '/limesurvey20/index.php', 
-						'SCRIPT_URI' => 'http://www.gisdat-umfragen.at/limesurvey20/index.php/installations', 
-						'PHP_SELF' => '/limesurvey20/index.php/installations', 
-						'CGI_MODE' => true
-					),
-					'GET' => array(),
-					'POST' => array(),
-					'reload' => true,
-					'webroot' => '/limesurvey20/app/webroot/',
-					'base' => '/limesurvey20/index.php',
-					'url' => 'installations',
-					'urlParams' => array(),
-					'environment' => array('CGI_MODE' => true)
-				)
-			)
+			),
 		);
-		$backup = $this->__backupEnvironment();
-
-		foreach ($environments as $name => $env) {
-			foreach ($env as $descrip => $settings) {
-				if ($settings['reload']) {
-					$this->__reloadEnvironment();
-				}
-				$this->__loadEnvironment($settings);
-		
-				$request = new CakeRequest();
-				$this->assertEqual($request->url, $settings['url'], "%s url on env: {$name} on setting {$descrip}");
-				$this->assertEqual($request->base, $settings['base'], "%s base on env: {$name} on setting {$descrip}");
-				$this->assertEqual($request->webroot, $settings['webroot'], "%s webroot on env: {$name} on setting {$descrip}");
-				
-				
-				if (isset($settings['urlParams'])) {
-					$this->assertEqual($_GET, $settings['urlParams'], "%s on environment: {$name}, on setting: {$descrip}");
-				}
-				
-
-				if (isset($settings['environment'])) {
-					foreach ($settings['environment'] as $key => $val) {
-						$this->assertEqual(env($key), $val, "%s on key {$key} on environment: {$name}, on setting: {$descrip}");
-					}
-				}
-			}
-		}
-		$this->__loadEnvironment(array_merge(array('reload' => true), $backup));
 	}
 
 /**
- * test that XSS can't be performed against the base path.
+ * testEnvironmentDetection method
  *
+ * @dataProvider environmentGenerator
  * @return void
  */
-	function testBasePathInjection() {
-		$self = $_SERVER['PHP_SELF'];
-		$_SERVER['PHP_SELF'] = urldecode(
-			"/index.php/%22%3E%3Ch1%20onclick=%22alert('xss');%22%3Eheya%3C/h1%3E"
-		);
+	public function testEnvironmentDetection($name, $env, $expected) {
+		$this->__loadEnvironment($env);
 
 		$request = new CakeRequest();
-		$expected = '/index.php/h1 onclick=alert(xss);heya';
-		$this->assertEqual($request->base, $expected);
+		$this->assertEquals($expected['url'], $request->url, "url error");
+		$this->assertEquals($expected['base'], $request->base, "base error");
+		$this->assertEquals($expected['webroot'], $request->webroot, "webroot error");
+		if (isset($expected['urlParams'])) {
+			$this->assertEqual($_GET, $expected['urlParams'], "GET param mismatch");
+		}
 	}
 
 /**
@@ -1357,40 +1402,6 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
- * backupEnvironment method
- *
- * @return void
- * @access private
- */
-	function __backupEnvironment() {
-		return array(
-			'App' => Configure::read('App'),
-			'GET' => $_GET,
-			'POST' => $_POST,
-			'SERVER' => $_SERVER
-		);
-	}
-
-/**
- * reloadEnvironment method
- *
- * @return void
- * @access private
- */
-	function __reloadEnvironment() {
-		foreach ($_GET as $key => $val) {
-			unset($_GET[$key]);
-		}
-		foreach ($_POST as $key => $val) {
-			unset($_POST[$key]);
-		}
-		foreach ($_SERVER as $key => $val) {
-			unset($_SERVER[$key]);
-		}
-		Configure::write('App', array());
-	}
-
-/**
  * loadEnvironment method
  *
  * @param mixed $env
@@ -1398,10 +1409,6 @@ class CakeRequestTestCase extends CakeTestCase {
  * @access private
  */
 	function __loadEnvironment($env) {
-		if ($env['reload']) {
-			$this->__reloadEnvironment();
-		}
-
 		if (isset($env['App'])) {
 			Configure::write('App', $env['App']);
 		}

@@ -318,7 +318,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertPattern('/\$this\-\>viewVars/', $contents);
 		$this->assertPattern('/extract\(\$this\-\>viewVars, EXTR_SKIP\);/', $contents);
 		$this->assertPattern('/php echo \$variable/', $contents);
-		$this->assertPattern('/variableValue/', $contents);
 
 		@unlink($filename);
 	}

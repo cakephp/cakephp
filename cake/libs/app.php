@@ -272,11 +272,10 @@ class App {
 				$path = array_flip(array_flip(array_merge(
 					(array)$paths[$type], self::${$type}, $merge
 				)));
-				self::${$type} = array_values($path);
 			} else {
 				$path = array_flip(array_flip(array_merge(self::${$type}, $merge)));
-				self::${$type} = array_values($path);
 			}
+			self::${$type} = array_values($path);
 		}
 	}
 
@@ -605,7 +604,7 @@ class App {
 		if (empty(self::$search)) {
 			return null;
 		} elseif (is_string(self::$search)) {
-			$this->search = array(self::$search);
+			self::$search = array(self::$search);
 		}
 
 		if (empty(self::$__paths)) {

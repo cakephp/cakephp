@@ -27,6 +27,7 @@ require CORE_PATH . 'cake' . DS . 'basics.php';
 require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 require LIBS . 'error' . DS . 'exceptions.php';
 require LIBS . 'object.php';
+require LIBS . 'object_collection.php';
 require LIBS . 'inflector.php';
 require LIBS . 'app.php';
 require LIBS . 'configure.php';

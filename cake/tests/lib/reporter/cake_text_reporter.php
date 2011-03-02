@@ -87,10 +87,9 @@ class CakeTextReporter extends CakeBaseReporter {
 			', Failures: ' . $result->failureCount() .
 			', Exceptions: ' . $result->errorCount() . "\n";
 
-		echo 'Time taken by tests (in seconds): ' . $result->time() . "\n";
-		if (function_exists('memory_get_peak_usage')) {
-			echo 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
-		}
+		echo 'Time: ' . $result->time() . " seconds\n";
+        echo 'Peak memory: ' . number_format(memory_get_peak_usage()) . " bytes\n";
+
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
 			$coverage = $result->getCodeCoverageInformation();
 			echo $this->paintCoverage($coverage);
@@ -129,8 +128,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintSkip($message) {
-		parent::paintSkip($message);
-		echo "Skip: $message\n";
+		printf("Skip: %s\n", $message->getMessage());
 	}
 
 /**

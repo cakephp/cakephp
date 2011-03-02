@@ -628,7 +628,10 @@ class Shell extends Object {
  * @return boolean Success
  */
 	protected function _checkUnitTest() {
-		if (App::import('vendor', 'simpletest' . DS . 'simpletest')) {
+		if (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit' . DS . 'Autoload.php'))) {
+			return true;
+		}
+		if (@include 'PHPUnit' . DS . 'Autoload.php') {
 			return true;
 		}
 		$prompt = 'PHPUnit is not installed. Do you want to bake unit test files anyway?';

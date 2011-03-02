@@ -441,10 +441,10 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains("App::import('Model', 'TestTaskArticle')", $result);
 		$this->assertContains('class TestTaskArticleTestCase extends CakeTestCase', $result);
 
-		$this->assertContains('function startTest()', $result);
+		$this->assertContains('function setUp()', $result);
 		$this->assertContains("\$this->TestTaskArticle = ClassRegistry::init('TestTaskArticle')", $result);
 
-		$this->assertContains('function endTest()', $result);
+		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->TestTaskArticle)', $result);
 
 		$this->assertContains('function testDoSomething()', $result);
@@ -476,11 +476,11 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains('public $autoRender = false', $result);
 		$this->assertContains('function redirect($url, $status = null, $exit = true)', $result);
 
-		$this->assertContains('function startTest()', $result);
+		$this->assertContains('function setUp()', $result);
 		$this->assertContains("\$this->TestTaskComments = new TestTestTaskCommentsController()", $result);
 		$this->assertContains("\$this->TestTaskComments->constructClasses()", $result);
 
-		$this->assertContains('function endTest()', $result);
+		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->TestTaskComments)', $result);
 
 		$this->assertContains("'app.test_task_article'", $result);

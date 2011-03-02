@@ -227,6 +227,7 @@ class DebuggerTest extends CakeTestCase {
 		View::$helpers = array
 		View::$viewPath = ""
 		View::$viewVars = array
+		View::$view = NULL
 		View::$layout = "default"
 		View::$layoutPath = NULL
 		View::$autoLayout = true

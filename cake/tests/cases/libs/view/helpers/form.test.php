@@ -661,8 +661,6 @@ class FormHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		Router::reload();
-
 
 		$this->Controller = new ContactTestController();
 		$this->View = new View($this->Controller);
@@ -704,7 +702,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		ClassRegistry::flush();
+		parent::tearDown();
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
@@ -1074,6 +1072,21 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test securing inputs with custom name attributes.
+ *
+ * @return void
+ */
+	function testFormSecureWithCustomNameAttribute() {
+		$this->Form->request->params['_Token']['key'] = 'testKey';
+
+		$this->Form->text('UserForm.published', array('name' => 'data[User][custom]'));
+		$this->assertEqual('User.custom', $this->Form->fields[0]);
+
+		$this->Form->text('UserForm.published', array('name' => 'data[User][custom][another][value]'));
+		$this->assertEqual('User.custom.another.value', $this->Form->fields[1]);
 	}
 
 /**
@@ -4470,6 +4483,16 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that bogus non-date time data doesn't cause errors.
+ *
+ * @return void
+ */
+	function testDateTimeWithBogusData() {
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => 'CURRENT_TIMESTAMP'));
+		$this->assertNoPattern('/selected="selected">\d/', $result);
+	}
+
+/**
  * testFormDateTimeMulti method
  *
  * test multiple datetime element generation
@@ -5254,7 +5277,7 @@ class FormHelperTest extends CakeTestCase {
 		));
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="data[extra]"  value="value"/>') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="data[extra]" value="value"/>') !== false);
 	}
 
 /**
@@ -5294,7 +5317,7 @@ class FormHelperTest extends CakeTestCase {
 		));
 
 		$result = $this->Form->postLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="data[id]"  value="1"/>') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="data[id]" value="1"/>') !== false);
 	}
 
 /**
@@ -5662,6 +5685,28 @@ class FormHelperTest extends CakeTestCase {
 			'form' => array(
 				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/contacts/delete/10/User:42',
 				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test create() with a custom route
+ *
+ * @return void
+ */
+	function testCreateCustomRoute() {
+		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+		$encoding = strtolower(Configure::read('App.encoding'));
+
+		$result = $this->Form->create('User', array('action' => 'login'));
+		$expected = array(
+			'form' => array(
+				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/login',
+				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),

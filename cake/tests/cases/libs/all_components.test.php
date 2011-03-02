@@ -37,6 +37,7 @@ class AllComponentsTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component_collection.test.php');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components' . DS . 'auth');
 		return $suite;
 	}
 }

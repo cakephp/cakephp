@@ -363,8 +363,8 @@ class AclNodeTest extends CakeTestCase {
  * @return void
  */
 	function testNodeAliasParenting() {
-		$Aco = new DbAcoTest();
-		$db = ConnectionManager::getDataSource('test');
+		$Aco = ClassRegistry::init('DbAcoTest');
+		$db = $Aco->getDataSource();
 		$db->truncate($Aco);
 
 		$Aco->create(array('model' => null, 'foreign_key' => null, 'parent_id' => null, 'alias' => 'Application'));

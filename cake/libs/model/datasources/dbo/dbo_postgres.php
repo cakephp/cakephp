@@ -240,6 +240,9 @@ class DboPostgres extends DboSource {
 						$this->_sequenceMap[$table][$c->default] = $seq[1];
 					}
 				}
+				if ($fields[$c->name]['type'] == 'boolean' && !empty($fields[$c->name]['default'])) {
+					$fields[$c->name]['default'] = constant($fields[$c->name]['default']);
+				}
 			}
 			$this->__cacheDescription($table, $fields);
 		}
