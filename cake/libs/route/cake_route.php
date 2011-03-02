@@ -193,12 +193,13 @@ class CakeRoute {
 					} else {
 						$header = 'http_' . $header[1];
 					}
+					$header = strtoupper($header);
 
 					$val = (array)$val;
 					$h = false;
 
 					foreach ($val as $v) {
-						if (env(strtoupper($header)) === $v) {
+						if (env($header) === $v) {
 							$h = true;
 						}
 					}
