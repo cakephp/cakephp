@@ -499,36 +499,7 @@ class Router {
 
 			if (($r = $route->parse($url)) !== false) {
 				self::$_currentRoute[] =& $route;
-
-				$params = $route->options;
-				$argOptions = array();
-
-				if (array_key_exists('named', $params)) {
-					$argOptions['named'] = $params['named'];
-					unset($params['named']);
-				}
-				if (array_key_exists('greedy', $params)) {
-					$argOptions['greedy'] = $params['greedy'];
-					unset($params['greedy']);
-				}
 				$out = $r;
-
-				if (isset($out['_args_'])) {
-					$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
-					$parsedArgs = self::getArgs($out['_args_'], $argOptions);
-					$out['pass'] = array_merge($out['pass'], $parsedArgs['pass']);
-					$out['named'] = $parsedArgs['named'];
-					unset($out['_args_']);
-				}
-
-				if (isset($params['pass'])) {
-					$j = count($params['pass']);
-					while($j--) {
-						if (isset($out[$params['pass'][$j]])) {
-							array_unshift($out['pass'], $out[$params['pass'][$j]]);
-						}
-					}
-				}
 				break;
 			}
 		}
@@ -998,61 +969,6 @@ class Router {
 	}
 
 /**
- * Takes an array of URL parameters and separates the ones that can be used as named arguments
- *
- * @param array $params Associative array of URL parameters.
- * @param string $controller Name of controller being routed.  Used in scoping.
- * @param string $action Name of action being routed.  Used in scoping.
- * @return array
- */
-	public static function getNamedElements($params, $controller = null, $action = null) {
-		$named = array();
-
-		foreach ($params as $param => $val) {
-			if (isset(self::$_namedConfig['rules'][$param])) {
-				$rule = self::$_namedConfig['rules'][$param];
-				if (Router::matchNamed($param, $val, $rule, compact('controller', 'action'))) {
-					$named[substr($param, 1)] = $val;
-					unset($params[$param]);
-				}
-			}
-		}
-		return array($named, $params);
-	}
-
-/**
- * Return true if a given named $param's $val matches a given $rule depending on $context. Currently implemented
- * rule types are controller, action and match that can be combined with each other.
- *
- * @param string $param The name of the named parameter
- * @param string $val The value of the named parameter
- * @param array $rule The rule(s) to apply, can also be a match string
- * @param string $context An array with additional context information (controller / action)
- * @return boolean
- */
-	public static function matchNamed($param, $val, $rule, $context = array()) {
-		if ($rule === true || $rule === false) {
-			return $rule;
-		}
-		if (is_string($rule)) {
-			$rule = array('match' => $rule);
-		}
-		if (!is_array($rule)) {
-			return false;
-		}
-
-		$controllerMatches = !isset($rule['controller'], $context['controller']) || in_array($context['controller'], (array)$rule['controller']);
-		if (!$controllerMatches) {
-			return false;
-		}
-		$actionMatches = !isset($rule['action'], $context['action']) || in_array($context['action'], (array)$rule['action']);
-		if (!$actionMatches) {
-			return false;
-		}
-		return (!isset($rule['match']) || preg_match('/' . $rule['match'] . '/', $val));
-	}
-
-/**
  * Generates a well-formed querystring from $q
  *
  * @param mixed $q Query string Either a string of already compiled query string arguments or
@@ -1218,70 +1134,6 @@ class Router {
 		return self::$_validExtensions;
 	}
 
-/**
- * Takes a passed params and converts it to args
- *
- * @param array $params
- * @return array Array containing passed and named parameters
- */
-	public static function getArgs($args, $options = array()) {
-		$pass = $named = array();
-		$args = explode('/', $args);
-
-		$greedy = isset($options['greedy']) ? $options['greedy'] : self::$_namedConfig['greedy'];
-		$context = array();
-		if (isset($options['context'])) {
-			$context = $options['context'];
-		}
-		$rules = self::$_namedConfig['rules'];
-		if (isset($options['named'])) {
-			$greedy = isset($options['greedy']) && $options['greedy'] === true;
-			foreach ((array)$options['named'] as $key => $val) {
-				if (is_numeric($key)) {
-					$rules[$val] = true;
-					continue;
-				}
-				$rules[$key] = $val;
-			}
-		}
-
-		foreach ($args as $param) {
-			if (empty($param) && $param !== '0' && $param !== 0) {
-				continue;
-			}
-
-			$separatorIsPresent = strpos($param, self::$_namedConfig['separator']) !== false;
-			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
-				list($key, $val) = explode(self::$_namedConfig['separator'], $param, 2);
-				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !self::matchNamed($key, $val, $rules[$key], $context));
-				if ($passIt) {
-					$pass[] = $param;
-				} else {
-					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
-						$matches = array_reverse($matches);
-						$parts = explode('[', $key);
-						$key = array_shift($parts);
-						$arr = $val;
-						foreach ($matches as $match) {
-							if (empty($match[1])) {
-								$arr = array($arr);
-							} else {
-								$arr = array(
-									$match[1] => $arr
-								);
-							}
-						}
-						$val = $arr;
-					}
-					$named = array_merge_recursive($named, array($key => $val));
-				}
-			} else {
-				$pass[] = $param;
-			}
-		}
-		return compact('pass', 'named');
-	}
 }
 
 //Save the initial state
