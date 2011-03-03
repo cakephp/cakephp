@@ -363,10 +363,6 @@ class FormHelper extends AppHelper {
 					unset($options['label']);
 				}
 				$submitOptions = $options;
-
-				if (!$submit) {
-					$submit = __('Submit', true);
-				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
@@ -1309,7 +1305,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1431/submit
  */
 	function submit($caption = null, $options = array()) {
-		if (!$caption) {
+		if (!is_string($caption) && empty($caption)) {
 			$caption = __('Submit', true);
 		}
 		$out = null;
