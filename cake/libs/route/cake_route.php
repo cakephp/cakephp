@@ -274,7 +274,7 @@ class CakeRoute {
 			if ((!isset($options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($namedConfig['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$this->_matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
 					$pass[] = $param;
 				} else {
@@ -301,6 +301,38 @@ class CakeRoute {
 			}
 		}
 		return array($pass, $named);
+	}
+
+/**
+ * Return true if a given named $param's $val matches a given $rule depending on $context. Currently implemented
+ * rule types are controller, action and match that can be combined with each other.
+ *
+ * @param string $param The name of the named parameter
+ * @param string $val The value of the named parameter
+ * @param array $rule The rule(s) to apply, can also be a match string
+ * @param string $context An array with additional context information (controller / action)
+ * @return boolean
+ */
+	protected function _matchNamed($param, $val, $rule, $context) {
+		if ($rule === true || $rule === false) {
+			return $rule;
+		}
+		if (is_string($rule)) {
+			$rule = array('match' => $rule);
+		}
+		if (!is_array($rule)) {
+			return false;
+		}
+
+		$controllerMatches = !isset($rule['controller'], $context['controller']) || in_array($context['controller'], (array)$rule['controller']);
+		if (!$controllerMatches) {
+			return false;
+		}
+		$actionMatches = !isset($rule['action'], $context['action']) || in_array($context['action'], (array)$rule['action']);
+		if (!$actionMatches) {
+			return false;
+		}
+		return (!isset($rule['match']) || preg_match('/' . $rule['match'] . '/', $val));
 	}
 
 /**

@@ -514,7 +514,7 @@ class CakeRouteTestCase extends CakeTestCase {
 			'named' => array(
 				'wibble',
 				'fish' => array('action' => 'index'),
-				'fizz' => array('controller' => 'comments'),
+				'fizz' => array('controller' => array('comments', 'other')),
 				'pattern' => 'val-[\d]+'
 			)
 		));
