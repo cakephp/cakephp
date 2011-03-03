@@ -532,7 +532,8 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the domain name and include $tldLength segments of the tld.
  *
- * @param int $tldLength Number of segments your tld contains
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
 	public function domain($tldLength = 1) {
@@ -544,7 +545,8 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the subdomains for a host.
  *
- * @param int $tldLength Number of segments your tld contains.
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ *   While `example.co.uk` contains 2.
  * @return array of subdomains.
  */
 	public function subdomains($tldLength = 1) {
