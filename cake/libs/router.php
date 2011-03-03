@@ -395,7 +395,7 @@ class Router {
 				self::$_namedConfig['rules'][$key] = $val;
 			}
 		}
-		self::$_namedConfig['greedy'] = $options['greedy'];
+		self::$_namedConfig['greedyNamed'] = $options['greedy'];
 		return self::$_namedConfig;
 	}
 

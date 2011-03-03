@@ -252,10 +252,10 @@ class CakeRoute {
 
 		$context = compact('controller', 'action');
 		$namedConfig = Router::namedConfig();
-		$greedy = isset($this->options['greedy']) ? $this->options['greedy'] : $namedConfig['greedy'];
+		$greedy = isset($this->options['greedyNamed']) ? $this->options['greedyNamed'] : $namedConfig['greedy'];
 		$rules = $namedConfig['rules'];
 		if (isset($this->options['named'])) {
-			$greedy = isset($this->options['greedy']) && $this->options['greedy'] === true;
+			$greedy = isset($this->options['greedyNamed']) && $this->options['greedyNamed'] === true;
 			foreach ((array)$this->options['named'] as $key => $val) {
 				if (is_numeric($key)) {
 					$rules[$val] = true;

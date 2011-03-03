@@ -514,14 +514,15 @@ class CakeRouteTestCase extends CakeTestCase {
 			'named' => array(
 				'wibble',
 				'fish' => array('action' => 'index'),
-				'fizz' => array('controller' => 'comments')
+				'fizz' => array('controller' => 'comments'),
+				'pattern' => 'val-[\d]+'
 			)
 		));
-		$result = $route->parse('/posts/display/wibble:spin/fish:trout/fizz:buzz');
+		$result = $route->parse('/posts/display/wibble:spin/fish:trout/fizz:buzz/unknown:value');
 		$expected = array(
 			'controller' => 'posts',
 			'action' => 'display',
-			'pass' => array('fish:trout', 'fizz:buzz'),
+			'pass' => array('fish:trout', 'fizz:buzz', 'unknown:value'),
 			'named' => array(
 				'wibble' => 'spin'
 			)
@@ -552,6 +553,49 @@ class CakeRouteTestCase extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expected, $result, 'All params should be parsed as conditions were met.');
+
+		$result = $route->parse('/comments/index/pattern:val--');
+		$expected = array(
+			'controller' => 'comments',
+			'action' => 'index',
+			'pass' => array('pattern:val--'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result, 'Named parameter pattern unmet.');
+
+		$result = $route->parse('/comments/index/pattern:val-2');
+		$expected = array(
+			'controller' => 'comments',
+			'action' => 'index',
+			'pass' => array(),
+			'named' => array('pattern' => 'val-2')
+		);
+		$this->assertEquals($expected, $result, 'Named parameter pattern met.');
+	}
+
+/**
+ * test that greedyNamed ignores rules.
+ *
+ * @return void
+ */
+	function testParseGreedyNamed() {
+		$route = new CakeRoute('/:controller/:action/*', array(), array(
+			'named' => array(
+				'fizz' => array('controller' => 'comments'),
+				'pattern' => 'val-[\d]+',
+			),
+			'greedyNamed' => true
+		));
+		$result = $route->parse('/posts/display/wibble:spin/fizz:buzz/pattern:ignored');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'display',
+			'pass' => array('fizz:buzz', 'pattern:ignored'),
+			'named' => array(
+				'wibble' => 'spin',
+			)
+		);
+		$this->assertEquals($expected, $result, 'Greedy named grabs everything, rules are followed');
 	}
 
 /**
