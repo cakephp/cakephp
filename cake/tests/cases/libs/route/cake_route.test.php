@@ -171,12 +171,14 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertPattern($result, '/posts/08/01/2007/title-of-post');
 		$result = $route->parse('/posts/08/01/2007/title-of-post');
 
-		$this->assertEqual(count($result), 8);
+		$this->assertEqual(count($result), 7);
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'view');
 		$this->assertEqual($result['year'], '2007');
 		$this->assertEqual($result['month'], '08');
 		$this->assertEqual($result['day'], '01');
+		$this->assertEquals($result['pass'][0], 'title-of-post');
+		
 
 		$route = new CakeRoute(
 			"/:extra/page/:slug/*",
@@ -473,4 +475,31 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
+/**
+ * test the parseArgs method
+ *
+ * @return void
+ */
+	function testPassedArgumentParsing() {
+		$route = new CakeRoute('/:controller/:action/*');
+		$result = $route->parse('/posts/edit/1/2/0');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'edit',
+			'pass' => array('1', '2', '0'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
+		
+		$result = $route->parse('/posts/edit/a-string/page:1');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'edit',
+			'pass' => array('a-string'),
+			'named' => array(
+				'page' => 1
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
 }

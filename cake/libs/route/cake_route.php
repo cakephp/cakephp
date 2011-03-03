@@ -214,17 +214,91 @@ class CakeRoute {
 				unset($route[$i]);
 			}
 			$route['pass'] = $route['named'] = array();
-			$route += $this->defaults;
 
-			//move numerically indexed elements from the defaults into pass.
-			foreach ($route as $key => $value) {
+			// Assign defaults, set passed args to pass
+			foreach ($this->defaults as $key => $value) {
+				if (isset($route[$key])) {
+					continue;
+				}
 				if (is_integer($key)) {
 					$route['pass'][] = $value;
-					unset($route[$key]);
+					continue;
 				}
+				$route[$key] = $value;
+			}
+			
+			if (isset($route['_args_'])) {
+				list($pass, $named) = $this->parseArgs($route['_args_'], $route['controller'], $route['action']);
+				$route['pass'] = array_merge($route['pass'], $pass);
+				$route['named'] = $named;
+				unset($route['_args_']);
 			}
 			return $route;
 		}
+	}
+
+/**
+ * Parse passed and Named parameters into a list of passed args, and a hash of named parameters.
+ * The local and global configuration for named parameters will be used.
+ *
+ * @param string $args A string with the passed & named params.  eg. /1/page:2
+ * @return array Array of ($pass, $named)
+ */
+	public function parseArgs($args, $controller = null, $action = null) {
+		$pass = $named = array();
+		$args = explode('/', $args);
+
+		$context = compact('controller', 'action');
+		$namedConfig = Router::namedConfig();
+		$greedy = isset($this->options['greedy']) ? $this->options['greedy'] : $namedConfig['greedy'];
+		$rules = $namedConfig['rules'];
+		if (isset($this->options['named'])) {
+			$greedy = isset($this->options['greedy']) && $this->options['greedy'] === true;
+			foreach ((array)$this->options['named'] as $key => $val) {
+				if (is_numeric($key)) {
+					$rules[$val] = true;
+					continue;
+				}
+				$rules[$key] = $val;
+			}
+		}
+
+		foreach ($args as $param) {
+			if (empty($param) && $param !== '0' && $param !== 0) {
+				continue;
+			}
+
+			$separatorIsPresent = strpos($param, $namedConfig['separator']) !== false;
+			if ((!isset($options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
+				list($key, $val) = explode($namedConfig['separator'], $param, 2);
+				$hasRule = isset($rules[$key]);
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
+				if ($passIt) {
+					$pass[] = $param;
+				} else {
+					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
+						$matches = array_reverse($matches);
+						$parts = explode('[', $key);
+						$key = array_shift($parts);
+						$arr = $val;
+						foreach ($matches as $match) {
+							if (empty($match[1])) {
+								$arr = array($arr);
+							} else {
+								$arr = array(
+									$match[1] => $arr
+								);
+							}
+						}
+						$val = $arr;
+					}
+					$named = array_merge_recursive($named, array($key => $val));
+				}
+			} else {
+				$pass[] = $param;
+			}
+		}
+		return array($pass, $named);
 	}
 
 /**
