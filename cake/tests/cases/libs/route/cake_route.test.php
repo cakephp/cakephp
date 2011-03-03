@@ -490,16 +490,73 @@ class CakeRouteTestCase extends CakeTestCase {
 			'named' => array()
 		);
 		$this->assertEquals($expected, $result);
-		
-		$result = $route->parse('/posts/edit/a-string/page:1');
+
+		$result = $route->parse('/posts/edit/a-string/page:1/sort:value');
 		$expected = array(
 			'controller' => 'posts',
 			'action' => 'edit',
 			'pass' => array('a-string'),
 			'named' => array(
-				'page' => 1
+				'page' => 1,
+				'sort' => 'value'
 			)
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that parsing array format named parameters works
+ *
+ * @return void
+ */
+	function testArrayNamedParameters() {
+		$route = new CakeRoute('/:controller/:action/*');
+		$result = $route->parse('/tests/action/var[]:val1/var[]:val2');
+		$expected = array(
+			'controller' => 'tests',
+			'action' => 'action',
+			'named' => array(
+				'var' => array(
+					'val1',
+					'val2'
+				)
+			),
+			'pass' => array(),
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $route->parse('/tests/action/theanswer[is]:42/var[]:val2/var[]:val3');
+		$expected = array(
+			'controller' => 'tests',
+			'action' => 'action',
+			'named' => array(
+				'theanswer' => array(
+					'is' => 42
+				),
+				'var' => array(
+					'val2',
+					'val3'
+				)
+			),
+			'pass' => array(),
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $route->parse('/tests/action/theanswer[is][not]:42/theanswer[]:5/theanswer[is]:6');
+		$expected = array(
+			'controller' => 'tests',
+			'action' => 'action',
+			'named' => array(
+				'theanswer' => array(
+					5,
+					'is' => array(
+						6,
+						'not' => 42
+					)
+				),
+			),
+			'pass' => array(),
+		);
+		$this->assertEqual($result, $expected);
 	}
 }
