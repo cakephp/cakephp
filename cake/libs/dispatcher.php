@@ -38,14 +38,6 @@ App::import('Controller', 'Controller', false);
 class Dispatcher {
 
 /**
- * Current URL
- *
- * @var string
- * @access public
- */
-	public $here = false;
-
-/**
  * The request object
  *
  * @var CakeRequest
@@ -91,9 +83,7 @@ class Dispatcher {
  *    are encountered.
  */
 	public function dispatch(CakeRequest $request, $additionalParams = array()) {
-		$this->here = $request->here;
-
-		if ($this->asset($request->url) || $this->cached($request->url)) {
+		if ($this->asset($request->url) || $this->cached($request->here)) {
 			return;
 		}
 
@@ -260,12 +250,11 @@ class Dispatcher {
 /**
  * Outputs cached dispatch view cache
  *
- * @param string $url Requested URL
+ * @param string $path Requested URL path
  */
-	public function cached($url) {
+	public function cached($path) {
 		if (Configure::read('Cache.check') === true) {
-			$path = $this->here;
-			if ($this->here == '/') {
+			if ($path == '/') {
 				$path = 'home';
 			}
 			$path = strtolower(Inflector::slug($path));
