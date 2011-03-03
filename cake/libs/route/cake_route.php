@@ -333,7 +333,7 @@ class CakeRoute {
 				}
 			}
 		}
-		return $this->_writeUrl(array_merge($url, compact('pass', 'named', '_query')));
+		return $this->_writeUrl(array_merge($url, compact('pass', 'named')));
 	}
 
 /**
@@ -391,20 +391,4 @@ class CakeRoute {
 		return $out;
 	}
 
-/**
- * Generates a well-formed querystring from $q
- * 
- * Will compose an array or nested array into a proper querystring.
- *
- * @param mixed $q An array of parameters to compose into a query string.
- * @param bool $escape Whether or not to use escaped &
- * @return string
- */
-	public function queryString($q, $escape = false) {
-		$join = '&';
-		if ($escape === true) {
-			$join = '&amp;';
-		}
-		return '?' . http_build_query($q, null, $join);
-	}
 }
