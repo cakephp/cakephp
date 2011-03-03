@@ -451,6 +451,35 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test numerically indexed defaults, get appeneded to pass
+ *
+ * @return void
+ */
+	function testParseWithPassDefaults() {
+		$route = new Cakeroute('/:controller', array('action' => 'display', 'home'));
+		$result = $route->parse('/posts');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'display',
+			'pass' => array('home'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that http header conditions can cause route failures.
+ *
+ * @return void
+ */
+	function testParseWithHttpHeaderConditions() {
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$route = new CakeRoute('/sample', array('controller' => 'posts', 'action' => 'index', '[method]' => 'POST'));
+
+		$this->assertFalse($route->parse('/sample'));
+	}
+
+/**
  * test that patterns work for :action
  *
  * @return void
@@ -652,5 +681,25 @@ class CakeRouteTestCase extends CakeTestCase {
 			'pass' => array(),
 		);
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test restructuring args with pass key
+ *
+ * @return void
+ */
+	function testPassArgRestructure() {
+		$route = new CakeRoute('/:controller/:action/:slug', array(), array(
+			'pass' => array('slug')
+		));
+		$result = $route->parse('/posts/view/my-title');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'view',
+			'slug' => 'my-title',
+			'pass' => array('my-title'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result, 'Slug should have moved');
 	}
 }
