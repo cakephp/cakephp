@@ -242,6 +242,8 @@ class CakeRoute {
  * The local and global configuration for named parameters will be used.
  *
  * @param string $args A string with the passed & named params.  eg. /1/page:2
+ * @param string $controller The current actions controller name, used to match named parameter rules
+ * @param string $action The current action name, used to match named parameter rules.
  * @return array Array of ($pass, $named)
  */
 	public function parseArgs($args, $controller = null, $action = null) {

@@ -480,7 +480,7 @@ class CakeRouteTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testPassedArgumentParsing() {
+	function testParsePassedArgument() {
 		$route = new CakeRoute('/:controller/:action/*');
 		$result = $route->parse('/posts/edit/1/2/0');
 		$expected = array(
@@ -505,11 +505,61 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that only named parameter rules are followed.
+ *
+ * @return void
+ */
+	function testParseNamedParametersWithRules() {
+		$route = new CakeRoute('/:controller/:action/*', array(), array(
+			'named' => array(
+				'wibble',
+				'fish' => array('action' => 'index'),
+				'fizz' => array('controller' => 'comments')
+			)
+		));
+		$result = $route->parse('/posts/display/wibble:spin/fish:trout/fizz:buzz');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'display',
+			'pass' => array('fish:trout', 'fizz:buzz'),
+			'named' => array(
+				'wibble' => 'spin'
+			)
+		);
+		$this->assertEquals($expected, $result, 'Fish should not be parsed, as action != index');
+
+		$result = $route->parse('/posts/index/wibble:spin/fish:trout/fizz:buzz');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('fizz:buzz'),
+			'named' => array(
+				'wibble' => 'spin',
+				'fish' => 'trout'
+			)
+		);
+		$this->assertEquals($expected, $result, 'Fish should be parsed, as action == index');
+
+		$result = $route->parse('/comments/index/wibble:spin/fish:trout/fizz:buzz');
+		$expected = array(
+			'controller' => 'comments',
+			'action' => 'index',
+			'pass' => array(),
+			'named' => array(
+				'wibble' => 'spin',
+				'fish' => 'trout',
+				'fizz' => 'buzz'
+			)
+		);
+		$this->assertEquals($expected, $result, 'All params should be parsed as conditions were met.');
+	}
+
+/**
  * test that parsing array format named parameters works
  *
  * @return void
  */
-	function testArrayNamedParameters() {
+	function testParseArrayNamedParameters() {
 		$route = new CakeRoute('/:controller/:action/*');
 		$result = $route->parse('/tests/action/var[]:val1/var[]:val2');
 		$expected = array(
