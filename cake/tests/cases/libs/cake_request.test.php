@@ -1402,6 +1402,30 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test the here() method 
+ *
+ * @return void
+ */
+	function testHere() {
+		Configure::write('App.base', '/base_path');
+		$_GET = array('test' => 'value');
+		$request = new CakeRequest('/posts/add/1/name:value');
+
+		$result = $request->here();
+		$this->assertEquals('/base_path/posts/add/1/name:value?test=value', $result);
+
+		$result = $request->here(false);
+		$this->assertEquals('/posts/add/1/name:value?test=value', $result);
+
+		$request = new CakeRequest('/posts/base_path/1/name:value');
+		$result = $request->here();
+		$this->assertEquals('/base_path/posts/base_path/1/name:value?test=value', $result);
+
+		$result = $request->here(false);
+		$this->assertEquals('/posts/base_path/1/name:value?test=value', $result);
+	}
+
+/**
  * loadEnvironment method
  *
  * @param mixed $env
