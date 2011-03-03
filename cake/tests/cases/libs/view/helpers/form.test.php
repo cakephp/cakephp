@@ -5284,6 +5284,14 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSubmitButton() {
+		$result = $this->Form->submit('');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->submit('Test Submit');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -6332,6 +6340,24 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
+
+		$result = $this->Form->end('');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->end(array('label' => ''));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end('save');
 		$expected = array(
