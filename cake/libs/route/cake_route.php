@@ -185,56 +185,55 @@ class CakeRoute {
 		}
 		if (!preg_match($this->_compiledRoute, $url, $route)) {
 			return false;
-		} else {
-			foreach ($this->defaults as $key => $val) {
-				if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
-					if (isset($this->__headerMap[$header[1]])) {
-						$header = $this->__headerMap[$header[1]];
-					} else {
-						$header = 'http_' . $header[1];
-					}
-					$header = strtoupper($header);
-
-					$val = (array)$val;
-					$h = false;
-
-					foreach ($val as $v) {
-						if (env($header) === $v) {
-							$h = true;
-						}
-					}
-					if (!$h) {
-						return false;
-					}
-				}
-			}
-			array_shift($route);
-			$count = count($this->keys);
-			for ($i = 0; $i <= $count; $i++) {
-				unset($route[$i]);
-			}
-			$route['pass'] = $route['named'] = array();
-
-			// Assign defaults, set passed args to pass
-			foreach ($this->defaults as $key => $value) {
-				if (isset($route[$key])) {
-					continue;
-				}
-				if (is_integer($key)) {
-					$route['pass'][] = $value;
-					continue;
-				}
-				$route[$key] = $value;
-			}
-			
-			if (isset($route['_args_'])) {
-				list($pass, $named) = $this->parseArgs($route['_args_'], $route['controller'], $route['action']);
-				$route['pass'] = array_merge($route['pass'], $pass);
-				$route['named'] = $named;
-				unset($route['_args_']);
-			}
-			return $route;
 		}
+		foreach ($this->defaults as $key => $val) {
+			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
+				if (isset($this->__headerMap[$header[1]])) {
+					$header = $this->__headerMap[$header[1]];
+				} else {
+					$header = 'http_' . $header[1];
+				}
+				$header = strtoupper($header);
+
+				$val = (array)$val;
+				$h = false;
+
+				foreach ($val as $v) {
+					if (env($header) === $v) {
+						$h = true;
+					}
+				}
+				if (!$h) {
+					return false;
+				}
+			}
+		}
+		array_shift($route);
+		$count = count($this->keys);
+		for ($i = 0; $i <= $count; $i++) {
+			unset($route[$i]);
+		}
+		$route['pass'] = $route['named'] = array();
+
+		// Assign defaults, set passed args to pass
+		foreach ($this->defaults as $key => $value) {
+			if (isset($route[$key])) {
+				continue;
+			}
+			if (is_integer($key)) {
+				$route['pass'][] = $value;
+				continue;
+			}
+			$route[$key] = $value;
+		}
+		
+		if (isset($route['_args_'])) {
+			list($pass, $named) = $this->parseArgs($route['_args_'], $route['controller'], $route['action']);
+			$route['pass'] = array_merge($route['pass'], $pass);
+			$route['named'] = $named;
+			unset($route['_args_']);
+		}
+		return $route;
 	}
 
 /**
@@ -252,9 +251,9 @@ class CakeRoute {
 
 		$context = compact('controller', 'action');
 		$namedConfig = Router::namedConfig();
-		$greedy = isset($this->options['greedyNamed']) ? $this->options['greedyNamed'] : $namedConfig['greedy'];
+		$greedy = $namedConfig['greedyNamed'];
 		$rules = $namedConfig['rules'];
-		if (isset($this->options['named'])) {
+		if (!empty($this->options['named'])) {
 			$greedy = isset($this->options['greedyNamed']) && $this->options['greedyNamed'] === true;
 			foreach ((array)$this->options['named'] as $key => $val) {
 				if (is_numeric($key)) {
@@ -271,7 +270,7 @@ class CakeRoute {
 			}
 
 			$separatorIsPresent = strpos($param, $namedConfig['separator']) !== false;
-			if ((!isset($options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
+			if ((!isset($this->options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($namedConfig['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$this->_matchNamed($key, $val, $rules[$key], $context));
@@ -324,11 +323,17 @@ class CakeRoute {
 			return false;
 		}
 
-		$controllerMatches = !isset($rule['controller'], $context['controller']) || in_array($context['controller'], (array)$rule['controller']);
+		$controllerMatches = (
+			!isset($rule['controller'], $context['controller']) || 
+			in_array($context['controller'], (array)$rule['controller'])
+		);
 		if (!$controllerMatches) {
 			return false;
 		}
-		$actionMatches = !isset($rule['action'], $context['action']) || in_array($context['action'], (array)$rule['action']);
+		$actionMatches = (
+			!isset($rule['action'], $context['action']) ||
+			in_array($context['action'], (array)$rule['action'])
+		);
 		if (!$actionMatches) {
 			return false;
 		}
@@ -383,7 +388,7 @@ class CakeRoute {
 		}
 
 		$namedConfig = Router::namedConfig();
-		$greedyNamed = $namedConfig['greedy'];
+		$greedyNamed = $namedConfig['greedyNamed'];
 		$allowedNamedParams = $namedConfig['rules'];
 
 		$named = $pass = $_query = array();

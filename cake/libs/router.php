@@ -102,7 +102,7 @@ class Router {
  */
 	protected static $_namedConfig = array(
 		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
-		'greedy' => true,
+		'greedyNamed' => true,
 		'separator' => ':',
 		'rules' => false,
 	);
