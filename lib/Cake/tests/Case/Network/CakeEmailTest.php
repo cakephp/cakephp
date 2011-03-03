@@ -29,7 +29,15 @@ class TestCakeEmail extends CakeEmail {
  *
  */
 	public function formatAddress($address) {
-		return $this->_formatAddress($address);
+		return parent::_formatAddress($address);
+	}
+
+/**
+ * Wrap to protected method
+ *
+ */
+	public function wrap($text) {
+		return parent::_wrap($text);
 	}
 
 }
@@ -304,6 +312,52 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->reset();
 		$this->assertIdentical($this->CakeEmail->getTo(), array());
+	}
+
+/**
+ * testWrap method
+ *
+ * @return void
+ */
+	public function testWrap() {
+		$text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
+		$result = $this->CakeEmail->wrap($text);
+		$expected = array(
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci,',
+			'non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.',
+			''
+		);
+		$this->assertIdentical($result, $expected);
+
+		$text = 'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan amet.';
+		$result = $this->CakeEmail->wrap($text);
+		$expected = array(
+			'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis',
+			'orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan',
+			'amet.',
+			''
+		);
+		$this->assertIdentical($result, $expected);
+
+		$text = '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula pellentesque accumsan amet.<hr></p>';
+		$result = $this->CakeEmail->wrap($text);
+		$expected = array(
+			'<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac',
+			'turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula',
+			'pellentesque accumsan amet.<hr></p>',
+			''
+		);
+		$this->assertIdentical($result, $expected);
+
+		$text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
+		$result = $this->CakeEmail->wrap($text);
+		$expected = array(
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac',
+			'<a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
+			'nisi, vehicula pellentesque accumsan amet.',
+			''
+		);
+		$this->assertIdentical($result, $expected);
 	}
 
 }

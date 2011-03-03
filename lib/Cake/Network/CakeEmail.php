@@ -843,7 +843,6 @@ class CakeEmail {
  * @param string $message Message to wrap
  * @return array Wrapped message
  * @access protected
- * @TODO Do not wrap tags
  */
 	function _wrap($message) {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
@@ -851,10 +850,84 @@ class CakeEmail {
 		$formatted = array();
 
 		foreach ($lines as $line) {
+			if (empty($line)) {
+				$formatted[] = '';
+				continue;
+			}
 			if ($line[0] === '.') {
 				$line = '.' . $line;
 			}
-			$formatted = array_merge($formatted, explode("\n", wordwrap($line, self::LINE_LENGTH_SHOULD, "\n", true)));
+			if (!preg_match('/\<[a-z]/i', $line)) {
+				$formatted = array_merge($formatted, explode("\n", wordwrap($line, self::LINE_LENGTH_SHOULD, "\n", true)));
+				continue;
+			}
+
+			$tagOpen = false;
+			$tmpLine = $tag = '';
+			$tmpLineLength = 0;
+			for ($i = 0, $count = strlen($line); $i < $count; $i++) {
+				$char = $line[$i];
+				if ($tagOpen) {
+					$tag .= $char;
+					if ($char === '>') {
+						$tagLength = strlen($tag);
+						if ($tagLength + $tmpLineLength < self::LINE_LENGTH_SHOULD) {
+							$tmpLine .= $tag;
+							$tmpLineLength += $tagLength;
+						} else {
+							if ($tmpLineLength > 0) {
+								$formatted[] = trim($tmpLine);
+								$tmpLine = '';
+								$tmpLineLength = 0;
+							}
+							if ($tagLength > self::LINE_LENGTH_SHOULD) {
+								$formatted[] = $tag;
+							} else {
+								$tmpLine = $tag;
+								$tmpLineLength = $tagLength;
+							}
+						}
+						$tag = '';
+						$tagOpen = false;
+					}
+					continue;
+				}
+				if ($char === '<') {
+					$tagOpen = true;
+					$tag = '<';
+					continue;
+				}
+				if ($char === ' ' && $tmpLineLength >= self::LINE_LENGTH_SHOULD) {
+					pr(1);
+					$formatted[] = $tmpLine;
+					$tmpLineLength = 0;
+					continue;
+				}
+				$tmpLine .= $char;
+				$tmpLineLength++;
+				if ($tmpLineLength === self::LINE_LENGTH_SHOULD) {
+					$nextChar = $line[$i + 1];
+					if ($nextChar === ' ' || $nextChar === '<') {
+						$formatted[] = trim($tmpLine);
+						$tmpLine = '';
+						$tmpLineLength = 0;
+						if ($nextChar === ' ') {
+							$i++;
+						}
+					} else {
+						$lastSpace = strrpos($tmpLine, ' ');
+						if ($lastSpace === false) {
+							continue;
+						}
+						$formatted[] = trim(substr($tmpLine, 0, $lastSpace));
+						$tmpLine = substr($tmpLine, $lastSpace + 1);
+						$tmpLineLength = strlen($tmpLine);
+					}
+				}
+			}
+			if (!empty($tmpLine)) {
+				$formatted[] = $tmpLine;
+			}
 		}
 		$formatted[] = '';
 		return $formatted;
