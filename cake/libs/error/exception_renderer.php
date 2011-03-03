@@ -172,7 +172,7 @@ class ExceptionRenderer {
  * @return void
  */
 	protected function _cakeError(CakeException $error) {
-		$url = Router::normalize($this->controller->request->here);
+		$url = $this->controller->request->here();
 		$code = $error->getCode();
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
@@ -195,7 +195,7 @@ class ExceptionRenderer {
 		if (Configure::read('debug') == 0 && $error instanceof CakeException) {
 			$message = __('Not Found');
 		}
-		$url = Router::normalize($this->controller->request->here);
+		$url = $this->controller->request->here();
 		$this->controller->response->statusCode($error->getCode());
 		$this->controller->set(array(
 			'name' => $message,
@@ -211,7 +211,7 @@ class ExceptionRenderer {
  * @param array $params Parameters for controller
  */
 	public function error500($error) {
-		$url = Router::normalize($this->controller->request->here);
+		$url = $this->controller->request->here();
 		$code = ($error->getCode() > 500) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
