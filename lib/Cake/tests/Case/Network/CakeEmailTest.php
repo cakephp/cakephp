@@ -232,7 +232,9 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array(
 			'X-Something' => 'nice',
 			'X-Mailer' => 'CakePHP Email Component',
-			'Date' => date(DATE_RFC2822)
+			'Date' => date(DATE_RFC2822),
+			'Content-Type' => 'text/plain; charset=UTF-8',
+			'Content-Transfer-Encoding' => '7bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
@@ -241,7 +243,9 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Something' => 'very nice',
 			'X-Other' => 'cool',
 			'X-Mailer' => 'CakePHP Email Component',
-			'Date' => date(DATE_RFC2822)
+			'Date' => date(DATE_RFC2822),
+			'Content-Type' => 'text/plain; charset=UTF-8',
+			'Content-Transfer-Encoding' => '7bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
@@ -253,7 +257,9 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Something' => 'very nice',
 			'X-Other' => 'cool',
 			'X-Mailer' => 'CakePHP Email Component',
-			'Date' => date(DATE_RFC2822)
+			'Date' => date(DATE_RFC2822),
+			'Content-Type' => 'text/plain; charset=UTF-8',
+			'Content-Transfer-Encoding' => '7bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
@@ -268,7 +274,9 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Something' => 'very nice',
 			'X-Other' => 'cool',
 			'X-Mailer' => 'CakePHP Email Component',
-			'Date' => date(DATE_RFC2822)
+			'Date' => date(DATE_RFC2822),
+			'Content-Type' => 'text/plain; charset=UTF-8',
+			'Content-Transfer-Encoding' => '7bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
 	}

@@ -606,6 +606,22 @@ class CakeEmail {
 			$headers['Subject'] = $this->_subject;
 		}
 
+		if (!empty($this->attachments)) {
+			$this->_createBoundary();
+			$headers['MIME-Version'] = '1.0';
+			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
+			$headers[] = 'This part of the E-mail should never be seen. If';
+			$headers[] = 'you are reading this, consider upgrading your e-mail';
+			$headers[] = 'client to a MIME-compatible client.';
+		} elseif ($this->_emailFormat === 'text') {
+			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
+		} elseif ($this->_emailFormat === 'html') {
+			$headers['Content-Type'] = 'text/html; charset=' . $this->charset;
+		} elseif ($this->_emailFormat === 'both') {
+			$headers['Content-Type'] = 'multipart/alternative; boundary="alt-' . $this->_boundary . '"';
+		}
+		$headers['Content-Transfer-Encoding'] = '7bit';
+
 		return $headers;
 	}
 
@@ -764,7 +780,7 @@ class CakeEmail {
 
 		$message = $this->_wrap($content);
 		if (empty($this->template)) {
-			//$message = $this->_formatMessage($message);
+			$message = $this->_formatMessage($message);
 		} else {
 			//$message = $this->_render($message);
 		}
@@ -931,6 +947,38 @@ class CakeEmail {
 		}
 		$formatted[] = '';
 		return $formatted;
+	}
+
+/**
+ * Create unique boundary identifier
+ *
+ * @return void
+ */
+	function _createboundary() {
+		$this->_boundary = md5(uniqid(time()));
+	}
+
+/**
+ * Format the message by seeing if it has attachments.
+ *
+ * @param array $message Message to format
+ * @return array
+ */
+	function _formatMessage($message) {
+		if (!empty($this->_attachments)) {
+			$prefix = array('--' . $this->_boundary);
+			if ($this->_emailFormat === 'text') {
+				$prefix[] = 'Content-Type: text/plain; charset=' . $this->charset;
+			} elseif ($this->_emailFormat === 'html') {
+				$prefix[] = 'Content-Type: text/html; charset=' . $this->charset;
+			} elseif ($this->_emailFormat === 'both') {
+				$prefix[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
+			}
+			$prefix[] = 'Content-Transfer-Encoding: 7bit';
+			$prefix[] = '';
+			$message = array_merge($prefix, $message);
+		}
+		return $message;
 	}
 
 }
