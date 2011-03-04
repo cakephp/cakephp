@@ -700,15 +700,18 @@ class CakeEmail {
  * @thrown SocketException
  */
 	public function setAttachments($attachments) {
-		$attachments = (array)$attachments;
-		foreach ($attachments as &$attach) {
-			$path = realpath($attach);
+		$attach = array();
+		foreach ((array)$attachments as $name => $file) {
+			$path = realpath($file);
 			if ($path === false) {
 				throw new SocketException(__('File not found: "%s"', $attach));
 			}
-			$attach = $path;
+			if (is_int($name)) {
+				$name = basename($path);
+			}
+			$attach[$name] = $path;
 		}
-		$this->_attachments = $attachments;
+		$this->_attachments = $attach;
 	}
 
 /**
@@ -721,7 +724,7 @@ class CakeEmail {
 	public function addAttachments($attachments) {
 		$current = $this->_attachments;
 		$this->setAttachments($attachments);
-		$this->_attachments = array_unique(array_merge($current, $this->_attachments));
+		$this->_attachments = array_merge($current, $this->_attachments);
 	}
 
 /**

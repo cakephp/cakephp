@@ -288,7 +288,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testAttachments() {
 		$this->CakeEmail->setAttachments(WWW_ROOT . 'index.php');
-		$expected = array(WWW_ROOT . 'index.php');
+		$expected = array('index.php' => WWW_ROOT . 'index.php');
 		$this->assertIdentical($this->CakeEmail->getAttachments(), $expected);
 
 		$this->CakeEmail->setAttachments(array());
@@ -296,9 +296,15 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->setAttachments(WWW_ROOT . 'index.php');
 		$this->CakeEmail->addAttachments(WWW_ROOT . 'test.php');
-		$this->CakeEmail->addAttachments(array(WWW_ROOT . 'test.php', WWW_ROOT . '.htaccess'));
-		$expected = array(WWW_ROOT . 'index.php', WWW_ROOT . 'test.php', WWW_ROOT . '.htaccess');
-		$this->assertIdentical(array_values($this->CakeEmail->getAttachments()), $expected);
+		$this->CakeEmail->addAttachments(array(WWW_ROOT . 'test.php'));
+		$this->CakeEmail->addAttachments(array('other.txt' => WWW_ROOT . 'test.php', 'ht' => WWW_ROOT . '.htaccess'));
+		$expected = array(
+			'index.php' => WWW_ROOT . 'index.php',
+			'test.php' => WWW_ROOT . 'test.php',
+			'other.txt' => WWW_ROOT . 'test.php',
+			'ht' => WWW_ROOT . '.htaccess'
+		);
+		$this->assertIdentical($this->CakeEmail->getAttachments(), $expected);
 	}
 
 /**
