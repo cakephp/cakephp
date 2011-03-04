@@ -656,6 +656,13 @@ class DboMysql extends DboMysqlBase {
 			case 'boolean':
 				return $this->boolean((bool)$data);
 			break;
+			case 'bit':
+				if(is_int($data)) {
+					return "b'" . dec2bin($data) . "'";
+				} else {
+					return "b'" . $data . "'";
+				}
+			break;
 			case 'integer':
 			case 'float':
 				if ($data === '') {
@@ -669,12 +676,6 @@ class DboMysql extends DboMysqlBase {
 					$data[0] != '0' && strpos($data, 'e') === false)
 				) {
 					return $data;
-				}
-			case 'bit':
-				if(is_int($data)) {
-					return "b'" . dec2bin($data) . "'";
-				} else {
-					return "b'" . $data . "'";
 				}
 			default:
 				return "'" . mysql_real_escape_string($data, $this->connection) . "'";
