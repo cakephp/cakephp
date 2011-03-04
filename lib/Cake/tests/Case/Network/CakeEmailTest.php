@@ -102,6 +102,20 @@ class CakeEmailTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->CakeEmail = new TestCakeEmail();
+
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	function tearDown() {
+		parent::tearDown();
+		App::build();
 	}
 
 /**
@@ -377,6 +391,27 @@ class CakeEmailTest extends CakeTestCase {
 		DebugTransport::$includeAddresses = true;
 		$this->CakeEmail->send("Other body");
 		$this->assertIdentical(DebugTransport::$lastEmail, "Other body\r\n\r\n");
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
+	}
+
+/**
+ * testSendRender method
+ *
+ * @return void
+ */
+	public function testSendRender() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->setTransport('debug');
+		DebugTransport::$includeAddresses = true;
+
+		$this->CakeEmail->setFrom('cake@cakephp.org');
+		$this->CakeEmail->setTo(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->setSubject('My title');
+		$this->CakeEmail->setLayout('default', 'default');
+		$result = $this->CakeEmail->send();
+
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the CakePHP Framework'));
 		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
 		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
 	}

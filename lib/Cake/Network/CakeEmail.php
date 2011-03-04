@@ -144,6 +144,13 @@ class CakeEmail {
 	protected $_template = '';
 
 /**
+ * View for render
+ *
+ * @var string
+ */
+	protected $_viewRender = 'View';
+
+/**
  * Text message
  *
  * @var string
@@ -652,6 +659,16 @@ class CakeEmail {
 	}
 
 /**
+ * Set view class for render
+ *
+ * @param string $viewClass
+ * @return void
+ */
+	public function setViewRender($viewClass) {
+		$this->_viewRender = $viewClass;
+	}
+
+/**
  * Set the email format
  *
  * @param string $format
@@ -823,6 +840,7 @@ class CakeEmail {
 		$this->_headers = array();
 		$this->_layout = 'default';
 		$this->_template = '';
+		$this->_viewRender = 'View';
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
 		$this->_message = '';
@@ -1008,16 +1026,16 @@ class CakeEmail {
  * @access private
  */
 	function _render($content) {
-		$viewClass = $this->Controller->view;
+		$viewClass = $this->_viewRender;
 
 		if ($viewClass !== 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass);
 			$viewClass = $viewClass . 'View';
-			App::import('View', $this->Controller->view);
+			App::import('View', $this->_viewRender);
 		}
 
-		$View = new $viewClass($this->Controller);
-		$View->layout = $this->layout;
+		$View = new $viewClass(null);
+		$View->layout = $this->_layout;
 		$msg = array();
 
 		$content = implode("\n", $content);
