@@ -164,13 +164,6 @@ class CakeEmail {
 	protected $_message = array();
 
 /**
- * as per RFC2822 Section 2.1.1
- *
- * @var integer
- */
-	public $lineLength = 70;
-
-/**
  * Available formats to be sent.
  *
  * @var array
