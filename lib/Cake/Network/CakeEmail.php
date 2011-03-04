@@ -929,7 +929,6 @@ class CakeEmail {
 					continue;
 				}
 				if ($char === ' ' && $tmpLineLength >= self::LINE_LENGTH_SHOULD) {
-					pr(1);
 					$formatted[] = $tmpLine;
 					$tmpLineLength = 0;
 					continue;
