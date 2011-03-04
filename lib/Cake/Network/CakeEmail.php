@@ -784,7 +784,7 @@ class CakeEmail {
 		$this->_message = $message;
 
 		if (!empty($this->_attachments)) {
-			//$this->_attachFiles();
+			$this->_attachFiles();
 		}
 
 		if (!is_null($this->_boundary)) {
@@ -952,6 +952,28 @@ class CakeEmail {
  */
 	function _createboundary() {
 		$this->_boundary = md5(uniqid(time()));
+	}
+
+/**
+ * Attach files by adding file contents inside boundaries.
+ *
+ * @return void
+ */
+	function _attachFiles() {
+		foreach ($this->_attachments as $filename => $file) {
+			$handle = fopen($file, 'rb');
+			$data = fread($handle, filesize($file));
+			$data = chunk_split(base64_encode($data)) ;
+			fclose($handle);
+
+			$this->_message[] = '--' . $this->_boundary;
+			$this->_message[] = 'Content-Type: application/octet-stream';
+			$this->_message[] = 'Content-Transfer-Encoding: base64';
+			$this->_message[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			$this->_message[] = '';
+			$this->_message[] = $data;
+			$this->_message[] = '';
+		}
 	}
 
 /**
