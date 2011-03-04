@@ -228,7 +228,7 @@ class CakeRoute {
 		}
 		
 		if (isset($route['_args_'])) {
-			list($pass, $named) = $this->parseArgs($route['_args_'], $route['controller'], $route['action']);
+			list($pass, $named) = $this->_parseArgs($route['_args_'], $route['controller'], $route['action']);
 			$route['pass'] = array_merge($route['pass'], $pass);
 			$route['named'] = $named;
 			unset($route['_args_']);
@@ -255,7 +255,7 @@ class CakeRoute {
  * @param string $action The current action name, used to match named parameter rules.
  * @return array Array of ($pass, $named)
  */
-	public function parseArgs($args, $controller = null, $action = null) {
+	protected function _parseArgs($args, $controller = null, $action = null) {
 		$pass = $named = array();
 		$args = explode('/', $args);
 
