@@ -606,7 +606,7 @@ class CakeEmail {
 			$headers['Subject'] = $this->_subject;
 		}
 
-		if (!empty($this->attachments)) {
+		if (!empty($this->_attachments)) {
 			$this->_createBoundary();
 			$headers['MIME-Version'] = '1.0';
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
@@ -779,15 +779,15 @@ class CakeEmail {
 		}
 
 		$message = $this->_wrap($content);
-		if (empty($this->template)) {
+		if (empty($this->_template)) {
 			$message = $this->_formatMessage($message);
 		} else {
-			//$message = $this->_render($message);
+			$message = $this->_render($message);
 		}
 		$message[] = '';
 		$this->_message = $message;
 
-		if (!empty($this->attachments)) {
+		if (!empty($this->_attachments)) {
 			//$this->_attachFiles();
 		}
 
@@ -979,6 +979,95 @@ class CakeEmail {
 			$message = array_merge($prefix, $message);
 		}
 		return $message;
+	}
+
+/**
+ * Render the contents using the current layout and template.
+ *
+ * @param string $content Content to render
+ * @return array Email ready to be sent
+ * @access private
+ */
+	function _render($content) {
+		$viewClass = $this->Controller->view;
+
+		if ($viewClass !== 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass);
+			$viewClass = $viewClass . 'View';
+			App::import('View', $this->Controller->view);
+		}
+
+		$View = new $viewClass($this->Controller);
+		$View->layout = $this->layout;
+		$msg = array();
+
+		$content = implode("\n", $content);
+
+		if ($this->_emailFormat === 'both') {
+			$htmlContent = $content;
+			if (!empty($this->_attachments)) {
+				$msg[] = '--' . $this->_boundary;
+				$msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
+				$msg[] = '';
+			}
+			$msg[] = '--alt-' . $this->_boundary;
+			$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
+			$msg[] = 'Content-Transfer-Encoding: 7bit';
+			$msg[] = '';
+
+			$content = $View->element('email' . DS . 'text' . DS . $this->_template, array('content' => $content), true);
+			$View->layoutPath = 'email' . DS . 'text';
+			$content = explode("\n", $this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+
+			$msg = array_merge($msg, $content);
+
+			$msg[] = '';
+			$msg[] = '--alt-' . $this->_boundary;
+			$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
+			$msg[] = 'Content-Transfer-Encoding: 7bit';
+			$msg[] = '';
+
+			$htmlContent = $View->element('email' . DS . 'html' . DS . $this->_template, array('content' => $htmlContent), true);
+			$View->layoutPath = 'email' . DS . 'html';
+			$htmlContent = explode("\n", $this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
+			$msg = array_merge($msg, $htmlContent);
+			$msg[] = '';
+			$msg[] = '--alt-' . $this->_boundary . '--';
+			$msg[] = '';
+
+			ClassRegistry::removeObject('view');
+			return $msg;
+		}
+
+		if (!empty($this->_attachments)) {
+			if ($this->_emailFormat === 'html') {
+				$msg[] = '';
+				$msg[] = '--' . $this->_boundary;
+				$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
+				$msg[] = 'Content-Transfer-Encoding: 7bit';
+				$msg[] = '';
+			} else {
+				$msg[] = '--' . $this->_boundary;
+				$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
+				$msg[] = 'Content-Transfer-Encoding: 7bit';
+				$msg[] = '';
+			}
+		}
+
+		$content = $View->element('email' . DS . $this->_emailFormat . DS . $this->_template, array('content' => $content), true);
+		$View->layoutPath = 'email' . DS . $this->_emailFormat;
+		$content = explode("\n", $rendered = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+
+		if ($this->_emailFormat === 'html') {
+			$this->_htmlMessage = $rendered;
+		} else {
+			$this->_textMessage = $rendered;
+		}
+
+		$msg = array_merge($msg, $content);
+		ClassRegistry::removeObject('view');
+
+		return $msg;
 	}
 
 }
