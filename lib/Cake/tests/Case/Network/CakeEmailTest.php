@@ -236,6 +236,42 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testAddresses method
+ *
+ * @return void
+ */
+	public function testAddresses() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
+		$this->CakeEmail->setReplyTo('replyto@cakephp.org', 'ReplyTo CakePHP');
+		$this->CakeEmail->setReadReceipt('readreceipt@cakephp.org', 'ReadReceipt CakePHP');
+		$this->CakeEmail->setReturnPath('returnpath@cakephp.org', 'ReturnPath CakePHP');
+		$this->CakeEmail->setTo('to@cakephp.org', 'To CakePHP');
+		$this->CakeEmail->setCc('cc@cakephp.org', 'Cc CakePHP');
+		$this->CakeEmail->setBcc('bcc@cakephp.org', 'Bcc CakePHP');
+		$this->CakeEmail->addTo('to2@cakephp.org', 'To2 CakePHP');
+		$this->CakeEmail->addCc('cc2@cakephp.org', 'Cc2 CakePHP');
+		$this->CakeEmail->addBcc('bcc2@cakephp.org', 'Bcc2 CakePHP');
+
+		$this->assertIdentical($this->CakeEmail->getFrom(), array('cake@cakephp.org' => 'CakePHP'));
+		$this->assertIdentical($this->CakeEmail->getReplyTo(), array('replyto@cakephp.org' => 'ReplyTo CakePHP'));
+		$this->assertIdentical($this->CakeEmail->getReadReceipt(), array('readreceipt@cakephp.org' => 'ReadReceipt CakePHP'));
+		$this->assertIdentical($this->CakeEmail->getReturnPath(), array('returnpath@cakephp.org' => 'ReturnPath CakePHP'));
+		$this->assertIdentical($this->CakeEmail->getTo(), array('to@cakephp.org' => 'To CakePHP', 'to2@cakephp.org' => 'To2 CakePHP'));
+		$this->assertIdentical($this->CakeEmail->getCc(), array('cc@cakephp.org' => 'Cc CakePHP', 'cc2@cakephp.org' => 'Cc2 CakePHP'));
+		$this->assertIdentical($this->CakeEmail->getBcc(), array('bcc@cakephp.org' => 'Bcc CakePHP', 'bcc2@cakephp.org' => 'Bcc2 CakePHP'));
+
+		$headers = $this->CakeEmail->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true));
+		$this->assertIdentical($headers['From'], 'CakePHP <cake@cakephp.org>');
+		$this->assertIdentical($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>');
+		$this->assertIdentical($headers['Disposition-Notification-To'], 'ReadReceipt CakePHP <readreceipt@cakephp.org>');
+		$this->assertIdentical($headers['Return-Path'], 'ReturnPath CakePHP <returnpath@cakephp.org>');
+		$this->assertIdentical($headers['To'], 'To CakePHP <to@cakephp.org>, To2 CakePHP <to2@cakephp.org>');
+		$this->assertIdentical($headers['Cc'], 'Cc CakePHP <cc@cakephp.org>, Cc2 CakePHP <cc2@cakephp.org>');
+		$this->assertIdentical($headers['Bcc'], 'Bcc CakePHP <bcc@cakephp.org>, Bcc2 CakePHP <bcc2@cakephp.org>');
+	}
+
+/**
  * testMessageId method
  *
  * @return void
