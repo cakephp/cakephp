@@ -889,7 +889,7 @@ class CakeEmail {
 				$line = '.' . $line;
 			}
 			if (!preg_match('/\<[a-z]/i', $line)) {
-				$formatted = array_merge($formatted, explode("\n", wordwrap($line, self::LINE_LENGTH_SHOULD, "\n", true)));
+				$formatted = array_merge($formatted, explode("\n", wordwrap($line, self::LINE_LENGTH_SHOULD, "\n")));
 				continue;
 			}
 

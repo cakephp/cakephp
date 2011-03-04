@@ -509,6 +509,26 @@ class CakeEmailTest extends CakeTestCase {
 			''
 		);
 		$this->assertIdentical($result, $expected);
+
+		$text = 'Lorem ipsum <a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">ok</a>';
+		$result = $this->CakeEmail->wrap($text);
+		$expected = array(
+			'Lorem ipsum',
+			'<a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">',
+			'ok</a>',
+			''
+		);
+		$this->assertIdentical($result, $expected);
+
+		$text = 'Lorem ipsum withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite ok.';
+		$result = $this->CakeEmail->wrap($text);
+		$expected = array(
+			'Lorem ipsum',
+			'withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite',
+			'ok.',
+			''
+		);
+		$this->assertIdentical($result, $expected);
 	}
 
 }
