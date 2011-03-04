@@ -504,6 +504,9 @@ class DboMysqlBase extends DboSource {
 		if (strpos($col, 'enum') !== false) {
 			return "enum($vals)";
 		}
+		if (strpos($col, 'bit') !== false) {
+			return 'bit';
+		}
 		return 'text';
 	}
 }
@@ -666,6 +669,12 @@ class DboMysql extends DboMysqlBase {
 					$data[0] != '0' && strpos($data, 'e') === false)
 				) {
 					return $data;
+				}
+			case 'bit':
+				if(is_int($data)) {
+					return "b'" . dec2bin($data) . "'";
+				} else {
+					return "b'" . $data . "'";
 				}
 			default:
 				return "'" . mysql_real_escape_string($data, $this->connection) . "'";
