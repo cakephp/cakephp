@@ -228,7 +228,7 @@ class CakeRoute {
 		}
 		
 		if (isset($route['_args_'])) {
-			list($pass, $named) = $this->_parseArgs($route['_args_'], $route['controller'], $route['action']);
+			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
 			$route['named'] = $named;
 			unset($route['_args_']);
@@ -251,15 +251,13 @@ class CakeRoute {
  * The local and global configuration for named parameters will be used.
  *
  * @param string $args A string with the passed & named params.  eg. /1/page:2
- * @param string $controller The current actions controller name, used to match named parameter rules
- * @param string $action The current action name, used to match named parameter rules.
+ * @param string $context The current route context, which should contain controller/action keys.
  * @return array Array of ($pass, $named)
  */
-	protected function _parseArgs($args, $controller = null, $action = null) {
+	protected function _parseArgs($args, $context) {
 		$pass = $named = array();
 		$args = explode('/', $args);
 
-		$context = compact('controller', 'action');
 		$namedConfig = Router::namedConfig();
 		$greedy = $namedConfig['greedyNamed'];
 		$rules = $namedConfig['rules'];
