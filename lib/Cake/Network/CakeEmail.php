@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Validation', 'Multibyte'));
+App::import('Lib', 'email/AbstractTransport');
 
 /**
  * Cake e-mail class.

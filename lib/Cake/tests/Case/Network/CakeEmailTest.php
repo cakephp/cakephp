@@ -43,6 +43,51 @@ class TestCakeEmail extends CakeEmail {
 }
 
 /**
+ * Debug transport email
+ *
+ */
+class DebugTransport extends AbstractTransport {
+
+/**
+ * Last email body
+ *
+ * @var string
+ */
+	public static $lastEmail = '';
+
+/**
+ * Last email header
+ *
+ * @var string
+ */
+	public static $lastHeader = '';
+
+/**
+ * Include addresses in header
+ *
+ * @var boolean
+ */
+	public static $includeAddresses = false;
+
+/**
+ * Send
+ *
+ * @param object $email CakeEmail
+ * @return boolean
+ */
+	public function send(CakeEmail $email) {
+		self::$lastEmail = implode("\r\n", $email->getMessage());
+		$options = array();
+		if (self::$includeAddresses) {
+			$options = array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true);
+		}
+		self::$lastHeader = $this->_headersToString($email->getHeaders($options));
+		return true;
+	}
+
+}
+
+/**
  * CakeEmailTest class
  *
  * @package       cake.tests.cases.libs
@@ -308,11 +353,32 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
- * testSend method
+ * testSendWithContent method
  *
  * @return void
  */
-	public function testSend() {
+	public function testSendWithContent() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->setTransport('debug');
+		DebugTransport::$includeAddresses = false;
+
+		$this->CakeEmail->setFrom('cake@cakephp.org');
+		$this->CakeEmail->setTo(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->setSubject('My title');
+		$result = $this->CakeEmail->send("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
+
+		$this->assertTrue($result);
+		$expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
+		$this->assertIdentical(DebugTransport::$lastEmail, $expected);
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Date: '));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
+		$this->assertFalse(strpos(DebugTransport::$lastHeader, 'To: '));
+
+		DebugTransport::$includeAddresses = true;
+		$this->CakeEmail->send("Other body");
+		$this->assertIdentical(DebugTransport::$lastEmail, "Other body\r\n\r\n");
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
 	}
 
 /**
