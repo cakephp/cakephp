@@ -44,7 +44,7 @@ class TestAuthComponent extends AuthComponent {
  * @access public
  * @return void
  */
-	function _stop() {
+	function _stop($status = 0) {
 		$this->testStop = true;
 	}
 
@@ -928,66 +928,6 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
 		Configure::write('Routing.prefixes', $prefixes);
-	}
-
-/**
- * testPluginModel method
- *
- * @access public
- * @return void
- */
-	function testPluginModel() {
-		// Adding plugins
-		Cache::delete('object_map', '_cake_core_');
-		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
-		), true);
-		App::objects('plugin', null, false);
-
-		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
-		$user['id'] = 1;
-		$user['username'] = 'gwoo';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
-		$PluginModel->save($user, false);
-
-		$authUser = $PluginModel->find();
-
-		$this->Controller->request->data['TestPluginAuthUser'] = array(
-			'username' => $authUser['TestPluginAuthUser']['username'], 'password' => 'cake'
-		);
-
-		$this->Controller->request->addParams(Router::parse('auth_test/login'));
-		$this->Controller->request->query['url'] = 'auth_test/login';
-
-		$this->Controller->Auth->initialize($this->Controller);
-
-		$this->Controller->Auth->loginAction = 'auth_test/login';
-		$this->Controller->Auth->userModel = 'TestPlugin.TestPluginAuthUser';
-
-		$this->Controller->Auth->startup($this->Controller);
-		$user = $this->Controller->Auth->user();
-		$expected = array('TestPluginAuthUser' => array(
-			'id' => 1, 'username' => 'gwoo', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
-		));
-		$this->assertEqual($user, $expected);
-		$sessionKey = $this->Controller->Auth->sessionKey;
-		$this->assertEqual('Auth.TestPluginAuthUser', $sessionKey);
-		
-		$this->Controller->Auth->loginAction = null;
-		$this->Controller->Auth->__setDefaults();
-		$loginAction = $this->Controller->Auth->loginAction;
-		$expected = array(
-		    'controller'	=> 'test_plugin_auth_users',
-		    'action'		=> 'login',
-		    'plugin'		=> 'test_plugin'
-		);
-		$this->assertEqual($loginAction, $expected);
-
-		// Reverting changes
-		Cache::delete('object_map', '_cake_core_');
-		App::build();
-		App::objects('plugin', null, false);
 	}
 
 /**
