@@ -25,8 +25,8 @@ App::uses('Router', 'Routing');
 App::uses('Security', 'Utility');
 App::uses('Debugger', 'Utility');
 App::uses('CakeSession', 'Model/Datasource');
-App::uses('BaseAuthorize', 'Component/Auth');
-App::uses('BaseAuthenticate', 'Component/Auth');
+App::uses('BaseAuthorize', 'Controller/Component/Auth');
+App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 
 /**
  * Authentication control component class
