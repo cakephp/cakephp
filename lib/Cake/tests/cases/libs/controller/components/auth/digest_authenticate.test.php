@@ -14,11 +14,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Component', 'auth/digest_authenticate');
-App::import('Model', 'AppModel');
-App::import('Core', 'CakeRequest');
-App::import('Core', 'CakeResponse');
-
+App::uses('DigestAuthenticate', 'Controller/Component/Auth');
+App::uses('AppModel', 'Model');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 
 require_once  CAKE_TESTS . 'cases' . DS . 'libs' . DS . 'model' . DS . 'models.php';
 
