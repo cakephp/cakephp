@@ -14,11 +14,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Component', 'Auth');
-App::import('Component', 'auth/form_authenticate');
-App::import('Model', 'AppModel');
-App::import('Core', 'CakeRequest');
-App::import('Core', 'CakeResponse');
+App::uses('AuthComponent', 'Controller/Component');
+App::uses('FormAuthenticate', 'Controller/Component/Auth');
+App::uses('AppModel', 'Model');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 
 require_once  CAKE_TESTS . 'cases' . DS . 'libs' . DS . 'model' . DS . 'models.php';
 
@@ -155,7 +155,7 @@ class FormAuthenticateTest extends CakeTestCase {
 	function testPluginModel() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		), true);
 		App::objects('plugin', null, false);
 
