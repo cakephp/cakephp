@@ -425,7 +425,7 @@ class App {
 	public static function objects($type, $path = null, $cache = true) {
 		$objects = array();
 		$extension = '/\.php$/';
-		$directories = false;
+		$includeDirectories = false;
 		$name = $type;
 
 		if (isset(self::$legacy[$type . 's'])) {

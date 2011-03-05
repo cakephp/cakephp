@@ -332,15 +332,11 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller = new AuthTestController($request);
 
-<<<<<<< HEAD
-		ClassRegistry::addObject('view', new View($this->Controller));
-=======
 		$collection = new ComponentCollection();
 		$collection->init($this->Controller);
 		$this->Auth = new TestAuthComponent($collection);
 		$this->Auth->request = $request;
 		$this->Auth->response = $this->getMock('CakeResponse');
->>>>>>> origin/2.0
 
 		$this->Controller->Components->init($this->Controller);
 
@@ -935,7 +931,6 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
-<<<<<<< HEAD
  * testPluginModel method
  *
  * @access public
@@ -946,7 +941,7 @@ class AuthTest extends CakeTestCase {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
 		), true);
 		App::objects('plugin', null, false);
 
@@ -996,8 +991,6 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
-=======
->>>>>>> origin/2.0
  * testAjaxLogin method
  *
  * @access public
@@ -1005,7 +998,7 @@ class AuthTest extends CakeTestCase {
  */
 	function testAjaxLogin() {
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 

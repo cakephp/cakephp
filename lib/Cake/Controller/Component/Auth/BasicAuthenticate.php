@@ -12,7 +12,8 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Component', 'auth/base_authenticate');
+
+App::uses('BaseAuthorize', 'Controller/Component/Auth');
 
 /**
  * Basic Authentication adapter for AuthComponent.
