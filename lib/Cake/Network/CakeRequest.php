@@ -501,6 +501,23 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Get the value of the current requests url.  Will include named parameters and querystring arguments.
+ *
+ * @param boolean $base Include the base path, set to false to trim the base path off.
+ * @return string the current request url including query string args.
+ */
+	public function here($base = true) {
+		$url = $this->here;
+		if (!empty($this->query)) {
+			$url .= '?' . http_build_query($this->query);
+		}
+		if (!$base) {
+			$url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);
+		}
+		return $url;
+	}
+
+/**
  * Read an HTTP header from the Request information.
  *
  * @param string $name Name of the header you want.
@@ -535,7 +552,8 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the domain name and include $tldLength segments of the tld.
  *
- * @param int $tldLength Number of segments your tld contains
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
 	public function domain($tldLength = 1) {
@@ -547,7 +565,8 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the subdomains for a host.
  *
- * @param int $tldLength Number of segments your tld contains.
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ *   While `example.co.uk` contains 2.
  * @return array of subdomains.
  */
 	public function subdomains($tldLength = 1) {

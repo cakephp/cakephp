@@ -1424,7 +1424,7 @@ class DispatcherTest extends CakeTestCase {
 		$out = ob_get_clean();
 
 		ob_start();
-		$dispatcher->cached($request);
+		$dispatcher->cached($request->here);
 		$cached = ob_get_clean();
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
@@ -1433,7 +1433,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 
-		$filename = $this->__cachePath($dispatcher->here);
+		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
 		$request = new CakeRequest('test_cached_pages/index');
@@ -1446,7 +1446,7 @@ class DispatcherTest extends CakeTestCase {
 		$out = ob_get_clean();
 
 		ob_start();
-		$dispatcher->cached($request);
+		$dispatcher->cached($request->here);
 		$cached = ob_get_clean();
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
@@ -1454,7 +1454,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = $this->__cachePath($dispatcher->here);
+		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
 		$request = new CakeRequest('TestCachedPages/index');
@@ -1464,7 +1464,7 @@ class DispatcherTest extends CakeTestCase {
 		$out = ob_get_clean();
 
 		ob_start();
-		$dispatcher->cached($request);
+		$dispatcher->cached($request->here);
 		$cached = ob_get_clean();
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
@@ -1472,7 +1472,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = $this->__cachePath($dispatcher->here);
+		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
 		$request = new CakeRequest('TestCachedPages/test_nocache_tags');
@@ -1482,7 +1482,7 @@ class DispatcherTest extends CakeTestCase {
 		$out = ob_get_clean();
 
 		ob_start();
-		$dispatcher->cached($request);
+		$dispatcher->cached($request->here);
 		$cached = ob_get_clean();
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
@@ -1490,7 +1490,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = $this->__cachePath($dispatcher->here);
+		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
 		$request = new CakeRequest('test_cached_pages/view/param/param');
@@ -1500,7 +1500,7 @@ class DispatcherTest extends CakeTestCase {
 		$out = ob_get_clean();
 
 		ob_start();
-		$dispatcher->cached($request);
+		$dispatcher->cached($request->here);
 		$cached = ob_get_clean();
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
@@ -1508,7 +1508,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = $this->__cachePath($dispatcher->here);
+		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
 		$request = new CakeRequest('test_cached_pages/view/foo:bar/value:goo');
@@ -1518,7 +1518,7 @@ class DispatcherTest extends CakeTestCase {
 		$out = ob_get_clean();
 
 		ob_start();
-		$dispatcher->cached($request);
+		$dispatcher->cached($request->here);
 		$cached = ob_get_clean();
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
@@ -1526,7 +1526,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = $this->__cachePath($dispatcher->here);
+		$filename = $this->__cachePath($request->here);
 		$this->assertTrue(file_exists($filename));
 
 		unlink($filename);

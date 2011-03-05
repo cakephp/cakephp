@@ -215,8 +215,8 @@ class CacheHelper extends AppHelper {
 		} else {
 			$cacheTime = strtotime($timestamp, $now);
 		}
-		$path = $this->request->here;
-		if ($this->here == '/') {
+		$path = $this->request->here();
+		if ($path == '/') {
 			$path = 'home';
 		}
 		$cache = strtolower(Inflector::slug($path));

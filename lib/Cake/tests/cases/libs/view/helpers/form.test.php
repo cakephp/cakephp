@@ -668,12 +668,13 @@ class FormHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 
+		Configure::write('App.base', '');
 		$this->Controller = new ContactTestController();
 		$this->View = new View($this->Controller);
 
 		$this->Form = new FormHelper($this->View);
 		$this->Form->Html = new HtmlHelper($this->View);
-		$this->Form->request = new CakeRequest(null, false);
+		$this->Form->request = new CakeRequest('contacts/add', false);
 		$this->Form->request->here = '/contacts/add';
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';
@@ -5670,12 +5671,21 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$this->Form->request->here = '/contacts/add/Contact:1';
-		$result = $this->Form->create();
+/**
+ * test create() with automatic url generation
+ *
+ * @return void
+ */
+	function testCreateAutoUrl() {
+		Router::setRequestInfo(array(array(), array('base' => '/base_url')));
+		$this->Form->request->here = '/base_url/contacts/add/Contact:1';
+		$this->Form->request->base = '/base_url';
+		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/Contact:1',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/base_url/contacts/add/Contact:1',
 				'accept-charset' => 'utf-8'
 			),
 			'div' => array('style' => 'display:none;'),
@@ -5685,11 +5695,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request['action'] = 'delete';
-		$this->Form->request->here = '/contacts/delete/10/User:42';
-		$result = $this->Form->create();
+		$this->Form->request->here = '/base_url/contacts/delete/10/User:42';
+		$this->Form->request->base = '/base_url';
+		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/contacts/delete/10/User:42',
+				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/base_url/contacts/delete/10/User:42',
 				'accept-charset' => 'utf-8'
 			),
 			'div' => array('style' => 'display:none;'),

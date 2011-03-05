@@ -241,7 +241,7 @@ class FormHelper extends AppHelper {
 		$this->_inputDefaults = $options['inputDefaults'];
 		unset($options['inputDefaults']);
 		if ($options['action'] === null && $options['url'] === null) {
-			$options['action'] = $this->request->here;
+			$options['action'] = $this->request->here(false);
 			if (!isset($options['id'])) {
 				$options['id'] = $this->domId($this->request['action'] . 'Form');
 			}
