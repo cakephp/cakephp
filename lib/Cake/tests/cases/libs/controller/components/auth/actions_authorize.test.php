@@ -13,11 +13,12 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Component', 'auth/actions_authorize');
-App::import('Controller', 'ComponentCollection');
-App::import('Component', 'Acl');
-App::import('Core', 'CakeRequest');
-App::import('Core', 'Controller');
+
+App::uses('ActionsAuthorize', 'Controller/Component/Auth');
+App::uses('ComponentCollection', 'Controller');
+App::uses('AclComponent', 'Controller/Component');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 
 class ActionsAuthorizeTest extends CakeTestCase {
 
