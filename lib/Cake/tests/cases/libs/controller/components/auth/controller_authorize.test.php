@@ -13,9 +13,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Component', 'auth/controller_authorize');
-App::import('Core', 'CakeRequest');
-App::import('Core', 'Controller');
+
+App::uses('Controller', 'Controller');
+App::uses('ControllerAuthorize', 'Controller/Component/Auth');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 
 class ControllerAuthorizeTest extends CakeTestCase {
 
