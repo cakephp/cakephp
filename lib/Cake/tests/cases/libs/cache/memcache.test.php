@@ -16,10 +16,9 @@
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('Cache')) {
-	require LIBS . 'cache.php';
-}
-require_once LIBS . 'cache' . DS . 'memcache.php';
+
+App::uses('Cache', 'Cache');
+App::uses('MemcacheEngine', 'Cache/Engine');
 
 class TestMemcacheEngine extends MemcacheEngine {
 /**
