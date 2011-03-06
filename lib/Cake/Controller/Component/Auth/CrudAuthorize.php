@@ -14,6 +14,7 @@
  */
 
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
+App::uses('Router', 'Routing');
 
 /**
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using CRUD mappings.
