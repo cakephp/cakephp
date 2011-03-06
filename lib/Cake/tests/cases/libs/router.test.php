@@ -437,6 +437,7 @@ class RouterTest extends CakeTestCase {
 		$expected = '/tests/index/namedParam[keyed]:is an array/namedParam[0]:test';
 		$this->assertEqual($result, $expected);
 
+		//@todo Delete from here down, tests are in CakeRoute now.
 		$result = Router::parse('/tests/action/var[]:val1/var[]:val2');
 		$expected = array(
 			'controller' => 'tests',
@@ -1018,7 +1019,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer'), 'greedy' => true));
+		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer'), 'greedyNamed' => true));
 		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42');
 		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
@@ -1329,7 +1330,7 @@ class RouterTest extends CakeTestCase {
  */
 	function testConnectNamed() {
 		$named = Router::connectNamed(false, array('default' => true));
-		$this->assertFalse($named['greedy']);
+		$this->assertFalse($named['greedyNamed']);
 		$this->assertEqual(array_keys($named['rules']), $named['default']);
 
 		Router::reload();
@@ -1430,23 +1431,25 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		$result = Router::connectNamed(false);
 		$this->assertEqual(array_keys($result['rules']), array());
-		$this->assertFalse($result['greedy']);
+		$this->assertFalse($result['greedyNamed']);
 		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
 		$expected = array('pass' => array('param1:value1:1', 'param2:value2:3', 'param:value'), 'named' => array(), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
 		$result = Router::connectNamed(true);
-		$this->assertEqual(array_keys($result['rules']), Router::$named['default']);
-		$this->assertTrue($result['greedy']);
+		$named = Router::namedConfig();
+		$this->assertEqual(array_keys($result['rules']), $named['default']);
+		$this->assertTrue($result['greedyNamed']);
 		Router::reload();
 		Router::connectNamed(array('param1' => 'not-matching'));
 		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
 		$expected = array('pass' => array('param1:value1:1'), 'named' => array('param2' => 'value2:3', 'param' => 'value'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 
+		//@todo delete this test.
 		Router::reload();
-		Router::connect('/foo/:action/*', array('controller' => 'bar'), array('named' => array('param1' => array('action' => 'index')), 'greedy' => true));
+		Router::connect('/foo/:action/*', array('controller' => 'bar'), array('named' => array('param1' => array('action' => 'index')), 'greedyNamed' => true));
 		$result = Router::parse('/foo/index/param1:value1:1/param2:value2:3/param:value');
 		$expected = array('pass' => array(), 'named' => array('param1' => 'value1:1', 'param2' => 'value2:3', 'param' => 'value'), 'controller' => 'bar', 'action' => 'index', 'plugin' => null);
 		$this->assertEqual($result, $expected);
@@ -1473,6 +1476,7 @@ class RouterTest extends CakeTestCase {
 		$expected = array('pass' => array('param2:value2:3', 'param3:value'), 'named' => array('param1' => 'value1:1'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 
+		//@todo delete this test.
 		Router::reload();
 		Router::connect('/foo/*', array('controller' => 'bar', 'action' => 'fubar'), array('named' => array('param1' => 'value[\d]:[\d]')));
 		Router::connectNamed(array(), array('greedy' => false));
