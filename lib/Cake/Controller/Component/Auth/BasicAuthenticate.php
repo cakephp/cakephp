@@ -13,7 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('BaseAuthorize', 'Controller/Component/Auth');
+App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 
 /**
  * Basic Authentication adapter for AuthComponent.
