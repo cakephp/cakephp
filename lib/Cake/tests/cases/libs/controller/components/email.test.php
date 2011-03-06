@@ -255,7 +255,7 @@ class EmailComponentTest extends CakeTestCase {
 		ClassRegistry::addObject('view', new View($this->Controller));
 
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 	}
 
