@@ -60,7 +60,7 @@ class TaskCollection extends ObjectCollection {
 		}
 		$taskFile = Inflector::underscore($name);
 		$taskClass = $name . 'Task';
-		App::uses($taskClass, 'Console/Command/Task');
+		App::uses($taskClass, $plugin . 'Console/Command/Task');
 		if (!class_exists($taskClass)) {
 			if (!class_exists($taskClass)) {
 				throw new MissingTaskClassException($taskClass);

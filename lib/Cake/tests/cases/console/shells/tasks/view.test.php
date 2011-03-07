@@ -20,12 +20,16 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('ViewTask', 'Console/Command/Task');
 App::uses('ControllerTask', 'Console/Command/Task');
 App::uses('TemplateTask', 'Console/Command/Task');
 App::uses('ProjectTask', 'Console/Command/Task');
 App::uses('DbConfigTask', 'Console/Command/Task');
+App::uses('Model', 'Model');
+App::uses('Controller', 'Controller');
 
 /**
  * Test View Task Comment Model

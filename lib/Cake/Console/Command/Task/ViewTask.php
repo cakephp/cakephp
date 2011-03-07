@@ -147,7 +147,7 @@ class ViewTask extends BakeTask {
 	protected function _methodsToBake() {
 		$methods =  array_diff(
 			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
-			array_map('strtolower', get_class_methods('appcontroller'))
+			array_map('strtolower', get_class_methods('AppController'))
 		);
 		$scaffoldActions = false;
 		if (empty($methods)) {
@@ -277,7 +277,7 @@ class ViewTask extends BakeTask {
 		}
 
 		$controllerClassName = $this->controllerName . 'Controller';
-		App::uses($controllerName, $plugin . 'Controller');
+		App::uses($controllerClassName, $plugin . 'Controller');
 		if (!class_exists($controllerClassName)) {
 			$file = $controllerClassName . '.php';
 			$this->err(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));

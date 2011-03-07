@@ -72,7 +72,7 @@ class TaskCollectionTest extends CakeTestCase {
 /**
  * test missinghelper exception
  *
- * @expectedException MissingTaskFileException
+ * @expectedException MissingTaskClassException
  * @return void
  */
 	function testLoadMissingTaskFile() {

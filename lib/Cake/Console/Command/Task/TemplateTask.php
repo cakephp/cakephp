@@ -54,8 +54,8 @@ class TemplateTask extends Shell {
  * @return array Array of bake themes that are installed.
  */
 	protected function _findThemes() {
-		$paths = App::path('shells');
-		$core = array_pop($paths);
+		$paths = App::path('Console');
+		$core = current(App::core('Console'));
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
 

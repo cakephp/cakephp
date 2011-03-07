@@ -302,13 +302,21 @@ class App {
 					'%s' . 'vendors' . DS . 'shells' . DS,
 					VENDORS . 'shells' . DS
 				),
+				'Console/Command' => array(
+					'%s' . 'console' . DS . 'shells' . DS,
+					'%s' . 'vendors' . DS . 'shells' . DS,
+					VENDORS . 'shells' . DS
+				),
+				'Console/Command/Task' => array(
+					'%s' . 'console' . DS . 'shells' . DS . 'tasks' . DS,
+					'%s' . 'vendors' . DS . 'shells' . DS . 'tasks' . DS,
+					VENDORS . 'shells' . DS . 'tasks' . DS
+				),
 				'libs' => array('%s' . 'libs' . DS),
 				'locales' => array('%s' . 'locale' . DS),
 				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
 				'plugins' => array(APP . 'plugins' . DS)
 			);
-
-			self::$__packageFormat['Console/Command'] = self::$__packageFormat['Console'];
 		}
 
 		if ($reset == true) {
