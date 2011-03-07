@@ -19,7 +19,6 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR. 'ShellDispatcher.php');
+require_once(__CAKE_PATH__ . 'shell_dispatcher.php');
 
 return ShellDispatcher::run($argv);
-

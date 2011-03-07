@@ -20,8 +20,11 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
-App::uses('ProjecTask', 'Console/Command/Task');
+App::uses('ProjectTask', 'Console/Command/Task');
+App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 
 /**
@@ -67,7 +70,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	protected function _setupTestProject() {
-		$skel = CAKE . 'console' . DS . 'templates' . DS . 'skel';
+		$skel = LIBS . 'Console' . DS . 'templates' . DS . 'skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}

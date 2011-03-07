@@ -19,6 +19,8 @@
  */
 
 App::uses('File', 'Utility');
+App::uses('String', 'Utility');
+App::uses('Security', 'Utility');
 
 /**
  * Task class for creating new project apps and plugins
@@ -237,9 +239,6 @@ class ProjectTask extends Shell {
 		$File = new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.salt\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
-			if (!class_exists('Security')) {
-				require LIBS . 'security.php';
-			}
 			$string = Security::generateAuthKey();
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.salt\', \''.$string.'\');', $contents);
 			if ($File->write($result)) {
