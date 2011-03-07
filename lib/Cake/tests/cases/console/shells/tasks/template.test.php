@@ -21,6 +21,8 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('TemplateTask', 'Console/Command/Task');
 /**
@@ -85,7 +87,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testFindingInstalledThemesForBake() {
-		$consoleLibs = CAKE . 'console' . DS;
+		$consoleLibs = LIBS . 'Console' . DS;
 		$this->Task->initialize();
 		$this->assertEqual($this->Task->templatePaths['default'], $consoleLibs . 'templates' . DS . 'default' . DS);
 	}
@@ -97,7 +99,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetThemePath() {
-		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
+		$defaultTheme = LIBS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
 
 		$this->Task->expects($this->exactly(1))->method('in')->will($this->returnValue('1'));
@@ -123,7 +125,7 @@ class TemplateTaskTest extends CakeTestCase {
  */
 	public function testGenerate() {
 		App::build(array(
-			'shells' => array(
+			'Console' => array(
 				LIBS . 'tests' . DS .  'test_app' . DS . 'console' . DS
 			)
 		));
@@ -143,7 +145,7 @@ class TemplateTaskTest extends CakeTestCase {
  */
 	public function testGenerateWithTemplateFallbacks() {
 		App::build(array(
-			'shells' => array(
+			'Console' => array(
 				LIBS . 'tests' . DS .  'test_app' . DS . 'console' . DS,
 				CAKE_CORE_INCLUDE_PATH . DS . 'console' . DS
 			)
