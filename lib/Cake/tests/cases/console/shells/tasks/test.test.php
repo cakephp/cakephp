@@ -20,6 +20,8 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('TestTask', 'Console/Command/Task');
 App::uses('TemplateTask', 'Console/Command/Task');
@@ -371,7 +373,7 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testGetClassName() {
 		$objects = App::objects('model');
-		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail. %s');
+		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail.');
 		if ($skip) {
 			return;
 		}
@@ -536,13 +538,13 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	function testInteractiveWithPlugin() {
-		$testApp = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS;
+		$testApp = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS;
 		App::build(array(
 			'plugins' => array($testApp)
 		), true);
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'other_helper.test.php';
+		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'other_helper_helper.test.php';
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls(
@@ -556,7 +558,7 @@ class TestTaskTest extends CakeTestCase {
 
 		$this->Task->stdout->expects($this->at(21))
 			->method('write')
-			->with('1. OtherHelper');
+			->with('1. OtherHelperHelper');
 	
 		$this->Task->execute();
 	}
