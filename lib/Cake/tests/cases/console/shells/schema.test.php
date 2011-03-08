@@ -18,8 +18,11 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('CakeSchema', 'Model');
+App::uses('SchemaShell', 'Console/Command');
 
 /**
  * Test for Schema database management
