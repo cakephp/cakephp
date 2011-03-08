@@ -19,11 +19,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Shell', 'Console');
 App::uses('CakeTestSuiteDispatcher', 'TestSuite');
 App::uses('CakeTestSuiteCommand', 'TestSuite');
 App::uses('CakeTestLoader', 'TestSuite');
 
-class TestSuiteShell extends Shell {
+class TestsuiteShell extends Shell {
 
 /**
  * Dispatcher object for the run.
