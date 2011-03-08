@@ -702,6 +702,20 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * test that View::$view works
+ *
+ * @return void
+ */
+	function testRenderUsingViewProperty() {
+		$this->PostsController->view = 'cache_form';
+		$View = new TestView($this->PostsController);
+		
+		$this->assertEquals('cache_form', $View->view);
+		$result = $View->render();
+		$this->assertRegExp('/Add User/', $result);
+	}
+
+/**
  * test that view vars can replace the local helper variables
  * and not overwrite the $this->Helper references
  *
