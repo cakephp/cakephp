@@ -22,6 +22,7 @@ App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
+App::uses('File', 'Utility');
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -607,10 +608,6 @@ class Shell extends Object {
 			}
 		} else {
 			$this->out(__('Creating file %s', $path));
-		}
-
-		if (!class_exists('File')) {
-			require LIBS . 'file.php';
 		}
 
 		if ($File = new File($path, true)) {
