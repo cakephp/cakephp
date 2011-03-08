@@ -176,7 +176,7 @@ class BakeShell extends Shell {
 					$this->Controller->bakeTest($controller);
 				}
 			}
-			App::uses($controller . 'Controller', 'Controller')
+			App::uses($controller . 'Controller', 'Controller');
 			if (class_exists($controller . 'Controller')) {
 				$this->View->args = array($controller);
 				$this->View->execute();
