@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once CONSOLE_LIBS . 'console_option_parser.php';
+App::uses('ConsoleOptionParser', 'Console');
 
 class ConsoleOptionParserTest extends CakeTestCase {
 
