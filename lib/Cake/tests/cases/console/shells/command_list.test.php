@@ -18,6 +18,9 @@
  */
 
 App::uses('CommandListShell', 'Console/Command');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
+App::uses('Shell', 'Console');
 
 
 class TestStringOutput extends ConsoleOutput {
@@ -40,10 +43,7 @@ class CommandListTest extends CakeTestCase {
 			'plugins' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			),
-			'shells' => array(
-				CORE_PATH ? 
-					CORE_PATH . CAKE . 'console' . DS . 'shells' . DS : 
-					CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'shells' .DS, 
+			'Console/Command' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
 			)
 		), true);
@@ -83,6 +83,7 @@ class CommandListTest extends CakeTestCase {
 
 		$expected = "/welcome \[.*TestPluginTwo.*\]/";
 		$this->assertPattern($expected, $output);
+
 
 		$expected = "/acl \[.*CORE.*\]/";
 		$this->assertPattern($expected, $output);

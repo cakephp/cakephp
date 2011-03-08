@@ -454,7 +454,7 @@ class App {
 		if ($type === 'file' && !$path) {
 			return false;
 		} elseif ($type === 'file') {
-			$extension = '/.*/';
+			$extension = '/\.php$/';
 			$name = $type . str_replace(DS, '', $path);
 		}
 
@@ -477,9 +477,10 @@ class App {
 					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
 					foreach ($files as $file) {
 						if (!$file->isDot()) {
-							if ($file->isDir() && $includeDirectories) {
+							$isDir = $file->isDir() ;
+							if ($isDir && $includeDirectories) {
 								$objects[] = basename($file);
-							} elseif (!$includeDirectories) {
+							} elseif (!$includeDirectories && !$isDir) {
 								$objects[] = substr(basename($file), 0, -4);
 							}
 						}

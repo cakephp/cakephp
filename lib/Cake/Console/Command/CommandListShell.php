@@ -16,6 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Inflector', 'Utility');
+
 /**
  * Shows a list of commands available from the console.
  *
@@ -79,17 +81,18 @@ class CommandListShell extends Shell {
 	protected function _getShellList() {
 		$shellList = array();
 
-		$corePaths = App::core('shells');
-		$shellList = $this->_appendShells('CORE', $corePaths, $shellList);
+		$shells = App::objects('file', App::core('Console/Command'));
+		$shellList = $this->_appendShells('CORE', $shells, $shellList);
 
-		$appPaths = array_diff(App::path('shells'), $corePaths);
-		$shellList = $this->_appendShells('app', $appPaths, $shellList);
+		$appShells = App::objects('Console/Command', null, false);
+		$shellList = $this->_appendShells('app', $appShells, $shellList);
 
 		$plugins = App::objects('plugin');
 		foreach ($plugins as $plugin) {
-			$pluginPath = App::pluginPath($plugin) . 'console' . DS . 'shells' . DS;
-			$shellList = $this->_appendShells($plugin, array($pluginPath), $shellList);
+			$pluginShells = App::objects($plugin . '.Console/Command');
+			$shellList = $this->_appendShells($plugin, $pluginShells, $shellList);
 		}
+
 		return $shellList;
 	}
 
@@ -98,20 +101,10 @@ class CommandListShell extends Shell {
  *
  * @return array
  */
-	protected function _appendShells($type, $paths, $shellList) {
-		foreach ($paths as $path) {
-			if (!is_dir($path)) {
-				continue;
-			}
- 			$shells = App::objects('file', $path);
-
-			if (empty($shells)) {
-				continue;
-			}
-			foreach ($shells as $shell) {
-				$shell = str_replace('Shell.php', '', $shell);
-				$shellList[$shell][$type] = $type;
-			}
+	protected function _appendShells($type, $shells, $shellList) {
+		foreach ($shells as $shell) {
+			$shell = Inflector::underscore(str_replace('Shell', '', $shell));
+			$shellList[$shell][$type] = $type;
 		}
 		return $shellList;
 	}
