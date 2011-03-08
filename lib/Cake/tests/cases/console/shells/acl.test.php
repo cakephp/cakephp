@@ -20,6 +20,7 @@
 App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('AclShell', 'Console/Command');
+App::uses('ComponentCollection', 'Controller');
 
 /**
  * AclShellTest class
