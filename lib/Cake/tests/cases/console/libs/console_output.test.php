@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once CONSOLE_LIBS . 'console_output.php';
+App::uses('ConsoleOutput', 'Console');
 
 class ConsoleOutputTest extends CakeTestCase {
 
