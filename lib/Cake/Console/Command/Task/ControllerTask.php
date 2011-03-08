@@ -107,7 +107,7 @@ class ControllerTask extends BakeTask {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
 			App::uses($model, 'Model');
-			if (!class_exists($model)) {
+			if (class_exists($model)) {
 				$actions = $this->bakeActions($controller);
 				if ($this->bake($controller, $actions) && $unitTestExists) {
 					$this->bakeTest($controller);
@@ -270,9 +270,9 @@ class ControllerTask extends BakeTask {
 		$currentModelName = $modelImport = $this->_modelName($controllerName);
 		$plugin = $this->plugin;
 		if ($plugin) {
-			$modelImport = $plugin . '.' . $modelImport;
+			$plugin .= '.';
 		}
-		App::uses($modelImport, 'Model');
+		App::uses($modelImport, $plugin . 'Model');
 		if (!class_exists($modelImport)) {
 			$this->err(__('You must have a model for this class to build basic methods. Please try again.'));
 			$this->_stop();

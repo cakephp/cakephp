@@ -29,7 +29,12 @@ App::uses('TemplateTask', 'Console/Command/Task');
 App::uses('TestTask', 'Console/Command/Task');
 App::uses('Model', 'Model');
 
-if (class_exists('BakeArticle')) {
+App::uses('BakeArticle', 'Model');
+App::uses('BakeComment', 'Model');
+App::uses('BakeTags', 'Model');
+$imported = class_exists('BakeArticle') || class_exists('BakeComment') || class_exists('BakeTag');
+
+if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 
 	class BakeArticle extends Model {
