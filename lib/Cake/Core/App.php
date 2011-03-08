@@ -315,7 +315,7 @@ class App {
 				'libs' => array('%s' . 'libs' . DS),
 				'locales' => array('%s' . 'locale' . DS),
 				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
-				'plugins' => array(APP . 'plugins' . DS)
+				'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS)
 			);
 		}
 
