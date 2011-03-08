@@ -41,13 +41,13 @@ class ApiShell extends Shell {
  */
 	public function initialize() {
 		$this->paths = array_merge($this->paths, array(
-			'behavior' => LIBS . 'model' . DS . 'behaviors' . DS,
-			'cache' => LIBS . 'cache' . DS,
-			'controller' => LIBS . 'controller' . DS,
-			'component' => LIBS . 'controller' . DS . 'components' . DS,
-			'helper' => LIBS . 'view' . DS . 'helpers' . DS,
-			'model' => LIBS . 'model' . DS,
-			'view' => LIBS . 'view' . DS,
+			'behavior' => LIBS . 'Model' . DS . 'Behavior' . DS,
+			'cache' => LIBS . 'Cache' . DS,
+			'controller' => LIBS . 'Controller' . DS,
+			'component' => LIBS . 'Controller' . DS . 'Component' . DS,
+			'helper' => LIBS . 'View' . DS . 'Helper' . DS,
+			'model' => LIBS . 'Model' . DS,
+			'view' => LIBS . 'View' . DS,
 			'core' => LIBS
 		));
 	}
@@ -74,7 +74,7 @@ class ApiShell extends Shell {
 			$class = Inflector::camelize($type);
 		} elseif (count($this->args) > 1) {
 			$file = Inflector::underscore($this->args[1]);
-			$class = Inflector::camelize($file);
+			$class = Inflector::camelize($this->args[1]);
 		}
 		$objects = App::objects('class', $path);
 		if (in_array($class, $objects)) {
@@ -88,7 +88,7 @@ class ApiShell extends Shell {
 			$this->error(__('%s not found', $class));
 		}
 
-		$parsed = $this->__parseClass($path . $file .'.php', $class);
+		$parsed = $this->__parseClass($path . $class .'.php', $class);
 
 		if (!empty($parsed)) {
 			if (isset($this->params['method'])) {
@@ -197,9 +197,12 @@ class ApiShell extends Shell {
 	function __parseClass($path, $class) {
 		$parsed = array();
 
-		if (!include_once($path)) {
-			$this->err(__('%s could not be found', $path));
+		if (!class_exists($class)) {
+			if (!include_once($path)) {
+				$this->err(__('%s could not be found', $path));
+			}
 		}
+
 		$reflection = new ReflectionClass($class);
 
 		foreach ($reflection->getMethods() as $method) {
