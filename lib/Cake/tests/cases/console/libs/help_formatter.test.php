@@ -1,7 +1,7 @@
 <?php
 
-require_once CONSOLE_LIBS . 'console_option_parser.php';
-require_once CONSOLE_LIBS . 'help_formatter.php';
+App::uses('ConsoleOptionParser', 'Console');
+App::uses('HelpFormatter', 'Console');
 
 class HelpFormatterTest extends CakeTestCase {
 

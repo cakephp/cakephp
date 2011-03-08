@@ -137,7 +137,7 @@ class TestsuiteShell extends Shell {
 		))->addOption('bootstrap', array(
 			'help' => __('<file> A "bootstrap" PHP file that is run before the tests.'),
 			'default' => false
-		))->addOption('configuraion', array(
+		))->addOption('configuration', array(
 			'help' => __('<file> Read configuration from XML file.'),
 			'default' => false
 		))->addOption('no-configuration', array(

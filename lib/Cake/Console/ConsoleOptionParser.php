@@ -16,9 +16,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('TaskCollection', 'Console');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
+App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleInputOption', 'Console');
 App::uses('ConsoleInputArgument', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
