@@ -45,11 +45,11 @@ ini_set('display_errors', 1);
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
 /**
- * The absolute path to the "cake" directory, WITHOUT a trailing DS.
+ * The absolute path to the "Cake" directory, WITHOUT a trailing DS.
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT);
+		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 	}
 
 /**
@@ -65,7 +65,7 @@ if (!defined('WWW_ROOT')) {
 }
 if (!defined('CORE_PATH')) {
 	define('APP_PATH', ROOT . DS . APP_DIR . DS);
-	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS . 'lib' . DS);
+	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 }
 if (!include(CORE_PATH . 'Cake' . DS . 'bootstrap.php')) {
 	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);

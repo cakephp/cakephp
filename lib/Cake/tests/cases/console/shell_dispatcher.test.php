@@ -16,7 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+
+App::uses('ShellDispatcher', 'Console');
 
 /**
  * TestShellDispatcher class
@@ -118,8 +119,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'plugins' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			),
-			'shells' => array(
-				CORE_PATH ? CONSOLE_LIBS : ROOT . DS . CONSOLE_LIBS,
+			'Console/Command' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
 			)
 		), true);
