@@ -18,6 +18,7 @@
  */
 
 App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
 
 /**
  * Task class for creating a plugin

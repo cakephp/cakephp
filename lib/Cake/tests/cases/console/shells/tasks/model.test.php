@@ -21,6 +21,8 @@
 
 App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('FixtureTask', 'Console/Command/Task');
 App::uses('TemplateTask', 'Console/Command/Task');
 App::uses('ModelTask', 'Console/Command/Task');

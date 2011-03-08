@@ -20,9 +20,12 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('PluginTask', 'Console/Command/Task');
 App::uses('ModelTask', 'Console/Command/Task');
+App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 
 /**

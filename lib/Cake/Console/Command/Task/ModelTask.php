@@ -20,6 +20,7 @@
 App::uses('BakeTask', 'Console/Command/Task');
 App::uses('ConnectionManager', 'Model');
 App::uses('Model', 'Model');
+App::uses('Validation', 'Utility');
 
 /**
  * Task class for creating and updating model files.
