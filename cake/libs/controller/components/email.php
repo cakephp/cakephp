@@ -580,11 +580,19 @@ class EmailComponent extends Object{
 		}
 
 		if (!empty($this->cc)) {
-			$headers['cc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->cc));
+		  if (is_array($this->cc)) {
+  			$headers['cc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->cc));
+		  } else {
+		    $headers['cc'] = $this->_formatAddress($this->cc);
+		  }
 		}
 
 		if (!empty($this->bcc) && $this->delivery != 'smtp') {
-			$headers['Bcc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->bcc));
+			if (is_array($this->cc)) {
+  			$headers['Bcc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->bcc));
+		  } else {
+		    $headers['Bcc'] = $this->_formatAddress($this->bcc);
+		  }
 		}
 		if ($this->delivery == 'smtp') {
 			$headers['Subject'] = $this->_encode($this->subject);
