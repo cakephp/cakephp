@@ -680,7 +680,7 @@ class View extends Object {
 		}
 
 		if ($name === null) {
-			$name = $this->action;
+			$name = $this->view;
 		}
 		$name = str_replace('/', DS, $name);
 
