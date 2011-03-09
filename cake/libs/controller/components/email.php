@@ -588,7 +588,7 @@ class EmailComponent extends Object{
 		}
 
 		if (!empty($this->bcc) && $this->delivery != 'smtp') {
-			if (is_array($this->cc)) {
+			if (is_array($this->bcc)) {
   			$headers['Bcc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->bcc));
 		  } else {
 		    $headers['Bcc'] = $this->_formatAddress($this->bcc);
