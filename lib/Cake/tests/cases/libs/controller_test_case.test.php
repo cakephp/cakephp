@@ -123,9 +123,9 @@ class ControllerTestCaseTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS)
+			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS)
 		));
 		$this->Case = new ControllerTestCase();
 		Router::reload();

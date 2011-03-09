@@ -254,7 +254,13 @@ class ControllerTestCase extends CakeTestCase {
  * @return Controller Mocked controller
  */
 	public function generate($controller, $mocks = array()) {
-		if (!class_exists($controller.'Controller') && App::import('Controller', $controller) === false) {
+		list($plugin, $controller) = pluginSplit($controller);
+		if ($plugin) {
+			App::uses($plugin . 'AppController', $plugin . '.Controller');
+			$plugin .= '.';
+		}
+		App::uses($controller . 'Controller', $plugin . 'Controller');
+		if (!class_exists($controller.'Controller')) {
 			throw new MissingControllerException(array('controller' => $controller.'Controller'));
 		}
 		ClassRegistry::flush();
@@ -295,10 +301,11 @@ class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			list($plugin, $name) = pluginSplit($component);
-			if (!App::import('Component', $component)) {
+			list($plugin, $name) = pluginSplit($component, true);
+			App::uses($name . 'Component', $plugin . 'Controller/Component');
+			if (!class_exists($name . 'Component')) {
 				throw new MissingComponentFileException(array(
-					'file' => Inflector::underscore($name) . '.php',
+					'file' => $name . 'Component.php',
 					'class' => $name.'Component'
 				));
 			}			
