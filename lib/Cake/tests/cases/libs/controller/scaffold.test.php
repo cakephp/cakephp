@@ -487,7 +487,7 @@ class ScaffoldViewTest extends CakeTestCase {
 	function testEditScaffold() {
 		$this->Controller->request->base = '';
 		$this->Controller->request->webroot = '/';
-		$this->Controller->request->here = '/scaffold_mock';
+		$this->Controller->request->here = '/scaffold_mock/edit/1';
 
 		$params = array(
 			'plugin' => null,

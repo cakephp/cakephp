@@ -399,7 +399,14 @@ class Controller extends Object {
 
 /**
  * Sets the request objects and configures a number of controller properties
- * based on the contents of the request.
+ * based on the contents of the request.  The properties that get set are
+ *
+ * - $this->request - To the $request parameter
+ * - $this->plugin - To the $request->params['plugin']
+ * - $this->view - To the $request->params['action']
+ * - $this->autoLayout - To the false if $request->params['bare']; is set.
+ * - $this->autoRender - To false if $request->params['return'] == 1
+ * - $this->passedArgs - The the combined results of params['named'] and params['pass]
  *
  * @param CakeRequest $request
  * @return void
@@ -407,7 +414,7 @@ class Controller extends Object {
 	public function setRequest(CakeRequest $request) {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
-
+		$this->view = isset($request->params['action']) ? $request->params['action'] : null;
 		if (isset($request->params['pass']) && isset($request->params['named'])) {
 			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
 		}
