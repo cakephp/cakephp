@@ -68,8 +68,7 @@ class RedirectRoute extends CakeRoute {
 			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
-			$argOptions['context'] = array('action' => $redirect['action'], 'controller' => $redirect['controller']);
-			$redirect += Router::getArgs($params['_args_'], $argOptions) + array('url' => array());
+			$redirect += array('named' => $params['named'], 'pass' => $params['pass'], 'url' => array());
 			$redirect = Router::reverse($redirect);
 		}
 		$status = 301;

@@ -171,6 +171,7 @@ class ControllerTestCase extends CakeTestCase {
  * Tests a controller action.
  *
  * ### Options:
+ *
  * - `data` POST or GET data to pass
  * - `method` POST or GET
  *
