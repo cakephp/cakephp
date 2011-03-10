@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('HelperCollection', 'View/Helper');
+App::uses('HelperCollection', 'View');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('View', 'View');
 
