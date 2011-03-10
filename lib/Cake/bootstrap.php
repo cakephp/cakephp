@@ -192,7 +192,7 @@ if (!defined('TMP')) {
  * Path to the vendors directory.
  */
 if (!defined('VENDORS')) {
-	define('VENDORS', CAKE_CORE_INCLUDE_PATH.DS.'vendors'.DS);
+	define('VENDORS', ROOT . DS . 'vendors' . DS);
 }
 
 /**

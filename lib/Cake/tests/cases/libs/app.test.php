@@ -14,11 +14,37 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testBuild() {
+		$old = App::path('Model');
+		$expected = array(
+			APP . 'models' . DS
+		);
+		$this->assertEqual($expected, $old);
+
+		App::build(array('Model' => array('/path/to/models/')));
+
+		$new = App::path('Model');
+
+		$expected = array(
+			'/path/to/models/',
+			APP . 'models' . DS
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build(); //reset defaults
+		$defaults = App::path('Model');
+		$this->assertEqual($old, $defaults);
+	}
+
+/**
+ * tests that it is possible to set up paths using the cake 1.3 notation for them (models, behaviors, controllers...)
+ *
+ * @access public
+ * @return void
+ */
+	function testCompatibleBuild() {
 		$old = App::path('models');
 		$expected = array(
-			APP . 'models' . DS,
-			APP,
-			LIBS . 'model' . DS
+			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $old);
 
@@ -28,14 +54,78 @@ class AppImportTest extends CakeTestCase {
 
 		$expected = array(
 			'/path/to/models/',
-			APP . 'models' . DS,
-			APP,
-			LIBS . 'model' . DS
+			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $new);
+		$this->assertEqual($expected, App::path('Model'));
+
+		App::build(array('datasources' => array('/path/to/datasources/')));
+		$expected = array(
+			'/path/to/datasources/',
+			APP . 'models' . DS . 'datasources' . DS
+		);
+		$result = App::path('datasources');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('Model/Datasource'));
+
+		App::build(array('behaviors' => array('/path/to/behaviors/')));
+		$expected = array(
+			'/path/to/behaviors/',
+			APP . 'models' . DS . 'behaviors' . DS
+		);
+		$result = App::path('behaviors');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('Model/Behavior'));
+
+		App::build(array('controllers' => array('/path/to/controllers/')));
+		$expected = array(
+			'/path/to/controllers/',
+			APP . 'controllers' . DS
+		);
+		$result = App::path('controllers');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('Controller'));
+
+		App::build(array('components' => array('/path/to/components/')));
+		$expected = array(
+			'/path/to/components/',
+			APP . 'controllers' . DS . 'components' . DS
+		);
+		$result = App::path('components');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('Controller/Component'));
+
+		App::build(array('views' => array('/path/to/views/')));
+		$expected = array(
+			'/path/to/views/',
+			APP . 'views' . DS
+		);
+		$result = App::path('views');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('View'));
+
+		App::build(array('helpers' => array('/path/to/helpers/')));
+		$expected = array(
+			'/path/to/helpers/',
+			APP . 'views' . DS . 'helpers' . DS
+		);
+		$result = App::path('helpers');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('View/Helper'));
+
+		App::build(array('shells' => array('/path/to/shells/')));
+		$expected = array(
+			'/path/to/shells/',
+			APP . 'console' . DS . 'shells' . DS,
+			APP . 'vendors' . DS . 'shells' . DS,
+			ROOT . DS . 'vendors' . DS . 'shells' . DS
+		);
+		$result = App::path('shells');
+		$this->assertEqual($expected, $result);
+		$this->assertEqual($expected, App::path('Console/Command'));
 
 		App::build(); //reset defaults
-		$defaults = App::path('models');
+		$defaults = App::path('Model');
 		$this->assertEqual($old, $defaults);
 	}
 

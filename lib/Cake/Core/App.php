@@ -226,10 +226,10 @@ class App {
 		'behaviors' => 'Model/Behavior',
 		'datasources' => 'Model/Datasource',
 		'controllers' => 'Controller',
-		'components' => 'Model/Datasource',
+		'components' => 'Controller/Component',
 		'views' => 'View',
 		'helpers' => 'View/Helper',
-		'shells' => 'Console'
+		'shells' => 'Console/Command'
 	);
 
 /**
@@ -329,6 +329,16 @@ class App {
 			return $paths;
 		}
 
+		//Provides Backwards compatibility for old-style package names
+		$legacyPaths = array();
+		foreach ($paths as $type => $path) {
+			if (!empty(self::$legacy[$type])) {
+				$type = self::$legacy[$type];
+			}
+			$legacyPaths[$type] = $path;
+		}
+
+		$paths = $legacyPaths;
 		$defaults = array();
 		foreach (self::$__packageFormat as $package => $format) {
 			foreach ($format as $f) {
@@ -340,7 +350,6 @@ class App {
 		$appLibs = empty($paths['libs']) ? $defaults['libs'] : $paths['libs'];
 
 		foreach ($defaults as $type => $default) {
-
 			if (empty(self::$__packages[$type]) || empty($paths)) {
 				self::$__packages[$type] = $default;
 			}
