@@ -189,31 +189,47 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testListObjects() {
-		$result = App::objects('class', LIBS . 'libs', false);
-		$this->assertTrue(in_array('Xml', $result));
-		$this->assertTrue(in_array('Cache', $result));
-		$this->assertTrue(in_array('HttpSocket', $result));
+		$result = App::objects('class',  LIBS . 'Routing', false);
+		$this->assertTrue(in_array('Dispatcher', $result));
+		$this->assertTrue(in_array('Router', $result));
 
+		App::build(array(
+			'Model/Behavior' => App::core('Model/Behavior'),
+			'Controller' => App::core('Controller'),
+			'Controller/Component' => App::core('Controller/Component'),
+			'View' => App::core('View'),
+			'Model' => App::core('Model'),
+			'View/Helper' => App::core('View/Helper'),
+		), true);
 		$result = App::objects('behavior', null, false);
-		$this->assertTrue(in_array('Tree', $result));
+		$this->assertTrue(in_array('TreeBehavior', $result));
+		$result = App::objects('Model/Behavior', null, false);
+		$this->assertTrue(in_array('TreeBehavior', $result));
 
 		$result = App::objects('controller', null, false);
-		$this->assertTrue(in_array('Pages', $result));
+		$this->assertTrue(in_array('PagesController', $result));
+		$result = App::objects('Controller', null, false);
+		$this->assertTrue(in_array('PagesController', $result));
 
 		$result = App::objects('component', null, false);
-		$this->assertTrue(in_array('Auth', $result));
+		$this->assertTrue(in_array('AuthComponent', $result));
+		$result = App::objects('Controller/Component', null, false);
+		$this->assertTrue(in_array('AuthComponent', $result));
 
 		$result = App::objects('view', null, false);
-		$this->assertTrue(in_array('Media', $result));
+		$this->assertTrue(in_array('MediaView', $result));
+		$result = App::objects('View', null, false);
+		$this->assertTrue(in_array('MediaView', $result));
 
 		$result = App::objects('helper', null, false);
-		$this->assertTrue(in_array('Html', $result));
+		$this->assertTrue(in_array('HtmlHelper', $result));
+		$result = App::objects('View/Helper', null, false);
+		$this->assertTrue(in_array('HtmlHelper', $result));
 
 		$result = App::objects('model', null, false);
-		$notExpected = array('AppModel', 'ModelBehavior', 'ConnectionManager',  'DbAcl', 'Model', 'CakeSchema');
-		foreach ($notExpected as $class) {
-			$this->assertFalse(in_array($class, $result));
-		}
+		$this->assertTrue(in_array('AcoAction', $result));
+		$result = App::objects('Model', null, false);
+		$this->assertTrue(in_array('AcoAction', $result));
 
 		$result = App::objects('file');
 		$this->assertFalse($result);
@@ -223,7 +239,7 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = App::objects('NonExistingType');
-		$this->assertFalse($result);
+		$this->assertEqual($result, array());
 
 		App::build(array(
 			'plugins' => array(
