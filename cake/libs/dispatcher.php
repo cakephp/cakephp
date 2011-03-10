@@ -302,13 +302,13 @@ class Dispatcher {
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
 			$this->response->statusCode(404);
 			$this->response->send();
-			return $this->_stop();
+			return true;
 		} elseif ($isCss) {
 			include WWW_ROOT . DS . $filters['css'];
-			$this->_stop();
+			return true;
 		} elseif ($isJs) {
 			include WWW_ROOT . DS . $filters['js'];
-			$this->_stop();
+			return true;
 		}
 		$controller = null;
 		$pathSegments = explode('.', $url);
