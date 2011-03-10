@@ -136,17 +136,15 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testBuildWithReset() {
-		$old = App::path('models');
+		$old = App::path('Model');
 		$expected = array(
-			APP . 'models' . DS,
-			APP,
-			LIBS . 'model' . DS
+			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $old);
 
-		App::build(array('models' => array('/path/to/models/')), true);
+		App::build(array('Model' => array('/path/to/models/')), true);
 
-		$new = App::path('models');
+		$new = App::path('Model');
 
 		$expected = array(
 			'/path/to/models/'
@@ -154,7 +152,7 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual($expected, $new);
 
 		App::build(); //reset defaults
-		$defaults = App::path('models');
+		$defaults = App::path('Model');
 		$this->assertEqual($old, $defaults);
 	}
 
@@ -165,15 +163,23 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testCore() {
-		$model = App::core('models');
-		$this->assertEqual(array(LIBS . 'model' . DS), $model);
+		$model = App::core('Model');
+		$this->assertEqual(array(LIBS . 'Model' . DS), $model);
 
-		$view = App::core('views');
-		$this->assertEqual(array(LIBS . 'view' . DS), $view);
+		$view = App::core('View');
+		$this->assertEqual(array(LIBS . 'View' . DS), $view);
 
-		$controller = App::core('controllers');
-		$this->assertEqual(array(LIBS . 'controller' . DS), $controller);
+		$controller = App::core('Controller');
+		$this->assertEqual(array(LIBS . 'Controller' . DS), $controller);
 
+		$component = App::core('Controller/Component');
+		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS), $component);
+
+		$auth = App::core('Controller/Component/Auth');
+		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), $auth);
+
+		$datasource = App::core('Model/Datasource');
+		$this->assertEqual(array(LIBS . 'Model' . DS . 'Datasource' . DS), $datasource);
 	}
 
 /**
