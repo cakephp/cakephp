@@ -260,29 +260,42 @@ class AppImportTest extends CakeTestCase {
  */
 	function testListObjectsInPlugin() {
 		App::build(array(
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
-		$oldCache = App::$models;
 		$result = App::objects('TestPlugin.model');
 		$this->assertTrue(in_array('TestPluginPost', $result));
-		$this->assertEquals($oldCache, App::$models);
+		$result = App::objects('TestPlugin.Model');
+		$this->assertTrue(in_array('TestPluginPost', $result));
 
 		$result = App::objects('TestPlugin.behavior');
 		$this->assertTrue(in_array('TestPluginPersisterOne', $result));
+		$result = App::objects('TestPlugin.Model/Behavior');
+		$this->assertTrue(in_array('TestPluginPersisterOne', $result));
 
 		$result = App::objects('TestPlugin.helper');
-		$expected = array('OtherHelper', 'PluggedHelper', 'TestPluginApp');
+		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
+		$this->assertEquals($result, $expected);
+		$result = App::objects('TestPlugin.View/Helper');
+		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
 		$this->assertEquals($result, $expected);
 
 		$result = App::objects('TestPlugin.component');
 		$this->assertTrue(in_array('OtherComponent', $result));
+		$result = App::objects('TestPlugin.Controller/Component');
+		$this->assertTrue(in_array('OtherComponent', $result));
 
 		$result = App::objects('TestPluginTwo.behavior');
 		$this->assertEquals($result, array());
+		$result = App::objects('TestPluginTwo.Model/Behavior');
+		$this->assertEquals($result, array());
 
 		$result = App::objects('model', null, false);
+		$this->assertTrue(in_array('Comment', $result));
+		$this->assertTrue(in_array('Post', $result));
+
+		$result = App::objects('Model', null, false);
 		$this->assertTrue(in_array('Comment', $result));
 		$this->assertTrue(in_array('Post', $result));
 
@@ -319,7 +332,7 @@ class AppImportTest extends CakeTestCase {
  */
 	function testThemePath() {
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS)
 		));
 		$path = App::themePath('test_theme');
 		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS;

@@ -67,90 +67,6 @@ class App {
 	);
 
 /**
- * List of additional path(s) where model files reside.
- *
- * @var array
- */
-	public static $models = array();
-
-/**
- * List of additional path(s) where behavior files reside.
- *
- * @var array
- */
-	public static $behaviors = array();
-
-/**
- * List of additional path(s) where controller files reside.
- *
- * @var array
- */
-	public static $controllers = array();
-
-/**
- * List of additional path(s) where component files reside.
- *
- * @var array
- */
-	public static $components = array();
-
-/**
- * List of additional path(s) where datasource files reside.
- *
- * @var array
- */
-	public static $datasources = array();
-
-/**
- * List of additional path(s) where libs files reside.
- *
- * @var array
- */
-	public static $libs = array();
-
-/**
- * List of additional path(s) where view files reside.
- *
- * @var array
- */
-	public static $views = array();
-
-/**
- * List of additional path(s) where helper files reside.
- *
- * @var array
- */
-	public static $helpers = array();
-
-/**
- * List of additional path(s) where plugins reside.
- *
- * @var array
- */
-	public static $plugins = array();
-
-/**
- * List of additional path(s) where vendor packages reside.
- *
- * @var array
- */
-	public static $vendors = array();
-
-/**
- * List of additional path(s) where locale files reside.
- *
- * @var array
- */
-	public static $locales = array();
-
-/**
- * List of additional path(s) where console shell files reside.
- *
- * @var array
- */
-	public static $shells = array();
-
-/**
  * Paths to search for files.
  *
  * @var array
@@ -218,7 +134,7 @@ class App {
 	private static $__packageFormat = array();
 
 /**
- * Maps an old style cakephp class type to the corresponding package
+ * Maps an old style CakePHP class type to the corresponding package
  *
  */
 	public static $legacy = array(
@@ -445,10 +361,6 @@ class App {
 		$includeDirectories = false;
 		$name = $type;
 
-		if (isset(self::$legacy[$type . 's'])) {
-			$type = self::$legacy[$type . 's'];
-		}
-
 		if ($type === 'plugin') {
 			$type = 'plugins';
 		}
@@ -459,6 +371,10 @@ class App {
 		}
 
 		list($plugin, $type) = pluginSplit($type);
+
+		if (isset(self::$legacy[$type . 's'])) {
+			$type = self::$legacy[$type . 's'];
+		}
 
 		if ($type === 'file' && !$path) {
 			return false;
@@ -479,6 +395,7 @@ class App {
 			if (empty($path)) {
 				$path = self::path($type, $plugin);
 			}
+
 			$items = array();
 
 			foreach ((array)$path as $dir) {
