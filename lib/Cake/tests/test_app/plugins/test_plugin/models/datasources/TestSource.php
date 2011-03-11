@@ -1,4 +1,6 @@
 <?php
+App::uses('DataSource', 'Model/Datasource');
+
 class TestSource extends DataSource {
 
 	function describe($model) {

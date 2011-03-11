@@ -145,7 +145,8 @@ class App {
 		'components' => 'Controller/Component',
 		'views' => 'View',
 		'helpers' => 'View/Helper',
-		'shells' => 'Console/Command'
+		'shells' => 'Console/Command',
+		'libs' => 'Lib'
 	);
 
 /**
@@ -228,7 +229,7 @@ class App {
 					'%s' . 'vendors' . DS . 'shells' . DS . 'tasks' . DS,
 					VENDORS . 'shells' . DS . 'tasks' . DS
 				),
-				'libs' => array('%s' . 'libs' . DS),
+				'Lib' => array('%s' . 'libs' . DS),
 				'locales' => array('%s' . 'locale' . DS),
 				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
 				'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS)
@@ -262,8 +263,8 @@ class App {
 			}
 		}
 
-		$mergeExclude = array('libs', 'locales', 'vendors', 'plugins');
-		$appLibs = empty($paths['libs']) ? $defaults['libs'] : $paths['libs'];
+		$mergeExclude = array('Lib', 'locales', 'vendors', 'plugins');
+		$appLibs = empty($paths['Lib']) ? $defaults['Lib'] : $paths['Lib'];
 
 		foreach ($defaults as $type => $default) {
 			if (empty(self::$__packages[$type]) || empty($paths)) {
@@ -551,6 +552,15 @@ class App {
 			} else if (isset(self::$types[$originalType]['suffix'])) {
 				$suffix = self::$types[$originalType]['suffix'];
 				$name .= ($suffix == $name) ? '' : $suffix;
+			}
+
+			if (isset(self::$types[$originalType]['extends'])) {
+				$extends = self::$types[$originalType]['extends'];
+				App::uses($extends, $type);
+				if ($plugin && in_array($originalType, array('controller', 'model'))) {
+					$pluginName = substr($plugin, 0 , -1);
+					App::uses($pluginName . $extends, $plugin . $type);
+				}
 			}
 
 			App::uses(Inflector::camelize($name), $plugin . $type);
