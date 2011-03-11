@@ -1422,7 +1422,7 @@ class FormHelper extends AppHelper {
 		$style = null;
 		$tag = null;
 		$attributes += array(
-			'class' => null, 
+			'class' => null,
 			'escape' => true,
 			'secure' => null,
 			'empty' => '',
@@ -2048,6 +2048,8 @@ class FormHelper extends AppHelper {
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
+						} elseif ($attributes['class'] === 'form-error') {
+							$attributes['class'] = 'checkbox ' . $attributes['class'];
 						}
 						$label = $this->label(null, $title, $label);
 						$item = sprintf(
@@ -2189,7 +2191,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$secure = (isset($this->params['_Token']) && !empty($this->params['_Token']));
 		}
-		
+
 		$fieldName = null;
 		if ($secure && !empty($options['name'])) {
 			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
