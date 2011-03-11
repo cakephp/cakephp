@@ -148,6 +148,15 @@ class AuthTestController extends Controller {
 	}
 
 /**
+ * admin_add method
+ *
+ * @access public
+ * @return void
+ */
+	function admin_add() {
+	}
+
+/**
  * logout method
  *
  * @access public
@@ -916,6 +925,7 @@ class AuthTest extends CakeTestCase {
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->query['url'] = ltrim($url, '/');
 		$this->Auth->request->base = '';
+
 		Router::setRequestInfo($this->Auth->request);
 		$this->Auth->initialize($this->Controller);
 
