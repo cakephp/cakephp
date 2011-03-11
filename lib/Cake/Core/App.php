@@ -543,10 +543,9 @@ class App {
 		if (!$specialPackage && isset(self::$legacy[$type . 's'])) {
 			$type = self::$legacy[$type . 's'];
 		}
+		list($plugin, $name) = pluginSplit($name);
 
 		if (!$specialPackage) {
-			list($plugin, $name) = pluginSplit($name, true);
-
 			if ($type == 'Console/Command' && $name == 'Shell') {
 				$type = 'Console';
 			} else if (isset(self::$types[$originalType]['suffix'])) {
@@ -554,17 +553,45 @@ class App {
 				$name .= ($suffix == $name) ? '' : $suffix;
 			}
 
-			if (isset(self::$types[$originalType]['extends'])) {
+			if ($parent && isset(self::$types[$originalType]['extends'])) {
 				$extends = self::$types[$originalType]['extends'];
 				App::uses($extends, $type);
 				if ($plugin && in_array($originalType, array('controller', 'model'))) {
-					$pluginName = substr($plugin, 0 , -1);
-					App::uses($pluginName . $extends, $plugin . $type);
+					App::uses($plugin . $extends, $plugin . '.' .$type);
 				}
 			}
-
+			if ($plugin) {
+				$plugin .= '.';
+			}
 			App::uses(Inflector::camelize($name), $plugin . $type);
 			return (bool) self::load($name);
+		}
+
+		if ($type == 'file' && !empty($file)) {
+			$mapped = self::__mapped($name, $plugin);
+			if ($mapped) {
+				$file = $mapped;
+			} else if (!empty($search)) {
+				foreach ($search as $path) {
+					$found = false;
+					if (file_exists($path . $file)) {
+						$file = $path . $file;
+						$found = true;
+						break;
+					}
+					if (empty($found)) {
+						$file = false;
+					}
+				}
+			}
+			if (!empty($file) && file_exists($file)) {
+				self::__map($file, $name, $plugin);
+				$returnValue = include $file;
+				if ($return) {
+					return $returnValue;
+				}
+				return (bool) $returnValue;
+			}
 		}
 
 		return false;

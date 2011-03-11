@@ -547,7 +547,7 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testLoadingWithSearch () {
-		$file = App::import('File', 'NewName', false, array(LIBS ), 'config.php');
+		$file = App::import('File', 'NewName', false, array(LIBS . 'config' . DS), 'config.php');
 		$this->assertTrue($file);
 
 		$file = App::import('File', 'AnotherNewName', false, array(LIBS), 'config.php');
@@ -560,12 +560,24 @@ class AppImportTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLoadingWithSearchArray () {
-		$type = array('type' => 'File', 'name' => 'RandomName', 'parent' => false, 'file' => 'config.php', 'search' => array(LIBS ));
+	function testLoadingWithSearchArray() {
+		$type = array(
+			'type' => 'File',
+			'name' => 'RandomName',
+			'parent' => false,
+			'file' => 'config.php',
+			'search' => array(LIBS . 'config' . DS)
+		);
 		$file = App::import($type);
 		$this->assertTrue($file);
 
-		$type = array('type' => 'File', 'name' => 'AnotherRandomName', 'parent' => false, 'file' => 'config.php', 'search' => array(LIBS));
+		$type = array(
+			'type' => 'File',
+			'name' => 'AnotherRandomName',
+			'parent' => false,
+			'file' => 'config.php',
+			'search' => array(LIBS)
+		);
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
@@ -577,28 +589,24 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testMultipleLoading() {
-		if (class_exists('I18n', false) || class_exists('CakeSocket', false)) {
+		if (class_exists('PersisterOne', false) || class_exists('PersisterTwo', false)) {
 			$this->markTestSkipped('Cannot test loading of classes that exist.');
 		}
-		$toLoad = array('I18n', 'CakeSocket');
-
-		$classes = array_flip(get_declared_classes());
-		$this->assertFalse(isset($classes['i18n']));
-		$this->assertFalse(isset($classes['CakeSocket']));
-
-		$load = App::import($toLoad);
+		App::build(array(
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		));
+		$toLoad = array('PersisterOne', 'PersisterTwo');
+		$load = App::import('Model', $toLoad);
 		$this->assertTrue($load);
 
 		$classes = array_flip(get_declared_classes());
 
 
-		$this->assertTrue(isset($classes['I18n']));
+		$this->assertTrue(isset($classes['PersisterOne']));
+		$this->assertTrue(isset($classes['PersisterTwo']));
 
-		$load = App::import(array('I18n', 'SomeNotFoundClass', 'CakeSocket'));
+		$load = App::import('Model', array('PersisterOne', 'SomeNotFoundClass', 'PersisterTwo'));
 		$this->assertFalse($load);
-
-		$load = App::import($toLoad);
-		$this->assertTrue($load);
 	}
 
 /**
