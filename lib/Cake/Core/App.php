@@ -536,6 +536,7 @@ class App {
 					return false;
 				}
 			}
+			return true;
 		}
 
 		$originalType = $type = strtolower($type);
@@ -563,8 +564,9 @@ class App {
 			if ($plugin) {
 				$plugin .= '.';
 			}
-			App::uses(Inflector::camelize($name), $plugin . $type);
-			return (bool) self::load($name);
+			$name = Inflector::camelize($name);
+			App::uses($name, $plugin . $type);
+			return class_exists($name);
 		}
 
 		if ($type == 'file' && !empty($file)) {
