@@ -352,9 +352,6 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testClassLoading() {
-		$file = App::import();
-		$this->assertTrue($file);
-
 		$file = App::import('Model', 'Model', false);
 		$this->assertTrue($file);
 		$this->assertTrue(class_exists('Model'));
@@ -363,15 +360,15 @@ class AppImportTest extends CakeTestCase {
 		$this->assertTrue($file);
 		$this->assertTrue(class_exists('Controller'));
 
-		$file = App::import('Component', 'Component', false);
+		$file = App::import('Component', 'Auth', false);
 		$this->assertTrue($file);
-		$this->assertTrue(class_exists('Component'));
+		$this->assertTrue(class_exists('AuthComponent'));
 
 		$file = App::import('Shell', 'Shell', false);
 		$this->assertTrue($file);
 		$this->assertTrue(class_exists('Shell'));
 
-		$file = App::import('Lib', 'config/PhpReader');
+		$file = App::import('Configure', 'PhpReader');
 		$this->assertTrue($file);
 		$this->assertTrue(class_exists('PhpReader'));
 
@@ -383,21 +380,12 @@ class AppImportTest extends CakeTestCase {
 		$this->assertTrue(class_exists('AppModel'));
 
 		$file = App::import('WrongType', null, true, array(), '');
-		$this->assertTrue($file);
+		$this->assertFalse($file);
 
 		$file = App::import('Model', 'NonExistingPlugin.NonExistingModel', false);
 		$this->assertFalse($file);
 
-		$file = App::import('Core', 'NonExistingPlugin.NonExistingModel', false);
-		$this->assertFalse($file);
-
 		$file = App::import('Model', array('NonExistingPlugin.NonExistingModel'), false);
-		$this->assertFalse($file);
-
-		$file = App::import('Core', array('NonExistingPlugin.NonExistingModel'), false);
-		$this->assertFalse($file);
-
-		$file = App::import('Core', array('NonExistingPlugin.NonExistingModel.AnotherChild'), false);
 		$this->assertFalse($file);
 
 		if (!class_exists('AppController')) {

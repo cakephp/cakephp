@@ -52,18 +52,18 @@ class App {
  * @var array
  */
 	public static $types = array(
-		'class' => array('suffix' => '.php', 'extends' => null, 'core' => true),
-		'file' => array('suffix' => '.php', 'extends' => null, 'core' => true),
-		'model' => array('suffix' => '.php', 'extends' => 'AppModel', 'core' => false),
-		'behavior' => array('suffix' => '.php', 'extends' => 'ModelBehavior', 'core' => true),
-		'controller' => array('suffix' => '_controller.php', 'extends' => 'AppController', 'core' => true),
-		'component' => array('suffix' => '.php', 'extends' => null, 'core' => true),
-		'lib' => array('suffix' => '.php', 'extends' => null, 'core' => true),
-		'view' => array('suffix' => '.php', 'extends' => null, 'core' => true),
-		'helper' => array('suffix' => '.php', 'extends' => 'AppHelper', 'core' => true),
-		'vendor' => array('suffix' => '', 'extends' => null, 'core' => true),
-		'shell' => array('suffix' => '.php', 'extends' => 'Shell', 'core' => true),
-		'plugin' => array('suffix' => '', 'extends' => null, 'core' => true)
+		'class' => array('extends' => null, 'core' => true),
+		'file' => array('extends' => null, 'core' => true),
+		'model' => array('extends' => 'AppModel', 'core' => false),
+		'behavior' => array('extends' => 'ModelBehavior', 'core' => true),
+		'controller' => array('suffix' => 'Controller', 'extends' => 'AppController', 'core' => true),
+		'component' => array('suffix' => 'Component', 'extends' => null, 'core' => true),
+		'lib' => array('extends' => null, 'core' => true),
+		'view' => array('suffix' => 'View', 'extends' => null, 'core' => true),
+		'helper' => array('suffix' => 'Helper', 'extends' => 'AppHelper', 'core' => true),
+		'vendor' => array('extends' => null, 'core' => true),
+		'shell' => array('suffix' => 'Shell', 'extends' => 'Shell', 'core' => true),
+		'plugin' => array('extends' => null, 'core' => true)
 	);
 
 /**
@@ -525,11 +525,28 @@ class App {
 			extract($parent, EXTR_OVERWRITE);
 		}
 
-		if ($name === null && $file === null) {
-			$name = $type;
-			$type = 'Core';
-		} elseif ($name === null) {
-			$type = 'File';
+		if ($name == null && $file == null) {
+			return false;
+		}
+
+		$originalType = $type = strtolower($type);
+		$specialPackage = in_array($type, array('core', 'file', 'vendor'));
+		if (!$specialPackage && isset(self::$legacy[$type . 's'])) {
+			$type = self::$legacy[$type . 's'];
+		}
+
+		if (!$specialPackage) {
+			list($plugin, $name) = pluginSplit($name, true);
+
+			if ($type == 'Console/Command' && $name == 'Shell') {
+				$type = 'Console';
+			} else if (isset(self::$types[$originalType]['suffix'])) {
+				$suffix = self::$types[$originalType]['suffix'];
+				$name .= ($suffix == $name) ? '' : $suffix;
+			}
+
+			App::uses(Inflector::camelize($name), $plugin . $type);
+			return (bool) self::load($name);
 		}
 
 		if (is_array($name)) {
