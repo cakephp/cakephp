@@ -471,20 +471,19 @@ class AppImportTest extends CakeTestCase {
  * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/410
  */
 	function testImportingHelpersFromAlternatePaths() {
-		App::build();
-		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper exists, cannot test importing it.');
+
+		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
 		App::import('Helper', 'Banana');
-		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper was not found because the path does not exist.');
+		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper was not found because the path does not exist.');
 
 		App::build(array(
-			'helpers' => array(
+			'View/Helper' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS
 			)
 		));
-		App::build(array('vendors' => array(LIBS)));
-		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper exists, cannot test importing it.');
+		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
 		App::import('Helper', 'Banana');
-		$this->assertTrue(class_exists('BananaHelper'), 'BananaHelper was not loaded.');
+		$this->assertTrue(class_exists('BananaHelper', false), 'BananaHelper was not loaded.');
 
 		App::build();
 	}
