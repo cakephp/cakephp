@@ -529,6 +529,14 @@ class App {
 			return false;
 		}
 
+		if (is_array($name)) {
+			foreach ($name as $class) {
+				if (!App::import(compact('type', 'parent', 'search', 'file', 'return') + array('name' => $class))) {
+					return false;
+				}
+			}
+		}
+
 		$originalType = $type = strtolower($type);
 		$specialPackage = in_array($type, array('core', 'file', 'vendor'));
 		if (!$specialPackage && isset(self::$legacy[$type . 's'])) {
@@ -548,6 +556,8 @@ class App {
 			App::uses(Inflector::camelize($name), $plugin . $type);
 			return (bool) self::load($name);
 		}
+
+		return false;
 
 		if (is_array($name)) {
 			foreach ($name as $class) {
@@ -657,83 +667,6 @@ class App {
 	}
 
 /**
- * Locates the $file in $__paths, searches recursively.
- *
- * @param string $file full file name
- * @param boolean $recursive search $__paths recursively
- * @return mixed boolean on fail, $file directory path on success
- */
-	private static function __find($file, $recursive = true) {
-		static $appPath = false;
-
-		if (empty(self::$search)) {
-			return null;
-		} elseif (is_string(self::$search)) {
-			self::$search = array(self::$search);
-		}
-
-		if (empty(self::$__paths)) {
-			self::$__paths = Cache::read('dir_map', '_cake_core_');
-		}
-
-		foreach (self::$search as $path) {
-			if ($appPath === false) {
-				$appPath = rtrim(APP, DS);
-			}
-			$path = rtrim($path, DS);
-
-			if ($path === $appPath) {
-				$recursive = false;
-			}
-			if ($recursive === false) {
-				if (self::__load($path . DS . $file)) {
-					return $path . DS;
-				}
-				continue;
-			}
-
-			if (!isset(self::$__paths[$path])) {
-				App::uses('Folder', 'Utility');
-				$Folder = new Folder();
-				$directories = $Folder->tree($path, array('.svn', '.git', 'CVS', 'tests', 'templates'), 'dir');
-				sort($directories);
-				self::$__paths[$path] = $directories;
-			}
-
-			foreach (self::$__paths[$path] as $directory) {
-				if (self::__load($directory . DS . $file)) {
-					return $directory . DS;
-				}
-			}
-		}
-		return null;
-	}
-
-/**
- * Attempts to load $file.
- *
- * @param string $file full path to file including file name
- * @return boolean
- * @access private
- */
-	private static function __load($file) {
-		if (empty($file)) {
-			return false;
-		}
-		if (!self::$return && isset(self::$__loaded[$file])) {
-			return true;
-		}
-		if (file_exists($file)) {
-			if (!self::$return) {
-				require($file);
-				self::$__loaded[$file] = true;
-			}
-			return true;
-		}
-		return false;
-	}
-
-/**
  * Maps the $name to the $file.
  *
  * @param string $file full path to file
@@ -771,180 +704,6 @@ class App {
 			return self::$__map[$name];
 		}
 		return false;
-	}
-
-/**
- * Loads parent classes based on $type.
- * Returns a prefix or suffix needed for loading files.
- *
- * @param string $type type of object
- * @param string $plugin camelized name of plugin
- * @param boolean $parent false will not attempt to load parent
- * @return array
- * @access private
- */
-	private static function __settings($type, $plugin, $parent) {
-		if (!$parent) {
-			return array('class' => null, 'suffix' => null, 'path' => null);
-		}
-
-		if ($plugin) {
-			$pluginPath = Inflector::underscore($plugin);
-		}
-		$path = null;
-		$load = strtolower($type);
-
-		switch ($load) {
-			case 'model':
-				App::uses('Model', 'Model');
-				if (!class_exists('AppModel')) {
-					App::import($type, 'AppModel', false);
-				}
-				if ($plugin) {
-					if (!class_exists($plugin . 'AppModel')) {
-						App::import($type, $plugin . '.' . $plugin . 'AppModel', false, array(), $pluginPath . DS . $pluginPath . '_app_model.php');
-					}
-					$path = $pluginPath . DS . 'models' . DS;
-				}
-				return array('class' => null, 'suffix' => null, 'path' => $path);
-			break;
-			case 'behavior':
-				if ($plugin) {
-					$path = $pluginPath . DS . 'models' . DS . 'behaviors' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			break;
-			case 'datasource':
-				if ($plugin) {
-					$path = $pluginPath . DS . 'models' . DS . 'datasources' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			case 'controller':
-				App::import($type, 'AppController', false);
-				if ($plugin) {
-					App::import($type, $plugin . '.' . $plugin . 'AppController', false, array(), $pluginPath . DS . $pluginPath . '_app_controller.php');
-					$path = $pluginPath . DS . 'controllers' . DS;
-				}
-				return array('class' => $type, 'suffix' => $type, 'path' => $path);
-			break;
-			case 'component':
-				App::import('Core', 'Component', false);
-				if ($plugin) {
-					$path = $pluginPath . DS . 'controllers' . DS . 'components' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			break;
-			case 'lib':
-				if ($plugin) {
-					$path = $pluginPath . DS . 'libs' . DS;
-				}
-				return array('class' => null, 'suffix' => null, 'path' => $path);
-			break;
-			case 'view':
-				App::import('View', 'View', false);
-				if ($plugin) {
-					$path = $pluginPath . DS . 'views' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			break;
-			case 'helper':
-				if (!class_exists('AppHelper')) {
-					App::import($type, 'AppHelper', false);
-				}
-				if ($plugin) {
-					$path = $pluginPath . DS . 'views' . DS . 'helpers' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			break;
-			case 'shell':
-				if (!class_exists('Shell')) {
-					App::import($type, 'Shell', false);
-				}
-				if (!class_exists('AppShell')) {
-					App::import($type, 'AppShell', false);
-				}
-				if ($plugin) {
-					$path = $pluginPath . DS . 'console' . DS . 'shells' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			break;
-			case 'vendor':
-				if ($plugin) {
-					$path = $pluginPath . DS . 'vendors' . DS;
-				}
-				return array('class' => null, 'suffix' => null, 'path' => $path);
-			break;
-			default:
-				$type = $suffix = $path = null;
-			break;
-		}
-		return array('class' => null, 'suffix' => null, 'path' => null);
-	}
-
-/**
- * Returns default search paths.
- *
- * @param string $type type of object to be searched
- * @return array list of paths
- */
-	private static function __paths($type) {
-		$type = strtolower($type);
-		$paths = array();
-
-		if ($type === 'core') {
-			return App::core('libs');
-		}
-		if (isset(self::${$type . 's'})) {
-			return self::${$type . 's'};
-		}
-		return $paths;
-	}
-
-/**
- * Removes file location from map if the file has been deleted.
- *
- * @param string $name name of object
- * @param string $type type of object
- * @param string $plugin camelized name of plugin
- * @return void
- */
-	private static function __remove($name, $type, $plugin) {
-		if ($plugin) {
-			unset(self::$__map['Plugin'][$plugin][$type][$name]);
-		} else {
-			unset(self::$__map[$type][$name]);
-		}
-	}
-
-/**
- * Returns an array of filenames of PHP files in the given directory.
- *
- * @param string $path Path to scan for files
- * @param string $suffix if false, return only directories. if string, match and return files
- * @return array  List of directories or files in directory
- */
-	private static function __list($path, $suffix = false, $extension = false) {
-		App::uses('Folder', 'Utility');
-		$items = array();
-		$Folder = new Folder($path);
-		$contents = $Folder->read(false, true);
-
-		if (is_array($contents)) {
-			if (!$suffix) {
-				return $contents[0];
-			} else {
-				foreach ($contents[1] as $item) {
-					if (substr($item, - strlen($suffix)) === $suffix) {
-						if ($extension) {
-							$items[] = $item;
-						} else {
-							$items[] = substr($item, 0, strlen($item) - strlen($suffix));
-						}
-					}
-				}
-			}
-		}
-		return $items;
 	}
 
 /**
