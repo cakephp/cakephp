@@ -559,35 +559,6 @@ class App {
 
 		return false;
 
-		if (is_array($name)) {
-			foreach ($name as $class) {
-				$tempType = $type;
-				$plugin = null;
-
-				if (strpos($class, '.') !== false) {
-					$value = explode('.', $class);
-					$count = count($value);
-
-					if ($count > 2) {
-						$tempType = $value[0];
-						$plugin = $value[1] . '.';
-						$class = $value[2];
-					} elseif ($count === 2 && ($type === 'Core' || $type === 'File')) {
-						$tempType = $value[0];
-						$class = $value[1];
-					} else {
-						$plugin = $value[0] . '.';
-						$class = $value[1];
-					}
-				}
-
-				if (!App::import($tempType, $plugin . $class, $parent)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
 		if ($name != null && strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 			$plugin = Inflector::camelize($plugin);
