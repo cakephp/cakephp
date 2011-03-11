@@ -360,7 +360,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$result = ob_get_clean();
 
 		$this->assertPattern('/<h2>Custom message<\/h2>/', $result);
-		$this->assertPattern("/<strong>'\/posts\/view\/1000'<\/strong>/", $result);
+		$this->assertPattern("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
 	}
 
 /**

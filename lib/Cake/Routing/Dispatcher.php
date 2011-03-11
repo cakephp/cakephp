@@ -41,14 +41,6 @@ App::uses('Debugger', 'Utility');
 class Dispatcher {
 
 /**
- * The request object
- *
- * @var CakeRequest
- * @access public
- */
-	public $request = null;
-
-/**
  * Response object used for asset/cached responses.
  *
  * @var CakeResponse
@@ -90,17 +82,15 @@ class Dispatcher {
 			return;
 		}
 
-		$this->request = $this->parseParams($request, $additionalParams);
-		$controller = $this->_getController($this->request);
+		$request = $this->parseParams($request, $additionalParams);
+		Router::setRequestInfo($request);
+		$controller = $this->_getController($request);
 
-		if (!is_object($controller)) {
-			Router::setRequestInfo($request);
+		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
 				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
 			));
 		}
-
-		Router::setRequestInfo($request);
 
 		if ($this->_isPrivateAction($request)) {
 			throw new PrivateActionException(array(
@@ -123,10 +113,8 @@ class Dispatcher {
 		$privateAction = $request->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
 
-		if (!empty($prefixes)) {
-			if (isset($request->params['prefix'])) {
-				$request->params['action'] = $request->params['prefix'] . '_' . $request->params['action'];
-			} elseif (strpos($request->params['action'], '_') > 0) {
+		if (!$privateAction && !empty($prefixes)) {
+			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
 				list($prefix, $action) = explode('_', $request->params['action']);
 				$privateAction = in_array($prefix, $prefixes);
 			}
@@ -303,13 +291,13 @@ class Dispatcher {
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
 			$this->response->statusCode(404);
 			$this->response->send();
-			return $this->_stop();
+			return true;
 		} elseif ($isCss) {
 			include WWW_ROOT . DS . $filters['css'];
-			$this->_stop();
+			return true;
 		} elseif ($isJs) {
 			include WWW_ROOT . DS . $filters['js'];
-			$this->_stop();
+			return true;
 		}
 		$controller = null;
 		$pathSegments = explode('.', $url);

@@ -147,9 +147,9 @@ class ExceptionRenderer {
 
 		if ($__previousError != $exception) {
 			$__previousError = $exception;
-			$controller = new CakeErrorController();
+			$controller = new CakeErrorController(Router::getRequest(false));
 		} else {
-			$controller = new Controller();
+			$controller = new Controller(Router::getRequest(false));
 			$controller->viewPath = 'errors';
 		}
 		return $controller;

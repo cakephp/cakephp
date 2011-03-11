@@ -39,7 +39,7 @@ App::uses('CakeRequest', 'Network');
  * {{{
  * class ExampleController extends AppController {
  *		function download () {
- *			$this->view = 'Media';
+ *			$this->viewClass = 'Media';
  *			$params = array(
  *				'id' => 'example.zip',
  *				'name' => 'example',

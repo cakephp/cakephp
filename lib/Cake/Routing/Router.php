@@ -503,6 +503,9 @@ class Router {
 				break;
 			}
 		}
+		if (isset($out['prefix'])) {
+			$out['action'] = $out['prefix'] . '_' . $out['action'];
+		}
 
 		if (!empty($ext) && !isset($out['url']['ext'])) {
 			$out['url']['ext'] = $ext;

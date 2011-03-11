@@ -59,15 +59,6 @@ class TestDispatcher extends Dispatcher {
 		return $controller;
 	}
 
-/**
- * _stop method
- *
- * @return void
- */
-	protected function _stop() {
-		$this->stopped = true;
-		return true;
-	}
 }
 
 /**
@@ -1356,9 +1347,8 @@ class DispatcherTest extends CakeTestCase {
 		));
 
 		ob_start();
-		$Dispatcher->asset('ccss/cake.generic.css');
+		$this->assertTrue($Dispatcher->asset('ccss/cake.generic.css'));
 		$result = ob_get_clean();
-		$this->assertTrue($Dispatcher->stopped);
 	}
 
 /**
@@ -1373,28 +1363,17 @@ class DispatcherTest extends CakeTestCase {
 			'js' => '',
 			'css' => ''
 		));
-		$Dispatcher->asset('theme/test_theme/ccss/cake.generic.css');
-		$this->assertTrue($Dispatcher->stopped);
+		$this->assertTrue($Dispatcher->asset('theme/test_theme/ccss/cake.generic.css'));
 
-		$Dispatcher->stopped = false;
-		$Dispatcher->asset('theme/test_theme/cjs/debug_kit.js');
-		$this->assertTrue($Dispatcher->stopped);
+		$this->assertTrue($Dispatcher->asset('theme/test_theme/cjs/debug_kit.js'));
 
-		$Dispatcher->stopped = false;
-		$Dispatcher->asset('test_plugin/ccss/cake.generic.css');
-		$this->assertTrue($Dispatcher->stopped);
+		$this->assertTrue($Dispatcher->asset('test_plugin/ccss/cake.generic.css'));
 
-		$Dispatcher->stopped = false;
-		$Dispatcher->asset('test_plugin/cjs/debug_kit.js');
-		$this->assertTrue($Dispatcher->stopped);
+		$this->assertTrue($Dispatcher->asset('test_plugin/cjs/debug_kit.js'));
 
-		$Dispatcher->stopped = false;
-		$Dispatcher->asset('css/ccss/debug_kit.css');
-		$this->assertFalse($Dispatcher->stopped);
+		$this->assertFalse($Dispatcher->asset('css/ccss/debug_kit.css'));
 		
-		$Dispatcher->stopped = false;
-		$Dispatcher->asset('js/cjs/debug_kit.js');
-		$this->assertFalse($Dispatcher->stopped);
+		$this->assertFalse($Dispatcher->asset('js/cjs/debug_kit.js'));
 	}
 /**
  * testFullPageCachingDispatch method
