@@ -194,7 +194,7 @@ class ExceptionRenderer {
 	public function error400($error) {
 		$message = $error->getMessage();
 		if (Configure::read('debug') == 0 && $error instanceof CakeException) {
-			$message = __('Not Found');
+			$message = __d('cake', 'Not Found');
 		}
 		$url = $this->controller->request->here();
 		$this->controller->response->statusCode($error->getCode());
@@ -216,7 +216,7 @@ class ExceptionRenderer {
 		$code = ($error->getCode() > 500) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
-			'name' => __('An Internal Error Has Occurred'),
+			'name' => __d('cake', 'An Internal Error Has Occurred'),
 			'message' => h($url),
 			'error' => $error,
 		));
