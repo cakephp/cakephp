@@ -157,8 +157,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintCoverage(array $coverage) {
-		$file = dirname(dirname(__FILE__)) . '/coverage/html_coverage_report.php';
-		include_once $file;
+		App::uses('HtmlCoverageReport', 'TestSuite/Coverage');
 		$reporter = new HtmlCoverageReport($coverage, $this);
 		echo $reporter->report();
 	}
