@@ -89,7 +89,7 @@ class CacheTest extends CakeTestCase {
  */
 	function testConfigWithLibAndPluginEngines() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'Lib' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 
