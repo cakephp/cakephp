@@ -57,7 +57,7 @@ class TestsuiteShellTest extends CakeTestCase {
 	public function testAvailableWithEmptyList() {
 		$this->Shell->startup();
 		$this->Shell->args = array('unexistant-category');
-		$this->Shell->expects($this->at(0))->method('out')->with(__("No test cases available \n\n"));
+		$this->Shell->expects($this->at(0))->method('out')->with(__d('cake', "No test cases available \n\n"));
 		$this->Shell->OptionParser->expects($this->once())->method('help');
 		$this->Shell->available();
 	}
@@ -77,7 +77,7 @@ class TestsuiteShellTest extends CakeTestCase {
 			->with(new PHPUnit_Framework_Constraint_PCREMatch('/\[2\].*/'));
 		
 		$this->Shell->expects($this->once())->method('in')
-			->with(__('What test case would you like to run?'), null, 'q')
+			->with(__d('cake', 'What test case would you like to run?'), null, 'q')
 			->will($this->returnValue('1'));
 
 		$this->Shell->expects($this->once())->method('run');
