@@ -571,7 +571,7 @@ class DboOracle extends DboSource {
  */
 	function constraint($action, $table) {
 		if (empty($table)) {
-			trigger_error(__('Must specify table to operate on constraints'));
+			trigger_error(__d('cake', 'Must specify table to operate on constraints'));
 		}
 
 		$table = strtoupper($table);
@@ -629,7 +629,7 @@ class DboOracle extends DboSource {
 					return $constraints;
 					break;
 				default:
-					trigger_error(__('DboOracle::constraint() accepts only enable, disable, or list'));
+					trigger_error(__d('cake', 'DboOracle::constraint() accepts only enable, disable, or list'));
 			}
 		}
 		return true;
@@ -976,7 +976,7 @@ class DboOracle extends DboSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
-					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __('SQL Error in model %s:', $model->alias) . ' ';
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __d('cake', 'SQL Error in model %s:', $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;
 					}
