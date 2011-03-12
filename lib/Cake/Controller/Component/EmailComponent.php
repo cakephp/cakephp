@@ -725,7 +725,7 @@ class EmailComponent extends Component {
 		$formatted = array();
 
 		if ($this->_lineLength !== null) {
-			trigger_error(__('_lineLength cannot be accessed please use lineLength'), E_USER_WARNING);
+			trigger_error(__d('cake', '_lineLength cannot be accessed please use lineLength'), E_USER_WARNING);
 			$this->lineLength = $this->_lineLength;
 		}
 
