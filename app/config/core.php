@@ -290,9 +290,6 @@ if (extension_loaded('apc')) {
 	$engine = 'Apc';
 }
 
-// Setup a 'default' cache configuration for use in the application.
-Cache::config('default', array('engine' => $engine));
-
 // In development mode, caches should expire quickly.
 $duration = '+999 days';
 if (Configure::read('debug') >= 1) {
