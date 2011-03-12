@@ -473,9 +473,6 @@ class AppImportTest extends CakeTestCase {
 	function testImportingHelpersFromAlternatePaths() {
 
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
-		App::import('Helper', 'Banana');
-		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper was not found because the path does not exist.');
-
 		App::build(array(
 			'View/Helper' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS
@@ -609,26 +606,7 @@ class AppImportTest extends CakeTestCase {
 		$this->assertFalse($load);
 	}
 
-/**
- * This test only works if you have plugins/my_plugin set up.
- * plugins/my_plugin/models/my_plugin.php and other_model.php
- */
 
-/*
-	function testMultipleLoadingByType() {
-		$classes = array_flip(get_declared_classes());
-		$this->assertFalse(isset($classes['OtherPlugin']));
-		$this->assertFalse(isset($classes['MyPlugin']));
-
-
-		$load = App::import('Model', array('MyPlugin.OtherPlugin', 'MyPlugin.MyPlugin'));
-		$this->assertTrue($load);
-
-		$classes = array_flip(get_declared_classes());
-		$this->assertTrue(isset($classes['OtherPlugin']));
-		$this->assertTrue(isset($classes['MyPlugin']));
-	}
-*/
 	function testLoadingVendor() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
@@ -636,27 +614,21 @@ class AppImportTest extends CakeTestCase {
 		), true);
 
 		ob_start();
-		$result = App::import('Vendor', 'TestPlugin.TestPluginAsset', array('ext' => 'css'));
-		$text = ob_get_clean();
-		$this->assertTrue($result);
-		$this->assertEqual($text, 'this is the test plugin asset css file');
-
-		ob_start();
-		$result = App::import('Vendor', 'TestAsset', array('ext' => 'css'));
+		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
 		$this->assertEqual($text, 'this is the test asset css file');
 
-		$result = App::import('Vendor', 'TestPlugin.SamplePlugin');
+		$result = App::import('Vendor', 'TestPlugin.sample/SamplePlugin');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('SamplePluginClassTestName'));
 
-		$result = App::import('Vendor', 'ConfigureTestVendorSample');
+		$result = App::import('Vendor', 'sample/ConfigureTestVendorSample');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('ConfigureTestVendorSample'));
 
 		ob_start();
-		$result = App::import('Vendor', 'SomeName', array('file' => 'some.name.php'));
+		$result = App::import('Vendor', 'SomeNameInSubfolder', array('file' => 'somename/some.name.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
 		$this->assertEqual($text, 'This is a file with dot in file name');

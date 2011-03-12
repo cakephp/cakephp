@@ -516,7 +516,7 @@ class App {
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  */
 	public static function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$plugin = $directory = null;
+		$ext = $plugin = $directory = null;
 
 		if (is_array($type)) {
 			extract($type, EXTR_OVERWRITE);
@@ -540,129 +540,106 @@ class App {
 		}
 
 		$originalType = $type = strtolower($type);
-		$specialPackage = in_array($type, array('core', 'file', 'vendor'));
+		$specialPackage = in_array($type, array('file', 'vendor'));
 		if (!$specialPackage && isset(self::$legacy[$type . 's'])) {
 			$type = self::$legacy[$type . 's'];
 		}
 		list($plugin, $name) = pluginSplit($name);
+		if (!empty($plugin)) {
+			$plugin = Inflector::camelize($plugin);
+		}
 
 		if (!$specialPackage) {
-			if ($type == 'Console/Command' && $name == 'Shell') {
-				$type = 'Console';
-			} else if (isset(self::$types[$originalType]['suffix'])) {
-				$suffix = self::$types[$originalType]['suffix'];
-				$name .= ($suffix == $name) ? '' : $suffix;
-			}
-
-			if ($parent && isset(self::$types[$originalType]['extends'])) {
-				$extends = self::$types[$originalType]['extends'];
-				App::uses($extends, $type);
-				if ($plugin && in_array($originalType, array('controller', 'model'))) {
-					App::uses($plugin . $extends, $plugin . '.' .$type);
-				}
-			}
-			if ($plugin) {
-				$plugin .= '.';
-			}
-			$name = Inflector::camelize($name);
-			App::uses($name, $plugin . $type);
-			return class_exists($name);
+			return self::_loadClass($name, $plugin, $type, $originalType, $parent);
 		}
 
 		if ($type == 'file' && !empty($file)) {
-			$mapped = self::__mapped($name, $plugin);
-			if ($mapped) {
-				$file = $mapped;
-			} else if (!empty($search)) {
-				foreach ($search as $path) {
-					$found = false;
-					if (file_exists($path . $file)) {
-						$file = $path . $file;
-						$found = true;
-						break;
-					}
-					if (empty($found)) {
-						$file = false;
-					}
-				}
-			}
-			if (!empty($file) && file_exists($file)) {
-				self::__map($file, $name, $plugin);
-				$returnValue = include $file;
-				if ($return) {
-					return $returnValue;
-				}
-				return (bool) $returnValue;
-			}
+			return self::_loadFile($name, $plugin, $search, $file, $return);
+		}
+
+		if ($type == 'vendor') {
+			return self::_loadVendor($name, $plugin, $file, $ext);
 		}
 
 		return false;
+	}
 
-		if ($name != null && strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
-			$plugin = Inflector::camelize($plugin);
+	private function _loadClass($name, $plugin, $type, $originalType, $parent) {
+		if ($type == 'Console/Command' && $name == 'Shell') {
+			$type = 'Console';
+		} else if (isset(self::$types[$originalType]['suffix'])) {
+			$suffix = self::$types[$originalType]['suffix'];
+			$name .= ($suffix == $name) ? '' : $suffix;
 		}
-		self::$return = $return;
 
-		if (isset($ext)) {
-			$file = Inflector::underscore($name) . ".{$ext}";
+		if ($parent && isset(self::$types[$originalType]['extends'])) {
+			$extends = self::$types[$originalType]['extends'];
+			App::uses($extends, $type);
+			if ($plugin && in_array($originalType, array('controller', 'model'))) {
+				App::uses($plugin . $extends, $plugin . '.' .$type);
+			}
 		}
-		$ext = self::__settings($type, $plugin, $parent);
-		$className = $name;
-		if (strpos($className, '/') !== false) {
-			$className = substr($className, strrpos($className, '/') + 1);
+		if ($plugin) {
+			$plugin .= '.';
 		}
-		if ($name != null && !class_exists($className . $ext['class'])) {
-			if ($load = self::__mapped($name . $ext['class'], $type, $plugin)) {
-				if (self::__load($load)) {
-					if (self::$return) {
-						return include($load);
-					}
-					return true;
-				} else {
-					self::__remove($name . $ext['class'], $type, $plugin);
-					self::$__cache = true;
+		$name = Inflector::camelize($name);
+		App::uses($name, $plugin . $type);
+		return class_exists($name);
+	}
+
+	private function _loadFile($name, $plugin, $search, $file, $return) {
+		$mapped = self::__mapped($name, $plugin);
+		if ($mapped) {
+			$file = $mapped;
+		} else if (!empty($search)) {
+			foreach ($search as $path) {
+				$found = false;
+				if (file_exists($path . $file)) {
+					$file = $path . $file;
+					$found = true;
+					break;
+				}
+				if (empty($found)) {
+					$file = false;
 				}
 			}
-			if (!empty($search)) {
-				self::$search = $search;
-			} elseif ($plugin) {
-				self::$search = self::__paths('plugin');
-			} else {
-				self::$search = self::__paths($type);
-			}
-			$find = $file;
-
-			if ($find === null) {
-				$find = Inflector::underscore($name . $ext['suffix']).'.php';
-
-				if ($plugin) {
-					$paths = self::$search;
-					foreach ($paths as $key => $value) {
-						self::$search[$key] = $value . $ext['path'];
-					}
-				}
-			}
-
-			if (strtolower($type) !== 'vendor' && empty($search) && self::__load($file)) {
-				$directory = false;
-			} else {
-				$file = $find;
-				$directory = self::__find($find, true);
-			}
-
-			if ($directory !== null) {
-				self::$__cache = true;
-				self::__map($directory . $file, $name . $ext['class'], $type, $plugin);
-
-				if (self::$return) {
-					return include($directory . $file);
-				}
-				return true;
-			}
-			return false;
 		}
-		return true;
+		if (!empty($file) && file_exists($file)) {
+			self::__map($file, $name, $plugin);
+			$returnValue = include $file;
+			if ($return) {
+				return $returnValue;
+			}
+			return (bool) $returnValue;
+		}
+		return false;
+	}
+
+	private function _loadVendor($name, $plugin, $file, $ext) {
+		if ($mapped = self::__mapped($name, $plugin)) {
+			return (bool) include_once($mapped);
+		}
+		$fileTries = array();
+		$paths = ($plugin) ? App::path('vendors', $plugin) : App::path('vendors');
+		if (empty($ext)) {
+			$ext = 'php';
+		}
+		if (empty($file)) {
+			$fileTries[] = $name . '.' . $ext;
+			$fileTries[] = Inflector::underscore($name) . '.' . $ext;
+		} else {
+			$fileTries[] = $file;
+		}
+
+		foreach ($fileTries as $file) {
+			foreach ($paths as $path) {
+				if (file_exists($path . $file)) {
+					self::__map($path . $file, $name, $plugin);
+					return (bool) include($path . $file); 
+				}
+			}
+		}
+		return false;
 	}
 
 /**
