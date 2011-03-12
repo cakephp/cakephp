@@ -27,17 +27,17 @@
  * This allows you to split your application up across the filesystem.
  *
  * ### Packages
- * 
+ *
  * CakePHP is organized around the idea of packages, each class belongs to a package or folder where other
  * classes reside. You can configure each package location in your application using `App::build('APackage/SubPackage', $paths)`
  * to inform the framework where should each class be loaded. Almost every class in the CakePHP framework can be swapped
  * by your own compatible implementation. If you wish to use you own class instead of the classes the framework provides,
  * just add the class to your libs folder mocking the directory location of where CakePHP expects to find it.
- * 
+ *
  * For instance if you'd like to use your own HttpSocket class, put it under
- * 
+ *
  *		app/libs/Network/Http/HttpSocket.php
- * 
+ *
  * ### Inspecting loaded paths
  *
  * You can inspect the currently loaded paths using `App::path('Controller')` for example to see loaded
@@ -45,7 +45,7 @@
  *
  * 	It is also possible to inspect paths for plugin classes, for instance, to see a plugin's helpers you would call
  * `App::path('View/Helper', 'MyPlugin')`
- * 
+ *
  * ### Locating plugins and themes
  *
  * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
@@ -183,7 +183,7 @@ class App {
  * Usage:
  *
  * `App::path('Model'); will return all paths for models`
- * 
+ *
  * `App::path('Model/Datasource', 'MyPlugin'); will return the path for datasources under the 'MyPlugin' plugin`
  *
  * @param string $type type of path
@@ -217,15 +217,15 @@ class App {
  * Sets up each package location on the file system. You can configure multiple search paths
  * for each package, those will be used to look for files one folder at a time in the specified order
  * All paths should be terminated with a Directory separator
- * 
+ *
  * Usage:
- * 
+ *
  * `App::build(array(Model' => array('/a/full/path/to/models/'))); will setup a new search path for the Model package`
- * 
+ *
  * `App::build(array('Model' => array('/path/to/models/')), true); will setup the path as the only valid path for searching models`
  *
  * `App::build(array('View/Helper' => array('/path/to/models/', '/another/path/))); will setup multiple search paths for helpers`
- * 
+ *
  * @param array $paths associative array with package names as keys and a list of directories for new search paths
  * @param boolean $reset true will set paths, false merges paths [default] false
  * @return void
@@ -311,9 +311,9 @@ class App {
 
 /**
  * Gets the path that a plugin is on. Searches through the defined plugin paths.
- * 
+ *
  * Usage:
- * 
+ *
  * `App::pluginPath('MyPlugin'); will return the full path to 'MyPlugin' plugin'`
  *
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
@@ -333,9 +333,9 @@ class App {
  * Finds the path that a theme is on.  Searches through the defined theme paths.
  *
  * Usage:
- * 
+ *
  * `App::themePath('MyTheme'); will return the full path to the 'MyTheme' theme`
- * 
+ *
  * @param string $theme lower_cased theme name to find the path of.
  * @return string full path to the theme.
  */
@@ -351,9 +351,9 @@ class App {
 
 /**
  * Returns the full path to a package inside the CakePHP core
- * 
+ *
  * Usage:
- * 
+ *
  * `App::core('Cache/Engine'); will return the full path to the cache engines package`
  *
  * @param string $type
@@ -372,14 +372,15 @@ class App {
  *
  * `App::objects('plugin');` returns `array('DebugKit', 'Blog', 'User');`
  *
+ * `App::objects('Controller');` returns `array('PagesController', 'BlogController');`
+ *
  * You can also search only within a plugin's objects by using the plugin dot
  * syntax.
  *
  * `App::objects('MyPlugin.Model');` returns `array('MyPluginPost', 'MyPluginComment');`
  *
- * @param string $type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
- * @param mixed $path Optional Scan only the path given. If null, paths for the chosen
- *   type will be used.
+ * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'plugin'
+ * @param mixed $path Optional Scan only the path given. If null, paths for the chosen type will be used.
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
  * @return mixed Either false on incorrect / miss.  Or an array of found objects.
  */
@@ -475,10 +476,31 @@ class App {
 		self::$__objects[$cacheLocation][$type] = $values;
 	}
 
+/**
+ * Declares a package for a class. This package location will be used
+ * by the automatic class loader if the class is tried to be used
+ *
+ * Usage:
+ *
+ * `App::use('MyCustomController', 'Controller');` will setup the class to be found under Controller package
+ *
+ * `App::use('MyHelper', 'MyPlugin.View/Helper');` will setup the helper class to be found in plugin's helper package
+ *
+ * @param string $className the name of the class to configure package for
+ * @param string $location the package name
+ */
 	public static function uses($className, $location) {
 		self::$__classMap[$className] = $location;
 	}
 
+/**
+ * Method to handle the automatic class loading. It will look for each class' package
+ * defined using App::uses() and with this information it will resolve the package name to a full path
+ * to load the class from. File name for each class should follow the class name. For instance,
+ * if a class is name `MyCustomClass` the file name should be `MyCustomClass.php`
+ *
+ * @param string $className the name of the class to load
+ */
 	public static function load($className) {
 		if (isset(self::$__classMap[$className])) {
 			if ($file = self::__mapped($className)) {
@@ -693,7 +715,7 @@ class App {
 			foreach ($paths as $path) {
 				if (file_exists($path . $file)) {
 					self::__map($path . $file, $name, $plugin);
-					return (bool) include($path . $file); 
+					return (bool) include($path . $file);
 				}
 			}
 		}
