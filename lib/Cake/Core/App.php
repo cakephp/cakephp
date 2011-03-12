@@ -16,8 +16,9 @@
  * @since         CakePHP(tm) v 1.2.0.6001
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
- * App is responsible for path managment, class location and class loading.
+ * App is responsible for path management, class location and class loading.
  *
  * ### Adding paths
  *
@@ -25,11 +26,26 @@
  * additional controller paths for example would alter where CakePHP looks for controllers.
  * This allows you to split your application up across the filesystem.
  *
+ * ### Packages
+ * 
+ * CakePHP is organized around the idea of packages, each class belongs to a package or folder where other
+ * classes reside. You can configure each package location in your application using `App::build('APackage/SubPackage', $paths)`
+ * to inform the framework where should each class be loaded. Almost every class in the CakePHP framework can be swapped
+ * by your own compatible implementation. If you wish to use you own class instead of the classes the framework provides,
+ * just add the class to your libs folder mocking the directory location of where CakePHP expects to find it.
+ * 
+ * For instance if you'd like to use your own HttpSocket class, put it under
+ * 
+ *		app/libs/Network/Http/HttpSocket.php
+ * 
  * ### Inspecting loaded paths
  *
- * You can inspect the currently loaded paths using `App::path('controller')` for example to see loaded
+ * You can inspect the currently loaded paths using `App::path('Controller')` for example to see loaded
  * controller paths.
  *
+ * 	It is also possible to inspect paths for plugin classes, for instance, to see a plugin's helpers you would call
+ * `App::path('View/Helper', 'MyPlugin')`
+ * 
  * ### Locating plugins and themes
  *
  * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
@@ -38,7 +54,7 @@
  *
  * ### Inspecting known objects
  *
- * You can find out which objects App knows about using App::objects('controller') for example to find
+ * You can find out which objects App knows about using App::objects('Controller') for example to find
  * which application controllers App knows about.
  *
  * @link          http://book.cakephp.org/view/933/The-App-Class
@@ -128,7 +144,7 @@ class App {
 	private static $__packages = array();
 
 /**
- *
+ * Holds the templates for each customizable package path in the application
  *
  */
 	private static $__packageFormat = array();
@@ -166,9 +182,12 @@ class App {
  *
  * Usage:
  *
- * `App::path('models'); will return all paths for models`
+ * `App::path('Model'); will return all paths for models`
+ * 
+ * `App::path('Model/Datasource', 'MyPlugin'); will return the path for datasources under the 'MyPlugin' plugin`
  *
  * @param string $type type of path
+ * @param string $plugin name of plugin
  * @return string array
  */
 	public static function path($type, $plugin = null) {
@@ -195,10 +214,19 @@ class App {
 	}
 
 /**
- * Build path references. Merges the supplied $paths
- * with the base paths and the default core paths.
+ * Sets up each package location on the file system. You can configure multiple search paths
+ * for each package, those will be used to look for files one folder at a time in the specified order
+ * All paths should be terminated with a Directory separator
+ * 
+ * Usage:
+ * 
+ * `App::build(array(Model' => array('/a/full/path/to/models/'))); will setup a new search path for the Model package`
+ * 
+ * `App::build(array('Model' => array('/path/to/models/')), true); will setup the path as the only valid path for searching models`
  *
- * @param array $paths paths defines in config/bootstrap.php
+ * `App::build(array('View/Helper' => array('/path/to/models/', '/another/path/))); will setup multiple search paths for helpers`
+ * 
+ * @param array $paths associative array with package names as keys and a list of directories for new search paths
  * @param boolean $reset true will set paths, false merges paths [default] false
  * @return void
  */
@@ -282,7 +310,11 @@ class App {
 	}
 
 /**
- * Get the path that a plugin is on.  Searches through the defined plugin paths.
+ * Gets the path that a plugin is on. Searches through the defined plugin paths.
+ * 
+ * Usage:
+ * 
+ * `App::pluginPath('MyPlugin'); will return the full path to 'MyPlugin' plugin'`
  *
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
@@ -298,8 +330,12 @@ class App {
 	}
 
 /**
- * Find the path that a theme is on.  Search through the defined theme paths.
+ * Finds the path that a theme is on.  Searches through the defined theme paths.
  *
+ * Usage:
+ * 
+ * `App::themePath('MyTheme'); will return the full path to the 'MyTheme' theme`
+ * 
  * @param string $theme lower_cased theme name to find the path of.
  * @return string full path to the theme.
  */
@@ -314,28 +350,19 @@ class App {
 	}
 
 /**
- * Returns a key/value list of all paths where core libs are found.
- * Passing $type only returns the values for a given value of $key.
+ * Returns the full path to a package inside the CakePHP core
+ * 
+ * Usage:
+ * 
+ * `App::core('Cache/Engine'); will return the full path to the cache engines package`
  *
- * @param string $type valid values are: 'cake' ,'plugins', 'vendors' and 'shells'
- * @return array numeric keyed array of core lib paths
+ * @param string $type
+ * @return string full path to package
  */
-	public static function core($type = null) {
-		static $paths = false;
-		if (!$paths) {
-			$paths = array();
-			$root = dirname(dirname(LIBS)) . DS;
-			$paths['cake'][] = LIBS;
-			$paths['plugins'][] = $root . 'plugins' . DS;
-			$paths['vendors'][] = $root . 'vendors' . DS;
-			$paths['shells'][] = LIBS . 'Console' . DS . 'Command' . DS;
-			// Provide BC path to vendors/shells
-			$paths['shells'][] = $root . 'vendors' . DS . 'shells' . DS;
-		}
+	public static function core($type) {
 		if ($type) {
 			return isset($paths[$type]) ? $paths[$type] : array(LIBS . $type . DS);
 		}
-		return $paths;
 	}
 
 /**
@@ -348,7 +375,7 @@ class App {
  * You can also search only within a plugin's objects by using the plugin dot
  * syntax.
  *
- * `App::objects('MyPlugin.model');` returns `array('Post', 'Comment');`
+ * `App::objects('MyPlugin.Model');` returns `array('MyPluginPost', 'MyPluginComment');`
  *
  * @param string $type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
  * @param mixed $path Optional Scan only the path given. If null, paths for the chosen
