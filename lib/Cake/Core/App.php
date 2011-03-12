@@ -513,8 +513,8 @@ class App {
 
 			if (empty($plugin)) {
 				$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
-				$paths[] =  $appLibs . self::$__classMap[$className] . DS;
-				$paths[] = LIBS . self::$__classMap[$className] . DS;
+				$paths[] =  $appLibs . $package . DS;
+				$paths[] = LIBS . $package . DS;
 			}
 
 			foreach ($paths as $path) {

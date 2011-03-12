@@ -657,4 +657,24 @@ class AppImportTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directory');
 	}
+
+/**
+ * Tests that the automatic class loader will also find in "libs" folder for both
+ * app and plugins if it does not find the class in other configured paths
+ *
+ */
+	public function testLoadClassInLibs() {
+		App::build(array(
+			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$this->assertFalse(class_exists('CustomLibClass', false));
+		App::uses('CustomLibClass', 'TestPlugin.Custom/Package');
+		$this->assertTrue(class_exists('CustomLibClass'));
+
+		$this->assertFalse(class_exists('TestUtilityClass', false));
+		App::uses('TestUtilityClass', 'Utility');
+		$this->assertTrue(class_exists('CustomLibClass'));
+	}
 }
