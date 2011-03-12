@@ -250,7 +250,7 @@ class FileEngine extends CacheEngine {
  * @throws CacheException
  */
 	public function decrement($key, $offset = 1) {
-		throw new CacheException(__('Files cannot be atomically decremented.'));
+		throw new CacheException(__d('cake', 'Files cannot be atomically decremented.'));
 	}
 
 /**
@@ -260,7 +260,7 @@ class FileEngine extends CacheEngine {
  * @throws CacheException
  */
 	public function increment($key, $offset = 1) {
-		throw new CacheException(__('Files cannot be atomically incremented.'));
+		throw new CacheException(__d('cake', 'Files cannot be atomically incremented.'));
 	}
 
 /**
@@ -296,7 +296,7 @@ class FileEngine extends CacheEngine {
 		$dir = new SplFileInfo($this->settings['path']);
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
-			trigger_error(__('%s is not writable', $this->settings['path']), E_USER_WARNING);
+			trigger_error(__d('cake', '%s is not writable', $this->settings['path']), E_USER_WARNING);
 			return false;
 		}
 		return true;

@@ -133,7 +133,7 @@ class Cache {
 		}
 		$cacheClass = $class . 'Engine';
 		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
-			throw new CacheException(__('Cache engines must use CacheEngine as a base class.'));
+			throw new CacheException(__d('cake', 'Cache engines must use CacheEngine as a base class.'));
 		}
 		self::$_engines[$name] = new $cacheClass();
 		if (self::$_engines[$name]->init($config)) {
@@ -273,7 +273,7 @@ class Cache {
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
 			trigger_error(
-				__("%s cache was unable to write '%s' to cache", $config, $key),
+				__d('cake', "%s cache was unable to write '%s' to cache", $config, $key),
 				E_USER_WARNING
 			);
 		}
