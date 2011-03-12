@@ -564,6 +564,18 @@ class App {
 		return false;
 	}
 
+/**
+ * Helper function to include classes
+ * This is a compatibility wrapper around using App::uses() and automatic class loading
+ *
+ * @param string $name unique name of the file for identifying it inside the application
+ * @param string $plugin camel cased plugin name if any
+ * @param string $type name of the packed where the class is located
+ * @param string $file filename if known, the $name param will be used otherwise
+ * @param string $originalType type name as supplied initially by the user
+ * @param boolean $parent whether to load the class parent or not
+ * @return boolean true indicating the successful load and existence of the class
+ */
 	private function _loadClass($name, $plugin, $type, $originalType, $parent) {
 		if ($type == 'Console/Command' && $name == 'Shell') {
 			$type = 'Console';
@@ -587,6 +599,16 @@ class App {
 		return class_exists($name);
 	}
 
+/**
+ * Helper function to include single files
+ *
+ * @param string $name unique name of the file for identifying it inside the application
+ * @param string $plugin camel cased plugin name if any
+ * @param array $search list of paths to search the file into
+ * @param string $file filename if known, the $name param will be used otherwise
+ * @param boolean $return whether this function should return the contents of the file after being parsed by php or just a success notice
+ * @return mixed, if $return contents of the file after php parses it, boolean indicating success otherwise
+ */
 	private function _loadFile($name, $plugin, $search, $file, $return) {
 		$mapped = self::__mapped($name, $plugin);
 		if ($mapped) {
@@ -615,6 +637,15 @@ class App {
 		return false;
 	}
 
+/**
+ * Helper function to load files from vendors folders
+ *
+ * @param string $name unique name of the file for identifying it inside the application
+ * @param string $plugin camel cased plugin name if any
+ * @param string $file file name if known
+ * @param string $ext file extension if known
+ * @return boolean true if the file was loaded successfully, false otherwise
+ */
 	private function _loadVendor($name, $plugin, $file, $ext) {
 		if ($mapped = self::__mapped($name, $plugin)) {
 			return (bool) include_once($mapped);
