@@ -16,18 +16,18 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __('Missing View'); ?></h2>
+<h2><?php echo __d('cake', 'Missing View'); ?></h2>
 <p class="error">
-	<strong><?php echo __('Error'); ?>: </strong>
-	<?php echo __('The view for %1$s%2$s was not found.', '<em>' . Inflector::camelize($this->request->controller) . 'Controller::</em>', '<em>' . $this->request->action . '()</em>'); ?>
+	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
+	<?php echo __d('cake', 'The view for %1$s%2$s was not found.', '<em>' . Inflector::camelize($this->request->controller) . 'Controller::</em>', '<em>' . $this->request->action . '()</em>'); ?>
 </p>
 <p class="error">
-	<strong><?php echo __('Error'); ?>: </strong>
-	<?php echo __('Confirm you have created the file: %s', $file); ?>
+	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
+	<?php echo __d('cake', 'Confirm you have created the file: %s', $file); ?>
 </p>
 <p class="notice">
-	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_view.ctp'); ?>
+	<strong><?php echo __d('cake', 'Notice'); ?>: </strong>
+	<?php echo __d('cake', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_view.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>
