@@ -71,13 +71,23 @@ class Cache {
  * both create new configurations, return the settings for already configured
  * configurations.
  *
- * To create a new configuration:
+ * To create a new configuration, or to modify an existing configuration permanently:
  *
  * `Cache::config('my_config', array('engine' => 'File', 'path' => TMP));`
  *
- * To get the settings for a configuration, and set it as the currently selected configuration
+ * If you need to modify a configuration temporarily, use Cache::set().
+ * To get the settings for a configuration:
  *
  * `Cache::config('default');`
+ *
+ * There are 4 built-in caching engines:
+ *
+ * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
+ *    storing large objects, or things that are not IO sensitive.
+ * - `ApcEngine` - Uses the APC object cache, one of the fastest caching engines.
+ * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
+ *   Fast reads/writes, and benefits from memcache being distributed.
+ * - `XcacheEngine` - Uses the Xcache extension, an alternative to APC.
  *
  * @see app/config/core.php for configuration settings
  * @param string $name Name of the configuration
