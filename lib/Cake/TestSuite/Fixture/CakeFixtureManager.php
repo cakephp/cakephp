@@ -105,9 +105,7 @@ class CakeFixtureManager {
 
 			if (strpos($fixture, 'core.') === 0) {
 				$fixture = substr($fixture, strlen('core.'));
-				foreach (App::core('cake') as $key => $path) {
-					$fixturePaths[] = $path . 'tests' . DS . 'fixtures';
-				}
+				$fixturePaths[] = LIBS . 'tests' . DS . 'fixtures';
 			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));
 				$fixturePaths = array(

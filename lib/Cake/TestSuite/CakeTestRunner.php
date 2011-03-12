@@ -80,7 +80,8 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  */
 	protected function _getFixtureManager($arguments) {
 		if (isset($arguments['fixtureManager'])) {
-			if (App::import('Lib', 'test_suite/' . Inflector::underscore($arguments['fixtureManager']))) {
+			App::uses($arguments['fixtureManager'], 'TestSuite');
+			if (class_exists($arguments['fixtureManager'])) {
 				return new $arguments['fixtureManager'];
 			}
 			throw new RuntimeException(__('Could not find fixture manager %s.', $arguments['fixtureManager']));
