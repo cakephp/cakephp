@@ -75,7 +75,7 @@ class BakeShell extends Shell {
 		}
 
 		if (!config('database')) {
-			$this->out(__('Your database configuration was not found. Take a moment to create one.'));
+			$this->out(__d('cake', 'Your database configuration was not found. Take a moment to create one.'));
 			$this->args = null;
 			return $this->DbConfig->execute();
 		}
@@ -90,7 +90,7 @@ class BakeShell extends Shell {
 		$this->out('[T]est case');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in(__('What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
+		$classToBake = strtoupper($this->in(__d('cake', 'What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -117,7 +117,7 @@ class BakeShell extends Shell {
 				exit(0);
 				break;
 			default:
-				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.'));
+				$this->out(__d('cake', 'You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.'));
 		}
 		$this->hr();
 		$this->main();
@@ -182,10 +182,10 @@ class BakeShell extends Shell {
 				$this->View->execute();
 			}
 			$this->out('', 1, Shell::QUIET);
-			$this->out(__('<success>Bake All complete</success>'), 1, Shell::QUIET);
+			$this->out(__d('cake', '<success>Bake All complete</success>'), 1, Shell::QUIET);
 			array_shift($this->args);
 		} else {
-			$this->error(__('Bake All could not continue without a valid model'));
+			$this->error(__d('cake', 'Bake All could not continue without a valid model'));
 		}
 		return $this->_stop();
 	}
@@ -203,33 +203,33 @@ class BakeShell extends Shell {
 			'creation process. You can customize the generation process by telling Bake' . 
 			'where different parts of your application are using command line arguments.'
 		)->addSubcommand('all', array(
-			'help' => __('Bake a complete MVC. optional <name> of a Model'),
+			'help' => __d('cake', 'Bake a complete MVC. optional <name> of a Model'),
 		))->addSubcommand('project', array(
-			'help' => __('Bake a new app folder in the path supplied or in current directory if no path is specified'),
+			'help' => __d('cake', 'Bake a new app folder in the path supplied or in current directory if no path is specified'),
 			'parser' => $this->Project->getOptionParser()
 		))->addSubcommand('plugin', array(
-			'help' => __('Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
+			'help' => __d('cake', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
 		))->addSubcommand('db_config', array(
-			'help' => __('Bake a database.php file in config directory.'),
+			'help' => __d('cake', 'Bake a database.php file in config directory.'),
 			'parser' => $this->DbConfig->getOptionParser()
 		))->addSubcommand('model', array(
-			'help' => __('Bake a model.'),
+			'help' => __d('cake', 'Bake a model.'),
 			'parser' => $this->Model->getOptionParser()
 		))->addSubcommand('view', array(
-			'help' => __('Bake views for controllers.'),
+			'help' => __d('cake', 'Bake views for controllers.'),
 			'parser' => $this->View->getOptionParser()
 		))->addSubcommand('controller', array(
-			'help' => __('Bake a controller.'),
+			'help' => __d('cake', 'Bake a controller.'),
 			'parser' => $this->Controller->getOptionParser()
 		))->addSubcommand('fixture', array(
-			'help' => __('Bake a fixture.'),
+			'help' => __d('cake', 'Bake a fixture.'),
 			'parser' => $this->Fixture->getOptionParser()
 		))->addSubcommand('test', array(
-			'help' => __('Bake a unit test.'),
+			'help' => __d('cake', 'Bake a unit test.'),
 			'parser' => $this->Test->getOptionParser()
 		))->addOption('connection', array(
-			'help' => __('Database connection to use in conjunction with     `bake all`.'),
+			'help' => __d('cake', 'Database connection to use in conjunction with     `bake all`.'),
 			'short' => 'c',
 			'default' => 'default'
 		));

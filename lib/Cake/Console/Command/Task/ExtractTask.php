@@ -112,11 +112,11 @@ class ExtractTask extends Shell {
 			$this->__paths = explode(',', $this->params['paths']);
 		} else {
 			$defaultPath = APP_PATH;
-			$message = __("What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one", $defaultPath);
+			$message = __d('cake', "What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one", $defaultPath);
 			while (true) {
 				$response = $this->in($message, null, $defaultPath);
 				if (strtoupper($response) === 'Q') {
-					$this->out(__('Extract Aborted'));
+					$this->out(__d('cake', 'Extract Aborted'));
 					$this->_stop();
 				} elseif (strtoupper($response) === 'D') {
 					$this->out();
@@ -125,7 +125,7 @@ class ExtractTask extends Shell {
 					$this->__paths[] = $response;
 					$defaultPath = 'D';
 				} else {
-					$this->err(__('The directory path you supplied was not found. Please try again.'));
+					$this->err(__d('cake', 'The directory path you supplied was not found. Please try again.'));
 				}
 				$this->out();
 			}
@@ -134,17 +134,17 @@ class ExtractTask extends Shell {
 		if (isset($this->params['output'])) {
 			$this->__output = $this->params['output'];
 		} else {
-			$message = __("What is the full path you would like to output?\nExample: %s\n[Q]uit", $this->__paths[0] . DS . 'locale');
+			$message = __d('cake', "What is the full path you would like to output?\nExample: %s\n[Q]uit", $this->__paths[0] . DS . 'locale');
 			while (true) {
 				$response = $this->in($message, null, $this->__paths[0] . DS . 'locale');
 				if (strtoupper($response) === 'Q') {
-					$this->out(__('Extract Aborted'));
+					$this->out(__d('cake', 'Extract Aborted'));
 					$this->_stop();
 				} elseif (is_dir($response)) {
 					$this->__output = $response . DS;
 					break;
 				} else {
-					$this->err(__('The directory path you supplied was not found. Please try again.'));
+					$this->err(__d('cake', 'The directory path you supplied was not found. Please try again.'));
 				}
 				$this->out();
 			}
@@ -154,7 +154,7 @@ class ExtractTask extends Shell {
 			$this->__merge = !(strtolower($this->params['merge']) === 'no');
 		} else {
 			$this->out();
-			$response = $this->in(__('Would you like to merge all domains strings into the default.pot file?'), array('y', 'n'), 'n');
+			$response = $this->in(__d('cake', 'Would you like to merge all domains strings into the default.pot file?'), array('y', 'n'), 'n');
 			$this->__merge = strtolower($response) === 'y';
 		}
 
@@ -173,13 +173,13 @@ class ExtractTask extends Shell {
 	function __extract() {
 		$this->out();
 		$this->out();
-		$this->out(__('Extracting...'));
+		$this->out(__d('cake', 'Extracting...'));
 		$this->hr();
-		$this->out(__('Paths:'));
+		$this->out(__d('cake', 'Paths:'));
 		foreach ($this->__paths as $path) {
 			$this->out('   ' . $path);
 		}
-		$this->out(__('Output Directory: ') . $this->__output);
+		$this->out(__d('cake', 'Output Directory: ') . $this->__output);
 		$this->hr();
 		$this->__extractTokens();
 		$this->__buildFiles();
@@ -187,7 +187,7 @@ class ExtractTask extends Shell {
 		$this->__paths = $this->__files = $this->__storage = array();
 		$this->__strings = $this->__tokens = array();
 		$this->out();
-		$this->out(__('Done.'));
+		$this->out(__d('cake', 'Done.'));
 	}
 
 /**
@@ -197,17 +197,17 @@ class ExtractTask extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__('CakePHP Language String Extraction:'))
-			->addOption('app', array('help' => __('Directory where your application is located.')))
-			->addOption('paths', array('help' => __('Comma separted list of paths, full paths are needed.')))
+		return $parser->description(__d('cake', 'CakePHP Language String Extraction:'))
+			->addOption('app', array('help' => __d('cake', 'Directory where your application is located.')))
+			->addOption('paths', array('help' => __d('cake', 'Comma separted list of paths, full paths are needed.')))
 			->addOption('merge', array(
-				'help' => __('Merge all domain strings into the default.po file.'),
+				'help' => __d('cake', 'Merge all domain strings into the default.po file.'),
 				'choices' => array('yes', 'no')
 			))
-			->addOption('output', array('help' => __('Full path to output directory.')))
-			->addOption('files', array('help' => __('Comma separated list of files, full paths are needed.')))
+			->addOption('output', array('help' => __d('cake', 'Full path to output directory.')))
+			->addOption('files', array('help' => __d('cake', 'Comma separated list of files, full paths are needed.')))
 			->addOption('exclude', array(
-				'help' => __('Comma separated list of directories to exclude. Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
+				'help' => __d('cake', 'Comma separated list of directories to exclude. Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
 			));
 	}
 
@@ -217,25 +217,25 @@ class ExtractTask extends Shell {
  * @return void
  */
 	public function help() {
-		$this->out(__('CakePHP Language String Extraction:'));
+		$this->out(__d('cake', 'CakePHP Language String Extraction:'));
 		$this->hr();
-		$this->out(__('The Extract script generates .pot file(s) with translations'));
-		$this->out(__('By default the .pot file(s) will be place in the locale directory of -app'));
-		$this->out(__('By default -app is ROOT/app'));
+		$this->out(__d('cake', 'The Extract script generates .pot file(s) with translations'));
+		$this->out(__d('cake', 'By default the .pot file(s) will be place in the locale directory of -app'));
+		$this->out(__d('cake', 'By default -app is ROOT/app'));
 		$this->hr();
-		$this->out(__('Usage: cake i18n extract <command> <param1> <param2>...'));
+		$this->out(__d('cake', 'Usage: cake i18n extract <command> <param1> <param2>...'));
 		$this->out();
-		$this->out(__('Params:'));
-		$this->out(__('   -app [path...]: directory where your application is located'));
-		$this->out(__('   -root [path...]: path to install'));
-		$this->out(__('   -core [path...]: path to cake directory'));
-		$this->out(__('   -paths [comma separated list of paths, full path is needed]'));
-		$this->out(__('   -merge [yes|no]: Merge all domains strings into the default.pot file'));
-		$this->out(__('   -output [path...]: Full path to output directory'));
-		$this->out(__('   -files: [comma separated list of files, full path to file is needed]'));
+		$this->out(__d('cake', 'Params:'));
+		$this->out(__d('cake', '   -app [path...]: directory where your application is located'));
+		$this->out(__d('cake', '   -root [path...]: path to install'));
+		$this->out(__d('cake', '   -core [path...]: path to cake directory'));
+		$this->out(__d('cake', '   -paths [comma separated list of paths, full path is needed]'));
+		$this->out(__d('cake', '   -merge [yes|no]: Merge all domains strings into the default.pot file'));
+		$this->out(__d('cake', '   -output [path...]: Full path to output directory'));
+		$this->out(__d('cake', '   -files: [comma separated list of files, full path to file is needed]'));
 		$this->out();
-		$this->out(__('Commands:'));
-		$this->out(__('   cake i18n extract help: Shows this help message.'));
+		$this->out(__d('cake', 'Commands:'));
+		$this->out(__d('cake', '   cake i18n extract help: Shows this help message.'));
 		$this->out();
 	}
 
@@ -248,7 +248,7 @@ class ExtractTask extends Shell {
 	function __extractTokens() {
 		foreach ($this->__files as $file) {
 			$this->__file = $file;
-			$this->out(__('Processing %s...', $file));
+			$this->out(__d('cake', 'Processing %s...', $file));
 
 			$code = file_get_contents($file);
 			$allTokens = token_get_all($code);
@@ -411,11 +411,11 @@ class ExtractTask extends Shell {
 			$response = '';
 			while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
 				$this->out();
-				$response = $this->in(__('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename), array('y', 'n', 'a'), 'y');
+				$response = $this->in(__d('cake', 'Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename), array('y', 'n', 'a'), 'y');
 				if (strtoupper($response) === 'N') {
 					$response = '';
 					while ($response == '') {
-						$response = $this->in(__("What would you like to name this file?\nExample: %s", 'new_' . $filename), null, 'new_' . $filename);
+						$response = $this->in(__d('cake', "What would you like to name this file?\nExample: %s", 'new_' . $filename), null, 'new_' . $filename);
 						$File = new File($this->__output . $response);
 						$filename = $response;
 					}
@@ -483,7 +483,7 @@ class ExtractTask extends Shell {
  * @access private
  */
 	function __markerError($file, $line, $marker, $count) {
-		$this->out(__("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
+		$this->out(__d('cake', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
 		$count += 2;
 		$tokenCount = count($this->__tokens);
 		$parenthesis = 1;

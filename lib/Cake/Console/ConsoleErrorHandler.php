@@ -58,7 +58,7 @@ class ConsoleErrorHandler extends ErrorHandler {
 	public static function handleException(Exception $exception) {
 		$stderr = self::getStderr();
 		$stderr->write(sprintf(
-			__("<error>Error:</error> %s\n%s"), 
+			__d('cake', "<error>Error:</error> %s\n%s"), 
 			$exception->getMessage(), 
 			$exception->getTraceAsString()
 		));
@@ -80,8 +80,8 @@ class ConsoleErrorHandler extends ErrorHandler {
 		}
 		$stderr = self::getStderr();
 		list($name, $log) = self::_mapErrorCode($code);
-		$message = __('%s in [%s, line %s]', $description, $file, $line);
-		$stderr->write(__("<error>%s Error:</error> %s\n", $name, $message));
+		$message = __d('cake', '%s in [%s, line %s]', $description, $file, $line);
+		$stderr->write(__d('cake', "<error>%s Error:</error> %s\n", $name, $message));
 
 		if (Configure::read('debug') == 0) {
 			CakeLog::write($log, $message);
