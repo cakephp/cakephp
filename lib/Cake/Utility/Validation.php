@@ -246,7 +246,7 @@ class Validation {
 				}
 				break;
 			default:
-				self::$errors[] = __('You must define the $operator parameter for Validation::comparison()');
+				self::$errors[] = __d('cake', 'You must define the $operator parameter for Validation::comparison()');
 				break;
 		}
 		return false;
@@ -265,7 +265,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 		if ($regex === null) {
-			self::$errors[] = __('You must define a regular expression for Validation::custom()');
+			self::$errors[] = __d('cake', 'You must define a regular expression for Validation::custom()');
 			return false;
 		}
 		return self::_check($check, $regex);
@@ -724,11 +724,11 @@ class Validation {
 	protected static function _pass($method, $check, $classPrefix) {
 		$className = ucwords($classPrefix) . 'Validation';
 		if (!class_exists($className)) {
-			trigger_error(__('Could not find %s class, unable to complete validation.', $className), E_USER_WARNING);
+			trigger_error(__d('cake', 'Could not find %s class, unable to complete validation.', $className), E_USER_WARNING);
 			return false;
 		}
 		if (!method_exists($className, $method)) {
-			trigger_error(__('Method %s does not exist on %s unable to complete validation.', $method, $className), E_USER_WARNING);
+			trigger_error(__d('cake', 'Method %s does not exist on %s unable to complete validation.', $method, $className), E_USER_WARNING);
 			return false;
 		}
 		$check = (array)$check;

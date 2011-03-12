@@ -136,7 +136,7 @@ class Security {
  */
 	public static function cipher($text, $key) {
 		if (empty($key)) {
-			trigger_error(__('You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
+			trigger_error(__d('cake', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
 			return '';
 		}
 

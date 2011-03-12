@@ -149,7 +149,7 @@ class ClassRegistry {
 				}
 
 				if (!isset(${$class})) {
-					trigger_error(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
+					trigger_error(__d('cake', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
 					return $false;
 				}
 
@@ -159,7 +159,7 @@ class ClassRegistry {
 					$_this->map($alias, $class);
 				}
 			} elseif (is_numeric($settings)) {
-				trigger_error(__('(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
+				trigger_error(__d('cake', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
 				return $false;
 			}
 		}
