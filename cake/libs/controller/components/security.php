@@ -184,7 +184,7 @@ class SecurityComponent extends Component {
  */
 	public function startup($controller) {
 		$this->request = $controller->request;
-		$this->_action = strtolower($this->request->params['action']);
+		$this->_action = $this->request->params['action'];
 		$this->_methodsRequired($controller);
 		$this->_secureRequired($controller);
 		$this->_authRequired($controller);
@@ -319,10 +319,10 @@ class SecurityComponent extends Component {
 		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
 			$property = 'require' . $method;
 			if (is_array($this->$property) && !empty($this->$property)) {
-				$require = array_map('strtolower', $this->$property);
+				$require = $this->$property;
 				if (in_array($this->_action, $require) || $this->$property == array('*')) {
-					if (!$this->request->is(strtolower($method))) {
-						if (!$this->blackHole($controller, strtolower($method))) {
+					if (!$this->request->is($method)) {
+						if (!$this->blackHole($controller, $method)) {
 							return null;
 						}
 					}
@@ -340,7 +340,7 @@ class SecurityComponent extends Component {
  */
 	protected function _secureRequired($controller) {
 		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
-			$requireSecure = array_map('strtolower', $this->requireSecure);
+			$requireSecure = $this->requireSecure;
 
 			if (in_array($this->_action, $requireSecure) || $this->requireSecure == array('*')) {
 				if (!$this->request->is('ssl')) {
@@ -361,7 +361,7 @@ class SecurityComponent extends Component {
  */
 	protected function _authRequired($controller) {
 		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
-			$requireAuth = array_map('strtolower', $this->requireAuth);
+			$requireAuth = $this->requireAuth;
 
 			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth == array('*')) {
 				if (!isset($controller->request->data['_Token'] )) {
