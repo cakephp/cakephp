@@ -400,12 +400,9 @@ class Debugger {
 		} elseif (strpos($path, ROOT) === 0) {
 			return str_replace(ROOT, 'ROOT', $path);
 		}
-		$corePaths = App::core('cake');
-
-		foreach ($corePaths as $corePath) {
-			if (strpos($path, $corePath) === 0) {
-				return str_replace($corePath, 'CORE' .DS . 'cake' .DS, $path);
-			}
+	
+		if (strpos($path, LIBS) === 0) {
+			return str_replace($corePath, 'CORE' . DS, $path);
 		}
 		return $path;
 	}

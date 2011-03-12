@@ -53,7 +53,7 @@ class ProjectTask extends Shell {
 		}
 
 		if (empty($this->params['skel'])) {
-			$core = App::core('shells');
+			$core = App::core('Console');
 			$skelPath = dirname($core[0]) . DS . 'templates' . DS . 'skel';
 			if (is_dir($skelPath) === true) {
 				$this->params['skel'] = $skelPath;
