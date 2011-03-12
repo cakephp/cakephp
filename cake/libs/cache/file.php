@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.cache
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +20,6 @@
 /**
  * File Storage engine for cache
  *
- * @todo use the File and Folder classes (if it's not a too big performance hit)
  * @package       cake.libs.cache
  */
 class FileEngine extends CacheEngine {
