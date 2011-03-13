@@ -73,43 +73,6 @@ class Configure {
 				trigger_error(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
 			}
 
-			if (empty(self::$_values['Cache']['disable'])) {
-				$cache = Cache::config('default');
-
-				if (empty($cache['settings'])) {
-					trigger_error(__('Cache not configured properly. Please check Cache::config(); in APP/config/core.php'), E_USER_WARNING);
-					$cache = Cache::config('default', array('engine' => 'File'));
-				}
-				$path = $prefix = $duration = null;
-
-				if (!empty($cache['settings']['path'])) {
-					$path = realpath($cache['settings']['path']);
-				} else {
-					$prefix = $cache['settings']['prefix'];
-				}
-
-				if (self::$_values['debug'] >= 1) {
-					$duration = '+10 seconds';
-				} else {
-					$duration = '+999 days';
-				}
-				$cacheConfigs = Cache::configured();
-
-				if (!in_array('_cake_core_', $cacheConfigs)) {
-					Cache::config('_cake_core_', array_merge((array)$cache['settings'], array(
-						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
-						'serialize' => true, 'duration' => $duration
-					)));
-				}
-
-				if (!in_array('_cake_model_', $cacheConfigs)) {
-					Cache::config('_cake_model_', array_merge((array)$cache['settings'], array(
-						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
-						'serialize' => true, 'duration' => $duration
-					)));
-				}
-			}
-
 			App::init();
 			App::build();
 			if (!include(CONFIGS . 'bootstrap.php')) {
