@@ -3013,6 +3013,35 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test disabled radio options
+ *
+ * @return void
+ */
+	function testRadioDisabled() {
+		$result = $this->Form->radio(
+			'Model.field', 
+			array('option A', 'option B'),
+			array('disabled' => array('option A'), 'value' => 'option A')
+		);
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
+			array('label' => array('for' => 'ModelField0')),
+			'option A',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'option B',
+			'/label',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test disabling the hidden input for radio buttons
  *
  * @return void
