@@ -19,7 +19,7 @@
 class TestAppCacheEngine extends CacheEngine {
 
 	public function write($key, $value, $duration) { 
-		if ($key = 'fail') {
+		if ($key == 'fail') {
 			return false;
 		}
 	}
