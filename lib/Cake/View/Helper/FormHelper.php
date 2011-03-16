@@ -368,7 +368,7 @@ class FormHelper extends AppHelper {
 				$submitOptions = $options;
 
 				if (!$submit) {
-					$submit = __('Submit');
+					$submit = __d('cake', 'Submit');
 				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
@@ -510,7 +510,7 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = __('Error in field %s', Inflector::humanize($this->field()));
+				$error = __d('cake', 'Error in field %s', Inflector::humanize($this->field()));
 			}
 			if ($options['escape']) {
 				$error = h($error);
@@ -553,7 +553,7 @@ class FormHelper extends AppHelper {
 			if (substr($text, -3) == '_id') {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
-			$text = __(Inflector::humanize(Inflector::underscore($text)));
+			$text = __d('cake', Inflector::humanize(Inflector::underscore($text)));
 		}
 
 		if (is_string($options)) {
@@ -622,16 +622,16 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($legend === true) {
-			$actionName = __('New %s');
+			$actionName = __d('cake', 'New %s');
 			$isEdit = (
 				strpos($this->request->params['action'], 'update') !== false ||
 				strpos($this->request->params['action'], 'edit') !== false
 			);
 			if ($isEdit) {
-				$actionName = __('Edit %s');
+				$actionName = __d('cake', 'Edit %s');
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($model));
-			$legend = sprintf($actionName, __($modelName));
+			$legend = sprintf($actionName, __d('cake', $modelName));
 		}
 
 		$out = null;
@@ -1058,7 +1058,7 @@ class FormHelper extends AppHelper {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
-			$legend = __(Inflector::humanize($this->field()));
+			$legend = __d('cake', Inflector::humanize($this->field()));
 		}
 		$label = true;
 
@@ -1151,7 +1151,7 @@ class FormHelper extends AppHelper {
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new CakeException(__('Missing field name for FormHelper::%s', $method));
+			throw new CakeException(__d('cake', 'Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];
@@ -1367,7 +1367,7 @@ class FormHelper extends AppHelper {
  */
 	public function submit($caption = null, $options = array()) {
 		if (!$caption) {
-			$caption = __('Submit');
+			$caption = __d('cake', 'Submit');
 		}
 		$out = null;
 		$div = true;
@@ -2159,18 +2159,18 @@ class FormHelper extends AppHelper {
 			break;
 			case 'month':
 				if ($options['monthNames'] === true) {
-					$data['01'] = __('January');
-					$data['02'] = __('February');
-					$data['03'] = __('March');
-					$data['04'] = __('April');
-					$data['05'] = __('May');
-					$data['06'] = __('June');
-					$data['07'] = __('July');
-					$data['08'] = __('August');
-					$data['09'] = __('September');
-					$data['10'] = __('October');
-					$data['11'] = __('November');
-					$data['12'] = __('December');
+					$data['01'] = __d('cake', 'January');
+					$data['02'] = __d('cake', 'February');
+					$data['03'] = __d('cake', 'March');
+					$data['04'] = __d('cake', 'April');
+					$data['05'] = __d('cake', 'May');
+					$data['06'] = __d('cake', 'June');
+					$data['07'] = __d('cake', 'July');
+					$data['08'] = __d('cake', 'August');
+					$data['09'] = __d('cake', 'September');
+					$data['10'] = __d('cake', 'October');
+					$data['11'] = __d('cake', 'November');
+					$data['12'] = __d('cake', 'December');
 				} else if (is_array($options['monthNames'])) {
 					$data = $options['monthNames'];
 				} else {

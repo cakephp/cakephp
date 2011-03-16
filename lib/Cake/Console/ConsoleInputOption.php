@@ -119,10 +119,10 @@ class ConsoleInputOption {
 	public function help($width = 0) {
 		$default = $short = '';
 		if (!empty($this->_default) && $this->_default !== true) {
-			$default = __(' <comment>(default: %s)</comment>', $this->_default);
+			$default = __d('cake', ' <comment>(default: %s)</comment>', $this->_default);
 		}
 		if (!empty($this->_choices)) {
-			$default .= __(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+			$default .= __d('cake', ' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
 		}
 		if (!empty($this->_short)) {
 			$short = ', -' . $this->_short;
@@ -180,7 +180,7 @@ class ConsoleInputOption {
 		}
 		if (!in_array($value, $this->_choices)) {
 			throw new ConsoleException(sprintf(
-				__('"%s" is not a valid value for --%s. Please use one of "%s"'), 
+				__d('cake', '"%s" is not a valid value for --%s. Please use one of "%s"'), 
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
 		}

@@ -337,20 +337,20 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
-		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
+		$this->assertContains("throw new NotFoundException(__d('cake', 'Invalid bake article'));", $result);
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
 		$this->assertContains("if (\$this->request->is('post'))", $result);
 		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
-		$this->assertContains("\$this->Session->setFlash(__('The bake article has been saved'));", $result);
+		$this->assertContains("\$this->Session->setFlash(__d('cake', 'The bake article has been saved'));", $result);
 
 		$this->assertContains('function edit($id = null)', $result);
-		$this->assertContains("\$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));", $result);
+		$this->assertContains("\$this->Session->setFlash(__d('cake', 'The bake article could not be saved. Please, try again.'));", $result);
 
 		$this->assertContains('function delete($id = null)', $result);
 		$this->assertContains('if ($this->BakeArticle->delete())', $result);
-		$this->assertContains("\$this->Session->setFlash(__('Bake article deleted'));", $result);
+		$this->assertContains("\$this->Session->setFlash(__d('cake', 'Bake article deleted'));", $result);
 
 		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
 
@@ -379,14 +379,14 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
-		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
+		$this->assertContains("throw new NotFoundException(__d('cake', 'Invalid bake article'));", $result);
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
 		$this->assertContains("if (\$this->request->is('post'))", $result);
 		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
 
-		$this->assertContains("\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))", $result);
+		$this->assertContains("\$this->flash(__d('cake', 'The bake article has been saved.'), array('action' => 'index'))", $result);
 
 		$this->assertContains('function edit($id = null)', $result);
 		$this->assertContains("\$this->BakeArticle->BakeTag->find('list')", $result);
@@ -394,7 +394,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->assertContains('function delete($id = null)', $result);
 		$this->assertContains('if ($this->BakeArticle->delete())', $result);
-		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
+		$this->assertContains("\$this->flash(__d('cake', 'Bake article deleted'), array('action' => 'index'))", $result);
 	}
 
 /**

@@ -351,7 +351,7 @@ class AuthComponent extends Component {
 	function __setDefaults() {
 		$defaults = array(
 			'logoutRedirect' => $this->loginAction,
-			'authError' => __('You are not authorized to access that location.')
+			'authError' => __d('cake', 'You are not authorized to access that location.')
 		);
 		foreach ($defaults as $key => $value) {
 			if (empty($this->{$key})) {
@@ -411,10 +411,10 @@ class AuthComponent extends Component {
 			$className = $class . 'Authorize';
 			App::uses($className, $plugin . 'Controller/Component/Auth');
 			if (!class_exists($className)) {
-				throw new CakeException(__('Authorization adapter "%s" was not found.', $class));
+				throw new CakeException(__d('cake', 'Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new CakeException(__('Authorization objects must implement an authorize method.'));
+				throw new CakeException(__d('cake', 'Authorization objects must implement an authorize method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authorizeObjects[] = new $className($this->_Collection, $settings);
@@ -651,10 +651,10 @@ class AuthComponent extends Component {
 			$className = $class . 'Authenticate';
 			App::uses($className, $plugin . 'Controller/Component/Auth');
 			if (!class_exists($className)) {
-				throw new CakeException(__('Authentication adapter "%s" was not found.', $class));
+				throw new CakeException(__d('cake', 'Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new CakeException(__('Authentication objects must implement an authenticate method.'));
+				throw new CakeException(__d('cake', 'Authentication objects must implement an authenticate method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);

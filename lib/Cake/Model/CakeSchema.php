@@ -592,7 +592,7 @@ class CakeSchema extends Object {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
-				trigger_error(__('Schema generation error: invalid column type %s does not exist in DBO', $value['type']), E_USER_NOTICE);
+				trigger_error(__d('cake', 'Schema generation error: invalid column type %s does not exist in DBO', $value['type']), E_USER_NOTICE);
 				continue;
 			} else {
 				$defaultCol = $db->columns[$value['type']];

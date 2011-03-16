@@ -95,10 +95,10 @@ class ConsoleInputArgument {
 		}
 		$optional = '';
 		if (!$this->isRequired()) {
-			$optional = __(' <comment>(optional)</comment>');
+			$optional = __d('cake', ' <comment>(optional)</comment>');
 		}
 		if (!empty($this->_choices)) {
-			$optional .= __(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+			$optional .= __d('cake', ' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
 		}
 		return sprintf('%s%s%s', $name, $this->_help, $optional);
 	}
@@ -140,7 +140,7 @@ class ConsoleInputArgument {
 		}
 		if (!in_array($value, $this->_choices)) {
 			throw new ConsoleException(sprintf(
-				__('"%s" is not a valid value for %s.  Please use one of "%s"'), 
+				__d('cake', '"%s" is not a valid value for %s.  Please use one of "%s"'), 
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
 		}

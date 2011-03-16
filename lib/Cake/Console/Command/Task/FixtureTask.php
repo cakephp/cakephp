@@ -68,25 +68,25 @@ class FixtureTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-			__('Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.')
+			__d('cake', 'Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.')
 		)->addArgument('name', array(
-			'help' => __('Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')
+			'help' => __d('cake', 'Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')
 		))->addOption('count', array(
-			'help' => __('When using generated data, the number of records to include in the fixture(s).'),
+			'help' => __d('cake', 'When using generated data, the number of records to include in the fixture(s).'),
 			'short' => 'n',
 			'default' => 10
 		))->addOption('connection', array(
-			'help' => __('Which database configuration to use for baking.'),
+			'help' => __d('cake', 'Which database configuration to use for baking.'),
 			'short' => 'c',
 			'default' => 'default'
 		))->addOption('plugin', array(
-			'help' => __('CamelCased name of the plugin to bake fixtures for.'),
+			'help' => __d('cake', 'CamelCased name of the plugin to bake fixtures for.'),
 			'short' => 'p',
 		))->addOption('records', array(
 			'help' => 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10',
 			'short' => 'r',
 			'boolean' => true
-		))->epilog(__('Omitting all arguments and options will enter into an interactive mode.'));;
+		))->epilog(__d('cake', 'Omitting all arguments and options will enter into an interactive mode.'));;
 	}
 
 /**
@@ -158,16 +158,16 @@ class FixtureTask extends BakeTask {
  */
 	public function importOptions($modelName) {
 		$options = array();
-		$doSchema = $this->in(__('Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
+		$doSchema = $this->in(__d('cake', 'Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
 		if ($doSchema == 'y') {
 			$options['schema'] = $modelName;
 		}
-		$doRecords = $this->in(__('Would you like to use record importing for this fixture?'), array('y', 'n'), 'n');
+		$doRecords = $this->in(__d('cake', 'Would you like to use record importing for this fixture?'), array('y', 'n'), 'n');
 		if ($doRecords == 'y') {
 			$options['records'] = true;
 		}
 		if ($doRecords == 'n') {
-			$prompt = __("Would you like to build this fixture with data from %s's table?", $modelName);
+			$prompt = __d('cake', "Would you like to build this fixture with data from %s's table?", $modelName);
 			$fromTable = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($fromTable) == 'y') {
 				$options['fromTable'] = true;
@@ -387,7 +387,7 @@ class FixtureTask extends BakeTask {
 	protected function _getRecordsFromTable($modelName, $useTable = null) {
 		if ($this->interactive) {
 			$condition = null;
-			$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10");
+			$prompt = __d('cake', "Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10");
 			while (!$condition) {
 				$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
 			}

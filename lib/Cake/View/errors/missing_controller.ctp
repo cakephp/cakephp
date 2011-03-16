@@ -16,14 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __('Missing Controller'); ?></h2>
+<h2><?php echo __d('cake', 'Missing Controller'); ?></h2>
 <p class="error">
-	<strong><?php echo __('Error'); ?>: </strong>
-	<?php echo __('%s could not be found.', '<em>' . $controller . '</em>'); ?>
+	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
+	<?php echo __d('cake', '%s could not be found.', '<em>' . $controller . '</em>'); ?>
 </p>
 <p class="error">
-	<strong><?php echo __('Error'); ?>: </strong>
-	<?php echo __('Create the class %s below in file: %s', '<em>' . $controller . '</em>', APP_DIR . DS . 'controllers' . DS . Inflector::underscore($controller) . '.php'); ?>
+	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
+	<?php echo __d('cake', 'Create the class %s below in file: %s', '<em>' . $controller . '</em>', APP_DIR . DS . 'controllers' . DS . Inflector::underscore($controller) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
@@ -33,8 +33,8 @@ class <?php echo $controller;?> extends AppController {
 ?&gt;
 </pre>
 <p class="notice">
-	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_controller.ctp'); ?>
+	<strong><?php echo __d('cake', 'Notice'); ?>: </strong>
+	<?php echo __d('cake', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_controller.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

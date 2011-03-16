@@ -105,7 +105,7 @@ abstract class ObjectCollection {
 			$list = array_keys($this->_loaded);
 		}
 		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
-			throw new CakeException(__('Cannot use modParams with indexes that do not exist.'));
+			throw new CakeException(__d('cake', 'Cannot use modParams with indexes that do not exist.'));
 		}
 		foreach ($list as $name) {
 			$result = call_user_func_array(array($this->_loaded[$name], $callback), $params);

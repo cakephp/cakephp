@@ -361,7 +361,7 @@ class DbConfigTask extends Shell {
 
 		$connections = array_keys($configs);
 		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__('Use Database Config') .':', $connections, 'default');
+			$useDbConfig = $this->in(__d('cake', 'Use Database Config') .':', $connections, 'default');
 		}
 		return $useDbConfig;
 	}
@@ -374,7 +374,7 @@ class DbConfigTask extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-				__('Bake new database configuration settings.')
+				__d('cake', 'Bake new database configuration settings.')
 			);
 	}
 }

@@ -380,7 +380,7 @@ class CakeRequest implements ArrayAccess {
 			$type = strtolower(substr($name, 2));
 			return $this->is($type);
 		}
-		throw new CakeException(__('Method %s does not exist', $name));
+		throw new CakeException(__d('cake', 'Method %s does not exist', $name));
 	}
 
 /**

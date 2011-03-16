@@ -214,10 +214,10 @@ class CommandListShell extends Shell {
 		$parser = parent::getOptionParser();
 		return $parser->description('Get the list of available shells for this CakePHP application.')
 			->addOption('xml', array(
-				'help' => __('Get the listing as XML.'),
+				'help' => __d('cake', 'Get the listing as XML.'),
 				'boolean' => true
 			))->addOption('sort', array(
-				'help' => __('Sorts the commands by where they are located.'),
+				'help' => __d('cake', 'Sorts the commands by where they are located.'),
 				'boolean' => true
 			));
 	}

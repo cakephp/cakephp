@@ -187,7 +187,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}
-		echo __('Running  %s', $suite->getName()) . "\n";
+		echo __d('cake', 'Running  %s', $suite->getName()) . "\n";
 	}
 
 /**

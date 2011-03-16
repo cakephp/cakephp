@@ -560,7 +560,7 @@ class Shell extends Object {
  * @param string $message An optional error message
  */
 	public function error($title, $message = null) {
-		$this->err(__('<error>Error:</error> %s', $title));
+		$this->err(__d('cake', '<error>Error:</error> %s', $title));
 
 		if (!empty($message)) {
 			$this->err($message);
@@ -596,27 +596,27 @@ class Shell extends Object {
 		$this->out();
 
 		if (is_file($path) && $this->interactive === true) {
-			$this->out(__('<warning>File `%s` exists</warning>', $path));
-			$key = $this->in(__('Do you want to overwrite?'),  array('y', 'n', 'q'), 'n');
+			$this->out(__d('cake', '<warning>File `%s` exists</warning>', $path));
+			$key = $this->in(__d('cake', 'Do you want to overwrite?'),  array('y', 'n', 'q'), 'n');
 
 			if (strtolower($key) == 'q') {
-				$this->out(__('<error>Quitting</error>.'), 2);
+				$this->out(__d('cake', '<error>Quitting</error>.'), 2);
 				$this->_stop();
 			} elseif (strtolower($key) != 'y') {
-				$this->out(__('Skip `%s`', $path), 2);
+				$this->out(__d('cake', 'Skip `%s`', $path), 2);
 				return false;
 			}
 		} else {
-			$this->out(__('Creating file %s', $path));
+			$this->out(__d('cake', 'Creating file %s', $path));
 		}
 
 		if ($File = new File($path, true)) {
 			$data = $File->prepare($contents);
 			$File->write($data);
-			$this->out(__('<success>Wrote</success> `%s`', $path));
+			$this->out(__d('cake', '<success>Wrote</success> `%s`', $path));
 			return true;
 		} else {
-			$this->err(__('<error>Could not write to `%s`</error>.', $path), 2);
+			$this->err(__d('cake', '<error>Could not write to `%s`</error>.', $path), 2);
 			return false;
 		}
 	}
