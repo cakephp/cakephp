@@ -28,15 +28,15 @@
  * You can specify multiple configurations for production, development and testing.
  *
  * driver => The name of a supported driver; valid options are as follows:
- *		mysql 		- MySQL 4 & 5,
- *		sqlite		- SQLite (PHP5 only),
- *		postgres	- PostgreSQL 7 and higher,
- *		mssql		- Microsoft SQL Server 2000 and higher,
- *		oracle		- Oracle 8 and higher
+ *		Datasabe/Mysql 		- MySQL 4 & 5,
+ *		Datasabe/Sqlite		- SQLite (PHP5 only),
+ *		Datasabe/Postgres	- PostgreSQL 7 and higher,
+ *		Datasabe/Mssql		- Microsoft SQL Server 2000 and higher,
+ *		Datasabe/Oracle		- Oracle 8 and higher
  *
  * You can add custom database drivers (or override existing drivers) by adding the
- * appropriate file to app/models/datasources/dbo.  Drivers should be named 'dbo_x.php',
- * where 'x' is the name of the database.
+ * appropriate file to app/models/datasources/database.  Drivers should be named 'MyDriver.php',
+ *
  *
  * persistent => true / false
  * Determines whether or not the database should use a persistent connection
@@ -59,7 +59,7 @@
 class DATABASE_CONFIG {
 
 	public $default = array(
-		'driver' => 'mysql',
+		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
 		'login' => 'user',
@@ -69,7 +69,7 @@ class DATABASE_CONFIG {
 	);
 
 	public $test = array(
-		'driver' => 'mysql',
+		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
 		'login' => 'user',

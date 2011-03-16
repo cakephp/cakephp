@@ -314,7 +314,7 @@ class ControllerTask extends BakeTask {
 		$contents = $this->Template->generate('classes', 'controller');
 
 		$path = $this->getPath();
-		$filename = $path . $this->_controllerPath($controllerName) . 'Controller.php';
+		$filename = $path . $this->_controllerName($controllerName) . 'Controller.php';
 		if ($this->createFile($filename, $contents)) {
 			return $contents;
 		}

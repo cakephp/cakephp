@@ -28,39 +28,38 @@
  * You can specify multiple configurations for production, development and testing.
  *
  * driver => The name of a supported driver; valid options are as follows:
- *		mysql 		- MySQL 4 & 5,
- *		sqlite		- SQLite (PHP5 only),
- *		postgres	- PostgreSQL 7 and higher,
- *		mssql		- Microsoft SQL Server 2000 and higher,
- *		oracle		- Oracle 8 and higher
+ *		Datasabe/Mysql 		- MySQL 4 & 5,
+ *		Datasabe/Sqlite		- SQLite (PHP5 only),
+ *		Datasabe/Postgres	- PostgreSQL 7 and higher,
+ *		Datasabe/Mssql		- Microsoft SQL Server 2000 and higher,
+ *		Datasabe/Oracle		- Oracle 8 and higher
  *
  * You can add custom database drivers (or override existing drivers) by adding the
- * appropriate file to app/models/datasources/dbo.  Drivers should be named 'dbo_x.php',
- * where 'x' is the name of the database.
+ * appropriate file to app/models/datasources/database.  Drivers should be named 'MyDriver.php',
+ *
  *
  * persistent => true / false
  * Determines whether or not the database should use a persistent connection
  *
  * host =>
- * the host you connect to the database.  To add a socket or port number, use 'port' => #
+ * the host you connect to the database. To add a socket or port number, use 'port' => #
  *
  * prefix =>
  * Uses the given prefix for all the tables in this database.  This setting can be overridden
  * on a per-table basis with the Model::$tablePrefix property.
  *
  * schema =>
- * For Postgresspecifies which schema you would like to use the tables in. Postgres defaults to
- * 'public', DB2 defaults to empty.
+ * For Postgres specifies which schema you would like to use the tables in. Postgres defaults to 'public'.
  *
  * encoding =>
- * For MySQL, Postgres and Sqlite, specifies the character encoding to use when connecting to the
- * database.  Uses database default.
+ * For MySQL, Postgres specifies the character encoding to use when connecting to the
+ * database. Uses database default not specified.
  *
  */
 class DATABASE_CONFIG {
 
 	public $default = array(
-		'driver' => 'mysql',
+		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
 		'login' => 'user',
@@ -70,7 +69,7 @@ class DATABASE_CONFIG {
 	);
 
 	public $test = array(
-		'driver' => 'mysql',
+		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
 		'login' => 'user',
