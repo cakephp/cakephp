@@ -20,12 +20,14 @@
 
 /**
  * Parent class for all of the HTTP related exceptions in CakePHP.
- * All HTTP status/error related exceptions should extend this class so 
+ * All HTTP status/error related exceptions should extend this class so
  * catch blocks can be specifically typed.
  *
  * @package cake.libs
  */
-class HttpException extends RuntimeException { }
+if (!class_exists('HttpException')) {
+	class HttpException extends RuntimeException { }
+}
 
 /**
  * Represents an HTTP 400 error.
@@ -198,12 +200,12 @@ class CakeException extends RuntimeException {
 }
 
 /**
- * Missing Controller exception - used when a controller 
+ * Missing Controller exception - used when a controller
  * cannot be found.
  *
  * @package cake.libs
  */
-class MissingControllerException extends CakeException { 
+class MissingControllerException extends CakeException {
 	protected $_messageTemplate = 'Controller class %s could not be found.';
 
 	public function __construct($message, $code = 404) {
@@ -212,12 +214,12 @@ class MissingControllerException extends CakeException {
 }
 
 /**
- * Missing Action exception - used when a controller action 
+ * Missing Action exception - used when a controller action
  * cannot be found.
  *
  * @package cake.libs
  */
-class MissingActionException extends CakeException { 
+class MissingActionException extends CakeException {
 	protected $_messageTemplate = 'Action %s::%s() could not be found.';
 
 	public function __construct($message, $code = 404) {
@@ -225,12 +227,12 @@ class MissingActionException extends CakeException {
 	}
 }
 /**
- * Private Action exception - used when a controller action 
+ * Private Action exception - used when a controller action
  * is protected, or starts with a `_`.
  *
  * @package cake.libs
  */
-class PrivateActionException extends CakeException { 
+class PrivateActionException extends CakeException {
 	protected $_messageTemplate = 'Private Action %s::%s() is not directly accessible.';
 
 	public function __construct($message, $code = 404, Exception $previous = null) {
@@ -243,7 +245,7 @@ class PrivateActionException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingComponentFileException extends CakeException { 
+class MissingComponentFileException extends CakeException {
 	protected $_messageTemplate = 'Component File  "%s" is missing.';
 }
 
@@ -252,7 +254,7 @@ class MissingComponentFileException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingComponentClassException extends CakeException { 
+class MissingComponentClassException extends CakeException {
 	protected $_messageTemplate = 'Component class "%s" is missing.';
 }
 
@@ -275,7 +277,7 @@ class MissingBehaviorClassException extends CakeException { }
  *
  * @package cake.libs
  */
-class MissingViewException extends CakeException { 
+class MissingViewException extends CakeException {
 	protected $_messageTemplate = 'View file "%s" is missing.';
 }
 
@@ -284,7 +286,7 @@ class MissingViewException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingLayoutException extends CakeException { 
+class MissingLayoutException extends CakeException {
 	protected $_messageTemplate = 'Layout file "%s" is missing.';
 }
 
@@ -293,7 +295,7 @@ class MissingLayoutException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingHelperFileException extends CakeException { 
+class MissingHelperFileException extends CakeException {
 	protected $_messageTemplate = 'Helper File "%s" is missing.';
 }
 
@@ -302,7 +304,7 @@ class MissingHelperFileException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingHelperClassException extends CakeException { 
+class MissingHelperClassException extends CakeException {
 	protected $_messageTemplate = 'Helper class "%s" is missing.';
 }
 
@@ -330,7 +332,7 @@ class MissingConnectionException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingTaskFileException extends CakeException { 
+class MissingTaskFileException extends CakeException {
 	protected $_messageTemplate = 'Task file "%s" is missing.';
 }
 
@@ -339,7 +341,7 @@ class MissingTaskFileException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingTaskClassException extends CakeException { 
+class MissingTaskClassException extends CakeException {
 	protected $_messageTemplate = 'Task class "%s" is missing.';
 }
 
@@ -348,7 +350,7 @@ class MissingTaskClassException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingShellMethodException extends CakeException { 
+class MissingShellMethodException extends CakeException {
 	protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
 }
 
@@ -357,7 +359,7 @@ class MissingShellMethodException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingShellClassException extends CakeException { 
+class MissingShellClassException extends CakeException {
 	protected $_messageTemplate = "Shell class %s could not be loaded.";
 }
 
@@ -366,7 +368,7 @@ class MissingShellClassException extends CakeException {
  *
  * @package cake.libs
  */
-class MissingShellFileException extends CakeException { 
+class MissingShellFileException extends CakeException {
 	protected $_messageTemplate = "Shell file %s could not be loaded.";
 }
 
@@ -479,4 +481,3 @@ class XmlException extends CakeException { }
  * @package cake.libs
  */
 class ConsoleException extends CakeException { }
-
