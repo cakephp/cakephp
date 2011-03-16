@@ -243,7 +243,7 @@ class App {
 				'View' => array('%s' . 'views' . DS),
 				'View/Helper' => array('%s' . 'views' . DS . 'helpers' . DS),
 				'Console' => array(
-					'%s' . 'console' . DS . 'shells' . DS,
+					'%s' . 'console' . DS,
 					'%s' . 'vendors' . DS . 'shells' . DS,
 					VENDORS . 'shells' . DS
 				),

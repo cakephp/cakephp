@@ -19,7 +19,7 @@
 
 /**
  * This is a placeholder class.
- * Create the same file in app/console/shells/app_shell.php
+ * Create the same file in app/console/shells/AppShell.php
  *
  * Add your application-wide methods in the class below, your shells
  * will inherit them.
