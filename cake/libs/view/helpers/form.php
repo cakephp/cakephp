@@ -238,11 +238,14 @@ class FormHelper extends AppHelper {
 		$options);
 		$this->_inputDefaults = $options['inputDefaults'];
 		unset($options['inputDefaults']);
+		
+		if (!isset($options['id'])) {
+			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
+			$options['id'] = $this->domId($domId . 'Form');
+		}
+		
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
-			if (!isset($options['id'])) {
-				$options['id'] = $this->domId($this->request['action'] . 'Form');
-			}
 		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model) && $model != $this->defaultModel) {
@@ -260,9 +263,6 @@ class FormHelper extends AppHelper {
 				'controller' => $this->_View->viewPath,
 				'action' => $options['action'],
 			);
-			if (!empty($options['action']) && !isset($options['id'])) {
-				$options['id'] = $this->domId($options['action'] . 'Form');
-			}
 			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
 			if (empty($options['action'][0]) && !empty($id)) {
 				$options['action'][0] = $id;
