@@ -1041,6 +1041,7 @@ class FormHelper extends AppHelper {
 	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 		$legend = false;
+		$disabled = array();
 
 		if (isset($attributes['legend'])) {
 			$legend = $attributes['legend'];
@@ -1066,6 +1067,11 @@ class FormHelper extends AppHelper {
 		} else {
 			$value =  $this->value($fieldName);
 		}
+
+		if (isset($attributes['disabled'])) {
+			$disabled = $attributes['disabled'];
+		}
+
 		$out = array();
 
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
@@ -1076,6 +1082,9 @@ class FormHelper extends AppHelper {
 
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
+			}
+			if (!empty($disabled) && in_array($optValue, $disabled)) {
+				$optionsHere['disabled'] = true;
 			}
 			$tagName = Inflector::camelize(
 				$attributes['id'] . '_' . Inflector::slug($optValue)
