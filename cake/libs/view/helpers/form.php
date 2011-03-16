@@ -980,8 +980,11 @@ class FormHelper extends AppHelper {
  * - `value` - the value of the checkbox
  * - `checked` - boolean indicate that this checkbox is checked.
  * - `hiddenField` - boolean to indicate if you want the results of checkbox() to include
- *	a hidden input with a value of ''.
+ *    a hidden input with a value of ''.
  * - `disabled` - create a disabled input.
+ * - `default` - Set the default value for the checkbox.  This allows you to start checkboxes
+ *    as checked, without having to check the POST data.  A matching POST data value, will overwrite
+ *    the default value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
