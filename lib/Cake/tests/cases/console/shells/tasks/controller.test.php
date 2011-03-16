@@ -299,7 +299,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$components = array('Acl', 'Auth');
 		$uses = array('Comment', 'User');
 
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'ArticlesController.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')->with(
 			$path,
@@ -313,7 +313,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->Task->plugin = 'controllerTest';
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'ArticlesController.php';
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->assertEqual($this->Task->Template->templateVars['plugin'], 'ControllerTest');
@@ -442,7 +442,7 @@ class ControllerTaskTest extends CakeTestCase {
 				'y' // looks good?
 			));
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
 			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
@@ -482,7 +482,7 @@ class ControllerTaskTest extends CakeTestCase {
 			->method('getPrefix')
 			->will($this->returnValue('admin_'));
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
 			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
@@ -512,7 +512,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('_checkUnitTest')->will($this->returnValue(true));
 		$this->Task->Test->expects($this->once())->method('bake');
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
 			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
@@ -534,7 +534,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles');
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
 			new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
@@ -568,7 +568,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array($name);
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
 		);
@@ -589,7 +589,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->args = array('BakeArticles');
 		$this->Task->params = array('public' => true);
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$expected = new PHPUnit_Framework_Constraint_Not(new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/'));
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, $expected
@@ -612,7 +612,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->args = array('BakeArticles');
 		$this->Task->params = array('public' => true, 'admin' => true);
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/admin_index/')
 		);
@@ -634,7 +634,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->args = array('BakeArticles');
 		$this->Task->params = array('admin' => true);
 
-		$filename = '/my/path/bake_articles_controller.php';
+		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/admin_index/')
 		);

@@ -663,7 +663,7 @@ class Shell extends Object {
  * @return string Path to controller
  */
 	protected function _controllerPath($name) {
-		return strtolower(Inflector::underscore($name));
+		return Inflector::camelize($name);
 	}
 
 /**

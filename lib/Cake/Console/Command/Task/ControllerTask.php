@@ -143,10 +143,9 @@ class ControllerTask extends BakeTask {
 		$useDynamicScaffold = 'n';
 		$wannaBakeCrud = 'y';
 
-		$controllerFile = strtolower(Inflector::underscore($controllerName));
 
 		$question[] = __("Would you like to build your controller interactively?");
-		if (file_exists($this->path . $controllerFile .'_controller.php')) {
+		if (file_exists($this->path . $controllerName .'Controller.php')) {
 			$question[] = __("Warning: Choosing no will overwrite the %sController.", $controllerName);
 		}
 		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
@@ -315,7 +314,7 @@ class ControllerTask extends BakeTask {
 		$contents = $this->Template->generate('classes', 'controller');
 
 		$path = $this->getPath();
-		$filename = $path . $this->_controllerPath($controllerName) . '_controller.php';
+		$filename = $path . $this->_controllerPath($controllerName) . 'Controller.php';
 		if ($this->createFile($filename, $contents)) {
 			return $contents;
 		}
