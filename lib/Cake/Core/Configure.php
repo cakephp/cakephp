@@ -21,7 +21,7 @@
  * Configuration class. Used for managing runtime configuration information.
  *
  * Provides features for reading and writing to the runtime configuration, as well
- * as methods for loading additional configuration files or storing runtime configuration 
+ * as methods for loading additional configuration files or storing runtime configuration
  * for future use.
  *
  * @package       cake.libs
@@ -71,43 +71,6 @@ class Configure {
 
 			if (!include(CONFIGS . 'core.php')) {
 				trigger_error(__d('cake', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
-			}
-
-			if (empty(self::$_values['Cache']['disable'])) {
-				$cache = Cache::config('default');
-
-				if (empty($cache['settings'])) {
-					trigger_error(__d('cake', 'Cache not configured properly. Please check Cache::config(); in APP/config/core.php'), E_USER_WARNING);
-					$cache = Cache::config('default', array('engine' => 'File'));
-				}
-				$path = $prefix = $duration = null;
-
-				if (!empty($cache['settings']['path'])) {
-					$path = realpath($cache['settings']['path']);
-				} else {
-					$prefix = $cache['settings']['prefix'];
-				}
-
-				if (self::$_values['debug'] >= 1) {
-					$duration = '+10 seconds';
-				} else {
-					$duration = '+999 days';
-				}
-				$cacheConfigs = Cache::configured();
-
-				if (!in_array('_cake_core_', $cacheConfigs)) {
-					Cache::config('_cake_core_', array_merge((array)$cache['settings'], array(
-						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
-						'serialize' => true, 'duration' => $duration
-					)));
-				}
-
-				if (!in_array('_cake_model_', $cacheConfigs)) {
-					Cache::config('_cake_model_', array_merge((array)$cache['settings'], array(
-						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
-						'serialize' => true, 'duration' => $duration
-					)));
-				}
 			}
 
 			App::init();
@@ -261,7 +224,7 @@ class Configure {
 	}
 
 /**
- * Add a new reader to Configure.  Readers allow you to read configuration 
+ * Add a new reader to Configure.  Readers allow you to read configuration
  * files in various formats/storage locations.  CakePHP comes with two built-in readers
  * PhpReader and IniReader.  You can also implement your own reader classes in your application.
  *
@@ -269,7 +232,7 @@ class Configure {
  *
  * `Configure::config('ini', new IniReader());`
  *
- * @param string $name The name of the reader being configured.  This alias is used later to 
+ * @param string $name The name of the reader being configured.  This alias is used later to
  *   read values from a specific reader.
  * @param ConfigReaderInterface $reader The reader to append.
  * @return void
@@ -291,7 +254,7 @@ class Configure {
 	}
 
 /**
- * Remove a configured reader.  This will unset the reader 
+ * Remove a configured reader.  This will unset the reader
  * and make any future attempts to use it cause an Exception.
  *
  * @param string $name Name of the reader to drop.
@@ -313,7 +276,7 @@ class Configure {
  * runtime configuration. You can load configuration files from plugins
  * by preceeding the filename with the plugin name.
  *
- * `Configure::load('Users.user', 'default')` 
+ * `Configure::load('Users.user', 'default')`
  *
  * Would load the 'user' config file using the default config reader.  You can load
  * app config files by giving the name of the resource you want loaded.
@@ -395,7 +358,7 @@ interface ConfigReaderInterface {
  * These sources can either be static resources like files, or dynamic ones like
  * a database, or other datasource.
  *
- * @param string $key 
+ * @param string $key
  * @return array An array of data to merge into the runtime configuration
  */
 	function read($key);

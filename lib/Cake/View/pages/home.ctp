@@ -18,7 +18,7 @@
 if (Configure::read('debug') == 0):
 	throw new NotFoundException();
 endif;
-App::import('Core', 'Debugger');
+App::uses('Debugger', 'Utility');
 ?>
 <h2><?php echo __d('cake', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <a href="http://cakephp.org/changelogs/1.3.6"><?php __d('cake', 'Read the changelog'); ?> </a>
@@ -72,16 +72,6 @@ endif;
 	?>
 </p>
 <?php
-	App::uses('Validation', 'Utility');
-	if (!Validation::alphaNumeric('cakephp')) {
-		echo '<p><span class="notice">';
-		__d('cake', 'PCRE has not been compiled with Unicode support.');
-		echo '<br/>';
-		__d('cake', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
-		echo '</span></p>';
-	}
-?>
-<?php
 if (isset($filePresent)):
 	App::uses('ConnectionManager', 'Model');
 	try {
@@ -104,6 +94,16 @@ if (isset($filePresent)):
 	?>
 </p>
 <?php endif;?>
+<?php
+	App::uses('Validation', 'Utility');
+	if (!Validation::alphaNumeric('cakephp')) {
+		echo '<p><span class="notice">';
+		__('PCRE has not been compiled with Unicode support.');
+		echo '<br/>';
+		__('Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+		echo '</span></p>';
+	}
+?>
 <h3><?php echo __d('cake', 'Editing this Page'); ?></h3>
 <p>
 <?php

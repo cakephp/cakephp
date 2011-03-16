@@ -1,6 +1,6 @@
 <?php
 /**
- * Test Suite Test App Cache Engine class.
+ * Test Suite TestUtilityClass Library
  *
  * PHP 5
  *
@@ -16,21 +16,4 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class TestAppCacheEngine extends CacheEngine {
-
-	public function write($key, $value, $duration) { 
-		if ($key == 'fail') {
-			return false;
-		}
-	}
-
-	public function read($key) { }
-
-	public function increment($key, $offset = 1) { }
-
-	public function decrement($key, $offset = 1) { }
-
-	public function delete($key) { }
-
-	public function clear($check) { }
-}
+class TestUtilityClass {}

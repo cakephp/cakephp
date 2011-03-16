@@ -741,7 +741,7 @@ class ModelTask extends BakeTask {
 		$out = $this->Template->generate('classes', 'model');
 
 		$path = $this->getPath();
-		$filename = $path . Inflector::underscore($name) . '.php';
+		$filename = $path . $name . '.php';
 		$this->out("\nBaking model class for $name...", 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		ClassRegistry::flush();

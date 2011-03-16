@@ -105,7 +105,7 @@ class ShellDispatcher {
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
 			$message = "This file has been loaded incorrectly and cannot continue.\n" .
-				"Please make sure that " . DIRECTORY_SEPARATOR . "cake" . DIRECTORY_SEPARATOR . "console is in your system path,\n" . 
+				"Please make sure that " . DIRECTORY_SEPARATOR . "cake" . DIRECTORY_SEPARATOR . "console is in your system path,\n" .
 				"and check the cookbook for the correct usage of this command.\n" .
 				"(http://book.cakephp.org/)";
 			throw new CakeException($message);
@@ -127,14 +127,14 @@ class ShellDispatcher {
 		define('APP_PATH', $this->params['working'] . DS);
 		define('WWW_ROOT', APP_PATH . $this->params['webroot'] . DS);
 		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
-			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
+			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
 		}
 
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
-			include_once CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 			App::build();
 		}
 		require_once CONSOLE_LIBS . 'ConsoleErrorHandler.php';
@@ -229,9 +229,9 @@ class ShellDispatcher {
 		$this->_parsePaths($args);
 
 		$defaults = array(
-			'app' => 'app', 
+			'app' => 'app',
 			'root' => dirname(dirname(dirname(__FILE__))),
-			'working' => null, 
+			'working' => null,
 			'webroot' => 'webroot'
 		);
 		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));

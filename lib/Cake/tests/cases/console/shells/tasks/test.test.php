@@ -437,7 +437,7 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Model', 'TestTaskArticle');
 
-		$this->assertContains("App::import('Model', 'TestTaskArticle')", $result);
+		$this->assertContains("App::uses('TestTaskArticle', 'Model')", $result);
 		$this->assertContains('class TestTaskArticleTestCase extends CakeTestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
@@ -468,7 +468,7 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Controller', 'TestTaskComments');
 
-		$this->assertContains("App::import('Controller', 'TestTaskComments')", $result);
+		$this->assertContains("App::uses('TestTaskCommentsController', 'Controller')", $result);
 		$this->assertContains('class TestTaskCommentsControllerTestCase extends CakeTestCase', $result);
 
 		$this->assertContains('class TestTestTaskCommentsController extends TestTaskCommentsController', $result);

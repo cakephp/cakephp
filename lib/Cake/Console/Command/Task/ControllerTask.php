@@ -143,10 +143,9 @@ class ControllerTask extends BakeTask {
 		$useDynamicScaffold = 'n';
 		$wannaBakeCrud = 'y';
 
-		$controllerFile = strtolower(Inflector::underscore($controllerName));
 
 		$question[] = __d('cake', "Would you like to build your controller interactively?");
-		if (file_exists($this->path . $controllerFile .'_controller.php')) {
+		if (file_exists($this->path . $controllerName .'Controller.php')) {
 			$question[] = __d('cake', "Warning: Choosing no will overwrite the %sController.", $controllerName);
 		}
 		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
@@ -288,7 +287,7 @@ class ControllerTask extends BakeTask {
 		$primaryKey = $modelObj->primaryKey;
 
 		$this->Template->set(compact('plugin', 'admin', 'controllerPath', 'pluralName', 'singularName',
-			'singularHumanName', 'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName', 
+			'singularHumanName', 'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName',
 			'displayField', 'primaryKey'
 		));
 		$actions = $this->Template->generate('actions', 'controller_actions');
@@ -315,7 +314,7 @@ class ControllerTask extends BakeTask {
 		$contents = $this->Template->generate('classes', 'controller');
 
 		$path = $this->getPath();
-		$filename = $path . $this->_controllerPath($controllerName) . '_controller.php';
+		$filename = $path . $this->_controllerNames($controllerName) . 'Controller.php';
 		if ($this->createFile($filename, $contents)) {
 			return $contents;
 		}

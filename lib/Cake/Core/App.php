@@ -236,14 +236,14 @@ class App {
 				'Model' => array('%s' . 'models' . DS),
 				'Model/Behavior' => array('%s' . 'models' . DS . 'behaviors' . DS),
 				'Model/Datasource' => array('%s' . 'models' . DS . 'datasources' . DS),
-				'Model/Datasource/Database' => array('%s' . 'models' . DS . 'datasources' . DS . 'Database' . DS),
-				'Model/Datasource/Session' => array('%s' . 'models' . DS . 'datasources' . DS . 'Session' . DS),
+				'Model/Datasource/Database' => array('%s' . 'models' . DS . 'datasources' . DS . 'database' . DS),
+				'Model/Datasource/Session' => array('%s' . 'models' . DS . 'datasources' . DS . 'session' . DS),
 				'Controller' => array('%s' . 'controllers' . DS),
 				'Controller/Component' => array('%s' . 'controllers' . DS . 'components' . DS),
 				'View' => array('%s' . 'views' . DS),
 				'View/Helper' => array('%s' . 'views' . DS . 'helpers' . DS),
 				'Console' => array(
-					'%s' . 'console' . DS . 'shells' . DS,
+					'%s' . 'console' . DS,
 					'%s' . 'vendors' . DS . 'shells' . DS,
 					VENDORS . 'shells' . DS
 				),

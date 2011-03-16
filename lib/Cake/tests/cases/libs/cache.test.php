@@ -307,7 +307,7 @@ class CacheTest extends CakeTestCase {
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 	
-		Cache::config('test_trigger', array('engine' => 'TestAppCache'));
+		Cache::config('test_trigger', array('engine' => 'TestAppCache', 'prefix' => ''));
 		try {
 			Cache::write('fail', 'value', 'test_trigger');
 			$this->fail('No exception thrown');
