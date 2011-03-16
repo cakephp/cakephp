@@ -3775,6 +3775,13 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testCheckbox() {
+		$result = $this->Form->checkbox('Model.field');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
@@ -3814,28 +3821,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->checkbox('Contact.name', array('value' => 'myvalue'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][name]', 'value' => '0', 'id' => 'ContactName_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][name]', 'value' => 'myvalue', 'id' => 'ContactName'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Model.field');
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Model.field', array('checked' => false));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->request->data['Contact']['published'] = 1;
 		$result = $this->Form->checkbox('Contact.published', array('id' => 'theID'));
 		$expected = array(
@@ -3844,7 +3829,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->request->data['Contact']['published'] = 0;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
 		$expected = array(
@@ -3866,7 +3850,14 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'data[CustomField][1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
 		);
 		$this->assertTags($result, $expected);
+	}
 
+/**
+ * test checkbox() with a custom name attribute
+ *
+ * @return void
+ */
+	function testCheckboxCustomNameAttribute() {
 		$result = $this->Form->checkbox('Test.test', array('name' => 'myField'));
 		$expected = array(
 				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
@@ -3919,7 +3910,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Test that disabling a checkbox also disables the hidden input so no value is submitted
+ * Test that disabled attribute works on both the checkbox and hidden input.
  *
  * @return void
  */
@@ -3929,15 +3920,8 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
 		);
-		$this->assertTags($result, $expected,true);
-	}
+		$this->assertTags($result, $expected);
 
-/**
- * Test that specifying false in the 'disabled' option will not disable either the hidden input or the checkbox input
- *
- * @return void
- */
-	function testCheckboxHiddenDisabling() {
 		$result = $this->Form->checkbox('Account.show_name', array('disabled' => false));
 		$expected = array(
 			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
