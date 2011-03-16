@@ -52,14 +52,6 @@ class ProjectTask extends Shell {
 			$project = $_SERVER['PWD'] . DS . $project;
 		}
 
-		if (empty($this->params['skel'])) {
-			$core = App::core('Console');
-			$skelPath = dirname($core[0]) . DS . 'templates' . DS . 'skel';
-			if (is_dir($skelPath) === true) {
-				$this->params['skel'] = $skelPath;
-			}
-		}
-
 		while (!$project) {
 			$prompt = __("What is the full path for this app including the app directory name?\n Example:");
 			$default = APP_PATH . 'myapp';
@@ -387,6 +379,7 @@ class ProjectTask extends Shell {
 			))->addOption('empty', array(
 				'help' => __('Create empty files in each of the directories. Good if you are using git')
 			))->addOption('skel', array(
+				'default' => current(App::core('Console')) . DS . 'templates' . DS . 'skel',
 				'help' => __('The directory layout to use for the new application skeleton. Defaults to cake/console/templates/skel of CakePHP used to create the project.')
 			));
 	}

@@ -2,7 +2,7 @@
 $output = "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
 $output .="
 <?php
-App::import('Core', 'Debugger');
+App::uses('Debugger', 'Utility');
 if (Configure::read() > 0):
 	Debugger::checkSecurityKeys();
 endif;
@@ -52,27 +52,38 @@ endif;
 ?>
 </p>
 <?php
-if (!empty(\$filePresent)):
-	if (!class_exists('ConnectionManager')) {
-		require LIBS . 'model' . DS . 'connection_manager.php';
+if (isset(\$filePresent)):
+	App::uses('ConnectionManager', 'Model');
+	try {
+		\$connected = ConnectionManager::getDataSource('default');
+	} catch (Exception \$e) {
+		\$connected = false;
 	}
-	\$db = ConnectionManager::getInstance();
- 	\$connected = \$db->getDataSource('default');
 ?>
 <p>
+	<?php
+		if (\$connected && \$connected->isConnected()):
+			echo '<span class=\"notice success\">';
+	 			echo __('Cake is able to connect to the database.');
+			echo '</span>';
+		else:
+			echo '<span class=\"notice\">';
+				echo __('Cake is NOT able to connect to the database.');
+			echo '</span>';
+		endif;
+	?>
+</p>
+<?php endif;?>
 <?php
-	if (\$connected->isConnected()):
-		echo '<span class=\"notice success\">';
- 			echo __('Cake is able to connect to the database.');
-		echo '</span>';
-	else:
-		echo '<span class=\"notice\">';
-			echo __('Cake is NOT able to connect to the database.');
-		echo '</span>';
-	endif;
-?>
-</p>\n";
-$output .= "<?php endif;?>\n";
+	App::uses('Validation', 'Utility');
+	if (!Validation::alphaNumeric('cakephp')) {
+		echo '<p><span class=\"notice\">';
+		__('PCRE has not been compiled with Unicode support.');
+		echo '<br/>';
+		__('Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+		echo '</span></p>';
+	}
+?>\n";
 $output .= "<h3><?php echo __('Editing this Page') ?></h3>\n";
 $output .= "<p>\n";
 $output .= "<?php\n";
