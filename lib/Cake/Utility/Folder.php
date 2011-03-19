@@ -345,11 +345,11 @@ class Folder {
 
 		if ($recursive === false && is_dir($path)) {
 			if (@chmod($path, intval($mode, 8))) {
-				$this->__messages[] = __d('cake', '%s changed to %s', $path, $mode);
+				$this->__messages[] = __d('cake_developer', '%s changed to %s', $path, $mode);
 				return true;
 			}
 
-			$this->__errors[] = __d('cake', '%s NOT changed to %s', $path, $mode);
+			$this->__errors[] = __d('cake_developer', '%s NOT changed to %s', $path, $mode);
 			return false;
 		}
 
@@ -366,9 +366,9 @@ class Folder {
 					}
 
 					if (@chmod($fullpath, intval($mode, 8))) {
-						$this->__messages[] = __d('cake', '%s changed to %s', $fullpath, $mode);
+						$this->__messages[] = __d('cake_developer', '%s changed to %s', $fullpath, $mode);
 					} else {
-						$this->__errors[] = __d('cake', '%s NOT changed to %s', $fullpath, $mode);
+						$this->__errors[] = __d('cake_deverloper', '%s NOT changed to %s', $fullpath, $mode);
 					}
 				}
 			}
@@ -453,7 +453,7 @@ class Folder {
 		}
 
 		if (is_file($pathname)) {
-			$this->__errors[] = __d('cake', '%s is a file', $pathname);
+			$this->__errors[] = __d('cake_developer', '%s is a file', $pathname);
 			return false;
 		}
 		$pathname = rtrim($pathname, DS);
@@ -464,11 +464,11 @@ class Folder {
 				$old = umask(0);
 				if (mkdir($pathname, $mode)) {
 					umask($old);
-					$this->__messages[] = __d('cake', '%s created', $pathname);
+					$this->__messages[] = __d('cake_developer', '%s created', $pathname);
 					return true;
 				} else {
 					umask($old);
-					$this->__errors[] = __d('cake', '%s NOT created', $pathname);
+					$this->__errors[] = __d('cake_developer', '%s NOT created', $pathname);
 					return false;
 				}
 			}
@@ -541,9 +541,9 @@ class Folder {
 					}
 					if (is_file($file) === true) {
 						if (@unlink($file)) {
-							$this->__messages[] = __d('cake', '%s removed', $file);
+							$this->__messages[] = __d('cake_developer', '%s removed', $file);
 						} else {
-							$this->__errors[] = __d('cake', '%s NOT removed', $file);
+							$this->__errors[] = __d('cake_developer', '%s NOT removed', $file);
 						}
 					} elseif (is_dir($file) === true && $this->delete($file) === false) {
 						return false;
@@ -552,10 +552,10 @@ class Folder {
 			}
 			$path = substr($path, 0, strlen($path) - 1);
 			if (rmdir($path) === false) {
-				$this->__errors[] = __d('cake', '%s NOT removed', $path);
+				$this->__errors[] = __d('cake_developer', '%s NOT removed', $path);
 				return false;
 			} else {
-				$this->__messages[] = __d('cake', '%s removed', $path);
+				$this->__messages[] = __d('cake_developer', '%s removed', $path);
 			}
 		}
 		return true;
@@ -590,7 +590,7 @@ class Folder {
 		$mode = $options['mode'];
 
 		if (!$this->cd($fromDir)) {
-			$this->__errors[] = __d('cake', '%s not found', $fromDir);
+			$this->__errors[] = __d('cake_developer', '%s not found', $fromDir);
 			return false;
 		}
 
@@ -599,7 +599,7 @@ class Folder {
 		}
 
 		if (!is_writable($toDir)) {
-			$this->__errors[] = __d('cake', '%s not writable', $toDir);
+			$this->__errors[] = __d('cake_developer', '%s not writable', $toDir);
 			return false;
 		}
 
@@ -613,9 +613,9 @@ class Folder {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
-							$this->__messages[] = __d('cake', '%s copied to %s', $from, $to);
+							$this->__messages[] = __d('cake_developer', '%s copied to %s', $from, $to);
 						} else {
-							$this->__errors[] = __d('cake', '%s NOT copied to %s', $from, $to);
+							$this->__errors[] = __d('cake_developer', '%s NOT copied to %s', $from, $to);
 						}
 					}
 
@@ -626,11 +626,11 @@ class Folder {
 							$old = umask(0);
 							chmod($to, $mode);
 							umask($old);
-							$this->__messages[] = __d('cake', '%s created', $to);
+							$this->__messages[] = __d('cake_developer', '%s created', $to);
 							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
 						} else {
-							$this->__errors[] = __d('cake', '%s not created', $to);
+							$this->__errors[] = __d('cake_developer', '%s not created', $to);
 						}
 					}
 				}
@@ -666,7 +666,7 @@ class Folder {
 			$options = (array)$options;
 		}
 		$options = array_merge(
-			array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()), 
+			array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()),
 			$options
 		);
 

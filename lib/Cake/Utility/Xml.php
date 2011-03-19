@@ -100,9 +100,9 @@ class Xml {
 			$dom->load($input);
 			return $dom;
 		} elseif (!is_string($input)) {
-			throw new XmlException(__d('cake', 'Invalid input.'));
+			throw new XmlException(__d('cake_error', 'Invalid input.'));
 		}
-		throw new XmlException(__d('cake', 'XML cannot be read.'));
+		throw new XmlException(__d('cake_error', 'XML cannot be read.'));
 	}
 
 /**
@@ -144,11 +144,11 @@ class Xml {
  */
 	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
-			throw new XmlException(__d('cake', 'Invalid input.'));
+			throw new XmlException(__d('cake_error', 'Invalid input.'));
 		}
 		$key = key($input);
 		if (is_integer($key)) {
-			throw new XmlException(__d('cake', 'The key of input must be alphanumeric'));
+			throw new XmlException(__d('cake_error', 'The key of input must be alphanumeric'));
 		}
 
 		if (!is_array($options)) {
@@ -212,7 +212,7 @@ class Xml {
 					}
 				} else {
 					if ($key[0] === '@') {
-						throw new XmlException(__d('cake', 'Invalid array'));
+						throw new XmlException(__d('cake_error', 'Invalid array'));
 					}
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
@@ -225,7 +225,7 @@ class Xml {
 					}
 				}
 			} else {
-				throw new XmlException(__d('cake', 'Invalid array'));
+				throw new XmlException(__d('cake_error', 'Invalid array'));
 			}
 		}
 	}
@@ -277,7 +277,7 @@ class Xml {
 			$obj = simplexml_import_dom($obj);
 		}
 		if (!($obj instanceof SimpleXMLElement)) {
-			throw new XmlException(__d('cake', 'The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
+			throw new XmlException(__d('cake_error', 'The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));
