@@ -459,31 +459,20 @@ class CookieComponent extends Component {
  * Implode method to keep keys are multidimensional arrays
  *
  * @param array $array Map of key and values
- * @return string String in the form key1|value1,key2|value2
+ * @return string A json encoded string.
  */
-	protected function _implode($array) {
-		$string = '';
-		foreach ($array as $key => $value) {
-			$string .= ',' . $key . '|' . $value;
-		}
-		return substr($string, 1);
+	protected function _implode(array $array) {
+		return json_encode($array);
 	}
 
 /**
  * Explode method to return array from string set in CookieComponent::_implode()
  *
- * @param string $string String in the form key1|value1,key2|value2
+ * @param string $string A string containing JSON encoded data, or a bare string.
  * @return array Map of key and values
  */
 	protected function _explode($string) {
-		$array = array();
-		foreach (explode(',', $string) as $pair) {
-			$key = explode('|', $pair);
-			if (!isset($key[1])) {
-				return $key[0];
-			}
-			$array[$key[0]] = $key[1];
-		}
-		return $array;
+		$ret = json_decode($string, true);
+		return ($ret != null) ? $ret : $string;
 	}
 }
