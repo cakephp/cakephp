@@ -184,7 +184,7 @@ class CakeException extends RuntimeException {
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {
 			$this->_attributes = $message;
-			$message = __d('cake', $this->_messageTemplate, $message);
+			$message = __d('cake_error', $this->_messageTemplate, $message);
 		}
 		parent::__construct($message, $code);
 	}
