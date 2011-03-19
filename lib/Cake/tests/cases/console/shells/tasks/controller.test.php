@@ -67,7 +67,7 @@ class ControllerTaskTest extends CakeTestCase {
 	public function setUp() {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ControllerTask', 
+		$this->Task = $this->getMock('ControllerTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
@@ -75,12 +75,12 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
 
-		$this->Task->Model = $this->getMock('ModelTask', 
-			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'), 
+		$this->Task->Model = $this->getMock('ModelTask',
+			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
-		$this->Task->Project = $this->getMock('ProjectTask', 
-			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix'), 
+		$this->Task->Project = $this->getMock('ProjectTask',
+			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix'),
 			array($out, $out, $in)
 		);
 		$this->Task->Test = $this->getMock('TestTask', array(), array($out, $out, $in));
@@ -139,11 +139,11 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')->will(
 			$this->onConsecutiveCalls(3, 1)
 		);
-		
+
 		$result = $this->Task->getName('test');
 		$expected = 'BakeComments';
 		$this->assertEqual($result, $expected);
-	
+
 		$result = $this->Task->getName('test');
 		$expected = 'BakeArticles';
 		$this->assertEqual($result, $expected);
@@ -309,7 +309,7 @@ class ControllerTaskTest extends CakeTestCase {
 			$path,
 			new PHPUnit_Framework_Constraint_PCREMatch('/ArticlesController extends ControllerTestAppController/')
 		);
-		
+
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->Task->plugin = 'controllerTest';
@@ -337,20 +337,20 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
-		$this->assertContains("throw new NotFoundException(__d('cake', 'Invalid bake article'));", $result);
+		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
 		$this->assertContains("if (\$this->request->is('post'))", $result);
 		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
-		$this->assertContains("\$this->Session->setFlash(__d('cake', 'The bake article has been saved'));", $result);
+		$this->assertContains("\$this->Session->setFlash(__('The bake article has been saved'));", $result);
 
 		$this->assertContains('function edit($id = null)', $result);
-		$this->assertContains("\$this->Session->setFlash(__d('cake', 'The bake article could not be saved. Please, try again.'));", $result);
+		$this->assertContains("\$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));", $result);
 
 		$this->assertContains('function delete($id = null)', $result);
 		$this->assertContains('if ($this->BakeArticle->delete())', $result);
-		$this->assertContains("\$this->Session->setFlash(__d('cake', 'Bake article deleted'));", $result);
+		$this->assertContains("\$this->Session->setFlash(__('Bake article deleted'));", $result);
 
 		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
 
@@ -379,14 +379,14 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
-		$this->assertContains("throw new NotFoundException(__d('cake', 'Invalid bake article'));", $result);
+		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
 		$this->assertContains("if (\$this->request->is('post'))", $result);
 		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
 
-		$this->assertContains("\$this->flash(__d('cake', 'The bake article has been saved.'), array('action' => 'index'))", $result);
+		$this->assertContains("\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))", $result);
 
 		$this->assertContains('function edit($id = null)', $result);
 		$this->assertContains("\$this->BakeArticle->BakeTag->find('list')", $result);
@@ -394,7 +394,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->assertContains('function delete($id = null)', $result);
 		$this->assertContains('if ($this->BakeArticle->delete())', $result);
-		$this->assertContains("\$this->flash(__d('cake', 'Bake article deleted'), array('action' => 'index'))", $result);
+		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
 	}
 
 /**
@@ -428,7 +428,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		
+
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls(
 				'1',
@@ -444,7 +444,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, 
+			$filename,
 			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
 		);
 		$this->Task->execute();
@@ -484,7 +484,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, 
+			$filename,
 			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
 		)->will($this->returnValue(true));
 
@@ -514,7 +514,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, 
+			$filename,
 			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
 		)->will($this->returnValue(true));
 
@@ -536,7 +536,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, 
+			$filename,
 			new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
 		);
 
