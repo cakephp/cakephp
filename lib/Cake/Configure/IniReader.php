@@ -27,7 +27,7 @@
  * you to create nested arrays structures in an ini config file. For example:
  *
  * `db.password = secret` would turn into `array('db' => array('password' => 'secret'))`
- * 
+ *
  * You can nest properties as deeply as needed using .'s.  IniReader also manipulates
  * how the special ini values of 'yes', 'no', 'on', 'off', 'null' are handled.
  * These values will be converted to their boolean equivalents.
@@ -74,7 +74,7 @@ class IniReader implements ConfigReaderInterface {
 		if (!file_exists($filename)) {
 			$filename .= '.ini';
 			if (!file_exists($filename)) {
-				throw new ConfigureException(__d('cake', 'Could not load configuration files: %s or %s', substr($filename, 0, -4), $filename));
+				throw new ConfigureException(__d('cake_error', 'Could not load configuration files: %s or %s', substr($filename, 0, -4), $filename));
 			}
 		}
 		$contents = parse_ini_file($filename, true);
