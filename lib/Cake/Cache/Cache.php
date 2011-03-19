@@ -22,12 +22,12 @@ App::uses('Inflector', 'Utility');
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
- * to use several different Cache engines, without coupling your application to a specific 
- * implementation.  It also allows you to change out cache storage or configuration without effecting 
+ * to use several different Cache engines, without coupling your application to a specific
+ * implementation.  It also allows you to change out cache storage or configuration without effecting
  * the rest of your application.
  *
- * You can configure Cache engines in your application's `bootstrap.php` file.  A sample configuration would 
- * be 
+ * You can configure Cache engines in your application's `bootstrap.php` file.  A sample configuration would
+ * be
  *
  * {{{
  *	Cache::config('shared', array(
@@ -37,7 +37,7 @@ App::uses('Inflector', 'Utility');
  * }}}
  *
  * This would configure an APC cache engine to the 'shared' alias.  You could then read and write
- * to that cache alias by using it for the `$config` parameter in the various Cache methods.  In 
+ * to that cache alias by using it for the `$config` parameter in the various Cache methods.  In
  * general all Cache operations are supported by all cache engines.  However, Cache::increment() and
  * Cache::decrement() are not supported by File caching.
  *
@@ -143,7 +143,7 @@ class Cache {
 		}
 		$cacheClass = $class . 'Engine';
 		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
-			throw new CacheException(__d('cake', 'Cache engines must use CacheEngine as a base class.'));
+			throw new CacheException(__d('cake_error', 'Cache engines must use CacheEngine as a base class.'));
 		}
 		self::$_engines[$name] = new $cacheClass();
 		if (self::$_engines[$name]->init($config)) {
@@ -182,13 +182,13 @@ class Cache {
 
 /**
  * Temporarily change the settings on a cache config.  The settings will persist for the next write
- * operation (write, decrement, increment, clear). Any reads that are done before the write, will 
- * use the modified settings. If `$settings` is empty, the settings will be reset to the 
+ * operation (write, decrement, increment, clear). Any reads that are done before the write, will
+ * use the modified settings. If `$settings` is empty, the settings will be reset to the
  * original configuration.
  *
  * Can be called with 2 or 3 parameters. To set multiple values at once.
  *
- * `Cache::set(array('duration' => '+30 minutes'), 'my_config');` 
+ * `Cache::set(array('duration' => '+30 minutes'), 'my_config');`
  *
  * Or to set one value.
  *
@@ -283,7 +283,7 @@ class Cache {
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
 			trigger_error(
-				__d('cake', "%s cache was unable to write '%s' to cache", $config, $key),
+				__d('cake_error', "%s cache was unable to write '%s' to cache", $config, $key),
 				E_USER_WARNING
 			);
 		}
@@ -357,7 +357,7 @@ class Cache {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to substract
- * @param string $config Optional string configuration name. Defaults to 'default' 
+ * @param string $config Optional string configuration name. Defaults to 'default'
  * @return mixed new value, or false if the data doesn't exist, is not integer,
  *   or if there was an error fetching it
  */

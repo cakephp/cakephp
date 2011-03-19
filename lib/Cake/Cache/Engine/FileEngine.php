@@ -37,7 +37,7 @@ class FileEngine extends CacheEngine {
 
 /**
  * Settings
- * 
+ *
  * - path = absolute path to cache directory, default => CACHE
  * - prefix = string prefix for filename, default => cake_
  * - lock = enable file locking on write, default => false
@@ -162,7 +162,7 @@ class FileEngine extends CacheEngine {
 		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			return false;
 		}
-		
+
 		$data = '';
 		$this->_File->next();
 		while ($this->_File->valid()) {
@@ -251,7 +251,7 @@ class FileEngine extends CacheEngine {
  * @throws CacheException
  */
 	public function decrement($key, $offset = 1) {
-		throw new CacheException(__d('cake', 'Files cannot be atomically decremented.'));
+		throw new CacheException(__d('cake_error', 'Files cannot be atomically decremented.'));
 	}
 
 /**
@@ -261,7 +261,7 @@ class FileEngine extends CacheEngine {
  * @throws CacheException
  */
 	public function increment($key, $offset = 1) {
-		throw new CacheException(__d('cake', 'Files cannot be atomically incremented.'));
+		throw new CacheException(__d('cake_error', 'Files cannot be atomically incremented.'));
 	}
 
 /**
@@ -297,7 +297,7 @@ class FileEngine extends CacheEngine {
 		$dir = new SplFileInfo($this->settings['path']);
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
-			trigger_error(__d('cake', '%s is not writable', $this->settings['path']), E_USER_WARNING);
+			trigger_error(__d('cake_error', '%s is not writable', $this->settings['path']), E_USER_WARNING);
 			return false;
 		}
 		return true;
