@@ -129,6 +129,12 @@ class DboPostgres extends DboSource {
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
+		// Support any SET ... TO ... (http://www.postgresql.org/docs/9.0/static/sql-set.html)
+		if (!empty($config['settings'])) {
+			foreach ($config['settings'] as $name => $value) {
+				$this->_execute("SET " . $name . " TO " . $value);
+			}
+		}
 		return $this->connected;
 	}
 
