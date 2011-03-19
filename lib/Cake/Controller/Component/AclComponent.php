@@ -68,7 +68,7 @@ class AclComponent extends Component {
 				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
-				throw new CakeException(__d('cake', 'Could not find %s.', $name));
+				throw new CakeException(__d('cake_error', 'Could not find %s.', $name));
 			}
 		}
 		$this->adapter($name);
@@ -92,7 +92,7 @@ class AclComponent extends Component {
 				$adapter = new $adapter();
 			}
 			if (!$adapter instanceof AclInterface) {
-				throw new CakeException(__d('cake', 'AclComponent adapters must implement AclInterface'));
+				throw new CakeException(__d('cake_error', 'AclComponent adapters must implement AclInterface'));
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);
@@ -163,7 +163,7 @@ class AclComponent extends Component {
  * @deprecated
  */
 	public function grant($aro, $aco, $action = "*") {
-		trigger_error(__d('cake', 'AclComponent::grant() is deprecated, use allow() instead'), E_USER_WARNING);
+		trigger_error(__d('cake_error', 'AclComponent::grant() is deprecated, use allow() instead'), E_USER_WARNING);
 		return $this->_Instance->allow($aro, $aco, $action);
 	}
 
@@ -177,7 +177,7 @@ class AclComponent extends Component {
  * @deprecated
  */
 	public function revoke($aro, $aco, $action = "*") {
-		trigger_error(__d('cake', 'AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
+		trigger_error(__d('cake_error', 'AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
 		return $this->_Instance->deny($aro, $aco, $action);
 	}
 }
@@ -299,12 +299,12 @@ class DbAcl extends Object implements AclInterface {
 		$acoPath = $this->Aco->node($aco);
 
 		if (empty($aroPath) || empty($acoPath)) {
-			trigger_error(__d('cake', "DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error(__d('cake_error', "DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 
 		if ($acoPath == null || $acoPath == array()) {
-			trigger_error(__d('cake', "DbAcl::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error(__d('cake_error', "DbAcl::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 
@@ -312,7 +312,7 @@ class DbAcl extends Object implements AclInterface {
 		$acoNode = $acoPath[0];
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error(__d('cake', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
+			trigger_error(__d('cake_error', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
 			return false;
 		}
 
@@ -386,7 +386,7 @@ class DbAcl extends Object implements AclInterface {
 		$save = array();
 
 		if ($perms == false) {
-			trigger_error(__d('cake', 'DbAcl::allow() - Invalid node'), E_USER_WARNING);
+			trigger_error(__d('cake_error', 'DbAcl::allow() - Invalid node'), E_USER_WARNING);
 			return false;
 		}
 		if (isset($perms[0])) {

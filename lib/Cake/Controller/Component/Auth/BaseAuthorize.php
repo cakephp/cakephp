@@ -87,7 +87,7 @@ abstract class BaseAuthorize {
 	public function controller($controller = null) {
 		if ($controller) {
 			if (!$controller instanceof Controller) {
-				throw new CakeException(__d('cake', '$controller needs to be an instance of Controller'));
+				throw new CakeException(__d('cake_error', '$controller needs to be an instance of Controller'));
 			}
 			$this->_Controller = $controller;
 			return true;

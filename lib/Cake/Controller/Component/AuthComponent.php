@@ -363,7 +363,7 @@ class AuthComponent extends Component {
 
 /**
  * Uses the configured Authorization adapters to check whether or not a user is authorized.
- * Each adapter will be checked in sequence, if any of them return true, then the user will 
+ * Each adapter will be checked in sequence, if any of them return true, then the user will
  * be authorized for the request.
  *
  * @param mixed $user The user to check the authorization of. If empty the user in the session will be used.
@@ -411,10 +411,10 @@ class AuthComponent extends Component {
 			$className = $class . 'Authorize';
 			App::uses($className, $plugin . 'Controller/Component/Auth');
 			if (!class_exists($className)) {
-				throw new CakeException(__d('cake', 'Authorization adapter "%s" was not found.', $class));
+				throw new CakeException(__d('cake_error', 'Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new CakeException(__d('cake', 'Authorization objects must implement an authorize method.'));
+				throw new CakeException(__d('cake_error', 'Authorization objects must implement an authorize method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authorizeObjects[] = new $className($this->_Collection, $settings);
@@ -428,7 +428,7 @@ class AuthComponent extends Component {
  *
  * You can use allow with either an array, or var args.
  *
- * `$this->Auth->allow(array('edit', 'add'));` or 
+ * `$this->Auth->allow(array('edit', 'add'));` or
  * `$this->Auth->allow('edit', 'add');`
  *
  * allow() also supports '*' as a wildcard to mean all actions.
@@ -458,7 +458,7 @@ class AuthComponent extends Component {
  *
  * You can use deny with either an array, or var args.
  *
- * `$this->Auth->deny(array('edit', 'add'));` or 
+ * `$this->Auth->deny(array('edit', 'add'));` or
  * `$this->Auth->deny('edit', 'add');`
  *
  * @param mixed $action Controller action name or array of actions
@@ -586,8 +586,8 @@ class AuthComponent extends Component {
 	}
 
 /**
- * If no parameter is passed, gets the authentication redirect URL.  Pass a url in to 
- * set the destination a user should be redirected to upon logging in.  Will fallback to 
+ * If no parameter is passed, gets the authentication redirect URL.  Pass a url in to
+ * set the destination a user should be redirected to upon logging in.  Will fallback to
  * AuthComponent::$loginRedirect if there is no stored redirect value.
  *
  * @param mixed $url Optional URL to write as the login redirect URL.
@@ -651,10 +651,10 @@ class AuthComponent extends Component {
 			$className = $class . 'Authenticate';
 			App::uses($className, $plugin . 'Controller/Component/Auth');
 			if (!class_exists($className)) {
-				throw new CakeException(__d('cake', 'Authentication adapter "%s" was not found.', $class));
+				throw new CakeException(__d('cake_error', 'Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new CakeException(__d('cake', 'Authentication objects must implement an authenticate method.'));
+				throw new CakeException(__d('cake_error', 'Authentication objects must implement an authenticate method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);
