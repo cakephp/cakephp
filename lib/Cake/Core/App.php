@@ -482,9 +482,9 @@ class App {
  *
  * Usage:
  *
- * `App::use('MyCustomController', 'Controller');` will setup the class to be found under Controller package
+ * `App::uses('MyCustomController', 'Controller');` will setup the class to be found under Controller package
  *
- * `App::use('MyHelper', 'MyPlugin.View/Helper');` will setup the helper class to be found in plugin's helper package
+ * `App::uses('MyHelper', 'MyPlugin.View/Helper');` will setup the helper class to be found in plugin's helper package
  *
  * @param string $className the name of the class to configure package for
  * @param string $location the package name
