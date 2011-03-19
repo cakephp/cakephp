@@ -234,8 +234,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString()) . "</pre></div>\n";
-		echo "<div class='msg'>" . __d('cake', 'Test case: %s', $testName) . "</div>\n";
-		echo "<div class='msg'>" . __d('cake', 'Stack trace:') . '<br />' . $trace . "</div>\n";
+		echo "<div class='msg'>" . __d('cake_developer', 'Test case: %s', $testName) . "</div>\n";
+		echo "<div class='msg'>" . __d('cake_developer', 'Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -272,8 +272,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<span>" . get_class($message) . "</span>";
 
 		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
-		echo "<div class='msg'>" . __d('cake', 'Test case: %s', $testName) . "</div>\n";
-		echo "<div class='msg'>" . __d('cake', 'Stack trace:') . '<br />' . $trace . "</div>\n";
+		echo "<div class='msg'>" . __d('cake_developer', 'Test case: %s', $testName) . "</div>\n";
+		echo "<div class='msg'>" . __d('cake_developer', 'Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -341,6 +341,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}
-		echo '<h2>' . __d('cake', 'Running  %s', $suite->getName())  . '</h2>';
+		echo '<h2>' . __d('cake_developer', 'Running  %s', $suite->getName())  . '</h2>';
 	}
 }
