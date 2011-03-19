@@ -16,18 +16,18 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __d('cake', 'Missing Database Connection'); ?></h2>
+<h2><?php echo __d('cake_developer', 'Missing Database Connection'); ?></h2>
 <p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', '%s requires a database connection', $class); ?>
+	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
+	<?php echo __d('cake_developer', '%s requires a database connection', $class); ?>
 </p>
 <p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', 'Confirm you have created the file : %s.', APP_DIR . DS . 'config' . DS . 'database.php'); ?>
+	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
+	<?php echo __d('cake_developer', 'Confirm you have created the file : %s.', APP_DIR . DS . 'config' . DS . 'database.php'); ?>
 </p>
 <p class="notice">
-	<strong><?php echo __d('cake', 'Notice'); ?>: </strong>
-	<?php echo __d('cake', 'If you want to customize this error message, create %s.', APP_DIR . DS . 'views' . DS . 'errors' . DS . basename(__FILE__)); ?>
+	<strong><?php echo __d('cake_developer', 'Notice'); ?>: </strong>
+	<?php echo __d('cake_developer', 'If you want to customize this error message, create %s.', APP_DIR . DS . 'views' . DS . 'errors' . DS . basename(__FILE__)); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

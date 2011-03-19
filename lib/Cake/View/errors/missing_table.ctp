@@ -16,14 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __d('cake', 'Missing Database Table'); ?></h2>
+<h2><?php echo __d('cake_developer', 'Missing Database Table'); ?></h2>
 <p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', 'Database table %1$s for model %2$s was not found.', '<em>' . $table . '</em>',  '<em>' . $class . '</em>'); ?>
+	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
+	<?php echo __d('cake_developer', 'Database table %1$s for model %2$s was not found.', '<em>' . $table . '</em>',  '<em>' . $class . '</em>'); ?>
 </p>
 <p class="notice">
-	<strong><?php echo __d('cake', 'Notice'); ?>: </strong>
-	<?php echo __d('cake', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_table.ctp'); ?>
+	<strong><?php echo __d('cake_developer', 'Notice'); ?>: </strong>
+	<?php echo __d('cake_developer', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_table.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

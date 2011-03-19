@@ -16,14 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __d('cake', 'Missing Helper File'); ?></h2>
+<h2><?php echo __d('cake_developer', 'Missing Helper File'); ?></h2>
 <p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', 'The helper file %s can not be found or does not exist.', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
+	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
+	<?php echo __d('cake_developer', 'The helper file %s can not be found or does not exist.', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
 </p>
 <p  class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', 'Create the class below in file: %s', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
+	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
+	<?php echo __d('cake_developer', 'Create the class below in file: %s', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
@@ -33,8 +33,8 @@ class <?php echo $class;?> extends AppHelper {
 ?&gt;
 </pre>
 <p class="notice">
-	<strong><?php echo __d('cake', 'Notice'); ?>: </strong>
-	<?php echo __d('cake', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_helper_file.ctp'); ?>
+	<strong><?php echo __d('cake_developer', 'Notice'); ?>: </strong>
+	<?php echo __d('cake_developer', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_helper_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>
