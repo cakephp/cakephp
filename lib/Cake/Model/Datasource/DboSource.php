@@ -941,11 +941,11 @@ class DboSource extends DataSource {
 		if (Configure::read('debug') > 0) {
 			$out = null;
 			if ($error) {
-				trigger_error('<span style="color:Red;text-align:left"><b>' . __d('cake', 'SQL Error:') . "</b> {$this->error}</span>", E_USER_WARNING);
+				trigger_error('<span style="color:Red;text-align:left"><b>' . __d('cake_developer', 'SQL Error:') . "</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
-				$out = ('<small>[' . __d('cake', 'Aff:%s Num:%s Took:%sms', $this->affected, $this->numRows, $this->took) . ']</small>');
+				$out = ('<small>[' . __d('cake_developer', 'Aff:%s Num:%s Took:%sms', $this->affected, $this->numRows, $this->took) . ']</small>');
 			}
-			pr(sprintf('<p style="text-align:left"><b>' . __d('cake', 'Query:') . '</b> %s %s</p>', $sql, $out));
+			pr(sprintf('<p style="text-align:left"><b>' . __d('cake_developer', 'Query:') . '</b> %s %s</p>', $sql, $out));
 		}
 	}
 
@@ -1169,7 +1169,7 @@ class DboSource extends DataSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
-					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __d('cake', 'SQL Error in model %s:', $model->alias) . ' ';
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __d('cake_developer', 'SQL Error in model %s:', $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;
 					}
@@ -2725,7 +2725,7 @@ class DboSource extends DataSource {
  */
 	public function length($real) {
 		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) {
-			trigger_error(__d('cake', "FIXME: Can't parse field: " . $real), E_USER_WARNING);
+			trigger_error(__d('cake_error', "FIXME: Can't parse field: " . $real), E_USER_WARNING);
 			$col = str_replace(array(')', 'unsigned'), '', $real);
 			$limit = null;
 
@@ -2833,7 +2833,7 @@ class DboSource extends DataSource {
  */
 	public function createSchema($schema, $tableName = null) {
 		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__d('cake', 'Invalid schema object'), E_USER_WARNING);
+			trigger_error(__d('cake_error', 'Invalid schema object'), E_USER_WARNING);
 			return null;
 		}
 		$out = '';
@@ -2915,12 +2915,12 @@ class DboSource extends DataSource {
 		extract(array_merge(array('null' => true), $column));
 
 		if (empty($name) || empty($type)) {
-			trigger_error(__d('cake', 'Column name or type not defined in schema'), E_USER_WARNING);
+			trigger_error(__d('cake_error', 'Column name or type not defined in schema'), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(__d('cake', 'Column type %s does not exist', $type), E_USER_WARNING);
+			trigger_error(__d('cake_error', 'Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 

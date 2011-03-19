@@ -231,7 +231,7 @@ class Sqlite extends DboSource {
  */
 	function truncate($table) {
 		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->fullTableName($table));
-		return $this->execute('DELETE FROM ' . $this->fullTableName($table)); 
+		return $this->execute('DELETE FROM ' . $this->fullTableName($table));
 	}
 
 /**
@@ -387,12 +387,12 @@ class Sqlite extends DboSource {
 		extract($column);
 
 		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			trigger_error(__d('cake_error', 'Column name or type not defined in schema'), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(__d('cake', 'Column type %s does not exist', $type), E_USER_WARNING);
+			trigger_error(__d('cake_error', 'Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 
@@ -473,7 +473,7 @@ class Sqlite extends DboSource {
 		$table = $this->fullTableName($model);
 		if ($table) {
 			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
-			
+
 		 	if (is_bool($indexes)) {
 				return array();
 			}
