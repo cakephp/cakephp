@@ -126,11 +126,11 @@ class HttpResponse implements ArrayAccess {
  */
 	public function parseResponse($message) {
 		if (!is_string($message)) {
-			throw new SocketException(__d('cake', 'Invalid response.'));
+			throw new SocketException(__d('cake_error', 'Invalid response.'));
 		}
 
 		if (!preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
-			throw new SocketException(__d('cake', 'Invalid HTTP response.'));
+			throw new SocketException(__d('cake_error', 'Invalid HTTP response.'));
 		}
 
 		list(, $statusLine, $header) = $match;
@@ -198,7 +198,7 @@ class HttpResponse implements ArrayAccess {
 
 		while ($chunkLength !== 0) {
 			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
-				throw new SocketException(__d('cake', 'HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
+				throw new SocketException(__d('cake_error', 'HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
 			}
 
 			$chunkSize = 0;
