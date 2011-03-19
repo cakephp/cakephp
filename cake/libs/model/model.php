@@ -1959,7 +1959,7 @@ class Model extends Object {
  */
 	protected function _deleteLinks($id) {
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
-			$joinModel = $data['with'];
+			list($plugin, $joinModel) = pluginSplit($data['with']);
 			$records = $this->{$joinModel}->find('all', array(
 				'conditions' => array_merge(array($this->{$joinModel}->escapeField($data['foreignKey']) => $id)),
 				'fields' => $this->{$joinModel}->primaryKey,
