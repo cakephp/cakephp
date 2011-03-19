@@ -482,7 +482,7 @@ class FileTest extends CakeTestCase {
 			$assertLine = $assertLine->traceMethod();
 			$shortPath = substr($tmpFile, strlen(ROOT));
 
-			$message = __d('cake', '[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath).$assertLine;
+			$message = __d('cake_developer', '[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath).$assertLine;
 			$this->_reporter->paintSkip($message);
 		}
 		return false;
