@@ -56,8 +56,8 @@ class PluginTask extends Shell {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);
 			if (is_dir($pluginPath)) {
-				$this->out(__d('cake', 'Plugin: %s', $plugin));
-				$this->out(__d('cake', 'Path: %s', $pluginPath));
+				$this->out(__d('cake_console', 'Plugin: %s', $plugin));
+				$this->out(__d('cake_console', 'Path: %s', $pluginPath));
 			} else {
 				$this->_interactive($plugin);
 			}
@@ -74,11 +74,11 @@ class PluginTask extends Shell {
  */
 	protected function _interactive($plugin = null) {
 		while ($plugin === null) {
-			$plugin = $this->in(__d('cake', 'Enter the name of the plugin in CamelCase format'));
+			$plugin = $this->in(__d('cake_console', 'Enter the name of the plugin in CamelCase format'));
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::underscore($pluginPath)));
+			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::underscore($pluginPath)));
 		}
 	}
 
@@ -97,11 +97,11 @@ class PluginTask extends Shell {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
-		$this->out(__d('cake', "<info>Plugin Name:</info> %s",  $plugin));
-		$this->out(__d('cake', "<info>Plugin Directory:</info> %s", $this->path . $pluginPath));
+		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s",  $plugin));
+		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $pluginPath));
 		$this->hr();
 
-		$looksGood = $this->in(__d('cake', 'Look okay?'), array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
 			$Folder = new Folder($this->path . $pluginPath);
@@ -156,7 +156,7 @@ class PluginTask extends Shell {
 			$this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
 
 			$this->hr();
-			$this->out(__d('cake', '<success>Created:</success> %s in %s', $plugin, $this->path . $pluginPath), 2);
+			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $pluginPath), 2);
 		}
 
 		return true;
@@ -174,7 +174,7 @@ class PluginTask extends Shell {
 			foreach ($pathOptions as $i => $option) {
 				$this->out($i + 1 .'. ' . $option);
 			}
-			$prompt = __d('cake', 'Choose a plugin path from the paths above.');
+			$prompt = __d('cake_console', 'Choose a plugin path from the paths above.');
 			$choice = $this->in($prompt);
 			if (intval($choice) > 0 && intval($choice) <= $max) {
 				$valid = true;
@@ -194,7 +194,7 @@ class PluginTask extends Shell {
 			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		)->addArgument('name', array(
-			'help' => __d('cake', 'CamelCased name of the plugin to create.')
+			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
 		));
 
 	}

@@ -170,8 +170,8 @@ class TemplateTask extends Shell {
 		}
 
 		$this->hr();
-		$this->out(__d('cake', 'You have more than one set of templates installed.'));
-		$this->out(__d('cake', 'Please choose the template set you wish to use:'));
+		$this->out(__d('cake_console', 'You have more than one set of templates installed.'));
+		$this->out(__d('cake_console', 'Please choose the template set you wish to use:'));
 		$this->hr();
 
 		$i = 1;
@@ -181,7 +181,7 @@ class TemplateTask extends Shell {
 			$indexedPaths[$i] = $path;
 			$i++;
 		}
-		$index = $this->in(__d('cake', 'Which bake theme would you like to use?'), range(1, $i - 1), 1);
+		$index = $this->in(__d('cake_console', 'Which bake theme would you like to use?'), range(1, $i - 1), 1);
 		$themeNames = array_keys($this->templatePaths);
 		$this->params['theme'] = $themeNames[$index - 1];
 		return $indexedPaths[$index];
@@ -208,7 +208,7 @@ class TemplateTask extends Shell {
 				return $templatePath;
 			}
 		}
-		$this->err(__d('cake', 'Could not find template for %s', $filename));
+		$this->err(__d('cake_console', 'Could not find template for %s', $filename));
 		return false;
 	}
 }

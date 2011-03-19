@@ -69,7 +69,7 @@ class HelpFormatter {
 			}
 			$out[] = '';
 			$out[] = sprintf(
-				__d('cake', 'To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'),
+				__d('cake_console', 'To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'),
 				$parser->command()
 			);
 			$out[] = '';

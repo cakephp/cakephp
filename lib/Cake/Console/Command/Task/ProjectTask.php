@@ -53,7 +53,7 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$prompt = __d('cake', "What is the full path for this app including the app directory name?\n Example:");
+			$prompt = __d('cake_console', "What is the full path for this app including the app directory name?\n Example:");
 			$default = APP_PATH . 'myapp';
 			$project = $this->in($prompt . $default, null, $default);
 		}
@@ -61,7 +61,7 @@ class ProjectTask extends Shell {
 		if ($project) {
 			$response = false;
 			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
-				$prompt = __d('cake', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
+				$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 				$response = $this->in($prompt, array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
 					$response = $project = false;
@@ -73,51 +73,51 @@ class ProjectTask extends Shell {
 		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
 			if ($this->createHome($path)) {
-				$this->out(__d('cake', ' * Welcome page created'));
+				$this->out(__d('cake_console', ' * Welcome page created'));
 			} else {
-				$this->err(__d('cake', 'The Welcome page was <error>NOT</error> created'));
+				$this->err(__d('cake_console', 'The Welcome page was <error>NOT</error> created'));
 				$success = false;
 			}
 
 			if ($this->securitySalt($path) === true) {
-				$this->out(__d('cake', ' * Random hash key created for \'Security.salt\''));
+				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
 			} else {
-				$this->err(__d('cake', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', CONFIGS . 'core.php'));
+				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', CONFIGS . 'core.php'));
 				$success = false;
 			}
 
 			if ($this->securityCipherSeed($path) === true) {
-				$this->out(__d('cake', ' * Random seed created for \'Security.cipherSeed\''));
+				$this->out(__d('cake_console', ' * Random seed created for \'Security.cipherSeed\''));
 			} else {
-				$this->err(__d('cake', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', CONFIGS . 'core.php'));
+				$this->err(__d('cake_console', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', CONFIGS . 'core.php'));
 				$success = false;
 			}
 
 			if ($this->corePath($path) === true) {
-				$this->out(__d('cake', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake', '   * <warning>Remember to check these value after moving to production server</warning>'));
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', '   * <warning>Remember to check these value after moving to production server</warning>'));
 			} else {
-				$this->err(__d('cake', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
+				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
 				$success = false;
 			}
 			if ($this->consolePath($path) === true) {
-				$this->out(__d('cake', ' * app/console/cake.php path set.'));
+				$this->out(__d('cake_console', ' * app/console/cake.php path set.'));
 			} else {
-				$this->err(__d('cake', 'Unable to set console path for app/console.'));
+				$this->err(__d('cake_console', 'Unable to set console path for app/console.'));
 				$success = false;
 			}
 
 			$Folder = new Folder($path);
 			if (!$Folder->chmod($path . 'tmp', 0777)) {
-				$this->err(__d('cake', 'Could not set permissions on %s', $path . DS .'tmp'));
-				$this->out(__d('cake', 'chmod -R 0777 %s', $path . DS .'tmp'));
+				$this->err(__d('cake_console', 'Could not set permissions on %s', $path . DS .'tmp'));
+				$this->out(__d('cake_console', 'chmod -R 0777 %s', $path . DS .'tmp'));
 				$success = false;
 			}
 			if ($success) {
-				$this->out(__d('cake', '<success>Project baked successfully!</success>'));
+				$this->out(__d('cake_console', '<success>Project baked successfully!</success>'));
 			} else {
-				$this->out(__d('cake', 'Project baked but with <warning>some issues.</warning>.'));
+				$this->out(__d('cake_console', 'Project baked but with <warning>some issues.</warning>.'));
 			}
 			return $path;
 		}
@@ -139,23 +139,23 @@ class ProjectTask extends Shell {
 			$skel = $this->params['skel'];
 		}
 		while (!$skel) {
-			$skel = $this->in(__d('cake', "What is the path to the directory layout you wish to copy?\nExample: %s", APP, null, ROOT . DS . 'myapp' . DS));
+			$skel = $this->in(__d('cake_console', "What is the path to the directory layout you wish to copy?\nExample: %s", APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
-				$this->err(__d('cake', 'The directory path you supplied was empty. Please try again.'));
+				$this->err(__d('cake_console', 'The directory path you supplied was empty. Please try again.'));
 			} else {
 				while (is_dir($skel) === false) {
-					$skel = $this->in(__d('cake', 'Directory path does not exist please choose another:'));
+					$skel = $this->in(__d('cake_console', 'Directory path does not exist please choose another:'));
 				}
 			}
 		}
 
 		$app = basename($path);
 
-		$this->out(__d('cake', '<info>Skel Directory</info>: ') . $skel);
-		$this->out(__d('cake', '<info>Will be copied to</info>: ') . $path);
+		$this->out(__d('cake_console', '<info>Skel Directory</info>: ') . $skel);
+		$this->out(__d('cake_console', '<info>Will be copied to</info>: ') . $path);
 		$this->hr();
 
-		$looksGood = $this->in(__d('cake', 'Look okay?'), array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
 			$Folder = new Folder($skel);
@@ -165,10 +165,10 @@ class ProjectTask extends Shell {
 
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
-				$this->out(__d('cake', '<success>Created:</success> %s in %s', $app, $path));
+				$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $app, $path));
 				$this->hr();
 			} else {
-				$this->err(__d('cake', "<error>Could not create</error> '%s' properly.", $app));
+				$this->err(__d('cake_console', "<error>Could not create</error> '%s' properly.", $app));
 				return false;
 			}
 
@@ -178,7 +178,7 @@ class ProjectTask extends Shell {
 
 			return true;
 		} elseif (strtolower($looksGood) == 'q') {
-			$this->out(__d('cake', 'Bake Aborted.'));
+			$this->out(__d('cake_console', 'Bake Aborted.'));
 		} else {
 			$this->execute(false);
 			return false;
@@ -335,7 +335,7 @@ class ProjectTask extends Shell {
 			}
 			if ($this->interactive) {
 				$this->out();
-				$this->out(__d('cake', 'You have more than one routing prefix configured'));
+				$this->out(__d('cake_console', 'You have more than one routing prefix configured'));
 			}
 			$options = array();
 			foreach ($prefixes as $i => $prefix) {
@@ -344,19 +344,19 @@ class ProjectTask extends Shell {
 					$this->out($i + 1 . '. ' . $prefix);
 				}
 			}
-			$selection = $this->in(__d('cake', 'Please choose a prefix to bake with.'), $options, 1);
+			$selection = $this->in(__d('cake_console', 'Please choose a prefix to bake with.'), $options, 1);
 			return $prefixes[$selection - 1] . '_';
 		}
 		if ($this->interactive) {
 			$this->hr();
 			$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
-			$this->out(__d('cake', 'What would you like the prefix route to be?'));
-			$this->out(__d('cake', 'Example: www.example.com/admin/controller'));
+			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
+			$this->out(__d('cake_console', 'Example: www.example.com/admin/controller'));
 			while ($admin == '') {
-				$admin = $this->in(__d('cake', 'Enter a routing prefix:'), null, 'admin');
+				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__d('cake', '<error>Unable to write to</error> /app/config/core.php.'));
+				$this->out(__d('cake_console', '<error>Unable to write to</error> /app/config/core.php.'));
 				$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
 				$this->_stop();
 			}
@@ -373,14 +373,14 @@ class ProjectTask extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-				__d('cake', 'Generate a new CakePHP project skeleton.')
+				__d('cake_console', 'Generate a new CakePHP project skeleton.')
 			)->addArgument('name', array(
-				'help' => __d('cake', 'Application directory to make, if it starts with "/" the path is absolute.')
+				'help' => __d('cake_console', 'Application directory to make, if it starts with "/" the path is absolute.')
 			))->addOption('empty', array(
-				'help' => __d('cake', 'Create empty files in each of the directories. Good if you are using git')
+				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . DS . 'templates' . DS . 'skel',
-				'help' => __d('cake', 'The directory layout to use for the new application skeleton. Defaults to cake/console/templates/skel of CakePHP used to create the project.')
+				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/console/templates/skel of CakePHP used to create the project.')
 			));
 	}
 

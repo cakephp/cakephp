@@ -89,14 +89,14 @@ class TestTask extends BakeTask {
 	protected function _interactive($type = null) {
 		$this->interactive = true;
 		$this->hr();
-		$this->out(__d('cake', 'Bake Tests'));
-		$this->out(__d('cake', 'Path: %s', $this->path));
+		$this->out(__d('cake_console', 'Bake Tests'));
+		$this->out(__d('cake_console', 'Path: %s', $this->path));
 		$this->hr();
 
 		if ($type) {
 			$type = Inflector::camelize($type);
 			if (!in_array($type, $this->classTypes)) {
-				$this->error(__d('cake', 'Incorrect type provided. Please choose one of %s', implode(', ', $this->classTypes)));
+				$this->error(__d('cake_console', 'Incorrect type provided. Please choose one of %s', implode(', ', $this->classTypes)));
 			}
 		} else {
 			$type = $this->getObjectType();
@@ -113,7 +113,7 @@ class TestTask extends BakeTask {
  */
 	public function bake($type, $className) {
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
-			$this->out(__d('cake', 'Bake is detecting possible fixtures...'));
+			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
 			$testSubject = $this->buildTestSubject($type, $className);
 			$this->generateFixtureList($testSubject);
 		} elseif ($this->interactive) {
@@ -154,7 +154,7 @@ class TestTask extends BakeTask {
  */
 	public function getObjectType() {
 		$this->hr();
-		$this->out(__d('cake', 'Select an object type:'));
+		$this->out(__d('cake_console', 'Select an object type:'));
 		$this->hr();
 
 		$keys = array();
@@ -163,7 +163,7 @@ class TestTask extends BakeTask {
 			$keys[] = $key;
 		}
 		$keys[] = 'q';
-		$selection = $this->in(__d('cake', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
+		$selection = $this->in(__d('cake_console', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
 		if ($selection == 'q') {
 			return $this->_stop();
 		}
@@ -191,13 +191,13 @@ class TestTask extends BakeTask {
 		} else {
 			$options = App::objects($type);
 		}
-		$this->out(__d('cake', 'Choose a %s class', $objectType));
+		$this->out(__d('cake_console', 'Choose a %s class', $objectType));
 		$keys = array();
 		foreach ($options as $key => $option) {
 			$this->out(++$key . '. ' . $option);
 			$keys[] = $key;
 		}
-		$selection = $this->in(__d('cake', 'Choose an existing class, or enter the name of a class that does not exist'));
+		$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
 		if (isset($options[$selection - 1])) {
 			return $options[$selection - 1];
 		}
@@ -365,10 +365,10 @@ class TestTask extends BakeTask {
  * @return array Array of fixtures the user wants to add.
  */
 	public function getUserFixtures() {
-		$proceed = $this->in(__d('cake', 'Bake could not detect fixtures, would you like to add some?'), array('y','n'), 'n');
+		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), array('y','n'), 'n');
 		$fixtures = array();
 		if (strtolower($proceed) == 'y') {
-			$fixtureList = $this->in(__d('cake', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
+			$fixtureList = $this->in(__d('cake_console', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
 			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
 			$fixtures = explode(',', $fixtureListTrimmed);
 		}
@@ -431,15 +431,15 @@ class TestTask extends BakeTask {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake', 'Bake test case skeletons for classes.'))
+		return $parser->description(__d('cake_console', 'Bake test case skeletons for classes.'))
 			->addArgument('type', array(
-				'help' => __d('cake', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
+				'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
 				'choices' => array('controller', 'model', 'helper', 'component', 'behavior')
 			))->addArgument('name', array(
-				'help' => __d('cake', 'An existing class to bake tests for.')
+				'help' => __d('cake_console', 'An existing class to bake tests for.')
 			))->addOption('plugin', array(
 				'short' => 'p',
-				'help' => __d('cake', 'CamelCased name of the plugin to bake tests for.')
-			))->epilog(__d('cake', 'Omitting all arguments and options will enter into an interactive mode.'));
+				'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
+			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
 }

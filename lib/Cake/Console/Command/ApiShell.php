@@ -85,7 +85,7 @@ class ApiShell extends Shell {
 			}
 
 		} else {
-			$this->error(__d('cake', '%s not found', $class));
+			$this->error(__d('cake_console', '%s not found', $class));
 		}
 
 		$parsed = $this->__parseClass($path . $class .'.php', $class);
@@ -93,7 +93,7 @@ class ApiShell extends Shell {
 		if (!empty($parsed)) {
 			if (isset($this->params['method'])) {
 				if (!isset($parsed[$this->params['method']])) {
-					$this->err(__d('cake', '%s::%s() could not be found', $class, $this->params['method']));
+					$this->err(__d('cake_console', '%s::%s() could not be found', $class, $this->params['method']));
 					$this->_stop();
 				}
 				$method = $parsed[$this->params['method']];
@@ -110,9 +110,9 @@ class ApiShell extends Shell {
 				$this->out($list);
 
 				$methods = array_keys($parsed);
-				while ($number = strtolower($this->in(__d('cake', 'Select a number to see the more information about a specific method. q to quit. l to list.'), null, 'q'))) {
+				while ($number = strtolower($this->in(__d('cake_console', 'Select a number to see the more information about a specific method. q to quit. l to list.'), null, 'q'))) {
 					if ($number === 'q') {
-						$this->out(__d('cake', 'Done'));
+						$this->out(__d('cake_console', 'Done'));
 						return $this->_stop();
 					}
 
@@ -145,8 +145,8 @@ class ApiShell extends Shell {
 			'help' => 'A CakePHP core class name (e.g: Component, HtmlHelper).'
 		))->addOption('method', array(
 			'short' => 'm',
-			'help' => __d('cake', 'The specific method you want help on.')
-		))->description(__d('cake', 'Lookup doc block comments for classes in CakePHP.'));
+			'help' => __d('cake_console', 'The specific method you want help on.')
+		))->description(__d('cake_console', 'Lookup doc block comments for classes in CakePHP.'));
 		return $parser;
 	}
 /**
@@ -199,7 +199,7 @@ class ApiShell extends Shell {
 
 		if (!class_exists($class)) {
 			if (!include_once($path)) {
-				$this->err(__d('cake', '%s could not be found', $path));
+				$this->err(__d('cake_console', '%s could not be found', $path));
 			}
 		}
 

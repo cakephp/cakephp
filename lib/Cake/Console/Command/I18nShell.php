@@ -52,7 +52,7 @@ class I18nShell extends Shell {
 
 		if ($this->command && !in_array($this->command, array('help'))) {
 			if (!config('database')) {
-				$this->out(__d('cake', 'Your database configuration was not found. Take a moment to create one.'), true);
+				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'), true);
 				return $this->DbConfig->execute();
 			}
 		}
@@ -63,14 +63,14 @@ class I18nShell extends Shell {
  *
  */
 	public function main() {
-		$this->out(__d('cake', '<info>I18n Shell</info>'));
+		$this->out(__d('cake_console', '<info>I18n Shell</info>'));
 		$this->hr();
-		$this->out(__d('cake', '[E]xtract POT file from sources'));
-		$this->out(__d('cake', '[I]nitialize i18n database table'));
-		$this->out(__d('cake', '[H]elp'));
-		$this->out(__d('cake', '[Q]uit'));
+		$this->out(__d('cake_console', '[E]xtract POT file from sources'));
+		$this->out(__d('cake_console', '[I]nitialize i18n database table'));
+		$this->out(__d('cake_console', '[H]elp'));
+		$this->out(__d('cake_console', '[Q]uit'));
 
-		$choice = strtolower($this->in(__d('cake', 'What would you like to do?'), array('E', 'I', 'H', 'Q')));
+		$choice = strtolower($this->in(__d('cake_console', 'What would you like to do?'), array('E', 'I', 'H', 'Q')));
 		switch ($choice) {
 			case 'e':
 				$this->Extract->execute();
@@ -85,7 +85,7 @@ class I18nShell extends Shell {
 				exit(0);
 			break;
 			default:
-				$this->out(__d('cake', 'You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.'));
+				$this->out(__d('cake_console', 'You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.'));
 		}
 		$this->hr();
 		$this->main();
@@ -107,11 +107,11 @@ class I18nShell extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-			__d('cake', 'I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.')
+			__d('cake_console', 'I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.')
 			)->addSubcommand('initdb', array(
-				'help' => __d('cake', 'Initialize the i18n table.')
+				'help' => __d('cake_console', 'Initialize the i18n table.')
 			))->addSubcommand('extract', array(
-				'help' => __d('cake', 'Extract the po translations from your application'),
+				'help' => __d('cake_console', 'Extract the po translations from your application'),
 				'parser' => $this->Extract->getOptionParser()
 			));
 	}

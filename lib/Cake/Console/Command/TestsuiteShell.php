@@ -44,113 +44,113 @@ class TestsuiteShell extends Shell {
 			'The CakePHP Testsuite allows you to run test cases from the command line',
 			'If run with no command line arguments, a list of available core test cases will be shown'
 		))->addArgument('category', array(
-			'help' => __d('cake', 'app, core or name of a plugin.'),
+			'help' => __d('cake_console', 'app, core or name of a plugin.'),
 			'required' => true
 		))->addArgument('file', array(
-			'help' => __d('cake', 'file name with folder prefix and without the test.php suffix.'),
+			'help' => __d('cake_console', 'file name with folder prefix and without the test.php suffix.'),
 			'required' => false,
 		))->addOption('log-junit', array(
-			'help' => __d('cake', '<file> Log test execution in JUnit XML format to file.'),
+			'help' => __d('cake_console', '<file> Log test execution in JUnit XML format to file.'),
 			'default' => false
 		))->addOption('log-json', array(
-			'help' => __d('cake', '<file> Log test execution in TAP format to file.'),
+			'help' => __d('cake_console', '<file> Log test execution in TAP format to file.'),
 			'default' => false
 		))->addOption('log-tap', array(
-			'help' => __d('cake', '<file> Log test execution in TAP format to file.'),
+			'help' => __d('cake_console', '<file> Log test execution in TAP format to file.'),
 			'default' => false
 		))->addOption('log-dbus', array(
-			'help' => __d('cake', 'Log test execution to DBUS.'),
+			'help' => __d('cake_console', 'Log test execution to DBUS.'),
 			'default' => false
 		))->addOption('coverage-html', array(
-			'help' => __d('cake', '<dir> Generate code coverage report in HTML format.'),
+			'help' => __d('cake_console', '<dir> Generate code coverage report in HTML format.'),
 			'default' => false
 		))->addOption('coverage-clover', array(
-			'help' => __d('cake', '<file> Write code coverage data in Clover XML format.'),
+			'help' => __d('cake_console', '<file> Write code coverage data in Clover XML format.'),
 			'default' => false
 		))->addOption('testdox-html', array(
-			'help' => __d('cake', '<file> Write agile documentation in HTML format to file.'),
+			'help' => __d('cake_console', '<file> Write agile documentation in HTML format to file.'),
 			'default' => false
 		))->addOption('testdox-text', array(
-			'help' => __d('cake', '<file> Write agile documentation in Text format to file.'),
+			'help' => __d('cake_console', '<file> Write agile documentation in Text format to file.'),
 			'default' => false
 		))->addOption('filter', array(
-			'help' => __d('cake', '<pattern> Filter which tests to run.'),
+			'help' => __d('cake_console', '<pattern> Filter which tests to run.'),
 			'default' => false
 		))->addOption('group', array(
-			'help' => __d('cake', '<name> Only runs tests from the specified group(s).'),
+			'help' => __d('cake_console', '<name> Only runs tests from the specified group(s).'),
 			'default' => false
 		))->addOption('exclude-group', array(
-			'help' => __d('cake', '<name> Exclude tests from the specified group(s).'),
+			'help' => __d('cake_console', '<name> Exclude tests from the specified group(s).'),
 			'default' => false
 		))->addOption('list-groups', array(
-			'help' => __d('cake', 'List available test groups.'),
+			'help' => __d('cake_console', 'List available test groups.'),
 			'boolean' => true
 		))->addOption('loader', array(
-			'help' => __d('cake', 'TestSuiteLoader implementation to use.'),
+			'help' => __d('cake_console', 'TestSuiteLoader implementation to use.'),
 			'default' => false
 		))->addOption('repeat', array(
-			'help' => __d('cake', '<times> Runs the test(s) repeatedly.'),
+			'help' => __d('cake_console', '<times> Runs the test(s) repeatedly.'),
 			'default' => false
 		))->addOption('tap', array(
-			'help' => __d('cake', 'Report test execution progress in TAP format.'),
+			'help' => __d('cake_console', 'Report test execution progress in TAP format.'),
 			'boolean' => true
 		))->addOption('testdox', array(
-			'help' => __d('cake', 'Report test execution progress in TestDox format.'),
+			'help' => __d('cake_console', 'Report test execution progress in TestDox format.'),
 			'default' => false,
 			'boolean' => true
 		))->addOption('no-colors', array(
-			'help' => __d('cake', 'Do not use colors in output.'),
+			'help' => __d('cake_console', 'Do not use colors in output.'),
 			'boolean' => true
 		))->addOption('stderr', array(
-			'help' => __d('cake', 'Write to STDERR instead of STDOUT.'),
+			'help' => __d('cake_console', 'Write to STDERR instead of STDOUT.'),
 			'boolean' => true
 		))->addOption('stop-on-error', array(
-			'help' => __d('cake', 'Stop execution upon first error or failure.'),
+			'help' => __d('cake_console', 'Stop execution upon first error or failure.'),
 			'boolean' => true
 		))->addOption('stop-on-failure', array(
-			'help' => __d('cake', 'Stop execution upon first failure.'),
+			'help' => __d('cake_console', 'Stop execution upon first failure.'),
 			'boolean' => true
 		))->addOption('stop-on-skipped ', array(
-			'help' => __d('cake', 'Stop execution upon first skipped test.'),
+			'help' => __d('cake_console', 'Stop execution upon first skipped test.'),
 			'boolean' => true
 		))->addOption('stop-on-incomplete', array(
-			'help' => __d('cake', 'Stop execution upon first incomplete test.'),
+			'help' => __d('cake_console', 'Stop execution upon first incomplete test.'),
 			'boolean' => true
 		))->addOption('strict', array(
-			'help' => __d('cake', 'Mark a test as incomplete if no assertions are made.'),
+			'help' => __d('cake_console', 'Mark a test as incomplete if no assertions are made.'),
 			'boolean' => true
 		))->addOption('wait', array(
-			'help' => __d('cake', 'Waits for a keystroke after each test.'),
+			'help' => __d('cake_console', 'Waits for a keystroke after each test.'),
 			'boolean' => true
 		))->addOption('process-isolation', array(
-			'help' => __d('cake', 'Run each test in a separate PHP process.'),
+			'help' => __d('cake_console', 'Run each test in a separate PHP process.'),
 			'boolean' => true
 		))->addOption('no-globals-backup', array(
-			'help' => __d('cake', 'Do not backup and restore $GLOBALS for each test.'),
+			'help' => __d('cake_console', 'Do not backup and restore $GLOBALS for each test.'),
 			'boolean' => true
 		))->addOption('static-backup ', array(
-			'help' => __d('cake', 'Backup and restore static attributes for each test.'),
+			'help' => __d('cake_console', 'Backup and restore static attributes for each test.'),
 			'boolean' => true
 		))->addOption('syntax-check', array(
-			'help' => __d('cake', 'Try to check source files for syntax errors.'),
+			'help' => __d('cake_console', 'Try to check source files for syntax errors.'),
 			'boolean' => true
 		))->addOption('bootstrap', array(
-			'help' => __d('cake', '<file> A "bootstrap" PHP file that is run before the tests.'),
+			'help' => __d('cake_console', '<file> A "bootstrap" PHP file that is run before the tests.'),
 			'default' => false
 		))->addOption('configuration', array(
-			'help' => __d('cake', '<file> Read configuration from XML file.'),
+			'help' => __d('cake_console', '<file> Read configuration from XML file.'),
 			'default' => false
 		))->addOption('no-configuration', array(
-			'help' => __d('cake', 'Ignore default configuration file (phpunit.xml).'),
+			'help' => __d('cake_console', 'Ignore default configuration file (phpunit.xml).'),
 			'boolean' => true
 		))->addOption('include-path', array(
-			'help' => __d('cake', '<path(s)> Prepend PHP include_path with given path(s).'),
+			'help' => __d('cake_console', '<path(s)> Prepend PHP include_path with given path(s).'),
 			'default' => false
 		))->addOption('directive', array(
-			'help' => __d('cake', 'key[=value] Sets a php.ini value.'),
+			'help' => __d('cake_console', 'key[=value] Sets a php.ini value.'),
 			'default' => false
 		))->addOption('fixture', array(
-			'help' => __d('cake', 'Choose a custom fixture manager.'),
+			'help' => __d('cake_console', 'Choose a custom fixture manager.'),
 		));
 
 		return $parser;
@@ -232,7 +232,7 @@ class TestsuiteShell extends Shell {
  * @return void
  */
 	public function main() {
-		$this->out(__d('cake', 'CakePHP Test Shell'));
+		$this->out(__d('cake_console', 'CakePHP Test Shell'));
 		$this->hr();
 
 		$args = $this->parseArgs();
@@ -281,7 +281,7 @@ class TestsuiteShell extends Shell {
 		}
 
 		if (empty($testCases)) {
-			$this->out(__d('cake', "No test cases available \n\n"));
+			$this->out(__d('cake_console', "No test cases available \n\n"));
 			return $this->out($this->OptionParser->help());
 		}
 
@@ -297,7 +297,7 @@ class TestsuiteShell extends Shell {
 			$i++;
 		}
 
-		while ($choice = $this->in(__d('cake', 'What test case would you like to run?'), null, 'q')) {
+		while ($choice = $this->in(__d('cake_console', 'What test case would you like to run?'), null, 'q')) {
 			if (is_numeric($choice)  && isset($cases[$choice])) {
 				$this->args[0] = $category;
 				$this->args[1] = $cases[$choice];

@@ -221,17 +221,17 @@ class ViewTask extends BakeTask {
 
 		$this->controllerPath = strtolower(Inflector::underscore($this->controllerName));
 
-		$prompt = __d('cake', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
+		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
 		if (strtolower($interactive) == 'n') {
 			$this->interactive = false;
 		}
 
-		$prompt = __d('cake', "Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).");
+		$prompt = __d('cake_console', "Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).");
 		$wannaDoScaffold = $this->in($prompt, array('y','n'), 'y');
 
-		$wannaDoAdmin = $this->in(__d('cake', "Would you like to create the views for admin routing?"), array('y','n'), 'n');
+		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), array('y','n'), 'n');
 
 		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
 			$vars = $this->__loadController();
@@ -250,7 +250,7 @@ class ViewTask extends BakeTask {
 			}
 			$this->hr();
 			$this->out();
-			$this->out(__d('cake', "View Scaffolding Complete.\n"));
+			$this->out(__d('cake_console', "View Scaffolding Complete.\n"));
 		} else {
 			$this->customAction();
 		}
@@ -268,7 +268,7 @@ class ViewTask extends BakeTask {
  */
 	private function __loadController() {
 		if (!$this->controllerName) {
-			$this->err(__d('cake', 'Controller not found'));
+			$this->err(__d('cake_console', 'Controller not found'));
 		}
 
 		$plugin = null;
@@ -280,7 +280,7 @@ class ViewTask extends BakeTask {
 		App::uses($controllerClassName, $plugin . 'Controller');
 		if (!class_exists($controllerClassName)) {
 			$file = $controllerClassName . '.php';
-			$this->err(__d('cake', "The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
+			$this->err(__d('cake_console', "The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
 			$this->_stop();
 		}
 		$controllerObj = new $controllerClassName();
@@ -331,25 +331,25 @@ class ViewTask extends BakeTask {
 	public function customAction() {
 		$action = '';
 		while ($action == '') {
-			$action = $this->in(__d('cake', 'Action Name? (use lowercase_underscored function name)'));
+			$action = $this->in(__d('cake_console', 'Action Name? (use lowercase_underscored function name)'));
 			if ($action == '') {
-				$this->out(__d('cake', 'The action name you supplied was empty. Please try again.'));
+				$this->out(__d('cake_console', 'The action name you supplied was empty. Please try again.'));
 			}
 		}
 		$this->out();
 		$this->hr();
-		$this->out(__d('cake', 'The following view will be created:'));
+		$this->out(__d('cake_console', 'The following view will be created:'));
 		$this->hr();
-		$this->out(__d('cake', 'Controller Name: %s', $this->controllerName));
-		$this->out(__d('cake', 'Action Name:     %s', $action));
-		$this->out(__d('cake', 'Path:            %s', $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
+		$this->out(__d('cake_console', 'Controller Name: %s', $this->controllerName));
+		$this->out(__d('cake_console', 'Action Name:     %s', $action));
+		$this->out(__d('cake_console', 'Path:            %s', $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
-		$looksGood = $this->in(__d('cake', 'Look okay?'), array('y','n'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y','n'), 'y');
 		if (strtolower($looksGood) == 'y') {
 			$this->bake($action, ' ');
 			$this->_stop();
 		} else {
-			$this->out(__d('cake', 'Bake Aborted.'));
+			$this->out(__d('cake_console', 'Bake Aborted.'));
 		}
 	}
 
@@ -431,25 +431,25 @@ class ViewTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-			__d('cake', 'Bake views for a controller, using built-in or custom templates.')
+			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
 		)->addArgument('controller', array(
-			'help' => __d('cake', 'Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
+			'help' => __d('cake_console', 'Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
 		))->addArgument('action', array(
-			'help' => __d('cake', "Will bake a single action's file. core templates are (index, add, edit, view)")
+			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
 		))->addArgument('alias', array(
-			'help' => __d('cake', 'Will bake the template in <action> but create the filename after <alias>.')
+			'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')
 		))->addOption('plugin', array(
 			'short' => 'p',
-			'help' => __d('cake', 'Plugin to bake the view into.')
+			'help' => __d('cake_console', 'Plugin to bake the view into.')
 		))->addOption('admin', array(
-			'help' => __d('cake', 'Set to only bake views for a prefix in Routing.prefixes'),
+			'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
 			'boolean' => true
 		))->addOption('connection', array(
 			'short' => 'c',
-			'help' => __d('cake', 'The connection the connected model is on.')
+			'help' => __d('cake_console', 'The connection the connected model is on.')
 		))->addSubcommand('all', array(
-			'help' => __d('cake', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
-		))->epilog(__d('cake', 'Omitting all arguments and options will enter into an interactive mode.'));
+			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
+		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
 
 /**
