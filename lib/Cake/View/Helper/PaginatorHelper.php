@@ -69,7 +69,7 @@ class PaginatorHelper extends AppHelper {
  * - `escape` Defines if the title field for the link should be escaped (default: true).
  * - `update` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are 
+ * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are
  *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
  * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
  *    if paramType == 'querystring'.
@@ -102,7 +102,7 @@ class PaginatorHelper extends AppHelper {
 		$classname = $ajaxProvider . 'Helper';
 		if (!method_exists($classname, 'link')) {
 			throw new CakeException(sprintf(
-				__d('cake', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
+				__d('cake_error', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
 			));
 		}
 		parent::__construct($View, $settings);
@@ -306,7 +306,7 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($title)) {
 			$title = $key;
-			$title = __d('cake', Inflector::humanize(preg_replace('/_id$/', '', $title)));
+			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
 		}
 		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
 		unset($options['direction']);
@@ -314,7 +314,7 @@ class PaginatorHelper extends AppHelper {
 		$sortKey = $this->sortKey($options['model']);
 		$defaultModel = $this->defaultModel();
 		$isSorted = (
-			$sortKey === $key || 
+			$sortKey === $key ||
 			$sortKey === $defaultModel . '.' . $key ||
 			$key === $defaultModel . '.' . $sortKey
 		);
@@ -603,12 +603,12 @@ class PaginatorHelper extends AppHelper {
 
 /**
  * Returns a set of numbers for the paged result set
- * uses a modulus to decide how many numbers to show on each side of the current page (default: 8). 
+ * uses a modulus to decide how many numbers to show on each side of the current page (default: 8).
  *
  * `$this->Paginator->numbers(array('first' => 2, 'last' => 2));`
  *
  * Using the first and last options you can create links to the beginning and end of the page set.
- * 
+ *
  *
  * ### Options
  *

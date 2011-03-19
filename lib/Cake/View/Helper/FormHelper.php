@@ -241,12 +241,12 @@ class FormHelper extends AppHelper {
 		$options);
 		$this->_inputDefaults = $options['inputDefaults'];
 		unset($options['inputDefaults']);
-		
+
 		if (!isset($options['id'])) {
 			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
 			$options['id'] = $this->domId($domId . 'Form');
 		}
-		
+
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
 		} elseif (empty($options['url']) || is_array($options['url'])) {
@@ -631,7 +631,7 @@ class FormHelper extends AppHelper {
 				$actionName = __d('cake', 'Edit %s');
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($model));
-			$legend = sprintf($actionName, __d('cake', $modelName));
+			$legend = sprintf($actionName, __($modelName));
 		}
 
 		$out = null;
@@ -1058,7 +1058,7 @@ class FormHelper extends AppHelper {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
-			$legend = __d('cake', Inflector::humanize($this->field()));
+			$legend = __(Inflector::humanize($this->field()));
 		}
 		$label = true;
 
@@ -1128,7 +1128,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Missing method handler - implements various simple input types. Is used to create inputs 
+ * Missing method handler - implements various simple input types. Is used to create inputs
  * of various types.  e.g. `$this->Form->text();` will create `<input type="text" />` while
  * `$this->Form->range();` will create `<input type="range" />`
  *
@@ -1151,7 +1151,7 @@ class FormHelper extends AppHelper {
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new CakeException(__d('cake', 'Missing field name for FormHelper::%s', $method));
+			throw new CakeException(__d('cake_error', 'Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];
@@ -1471,7 +1471,7 @@ class FormHelper extends AppHelper {
 		$style = null;
 		$tag = null;
 		$attributes += array(
-			'class' => null, 
+			'class' => null,
 			'escape' => true,
 			'secure' => null,
 			'empty' => '',
@@ -2023,7 +2023,7 @@ class FormHelper extends AppHelper {
 	function __selectOptions($elements = array(), $parents = array(), $showParents = null, $attributes = array()) {
 		$select = array();
 		$attributes = array_merge(
-			array('escape' => true, 'style' => null, 'value' => null, 'class' => null), 
+			array('escape' => true, 'style' => null, 'value' => null, 'class' => null),
 			$attributes
 		);
 		$selectedIsEmpty = ($attributes['value'] === '' || $attributes['value'] === null);
@@ -2226,7 +2226,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
-		
+
 		$fieldName = null;
 		if ($secure && !empty($options['name'])) {
 			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);

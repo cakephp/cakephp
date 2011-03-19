@@ -164,7 +164,7 @@ class NumberHelper extends AppHelper {
  * ### Options
  *
  * - `before` - The currency symbol to place before whole numbers ie. '$'
- * - `after` - The currency symbol to place after decimal numbers ie. 'c'. Set to boolean false to 
+ * - `after` - The currency symbol to place after decimal numbers ie. 'c'. Set to boolean false to
  *    use no decimal symbol.  eg. 0.35 => $0.35.
  * - `zero` - The text to use for zero values, can be a string or a number. ie. 0, 'Free!'
  * - `places` - Number of decimal places to use. ie. 2
@@ -215,7 +215,7 @@ class NumberHelper extends AppHelper {
 			}
 		}
 
-		$position = $options[$symbolKey.'Position'] != 'after' ? 'before' : 'after';		
+		$position = $options[$symbolKey.'Position'] != 'after' ? 'before' : 'after';
 		$options[$position] = $options[$symbolKey.'Symbol'];
 
 		$abs = abs($number);
@@ -236,7 +236,7 @@ class NumberHelper extends AppHelper {
  * currency formats easier.
  *
  * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
- * 
+ *
  * You can now use `NOK` as a shortform when formatting currency amounts.
  *
  * {{{ $number->currency($value, 'NOK'); }}}
