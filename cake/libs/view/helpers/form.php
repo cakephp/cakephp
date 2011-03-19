@@ -732,6 +732,9 @@ class FormHelper extends AppHelper {
 				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
 				$type = $fieldDef['type'];
 				$primaryKey = $this->fieldset[$modelKey]['key'];
+				if(isset($fieldDef['options'])){
+				  $options['options'] = $fieldDef['options'];
+				}
 			}
 
 			if (isset($type)) {
@@ -751,7 +754,7 @@ class FormHelper extends AppHelper {
 					$options['type'] = 'hidden';
 				}
 			}
-			if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
+			if ( (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') || isset($options['options']) ) {
 				$options['type'] = 'select';
 			}
 
