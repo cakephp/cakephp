@@ -12,7 +12,7 @@ class HelpFormatterTest extends CakeTestCase {
  */
 	function testWidthFormatting() {
 		$parser = new ConsoleOptionParser('test', false);
-		$parser->description(__d('cake', 'This is fifteen This is fifteen This is fifteen'))
+		$parser->description('This is fifteen This is fifteen This is fifteen')
 			->addOption('four', array('help' => 'this is help text this is help text'))
 			->addArgument('four', array('help' => 'this is help text this is help text'))
 			->addSubcommand('four', array('help' => 'this is help text this is help text'));
