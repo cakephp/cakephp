@@ -117,7 +117,7 @@ class CakeSocket {
 		}
 
 		if (!empty($errNum) || !empty($errStr)) {
-			$this->setLastError($errStr, $errNum);
+			$this->setLastError($errNum, $errStr);
 			throw new SocketException($errStr, $errNum);
 		}
 

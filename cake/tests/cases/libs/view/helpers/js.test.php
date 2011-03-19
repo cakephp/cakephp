@@ -483,7 +483,7 @@ class JsHelperTest extends CakeTestCase {
 	function testSubmitWithMock() {
 		$this->_useMock();
 
-		$options = array('update' => '#content', 'id' => 'test-submit');
+		$options = array('update' => '#content', 'id' => 'test-submit', 'style' => 'margin: 0');
 
 		$this->Js->TestJsEngine->expects($this->at(0))
 			->method('get');
@@ -508,7 +508,7 @@ class JsHelperTest extends CakeTestCase {
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
 			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
+			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save', 'style' => 'margin: 0'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);

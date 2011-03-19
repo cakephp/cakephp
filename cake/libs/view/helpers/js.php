@@ -404,7 +404,10 @@ class JsHelper extends AppHelper {
  * @return array Array of js options and Htmloptions
  */
 	protected function _getHtmlOptions($options, $additional = array()) {
-		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
+		$htmlKeys = array_merge(
+			array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title', 'style'), 
+			$additional
+		);
 		$htmlOptions = array();
 		foreach ($htmlKeys as $key) {
 			if (isset($options[$key])) {

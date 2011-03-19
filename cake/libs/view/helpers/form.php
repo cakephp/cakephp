@@ -364,10 +364,6 @@ class FormHelper extends AppHelper {
 					unset($options['label']);
 				}
 				$submitOptions = $options;
-
-				if (!$submit) {
-					$submit = __('Submit');
-				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
@@ -1364,7 +1360,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1431/submit
  */
 	public function submit($caption = null, $options = array()) {
-		if (!$caption) {
+		if (!is_string($caption) && empty($caption)) {
 			$caption = __('Submit');
 		}
 		$out = null;
@@ -1469,7 +1465,7 @@ class FormHelper extends AppHelper {
 		$style = null;
 		$tag = null;
 		$attributes += array(
-			'class' => null, 
+			'class' => null,
 			'escape' => true,
 			'secure' => null,
 			'empty' => '',
@@ -2090,6 +2086,8 @@ class FormHelper extends AppHelper {
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
+						} elseif ($attributes['class'] === 'form-error') {
+							$attributes['class'] = 'checkbox ' . $attributes['class'];
 						}
 						$label = $this->label(null, $title, $label);
 						$item = $this->Html->useTag('checkboxmultiple', $name, $htmlOptions);
@@ -2224,7 +2222,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
-		
+
 		$fieldName = null;
 		if ($secure && !empty($options['name'])) {
 			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
