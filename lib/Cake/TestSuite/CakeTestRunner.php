@@ -84,7 +84,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 			if (class_exists($arguments['fixtureManager'])) {
 				return new $arguments['fixtureManager'];
 			}
-			throw new RuntimeException(__d('cake_error', 'Could not find fixture manager %s.', $arguments['fixtureManager']));
+			throw new RuntimeException(__d('cake_dev', 'Could not find fixture manager %s.', $arguments['fixtureManager']));
 		}
 		App::uses('AppFixtureManager', 'TestSuite');
 		if (class_exists('AppFixtureManager')) {

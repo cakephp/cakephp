@@ -16,18 +16,18 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __d('cake_developer', 'Missing Layout'); ?></h2>
+<h2><?php echo __d('cake_dev', 'Missing Layout'); ?></h2>
 <p class="error">
-	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
-	<?php echo __d('cake_developer', 'The layout file %s can not be found or does not exist.', '<em>' . $file . '</em>'); ?>
+	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
+	<?php echo __d('cake_dev', 'The layout file %s can not be found or does not exist.', '<em>' . $file . '</em>'); ?>
 </p>
 <p class="error">
-	<strong><?php echo __d('cake_developer', 'Error'); ?>: </strong>
-	<?php echo __d('cake_developer', 'Confirm you have created the file: %s', '<em>' . $file . '</em>'); ?>
+	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', '<em>' . $file . '</em>'); ?>
 </p>
 <p class="notice">
-	<strong><?php echo __d('cake_developer', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_developer', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_layout.ctp'); ?>
+	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_layout.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

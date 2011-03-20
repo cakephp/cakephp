@@ -254,7 +254,7 @@ class CakeSession {
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
-		self::__setError(2, __d('cake_error', "%s doesn't exist", $name));
+		self::__setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
 	}
 
@@ -480,7 +480,7 @@ class CakeSession {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
 						throw new CakeSessionException(sprintf(
-							__d('cake_error', 'Unable to configure the session, setting %s failed.'),
+							__d('cake_dev', 'Unable to configure the session, setting %s failed.'),
 							$setting
 						));
 					}
@@ -514,13 +514,13 @@ class CakeSession {
 		list($plugin, $class) = pluginSplit($handler, true);
 		App::uses($class, $plugin . 'Model/Datasource/Session');
 		if (!class_exists($class)) {
-			throw new CakeSessionException(__d('cake_error', 'Could not load %s to handle the session.', $class));
+			throw new CakeSessionException(__d('cake_dev', 'Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof CakeSessionHandlerInterface) {
 			return $handler;
 		}
-		throw new CakeSessionException(__d('cake_error', 'Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
+		throw new CakeSessionException(__d('cake_dev', 'Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
 	}
 
 /**

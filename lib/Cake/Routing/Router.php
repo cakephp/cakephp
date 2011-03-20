@@ -263,7 +263,7 @@ class Router {
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
 			if (!is_subclass_of($routeClass, 'CakeRoute')) {
-				throw new RouterException(__d('cake_error', 'Route classes must extend CakeRoute'));
+				throw new RouterException(__d('cake_dev', 'Route classes must extend CakeRoute'));
 			}
 			unset($options['routeClass']);
 			if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {

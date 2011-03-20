@@ -387,12 +387,12 @@ class Sqlite extends DboSource {
 		extract($column);
 
 		if (empty($name) || empty($type)) {
-			trigger_error(__d('cake_error', 'Column name or type not defined in schema'), E_USER_WARNING);
+			trigger_error(__d('cake_dev', 'Column name or type not defined in schema'), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(__d('cake_error', 'Column type %s does not exist', $type), E_USER_WARNING);
+			trigger_error(__d('cake_dev', 'Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 

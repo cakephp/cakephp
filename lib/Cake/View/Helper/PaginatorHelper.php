@@ -102,7 +102,7 @@ class PaginatorHelper extends AppHelper {
 		$classname = $ajaxProvider . 'Helper';
 		if (!method_exists($classname, 'link')) {
 			throw new CakeException(sprintf(
-				__d('cake_error', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
+				__d('cake_dev', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
 			));
 		}
 		parent::__construct($View, $settings);

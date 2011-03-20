@@ -153,7 +153,7 @@ class MemcacheEngine extends CacheEngine {
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
 			throw new CacheException(
-				__d('cake_error', 'Method increment() not implemented for compressed cache in %s', __CLASS__)
+				__d('cake_dev', 'Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
 		return $this->_Memcache->increment($key, $offset);
@@ -171,7 +171,7 @@ class MemcacheEngine extends CacheEngine {
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
 			throw new CacheException(
-				__d('cake_error', 'Method decrement() not implemented for compressed cache in %s', __CLASS__)
+				__d('cake_dev', 'Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
 		return $this->_Memcache->decrement($key, $offset);

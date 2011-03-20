@@ -153,7 +153,7 @@ class JsHelper extends AppHelper {
 		if (method_exists($this, $method . '_')) {
 			return call_user_func(array(&$this, $method . '_'), $params);
 		}
-		trigger_error(__d('cake_error', 'JsHelper:: Missing Method %s is undefined', $method), E_USER_WARNING);
+		trigger_error(__d('cake_dev', 'JsHelper:: Missing Method %s is undefined', $method), E_USER_WARNING);
 	}
 
 /**

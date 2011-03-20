@@ -359,7 +359,7 @@ class ContainableBehavior extends ModelBehavior {
 
 			if (!isset($Model->{$name}) || !is_object($Model->{$name})) {
 				if ($throwErrors) {
-					trigger_error(__d('cake_error', 'Model "%s" is not associated with model "%s"', $Model->alias, $name), E_USER_WARNING);
+					trigger_error(__d('cake_dev', 'Model "%s" is not associated with model "%s"', $Model->alias, $name), E_USER_WARNING);
 				}
 				continue;
 			}

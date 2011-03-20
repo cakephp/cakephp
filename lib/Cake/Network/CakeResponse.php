@@ -459,7 +459,7 @@ class CakeResponse {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new CakeException(__d('cake_error', 'Unknown status code'));
+			throw new CakeException(__d('cake_dev', 'Unknown status code'));
 		}
 		return $this->_status = $code;
 	}

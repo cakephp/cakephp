@@ -82,7 +82,7 @@ class CakeLog {
  */
 	public static function config($key, $config) {
 		if (empty($config['engine'])) {
-			throw new CakeLogException(__d('cake_error', 'Missing logger classname'));
+			throw new CakeLogException(__d('cake_dev', 'Missing logger classname'));
 		}
 		$loggerName = $config['engine'];
 		unset($config['engine']);
@@ -90,7 +90,7 @@ class CakeLog {
 		$logger = new $className($config);
 		if (!$logger instanceof CakeLogInterface) {
 			throw new CakeLogException(sprintf(
-				__d('cake_error', 'logger class %s does not implement a write method.'), $loggerName
+				__d('cake_dev', 'logger class %s does not implement a write method.'), $loggerName
 			));
 		}
 		self::$_streams[$key] = $logger;
@@ -109,7 +109,7 @@ class CakeLog {
 
 		App::uses($loggerName, $plugin . 'Log/Engine');
 		if (!class_exists($loggerName)) {
-			throw new CakeLogException(__d('cake_error', 'Could not load class %s', $loggerName));
+			throw new CakeLogException(__d('cake_dev', 'Could not load class %s', $loggerName));
 		}
 		return $loggerName;
 	}

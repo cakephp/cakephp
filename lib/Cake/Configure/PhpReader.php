@@ -55,7 +55,7 @@ class PhpReader implements ConfigReaderInterface {
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new ConfigureException(__d('cake_error', 'Cannot load configuration files with ../ in them.'));
+			throw new ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
 		}
 		if (substr($key, -4) === '.php') {
 			$key = substr($key, 0, -4);
@@ -70,13 +70,13 @@ class PhpReader implements ConfigReaderInterface {
 		if (!file_exists($file)) {
 			$file .= '.php';
 			if (!file_exists($file)) {
-				throw new ConfigureException(__d('cake_error', 'Could not load configuration files: %s or %s', substr($file, 0, -4), $file));
+				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', substr($file, 0, -4), $file));
 			}
 		}
 		include $file;
 		if (!isset($config)) {
 			throw new ConfigureException(
-				sprintf(__d('cake_error', 'No variable $config found in %s.php'), $file)
+				sprintf(__d('cake_dev', 'No variable $config found in %s.php'), $file)
 			);
 		}
 		return $config;
