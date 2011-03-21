@@ -82,19 +82,19 @@ class TimeHelper extends AppHelper {
 	private function __translateSpecifier($specifier) {
 		switch ($specifier[1]) {
 			case 'a':
-				$abday = __cn('cake', 'abday', 5);
+				$abday = __dc('cake', 'abday', 5);
 				if (is_array($abday)) {
 					return $abday[date('w', $this->__time)];
 				}
 				break;
 			case 'A':
-				$day = __cn('cake', 'day', 5);
+				$day = __dc('cake', 'day', 5);
 				if (is_array($day)) {
 					return $day[date('w', $this->__time)];
 				}
 				break;
 			case 'c':
-				$format = __cn('cake', 'd_t_fmt', 5);
+				$format = __dc('cake', 'd_t_fmt', 5);
 				if ($format != 'd_t_fmt') {
 					return $this->convertSpecifiers($format, $this->__time);
 				}
@@ -116,13 +116,13 @@ class TimeHelper extends AppHelper {
 				return date('jS', $this->__time);
 			case 'b':
 			case 'h':
-				$months = __cn('cake', 'abmon', 5);
+				$months = __dc('cake', 'abmon', 5);
 				if (is_array($months)) {
 					return $months[date('n', $this->__time) -1];
 				}
 				return '%b';
 			case 'B':
-				$months = __cn('cake', 'mon', 5);
+				$months = __dc('cake', 'mon', 5);
 				if (is_array($months)) {
 					return $months[date('n', $this->__time) -1];
 				}
@@ -133,14 +133,14 @@ class TimeHelper extends AppHelper {
 			case 'P':
 				$default = array('am' => 0, 'pm' => 1);
 				$meridiem = $default[date('a',$this->__time)];
-				$format = __cn('cake', 'am_pm', 5);
+				$format = __dc('cake', 'am_pm', 5);
 				if (is_array($format)) {
 					$meridiem = $format[$meridiem];
 					return ($specifier[1] == 'P') ? strtolower($meridiem) : strtoupper($meridiem);
 				}
 				break;
 			case 'r':
-				$complete = __cn('cake', 't_fmt_ampm', 5);
+				$complete = __dc('cake', 't_fmt_ampm', 5);
 				if ($complete != 't_fmt_ampm') {
 					return str_replace('%p',$this->__translateSpecifier(array('%p', 'p')),$complete);
 				}
@@ -154,13 +154,13 @@ class TimeHelper extends AppHelper {
 			case 'u':
 				return ($weekDay = date('w', $this->__time)) ? $weekDay : 7;
 			case 'x':
-				$format = __cn('cake', 'd_fmt', 5);
+				$format = __dc('cake', 'd_fmt', 5);
 				if ($format != 'd_fmt') {
 					return $this->convertSpecifiers($format, $this->__time);
 				}
 				break;
 			case 'X':
-				$format = __cn('cake', 't_fmt', 5);
+				$format = __dc('cake', 't_fmt', 5);
 				if ($format != 't_fmt') {
 					return $this->convertSpecifiers($format, $this->__time);
 				}
