@@ -459,7 +459,7 @@ class CakeEmail {
 	}
 
 /**
- * Sets headers for the message
+ * Sets eaders for the message
  *
  * @param array Associative array containing headers to be set.
  * @return void
@@ -597,13 +597,19 @@ class CakeEmail {
 	}
 
 /**
- * Set the layout and template
+ * Layout and template
  *
  * @param string $layout
  * @param string $template
- * @return void
+ * @return mixed
  */
-	public function setLayout($layout, $template = null) {
+	public function layout($layout = null, $template = null) {
+		if ($layout === null) {
+			return array(
+				'layout' => $this->_layout,
+				'template' => $this->_template
+			);
+		}
 		$this->_layout = (string)$layout;
 		if ($template !== null) {
 			$this->_template = (string)$template;
@@ -611,23 +617,29 @@ class CakeEmail {
 	}
 
 /**
- * Set view class for render
+ * View class for render
  *
  * @param string $viewClass
- * @return void
+ * @return mixed
  */
-	public function setViewRender($viewClass) {
+	public function viewRender($viewClass = null) {
+		if ($viewClass === null) {
+			return $this->_viewRender;
+		}
 		$this->_viewRender = $viewClass;
 	}
 
 /**
- * Set the email format
+ * Email format
  *
  * @param string $format
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setEmailFormat($format) {
+	public function emailFormat($format = null) {
+		if ($format === null) {
+			return $this->_emailFormat;
+		}
 		if (!in_array($format, $this->_emailFormatAvailable)) {
 			throw new SocketException(__('Format not available.'));
 		}
@@ -635,23 +647,29 @@ class CakeEmail {
 	}
 
 /**
- * Set transport name
+ * Transport name
  *
  * @param string $name
- * @return void
+ * @return mixed
  */
-	public function setTransport($name) {
+	public function transport($name = null) {
+		if ($name === null) {
+			return $this->_transportName;
+		}
 		$this->_transportName = (string)$name;
 	}
 
 /**
- * Set Message-ID
+ * Message-ID
  *
  * @param mixed $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setMessageID($message) {
+	public function messageID($message = null) {
+		if ($message === null) {
+			return $this->_messageId;
+		}
 		if (is_bool($message)) {
 			$this->_messageId = $message;
 		} else {
@@ -663,13 +681,16 @@ class CakeEmail {
 	}
 
 /**
- * Set attachments
+ * Attachments
  *
  * @param mixed $attachments String with the filename or array with filenames
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setAttachments($attachments) {
+	public function attachments($attachments = null) {
+		if ($attachments === null) {
+			return $this->_attachments;
+		}
 		$attach = array();
 		foreach ((array)$attachments as $name => $file) {
 			$path = realpath($file);
@@ -693,17 +714,8 @@ class CakeEmail {
  */
 	public function addAttachments($attachments) {
 		$current = $this->_attachments;
-		$this->setAttachments($attachments);
+		$this->attachments($attachments);
 		$this->_attachments = array_merge($current, $this->_attachments);
-	}
-
-/**
- * Get attachments
- *
- * @return array
- */
-	public function getAttachments() {
-		return $this->_attachments;
 	}
 
 /**
@@ -711,7 +723,7 @@ class CakeEmail {
  *
  * @return array
  */
-	public function getMessage() {
+	public function message() {
 		return $this->_message;
 	}
 

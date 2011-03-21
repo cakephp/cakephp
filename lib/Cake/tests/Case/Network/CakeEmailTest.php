@@ -76,7 +76,7 @@ class DebugTransport extends AbstractTransport {
  * @return boolean
  */
 	public function send(CakeEmail $email) {
-		self::$lastEmail = implode("\r\n", $email->getMessage());
+		self::$lastEmail = implode("\r\n", $email->message());
 		$options = array();
 		if (self::$includeAddresses) {
 			$options = array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true);
@@ -277,15 +277,15 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testMessageId() {
-		$this->CakeEmail->setMessageId(true);
+		$this->CakeEmail->messageId(true);
 		$result = $this->CakeEmail->getHeaders();
 		$this->assertTrue(isset($result['Message-ID']));
 
-		$this->CakeEmail->setMessageId(false);
+		$this->CakeEmail->messageId(false);
 		$result = $this->CakeEmail->getHeaders();
 		$this->assertFalse(isset($result['Message-ID']));
 
-		$this->CakeEmail->setMessageId('<my-email@localhost>');
+		$this->CakeEmail->messageId('<my-email@localhost>');
 		$result = $this->CakeEmail->getHeaders();
 		$this->assertIdentical($result['Message-ID'], '<my-email@localhost>');
 	}
@@ -297,7 +297,7 @@ class CakeEmailTest extends CakeTestCase {
  * @expectedException SocketException
  */
 	public function testMessageIdInvalid() {
-		$this->CakeEmail->setMessageId('my-email@localhost');
+		$this->CakeEmail->messageId('my-email@localhost');
 	}
 
 /**
@@ -322,7 +322,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testHeaders() {
-		$this->CakeEmail->setMessageId(false);
+		$this->CakeEmail->messageId(false);
 		$this->CakeEmail->setHeaders(array('X-Something' => 'nice'));
 		$expected = array(
 			'X-Something' => 'nice',
@@ -382,14 +382,14 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testAttachments() {
-		$this->CakeEmail->setAttachments(WWW_ROOT . 'index.php');
+		$this->CakeEmail->attachments(WWW_ROOT . 'index.php');
 		$expected = array('index.php' => WWW_ROOT . 'index.php');
-		$this->assertIdentical($this->CakeEmail->getAttachments(), $expected);
+		$this->assertIdentical($this->CakeEmail->attachments(), $expected);
 
-		$this->CakeEmail->setAttachments(array());
-		$this->assertIdentical($this->CakeEmail->getAttachments(), array());
+		$this->CakeEmail->attachments(array());
+		$this->assertIdentical($this->CakeEmail->attachments(), array());
 
-		$this->CakeEmail->setAttachments(WWW_ROOT . 'index.php');
+		$this->CakeEmail->attachments(WWW_ROOT . 'index.php');
 		$this->CakeEmail->addAttachments(WWW_ROOT . 'test.php');
 		$this->CakeEmail->addAttachments(array(WWW_ROOT . 'test.php'));
 		$this->CakeEmail->addAttachments(array('other.txt' => WWW_ROOT . 'test.php', 'ht' => WWW_ROOT . '.htaccess'));
@@ -399,7 +399,7 @@ class CakeEmailTest extends CakeTestCase {
 			'other.txt' => WWW_ROOT . 'test.php',
 			'ht' => WWW_ROOT . '.htaccess'
 		);
-		$this->assertIdentical($this->CakeEmail->getAttachments(), $expected);
+		$this->assertIdentical($this->CakeEmail->attachments(), $expected);
 	}
 
 /**
@@ -409,7 +409,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testSendWithContent() {
 		$this->CakeEmail->reset();
-		$this->CakeEmail->setTransport('debug');
+		$this->CakeEmail->transport('debug');
 		DebugTransport::$includeAddresses = false;
 
 		$this->CakeEmail->from('cake@cakephp.org');
@@ -438,13 +438,13 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testSendRender() {
 		$this->CakeEmail->reset();
-		$this->CakeEmail->setTransport('debug');
+		$this->CakeEmail->transport('debug');
 		DebugTransport::$includeAddresses = true;
 
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
-		$this->CakeEmail->setLayout('default', 'default');
+		$this->CakeEmail->layout('default', 'default');
 		$result = $this->CakeEmail->send();
 
 		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the CakePHP Framework'));
