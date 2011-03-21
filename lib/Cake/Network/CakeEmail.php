@@ -837,9 +837,8 @@ class CakeEmail {
  *
  * @param string $message Message to wrap
  * @return array Wrapped message
- * @access protected
  */
-	function _wrap($message) {
+	protected function _wrap($message) {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
@@ -932,7 +931,7 @@ class CakeEmail {
  *
  * @return void
  */
-	function _createboundary() {
+	protected function _createboundary() {
 		$this->_boundary = md5(uniqid(time()));
 	}
 
@@ -941,7 +940,7 @@ class CakeEmail {
  *
  * @return void
  */
-	function _attachFiles() {
+	protected function _attachFiles() {
 		foreach ($this->_attachments as $filename => $file) {
 			$handle = fopen($file, 'rb');
 			$data = fread($handle, filesize($file));
@@ -964,7 +963,7 @@ class CakeEmail {
  * @param array $message Message to format
  * @return array
  */
-	function _formatMessage($message) {
+	protected function _formatMessage($message) {
 		if (!empty($this->_attachments)) {
 			$prefix = array('--' . $this->_boundary);
 			if ($this->_emailFormat === 'text') {
@@ -988,7 +987,7 @@ class CakeEmail {
  * @return array Email ready to be sent
  * @access private
  */
-	function _render($content) {
+	protected function _render($content) {
 		$viewClass = $this->_viewRender;
 
 		if ($viewClass !== 'View') {
