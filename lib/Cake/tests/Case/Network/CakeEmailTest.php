@@ -124,21 +124,21 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testFrom() {
-		$this->assertIdentical($this->CakeEmail->getFrom(), array());
+		$this->assertIdentical($this->CakeEmail->from(), array());
 
-		$this->CakeEmail->setFrom('cake@cakephp.org');
+		$this->CakeEmail->from('cake@cakephp.org');
 		$expected = array('cake@cakephp.org' => 'cake@cakephp.org');
-		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+		$this->assertIdentical($this->CakeEmail->from(), $expected);
 
-		$this->CakeEmail->setFrom(array('cake@cakephp.org'));
-		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+		$this->CakeEmail->from(array('cake@cakephp.org'));
+		$this->assertIdentical($this->CakeEmail->from(), $expected);
 
-		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
+		$this->CakeEmail->from('cake@cakephp.org', 'CakePHP');
 		$expected = array('cake@cakephp.org' => 'CakePHP');
-		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+		$this->assertIdentical($this->CakeEmail->from(), $expected);
 
-		$this->CakeEmail->setFrom(array('cake@cakephp.org' => 'CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getFrom(), $expected);
+		$this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP'));
+		$this->assertIdentical($this->CakeEmail->from(), $expected);
 	}
 
 /**
@@ -147,28 +147,28 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testTo() {
-		$this->assertIdentical($this->CakeEmail->getTo(), array());
+		$this->assertIdentical($this->CakeEmail->to(), array());
 
-		$this->CakeEmail->setTo('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
 		$expected = array('cake@cakephp.org' => 'cake@cakephp.org');
-		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+		$this->assertIdentical($this->CakeEmail->to(), $expected);
 
-		$this->CakeEmail->setTo('cake@cakephp.org', 'CakePHP');
+		$this->CakeEmail->to('cake@cakephp.org', 'CakePHP');
 		$expected = array('cake@cakephp.org' => 'CakePHP');
-		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+		$this->assertIdentical($this->CakeEmail->to(), $expected);
 
 		$list = array(
 			'cake@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org'
 		);
-		$this->CakeEmail->setTo($list);
+		$this->CakeEmail->to($list);
 		$expected = array(
 			'cake@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org' => 'root@cakephp.org'
 		);
-		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+		$this->assertIdentical($this->CakeEmail->to(), $expected);
 
 		$this->CakeEmail->addTo('jrbasso@cakephp.org');
 		$this->CakeEmail->addTo('mark_story@cakephp.org', 'Mark Story');
@@ -182,7 +182,7 @@ class CakeEmailTest extends CakeTestCase {
 			'phpnut@cakephp.org' => 'PhpNut',
 			'jose_zap@cakephp.org' => 'jose_zap@cakephp.org'
 		);
-		$this->assertIdentical($this->CakeEmail->getTo(), $expected);
+		$this->assertIdentical($this->CakeEmail->to(), $expected);
 	}
 
 /**
@@ -209,7 +209,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidEmail($value) {
-		$this->CakeEmail->setTo($value);
+		$this->CakeEmail->to($value);
 	}
 
 /**
@@ -242,24 +242,24 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testAddresses() {
 		$this->CakeEmail->reset();
-		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
-		$this->CakeEmail->setReplyTo('replyto@cakephp.org', 'ReplyTo CakePHP');
-		$this->CakeEmail->setReadReceipt('readreceipt@cakephp.org', 'ReadReceipt CakePHP');
-		$this->CakeEmail->setReturnPath('returnpath@cakephp.org', 'ReturnPath CakePHP');
-		$this->CakeEmail->setTo('to@cakephp.org', 'To CakePHP');
-		$this->CakeEmail->setCc('cc@cakephp.org', 'Cc CakePHP');
-		$this->CakeEmail->setBcc('bcc@cakephp.org', 'Bcc CakePHP');
+		$this->CakeEmail->from('cake@cakephp.org', 'CakePHP');
+		$this->CakeEmail->replyTo('replyto@cakephp.org', 'ReplyTo CakePHP');
+		$this->CakeEmail->readReceipt('readreceipt@cakephp.org', 'ReadReceipt CakePHP');
+		$this->CakeEmail->returnPath('returnpath@cakephp.org', 'ReturnPath CakePHP');
+		$this->CakeEmail->to('to@cakephp.org', 'To CakePHP');
+		$this->CakeEmail->cc('cc@cakephp.org', 'Cc CakePHP');
+		$this->CakeEmail->bcc('bcc@cakephp.org', 'Bcc CakePHP');
 		$this->CakeEmail->addTo('to2@cakephp.org', 'To2 CakePHP');
 		$this->CakeEmail->addCc('cc2@cakephp.org', 'Cc2 CakePHP');
 		$this->CakeEmail->addBcc('bcc2@cakephp.org', 'Bcc2 CakePHP');
 
-		$this->assertIdentical($this->CakeEmail->getFrom(), array('cake@cakephp.org' => 'CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getReplyTo(), array('replyto@cakephp.org' => 'ReplyTo CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getReadReceipt(), array('readreceipt@cakephp.org' => 'ReadReceipt CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getReturnPath(), array('returnpath@cakephp.org' => 'ReturnPath CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getTo(), array('to@cakephp.org' => 'To CakePHP', 'to2@cakephp.org' => 'To2 CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getCc(), array('cc@cakephp.org' => 'Cc CakePHP', 'cc2@cakephp.org' => 'Cc2 CakePHP'));
-		$this->assertIdentical($this->CakeEmail->getBcc(), array('bcc@cakephp.org' => 'Bcc CakePHP', 'bcc2@cakephp.org' => 'Bcc2 CakePHP'));
+		$this->assertIdentical($this->CakeEmail->from(), array('cake@cakephp.org' => 'CakePHP'));
+		$this->assertIdentical($this->CakeEmail->replyTo(), array('replyto@cakephp.org' => 'ReplyTo CakePHP'));
+		$this->assertIdentical($this->CakeEmail->readReceipt(), array('readreceipt@cakephp.org' => 'ReadReceipt CakePHP'));
+		$this->assertIdentical($this->CakeEmail->returnPath(), array('returnpath@cakephp.org' => 'ReturnPath CakePHP'));
+		$this->assertIdentical($this->CakeEmail->to(), array('to@cakephp.org' => 'To CakePHP', 'to2@cakephp.org' => 'To2 CakePHP'));
+		$this->assertIdentical($this->CakeEmail->cc(), array('cc@cakephp.org' => 'Cc CakePHP', 'cc2@cakephp.org' => 'Cc2 CakePHP'));
+		$this->assertIdentical($this->CakeEmail->bcc(), array('bcc@cakephp.org' => 'Bcc CakePHP', 'bcc2@cakephp.org' => 'Bcc2 CakePHP'));
 
 		$headers = $this->CakeEmail->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true));
 		$this->assertIdentical($headers['From'], 'CakePHP <cake@cakephp.org>');
@@ -306,14 +306,14 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testSubject() {
-		$this->CakeEmail->setSubject('You have a new message.');
-		$this->assertIdentical($this->CakeEmail->getSubject(), 'You have a new message.');
+		$this->CakeEmail->subject('You have a new message.');
+		$this->assertIdentical($this->CakeEmail->subject(), 'You have a new message.');
 
-		$this->CakeEmail->setSubject(1);
-		$this->assertIdentical($this->CakeEmail->getSubject(), '1');
+		$this->CakeEmail->subject(1);
+		$this->assertIdentical($this->CakeEmail->subject(), '1');
 
-		$this->CakeEmail->setSubject(array('something'));
-		$this->assertIdentical($this->CakeEmail->getSubject(), 'Array');
+		$this->CakeEmail->subject(array('something'));
+		$this->assertIdentical($this->CakeEmail->subject(), 'Array');
 	}
 
 /**
@@ -344,7 +344,7 @@ class CakeEmailTest extends CakeTestCase {
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
-		$this->CakeEmail->setFrom('cake@cakephp.org');
+		$this->CakeEmail->from('cake@cakephp.org');
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
 		$expected = array(
@@ -358,11 +358,11 @@ class CakeEmailTest extends CakeTestCase {
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
-		$this->CakeEmail->setFrom('cake@cakephp.org', 'CakePHP');
+		$this->CakeEmail->from('cake@cakephp.org', 'CakePHP');
 		$expected['From'] = 'CakePHP <cake@cakephp.org>';
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
-		$this->CakeEmail->setTo(array('cake@cakephp.org', 'php@cakephp.org' => 'CakePHP'));
+		$this->CakeEmail->to(array('cake@cakephp.org', 'php@cakephp.org' => 'CakePHP'));
 		$expected = array(
 			'From' => 'CakePHP <cake@cakephp.org>',
 			'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
@@ -412,9 +412,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->setTransport('debug');
 		DebugTransport::$includeAddresses = false;
 
-		$this->CakeEmail->setFrom('cake@cakephp.org');
-		$this->CakeEmail->setTo(array('you@cakephp.org' => 'You'));
-		$this->CakeEmail->setSubject('My title');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
 		$result = $this->CakeEmail->send("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
 
 		$this->assertTrue($result);
@@ -441,9 +441,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->setTransport('debug');
 		DebugTransport::$includeAddresses = true;
 
-		$this->CakeEmail->setFrom('cake@cakephp.org');
-		$this->CakeEmail->setTo(array('you@cakephp.org' => 'You'));
-		$this->CakeEmail->setSubject('My title');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->setLayout('default', 'default');
 		$result = $this->CakeEmail->send();
 
@@ -458,11 +458,11 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testReset() {
-		$this->CakeEmail->setTo('cake@cakephp.org');
-		$this->assertIdentical($this->CakeEmail->getTo(), array('cake@cakephp.org' => 'cake@cakephp.org'));
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->assertIdentical($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 
 		$this->CakeEmail->reset();
-		$this->assertIdentical($this->CakeEmail->getTo(), array());
+		$this->assertIdentical($this->CakeEmail->to(), array());
 	}
 
 /**

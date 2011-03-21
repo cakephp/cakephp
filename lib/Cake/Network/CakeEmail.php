@@ -227,97 +227,76 @@ class CakeEmail {
 	}
 
 /**
- * Set From
+ * From
  *
  * @param mixed $email
  * @param string $name
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setFrom($email, $name = null) {
-		$this->_setEmail1('_from', $email, $name, __('From requires only 1 email address.'));
+	public function from($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_from;
+		}
+		$this->_setEmailSingle('_from', $email, $name, __('From requires only 1 email address.'));
 	}
 
 /**
- * Get the From information
- *
- * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
- */
-	public function getFrom() {
-		return $this->_from;
-	}
-
-/**
- * Set Reply-To
+ * Reply-To
  *
  * @param mixed $email
  * @param string $name
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setReplyTo($email, $name = null) {
-		$this->_setEmail1('_replyTo', $email, $name, __('Reply-To requires only 1 email address.'));
+	public function replyTo($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_replyTo;
+		}
+		$this->_setEmailSingle('_replyTo', $email, $name, __('Reply-To requires only 1 email address.'));
 	}
 
 /**
- * Get the ReplyTo information
- *
- * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
- */
-	public function getReplyTo() {
-		return $this->_replyTo;
-	}
-
-/**
- * Set Read Receipt (Disposition-Notification-To header)
+ * Read Receipt (Disposition-Notification-To header)
  *
  * @param mixed $email
  * @param string $name
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setReadReceipt($email, $name = null) {
-		$this->_setEmail1('_readReceipt', $email, $name, __('Disposition-Notification-To requires only 1 email address.'));
+	public function readReceipt($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_readReceipt;
+		}
+		$this->_setEmailSingle('_readReceipt', $email, $name, __('Disposition-Notification-To requires only 1 email address.'));
 	}
 
 /**
- * Get the Read Receipt (Disposition-Notification-To header) information
- *
- * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
- */
-	public function getReadReceipt() {
-		return $this->_readReceipt;
-	}
-
-/**
- * Set Return Path
+ * Return Path
  *
  * @param mixed $email
  * @param string $name
- * @return void
+ * @return mixed
  * @thrown SocketException
  */
-	public function setReturnPath($email, $name = null) {
-		$this->_setEmail1('_returnPath', $email, $name, __('Return-Path requires only 1 email address.'));
+	public function returnPath($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_returnPath;
+		}
+		$this->_setEmailSingle('_returnPath', $email, $name, __('Return-Path requires only 1 email address.'));
 	}
 
 /**
- * Get the Return Path information
+ * To
  *
- * @return array Key is email, Value is name. If Key is equal of Value, the name is not specified
- */
-	public function getReturnPath() {
-		return $this->_returnPath;
-	}
-
-/**
- * Set To
- *
- * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
+ * @param mixed $email Null to get, String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return void
+ * @return mixed
  */
-	public function setTo($email, $name = null) {
+	public function to($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_to;
+		}
 		$this->_setEmail('_to', $email, $name);
 	}
 
@@ -333,22 +312,16 @@ class CakeEmail {
 	}
 
 /**
- * Get To
- *
- * @return array
- */
-	public function getTo() {
-		return $this->_to;
-	}
-
-/**
- * Set Cc
+ * Cc
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return void
+ * @return mixed
  */
-	public function setCc($email, $name = null) {
+	public function cc($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_cc;
+		}
 		$this->_setEmail('_cc', $email, $name);
 	}
 
@@ -364,22 +337,16 @@ class CakeEmail {
 	}
 
 /**
- * Get Cc
- *
- * @return array
- */
-	public function getCc() {
-		return $this->_cc;
-	}
-
-/**
- * Set Bcc
+ * Bcc
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
  * @return void
  */
-	public function setBcc($email, $name = null) {
+	public function bcc($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_bcc;
+		}
 		$this->_setEmail('_bcc', $email, $name);
 	}
 
@@ -392,15 +359,6 @@ class CakeEmail {
  */
 	public function addBcc($email, $name = null) {
 		$this->_addEmail('_bcc', $email, $name);
-	}
-
-/**
- * Get Bcc
- *
- * @return array
- */
-	public function getBcc() {
-		return $this->_bcc;
 	}
 
 /**
@@ -446,7 +404,7 @@ class CakeEmail {
  * @return void
  * @thrown SocketExpceiton
  */
-	protected function _setEmail1($varName, $email, $name, $throwMessage) {
+	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
 		$current = $this->{$varName};
 		$this->_setEmail($varName, $email, $name);
 		if (count($this->{$varName}) !== 1) {
@@ -491,19 +449,13 @@ class CakeEmail {
  * Set Subject
  *
  * @param string $subject
- * @return void
+ * @return mixed
  */
-	public function setSubject($subject) {
+	public function subject($subject = null) {
+		if ($subject === null) {
+			return $this->_subject;
+		}
 		$this->_subject = (string)$subject;
-	}
-
-/**
- * Get Subject
- *
- * @return string
- */
-	public function getSubject() {
-		return $this->_subject;
 	}
 
 /**
