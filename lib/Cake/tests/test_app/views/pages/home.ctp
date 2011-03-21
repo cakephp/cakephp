@@ -15,18 +15,10 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (Configure::read('debug') == 0):
-	throw new NotFoundException();
-endif;
 App::uses('Debugger', 'Utility');
 ?>
 <h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <a href="http://cakephp.org/changelogs/1.3.6"><?php __d('cake_dev', 'Read the changelog'); ?> </a>
-<?php
-if (Configure::read('debug') > 0):
-	Debugger::checkSecurityKeys();
-endif;
-?>
 <p>
 	<?php
 		if (is_writable(TMP)):
