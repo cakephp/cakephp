@@ -112,9 +112,12 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "Editing this Page"\nmsgstr ""\n/';
 		$this->assertPattern($pattern, $result);
-		$pattern = '/msgid "To change the content of this page, edit: %s.*To change its layout, ';
-		$pattern .= 'edit: %s.*You can also add some CSS styles for your pages at: %s"\nmsgstr ""/s';
+		$pattern = '/msgid "To change the content of this page, create: APP\/views\/pages\/home\.ctp/';
 		$this->assertPattern($pattern, $result);
+
+		$pattern = '/To change its layout, create: APP\/views\/layouts\/default\.ctp\./s';
+		$this->assertPattern($pattern, $result);
+		
 
 		// extract.ctp
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:6\n';
@@ -126,9 +129,11 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:66\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:99\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
+
 		$this->assertPattern($pattern, $result);
+
 
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($this->path . DS . 'domain.pot');
