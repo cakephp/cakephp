@@ -504,6 +504,9 @@ class DboMysqlBase extends DboSource {
 		if (strpos($col, 'enum') !== false) {
 			return "enum($vals)";
 		}
+		if (strpos($col, 'bit') !== false) {
+			return 'bit';
+		}
 		return 'text';
 	}
 }
@@ -652,6 +655,13 @@ class DboMysql extends DboMysqlBase {
 		switch ($column) {
 			case 'boolean':
 				return $this->boolean((bool)$data);
+			break;
+			case 'bit':
+				if(is_int($data)) {
+					return "b'" . dec2bin($data) . "'";
+				} else {
+					return "b'" . $data . "'";
+				}
 			break;
 			case 'integer':
 			case 'float':
