@@ -741,6 +741,25 @@ class TimeHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test convert %e on windows.
+ *
+ * @return void
+ */
+	function testConvertPercentE() {
+		if ($this->skipIf(DS !== '\\', 'Cannot run windows tests on non-windows OS')) {
+			return;
+		}
+		$time = strtotime('Thu Jan 14 11:43:39 2010');
+		$result = $this->Time->convertSpecifiers('%e', $time);
+		$expected = '14';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%e', strtotime('2011-01-01'));
+		$expected = ' 1';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test formatting dates taking in account preferred i18n locale file
  *
  * @access public

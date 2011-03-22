@@ -79,6 +79,15 @@ class TimeHelper extends AppHelper {
 				return sprintf("%02d", date('Y', $this->__time) / 100);
 			case 'D':
 				return '%m/%d/%y';
+			case 'e':
+				if (DS === '/') {
+					return '%e';
+				}
+				$day = date('j', $this->__time);
+				if ($day < 10) {
+					$day = ' ' . $day;
+				}
+				return $day;
 			case 'eS' :
 				return date('jS', $this->__time);
 			case 'b':

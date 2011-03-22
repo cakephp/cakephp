@@ -315,7 +315,7 @@ class AjaxHelper extends AppHelper {
 	function remoteTimer($options = null) {
 		$frequency = (isset($options['frequency'])) ? $options['frequency'] : 10;
 		$callback = $this->remoteFunction($options);
-		$code = "new PeriodicalExecuter(function() {{$callback}}, $frequency)";
+		$code = "new PeriodicalExecuter(function(pe) {{$callback}}, $frequency)";
 		return $this->Javascript->codeBlock($code);
 	}
 
