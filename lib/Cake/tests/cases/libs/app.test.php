@@ -16,6 +16,7 @@ class AppImportTest extends CakeTestCase {
 	function testBuild() {
 		$old = App::path('Model');
 		$expected = array(
+			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $old);
@@ -26,6 +27,7 @@ class AppImportTest extends CakeTestCase {
 
 		$expected = array(
 			'/path/to/models/',
+			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $new);
@@ -44,6 +46,7 @@ class AppImportTest extends CakeTestCase {
 	function testCompatibleBuild() {
 		$old = App::path('models');
 		$expected = array(
+			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $old);
@@ -54,6 +57,7 @@ class AppImportTest extends CakeTestCase {
 
 		$expected = array(
 			'/path/to/models/',
+			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $new);
@@ -62,6 +66,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('datasources' => array('/path/to/datasources/')));
 		$expected = array(
 			'/path/to/datasources/',
+			APP . 'Model' . DS . 'Datasource' . DS,
 			APP . 'models' . DS . 'datasources' . DS
 		);
 		$result = App::path('datasources');
@@ -71,6 +76,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('behaviors' => array('/path/to/behaviors/')));
 		$expected = array(
 			'/path/to/behaviors/',
+			APP . 'Model' . DS . 'Behavior' . DS,
 			APP . 'models' . DS . 'behaviors' . DS
 		);
 		$result = App::path('behaviors');
@@ -80,6 +86,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('controllers' => array('/path/to/controllers/')));
 		$expected = array(
 			'/path/to/controllers/',
+			APP . 'Controller' . DS,
 			APP . 'controllers' . DS
 		);
 		$result = App::path('controllers');
@@ -89,6 +96,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('components' => array('/path/to/components/')));
 		$expected = array(
 			'/path/to/components/',
+			APP . 'Controller' . DS . 'Component' . DS,
 			APP . 'controllers' . DS . 'components' . DS
 		);
 		$result = App::path('components');
@@ -98,6 +106,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('views' => array('/path/to/views/')));
 		$expected = array(
 			'/path/to/views/',
+			APP . 'View' . DS,
 			APP . 'views' . DS
 		);
 		$result = App::path('views');
@@ -107,6 +116,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('helpers' => array('/path/to/helpers/')));
 		$expected = array(
 			'/path/to/helpers/',
+			APP . 'View' . DS . 'Helper' .DS,
 			APP . 'views' . DS . 'helpers' . DS
 		);
 		$result = App::path('helpers');
@@ -116,9 +126,8 @@ class AppImportTest extends CakeTestCase {
 		App::build(array('shells' => array('/path/to/shells/')));
 		$expected = array(
 			'/path/to/shells/',
+			APP . 'Console' . DS . 'Command' . DS,
 			APP . 'console' . DS . 'shells' . DS,
-			APP . 'vendors' . DS . 'shells' . DS,
-			ROOT . DS . 'vendors' . DS . 'shells' . DS
 		);
 		$result = App::path('shells');
 		$this->assertEqual($expected, $result);
@@ -138,6 +147,7 @@ class AppImportTest extends CakeTestCase {
 	function testBuildWithReset() {
 		$old = App::path('Model');
 		$expected = array(
+			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
 		$this->assertEqual($expected, $old);

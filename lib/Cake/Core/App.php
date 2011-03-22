@@ -203,7 +203,7 @@ class App {
 					$path[] = sprintf($f, $pluginPath);
 				}
 			}
-			$path[] = $pluginPath . 'libs' . DS . $type . DS;
+			$path[] = $pluginPath . 'Lib' . DS . $type . DS;
 			return $path;
 		}
 
@@ -233,32 +233,61 @@ class App {
 	public static function build($paths = array(), $reset = false) {
 		if (empty(self::$__packageFormat)) {
 			self::$__packageFormat = array(
-				'Model' => array('%s' . 'models' . DS),
-				'Model/Behavior' => array('%s' . 'models' . DS . 'behaviors' . DS),
-				'Model/Datasource' => array('%s' . 'models' . DS . 'datasources' . DS),
-				'Model/Datasource/Database' => array('%s' . 'models' . DS . 'datasources' . DS . 'database' . DS),
-				'Model/Datasource/Session' => array('%s' . 'models' . DS . 'datasources' . DS . 'session' . DS),
-				'Controller' => array('%s' . 'controllers' . DS),
-				'Controller/Component' => array('%s' . 'controllers' . DS . 'components' . DS),
-				'View' => array('%s' . 'views' . DS),
-				'View/Helper' => array('%s' . 'views' . DS . 'helpers' . DS),
+				'Model' => array(
+					'%s' . 'Model' . DS,
+					'%s' . 'models' . DS
+				),
+				'Model/Behavior' => array(
+					'%s' . 'Model' . DS . 'Behavior' . DS,
+					'%s' . 'models' . DS . 'behaviors' . DS
+				),
+				'Model/Datasource' => array(
+					'%s' . 'Model' . DS . 'Datasource' . DS,
+					'%s' . 'models' . DS . 'datasources' . DS
+				),
+				'Model/Datasource/Database' => array(
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS,
+					'%s' . 'models' . DS . 'datasources' . DS . 'database' . DS
+				),
+				'Model/Datasource/Session' => array(
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS,
+					'%s' . 'models' . DS . 'datasources' . DS . 'session' . DS
+				),
+				'Controller' => array(
+					'%s' . 'Controller' . DS,
+					'%s' . 'controllers' . DS
+				),
+				'Controller/Component' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS,
+					'%s' . 'controllers' . DS . 'components' . DS
+				),
+				'View' => array(
+					'%s' . 'View' . DS,
+					'%s' . 'views' . DS
+				),
+				'View/Helper' => array(
+					'%s' . 'View' . DS . 'Helper' . DS,
+					'%s' . 'views' . DS . 'helpers' . DS
+				),
 				'Console' => array(
-					'%s' . 'console' . DS,
-					'%s' . 'vendors' . DS . 'shells' . DS,
-					VENDORS . 'shells' . DS
+					'%s' . 'Console' . DS,
+					'%s' . 'console' . DS
 				),
 				'Console/Command' => array(
+					'%s' . 'Console' . DS . 'Command' . DS,
 					'%s' . 'console' . DS . 'shells' . DS,
-					'%s' . 'vendors' . DS . 'shells' . DS,
-					VENDORS . 'shells' . DS
 				),
 				'Console/Command/Task' => array(
-					'%s' . 'console' . DS . 'shells' . DS . 'tasks' . DS,
-					'%s' . 'vendors' . DS . 'shells' . DS . 'tasks' . DS,
-					VENDORS . 'shells' . DS . 'tasks' . DS
+					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS,
+					'%s' . 'console' . DS . 'shells' . DS . 'tasks' . DS
 				),
-				'Lib' => array('%s' . 'libs' . DS),
-				'locales' => array('%s' . 'locale' . DS),
+				'Lib' => array(
+					'%s' . 'Lib' . DS,
+					'%s' . 'libs' . DS
+				),
+				'locales' => array(
+					'%s' . 'locale' . DS
+				),
 				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
 				'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS)
 			);

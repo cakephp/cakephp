@@ -141,7 +141,9 @@ class ConnectionManagerTest extends CakeTestCase {
 	function testGetPluginDataSourceAndLocalDriver() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'Model/Datasource/Database' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS . 'Database' . DS)
+			'Model/Datasource/Database' => array(
+				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
+			)
 		));
 
 		$name = 'test_plugin_source_and_local_driver';
@@ -262,7 +264,9 @@ class ConnectionManagerTest extends CakeTestCase {
 	function testConnectionData() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'Model/Datasource' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+			'Model/Datasource' => array(
+				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
+			)
 		));
 
 		$expected = array(
