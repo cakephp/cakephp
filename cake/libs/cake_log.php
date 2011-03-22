@@ -287,5 +287,6 @@ class CakeLog {
 }
 
 if (!defined('DISABLE_DEFAULT_ERROR_HANDLING')) {
-	set_error_handler(array('CakeLog', 'handleError'));
+	$cakeLog =& CakeLog::getInstance();
+	set_error_handler(array($cakeLog, 'handleError'));
 }
