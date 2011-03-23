@@ -402,7 +402,7 @@ CODE;
 	function testSubmitWithMock() {
 		$this->_useMock();
 
-		$options = array('update' => '#content', 'id' => 'test-submit');
+		$options = array('update' => '#content', 'id' => 'test-submit', 'style' => 'margin: 0');
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeform', '*'));
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeForm', '*'));
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax-code', array('request', '*'));
@@ -422,7 +422,7 @@ CODE;
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
 			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
+			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save', 'style' => 'margin: 0'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);

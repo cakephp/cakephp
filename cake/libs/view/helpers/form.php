@@ -1422,18 +1422,20 @@ class FormHelper extends AppHelper {
 		$style = null;
 		$tag = null;
 		$attributes += array(
-			'class' => null, 
+			'class' => null,
 			'escape' => true,
 			'secure' => null,
 			'empty' => '',
-			'showParents' => false
+			'showParents' => false,
+			'hiddenField' => true
 		);
 
 		$escapeOptions = $this->_extractOption('escape', $attributes);
 		$secure = $this->_extractOption('secure', $attributes);
 		$showEmpty = $this->_extractOption('empty', $attributes);
 		$showParents = $this->_extractOption('showParents', $attributes);
-		unset($attributes['escape'], $attributes['secure'], $attributes['empty'], $attributes['showParents']);
+		$hiddenField = $this->_extractOption('hiddenField', $attributes);
+		unset($attributes['escape'], $attributes['secure'], $attributes['empty'], $attributes['showParents'], $attributes['hiddenField']);
 
 		$attributes = $this->_initInputField($fieldName, array_merge(
 			(array)$attributes, array('secure' => false)
@@ -1456,13 +1458,15 @@ class FormHelper extends AppHelper {
 			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
 			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
 			$tag = $this->Html->tags[$template];
-			$hiddenAttributes = array(
-				'value' => '',
-				'id' => $attributes['id'] . ($style ? '' : '_'),
-				'secure' => false,
-				'name' => $attributes['name']
-			);
-			$select[] = $this->hidden(null, $hiddenAttributes);
+			if ($hiddenField) {
+				$hiddenAttributes = array(
+					'value' => '',
+					'id' => $attributes['id'] . ($style ? '' : '_'),
+					'secure' => false,
+					'name' => $attributes['name']
+				);
+				$select[] = $this->hidden(null, $hiddenAttributes);
+			}
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}
@@ -2048,6 +2052,8 @@ class FormHelper extends AppHelper {
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
+						} elseif ($attributes['class'] === 'form-error') {
+							$attributes['class'] = 'checkbox ' . $attributes['class'];
 						}
 						$label = $this->label(null, $title, $label);
 						$item = sprintf(
@@ -2189,7 +2195,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$secure = (isset($this->params['_Token']) && !empty($this->params['_Token']));
 		}
-		
+
 		$fieldName = null;
 		if ($secure && !empty($options['name'])) {
 			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
