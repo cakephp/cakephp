@@ -249,7 +249,7 @@ class CakeTestSuiteDispatcher {
 		} catch (MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates' . DS . 'missing_conenction.php';
+			include CAKE_TESTS_LIB . 'templates' . DS . 'missing_connection.php';
 			exit();
 		}
 	}
