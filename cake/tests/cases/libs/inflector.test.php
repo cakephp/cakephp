@@ -228,11 +228,12 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	function testInflectorSlugWithMap() {
-		$result = Inflector::slug('replace every r', array('/r/' => '1'));
+	    Inflector::rules('transliteration', array('/r/' => '1'));
+		$result = Inflector::slug('replace every r');
 		$expected = '1eplace_eve1y_1';
 		$this->assertEqual($result, $expected);
 
-		$result = Inflector::slug('replace every r', '_', array('/r/' => '1'));
+		$result = Inflector::slug('replace every r', '_');
 		$expected = '1eplace_eve1y_1';
 		$this->assertEqual($result, $expected);
 	}
@@ -244,7 +245,8 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	function testInflectorSlugWithMapOverridingDefault() {
-		$result = Inflector::slug('Testing æ ø å', '-', array('/å/' => 'aa', '/ø/' => 'oe'));
+	    Inflector::rules('transliteration', array('/å/' => 'aa', '/ø/' => 'oe'));
+		$result = Inflector::slug('Testing æ ø å', '-');
 		$expected = 'Testing-ae-oe-aa';
 		$this->assertEqual($result, $expected);
 	}
@@ -386,8 +388,6 @@ class InflectorTest extends CakeTestCase {
 
 		Inflector::rules('transliteration', array('/ä|æ/' => 'ae', '/å/' => 'aa'), true);
 		$this->assertEqual(Inflector::slug('Testing æ ø å'), 'Testing_ae_ø_aa');
-
-		$this->assertEqual(Inflector::slug('Testing æ ø å', '-', array('/ø/' => 'oe')), 'Testing-ae-oe-aa');
 	}
 
 /**
