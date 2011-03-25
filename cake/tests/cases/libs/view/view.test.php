@@ -947,4 +947,30 @@ class ViewTest extends CakeTestCase {
 		$View->render('this_is_missing');
 		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 	}
+
+/**
+ * testAltExt method
+ *
+ * @access public
+ * @return void
+ */
+	function testAltExt() {
+		$this->PostsController->ext = '.alt';
+		$View = new TestView($this->PostsController);
+		$result = $View->render('alt_ext', false);
+		$this->assertEqual($result, 'alt ext');
+	}
+
+/**
+ * testAltBadExt method
+ *
+ * @expectedException MissingViewException
+ * @access public
+ * @return void
+ */
+	function testAltBadExt() {
+		$View = new TestView($this->PostsController);
+		$View->render('alt_ext');
+		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+	}
 }
