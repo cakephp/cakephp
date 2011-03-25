@@ -2108,7 +2108,7 @@ class DboSource extends DataSource {
 		$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
 
 		if (strpos($keys, '.')) {
-			preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
+			preg_match_all('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
 			$pregCount = count($result[0]);
 
 			for ($i = 0; $i < $pregCount; $i++) {
