@@ -218,12 +218,21 @@ class DboMysqlBase extends DboSource {
 		if (empty($conditions)) {
 			$alias = $joins = false;
 		}
-		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
+		$complexConditions = false;
+		foreach ((array)$conditions as $key => $value) {
+			if (strpos($key, $model->alias) === false) {
+				$complexConditions = true;
+				break;
+			}
+		}
+		if (!$complexConditions) {
+			$joins = false;
+		}
 
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
 		if ($conditions === false) {
 			return false;
 		}
-
 		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
 			$model->onError();
 			return false;
