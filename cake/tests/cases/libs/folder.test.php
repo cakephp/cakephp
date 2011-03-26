@@ -663,7 +663,6 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  * @access public
- * @link   https://trac.cakephp.org/ticket/6259
  */
 	function testCopy() {
 		$path = TMP . 'folder_test';
@@ -722,7 +721,6 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  * @access public
- * @link   https://trac.cakephp.org/ticket/6259
  */
 	function testMove() {
 		$path = TMP . 'folder_test';
