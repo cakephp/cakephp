@@ -28,7 +28,6 @@ Cache::config('default', array('engine' => 'File'));
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
- * This is related to Ticket #470 (https://trac.cakephp.org/ticket/470)
  *
  * App::build(array(
  *     'plugins' => array('/full/path/to/plugins/', '/next/full/path/to/plugins/'),
