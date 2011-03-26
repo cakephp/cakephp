@@ -119,13 +119,11 @@ class ConnectionManager {
 /**
  * Gets a DataSource name from an object reference.
  *
- * **Warning** this method may cause fatal errors in PHP4.
- *
  * @param object $source DataSource object
  * @return string Datasource name, or null if source is not present
  *    in the ConnectionManager.
  */
-	public static function getSourceName(&$source) {
+	public static function getSourceName($source) {
 		$_this = ConnectionManager::getInstance();
 		foreach ($_this->_dataSources as $name => $ds) {
 			if ($ds == $source) {

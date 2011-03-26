@@ -1449,7 +1449,7 @@ class Model extends Object {
  * @param mixed $id ID of record in this model
  * @access private
  */
-	function __saveMulti($joined, $id, &$db) {
+	function __saveMulti($joined, $id, $db) {
 		foreach ($joined as $assoc => $data) {
 
 			if (isset($this->hasAndBelongsToMany[$assoc])) {

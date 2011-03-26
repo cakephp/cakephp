@@ -263,7 +263,7 @@ class Sanitize {
  *
  * @param Model $model The model containing the data to be formatted
  */
-	public static function formatColumns(&$model) {
+	public static function formatColumns($model) {
 		foreach ($model->data as $name => $values) {
 			if ($name == $model->alias) {
 				$curModel =& $model;

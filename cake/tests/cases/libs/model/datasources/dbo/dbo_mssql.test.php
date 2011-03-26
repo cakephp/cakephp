@@ -75,7 +75,7 @@ class DboMssqlTestDb extends DboMssql {
  * @access protected
  * @return void
  */
-	function _matchRecords(&$model, $conditions = null) {
+	function _matchRecords($model, $conditions = null) {
 		return $this->conditions(array('id' => array(1, 2)));
 	}
 

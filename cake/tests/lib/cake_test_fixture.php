@@ -136,7 +136,7 @@ class CakeTestFixture {
  * @param object	$db	An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
  */
-	public function create(&$db) {
+	public function create($db) {
 		if (!isset($this->fields) || empty($this->fields)) {
 			return false;
 		}
@@ -153,7 +153,7 @@ class CakeTestFixture {
  * @param object	$db	An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
  */
-	public function drop(&$db) {
+	public function drop($db) {
 		if (empty($this->fields)) {
 			return false;
 		}
@@ -170,7 +170,7 @@ class CakeTestFixture {
  * @param object $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
  */
-	public function insert(&$db) {
+	public function insert($db) {
 		if (!isset($this->_insert)) {
 			$values = array();
 			if (isset($this->records) && !empty($this->records)) {
@@ -191,7 +191,7 @@ class CakeTestFixture {
  * @param object $db A reference to a db instance
  * @return boolean
  */
-	public function truncate(&$db) {
+	public function truncate($db) {
 		$fullDebug = $db->fullDebug;
 		$db->fullDebug = false;
 		$return = $db->truncate($this->table);
