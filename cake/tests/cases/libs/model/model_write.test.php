@@ -3762,7 +3762,6 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * TestFindAllWithoutForeignKey
  *
- * @link http://code.cakephp.org/tickets/view/69
  * @access public
  * @return void
  */
@@ -3827,7 +3826,6 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testProductUpdateAllWithForeignKey
  *
- * @link http://code.cakephp.org/tickets/view/69
  * @access public
  * @return void
  */
@@ -3878,7 +3876,6 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testProductUpdateAllWithoutForeignKey
  *
- * @link http://code.cakephp.org/tickets/view/69
  * @access public
  * @return void
  */
