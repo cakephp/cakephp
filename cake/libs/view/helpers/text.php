@@ -127,7 +127,7 @@ class TextHelper extends AppHelper {
 		$options .= ')';
 		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
 
-		return preg_replace_callback('/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*)/i',
+		return preg_replace_callback('/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
 						create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "mailto:" . $matches[0],' . $options . ');'), $text);
 	}
 /**
