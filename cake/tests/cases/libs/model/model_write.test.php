@@ -3903,7 +3903,7 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * testProductUpdateAllWithForeignKey
+ * testUpdateAllWithJoins
  *
  * @link http://code.cakephp.org/tickets/view/69
  * @access public
@@ -3954,7 +3954,7 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * testProductUpdateAllWithoutForeignKey
+ * testUpdateAllWithoutForeignKey
  *
  * @link http://code.cakephp.org/tickets/view/69
  * @access public
