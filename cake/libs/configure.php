@@ -286,14 +286,25 @@ class Configure {
  * @link http://book.cakephp.org/view/929/load
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identfied by $key.
+ * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
-	public static function load($key, $config = 'default') {
+	public static function load($key, $config = 'default', $merge = false) {
 		if (!isset(self::$_readers[$config])) {
 			return false;
 		}
 		$values = self::$_readers[$config]->read($key);
+		
+		if ($merge) {
+			$keys = array_keys($values);
+			foreach ($keys as $key) {
+				if (($c = self::read($key)) && is_array($values[$key]) && is_array($c)) {
+					$values[$key] = array_merge_recursive($c, $values[$key]);
+				}
+			}
+		}
+		
 		return self::write($values);
 	}
 

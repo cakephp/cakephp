@@ -204,6 +204,13 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertTrue($result);
 		
 		$this->assertEquals('value', Configure::read('Read'));
+		
+		$result = Configure::load('var_test2', 'test', true);
+		$this->assertTrue($result);
+				
+		$this->assertEquals('value2', Configure::read('Read'));
+		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
+		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
 	}
 
 /**
