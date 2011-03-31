@@ -838,6 +838,16 @@ class Xml extends XmlNode {
  * @access private
  */
 	var $encoding = 'UTF-8';
+	
+/**
+ * XML parse error
+ *
+ * @var array
+ * @access public
+ */
+	var $error = array();
+
+
 
 /**
  * Constructor.  Sets up the XML parser with options, gives it this object as
@@ -937,6 +947,10 @@ class Xml extends XmlNode {
 		));
 
 		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
+		$this->error['code'] = xml_get_error_code($this->__parser);
+		$this->error['message'] = xml_error_string(xml_get_error_code($this->__parser));  
+		$this->error['line_number'] = xml_get_current_line_number($this->__parser);
+		
 		$xml =& $this;
 		$count = count($vals);
 
