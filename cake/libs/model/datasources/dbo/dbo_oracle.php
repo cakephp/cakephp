@@ -463,7 +463,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function listSources() {
-		$cache = parent::listSources();
+		$cache = $this->cachedListSources();
 		if ($cache != null) {
 			return $cache;
 		}
@@ -477,7 +477,7 @@ class DboOracle extends DboSource {
 		while($r = $this->fetchRow()) {
 			$sources[] = strtolower($r[0]['name']);
 		}
-		parent::listSources($sources);
+		$this->cachedListSources($sources);
 		return $sources;
 	}
 
