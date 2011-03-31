@@ -223,7 +223,7 @@ class DataSource extends Object {
  * @return array Array of sources available in this datasource.
  * @access public
  */
-	function CachedListSources($data = null) {
+	function cachedListSources($data = null) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
