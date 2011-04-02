@@ -31,7 +31,6 @@ if (!class_exists('ShellDispatcher')) {
 	require CAKE . 'console' .  DS . 'cake.php';
 	ob_end_clean();
 }
-null
 
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
