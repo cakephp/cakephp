@@ -272,9 +272,9 @@ class Configure {
  * Loads stored configuration information from a resource.  You can add
  * config file resource readers with `Configure::config()`.
  *
- * Loaded configuration infomration will be merged with the current
+ * Loaded configuration information will be merged with the current
  * runtime configuration. You can load configuration files from plugins
- * by preceeding the filename with the plugin name.
+ * by preceding the filename with the plugin name.
  *
  * `Configure::load('Users.user', 'default')` 
  *
@@ -285,12 +285,12 @@ class Configure {
  *
  * @link http://book.cakephp.org/view/929/load
  * @param string $key name of configuration resource to load.
- * @param string $config Name of the configured reader to use to read the resource identfied by $key.
+ * @param string $config Name of the configured reader to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
-	public static function load($key, $config = 'default', $merge = false) {
+	public static function load($key, $config = 'default', $merge = true) {
 		if (!isset(self::$_readers[$config])) {
 			return false;
 		}

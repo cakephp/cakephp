@@ -193,24 +193,45 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
- * test load
+ * test load with merging
  *
  * @return void
  */
-	function testLoad() {
+	function testLoadWithMerge() {
 		Configure::config('test', new PhpReader(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
-		
+
 		$this->assertEquals('value', Configure::read('Read'));
-		
+
 		$result = Configure::load('var_test2', 'test', true);
 		$this->assertTrue($result);
-				
+
 		$this->assertEquals('value2', Configure::read('Read'));
 		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
 		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
+	}
+
+/**
+ * test loading with overwrite
+ *
+ * @return void
+ */
+	function testLoadNoMerge() {
+		Configure::config('test', new PhpReader(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS));
+
+		$result = Configure::load('var_test', 'test');
+		$this->assertTrue($result);
+
+		$this->assertEquals('value', Configure::read('Read'));
+
+		$result = Configure::load('var_test2', 'test', false);
+		$this->assertTrue($result);
+
+		$this->assertEquals('value2', Configure::read('Read'));
+		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
+		$this->assertNull(Configure::read('Deep.Deeper.Deepest'));
 	}
 
 /**
