@@ -78,7 +78,10 @@ class HtmlHelper extends AppHelper {
 		'legend' => '<legend>%s</legend>',
 		'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
 		'style' => '<style type="text/css"%s>%s</style>',
-		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
+		'charset' => array(
+            'default' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
+            'html5' => '<meta charset="%s" />',
+        ),
 		'ul' => '<ul%s>%s</ul>',
 		'ol' => '<ol%s>%s</ol>',
 		'li' => '<li%s>%s</li>',
@@ -135,6 +138,15 @@ class HtmlHelper extends AppHelper {
  * @access protected
  */
 	protected $_scriptBlockOptions = array();
+
+/**
+ * Document type setted
+ *
+ * @var string
+ * @access private
+ */
+	private $_docType = null;
+
 /**
  * Document type definitions
  *
@@ -199,6 +211,7 @@ class HtmlHelper extends AppHelper {
  */
 	public function docType($type = 'xhtml-strict') {
 		if (isset($this->__docTypes[$type])) {
+            $this->_docType = $type;
 			return $this->__docTypes[$type];
 		}
 		return null;
@@ -284,11 +297,19 @@ class HtmlHelper extends AppHelper {
  * @access public
  * @link http://book.cakephp.org/view/1436/charset
  */
-	public function charset($charset = null) {
+	public function charset($charset = null, $doctype = null) {
 		if (empty($charset)) {
 			$charset = strtolower(Configure::read('App.encoding'));
 		}
-		return sprintf($this->_tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
+
+        if(empty($doctype) || !isset($this->_tags['charset'][$doctype])) {
+            if(!empty($this->_docType) && isset($this->_tags['charset'][$this->_docType])) {
+                $doctype = $this->_docType;
+            } else {
+                $doctype = 'default';
+            }
+        }
+		return sprintf($this->_tags['charset'][$doctype], (!empty($charset) ? $charset : 'utf-8'));
 	}
 
 /**
