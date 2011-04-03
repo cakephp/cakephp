@@ -843,7 +843,7 @@ class Controller extends Object {
 				$object =& $this->{$object->alias};
 			}
 			$object->set($object->data);
-			$errors = array_merge($errors, $object->invalidFields());
+			$errors = array_merge($errors, (array)$object->invalidFields());
 		}
 
 		return $this->validationErrors = (!empty($errors) ? $errors : false);
