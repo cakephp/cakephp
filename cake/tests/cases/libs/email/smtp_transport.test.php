@@ -264,4 +264,14 @@ class StmpProtocolTest extends CakeTestCase {
 		$this->SmtpTransport->sendData();
 	}
 
+/**
+ * testQuit method
+ *
+ * @return void
+ */
+	public function testQuit() {
+		$this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
+		$this->SmtpTransport->disconnect();
+	}
+
 }
