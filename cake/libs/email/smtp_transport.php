@@ -139,12 +139,12 @@ class SmtpTransport extends AbstractTransport {
  * @thrown SocketException
  */
 	protected function _sendRcpt() {
-		$from = $this->_cakeEmail->getFrom();
+		$from = $this->_cakeEmail->from();
 		$this->_smtpSend('MAIL FROM:<' . key($from) . '>');
 
-		$to = $this->_cakeEmail->getTo();
-		$cc = $this->_cakeEmail->getCc();
-		$bcc = $this->_cakeEmail->getBcc();
+		$to = $this->_cakeEmail->to();
+		$cc = $this->_cakeEmail->cc();
+		$bcc = $this->_cakeEmail->bcc();
 		$emails = array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
 		foreach ($emails as $email) {
 			$this->_smtpSend('RCPT TO:<' . $email . '>');
@@ -162,7 +162,7 @@ class SmtpTransport extends AbstractTransport {
 
 		$headers = $this->_cakeEmail->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'), true));
 		$headers = $this->_headersToString($headers);
-		$message = implode("\r\n", $this->_cakeEmail->getMessage());
+		$message = implode("\r\n", $this->_cakeEmail->message());
 		$this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
 	}
 
