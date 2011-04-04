@@ -42,6 +42,9 @@ abstract class AbstractTransport {
 	protected function _headersToString($headers, $eol = "\r\n") {
 		$out = '';
 		foreach ($headers as $key => $value) {
+			if ($value === false || $value === null || $value === '') {
+				continue;
+			}
 			$out .= $key . ': ' . $value . $eol;
 		}
 		if (!empty($out)) {

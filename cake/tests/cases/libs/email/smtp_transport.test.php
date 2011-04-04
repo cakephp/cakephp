@@ -221,4 +221,47 @@ class StmpProtocolTest extends CakeTestCase {
 		$this->SmtpTransport->sendRcpt();
 	}
 
+/**
+ * testSendData method
+ *
+ * @return void
+ */
+	public function testSendData() {
+		$this->getMock('CakeEmail', array('message'), array(), 'TestCakeEmail');
+		$email = new TestCakeEmail();
+		$email->from('noreply@cakephp.org', 'CakePHP Test');
+		$email->to('cake@cakephp.org', 'CakePHP');
+		$email->cc(array('mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso'));
+		$email->bcc('phpnut@cakephp.org');
+		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+		$email->subject('Testing SMTP');
+		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
+
+		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
+		$data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
+		$data .= "Bcc: phpnut@cakephp.org\r\n";
+		$data .= "X-Mailer: CakePHP Email Component\r\n";
+		$data .= "Date: " . date(DATE_RFC2822) . "\r\n";
+		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
+		$data .= "Subject: Testing SMTP\r\n";
+		$data .= "Content-Type: text/plain; charset=UTF-8\r\n";
+		$data .= "Content-Transfer-Encoding: 7bit\r\n";
+		$data .= "\r\n";
+		$data .= "First Line\r\n";
+		$data .= "Second Line\r\n";
+		$data .= "\r\n";
+		$data .= "\r\n\r\n.\r\n";
+
+		$this->socket->expects($this->at(0))->method('write')->with("DATA\r\n");
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(2))->method('read')->will($this->returnValue("354 OK\r\n"));
+		$this->socket->expects($this->at(3))->method('write')->with($data);
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->SmtpTransport->setCakeEmail($email);
+		$this->SmtpTransport->sendData();
+	}
+
 }
