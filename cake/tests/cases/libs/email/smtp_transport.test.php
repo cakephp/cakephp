@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Lib', array('email/AbstractTransport', 'email/SmtpTransport'));
+App::import('Lib', array('CakeEmail', 'email/AbstractTransport', 'email/SmtpTransport'));
 
 /**
  * Help to test SmtpTransport
@@ -46,11 +46,21 @@ class SmtpTestTransport extends SmtpTransport {
 /**
  * Helper to change the config attribute
  *
- * @param array config
+ * @param array $config
  * @return void
  */
 	public function setConfig($config) {
 		$this->_config = array_merge($this->_config, $config);
+	}
+
+/**
+ * Helper to change the CakeEmail
+ *
+ * @param object $cakeEmail
+ * @return void
+ */
+	public function setCakeEmail($cakeEmail) {
+		$this->_cakeEmail = $cakeEmail;
 	}
 
 /**
@@ -177,6 +187,38 @@ class StmpProtocolTest extends CakeTestCase {
 		$this->socket->expects($this->never())->method('write')->with("AUTH LOGIN\r\n");
 		$this->SmtpTransport->setConfig(array('username' => null, 'password' => null));
 		$this->SmtpTransport->auth();
+	}
+
+/**
+ * testRcpt method
+ *
+ * @return void
+ */
+	public function testRcpt() {
+		$email = new CakeEmail();
+		$email->from('noreply@cakephp.org', 'CakePHP Test');
+		$email->to('cake@cakephp.org', 'CakePHP');
+		$email->bcc('phpnut@cakephp.org');
+		$email->cc(array('mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso'));
+
+		$this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(2))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(3))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<mark@cakephp.org>\r\n");
+		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(9))->method('write')->with("RCPT TO:<juan@cakephp.org>\r\n");
+		$this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(12))->method('write')->with("RCPT TO:<phpnut@cakephp.org>\r\n");
+		$this->socket->expects($this->at(13))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(14))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->SmtpTransport->setCakeEmail($email);
+		$this->SmtpTransport->sendRcpt();
 	}
 
 }
