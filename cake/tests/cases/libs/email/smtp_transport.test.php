@@ -44,6 +44,16 @@ class SmtpTestTransport extends SmtpTransport {
 	}
 
 /**
+ * Helper to change the config attribute
+ *
+ * @param array config
+ * @return void
+ */
+	public function setConfig($config) {
+		$this->_config = array_merge($this->_config, $config);
+	}
+
+/**
  * Disabled the socket change
  *
  * @return void
@@ -137,6 +147,36 @@ class StmpProtocolTest extends CakeTestCase {
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
 		$this->SmtpTransport->connect();
+	}
+
+/**
+ * testAuth method
+ *
+ * @return void
+ */
+	public function testAuth() {
+		$this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(2))->method('read')->will($this->returnValue("334 Login\r\n"));
+		$this->socket->expects($this->at(3))->method('write')->with("bWFyaw==\r\n");
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("334 Pass\r\n"));
+		$this->socket->expects($this->at(6))->method('write')->with("c3Rvcnk=\r\n");
+		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(8))->method('read')->will($this->returnValue("235 OK\r\n"));
+		$this->SmtpTransport->setConfig(array('username' => 'mark', 'password' => 'story'));
+		$this->SmtpTransport->auth();
+	}
+
+/**
+ * testAuthNoAuth method
+ *
+ * @return void
+ */
+	public function testAuthNoAuth() {
+		$this->socket->expects($this->never())->method('write')->with("AUTH LOGIN\r\n");
+		$this->SmtpTransport->setConfig(array('username' => null, 'password' => null));
+		$this->SmtpTransport->auth();
 	}
 
 }
