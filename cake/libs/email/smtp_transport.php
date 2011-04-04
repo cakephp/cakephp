@@ -202,7 +202,7 @@ class SmtpTransport extends AbstractTransport {
 		while ($checkCode !== false) {
 			$response = '';
 			$startTime = time();
-			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->smtpOptions['timeout'])) {
+			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->_config['timeout'])) {
 				$response .= $this->_socket->read();
 			}
 			if (substr($response, -2) !== "\r\n") {
