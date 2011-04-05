@@ -187,6 +187,9 @@ class DboOracle extends DboSource {
 			if (!empty($config['nls_comp'])) {
 				$this->execute('ALTER SESSION SET NLS_COMP='.$config['nls_comp']);
 			}
+			if (!empty($config['schema'])) {
+			  $this->execute('ALTER SESSION SET CURRENT_SCHEMA='.$config['schema']);
+			}
 			$this->execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 		} else {
 			$this->connected = false;
@@ -463,11 +466,17 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function listSources() {
+		$config = $this->config;
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
 		}
-		$sql = 'SELECT view_name AS name FROM all_views UNION SELECT table_name AS name FROM all_tables';
+		
+		if (!empty($config['schema'])) {
+		  $sql = 'SELECT view_name AS name FROM all_views WHERE owner = \'' . $config['schema'] . '\' UNION SELECT table_name AS name FROM all_tables  WHERE owner = \'' . $config['schema'] . '\'';
+		} else {
+		  $sql = 'SELECT view_name AS name FROM all_views UNION SELECT table_name AS name FROM all_tables';
+		}
 
 		if (!$this->execute($sql)) {
 			return false;
