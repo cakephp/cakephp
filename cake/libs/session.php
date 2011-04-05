@@ -117,13 +117,6 @@ class CakeSession extends Object {
  */
 	var $id = null;
 /**
- * Session Started
- *
- * @var boolean
- * @access protected
- */
-	var $_started = false;
-/**
  * Hostname
  *
  * @var string
@@ -188,7 +181,7 @@ class CakeSession extends Object {
 			session_write_close();
 		}
 		$this->__initSession();
-		$this->_started = $this->__startSession();
+		$this->__startSession();
 		return $this->started();
 	}
 /**
@@ -198,7 +191,7 @@ class CakeSession extends Object {
  * @return boolean True if session has been started.
  */
 	function started() {
-		if (isset($_SESSION) && $this->_started) {
+		if (isset($_SESSION) && session_id()) {
 			return true;
 		}
 		return false;
@@ -792,6 +785,6 @@ class CakeSession extends Object {
 		$table = $db->fullTableName(Configure::read('Session.table'));
 		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));
 		return true;
-	 }
+	}
 }
 ?>
