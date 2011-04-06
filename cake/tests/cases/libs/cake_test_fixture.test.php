@@ -391,6 +391,10 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->criticDb->setReturnValueAt(1, 'execute', false);
 		$return = $Fixture->drop($this->criticDb);
 		$this->assertFalse($return);
+
+		unset($Fixture->fields);
+		$return = $Fixture->drop($this->criticDb);
+		$this->assertFalse($return);
 	}
 
 /**

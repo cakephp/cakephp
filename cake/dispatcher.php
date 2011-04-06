@@ -359,8 +359,7 @@ class Dispatcher extends Object {
 		}
 		$this->webroot = $base . '/';
 
-		$docRoot = env('DOCUMENT_ROOT');
-		$script = realpath(env('SCRIPT_FILENAME'));
+		$docRoot = realpath(env('DOCUMENT_ROOT'));
 		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
 
 		if (!empty($base) || !$docRootContainsWebroot) {

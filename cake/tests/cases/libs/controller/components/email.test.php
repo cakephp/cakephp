@@ -437,6 +437,9 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpSendMultipleTo() {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
 		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = array('postmaster@localhost', 'root@localhost');
 		$this->Controller->EmailTest->from = 'noreply@example.com';
@@ -737,6 +740,8 @@ HTMLBLOC;
 	function testSendDebug() {
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->cc = 'cc@example.com';
+		$this->Controller->EmailTest->bcc = 'bcc@example.com';
 		$this->Controller->EmailTest->subject = 'Cake Debug Test';
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 		$this->Controller->EmailTest->template = null;
@@ -749,6 +754,8 @@ HTMLBLOC;
 		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
 		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
 		$this->assertPattern('/From: noreply@example.com\n/', $result);
+		$this->assertPattern('/Cc: cc@example.com\n/', $result);
+		$this->assertPattern('/Bcc: bcc@example.com\n/', $result);
 		$this->assertPattern('/Date: ' . preg_quote(date(DATE_RFC2822)) . '\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);

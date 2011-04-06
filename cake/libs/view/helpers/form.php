@@ -363,10 +363,6 @@ class FormHelper extends AppHelper {
 					unset($options['label']);
 				}
 				$submitOptions = $options;
-
-				if (!$submit) {
-					$submit = __('Submit', true);
-				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
@@ -1309,7 +1305,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1431/submit
  */
 	function submit($caption = null, $options = array()) {
-		if (!$caption) {
+		if (!is_string($caption) && empty($caption)) {
 			$caption = __('Submit', true);
 		}
 		$out = null;
@@ -1426,7 +1422,7 @@ class FormHelper extends AppHelper {
 		$style = null;
 		$tag = null;
 		$attributes += array(
-			'class' => null, 
+			'class' => null,
 			'escape' => true,
 			'secure' => null,
 			'empty' => '',
@@ -1843,8 +1839,11 @@ class FormHelper extends AppHelper {
 					if ($time[0] == 0 && $timeFormat == '12') {
 						$time[0] = 12;
 					}
-					$hour = $time[0];
-					$min = $time[1];
+					$hour = $min = null;
+					if (isset($time[1])) {
+						$hour = $time[0];
+						$min = $time[1];
+					}
 				}
 			}
 		}
@@ -2049,6 +2048,8 @@ class FormHelper extends AppHelper {
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
+						} elseif ($attributes['class'] === 'form-error') {
+							$attributes['class'] = 'checkbox ' . $attributes['class'];
 						}
 						$label = $this->label(null, $title, $label);
 						$item = sprintf(
@@ -2190,10 +2191,19 @@ class FormHelper extends AppHelper {
 		} else {
 			$secure = (isset($this->params['_Token']) && !empty($this->params['_Token']));
 		}
+
+		$fieldName = null;
+		if ($secure && !empty($options['name'])) {
+			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
+			if (isset($matches[1])) {
+				$fieldName = $matches[1];
+			}
+		}
+
 		$result = parent::_initInputField($field, $options);
 
 		if ($secure) {
-			$this->__secure();
+			$this->__secure($fieldName);
 		}
 		return $result;
 	}

@@ -3051,7 +3051,8 @@ class ModelWriteTest extends BaseModelTest {
 					'published' => 'Y',
 					'user_id' => 1
 			))
-		), array('validate' => 'only'));
+		), array('validate' => 'first'));
+		$this->assertFalse($result);
 	}
 
 /**

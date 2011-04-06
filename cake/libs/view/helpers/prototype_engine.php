@@ -45,10 +45,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'error' => 'onFailure'
 		),
 		'sortable' => array(
-			'start' => 'onStart',
 			'sort' => 'onChange',
 			'complete' => 'onUpdate',
-			'distance' => 'snap',
 		),
 		'drag' => array(
 			'snapGrid' => 'snap',
@@ -246,7 +244,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		$safe = array_keys($this->_callbackArguments['request']);
 		$options = $this->_prepareCallbacks('request', $options, $safe);
-		if (isset($options['dataExpression'])) {
+		if (!empty($options['dataExpression'])) {
 			$safe[] = 'parameters';
 			unset($options['dataExpression']);
 		}
@@ -261,6 +259,9 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * Create a sortable element.
  *
  * #### Note: Requires scriptaculous to be loaded.
+ *
+ * The scriptaculous implementation of sortables does not suppot the 'start'
+ * and 'distance' options.
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
@@ -330,10 +331,14 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		unset($options['handle']);
 
 		if (isset($options['min']) && isset($options['max'])) {
-			$options['range'] = array($options['min'], $options['max']);
+			$options['range'] = sprintf('$R(%s,%s)', $options['min'], $options['max']);
 			unset($options['min'], $options['max']);
 		}
-		$optionString = $this->_processOptions('slider', $options);
+		$options = $this->_mapOptions('slider', $options);
+		$options = $this->_prepareCallbacks('slider', $options);
+		$optionString = $this->_parseOptions(
+			$options, array_merge(array_keys($this->_callbackArguments['slider']), array('range'))
+		);
 		if (!empty($optionString)) {
 			$optionString = ', {' . $optionString . '}';
 		}

@@ -252,7 +252,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		}
 		$options['url'] = $url;
 		$options = $this->_prepareCallbacks('request', $options);
-		if (isset($options['dataExpression'])) {
+		if (!empty($options['dataExpression'])) {
 			$callbacks[] = 'data';
 			unset($options['dataExpression']);
 		} elseif (!empty($data)) {

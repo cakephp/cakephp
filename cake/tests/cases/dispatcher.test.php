@@ -1173,7 +1173,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->baseUrl();
 		$expected = '/index.php';
 		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/';
+		$expectedWebroot = '/app/webroot/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 
 		Configure::write('App.baseUrl', '/CakeBB/app/webroot/index.php');
@@ -1287,7 +1287,7 @@ class DispatcherTest extends CakeTestCase {
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$expected = array('missingController', array(array(
 			'className' => 'SomeControllerController',
-			'webroot' => '/',
+			'webroot' => '/app/webroot/',
 			'url' => 'some_controller/home/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1310,7 +1310,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('privateAction', array(array(
 			'className' => 'SomePagesController',
 			'action' => '_protected',
-			'webroot' => '/',
+			'webroot' => '/app/webroot/',
 			'url' => 'some_pages/_protected/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1333,7 +1333,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('missingAction', array(array(
 			'className' => 'SomePagesController',
 			'action' => 'home',
-			'webroot' => '/',
+			'webroot' => '/app/webroot/',
 			'url' => '/index.php/some_pages/home/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1348,7 +1348,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('missingAction', array(array(
 			'className' => 'SomePagesController',
 			'action' => 'redirect',
-			'webroot' => '/',
+			'webroot' => '/app/webroot/',
 			'url' => '/index.php/some_pages/redirect/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1455,7 +1455,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch($url);
 		$expected = array('missingController', array(array(
 			'className' => 'Controller',
-			'webroot' => '/',
+			'webroot' => '/app/webroot/',
 			'url' => 'http://google.com',
 			'base' => '/index.php'
 		)));
