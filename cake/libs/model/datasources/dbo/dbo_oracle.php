@@ -503,7 +503,7 @@ class DboOracle extends DboSource {
 		if (!empty($model->sequence)) {
 			$this->_sequenceMap[$table] = $model->sequence;
 		} elseif (!empty($model->table)) {
-			$this->_sequenceMap[$table] = $model->table . '_seq';
+			$this->_sequenceMap[$table] = $model->tablePrefix . $model->table . '_seq';
 		}
 
 		$cache = parent::describe($model);
