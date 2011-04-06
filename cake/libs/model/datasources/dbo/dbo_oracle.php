@@ -906,7 +906,18 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastInsertId($source) {
-		$sequence = $this->_sequenceMap[$source];
+		if (empty($this->_sequenceMap[$source])) {
+	
+			$model = ClassRegistry::init($source);
+	
+			if (!empty($model->sequence)) {
+				$sequence = $model->sequence;
+			} elseif (!empty($model->table)) {
+				$sequence = $model->tablePrefix . $model->table . '_seq';
+			}
+		} else {
+			$sequence = $this->_sequenceMap[$source];
+		}
 		$sql = "SELECT $sequence.currval FROM dual";
 
 		if (!$this->execute($sql)) {
