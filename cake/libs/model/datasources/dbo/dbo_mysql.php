@@ -562,7 +562,14 @@ class DboMysql extends DboMysqlBase {
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
-
+	
+		// Support any SET ... = ... (http://dev.mysql.com/doc/refman/5.1/en/set-option.html)	
+		if (!empty($config['settings'])) {
+			foreach ($config['settings'] as $name => $value) {
+				$this->_execute("SET " . $name . " = " . $value);
+			}
+		}
+		
 		$this->_useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
 
 		return $this->connected;
