@@ -363,7 +363,9 @@ class HttpSocket extends CakeSocket {
 			$this->disconnect();
 		}
 
-		if (!App::import('Lib', $this->responseClass)) {
+		list($plugin, $responseClass) = pluginSplit($this->responseClass, true);
+		App::uses($this->responseClass, $plugin . 'Network/Http');
+		if (!class_exists($responseClass)) {
 			throw new SocketException(__d('cake_dev', 'Class %s not found.', $this->responseClass));
 		}
 		$responseClass = $this->responseClass;
