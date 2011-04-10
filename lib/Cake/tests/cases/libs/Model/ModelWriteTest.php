@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once dirname(__FILE__) . DS . 'model.test.php';
+require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 /**
  * ModelWriteTest
  *

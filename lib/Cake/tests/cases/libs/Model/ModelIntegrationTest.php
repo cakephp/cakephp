@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once dirname(__FILE__) . DS . 'model.test.php';
+require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 App::uses('DboSource', 'Model/Datasource');
 
 /**
