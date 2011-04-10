@@ -289,23 +289,26 @@ class View extends Object {
  * This realizes the concept of Elements, (or "partial layouts")  and the $params array is used to send
  * data to be used in the element.  Elements can be cached improving performance by using the `cache` option.
  *
- * ### Special params
- *
- * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
- *   If an array, the following keys can be used:
- *   - `config` - Used to store the cached element in a custom cache configuration.
- *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
- * - `plugin` - Load an element from a specific plugin.
- *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
  *    view (i.e. the Element)
+ * @param array $params Params for caching and loading from a plugin
+ *    - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
+ *       - If an array, the following keys can be used:
+ *       - `config` Used to store the cached element in a custom cache configuration.
+ *       - `key` Used to define the key used in the Cache::write().  It will be prefixed with `element_`
+ *    - `plugin` - Load an element from a specific plugin.
  * @param boolean $callbacks Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * @return string Rendered Element
  */
-	public function element($name, $params = array(), $callbacks = false) {
+	public function element($name, $variables = array(), $params = array(), $callbacks = false) {
 		$file = $plugin = $key = null;
+
+		if (is_bool($params)) {
+			$callbacks = $params;
+			$params = array();
+		}
 
 		if (isset($params['plugin'])) {
 			$plugin = $params['plugin'];
@@ -315,7 +318,7 @@ class View extends Object {
 		}
 
 		if (isset($params['cache'])) {
-			$keys = array_merge(array($plugin, $name), array_keys($params));
+			$keys = array_merge(array($plugin, $name), array_keys($params), array_keys($variables));
 			$caching = array(
 				'config' => $this->elementCache,
 				'key' => implode('_', $keys)
@@ -343,7 +346,7 @@ class View extends Object {
 			if ($callbacks) {
 				$this->Helpers->trigger('beforeRender', array($file));
 			}
-			$element = $this->_render($file, array_merge($this->viewVars, $params));
+			$element = $this->_render($file, array_merge($this->viewVars, $variables));
 			if ($callbacks) {
 				$this->Helpers->trigger('afterRender', array($file, $element));
 			}
