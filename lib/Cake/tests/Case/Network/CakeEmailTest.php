@@ -25,6 +25,12 @@ App::import('Core', 'CakeEmail');
 class TestCakeEmail extends CakeEmail {
 
 /**
+ * Config
+ *
+ */
+	protected $_config = array();
+
+/**
  * Wrap to protected method
  *
  */

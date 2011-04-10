@@ -216,6 +216,13 @@ class CakeEmail {
 	protected $_boundary = null;
 
 /**
+ * Configuration to transport
+ *
+ * @var mixed
+ */
+	protected $_config = 'default';
+
+/**
  * Constructor
  *
  */
@@ -728,14 +735,48 @@ class CakeEmail {
 	}
 
 /**
+ * Configuration to use when send email
+ *
+ * @param mixed $config String with configuration name (from email.php), array with config or null to return current config
+ * @return string
+ */
+	public function config($config = null) {
+		if (!empty($config)) {
+			if (is_array($config)) {
+				$this->_config = $config;
+			} else {
+				$this->_config = (string)$config;
+			}
+		}
+		return $this->_config;
+	}
+
+/**
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
  * @thrown SocketExpcetion
  */
 	public function send($content = null) {
+		if (is_string($this->_config)) {
+			if (!config('email')) {
+				throw new SocketException(__('%s not found.', APP . DS . 'email.php'));
+			}
+			$configs = new EMAIL_CONFIG();
+			if (!isset($configs->{$this->_config})) {
+				throw new SocketException(__('Unknown email configuration "%s".', $this->_config));
+			}
+			$config = $configs->{$this->_config};
+		} else {
+			$config = $this->_config;
+		}
+
 		if (empty($this->_from)) {
-			throw new SocketException(__('From is not specified.'));
+			if (!empty($config['from'])) {
+				$this->to($config['from']);
+			} else {
+				throw new SocketException(__('From is not specified.'));
+			}
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
 			throw new SocketExpcetion(__('You need specify one destination on to, cc or bcc.'));
@@ -782,7 +823,7 @@ class CakeEmail {
 			throw new SocketException(__('The "%s" do not have send method.', $transportClassname));
 		}
 
-		$transport = new $transportClassname();
+		$transport = new $transportClassname($config);
 		return $transport->send($this);
 	}
 
