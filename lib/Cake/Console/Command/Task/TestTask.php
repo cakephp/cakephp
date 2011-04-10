@@ -181,13 +181,14 @@ class TestTask extends BakeTask {
 		if ($this->plugin) {
 			$path = Inflector::pluralize($type);
 			if ($type === 'helper') {
-				$path = 'views' . DS . $path;
+				$path = 'View/Helper';
 			} elseif ($type === 'component') {
-				$path = 'controllers' . DS . $path;
+				$path = 'Controller/Component';
 			} elseif ($type === 'behavior') {
-				$path = 'models' . DS . $path;
+				$path = 'Model/Behavior';
 			}
-			$options = App::objects($type, App::pluginPath($this->plugin) . $path, false);
+			$plugin = $this->plugin . '.';
+			$options = App::objects($plugin . $type);
 		} else {
 			$options = App::objects($type);
 		}

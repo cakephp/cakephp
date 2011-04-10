@@ -253,7 +253,7 @@ class AppImportTest extends CakeTestCase {
 
 		App::build(array(
 			'plugins' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS
 			)
 		));
 		$result = App::objects('plugin', null, false);
@@ -270,7 +270,7 @@ class AppImportTest extends CakeTestCase {
  */
 	function testListObjectsInPlugin() {
 		App::build(array(
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
@@ -442,7 +442,7 @@ class AppImportTest extends CakeTestCase {
  */
 	function testPluginImporting() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
@@ -485,7 +485,7 @@ class AppImportTest extends CakeTestCase {
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
 		App::build(array(
 			'View/Helper' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'Helper' . DS
 			)
 		));
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
@@ -600,7 +600,7 @@ class AppImportTest extends CakeTestCase {
 			$this->markTestSkipped('Cannot test loading of classes that exist.');
 		}
 		App::build(array(
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
 		));
 		$toLoad = array('PersisterOne', 'PersisterTwo');
 		$load = App::import('Model', $toLoad);

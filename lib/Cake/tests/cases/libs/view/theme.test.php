@@ -118,7 +118,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->ThemeView = new ThemeView($this->PostsController);
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
 	}
 
@@ -150,15 +150,15 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->theme = 'test_theme';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'tests' . DS .'index.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
 		$result = $ThemeView->getLayoutFileName('plugin_default');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
 		$result = $ThemeView->getLayoutFileName('default');
 		$this->assertEqual($result, $expected);
 	}
@@ -178,25 +178,25 @@ class ThemeViewTest extends CakeTestCase {
 
 		$ThemeView = new TestThemeView($this->Controller);
 		$ThemeView->theme = 'test_theme';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS .'pages' . DS .'home.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS .'pages' . DS .'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'posts' . DS .'index.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'posts' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('/posts/index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
 		$ThemeView->layoutPath = 'rss';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'layouts' . DS . 'rss' . DS . 'default.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'rss' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
 		$ThemeView->layoutPath = 'email' . DS . 'html';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}

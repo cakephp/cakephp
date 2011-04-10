@@ -47,7 +47,7 @@ class CakeLogTest extends CakeTestCase {
  */
 	function testImportingLoggers() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 

@@ -527,7 +527,9 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testUsingAppLibsHandler() {
 		App::build(array(
-			'Model/Datasource/Session' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS . 'Session' . DS),
+			'Model/Datasource/Session' => array(
+				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
+			),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 		Configure::write('Session', array(
