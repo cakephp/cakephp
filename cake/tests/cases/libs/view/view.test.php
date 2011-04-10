@@ -422,7 +422,7 @@ class ViewTest extends CakeTestCase {
 		$result = $this->View->element('test_element');
 		$this->assertEqual($result, 'this is the test element');
 		
-		$result = $this->View->element('plugin_element', array('plugin' => 'test_plugin'));
+		$result = $this->View->element('plugin_element', array(), array('plugin' => 'test_plugin'));
 		$this->assertEqual($result, 'this is the plugin element using params[plugin]');
 		
 		$this->View->plugin = 'test_plugin';
