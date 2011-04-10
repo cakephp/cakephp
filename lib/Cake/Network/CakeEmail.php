@@ -546,10 +546,7 @@ class CakeEmail {
 
 		$headers += $this->_headers;
 		if (!isset($headers['X-Mailer'])) {
-			$headers['X-Mailer'] = Configure::read('Email.XMailer');
-			if (empty($headers['X-Mailer'])) {
-				$headers['X-Mailer'] = self::EMAIL_CLIENT;
-			}
+			$headers['X-Mailer'] = self::EMAIL_CLIENT;
 		}
 		if (!isset($headers['Date'])) {
 			$headers['Date'] = date(DATE_RFC2822);
