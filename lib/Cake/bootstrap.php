@@ -51,37 +51,37 @@ if (!defined('APP')) {
 /**
  * Path to the application's models directory.
  */
-	define('MODELS', APP.'models'.DS);
+	define('MODELS', APP.'Model'.DS);
 
 /**
  * Path to model behaviors directory.
  */
-	define('BEHAVIORS', MODELS.'behaviors'.DS);
+	define('BEHAVIORS', MODELS.'Behavior'.DS);
 
 /**
  * Path to the application's controllers directory.
  */
-	define('CONTROLLERS', APP.'controllers'.DS);
+	define('CONTROLLERS', APP.'Controller'.DS);
 
 /**
  * Path to the application's components directory.
  */
-	define('COMPONENTS', CONTROLLERS.'components'.DS);
+	define('COMPONENTS', CONTROLLERS.'Component'.DS);
 
 /**
  * Path to the application's libs directory.
  */
-	define('APPLIBS', APP.'libs'.DS);
+	define('APPLIBS', APP.'Lib'.DS);
 
 /**
  * Path to the application's views directory.
  */
-	define('VIEWS', APP.'views'.DS);
+	define('VIEWS', APP.'View'.DS);
 
 /**
  * Path to the application's helpers directory.
  */
-	define('HELPERS', VIEWS.'helpers'.DS);
+	define('HELPERS', VIEWS.'Helper'.DS);
 
 /**
  * Path to the application's view's layouts directory.
