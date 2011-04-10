@@ -25,6 +25,23 @@
 abstract class AbstractTransport {
 
 /**
+ * Configurations
+ *
+ * @var array
+ */
+	protected $_config = array();
+
+/**
+ * Constructor
+ *
+ */
+	public function __construct($config = array()) {
+		if (!empty($config)) {
+			$this->_config = $config;
+		}
+	}
+
+/**
  * Send mail
  *
  * @params object $email CakeEmail

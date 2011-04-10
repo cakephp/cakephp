@@ -40,10 +40,10 @@ class MailTransport extends AbstractTransport {
 		unset($headers['To']);
 		$header = $this->_headersToString($headers, $eol);
 		$message = implode($eol, $email->message());
-		if (ini_get('safe_mode')) {
+		if (ini_get('safe_mode') || !isset($this->_config['additionalParameters'])) {
 			return @mail($to, $email->subject(), $message, $header);
 		}
-		return @mail($to, $email->subject(), $message, $header, (string)Configure::read('Email.Mail.AdditionalParameters'));
+		return @mail($to, $email->subject(), $message, $header, $this->_config['additionalParameters']);
 	}
 
 }

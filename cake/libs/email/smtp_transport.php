@@ -26,13 +26,6 @@ App::import('Core', 'CakeSocket');
 class SmtpTransport extends AbstractTransport {
 
 /**
- * Config
- *
- * @var array
- */
-	protected $_config;
-
-/**
  * Socket to SMTP server
  *
  * @var object CakeScoket
@@ -62,11 +55,8 @@ class SmtpTransport extends AbstractTransport {
 			'password' => null,
 			'client' => null
 		);
-		$userConfig = Configure::read('Email.Smtp');
-		if (is_array($userConfig)) {
-			$config = array_merge($config, array_change_key_case($userConfig, CASE_LOWER));
-		}
-		$this->_config = $config;
+		$this->_config += $config;
+
 		$this->_cakeEmail = $email;
 
 		$this->_connect();

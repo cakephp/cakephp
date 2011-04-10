@@ -51,8 +51,10 @@ class EMAIL_CONFIG {
 		'from' => array('My Site', 'site@localhost'),
 		'host' => 'localhost',
 		'port' => 25,
+		'timeout' => 30,
 		'username' => 'user',
-		'password' => 'secret'
+		'password' => 'secret',
+		'client' => null
 	);
 
 }
