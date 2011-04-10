@@ -849,6 +849,7 @@ class CakeEmail {
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'mail';
 		$this->_attachments = array();
+		$this->_config = 'default';
 	}
 
 /**
