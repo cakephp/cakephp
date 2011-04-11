@@ -269,7 +269,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->never())->method('_stop');
 
-		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
+		$file = TESTS . 'Case' . DS . 'Model' . DS . 'MyClassTest.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
@@ -277,7 +277,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = TESTS . 'cases' . DS . 'controllers' . DS . 'comments_controller.test.php';
+		$file = TESTS . 'Case' . DS . 'Controller' . DS . 'CommentsControllerTest.php';
 		$this->Task->expects($this->at(5))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
@@ -339,7 +339,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->getObjectType();
 
 		$result = $this->Task->getObjectType();
-		$this->assertEqual($result, $this->Task->classTypes[1]);
+		$this->assertEqual($result, $this->Task->classTypes['Controller']);
 	}
 
 /**
@@ -525,7 +525,7 @@ class TestTaskTest extends CakeTestCase {
 	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'TestTest';
 
-		$path = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'form.test.php';
+		$path = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS  .'FormHelperTest.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
 
@@ -544,7 +544,7 @@ class TestTaskTest extends CakeTestCase {
 		), true);
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'other_helper_helper.test.php';
+		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperHelperTest.php';
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls(
@@ -572,28 +572,28 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/tests/';
 
 		$result = $this->Task->testCaseFileName('Model', 'Post');
-		$expected = $this->Task->path . 'cases' . DS . 'models' . DS . 'post.test.php';
+		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'PostTest.php';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Task->testCaseFileName('Helper', 'Form');
-		$expected = $this->Task->path . 'cases' . DS . 'helpers' . DS . 'form.test.php';
+		$expected = $this->Task->path . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Task->testCaseFileName('Controller', 'Posts');
-		$expected = $this->Task->path . 'cases' . DS . 'controllers' . DS . 'posts_controller.test.php';
+		$expected = $this->Task->path . 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Task->testCaseFileName('Behavior', 'Containable');
-		$expected = $this->Task->path . 'cases' . DS . 'behaviors' . DS . 'containable.test.php';
+		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Task->testCaseFileName('Component', 'Auth');
-		$expected = $this->Task->path . 'cases' . DS . 'components' . DS . 'auth.test.php';
+		$expected = $this->Task->path . 'Case' . DS . 'Controller' . DS  . 'Component' . DS . 'AuthComponentTest.php';
 		$this->assertEqual($result, $expected);
 
 		$this->Task->plugin = 'TestTest';
 		$result = $this->Task->testCaseFileName('Model', 'Post');
-		$expected = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'models' . DS . 'post.test.php';
+		$expected = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'Case' . DS . 'Model' . DS . 'PostTest.php';
 		$this->assertEqual($result, $expected);
 	}
 

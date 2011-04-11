@@ -49,7 +49,13 @@ class TestTask extends BakeTask {
  * @var array
  * @access public
  */
-	public $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
+	public $classTypes =  array(
+		'Model' => 'Model',
+		'Controller' => 'Controller',
+		'Component' => 'Controller/Component',
+		'Behavior' => 'Model/Behavior',
+		'Helper' => 'View/Helper'
+	);
 
 /**
  * Internal list of fixtures that have been added so far.
@@ -95,8 +101,8 @@ class TestTask extends BakeTask {
 
 		if ($type) {
 			$type = Inflector::camelize($type);
-			if (!in_array($type, $this->classTypes)) {
-				$this->error(__d('cake_console', 'Incorrect type provided. Please choose one of %s', implode(', ', $this->classTypes)));
+			if (!isset($this->classTypes[$type])) {
+				$this->error(__d('cake_console', 'Incorrect type provided. Please choose one of %s', implode(', ', array_keys($this->classTypes))));
 			}
 		} else {
 			$type = $this->getObjectType();
@@ -119,7 +125,11 @@ class TestTask extends BakeTask {
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
 		}
-		$fullClassName = $this->getRealClassName($type, $className);
+		$fullClassName = $className;
+
+		if (!$this->interactive) {
+			$fullClassName = $this->getRealClassName($type, $className);
+		}
 
 		$methods = array();
 		if (class_exists($fullClassName)) {
@@ -158,16 +168,18 @@ class TestTask extends BakeTask {
 		$this->hr();
 
 		$keys = array();
-		foreach ($this->classTypes as $key => $option) {
-			$this->out(++$key . '. ' . $option);
-			$keys[] = $key;
+		$i = 0;
+		foreach ($this->classTypes as $option => $package) {
+			$this->out(++$i . '. ' . $option);
+			$keys[] = $i;
 		}
 		$keys[] = 'q';
 		$selection = $this->in(__d('cake_console', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
 		if ($selection == 'q') {
 			return $this->_stop();
 		}
-		return $this->classTypes[$selection - 1];
+		$types = array_keys($this->classTypes);
+		return $types[$selection - 1];
 	}
 
 /**
@@ -257,7 +269,7 @@ class TestTask extends BakeTask {
  * @return string Real classname
  */
 	public function getRealClassName($type, $class) {
-		if (strtolower($type) == 'model') {
+		if (strtolower($type) == 'model' || empty($this->classTypes[$type])) {
 			return $class;
 		}
 		return $class . $type;
@@ -417,12 +429,14 @@ class TestTask extends BakeTask {
  * @return string filename the test should be created on.
  */
 	public function testCaseFileName($type, $className) {
-		$path = $this->getPath();;
-		$path .= 'cases' . DS . strtolower($type) . 's' . DS;
-		if (strtolower($type) == 'controller') {
+		$path = $this->getPath() . 'Case' . DS;
+		if (isset($this->classTypes[$type])) {
+			$path .= $this->classTypes[$type] . DS;
+		}
+		if (!$this->interactive) {
 			$className = $this->getRealClassName($type, $className);
 		}
-		return $path . Inflector::underscore($className) . '.test.php';
+		return $path . Inflector::camelize($className) . 'Test.php';
 	}
 
 /**
