@@ -57,7 +57,7 @@ class FixtureTask extends BakeTask {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);
-		$this->path = APP . 'tests' . DS . 'fixtures' . DS;
+		$this->path = APP . 'tests' . DS . 'Fixture' . DS;
 	}
 
 /**
@@ -249,7 +249,7 @@ class FixtureTask extends BakeTask {
 		$vars = array_merge($defaults, $otherVars);
 
 		$path = $this->getPath();
-		$filename = Inflector::underscore($model) . '_fixture.php';
+		$filename = Inflector::camelize($model) . 'Fixture.php';
 
 		$this->Template->set('model', $model);
 		$this->Template->set($vars);
@@ -268,7 +268,7 @@ class FixtureTask extends BakeTask {
 	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;
+			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'Fixture' . DS;
 		}
 		return $path;
 	}
