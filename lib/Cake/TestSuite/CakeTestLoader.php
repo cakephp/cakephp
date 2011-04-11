@@ -38,7 +38,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
  */
 	protected function _resolveTestFile($filePath, $params) {
 		$basePath = $this->_basePath($params) . DS . $filePath;
-		$ending = '.test.php';
+		$ending = 'Test.php';
 		return (strpos($basePath, $ending) === (strlen($basePath) - strlen($ending))) ? $basePath : $basePath . $ending;
 	}
 
@@ -56,7 +56,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 			$result = APP_TEST_CASES;
 		} else if (!empty($params['plugin'])) {
 			$pluginPath = App::pluginPath($params['plugin']);
-			$result = $pluginPath . 'tests' . DS . 'cases';
+			$result = $pluginPath . 'tests' . DS . 'Case';
 		}
 		return $result;
 	}
@@ -72,7 +72,9 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 
 		$testCases = array();
 		foreach ($fileList as $testCaseFile) {
-			$testCases[$testCaseFile] = str_replace($directory . DS, '', $testCaseFile);
+			$case = str_replace($directory . DS, '', $testCaseFile);
+			$case = str_replace('Test.php', '', $case);
+			$testCases[$testCaseFile] = $case;
 		}
 		return $testCases;
 	}
@@ -92,7 +94,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 
 		$files = new RegexIterator(
 			new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
-			'/.*\.test.php$/'
+			'/.*Test.php$/'
 		);
 
 		foreach ($files as $file) {

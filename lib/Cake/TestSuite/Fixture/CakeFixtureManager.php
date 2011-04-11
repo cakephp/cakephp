@@ -105,42 +105,37 @@ class CakeFixtureManager {
 
 			if (strpos($fixture, 'core.') === 0) {
 				$fixture = substr($fixture, strlen('core.'));
-				$fixturePaths[] = LIBS . 'tests' . DS . 'fixtures';
+				$fixturePaths[] = LIBS . 'tests' . DS . 'Fixture';
 			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));
 				$fixturePaths = array(
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures'
+					TESTS . 'Fixture'
 				);
 			} elseif (strpos($fixture, 'plugin.') === 0) {
 				$parts = explode('.', $fixture, 3);
 				$pluginName = $parts[1];
 				$fixture = $parts[2];
 				$fixturePaths = array(
-					App::pluginPath($pluginName) . 'tests' . DS . 'fixtures',
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures'
+					App::pluginPath($pluginName) . 'tests' . DS . 'Fixture',
+					TESTS . 'Fixture'
 				);
 			} else {
 				$fixturePaths = array(
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures',
-					LIBS . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
+					TESTS . 'Fixture',
+					LIBS  . 'tests' . DS . 'Fixture'
 				);
 			}
 
 			foreach ($fixturePaths as $path) {
-				if (is_readable($path . DS . $fixture . '_fixture.php')) {
-					$fixtureFile = $path . DS . $fixture . '_fixture.php';
+				$className = Inflector::camelize($fixture);
+				if (is_readable($path . DS . $className . 'Fixture.php')) {
+					$fixtureFile = $path . DS . $className . 'Fixture.php';
+					require_once($fixtureFile);
+					$fixtureClass = $className . 'Fixture';
+					$this->_loaded[$fixtureIndex] = new $fixtureClass($this->_db);
+					$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
 					break;
 				}
-			}
-
-			if (isset($fixtureFile)) {
-				require_once($fixtureFile);
-				$fixtureClass = Inflector::camelize($fixture) . 'Fixture';
-				$this->_loaded[$fixtureIndex] = new $fixtureClass($this->_db);
-				$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
 			}
 		}
 	}

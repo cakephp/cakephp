@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-define('CORE_TEST_CASES', LIBS . 'tests' . DS . 'cases');
-define('APP_TEST_CASES', TESTS . 'cases');
+define('CORE_TEST_CASES', LIBS . 'tests' . DS . 'Case');
+define('APP_TEST_CASES', TESTS . 'Case');
 
 App::uses('CakeTestSuiteCommand', 'TestSuite');
 
