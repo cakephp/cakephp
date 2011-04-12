@@ -21,6 +21,7 @@
  */
 
 App::uses('Sanitize', 'Utility');
+App::uses('Router', 'Routing');
 
 /**
  * Exception Renderer.

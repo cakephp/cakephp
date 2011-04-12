@@ -193,7 +193,7 @@ class TestsuiteShell extends Shell {
 		}
 
 		if (isset($this->args[1])) {
-			$params['case'] = Inflector::underscore($this->args[1]);
+			$params['case'] = $this->args[1];
 		}
 		return $params;
 	}
@@ -289,8 +289,8 @@ class TestsuiteShell extends Shell {
 		$i = 1;
 		$cases = array();
 		foreach ($testCases as $testCaseFile => $testCase) {
-			$case = explode(DS, str_replace('.test.php', '', $testCase));
-			$case[count($case) - 1] = Inflector::camelize($case[count($case) - 1]);
+			$case = explode(DS, str_replace('Test.php', '', $testCase));
+			$case[count($case) - 1] = $case[count($case) - 1];
 			$case = implode('/', $case);
 			$this->out("[$i] $case");
 			$cases[$i] = $case;
