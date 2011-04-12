@@ -20,7 +20,7 @@ App::uses('AppModel', 'Model');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
-require_once  CAKE_TESTS . 'cases' . DS . 'libs' . DS . 'model' . DS . 'models.php';
+require_once  CAKE_TESTS . 'Case' . DS . 'Model' . DS . 'models.php';
 
 /**
  * Test case for FormAuthentication

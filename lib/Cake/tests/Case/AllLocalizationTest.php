@@ -32,11 +32,9 @@ class AllLocalizationTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All localization class tests');
+		$suite = new CakeTestSuite('All localization class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'i18n.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'l10n.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'multibyte.test.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'I18n');
 		return $suite;
 	}
 }

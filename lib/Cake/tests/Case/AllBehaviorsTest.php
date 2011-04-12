@@ -31,15 +31,12 @@ class AllBehaviorsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('Model Behavior and all behaviors');
+		$suite = new CakeTestSuite('Model Behavior and all behaviors');
 
-		$path = CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behaviors' . DS;
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behavior_collection.test.php');
+		$path = CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS;
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'BehaviorCollectionTest.php');
 
-		$suite->addTestFile($path . 'acl.test.php');
-		$suite->addTestFile($path . 'containable.test.php');
-		$suite->addTestFile($path . 'translate.test.php');
-		$suite->addTestFile($path . 'tree.test.php');
+		$suite->addTestDirectory($path);
 		return $suite;
 	}
 }

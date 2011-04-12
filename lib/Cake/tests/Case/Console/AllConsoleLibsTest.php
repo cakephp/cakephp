@@ -34,9 +34,13 @@ class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new CakeTestSuite('All console lib classes');
 
-		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS;
-
-		$suite->addTestDirectory($path);
+		$path = CORE_TEST_CASES . DS . 'Console';
+		foreach (new DirectoryIterator(dirname(__FILE__)) as $file) {
+			if (!$file->isFile() || strpos($file, 'All') === 0) {
+				continue;
+			}
+			$suite->addTestFile($file->getRealPath());
+		}
 		return $suite;
 	}
 }

@@ -34,10 +34,10 @@ class AllComponentsTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new CakeTestSuite('All component class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component_collection.test.php');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components' . DS . 'auth');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ComponentTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ComponentCollectionTest.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Controller' . DS . 'Component');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Controller' . DS . 'Component' . DS . 'Auth');
 		return $suite;
 	}
 }

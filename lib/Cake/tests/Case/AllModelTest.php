@@ -34,11 +34,10 @@ class AllModelTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All Model related class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behavior_collection.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_read.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_write.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_validation.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_integration.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelReadTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelWriteTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelValidationTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelIntegrationTest.php');
 		return $suite;
 	}
 }

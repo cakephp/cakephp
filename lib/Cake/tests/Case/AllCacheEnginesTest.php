@@ -33,9 +33,7 @@ class AllCacheEnginesTest extends PHPUnit_Framework_TestSuite {
  */
 	public static function suite() {
 		$suite = new CakeTestSuite('All Cache related class tests');
-
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cache.test.php');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'cache');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache');
 		return $suite;
 	}
 }

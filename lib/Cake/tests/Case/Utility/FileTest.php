@@ -75,7 +75,7 @@ class FileTest extends CakeTestCase {
 		$result = $this->File->info();
 		$expecting = array(
 			'dirname' => dirname(__FILE__), 'basename' => basename(__FILE__),
-			'extension' => 'php', 'filename' =>'file.test'
+			'extension' => 'php', 'filename' =>'FileTest'
 		);
 		$this->assertEqual($result, $expecting);
 
@@ -84,7 +84,7 @@ class FileTest extends CakeTestCase {
 		$this->assertEqual($result, $expecting);
 
 		$result = $this->File->name();
-		$expecting = 'file.test';
+		$expecting = 'FileTest';
 		$this->assertEqual($result, $expecting);
 
 		$result = $this->File->md5();

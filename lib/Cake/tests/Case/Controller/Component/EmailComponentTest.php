@@ -1058,7 +1058,7 @@ HTMLBLOC;
 		$this->Controller->EmailTest->sendAs = 'text';
 		$this->assertTrue($this->Controller->EmailTest->send($body));
 		$msg = $this->Controller->Session->read('Message.email.message');
-		$this->assertPattern('/' . preg_quote('Content-Disposition: attachment; filename="email.test.php"') . '/', $msg);
+		$this->assertPattern('/' . preg_quote('Content-Disposition: attachment; filename="EmailComponentTest.php"') . '/', $msg);
 		$this->assertPattern('/' . preg_quote('Content-Disposition: attachment; filename="some-name.php"') . '/', $msg);
 	}
 

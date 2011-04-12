@@ -32,12 +32,9 @@ class AllTestSuiteTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Test Suite classes tests');
+		$suite = new CakeTestSuite('All Test Suite classes tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_case.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_fixture.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'html_coverage_report.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller_test_case.test.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'TestSuite');
 		return $suite;
 	}
 }

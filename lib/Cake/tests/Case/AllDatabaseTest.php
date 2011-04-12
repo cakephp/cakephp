@@ -34,18 +34,18 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('Datasources, Schema and DbAcl tests');
 
-		$path = CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS;
+		$path = CORE_TEST_CASES . DS . 'Model' . DS;
 		$tasks = array(
-			'db_acl',
-			'cake_schema',
-			'connection_manager',
-			'datasources' . DS . 'dbo_source',
-			'datasources' . DS . 'dbo' . DS . 'dbo_mysql',
-			'datasources' . DS . 'dbo' . DS . 'dbo_postgres',
-			'datasources' . DS . 'dbo' . DS . 'dbo_sqlite'
+			'DbAcl',
+			'CakeSchema',
+			'ConnectionManager',
+			'Datasource' . DS . 'DboSource',
+			'Datasource' . DS . 'Database' . DS . 'MySql',
+			'Datasource' . DS . 'Database' . DS . 'Postgres',
+			'Datasource' . DS . 'Database' . DS . 'Sqlite'
 		);
 		foreach ($tasks as $task) {
-			$suite->addTestFile($path . $task . '.test.php');
+			$suite->addTestFile($path . $task . 'Test.php');
 		}
 		return $suite;
 	}

@@ -32,22 +32,13 @@ class AllLibsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All non-MVC lib class tests');
+		$suite = new CakeTestSuite('All non-MVC lib class tests');
 		
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'basics.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_session.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'debugger.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'file.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'folder.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'inflector.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'log' . DS . 'file_log.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_log.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'class_registry.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'sanitize.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'set.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'string.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'validation.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'object_collection.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'BasicsTest.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Utility');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Datasource' . DS . 'CakeSessionTest.php');
+		//$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Model' . DS . 'Datasource' . DS . 'Session');
 		return $suite;
 	}
 }

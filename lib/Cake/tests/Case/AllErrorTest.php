@@ -34,10 +34,10 @@ class AllErrorTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All Error handling tests');
 
-		$libs = CORE_TEST_CASES . DS . 'libs' . DS;
+		$libs = CORE_TEST_CASES . DS;
 
-		$suite->addTestFile($libs . 'error' . DS . 'error_handler.test.php');
-		$suite->addTestFile($libs . 'error' . DS . 'exception_renderer.test.php');
+		$suite->addTestFile($libs . 'Error' . DS . 'ErrorHandlerTest.php');
+		$suite->addTestFile($libs . 'Error' . DS . 'ExceptionRendererTest.php');
 		return $suite;
 	}
 }
