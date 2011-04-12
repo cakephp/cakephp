@@ -118,7 +118,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testRenderWithUnknownFileType() {
 		$this->MediaView->viewVars = array(
-			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS,
+			'path' =>  LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS,
 			'id' => 'no_section.ini',
 			'extension' => 'ini',
 		);
