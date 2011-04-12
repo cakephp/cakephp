@@ -102,9 +102,9 @@ class ProjectTask extends Shell {
 				$success = false;
 			}
 			if ($this->consolePath($path) === true) {
-				$this->out(__d('cake_console', ' * app/console/cake.php path set.'));
+				$this->out(__d('cake_console', ' * app/Console/cake.php path set.'));
 			} else {
-				$this->err(__d('cake_console', 'Unable to set console path for app/console.'));
+				$this->err(__d('cake_console', 'Unable to set console path for app/Console.'));
 				$success = false;
 			}
 
@@ -194,7 +194,7 @@ class ProjectTask extends Shell {
 	public function createHome($dir) {
 		$app = basename($dir);
 		$path = $dir . 'views' . DS . 'pages' . DS;
-		$source = CAKE . 'console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
+		$source = LIBS . 'Console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
 		include($source);
 		return $this->createFile($path.'home.ctp', $output);
 	}
@@ -207,10 +207,10 @@ class ProjectTask extends Shell {
  * @return boolean success
  */
 	public function consolePath($path) {
-		$File = new File($path . 'console' . DS . 'cake.php');
+		$File = new File($path . 'Console' . DS . 'cake.php');
 		$contents = $File->read();
 		if (preg_match('/(__CAKE_PATH__)/', $contents, $match)) {
-			$path = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS;
+			$path = LIBS . 'Console' . DS;
 			$replacement = "'" . str_replace(DS, "' . DIRECTORY_SEPARATOR . '", $path) . "'";
 			$result = str_replace($match[0], $replacement, $contents);
 			if ($File->write($result)) {
@@ -252,7 +252,7 @@ class ProjectTask extends Shell {
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			if (!class_exists('Security')) {
-				require LIBS . 'security.php';
+				require LIBS . 'Utility' . DS . 'security.php';
 			}
 			$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.cipherSeed\', \''.$string.'\');', $contents);
