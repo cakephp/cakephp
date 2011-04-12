@@ -219,7 +219,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoadNoMerge() {
-		Configure::config('test', new PhpReader(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS));
+		Configure::config('test', new PhpReader(LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);

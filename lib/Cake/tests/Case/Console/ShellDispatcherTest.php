@@ -120,7 +120,7 @@ class ShellDispatcherTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			),
 			'Console/Command' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
 	}
