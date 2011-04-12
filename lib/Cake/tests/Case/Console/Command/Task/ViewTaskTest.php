@@ -395,7 +395,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->plugin = 'TestTest';
 		$this->Task->name = 'View';
 
-		$path = APP . 'plugins' . DS . 'test_test' . DS . 'views' . DS . 'view_task_comments' . DS  . 'view.ctp';
+		$path = APP . 'plugins' . DS . 'test_test' . DS . 'View' . DS . 'view_task_comments' . DS  . 'view.ctp';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
 

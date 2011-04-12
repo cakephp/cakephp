@@ -745,7 +745,7 @@ STRINGEND;
 	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'controllerTest';
 
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'BakeArticle.php';
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'Model' . DS . 'BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/BakeArticle extends ControllerTestAppModel/'));
 	
