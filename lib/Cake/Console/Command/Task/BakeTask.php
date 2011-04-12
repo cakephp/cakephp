@@ -50,7 +50,7 @@ class BakeTask extends Shell {
 	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . Inflector::pluralize(Inflector::underscore($this->name)) . DS;
+			$path = $this->_pluginPath($this->plugin) . $this->name . DS;
 		}
 		return $path;
 	}

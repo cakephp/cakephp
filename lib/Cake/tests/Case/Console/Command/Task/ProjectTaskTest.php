@@ -88,18 +88,17 @@ class ProjectTaskTest extends CakeTestCase {
 		$dirs = array(
 			'config',
 			'config' . DS . 'schema',
-			'console',
-			'console' . DS . 'shells',
-			'console' . DS . 'shells' . DS . 'tasks',
-			'controllers', 
-			'models', 
-			'views',
-			'views' . DS . 'helpers',
+			'Console',
+			'Console' . DS . 'Command',
+			'Console' . DS . 'Command' . DS . 'Task',
+			'Controller', 
+			'Model', 
+			'View',
+			'View' . DS . 'Helper',
 			'tests',
-			'tests' . DS . 'cases', 
-			'tests' . DS . 'cases' . DS . 'models', 
-			'tests' . DS . 'cases', 
-			'tests' . DS . 'fixtures',
+			'tests' . DS . 'Case', 
+			'tests' . DS . 'Case' . DS . 'Model',
+			'tests' . DS . 'Fixture',
 			'tmp',
 			'webroot',
 			'webroot' . DS . 'js',
@@ -121,16 +120,16 @@ class ProjectTaskTest extends CakeTestCase {
 		$path = $this->Task->path . 'bake_test_app';
 	
 		$empty = array(
-			'console' . DS . 'shells' . DS . 'tasks',
-			'controllers' . DS . 'components', 
-			'models' . DS . 'behaviors', 
-			'views' . DS . 'helpers',
-			'views' . DS . 'errors',
-			'views' . DS . 'scaffolds',
-			'tests' . DS . 'cases' . DS . 'models', 
-			'tests' . DS . 'cases' . DS . 'controllers',
-			'tests' . DS . 'cases' . DS . 'helpers',
-			'tests' . DS . 'fixtures',
+			'Console' . DS . 'Command' . DS . 'Task',
+			'Controller' . DS . 'Component', 
+			'Model' . DS . 'Behavior', 
+			'View' . DS . 'Helper',
+			'View' . DS . 'errors',
+			'View' . DS . 'scaffolds',
+			'tests' . DS . 'Case' . DS . 'Model', 
+			'tests' . DS . 'Case' . DS . 'Controller',
+			'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper',
+			'tests' . DS . 'Fixture',
 			'webroot' . DS . 'js'
 		);
 	
@@ -256,7 +255,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecute() {
-		$this->Task->params['skel'] = CAKE . DS . 'console' . DS. 'templates' . DS . 'skel';
+		$this->Task->params['skel'] = LIBS . 'Console' . DS. 'templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;
 
 		$path = $this->Task->path . 'bake_test_app';
@@ -265,14 +264,14 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$this->assertTrue(is_dir($path), 'No project dir');
-		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir ');
-		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir ');
-		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir');
-		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir');
-		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir');
+		$this->assertTrue(is_dir($path . DS . 'Controller'), 'No controllers dir ');
+		$this->assertTrue(is_dir($path . DS . 'Controller' . DS .'Component'), 'No components dir ');
+		$this->assertTrue(is_dir($path . DS . 'Model'), 'No models dir');
+		$this->assertTrue(is_dir($path . DS . 'View'), 'No views dir');
+		$this->assertTrue(is_dir($path . DS . 'View' . DS . 'Helper'), 'No helpers dir');
 		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir');
-		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir');
-		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'Case'), 'No cases dir');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'Fixture'), 'No fixtures dir');
 	}
 
 /**
@@ -287,7 +286,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->consolePath($path);
 		$this->assertTrue($result);
 
-		$file = new File($path . 'console' . DS . 'cake.php');
+		$file = new File($path . 'Console' . DS . 'cake.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/__CAKE_PATH__/', $contents, 'Console path placeholder left behind.');
 	}

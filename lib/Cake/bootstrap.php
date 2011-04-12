@@ -149,27 +149,27 @@ if (!defined('CAKE_TESTS')) {
 /**
  * Path to the controller test directory.
  */
-	define('CONTROLLER_TESTS', TESTS.'cases'.DS.'controllers'.DS);
+	define('CONTROLLER_TESTS', TESTS.'Case'.DS.'Controller'.DS);
 
 /**
  * Path to the components test directory.
  */
-	define('COMPONENT_TESTS', TESTS.'cases'.DS.'components'.DS);
+	define('COMPONENT_TESTS', TESTS.'Case'.DS.'Component'.DS);
 
 /**
  * Path to the helpers test directory.
  */
-	define('HELPER_TESTS', TESTS.'cases'.DS.'views'.DS.'helpers'.DS);
+	define('HELPER_TESTS', TESTS.'Case'.DS.'View'.DS.'Helper'.DS);
 
 /**
  * Path to the models' test directory.
  */
-	define('MODEL_TESTS', TESTS.'cases'.DS.'models'.DS);
+	define('MODEL_TESTS', TESTS.'Case'.DS.'Model'.DS);
 
 /**
  * Path to the lib test directory.
  */
-	define('LIB_TESTS', CAKE_TESTS.'cases'.DS.'lib'.DS);
+	define('LIB_TESTS', CAKE_TESTS.'Case'.DS.'Lib'.DS);
 
 /**
  * Path to the temporary files directory.
