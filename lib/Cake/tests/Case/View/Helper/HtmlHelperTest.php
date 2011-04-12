@@ -369,7 +369,6 @@ class HtmlHelperTest extends CakeTestCase {
  *
  * @access public
  * @return void
- * @link https://trac.cakephp.org/ticket/6490
  */
 	function testImageTagWithTheme() {
 		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {

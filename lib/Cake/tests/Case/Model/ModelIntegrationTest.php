@@ -1212,7 +1212,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 
-		// Tests related to ticket https://trac.cakephp.org/ticket/5594
 		$TestModel = new ArticleFeatured();
 		$TestFakeModel = new ArticleFeatured(array('table' => false));
 

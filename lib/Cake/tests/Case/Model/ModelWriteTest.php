@@ -2972,7 +2972,8 @@ class ModelWriteTest extends BaseModelTest {
 					'published' => 'Y',
 					'user_id' => 1
 			))
-		), array('validate' => 'only'));
+		), array('validate' => 'first'));
+		$this->assertFalse($result);
 	}
 
 /**
@@ -3761,7 +3762,6 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * TestFindAllWithoutForeignKey
  *
- * @link http://code.cakephp.org/tickets/view/69
  * @access public
  * @return void
  */
@@ -3826,7 +3826,6 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testProductUpdateAllWithForeignKey
  *
- * @link http://code.cakephp.org/tickets/view/69
  * @access public
  * @return void
  */
@@ -3877,7 +3876,6 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testProductUpdateAllWithoutForeignKey
  *
- * @link http://code.cakephp.org/tickets/view/69
  * @access public
  * @return void
  */

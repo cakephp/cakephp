@@ -221,7 +221,8 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
- * $options offers three 'special' keys. `pass`, `persist` and `routeClass` have special meaning in the $options array.
+ * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass` 
+ * have special meaning in the $options array.
  *
  * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
  * parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
@@ -232,6 +233,9 @@ class Router {
  *
  * `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  * via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
+ *
+ * `named` is used to configure named parameters at the route level. This key uses the same options 
+ * as Router::connectNamed()
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
@@ -286,7 +290,7 @@ class Router {
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
  *
  * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the 
- * redirect destination allows you to use other routes to define where a url string should be redirected ot.
+ * redirect destination allows you to use other routes to define where a url string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
  *

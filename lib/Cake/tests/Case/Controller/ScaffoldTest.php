@@ -821,7 +821,6 @@ class ScaffoldTest extends CakeTestCase {
 /**
  * test that habtm relationship keys get added to scaffoldFields.
  *
- * @see http://code.cakephp.org/tickets/view/48
  * @return void
  */
 	function testHabtmFieldAdditionWithScaffoldForm() {

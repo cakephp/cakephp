@@ -540,17 +540,11 @@ class Inflector {
  * @param string $string the string you want to slug
  * @param string $replacement will replace keys in map
  * @param array $map extra elements to map to the replacement
- * @deprecated $map param will be removed in future versions. Use Inflector::rules() instead
  * @return string
  * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
-	public static function slug($string, $replacement = '_', $map = array()) {
-
-		if (is_array($replacement)) {
-			$map = $replacement;
-			$replacement = '_';
-		}
+	public static function slug($string, $replacement = '_') {
 		$quotedReplacement = preg_quote($replacement, '/');
 
 		$merge = array(
@@ -559,7 +553,7 @@ class Inflector {
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 
-		$map = $map + self::$_transliteration + $merge;
+		$map = self::$_transliteration + $merge;
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }

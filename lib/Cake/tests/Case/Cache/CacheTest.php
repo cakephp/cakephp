@@ -324,7 +324,6 @@ class CacheTest extends CakeTestCase {
  * Check that the "Cache.disable" configuration and a change to it
  * (even after a cache config has been setup) is taken into account.
  *
- * @link https://trac.cakephp.org/ticket/6236
  * @access public
  * @return void
  */

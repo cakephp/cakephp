@@ -302,7 +302,7 @@ class TestTask extends BakeTask {
  * @param object $subject The object you want to generate fixtures for.
  * @return array Array of fixtures to be included in the test.
  */
-	public function generateFixtureList(&$subject) {
+	public function generateFixtureList($subject) {
 		$this->_fixtures = array();
 		if (is_a($subject, 'Model')) {
 			$this->_processModel($subject);
@@ -319,7 +319,7 @@ class TestTask extends BakeTask {
  * @param Model $subject A Model class to scan for associations and pull fixtures off of.
  * @return void
  */
-	protected function _processModel(&$subject) {
+	protected function _processModel($subject) {
 		$this->_addFixture($subject->name);
 		$associated = $subject->getAssociated();
 		foreach ($associated as $alias => $type) {
@@ -343,7 +343,7 @@ class TestTask extends BakeTask {
  * @param Controller $subject A controller to pull model names off of.
  * @return void
  */
-	protected function _processController(&$subject) {
+	protected function _processController($subject) {
 		$subject->constructClasses();
 		$models = array(Inflector::classify($subject->name));
 		if (!empty($subject->uses)) {

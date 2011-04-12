@@ -534,6 +534,23 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * test that a plugin model as the 'with' model doesn't have issues
+ *
+ * @return void
+ */
+	function testDeleteLinksWithPLuginJoinModel() {
+		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
+		$Article =& new Article();
+		$Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')), false);
+		unset($Article->Tag, $Article->ArticleTags);
+		$Article->bindModel(array('hasAndBelongsToMany' => array(
+			'Tag' => array('with' => 'TestPlugin.ArticlesTag')
+		)), false);
+
+		$this->assertTrue($Article->delete(1));
+	}
+
+/**
  * test deleteLinks with Multiple habtm associations
  *
  * @return void

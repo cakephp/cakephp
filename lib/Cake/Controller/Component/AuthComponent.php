@@ -331,7 +331,7 @@ class AuthComponent extends Component {
 				}
 			}
 		}
-		if (empty($this->authorize) || $this->isAuthorized()) {
+		if (empty($this->authorize) || $this->isAuthorized($this->user())) {
 			return true;
 		}
 

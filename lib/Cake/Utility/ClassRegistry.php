@@ -177,7 +177,7 @@ class ClassRegistry {
  * @param mixed $object	Object to store
  * @return boolean True if the object was written, false if $key already exists
  */
-	public static function addObject($key, &$object) {
+	public static function addObject($key, $object) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		if (!isset($_this->__objects[$key])) {

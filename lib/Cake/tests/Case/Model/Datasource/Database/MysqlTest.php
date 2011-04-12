@@ -986,7 +986,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access protected
  * @return void
  */
-	function _buildRelatedModels(&$model) {
+	function _buildRelatedModels($model) {
 		foreach ($model->associations() as $type) {
 			foreach ($model->{$type} as $assoc => $assocData) {
 				if (is_string($assocData)) {
@@ -1009,7 +1009,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function &_prepareAssociationQuery(&$model, &$queryData, $binding) {
+	function &_prepareAssociationQuery($model, &$queryData, $binding) {
 		$type = $binding['type'];
 		$assoc = $binding['model'];
 		$assocData = $model->{$type}[$assoc];

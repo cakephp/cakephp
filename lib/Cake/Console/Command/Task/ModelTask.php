@@ -310,7 +310,7 @@ class ModelTask extends BakeTask {
  * @param object $model Model to have validations generated for.
  * @return array $validate Array of user selected validations.
  */
-	public function doValidation(&$model) {
+	public function doValidation($model) {
 		if (!is_object($model)) {
 			return false;
 		}
@@ -442,7 +442,7 @@ class ModelTask extends BakeTask {
  * @param object $model
  * @return array $assocaitons
  */
-	public function doAssociations(&$model) {
+	public function doAssociations($model) {
 		if (!is_object($model)) {
 			return false;
 		}
@@ -493,7 +493,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of inprogress associations
  * @return array $associations with belongsTo added in.
  */
-	public function findBelongsTo(&$model, $associations) {
+	public function findBelongsTo($model, $associations) {
 		$fields = $model->schema(true);
 		foreach ($fields as $fieldName => $field) {
 			$offset = strpos($fieldName, '_id');
@@ -522,7 +522,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasOne and hasMany added in.
  */
-	public function findHasOneAndMany(&$model, $associations) {
+	public function findHasOneAndMany($model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
@@ -565,7 +565,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasAndBelongsToMany added in.
  */
-	public function findHasAndBelongsToMany(&$model, $associations) {
+	public function findHasAndBelongsToMany($model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
@@ -605,7 +605,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of associations to be confirmed.
  * @return array Array of confirmed associations
  */
-	public function confirmAssociations(&$model, $associations) {
+	public function confirmAssociations($model, $associations) {
 		foreach ($associations as $type => $settings) {
 			if (!empty($associations[$type])) {
 				$count = count($associations[$type]);

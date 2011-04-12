@@ -849,6 +849,9 @@ class AuthTest extends CakeTestCase {
 
 		//external authed action
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
+		$_GET = array(
+			'url' => '/posts/edit/1'
+		);
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/edit/1';
 		$this->Auth->request = $this->Controller->request = new CakeRequest($url);

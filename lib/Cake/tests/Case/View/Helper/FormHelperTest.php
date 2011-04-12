@@ -3639,6 +3639,42 @@ class FormHelperTest extends CakeTestCase {
 			'label' => false
 		));
 		$this->assertTags($result, $expected);
+
+		$this->Form->validationErrors['Model']['tags'] = 'Select atleast one option';
+		$result = $this->Form->input('Model.tags', array(
+			'options' => array('one'),
+			'multiple' => 'checkbox',
+			'label' => false,
+			'div' => false
+		));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'),
+			array('div' => array('class' => 'checkbox form-error')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][tags][]', 'value' => '0', 'id' => 'ModelTags0')),
+			array('label' => array('for' => 'ModelTags0')),
+			'one',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.tags', array(
+			'options' => array('one'),
+			'multiple' => 'checkbox',
+			'class' => 'mycheckbox',
+			'label' => false,
+			'div' => false
+		));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'),
+			array('div' => array('class' => 'mycheckbox form-error')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][tags][]', 'value' => '0', 'id' => 'ModelTags0')),
+			array('label' => array('for' => 'ModelTags0')),
+			'one',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -5373,6 +5409,14 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSubmitButton() {
+		$result = $this->Form->submit('');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->submit('Test Submit');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -6487,6 +6531,24 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
+
+		$result = $this->Form->end('');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->end(array('label' => ''));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end('save');
 		$expected = array(
