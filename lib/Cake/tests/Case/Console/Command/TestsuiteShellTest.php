@@ -82,7 +82,7 @@ class TestsuiteShellTest extends CakeTestCase {
 
 		$this->Shell->expects($this->once())->method('run');
 		$this->Shell->available();
-		$this->assertEquals($this->Shell->args, array('core', 'Basics'));
+		$this->assertEquals($this->Shell->args, array('core', 'AllBehaviors'));
 	}
 
 /**
@@ -97,7 +97,7 @@ class TestsuiteShellTest extends CakeTestCase {
 
 		$this->Shell->expects($this->once())->method('run')
 			->with(
-				array('app' => false, 'plugin' => null, 'core' => true, 'output' => 'text', 'case' => 'basics'),
+				array('app' => false, 'plugin' => null, 'core' => true, 'output' => 'text', 'case' => 'Basics'),
 				array('--filter', 'myFilter', '--colors', '--verbose')
 			);
 		$this->Shell->main();
