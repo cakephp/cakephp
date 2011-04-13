@@ -31,9 +31,9 @@ class MailTransport extends AbstractTransport {
  * @return boolean
  */
 	public function send(CakeEmail $email) {
-		$eol = Configure::read('Email.Mail.EOL');
-		if (!$eol) {
-			$eol = PHP_EOL;
+		$eol = PHP_EOL;
+		if (isset($this->_config['eol'])) {
+			$eol = $this->_config['eol'];
 		}
 		$headers = $email->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true));
 		$to = $headers['To'];
