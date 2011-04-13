@@ -1454,7 +1454,7 @@ class FormHelper extends AppHelper {
 			$selected = $attributes['value'];
 		}
 
-		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
+		if (!empty($attributes['multiple'])) {
 			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
 			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
 			$tag = $this->Html->tags[$template];
