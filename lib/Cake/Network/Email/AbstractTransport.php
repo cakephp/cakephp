@@ -32,22 +32,24 @@ abstract class AbstractTransport {
 	protected $_config = array();
 
 /**
- * Constructor
- *
- */
-	public function __construct($config = array()) {
-		if (!empty($config)) {
-			$this->_config = $config;
-		}
-	}
-
-/**
  * Send mail
  *
  * @params object $email CakeEmail
  * @return boolean
  */
 	abstract public function send(CakeEmail $email);
+
+/**
+ * Set the config
+ *
+ * @param array $config
+ * @return object $this
+ */
+	public function config($config = array()) {
+		if (!empty($config)) {
+			$this->_config = $config;
+		}
+	}
 
 /**
  * Help to convert headers in string

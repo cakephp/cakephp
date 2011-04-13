@@ -47,16 +47,6 @@ class SmtpTransport extends AbstractTransport {
  * @thrown SocketException
  */
 	public function send(CakeEmail $email) {
-		$config = array(
-			'host' => 'localhost',
-			'port' => 25,
-			'timeout' => 30,
-			'username' => null,
-			'password' => null,
-			'client' => null
-		);
-		$this->_config += $config;
-
 		$this->_cakeEmail = $email;
 
 		$this->_connect();
@@ -66,6 +56,24 @@ class SmtpTransport extends AbstractTransport {
 		$this->_disconnect();
 
 		return true;
+	}
+
+/**
+ * Set the configuration
+ *
+ * @param array $config
+ * @return object $this
+ */
+	public function config($config = array()) {
+		$default = array(
+			'host' => 'localhost',
+			'port' => 25,
+			'timeout' => 30,
+			'username' => null,
+			'password' => null,
+			'client' => null
+		);
+		$this->_config = $config + $default;
 	}
 
 /**

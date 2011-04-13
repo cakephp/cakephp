@@ -194,6 +194,13 @@ class CakeEmail {
 	protected $_transportName = 'mail';
 
 /**
+ * Instance of tranport class
+ *
+ * @var object
+ */
+	protected $_transportClass = null;
+
+/**
  * charset the email is sent in
  *
  * @var string
@@ -671,7 +678,30 @@ class CakeEmail {
 			return $this->_transportName;
 		}
 		$this->_transportName = (string)$name;
+		$this->_transportClass = null;
 		return $this;
+	}
+
+/**
+ * Return the transport class
+ *
+ * @return object
+ * @thrown SocketException
+ */
+	public function transportClass() {
+		if ($this->_transportClass) {
+			return $this->_transportClass;
+		}
+		list($plugin, $transportClassname) = pluginSplit($this->_transportName, true);
+		$transportClassname .= 'Transport';
+		App::uses($transportClassname, $plugin . 'Network/Email');
+		if (!class_exists($transportClassname)) {
+			throw new SocketException(__d('cake', 'Class "%s" not found.', $transportClassname));
+		} elseif (!method_exists($transportClassname, 'send')) {
+			throw new SocketException(__d('cake', 'The "%s" do not have send method.', $transportClassname));
+		}
+
+		return $this->_transportClass = new $transportClassname();
 	}
 
 /**
@@ -755,11 +785,17 @@ class CakeEmail {
 		if (empty($config)) {
 			return $this->_config;
 		}
+
 		if (is_array($config)) {
 			$this->_config = $config;
 		} else {
 			$this->_config = (string)$config;
 		}
+
+		if ($this->_transportClass) {
+			$this->_transportClass->config($this->_config);
+		}
+
 		return $this;
 	}
 
@@ -828,16 +864,9 @@ class CakeEmail {
 			$this->_message[] = '';
 		}
 
-		list($plugin, $transportClassname) = pluginSplit($this->_transportName, true);
-		$transportClassname .= 'Transport';
-		App::uses($transportClassname, $plugin . 'Network/Email');
-		if (!class_exists($transportClassname)) {
-			throw new SocketException(__d('cake', 'Class "%s" not found.', $transportClassname));
-		} elseif (!method_exists($transportClassname, 'send')) {
-			throw new SocketException(__d('cake', 'The "%s" do not have send method.', $transportClassname));
-		}
+		$transport = $this->transportClass();
+		$transport->config($config);
 
-		$transport = new $transportClassname($config);
 		return $transport->send($this);
 	}
 
@@ -865,6 +894,7 @@ class CakeEmail {
 		$this->_message = '';
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'mail';
+		$this->_transportClass = null;
 		$this->_attachments = array();
 		$this->_config = 'default';
 		return $this;
