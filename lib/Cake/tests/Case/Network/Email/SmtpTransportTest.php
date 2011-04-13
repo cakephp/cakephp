@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeEmail', 'Network');
+App::uses('AbstractTransport', 'Network/Email');
 App::uses('SmtpTransport', 'Network/Email');
 
 /**

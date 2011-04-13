@@ -567,6 +567,7 @@ class CakeEmail {
 		}
 		if ($this->_messageId !== false) {
 			if ($this->_messageId === true) {
+				App::uses('String', 'Utility');
 				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
 			} else {
 				$headers['Message-ID'] = $this->_messageId;
@@ -808,7 +809,7 @@ class CakeEmail {
 	public function send($content = null) {
 		if (is_string($this->_config)) {
 			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . DS . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', APP . 'config' . DS . 'email.php'));
 			}
 			$configs = new EMAIL_CONFIG();
 			if (!isset($configs->{$this->_config})) {
@@ -1077,6 +1078,7 @@ class CakeEmail {
 	protected function _render($content) {
 		$viewClass = $this->_viewRender;
 
+		App::uses('View', 'View');
 		if ($viewClass !== 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass .= 'View';
