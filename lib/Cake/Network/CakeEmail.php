@@ -1076,7 +1076,6 @@ class CakeEmail {
 			$msg[] = '--alt-' . $this->_boundary . '--';
 			$msg[] = '';
 
-			ClassRegistry::removeObject('view');
 			return $msg;
 		}
 
@@ -1105,10 +1104,7 @@ class CakeEmail {
 			$this->_textMessage = $rendered;
 		}
 
-		$msg = array_merge($msg, $content);
-		ClassRegistry::removeObject('view');
-
-		return $msg;
+		return array_merge($msg, $content);
 	}
 
 }
