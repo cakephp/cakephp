@@ -246,7 +246,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_from;
 		}
-		$this->_setEmailSingle('_from', $email, $name, __d('cake', 'From requires only 1 email address.'));
+		return $this->_setEmailSingle('_from', $email, $name, __d('cake', 'From requires only 1 email address.'));
 	}
 
 /**
@@ -261,7 +261,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_replyTo;
 		}
-		$this->_setEmailSingle('_replyTo', $email, $name, __d('cake', 'Reply-To requires only 1 email address.'));
+		return $this->_setEmailSingle('_replyTo', $email, $name, __d('cake', 'Reply-To requires only 1 email address.'));
 	}
 
 /**
@@ -276,7 +276,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_readReceipt;
 		}
-		$this->_setEmailSingle('_readReceipt', $email, $name, __d('cake', 'Disposition-Notification-To requires only 1 email address.'));
+		return $this->_setEmailSingle('_readReceipt', $email, $name, __d('cake', 'Disposition-Notification-To requires only 1 email address.'));
 	}
 
 /**
@@ -291,7 +291,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_returnPath;
 		}
-		$this->_setEmailSingle('_returnPath', $email, $name, __d('cake', 'Return-Path requires only 1 email address.'));
+		return $this->_setEmailSingle('_returnPath', $email, $name, __d('cake', 'Return-Path requires only 1 email address.'));
 	}
 
 /**
@@ -305,7 +305,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_to;
 		}
-		$this->_setEmail('_to', $email, $name);
+		return $this->_setEmail('_to', $email, $name);
 	}
 
 /**
@@ -313,10 +313,10 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return void
+ * @return object $this
  */
 	public function addTo($email, $name = null) {
-		$this->_addEmail('_to', $email, $name);
+		return $this->_addEmail('_to', $email, $name);
 	}
 
 /**
@@ -330,7 +330,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_cc;
 		}
-		$this->_setEmail('_cc', $email, $name);
+		return $this->_setEmail('_cc', $email, $name);
 	}
 
 /**
@@ -338,10 +338,10 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return void
+ * @return object $this
  */
 	public function addCc($email, $name = null) {
-		$this->_addEmail('_cc', $email, $name);
+		return $this->_addEmail('_cc', $email, $name);
 	}
 
 /**
@@ -349,13 +349,13 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return void
+ * @return mixed
  */
 	public function bcc($email = null, $name = null) {
 		if ($email === null) {
 			return $this->_bcc;
 		}
-		$this->_setEmail('_bcc', $email, $name);
+		return $this->_setEmail('_bcc', $email, $name);
 	}
 
 /**
@@ -363,10 +363,10 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return void
+ * @return object $this
  */
 	public function addBcc($email, $name = null) {
-		$this->_addEmail('_bcc', $email, $name);
+		return $this->_addEmail('_bcc', $email, $name);
 	}
 
 /**
@@ -375,7 +375,7 @@ class CakeEmail {
  * @param string $varName
  * @param mixed $email
  * @param mixed $name
- * @return void
+ * @return object $this
  * @thrown SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
@@ -387,7 +387,7 @@ class CakeEmail {
 				$name = $email;
 			}
 			$this->{$varName} = array($email => $name);
-			return;
+			return $this;
 		}
 		$list = array();
 		foreach ($email as $key => $value) {
@@ -400,6 +400,7 @@ class CakeEmail {
 			$list[$key] = $value;
 		}
 		$this->{$varName} = $list;
+		return $this;
 	}
 
 /**
@@ -409,7 +410,7 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @param string $throwMessage
- * @return void
+ * @return object $this
  * @thrown SocketExpceiton
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
@@ -419,6 +420,7 @@ class CakeEmail {
 			$this->{$varName} = $current;
 			throw new SocketException($throwMessage);
 		}
+		return $this;
 	}
 
 /**
@@ -427,7 +429,7 @@ class CakeEmail {
  * @param string $varName
  * @param mixed $email
  * @param mixed $name
- * @return void
+ * @return object $this
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -438,7 +440,7 @@ class CakeEmail {
 				$name = $email;
 			}
 			$this->{$varName}[$email] = $name;
-			return;
+			return $this;
 		}
 		$list = array();
 		foreach ($email as $key => $value) {
@@ -451,6 +453,7 @@ class CakeEmail {
 			$list[$key] = $value;
 		}
 		$this->{$varName} = array_merge($this->{$varName}, $list);
+		return $this;
 	}
 
 /**
@@ -464,13 +467,14 @@ class CakeEmail {
 			return $this->_subject;
 		}
 		$this->_subject = (string)$subject;
+		return $this;
 	}
 
 /**
  * Sets eaders for the message
  *
  * @param array Associative array containing headers to be set.
- * @return void
+ * @return object $this
  * @thrown SocketException
  */
 	public function setHeaders($headers) {
@@ -478,13 +482,14 @@ class CakeEmail {
 			throw new SocketException(__d('cake', '$headers should be an array.'));
 		}
 		$this->_headers = $headers;
+		return $this;
 	}
 
 /**
  * Add header for the message
  *
  * @param array $headers
- * @return void
+ * @return mixed $this
  * @thrown SocketException
  */
 	public function addHeaders($headers) {
@@ -492,6 +497,7 @@ class CakeEmail {
 			throw new SocketException(__d('cake', '$headers should be an array.'));
 		}
 		$this->_headers = array_merge($this->_headers, $headers);
+		return $this;
 	}
 
 /**
@@ -619,6 +625,7 @@ class CakeEmail {
 		if ($template !== null) {
 			$this->_template = (string)$template;
 		}
+		return $this;
 	}
 
 /**
@@ -632,6 +639,7 @@ class CakeEmail {
 			return $this->_viewRender;
 		}
 		$this->_viewRender = $viewClass;
+		return $this;
 	}
 
 /**
@@ -649,6 +657,7 @@ class CakeEmail {
 			throw new SocketException(__d('cake', 'Format not available.'));
 		}
 		$this->_emailFormat = $format;
+		return $this;
 	}
 
 /**
@@ -662,6 +671,7 @@ class CakeEmail {
 			return $this->_transportName;
 		}
 		$this->_transportName = (string)$name;
+		return $this;
 	}
 
 /**
@@ -683,6 +693,7 @@ class CakeEmail {
 			}
 			$this->_messageId = $message;
 		}
+		return $this;
 	}
 
 /**
@@ -708,19 +719,21 @@ class CakeEmail {
 			$attach[$name] = $path;
 		}
 		$this->_attachments = $attach;
+		return $this;
 	}
 
 /**
  * Add attachments
  *
  * @param mixed $attachments String with the filename or array with filenames
- * @return void
+ * @return object $this
  * @thrown SocketException
  */
 	public function addAttachments($attachments) {
 		$current = $this->_attachments;
 		$this->attachments($attachments);
 		$this->_attachments = array_merge($current, $this->_attachments);
+		return $this;
 	}
 
 /**
@@ -736,17 +749,18 @@ class CakeEmail {
  * Configuration to use when send email
  *
  * @param mixed $config String with configuration name (from email.php), array with config or null to return current config
- * @return string
+ * @return mixed
  */
 	public function config($config = null) {
-		if (!empty($config)) {
-			if (is_array($config)) {
-				$this->_config = $config;
-			} else {
-				$this->_config = (string)$config;
-			}
+		if (empty($config)) {
+			return $this->_config;
 		}
-		return $this->_config;
+		if (is_array($config)) {
+			$this->_config = $config;
+		} else {
+			$this->_config = (string)$config;
+		}
+		return $this;
 	}
 
 /**
@@ -830,7 +844,7 @@ class CakeEmail {
 /**
  * Reset all EmailComponent internal variables to be able to send out a new email.
  *
- * @return void
+ * @return object $this
  */
 	public function reset() {
 		$this->_to = array();
@@ -853,6 +867,7 @@ class CakeEmail {
 		$this->_transportName = 'mail';
 		$this->_attachments = array();
 		$this->_config = 'default';
+		return $this;
 	}
 
 /**
