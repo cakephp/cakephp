@@ -16,7 +16,8 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Lib', array('CakeEmail', 'email/AbstractTransport', 'email/SmtpTransport'));
+App::uses('CakeEmail', 'Network');
+App::uses('SmtpTransport', 'Network/Email');
 
 /**
  * Help to test SmtpTransport

@@ -16,8 +16,9 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Validation', 'Multibyte'));
-App::import('Lib', 'email/AbstractTransport');
+App::uses('Validation', 'Utility');
+App::uses('Multibyte', 'I18n');
+App::uses('AbstractTransport', 'Network/Email');
 
 /**
  * Cake e-mail class.
@@ -813,8 +814,10 @@ class CakeEmail {
 			$this->_message[] = '';
 		}
 
-		$transportClassname = Inflector::camelize($this->_transportName) . 'Transport';
-		if (!App::import('Lib', 'email/' . $transportClassname)) {
+		list($plugin, $transportClassname) = pluginSplit($this->_transportName, true);
+		$transportClassname .= 'Transport';
+		App::uses($transportClassname, $plugin . 'Network/Email');
+		if (!class_exists($transportClassname)) {
 			throw new SocketException(__('Class "%s" not found.', $transportClassname));
 		} elseif (!method_exists($transportClassname, 'send')) {
 			throw new SocketException(__('The "%s" do not have send method.', $transportClassname));
@@ -1030,9 +1033,9 @@ class CakeEmail {
 		$viewClass = $this->_viewRender;
 
 		if ($viewClass !== 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass);
-			$viewClass = $viewClass . 'View';
-			App::import('View', $this->_viewRender);
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass .= 'View';
+			App::uses($viewClass, $plugin . 'View');
 		}
 
 		$View = new $viewClass(null);
