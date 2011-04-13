@@ -246,7 +246,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_from;
 		}
-		$this->_setEmailSingle('_from', $email, $name, __('From requires only 1 email address.'));
+		$this->_setEmailSingle('_from', $email, $name, __d('cake', 'From requires only 1 email address.'));
 	}
 
 /**
@@ -261,7 +261,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_replyTo;
 		}
-		$this->_setEmailSingle('_replyTo', $email, $name, __('Reply-To requires only 1 email address.'));
+		$this->_setEmailSingle('_replyTo', $email, $name, __d('cake', 'Reply-To requires only 1 email address.'));
 	}
 
 /**
@@ -276,7 +276,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_readReceipt;
 		}
-		$this->_setEmailSingle('_readReceipt', $email, $name, __('Disposition-Notification-To requires only 1 email address.'));
+		$this->_setEmailSingle('_readReceipt', $email, $name, __d('cake', 'Disposition-Notification-To requires only 1 email address.'));
 	}
 
 /**
@@ -291,7 +291,7 @@ class CakeEmail {
 		if ($email === null) {
 			return $this->_returnPath;
 		}
-		$this->_setEmailSingle('_returnPath', $email, $name, __('Return-Path requires only 1 email address.'));
+		$this->_setEmailSingle('_returnPath', $email, $name, __d('cake', 'Return-Path requires only 1 email address.'));
 	}
 
 /**
@@ -381,7 +381,7 @@ class CakeEmail {
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
 			if (!Validation::email($email)) {
-				throw new SocketException(__('Invalid email: "%s"', $email));
+				throw new SocketException(__d('cake', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
 				$name = $email;
@@ -395,7 +395,7 @@ class CakeEmail {
 				$key = $value;
 			}
 			if (!Validation::email($key)) {
-				throw new SocketException(__('Invalid email: "%s"', $key));
+				throw new SocketException(__d('cake', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
 		}
@@ -432,7 +432,7 @@ class CakeEmail {
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
 			if (!Validation::email($email)) {
-				throw new SocketException(__('Invalid email: "%s"', $email));
+				throw new SocketException(__d('cake', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
 				$name = $email;
@@ -446,7 +446,7 @@ class CakeEmail {
 				$key = $value;
 			}
 			if (!Validation::email($key)) {
-				throw new SocketException(__('Invalid email: "%s"', $key));
+				throw new SocketException(__d('cake', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
 		}
@@ -475,7 +475,7 @@ class CakeEmail {
  */
 	public function setHeaders($headers) {
 		if (!is_array($headers)) {
-			throw new SocketException(__('$headers should be an array.'));
+			throw new SocketException(__d('cake', '$headers should be an array.'));
 		}
 		$this->_headers = $headers;
 	}
@@ -489,7 +489,7 @@ class CakeEmail {
  */
 	public function addHeaders($headers) {
 		if (!is_array($headers)) {
-			throw new SocketException(__('$headers should be an array.'));
+			throw new SocketException(__d('cake', '$headers should be an array.'));
 		}
 		$this->_headers = array_merge($this->_headers, $headers);
 	}
@@ -646,7 +646,7 @@ class CakeEmail {
 			return $this->_emailFormat;
 		}
 		if (!in_array($format, $this->_emailFormatAvailable)) {
-			throw new SocketException(__('Format not available.'));
+			throw new SocketException(__d('cake', 'Format not available.'));
 		}
 		$this->_emailFormat = $format;
 	}
@@ -679,7 +679,7 @@ class CakeEmail {
 			$this->_messageId = $message;
 		} else {
 			if (!preg_match('/^\<.+@.+\>$/', $message)) {
-				throw new SocketException(__('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
+				throw new SocketException(__d('cake', 'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
 			}
 			$this->_messageId = $message;
 		}
@@ -700,7 +700,7 @@ class CakeEmail {
 		foreach ((array)$attachments as $name => $file) {
 			$path = realpath($file);
 			if ($path === false) {
-				throw new SocketException(__('File not found: "%s"', $attach));
+				throw new SocketException(__d('cake', 'File not found: "%s"', $attach));
 			}
 			if (is_int($name)) {
 				$name = basename($path);
@@ -758,11 +758,11 @@ class CakeEmail {
 	public function send($content = null) {
 		if (is_string($this->_config)) {
 			if (!config('email')) {
-				throw new SocketException(__('%s not found.', APP . DS . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', APP . DS . 'email.php'));
 			}
 			$configs = new EMAIL_CONFIG();
 			if (!isset($configs->{$this->_config})) {
-				throw new SocketException(__('Unknown email configuration "%s".', $this->_config));
+				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $this->_config));
 			}
 			$config = $configs->{$this->_config};
 		} else {
@@ -773,11 +773,11 @@ class CakeEmail {
 			if (!empty($config['from'])) {
 				$this->to($config['from']);
 			} else {
-				throw new SocketException(__('From is not specified.'));
+				throw new SocketException(__d('cake', 'From is not specified.'));
 			}
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new SocketExpcetion(__('You need specify one destination on to, cc or bcc.'));
+			throw new SocketExpcetion(__d('cake', 'You need specify one destination on to, cc or bcc.'));
 		}
 
 		if (is_array($content)) {
@@ -818,9 +818,9 @@ class CakeEmail {
 		$transportClassname .= 'Transport';
 		App::uses($transportClassname, $plugin . 'Network/Email');
 		if (!class_exists($transportClassname)) {
-			throw new SocketException(__('Class "%s" not found.', $transportClassname));
+			throw new SocketException(__d('cake', 'Class "%s" not found.', $transportClassname));
 		} elseif (!method_exists($transportClassname, 'send')) {
-			throw new SocketException(__('The "%s" do not have send method.', $transportClassname));
+			throw new SocketException(__d('cake', 'The "%s" do not have send method.', $transportClassname));
 		}
 
 		$transport = new $transportClassname($config);

@@ -77,7 +77,7 @@ class SmtpTransport extends AbstractTransport {
 	protected function _connect() {
 		$this->_generateSocket();
 		if (!$this->_socket->connect()) {
-			throw new SocketException(__('Unable to connect in SMTP server.'));
+			throw new SocketException(__d('cake', 'Unable to connect in SMTP server.'));
 		}
 		$this->_smtpSend(null, '220');
 
@@ -95,7 +95,7 @@ class SmtpTransport extends AbstractTransport {
 			try {
 				$this->_smtpSend("HELO {$host}", '250');
 			} catch (SocketException $e2) {
-				throw new SocketException(__('SMTP server not accepted the connection.'));
+				throw new SocketException(__d('cake', 'SMTP server not accepted the connection.'));
 			}
 		}
 	}
@@ -111,13 +111,13 @@ class SmtpTransport extends AbstractTransport {
 			$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
 			if ($authRequired == '334') {
 				if (!$this->_smtpSend(base64_encode($this->_config['username']), '334')) {
-					throw new SocketException(__('SMTP server not accepted the username.'));
+					throw new SocketException(__d('cake', 'SMTP server not accepted the username.'));
 				}
 				if (!$this->_smtpSend(base64_encode($this->_config['password']), '235')) {
-					throw new SocketException(__('SMTP server not accepted the password.'));
+					throw new SocketException(__d('cake', 'SMTP server not accepted the password.'));
 				}
 			} elseif ($authRequired != '503') {
-				throw new SocketException(__('SMTP do not require authentication.'));
+				throw new SocketException(__d('cake', 'SMTP do not require authentication.'));
 			}
 		}
 	}
@@ -196,7 +196,7 @@ class SmtpTransport extends AbstractTransport {
 				$response .= $this->_socket->read();
 			}
 			if (substr($response, -2) !== "\r\n") {
-				throw new SocketException(__('SMTP timeout.'));
+				throw new SocketException(__d('cake', 'SMTP timeout.'));
 			}
 			$response = end(explode("\r\n", rtrim($response, "\r\n")));
 
@@ -206,7 +206,7 @@ class SmtpTransport extends AbstractTransport {
 				}
 				return $code[1];
 			}
-			throw new SocketException(__('SMTP Error: %s', $response));
+			throw new SocketException(__d('cake', 'SMTP Error: %s', $response));
 		}
 	}
 
