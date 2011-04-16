@@ -76,6 +76,23 @@ class DebugTransport extends AbstractTransport {
 	public static $includeAddresses = false;
 
 /**
+ * Config
+ *
+ * @var array
+ */
+	public static $config = array();
+
+/**
+ * Config
+ *
+ * @param mixed $config
+ * @return mixed
+ */
+	public function config($config) {
+		self::$config = $config;
+	}
+
+/**
  * Send
  *
  * @param object $email CakeEmail
@@ -143,8 +160,9 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array('cake@cakephp.org' => 'CakePHP');
 		$this->assertIdentical($this->CakeEmail->from(), $expected);
 
-		$this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP'));
+		$result = $this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP'));
 		$this->assertIdentical($this->CakeEmail->from(), $expected);
+		$this->assertIdentical($this->CakeEmail, $result);
 	}
 
 /**
@@ -155,9 +173,10 @@ class CakeEmailTest extends CakeTestCase {
 	public function testTo() {
 		$this->assertIdentical($this->CakeEmail->to(), array());
 
-		$this->CakeEmail->to('cake@cakephp.org');
+		$result = $this->CakeEmail->to('cake@cakephp.org');
 		$expected = array('cake@cakephp.org' => 'cake@cakephp.org');
 		$this->assertIdentical($this->CakeEmail->to(), $expected);
+		$this->assertIdentical($this->CakeEmail, $result);
 
 		$this->CakeEmail->to('cake@cakephp.org', 'CakePHP');
 		$expected = array('cake@cakephp.org' => 'CakePHP');
@@ -178,7 +197,7 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->addTo('jrbasso@cakephp.org');
 		$this->CakeEmail->addTo('mark_story@cakephp.org', 'Mark Story');
-		$this->CakeEmail->addTo(array('phpnut@cakephp.org' => 'PhpNut', 'jose_zap@cakephp.org'));
+		$result = $this->CakeEmail->addTo(array('phpnut@cakephp.org' => 'PhpNut', 'jose_zap@cakephp.org'));
 		$expected = array(
 			'cake@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
@@ -189,6 +208,7 @@ class CakeEmailTest extends CakeTestCase {
 			'jose_zap@cakephp.org' => 'jose_zap@cakephp.org'
 		);
 		$this->assertIdentical($this->CakeEmail->to(), $expected);
+		$this->assertIdentical($this->CakeEmail, $result);
 	}
 
 /**
@@ -291,7 +311,8 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->getHeaders();
 		$this->assertFalse(isset($result['Message-ID']));
 
-		$this->CakeEmail->messageId('<my-email@localhost>');
+		$result = $this->CakeEmail->messageId('<my-email@localhost>');
+		$this->assertIdentical($this->CakeEmail, $result);
 		$result = $this->CakeEmail->getHeaders();
 		$this->assertIdentical($result['Message-ID'], '<my-email@localhost>');
 	}
@@ -318,8 +339,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject(1);
 		$this->assertIdentical($this->CakeEmail->subject(), '1');
 
-		$this->CakeEmail->subject(array('something'));
+		$result = $this->CakeEmail->subject(array('something'));
 		$this->assertIdentical($this->CakeEmail->subject(), 'Array');
+		$this->assertIdentical($this->CakeEmail, $result);
 	}
 
 /**
@@ -406,6 +428,34 @@ class CakeEmailTest extends CakeTestCase {
 			'ht' => WWW_ROOT . '.htaccess'
 		);
 		$this->assertIdentical($this->CakeEmail->attachments(), $expected);
+	}
+
+/**
+ * testTransport method
+ *
+ * @return void
+ */
+	public function testTransport() {
+		$result = $this->CakeEmail->transport('debug');
+		$this->assertIdentical($this->CakeEmail, $result);
+		$this->assertIdentical($this->CakeEmail->transport(), 'debug');
+
+		$result = $this->CakeEmail->transportClass();
+		$this->assertIsA($result, 'DebugTransport');
+	}
+
+/**
+ * testConfig method
+ *
+ * @return void
+ */
+	public function testConfig() {
+		$this->CakeEmail->transport('debug')->transportClass();
+		DebugTransport::$config = array();
+
+		$config = array('test' => 'ok', 'test2' => true);
+		$this->CakeEmail->config($config);
+		$this->assertIdentical(DebugTransport::$config, $config);
 	}
 
 /**
