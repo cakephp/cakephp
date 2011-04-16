@@ -19,6 +19,8 @@
 App::uses('Validation', 'Utility');
 App::uses('Multibyte', 'I18n');
 App::uses('AbstractTransport', 'Network/Email');
+App::uses('String', 'Utility');
+App::uses('View', 'View');
 
 /**
  * Cake e-mail class.
@@ -567,7 +569,6 @@ class CakeEmail {
 		}
 		if ($this->_messageId !== false) {
 			if ($this->_messageId === true) {
-				App::uses('String', 'Utility');
 				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
 			} else {
 				$headers['Message-ID'] = $this->_messageId;
@@ -1078,7 +1079,6 @@ class CakeEmail {
 	protected function _render($content) {
 		$viewClass = $this->_viewRender;
 
-		App::uses('View', 'View');
 		if ($viewClass !== 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass .= 'View';
