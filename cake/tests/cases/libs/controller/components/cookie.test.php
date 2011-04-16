@@ -456,7 +456,10 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	function testDeleteRemovesChildren() {
-		$_COOKIE['CakeTestCookie'] = array('User' => array('email' => 'example@example.com', 'name' => 'mark'));
+		$_COOKIE['CakeTestCookie'] = array(
+			'User' => array('email' => 'example@example.com', 'name' => 'mark'),
+			'other' => 'value'
+		);
 		$this->Controller->Cookie->startup();
 		$this->assertEqual('mark', $this->Controller->Cookie->read('User.name'));
 
