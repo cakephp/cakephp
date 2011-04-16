@@ -38,6 +38,8 @@ class XmlHelper extends AppHelper {
  */
 	var $encoding = 'UTF-8';
 
+	var $Xml;
+	var $XmlElement;
 /**
  * Constructor
  *
@@ -136,7 +138,7 @@ class XmlHelper extends AppHelper {
 		$out = $elem->toString(array('cdata' => $cdata, 'leaveOpen' => !$endTag));
 
 		if (!$endTag) {
-			$this->Xml =& $elem;
+			$this->XmlElement =& $elem;
 		}
 		return $out;
 	}
@@ -148,9 +150,10 @@ class XmlHelper extends AppHelper {
  * @access public
  */
 	function closeElem() {
-		$name = $this->Xml->name();
-		if ($parent =& $this->Xml->parent()) {
-			$this->Xml =& $parent;
+		$elem = (empty($this->XmlElement)) ? $this->Xml : $this->XmlElement;
+		$name = $elem->name();
+		if ($parent =& $elem->parent()) {
+			$this->XmlElement =& $parent;
 		}
 		return '</' . $name . '>';
 	}
