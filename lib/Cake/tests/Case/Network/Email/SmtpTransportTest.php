@@ -27,15 +27,6 @@ App::uses('SmtpTransport', 'Network/Email');
 class SmtpTestTransport extends SmtpTransport {
 
 /**
- * Config the timeout
- *
- * @var array
- */
-	protected $_config = array(
-		'timeout' => 30
-	);
-
-/**
  * Helper to change the socket
  *
  * @param object $socket
@@ -43,16 +34,6 @@ class SmtpTestTransport extends SmtpTransport {
  */
 	public function setSocket(CakeSocket $socket) {
 		$this->_socket = $socket;
-	}
-
-/**
- * Helper to change the config attribute
- *
- * @param array $config
- * @return void
- */
-	public function setConfig($config) {
-		$this->_config = array_merge($this->_config, $config);
 	}
 
 /**
@@ -107,6 +88,7 @@ class StmpProtocolTest extends CakeTestCase {
 
 		$this->SmtpTransport = new SmtpTestTransport();
 		$this->SmtpTransport->setSocket($this->socket);
+		$this->SmtpTransport->config();
 	}
 
 /**
@@ -176,7 +158,7 @@ class StmpProtocolTest extends CakeTestCase {
 		$this->socket->expects($this->at(6))->method('write')->with("c3Rvcnk=\r\n");
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(8))->method('read')->will($this->returnValue("235 OK\r\n"));
-		$this->SmtpTransport->setConfig(array('username' => 'mark', 'password' => 'story'));
+		$this->SmtpTransport->config(array('username' => 'mark', 'password' => 'story'));
 		$this->SmtpTransport->auth();
 	}
 
@@ -187,7 +169,7 @@ class StmpProtocolTest extends CakeTestCase {
  */
 	public function testAuthNoAuth() {
 		$this->socket->expects($this->never())->method('write')->with("AUTH LOGIN\r\n");
-		$this->SmtpTransport->setConfig(array('username' => null, 'password' => null));
+		$this->SmtpTransport->config(array('username' => null, 'password' => null));
 		$this->SmtpTransport->auth();
 	}
 
