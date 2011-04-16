@@ -135,7 +135,7 @@ class ProjectTask extends Shell {
  * @access private
  */
 	function bake($path, $skel = null, $skip = array('empty')) {
-		if (!$skel) {
+		if (!$skel && !empty($this->params['skel'])) {
 			$skel = $this->params['skel'];
 		}
 		while (!$skel) {
