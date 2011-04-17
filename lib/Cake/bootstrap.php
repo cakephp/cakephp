@@ -95,11 +95,6 @@ if (!defined('CAKE_TESTS')) {
 }
 
 /**
- * Path to the components test directory.
- */
-	define('COMPONENT_TESTS', TESTS.'Case'.DS.'Component'.DS);
-
-/**
  * Path to the helpers test directory.
  */
 	define('HELPER_TESTS', TESTS.'Case'.DS.'View'.DS.'Helper'.DS);
