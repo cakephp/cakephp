@@ -240,15 +240,6 @@ class EmailComponent extends Component {
 	public $smtpOptions = array();
 
 /**
- * Placeholder for any errors that might happen with the
- * smtp mail methods
- *
- * @var string
- * @access public
- */
-	public $smtpError = null;
-
-/**
  * Contains the rendered plain text message if one was sent.
  *
  * @var string
@@ -376,14 +367,10 @@ class EmailComponent extends Component {
 		$this->subject = null;
 		$this->additionalParams = null;
 		$this->date = null;
-		$this->smtpError = null;
 		$this->attachments = array();
 		$this->htmlMessage = null;
 		$this->textMessage = null;
 		$this->messageId = true;
-		$this->_header = array();
-		$this->_boundary = null;
-		$this->_message = array();
 	}
 
 /**
