@@ -62,14 +62,6 @@ class EmailTestComponent extends EmailComponent {
 		return parent::_strip($content, $message);
 	}
 
-/**
- * Wrapper for testing.
- *
- * @return void
- */
-	function formatAddress($string, $smtp = false) {
-		return parent::_formatAddress($string, $smtp);
-	}
 }
 
 /**
@@ -895,51 +887,4 @@ HTMLBLOC;
 		$this->assertEqual($expected, $result);
 	}
 
-/**
- * Test that _formatName doesn't jack up email addresses with alias parts.
- *
- * @return void
- */
-	function testFormatAddressAliases() {
-		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
-		$this->assertEqual($result, 'email@example.com');
-
-		$result = $this->Controller->EmailTest->formatAddress('alias <email@example.com>');
-		$this->assertEqual($result, 'alias <email@example.com>');
-		
-		$result = $this->Controller->EmailTest->formatAddress('alias<email@example.com>');
-		$this->assertEqual($result, 'alias <email@example.com>');
-
-		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
-		$this->assertEqual($result, 'email@example.com');
-
-		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>');
-		$this->assertEqual($result, '<email@example.com>');
-
-		$result = $this->Controller->EmailTest->formatAddress('email@example.com', true);
-		$this->assertEqual($result, '<email@example.com>');
-
-		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>', true);
-		$this->assertEqual($result, '<email@example.com>');
-
-		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
-		$this->assertEqual($result, '<email@example.com>');
-	}
-
-/**
- * test formatting addresses with multibyte chars
- *
- * @return void
- */
-	function testFormatAddressMultibyte() {
-		$this->Controller->EmailTest->charset = 'UTF-8';
-		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>');
-		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdCA=?= <email@domain.de>');
-		
-		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest<email@domain.de>');
-		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdA==?= <email@domain.de>');
-
-		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>', true);
-		$this->assertEqual($result, '<email@domain.de>');
-	}
 }

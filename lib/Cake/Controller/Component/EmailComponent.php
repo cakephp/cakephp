@@ -515,27 +515,6 @@ class EmailComponent extends Component {
 	}
 
 /**
- * Format a string as an email address
- *
- * @param string $string String representing an email address
- * @return string Email address suitable for email headers or smtp pipe
- * @access private
- */
-	function _formatAddress($string, $smtp = false) {
-		$hasAlias = preg_match('/((.*))?\s?<(.+)>/', $string, $matches);
-		if ($smtp && $hasAlias) {
-			return $this->_strip('<' .  $matches[3] . '>');
-		} elseif ($smtp) {
-			return $this->_strip('<' . $string . '>');
-		}
-
-		if ($hasAlias && !empty($matches[2])) {
-			return $this->_encode($matches[2]) . $this->_strip(' <' . $matches[3] . '>');
-		}
-		return $this->_strip($string);
-	}
-
-/**
  * Format addresses to be an array with email as key and alias as value
  *
  * @param array $addresses
