@@ -489,39 +489,6 @@ class EmailComponent extends Component {
 	}
 
 /**
- * Wrap the message using EmailComponent::$lineLength
- *
- * @param string $message Message to wrap
- * @param integer $lineLength Max length of line
- * @return array Wrapped message
- * @access protected
- */
-	function _wrap($message, $lineLength = null) {
-		$message = $this->_strip($message, true);
-		$message = str_replace(array("\r\n","\r"), "\n", $message);
-		$lines = explode("\n", $message);
-		$formatted = array();
-
-		if ($this->_lineLength !== null) {
-			trigger_error(__d('cake_dev', '_lineLength cannot be accessed please use lineLength'), E_USER_WARNING);
-			$this->lineLength = $this->_lineLength;
-		}
-
-		if (!$lineLength) {
-			$lineLength = $this->lineLength;
-		}
-
-		foreach ($lines as $line) {
-			if (substr($line, 0, 1) == '.') {
-				$line = '.' . $line;
-			}
-			$formatted = array_merge($formatted, explode("\n", wordwrap($line, $lineLength, "\n", true)));
-		}
-		$formatted[] = '';
-		return $formatted;
-	}
-
-/**
  * Encode the specified string using the current charset
  *
  * @param string $subject String to encode
