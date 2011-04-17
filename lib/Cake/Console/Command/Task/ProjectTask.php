@@ -54,7 +54,7 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$prompt = __d('cake_console', "What is the full path for this app including the app directory name?\n Example:");
+			$prompt = __d('cake_console', "What is the path for this app including the app directory name?\n Example:");
 			$default = APP_PATH . 'myapp';
 			$project = $this->in($prompt . $default, null, $default);
 		}
