@@ -563,7 +563,7 @@ class App {
 		if (empty($plugin)) {
 			$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
 			$paths[] =  $appLibs . $package . DS;
-			$paths[] = LIBS . $package . DS;
+			$paths[] = CAKE . $package . DS;
 		}
 
 		foreach ($paths as $path) {

@@ -202,7 +202,7 @@ class ProjectTask extends Shell {
 	public function createHome($dir) {
 		$app = basename($dir);
 		$path = $dir . 'View' . DS . 'pages' . DS;
-		$source = LIBS . 'Console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
+		$source = CAKE . 'Console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
 		include($source);
 		return $this->createFile($path.'home.ctp', $output);
 	}
@@ -218,7 +218,7 @@ class ProjectTask extends Shell {
 		$File = new File($path . 'Console' . DS . 'cake.php');
 		$contents = $File->read();
 		if (preg_match('/(__CAKE_PATH__)/', $contents, $match)) {
-			$path = LIBS . 'Console' . DS;
+			$path = CAKE . 'Console' . DS;
 			$replacement = "'" . str_replace(DS, "' . DIRECTORY_SEPARATOR . '", $path) . "'";
 			$result = str_replace($match[0], $replacement, $contents);
 			if ($File->write($result)) {
@@ -260,7 +260,7 @@ class ProjectTask extends Shell {
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			if (!class_exists('Security')) {
-				require LIBS . 'Utility' . DS . 'security.php';
+				require CAKE . 'Utility' . DS . 'security.php';
 			}
 			$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.cipherSeed\', \''.$string.'\');', $contents);

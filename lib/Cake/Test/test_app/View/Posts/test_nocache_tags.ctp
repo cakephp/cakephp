@@ -76,7 +76,7 @@
 <?php
 if (!empty($filePresent)):
 	if (!class_exists('ConnectionManager')) {
-		require LIBS . 'model' . DS . 'connection_manager.php';
+		require CAKE . 'model' . DS . 'connection_manager.php';
 	}
  	$connected = ConnectionManager::getDataSource('default');
 ?>

@@ -295,7 +295,7 @@ class Configure {
 			return false;
 		}
 		$values = self::$_readers[$config]->read($key);
-		
+
 		if ($merge) {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
@@ -304,7 +304,7 @@ class Configure {
 				}
 			}
 		}
-		
+
 		return self::write($values);
 	}
 
@@ -318,7 +318,7 @@ class Configure {
  */
 	public static function version() {
 		if (!isset(self::$_values['Cake']['version'])) {
-			require(LIBS . 'Config' . DS . 'config.php');
+			require(CAKE . 'Config' . DS . 'config.php');
 			self::write($config);
 		}
 		return self::$_values['Cake']['version'];

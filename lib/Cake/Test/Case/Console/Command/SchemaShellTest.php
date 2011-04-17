@@ -97,7 +97,7 @@ class SchemaShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author', 
+	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
 		'core.comment', 'core.test_plugin_comment'
 	);
 
@@ -187,7 +187,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testViewWithPlugins() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.schema');
@@ -238,7 +238,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testDumpFileWritingWithPlugins() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
@@ -314,7 +314,7 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->Shell->expects($this->at(2))->method('out')
 			->with(new PHPUnit_Framework_Constraint_PCREMatch('/Schema file:\s[a-z\.]+\sgenerated/'));
-	
+
 		$this->Shell->Schema = $this->getMock('CakeSchema');
 		$this->Shell->Schema->path = TMP;
 		$this->Shell->Schema->expects($this->once())->method('read')->will($this->returnValue(array('schema data')));
@@ -336,7 +336,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testGenerateWithPlugins() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		CakePlugin::load('TestPlugin');
 
@@ -377,7 +377,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->create();
 
 		$db = ConnectionManager::getDataSource('test');
-		
+
 		$db->cacheSources = false;
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
@@ -439,7 +439,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->once())->method('__run')
 			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
-	
+
 		$this->Shell->update();
 	}
 
@@ -450,7 +450,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testPluginParam() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(
@@ -458,7 +458,7 @@ class SchemaShellTest extends CakeTestCase {
 			'connection' => 'test'
 		);
 		$this->Shell->startup();
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Config' . DS . 'Schema';
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Config' . DS . 'Schema';
 		$this->assertEqual($this->Shell->Schema->path, $expected);
 		CakePlugin::unload();
 	}

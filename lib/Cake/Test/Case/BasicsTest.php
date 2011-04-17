@@ -34,7 +34,7 @@ class BasicsTest extends CakeTestCase {
  */
 	public function setUp() {
 		App::build(array(
-			'locales' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
+			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		));
 		$this->_language = Configure::read('Config.language');
 	}
@@ -206,7 +206,7 @@ class BasicsTest extends CakeTestCase {
 		$string = '<foo> & &nbsp;';
 		$result = h($string, false);
 		$this->assertEqual('&lt;foo&gt; &amp; &nbsp;', $result);
-		
+
 		$string = '<foo> & &nbsp;';
 		$result = h($string, 'UTF-8');
 		$this->assertEqual('&lt;foo&gt; &amp; &amp;nbsp;', $result);
@@ -226,7 +226,7 @@ class BasicsTest extends CakeTestCase {
 			'&nbsp;'
 		);
 		$this->assertEqual($expected, $result);
-		
+
 		$arr = array('f' => '<foo>', 'n' => '&nbsp;');
 		$result = h($arr, false);
 		$expected = array(

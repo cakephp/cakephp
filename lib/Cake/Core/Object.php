@@ -74,7 +74,7 @@ class Object {
 			$extra['url'] = array();
 		}
 		$extra = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
-		
+
 		if (is_string($url)) {
 			$request = new CakeRequest($url);
 		} elseif (is_array($url)) {
@@ -119,7 +119,7 @@ class Object {
 	}
 
 /**
- * Stop execution of the current script.  Wraps exit() making 
+ * Stop execution of the current script.  Wraps exit() making
  * testing easier.
  *
  * @param $status see http://php.net/exit for values
@@ -139,7 +139,7 @@ class Object {
  */
 	public function log($msg, $type = LOG_ERROR) {
 		if (!class_exists('CakeLog')) {
-			require LIBS . 'cake_log.php';
+			require CAKE . 'cake_log.php';
 		}
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
@@ -148,7 +148,7 @@ class Object {
 	}
 
 /**
- * Allows setting of multiple properties of the object in a single line of code.  Will only set 
+ * Allows setting of multiple properties of the object in a single line of code.  Will only set
  * properties that are part of a class declaration.
  *
  * @param array $properties An associative array containing properties and corresponding values.
@@ -213,7 +213,7 @@ class Object {
 		foreach ($properties as $var) {
 			if (
 				isset($classProperties[$var]) &&
-				!empty($classProperties[$var]) && 
+				!empty($classProperties[$var]) &&
 				is_array($this->{$var}) &&
 				$this->{$var} != $classProperties[$var]
 			) {

@@ -51,7 +51,7 @@ if (!defined('APP')) {
 /**
  * Path to the application's libs directory.
  */
-	define('APPLIBS', APP.'Lib'.DS);
+	define('APPCAKE', APP.'Lib'.DS);
 
 /**
  * Path to the configuration files directory.
@@ -59,11 +59,6 @@ if (!defined('APP')) {
 if (!defined('CONFIGS')) {
 	define('CONFIGS', APP.'Config'.DS);
 }
-
-/**
- * Path to the libs directory.
- */
-	define('LIBS', CAKE);
 
 /**
  * Path to the public CSS directory.
@@ -140,9 +135,9 @@ if (!defined('JS_URL')) {
 }
 
 
-require LIBS . 'basics.php';
-require LIBS . 'Core' . DS .'App.php';
-require LIBS . 'Error' . DS . 'exceptions.php';
+require CAKE . 'basics.php';
+require CAKE . 'Core' . DS .'App.php';
+require CAKE . 'Error' . DS . 'exceptions.php';
 
 spl_autoload_register(array('App', 'load'));
 

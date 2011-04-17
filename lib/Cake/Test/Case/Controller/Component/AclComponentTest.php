@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- 
+
 App::uses('AclComponent', 'Controller/Component');
 App::uses('AclNode', 'Model');
 class_exists('AclComponent');
@@ -210,7 +210,7 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that construtor throws an exception when Acl.classname is a 
+ * test that construtor throws an exception when Acl.classname is a
  * non-existant class
  *
  * @expectedException CakeException
@@ -262,7 +262,7 @@ class IniAclTest extends CakeTestCase {
  * @return void
  */
 	function testCheck() {
-		$iniFile = LIBS . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.ini.php';
+		$iniFile = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
 		$Ini->config = $Ini->readConfigFile($iniFile);
@@ -285,7 +285,7 @@ class IniAclTest extends CakeTestCase {
  * @return void
  */
 	function testCheckArray() {
-		$iniFile = LIBS . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.ini.php';
+		$iniFile = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
 		$Ini->config = $Ini->readConfigFile($iniFile);

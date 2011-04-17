@@ -26,7 +26,7 @@ class PhpReaderTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->path = LIBS . 'Test' . DS . 'test_app' . DS . 'Config'. DS;
+		$this->path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS;
 	}
 /**
  * test reading files
@@ -83,7 +83,7 @@ class PhpReaderTest extends CakeTestCase {
  */
 	function testReadPluginValue() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		CakePlugin::load('TestPlugin');
 		$reader = new PhpReader($this->path);

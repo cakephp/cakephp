@@ -45,7 +45,7 @@ abstract class BaseCoverageReport {
 
 /**
  * Array of test case file names.  Used to do basename() matching with
- * files that have coverage to decide which results to show on page load. 
+ * files that have coverage to decide which results to show on page load.
  *
  * @var array
  */
@@ -101,7 +101,7 @@ abstract class BaseCoverageReport {
 		} elseif ($this->pluginTest) {
 			$path = App::pluginPath($this->pluginTest);
 		} else {
-			$path = LIBS;
+			$path = CAKE;
 		}
 		return $path;
 	}

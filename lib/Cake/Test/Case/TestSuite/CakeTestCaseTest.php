@@ -23,7 +23,7 @@ App::uses('Controller', 'Controller');
 App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
 
 if (!class_exists('AppController', false)) {
-	require_once LIBS . 'Controller' . DS . 'AppController.php';
+	require_once CAKE . 'Controller' . DS . 'AppController.php';
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
@@ -36,8 +36,8 @@ if (!class_exists('AppController', false)) {
 class CakeTestCaseTest extends CakeTestCase {
 
 	public static function setUpBeforeClass() {
-		require_once LIBS . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
-		require_once LIBS . 'Test' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';
+		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
+		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';
 	}
 
 /**

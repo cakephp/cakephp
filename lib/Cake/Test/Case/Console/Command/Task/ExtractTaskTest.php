@@ -70,7 +70,7 @@ class ExtractTaskTest extends CakeTestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')
@@ -117,7 +117,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$pattern = '/To change its layout, create: APP\/views\/layouts\/default\.ctp\./s';
 		$this->assertPattern($pattern, $result);
-		
+
 		// extract.ctp
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:6\n';
 		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
@@ -131,7 +131,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern .= '\#: (\\\\|\/)home\.ctp:99\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertPattern($pattern, $result);
-		
+
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:17\nmsgid "';
 		$pattern .= 'Hot features!';
 		$pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
@@ -162,7 +162,7 @@ class ExtractTaskTest extends CakeTestCase {
 	function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = LIBS . 'Test' . DS . 'test_app' . DS . 'View';
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layouts';
 
@@ -175,7 +175,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$pattern = '/\#: .*extract\.ctp:6\n/';
 		$this->assertNotRegExp($pattern, $result);
-		
+
 		$pattern = '/\#: .*default\.ctp:26\n/';
 		$this->assertNotRegExp($pattern, $result);
 	}
@@ -188,10 +188,10 @@ class ExtractTaskTest extends CakeTestCase {
 	function testExtractMultiplePaths() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = 
-			LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages,' .
-			LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts';
-	
+		$this->Task->params['paths'] =
+			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages,' .
+			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts';
+
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->never())->method('_stop');
