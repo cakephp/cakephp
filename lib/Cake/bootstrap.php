@@ -95,11 +95,6 @@ if (!defined('CAKE_TESTS')) {
 }
 
 /**
- * Path to the test suite.
- */
-	define('CAKE_TESTS_LIB', LIBS . 'TestSuite' . DS);
-
-/**
  * Path to the controller test directory.
  */
 	define('CONTROLLER_TESTS', TESTS.'Case'.DS.'Controller'.DS);
