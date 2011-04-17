@@ -409,7 +409,30 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
- * testAttachments
+ * testTemplate method
+ *
+ * @return void
+ */
+	public function testTemplate() {
+		$this->CakeEmail->template('template', 'layout');
+		$expected = array('template' => 'template', 'layout' => 'layout');
+		$this->assertIdentical($this->CakeEmail->template(), $expected);
+
+		$this->CakeEmail->template('new_template');
+		$expected = array('template' => 'new_template', 'layout' => 'layout');
+		$this->assertIdentical($this->CakeEmail->template(), $expected);
+
+		$this->CakeEmail->template('template', null);
+		$expected = array('template' => 'template', 'layout' => null);
+		$this->assertIdentical($this->CakeEmail->template(), $expected);
+
+		$this->CakeEmail->template(null, null);
+		$expected = array('template' => null, 'layout' => null);
+		$this->assertIdentical($this->CakeEmail->template(), $expected);
+	}
+
+/**
+ * testAttachments method
  *
  * @return void
  */
@@ -510,7 +533,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array('empty'));
-		$this->CakeEmail->layout('default', 'default');
+		$this->CakeEmail->template('default', 'default');
 		$result = $this->CakeEmail->send();
 
 		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the CakePHP Framework'));
@@ -532,7 +555,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array('empty'));
-		$this->CakeEmail->layout('default', 'custom');
+		$this->CakeEmail->template('custom', 'default');
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$result = $this->CakeEmail->send();
 
@@ -553,7 +576,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array('empty'));
-		$this->CakeEmail->layout('default', 'default');
+		$this->CakeEmail->template('default', 'default');
 		$this->CakeEmail->emailFormat('both');
 		$result = $this->CakeEmail->send();
 

@@ -638,22 +638,22 @@ class CakeEmail {
 	}
 
 /**
- * Layout and template
+ * Template and layout
  *
- * @param string $layout
- * @param string $template
+ * @param mixed $template Template name or null to not use
+ * @param mixed $layout Layout name or null to not use
  * @return mixed
  */
-	public function layout($layout = null, $template = null) {
-		if ($layout === null) {
+	public function template($template = false, $layout = false) {
+		if ($template === false) {
 			return array(
-				'layout' => $this->_layout,
-				'template' => $this->_template
+				'template' => $this->_template,
+				'layout' => $this->_layout
 			);
 		}
-		$this->_layout = (string)$layout;
-		if ($template !== null) {
-			$this->_template = (string)$template;
+		$this->_template = $template;
+		if ($layout !== false) {
+			$this->_layout = $layout;
 		}
 		return $this;
 	}
