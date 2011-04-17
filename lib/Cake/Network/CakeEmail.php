@@ -475,7 +475,7 @@ class CakeEmail {
 		if ($subject === null) {
 			return $this->_subject;
 		}
-		$this->_subject = (string)$subject;
+		$this->_subject = $this->_encode((string)$subject);
 		return $this;
 	}
 
