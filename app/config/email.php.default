@@ -28,7 +28,7 @@
  * You can specify multiple configurations for production, development and testing.
  *
  * transport => The name of a supported transport; valid options are as follows:
- *		mail 		- MySQL 4 & 5,
+ *		mail 		- Send using PHP mail function
  *		smtp		- Send using SMTP
  *
  * You can add custom database transports (or override existing transports) by adding the
@@ -39,7 +39,7 @@
  * The origin email. See CakeEmail::to() about the valid values
  *
  */
-class EMAIL_CONFIG {
+class EmailConfig {
 
 	public $default = array(
 		'driver' => 'mail',

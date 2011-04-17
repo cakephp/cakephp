@@ -854,7 +854,7 @@ class CakeEmail {
 			if (!config('email')) {
 				throw new SocketException(__d('cake', '%s not found.', APP . 'config' . DS . 'email.php'));
 			}
-			$configs = new EMAIL_CONFIG();
+			$configs = new EmailConfig();
 			if (!isset($configs->{$this->_config})) {
 				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $this->_config));
 			}
