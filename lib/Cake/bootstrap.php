@@ -59,11 +59,6 @@ if (!defined('APP')) {
 	define('BEHAVIORS', MODELS.'Behavior'.DS);
 
 /**
- * Path to the application's components directory.
- */
-	define('COMPONENTS', CONTROLLERS.'Component'.DS);
-
-/**
  * Path to the application's libs directory.
  */
 	define('APPLIBS', APP.'Lib'.DS);
