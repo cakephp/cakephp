@@ -95,11 +95,6 @@ if (!defined('CAKE_TESTS')) {
 }
 
 /**
- * Path to the models' test directory.
- */
-	define('MODEL_TESTS', TESTS.'Case'.DS.'Model'.DS);
-
-/**
  * Path to the lib test directory.
  */
 	define('LIB_TESTS', CAKE_TESTS.'Case'.DS.'Lib'.DS);
