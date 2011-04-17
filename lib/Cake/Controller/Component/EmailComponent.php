@@ -28,8 +28,7 @@ App::uses('Multibyte', 'I18n');
  *
  * @package       cake.libs.controller.components
  * @link http://book.cakephp.org/view/1283/Email
- * @deprecated
- * @see CakeEmail Lib
+ *
  */
 class EmailComponent extends Component {
 
@@ -253,6 +252,15 @@ class EmailComponent extends Component {
 	public $smtpOptions = array();
 
 /**
+ * Placeholder for any errors that might happen with the
+ * smtp mail methods
+ *
+ * @var string
+ * @access public
+ */
+	public $smtpError = null;
+
+/**
  * Contains the rendered plain text message if one was sent.
  *
  * @var string
@@ -305,6 +313,14 @@ class EmailComponent extends Component {
  * @access protected
  */
 	protected $_message = array();
+
+/**
+ * Variable that holds SMTP connection
+ *
+ * @var resource
+ * @access protected
+ */
+	protected $_smtpConnection = null;
 
 /**
  * Constructor
@@ -397,8 +413,7 @@ class EmailComponent extends Component {
 
 
 		$_method = '_' . $this->delivery;
-		//$sent = $this->$_method();
-		$sent = true;
+		$sent = $this->$_method();
 
 		$this->_header = array();
 		$this->_message = array();
@@ -422,6 +437,7 @@ class EmailComponent extends Component {
 		$this->subject = null;
 		$this->additionalParams = null;
 		$this->date = null;
+		$this->smtpError = null;
 		$this->attachments = array();
 		$this->htmlMessage = null;
 		$this->textMessage = null;
@@ -797,4 +813,197 @@ class EmailComponent extends Component {
 		return $value;
 	}
 
+/**
+ * Wrapper for PHP mail function used for sending out emails
+ *
+ * @return bool Success
+ * @access private
+ */
+	function _mail() {
+		$header = implode($this->lineFeed, $this->_header);
+		$message = implode($this->lineFeed, $this->_message);
+		if (is_array($this->to)) {
+			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
+		} else {
+			$to = $this->to;
+		}
+		if (ini_get('safe_mode')) {
+			return @mail($to, $this->_encode($this->subject), $message, $header);
+		}
+		return @mail($to, $this->_encode($this->subject), $message, $header, $this->additionalParams);
+	}
+
+
+/**
+ * Helper method to get socket, overridden in tests
+ *
+ * @param array $config Config data for the socket.
+ * @return void
+ * @access protected
+ */
+	function _getSocket($config) {
+		$this->_smtpConnection = new CakeSocket($config);
+	}
+
+/**
+ * Sends out email via SMTP
+ *
+ * @return bool Success
+ * @access private
+ */
+	function _smtp() {
+		App::uses('CakeSocket', 'Network');
+
+		$defaults = array(
+			'host' => 'localhost',
+			'port' => 25,
+			'protocol' => 'smtp',
+			'timeout' => 30
+		);
+		$this->smtpOptions = array_merge($defaults, $this->smtpOptions);
+		$this->_getSocket($this->smtpOptions);
+
+		if (!$this->_smtpConnection->connect()) {
+			$this->smtpError = $this->_smtpConnection->lastError();
+			return false;
+		} elseif (!$this->_smtpSend(null, '220')) {
+			return false;
+		}
+
+		$httpHost = env('HTTP_HOST');
+
+		if (isset($this->smtpOptions['client'])) {
+			$host = $this->smtpOptions['client'];
+		} elseif (!empty($httpHost)) {
+			list($host) = explode(':', $httpHost);
+		} else {
+			$host = 'localhost';
+		}
+
+		if (!$this->_smtpSend("EHLO {$host}", '250') && !$this->_smtpSend("HELO {$host}", '250')) {
+			return false;
+		}
+
+		if (isset($this->smtpOptions['username']) && isset($this->smtpOptions['password'])) {
+			$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
+			if ($authRequired == '334') {
+				if (!$this->_smtpSend(base64_encode($this->smtpOptions['username']), '334')) {
+					return false;
+				}
+				if (!$this->_smtpSend(base64_encode($this->smtpOptions['password']), '235')) {
+					return false;
+				}
+			} elseif ($authRequired != '503') {
+				return false;
+			}
+		}
+
+		if (!$this->_smtpSend('MAIL FROM: ' . $this->_formatAddress($this->from, true))) {
+			return false;
+		}
+
+		if (!is_array($this->to)) {
+			$tos = array_map('trim', explode(',', $this->to));
+		} else {
+			$tos = $this->to;
+		}
+		foreach ($tos as $to) {
+			if (!$this->_smtpSend('RCPT TO: ' . $this->_formatAddress($to, true))) {
+				return false;
+			}
+		}
+
+		foreach ($this->cc as $cc) {
+			if (!$this->_smtpSend('RCPT TO: ' . $this->_formatAddress($cc, true))) {
+				return false;
+			}
+		}
+		foreach ($this->bcc as $bcc) {
+			if (!$this->_smtpSend('RCPT TO: ' . $this->_formatAddress($bcc, true))) {
+				return false;
+			}
+		}
+
+		if (!$this->_smtpSend('DATA', '354')) {
+			return false;
+		}
+
+		$header = implode("\r\n", $this->_header);
+		$message = implode("\r\n", $this->_message);
+		if (!$this->_smtpSend($header . "\r\n\r\n" . $message . "\r\n\r\n\r\n.")) {
+			return false;
+		}
+		$this->_smtpSend('QUIT', false);
+
+		$this->_smtpConnection->disconnect();
+		return true;
+	}
+
+/**
+ * Protected method for sending data to SMTP connection
+ *
+ * @param string $data data to be sent to SMTP server
+ * @param mixed $checkCode code to check for in server response, false to skip
+ * @return bool Success
+ * @access protected
+ */
+	function _smtpSend($data, $checkCode = '250') {
+		if (!is_null($data)) {
+			$this->_smtpConnection->write($data . "\r\n");
+		}
+		while ($checkCode !== false) {
+			$response = '';
+			$startTime = time();
+			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->smtpOptions['timeout'])) {
+				$response .= $this->_smtpConnection->read();
+			}
+			if (substr($response, -2) !== "\r\n") {
+				$this->smtpError = 'timeout';
+				return false;
+			}
+			$response = end(explode("\r\n", rtrim($response, "\r\n")));
+
+			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
+				if ($code[2] === '-') {
+					continue;
+				}
+				return $code[1];
+			}
+			$this->smtpError = $response;
+			return false;
+		}
+		return true;
+	}
+
+/**
+ * Set as controller flash message a debug message showing current settings in component
+ *
+ * @return boolean Success
+ * @access private
+ */
+	function _debug() {
+		$nl = "\n";
+		$header = implode($nl, $this->_header);
+		$message = implode($nl, $this->_message);
+		$fm = '<pre>';
+
+		if (is_array($this->to)) {
+			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
+		} else {
+			$to = $this->to;
+		}
+		$fm .= sprintf('%s %s%s', 'To:', $to, $nl);
+		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);
+		$fm .= sprintf('%s %s%s', 'Subject:', $this->_encode($this->subject), $nl);
+		$fm .= sprintf('%s%3$s%3$s%s', 'Header:', $header, $nl);
+		$fm .= sprintf('%s%3$s%3$s%s', 'Parameters:', $this->additionalParams, $nl);
+		$fm .= sprintf('%s%3$s%3$s%s', 'Message:', $message, $nl);
+		$fm .= '</pre>';
+
+		if (isset($this->Controller->Session)) {
+			$this->Controller->Session->setFlash($fm, 'default', null, 'email');
+			return true;
+		}
+		return $fm;
+	}
 }
