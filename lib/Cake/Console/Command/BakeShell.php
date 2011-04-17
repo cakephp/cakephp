@@ -151,6 +151,8 @@ class BakeShell extends Shell {
 
 		$modelExists = false;
 		$model = $this->_modelName($name);
+
+		App::uses('AppModel', 'Model');
 		App::uses($model, 'Model');
 		if (class_exists($model)) {
 			$object = new $model();

@@ -574,6 +574,16 @@ class ExceptionRendererTest extends CakeTestCase {
 					'/Internal Error/'
 				),
 				500
+			),
+			array(
+				new CakeException('base class'),
+				array('/Internal Error/'),
+				500
+			),
+			array(
+				new ConfigureException('No file'),
+				array('/Internal Error/'),
+				500
 			)
 		);
 	}

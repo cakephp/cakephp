@@ -1299,7 +1299,7 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * test Model::__construct
  *
- * ensure that $actsAS and $_findMethods are merged.
+ * ensure that $actsAS and $findMethods are merged.
  *
  * @return void
  */
@@ -1320,7 +1320,7 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * test Model::__construct
  *
- * ensure that $actsAS and $_findMethods are merged.
+ * ensure that $actsAS and $findMethods are merged.
  *
  * @return void
  */

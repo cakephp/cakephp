@@ -201,13 +201,30 @@ class ConnectionManager {
 		}
 
 		if (empty($name) || empty($config) || array_key_exists($name, self::$_connectionsEnum)) {
-			$null = null;
-			return $null;
+			return null;
 		}
 		self::$config->{$name} = $config;
 		self::$_connectionsEnum[$name] = self::_connectionData($config);
 		$return = self::getDataSource($name);
 		return $return;
+	}
+
+/**
+ * Removes a connection configuration at runtime given its name
+ *
+ * @param string $name the connection name as it was created
+ * @return boolean success if connection was removed, false if it does not exist
+ */
+	public static function drop($name) {
+		if (empty(self::$_init)) {
+			self::init();
+		}
+
+		if (!isset(self::$config->{$name})) {
+			return false;
+		}
+		unset(self::$_connectionsEnum[$name], self::$_dataSources[$name], self::$config->{$name});
+		return true;
 	}
 
 /**

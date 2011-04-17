@@ -135,16 +135,24 @@ class ProjectTask extends Shell {
  * @access private
  */
 	function bake($path, $skel = null, $skip = array('empty')) {
-		if (!$skel) {
+		if (!$skel && !empty($this->params['skel'])) {
 			$skel = $this->params['skel'];
 		}
 		while (!$skel) {
-			$skel = $this->in(__d('cake_console', "What is the path to the directory layout you wish to copy?\nExample: %s", APP, null, ROOT . DS . 'myapp' . DS));
-			if ($skel == '') {
+			$skel = $this->in(
+				__d('cake_console', "What is the path to the directory layout you wish to copy?"),
+				null,
+				CAKE . 'Console' . DS . 'templates' . DS . 'skel'
+			);
+			if (!$skel) {
 				$this->err(__d('cake_console', 'The directory path you supplied was empty. Please try again.'));
 			} else {
 				while (is_dir($skel) === false) {
-					$skel = $this->in(__d('cake_console', 'Directory path does not exist please choose another:'));
+					$skel = $this->in(
+						__d('cake_console', 'Directory path does not exist please choose another:'),
+						null,
+						CAKE . 'Console' . DS . 'templates' . DS . 'skel'
+					);
 				}
 			}
 		}

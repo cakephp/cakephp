@@ -373,9 +373,9 @@ class Model extends Object {
  * List of valid finder method options, supplied as the first parameter to find().
  *
  * @var array
- * @access protected
+ * @access public
  */
-	protected $_findMethods = array(
+	public $findMethods = array(
 		'all' => true, 'first' => true, 'count' => true,
 		'neighbors' => true, 'list' => true, 'threaded' => true
 	);
@@ -453,7 +453,7 @@ class Model extends Object {
 		}
 
 		if (is_subclass_of($this, 'AppModel')) {
-			$merge = array('_findMethods');
+			$merge = array('findMethods');
 			if ($this->actsAs !== null || $this->actsAs !== false) {
 				$merge[] = 'actsAs';
 			}
@@ -2134,7 +2134,7 @@ class Model extends Object {
 		);
 
 		if ($type !== 'all') {
-			if ($this->_findMethods[$type] === true) {
+			if ($this->findMethods[$type] === true) {
 				$query = $this->{'_find' . ucfirst($type)}('before', $query);
 			}
 		}
@@ -2183,7 +2183,7 @@ class Model extends Object {
 		if ($type === 'all') {
 			return $results;
 		} else {
-			if ($this->_findMethods[$type] === true) {
+			if ($this->findMethods[$type] === true) {
 				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
 			}
 		}

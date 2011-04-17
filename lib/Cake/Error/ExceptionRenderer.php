@@ -143,13 +143,10 @@ class ExceptionRenderer {
  * @return Controller
  */
 	protected function _getController($exception) {
-		static $__previousError = null;
 		App::uses('CakeErrorController', 'Controller');
-
-		if ($__previousError != $exception) {
-			$__previousError = $exception;
+		try {
 			$controller = new CakeErrorController(Router::getRequest(false));
-		} else {
+		} catch (Exception $e) {
 			$controller = new Controller(Router::getRequest(false));
 			$controller->viewPath = 'errors';
 		}
@@ -183,8 +180,12 @@ class ExceptionRenderer {
 			'name' => $error->getMessage(),
 			'error' => $error,
 		));
-		$this->controller->set($error->getAttributes());
-		$this->_outputMessage($this->template);
+		try {
+			$this->controller->set($error->getAttributes());
+			$this->_outputMessage($this->template);
+		} catch (Exception $e) {
+			$this->_outputMessage('error500');
+		}
 	}
 
 /**
