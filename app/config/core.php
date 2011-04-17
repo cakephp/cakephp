@@ -41,7 +41,7 @@
  *
  * Options:
  *
- * - `handler` - callback - The callback to handle errors. You can set this to any callback type, 
+ * - `handler` - callback - The callback to handle errors. You can set this to any callback type,
  *    including anonymous functions.
  * - `level` - int - The level of errors you are interested in capturing.
  * - `trace` - boolean - Include stack traces for errors in log files.
@@ -55,14 +55,14 @@
 	));
 
 /**
- * Configure the Exception handler used for uncaught exceptions.  By default, 
- * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and 
- * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0, 
+ * Configure the Exception handler used for uncaught exceptions.  By default,
+ * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and
+ * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0,
  * framework errors will be coerced into generic HTTP errors.
  *
  * Options:
  *
- * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type, 
+ * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type,
  *   including anonymous functions.
  * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
  *   should place the file for that class in app/libs. This class needs to implement a render method.
@@ -138,7 +138,7 @@
 /**
  * Session configuration.
  *
- * Contains an array of settings to use for session configuration. The defaults key is 
+ * Contains an array of settings to use for session configuration. The defaults key is
  * used to define a default preset to use for sessions, any settings declared here will override
  * the settings of the default config.
  *
@@ -147,14 +147,14 @@
  * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
  * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
  * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
- * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the    
+ * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the
  *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
  * - `Session.defaults` - The default configuration set to use as a basis for your session.
  *    There are four builtins: php, cake, cache, database.
  * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
  *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
  *    to the ini array.
- * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and 
+ * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and
  *    sessionids that change frequently. See CakeSession::$requestCountdown.
  * - `Session.ini` - An associative array of additional ini values to set.
  *
@@ -284,9 +284,13 @@
  *
  */
 
-// Pick the caching engine to use.  If APC is enabled use it.
+/**
+ * Pick the caching engine to use.  If APC is enabled use it.
+ * If running via cli - apc is disabled by default. ensure it's avaiable and enabled in this case
+ *
+ */
 $engine = 'File';
-if (extension_loaded('apc')) {
+if (extension_loaded('apc') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
 	$engine = 'Apc';
 }
 
@@ -309,7 +313,7 @@ Cache::config('_cake_core_', array(
 ));
 
 /**
- * Configure the cache for model, and datasource caches.  This cache configuration 
+ * Configure the cache for model, and datasource caches.  This cache configuration
  * is used to store schema descriptions, and table listings in connections.
  */
 Cache::config('_cake_model_', array(
@@ -319,4 +323,3 @@ Cache::config('_cake_model_', array(
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
-
