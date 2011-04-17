@@ -286,46 +286,47 @@ class View extends Object {
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
- * This realizes the concept of Elements, (or "partial layouts")  and the $params array is used to send
- * data to be used in the element.  Elements can be cached improving performance by using the `cache` option.
+ * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
+ * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
- * ### Special params
- *
+ * @param string $name Name of template file in the/app/views/elements/ folder
+ * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
+ * @param array $options Array of options. Possible keys are:
  * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
  *   If an array, the following keys can be used:
  *   - `config` - Used to store the cached element in a custom cache configuration.
  *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
  * - `plugin` - Load an element from a specific plugin.
- *
- * @param string $name Name of template file in the/app/views/elements/ folder
- * @param array $params Array of data to be made available to the for rendered
- *    view (i.e. the Element)
- * @param boolean $callbacks Set to true to fire beforeRender and afterRender helper callbacks for this element.
+ * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * @return string Rendered Element
  */
-	public function element($name, $params = array(), $callbacks = false) {
+	public function element($name, $data = array(), $options = array()) {
 		$file = $plugin = $key = null;
+		$callbacks = false;
 
-		if (isset($params['plugin'])) {
-			$plugin = $params['plugin'];
+		if (isset($options['plugin'])) {
+			$plugin = $options['plugin'];
 		}
 		if (isset($this->plugin) && !$plugin) {
 			$plugin = $this->plugin;
 		}
+		if (isset($options['callbacks'])) {
+			$callbacks = $options['callbacks'];
+		}
 
-		if (isset($params['cache'])) {
-			$keys = array_merge(array($plugin, $name), array_keys($params));
+		if (isset($options['cache'])) {
+			$keys = array_merge(array($plugin, $name), array_keys($options), array_keys($data));
 			$caching = array(
 				'config' => $this->elementCache,
 				'key' => implode('_', $keys)
 			);
-			if (is_array($params['cache'])) {
+			if (is_array($options['cache'])) {
 				$defaults = array(
 					'config' => $this->elementCache,
 					'key' => $caching['key']
 				);
-				$caching = array_merge($defaults, $params['cache']);
+				$caching = array_merge($defaults, $options['cache']);
 			}
 			$key = 'element_' . $caching['key'];
 			$contents = Cache::read($key, $caching['config']);
@@ -343,11 +344,11 @@ class View extends Object {
 			if ($callbacks) {
 				$this->Helpers->trigger('beforeRender', array($file));
 			}
-			$element = $this->_render($file, array_merge($this->viewVars, $params));
+			$element = $this->_render($file, array_merge($this->viewVars, $data));
 			if ($callbacks) {
 				$this->Helpers->trigger('afterRender', array($file, $element));
 			}
-			if (isset($params['cache'])) {
+			if (isset($options['cache'])) {
 				Cache::write($key, $element, $caching['config']);
 			}
 			return $element;
