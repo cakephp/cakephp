@@ -54,13 +54,6 @@ if (!defined('APP')) {
 	define('APPLIBS', APP.'Lib'.DS);
 
 /**
- * Path to the application's view's elements directory.
- * It's supposed to hold pieces of PHP/HTML that are used on multiple pages
- * and are not linked to a particular layout (like polls, footers and so on).
- */
-	define('ELEMENTS', VIEWS.'Elements'.DS);
-
-/**
  * Path to the configuration files directory.
  */
 if (!defined('CONFIGS')) {
