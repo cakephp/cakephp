@@ -49,11 +49,6 @@ if (!defined('APP')) {
 }
 
 /**
- * Path to the application's models directory.
- */
-	define('MODELS', APP.'Model'.DS);
-
-/**
  * Path to model behaviors directory.
  */
 	define('BEHAVIORS', MODELS.'Behavior'.DS);
