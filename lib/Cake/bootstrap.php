@@ -51,7 +51,7 @@ if (!defined('APP')) {
 /**
  * Path to the application's libs directory.
  */
-	define('APPCAKE', APP.'Lib'.DS);
+	define('APPLIBS', APP.'Lib'.DS);
 
 /**
  * Path to the configuration files directory.
