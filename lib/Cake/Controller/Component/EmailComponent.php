@@ -365,6 +365,15 @@ class EmailComponent extends Component {
 
 		$sent = $lib->send($content);
 
+		$this->htmlMessage = $lib->message(CakeEmail::MESSAGE_HTML);
+		if (empty($this->htmlMessage)) {
+			$this->htmlMessage = null;
+		}
+		$this->textMessage = $lib->message(CakeEmail::MESSAGE_TEXT);
+		if (empty($this->textMessage)) {
+			$this->textMessage = null;
+		}
+
 		$this->_header = array();
 		$this->_message = array();
 
