@@ -95,11 +95,6 @@ if (!defined('CAKE_TESTS')) {
 }
 
 /**
- * Path to the controller test directory.
- */
-	define('CONTROLLER_TESTS', TESTS.'Case'.DS.'Controller'.DS);
-
-/**
  * Path to the components test directory.
  */
 	define('COMPONENT_TESTS', TESTS.'Case'.DS.'Component'.DS);
