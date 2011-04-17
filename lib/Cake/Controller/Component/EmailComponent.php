@@ -333,14 +333,16 @@ class EmailComponent extends Component {
 		$lib->layout($this->layout, $this->template)->emailFormat($this->sendAs);
 
 		if (!empty($this->attachments)) {
-			$lib->attachment($this->_formatAttachFiles());
+			$lib->attachments($this->_formatAttachFiles());
 		}
 
-		$transport = $lib->transport($this->delivery)->transportClass();
+		$lib->transport($this->delivery);
 		if ($this->delivery === 'mail') {
-			$transport->config(array('eol' => $this->lineFeed, 'additionalParameters' => $this->additionalParams));
+			$lib->config(array('eol' => $this->lineFeed, 'additionalParameters' => $this->additionalParams));
 		} elseif ($this->delivery === 'smtp') {
-			$transport->config($this->smtpOptions);
+			$lib->config($this->smtpOptions);
+		} else {
+			$lib->config(array());
 		}
 
 		$sent = $lib->send($content);
