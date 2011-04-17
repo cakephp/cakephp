@@ -310,4 +310,24 @@ class ConnectionManagerTest extends CakeTestCase {
 		$connections = ConnectionManager::enumConnectionObjects();
 		$this->assertEqual($expected, $connections['connection8']);
 	}
+
+/**
+ * Tests that a connection configuration can be deleted in runtime
+ *
+ * @return void
+ */
+	public function testDrop() {
+		App::build(array(
+			'Model/Datasource' => array(
+				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
+			)
+		));
+		ConnectionManager::create('droppable', array('datasource' => 'Test2Source'));
+		$connections = ConnectionManager::enumConnectionObjects();
+		$this->assertEqual(array('datasource' => 'Test2Source'), $connections['droppable']);
+
+		$this->assertTrue(ConnectionManager::drop('droppable'));
+		$connections = ConnectionManager::enumConnectionObjects();
+		$this->assertFalse(isset($connections['droppable']));
+	}
 }
