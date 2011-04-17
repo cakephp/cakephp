@@ -155,7 +155,6 @@ class EmailComponentTest extends CakeTestCase {
 		$this->Controller->Components->init($this->Controller);
 
 		$this->Controller->EmailTest->initialize($this->Controller, array());
-		ClassRegistry::addObject('view', new View($this->Controller));
 
 		App::build(array(
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
@@ -335,9 +334,6 @@ HTMLBLOC;
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
 		$this->assertEqual(DebugCompTransport::$lastEmail, $this->__osFix($expect));
-		
-		$result = ClassRegistry::getObject('view');
-		$this->assertFalse($result);
 	}
 
 /**
