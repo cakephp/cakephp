@@ -63,7 +63,7 @@ class FileEngine extends CacheEngine {
  * Called automatically by the cache frontend
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @param array $setting array of setting for the engine
+ * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
@@ -99,7 +99,7 @@ class FileEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $data Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
- * @return boolean True if the data was succesfully cached, false on failure
+ * @return boolean True if the data was successfully cached, false on failure
  */
 	public function write($key, $data, $duration) {
 		if ($data === '' || !$this->_init) {
@@ -204,7 +204,7 @@ class FileEngine extends CacheEngine {
  * Delete all values from the cache
  *
  * @param boolean $check Optional - only delete expired cache items
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		if (!$this->_init) {

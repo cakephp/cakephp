@@ -53,7 +53,7 @@ class MemcacheEngine extends CacheEngine {
  * Called automatically by the cache frontend
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @param array $setting array of setting for the engine
+ * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
@@ -121,7 +121,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
  * @param integer $duration How long to cache the data, in seconds
- * @return boolean True if the data was succesfully cached, false on failure
+ * @return boolean True if the data was successfully cached, false on failure
  * @see http://php.net/manual/en/memcache.set.php
  */
 	public function write($key, $value, $duration) {
@@ -146,7 +146,6 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @param integer $duration How long to cache the data, in seconds
  * @return New incremented value, false otherwise
  * @throws CacheException when you try to increment with compress = true
  */
@@ -163,8 +162,7 @@ class MemcacheEngine extends CacheEngine {
  * Decrements the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to substract
- * @param integer $duration How long to cache the data, in seconds
+ * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
  * @throws CacheException when you try to decrement with compress = true
  */
@@ -181,7 +179,7 @@ class MemcacheEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		return $this->_Memcache->delete($key);
@@ -190,7 +188,7 @@ class MemcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		return $this->_Memcache->flush();
