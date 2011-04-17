@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
 
 /**
  * FileTest class

@@ -17,12 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Controller', 'Controller');
 App::uses('Helper', 'View');
 App::uses('AppHelper', 'View/Helper');
-App::uses('ClassRegistry', 'Utility');
-App::uses('Controller', 'Controller');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('FomrHelper', 'View/Helper');
+App::uses('ClassRegistry', 'Utility');
+App::uses('Folder', 'Utility');
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
@@ -56,10 +57,10 @@ class TestHtmlHelper extends HtmlHelper {
 /**
  * expose a method as public
  *
- * @param string $options 
- * @param string $exclude 
- * @param string $insertBefore 
- * @param string $insertAfter 
+ * @param string $options
+ * @param string $exclude
+ * @param string $insertBefore
+ * @param string $insertAfter
  * @return void
  */
 	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
@@ -639,7 +640,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$this->View->expects($this->any())->method('addScript')
 			->with($this->matchesRegularExpression('/script_in_head.js/'));
 		$result = $this->Html->script('script_in_head', array('inline' => false));
@@ -711,7 +712,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		
+
 		$this->View->expects($this->any())->method('addScript')
 			->with($this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
@@ -1342,12 +1343,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->para('class-name', '<text>', array('escape' => true));
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
 	}
-	
+
 /**
  * testCrumbList method
- * 
+ *
  * @access public
- * 
+ *
  * @return void
  */
 	function testCrumbList() {
@@ -1435,7 +1436,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$helper = new TestHtmlHelper($this->View);
 		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
 			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
-		
+
 		foreach ($compact as $attribute) {
 			foreach (array('true', true, 1, '1', $attribute) as $value) {
 				$attrs = array($attribute => $value);

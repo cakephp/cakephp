@@ -17,6 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
+
 /**
  * Language string extractor
  *
@@ -515,7 +517,7 @@ class ExtractTask extends Shell {
 	function __searchFiles() {
 		$pattern = false;
 		if (!empty($this->_exclude)) {
-			$pattern = '/[\/\\\\]' . implode('|', $this->_exclude) . '[\/\\\\]/'; 
+			$pattern = '/[\/\\\\]' . implode('|', $this->_exclude) . '[\/\\\\]/';
 		}
 		foreach ($this->__paths as $path) {
 			$Folder = new Folder($path);

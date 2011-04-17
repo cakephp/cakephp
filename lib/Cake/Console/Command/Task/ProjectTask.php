@@ -19,6 +19,7 @@
  */
 
 App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
 App::uses('String', 'Utility');
 App::uses('Security', 'Utility');
 
