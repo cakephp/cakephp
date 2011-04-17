@@ -54,11 +54,6 @@ if (!defined('APP')) {
 	define('APPLIBS', APP.'Lib'.DS);
 
 /**
- * Path to the application's views directory.
- */
-	define('VIEWS', APP.'View'.DS);
-
-/**
  * Path to the application's helpers directory.
  */
 	define('HELPERS', VIEWS.'Helper'.DS);
