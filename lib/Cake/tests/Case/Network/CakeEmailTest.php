@@ -519,6 +519,27 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderWithVars method
+ *
+ * @return void
+ */
+	public function testSendRenderWithVars() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		DebugTransport::$includeAddresses = true;
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->layout('default', 'custom');
+		$this->CakeEmail->viewVars(array('value' => 12345));
+		$result = $this->CakeEmail->send();
+
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Here is your value: 12345'));
+	}
+
+/**
  * testReset method
  *
  * @return void
