@@ -456,6 +456,10 @@ class CakeEmailTest extends CakeTestCase {
 		$config = array('test' => 'ok', 'test2' => true);
 		$this->CakeEmail->config($config);
 		$this->assertIdentical(DebugTransport::$config, $config);
+		$this->assertIdentical($this->CakeEmail->config(), $config);
+
+		$this->CakeEmail->config(array());
+		$this->assertIdentical(DebugTransport::$config, array());
 	}
 
 /**

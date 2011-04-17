@@ -784,7 +784,7 @@ class CakeEmail {
  * @return mixed
  */
 	public function config($config = null) {
-		if (empty($config)) {
+		if ($config === null) {
 			return $this->_config;
 		}
 
