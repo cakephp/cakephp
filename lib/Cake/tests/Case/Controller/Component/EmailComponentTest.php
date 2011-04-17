@@ -86,29 +86,6 @@ class EmailTestComponent extends EmailComponent {
 	}
 
 /**
- * Convenience setter for testing.
- *
- * @access public
- * @return void
- */
-	function setBoundary() {
-		$this->_createBoundary();
-	}
-
-/**
- * Convenience getter for testing.
- *
- * @access public
- * @return string
- */
-	function getBoundary() {
-		if (empty($this->_boundary)) {
-			return null;
-		}
-		return $this->_boundary;
-	}
-
-/**
  * Convenience getter for testing.
  *
  * @access public
@@ -1141,7 +1118,6 @@ HTMLBLOC;
 		$this->assertNull($this->Controller->EmailTest->date);
 		$this->assertNull($this->Controller->EmailTest->subject);
 		$this->assertNull($this->Controller->EmailTest->additionalParams);
-		$this->assertNull($this->Controller->EmailTest->getBoundary());
 		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
 		$this->assertNull($this->Controller->EmailTest->smtpError);
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());

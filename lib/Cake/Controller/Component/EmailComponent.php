@@ -539,15 +539,6 @@ class EmailComponent extends Component {
 	}
 
 /**
- * Create unique boundary identifier
- *
- * @access private
- */
-	function _createboundary() {
-		$this->_boundary = md5(uniqid(time()));
-	}
-
-/**
  * Format the message by seeing if it has attachments.
  *
  * @param string $message Message to format
