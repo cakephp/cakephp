@@ -95,11 +95,6 @@ if (!defined('CAKE_TESTS')) {
 }
 
 /**
- * Path to the lib test directory.
- */
-	define('LIB_TESTS', CAKE_TESTS.'Case'.DS.'Lib'.DS);
-
-/**
  * Path to the temporary files directory.
  */
 if (!defined('TMP')) {
