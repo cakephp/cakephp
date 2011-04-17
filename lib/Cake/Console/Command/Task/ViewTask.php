@@ -89,7 +89,7 @@ class ViewTask extends BakeTask {
  *
  */
 	public function initialize() {
-		$this->path = App::path('View');
+		$this->path = current(App::path('View'));
 	}
 
 /**

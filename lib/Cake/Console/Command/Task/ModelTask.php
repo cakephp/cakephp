@@ -74,7 +74,7 @@ class ModelTask extends BakeTask {
  *
  */
 	public function initialize() {
-		$this->path = App::path('Model');
+		$this->path = current(App::path('Model'));
 	}
 
 /**

@@ -48,7 +48,7 @@ class ControllerTask extends BakeTask {
  *
  */
 	public function initialize() {
-		$this->path = App::path('Controller');
+		$this->path = current(App::path('Controller'));
 	}
 
 /**
