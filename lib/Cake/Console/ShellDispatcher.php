@@ -136,7 +136,7 @@ class ShellDispatcher {
 			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'templates' . DS . 'skel' . DS . 'Config' . DS . 'core.php';
 			App::build();
 		}
-		require_once CONSOLE_LIBS . 'ConsoleErrorHandler.php';
+		require_once CAKE . 'Console' . DS . 'ConsoleErrorHandler.php';
 		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
 

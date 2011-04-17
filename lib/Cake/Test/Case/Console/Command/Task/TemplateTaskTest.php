@@ -42,7 +42,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('TemplateTask', 
+		$this->Task = $this->getMock('TemplateTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
@@ -73,7 +73,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->templateVars['one'], 'three');
 		$this->assertTrue(isset($this->Task->templateVars['four']));
 		$this->assertEqual($this->Task->templateVars['four'], 'five');
-		
+
 		$this->Task->templateVars = array();
 		$this->Task->set(array(3 => 'three', 4 => 'four'));
 		$this->Task->set(array(1 => 'one', 2 => 'two'));
@@ -99,7 +99,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetThemePath() {
-		$defaultTheme = LIBS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
+		$defaultTheme = LIBS . 'Console' . DS . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
 
 		$this->Task->expects($this->exactly(1))->method('in')->will($this->returnValue('1'));

@@ -81,11 +81,6 @@ if (!defined('CONFIGS')) {
 	define('IMAGES', WWW_ROOT.'img'.DS);
 
 /**
- * Path to the console libs direcotry.
- */
-	define('CONSOLE_LIBS', CAKE . 'Console' . DS);
-
-/**
  * Path to the tests directory.
  */
 if (!defined('TESTS')) {
