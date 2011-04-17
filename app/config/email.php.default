@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
- * In this file you set up your database connection details.
+ * In this file you set up your send email details.
  *
  * @package       cake.config
  */
@@ -31,23 +31,23 @@
  *		mail 		- Send using PHP mail function
  *		smtp		- Send using SMTP
  *
- * You can add custom database transports (or override existing transports) by adding the
- * appropriate file to app/libs/emails.  Transports should be named 'x_transport.php',
- * where 'x' is the name of the transport.
+ * You can add custom transports (or override existing transports) by adding the
+ * appropriate file to app/Network/Email.  Transports should be named 'YourTransport.php',
+ * where 'Your' is the name of the transport.
  *
  * from =>
- * The origin email. See CakeEmail::to() about the valid values
+ * The origin email. See CakeEmail::from() about the valid values
  *
  */
 class EmailConfig {
 
 	public $default = array(
-		'driver' => 'mail',
+		'transport' => 'mail',
 		'from' => 'you@localhost'
 	);
 
 	public $smtp = array(
-		'driver' => 'smtp',
+		'transport' => 'smtp',
 		'from' => array('My Site', 'site@localhost'),
 		'host' => 'localhost',
 		'port' => 25,

@@ -852,20 +852,23 @@ class CakeEmail {
 	public function send($content = null) {
 		if (is_string($this->_config)) {
 			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'config' . DS . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', CONFIGS . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$this->_config})) {
 				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $this->_config));
 			}
 			$config = $configs->{$this->_config};
+			if (isset($config['transport'])) {
+				$this->transport($config['transport']);
+			}
 		} else {
 			$config = $this->_config;
 		}
 
 		if (empty($this->_from)) {
 			if (!empty($config['from'])) {
-				$this->to($config['from']);
+				$this->from($config['from']);
 			} else {
 				throw new SocketException(__d('cake', 'From is not specified.'));
 			}
