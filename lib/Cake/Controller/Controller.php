@@ -353,7 +353,7 @@ class Controller extends Object {
 	}
 
 /**
- * Provides backwards compatbility access to the request object properties.
+ * Provides backwards compatibility access to the request object properties.
  * Also provides the params alias.
  *
  * @return void
@@ -376,7 +376,7 @@ class Controller extends Object {
 	}
 
 /**
- * Provides backwards compatiblity access for setting values to the request object.
+ * Provides backwards compatibility access for setting values to the request object.
  *
  * @return void
  */
