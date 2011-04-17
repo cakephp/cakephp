@@ -349,13 +349,7 @@ class App {
  * @return string full path to the plugin.
  */
 	public static function pluginPath($plugin) {
-		$pluginDir = Inflector::underscore($plugin);
-		foreach (self::$__packages['plugins'] as $pluginPath) {
-			if (is_dir($pluginPath . $pluginDir)) {
-				return $pluginPath . $pluginDir . DS ;
-			}
-		}
-		return self::$__packages['plugins'][0] . $pluginDir . DS;
+		return CakePlugin::path($plugin);
 	}
 
 /**
@@ -760,6 +754,7 @@ class App {
 		self::$__map = (array)Cache::read('file_map', '_cake_core_');
 		self::$__objects = (array)Cache::read('object_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
+		self::uses('CakePlugin', 'Core');
 	}
 
 /**
