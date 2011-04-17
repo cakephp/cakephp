@@ -270,6 +270,24 @@ class EmailComponent extends Component {
 	public $messageId = true;
 
 /**
+ * Controller reference
+ *
+ * @var object Controller
+ */
+	protected $_controller = null;
+
+/**
+ * Constructor
+ *
+ * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param array $settings Array of configuration settings.
+ */
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		$this->_controller = $collection->getController();
+		parent::__construct($collection, $settings);
+	}
+
+/**
  * Initialize component
  *
  * @param object $controller Instantiating controller
@@ -330,7 +348,7 @@ class EmailComponent extends Component {
 		if ($layout) {
 			$this->layout = $layout;
 		}
-		$lib->layout($this->layout, $this->template)->emailFormat($this->sendAs);
+		$lib->layout($this->layout, $this->template)->viewVars($this->_controller->viewVars)->emailFormat($this->sendAs);
 
 		if (!empty($this->attachments)) {
 			$lib->attachments($this->_formatAttachFiles());

@@ -272,6 +272,7 @@ HEADBLOC;
 
 		$this->Controller->EmailTest->layout = 'default';
 		$this->Controller->EmailTest->template = 'default';
+		$this->Controller->set('title_for_layout', 'Email Test');
 
 		$text = <<<TEXTBLOC
 
