@@ -96,7 +96,7 @@ class Cache {
  * - `duration` Specify how long items in this cache configuration last.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
  *    with either another cache config or annother application.
- * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable 
+ * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
  *    cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.
  * - `compress` Used by memcache.  Enables memcache's compressed format.
@@ -298,7 +298,12 @@ class Cache {
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
 			trigger_error(
-				__d('cake_dev', "%s cache was unable to write '%s' to cache", $config, $key),
+				__d('cake_dev',
+					"%s cache was unable to write '%s' to %s cache",
+					$config,
+					$key,
+					self::$_engines[$config]->settings['engine']
+				),
 				E_USER_WARNING
 			);
 		}
