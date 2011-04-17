@@ -19,6 +19,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('Multibyte', 'I18n');
+App::uses('CakeEmail', 'Network');
 
 /**
  * EmailComponent
@@ -361,59 +362,60 @@ class EmailComponent extends Component {
  * @return boolean Success
  */
 	public function send($content = null, $template = null, $layout = null) {
-		$this->_createHeader();
+		$lib = new CakeEmail();
+		$lib->charset = $this->charset;
+
+		$lib->from($this->_formatAddresses((array)$this->from));
+		if (!empty($this->to)) {
+			$lib->to($this->_formatAddresses((array)$this->to));
+		}
+		if (!empty($this->cc)) {
+			$lib->cc($this->_formatAddresses((array)$this->cc));
+		}
+		if (!empty($this->bcc)) {
+			$lib->bcc($this->_formatAddresses((array)$this->bcc));
+		}
+		if (!empty($this->replyTo)) {
+			$lib->replyTo($this->_formatAddresses((array)$this->replyTo));
+		}
+		if (!empty($this->return)) {
+			$lib->returnPath($this->_formatAddresses((array)$this->return));
+		}
+		if (!empty($readReceipt)) {
+			$lib->readReceipt($this->_formatAddresses((array)$this->readReceipt));
+		}
+
+		$lib->subject($this->subject)->messageID($this->messageId);
+
+		$headers = array();
+		foreach ($this->headers as $key => $value) {
+			$headers['X-' . $key] = $value;
+		}
+		if ($this->date != false) {
+			$headers['Date'] = $this->date;
+		}
+		$lib->setHeaders($headers);
 
 		if ($template) {
 			$this->template = $template;
 		}
-
 		if ($layout) {
 			$this->layout = $layout;
 		}
-
-		if (is_array($content)) {
-			$content = implode("\n", $content) . "\n";
-		}
-
-		$this->htmlMessage = $this->textMessage = null;
-		if ($content) {
-			if ($this->sendAs === 'html') {
-				$this->htmlMessage = $content;
-			} elseif ($this->sendAs === 'text') {
-				$this->textMessage = $content;
-			} else {
-				$this->htmlMessage = $this->textMessage = $content;
-			}
-		}
-
-		if ($this->sendAs === 'text') {
-			$message = $this->_wrap($content);
-		} else {
-			$message = $this->_wrap($content, 998);
-		}
-
-		if ($this->template === null) {
-			$message = $this->_formatMessage($message);
-		} else {
-			$message = $this->_render($message);
-		}
-
-		$message[] = '';
-		$this->_message = $message;
+		$lib->layout($this->layout, $this->template)->emailFormat($this->sendAs);
 
 		if (!empty($this->attachments)) {
-			$this->_attachFiles();
+			$lib->attachment($this->_formatAttachFiles());
 		}
 
-		if (!is_null($this->_boundary)) {
-			$this->_message[] = '';
-			$this->_message[] = '--' . $this->_boundary . '--';
-			$this->_message[] = '';
+		$transport = $lib->transport($this->delivery)->transportClass();
+		if ($this->delivery === 'mail') {
+			$transport->config(array('eol' => $this->lineFeed));
+		} elseif ($this->delivery === 'smtp') {
+			$transport->config($this->smtpOptions);
 		}
 
-
-		$_method = '_' . $this->delivery;
-		$sent = $this->$_method();
+		$sent = $lib->send($content);
 
 		$this->_header = array();
 		$this->_message = array();
@@ -657,12 +659,11 @@ class EmailComponent extends Component {
 	}
 
 /**
- * Attach files by adding file contents inside boundaries.
+ * Format the attach array
  *
- * @access private
- * @TODO: modify to use the core File class?
+ * @return array
  */
-	function _attachFiles() {
+	protected function _formatAttachFiles() {
 		$files = array();
 		foreach ($this->attachments as $filename => $attachment) {
 			$file = $this->_findFiles($attachment);
@@ -673,21 +674,7 @@ class EmailComponent extends Component {
 				$files[$filename] = $file;
 			}
 		}
-
-		foreach ($files as $filename => $file) {
-			$handle = fopen($file, 'rb');
-			$data = fread($handle, filesize($file));
-			$data = chunk_split(base64_encode($data)) ;
-			fclose($handle);
-
-			$this->_message[] = '--' . $this->_boundary;
-			$this->_message[] = 'Content-Type: application/octet-stream';
-			$this->_message[] = 'Content-Transfer-Encoding: base64';
-			$this->_message[] = 'Content-Disposition: attachment; filename="' . basename($filename) . '"';
-			$this->_message[] = '';
-			$this->_message[] = $data;
-			$this->_message[] = '';
-		}
+		return $files;
 	}
 
 /**
@@ -788,6 +775,25 @@ class EmailComponent extends Component {
 			return $this->_encode($matches[2]) . $this->_strip(' <' . $matches[3] . '>');
 		}
 		return $this->_strip($string);
+	}
+
+/**
+ * Format addresses to be an array with email as key and alias as value
+ *
+ * @param array $addresses
+ * @return array
+ */
+	protected function _formatAddresses($addresses) {
+		$formatted = array();
+		foreach ($addresses as $address) {
+			if (preg_match('/((.*))?\s?<(.+)>/', $address, $matches) && !empty($matches[2])) {
+				$formatted[$this->_strip($matches[3])] = $this->_encode($matches[2]);
+			} else {
+				$address = $this->_strip($address);
+				$formatted[$address] = $address;
+			}
+		}
+		return $formatted;
 	}
 
 /**
