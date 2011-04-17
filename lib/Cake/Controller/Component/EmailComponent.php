@@ -347,7 +347,7 @@ class EmailComponent extends Component {
 
 		$transport = $lib->transport($this->delivery)->transportClass();
 		if ($this->delivery === 'mail') {
-			$transport->config(array('eol' => $this->lineFeed));
+			$transport->config(array('eol' => $this->lineFeed, 'additionalParameters' => $this->additionalParams));
 		} elseif ($this->delivery === 'smtp') {
 			$transport->config($this->smtpOptions);
 		}
