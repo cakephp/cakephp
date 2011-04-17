@@ -91,29 +91,6 @@ class EmailTestComponent extends EmailComponent {
  * @access public
  * @return void
  */
-	function setHeaders($headers) {
-		$this->_header += $headers;
-	}
-
-/**
- * Convenience getter for testing.
- *
- * @access public
- * @return array
- */
-	function getHeaders() {
-		if (empty($this->_header)) {
-			return array();
-		}
-		return $this->_header;
-	}
-
-/**
- * Convenience setter for testing.
- *
- * @access public
- * @return void
- */
 	function setBoundary() {
 		$this->_createBoundary();
 	}
@@ -1164,7 +1141,6 @@ HTMLBLOC;
 		$this->assertNull($this->Controller->EmailTest->date);
 		$this->assertNull($this->Controller->EmailTest->subject);
 		$this->assertNull($this->Controller->EmailTest->additionalParams);
-		$this->assertIdentical($this->Controller->EmailTest->getHeaders(), array());
 		$this->assertNull($this->Controller->EmailTest->getBoundary());
 		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
 		$this->assertNull($this->Controller->EmailTest->smtpError);
