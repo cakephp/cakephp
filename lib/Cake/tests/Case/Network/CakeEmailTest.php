@@ -540,6 +540,35 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testMessage method
+ *
+ * @return void
+ */
+	public function testMessage() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		DebugTransport::$includeAddresses = true;
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->layout('default', 'default');
+		$this->CakeEmail->emailFormat('both');
+		$result = $this->CakeEmail->send();
+
+		$expected = '<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>';
+		$this->assertTrue((bool)strpos($this->CakeEmail->message(CakeEmail::MESSAGE_HTML), $expected));
+
+		$expected = 'This email was sent using the CakePHP Framework, http://cakephp.org.';
+		$this->assertTrue((bool)strpos($this->CakeEmail->message(CakeEmail::MESSAGE_TEXT), $expected));
+
+		$message = $this->CakeEmail->message();
+		$this->assertTrue(in_array('Content-Type: text/plain; charset=UTF-8', $message));
+		$this->assertTrue(in_array('Content-Type: text/html; charset=UTF-8', $message));
+	}
+
+/**
  * testReset method
  *
  * @return void

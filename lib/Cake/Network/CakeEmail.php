@@ -53,6 +53,20 @@ class CakeEmail {
 	const LINE_LENGTH_MUST = 998;
 
 /**
+ * Type of message - HTML
+ *
+ * @constant MESSAGE_HTML
+ */
+	const MESSAGE_HTML = 'html';
+
+/**
+ * Type of message - TEXT
+ *
+ * @constant MESSAGE_TEXT
+ */
+	const MESSAGE_TEXT = 'text';
+
+/**
  * Recipient of the email
  *
  * @var string
@@ -792,9 +806,16 @@ class CakeEmail {
 /**
  * Get generated message (used by transport classes)
  *
- * @return array
+ * @param mixed $type Use MESSAGE_* constants or null to return the full message as array
+ * @return mixed String if have type, array if type is null
  */
-	public function message() {
+	public function message($type = null) {
+		switch ($type) {
+			case self::MESSAGE_HTML:
+				return $this->_htmlMessage;
+			case self::MESSAGE_TEXT:
+				return $this->_textMessage;
+		}
 		return $this->_message;
 	}
 
