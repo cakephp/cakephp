@@ -440,7 +440,7 @@ class SchemaShell extends Shell {
 		);
 		$path = array(
 			'help' => __d('cake_console', 'Path to read and write schema.php'),
-			'default' => CONFIGS . 'Schema'
+			'default' => APP . 'Config' . 'Schema'
 		);
 		$file = array(
 			'help' => __d('cake_console', 'File name to read and write.'),

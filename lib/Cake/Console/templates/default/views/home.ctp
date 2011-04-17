@@ -37,7 +37,7 @@ endif;
 <p>
 <?php
 	\$filePresent = null;
-	if (file_exists(CONFIGS . 'database.php')):
+	if (file_exists(APP . 'Config' . DS . 'database.php')):
 		echo '<span class=\"notice success\">';
 			echo __('Your database configuration file is present.');
 			\$filePresent = true;

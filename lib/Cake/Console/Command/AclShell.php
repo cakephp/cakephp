@@ -20,7 +20,7 @@ App::uses('AclComponent', 'Controller/Component');
 App::uses('DbAcl', 'Model');
 
 /**
- * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode 
+ * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
  * being enabled.  Be sure to turn it off when using this shell.
  *
  * @package       cake.console.libs
@@ -86,7 +86,7 @@ class AclShell extends Shell {
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
-			require_once (CONFIGS.'database.php');
+			require_once (APP . 'Config' . DS . 'database.php');
 
 			if (!in_array($this->command, array('initdb'))) {
 				$collection = new ComponentCollection();
@@ -348,13 +348,13 @@ class AclShell extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		
+
 		$type = array(
-			'choices' => array('aro', 'aco'), 
+			'choices' => array('aro', 'aco'),
 			'required' => true,
 			'help' => __d('cake_console', 'Type of node to create.')
 		);
-		
+
 		$parser->description(__d('cake_console', 'A console tool for managing the DbAcl'))
 			->addSubcommand('create', array(
 				'help' => __d('cake_console', 'Create a new ACL node'),

@@ -54,13 +54,6 @@ if (!defined('APP')) {
 	define('APPLIBS', APP.'Lib'.DS);
 
 /**
- * Path to the configuration files directory.
- */
-if (!defined('CONFIGS')) {
-	define('CONFIGS', APP.'Config'.DS);
-}
-
-/**
  * Path to the public CSS directory.
  */
 	define('CSS', WWW_ROOT.'css'.DS);

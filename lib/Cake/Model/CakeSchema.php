@@ -94,7 +94,7 @@ class CakeSchema extends Object {
 		}
 
 		if (empty($options['path'])) {
-			$this->path = CONFIGS . 'Schema';
+			$this->path = APP . 'Config' . 'Schema';
 		}
 
 		$options = array_merge(get_object_vars($this), $options);
@@ -277,7 +277,7 @@ class CakeSchema extends Object {
 									if (in_array($withTable, $currentTables)) {
 										$key = array_search($withTable, $currentTables);
 										$noPrefixWith = str_replace($prefix, '', $withTable);
-	
+
 										$tables[$noPrefixWith] = $this->__columns($Object->$class);
 										$tables[$noPrefixWith]['indexes'] = $db->index($Object->$class);
 										$tables[$noPrefixWith]['tableParameters'] = $db->readTableParameters($withTable);

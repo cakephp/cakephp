@@ -49,7 +49,7 @@ App::uses('Debugger', 'Utility');
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(CONFIGS.'database.php')):
+		if (file_exists(APP . 'Config' . DS.'database.php')):
 			echo '<span class="notice success">';
 				echo __d('cake_dev', 'Your database configuration file is present.');
 				$filePresent = true;

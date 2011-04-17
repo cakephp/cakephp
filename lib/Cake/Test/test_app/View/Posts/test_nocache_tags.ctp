@@ -62,7 +62,7 @@
 		<?php
 			echo __d('cake', 'Your database configuration file is ');
 			$filePresent = null;
-			if (file_exists(CONFIGS.'database.php')):
+			if (file_exists(APP . 'Config'.'database.php')):
 				echo __d('cake', 'present.');
 				$filePresent = true;
 			else:

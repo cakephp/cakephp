@@ -46,7 +46,7 @@ class CakeEmail {
 	const LINE_LENGTH_SHOULD = 78;
 
 /**
- * Line length - no must more - RFC 2822 - 2.1.1 
+ * Line length - no must more - RFC 2822 - 2.1.1
  *
  * @constant LINE_LENGTH_MUST
  */
@@ -890,7 +890,7 @@ class CakeEmail {
 	public function send($content = null) {
 		if (is_string($this->_config)) {
 			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', CONFIGS . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$this->_config})) {
@@ -971,7 +971,7 @@ class CakeEmail {
 
 		if (is_string($transportConfig)) {
 			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', CONFIGS . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$transportConfig})) {
