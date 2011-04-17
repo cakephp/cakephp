@@ -114,7 +114,7 @@ class ExtractTask extends Shell {
 			$this->__paths = explode(',', $this->params['paths']);
 		} else {
 			$defaultPath = APP_PATH;
-			$message = __d('cake_console', "What is the path you would like to extract?\nExample: %s\n[Q]uit [D]one", $defaultPath);
+			$message = __d('cake_console', "What is the path you would like to extract?\n[Q]uit [D]one");
 			while (true) {
 				$response = $this->in($message, null, $defaultPath);
 				if (strtoupper($response) === 'Q') {
@@ -136,7 +136,7 @@ class ExtractTask extends Shell {
 		if (isset($this->params['output'])) {
 			$this->__output = $this->params['output'];
 		} else {
-			$message = __d('cake_console', "What is the path you would like to output?\nExample: %s\n[Q]uit", $this->__paths[0] . DS . 'locale');
+			$message = __d('cake_console', "What is the path you would like to output?\n[Q]uit", $this->__paths[0] . DS . 'locale');
 			while (true) {
 				$response = $this->in($message, null, $this->__paths[0] . DS . 'locale');
 				if (strtoupper($response) === 'Q') {
@@ -417,7 +417,7 @@ class ExtractTask extends Shell {
 				if (strtoupper($response) === 'N') {
 					$response = '';
 					while ($response == '') {
-						$response = $this->in(__d('cake_console', "What would you like to name this file?\nExample: %s", 'new_' . $filename), null, 'new_' . $filename);
+						$response = $this->in(__d('cake_console', "What would you like to name this file?"), null, 'new_' . $filename);
 						$File = new File($this->__output . $response);
 						$filename = $response;
 					}
