@@ -76,13 +76,6 @@ if (!defined('TESTS')) {
 }
 
 /**
- * Path to the core tests directory.
- */
-if (!defined('CAKE_TESTS')) {
-	define('CAKE_TESTS', CAKE.'Test'.DS);
-}
-
-/**
  * Path to the temporary files directory.
  */
 if (!defined('TMP')) {

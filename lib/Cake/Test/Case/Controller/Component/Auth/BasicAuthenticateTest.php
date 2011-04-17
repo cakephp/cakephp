@@ -21,7 +21,7 @@ App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
 
-require_once  CAKE_TESTS . 'Case' . DS . 'Model' . DS . 'models.php';
+require_once  CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
 
 /**
  * Test case for BasicAuthentication
@@ -100,7 +100,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 	function testAuthenticateNoUsername() {
 		$request = new CakeRequest('posts/index', false);
 		$_SERVER['PHP_AUTH_PW'] = 'foobar';
-		
+
 		$this->response->expects($this->once())
 			->method('header')
 			->with('WWW-Authenticate: Basic realm="localhost"');
@@ -117,7 +117,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = null;
-		
+
 		$this->response->expects($this->once())
 			->method('header')
 			->with('WWW-Authenticate: Basic realm="localhost"');
@@ -152,10 +152,10 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$this->response->expects($this->at(0))
 			->method('header')
 			->with('WWW-Authenticate: Basic realm="localhost"');
-		
+
 		$this->response->expects($this->at(1))
 			->method('send');
-		
+
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertFalse($result);
 	}
@@ -201,7 +201,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$this->response->expects($this->at(1))
 			->method('statusCode')
 			->with(401);
-		
+
 		$this->response->expects($this->at(2))
 			->method('send');
 
