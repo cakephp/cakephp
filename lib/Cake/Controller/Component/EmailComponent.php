@@ -151,14 +151,6 @@ class EmailComponent extends Component {
 	public $template = null;
 
 /**
- * as per RFC2822 Section 2.1.1
- *
- * @var integer
- * @access public
- */
-	public $lineLength = 70;
-
-/**
  * Line feed character(s) to be used when sending using mail() function
  * By default PHP_EOL is used.
  * RFC2822 requires it to be CRLF but some Unix
@@ -168,12 +160,7 @@ class EmailComponent extends Component {
  * @var string
  * @access public
  */
-	var $lineFeed = PHP_EOL;
-
-/**
- * @deprecated see lineLength
- */
-	protected $_lineLength = null;
+	public $lineFeed = PHP_EOL;
 
 /**
  * What format should the email be sent in
@@ -292,49 +279,6 @@ class EmailComponent extends Component {
 	public $messageId = true;
 
 /**
- * Temporary store of message header lines
- *
- * @var array
- * @access protected
- */
-	protected $_header = array();
-
-/**
- * If set, boundary to use for multipart mime messages
- *
- * @var string
- * @access protected
- */
-	protected $_boundary = null;
-
-/**
- * Temporary store of message lines
- *
- * @var array
- * @access protected
- */
-	protected $_message = array();
-
-/**
- * Variable that holds SMTP connection
- *
- * @var resource
- * @access protected
- */
-	protected $_smtpConnection = null;
-
-/**
- * Constructor
- *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
- * @param array $settings Array of configuration settings.
- */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->Controller = $collection->getController();
-		parent::__construct($collection, $settings);
-	}
-
-/**
  * Initialize component
  *
  * @param object $controller Instantiating controller
@@ -344,13 +288,6 @@ class EmailComponent extends Component {
 			$this->charset = Configure::read('App.encoding');
 		}
 	}
-
-/**
- * Startup component
- *
- * @param object $controller Instantiating controller
- */
-	public function startup($controller) {}
 
 /**
  * Send an email using the specified content, template and layout

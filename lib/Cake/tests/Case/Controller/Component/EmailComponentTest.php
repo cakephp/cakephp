@@ -20,7 +20,6 @@
  */
 App::uses('Controller', 'Controller');
 App::uses('EmailComponent', 'Controller/Component');
-App::uses('CakeSocket', 'Network');
 
 /**
  * EmailTestComponent class
@@ -28,29 +27,6 @@ App::uses('CakeSocket', 'Network');
  * @package       cake.tests.cases.libs.controller.components
  */
 class EmailTestComponent extends EmailComponent {
-
-/**
- * Convenience getter for testing.
- *
- * @access public
- * @return string
- */
-	function getMessage() {
-		if (empty($this->_message)) {
-			return array();
-		}
-		return $this->_message;
-	}
-
-/**
- * Convenience getter for testing.
- *
- * @access protected
- * @return string
- */
-	function _getMessage() {
-		return $this->_message;
-	}
 
 /**
  * Convenience method for testing.
@@ -783,7 +759,6 @@ HTMLBLOC;
 		$this->assertNull($this->Controller->EmailTest->date);
 		$this->assertNull($this->Controller->EmailTest->subject);
 		$this->assertNull($this->Controller->EmailTest->additionalParams);
-		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
 		$this->assertNull($this->Controller->EmailTest->smtpError);
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 		$this->assertNull($this->Controller->EmailTest->textMessage);
