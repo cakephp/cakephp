@@ -376,7 +376,7 @@ class Cache {
  * Decrement a number under the key and return decremented value.
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to substract
+ * @param integer $offset How much to subtract
  * @param string $config Optional string configuration name. Defaults to 'default'
  * @return mixed new value, or false if the data doesn't exist, is not integer,
  *   or if there was an error fetching it
@@ -414,7 +414,7 @@ class Cache {
  *
  * @param string $key Identifier for the data
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public static function delete($key, $config = 'default') {
 		$settings = self::settings($config);
@@ -440,7 +440,7 @@ class Cache {
  *
  * @param boolean $check if true will check expiration, otherwise delete all
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public static function clear($check = false, $config = 'default') {
 		if (!self::isInitialized($config)) {
@@ -454,21 +454,20 @@ class Cache {
 /**
  * Check if Cache has initialized a working config for the given name.
  *
- * @param string $engine Name of the engine, Defaults to default
- * @param string $config Name of the configuration setting
+ * @param string $config name of the configuration to use. Defaults to 'default'
  * @return bool Whether or not the config name has been initialized.
  */
-	public static function isInitialized($name = 'default') {
+	public static function isInitialized($config = 'default') {
 		if (Configure::read('Cache.disable')) {
 			return false;
 		}
-		return isset(self::$_engines[$name]);
+		return isset(self::$_engines[$config]);
 	}
 
 /**
  * Return the settings for the named cache engine.
  *
- * @param string $engine Name of the configuration to get settings for. Defaults to 'default'
+ * @param string $name Name of the configuration to get settings for. Defaults to 'default'
  * @return array list of settings for this engine
  * @see Cache::config()
  * @access public
@@ -502,8 +501,8 @@ abstract class CacheEngine {
  *
  * Called automatically by the cache frontend
  *
- * @param array $params Associative array of parameters for the engine
- * @return boolean True if the engine has been succesfully initialized, false if not
+ * @param array $settings Associative array of parameters for the engine
+ * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
 		$this->settings = array_merge(
@@ -531,7 +530,7 @@ abstract class CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
  * @param mixed $duration How long to cache for.
- * @return boolean True if the data was succesfully cached, false on failure
+ * @return boolean True if the data was successfully cached, false on failure
  */
 	abstract public function write($key, $value, $duration);
 
@@ -556,7 +555,7 @@ abstract class CacheEngine {
  * Decrement a number under the key and return decremented value
  *
  * @param string $key Identifier for the data
- * @param integer $value How much to substract
+ * @param integer $offset How much to subtract
  * @return New incremented value, false otherwise
  */
 	abstract public function decrement($key, $offset = 1);
@@ -565,7 +564,7 @@ abstract class CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	abstract public function delete($key);
 
@@ -573,7 +572,7 @@ abstract class CacheEngine {
  * Delete all keys from the cache
  *
  * @param boolean $check if true will check expiration, otherwise delete all
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	abstract public function clear($check);
 
