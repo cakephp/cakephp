@@ -871,6 +871,10 @@ class DboOracle extends DboSource {
 		}
 
 		switch($column) {
+			case 'timestamp':
+				$data = date('Y-m-d H:i:s', strtotime($data));
+				$data = "timestamp'$data'";
+			break;
 			case 'date':
 				$data = date('Y-m-d H:i:s', strtotime($data));
 				$data = "TO_DATE('$data', 'YYYY-MM-DD HH24:MI:SS')";
