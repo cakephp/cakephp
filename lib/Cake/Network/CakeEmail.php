@@ -675,14 +675,14 @@ class CakeEmail {
 /**
  * Variables to be set on render
  *
- * @param array
+ * @param array $viewVars
  * @return mixed
  */
 	public function viewVars($viewVars = null) {
 		if ($viewVars === null) {
 			return $this->_viewVars;
 		}
-		$this->_viewVars = $viewVars;
+		$this->_viewVars = array_merge($this->_viewVars, (array)$viewVars);
 		return $this;
 	}
 

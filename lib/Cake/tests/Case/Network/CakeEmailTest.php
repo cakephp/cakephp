@@ -432,6 +432,24 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testViewVars method
+ *
+ * @return void
+ */
+	public function testViewVars() {
+		$this->assertIdentical($this->CakeEmail->viewVars(), array());
+
+		$this->CakeEmail->viewVars(array('value' => 12345));
+		$this->assertIdentical($this->CakeEmail->viewVars(), array('value' => 12345));
+
+		$this->CakeEmail->viewVars(array('name' => 'CakePHP'));
+		$this->assertIdentical($this->CakeEmail->viewVars(), array('value' => 12345, 'name' => 'CakePHP'));
+
+		$this->CakeEmail->viewVars(array('value' => 4567));
+		$this->assertIdentical($this->CakeEmail->viewVars(), array('value' => 4567, 'name' => 'CakePHP'));
+	}
+
+/**
  * testAttachments method
  *
  * @return void
