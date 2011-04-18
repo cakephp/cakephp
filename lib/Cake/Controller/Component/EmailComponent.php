@@ -455,7 +455,7 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _render($content) {
-		$viewClass = $this->Controller->view;
+		$viewClass = $this->Controller->viewClass;
 
 		if ($viewClass != 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
