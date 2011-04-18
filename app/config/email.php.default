@@ -57,4 +57,31 @@ class EmailConfig {
 		'client' => null
 	);
 
+	public $fast = array(
+		'from' => 'you@localhost',
+		'to' => null,
+		'cc' => null,
+		'bcc' => null,
+		'replyTo' => null,
+		'readReceipt' => null,
+		'returnPath' => null,
+		'messageId' => true,
+		'subject' => null,
+		'message' => null,
+		'headers' => null,
+		'viewRender' => null,
+		'template' => false,
+		'layout' => false,
+		'viewVars' => null,
+		'attachments' => null,
+		'emailFormat' => null,
+		'transport' => 'smtp',
+		'host' => 'localhost',
+		'port' => 25,
+		'timeout' => 30,
+		'username' => 'user',
+		'password' => 'secret',
+		'client' => null
+	);
+
 }

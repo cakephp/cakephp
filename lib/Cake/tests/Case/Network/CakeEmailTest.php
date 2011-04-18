@@ -581,6 +581,36 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testFastSend method
+ *
+ * @return void
+ */
+	public function testFastSend() {
+		$instance = CakeEmail::fastSend('all@cakephp.org', 'About', 'Everything ok', array('from' => 'root@cakephp.org'), false);
+		$this->assertIsA($instance, 'CakeEmail');
+		$this->assertIdentical($instance->to(), array('all@cakephp.org' => 'all@cakephp.org'));
+		$this->assertIdentical($instance->subject(), 'About');
+		$this->assertIdentical($instance->from(), array('root@cakephp.org' => 'root@cakephp.org'));
+
+		$config = array(
+			'from' => 'cake@cakephp.org',
+			'to' => 'debug@cakephp.org',
+			'subject' => 'Update ok',
+			'template' => 'custom',
+			'layout' => 'custom_layout',
+			'viewVars' => array('value' => 123),
+			'cc' => array('cake@cakephp.org' => 'Myself')
+		);
+		$instance = CakeEmail::fastSend(null, null, array('name' => 'CakePHP'), $config, false);
+		$this->assertIdentical($instance->from(), array('cake@cakephp.org' => 'cake@cakephp.org'));
+		$this->assertIdentical($instance->to(), array('debug@cakephp.org' => 'debug@cakephp.org'));
+		$this->assertIdentical($instance->subject(), 'Update ok');
+		$this->assertIdentical($instance->template(), array('template' => 'custom', 'layout' => 'custom_layout'));
+		$this->assertIdentical($instance->viewVars(), array('value' => 123, 'name' => 'CakePHP'));
+		$this->assertIdentical($instance->cc(), array('cake@cakephp.org' => 'Myself'));
+	}
+
+/**
  * testMessage method
  *
  * @return void

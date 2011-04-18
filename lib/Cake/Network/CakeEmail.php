@@ -748,7 +748,7 @@ class CakeEmail {
  * @return mixed
  * @thrown SocketException
  */
-	public function messageID($message = null) {
+	public function messageId($message = null) {
 		if ($message === null) {
 			return $this->_messageId;
 		}
@@ -915,6 +915,87 @@ class CakeEmail {
 		$transport->config($config);
 
 		return $transport->send($this);
+	}
+
+/**
+ * Static method to fast create an instance of CakeEmail
+ *
+ * @param mixed $to Address to send (see CakeEmail::to()). If null, will try to use 'to' from transport config
+ * @param mixed $subject String of subject or null to use 'subject' from transport config
+ * @param mixed $message String with message or array with variables to be used in render
+ * @param mixed $transportConfig String to use config from EmailConfig or array with configs
+ * @param boolean $send Send the email or just return the instance pre-configured
+ * @return object Instance of CakeEmail
+ */
+	public static function fastSend($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
+		$class = __CLASS__;
+		$instance = new $class();
+
+		if (is_string($transportConfig)) {
+			if (!config('email')) {
+				throw new SocketException(__d('cake', '%s not found.', CONFIGS . 'email.php'));
+			}
+			$configs = new EmailConfig();
+			if (!isset($configs->{$transportConfig})) {
+				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $transportConfig));
+			}
+			$transportConfig = $configs->{$transportConfig};
+		}
+		self::_applyConfig($instance, $transportConfig);
+
+		if ($to !== null) {
+			$instance->to($to);
+		}
+		if ($subject !== null) {
+			$instance->subject($subject);
+		}
+		if (is_array($message)) {
+			$instance->viewVars($message);
+			$message = null;
+		} elseif ($message === null && isset($config['message'])) {
+			$message = $config['message'];
+		}
+
+		if ($send === true) {
+			$instance->send($message);
+		}
+
+		return $instance;
+	}
+
+/**
+ * Apply the config to an instance
+ *
+ * @param object $obj CakeEmail
+ * @param array $config
+ * @return void
+ */
+	protected static function _applyConfig(CakeEmail $obj, $config) {
+		$simpleMethods = array(
+			'from', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
+			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
+			'transport', 'emailFormat'
+		);
+		foreach ($simpleMethods as $method) {
+			if (isset($config[$method])) {
+				$obj->$method($config[$method]);
+				unset($config[$method]);
+			}
+		}
+		if (isset($config['headers'])) {
+			$obj->setHeaders($config['headers']);
+			unset($config['headers']);
+		}
+		if (array_key_exists('template', $config)) {
+			$layout = false;
+			if (array_key_exists('layout', $config)) {
+				$layout = $config['layout'];
+				unset($config['layout']);
+			}
+			$obj->template($config['template'], $layout);
+			unset($config['template']);
+		}
+		$obj->config($config);
 	}
 
 /**
