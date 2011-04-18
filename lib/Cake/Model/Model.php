@@ -2589,7 +2589,7 @@ class Model extends Object {
 				'allowEmpty' => null,
 				'required' => null,
 				'rule' => 'blank',
-				'last' => false,
+				'last' => true,
 				'on' => null
 			);
 
@@ -2728,7 +2728,7 @@ class Model extends Object {
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
 		}
-		$this->validationErrors[$field] = $value;
+		$this->validationErrors[$field] []= $value;
 	}
 
 /**
