@@ -467,12 +467,24 @@ class CookieComponent extends Component {
 
 /**
  * Explode method to return array from string set in CookieComponent::_implode()
+ * Maintains reading backwards compatibility with 1.x CookieComponent::_implode().
  *
  * @param string $string A string containing JSON encoded data, or a bare string.
  * @return array Map of key and values
  */
 	protected function _explode($string) {
-		$ret = json_decode($string, true);
-		return ($ret != null) ? $ret : $string;
+		if ($string[0] === '{' || $string[0] === '[') {
+			$ret = json_decode($string, true);
+			return ($ret != null) ? $ret : $string;
+		}
+		$array = array();
+		foreach (explode(',', $string) as $pair) {
+			$key = explode('|', $pair);
+			if (!isset($key[1])) {
+				return $key[0];
+			}
+			$array[$key[0]] = $key[1];
+		}
+		return $array;
 	}
 }

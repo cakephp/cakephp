@@ -471,6 +471,19 @@ class CookieComponentTest extends CakeTestCase {
 		unset($_COOKIE['CakeTestCookie']);
 	}
 
+/**
+ * Test Reading legacy cookie values.
+ *
+ * @return void
+ */
+	function testReadLegacyCookieValue() {
+		$_COOKIE['CakeTestCookie'] = array(
+			'Legacy' => array('value' => $this->_oldImplode(array(1, 2, 3)))
+		);
+		$result = $this->Cookie->read('Legacy.value');
+		$expected = array(1, 2, 3);
+		$this->assertEquals($expected, $result);
+	}
 
 /**
  * test that no error is issued for non array data.
@@ -485,6 +498,19 @@ class CookieComponentTest extends CakeTestCase {
 	}
 	
 /**
+ * Helper method for generating old style encoded cookie values.
+ *
+ * @return string.
+ */
+	protected function _oldImplode(array $array) {
+		$string = '';
+		foreach ($array as $key => $value) {
+			$string .= ',' . $key . '|' . $value;
+		}
+		return substr($string, 1);
+	}
+
+/**
  * Implode method to keep keys are multidimensional arrays
  *
  * @param array $array Map of key and values
@@ -492,12 +518,6 @@ class CookieComponentTest extends CakeTestCase {
  */
 	protected function _implode(array $array) {
 		return json_encode($array);
-
-		$string = '';
-		foreach ($array as $key => $value) {
-			$string .= ',' . $key . '|' . $value;
-		}
-		return substr($string, 1);
 	}
 
 /**
