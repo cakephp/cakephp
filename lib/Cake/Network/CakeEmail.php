@@ -601,7 +601,6 @@ class CakeEmail {
 		}
 
 		if (!empty($this->_attachments)) {
-			$this->_createBoundary();
 			$headers['MIME-Version'] = '1.0';
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
 			$headers[] = 'This part of the E-mail should never be seen. If';
@@ -892,6 +891,8 @@ class CakeEmail {
 			}
 		}
 
+		$this->_createBoundary();
+
 		$message = $this->_wrap($content);
 		if (empty($this->_template)) {
 			$message = $this->_formatMessage($message);
@@ -905,7 +906,7 @@ class CakeEmail {
 			$this->_attachFiles();
 		}
 
-		if (!is_null($this->_boundary)) {
+		if (!empty($this->_attachments)) {
 			$this->_message[] = '';
 			$this->_message[] = '--' . $this->_boundary . '--';
 			$this->_message[] = '';
@@ -1147,8 +1148,10 @@ class CakeEmail {
  *
  * @return void
  */
-	protected function _createboundary() {
-		$this->_boundary = md5(uniqid(time()));
+	protected function _createBoundary() {
+		if (!empty($this->_attachments) || $this->_emailFormat === 'both') {
+			$this->_boundary = md5(uniqid(time()));
+		}
 	}
 
 /**

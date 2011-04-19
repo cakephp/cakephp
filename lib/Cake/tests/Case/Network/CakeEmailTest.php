@@ -46,6 +46,15 @@ class TestCakeEmail extends CakeEmail {
 		return parent::_wrap($text);
 	}
 
+/**
+ * Get the boundary attribute
+ *
+ * @return string
+ */
+	public function getBoundary() {
+		return $this->_boundary;
+	}
+
 }
 
 /**
@@ -578,6 +587,45 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->send();
 
 		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Here is your value: 12345'));
+	}
+
+/**
+ * testSendMultipleMIME method
+ *
+ * @return void
+ */
+	public function testSendMultipleMIME() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		DebugTransport::$includeAddresses = true;
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->template('custom', 'default');
+		$this->CakeEmail->config(array());
+		$this->CakeEmail->viewVars(array('value' => 12345));
+		$this->CakeEmail->emailFormat('both');
+		$result = $this->CakeEmail->send();
+
+		$message = $this->CakeEmail->message();
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertFalse(empty($boundary));
+		$this->assertFalse(in_array('--' . $boundary, $message));
+		$this->assertFalse(in_array('--' . $boundary . '--', $message));
+		$this->assertTrue(in_array('--alt-' . $boundary, $message));
+		$this->assertTrue(in_array('--alt-' . $boundary . '--', $message));
+
+		$this->CakeEmail->attachments(array('fake.php' => __FILE__));
+		$this->CakeEmail->send();
+
+		$message = $this->CakeEmail->message();
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertFalse(empty($boundary));
+		$this->assertTrue(in_array('--' . $boundary, $message));
+		$this->assertTrue(in_array('--' . $boundary . '--', $message));
+		$this->assertTrue(in_array('--alt-' . $boundary, $message));
+		$this->assertTrue(in_array('--alt-' . $boundary . '--', $message));
 	}
 
 /**
