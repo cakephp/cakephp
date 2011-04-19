@@ -629,12 +629,12 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
- * testFastSend method
+ * testDeliver method
  *
  * @return void
  */
-	public function testFastSend() {
-		$instance = CakeEmail::fastSend('all@cakephp.org', 'About', 'Everything ok', array('from' => 'root@cakephp.org'), false);
+	public function testDeliver() {
+		$instance = CakeEmail::deliver('all@cakephp.org', 'About', 'Everything ok', array('from' => 'root@cakephp.org'), false);
 		$this->assertIsA($instance, 'CakeEmail');
 		$this->assertIdentical($instance->to(), array('all@cakephp.org' => 'all@cakephp.org'));
 		$this->assertIdentical($instance->subject(), 'About');
@@ -649,7 +649,7 @@ class CakeEmailTest extends CakeTestCase {
 			'viewVars' => array('value' => 123),
 			'cc' => array('cake@cakephp.org' => 'Myself')
 		);
-		$instance = CakeEmail::fastSend(null, null, array('name' => 'CakePHP'), $config, false);
+		$instance = CakeEmail::deliver(null, null, array('name' => 'CakePHP'), $config, false);
 		$this->assertIdentical($instance->from(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 		$this->assertIdentical($instance->to(), array('debug@cakephp.org' => 'debug@cakephp.org'));
 		$this->assertIdentical($instance->subject(), 'Update ok');

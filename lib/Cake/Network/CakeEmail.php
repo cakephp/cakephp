@@ -928,7 +928,7 @@ class CakeEmail {
  * @param boolean $send Send the email or just return the instance pre-configured
  * @return object Instance of CakeEmail
  */
-	public static function fastSend($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
+	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
 		$instance = new $class();
 
