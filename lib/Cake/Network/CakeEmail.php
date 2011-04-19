@@ -69,28 +69,28 @@ class CakeEmail {
 /**
  * Recipient of the email
  *
- * @var string
+ * @var array
  */
 	protected $_to = array();
 
 /**
  * The mail which the email is sent from
  *
- * @var string
+ * @var array
  */
 	protected $_from = array();
 
 /**
  * The email the recipient will reply to
  *
- * @var string
+ * @var array
  */
 	protected $_replyTo = array();
 
 /**
  * The read receipt email
  *
- * @var string
+ * @var array
  */
 	protected $_readReceipt = array();
 
@@ -100,7 +100,7 @@ class CakeEmail {
  * - Remote user has exceeded his quota
  * - Unknown user
  *
- * @var string
+ * @var array
  */
 	protected $_returnPath = array();
 
