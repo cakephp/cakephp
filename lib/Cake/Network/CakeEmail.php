@@ -217,7 +217,7 @@ class CakeEmail {
 	protected $_transportName = 'mail';
 
 /**
- * Instance of tranport class
+ * Instance of transport class
  *
  * @var object
  */
@@ -501,7 +501,7 @@ class CakeEmail {
 	}
 
 /**
- * Sets eaders for the message
+ * Sets headers for the message
  *
  * @param array Associative array containing headers to be set.
  * @return object $this
@@ -846,7 +846,7 @@ class CakeEmail {
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
- * @thrown SocketExpcetion
+ * @thrown SocketException
  */
 	public function send($content = null) {
 		if (is_string($this->_config)) {
@@ -873,7 +873,7 @@ class CakeEmail {
 			}
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new SocketExpcetion(__d('cake', 'You need specify one destination on to, cc or bcc.'));
+			throw new SocketException(__d('cake', 'You need specify one destination on to, cc or bcc.'));
 		}
 
 		if (is_array($content)) {
