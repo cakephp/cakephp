@@ -75,6 +75,6 @@
 		return;
 	}
 
-	App::uses('Dispatcher', 'Dispatcher');
+	App::uses('Dispatcher', 'Routing');
 	$Dispatcher = new Dispatcher();
 	$Dispatcher->dispatch(new CakeRequest());

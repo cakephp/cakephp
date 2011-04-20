@@ -107,19 +107,16 @@ class PluginTask extends Shell {
 			$Folder = new Folder($this->path . $pluginPath);
 			$directories = array(
 				'config' . DS . 'schema',
-				'models' . DS . 'behaviors',
-				'models' . DS . 'datasources',
-				'console' . DS . 'shells' . DS . 'tasks',
-				'controllers' . DS . 'components',
-				'libs',
-				'views' . DS . 'helpers',
-				'tests' . DS . 'cases' . DS . 'components',
-				'tests' . DS . 'cases' . DS . 'helpers',
-				'tests' . DS . 'cases' . DS . 'behaviors',
-				'tests' . DS . 'cases' . DS . 'controllers',
-				'tests' . DS . 'cases' . DS . 'models',
-				'tests' . DS . 'groups',
-				'tests' . DS . 'fixtures',
+				'Model' . DS . 'Behavior',
+				'Model' . DS . 'Datasource',
+				'Console' . DS . 'Command' . DS . 'Task',
+				'Controller' . DS . 'Component',
+				'Lib',
+				'View' . DS . 'Helper',
+				'tests' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
+				'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper',
+				'tests' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
+				'tests' . DS . 'Fixture',
 				'vendors',
 				'webroot'
 			);
@@ -139,21 +136,21 @@ class PluginTask extends Shell {
 				return false;
 			}
 
-			$controllerFileName = $pluginPath . '_app_controller.php';
+			$controllerFileName = $plugin . 'AppController.php';
 
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n\n";
 			$out .= "?>";
-			$this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
+			$this->createFile($this->path . $pluginPath. DS . 'Controller' . DS . $controllerFileName, $out);
 
-			$modelFileName = $pluginPath . '_app_model.php';
+			$modelFileName = $plugin . 'AppModel.php';
 
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n\n";
 			$out .= "?>";
-			$this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
+			$this->createFile($this->path . $pluginPath . DS . 'Model' . DS . $modelFileName, $out);
 
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $pluginPath), 2);
