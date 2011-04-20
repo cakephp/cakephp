@@ -891,6 +891,14 @@ class DboSource extends DataSource {
 
 						if (isset($model->{$className}) && is_object($model->{$className})) {
 							$data = $model->{$className}->afterFind(array(array($className => $results[$i][$className])), false);
+
+							foreach ($model->{$className}->Behaviors->_attached as $behavior_name) {
+								$behavior = $model->{$className}->Behaviors->{$behavior_name};
+								if (method_exists($behavior, 'afterFind') && $filtered_data = $behavior->afterFind($model->{$className}, $data, false)) {
+									$data = $filtered_data;
+								}
+							}
+
 						}
 						if (isset($data[0][$className])) {
 							$results[$i][$className] = $data[0][$className];
@@ -1054,6 +1062,14 @@ class DboSource extends DataSource {
 					}
 					if (isset($resultSet[$i][$association])) {
 						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association], false);
+
+						foreach($linkModel->Behaviors->_attached as $behavior_name) {
+							$behavior = $linkModel->Behaviors->{$behavior_name};
+							if (method_exists($behavior, 'afterfind') && $filtered_data = $behavior->afterFind($linkModel, $resultSet[$i][$association], false)) {
+								$resultSet[$i][$association] = $filtered_data;
+							}
+						}
+
 					}
 				} else {
 					$tempArray[0][$association] = false;
