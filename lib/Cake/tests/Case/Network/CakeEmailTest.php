@@ -175,6 +175,29 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSender method
+ *
+ * @return void
+ */
+	public function testSender() {
+		$this->CakeEmail->reset();
+		$this->assertIdentical($this->CakeEmail->sender(), array());
+
+		$this->CakeEmail->sender('cake@cakephp.org', 'Name');
+		$expected = array('cake@cakephp.org' => 'Name');
+		$this->assertIdentical($this->CakeEmail->sender(), $expected);
+
+		$headers = $this->CakeEmail->getHeaders(array('from' => true, 'sender' => true));
+		$this->assertIdentical($headers['From'], false);
+		$this->assertIdentical($headers['Sender'], 'Name <cake@cakephp.org>');
+
+		$this->CakeEmail->from('cake@cakephp.org', 'CakePHP');
+		$headers = $this->CakeEmail->getHeaders(array('from' => true, 'sender' => true));
+		$this->assertIdentical($headers['From'], 'CakePHP <cake@cakephp.org>');
+		$this->assertIdentical($headers['Sender'], '');
+	}
+
+/**
  * testTo method
  *
  * @return void

@@ -59,6 +59,7 @@ class EmailConfig {
 
 	public $fast = array(
 		'from' => 'you@localhost',
+		'sender' => null,
 		'to' => null,
 		'cc' => null,
 		'bcc' => null,

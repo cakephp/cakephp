@@ -35,7 +35,7 @@ class MailTransport extends AbstractTransport {
 		if (isset($this->_config['eol'])) {
 			$eol = $this->_config['eol'];
 		}
-		$headers = $email->getHeaders(array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true));
+		$headers = $email->getHeaders(array_fill_keys(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true));
 		$to = $headers['To'];
 		unset($headers['To']);
 		$header = $this->_headersToString($headers, $eol);

@@ -81,6 +81,13 @@ class CakeEmail {
 	protected $_from = array();
 
 /**
+ * The sender email
+ *
+ * @var array();
+ */
+	protected $_sender = array();
+
+/**
  * The email the recipient will reply to
  *
  * @var array
@@ -277,6 +284,21 @@ class CakeEmail {
 			return $this->_from;
 		}
 		return $this->_setEmailSingle('_from', $email, $name, __d('cake', 'From requires only 1 email address.'));
+	}
+
+/**
+ * Sender
+ *
+ * @param mixed $email
+ * @param string $name
+ * @return mixed
+ * @thrown SocketException
+ */
+	public function sender($email = null, $name = null) {
+		if ($email === null) {
+			return $this->_sender;
+		}
+		return $this->_setEmailSingle('_sender', $email, $name, __d('cake', 'Sender requires only 1 email address.'));
 	}
 
 /**
@@ -550,6 +572,7 @@ class CakeEmail {
 	public function getHeaders($include = array()) {
 		$defaults = array(
 			'from' => false,
+			'sender' => false,
 			'replyTo' => false,
 			'readReceipt' => false,
 			'returnPath' => false,
@@ -571,6 +594,13 @@ class CakeEmail {
 			if ($include[$var]) {
 				$var = '_' . $var;
 				$headers[$header] = current($this->_formatAddress($this->{$var}));
+			}
+		}
+		if ($include['sender']) {
+			if (key($this->_sender) === key($this->_from)) {
+				$headers['Sender'] = '';
+			} else {
+				$headers['Sender'] = current($this->_formatAddress($this->_sender));
 			}
 		}
 
@@ -973,7 +1003,7 @@ class CakeEmail {
  */
 	protected static function _applyConfig(CakeEmail $obj, $config) {
 		$simpleMethods = array(
-			'from', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
+			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
 			'transport', 'emailFormat'
 		);
@@ -1007,6 +1037,7 @@ class CakeEmail {
 	public function reset() {
 		$this->_to = array();
 		$this->_from = array();
+		$this->_sender = array();
 		$this->_replyTo = array();
 		$this->_readReceipt = array();
 		$this->_returnPath = array();
