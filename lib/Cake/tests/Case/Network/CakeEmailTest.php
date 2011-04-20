@@ -392,6 +392,7 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Something' => 'nice',
 			'X-Mailer' => 'CakePHP Email Component',
 			'Date' => date(DATE_RFC2822),
+			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
 			'Content-Transfer-Encoding' => '7bit'
 		);
@@ -403,6 +404,7 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Other' => 'cool',
 			'X-Mailer' => 'CakePHP Email Component',
 			'Date' => date(DATE_RFC2822),
+			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
 			'Content-Transfer-Encoding' => '7bit'
 		);
@@ -417,6 +419,7 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Other' => 'cool',
 			'X-Mailer' => 'CakePHP Email Component',
 			'Date' => date(DATE_RFC2822),
+			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
 			'Content-Transfer-Encoding' => '7bit'
 		);
@@ -434,6 +437,7 @@ class CakeEmailTest extends CakeTestCase {
 			'X-Other' => 'cool',
 			'X-Mailer' => 'CakePHP Email Component',
 			'Date' => date(DATE_RFC2822),
+			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
 			'Content-Transfer-Encoding' => '7bit'
 		);

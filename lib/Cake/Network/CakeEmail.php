@@ -630,8 +630,8 @@ class CakeEmail {
 			$headers['Subject'] = $this->_subject;
 		}
 
+		$headers['MIME-Version'] = '1.0';
 		if (!empty($this->_attachments)) {
-			$headers['MIME-Version'] = '1.0';
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
 			$headers[] = 'This part of the E-mail should never be seen. If';
 			$headers[] = 'you are reading this, consider upgrading your e-mail';
