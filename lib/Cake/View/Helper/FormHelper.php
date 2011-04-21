@@ -1238,7 +1238,7 @@ class FormHelper extends AppHelper {
 			$this->__secure(null, '' . $options['value']);
 		}
 
-		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '', 'class' => '')));
+		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '')));
 	}
 
 /**
