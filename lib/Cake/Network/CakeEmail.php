@@ -804,15 +804,24 @@ class CakeEmail {
 			return $this->_attachments;
 		}
 		$attach = array();
-		foreach ((array)$attachments as $name => $file) {
-			$path = realpath($file);
-			if ($path === false) {
-				throw new SocketException(__d('cake', 'File not found: "%s"', $attach));
+		foreach ((array)$attachments as $name => $fileInfo) {
+			if (!is_array($fileInfo)) {
+				$fileInfo = array('file' => $fileInfo);
+			}
+			if (!isset($fileInfo['file'])) {
+				throw new SocketException(__d('cake', 'File not specified.'));
+			}
+			$fileInfo['file'] = realpath($fileInfo['file']);
+			if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
+				throw new SocketException(__d('cake', 'File not found: "%s"', $fileInfo['file']));
 			}
 			if (is_int($name)) {
-				$name = basename($path);
+				$name = basename($fileInfo['file']);
 			}
-			$attach[$name] = $path;
+			if (!isset($fileInfo['mimetype'])) {
+				$fileInfo['mimetype'] = 'application/octet-stream';
+			}
+			$attach[$name] = $fileInfo;
 		}
 		$this->_attachments = $attach;
 		return $this;
@@ -1191,16 +1200,21 @@ class CakeEmail {
  * @return void
  */
 	protected function _attachFiles() {
-		foreach ($this->_attachments as $filename => $file) {
-			$handle = fopen($file, 'rb');
-			$data = fread($handle, filesize($file));
+		foreach ($this->_attachments as $filename => $fileInfo) {
+			$handle = fopen($fileInfo['file'], 'rb');
+			$data = fread($handle, filesize($fileInfo['file']));
 			$data = chunk_split(base64_encode($data)) ;
 			fclose($handle);
 
 			$this->_message[] = '--' . $this->_boundary;
-			$this->_message[] = 'Content-Type: application/octet-stream';
+			$this->_message[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$this->_message[] = 'Content-Transfer-Encoding: base64';
-			$this->_message[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			if (empty($fileInfo['contentId'])) {
+				$this->_message[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			} else {
+				$this->_message[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
+				$this->_message[] = 'Content-Disposition: inline; filename="' . $filename . '"';
+			}
 			$this->_message[] = '';
 			$this->_message[] = $data;
 			$this->_message[] = '';
