@@ -210,6 +210,7 @@ From: noreply@example.com
 Reply-To: noreply@example.com
 X-Mailer: CakePHP Email Component
 Date: $date
+MIME-Version: 1.0
 Content-Type: {CONTENTTYPE}
 Content-Transfer-Encoding: 7bitMessage:
 
@@ -232,7 +233,7 @@ MSGBLOC;
 		$this->Controller->EmailTest->sendAs = 'both';
 		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $message);
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEqual(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertEqual(preg_replace('/alt-[a-z0-9]{32}/i', 'alt-', DebugCompTransport::$lastEmail), $this->__osFix($expect));
 	}
 
 /**
@@ -263,6 +264,7 @@ From: noreply@example.com
 Reply-To: noreply@example.com
 X-Mailer: CakePHP Email Component
 Date: $date
+MIME-Version: 1.0
 Content-Type: {CONTENTTYPE}
 Content-Transfer-Encoding: 7bitMessage:
 
@@ -312,7 +314,7 @@ HTMLBLOC;
 		$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
 
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEqual(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertEqual(preg_replace('/alt-[a-z0-9]{32}/i', 'alt-', DebugCompTransport::$lastEmail), $this->__osFix($expect));
 
 		$html = <<<HTMLBLOC
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
@@ -752,7 +754,7 @@ HTMLBLOC;
  * @return void
  */
 	function testReset() {
-		$this->Controller->EmailTest->template = 'test_template';
+		$this->Controller->EmailTest->template = 'default';
 		$this->Controller->EmailTest->to = 'test.recipient@example.com';
 		$this->Controller->EmailTest->from = 'test.sender@example.com';
 		$this->Controller->EmailTest->replyTo = 'test.replyto@example.com';
