@@ -165,7 +165,7 @@ class TestsuiteShell extends Shell {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$sucess = $this->_dispatcher->loadTestFramework();
 		if (!$sucess) {
-			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework (http://www.phpunit.de)'));
+			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
 		}
 	}
 
