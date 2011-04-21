@@ -163,7 +163,10 @@ class TestsuiteShell extends Shell {
  */
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
-		$this->_dispatcher->loadTestFramework();
+		$sucess = $this->_dispatcher->loadTestFramework();
+		if (!$sucess) {
+			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework (http://www.phpunit.de)'));
+		}
 	}
 
 /**
