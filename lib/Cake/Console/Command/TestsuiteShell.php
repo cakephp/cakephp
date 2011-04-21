@@ -292,9 +292,7 @@ class TestsuiteShell extends Shell {
 		$i = 1;
 		$cases = array();
 		foreach ($testCases as $testCaseFile => $testCase) {
-			$case = explode(DS, str_replace('Test.php', '', $testCase));
-			$case[count($case) - 1] = $case[count($case) - 1];
-			$case = implode('/', $case);
+			$case = str_replace('Test.php', '', $testCase);
 			$this->out("[$i] $case");
 			$cases[$i] = $case;
 			$i++;
