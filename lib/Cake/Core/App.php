@@ -531,43 +531,45 @@ class App {
  * @param string $className the name of the class to load
  */
 	public static function load($className) {
-		if (isset(self::$__classMap[$className])) {
-			if ($file = self::__mapped($className)) {
+		if (!isset(self::$__classMap[$className])) {
+			return false;
+		}
+
+		if ($file = self::__mapped($className)) {
+			return include $file;
+		}
+
+		$parts = explode('.', self::$__classMap[$className], 2);
+		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
+		$paths = self::path($package, $plugin);
+
+		if (empty($plugin)) {
+			$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
+			$paths[] =  $appLibs . $package . DS;
+			$paths[] = LIBS . $package . DS;
+		}
+
+		foreach ($paths as $path) {
+			$file = $path . $className . '.php';
+			if (file_exists($file)) {
+				self::__map($file, $className);
 				return include $file;
 			}
+		}
 
-			$parts = explode('.', self::$__classMap[$className], 2);
-			list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
-			$paths = self::path($package, $plugin);
-
-			if (empty($plugin)) {
-				$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
-				$paths[] =  $appLibs . $package . DS;
-				$paths[] = LIBS . $package . DS;
+		//To help apps migrate to 2.0 old style file names are allowed
+		foreach ($paths as $path) {
+			$underscored = Inflector::underscore($className);
+			$tries = array($path . $underscored . '.php');
+			$parts = explode('_', $underscored);
+			if (count($parts) > 1) {
+				array_pop($parts);
+				$tries[] = $path . implode('_', $parts) . '.php';
 			}
-
-			foreach ($paths as $path) {
-				$file = $path . $className . '.php';
+			foreach ($tries as $file) {
 				if (file_exists($file)) {
 					self::__map($file, $className);
 					return include $file;
-				}
-			}
-
-			//To help apps migrate to 2.0 old style file names are allowed
-			foreach ($paths as $path) {
-				$underscored = Inflector::underscore($className);
-				$tries = array($path . $underscored . '.php');
-				$parts = explode('_', $underscored);
-				if (count($parts) > 1) {
-					array_pop($parts);
-					$tries[] = $path . implode('_', $parts) . '.php';
-				}
-				foreach ($tries as $file) {
-					if (file_exists($file)) {
-						self::__map($file, $className);
-						return include $file;
-					}
 				}
 			}
 		}
