@@ -348,7 +348,7 @@ class EmailComponent extends Component {
 		if ($layout) {
 			$this->layout = $layout;
 		}
-		$lib->layout($this->layout, $this->template)->viewVars($this->_controller->viewVars)->emailFormat($this->sendAs);
+		$lib->template($this->template, $this->layout)->viewVars($this->_controller->viewVars)->emailFormat($this->sendAs);
 
 		if (!empty($this->attachments)) {
 			$lib->attachments($this->_formatAttachFiles());
