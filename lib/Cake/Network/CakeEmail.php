@@ -1261,14 +1261,13 @@ class CakeEmail {
 		}
 
 		$View = new $viewClass(null);
-		$View->layout = $this->_layout;
 		$View->viewVars = $this->_viewVars;
 		$msg = array();
 
 		$content = implode("\n", $content);
 
 		if ($this->_emailFormat === 'both') {
-			$htmlContent = $content;
+			$originalContent = $content;
 			if (!empty($this->_attachments)) {
 				$msg[] = '--' . $this->_boundary;
 				$msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
@@ -1279,10 +1278,10 @@ class CakeEmail {
 			$msg[] = 'Content-Transfer-Encoding: 7bit';
 			$msg[] = '';
 
-			$content = $View->element('email' . DS . 'text' . DS . $this->_template, array('content' => $content), true);
-			$View->layoutPath = 'email' . DS . 'text';
-			$content = explode("\n", $this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
-
+			$View->viewPath = $View->layoutPath = 'emails' . DS . 'text';
+			$View->viewVars['content'] = $originalContent;
+			$this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($this->_template, $this->_layout));
+			$content = explode("\n", $this->_textMessage);
 			$msg = array_merge($msg, $content);
 
 			$msg[] = '';
@@ -1291,10 +1290,13 @@ class CakeEmail {
 			$msg[] = 'Content-Transfer-Encoding: 7bit';
 			$msg[] = '';
 
-			$htmlContent = $View->element('email' . DS . 'html' . DS . $this->_template, array('content' => $htmlContent), true);
-			$View->layoutPath = 'email' . DS . 'html';
-			$htmlContent = explode("\n", $this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
-			$msg = array_merge($msg, $htmlContent);
+			$View->viewPath = $View->layoutPath = 'emails' . DS . 'html';
+			$View->viewVars['content'] = $originalContent;
+			$View->hasRendered = false;
+			$this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($this->_template, $this->_layout));
+			$content = explode("\n", $this->_htmlMessage);
+			$msg = array_merge($msg, $content);
+
 			$msg[] = '';
 			$msg[] = '--alt-' . $this->_boundary . '--';
 			$msg[] = '';
@@ -1317,9 +1319,10 @@ class CakeEmail {
 			}
 		}
 
-		$content = $View->element('email' . DS . $this->_emailFormat . DS . $this->_template, array('content' => $content), true);
-		$View->layoutPath = 'email' . DS . $this->_emailFormat;
-		$content = explode("\n", $rendered = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+		$View->viewPath = $View->layoutPath = 'emails' . DS . $this->_emailFormat;
+		$View->viewVars['content'] = $content;
+		$rendered = $View->render($this->_template, $this->_layout);
+		$content = explode("\n", $rendered);
 
 		if ($this->_emailFormat === 'html') {
 			$this->_htmlMessage = $rendered;
