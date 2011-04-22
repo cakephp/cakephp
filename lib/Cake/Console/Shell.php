@@ -333,10 +333,14 @@ class Shell extends Object {
 			array_shift($argv);
 		}
 
-		$this->OptionParser = $this->getOptionParser();
-		list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+		try {
+			$this->OptionParser = $this->getOptionParser();
+			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+		} catch (ConsoleException $e) {
+			return $this->out($this->OptionParser->help($command));
+		}
+		
 		$this->command = $command;
-
 		if (!empty($this->params['help'])) {
 			return $this->_displayHelp($command);
 		}

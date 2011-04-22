@@ -171,30 +171,25 @@ class ShellDispatcher {
 			$command = $this->args[0];
 		}
 
-		try {
-			if ($Shell instanceof Shell) {
-				$Shell->initialize();
-				$Shell->loadTasks();
-				return $Shell->runCommand($command, $this->args);
-			}
-			$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
-			$added = in_array($command, $methods);
-			$private = $command[0] == '_' && method_exists($Shell, $command);
+		if ($Shell instanceof Shell) {
+			$Shell->initialize();
+			$Shell->loadTasks();
+			return $Shell->runCommand($command, $this->args);
+		}
+		$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
+		$added = in_array($command, $methods);
+		$private = $command[0] == '_' && method_exists($Shell, $command);
 
-			if (!$private) {
-				if ($added) {
-					$this->shiftArgs();
-					$Shell->startup();
-					return $Shell->{$command}();
-				}
-				if (method_exists($Shell, 'main')) {
-					$Shell->startup();
-					return $Shell->main();
-				}
+		if (!$private) {
+			if ($added) {
+				$this->shiftArgs();
+				$Shell->startup();
+				return $Shell->{$command}();
 			}
-		} catch(ConsoleException $e) {
-			$this->help();
-			$this->_stop(1);
+			if (method_exists($Shell, 'main')) {
+				$Shell->startup();
+				return $Shell->main();
+			}
 		}
 		throw new MissingShellMethodException(array('shell' => $shell, 'method' => $arg));
 	}
