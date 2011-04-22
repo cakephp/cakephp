@@ -1,6 +1,6 @@
 <?php
 /**
- * AllCacheEnginesTest file
+ * AllCacheTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllCacheEnginesTest class
+ * AllCacheTest class
  *
  * This test group will run cache engine tests.
  *
  * @package       cake.tests.groups
  */
-class AllCacheEnginesTest extends PHPUnit_Framework_TestSuite {
+class AllCacheTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
