@@ -6592,7 +6592,7 @@ class MultibyteTest extends CakeTestCase {
 
 		$string = 'ԀԂԄԆԈԊԌԎԐԒ';
 		$result = mb_strtolower($string);
-		$expected = 'ԁԃԅԇԉԋԍԏԐԒ';
+		$expected = 'ԁԃԅԇԉԋԍԏԑԓ';
 		$this->assertEqual($result, $expected);
 
 		$string = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
