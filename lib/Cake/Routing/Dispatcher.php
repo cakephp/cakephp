@@ -299,7 +299,6 @@ class Dispatcher {
 			include WWW_ROOT . DS . $filters['js'];
 			return true;
 		}
-		$controller = null;
 		$pathSegments = explode('.', $url);
 		$ext = array_pop($pathSegments);
 		$parts = explode('/', $url);

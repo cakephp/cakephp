@@ -487,7 +487,7 @@ class Router {
 			'named' => array()
 		);
 
-		$r = $ext = null;
+		$ext = null;
 
 		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
@@ -771,7 +771,7 @@ class Router {
  * @return string Full translated URL with base path.
  */
 	public static function url($url = null, $full = false) {
-		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
+		$params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
 		if (is_bool($full)) {
 			$escape = false;
@@ -792,7 +792,7 @@ class Router {
 		}
 
 		$base = $path['base'];
-		$extension = $output = $mapped = $q = $frag = null;
+		$extension = $output = $q = $frag = null;
 		
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
