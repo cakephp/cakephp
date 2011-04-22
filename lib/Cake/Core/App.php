@@ -289,7 +289,10 @@ class App {
 					'%s' . 'locale' . DS
 				),
 				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
-				'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS)
+				'plugins' => array(
+					APP . 'plugins' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+				)
 			);
 		}
 
