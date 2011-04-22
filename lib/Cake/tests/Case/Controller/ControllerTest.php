@@ -1040,7 +1040,7 @@ class ControllerTest extends CakeTestCase {
 		$comment = new ControllerComment($request);
 		$comment->set('someVar', 'data');
 		$result = $TestController->validateErrors($comment);
-		$expected = array('some_field' => 'error_message', 'some_field2' => 'error_message2');
+		$expected = array('some_field' => array('error_message'), 'some_field2' => array('error_message2'));
 		$this->assertIdentical($result, $expected);
 		$this->assertEqual($TestController->validate($comment), 2);
 	}
@@ -1058,7 +1058,7 @@ class ControllerTest extends CakeTestCase {
 		$Post->set('title', '');
 		$result = $TestController->validateErrors($Post);
 
-		$expected = array('title' => 'This field cannot be left blank');
+		$expected = array('title' => array('This field cannot be left blank'));
 		$this->assertEqual($result, $expected);
 	}
 
