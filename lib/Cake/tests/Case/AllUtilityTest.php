@@ -1,6 +1,6 @@
 <?php
 /**
- * AllLibsTest file
+ * AllUtilityTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllLibsTest class
+ * AllUtilityTest class
  *
  * This test group will run all non mvc related lib class tests
  *
  * @package       cake.tests.cases
  */
-class AllLibsTest extends PHPUnit_Framework_TestSuite {
+class AllUtilityTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,13 +32,10 @@ class AllLibsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All non-MVC lib class tests');
+		$suite = new CakeTestSuite('All Utility class tests');
 		
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'BasicsTest.php');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Utility');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Datasource' . DS . 'CakeSessionTest.php');
-		//$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Model' . DS . 'Datasource' . DS . 'Session');
 		return $suite;
 	}
 }

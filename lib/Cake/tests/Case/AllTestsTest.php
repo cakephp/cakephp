@@ -34,25 +34,25 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 		$suite = new PHPUnit_Framework_TestSuite('All Tests');
 
 		$path = CORE_TEST_CASES . DS;
-		$console = $path . 'Console' . DS;
 
-		$suite->addTestFile($console . 'AllConsoleTest.php');
+		$suite->addTestFile($path . 'AllConsoleTest.php');
 		$suite->addTestFile($path . 'AllBehaviorsTest.php');
-		$suite->addTestFile($path . 'AllCacheEnginesTest.php');
+		$suite->addTestFile($path . 'AllCacheTest.php');
 		$suite->addTestFile($path . 'AllComponentsTest.php');
 		$suite->addTestFile($path . 'AllConfigureTest.php');
-		$suite->addTestFile($path . 'AllControllersTest.php');
+		$suite->addTestFile($path . 'AllCoreTest.php');
+		$suite->addTestFile($path . 'AllControllerTest.php');
 		$suite->addTestFile($path . 'AllDatabaseTest.php');
 		$suite->addTestFile($path . 'AllErrorTest.php');
 		$suite->addTestFile($path . 'AllHelpersTest.php');
-		$suite->addTestFile($path . 'AllLibsTest.php');
-		$suite->addTestFile($path . 'AllLocalizationTest.php');
+		$suite->addTestFile($path . 'AllLogTest.php');
+		$suite->addTestFile($path . 'AllI18nTest.php');
 		$suite->addTestFile($path . 'AllModelTest.php');
 		$suite->addTestFile($path . 'AllRoutingTest.php');
-		$suite->addTestFile($path . 'AllSocketTest.php');
+		$suite->addTestFile($path . 'AllNetworkTest.php');
 		$suite->addTestFile($path . 'AllTestSuiteTest.php');;
-		$suite->addTestFile($path . 'AllViewsTest.php');
-		$suite->addTestFile($path . 'AllXmlTest.php');
+		$suite->addTestFile($path . 'AllUtilityTest.php');
+		$suite->addTestFile($path . 'AllViewTest.php');
 		return $suite;
 	}
 }

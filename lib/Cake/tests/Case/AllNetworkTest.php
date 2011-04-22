@@ -1,6 +1,6 @@
 <?php
 /**
- * AllSocketTest file
+ * AllNetworkTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllSocketTest class
+ * AllNetworkTest class
  *
  * This test group will run socket class tests
  *
  * @package       cake.tests.groups
  */
-class AllSocketTest extends PHPUnit_Framework_TestSuite {
+class AllNetworkTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,9 +32,9 @@ class AllSocketTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Socket related class tests');
+		$suite = new CakeTestSuite('All Network related class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Network' . DS . 'CakeSocketTest.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network' . DS . 'Http');
 		return $suite;
 	}

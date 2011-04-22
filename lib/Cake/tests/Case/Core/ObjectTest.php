@@ -683,9 +683,9 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestAction() {
 		App::build(array(
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
+			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS)
 		));
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
@@ -763,9 +763,9 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestActionArray() {
 		App::build(array(
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
+			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS)
 		));
 	
 		$result = $this->object->requestAction(
@@ -819,8 +819,7 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestActionParamParseAndPass() {
 		$result = $this->object->requestAction('/request_action/params_pass');
-		$this->assertTrue(isset($result['url']['url']));
-		$this->assertEqual($result['url']['url'], 'request_action/params_pass');
+		$this->assertEqual($result->url, 'request_action/params_pass');
 		$this->assertEqual($result['controller'], 'request_action');
 		$this->assertEqual($result['action'], 'params_pass');
 		$this->assertEqual($result['form'], array());

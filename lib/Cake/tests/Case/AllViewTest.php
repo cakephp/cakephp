@@ -1,6 +1,6 @@
 <?php
 /**
- * AllViewsTest file
+ * AllViewTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllViewsTest class
+ * AllViewTest class
  *
  * This test group will run view class tests (view, theme)
  *
  * @package       cake.tests.groups
  */
-class AllViewsTest extends PHPUnit_Framework_TestSuite {
+class AllViewTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.

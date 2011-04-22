@@ -3687,7 +3687,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => false
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'),
 			array('div' => array('class' => 'checkbox form-error')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][tags][]', 'value' => '0', 'id' => 'ModelTags0')),
 			array('label' => array('for' => 'ModelTags0')),
@@ -3705,7 +3705,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => false
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'),
 			array('div' => array('class' => 'mycheckbox form-error')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][tags][]', 'value' => '0', 'id' => 'ModelTags0')),
 			array('label' => array('for' => 'ModelTags0')),
@@ -3900,14 +3900,14 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request->data['Model']['field'] = 'myvalue';
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
 			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'theID', 'checked' => 'checked', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
 			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'ModelField', 'checked' => 'checked', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
@@ -3915,7 +3915,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'theID', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
@@ -5316,7 +5316,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->request->data['Model']['field'] = 'test';
 		$result = $this->Form->hidden('Model.field', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'theID', 'value' => 'test')));
+		$this->assertTags($result, array(
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Model][field]', 'id' => 'theID', 'value' => 'test'))
+		);
 	}
 
 /**
