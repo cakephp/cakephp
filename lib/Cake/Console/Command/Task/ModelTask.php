@@ -462,7 +462,6 @@ class ModelTask extends BakeTask {
 		$associations = array(
 			'belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array()
 		);
-		$possibleKeys = array();
 
 		$associations = $this->findBelongsTo($model, $associations);
 		$associations = $this->findHasOneAndMany($model, $associations);
@@ -608,8 +607,6 @@ class ModelTask extends BakeTask {
 	public function confirmAssociations($model, $associations) {
 		foreach ($associations as $type => $settings) {
 			if (!empty($associations[$type])) {
-				$count = count($associations[$type]);
-				$response = 'y';
 				foreach ($associations[$type] as $i => $assoc) {
 					$prompt = "{$model->name} {$type} {$assoc['alias']}?";
 					$response = $this->in($prompt, array('y','n'), 'y');
@@ -647,7 +644,6 @@ class ModelTask extends BakeTask {
 
 			$alias = $this->in(__d('cake_console', 'What is the alias for this association?'));
 			$className = $this->in(__d('cake_console', 'What className will %s use?', $alias), null, $alias );
-			$suggestedForeignKey = null;
 
 			if ($assocType == 0) {
 				$showKeys = $possibleKeys[$model->table];

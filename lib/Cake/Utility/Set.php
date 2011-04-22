@@ -415,7 +415,6 @@ class Set {
 					$matches[] = $context;
 					continue;
 				}
-				$match = false;
 				if ($token === '@*' && is_array($context['item'])) {
 					$matches[] = array(
 						'trace' => array_merge($context['trace'], (array)$key),

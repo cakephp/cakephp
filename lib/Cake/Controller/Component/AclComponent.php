@@ -308,9 +308,6 @@ class DbAcl extends Object implements AclInterface {
 			return false;
 		}
 
-		$aroNode = $aroPath[0];
-		$acoNode = $acoPath[0];
-
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
 			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
 			return false;

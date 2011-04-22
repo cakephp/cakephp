@@ -106,7 +106,6 @@ class TemplateTask extends Shell {
  * @return void
  */
 	public function set($one, $two = null) {
-		$data = null;
 		if (is_array($one)) {
 			if (is_array($two)) {
 				$data = array_combine($one, $two);

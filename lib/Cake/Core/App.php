@@ -323,9 +323,6 @@ class App {
 			}
 		}
 
-		$mergeExclude = array('Lib', 'locales', 'vendors', 'plugins');
-		$appLibs = empty($paths['Lib']) ? $defaults['Lib'] : $paths['Lib'];
-
 		foreach ($defaults as $type => $default) {
 			if (empty(self::$__packages[$type]) || empty($paths)) {
 				self::$__packages[$type] = $default;
@@ -417,7 +414,6 @@ class App {
  * @return mixed Either false on incorrect / miss.  Or an array of found objects.
  */
 	public static function objects($type, $path = null, $cache = true) {
-		$objects = array();
 		$extension = '/\.php$/';
 		$includeDirectories = false;
 		$name = $type;
@@ -456,8 +452,6 @@ class App {
 			if (empty($path)) {
 				$path = self::path($type, $plugin);
 			}
-
-			$items = array();
 
 			foreach ((array)$path as $dir) {
 				if ($dir != APP && is_dir($dir)) {
@@ -599,7 +593,7 @@ class App {
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  */
 	public static function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$ext = $plugin = $directory = null;
+		$ext = null;
 
 		if (is_array($type)) {
 			extract($type, EXTR_OVERWRITE);

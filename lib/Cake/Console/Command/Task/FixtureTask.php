@@ -140,7 +140,6 @@ class FixtureTask extends BakeTask {
 		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
 		$this->hr();
 
-		$useDbConfig = $this->connection;
 		if (!isset($this->connection)) {
 			$this->connection = $this->DbConfig->getConfig();
 		}

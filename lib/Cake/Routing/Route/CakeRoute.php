@@ -399,7 +399,7 @@ class CakeRoute {
 		$greedyNamed = $namedConfig['greedyNamed'];
 		$allowedNamedParams = $namedConfig['rules'];
 
-		$named = $pass = $_query = array();
+		$named = $pass = array();
 
 		foreach ($url as $key => $value) {
 
