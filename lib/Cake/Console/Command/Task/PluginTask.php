@@ -50,8 +50,6 @@ class PluginTask extends Shell {
  * @return void
  */
 	public function execute() {
-		$plugin = null;
-
 		if (isset($this->args[0])) {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);

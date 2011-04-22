@@ -61,7 +61,7 @@ class SchemaShell extends Shell {
  *
  */
 	public function startup() {
-		$name = $file = $path = $connection = $plugin = null;
+		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
 		} elseif (!empty($this->args[0])) {

@@ -58,7 +58,6 @@ class TaskCollection extends ObjectCollection {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-		$taskFile = Inflector::underscore($name);
 		$taskClass = $name . 'Task';
 		App::uses($taskClass, $plugin . 'Console/Command/Task');
 		if (!class_exists($taskClass)) {

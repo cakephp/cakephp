@@ -106,7 +106,7 @@ class ViewTask extends BakeTask {
 		if (!isset($this->connection)) {
 			$this->connection = 'default';
 		}
-		$controller = $action = $alias = null;
+		$action = null;
 		$this->controllerName = $this->_controllerName($this->args[0]);
 		$this->controllerPath = $this->_controllerPath($this->controllerName);
 
