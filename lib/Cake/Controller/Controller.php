@@ -732,8 +732,6 @@ class Controller extends Object {
  * @link http://book.cakephp.org/view/979/set
  */
 	public function set($one, $two = null) {
-		$data = array();
-
 		if (is_array($one)) {
 			if (is_array($two)) {
 				$data = array_combine($one, $two);
