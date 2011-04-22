@@ -274,7 +274,6 @@ class Debugger {
 			break;
 		}
 
-		$helpCode = null;
 		if (!empty($_this->helpPath) && preg_match('/.*\[([0-9]+)\]$/', $description, $codes)) {
 			if (isset($codes[1])) {
 				$helpID = $codes[1];
@@ -418,7 +417,7 @@ class Debugger {
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	public static function excerpt($file, $line, $context = 2) {
-		$data = $lines = array();
+		$lines = array();
 		if (!file_exists($file)) {
 			return array();
 		}
