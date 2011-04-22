@@ -170,20 +170,20 @@ class ShellTest extends CakeTestCase {
 	public function testInitialize() {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
 		), true);
 
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 
 		$this->assertTrue(isset($this->Shell->TestPluginPost));
-		$this->assertIsA($this->Shell->TestPluginPost, 'TestPluginPost');
+		$this->assertInstanceOf('TestPluginPost', $this->Shell->TestPluginPost);
 		$this->assertEqual($this->Shell->modelClass, 'TestPluginPost');
 
 		$this->Shell->uses = array('Comment');
 		$this->Shell->initialize();
 		$this->assertTrue(isset($this->Shell->Comment));
-		$this->assertIsA($this->Shell->Comment, 'Comment');
+		$this->assertInstanceOf('Comment', $this->Shell->Comment);
 		$this->assertEqual($this->Shell->modelClass, 'Comment');
 
 		App::build();
