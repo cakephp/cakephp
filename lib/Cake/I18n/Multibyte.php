@@ -772,7 +772,6 @@ class Multibyte {
 
 		$length = count($utf8Map);
 		$lowerCase = array();
-		$matched = false;
 
 		for ($i = 0 ; $i < $length; $i++) {
 			$char = $utf8Map[$i];
@@ -819,7 +818,6 @@ class Multibyte {
 		$utf8Map = Multibyte::utf8($string);
 
 		$length = count($utf8Map);
-		$matched = false;
 		$replaced = array();
 		$upperCase = array();
 
@@ -947,7 +945,6 @@ class Multibyte {
 		}
 
 		$string = Multibyte::utf8($string);
-		$stringCount = count($string);
 
 		for ($i = 1; $i <= $start; $i++) {
 			unset($string[$i - 1]);
@@ -1068,7 +1065,6 @@ class Multibyte {
  * @return array
  */
 	private static function __find($char, $type = 'lower') {
-		$value = false;
 		$found = array();
 		if (!isset(self::$__codeRange[$char])) {
 			$range = self::__codepoint($char);
