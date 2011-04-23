@@ -35,6 +35,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 
 		$path = CORE_TEST_CASES . DS;
 
+		$suite->addTestFile($path . 'BasicsTest.php');
 		$suite->addTestFile($path . 'AllConsoleTest.php');
 		$suite->addTestFile($path . 'AllBehaviorsTest.php');
 		$suite->addTestFile($path . 'AllCacheTest.php');

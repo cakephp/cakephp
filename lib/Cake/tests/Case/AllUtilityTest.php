@@ -33,8 +33,6 @@ class AllUtilityTest extends PHPUnit_Framework_TestSuite {
  */
 	public static function suite() {
 		$suite = new CakeTestSuite('All Utility class tests');
-		
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'BasicsTest.php');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Utility');
 		return $suite;
 	}

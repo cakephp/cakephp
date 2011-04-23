@@ -170,17 +170,26 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->read(26), null);
 
-		$config = array('host' => '127.0.0.1', 'timeout' => 0.5);
-		$this->Socket = new CakeSocket($config);
-		$this->assertTrue($this->Socket->connect());
-		$this->assertFalse($this->Socket->read(1024 * 1024));
-		$this->assertEqual($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
-
-		$config = array('host' => 'cakephp.org', 'port' => 80, 'timeout' => 20);
+		$config = array('host' => 'google.com', 'port' => 80, 'timeout' => 1);
 		$this->Socket = new CakeSocket($config);
 		$this->assertTrue($this->Socket->connect());
 		$this->assertEqual($this->Socket->read(26), null);
-		$this->assertEqual($this->Socket->lastError(), null);
+		$this->assertEqual($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
+	}
+
+/**
+ * testTimeOutConnection method
+ *
+ * @return void
+ */
+	function testTimeOutConnection() {
+		$config = array('host' => '127.0.0.1', 'timeout' => 0.5);
+		$this->Socket = new CakeSocket($config);
+		$this->assertTrue($this->Socket->connect());
+
+		$config = array('host' => '127.0.0.1', 'timeout' => 0.00001);
+		$this->assertFalse($this->Socket->read(1024 * 1024));
+		$this->assertEqual($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
 	}
 
 /**
