@@ -390,7 +390,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->setHeaders(array('X-Something' => 'nice'));
 		$expected = array(
 			'X-Something' => 'nice',
-			'X-Mailer' => 'CakePHP Email Component',
+			'X-Mailer' => 'CakePHP Email',
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
@@ -402,7 +402,7 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array(
 			'X-Something' => 'very nice',
 			'X-Other' => 'cool',
-			'X-Mailer' => 'CakePHP Email Component',
+			'X-Mailer' => 'CakePHP Email',
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
@@ -417,7 +417,7 @@ class CakeEmailTest extends CakeTestCase {
 			'From' => 'cake@cakephp.org',
 			'X-Something' => 'very nice',
 			'X-Other' => 'cool',
-			'X-Mailer' => 'CakePHP Email Component',
+			'X-Mailer' => 'CakePHP Email',
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
@@ -435,7 +435,7 @@ class CakeEmailTest extends CakeTestCase {
 			'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
 			'X-Something' => 'very nice',
 			'X-Other' => 'cool',
-			'X-Mailer' => 'CakePHP Email Component',
+			'X-Mailer' => 'CakePHP Email',
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',

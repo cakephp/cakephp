@@ -32,11 +32,11 @@ App::uses('View', 'View');
  */
 class CakeEmail {
 /**
- * What mailer should EmailComponent identify itself as
+ * Default X-Mailer
  *
  * @constant EMAIL_CLIENT
  */
-	const EMAIL_CLIENT = 'CakePHP Email Component';
+	const EMAIL_CLIENT = 'CakePHP Email';
 
 /**
  * Line length - no should more - RFC 2822 - 2.1.1
@@ -943,9 +943,7 @@ class CakeEmail {
 
 		if (!empty($this->_attachments)) {
 			$this->_attachFiles();
-		}
 
-		if (!empty($this->_attachments)) {
 			$this->_message[] = '';
 			$this->_message[] = '--' . $this->_boundary . '--';
 			$this->_message[] = '';
