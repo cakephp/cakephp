@@ -1,6 +1,6 @@
 <?php
 /**
- * AllViewsTest file
+ * AllCacheTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllViewsTest class
+ * AllCacheTest class
  *
- * This test group will run view class tests (view, theme)
+ * This test group will run cache engine tests.
  *
  * @package       cake.tests.groups
  */
-class AllViewsTest extends PHPUnit_Framework_TestSuite {
+class AllCacheTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,9 +32,9 @@ class AllViewsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All View class tests');
-
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'View');
+		$suite = new CakeTestSuite('All Cache related class tests');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache' . DS . 'Engine');
 		return $suite;
 	}
 }

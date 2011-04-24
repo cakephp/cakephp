@@ -990,11 +990,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 
 		$Apple->Behaviors->attach('Test', array('validate' => 'on'));
 		$this->assertIdentical($Apple->validates(), false);
-		$this->assertIdentical($Apple->validationErrors, array('name' => true));
+		$this->assertIdentical($Apple->validationErrors, array('name' => array(true)));
 
 		$Apple->Behaviors->attach('Test', array('validate' => 'stop'));
 		$this->assertIdentical($Apple->validates(), false);
-		$this->assertIdentical($Apple->validationErrors, array('name' => true));
+		$this->assertIdentical($Apple->validationErrors, array('name' => array(true, true)));
 
 		$Apple->Behaviors->attach('Test', array('validate' => 'whitelist'));
 		$Apple->validates();

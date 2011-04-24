@@ -289,7 +289,10 @@ class App {
 					'%s' . 'locale' . DS
 				),
 				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
-				'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS)
+				'plugins' => array(
+					APP . 'plugins' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+				)
 			);
 		}
 
@@ -319,9 +322,6 @@ class App {
 				$defaults[$package][] = sprintf($f, APP);
 			}
 		}
-
-		$mergeExclude = array('Lib', 'locales', 'vendors', 'plugins');
-		$appLibs = empty($paths['Lib']) ? $defaults['Lib'] : $paths['Lib'];
 
 		foreach ($defaults as $type => $default) {
 			if (empty(self::$__packages[$type]) || empty($paths)) {
@@ -408,7 +408,6 @@ class App {
  * @return mixed Either false on incorrect / miss.  Or an array of found objects.
  */
 	public static function objects($type, $path = null, $cache = true) {
-		$objects = array();
 		$extension = '/\.php$/';
 		$includeDirectories = false;
 		$name = $type;
@@ -447,8 +446,6 @@ class App {
 			if (empty($path)) {
 				$path = self::path($type, $plugin);
 			}
-
-			$items = array();
 
 			foreach ((array)$path as $dir) {
 				if ($dir != APP && is_dir($dir)) {
@@ -525,43 +522,45 @@ class App {
  * @param string $className the name of the class to load
  */
 	public static function load($className) {
-		if (isset(self::$__classMap[$className])) {
-			if ($file = self::__mapped($className)) {
+		if (!isset(self::$__classMap[$className])) {
+			return false;
+		}
+
+		if ($file = self::__mapped($className)) {
+			return include $file;
+		}
+
+		$parts = explode('.', self::$__classMap[$className], 2);
+		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
+		$paths = self::path($package, $plugin);
+
+		if (empty($plugin)) {
+			$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
+			$paths[] =  $appLibs . $package . DS;
+			$paths[] = LIBS . $package . DS;
+		}
+
+		foreach ($paths as $path) {
+			$file = $path . $className . '.php';
+			if (file_exists($file)) {
+				self::__map($file, $className);
 				return include $file;
 			}
+		}
 
-			$parts = explode('.', self::$__classMap[$className], 2);
-			list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
-			$paths = self::path($package, $plugin);
-
-			if (empty($plugin)) {
-				$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
-				$paths[] =  $appLibs . $package . DS;
-				$paths[] = LIBS . $package . DS;
+		//To help apps migrate to 2.0 old style file names are allowed
+		foreach ($paths as $path) {
+			$underscored = Inflector::underscore($className);
+			$tries = array($path . $underscored . '.php');
+			$parts = explode('_', $underscored);
+			if (count($parts) > 1) {
+				array_pop($parts);
+				$tries[] = $path . implode('_', $parts) . '.php';
 			}
-
-			foreach ($paths as $path) {
-				$file = $path . $className . '.php';
+			foreach ($tries as $file) {
 				if (file_exists($file)) {
 					self::__map($file, $className);
 					return include $file;
-				}
-			}
-
-			//To help apps migrate to 2.0 old style file names are allowed
-			foreach ($paths as $path) {
-				$underscored = Inflector::underscore($className);
-				$tries = array($path . $underscored . '.php');
-				$parts = explode('_', $underscored);
-				if (count($parts) > 1) {
-					array_pop($parts);
-					$tries[] = $path . implode('_', $parts) . '.php';
-				}
-				foreach ($tries as $file) {
-					if (file_exists($file)) {
-						self::__map($file, $className);
-						return include $file;
-					}
 				}
 			}
 		}
@@ -588,7 +587,7 @@ class App {
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  */
 	public static function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$ext = $plugin = $directory = null;
+		$ext = null;
 
 		if (is_array($type)) {
 			extract($type, EXTR_OVERWRITE);

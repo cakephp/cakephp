@@ -93,7 +93,7 @@ class ClassRegistry {
  */
 	public static function &init($class, $type = null) {
 		$_this = ClassRegistry::getInstance();
-		$id = $false = false;
+		$false = false;
 		$true = true;
 
 		if (!$type) {

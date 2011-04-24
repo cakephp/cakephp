@@ -194,7 +194,6 @@ class Xml {
 						$value = '';
 					}
 					$isNamespace = strpos($key, 'xmlns:');
-					$nsUri = null;
 					if ($isNamespace !== false) {
 						$node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, $value);
 						continue;

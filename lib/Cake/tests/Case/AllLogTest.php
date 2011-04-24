@@ -1,6 +1,6 @@
 <?php
 /**
- * AllJavascriptHelpersTest file
+ * AllLogTest file
  *
  * PHP 5
  *
@@ -16,29 +16,26 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
- * AllJavascriptHelpersTest class
+ * AllLogTest class
  *
- * This test group will run all test in the cases/libs/view/helpers directory related
- * to Js helper and its engines
+ * This test group will run log tests.
  *
  * @package       cake.tests.groups
  */
-class AllJavascriptHelpersTest extends PHPUnit_Framework_TestSuite {
+class AllLogTest extends PHPUnit_Framework_TestSuite {
 
 /**
- * Suite define the tests for this suite
+ * suite method, defines tests for this suite.
  *
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('Js Helper and all Engine Helpers');
-
-		$helperTestPath = CORE_TEST_CASES . DS .  'View' . DS . 'Helper' . DS;
-		$suite->addTestFile($helperTestPath . 'JsHelperTest.php');
-		$suite->addTestFile($helperTestPath . 'JqueryEngineHelperTest.php');
-		$suite->addTestFile($helperTestPath . 'MootoolsEngineHelperTest.php');
-		$suite->addTestFile($helperTestPath . 'PrototypeEngineHelperTest.php');
+		$suite = new CakeTestSuite('All Logging related class tests');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log' . DS . 'Engine');
 		return $suite;
 	}
 }
+

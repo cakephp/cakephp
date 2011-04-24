@@ -32,12 +32,11 @@ class AllErrorTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Error handling tests');
+		$suite = new CakeTestSuite('All Error handling tests');
 
 		$libs = CORE_TEST_CASES . DS;
 
-		$suite->addTestFile($libs . 'Error' . DS . 'ErrorHandlerTest.php');
-		$suite->addTestFile($libs . 'Error' . DS . 'ExceptionRendererTest.php');
+		$suite->addTestDirectory($libs . 'Error');
 		return $suite;
 	}
 }

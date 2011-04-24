@@ -1,6 +1,6 @@
 <?php
 /**
- * AllCacheEnginesTest file
+ * AllUtilityTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllCacheEnginesTest class
+ * AllUtilityTest class
  *
- * This test group will run cache engine tests.
+ * This test group will run all non mvc related lib class tests
  *
- * @package       cake.tests.groups
+ * @package       cake.tests.cases
  */
-class AllCacheEnginesTest extends PHPUnit_Framework_TestSuite {
+class AllUtilityTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,8 +32,8 @@ class AllCacheEnginesTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Cache related class tests');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache');
+		$suite = new CakeTestSuite('All Utility class tests');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Utility');
 		return $suite;
 	}
 }

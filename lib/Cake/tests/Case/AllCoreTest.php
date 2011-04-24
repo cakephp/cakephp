@@ -1,6 +1,6 @@
 <?php
 /**
- * AllRoutingTest file
+ * AllCoreTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllRoutingTest class
+ * AllCoreTest class
  *
- * This test group will run view class tests (view, theme)
+ * This test group will run all core class tests
  *
  * @package       cake.tests.groups
  */
-class AllRoutingTest extends PHPUnit_Framework_TestSuite {
+class AllCoreTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,12 +32,10 @@ class AllRoutingTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Routing class tests');
+		$suite = new CakeTestSuite('All Core class tests');
 
-		$libs = CORE_TEST_CASES . DS;
-
-		$suite->addTestDirectory($libs . 'Routing');
-		$suite->addTestDirectory($libs . 'Routing' . DS . 'Route');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Core');
 		return $suite;
 	}
 }
+

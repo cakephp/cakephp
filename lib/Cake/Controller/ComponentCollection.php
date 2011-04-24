@@ -32,7 +32,7 @@ class ComponentCollection extends ObjectCollection {
  * Initializes all the Components for a controller.
  * Attaches a reference of each component to the Controller.
  *
- * @param Controller $controller Controller to initialize components for.
+ * @param Controller $Controller Controller to initialize components for.
  * @return void
  */
 	public function init(Controller $Controller) {

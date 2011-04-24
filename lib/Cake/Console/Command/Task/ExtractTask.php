@@ -17,6 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
+
 /**
  * Language string extractor
  *
@@ -112,7 +114,7 @@ class ExtractTask extends Shell {
 			$this->__paths = explode(',', $this->params['paths']);
 		} else {
 			$defaultPath = APP_PATH;
-			$message = __d('cake_console', "What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one", $defaultPath);
+			$message = __d('cake_console', "What is the path you would like to extract?\n[Q]uit [D]one");
 			while (true) {
 				$response = $this->in($message, null, $defaultPath);
 				if (strtoupper($response) === 'Q') {
@@ -134,7 +136,7 @@ class ExtractTask extends Shell {
 		if (isset($this->params['output'])) {
 			$this->__output = $this->params['output'];
 		} else {
-			$message = __d('cake_console', "What is the full path you would like to output?\nExample: %s\n[Q]uit", $this->__paths[0] . DS . 'locale');
+			$message = __d('cake_console', "What is the path you would like to output?\n[Q]uit", $this->__paths[0] . DS . 'locale');
 			while (true) {
 				$response = $this->in($message, null, $this->__paths[0] . DS . 'locale');
 				if (strtoupper($response) === 'Q') {
@@ -199,13 +201,13 @@ class ExtractTask extends Shell {
 		$parser = parent::getOptionParser();
 		return $parser->description(__d('cake_console', 'CakePHP Language String Extraction:'))
 			->addOption('app', array('help' => __d('cake_console', 'Directory where your application is located.')))
-			->addOption('paths', array('help' => __d('cake_console', 'Comma separted list of paths, full paths are needed.')))
+			->addOption('paths', array('help' => __d('cake_console', 'Comma separted list of paths.')))
 			->addOption('merge', array(
 				'help' => __d('cake_console', 'Merge all domain strings into the default.po file.'),
 				'choices' => array('yes', 'no')
 			))
 			->addOption('output', array('help' => __d('cake_console', 'Full path to output directory.')))
-			->addOption('files', array('help' => __d('cake_console', 'Comma separated list of files, full paths are needed.')))
+			->addOption('files', array('help' => __d('cake_console', 'Comma separated list of files.')))
 			->addOption('exclude', array(
 				'help' => __d('cake_console', 'Comma separated list of directories to exclude. Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
 			));
@@ -229,10 +231,10 @@ class ExtractTask extends Shell {
 		$this->out(__d('cake_console', '   -app [path...]: directory where your application is located'));
 		$this->out(__d('cake_console', '   -root [path...]: path to install'));
 		$this->out(__d('cake_console', '   -core [path...]: path to cake directory'));
-		$this->out(__d('cake_console', '   -paths [comma separated list of paths, full path is needed]'));
+		$this->out(__d('cake_console', '   -paths [comma separated list of paths]'));
 		$this->out(__d('cake_console', '   -merge [yes|no]: Merge all domains strings into the default.pot file'));
 		$this->out(__d('cake_console', '   -output [path...]: Full path to output directory'));
-		$this->out(__d('cake_console', '   -files: [comma separated list of files, full path to file is needed]'));
+		$this->out(__d('cake_console', '   -files: [comma separated list of files]'));
 		$this->out();
 		$this->out(__d('cake_console', 'Commands:'));
 		$this->out(__d('cake_console', '   cake i18n extract help: Shows this help message.'));
@@ -415,7 +417,7 @@ class ExtractTask extends Shell {
 				if (strtoupper($response) === 'N') {
 					$response = '';
 					while ($response == '') {
-						$response = $this->in(__d('cake_console', "What would you like to name this file?\nExample: %s", 'new_' . $filename), null, 'new_' . $filename);
+						$response = $this->in(__d('cake_console', "What would you like to name this file?"), null, 'new_' . $filename);
 						$File = new File($this->__output . $response);
 						$filename = $response;
 					}
@@ -515,7 +517,7 @@ class ExtractTask extends Shell {
 	function __searchFiles() {
 		$pattern = false;
 		if (!empty($this->_exclude)) {
-			$pattern = '/[\/\\\\]' . implode('|', $this->_exclude) . '[\/\\\\]/'; 
+			$pattern = '/[\/\\\\]' . implode('|', $this->_exclude) . '[\/\\\\]/';
 		}
 		foreach ($this->__paths as $path) {
 			$Folder = new Folder($path);

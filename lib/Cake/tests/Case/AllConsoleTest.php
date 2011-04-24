@@ -1,6 +1,6 @@
 <?php
 /**
- * AllXmlTest file
+ * AllConsoleTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllXmlTest class
+ * AllConsoleTest class
  *
- * This test group will run xml class tests
+ * This test group will run all console classes.
  *
- * @package       cake.tests.groups
+ * @package       cake.tests.cases.console
  */
-class AllXmlTest extends PHPUnit_Framework_TestSuite {
+class AllConsoleTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,10 +32,13 @@ class AllXmlTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Xml related class tests');
+		$suite = new CakeTestSuite('All console classes');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Utility' . DS . 'XmlTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'View' . DS . 'Helper' . DS . 'RssHelperTest.php');
+		$path = CORE_TEST_CASES . DS . 'Console' . DS;
+
+		$suite->addTestFile($path . 'AllConsoleLibsTest.php');
+		$suite->addTestFile($path . 'AllTasksTest.php');
+		$suite->addTestFile($path . 'AllShellsTest.php');
 		return $suite;
 	}
 }

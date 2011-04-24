@@ -22,8 +22,8 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 /**
  * Load a file and find the first test case / suite in that file.
  *
- * @param string $filePath 
- * @param string $params 
+ * @param string $filePath
+ * @param string $params
  * @return ReflectionClass
  */
 	public function load($filePath, $params = '') {
@@ -45,7 +45,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 /**
  * Generates the base path to a set of tests based on the parameters.
  *
- * @param array $params 
+ * @param array $params
  * @return string The base path.
  */
 	protected static function _basePath($params) {
@@ -76,6 +76,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 			$case = str_replace('Test.php', '', $case);
 			$testCases[$testCaseFile] = $case;
 		}
+		sort($testCases);
 		return $testCases;
 	}
 

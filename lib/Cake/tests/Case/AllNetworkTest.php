@@ -1,6 +1,6 @@
 <?php
 /**
- * AllLibsTest file
+ * AllNetworkTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllLibsTest class
+ * AllNetworkTest class
  *
- * This test group will run all non mvc related lib class tests
+ * This test group will run socket class tests
  *
- * @package       cake.tests.cases
+ * @package       cake.tests.groups
  */
-class AllLibsTest extends PHPUnit_Framework_TestSuite {
+class AllNetworkTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,13 +32,10 @@ class AllLibsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All non-MVC lib class tests');
-		
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'BasicsTest.php');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Utility');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Datasource' . DS . 'CakeSessionTest.php');
-		//$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Model' . DS . 'Datasource' . DS . 'Session');
+		$suite = new CakeTestSuite('All Network related class tests');
+
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network' . DS . 'Http');
 		return $suite;
 	}
 }

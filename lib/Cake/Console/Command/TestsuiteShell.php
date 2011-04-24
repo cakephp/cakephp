@@ -163,7 +163,10 @@ class TestsuiteShell extends Shell {
  */
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
-		$this->_dispatcher->loadTestFramework();
+		$sucess = $this->_dispatcher->loadTestFramework();
+		if (!$sucess) {
+			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
+		}
 	}
 
 /**
@@ -289,9 +292,7 @@ class TestsuiteShell extends Shell {
 		$i = 1;
 		$cases = array();
 		foreach ($testCases as $testCaseFile => $testCase) {
-			$case = explode(DS, str_replace('Test.php', '', $testCase));
-			$case[count($case) - 1] = $case[count($case) - 1];
-			$case = implode('/', $case);
+			$case = str_replace('Test.php', '', $testCase);
 			$this->out("[$i] $case");
 			$cases[$i] = $case;
 			$i++;

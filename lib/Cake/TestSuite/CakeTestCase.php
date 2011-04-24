@@ -72,6 +72,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected $_configure = array();
 
+
 /**
 * Runs the test case and collects the results in a TestResult object.
 * If no TestResult object is passed a new one will be created.

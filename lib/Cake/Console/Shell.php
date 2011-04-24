@@ -165,7 +165,7 @@ class Shell extends Object {
 		if ($this->stdin == null) {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
-		
+
 		$parent = get_parent_class($this);
 		if ($this->tasks !== null && $this->tasks !== false) {
 			$this->_mergeVars(array('tasks'), $parent, true);
@@ -200,7 +200,6 @@ class Shell extends Object {
  *
  */
 	protected function _welcome() {
-		$this->clear();
 		$this->out();
 		$this->out('<info>Welcome to CakePHP v' . Configure::version() . ' Console</info>');
 		$this->hr();
@@ -296,16 +295,16 @@ class Shell extends Object {
  * but intended for running shells from other shells.
  *
  * ### Usage:
- * 
+ *
  * With a string commmand:
  *
  *	`return $this->dispatchShell('schema create DbAcl');`
  *
  * With an array command:
  *
- * `return $this->dispatchShell('schema', 'create', 'i18n', '--dry');` 
+ * `return $this->dispatchShell('schema', 'create', 'i18n', '--dry');`
  *
- * @param mixed $command Either an array of args similar to $argv. Or a string command, that can be 
+ * @param mixed $command Either an array of args similar to $argv. Or a string command, that can be
  *   exploded on space to simulate argv.
  * @return mixed. The return of the other shell.
  */
@@ -334,10 +333,14 @@ class Shell extends Object {
 			array_shift($argv);
 		}
 
-		$this->OptionParser = $this->getOptionParser();
-		list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+		try {
+			$this->OptionParser = $this->getOptionParser();
+			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+		} catch (ConsoleException $e) {
+			return $this->out($this->OptionParser->help($command));
+		}
+		
 		$this->command = $command;
-
 		if (!empty($this->params['help'])) {
 			return $this->_displayHelp($command);
 		}
@@ -471,7 +474,7 @@ class Shell extends Object {
 
 /**
  * Wrap a block of text.
- * Allows you to set the width, and indenting on a block of text. 
+ * Allows you to set the width, and indenting on a block of text.
  *
  * ### Options
  *
@@ -480,7 +483,7 @@ class Shell extends Object {
  * - `indent` Indent the text with the string provided. Defaults to null.
  *
  * @param string $text Text the text to format.
- * @param mixed $options Array of options to use, or an integer to wrap the text to. 
+ * @param mixed $options Array of options to use, or an integer to wrap the text to.
  * @return string Wrapped / indented text
  * @see String::wrap()
  */

@@ -19,6 +19,7 @@
  */
 
 App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
 App::uses('String', 'Utility');
 App::uses('Security', 'Utility');
 
@@ -53,9 +54,8 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$prompt = __d('cake_console', "What is the full path for this app including the app directory name?\n Example:");
-			$default = APP_PATH . 'myapp';
-			$project = $this->in($prompt . $default, null, $default);
+			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
+			$project = $this->in($prompt, null, APP_PATH . 'myapp');
 		}
 
 		if ($project) {
@@ -201,7 +201,7 @@ class ProjectTask extends Shell {
  */
 	public function createHome($dir) {
 		$app = basename($dir);
-		$path = $dir . 'views' . DS . 'pages' . DS;
+		$path = $dir . 'View' . DS . 'pages' . DS;
 		$source = LIBS . 'Console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
 		include($source);
 		return $this->createFile($path.'home.ctp', $output);

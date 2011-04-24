@@ -42,7 +42,7 @@ class XcacheEngine extends CacheEngine {
  * Called automatically by the cache frontend
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @param array $setting array of setting for the engine
+ * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings) {
@@ -62,7 +62,7 @@ class XcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
  * @param integer $duration How long to cache the data, in seconds
- * @return boolean True if the data was succesfully cached, false on failure
+ * @return boolean True if the data was successfully cached, false on failure
  */
 	public function write($key, $value, $duration) {
 		$expires = time() + $duration;
@@ -94,7 +94,6 @@ class XcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @param integer $duration How long to cache the data, in seconds
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
@@ -106,8 +105,7 @@ class XcacheEngine extends CacheEngine {
  * If the cache key is not an integer it will be treated as 0
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to substract
- * @param integer $duration How long to cache the data, in seconds
+ * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
@@ -117,7 +115,7 @@ class XcacheEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		return xcache_unset($key);
@@ -126,7 +124,7 @@ class XcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		$this->__auth();
@@ -145,7 +143,7 @@ class XcacheEngine extends CacheEngine {
  * This has to be done because xcache_clear_cache() needs to pass Basic Http Auth
  * (see xcache.admin configuration settings)
  *
- * @param boolean Revert changes
+ * @param boolean $reverse Revert changes
  * @access private
  */
 	function __auth($reverse = false) {

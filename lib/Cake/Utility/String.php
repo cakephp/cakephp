@@ -33,7 +33,6 @@ class String {
  */
 	public static function uuid() {
 		$node = env('SERVER_ADDR');
-		$pid = null;
 
 		if (strpos($node, ':') !== false) {
 			if (substr_count($node, '::')) {

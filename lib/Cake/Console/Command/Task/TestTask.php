@@ -220,7 +220,7 @@ class TestTask extends BakeTask {
 /**
  * Checks whether the chosen type can find its own fixtures.
  * Currently only model, and controller are supported
- * 
+ *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className the Classname of the class the test is being generated for.
  * @return boolean

@@ -67,11 +67,11 @@ class PluginTaskTest extends CakeTestCase {
 
 		$path = $this->Task->path . 'bake_test_plugin';
 
-		$file = $path . DS . 'bake_test_plugin_app_controller.php';
+		$file = $path . DS . 'Controller' . DS  .'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . DS . 'bake_test_plugin_app_model.php';
+		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
@@ -82,19 +82,16 @@ class PluginTaskTest extends CakeTestCase {
 		
 		$directories = array(
 			'config' . DS . 'schema',
-			'models' . DS . 'behaviors',
-			'models' . DS . 'datasources',
-			'console' . DS . 'shells' . DS . 'tasks',
-			'controllers' . DS . 'components',
-			'libs',
-			'views' . DS . 'helpers',
-			'tests' . DS . 'cases' . DS . 'components',
-			'tests' . DS . 'cases' . DS . 'helpers',
-			'tests' . DS . 'cases' . DS . 'behaviors',
-			'tests' . DS . 'cases' . DS . 'controllers',
-			'tests' . DS . 'cases' . DS . 'models',
-			'tests' . DS . 'groups',
-			'tests' . DS . 'fixtures',
+			'Model' . DS . 'Behavior',
+			'Model' . DS . 'Datasource',
+			'Console' . DS . 'Command' . DS . 'Task',
+			'Controller' . DS . 'Component',
+			'Lib',
+			'View' . DS . 'Helper',
+			'tests' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
+			'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper',
+			'tests' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
+			'tests' . DS . 'Fixture',
 			'vendors',
 			'webroot'
 		);
@@ -117,11 +114,11 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'test_plugin';
-		$file = $path . DS . 'test_plugin_app_controller.php';
+		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . DS . 'test_plugin_app_model.php';
+		$file = $path . DS . 'Model' . DS . 'TestPluginAppModel.php';
 		$this->Task->expects($this->at(4))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
@@ -144,12 +141,12 @@ class PluginTaskTest extends CakeTestCase {
 			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'bake_test_plugin';
-		$file = $path . DS . 'bake_test_plugin_app_controller.php';
+		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
 		$path = $this->Task->path . 'bake_test_plugin';
-		$file = $path . DS . 'bake_test_plugin_app_model.php';
+		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 		

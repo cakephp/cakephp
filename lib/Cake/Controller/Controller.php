@@ -353,7 +353,7 @@ class Controller extends Object {
 	}
 
 /**
- * Provides backwards compatbility access to the request object properties.
+ * Provides backwards compatibility access to the request object properties.
  * Also provides the params alias.
  *
  * @return void
@@ -376,7 +376,7 @@ class Controller extends Object {
 	}
 
 /**
- * Provides backwards compatiblity access for setting values to the request object.
+ * Provides backwards compatibility access for setting values to the request object.
  *
  * @return void
  */
@@ -732,8 +732,6 @@ class Controller extends Object {
  * @link http://book.cakephp.org/view/979/set
  */
 	public function set($one, $two = null) {
-		$data = array();
-
 		if (is_array($one)) {
 			if (is_array($two)) {
 				$data = array_combine($one, $two);

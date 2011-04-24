@@ -94,6 +94,7 @@ class ControllerTaskTest extends CakeTestCase {
 	public function teardown() {
 		unset($this->Task);
 		ClassRegistry::flush();
+		App::build();
 	}
 
 /**

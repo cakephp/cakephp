@@ -670,7 +670,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		));
 		$TestModel->create();
 		$this->assertFalse($TestModel->save($data));
-		$this->assertEqual($TestModel->validationErrors['title'], 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors['title'], array('This field cannot be left blank'));
 
 		$TestModel->locale = 'eng';
 		$TestModel->validate['title'] = '/Only this title/';

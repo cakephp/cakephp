@@ -363,10 +363,12 @@ class CakeResponse {
  * @return void
  */
 	protected function _sendHeader($name, $value = null) {
-		if (is_null($value)) {
-			header($name);
-		} else {
-			header("{$name}: {$value}");
+		if (!headers_sent()) {
+			if (is_null($value)) {
+				header($name);
+			} else {
+				header("{$name}: {$value}");
+			}
 		}
 	}
 
@@ -571,7 +573,6 @@ class CakeResponse {
 			return array_map(array($this, 'mapType'), $ctype);
 		}
 		$keys = array_keys($this->_mimeTypes);
-		$count = count($keys);
 
 		foreach ($this->_mimeTypes as $alias => $types) {
 			if (is_array($types) && in_array($ctype, $types)) {

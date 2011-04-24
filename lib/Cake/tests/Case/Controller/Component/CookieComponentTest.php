@@ -239,6 +239,19 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test writing values that are not scalars
+ *
+ * @return void
+ */
+	function testWriteArrayValues() {
+		$this->Cookie->secure = false;
+		$this->Cookie->expects($this->once())->method('_setcookie')
+			->with('CakeTestCookie[Testing]', '[1,2,3]', time() + 10, '/', '', false, false);
+
+		$this->Cookie->write('Testing', array(1, 2, 3), false);
+	}
+
+/**
  * testReadingCookieValue
  *
  * @access public
@@ -359,7 +372,6 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	function testReadingCookieDataOnStartup() {
-
 		$data = $this->Cookie->read('Encrytped_array');
 		$this->assertNull($data);
 
@@ -378,28 +390,29 @@ class CookieComponentTest extends CakeTestCase {
 						'name' => $this->__encrypt('CakePHP'),
 						'version' => $this->__encrypt('1.2.0.x'),
 						'tag' => $this->__encrypt('CakePHP Rocks!')),
-				'Plain_array' => 'name|CakePHP,version|1.2.0.x,tag|CakePHP Rocks!',
+				'Plain_array' => '{"name":"CakePHP","version":"1.2.0.x","tag":"CakePHP Rocks!"}',
 				'Plain_multi_cookies' => array(
 						'name' => 'CakePHP',
 						'version' => '1.2.0.x',
 						'tag' => 'CakePHP Rocks!'));
+
 		$this->Cookie->startup(null);
 
 		$data = $this->Cookie->read('Encrytped_array');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_array');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_multi_cookies');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 		$this->Cookie->destroy();
 		unset($_COOKIE['CakeTestCookie']);
 	}
@@ -413,19 +426,19 @@ class CookieComponentTest extends CakeTestCase {
 	function testReadingCookieDataWithoutStartup() {
 		$data = $this->Cookie->read('Encrytped_array');
 		$expected = null;
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
 		$expected = null;
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_array');
 		$expected = null;
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_multi_cookies');
 		$expected = null;
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$_COOKIE['CakeTestCookie'] = array(
 				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!')),
@@ -433,7 +446,7 @@ class CookieComponentTest extends CakeTestCase {
 						'name' => $this->__encrypt('CakePHP'),
 						'version' => $this->__encrypt('1.2.0.x'),
 						'tag' => $this->__encrypt('CakePHP Rocks!')),
-				'Plain_array' => 'name|CakePHP,version|1.2.0.x,tag|CakePHP Rocks!',
+				'Plain_array' => '{"name":"CakePHP","version":"1.2.0.x","tag":"CakePHP Rocks!"}',
 				'Plain_multi_cookies' => array(
 						'name' => 'CakePHP',
 						'version' => '1.2.0.x',
@@ -441,23 +454,36 @@ class CookieComponentTest extends CakeTestCase {
 
 		$data = $this->Cookie->read('Encrytped_array');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_array');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_multi_cookies');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($expected, $data);
 		$this->Cookie->destroy();
 		unset($_COOKIE['CakeTestCookie']);
 	}
 
+/**
+ * Test Reading legacy cookie values.
+ *
+ * @return void
+ */
+	function testReadLegacyCookieValue() {
+		$_COOKIE['CakeTestCookie'] = array(
+			'Legacy' => array('value' => $this->_oldImplode(array(1, 2, 3)))
+		);
+		$result = $this->Cookie->read('Legacy.value');
+		$expected = array(1, 2, 3);
+		$this->assertEquals($expected, $result);
+	}
 
 /**
  * test that no error is issued for non array data.
@@ -470,6 +496,29 @@ class CookieComponentTest extends CakeTestCase {
 
 		$this->assertNull($this->Cookie->read('value'));
 	}
+	
+/**
+ * Helper method for generating old style encoded cookie values.
+ *
+ * @return string.
+ */
+	protected function _oldImplode(array $array) {
+		$string = '';
+		foreach ($array as $key => $value) {
+			$string .= ',' . $key . '|' . $value;
+		}
+		return substr($string, 1);
+	}
+
+/**
+ * Implode method to keep keys are multidimensional arrays
+ *
+ * @param array $array Map of key and values
+ * @return string String in the form key1|value1,key2|value2
+ */
+	protected function _implode(array $array) {
+		return json_encode($array);
+	}
 
 /**
  * encrypt method
@@ -480,23 +529,9 @@ class CookieComponentTest extends CakeTestCase {
  */
 	function __encrypt($value) {
 		if (is_array($value)) {
-			$value = $this->__implode($value);
+			$value = $this->_implode($value);
 		}
 		return "Q2FrZQ==." . base64_encode(Security::cipher($value, $this->Cookie->key));
 	}
 
-/**
- * implode method
- *
- * @param array $value
- * @return string
- * @access private
- */
-	function __implode($array) {
-		$string = '';
-		foreach ($array as $key => $value) {
-			$string .= ',' . $key . '|' . $value;
-		}
-		return substr($string, 1);
-	}
 }

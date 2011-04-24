@@ -36,7 +36,7 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	function setUp() {
 		App::build(array(
-			'views' => array(
+			'View' => array(
 				LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS,
 				LIBS . 'libs' . DS . 'view' . DS
 			)

@@ -20,7 +20,7 @@
 /**
  * AllConfigureTest class
  *
- * This test group will run cache engine tests.
+ * This test group will run configure tests.
  *
  * @package       cake.tests.groups
  */
@@ -32,9 +32,8 @@ class AllConfigureTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Configure and Core related tests');
+		$suite = new CakeTestSuite('All Configure related tests');
 
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Core');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Configure');
 		return $suite;
 	}
