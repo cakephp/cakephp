@@ -136,7 +136,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail = new TestCakeEmail();
 
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'views' => array(CAKE . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
 	}
 
@@ -491,22 +491,22 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testAttachments() {
-		$this->CakeEmail->attachments(WWW_ROOT . 'index.php');
-		$expected = array('index.php' => array('file' => WWW_ROOT . 'index.php', 'mimetype' => 'application/octet-stream'));
+		$this->CakeEmail->attachments(CAKE . 'basics.php');
+		$expected = array('basics.php' => array('file' => CAKE . 'basics.php', 'mimetype' => 'application/octet-stream'));
 		$this->assertIdentical($this->CakeEmail->attachments(), $expected);
 
 		$this->CakeEmail->attachments(array());
 		$this->assertIdentical($this->CakeEmail->attachments(), array());
 
-		$this->CakeEmail->attachments(array(array('file' => WWW_ROOT . 'index.php', 'mimetype' => 'text/plain')));
-		$this->CakeEmail->addAttachments(WWW_ROOT . 'test.php');
-		$this->CakeEmail->addAttachments(array(WWW_ROOT . 'test.php'));
-		$this->CakeEmail->addAttachments(array('other.txt' => WWW_ROOT . 'test.php', 'ht' => WWW_ROOT . '.htaccess'));
+		$this->CakeEmail->attachments(array(array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
+		$this->CakeEmail->addAttachments(CAKE . 'bootstrap.php');
+		$this->CakeEmail->addAttachments(array(CAKE . 'bootstrap.php'));
+		$this->CakeEmail->addAttachments(array('other.txt' => CAKE . 'bootstrap.php', 'license' => CAKE . 'LICENSE.txt'));
 		$expected = array(
-			'index.php' => array('file' => WWW_ROOT . 'index.php', 'mimetype' => 'text/plain'),
-			'test.php' => array('file' => WWW_ROOT . 'test.php', 'mimetype' => 'application/octet-stream'),
-			'other.txt' => array('file' => WWW_ROOT . 'test.php', 'mimetype' => 'application/octet-stream'),
-			'ht' => array('file' => WWW_ROOT . '.htaccess', 'mimetype' => 'application/octet-stream')
+			'basics.php' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'),
+			'bootstrap.php' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
+			'other.txt' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
+			'license' => array('file' => CAKE . 'LICENSE.txt', 'mimetype' => 'application/octet-stream')
 		);
 		$this->assertIdentical($this->CakeEmail->attachments(), $expected);
 	}
@@ -669,19 +669,19 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array());
-		$this->CakeEmail->attachments(array(WWW_ROOT . 'index.php'));
+		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
 		$this->CakeEmail->send('body');
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"index.php\""));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"basics.php\""));
 
-		$this->CakeEmail->attachments(array('my.file.txt' => WWW_ROOT . 'index.php'));
+		$this->CakeEmail->attachments(array('my.file.txt' => CAKE . 'basics.php'));
 		$this->CakeEmail->send('body');
 		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"my.file.txt\""));
 
-		$this->CakeEmail->attachments(array('file.txt' => array('file' => WWW_ROOT . 'index.php', 'mimetype' => 'text/plain')));
+		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
 		$this->CakeEmail->send('body');
 		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"file.txt\""));
 
-		$this->CakeEmail->attachments(array('file.txt' => array('file' => WWW_ROOT . 'index.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1')));
+		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1')));
 		$this->CakeEmail->send('body');
 		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <a1b1c1>\r\nContent-Disposition: inline; filename=\"file.txt\""));
 	}
