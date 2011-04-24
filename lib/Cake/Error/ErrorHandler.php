@@ -54,13 +54,13 @@ App::uses('AppController', 'Controller');
  *
  * This controller method is called instead of the default exception rendering.  It receives the
  * thrown exception as its only argument.  You should implement your error handling in that method.
- * Using AppController::appError(), will superseed any configuration for Exception.renderer.
+ * Using AppController::appError(), will supersede any configuration for Exception.renderer.
  *
  * #### Using a custom renderer with `Exception.renderer`
  *
  * If you don't want to take control of the exception handling, but want to change how exceptions are
  * rendered you can use `Exception.renderer` to choose a class to render exception pages.  By default
- * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/libs.
+ * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Lib/Error.
  *
  * Your custom renderer should expect an exception in its constructor, and implement a render method.
  * Failing to do so will cause additional errors.
@@ -116,10 +116,12 @@ class ErrorHandler {
 			);
 			CakeLog::write(LOG_ERR, $message);
 		}
-		if ($config['renderer'] !== 'ExceptionRenderer') {
-			App::uses($config['renderer'], 'Error');
+		$renderer = $config['renderer'];
+		if ($renderer !== 'ExceptionRenderer') {
+			list($plugin, $renderer) = pluginSplit($renderer, true);
+			App::uses($renderer, $plugin . 'Error');
 		}
-		$error = new $config['renderer']($exception);
+		$error = new $renderer($exception);
 		$error->render();
 	}
 
