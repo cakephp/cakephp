@@ -195,8 +195,8 @@ class ThemeViewTest extends CakeTestCase {
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
-		$ThemeView->layoutPath = 'email' . DS . 'html';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
+		$ThemeView->layoutPath = 'emails' . DS . 'html';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}

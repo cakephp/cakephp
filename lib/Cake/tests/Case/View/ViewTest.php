@@ -331,8 +331,8 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
-		$View->layoutPath = 'email' . DS . 'html';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
+		$View->layoutPath = 'emails' . DS . 'html';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 
 		$this->assertEqual($result, $expected);
