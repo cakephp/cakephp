@@ -103,7 +103,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function execute() {
+	public function execute() {
 		if (!empty($this->params['exclude'])) {
 			$this->_exclude = explode(',', $this->params['exclude']);
 		}
@@ -172,7 +172,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __extract() {
+	private function __extract() {
 		$this->out();
 		$this->out();
 		$this->out(__d('cake_console', 'Extracting...'));
@@ -201,7 +201,7 @@ class ExtractTask extends Shell {
 		$parser = parent::getOptionParser();
 		return $parser->description(__d('cake_console', 'CakePHP Language String Extraction:'))
 			->addOption('app', array('help' => __d('cake_console', 'Directory where your application is located.')))
-			->addOption('paths', array('help' => __d('cake_console', 'Comma separted list of paths.')))
+			->addOption('paths', array('help' => __d('cake_console', 'Comma separated list of paths.')))
 			->addOption('merge', array(
 				'help' => __d('cake_console', 'Merge all domain strings into the default.po file.'),
 				'choices' => array('yes', 'no')
@@ -247,28 +247,18 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __extractTokens() {
+	private function __extractTokens() {
 		foreach ($this->__files as $file) {
 			$this->__file = $file;
 			$this->out(__d('cake_console', 'Processing %s...', $file));
 
 			$code = file_get_contents($file);
 			$allTokens = token_get_all($code);
+
 			$this->__tokens = array();
-			$lineNumber = 1;
-
 			foreach ($allTokens as $token) {
-				if ((!is_array($token)) || (($token[0] != T_WHITESPACE) && ($token[0] != T_INLINE_HTML))) {
-					if (is_array($token)) {
-						$token[] = $lineNumber;
-					}
+				if (!is_array($token) || ($token[0] != T_WHITESPACE && $token[0] != T_INLINE_HTML)) {
 					$this->__tokens[] = $token;
-				}
-
-				if (is_array($token)) {
-					$lineNumber += count(explode("\n", $token[1])) - 1;
-				} else {
-					$lineNumber += count(explode("\n", $token)) - 1;
 				}
 			}
 			unset($allTokens);
@@ -290,7 +280,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __parse($functionName, $map) {
+	private function __parse($functionName, $map) {
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
@@ -337,7 +327,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __buildFiles() {
+	private function __buildFiles() {
 		foreach ($this->__strings as $domain => $strings) {
 			foreach ($strings as $string => $files) {
 				$occurrences = array();
@@ -372,7 +362,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __store($domain, $header, $sentence) {
+	private function __store($domain, $header, $sentence) {
 		if (!isset($this->__storage[$domain])) {
 			$this->__storage[$domain] = array();
 		}
@@ -389,7 +379,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __writeFiles() {
+	private function __writeFiles() {
 		$overwriteAll = false;
 		foreach ($this->__storage as $domain => $sentences) {
 			$output = $this->__writeHeader();
@@ -425,7 +415,7 @@ class ExtractTask extends Shell {
  * @return string Translation template header
  * @access private
  */
-	function __writeHeader() {
+	private function __writeHeader() {
 		$output  = "# LANGUAGE translation of CakePHP Application\n";
 		$output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
 		$output .= "#\n";
@@ -452,7 +442,7 @@ class ExtractTask extends Shell {
  * @return array Strings extracted
  * @access private
  */
-	function __getStrings(&$position, $target) {
+	private function __getStrings(&$position, $target) {
 		$strings = array();
 		while (count($strings) < $target && ($this->__tokens[$position] == ',' || $this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
 			if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->__tokens[$position+1] == '.') {
@@ -473,13 +463,13 @@ class ExtractTask extends Shell {
 	}
 
 /**
- * Format a string to be added as a translateable string
+ * Format a string to be added as a translatable string
  *
  * @param string $string String to format
  * @return string Formatted string
  * @access private
  */
-	function __formatString($string) {
+	private function __formatString($string) {
 		$quote = substr($string, 0, 1);
 		$string = substr($string, 1, -1);
 		if ($quote == '"') {
@@ -501,7 +491,7 @@ class ExtractTask extends Shell {
  * @return void
  * @access private
  */
-	function __markerError($file, $line, $marker, $count) {
+	private function __markerError($file, $line, $marker, $count) {
 		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
 		$count += 2;
 		$tokenCount = count($this->__tokens);
@@ -526,12 +516,12 @@ class ExtractTask extends Shell {
 	}
 
 /**
- * Search files that may contain translateable strings
+ * Search files that may contain translatable strings
  *
  * @return void
  * @access private
  */
-	function __searchFiles() {
+	private function __searchFiles() {
 		$pattern = false;
 		if (!empty($this->_exclude)) {
 			$pattern = '/[\/\\\\]' . implode('|', $this->_exclude) . '[\/\\\\]/';
