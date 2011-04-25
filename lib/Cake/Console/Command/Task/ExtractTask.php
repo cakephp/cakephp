@@ -316,24 +316,13 @@ class ExtractTask extends Shell {
 				}
 
 				$mapCount = count($map);
-				$strings = array();
-				while (count($strings) < $mapCount && ($this->__tokens[$position] == ',' || $this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
-					if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
-						$strings[] = $this->__tokens[$position][1];
-					}
-					$position++;
-				}
+				$strings = $this->__getStrings($position, $mapCount);
 
 				if ($mapCount == count($strings)) {
 					extract(array_combine($map, $strings));
-					if (!isset($domain)) {
-						$domain = '\'default\'';
-					}
-					$string = $this->__formatString($singular);
-					if (isset($plural)) {
-						$string .= "\0" . $this->__formatString($plural);
-					}
-					$this->__strings[$this->__formatString($domain)][$string][$this->__file][] = $line;
+					$domain = isset($domain) ? $domain : 'default';
+					$string = isset($plural) ? $singular . "\0" . $plural : $singular;
+					$this->__strings[$domain][$string][$this->__file][] = $line;
 				} else {
 					$this->__markerError($this->__file, $line, $functionName, $count);
 				}
@@ -453,6 +442,34 @@ class ExtractTask extends Shell {
 		$output .= "\"Content-Transfer-Encoding: 8bit\\n\"\n";
 		$output .= "\"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n\"\n\n";
 		return $output;
+	}
+	
+/**
+ * Get the strings from the position forward
+ *
+ * @param int $position Actual position on tokens array
+ * @param int $target Number of strings to extract
+ * @return array Strings extracted
+ * @access private
+ */
+	function __getStrings(&$position, $target) {
+		$strings = array();
+		while (count($strings) < $target && ($this->__tokens[$position] == ',' || $this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
+			if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->__tokens[$position+1] == '.') {
+				$string = '';
+				while ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING || $this->__tokens[$position] == '.') {
+					if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
+						$string .= $this->__formatString($this->__tokens[$position][1]);
+					}
+					$position++;
+				}
+				$strings[] = $string;
+			} else if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
+				$strings[] = $this->__formatString($this->__tokens[$position][1]);
+			}
+			$position++;
+		}
+		return $strings;
 	}
 
 /**
