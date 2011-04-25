@@ -257,7 +257,7 @@ class FileEngineTest extends CakeTestCase {
 		$result = Cache::read('views.countries.something', 'file_test');
 		$this->assertEqual($result, 'here');
 
-		$result = Cache::clear();
+		$result = Cache::clear(false, 'file_test');
 		$this->assertTrue($result);
 	}
 

@@ -147,7 +147,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$result = file(LOGS . 'debug.log');
 		$this->assertEqual(count($result), 1);
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
 		@unlink(LOGS . 'debug.log');
@@ -172,7 +172,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$result = file(LOGS . 'debug.log');
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
 		$this->assertPattern('/^Trace:/', $result[1]);

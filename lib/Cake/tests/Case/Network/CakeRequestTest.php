@@ -33,6 +33,11 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->_post = $_POST;
 		$this->_files = $_FILES;
 		$this->_app = Configure::read('App');
+		$this->_case = null;
+		if (isset($_GET['case'])) {
+			$this->_case = $_GET['case'];
+			unset($_GET['case']);
+		}
 
 		Configure::write('App.baseUrl', false);
 	}
@@ -48,6 +53,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
+		if (!empty($this->_case)) {
+			$_GET['case'] = $this->_case;
+		}
 		Configure::write('App', $this->_app);
 	}
 
@@ -1173,7 +1181,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				),
 			),
 			array(
-				'Apache - No rewrite, document root set above top level cake dir, reques root, no PATH_INFO',
+				'Apache - No rewrite, document root set above top level cake dir, request root, no PATH_INFO',
 				array(
 					'App' => array(
 						'base' => false, 

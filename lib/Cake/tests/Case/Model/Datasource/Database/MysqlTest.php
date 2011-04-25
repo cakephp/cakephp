@@ -147,6 +147,8 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testLocalizedFloats() {
+		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
+
 		$restore = setlocale(LC_ALL, null);
 		setlocale(LC_ALL, 'de_DE');
 

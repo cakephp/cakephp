@@ -171,7 +171,7 @@ class DebuggerTest extends CakeTestCase {
 			               '&line={:line}">{:path}</a>, line {:line}'
 		));
 		$result = Debugger::trace();
-		$this->assertPattern('/' . preg_quote('txmt://open?url=file:///', '/') . '/', $result);
+		$this->assertPattern('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .

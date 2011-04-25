@@ -183,13 +183,13 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual(array(LIBS . 'Controller' . DS), $controller);
 
 		$component = App::core('Controller/Component');
-		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS), $component);
+		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS), str_replace('/', DS, $component));
 
 		$auth = App::core('Controller/Component/Auth');
-		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), $auth);
+		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), str_replace('/', DS, $auth));
 
 		$datasource = App::core('Model/Datasource');
-		$this->assertEqual(array(LIBS . 'Model' . DS . 'Datasource' . DS), $datasource);
+		$this->assertEqual(array(LIBS . 'Model' . DS . 'Datasource' . DS), str_replace('/', DS, $datasource));
 	}
 
 /**
