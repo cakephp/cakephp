@@ -23,7 +23,7 @@ App::uses('String', 'Utility');
  * Generally not directly used. Using $parser->help($command, 'xml'); is usually
  * how you would access help.  Or via the `--help=xml` option on the command line.
  *
- * Xml output is useful for intergration with other tools like IDE's or other build tools.
+ * Xml output is useful for integration with other tools like IDE's or other build tools.
  *
  * @package    cake.console.libs
  * @since      CakePHP(tm) v 2.0
@@ -52,12 +52,12 @@ class HelpFormatter {
 			$out[] = String::wrap($description, $width);
 			$out[] = '';
 		}
-		$out[] = '<info>Usage:</info>';
+		$out[] = __d('cake_console', '<info>Usage:</info>');
 		$out[] = $this->_generateUsage();
 		$out[] = '';
 		$subcommands = $parser->subcommands();
 		if (!empty($subcommands)) {
-			$out[] = '<info>Subcommands:</info>';
+			$out[] = __d('cake_console', '<info>Subcommands:</info>');
 			$out[] = '';
 			$max = $this->_getMaxLength($subcommands) + 2;
 			foreach ($subcommands as $command) {
@@ -68,17 +68,14 @@ class HelpFormatter {
 				));
 			}
 			$out[] = '';
-			$out[] = sprintf(
-				__d('cake_console', 'To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'),
-				$parser->command()
-			);
+			$out[] = __d('cake_console', 'To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>', $parser->command());
 			$out[] = '';
 		}
 
 		$options = $parser->options();
 		if (!empty($options)) {
 			$max = $this->_getMaxLength($options) + 8;
-			$out[] = '<info>Options:</info>';
+			$out[] = __d('cake_console', '<info>Options:</info>');
 			$out[] = '';
 			foreach ($options as $option) {
 				$out[] = String::wrap($option->help($max), array(
@@ -93,7 +90,7 @@ class HelpFormatter {
 		$arguments = $parser->arguments();
 		if (!empty($arguments)) {
 			$max = $this->_getMaxLength($arguments) + 2;
-			$out[] = '<info>Arguments:</info>';
+			$out[] = __d('cake_console', '<info>Arguments:</info>');
 			$out[] = '';
 			foreach ($arguments as $argument) {
 				$out[] = String::wrap($argument->help($max), array(
@@ -114,7 +111,7 @@ class HelpFormatter {
 
 /**
  * Generate the usage for a shell based on its arguments and options.
- * Usage strings favour short options over the long ones. and optional args will
+ * Usage strings favor short options over the long ones. and optional args will
  * be indicated with []
  *
  * @return string
@@ -156,7 +153,7 @@ class HelpFormatter {
 	public function xml($string = true) {
 		$parser = $this->_parser;
 		$xml = new SimpleXmlElement('<shell></shell>');
-		$xml->addChild('commmand', $parser->command());
+		$xml->addChild('command', $parser->command());
 		$xml->addChild('description', $parser->description());
 		
 		$xml->addChild('epilog', $parser->epilog());

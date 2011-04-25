@@ -55,7 +55,7 @@ class ConsoleInputArgument {
 /**
  * Make a new Input Argument
  *
- * @param mixed $name The long name of the option, or an array with all the properites.
+ * @param mixed $name The long name of the option, or an array with all the properties.
  * @param string $help The help text for this option
  * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
  * @param array $choices Valid choices for this option.
@@ -139,8 +139,8 @@ class ConsoleInputArgument {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new ConsoleException(sprintf(
-				__d('cake_console', '"%s" is not a valid value for %s.  Please use one of "%s"'), 
+			throw new ConsoleException(
+				__d('cake_console', '"%s" is not a valid value for %s. Please use one of "%s"', 
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
 		}

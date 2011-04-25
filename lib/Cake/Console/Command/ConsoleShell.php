@@ -47,7 +47,7 @@ class ConsoleShell extends Shell {
 	public $models = array();
 
 /**
- * Override intialize of the Shell
+ * Override initialize of the Shell
  *
  */
 	public function initialize() {
@@ -61,8 +61,8 @@ class ConsoleShell extends Shell {
 			App::uses($class, 'Model');
 			$this->{$class} = new $class();
 		}
-		$this->out('Model classes:');
-		$this->out('--------------');
+		$this->out(__d('cake_console', 'Model classes:'));
+		$this->hr();
 
 		foreach ($this->models as $model) {
 			$this->out(" - {$model}");
@@ -151,7 +151,7 @@ class ConsoleShell extends Shell {
 					return true;
 				break;
 				case 'models':
-					$this->out('Model classes:');
+					$this->out(__d('cake_console', 'Model classes:'));
 					$this->hr();
 					foreach ($this->models as $model) {
 						$this->out(" - {$model}");
@@ -169,9 +169,10 @@ class ConsoleShell extends Shell {
 
 					if ($this->_isValidModel($modelA) && $this->_isValidModel($modelB) && in_array($association, $this->associations)) {
 						$this->{$modelA}->bindModel(array($association => array($modelB => array('className' => $modelB))), false);
-						$this->out("Created $association association between $modelA and $modelB");
+						$this->out(__d('cake_console', "Created %s association between %s and %s",
+							$association, $modelA, $modelB));
 					} else {
-						$this->out("Please verify you are using valid models and association types");
+						$this->out(__d('cake_console', "Please verify you are using valid models and association types"));
 					}
 				break;
 				case (preg_match("/^(\w+) unbind (\w+) (\w+)/", $command, $tmp) == true):
@@ -196,9 +197,10 @@ class ConsoleShell extends Shell {
 
 					if ($this->_isValidModel($modelA) && $this->_isValidModel($modelB) && in_array($association, $this->associations) && $validCurrentAssociation) {
 						$this->{$modelA}->unbindModel(array($association => array($modelB)));
-						$this->out("Removed $association association between $modelA and $modelB");
+						$this->out(__d('cake_console', "Removed %s association between %s and %s",
+							$association, $modelA, $modelB));
 					} else {
-						$this->out("Please verify you are using valid models, valid current association, and valid association types");
+						$this->out(__d('cake_console', "Please verify you are using valid models, valid current association, and valid association types"));
 					}
 				break;
 				case (strpos($command, "->find") > 0):
@@ -248,10 +250,11 @@ class ConsoleShell extends Shell {
 								}
 							}
 						} else {
-							$this->out("\nNo result set found");
+							$this->out();
+							$this->out(__d('cake_console', "No result set found"));
 						}
 					} else {
-						$this->out("$modelToCheck is not a valid model");
+						$this->out(__d('cake_console', "%s is not a valid model", $modelToCheck));
 					}
 
 				break;
@@ -267,7 +270,7 @@ class ConsoleShell extends Shell {
 						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
 						@eval($saveCommand);
-						$this->out('Saved record for ' . $modelToSave);
+						$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
 					}
 				break;
 				case (preg_match("/^(\w+) columns/", $command, $tmp) == true):
@@ -284,17 +287,16 @@ class ConsoleShell extends Shell {
 							}
 						}
 					} else {
-						$this->out("Please verify that you selected a valid model");
+						$this->out(__d('cake_console', "Please verify that you selected a valid model"));
 					}
 				break;
 				case (preg_match("/^routes\s+reload/i", $command, $tmp) == true):
 					$router = Router::getInstance();
 					if (!$this->_loadRoutes()) {
-						$this->out("There was an error loading the routes config.  Please check that the file");
-						$this->out("exists and is free of parse errors.");
+						$this->out(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
 						break;
 					}
-					$this->out("Routes configuration reloaded, " . count($router->routes) . " routes connected");
+					$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count($router->routes)));
 				break;
 				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
 					$router = Router::getInstance();
@@ -309,7 +311,8 @@ class ConsoleShell extends Shell {
 					$this->out(var_export(Router::parse($tmp[1]), true));
 				break;
 				default:
-					$this->out("Invalid command\n");
+					$this->out(__d('cake_console', "Invalid command"));
+					$this->out();
 				break;
 			}
 			$command = '';

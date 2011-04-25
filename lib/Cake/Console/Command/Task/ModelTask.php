@@ -168,7 +168,7 @@ class ModelTask extends BakeTask {
  */
 	protected function _interactive() {
 		$this->hr();
-		$this->out(sprintf("Bake Model\nPath: %s", $this->path));
+		$this->out(__d('cake_console', "Bake Model\nPath: %s", $this->path));
 		$this->hr();
 		$this->interactive = true;
 
@@ -215,7 +215,7 @@ class ModelTask extends BakeTask {
 		$this->hr();
 		$this->out(__d('cake_console', 'The following Model will be created:'));
 		$this->hr();
-		$this->out("Name:       " . $currentModelName);
+		$this->out(__d('cake_console', "Name:       %s", $currentModelName));
 
 		if ($this->connection !== 'default') {
 			$this->out(__d('cake_console', "DB Config:  %s", $this->connection));
@@ -561,7 +561,7 @@ class ModelTask extends BakeTask {
  * Find the hasAndBelongsToMany relations and add them to associations list
  *
  * @param object $model Model instance being generated
- * @param array $associations Array of inprogress associations
+ * @param array $associations Array of in-progress associations
  * @return array $associations with hasAndBelongsToMany added in.
  */
 	public function findHasAndBelongsToMany($model, $associations) {
@@ -738,7 +738,7 @@ class ModelTask extends BakeTask {
 
 		$path = $this->getPath();
 		$filename = $path . $name . '.php';
-		$this->out("\nBaking model class for $name...", 1, Shell::QUIET);
+		$this->out("\n" . __d('cake_console', 'Baking model class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		ClassRegistry::flush();
 		return $out;

@@ -79,16 +79,16 @@ class BakeShell extends Shell {
 			$this->args = null;
 			return $this->DbConfig->execute();
 		}
-		$this->out('Interactive Bake Shell');
+		$this->out(__d('cake_console', 'Interactive Bake Shell'));
 		$this->hr();
-		$this->out('[D]atabase Configuration');
-		$this->out('[M]odel');
-		$this->out('[V]iew');
-		$this->out('[C]ontroller');
-		$this->out('[P]roject');
-		$this->out('[F]ixture');
-		$this->out('[T]est case');
-		$this->out('[Q]uit');
+		$this->out(__d('cake_console', '[D]atabase Configuration'));
+		$this->out(__d('cake_console', '[M]odel'));
+		$this->out(__d('cake_console', '[V]iew'));
+		$this->out(__d('cake_console', '[C]ontroller'));
+		$this->out(__d('cake_console', '[P]roject'));
+		$this->out(__d('cake_console', '[F]ixture'));
+		$this->out(__d('cake_console', '[T]est case'));
+		$this->out(__d('cake_console', '[Q]uit'));
 
 		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
 		switch ($classToBake) {
@@ -199,12 +199,11 @@ class BakeShell extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(
-			'The Bake script generates controllers, views and models for your application.' . 
-			'If run with no command line arguments, Bake guides the user through the class' . 
-			'creation process. You can customize the generation process by telling Bake' . 
-			'where different parts of your application are using command line arguments.'
-		)->addSubcommand('all', array(
+		return $parser->description(__d('cake_console',
+			'The Bake script generates controllers, views and models for your application.'
+			. ' If run with no command line arguments, Bake guides the user through the class creation process.' .
+			. ' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
+		))->addSubcommand('all', array(
 			'help' => __d('cake_console', 'Bake a complete MVC. optional <name> of a Model'),
 		))->addSubcommand('project', array(
 			'help' => __d('cake_console', 'Bake a new app folder in the path supplied or in current directory if no path is specified'),
@@ -231,7 +230,7 @@ class BakeShell extends Shell {
 			'help' => __d('cake_console', 'Bake a unit test.'),
 			'parser' => $this->Test->getOptionParser()
 		))->addOption('connection', array(
-			'help' => __d('cake_console', 'Database connection to use in conjunction with     `bake all`.'),
+			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',
 			'default' => 'default'
 		));
