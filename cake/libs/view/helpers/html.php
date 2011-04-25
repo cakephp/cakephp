@@ -195,6 +195,12 @@ class HtmlHelper extends AppHelper {
 				'icon'	=> array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $url),
 				'keywords' => array('name' => 'keywords', 'content' => $url),
 				'description' => array('name' => 'description', 'content' => $url),
+				'og:title' => array('property' => 'og:title' , 'content' => $url),
+				'og:type'  => array('property' => 'og:type' , 'content' => $url),
+				'og:image'  => array('property' => 'og:image' , 'content' => $url),
+				'og:site_name'  => array('property' => 'og:site_name' , 'content' => $url),
+				'fb:admins'  => array('property' => 'fb:admins' , 'content' => $url),
+				'og:url'  => array('property' => 'og:url' , 'content' => $url)
 			);
 
 			if ($type === 'icon' && $url === null) {
