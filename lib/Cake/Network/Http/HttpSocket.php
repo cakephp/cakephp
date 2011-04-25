@@ -405,7 +405,7 @@ class HttpSocket extends CakeSocket {
  */
 	public function get($uri = null, $query = array(), $request = array()) {
 		if (!empty($query)) {
-			$uri = $this->_parseUri($uri);
+			$uri = $this->_parseUri($uri, $this->config['request']['uri']);
 			if (isset($uri['query'])) {
 				$uri['query'] = array_merge($uri['query'], $query);
 			} else {
