@@ -211,8 +211,8 @@ class StmpProtocolTest extends CakeTestCase {
  * @return void
  */
 	public function testSendData() {
-		$this->getMock('CakeEmail', array('message'), array(), 'TestCakeEmail');
-		$email = new TestCakeEmail();
+		$this->getMock('CakeEmail', array('message'), array(), 'SmtpCakeEmail');
+		$email = new SmtpCakeEmail();
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->cc(array('mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso'));

@@ -35,6 +35,7 @@ class AllNetworkTest extends PHPUnit_Framework_TestSuite {
 		$suite = new CakeTestSuite('All Network related class tests');
 
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network' . DS . 'Email');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Network' . DS . 'Http');
 		return $suite;
 	}
