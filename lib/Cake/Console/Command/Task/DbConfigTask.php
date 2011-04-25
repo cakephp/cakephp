@@ -217,8 +217,8 @@ class DbConfigTask extends Shell {
 		}
 
 		$this->out(__d('cake_console', "User:         %s", $login));
-		$this->out("Pass:         %s", str_repeat('*', strlen($password))));
-		$this->out("Database:     %s", $database));
+		$this->out(__d('cake_console', "Pass:         %s", str_repeat('*', strlen($password))));
+		$this->out(__d('cake_console', "Database:     %s", $database));
 
 		if ($prefix) {
 			$this->out(__d('cake_console', "Table prefix: %s", $prefix));
