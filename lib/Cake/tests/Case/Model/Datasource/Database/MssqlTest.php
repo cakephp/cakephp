@@ -1,6 +1,6 @@
 <?php
 /**
- * DboMssqlTest file
+ * MssqlTest file
  *
  * PHP 5
  *
@@ -17,17 +17,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once LIBS.'model'.DS.'model.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
+App::uses('Model', 'Model');
+App::uses('Mssql', 'Model/Datasource/Database');
 
 /**
- * DboMssqlTestDb class
+ * MssqlTestDb class
  *
  * @package       cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMssqlTestDb extends DboMssql {
+class MssqlTestDb extends Mssql {
 
 /**
  * simulated property
@@ -261,11 +259,11 @@ class MssqlClientTestModel extends Model {
 	);
 }
 /**
- * DboMssqlTest class
+ * MssqlTest class
  *
  * @package       cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMssqlTest extends CakeTestCase {
+class MssqlTest extends CakeTestCase {
 
 /**
  * The Dbo instance to be tested
@@ -322,7 +320,7 @@ class DboMssqlTest extends CakeTestCase {
  */
 	public function setUp() {
 		$db = ConnectionManager::getDataSource('test');
-		$this->db = new DboMssqlTestDb($db->config);
+		$this->db = new MssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}
 
