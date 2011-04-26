@@ -1809,7 +1809,7 @@ class FormHelper extends AppHelper {
 				$attributes['value'] = $meridian;
 			} else {
 				if (empty($value)) {
-					if (!$attribues['empty']) {
+					if (!$attributes['empty']) {
 						$attributes['value'] = date('a');
 					}
 				} else {
