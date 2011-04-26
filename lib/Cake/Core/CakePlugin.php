@@ -81,10 +81,10 @@ class CakePlugin {
  * @throws MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
-		if (empty(self::_$plugins[$plugin])) {
+		if (empty(self::$_plugins[$plugin])) {
 			throw new MissingPluginException(array('plugin' => $plugin));
 		}
-		return self::_$plugins[$plugin]['path'];
+		return self::$_plugins[$plugin]['path'];
 	}
 
 /**
@@ -111,7 +111,7 @@ class CakePlugin {
 		$bootstrap = (array)$config['bootstrap'];
 		foreach ($bootstrap as $file) {
 			if (is_file($path . 'config' . DS . $file . '.php')) {
-				include $path . 'config' . DS . $file . '.php'
+				include $path . 'config' . DS . $file . '.php';
 			}
 		}
 
@@ -141,7 +141,7 @@ class CakePlugin {
  *
  * @return array list of plugins that have been loaded
  */
-	public static function list() {
+	public static function enabled() {
 		return array_keys(self::$_plugins);
 	}
 
