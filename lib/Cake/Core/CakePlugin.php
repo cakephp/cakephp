@@ -45,13 +45,13 @@ class CakePlugin {
 		if (is_array($plugin)) {
 			foreach ($plugin as $name => $conf) {
 				list($name, $conf) = (is_numeric($name)) ? array($conf, $config) : array($name, $conf);
-				self::load($name, $config);
+				self::load($name, $conf);
 			}
 			return;
 		}
 		$config += array('bootstrap' => false, 'routes' => false);
 		$underscored = Inflector::underscore($plugin);
-		if (empty($config[$path])) {
+		if (empty($config['path'])) {
 			foreach (App::path('plugins') as $path) {
 				if (is_dir($path . $underscored)) {
 					self::$_plugins[$plugin] = $config + array('path' => $path . $underscored . DS);
@@ -104,15 +104,13 @@ class CakePlugin {
 		}
 
 		$path = self::path($plugin);
-		if ($config['bootstrap'] === true && is_file($path . 'config' . DS . 'bootstrap.php')) {
+		if ($config['bootstrap'] === true) {
 			return include($path . 'config' . DS . 'bootstrap.php');
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
 		foreach ($bootstrap as $file) {
-			if (is_file($path . 'config' . DS . $file . '.php')) {
-				include $path . 'config' . DS . $file . '.php';
-			}
+			include $path . 'config' . DS . $file . '.php';
 		}
 
 		return true;
@@ -129,11 +127,7 @@ class CakePlugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		$path = include self::path($plugin) . 'config' . DS . 'routes.php';
-		if (is_file($path)) {
-			include $path;
-		}
-		return true;
+		return (bool) include self::path($plugin) . 'config' . DS . 'routes.php';
 	}
 
 /**
@@ -141,7 +135,7 @@ class CakePlugin {
  *
  * @return array list of plugins that have been loaded
  */
-	public static function enabled() {
+	public static function loaded() {
 		return array_keys(self::$_plugins);
 	}
 
@@ -155,7 +149,7 @@ class CakePlugin {
 		if (is_null($plugin)) {
 			self::$_plugins = array();
 		} else {
-			unset($_plugins[$plugin]);
+			unset(self::$_plugins[$plugin]);
 		}
 	}
 }
