@@ -27,13 +27,6 @@ App::uses('AppHelper', 'View/Helper');
  * @package cake.view.helpers
  */
 abstract class JsBaseEngineHelper extends AppHelper {
-/**
- * Determines whether native JSON extension is used for encoding.  Set by object constructor.
- *
- * @var boolean
- * @access public
- */
-	public $useNative = false;
 
 /**
  * The js snippet for the current selection.
@@ -76,7 +69,6 @@ abstract class JsBaseEngineHelper extends AppHelper {
  */
 	function __construct($View, $settings = array()) {
 		parent::__construct($View, $settings);
-		$this->useNative = function_exists('json_encode');
 	}
 
 /**
@@ -154,50 +146,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 		);
 		$options = array_merge($defaultOptions, $options);
 
-		if (is_object($data)) {
-			$data = get_object_vars($data);
-		}
-
-		$out = $keys = array();
-		$numeric = true;
-
-		if ($this->useNative && function_exists('json_encode')) {
-			$rt = json_encode($data);
-		} else {
-			if (is_null($data)) {
-				return 'null';
-			}
-			if (is_bool($data)) {
-				return $data ? 'true' : 'false';
-			}
-			if (is_array($data)) {
-				$keys = array_keys($data);
-			}
-
-			if (!empty($keys)) {
-				$numeric = (array_values($keys) === array_keys(array_values($keys)));
-			}
-
-			foreach ($data as $key => $val) {
-				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val);
-				} else {
-					$val = $this->value($val);
-				}
-				if (!$numeric) {
-					$val = '"' . $this->value($key, false) . '":' . $val;
-				}
-				$out[] = $val;
-			}
-
-			if (!$numeric) {
-				$rt = '{' . join(',', $out) . '}';
-			} else {
-				$rt = '[' . join(',', $out) . ']';
-			}
-		}
-		$rt = $options['prefix'] . $rt . $options['postfix'];
-		return $rt;
+		return $options['prefix'] . json_encode($data) . $options['postfix'];
 	}
 
 /**
