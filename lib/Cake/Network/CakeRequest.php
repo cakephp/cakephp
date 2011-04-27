@@ -663,6 +663,35 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Read data from `php://stdin`. Useful when interacting with XML or JSON
+ * request body content.
+ *
+ * @param string $callback A decoding callback that will convert the string data to another
+ *     representation. Leave empty to access the raw input data.
+ * @return The decoded/processed request data.
+ */
+	public function input($callback = null) {
+		$input = $this->_readStdin();
+		if ($callback) {
+			return call_user_func($callback, $input);
+		}
+		return $input;
+	}
+
+/**
+ * Read data from php://stdin, mocked in tests.
+ *
+ * @return string contents of stdin
+ */
+	protected function _readStdin() {
+		$fh = fopen('php://stdin', 'r');
+		rewind($fh);
+		$content = stream_get_contents($fh);
+		fclose($fh);
+		return $content;
+	}
+
+/**
  * Array access read implementation
  *
  * @param string $name Name of the key being accessed.

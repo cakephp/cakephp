@@ -1435,6 +1435,33 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test the input() method.
+ *
+ * @return void
+ */
+	function testInput() {
+		$request = $this->getMock('CakeRequest', array('_readStdin'));
+		$request->expects($this->once())->method('_readStdin')
+			->will($this->returnValue('I came from stdin'));
+		
+		$result = $request->input();
+		$this->assertEquals('I came from stdin', $result);
+	}
+
+/**
+ * Test input() decoding.
+ *
+ * @return void
+ */
+	function testInputDecode() {
+		$request = $this->getMock('CakeRequest', array('_readStdin'));
+		$request->expects($this->once())->method('_readStdin')
+			->will($this->returnValue('{"name":"value"}'));
+
+		$result = $request->input('json_decode');
+		$this->assertEquals(array('name' => 'value'), (array)$result);
+	}
+/**
  * loadEnvironment method
  *
  * @param mixed $env
