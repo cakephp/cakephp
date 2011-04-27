@@ -521,8 +521,8 @@ class Controller extends Object {
 		$this->__mergeVars();
 		$this->Components->init($this);
 		if ($this->uses) {
-			$this->uses = $uses = is_array($this->uses) ? $this->uses : array($this->uses);
-			list(, $this->modelClass) = pluginSplit($uses[0]);
+			$this->uses = (array) $this->uses;
+			list(, $this->modelClass) = pluginSplit(current($this->uses));
 		}
 		return true;
 	}
