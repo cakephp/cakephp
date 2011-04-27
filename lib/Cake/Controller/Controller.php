@@ -336,6 +336,7 @@ class Controller extends Object {
 
 /**
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
+ * Lazy loads models using the loadModel() method if declared in $uses
  *
  * @return void
  */
@@ -349,6 +350,27 @@ class Controller extends Object {
 			case 'params':
 				return true;
 		}
+
+		if (is_array($this->uses)) {
+			foreach ($this->uses as $modelClass) {
+				list($plugin, $class) = pluginSplit($modelClass, true);
+				if ($name === $class) {
+					if (!$plugin) {
+						$plugin = $this->plugin ? $this->plugin . '.' : null;
+					}
+					return $this->loadModel($modelClass);
+				}
+			}
+		}
+
+		if ($name === $this->modelClass) {
+			list($plugin, $class) = pluginSplit($name, true);
+			if (!$plugin) {
+				$plugin = $this->plugin ? $this->plugin . '.' : null;
+			}
+			return $this->loadModel($plugin . $this->modelClass);
+		}
+
 		return false;
 	}
 
@@ -372,6 +394,11 @@ class Controller extends Object {
 			case 'paginate':
 				return $this->Components->load('Paginator')->settings;
 		}
+
+		if (isset($this->{$name})) {
+			return $this->{$name};
+		}
+
 		return null;
 	}
 
@@ -493,19 +520,9 @@ class Controller extends Object {
 	public function constructClasses() {
 		$this->__mergeVars();
 		$this->Components->init($this);
-
-		if ($this->uses !== null || ($this->uses !== array())) {
-			$plugin = $this->plugin ? $this->plugin . '.' : null;
-			if ($this->uses === false) {
-				$this->loadModel($plugin . $this->modelClass);
-			} elseif ($this->uses) {
-				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-				list($plugin, $modelClassName) = pluginSplit($uses[0]);
-				$this->modelClass = $modelClassName;
-				foreach ($uses as $modelClass) {
-					$this->loadModel($modelClass);
-				}
-			}
+		if ($this->uses) {
+			$this->uses = $uses = is_array($this->uses) ? $this->uses : array($this->uses);
+			list(, $this->modelClass) = pluginSplit($uses[0]);
 		}
 		return true;
 	}
