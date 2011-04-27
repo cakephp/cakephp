@@ -495,15 +495,9 @@ class Controller extends Object {
 		$this->Components->init($this);
 
 		if ($this->uses !== null || ($this->uses !== array())) {
-			if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
-				$id = false;
-			} else {
-				$id = $this->passedArgs['0'];
-			}
 			$plugin = $this->plugin ? $this->plugin . '.' : null;
-
 			if ($this->uses === false) {
-				$this->loadModel($plugin . $this->modelClass, $id);
+				$this->loadModel($plugin . $this->modelClass);
 			} elseif ($this->uses) {
 				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 				list($plugin, $modelClassName) = pluginSplit($uses[0]);

@@ -470,16 +470,8 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 		$Controller = new Controller($request);
 
-		$Controller->modelClass = 'ControllerPost';
-		$Controller->passedArgs[] = '1';
-		$Controller->constructClasses();
-		$this->assertEqual($Controller->ControllerPost->id, 1);
-
-		unset($Controller);
-
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
 		$Controller->constructClasses();
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
