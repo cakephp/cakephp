@@ -151,26 +151,26 @@ class Mssql extends DboSource {
  *
  * @return array Array of tablenames in the database
  */
-	function listSources() {
+	public function listSources() {
 		$cache = parent::listSources();
-
-		if ($cache != null) {
+		if ($cache !== null) {
 			return $cache;
 		}
-		$result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES', false);
+		$result = $this->_execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'"));
 
-		if (!$result || empty($result)) {
+		if (!$result) {
+			$result->closeCursor();
 			return array();
-		} else {
-			$tables = array();
-
-			foreach ($result as $table) {
-				$tables[] = $table[0]['TABLE_NAME'];
-			}
-
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+		while ($line = $result->fetch(PDO::FETCH_ASSOC)) {
+			$tables[] = $line['TABLE_NAME'];
+		}
+
+		$result->closeCursor();
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
