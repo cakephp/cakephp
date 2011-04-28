@@ -64,11 +64,10 @@ class Mssql extends DboSource {
  */
 	protected $_baseConfig = array(
 		'persistent' => true,
-		'host' => 'localhost',
-		'login' => 'root',
+		'host' => '(local)\sqlexpress',
+		'login' => '',
 		'password' => '',
-		'database' => 'cake',
-		'port' => '1433',
+		'database' => 'cake'
 	);
 
 /**
@@ -109,22 +108,6 @@ class Mssql extends DboSource {
  * @access private
  */
 	private $__lastQueryHadError = false;
-/**
- * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
- *
- * @param array $config Configuration data from app/config/databases.php
- * @return boolean True if connected successfully, false on error
- */
-	function __construct($config, $autoConnect = true) {
-		if ($autoConnect) {
-			if (!function_exists('mssql_min_message_severity')) {
-				trigger_error(__d('cake_dev', "PHP SQL Server interface is not installed, cannot continue. For troubleshooting information, see http://php.net/mssql/"), E_USER_WARNING);
-			}
-			mssql_min_message_severity(15);
-			mssql_min_error_severity(2);
-		}
-		return parent::__construct($config, $autoConnect);
-	}
 
 /**
  * Connects to the database using options in the given configuration array.
@@ -133,53 +116,34 @@ class Mssql extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-
-		$os = env('OS');
-		if (!empty($os) && strpos($os, 'Windows') !== false) {
-			$sep = ',';
-		} else {
-			$sep = ':';
-		}
 		$this->connected = false;
-
-		if (is_numeric($config['port'])) {
-			$port = $sep . $config['port'];	// Port number
-		} elseif ($config['port'] === null) {
-			$port = '';						// No port - SQL Server 2005
-		} else {
-			$port = '\\' . $config['port'];	// Named pipe
-		}
-
-		if (!$config['persistent']) {
-			$this->connection = mssql_connect($config['host'] . $port, $config['login'], $config['password'], true);
-		} else {
-			$this->connection = mssql_pconnect($config['host'] . $port, $config['login'], $config['password']);
-		}
-
-		if (mssql_select_db($config['database'], $this->connection)) {
-			$this->_execute("SET DATEFORMAT ymd");
+		try {
+			$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
+			if (!empty($config['encoding'])) {
+				$flags[PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
+			}
+			$this->_connection = new PDO(
+				"sqlsrv:server={$config['host']};Database={$config['database']}",
+				$config['login'],
+				$config['password'],
+				$flags
+			);
 			$this->connected = true;
+		} catch (PDOException $e) {
+			throw new MissingConnectionException(array('class' => $e->getMessage()));
 		}
+
+//		$this->_execute("SET DATEFORMAT ymd");
 		return $this->connected;
 	}
 
 /**
- * Check that MsSQL is installed/loaded
+ * Check that PDO SQL Server is installed/loaded
  *
  * @return boolean
  */
-	function enabled() {
-		return extension_loaded('mssql');
-	}
-/**
- * Disconnects from database.
- *
- * @return boolean True if the database could be disconnected, else false
- */
-	function disconnect() {
-		@mssql_free_result($this->results);
-		$this->connected = !@mssql_close($this->connection);
-		return !$this->connected;
+	public function enabled() {
+		return in_array('sqlsrv', PDO::getAvailableDrivers());
 	}
 
 /**
