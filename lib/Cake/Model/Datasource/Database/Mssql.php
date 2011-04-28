@@ -181,40 +181,43 @@ class Mssql extends DboSource {
  */
 	function describe($model) {
 		$cache = parent::describe($model);
-
 		if ($cache != null) {
 			return $cache;
 		}
-
-		$table = $this->fullTableName($model, false);
-		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $table . "'", false);
-
 		$fields = false;
+		$table = $this->fullTableName($model, false);
+		$cols = $this->_execute("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $table . "'");
+		if (!$cols) {
+			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $model->name));
+		}
+
 		foreach ($cols as $column) {
-			$field = $column[0]['Field'];
+			$field = $column->Field;
 			$fields[$field] = array(
-				'type' => $this->column($column[0]['Type']),
-				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column[0]['Default']),
-				'length' => intval($column[0]['Length']),
-				'key' => ($column[0]['Key'] == '1') ? 'primary' : false
+				'type' => $this->column($column->Type),
+				'null' => ($column->Null === 'YES' ? true : false),
+				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column->Default),
+				'length' => intval($column->Type),
+				'key' => ($column->Key == '1') ? 'primary' : false
 			);
+
 			if ($fields[$field]['default'] === 'null') {
 				$fields[$field]['default'] = null;
 			} else {
 				$this->value($fields[$field]['default'], $fields[$field]['type']);
 			}
 
-			if ($fields[$field]['key'] && $fields[$field]['type'] == 'integer') {
+			if ($fields[$field]['key'] !== false && $fields[$field]['type'] == 'integer') {
 				$fields[$field]['length'] = 11;
-			} elseif (!$fields[$field]['key']) {
+			} elseif ($fields[$field]['key'] === false) {
 				unset($fields[$field]['key']);
 			}
 			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
 				$fields[$field]['length'] = null;
 			}
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->__cacheDescription($table, $fields);
+		$cols->closeCursor();
 		return $fields;
 	}
 
