@@ -222,49 +222,6 @@ class Mssql extends DboSource {
 	}
 
 /**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
- * @return string Quoted and escaped data
- */
-	function value($data, $column = null, $safe = false) {
-		$parent = parent::value($data, $column, $safe);
-
-		if ($parent != null) {
-			return $parent;
-		}
-		if ($data === null) {
-			return 'NULL';
-		}
-		if (in_array($column, array('integer', 'float', 'binary')) && $data === '') {
-			return 'NULL';
-		}
-		if ($data === '') {
-			return "''";
-		}
-
-		switch ($column) {
-			case 'boolean':
-				$data = $this->boolean((bool)$data);
-			break;
-			default:
-				if (get_magic_quotes_gpc()) {
-					$data = stripslashes(str_replace("'", "''", $data));
-				} else {
-					$data = str_replace("'", "''", $data);
-				}
-			break;
-		}
-
-		if (in_array($column, array('integer', 'float', 'binary')) && is_numeric($data)) {
-			return $data;
-		}
-		return "'" . $data . "'";
-	}
-
-/**
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
