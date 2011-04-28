@@ -147,18 +147,6 @@ class Mssql extends DboSource {
 	}
 
 /**
- * Executes given SQL statement.
- *
- * @param string $sql SQL statement
- * @return resource Result resource identifier
- */
-	protected function _execute($sql) {
-		$result = @mssql_query($sql, $this->connection);
-		$this->__lastQueryHadError = ($result === false);
-		return $result;
-	}
-
-/**
  * Returns an array of sources (tables) in the database.
  *
  * @return array Array of tablenames in the database
