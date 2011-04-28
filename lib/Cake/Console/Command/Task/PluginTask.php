@@ -185,10 +185,10 @@ class PluginTask extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(
+		return $parser->description(__d('cake_console', 
 			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
-		)->addArgument('name', array(
+		))->addArgument('name', array(
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
 		));
 

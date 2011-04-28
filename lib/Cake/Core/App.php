@@ -389,9 +389,7 @@ class App {
  * @return string full path to package
  */
 	public static function core($type) {
-		if ($type) {
-			return isset($paths[$type]) ? $paths[$type] : array(LIBS . $type . DS);
-		}
+		return array(LIBS . str_replace('/', DS, $type) . DS);
 	}
 
 /**

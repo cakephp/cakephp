@@ -43,18 +43,17 @@ class CommandListShell extends Shell {
  */
 	public function main() {
 		if (empty($this->params['xml'])) {
-			$this->out("<info>Current Paths:</info>", 2);
+			$this->out(__d('cake_console', "<info>Current Paths:</info>"), 2);
 			$this->out(" -app: ". APP_DIR);
 			$this->out(" -working: " . rtrim(APP_PATH, DS));
 			$this->out(" -root: " . rtrim(ROOT, DS));
 			$this->out(" -core: " . rtrim(CORE_PATH, DS));
 			$this->out("");
-			$this->out("<info>Changing Paths:</info>", 2);
-			$this->out("Your working path should be the same as your application path");
-			$this->out("to change your path use the '-app' param.");
-			$this->out("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp", 2);
+			$this->out(__d('cake_console', "<info>Changing Paths:</info>"), 2);
+			$this->out(__d('cake_console', "Your working path should be the same as your application path to change your path use the '-app' param."));
+			$this->out(__d('cake_console', "Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp"), 2);
 
-			$this->out("<info>Available Shells:</info>", 2);
+			$this->out(__d('cake_console', "<info>Available Shells:</info>"), 2);
 		}
 
 		$shellList = $this->_getShellList();
@@ -140,8 +139,8 @@ class CommandListShell extends Shell {
 			$this->out(" " . $row);
 		}
 		$this->out();
-		$this->out("To run a command, type <info>cake shell_name [args]</info>");
-		$this->out("To get help on a specific command, type <info>cake shell_name --help</info>", 2);
+		$this->out(__d('cake_console', "To run a command, type <info>cake shell_name [args]</info>"));
+		$this->out(__d('cake_console', "To get help on a specific command, type <info>cake shell_name --help</info>"), 2);
 	}
 
 /**
@@ -212,7 +211,7 @@ class CommandListShell extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description('Get the list of available shells for this CakePHP application.')
+		return $parser->description(__d('cake_console', 'Get the list of available shells for this CakePHP application.'))
 			->addOption('xml', array(
 				'help' => __d('cake_console', 'Get the listing as XML.'),
 				'boolean' => true

@@ -86,9 +86,9 @@ class ConsoleOptionParser {
  *
  * ### Options
  *
- * Named arguments come in two forms, long and short. Long arguments are preceeded
+ * Named arguments come in two forms, long and short. Long arguments are preceded
  * by two - and give a more verbose option name. i.e. `--version`. Short arguments are
- * preceeded by one - and are only one character long.  They usually match with a long option,
+ * preceded by one - and are only one character long.  They usually match with a long option,
  * and provide a more terse alternative.
  *
  * ### Using Options
@@ -102,7 +102,7 @@ class ConsoleOptionParser {
  *
  * `cake myshell command --connection default --name=something`
  *
- * Short options can be defined singally or in groups.
+ * Short options can be defined signally or in groups.
  *
  * `cake myshell command -cn`
  *
@@ -127,7 +127,7 @@ class ConsoleOptionParser {
 
 		$this->addOption('help', array(
 			'short' => 'h',
-			'help' => 'Display this help.',
+			'help' => __d('cake_console', 'Display this help.'),
 			'boolean' => true
 		));
 
@@ -330,7 +330,7 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Add multiple arugments at once. Take an array of arugment defintions.
+ * Add multiple arguments at once. Take an array of argument definitions.
  * The keys are used as the argument names, and the values as params for the argument.
  *
  * @param array $args Array of arguments to add.

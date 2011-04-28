@@ -57,8 +57,7 @@ class ConsoleErrorHandler extends ErrorHandler {
  */
 	public static function handleException(Exception $exception) {
 		$stderr = self::getStderr();
-		$stderr->write(sprintf(
-			__d('cake_console', "<error>Error:</error> %s\n%s"), 
+		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
 			$exception->getMessage(), 
 			$exception->getTraceAsString()
 		));
@@ -70,7 +69,7 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @param int $code Error code
  * @param string $description Description of the error.
  * @param string $file The file the error occurred in.
- * @param int $line The line the error ocurrred on.
+ * @param int $line The line the error occurred on.
  * @param array $context The backtrace of the error.
  * @return void
  */
