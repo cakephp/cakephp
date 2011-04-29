@@ -406,19 +406,18 @@ class Mssql extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Builds a map of the columns contained in a result
  *
- * @param unknown_type $results
+ * @param PDOStatement $results
  */
-	function resultSet(&$results) {
-		$this->results =& $results;
+	function resultSet($results) {
 		$this->map = array();
-		$numFields = mssql_num_fields($results);
+		$numFields = $results->columnCount();
 		$index = 0;
 		$j = 0;
 
-		while ($j < $numFields) {
-			$column = mssql_field_name($results, $j);
+		while ($numFields-- > 0) {
+			$column = $results->getColumnMeta($index);
 
 			if (strpos($column, '__')) {
 				if (isset($this->__fieldMappings[$column]) && strpos($this->__fieldMappings[$column], '.')) {
@@ -536,22 +535,22 @@ class Mssql extends DboSource {
 /**
  * Fetches the next row from the current result set
  *
- * @return unknown
+ * @return mixed
  */
 	function fetchResult() {
-		if ($row = mssql_fetch_row($this->results)) {
+		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
-			$i = 0;
-
-			foreach ($row as $index => $field) {
-				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column] = $row[$index];
-				$i++;
+			foreach ($this->map as $col => $meta) {
+				list($table, $column, $type) = $meta;
+				$resultRow[$table][$column] = $row[$col];
+				if ($type === 'boolean' && !is_null($row[$col])) {
+					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
+				}
 			}
 			return $resultRow;
-		} else {
-			return false;
 		}
+		$this->_result->closeCursor();
+		return false;
 	}
 
 /**
