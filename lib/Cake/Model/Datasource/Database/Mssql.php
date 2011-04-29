@@ -55,7 +55,7 @@ class Mssql extends DboSource {
  *
  * @var array
  */
-	private $__fieldMappings = array();
+	protected $_fieldMappings = array();
 
 /**
  * Base configuration settings for MS SQL driver
@@ -294,7 +294,7 @@ class Mssql extends DboSource {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
-				$fieldAlias = count($this->__fieldMappings);
+				$fieldAlias = count($this->_fieldMappings);
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
 					if (substr($fields[$i], -1) == '*') {
@@ -311,12 +311,12 @@ class Mssql extends DboSource {
 					}
 
 					if (strpos($fields[$i], '.') === false) {
-						$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
+						$this->_fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
 						$fieldName  = $this->name($alias . '.' . $fields[$i]);
 						$fieldAlias = $this->name($alias . '__' . $fieldAlias);
 					} else {
 						$build = explode('.', $fields[$i]);
-						$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
+						$this->_fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
 						$fieldName  = $this->name($build[0] . '.' . $build[1]);
 						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $fieldAlias);
 					}
@@ -469,10 +469,10 @@ class Mssql extends DboSource {
 			$column = $results->getColumnMeta($index);
 
 			if (strpos($column, '__')) {
-				if (isset($this->__fieldMappings[$column]) && strpos($this->__fieldMappings[$column], '.')) {
-					$map = explode('.', $this->__fieldMappings[$column]);
-				} elseif (isset($this->__fieldMappings[$column])) {
-					$map = array(0, $this->__fieldMappings[$column]);
+				if (isset($this->_fieldMappings[$column]) && strpos($this->_fieldMappings[$column], '.')) {
+					$map = explode('.', $this->_fieldMappings[$column]);
+				} elseif (isset($this->_fieldMappings[$column])) {
+					$map = array(0, $this->_fieldMappings[$column]);
 				} else {
 					$map = array(0, $column);
 				}
@@ -557,10 +557,10 @@ class Mssql extends DboSource {
  * @access private
  */
 	function __mapFields($sql) {
-		if (empty($sql) || empty($this->__fieldMappings)) {
+		if (empty($sql) || empty($this->_fieldMappings)) {
 			return $sql;
 		}
-		foreach ($this->__fieldMappings as $key => $val) {
+		foreach ($this->_fieldMappings as $key => $val) {
 			$sql = preg_replace('/' . preg_quote($val) . '/', $this->name($key), $sql);
 			$sql = preg_replace('/' . preg_quote($this->name($val)) . '/', $this->name($key), $sql);
 		}
@@ -577,7 +577,7 @@ class Mssql extends DboSource {
  */
 	function read($model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
-		$this->__fieldMappings = array();
+		$this->_fieldMappings = array();
 		return $results;
 	}
 

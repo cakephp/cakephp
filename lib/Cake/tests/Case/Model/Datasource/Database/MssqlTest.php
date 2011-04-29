@@ -119,7 +119,7 @@ class MssqlTestDb extends Mssql {
  * @return void
  */
 	function clearFieldMappings() {
-		$this->__fieldMappings = array();
+		$this->_fieldMappings = array();
 	}
 }
 
