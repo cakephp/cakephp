@@ -140,6 +140,12 @@ class CakePluginTest extends CakeTestCase {
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 	}
 
+
+/**
+ * Tests that it is possible to load plugin bootstrap by calling a callback function
+ *
+ * @return void
+ */
 	public function testCallbackBootstrap() {
 		CakePlugin::load('TestPlugin', array('bootstrap' => array($this, 'pluginBootstrap')));
 		$expected = array('TestPlugin');
@@ -155,6 +161,41 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testLoadMultipleWithDefaultsMissingFile() {
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'), array('bootstrap' => true, 'routes' => true));
+	}
+
+/**
+ * Tests that CakePlugin::load() throws an exception on unknown plugin
+ *
+ * @return void
+ * @expectedException MissingPluginException
+ */
+	public function testLoadNotFound() {
+		CakePlugin::load('MissingPlugin');
+	}
+
+
+/**
+ * Tests that CakePlugin::path() returns the correct path for the loaded plugins
+ *
+ * @return void
+ */
+	public function testPath() {
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
+		$expected = CAKE_TESTS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS;
+		$this->assertEquals(CakePlugin::path('TestPlugin'), $expected);
+
+		$expected = CAKE_TESTS . 'test_app' . DS . 'plugins' . DS . 'test_plugin_two' . DS;
+		$this->assertEquals(CakePlugin::path('TestPluginTwo'), $expected);
+	}
+
+/**
+ * Tests that CakePlugin::path() throws an exception on unknown plugin
+ *
+ * @return void
+ * @expectedException MissingPluginException
+ */
+	public function testPathNotFound() {
+		CakePlugin::path('TestPlugin');
 	}
 
 /**
