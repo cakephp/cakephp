@@ -277,7 +277,7 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function from($email = null, $name = null) {
 		if ($email === null) {
@@ -292,7 +292,7 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function sender($email = null, $name = null) {
 		if ($email === null) {
@@ -307,7 +307,7 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function replyTo($email = null, $name = null) {
 		if ($email === null) {
@@ -322,7 +322,7 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function readReceipt($email = null, $name = null) {
 		if ($email === null) {
@@ -337,7 +337,7 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function returnPath($email = null, $name = null) {
 		if ($email === null) {
@@ -428,7 +428,7 @@ class CakeEmail {
  * @param mixed $email
  * @param mixed $name
  * @return object $this
- * @thrown SocketException
+ * @throws SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -463,7 +463,7 @@ class CakeEmail {
  * @param string $name
  * @param string $throwMessage
  * @return object $this
- * @thrown SocketExpceiton
+ * @throws SocketExpceiton
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
 		$current = $this->{$varName};
@@ -527,7 +527,7 @@ class CakeEmail {
  *
  * @param array Associative array containing headers to be set.
  * @return object $this
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function setHeaders($headers) {
 		if (!is_array($headers)) {
@@ -542,7 +542,7 @@ class CakeEmail {
  *
  * @param array $headers
  * @return mixed $this
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function addHeaders($headers) {
 		if (!is_array($headers)) {
@@ -720,7 +720,7 @@ class CakeEmail {
  *
  * @param string $format
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function emailFormat($format = null) {
 		if ($format === null) {
@@ -752,7 +752,7 @@ class CakeEmail {
  * Return the transport class
  *
  * @return object
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function transportClass() {
 		if ($this->_transportClass) {
@@ -775,7 +775,7 @@ class CakeEmail {
  *
  * @param mixed $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function messageId($message = null) {
 		if ($message === null) {
@@ -797,7 +797,7 @@ class CakeEmail {
  *
  * @param mixed $attachments String with the filename or array with filenames
  * @return mixed
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function attachments($attachments = null) {
 		if ($attachments === null) {
@@ -832,7 +832,7 @@ class CakeEmail {
  *
  * @param mixed $attachments String with the filename or array with filenames
  * @return object $this
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function addAttachments($attachments) {
 		$current = $this->_attachments;
@@ -885,7 +885,7 @@ class CakeEmail {
  * Send an email using the specified content, template and layout
  *
  * @return boolean Success
- * @thrown SocketException
+ * @throws SocketException
  */
 	public function send($content = null) {
 		if (is_string($this->_config)) {
