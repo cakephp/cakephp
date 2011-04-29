@@ -33,7 +33,7 @@ class TimeHelper extends AppHelper {
  * Converts a string representing the format for the function strftime and returns a
  * windows safe and i18n aware format.
  *
- * @param string $format Format with specifiers for strftime function. 
+ * @param string $format Format with specifiers for strftime function.
  *    Accepts the special specifier %S which mimics th modifier S for date()
  * @param string UNIX timestamp
  * @return string windows safe and date() function compatible format for strftime
@@ -343,7 +343,7 @@ class TimeHelper extends AppHelper {
  * @return boolean True if datetime string was yesterday
  * @access public
  * @link http://book.cakephp.org/view/1472/Testing-Time
- * 
+ *
  */
 	function wasYesterday($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
@@ -589,33 +589,33 @@ class TimeHelper extends AppHelper {
 		} else {
 			if ($years > 0) {
 				// years and months and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . $years . ' ' . __n('year', 'years', $years, true);
-				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . $months . ' ' . __n('month', 'months', $months, true) : '';
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d year', '%d years', $years, true), $years);
+				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d month', '%d months', $months, true), $months) : '';
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d week', '%d weeks', $weeks, true), $weeks) : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d day', '%d days', $days, true), $days) : '';
 			} elseif (abs($months) > 0) {
 				// months, weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . $months . ' ' . __n('month', 'months', $months, true);
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d month', '%d months', $months, true), $months);
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d week', '%d weeks', $weeks, true), $weeks) : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d day', '%d days', $days, true), $days) : '';
 			} elseif (abs($weeks) > 0) {
 				// weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true);
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d week', '%d weeks', $weeks, true), $weeks);
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d day', '%d days', $days, true), $days) : '';
 			} elseif (abs($days) > 0) {
 				// days and hours
-				$relativeDate .= ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true);
-				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . $hours . ' ' . __n('hour', 'hours', $hours, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d day', '%d days', $days, true), $days);
+				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d hour', '%d hours', $hours, true), $hours) : '';
 			} elseif (abs($hours) > 0) {
 				// hours and minutes
-				$relativeDate .= ($relativeDate ? ', ' : '') . $hours . ' ' . __n('hour', 'hours', $hours, true);
-				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . $minutes . ' ' . __n('minute', 'minutes', $minutes, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d hour', '%d hours', $hours, true), $hours);
+				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . sprintf(__n('%d minute', '%d minutes', $minutes, true), $minutes) : '';
 			} elseif (abs($minutes) > 0) {
 				// minutes only
-				$relativeDate .= ($relativeDate ? ', ' : '') . $minutes . ' ' . __n('minute', 'minutes', $minutes, true);
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d minute', '%d minutes', $minutes, true), $minutes);
 			} else {
 				// seconds only
-				$relativeDate .= ($relativeDate ? ', ' : '') . $seconds . ' ' . __n('second', 'seconds', $seconds, true);
+				$relativeDate .= ($relativeDate ? ', ' : '') . sprintf(__n('%d second', '%d seconds', $seconds, true), $seconds);
 			}
 
 			if (!$backwards) {
@@ -644,7 +644,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns true if specified datetime was within the interval specified, else false.
  *
- * @param mixed $timeInterval the numeric value with space then time type. 
+ * @param mixed $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
  * @param mixed $dateString the datestring or unix timestamp to compare
  * @param int $userOffset User's offset from GMT (in hours)
