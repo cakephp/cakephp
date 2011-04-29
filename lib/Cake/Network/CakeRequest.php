@@ -133,6 +133,8 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * process the post data and set what is there into the object.
+ * The raw post is available at $this->params['form'], while a lightly processed
+ * version is available at $this->data
  *
  * @return void
  */
@@ -150,11 +152,12 @@ class CakeRequest implements ArrayAccess {
 			} else {
 				$_ENV['REQUEST_METHOD'] = $this->params['form']['_method'];
 			}
-			unset($this->params['form']['_method']);
 		}
-		if (isset($this->params['form']['data'])) {
-			$this->data = $this->params['form']['data'];
-			unset($this->params['form']['data']);
+		$this->data = $this->params['form'];
+		if (isset($this->data['data'])) {
+			$data = $this->data['data'];
+			unset($this->data['data']);
+			$this->data = Set::merge($this->data, $data);
 		}
 	}
 
@@ -533,6 +536,14 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Get the HTTP method used for this request.
+ * There are a few ways to specify a method.  
+ *
+ * - If your client supports it you can use native HTTP methods.
+ * - You can set the HTTP-X-Method-Override header. 
+ * - You can submit an input with the name `_method`
+ *
+ * Any of these 3 approaches can be used to set the HTTP method used
+ * by CakePHP internally, and will effect the result of this method.
  *
  * @return string The name of the HTTP method used.
  */

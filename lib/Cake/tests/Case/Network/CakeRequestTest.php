@@ -160,7 +160,8 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_POST = array('one' => 1, 'two' => 'three');
 		$request = new CakeRequest('some/path');
-		$this->assertEqual($request->params['form'], $_POST);
+		$this->assertEquals($_POST, $request->params['form']);
+		$this->assertEquals($_POST, $request->data);
 	}
 
 /**
