@@ -287,14 +287,6 @@ class MssqlTest extends CakeTestCase {
  * @access public
  */
 	public $fixtures = array('core.category');
-/**
- * Skip if cannot connect to mssql
- *
- */
-	public function skip() {
-		$this->_initDb();
-		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
-	}
 
 /**
  * Make sure all fixtures tables are being created
@@ -319,8 +311,11 @@ class MssqlTest extends CakeTestCase {
  *
  */
 	public function setUp() {
-		$db = ConnectionManager::getDataSource('test');
-		$this->db = new MssqlTestDb($db->config);
+		$this->Dbo = ConnectionManager::getDataSource('test');
+		if (!($this->Dbo instanceof Mssql)) {
+			$this->markTestSkipped('Please configure the test datasource to use SQL Server.');
+		}
+		$this->db = new MssqlTestDb($this->Dbo->config);
 		$this->model = new MssqlTestModel();
 	}
 
