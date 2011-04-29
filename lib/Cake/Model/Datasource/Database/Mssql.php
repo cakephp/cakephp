@@ -232,6 +232,12 @@ class Mssql extends DboSource {
 	function value($data, $column = null, $safe = false) {
 		$parent = parent::value($data, $column, $safe);
 
+		if ($column === 'float' && strpos($data, '.') !== false) {
+			return rtrim($data, '0');
+		}
+		if ($parent === "''") {
+			return 'NULL';
+		}
 		if ($parent != null) {
 			return $parent;
 		}
