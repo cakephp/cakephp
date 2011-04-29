@@ -339,58 +339,6 @@ class Mssql extends DboSource {
 	}
 
 /**
- * Returns a formatted error message from previous database operation.
- *
- * @return string Error message with error number
- */
-	function lastError() {
-		if ($this->__lastQueryHadError) {
-			$error = mssql_get_last_message();
-			if ($error && !preg_match('/contexto de la base de datos a|contesto di database|changed database|contexte de la base de don|datenbankkontext/i', $error)) {
-				return $error;
-			}
-		}
-		return null;
-	}
-
-/**
- * Returns number of affected rows in previous database operation. If no previous operation exists,
- * this returns false.
- *
- * @return integer Number of affected rows
- */
-	function lastAffected() {
-		if ($this->_result) {
-			return mssql_rows_affected($this->connection);
-		}
-		return null;
-	}
-
-/**
- * Returns number of rows in previous resultset. If no previous resultset exists,
- * this returns false.
- *
- * @return integer Number of rows in resultset
- */
-	function lastNumRows() {
-		if ($this->_result) {
-			return @mssql_num_rows($this->_result);
-		}
-		return null;
-	}
-
-/**
- * Returns the ID generated from the previous INSERT operation.
- *
- * @param unknown_type $source
- * @return in
- */
-	function lastInsertId($source = null) {
-		$id = $this->fetchRow('SELECT SCOPE_IDENTITY() AS insertID', false);
-		return $id[0]['insertID'];
-	}
-
-/**
  * Returns a limit statement in the correct format for the particular database.
  *
  * @param integer $limit Limit of results returned
