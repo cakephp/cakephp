@@ -692,7 +692,7 @@ class Helper extends Object {
 			$result = $data[$habtmKey][$habtmKey];
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
-				$model =& ClassRegistry::getObject($habtmKey);
+				$model = ClassRegistry::getObject($habtmKey);
 				$result = $this->__selectedArray($data[$habtmKey], $model->primaryKey);
 			}
 		}

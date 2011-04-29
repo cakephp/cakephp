@@ -540,7 +540,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDeleteLinksWithPLuginJoinModel() {
 		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
-		$Article =& new Article();
+		$Article = new Article();
 		$Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')), false);
 		unset($Article->Tag, $Article->ArticleTags);
 		$Article->bindModel(array('hasAndBelongsToMany' => array(

@@ -25,7 +25,7 @@ if ($noLogs):
 
 	$logs = array();
 	foreach ($sources as $source):
-		$db =& ConnectionManager::getDataSource($source);
+		$db = ConnectionManager::getDataSource($source);
 		if (!method_exists($db, 'getLog')):
 			continue;
 		endif;

@@ -473,7 +473,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'test_plugin_acos', $sources));
 

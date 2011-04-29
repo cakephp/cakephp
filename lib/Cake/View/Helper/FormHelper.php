@@ -204,7 +204,7 @@ class FormHelper extends AppHelper {
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
 			if (ClassRegistry::isKeySet($currentModel)) {
-				$currentObject =& ClassRegistry::getObject($currentModel);
+				$currentObject = ClassRegistry::getObject($currentModel);
 				if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
 					$this->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
 				}

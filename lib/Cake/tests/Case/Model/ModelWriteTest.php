@@ -3016,7 +3016,7 @@ class ModelWriteTest extends BaseModelTest {
 		$testDb = ConnectionManager::getDataSource('test');
 
 		$mock = $this->getMock('DboSource', array(), array(), 'MockTransactionAssociatedDboSource', false);
-		$db =& ConnectionManager::create('mock_transaction_assoc', array(
+		$db = ConnectionManager::create('mock_transaction_assoc', array(
 			'datasource' => 'MockTransactionAssociatedDboSource',
 		));
 		$this->mockObjects[] = $db;
