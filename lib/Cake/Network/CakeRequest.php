@@ -133,27 +133,26 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * process the post data and set what is there into the object.
- * The raw post is available at $this->params['form'], while a lightly processed
- * version is available at $this->data
+ * processed data is available at $this->data
  *
  * @return void
  */
 	protected function _processPost() {
-		$this->params['form'] = $_POST;
+		$this->data = $_POST;
 		if (ini_get('magic_quotes_gpc') === '1') {
-			$this->params['form'] = stripslashes_deep($this->params['form']);
+			$this->data = stripslashes_deep($this->data);
 		}
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
-			$this->params['form']['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
+			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
-		if (isset($this->params['form']['_method'])) {
+		if (isset($this->data['_method'])) {
 			if (!empty($_SERVER)) {
-				$_SERVER['REQUEST_METHOD'] = $this->params['form']['_method'];
+				$_SERVER['REQUEST_METHOD'] = $this->data['_method'];
 			} else {
-				$_ENV['REQUEST_METHOD'] = $this->params['form']['_method'];
+				$_ENV['REQUEST_METHOD'] = $this->data['_method'];
 			}
+			unset($this->data['_method']);
 		}
-		$this->data = $this->params['form'];
 		if (isset($this->data['data'])) {
 			$data = $this->data['data'];
 			unset($this->data['data']);
