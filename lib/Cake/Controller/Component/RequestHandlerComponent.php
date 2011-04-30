@@ -174,7 +174,7 @@ class RequestHandlerComponent extends Component {
 
 		if ($this->requestedWith('xml')) {
 			try {
-				$xml = Xml::build(trim(file_get_contents('php://input')));
+				$xml = $controller->request->input('Xml::build');
 
 				if (isset($xml->data)) {
 					$controller->data = Xml::toArray($xml->data);
