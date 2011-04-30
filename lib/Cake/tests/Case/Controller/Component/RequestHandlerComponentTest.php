@@ -292,6 +292,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function testStartupCallback() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml';
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
@@ -305,6 +306,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function testStartupCallbackCharset() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
