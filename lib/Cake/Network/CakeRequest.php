@@ -676,15 +676,29 @@ class CakeRequest implements ArrayAccess {
 /**
  * Read data from `php://stdin`. Useful when interacting with XML or JSON
  * request body content.
+ * 
+ * Getting input with a decoding function:
+ *
+ * `$this->request->input('json_decode');`
+ *
+ * Getting input using a decoding function, and additional params:
+ *
+ * `$this->request->input('Xml::build', array('return' => 'DOMDocument'));`
+ *
+ * Any additional parameters are applied to the callback in the order they are given.
  *
  * @param string $callback A decoding callback that will convert the string data to another
- *     representation. Leave empty to access the raw input data.
+ *     representation. Leave empty to access the raw input data. You can also
+ *     supply additional parameters for the decoding callback using var args, see above.
  * @return The decoded/processed request data.
  */
 	public function input($callback = null) {
 		$input = $this->_readStdin();
-		if ($callback) {
-			return call_user_func($callback, $input);
+		$args = func_get_args();
+		if (!empty($args)) {
+			$callback = array_shift($args);
+			array_unshift($args, $input);
+			return call_user_func_array($callback, $args);
 		}
 		return $input;
 	}

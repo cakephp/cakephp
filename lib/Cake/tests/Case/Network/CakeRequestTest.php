@@ -18,6 +18,7 @@
  */
 
 App::uses('Dispatcher', 'Routing');
+App::uses('Xml', 'Utility');
 App::uses('CakeRequest', 'Network');
 
 class CakeRequestTestCase extends CakeTestCase {
@@ -1462,6 +1463,32 @@ class CakeRequestTestCase extends CakeTestCase {
 		$result = $request->input('json_decode');
 		$this->assertEquals(array('name' => 'value'), (array)$result);
 	}
+
+/** 
+ * Test input() decoding with additional arguments.
+ *
+ * @return void
+ */
+	function testInputDecodeExtraParams() {
+		$xml = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<post>
+	<title id="title">Test</title>
+</post>
+XML;
+
+		$request = $this->getMock('CakeRequest', array('_readStdin'));
+		$request->expects($this->once())->method('_readStdin')
+			->will($this->returnValue($xml));
+
+		$result = $request->input('Xml::build', array('return' => 'domdocument'));
+		$this->assertInstanceOf('DOMDocument', $result);
+		$this->assertEquals(
+			'Test', 
+			$result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
+		);
+	}
+
 /**
  * loadEnvironment method
  *
