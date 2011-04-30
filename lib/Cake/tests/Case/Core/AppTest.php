@@ -285,9 +285,11 @@ class AppImportTest extends CakeTestCase {
 		$this->assertTrue(in_array('TestPluginPersisterOne', $result));
 
 		$result = App::objects('TestPlugin.helper');
+		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
 		$this->assertEquals($result, $expected);
 		$result = App::objects('TestPlugin.View/Helper');
+		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
 		$this->assertEquals($result, $expected);
 
@@ -462,7 +464,7 @@ class AppImportTest extends CakeTestCase {
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
-		
+
 		$result = App::import('Helper', 'TestPlugin.TestPluginApp');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestPluginAppHelper'));
@@ -470,7 +472,7 @@ class AppImportTest extends CakeTestCase {
 		$result = App::import('Datasource', 'TestPlugin.TestSource');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestSource'));
-		
+
 		App::build();
 	}
 

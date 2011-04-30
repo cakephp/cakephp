@@ -614,10 +614,10 @@ class App {
 			return true;
 		}
 
-		$originalType = $type = strtolower($type);
-		$specialPackage = in_array($type, array('file', 'vendor'));
-		if (!$specialPackage && isset(self::$legacy[$type . 's'])) {
-			$type = self::$legacy[$type . 's'];
+		$originalType = strtolower($type);
+		$specialPackage = in_array($originalType, array('file', 'vendor'));
+		if (!$specialPackage && isset(self::$legacy[$originalType . 's'])) {
+			$type = self::$legacy[$originalType . 's'];
 		}
 		list($plugin, $name) = pluginSplit($name);
 		if (!empty($plugin)) {
@@ -628,11 +628,11 @@ class App {
 			return self::_loadClass($name, $plugin, $type, $originalType, $parent);
 		}
 
-		if ($type == 'file' && !empty($file)) {
+		if ($originalType == 'file' && !empty($file)) {
 			return self::_loadFile($name, $plugin, $search, $file, $return);
 		}
 
-		if ($type == 'vendor') {
+		if ($originalType == 'vendor') {
 			return self::_loadVendor($name, $plugin, $file, $ext);
 		}
 
