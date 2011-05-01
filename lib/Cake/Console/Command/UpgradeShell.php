@@ -277,6 +277,7 @@ class UpgradeShell extends Shell {
 		$paths = $this->_paths;
 		$this->_paths = array($path);
 
+		$this->_files = array();
 		$this->_findFiles('php');
 		foreach ($this->_files as $file) {
 			$contents = file_get_contents($file);
