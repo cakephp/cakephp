@@ -22,13 +22,41 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual($expected, $old);
 
 		App::build(array('Model' => array('/path/to/models/')));
-
 		$new = App::path('Model');
-
 		$expected = array(
 			'/path/to/models/',
 			APP . 'Model' . DS,
 			APP . 'models' . DS
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build();
+		App::build(array('Model' => array('/path/to/models/')), APP::APPEND);
+		$new = App::path('Model');
+		$expected = array(
+			APP . 'Model' . DS,
+			APP . 'models' . DS,
+			'/path/to/models/'
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build();
+		App::build(array(
+			'Model' => array('/path/to/models/'),
+			'Controller' => array('/path/to/controllers/'),
+		), APP::APPEND);
+		$new = App::path('Model');
+		$expected = array(
+			APP . 'Model' . DS,
+			APP . 'models' . DS,
+			'/path/to/models/'
+		);
+		$this->assertEqual($expected, $new);
+		$new = App::path('Controller');
+		$expected = array(
+			APP . 'Controller' . DS,
+			APP . 'controllers' . DS,
+			'/path/to/controllers/'
 		);
 		$this->assertEqual($expected, $new);
 
@@ -152,7 +180,7 @@ class AppImportTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $old);
 
-		App::build(array('Model' => array('/path/to/models/')), true);
+		App::build(array('Model' => array('/path/to/models/')), App::RESET);
 
 		$new = App::path('Model');
 
@@ -210,7 +238,7 @@ class AppImportTest extends CakeTestCase {
 			'View' => App::core('View'),
 			'Model' => App::core('Model'),
 			'View/Helper' => App::core('View/Helper'),
-		), true);
+		), App::RESET);
 		$result = App::objects('behavior', null, false);
 		$this->assertTrue(in_array('TreeBehavior', $result));
 		$result = App::objects('Model/Behavior', null, false);
@@ -623,7 +651,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
-		), true);
+		), App::RESET);
 
 		ob_start();
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
@@ -679,7 +707,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array(
 			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
-		), true);
+		), App::RESET);
 
 		$this->assertFalse(class_exists('CustomLibClass', false));
 		App::uses('CustomLibClass', 'TestPlugin.Custom/Package');
