@@ -53,7 +53,7 @@ class UpgradeShell extends Shell {
 				"\\\$this->{$helper}->"
 			);
 		}
-		
+
 		$this->_filesRegexpUpdate($patterns);
 	}
 
@@ -246,11 +246,14 @@ class UpgradeShell extends Shell {
 /**
  * Searches the paths and finds files based on extension.
  *
- * @param string $extensions 
+ * @param string $extensions
  * @return void
  */
 	protected function _findFiles($extensions = '') {
 		foreach ($this->_paths as $path) {
+			if (!is_dir($path)) {
+				continue;
+			}
 			$files = array();
 			$Iterator = new RegexIterator(
 				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
@@ -275,7 +278,7 @@ class UpgradeShell extends Shell {
  */
 	protected function _updateFile($file, $patterns) {
 		$contents = file_get_contents($file);
-		
+
 		foreach ($patterns as $pattern) {
 			$this->out(' * Updating ' . $pattern[0], 1, Shell::VERBOSE);
 			$contents = preg_replace($pattern[1], $pattern[2], $contents);
