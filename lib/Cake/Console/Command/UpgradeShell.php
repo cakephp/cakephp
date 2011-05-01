@@ -20,6 +20,18 @@ class UpgradeShell extends Shell {
 			$this->out('<warning>Dry-run mode enabled!</warning>', 1, Shell::QUIET);
 		}
 	}
+
+	function all() {
+		foreach($this->OptionParser->subcommands() as $command) {
+			$name = $command->name();
+			if ($name === 'all') {
+				continue;
+			}
+			$this->out('Running ' . $name);
+			$this->$name();
+		}
+	}
+
 /**
  * Update helpers.
  *
@@ -317,6 +329,10 @@ class UpgradeShell extends Shell {
 		return parent::getOptionParser()
 			->description("A shell to help automate upgrading from CakePHP 1.3 to 2.0. \n" .
 				"Be sure to have a backup of your application before running these commands.")
+			->addSubcommand('all', array(
+				'help' => 'Run all upgrade commands.',
+				'parser' => $subcommandParser
+			))
 			->addSubcommand('i18n', array(
 				'help' => 'Update the i18n translation method calls.',
 				'parser' => $subcommandParser
