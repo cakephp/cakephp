@@ -66,7 +66,7 @@ if (!class_exists('File')) {
 
 	$filename = 'css/' . $regs[1];
 	$filepath = CSS . $regs[1];
-	$cachepath = CACHE . 'css' . DS . str_replace(array('/','\\'), '-', $regs[1]);
+	$cachepath = CACHE . 'css' . DS . str_replace(array('/\.','\\'), '-', $regs[1]);
 
 	if (!file_exists($filepath)) {
 		die('Wrong file name.');
