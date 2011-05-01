@@ -46,6 +46,7 @@ class UpgradeShell extends Shell {
 			'tests' . DS . 'cases' => 'tests' . DS . 'Case',
 			'tests' . DS . 'fixtures' => 'tests' . DS . 'Fixture',
 			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'templates',
+			'vendors' . DS . 'shells' . DS . 'tasks' => 'Console' . DS . 'Command' . DS . 'Task',
 			'vendors' . DS . 'shells' => 'Console' . DS . 'Command',
 			'views' . DS . 'helpers' => 'View' . DS . 'Helper',
 			'views' => 'View'
