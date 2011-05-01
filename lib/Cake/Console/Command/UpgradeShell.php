@@ -58,6 +58,10 @@ class UpgradeShell extends Shell {
 				$Folder->move($new);
 			}
 		}
+
+		foreach($moves as $new) {
+			$this->_filesMatchClass($new);
+		}
 	}
 
 /**
@@ -266,6 +270,38 @@ class UpgradeShell extends Shell {
 			),
 		);
 		$this->_filesRegexpUpdate($patterns);
+	}
+
+	protected function _filesMatchClass($path) {
+		$paths = $this->_paths;
+		$this->_paths = array($path);
+
+		$this->_findFiles('php');
+		foreach ($this->_files as $file) {
+			$contents = file_get_contents($file);
+			preg_match('@class (\S*) @', $contents, $match);
+			if (!$match) {
+				continue;
+			}
+
+			$class = $match[1];
+
+			$filename = basename($file);
+			if ($filename === $class . '.php') {
+				continue;
+			}
+
+			$new = dirname($file);
+			if ($new) {
+				$new .= DS;
+			}
+			$new .= $class . '.php';
+
+			$this->out('Moving ' . $file . ' to ' . $new, 1, Shell::VERBOSE);
+			rename($file, $new);
+		}
+
+		$this->_paths = $paths;
 	}
 
 /**
