@@ -157,7 +157,6 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	public function request() {
-		$core = App::core();
 		$views = array_diff(App::path('views'), App::core('views'));
 		$controllers = array_diff(App::path('controllers'), App::core('controllers'), array(APP));
 		$components = array_diff(App::path('components'), App::core('components'));
