@@ -4,6 +4,9 @@
  *
  * @package cake.console/shells
  */
+
+App::uses('Folder', 'Utility');
+
 class UpgradeShell extends Shell {
 
 	protected $_files = array();
@@ -29,6 +32,31 @@ class UpgradeShell extends Shell {
 			}
 			$this->out('Running ' . $name);
 			$this->$name();
+		}
+	}
+
+	function locations() {
+		$moves = array(
+			'controllers' . DS . 'components' => 'Controller' . DS . 'Component',
+			'controllers' => 'Controller',
+			'libs' => 'Lib',
+			'models' . DS . 'behaviors' => 'Model' . DS . 'Behavior',
+			'models' . DS . 'datasources' => 'Model' . DS . 'Datasource',
+			'models' => 'Model',
+			'tests' . DS . 'cases' => 'tests' . DS . 'Case',
+			'tests' . DS . 'fixtures' => 'tests' . DS . 'Fixture',
+			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'templates',
+			'vendors' . DS . 'shells' => 'Console' . DS . 'Command',
+			'views' . DS . 'helpers' => 'View' . DS . 'Helper',
+			'views' => 'View'
+		);
+
+		foreach($moves as $old => $new) {
+			if (is_dir($old)) {
+				$this->out("Moving $old to $new");
+				$Folder = new Folder($old);
+				$Folder->move($new);
+			}
 		}
 	}
 
@@ -331,6 +359,10 @@ class UpgradeShell extends Shell {
 				"Be sure to have a backup of your application before running these commands.")
 			->addSubcommand('all', array(
 				'help' => 'Run all upgrade commands.',
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('locations', array(
+				'help' => 'Move files and folders to their new homes.',
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('i18n', array(
