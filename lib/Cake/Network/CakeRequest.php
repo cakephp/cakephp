@@ -106,6 +106,15 @@ class CakeRequest implements ArrayAccess {
 			'webOS', 'Windows CE', 'Xiino'
 		))
 	);
+
+/**
+ * Copy of php://input.  Since this stream can only be read once in most SAPI's
+ * keep a copy of it so users don't need to know about that detail.
+ *
+ * @var string
+ */
+	private $__input = '';
+
 /**
  * Constructor 
  *
@@ -708,11 +717,13 @@ class CakeRequest implements ArrayAccess {
  * @return string contents of stdin
  */
 	protected function _readStdin() {
-		$fh = fopen('php://stdin', 'r');
-		rewind($fh);
-		$content = stream_get_contents($fh);
-		fclose($fh);
-		return $content;
+		if (empty($this->__input)) {
+			$fh = fopen('php://input', 'r');
+			$content = stream_get_contents($fh);
+			fclose($fh);
+			$this->__input = $content;
+		}
+		return $this->__input;
 	}
 
 /**
