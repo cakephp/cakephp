@@ -92,14 +92,6 @@ class RequestHandlerComponent extends Component {
  */
 	function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->addInputType('xml', array(array($this, '_convertXml')));
-		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
-
-		foreach ($this->__acceptTypes as $i => $type) {
-			if (strpos($type, ';')) {
-				$type = explode(';', $type);
-				$this->__acceptTypes[$i] = $type[0];
-			}
-		}
 		parent::__construct($collection, $settings);
 	}
 
@@ -362,6 +354,7 @@ class RequestHandlerComponent extends Component {
  * @param mixed $type The Content-type or array of Content-types assigned to the name,
  *    i.e. "text/html", or "application/xml"
  * @return void
+ * @deprecated use `$this->response->type()` instead.
  */
 	public function setContent($name, $type = null) {
 		$this->response->type(array($name => $type));
