@@ -292,6 +292,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function testStartupCallback() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml';
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
@@ -305,9 +306,33 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function testStartupCallbackCharset() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
+	}
+
+/**
+ * Test mapping a new type and having startup process it.
+ *
+ * @return void
+ */
+	function testStartupCustomTypeProcess() {
+		if (!function_exists('str_getcsv')) {
+			$this->markTestSkipped('Need "str_getcsv" for this test.');
+		}
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_SERVER['CONTENT_TYPE'] = 'text/csv';
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request->expects($this->once())
+			->method('_readStdin')
+			->will($this->returnValue('"A","csv","string"'));
+		$this->RequestHandler->addInputType('csv', array('str_getcsv'));
+		$this->RequestHandler->startup($this->Controller);
+		$expected = array(
+			'A', 'csv', 'string'
+		);
+		$this->assertEquals($expected, $this->Controller->request->data);
 	}
 
 /**
@@ -774,4 +799,11 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$result = ob_get_clean();
 	}
 
+/**
+ * @expectedException CakeException
+ * @return void
+ */
+	function testAddInputTypeException() {
+		$this->RequestHandler->addInputType('csv', array('I am not callable'));
+	}
 }
