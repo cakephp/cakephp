@@ -504,6 +504,7 @@ Commands:
 		parameter will only update one table. 
 		To use a snapshot pass the `-s` param with the snapshot number.
 		To preview the changes that will be done use `-dry`.
+		To force update of all tables into the schema, use the -f param.
 TEXT;
 		$this->out($help);
 		$this->_stop();
