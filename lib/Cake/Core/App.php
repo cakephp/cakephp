@@ -350,7 +350,7 @@ class App {
 			}
 
 			if (!empty($paths[$type])) {
-				if ($mode === APP::PREPEND) {
+				if ($mode === App::PREPEND) {
 					$path = array_merge((array)$paths[$type], self::$__packages[$type]);
 				} else {
 					$path = array_merge(self::$__packages[$type], (array)$paths[$type]);

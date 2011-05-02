@@ -31,7 +31,17 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual($expected, $new);
 
 		App::build();
-		App::build(array('Model' => array('/path/to/models/')), APP::APPEND);
+		App::build(array('Model' => array('/path/to/models/')), App::PREPEND);
+		$new = App::path('Model');
+		$expected = array(
+			'/path/to/models/',
+			APP . 'Model' . DS,
+			APP . 'models' . DS
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build();
+		App::build(array('Model' => array('/path/to/models/')), App::APPEND);
 		$new = App::path('Model');
 		$expected = array(
 			APP . 'Model' . DS,
@@ -44,7 +54,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array(
 			'Model' => array('/path/to/models/'),
 			'Controller' => array('/path/to/controllers/'),
-		), APP::APPEND);
+		), App::APPEND);
 		$new = App::path('Model');
 		$expected = array(
 			APP . 'Model' . DS,
