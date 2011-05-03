@@ -112,7 +112,7 @@ class RequestHandlerComponent extends Component {
 		if (isset($this->request->params['url']['ext'])) {
 			$this->ext = $this->request->params['url']['ext'];
 		}
-		if (empty($this->ext)) {
+		if (empty($this->ext) || $this->ext == 'html') {
 			$accepts = $this->request->accepts();
 			$extensions = Router::extensions();
 			if (count($accepts) == 1) {
