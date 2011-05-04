@@ -431,6 +431,13 @@ class Set {
 						'key' => $key,
 						'item' => array_keys($context['item']),
 					);
+				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.')) {
+					$context['trace'][] = $key;
+					$matches[] = array(
+						'trace' => $context['trace'],
+						'key' => $key,
+						'item' => $context['item'],
+					);
 				} elseif (is_array($context['item']) && array_key_exists($token, $context['item'])) {
 					$items = $context['item'][$token];
 					if (!is_array($items)) {
@@ -470,13 +477,6 @@ class Set {
 							'item' => $item,
 						);
 					}
-				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.')) {
-					$context['trace'][] = $key;
-					$matches[] = array(
-						'trace' => $context['trace'],
-						'key' => $key,
-						'item' => $context['item'],
-					);
 				}
 			}
 			if ($conditions) {

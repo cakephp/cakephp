@@ -633,7 +633,7 @@ class Dispatcher extends Object {
 			ob_start('ob_gzhandler');
 		}
 
-		App::import('View', 'Media', false);
+		App::import('View', 'Media');
 		$controller = null;
 		$Media = new MediaView($controller);
 		if (isset($Media->mimeType[$ext])) {

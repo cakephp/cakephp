@@ -18,58 +18,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
+App::import('Core', array('AppModel', 'Model'));
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
-Mock::generatePartial('DboMysql', 'QueryMockDboMysql', array('query'));
-
-/**
- * DboMysqlTestDb class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
- */
-class DboMysqlTestDb extends DboMysql {
-
-/**
- * simulated property
- *
- * @var array
- * @access public
- */
-	var $simulated = array();
-
-/**
- * testing property
- *
- * @var bool true
- * @access public
- */
-	var $testing = true;
-
-/**
- * execute method
- *
- * @param mixed $sql
- * @access protected
- * @return void
- */
-	function _execute($sql) {
-		if ($this->testing) {
-			$this->simulated[] = $sql;
-			return null;
-		}
-		return parent::_execute($sql);
-	}
-
-/**
- * getLastQuery method
- *
- * @access public
- * @return void
- */
-	function getLastQuery() {
-		return $this->simulated[count($this->simulated) - 1];
-	}
-}
+Mock::generatePartial('DboMysql', 'QueryMockDboMysql', array('query', 'execute'));
 
 /**
  * MysqlTestModel class
@@ -160,7 +112,7 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
-	var $fixtures = array('core.binary_test');
+	var $fixtures = array('core.binary_test', 'core.post', 'core.author');
 /**
  * The Dbo instance to be tested
  *
@@ -583,7 +535,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function testAlterSchemaIndexes() {
 		App::import('Model', 'CakeSchema');
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 
 		$schema1 =& new CakeSchema(array(
 			'name' => 'AlterTest1',
@@ -673,7 +625,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function testAlteringTableParameters() {
 		App::import('Model', 'CakeSchema');
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 
 		$schema1 =& new CakeSchema(array(
 			'name' => 'AlterTest1',
@@ -757,7 +709,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testReadTableParameters() {
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
 		$result = $this->db->readTableParameters('tinyint');
 		$expected = array(
@@ -784,7 +736,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testBuildTableParameters() {
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 		$data = array(
 			'charset' => 'utf8',
 			'collate' => 'utf8_unicode_ci',
@@ -804,7 +756,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testGetCharsetName() {
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 		$result = $this->db->getCharsetName('utf8_unicode_ci');
 		$this->assertEqual($result, 'utf8');
 		$result = $this->db->getCharsetName('cp1250_general_ci');
@@ -863,4 +815,47 @@ class DboMysqlTest extends CakeTestCase {
 		$this->db->execute($this->db->dropSchema($schema));
 	}
 
+/**
+ * test that simple delete conditions don't create joins using a mock.
+ *
+ * @return void
+ */
+	function testSimpleDeleteConditionsNoJoins() {
+		$model =& new Post();
+		$mockDbo =& new QueryMockDboMysql($this);
+		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/AS\s+`Post`\s+WHERE\s+`Post/')));
+		$mockDbo->setReturnValue('execute', true);
+
+		$mockDbo->delete($model, array('Post.id' => 1));
+	}
+
+/**
+ * test deleting with joins, a MySQL specific feature.
+ *
+ * @return void
+ */
+	function testDeleteWithJoins() {
+		$model =& new Post();
+		$mockDbo =& new QueryMockDboMysql($this);
+		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
+		$mockDbo->setReturnValue('execute', true);
+
+		$mockDbo->delete($model, array('Author.id' => 1));
+	}
+
+/**
+ * test joins on delete with multiple conditions.
+ *
+ * @return void
+ */
+	function testDeleteWithJoinsAndMultipleConditions() {
+		$model =& new Post();
+		$mockDbo =& new QueryMockDboMysql($this);
+		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
+		$mockDbo->expectAt(1, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
+		$mockDbo->setReturnValue('execute', true);
+
+		$mockDbo->delete($model, array('Author.id' => 1, 'Post.id' => 2));
+		$mockDbo->delete($model, array('Post.id' => 2, 'Author.id' => 1));
+	}
 }

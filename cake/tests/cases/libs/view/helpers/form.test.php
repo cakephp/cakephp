@@ -3360,6 +3360,26 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.multi_field', $options, array(0, 1), array('multiple' => false)
+		);
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Model][multi_field]', 'id' => 'ModelMultiField'
+			),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'first',
+			'/option',
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'second',
+			'/option',
+			array('option' => array('value' => '2')),
+			'third',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -3751,6 +3771,62 @@ class FormHelperTest extends CakeTestCase {
 			array('label' => array('for' => 'ModelMultiField2')),
 			'second',
 			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
+ * testSelectHiddenFieldOmission method
+ *
+ * test that select() with 'hiddenField' => false omits the hidden field
+ *
+ * @access public
+ * @return void
+ */
+	function testSelectHiddenFieldOmission() {
+		$result = $this->Form->select('Model.multi_field',
+			array('first', 'second'),
+			null,
+			array('multiple' => 'checkbox', 'hiddenField' => false)
+		);
+		$expected = array(
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('label' => array('for' => 'ModelMultiField0')),
+			'first',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1')),
+			'second',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.multi_field', array(
+			'options' => array('first', 'second'),
+			'multiple' => 'checkbox',
+			'hiddenField' => false
+		));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ModelMultiField')),
+			'Multi Field',
+			'/label',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('label' => array('for' => 'ModelMultiField0')),
+			'first',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1')),
+			'second',
+			'/label',
+			'/div',
 			'/div'
 		);
 		$this->assertTags($result, $expected);

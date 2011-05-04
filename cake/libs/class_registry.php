@@ -71,12 +71,13 @@ class ClassRegistry {
 	}
 
 /**
- * Loads a class, registers the object in the registry and returns instance of the object.
+ * Loads a class, registers the object in the registry and returns instance of the object. ClassRegistry::init()
+ * is used as a factory for models, and handle correct injecting of settings, that assist in testing.
  *
  * Examples
  * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
  *
- * Exapanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass');```
+ * Exapanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
  *
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
@@ -84,14 +85,14 @@ class ClassRegistry {
  *  no instance of the object will be returned
  * {{{
  * array(
- *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
- *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
- *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass')
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model'),
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model'),
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model')
  * );
  * }}}
  * @param mixed $class as a string or a single key => value array instance will be created,
  *  stored in the registry and returned.
- * @param string $type TypeOfClass
+ * @param string $type Only model is accepted as a valid value for $type.
  * @return object instance of ClassName
  * @access public
  * @static
