@@ -282,8 +282,14 @@ class CookieComponent extends Component {
 			$this->read();
 		}
 		if (strpos($key, '.') === false) {
+			if (isset($this->_values[$key]) && is_array($this->_values[$key])) {
+				foreach ($this->_values[$key] as $idx => $val) {
+					$this->_delete("[$key][$idx]");
+				}
+			} else {
+				$this->_delete("[$key]");
+			}
 			unset($this->_values[$key]);
-			$this->_delete("[$key]");
 			return;
 		}
 		$names = explode('.', $key, 2);

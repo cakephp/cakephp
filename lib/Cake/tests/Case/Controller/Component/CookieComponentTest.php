@@ -496,7 +496,23 @@ class CookieComponentTest extends CakeTestCase {
 
 		$this->assertNull($this->Cookie->read('value'));
 	}
-	
+
+/**
+ * test that deleting a top level keys kills the child elements too.
+ *
+ * @return void
+ */
+	function testDeleteRemovesChildren() {
+		$_COOKIE['CakeTestCookie'] = array(
+			'User' => array('email' => 'example@example.com', 'name' => 'mark'),
+			'other' => 'value'
+		);
+		$this->assertEqual('mark', $this->Cookie->read('User.name'));
+
+		$this->Cookie->delete('User');
+		$this->assertNull($this->Cookie->read('User.email'));
+		$this->Cookie->destroy();
+	}
 /**
  * Helper method for generating old style encoded cookie values.
  *
