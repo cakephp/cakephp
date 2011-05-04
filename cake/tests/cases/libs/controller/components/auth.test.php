@@ -553,6 +553,49 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * testIdentify method
+ *
+ * @access public
+ * @return void
+ */
+	function testIdentify() {
+		$this->AuthUser =& new AuthUser();
+		$user['id'] = 1;
+		$user['username'] = 'mariano';
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$this->AuthUser->save($user, false);
+
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($this->Controller->Auth->identify($user));
+	}
+
+/**
+ * testIdentifyWithConditions method
+ *
+ * @access public
+ * @return void
+ */
+	function testIdentifyWithConditions() {
+		$this->AuthUser =& new AuthUser();
+		$user['id'] = 1;
+		$user['username'] = 'mariano';
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$this->AuthUser->save($user, false);
+
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->startup($this->Controller);
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->assertFalse($this->Controller->Auth->identify($user, array('AuthUser.id >' => 2)));
+
+		$this->Controller->Auth->userScope = array('id >' => 2);
+		$this->assertFalse($this->Controller->Auth->identify($user));
+		$this->assertTrue($this->Controller->Auth->identify($user, false));
+	}
+
+/**
  * testLogin method
  *
  * @access public
