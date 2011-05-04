@@ -18,6 +18,7 @@
  */
 
 App::uses('BakeTask', 'Console/Command/Task');
+App::uses('AppModel', 'Model');
 
 /**
  * Task class for creating and updating controller files.

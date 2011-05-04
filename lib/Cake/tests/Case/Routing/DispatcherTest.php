@@ -585,8 +585,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher = new Dispatcher();
 
 		$test = $Dispatcher->parseParams(new CakeRequest("/"));
-		$this->assertFalse(empty($test['form']), "Parsed URL not returning post data");
-		$this->assertEquals($test['form']['testdata'], "My Posted Content");
+		$this->assertEquals($test['data']['testdata'], "My Posted Content");
 	}
 
 /**
@@ -868,7 +867,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array(
 			'pass' => array('home'),
 			'named' => array('param'=> 'value', 'param2'=> 'value2'), 'plugin'=> 'my_plugin',
-			'controller'=> 'some_pages', 'action'=> 'display', 'form'=> array(),
+			'controller'=> 'some_pages', 'action'=> 'display'
 		);
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch ' . $key . ' %');
@@ -1000,7 +999,6 @@ class DispatcherTest extends CakeTestCase {
 			'action' => 'admin_index',
 			'prefix' => 'admin',
 			'admin' =>  true,
-			'form' => array(), 
 			'return' => 1
 		);
 		foreach ($expected as $key => $value) {
@@ -1524,7 +1522,7 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher = new Dispatcher();
 
 		$result = $dispatcher->parseParams(new CakeRequest('/posts'));
-		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST', 'form' => array());
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST');
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
 		}
@@ -1533,7 +1531,15 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
 
 		$result = $dispatcher->parseParams(new CakeRequest('/posts/5'));
-		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array());
+		$expected = array(
+			'pass' => array('5'),
+			'named' => array(),
+			'id' => '5',
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'edit',
+			'[method]' => 'PUT'
+		);
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
 		}
@@ -1542,7 +1548,7 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$result = $dispatcher->parseParams(new CakeRequest('/posts/5'));
-		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array());
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET');
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
 		}
@@ -1550,7 +1556,7 @@ class DispatcherTest extends CakeTestCase {
 		$_POST['_method'] = 'PUT';
 
 		$result = $dispatcher->parseParams(new CakeRequest('/posts/5'));
-		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array());
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT');
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
 		}
@@ -1563,7 +1569,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = $dispatcher->parseParams(new CakeRequest('/posts'));
 		$expected = array(
 			'pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add',
-			'[method]' => 'POST', 'form' => array('extra' => 'data'), 'data' => array('Post' => array('title' => 'New Post')),
+			'[method]' => 'POST', 'data' => array('extra' => 'data', 'Post' => array('title' => 'New Post')),
 		);
 		foreach ($expected as $key => $value) {
 			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');

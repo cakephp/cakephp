@@ -38,7 +38,7 @@ class DbConfigTask extends Shell {
  */
 	protected $_defaultConfig = array(
 		'name' => 'default',
-		'driver'=> 'mysql',
+		'datasource'=> 'Database/Mysql',
 		'persistent'=> 'false',
 		'host'=> 'localhost',
 		'login'=> 'root',
@@ -104,7 +104,7 @@ class DbConfigTask extends Shell {
 				}
 			}
 
-			$driver = $this->in(__d('cake_console', 'Driver:'), array('mssql', 'mysql', 'oracle', 'postgres', 'sqlite'), 'mysql');
+			$driver = $this->in(__d('cake_console', 'Driver:'), array('Mssql', 'Mysql', 'Oracle', 'Postgres', 'Sqlite'), 'Mysql');
 
 			$persistent = $this->in(__d('cake_console', 'Persistent Connection?'), array('y', 'n'), 'n');
 			if (strtolower($persistent) == 'n') {
@@ -313,7 +313,7 @@ class DbConfigTask extends Shell {
 			extract($config);
 
 			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'driver' => '{$driver}',\n";
+			$out .= "\t\t'datasource' => 'Database/{$driver}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
 
