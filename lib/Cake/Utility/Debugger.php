@@ -607,7 +607,7 @@ class Debugger {
 			$this->_outputFormat = 'js';
 		}
 
-		$data['id'] = 'cakeErr' . count($this->errors);
+		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
 		$insert = array('context' => join("\n", $context), 'helpPath' => $this->helpPath) + $data;
 

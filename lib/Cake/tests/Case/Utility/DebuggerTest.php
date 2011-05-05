@@ -145,9 +145,9 @@ class DebuggerTest extends CakeTestCase {
 			'pre' => array('class' => 'cake-debug'),
 			'a' => array(
 				'href' => "javascript:void(0);",
-				'onclick' => "document.getElementById('cakeErr9-trace').style.display = " .
-				             "(document.getElementById('cakeErr9-trace').style.display == 'none'" .
-				             " ? '' : 'none');"
+				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
+				             "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
+				             " \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
