@@ -491,7 +491,7 @@ class CakeRequest implements ArrayAccess {
  * @return The current object, you can chain this method.
  */
 	public function addParams($params) {
-		$this->params = array_merge($this->params, $params);
+		$this->params = array_merge($this->params, (array)$params);
 		return $this;
 	}
 
