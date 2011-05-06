@@ -898,6 +898,11 @@ class ModelTask extends BakeTask {
 		$this->out("\tName of the model to bake. Can use Plugin.name");
 		$this->out("\tas a shortcut for plugin baking.");
 		$this->out();
+		$this->out('Params:');
+		$this->out();
+		$this->out('-connection <config>');
+		$this->out("\tset db config <config>. uses 'default' if none is specified");
+		$this->out();
 		$this->out('Commands:');
 		$this->out();
 		$this->out("model");
