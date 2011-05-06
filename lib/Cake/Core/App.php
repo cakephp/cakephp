@@ -305,7 +305,6 @@ class App {
 				}
 				self::$__packages[$type] = (array)$new;
 			}
-			CakePlugin::unload();
 			return $paths;
 		}
 

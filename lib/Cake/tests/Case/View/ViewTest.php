@@ -212,6 +212,7 @@ class ViewTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
+		CakePlugin::unload();
 		unset($this->View);
 		unset($this->PostsController);
 		unset($this->Controller);
