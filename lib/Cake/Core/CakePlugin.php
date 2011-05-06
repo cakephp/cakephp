@@ -79,6 +79,31 @@ class CakePlugin {
 		}
 	}
 
+/**
+ * Will load all the plugins located in the configured plugins folders
+ * If passed an options array, it will be used as a common default for all plugins to be loaded
+ * It is possible to set specific defaults for each plugins in the options array. Examples:
+ *
+ * {{{
+ * 	CakePlugin::loadAll(array(
+ *		array('bootstrap' => true),
+ * 		'DebugKit' => array('routes' => true),
+ * 	))
+ * }}}
+ *
+ * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
+ * and will not look for any bootstrap script.
+ *
+ * @param array $options 
+ * @return void
+ */
+	public function loadAll($options = array()) {
+		$plugins = App::objects('plugins');
+		foreach ($plugins as $p) {
+			$opts = isset($options[$p]) ? $options[$p] : $options;
+			self::load($p, $opts);
+		}
+	}
 
 /**
  * Returns the filesystem path for a plugin
