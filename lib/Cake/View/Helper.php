@@ -253,7 +253,7 @@ class Helper extends Object {
 				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
 				return $path . '?' . @filemtime($themePath);
 			} else {
-				$plugin = $segments[0];
+				$plugin = Inflector::camelize($segments[0]);
 				unset($segments[0]);
 				$pluginPath = App::pluginPath($plugin) . 'webroot' . DS . implode(DS, $segments);
 				return $path . '?' . @filemtime($pluginPath);

@@ -120,6 +120,7 @@ class ThemeViewTest extends CakeTestCase {
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
+		CakePlugin::loadAll();
 	}
 
 /**
@@ -134,6 +135,7 @@ class ThemeViewTest extends CakeTestCase {
 		unset($this->Controller);
 		ClassRegistry::flush();
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
@@ -143,18 +145,18 @@ class ThemeViewTest extends CakeTestCase {
  * @return void
  */
 	function testPluginThemedGetTemplate() {
-		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
 		$this->Controller->viewPath = 'tests';
 		$this->Controller->action = 'index';
 		$this->Controller->theme = 'test_theme';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'tests' . DS .'index.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'layouts' . DS .'plugin_default.ctp';
 		$result = $ThemeView->getLayoutFileName('plugin_default');
 		$this->assertEqual($result, $expected);
 
@@ -195,8 +197,8 @@ class ThemeViewTest extends CakeTestCase {
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
-		$ThemeView->layoutPath = 'email' . DS . 'html';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
+		$ThemeView->layoutPath = 'emails' . DS . 'html';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}

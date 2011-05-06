@@ -216,6 +216,7 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		CakePlugin::unload();
 		unset($this->Helper, $this->View);
 		ClassRegistry::flush();
 	}
@@ -520,6 +521,7 @@ class HelperTest extends CakeTestCase {
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
 		));
+		CakePlugin::loadAll();
 
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
 		$this->assertPattern('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
