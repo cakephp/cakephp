@@ -200,7 +200,7 @@ class ViewTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
-
+		CakePlugin::loadAll();
 		Configure::write('debug', 2);
 	}
 
@@ -224,18 +224,18 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testPluginGetTemplate() {
-		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
 		$this->Controller->viewPath = 'tests';
 		$this->Controller->action = 'index';
 
 		$View = new TestView($this->Controller);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'View' . DS .'tests' . DS .'index.ctp';
+		$expected = CakePlugin::path('TestPlugin') . 'View' . DS .'tests' . DS .'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'View' . DS . 'layouts' . DS .'default.ctp';
+		$expected = CakePlugin::path('TestPlugin') . 'View' . DS . 'layouts' . DS .'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
@@ -246,7 +246,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testPluginPathGeneration() {
-		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
 		$this->Controller->viewPath = 'tests';
 		$this->Controller->action = 'index';
@@ -256,13 +256,13 @@ class ViewTest extends CakeTestCase {
 		$expected = array_merge(App::path('View'), App::core('View'));
 		$this->assertEqual($paths, $expected);
 
-		$paths = $View->paths('test_plugin');
-
+		$paths = $View->paths('TestPlugin');
+		$pluginPath = CakePlugin::path('TestPlugin');
 		$expected = array(
-			LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'plugins' . DS . 'test_plugin' . DS,
-			LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'View' . DS,
-			LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'views' . DS,
-			LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'Lib' . DS . 'View' . DS,
+			LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'plugins' . DS . 'TestPlugin' . DS,
+			$pluginPath . 'View' . DS,
+			$pluginPath . 'views' . DS,
+			$pluginPath . 'Lib' . DS . 'View' . DS,
 			LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS,
 			LIBS . 'View' . DS
 		);
@@ -286,11 +286,12 @@ class ViewTest extends CakeTestCase {
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'View' . DS .'tests' . DS .'index.ctp';
+		$pluginPath = CakePlugin::path('TestPlugin');
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'TestPlugin' . DS . 'View' . DS .'tests' . DS .'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'View' . DS . 'layouts' . DS .'default.ctp';
+		$expected = $pluginPath. 'View' . DS . 'layouts' . DS .'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
@@ -331,8 +332,8 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
-		$View->layoutPath = 'email' . DS . 'html';
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
+		$View->layoutPath = 'emails' . DS . 'html';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 
 		$this->assertEqual($result, $expected);
@@ -427,10 +428,10 @@ class ViewTest extends CakeTestCase {
 		$result = $this->View->element('test_element');
 		$this->assertEqual($result, 'this is the test element');
 
-		$result = $this->View->element('plugin_element', array(), array('plugin' => 'test_plugin'));
+		$result = $this->View->element('plugin_element', array(), array('plugin' => 'TestPlugin'));
 		$this->assertEqual($result, 'this is the plugin element using params[plugin]');
 
-		$this->View->plugin = 'test_plugin';
+		$this->View->plugin = 'TestPlugin';
 		$result = $this->View->element('test_plugin_element');
 		$this->assertEqual($result, 'this is the test set using View::$plugin plugin element');
 

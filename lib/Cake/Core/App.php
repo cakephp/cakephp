@@ -226,6 +226,8 @@ class App {
  *
  * `App::build(array('View/Helper' => array('/path/to/models/', '/another/path/))); will setup multiple search paths for helpers`
  *
+ * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
+ *
  * @param array $paths associative array with package names as keys and a list of directories for new search paths
  * @param boolean $reset true will set paths, false merges paths [default] false
  * @return void
@@ -303,6 +305,7 @@ class App {
 				}
 				self::$__packages[$type] = (array)$new;
 			}
+			CakePlugin::unload();
 			return $paths;
 		}
 
