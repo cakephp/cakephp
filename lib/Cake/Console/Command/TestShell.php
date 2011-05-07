@@ -24,7 +24,7 @@ App::uses('CakeTestSuiteDispatcher', 'TestSuite');
 App::uses('CakeTestSuiteCommand', 'TestSuite');
 App::uses('CakeTestLoader', 'TestSuite');
 
-class TestsuiteShell extends Shell {
+class TestShell extends Shell {
 
 /**
  * Dispatcher object for the run.
