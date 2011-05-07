@@ -548,6 +548,12 @@ class Cache {
 		}
 		return array();
 	}
+
+	function __destruct() {
+		if (Configure::read('Session.save') == 'cache' && function_exists('session_write_close')) {
+		        session_write_close();
+		    }
+	}
 }
 
 /**
