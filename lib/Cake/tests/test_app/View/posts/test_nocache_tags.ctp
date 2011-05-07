@@ -82,8 +82,7 @@ if (!empty($filePresent)):
 ?>
 <p>
 	<span class="notice">
-		<?php
-			__d('cake', 'Cake');
+		<?php echo __d('cake', 'Cake');
 			if ($connected->isConnected()):
 		 		__d('cake', ' is able to ');
 			else:
@@ -95,48 +94,48 @@ if (!empty($filePresent)):
 </p>
 <?php endif; ?>
 <h2><?php echo __d('cake', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
-<a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __d('cake', 'Read the release notes and get the latest version'); ?> </a>
-<h2><?php __d('cake', 'Editing this Page'); ?></h2>
+<a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php echo __d('cake', 'Read the release notes and get the latest version'); ?> </a>
+<h2><?php echo __d('cake', 'Editing this Page'); ?></h2>
 <p>
-<?php __d('cake', 'To change the content of this page, create: /app/views/pages/home.ctp.'); ?><br />
-<?php __d('cake', 'To change its layout, create: /app/views/layouts/default.ctp.'); ?><br />
-<a href="http://manual.cakephp.org/"><?php __d('cake', 'See the views section of the manual for more info.'); ?> </a><br />
-<?php __d('cake', 'You can also add some CSS styles for your pages at: app/webroot/css/.'); ?>
+<?php echo __d('cake', 'To change the content of this page, create: /app/views/pages/home.ctp.'); ?><br />
+<?php echo __d('cake', 'To change its layout, create: /app/views/layouts/default.ctp.'); ?><br />
+<a href="http://manual.cakephp.org/"><?php echo __d('cake', 'See the views section of the manual for more info.'); ?> </a><br />
+<?php echo __d('cake', 'You can also add some CSS styles for your pages at: app/webroot/css/.'); ?>
 </p>
-<h2><?php __d('cake', 'Getting Started'); ?></h2>
+<h2><?php echo __d('cake', 'Getting Started'); ?></h2>
 <p>
-<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __d('cake', 'The 15 min Blog Tutorial'); ?></a><br />
-<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?php __d('cake', 'Cook up Web sites fast with CakePHP'); ?></a><br />
-<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-wiki1.html"><?php __d('cake', 'Create an interactive production wiki using PHP'); ?></a>
+<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php echo __d('cake', 'The 15 min Blog Tutorial'); ?></a><br />
+<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?php echo __d('cake', 'Cook up Web sites fast with CakePHP'); ?></a><br />
+<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-wiki1.html"><?php echo __d('cake', 'Create an interactive production wiki using PHP'); ?></a>
 </p>
-<h2><?php __d('cake', 'More about Cake'); ?></h2>
+<h2><?php echo __d('cake', 'More about Cake'); ?></h2>
 <p>
-<?php __d('cake', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
+<?php echo __d('cake', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
 </p>
 <p>
-<?php __d('cake', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
+<?php echo __d('cake', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
 </p>
 <ul>
-	<li><a href="http://cakefoundation.org/"><?php __d('cake', 'Cake Software Foundation'); ?> </a>
-	<ul><li><?php __d('cake', 'Promoting development related to CakePHP'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?php __d('cake', 'The Bakery'); ?> </a>
-	<ul><li><?php __d('cake', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php __d('cake', 'Book Store'); ?> </a>
-	<ul><li><?php __d('cake', 'Recommended Software Books'); ?></li></ul></li>
-	<li><a href="http://www.cafepress.com/cakefoundation"><?php __d('cake', 'CakeSchwag'); ?> </a>
-	<ul><li><?php __d('cake', 'Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
-	<li><a href="http://www.cakephp.org"><?php __d('cake', 'CakePHP'); ?> </a>
-	<ul><li><?php __d('cake', 'The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://manual.cakephp.org"><?php __d('cake', 'CakePHP Manual'); ?> </a>
-	<ul><li><?php __d('cake', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org"><?php __d('cake', 'CakePHP API'); ?> </a>
-	<ul><li><?php __d('cake', 'Docblock Your Best Friend'); ?></li></ul></li>
-	<li><a href="http://www.cakeforge.org"><?php __d('cake', 'CakeForge'); ?> </a>
-	<ul><li><?php __d('cake', 'Open Development for CakePHP'); ?></li></ul></li>
-	<li><a href="https://trac.cakephp.org/"><?php __d('cake', 'CakePHP Trac'); ?> </a>
-	<ul><li><?php __d('cake', 'For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
-	<li><a href="http://groups-beta.google.com/group/cake-php"><?php __d('cake', 'CakePHP Google Group'); ?> </a>
-	<ul><li><?php __d('cake', 'Community mailing list'); ?></li></ul></li>
+	<li><a href="http://cakefoundation.org/"><?php echo __d('cake', 'Cake Software Foundation'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Promoting development related to CakePHP'); ?></li></ul></li>
+	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake', 'The Bakery'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Everything CakePHP'); ?></li></ul></li>
+	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php echo __d('cake', 'Book Store'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Recommended Software Books'); ?></li></ul></li>
+	<li><a href="http://www.cafepress.com/cakefoundation"><?php echo __d('cake', 'CakeSchwag'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
+	<li><a href="http://www.cakephp.org"><?php echo __d('cake', 'CakePHP'); ?> </a>
+	<ul><li><?php echo __d('cake', 'The Rapid Development Framework'); ?></li></ul></li>
+	<li><a href="http://manual.cakephp.org"><?php echo __d('cake', 'CakePHP Manual'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Your Rapid Development Cookbook'); ?></li></ul></li>
+	<li><a href="http://api.cakephp.org"><?php echo __d('cake', 'CakePHP API'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Docblock Your Best Friend'); ?></li></ul></li>
+	<li><a href="http://www.cakeforge.org"><?php echo __d('cake', 'CakeForge'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Open Development for CakePHP'); ?></li></ul></li>
+	<li><a href="https://trac.cakephp.org/"><?php echo __d('cake', 'CakePHP Trac'); ?> </a>
+	<ul><li><?php echo __d('cake', 'For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
+	<li><a href="http://groups-beta.google.com/group/cake-php"><?php echo __d('cake', 'CakePHP Google Group'); ?> </a>
+	<ul><li><?php echo __d('cake', 'Community mailing list'); ?></li></ul></li>
 	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-	<ul><li><?php __d('cake', 'Live chat about CakePHP'); ?></li></ul></li>
+	<ul><li><?php echo __d('cake', 'Live chat about CakePHP'); ?></li></ul></li>
 </ul>
