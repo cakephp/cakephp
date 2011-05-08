@@ -26,6 +26,7 @@ class UpgradeShell extends Shell {
 		'Task' => 'Console/Command/Task',
 		'Case' => 'tests/Case',
 		'Fixture' => 'tests/Fixture',
+		'Error' => 'Lib/Error',
 	);
 
 /**
