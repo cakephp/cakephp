@@ -10,7 +10,23 @@ App::uses('Folder', 'Utility');
 class UpgradeShell extends Shell {
 
 	protected $_files = array();
+
 	protected $_paths = array();
+
+	protected $_map = array(
+		'Controller' => 'Controller',
+		'Component' => 'Controller/Component',
+		'Model' => 'Model',
+		'Behavior' => 'Model/Behavior',
+		'Datasource' => 'Model/Datasource',
+		'Dbo' => 'Model/Datasource/Database',
+		'View' => 'View',
+		'Helper' => 'View/Helper',
+		'Shell' => 'Console/Command',
+		'Task' => 'Console/Command/Task',
+		'Case' => 'tests/Case',
+		'Fixture' => 'tests/Fixture',
+	);
 
 /**
  * Shell startup, prints info message about dry run.
@@ -22,8 +38,17 @@ class UpgradeShell extends Shell {
 		if ($this->params['dry-run']) {
 			$this->out('<warning>Dry-run mode enabled!</warning>', 1, Shell::QUIET);
 		}
+		if ($this->params['git'] && !is_dir('.git')) {
+			$this->out('<warning>No git repository detected!</warning>', 1, Shell::QUIET);
+		}
 	}
 
+/**
+ * Run all upgrade steps one at a time
+ *
+ * @access public
+ * @return void
+ */
 	function all() {
 		foreach($this->OptionParser->subcommands() as $command) {
 			$name = $command->name();
@@ -35,33 +60,72 @@ class UpgradeShell extends Shell {
 		}
 	}
 
+/**
+ * Move files and folders to their new homes
+ *
+ * Moves folders containing files which cannot necessarily be autodetected (libs and templates)
+ * and then looks for all php files except vendors, and moves them to where Cake 2.0 expects
+ * to find them.
+ *
+ * @access public
+ * @return void
+ */
 	function locations() {
-		$moves = array(
-			'controllers' . DS . 'components' => 'Controller' . DS . 'Component',
-			'controllers' => 'Controller',
-			'libs' => 'Lib',
-			'models' . DS . 'behaviors' => 'Model' . DS . 'Behavior',
-			'models' . DS . 'datasources' => 'Model' . DS . 'Datasource',
-			'models' => 'Model',
-			'tests' . DS . 'cases' => 'tests' . DS . 'Case',
-			'tests' . DS . 'fixtures' => 'tests' . DS . 'Fixture',
-			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'templates',
-			'vendors' . DS . 'shells' . DS . 'tasks' => 'Console' . DS . 'Command' . DS . 'Task',
-			'vendors' . DS . 'shells' => 'Console' . DS . 'Command',
-			'views' . DS . 'helpers' => 'View' . DS . 'Helper',
-			'views' => 'View'
-		);
+		$cwd = getcwd();
 
+		if (is_dir('plugins')) {
+
+			$Folder = new Folder('plugins');
+			list($plugins) = $Folder->read();
+			foreach($plugins as $plugin) {
+				chdir($cwd . DS . 'plugins' . DS . $plugin);
+				$this->locations();
+			}
+			$this->_files = array();
+			chdir($cwd);
+		}
+
+		$moves = array(
+			'libs' => 'Lib',
+			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'templates',
+		);
 		foreach($moves as $old => $new) {
 			if (is_dir($old)) {
 				$this->out("Moving $old to $new");
-				$Folder = new Folder($old);
-				$Folder->move($new);
+				if (!$this->params['dry-run']) {
+					$Folder = new Folder($old);
+					$Folder->move($new);
+				}
+				if ($this->params['git']) {
+					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+				}
 			}
 		}
+		$sourceDirs = array(
+			'.' => array('recursive' => false),
+			'Console',
+			'Controller',
+			'controllers',
+			'Lib' => array('checkFolder' => false),
+			'Model',
+			'models',
+			'tests',
+			'View',
+			'views',
+			'vendors/shells',
+		);
 
-		foreach($moves as $new) {
-			$this->_filesMatchClass($new);
+		$defaultOptions = array(
+			'recursive' => true,
+			'checkFolder' => true,
+		);
+		foreach($sourceDirs as $dir => $options) {
+			if (is_numeric($dir)) {
+				$dir = $options;
+				$options = array();
+			}
+			$options = array_merge($defaultOptions, $options);
+			$this->_movePhpFiles($dir, $options);
 		}
 	}
 
@@ -273,34 +337,88 @@ class UpgradeShell extends Shell {
 		$this->_filesRegexpUpdate($patterns);
 	}
 
-	protected function _filesMatchClass($path) {
-		$paths = $this->_paths;
-		$this->_paths = array($path);
+/**
+ * Move application php files to where they now should be
+ *
+ * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
+ * If the file is not exactly where cake expects it - move it.
+ *
+ * @param mixed $path
+ * @param mixed $options array(recursive, checkFolder)
+ * @access protected
+ * @return void
+ */
+	protected function _movePhpFiles($path, $options) {
+		if (!is_dir($path)) {
+			return;
+		}
 
+		$paths = $this->_paths;
+
+		$this->_paths = array($path);
 		$this->_files = array();
-		$this->_findFiles('php');
-		foreach ($this->_files as $file) {
+		if ($options['recursive']) {
+			$this->_findFiles('php');
+		} else {
+			$this->_files = scandir($path);
+			foreach($this->_files as $i => $file) {
+				if (strlen($file) < 5 || substr($file, -4) !== '.php') {
+					unset($this->_files[$i]);
+				}
+			}
+		}
+
+		$cwd = getcwd();
+		foreach ($this->_files as &$file) {
+			$file = $cwd . DS . $file;
+
 			$contents = file_get_contents($file);
-			preg_match('@class (\S*) @', $contents, $match);
+			preg_match('@class (\S*) .*{@', $contents, $match);
 			if (!$match) {
 				continue;
 			}
 
 			$class = $match[1];
 
-			$filename = basename($file);
-			if ($filename === $class . '.php') {
+			preg_match('@([A-Z][^A-Z]*)$@', $class, $match);
+			if ($match) {
+				$type = $match[1];
+			} else {
+				$type = 'unknown';
+			}
+
+			preg_match('@^.*[\\\/]plugins[\\\/](.*?)[\\\/]@', $file, $match);
+			$base = $cwd . DS;
+			$plugin = false;
+			if ($match) {
+				$base = $match[0];
+				$plugin = $match[1];
+			}
+
+			if ($options['checkFolder'] && !empty($this->_map[$type])) {
+				$folder = str_replace('/', DS, $this->_map[$type]);
+				$new = $base . $folder . DS . $class . '.php';
+			} else {
+				$new = dirname($file) . DS . $class . '.php';
+			}
+
+			if ($file === $new) {
 				continue;
 			}
 
-			$new = dirname($file);
-			if ($new) {
-				$new .= DS;
+			$dir = dirname($new);
+			if (!is_dir($dir)) {
+				new Folder($dir, true);
 			}
-			$new .= $class . '.php';
 
 			$this->out('Moving ' . $file . ' to ' . $new, 1, Shell::VERBOSE);
-			rename($file, $new);
+			if (!$this->params['dry-run']) {
+				if ($this->params['git']) {
+					exec('git mv -f ' . escapeshellarg($file) . ' ' . escapeshellarg($new));
+				} else {
+					rename($file, $new);
+				}
+			}
 		}
 
 		$this->_paths = $paths;
@@ -383,6 +501,10 @@ class UpgradeShell extends Shell {
 					'short' => 'e',
 					'help' => __('The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
 					'default' => 'php|ctp|thtml|inc|tpl'
+				),
+				'git'=> array(
+					'help' => __('use git command for moving files around.'),
+					'default' => 0
 				),
 				'dry-run'=> array(
 					'short' => 'd',
