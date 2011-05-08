@@ -380,11 +380,15 @@ class UpgradeShell extends Shell {
 
 			$class = $match[1];
 
-			preg_match('@([A-Z][^A-Z]*)$@', $class, $match);
-			if ($match) {
-				$type = $match[1];
+			if (substr($class, 0, 3) === 'Dbo') {
+				$type = 'Dbo';
 			} else {
-				$type = 'unknown';
+				preg_match('@([A-Z][^A-Z]*)$@', $class, $match);
+				if ($match) {
+					$type = $match[1];
+				} else {
+					$type = 'unknown';
+				}
 			}
 
 			preg_match('@^.*[\\\/]plugins[\\\/](.*?)[\\\/]@', $file, $match);
