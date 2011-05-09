@@ -43,6 +43,16 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		CakePlugin::unload();
+	}
+
+/**
  * testFullBaseURL method
  *
  * @access public
@@ -1179,7 +1189,7 @@ class RouterTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			)
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 
 		Router::reload();
 		$request = new CakeRequest();
@@ -2204,7 +2214,7 @@ class RouterTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			)
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 		Router::reload();
 
 		$result = Router::url(array('plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index'));

@@ -553,6 +553,7 @@ class DispatcherTest extends CakeTestCase {
 		$_FILES = $this->_files;
 		$_SERVER = $this->_server;
 		App::build();
+		CakePlugin::unload();
 		Configure::write('App', $this->_app);
 		Configure::write('Cache', $this->_cache);
 		Configure::write('debug', $this->_debug);
@@ -925,7 +926,7 @@ class DispatcherTest extends CakeTestCase {
 		$plugins[] = 'MyPlugin';
 		$plugins[] = 'ArticlesTest';
 
-		App::setObjects('plugin', $plugins);
+		CakePlugin::load('MyPlugin', array('path' => '/fake/path'));
 
 		Router::reload();
 		$Dispatcher = new TestDispatcher();
@@ -982,6 +983,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->passedArgs, $expected);
 
 		Configure::write('Routing.prefixes', array('admin'));
+		CakePLugin::load('ArticlesTest', array('path' => '/fake/path'));
 		Router::reload();
 
 		$Dispatcher = new TestDispatcher();
@@ -1002,7 +1004,7 @@ class DispatcherTest extends CakeTestCase {
 			'return' => 1
 		);
 		foreach ($expected as $key => $value) {
-			$this->assertEqual($controller->request[$key], $expected[$key], 'Value mismatch ' . $key . ' %s');
+			$this->assertEqual($controller->request[$key], $expected[$key], 'Value mismatch ' . $key);
 		}
 	}
 
@@ -1013,12 +1015,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testAutomaticPluginDispatchWithShortAccess() {
-		$_POST = array();
-		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
-		$plugins = App::objects('plugin');
-		$plugins[] = 'MyPlugin';
-
-		App::setObjects('plugin', $plugins);
+		CakePlugin::load('MyPlugin', array('path' => '/fake/path'));
 		Router::reload();
 
 		$Dispatcher = new TestDispatcher();
@@ -1047,7 +1044,7 @@ class DispatcherTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
@@ -1147,7 +1144,7 @@ class DispatcherTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 		Router::reload();
 		Router::parse('/');
 
@@ -1207,6 +1204,7 @@ class DispatcherTest extends CakeTestCase {
 			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
+		CakePlugin::loadAll();
 
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -1264,20 +1262,20 @@ class DispatcherTest extends CakeTestCase {
 		ob_start();
 		$Dispatcher->asset('test_plugin/root.js');
 		$result = ob_get_clean();
-		$expected = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'root.js');
+		$expected = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'root.js');
 		$this->assertEqual($result, $expected);
 
 		ob_start();
 		$Dispatcher->dispatch(new CakeRequest('test_plugin/flash/plugin_test.swf'));
 		$result = ob_get_clean();
-		$file = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'flash' . DS . 'plugin_test.swf');
+		$file = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'flash' . DS . 'plugin_test.swf');
 		$this->assertEqual($file, $result);
 		$this->assertEqual('this is just a test to load swf file from the plugin.', $result);
 
 		ob_start();
 		$Dispatcher->dispatch(new CakeRequest('test_plugin/pdfs/plugin_test.pdf'));
 		$result = ob_get_clean();
-		$file = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'pdfs' . DS . 'plugin_test.pdf');
+		$file = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'pdfs' . DS . 'plugin_test.pdf');
 		$this->assertEqual($file, $result);
 		 $this->assertEqual('this is just a test to load pdf file from the plugin.', $result);
 
@@ -1299,7 +1297,7 @@ class DispatcherTest extends CakeTestCase {
 		ob_start();
 		$Dispatcher->asset('test_plugin/img/cake.icon.gif');
 		$result = ob_get_clean();
-		$file = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
+		$file = file_get_contents(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
 		$this->assertEqual($file, $result);
 
 		ob_start();
