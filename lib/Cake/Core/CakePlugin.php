@@ -163,11 +163,16 @@ class CakePlugin {
 	}
 
 /**
- * Returns a list of all loaded plugins
+ * Retruns true if the plugin $plugin is already loaded
+ * If plugin is null, it will return a list of all loaded plugins
  *
- * @return array list of plugins that have been loaded
+ * @return mixed boolean true if $plugin is already loaded.
+ * If $plugin is null, returns a list of plugins that have been loaded
  */
-	public static function loaded() {
+	public static function loaded($plugin = null) {
+		if ($plugin) {
+			return isset(self::$_plugins[$plugin]);
+		}
 		return array_keys(self::$_plugins);
 	}
 

@@ -69,8 +69,7 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testLoadSingleWithBootstrap() {
 		CakePlugin::load('TestPlugin', array('bootstrap' => true));
-		$expected = array('TestPlugin');
-		$this->assertEquals($expected, CakePlugin::loaded());
+		$this->assertTrue(CakePlugin::loaded('TestPlugin'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 	}
 
@@ -81,8 +80,7 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testLoadSingleWithBootstrapAndRoutes() {
 		CakePlugin::load('TestPlugin', array('bootstrap' => true, 'routes' => true));
-		$expected = array('TestPlugin');
-		$this->assertEquals($expected, CakePlugin::loaded());
+		$this->assertTrue(CakePlugin::loaded('TestPlugin'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin routes', Configure::read('CakePluginTest.test_plugin.routes'));
 	}
@@ -134,8 +132,7 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testMultipleBootstrapFiles() {
 		CakePlugin::load('TestPlugin', array('bootstrap' => array('bootstrap', 'custom_config')));
-		$expected = array('TestPlugin');
-		$this->assertEquals($expected, CakePlugin::loaded());
+		$this->assertTrue(CakePlugin::loaded('TestPlugin'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 	}
 
@@ -147,8 +144,7 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testCallbackBootstrap() {
 		CakePlugin::load('TestPlugin', array('bootstrap' => array($this, 'pluginBootstrap')));
-		$expected = array('TestPlugin');
-		$this->assertEquals($expected, CakePlugin::loaded());
+		$this->assertTrue(CakePlugin::loaded('TestPlugin'));
 		$this->assertEquals('called plugin bootstrap callback', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 	}
 
