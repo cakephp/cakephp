@@ -313,12 +313,14 @@ class Dispatcher {
 				$assetFile = $path . $fileFragment;
 			}
 		} else {
-			$plugin = $parts[0];
-			unset($parts[0]);
-			$fileFragment = implode(DS, $parts);
-			$pluginWebroot = App::pluginPath($plugin) . 'webroot' . DS;
-			if (file_exists($pluginWebroot . $fileFragment)) {
-				$assetFile = $pluginWebroot . $fileFragment;
+			$plugin = Inflector::camelize($parts[0]);
+			if (CakePlugin::loaded($plugin)) {
+				unset($parts[0]);
+				$fileFragment = implode(DS, $parts);
+				$pluginWebroot = CakePlugin::path($plugin) . 'webroot' . DS;
+				if (file_exists($pluginWebroot . $fileFragment)) {
+					$assetFile = $pluginWebroot . $fileFragment;
+				}
 			}
 		}
 

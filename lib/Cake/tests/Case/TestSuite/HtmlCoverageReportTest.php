@@ -26,6 +26,10 @@ class HtmlCoverageReportTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		App::build(array(
+			'plugins' => array(CAKE . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		CakePlugin::loadAll();
 		$reporter = new CakeBaseReporter();
 		$reporter->params = array('app' => false, 'plugin' => false, 'group' => false);
 		$coverage = array();
@@ -47,9 +51,9 @@ class HtmlCoverageReportTest extends CakeTestCase {
 		$this->assertEquals(ROOT . DS . APP_DIR . DS, $result);
 
 		$this->Coverage->appTest = false;
-		$this->Coverage->pluginTest = 'test_plugin';
+		$this->Coverage->pluginTest = 'TestPlugin';
 		$result = $this->Coverage->getPathFilter();
-		$this->assertEquals(ROOT . DS . APP_DIR . DS . 'plugins' . DS .'test_plugin' . DS, $result);
+		$this->assertEquals(CakePlugin::path('TestPlugin'), $result);
 	}
 
 /**
@@ -170,6 +174,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		CakePlugin::unload();
 		unset($this->Coverage);
 	}
 }

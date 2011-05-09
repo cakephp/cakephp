@@ -127,6 +127,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS)
 		));
+		CakePlugin::loadAll();
 		$this->Case = new ControllerTestCase();
 		Router::reload();
 	}
@@ -138,6 +139,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
+		CakePlugin::unload();
 		$this->Case->controller = null;
 	}
 
@@ -412,8 +414,9 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'blue' => 'mana'
 			)
 		));
-		$this->assertTrue(isset($result['params']['url']['red']));
-		$this->assertTrue(isset($result['params']['url']['blue']));
+		$query = $this->Case->controller->request->query;
+		$this->assertTrue(isset($query['red']));
+		$this->assertTrue(isset($query['blue']));
 	}
 
 /**

@@ -278,5 +278,6 @@ class ClassRegistryTest extends CakeTestCase {
 		$PluginUserCopy = ClassRegistry::getObject('RegistryPluginUser');
 		$this->assertTrue(is_a($PluginUserCopy, 'RegistryPluginAppModel'));
 		$this->assertSame($PluginUser, $PluginUserCopy);
+		CakePlugin::unload();
 	}
 }
