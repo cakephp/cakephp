@@ -50,6 +50,7 @@ class CakeLogTest extends CakeTestCase {
 			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
+		CakePlugin::load('TestPlugin');
 
 		$result = CakeLog::config('libtest', array(
 			'engine' => 'TestAppLog'
@@ -64,6 +65,7 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertEqual(CakeLog::configured(), array('libtest', 'plugintest'));
 
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
