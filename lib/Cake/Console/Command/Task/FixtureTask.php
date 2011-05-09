@@ -83,7 +83,7 @@ class FixtureTask extends BakeTask {
 			'help' => __d('cake_console', 'CamelCased name of the plugin to bake fixtures for.'),
 			'short' => 'p',
 		))->addOption('records', array(
-			'help' => 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10',
+			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10'),
 			'short' => 'r',
 			'boolean' => true
 		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));;
@@ -91,7 +91,7 @@ class FixtureTask extends BakeTask {
 
 /**
  * Execution method always used for tasks
- * Handles dispatching to interactive, named, or all processess.
+ * Handles dispatching to interactive, named, or all processeses.
  *
  * @return void
  */
@@ -137,7 +137,7 @@ class FixtureTask extends BakeTask {
 	protected function _interactive() {
 		$this->DbConfig->interactive = $this->Model->interactive = $this->interactive = true;
 		$this->hr();
-		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
+		$this->out(__d('cake_console', "Bake Fixture\nPath: %s", $this->path));
 		$this->hr();
 
 		if (!isset($this->connection)) {
@@ -254,7 +254,7 @@ class FixtureTask extends BakeTask {
 		$this->Template->set($vars);
 		$content = $this->Template->generate('classes', 'fixture');
 
-		$this->out("\nBaking test fixture for $model...", 1, Shell::QUIET);
+		$this->out("\n" . __d('cake_console', 'Baking test fixture for %s...', $model), 1, Shell::QUIET);
 		$this->createFile($path . $filename, $content);
 		return $content;
 	}

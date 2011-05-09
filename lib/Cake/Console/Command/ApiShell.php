@@ -36,7 +36,7 @@ class ApiShell extends Shell {
 	public $paths = array();
 
 /**
- * Override intialize of the Shell
+ * Override initialize of the Shell
  *
  */
 	public function initialize() {
@@ -140,9 +140,9 @@ class ApiShell extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		$parser->addArgument('type', array(
-			'help' => 'Either a full path or type of class (model, behavior, controller, component, view, helper)'
+			'help' => __d('cake_console', 'Either a full path or type of class (model, behavior, controller, component, view, helper)')
 		))->addArgument('className', array(
-			'help' => 'A CakePHP core class name (e.g: Component, HtmlHelper).'
+			'help' => __d('cake_console', 'A CakePHP core class name (e.g: Component, HtmlHelper).')
 		))->addOption('method', array(
 			'short' => 'm',
 			'help' => __d('cake_console', 'The specific method you want help on.')
@@ -181,7 +181,7 @@ class ApiShell extends Shell {
 		} elseif (isset($commands[strtolower($this->args[1])])) {
 			$this->out($commands[strtolower($this->args[1])] . "\n\n");
 		} else {
-			$this->out("Command '" . $this->args[1] . "' not found");
+			$this->out(__d('cake_console', 'Command %s not found', $this->args[1]));
 		}
 	}
 

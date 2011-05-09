@@ -18,6 +18,7 @@
  */
 
 App::uses('BakeTask', 'Console/Command/Task');
+App::uses('AppModel', 'Model');
 
 /**
  * Task class for creating and updating controller files.
@@ -305,7 +306,7 @@ class ControllerTask extends BakeTask {
  * @return string Baked controller
  */
 	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
-		$this->out("\nBaking controller class for $controllerName...", 1, Shell::QUIET);
+		$this->out("\n" . __d('cake_console', 'Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
 
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 

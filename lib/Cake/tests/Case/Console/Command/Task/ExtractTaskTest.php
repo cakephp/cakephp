@@ -118,7 +118,6 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/To change its layout, create: APP\/views\/layouts\/default\.ctp\./s';
 		$this->assertPattern($pattern, $result);
 		
-
 		// extract.ctp
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:6\n';
 		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
@@ -131,9 +130,15 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
 		$pattern .= '\#: (\\\\|\/)home\.ctp:99\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
-
 		$this->assertPattern($pattern, $result);
-
+		
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:17\nmsgid "';
+		$pattern .= 'Hot features!';
+		$pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
+		$pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
+		$pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
+		$pattern .= '"\nmsgstr ""/';
+		$this->assertPattern($pattern, $result);
 
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($this->path . DS . 'domain.pot');

@@ -55,7 +55,7 @@ class I18nTest extends CakeTestCase {
 
 	function testTranslationCaching() {
 		Configure::write('Config.language', 'cache_test_po');
-		$i18n =& i18n::getInstance();
+		$i18n = i18n::getInstance();
 
 		// reset internally stored entries
 		I18n::clear();

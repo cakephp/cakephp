@@ -565,7 +565,7 @@ class ModelValidationTest extends BaseModelTest {
 		);
 
 		$Something = new Something();
-		$JoinThing =& $Something->JoinThing;
+		$JoinThing = $Something->JoinThing;
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
 
@@ -618,7 +618,7 @@ class ModelValidationTest extends BaseModelTest {
 			)
 		);
 		$Something = new Something();
-		$JoinThing =& $Something->JoinThing;
+		$JoinThing = $Something->JoinThing;
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
 		$expectedError = array('doomed' => array('This field cannot be left blank'));

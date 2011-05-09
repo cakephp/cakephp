@@ -1,6 +1,9 @@
 <?php
 /**
- * Core Configurations.
+ * Exception Renderer
+ *
+ * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * as HTML pages.
  *
  * PHP 5
  *
@@ -12,9 +15,21 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.config
- * @since         CakePHP(tm) v 1.1.11.4062
+ * @package       cake.libs.error
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-return $config['Cake.version'] = '2.0.0-dev';
+App::uses('ExceptionRenderer', 'Error');
+
+class TestPluginExceptionRenderer extends ExceptionRenderer {
+
+/**
+ * Renders the response for the exception.
+ *
+ * @return void
+ */
+	public function render() {
+		echo 'Rendered by test plugin';
+	}
+}

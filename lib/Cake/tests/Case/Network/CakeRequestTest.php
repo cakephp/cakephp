@@ -18,6 +18,7 @@
  */
 
 App::uses('Dispatcher', 'Routing');
+App::uses('Xml', 'Utility');
 App::uses('CakeRequest', 'Network');
 
 class CakeRequestTestCase extends CakeTestCase {
@@ -33,6 +34,11 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->_post = $_POST;
 		$this->_files = $_FILES;
 		$this->_app = Configure::read('App');
+		$this->_case = null;
+		if (isset($_GET['case'])) {
+			$this->_case = $_GET['case'];
+			unset($_GET['case']);
+		}
 
 		Configure::write('App.baseUrl', false);
 	}
@@ -48,6 +54,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
+		if (!empty($this->_case)) {
+			$_GET['case'] = $this->_case;
+		}
 		Configure::write('App', $this->_app);
 	}
 
@@ -152,7 +161,7 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_POST = array('one' => 1, 'two' => 'three');
 		$request = new CakeRequest('some/path');
-		$this->assertEqual($request->params['form'], $_POST);
+		$this->assertEquals($_POST, $request->data);
 	}
 
 /**
@@ -1173,7 +1182,7 @@ class CakeRequestTestCase extends CakeTestCase {
 				),
 			),
 			array(
-				'Apache - No rewrite, document root set above top level cake dir, reques root, no PATH_INFO',
+				'Apache - No rewrite, document root set above top level cake dir, request root, no PATH_INFO',
 				array(
 					'App' => array(
 						'base' => false, 
@@ -1424,6 +1433,59 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$result = $request->here(false);
 		$this->assertEquals('/posts/base_path/1/name:value?test=value', $result);
+	}
+
+/**
+ * Test the input() method.
+ *
+ * @return void
+ */
+	function testInput() {
+		$request = $this->getMock('CakeRequest', array('_readStdin'));
+		$request->expects($this->once())->method('_readStdin')
+			->will($this->returnValue('I came from stdin'));
+		
+		$result = $request->input();
+		$this->assertEquals('I came from stdin', $result);
+	}
+
+/**
+ * Test input() decoding.
+ *
+ * @return void
+ */
+	function testInputDecode() {
+		$request = $this->getMock('CakeRequest', array('_readStdin'));
+		$request->expects($this->once())->method('_readStdin')
+			->will($this->returnValue('{"name":"value"}'));
+
+		$result = $request->input('json_decode');
+		$this->assertEquals(array('name' => 'value'), (array)$result);
+	}
+
+/** 
+ * Test input() decoding with additional arguments.
+ *
+ * @return void
+ */
+	function testInputDecodeExtraParams() {
+		$xml = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<post>
+	<title id="title">Test</title>
+</post>
+XML;
+
+		$request = $this->getMock('CakeRequest', array('_readStdin'));
+		$request->expects($this->once())->method('_readStdin')
+			->will($this->returnValue($xml));
+
+		$result = $request->input('Xml::build', array('return' => 'domdocument'));
+		$this->assertInstanceOf('DOMDocument', $result);
+		$this->assertEquals(
+			'Test', 
+			$result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
+		);
 	}
 
 /**

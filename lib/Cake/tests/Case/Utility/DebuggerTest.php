@@ -145,9 +145,9 @@ class DebuggerTest extends CakeTestCase {
 			'pre' => array('class' => 'cake-debug'),
 			'a' => array(
 				'href' => "javascript:void(0);",
-				'onclick' => "document.getElementById('cakeErr9-trace').style.display = " .
-				             "(document.getElementById('cakeErr9-trace').style.display == 'none'" .
-				             " ? '' : 'none');"
+				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
+				             "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
+				             " \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
@@ -171,7 +171,7 @@ class DebuggerTest extends CakeTestCase {
 			               '&line={:line}">{:path}</a>, line {:line}'
 		));
 		$result = Debugger::trace();
-		$this->assertPattern('/' . preg_quote('txmt://open?url=file:///', '/') . '/', $result);
+		$this->assertPattern('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .

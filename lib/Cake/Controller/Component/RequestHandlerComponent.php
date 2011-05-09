@@ -34,7 +34,6 @@ class RequestHandlerComponent extends Component {
  * The layout that will be switched to for Ajax requests
  *
  * @var string
- * @access public
  * @see RequestHandler::setAjax()
  */
 	public $ajaxLayout = 'ajax';
@@ -43,7 +42,6 @@ class RequestHandlerComponent extends Component {
  * Determines whether or not callbacks will be fired on this component
  *
  * @var boolean
- * @access public
  */
 	public $enabled = true;
 
@@ -51,7 +49,6 @@ class RequestHandlerComponent extends Component {
  * Holds the reference to Controller::$request
  *
  * @var CakeRequest
- * @access public
  */
 	public $request;
 
@@ -59,35 +56,33 @@ class RequestHandlerComponent extends Component {
  * Holds the reference to Controller::$response
  *
  * @var CakeResponse
- * @access public
  */
 	public $response;
-
-/**
- * The template to use when rendering the given content type.
- *
- * @var string
- * @access private
- */
-	private $__renderType = null;
 
 /**
  * Contains the file extension parsed out by the Router
  *
  * @var string
- * @access public
  * @see Router::parseExtensions()
  */
 	public $ext = null;
 
 /**
- * Flag set when MIME types have been initialized
+ * The template to use when rendering the given content type.
  *
- * @var boolean
- * @access private
- * @see RequestHandler::__initializeTypes()
+ * @var string
  */
-	private $__typesInitialized = false;
+	private $__renderType = null;
+
+/**
+ * A mapping between extensions and deserializers for request bodies of that type.
+ * By default only JSON and XML are mapped, use RequestHandlerComponent::addInputType()
+ *
+ * @var array
+ */
+	private $__inputTypeMap = array(
+		'json' => array('json_decode', true)
+	);
 
 /**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
@@ -96,14 +91,7 @@ class RequestHandlerComponent extends Component {
  * @param array $settings Array of settings.
  */
 	function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
-
-		foreach ($this->__acceptTypes as $i => $type) {
-			if (strpos($type, ';')) {
-				$type = explode(';', $type);
-				$this->__acceptTypes[$i] = $type[0];
-			}
-		}
+		$this->addInputType('xml', array(array($this, '_convertXml')));
 		parent::__construct($collection, $settings);
 	}
 
@@ -124,7 +112,7 @@ class RequestHandlerComponent extends Component {
 		if (isset($this->request->params['url']['ext'])) {
 			$this->ext = $this->request->params['url']['ext'];
 		}
-		if (empty($this->ext)) {
+		if (empty($this->ext) || $this->ext == 'html') {
 			$accepts = $this->request->accepts();
 			$extensions = Router::extensions();
 			if (count($accepts) == 1) {
@@ -172,17 +160,32 @@ class RequestHandlerComponent extends Component {
 			$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
 		}
 
-		if ($this->requestedWith('xml')) {
-			try {
-				$xml = Xml::build(trim(file_get_contents('php://input')));
-
-				if (isset($xml->data)) {
-					$controller->data = Xml::toArray($xml->data);
-				} else {
-					$controller->data = Xml::toArray($xml);
-				}
-			} catch (Exception $e) {}
+		foreach ($this->__inputTypeMap as $type => $handler) {
+			if ($this->requestedWith($type)) {
+				$input = call_user_func_array(array($controller->request, 'input'), $handler);
+				$controller->request->data = $input;
+			}
 		}
+	}
+
+/**
+ * Helper method to parse xml input data, due to lack of anonymous functions
+ * this lives here.
+ *
+ * @param string $xml 
+ * @return array Xml array data
+ * @access protected
+ */
+	public function _convertXml($xml) {
+		try {
+			$xml = Xml::build($xml);
+			if (isset($xml->data)) {
+				return Xml::toArray($xml->data);
+			}
+			return Xml::toArray($xml);
+		 } catch (XmlException $e) {
+			return array();
+		 }
 	}
 
 /**
@@ -216,6 +219,7 @@ class RequestHandlerComponent extends Component {
  * Returns true if the current HTTP request is Ajax, false otherwise
  *
  * @return boolean True if call is Ajax
+ * @deprecated use `$this->request->is('ajax')` instead.
  */
 	public function isAjax() {
 		return $this->request->is('ajax');
@@ -225,6 +229,7 @@ class RequestHandlerComponent extends Component {
  * Returns true if the current HTTP request is coming from a Flash-based client
  *
  * @return boolean True if call is from Flash
+ * @deprecated use `$this->request->is('flash')` instead.
  */
 	public function isFlash() {
 		return $this->request->is('flash');
@@ -234,6 +239,7 @@ class RequestHandlerComponent extends Component {
  * Returns true if the current request is over HTTPS, false otherwise.
  *
  * @return bool True if call is over HTTPS
+ * @deprecated use `$this->request->is('ssl')` instead.
  */
 	public function isSSL() {
 		return $this->request->is('ssl');
@@ -348,6 +354,7 @@ class RequestHandlerComponent extends Component {
  * @param mixed $type The Content-type or array of Content-types assigned to the name,
  *    i.e. "text/html", or "application/xml"
  * @return void
+ * @deprecated use `$this->response->type()` instead.
  */
 	public function setContent($name, $type = null) {
 		$this->response->type(array($name => $type));
@@ -367,7 +374,7 @@ class RequestHandlerComponent extends Component {
  * Gets remote client IP
  *
  * @return string Client IP address
- * @deprecated use $this->request->clientIp() from your controller instead.
+ * @deprecated use $this->request->clientIp() from your,  controller instead.
  */
 	public function getClientIP($safe = true) {
 		return $this->request->clientIp($safe);
@@ -640,5 +647,22 @@ class RequestHandlerComponent extends Component {
 			return $type;
 		}
 		return null;
+	}
+
+/**
+ * Add a new mapped input type.  Mapped input types are automatically 
+ * converted by RequestHandlerComponent during the startup() callback.
+ *
+ * @param string $type The type alias being converted, ie. json
+ * @param array $handler The handler array for the type.  The first index should
+ *    be the handling callback, all other arguments should be additional parameters
+ *    for the handler.
+ * @return void
+ */
+	public function addInputType($type, $handler) {
+		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
+			throw new CakeException(__d('cake_dev', 'You must give a handler callback.'));
+		}
+		$this->__inputTypeMap[$type] = $handler;
 	}
 }

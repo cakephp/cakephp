@@ -470,16 +470,8 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 		$Controller = new Controller($request);
 
-		$Controller->modelClass = 'ControllerPost';
-		$Controller->passedArgs[] = '1';
-		$Controller->constructClasses();
-		$this->assertEqual($Controller->ControllerPost->id, 1);
-
-		unset($Controller);
-
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
 		$Controller->constructClasses();
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
@@ -494,7 +486,6 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses = array('TestPlugin.TestPluginPost');
 		$Controller->constructClasses();
 
-		$this->assertEqual($Controller->modelClass, 'TestPluginPost');
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
 
@@ -917,7 +908,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
 		$this->assertNull($testVars['uses']);
 
-		$this->assertFalse(isset($TestController->ControllerPost));
+		$this->assertFalse(property_exists($TestController, 'ControllerPost'));
 
 
 		$TestController = new ControllerCommentsController($request);

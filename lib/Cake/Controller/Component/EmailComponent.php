@@ -19,7 +19,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('Multibyte', 'I18n');
-App::uses('CakeEmail', 'Network');
+App::uses('CakeEmail', 'Network/Email');
 
 /**
  * EmailComponent

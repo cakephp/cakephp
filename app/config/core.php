@@ -286,7 +286,7 @@
 
 /**
  * Pick the caching engine to use.  If APC is enabled use it.
- * If running via cli - apc is disabled by default. ensure it's avaiable and enabled in this case
+ * If running via cli - apc is disabled by default. ensure it's available and enabled in this case
  *
  */
 $engine = 'File';

@@ -40,7 +40,7 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 			'CakeSchema',
 			'ConnectionManager',
 			'Datasource' . DS . 'DboSource',
-			'Datasource' . DS . 'Database' . DS . 'MySql',
+			'Datasource' . DS . 'Database' . DS . 'Mysql',
 			'Datasource' . DS . 'Database' . DS . 'Postgres',
 			'Datasource' . DS . 'Database' . DS . 'Sqlite'
 		);

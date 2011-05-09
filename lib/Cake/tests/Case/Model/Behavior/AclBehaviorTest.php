@@ -266,7 +266,7 @@ class AclBehaviorTest extends CakeTestCase {
  * @access public
  */
 	function testSetupMulti() {
-		$User =& new AclPerson();
+		$User = new AclPerson();
 		$this->assertTrue(isset($User->Behaviors->Acl->settings['AclPerson']));
 		$this->assertEqual($User->Behaviors->Acl->settings['AclPerson']['type'], 'both');
 		$this->assertTrue(is_object($User->Aro));

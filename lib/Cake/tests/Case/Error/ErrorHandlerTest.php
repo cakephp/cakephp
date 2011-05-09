@@ -37,8 +37,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function setUp() {
 		App::build(array(
 			'View' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS,
-				LIBS . 'libs' . DS . 'view' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
 		Router::reload();
@@ -148,7 +147,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$result = file(LOGS . 'debug.log');
 		$this->assertEqual(count($result), 1);
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
 		@unlink(LOGS . 'debug.log');
@@ -173,7 +172,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$result = file(LOGS . 'debug.log');
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
 		$this->assertPattern('/^Trace:/', $result[1]);
@@ -221,6 +220,25 @@ class ErrorHandlerTest extends CakeTestCase {
 		$log = file(LOGS . 'error.log');
 		$this->assertPattern('/\[NotFoundException\] Kaboom!/', $log[0], 'message missing.');
 		$this->assertPattern('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[1], 'Stack trace missing.');
+	}
+
+/**
+ * tests it is possible to load a plugin exception renderer
+ *
+ * @return void
+ */
+	function testLoadPluginHanlder() {
+		App::build(array(
+			'plugins' => array(
+				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+			)
+		), true);
+		Configure::write('Exception.renderer', 'TestPlugin.TestPluginExceptionRenderer');
+		$error = new NotFoundException('Kaboom!');
+		ob_start();
+		ErrorHandler::handleException($error);
+		$result = ob_get_clean();
+		$this->assertEquals($result, 'Rendered by test plugin');
 	}
 
 }

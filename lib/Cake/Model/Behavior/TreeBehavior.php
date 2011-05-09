@@ -426,7 +426,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to move
- * @param mixed $number how many places to move the node or true to move to last position
+ * @param int|bool $number how many places to move the node or true to move to last position
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1352/moveDown
  */
@@ -484,7 +484,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to move
- * @param mixed $number how many places to move the node, or true to move to first position
+ * @param int|bool $number how many places to move the node, or true to move to first position
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1353/moveUp
  */

@@ -339,7 +339,6 @@ class ComponentTest extends CakeTestCase {
 
 		$this->assertInstanceOf('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
 		$this->assertInstanceOf('EmailComponent', $Controller->SomethingWithEmail->Email);
-		$this->assertInstanceOf('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
 	}
 
 }

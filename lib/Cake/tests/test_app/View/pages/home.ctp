@@ -18,7 +18,7 @@
 App::uses('Debugger', 'Utility');
 ?>
 <h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
-<a href="http://cakephp.org/changelogs/1.3.6"><?php __d('cake_dev', 'Read the changelog'); ?> </a>
+<a href="http://cakephp.org/changelogs/1.3.6"><?php echo __d('cake_dev', 'Read the changelog'); ?> </a>
 <p>
 	<?php
 		if (is_writable(TMP)):

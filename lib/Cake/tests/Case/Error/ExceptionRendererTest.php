@@ -609,4 +609,32 @@ class ExceptionRendererTest extends CakeTestCase {
 			$this->assertPattern($pattern, $result);
 		}
 	}
+
+/**
+ * Test exceptions being raised when helpers are missing.
+ *
+ * @return void
+ */
+	function testMissingRenderSafe() {
+		$exception = new MissingHelperFileException(array('class' => 'Fail'));
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		$ExceptionRenderer->controller = $this->getMock('Controller');
+		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
+		$ExceptionRenderer->controller->request = $this->getMock('CakeRequest');
+		$ExceptionRenderer->controller->expects($this->at(2))
+			->method('render')
+			->with('missingHelperFile')
+			->will($this->throwException($exception));
+
+		$ExceptionRenderer->controller->expects($this->at(3))
+			->method('render')
+			->with('error500')
+			->will($this->returnValue(true));
+
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse');
+		$ExceptionRenderer->render();
+		sort($ExceptionRenderer->controller->helpers);
+		$this->assertEquals(array('Form', 'Html', 'Session'), $ExceptionRenderer->controller->helpers);
+	}
 }

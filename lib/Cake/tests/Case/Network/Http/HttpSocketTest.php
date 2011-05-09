@@ -596,6 +596,34 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * testRequestWithConstructor method
+ *
+ * @return void
+ */
+	public function testRequestWithConstructor() {
+		$request = array(
+			'request' => array(
+				'uri' => array(
+					'scheme' => 'http',
+					'host' => 'localhost',
+					'port' => '5984',
+					'user' => null,
+					'pass' => null
+				)
+			)
+		);
+		$http = new MockHttpSocketRequests($request);
+
+		$expected = array('method' => 'GET', 'uri' => '/_test');
+		$http->expects($this->at(0))->method('request')->with($expected);
+		$http->get('/_test');
+
+		$expected = array('method' => 'GET', 'uri' => 'http://localhost:5984/_test?count=4');
+		$http->expects($this->at(0))->method('request')->with($expected);
+		$http->get('/_test', array('count' => 4));
+	}
+
+/**
  * testRequestWithResource
  *
  * @return void

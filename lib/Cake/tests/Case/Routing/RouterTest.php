@@ -1275,7 +1275,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::parse('/posts.atom?hello=goodbye');
-		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array(), 'url' => array('ext' => 'html'));
+		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
@@ -2164,7 +2164,7 @@ class RouterTest extends CakeTestCase {
 
 		$expected = array(
 			'plugin' => null, 'controller' => false, 'action' => false,
-			'param1' => '1', 'param2' => '2', 'form' => array()
+			'param1' => '1', 'param2' => '2'
 		);
 		$this->assertEqual(Router::getParams(), $expected);
 		$this->assertEqual(Router::getParam('controller'), false);
@@ -2175,7 +2175,7 @@ class RouterTest extends CakeTestCase {
 
 		$params = array('controller' => 'pages', 'action' => 'display');
 		Router::setRequestInfo(array($params, $paths));
-		$expected = array('plugin' => null, 'controller' => 'pages', 'action' => 'display', 'form' => array());
+		$expected = array('plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual(Router::getParams(), $expected);
 		$this->assertEqual(Router::getParams(true), $expected);
 	}

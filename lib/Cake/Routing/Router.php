@@ -543,9 +543,6 @@ class Router {
 					}
 				}
 			}
-			if (empty($ext)) {
-				$ext = 'html';
-			}
 		}
 		return compact('ext', 'url');
 	}

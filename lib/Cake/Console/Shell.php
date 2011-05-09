@@ -188,7 +188,7 @@ class Shell extends Object {
 /**
  * Starts up the Shell
  * allows for checking and configuring prior to command or main execution
- * can be overriden in subclasses
+ * can be overridden in subclasses
  *
  */
 	public function startup() {
@@ -201,10 +201,10 @@ class Shell extends Object {
  */
 	protected function _welcome() {
 		$this->out();
-		$this->out('<info>Welcome to CakePHP v' . Configure::version() . ' Console</info>');
+		$this->out(__d('cake_console', '<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
 		$this->hr();
-		$this->out('App : '. APP_DIR);
-		$this->out('Path: '. APP_PATH);
+		$this->out(__d('cake_console', 'App : %s', APP_DIR));
+		$this->out(__d('cake_console', 'Path: %s', APP_PATH));
 		$this->hr();
 	}
 
@@ -220,7 +220,7 @@ class Shell extends Object {
 		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
-		App::import('Core', 'ClassRegistry');
+		App::uses('ClassRegistry', 'Utility');
 
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
@@ -296,7 +296,7 @@ class Shell extends Object {
  *
  * ### Usage:
  *
- * With a string commmand:
+ * With a string command:
  *
  *	`return $this->dispatchShell('schema create DbAcl');`
  *
@@ -578,7 +578,7 @@ class Shell extends Object {
  */
 	public function clear() {
 		if (empty($this->params['noclear'])) {
-			if ( DS === '/') {
+			if (DS === '/') {
 				passthru('clear');
 			} else {
 				passthru('cls');
@@ -600,7 +600,7 @@ class Shell extends Object {
 
 		if (is_file($path) && $this->interactive === true) {
 			$this->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
-			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'),  array('y', 'n', 'q'), 'n');
+			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), array('y', 'n', 'q'), 'n');
 
 			if (strtolower($key) == 'q') {
 				$this->out(__d('cake_console', '<error>Quitting</error>.'), 2);
@@ -636,13 +636,13 @@ class Shell extends Object {
 		if (@include 'PHPUnit' . DS . 'Autoload.php') {
 			return true;
 		}
-		$prompt = 'PHPUnit is not installed. Do you want to bake unit test files anyway?';
+		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
 		$unitTest = $this->in($prompt, array('y','n'), 'y');
 		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
 
 		if ($result) {
 			$this->out();
-			$this->out('You can download PHPUnit from http://phpunit.de');
+			$this->out(__d('cake_console', 'You can download PHPUnit from %s', 'http://phpunit.de'));
 		}
 		return $result;
 	}

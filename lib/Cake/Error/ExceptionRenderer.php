@@ -184,7 +184,7 @@ class ExceptionRenderer {
 			$this->controller->set($error->getAttributes());
 			$this->_outputMessage($this->template);
 		} catch (Exception $e) {
-			$this->_outputMessage('error500');
+			$this->_outputMessageSafe('error500');
 		}
 	}
 
@@ -233,6 +233,18 @@ class ExceptionRenderer {
 	protected function _outputMessage($template) {
 		$this->controller->render($template);
 		$this->controller->afterFilter();
+		$this->controller->response->send();
+	}
+
+/**
+ * A safer way to render error messages, replaces all helpers, with basics
+ * and doesn't call component methods.
+ *
+ * @param string $template The template to render
+ */
+	protected function _outputMessageSafe($template) {
+		$this->controller->helpers = array('Form', 'Html', 'Session');
+		$this->controller->render($template);
 		$this->controller->response->send();
 	}
 }

@@ -40,7 +40,7 @@ class TestsAppsPostsController extends AppController {
  *
  */
 	function url_var() {
-		$this->set('params', $this->params);
+		$this->set('params', $this->request->params);
 		$this->render('index');
 	}
 
@@ -49,7 +49,7 @@ class TestsAppsPostsController extends AppController {
  *
  */
 	function post_var() {
-		$this->set('data', $this->data);
+		$this->set('data', $this->request->data);
 		$this->render('index');
 	}
 

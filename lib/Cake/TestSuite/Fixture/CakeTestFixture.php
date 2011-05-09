@@ -70,7 +70,7 @@ class CakeTestFixture {
 	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array_merge(
-				array('connection' => 'default', 'records' => false), 
+				array('connection' => 'default', 'records' => false),
 				is_array($this->import) ? $this->import : array('model' => $this->import)
 			);
 
@@ -178,15 +178,22 @@ class CakeTestFixture {
 		if (!isset($this->_insert)) {
 			$values = array();
 			if (isset($this->records) && !empty($this->records)) {
+				$fields = array();
+				foreach($this->records as $record) {
+					$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
+				}
+				$fields = array_unique($fields);
+				$default = array_fill_keys($fields, null);
 				foreach ($this->records as $record) {
 					$fields = array_keys($record);
-					$values[] = array_values($record);
+					$values[] = array_values(array_merge($default, $record));
 				}
 				return $db->insertMulti($this->table, $fields, $values);
 			}
 			return true;
 		}
 	}
+
 
 /**
  * Truncates the current fixture. Can be overwritten by classes extending CakeFixture to trigger other events before / after

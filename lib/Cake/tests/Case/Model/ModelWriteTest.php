@@ -3016,7 +3016,7 @@ class ModelWriteTest extends BaseModelTest {
 		$testDb = ConnectionManager::getDataSource('test');
 
 		$mock = $this->getMock('DboSource', array(), array(), 'MockTransactionAssociatedDboSource', false);
-		$db =& ConnectionManager::create('mock_transaction_assoc', array(
+		$db = ConnectionManager::create('mock_transaction_assoc', array(
 			'datasource' => 'MockTransactionAssociatedDboSource',
 		));
 		$this->mockObjects[] = $db;
@@ -3824,12 +3824,24 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * testProductUpdateAllWithForeignKey
+ * test updateAll with empty values.
+ *
+ * @return void
+ */
+	function testUpdateAllEmptyValues() {
+		$this->loadFixtures('Author', 'Post');
+		$model = new Author();
+		$result = $model->updateAll(array('user' => '""'));
+		$this->assertTrue($result);
+	}
+
+/**
+ * testUpdateAllWithJoins
  *
  * @access public
  * @return void
  */
-	function testProductUpdateAll() {
+	function testUpdateAllWithJoins() {
 		$this->skipIf(
 			!$this->db instanceof Mysql,
 			'%s Currently, there is no way of doing joins in an update statement in postgresql or sqlite'
@@ -3874,12 +3886,12 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * testProductUpdateAllWithoutForeignKey
+ * testUpdateAllWithoutForeignKey
  *
  * @access public
  * @return void
  */
-    function testProductUpdateAllWithoutForeignKey() {
+    function testUpdateAllWithoutForeignKey() {
 		$this->skipIf(
 			!$this->db instanceof Mysql,
 			'%s Currently, there is no way of doing joins in an update statement in postgresql'

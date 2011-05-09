@@ -199,8 +199,14 @@ class CakeSocket {
 				return false;
 			}
 		}
-
-		return fwrite($this->connection, $data, strlen($data));
+		$totalBytes = strlen($data);
+		for ($written = 0, $rv = 0; $written < $totalBytes; $written += $rv) {
+			$rv = fwrite($this->connection, substr($data, $written));
+			if ($rv === false || $rv === 0) {
+				return $written;
+			}
+		}
+		return $written;
 	}
 
 /**

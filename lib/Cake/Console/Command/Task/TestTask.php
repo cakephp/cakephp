@@ -142,7 +142,7 @@ class TestTask extends BakeTask {
 		if ($this->plugin) {
 			$plugin = $this->plugin . '.';
 		}
-		$this->out("\nBaking test case for $className $type...", 1, Shell::QUIET);
+		$this->out("\n" . __d('cake_console', 'Baking test case for %s %s ...', $className, $type), 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);

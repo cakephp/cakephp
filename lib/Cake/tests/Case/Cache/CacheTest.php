@@ -235,7 +235,7 @@ class CacheTest extends CakeTestCase {
 	function testInitSettings() {
 		$initial = Cache::settings();
 		$override = array('engine' => 'File', 'path' => TMP . 'tests');
-		Cache::config('default', $override);
+		Cache::config('for_test', $override);
 
 		$settings = Cache::settings();
 		$expecting = $override + $initial;

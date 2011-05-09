@@ -137,7 +137,8 @@ class SchemaShell extends Shell {
 
 		if (!$snapshot && file_exists($this->Schema->path . DS . $this->params['file'])) {
 			$snapshot = true;
-			$result = strtolower($this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's'));
+			$prompt = __d('cake_console', "Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?");
+			$result = strtolower($this->in($prompt, array('o', 's', 'q'), 's'));
 			if ($result === 'q') {
 				return $this->_stop();
 			}
@@ -453,7 +454,7 @@ class SchemaShell extends Shell {
 			'help' => __d('cake_console', 'Snapshot number to use/make.')
 		);
 		$dry = array(
-			'help' => 'Perform a dry run on create and update commands. Queries will be output instead of run.',
+			'help' => __d('cake_console', 'Perform a dry run on create and update commands. Queries will be output instead of run.'),
 			'boolean' => true
 		);
 		$force = array(
@@ -467,10 +468,9 @@ class SchemaShell extends Shell {
 
 		$parser = parent::getOptionParser();
 		$parser->description(
-			'The Schema Shell generates a schema object from' .
-			'the database and updates the database from the schema.'
+			__d('cake_console', 'The Schema Shell generates a schema object from the database and updates the database from the schema.')
 		)->addSubcommand('view', array(
-			'help' => 'read and output the contents of a schema file',
+			'help' => __d('cake_console', 'Read and output the contents of a schema file'),
 			'parser' => array(
 				'options' => compact('plugin', 'path', 'file', 'name', 'connection'),
 				'arguments' => compact('name')

@@ -38,7 +38,7 @@ class DbConfigTask extends Shell {
  */
 	protected $_defaultConfig = array(
 		'name' => 'default',
-		'driver'=> 'mysql',
+		'datasource'=> 'Database/Mysql',
 		'persistent'=> 'false',
 		'host'=> 'localhost',
 		'login'=> 'root',
@@ -94,19 +94,19 @@ class DbConfigTask extends Shell {
 			$name = '';
 
 			while ($name == '') {
-				$name = $this->in("Name:", null, 'default');
+				$name = $this->in(__d('cake_console', "Name:"), null, 'default');
 				if (preg_match('/[^a-z0-9_]/i', $name)) {
 					$name = '';
-					$this->out('The name may only contain unaccented latin characters, numbers or underscores');
+					$this->out(__d('cake_console', 'The name may only contain unaccented latin characters, numbers or underscores'));
 				} else if (preg_match('/^[^a-z_]/i', $name)) {
 					$name = '';
-					$this->out('The name must start with an unaccented latin character or an underscore');
+					$this->out(__d('cake_console', 'The name must start with an unaccented latin character or an underscore'));
 				}
 			}
 
-			$driver = $this->in('Driver:', array('mssql', 'mysql', 'oracle', 'postgres', 'sqlite'), 'mysql');
+			$driver = $this->in(__d('cake_console', 'Driver:'), array('Mssql', 'Mysql', 'Oracle', 'Postgres', 'Sqlite'), 'Mysql');
 
-			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
+			$persistent = $this->in(__d('cake_console', 'Persistent Connection?'), array('y', 'n'), 'n');
 			if (strtolower($persistent) == 'n') {
 				$persistent = 'false';
 			} else {
@@ -115,12 +115,12 @@ class DbConfigTask extends Shell {
 
 			$host = '';
 			while ($host == '') {
-				$host = $this->in('Database Host:', null, 'localhost');
+				$host = $this->in(__d('cake_console', 'Database Host:'), null, 'localhost');
 			}
 
 			$port = '';
 			while ($port == '') {
-				$port = $this->in('Port?', null, 'n');
+				$port = $this->in(__d('cake_console', 'Port?'), null, 'n');
 			}
 
 			if (strtolower($port) == 'n') {
@@ -129,16 +129,16 @@ class DbConfigTask extends Shell {
 
 			$login = '';
 			while ($login == '') {
-				$login = $this->in('User:', null, 'root');
+				$login = $this->in(__d('cake_console', 'User:'), null, 'root');
 			}
 			$password = '';
 			$blankPassword = false;
 
 			while ($password == '' && $blankPassword == false) {
-				$password = $this->in('Password:');
+				$password = $this->in(__d('cake_console', 'Password:'));
 
 				if ($password == '') {
-					$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
+					$blank = $this->in(__d('cake_console', 'The password you supplied was empty. Use an empty password?'), array('y', 'n'), 'n');
 					if ($blank == 'y') {
 						$blankPassword = true;
 					}
@@ -147,12 +147,12 @@ class DbConfigTask extends Shell {
 
 			$database = '';
 			while ($database == '') {
-				$database = $this->in('Database Name:', null, 'cake');
+				$database = $this->in(__d('cake_console', 'Database Name:'), null, 'cake');
 			}
 
 			$prefix = '';
 			while ($prefix == '') {
-				$prefix = $this->in('Table Prefix?', null, 'n');
+				$prefix = $this->in(__d('cake_console', 'Table Prefix?'), null, 'n');
 			}
 			if (strtolower($prefix) == 'n') {
 				$prefix = null;
@@ -160,7 +160,7 @@ class DbConfigTask extends Shell {
 
 			$encoding = '';
 			while ($encoding == '') {
-				$encoding = $this->in('Table encoding?', null, 'n');
+				$encoding = $this->in(__d('cake_console', 'Table encoding?'), null, 'n');
 			}
 			if (strtolower($encoding) == 'n') {
 				$encoding = null;
@@ -169,7 +169,7 @@ class DbConfigTask extends Shell {
 			$schema = '';
 			if ($driver == 'postgres') {
 				while ($schema == '') {
-					$schema = $this->in('Table schema?', null, 'n');
+					$schema = $this->in(__d('cake_console', 'Table schema?'), null, 'n');
 				}
 			}
 			if (strtolower($schema) == 'n') {
@@ -183,7 +183,7 @@ class DbConfigTask extends Shell {
 			}
 
 			$dbConfigs[] = $config;
-			$doneYet = $this->in('Do you wish to add another database configuration?', null, 'n');
+			$doneYet = $this->in(__d('cake_console', 'Do you wish to add another database configuration?'), null, 'n');
 
 			if (strtolower($doneYet == 'n')) {
 				$done = true;
@@ -205,35 +205,35 @@ class DbConfigTask extends Shell {
 		extract($config);
 		$this->out();
 		$this->hr();
-		$this->out('The following database configuration will be created:');
+		$this->out(__d('cake_console', 'The following database configuration will be created:'));
 		$this->hr();
-		$this->out("Name:         $name");
-		$this->out("Driver:       $driver");
-		$this->out("Persistent:   $persistent");
-		$this->out("Host:         $host");
+		$this->out(__d('cake_console', "Name:         %s", $name));
+		$this->out(__d('cake_console', "Driver:       %s", $driver));
+		$this->out(__d('cake_console', "Persistent:   %s", $persistent));
+		$this->out(__d('cake_console', "Host:         %s", $host));
 
 		if ($port) {
-			$this->out("Port:         $port");
+			$this->out(__d('cake_console', "Port:         %s", $port));
 		}
 
-		$this->out("User:         $login");
-		$this->out("Pass:         " . str_repeat('*', strlen($password)));
-		$this->out("Database:     $database");
+		$this->out(__d('cake_console', "User:         %s", $login));
+		$this->out(__d('cake_console', "Pass:         %s", str_repeat('*', strlen($password))));
+		$this->out(__d('cake_console', "Database:     %s", $database));
 
 		if ($prefix) {
-			$this->out("Table prefix: $prefix");
+			$this->out(__d('cake_console', "Table prefix: %s", $prefix));
 		}
 
 		if ($schema) {
-			$this->out("Schema:       $schema");
+			$this->out(__d('cake_console', "Schema:       %s", $schema));
 		}
 
 		if ($encoding) {
-			$this->out("Encoding:     $encoding");
+			$this->out(__d('cake_console', "Encoding:     %s", $encoding));
 		}
 
 		$this->hr();
-		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
 			return $config;
@@ -249,7 +249,7 @@ class DbConfigTask extends Shell {
  */
 	public function bake($configs) {
 		if (!is_dir($this->path)) {
-			$this->err($this->path . ' not found');
+			$this->err(__d('cake_console', '%s not found', $this->path));
 			return false;
 		}
 
@@ -313,7 +313,7 @@ class DbConfigTask extends Shell {
 			extract($config);
 
 			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'driver' => '{$driver}',\n";
+			$out .= "\t\t'datasource' => 'Database/{$driver}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
 

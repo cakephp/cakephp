@@ -22,13 +22,51 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual($expected, $old);
 
 		App::build(array('Model' => array('/path/to/models/')));
-
 		$new = App::path('Model');
-
 		$expected = array(
 			'/path/to/models/',
 			APP . 'Model' . DS,
 			APP . 'models' . DS
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build();
+		App::build(array('Model' => array('/path/to/models/')), App::PREPEND);
+		$new = App::path('Model');
+		$expected = array(
+			'/path/to/models/',
+			APP . 'Model' . DS,
+			APP . 'models' . DS
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build();
+		App::build(array('Model' => array('/path/to/models/')), App::APPEND);
+		$new = App::path('Model');
+		$expected = array(
+			APP . 'Model' . DS,
+			APP . 'models' . DS,
+			'/path/to/models/'
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build();
+		App::build(array(
+			'Model' => array('/path/to/models/'),
+			'Controller' => array('/path/to/controllers/'),
+		), App::APPEND);
+		$new = App::path('Model');
+		$expected = array(
+			APP . 'Model' . DS,
+			APP . 'models' . DS,
+			'/path/to/models/'
+		);
+		$this->assertEqual($expected, $new);
+		$new = App::path('Controller');
+		$expected = array(
+			APP . 'Controller' . DS,
+			APP . 'controllers' . DS,
+			'/path/to/controllers/'
 		);
 		$this->assertEqual($expected, $new);
 
@@ -152,7 +190,7 @@ class AppImportTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $old);
 
-		App::build(array('Model' => array('/path/to/models/')), true);
+		App::build(array('Model' => array('/path/to/models/')), App::RESET);
 
 		$new = App::path('Model');
 
@@ -183,13 +221,13 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual(array(LIBS . 'Controller' . DS), $controller);
 
 		$component = App::core('Controller/Component');
-		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS), $component);
+		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS), str_replace('/', DS, $component));
 
 		$auth = App::core('Controller/Component/Auth');
-		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), $auth);
+		$this->assertEqual(array(LIBS . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), str_replace('/', DS, $auth));
 
 		$datasource = App::core('Model/Datasource');
-		$this->assertEqual(array(LIBS . 'Model' . DS . 'Datasource' . DS), $datasource);
+		$this->assertEqual(array(LIBS . 'Model' . DS . 'Datasource' . DS), str_replace('/', DS, $datasource));
 	}
 
 /**
@@ -210,7 +248,7 @@ class AppImportTest extends CakeTestCase {
 			'View' => App::core('View'),
 			'Model' => App::core('Model'),
 			'View/Helper' => App::core('View/Helper'),
-		), true);
+		), App::RESET);
 		$result = App::objects('behavior', null, false);
 		$this->assertTrue(in_array('TreeBehavior', $result));
 		$result = App::objects('Model/Behavior', null, false);
@@ -285,9 +323,11 @@ class AppImportTest extends CakeTestCase {
 		$this->assertTrue(in_array('TestPluginPersisterOne', $result));
 
 		$result = App::objects('TestPlugin.helper');
+		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
 		$this->assertEquals($result, $expected);
 		$result = App::objects('TestPlugin.View/Helper');
+		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
 		$this->assertEquals($result, $expected);
 
@@ -462,7 +502,7 @@ class AppImportTest extends CakeTestCase {
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
-		
+
 		$result = App::import('Helper', 'TestPlugin.TestPluginApp');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestPluginAppHelper'));
@@ -470,7 +510,7 @@ class AppImportTest extends CakeTestCase {
 		$result = App::import('Datasource', 'TestPlugin.TestSource');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestSource'));
-		
+
 		App::build();
 	}
 
@@ -621,7 +661,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
-		), true);
+		), App::RESET);
 
 		ob_start();
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
@@ -677,7 +717,7 @@ class AppImportTest extends CakeTestCase {
 		App::build(array(
 			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
-		), true);
+		), App::RESET);
 
 		$this->assertFalse(class_exists('CustomLibClass', false));
 		App::uses('CustomLibClass', 'TestPlugin.Custom/Package');

@@ -70,7 +70,7 @@ class ConsoleInputOption {
 /**
  * Make a new Input Option
  *
- * @param mixed $name The long name of the option, or an array with all the properites.
+ * @param mixed $name The long name of the option, or an array with all the properties.
  * @param string $short The short alias for this option
  * @param string $help The help text for this option
  * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
@@ -179,8 +179,8 @@ class ConsoleInputOption {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new ConsoleException(sprintf(
-				__d('cake_console', '"%s" is not a valid value for --%s. Please use one of "%s"'), 
+			throw new ConsoleException(
+				__d('cake_console', '"%s" is not a valid value for --%s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
 		}

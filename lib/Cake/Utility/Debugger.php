@@ -176,7 +176,6 @@ class Debugger {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
 				$instance[0] = new $class();
 				if (Configure::read('debug') > 0) {
-					Configure::version(); // Make sure the core config is loaded
 					$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
 				}
 			}
@@ -185,7 +184,6 @@ class Debugger {
 		if (!$instance) {
 			$instance[0] = new Debugger();
 			if (Configure::read('debug') > 0) {
-				Configure::version(); // Make sure the core config is loaded
 				$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
 			}
 		}
@@ -609,7 +607,7 @@ class Debugger {
 			$this->_outputFormat = 'js';
 		}
 
-		$data['id'] = 'cakeErr' . count($this->errors);
+		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
 		$insert = array('context' => join("\n", $context), 'helpPath' => $this->helpPath) + $data;
 

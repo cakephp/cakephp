@@ -822,7 +822,6 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($result->url, 'request_action/params_pass');
 		$this->assertEqual($result['controller'], 'request_action');
 		$this->assertEqual($result['action'], 'params_pass');
-		$this->assertEqual($result['form'], array());
 		$this->assertEqual($result['plugin'], null);
 
 		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');

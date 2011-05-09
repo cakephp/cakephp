@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
- * Object wrapper for outputing information from a shell application.
+ * Object wrapper for outputting information from a shell application.
  * Can be connected to any stream resource that can be used with fopen()
  * 
- * Can generate colourized output on consoles that support it. There are a few 
+ * Can generate colorized output on consoles that support it. There are a few 
  * built in styles
  *
  * - `error` Error messages.
@@ -37,7 +37,7 @@
  *
  * `$this->out('<warning>Overwrite:</warning> foo.php was overwritten.');`
  *
- * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal colour.
+ * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
  * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
  * at this time.
  *
@@ -55,7 +55,7 @@ class ConsoleOutput {
 	const PLAIN = 1;
 
 /**
- * Colour output - Convert known tags in to ANSI color escape codes.
+ * Color output - Convert known tags in to ANSI color escape codes.
  */
 	const COLOR = 2;
 
@@ -79,7 +79,7 @@ class ConsoleOutput {
 	protected $_outputAs = self::COLOR;
 
 /**
- * text colors used in coloured output.
+ * text colors used in colored output.
  *
  * @var array
  */
@@ -95,7 +95,7 @@ class ConsoleOutput {
 	);
 
 /**
- * background colours used in coloured output.
+ * background colors used in colored output.
  *
  * @var array
  */
@@ -111,7 +111,7 @@ class ConsoleOutput {
 	);
 
 /**
- * formatting options for coloured output
+ * formatting options for colored output
  *
  * @var string
  */
@@ -140,7 +140,7 @@ class ConsoleOutput {
 /**
  * Construct the output object.
  *
- * Checks for a pretty console enviornment.  Ansicon allows pretty consoles
+ * Checks for a pretty console environment. Ansicon allows pretty consoles
  * on windows, and is supported.
  * 
  * @param string $stream The identifier of the stream to write output to.
@@ -267,7 +267,7 @@ class ConsoleOutput {
 /**
  * Get/Set the output type to use.  The output type how formatting tags are treated.
  * 
- * @param int $type The output type to use.  Should be one of the class contstants.
+ * @param int $type The output type to use.  Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {
