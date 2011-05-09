@@ -1039,6 +1039,7 @@ class CakeRequestTestCase extends CakeTestCase {
 						'REQUEST_URI' => '/index.php?/posts/add',
 						'PHP_SELF' => '',
 						'URL' => '/index.php?/posts/add',
+						'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
 						'argv' => array('/posts/add'),
 						'argc' => 1
 					),
@@ -1317,6 +1318,7 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEnvironmentDetection($name, $env, $expected) {
+		$_GET = array();
 		$this->__loadEnvironment($env);
 
 		$request = new CakeRequest();
