@@ -37,7 +37,7 @@ class I18nTest extends CakeTestCase {
 			'locales' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'locale' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 	}
 
 /**
@@ -49,7 +49,7 @@ class I18nTest extends CakeTestCase {
 	function tearDown() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build();
-		App::objects('plugin', null, false);
+		CakePlugin::unload();
 	}
 
 
