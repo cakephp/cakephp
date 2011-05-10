@@ -233,12 +233,14 @@ class ErrorHandlerTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			)
 		), true);
+		CakePlugin::load('TestPlugin');
 		Configure::write('Exception.renderer', 'TestPlugin.TestPluginExceptionRenderer');
 		$error = new NotFoundException('Kaboom!');
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
 		$this->assertEquals($result, 'Rendered by test plugin');
+		CakePlugin::unload();
 	}
 
 }
