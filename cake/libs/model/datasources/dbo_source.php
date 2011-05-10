@@ -705,10 +705,14 @@ class DboSource extends DataSource {
 		} else {
 			$table = strval($model);
 		}
+
+		$db = ConnectionManager::getDataSource($model->useDbConfig);
+		$database = $db->config['database'];
+
 		if ($quote) {
-			return $this->name($table);
+			return $this->name($database) . '.' . $this->name($table);
 		}
-		return $table;
+		return $database . '.' . $table;
 	}
 
 /**
