@@ -76,6 +76,7 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
+		$_GET = array();
 		$request = new CakeRequest();
 		$this->Controller = new CacheTestController($request);
 		$View = new View($this->Controller);

@@ -801,6 +801,7 @@ class HelperTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),	
 		));
+		CakePlugin::loadAll();
 		$Helper = new TestHelper($this->View);
 		$this->assertInstanceOf('OtherHelperHelper', $Helper->OtherHelper);
 		$this->assertInstanceOf('HtmlHelper', $Helper->Html);

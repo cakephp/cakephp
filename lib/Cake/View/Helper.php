@@ -254,9 +254,11 @@ class Helper extends Object {
 				return $path . '?' . @filemtime($themePath);
 			} else {
 				$plugin = Inflector::camelize($segments[0]);
-				unset($segments[0]);
-				$pluginPath = App::pluginPath($plugin) . 'webroot' . DS . implode(DS, $segments);
-				return $path . '?' . @filemtime($pluginPath);
+				if (CakePlugin::loaded($plugin)) {
+					unset($segments[0]);
+					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					return $path . '?' . @filemtime($pluginPath);
+				}
 			}
 		}
 		return $path;
@@ -264,7 +266,7 @@ class Helper extends Object {
 
 /**
  * Used to remove harmful tags from content.  Removes a number of well known XSS attacks
- * from content.  However, is not guaranteed to remove all possiblities.  Escaping
+ * from content.  However, is not guaranteed to remove all possibilities.  Escaping
  * content is the best way to prevent all possible attacks.
  *
  * @param mixed $output Either an array of strings to clean or a single string to clean.
@@ -287,7 +289,6 @@ class Helper extends Object {
 	}
 
 /**
-<<<<<<< HEAD:lib/Cake/View/Helper.php
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
  *
