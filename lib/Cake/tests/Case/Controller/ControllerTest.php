@@ -406,6 +406,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function teardown() {
+		CakePlugin::unload();
 		App::build();
 	}
 
@@ -442,6 +443,7 @@ class ControllerTest extends CakeTestCase {
 			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
 			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		App::uses('TestPluginAppController', 'TestPlugin.Controller');
 		App::uses('TestPluginController', 'TestPlugin.Controller');
 
@@ -481,6 +483,7 @@ class ControllerTest extends CakeTestCase {
 		unset($Controller);
 
 		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		CakePlugin::load('TestPlugin');
 
 		$Controller = new Controller($request);
 		$Controller->uses = array('TestPlugin.TestPluginPost');
