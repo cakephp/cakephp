@@ -1928,6 +1928,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
 		$this->assertPattern('#<option value="30"[^>]*>30</option>#', $result[1]);
 
+		$result = $this->Form->input('Random.start_time', array(
+			'type' => 'time',
+			'selected' => '18:15'
+		));
+
+		$this->assertPattern('#<option value="6"[^>]*>6</option>#', $result[1]);
+		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
 	}
 
 /**
