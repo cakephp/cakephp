@@ -25,6 +25,15 @@ App::uses('ConnectionManager', 'Model');
  */
 class ConnectionManagerTest extends CakeTestCase {
 
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		CakePlugin::unload();
+	}
 /**
  * testEnumConnectionObjects method
  *
@@ -73,7 +82,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
-
+		CakePlugin::load('TestPlugin');
 		$name = 'test_source';
 		$config = array('datasource' => 'TestPlugin.TestSource');
 		$connection = ConnectionManager::create($name, $config);
@@ -95,7 +104,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
-
+		CakePlugin::load('TestPlugin');
 		$name = 'test_plugin_source_and_driver';
 		$config = array('datasource' => 'TestPlugin.Database/TestDriver');
 
@@ -119,7 +128,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
-
+		CakePlugin::load('TestPlugin');
 		$name = 'test_local_source_and_plugin_driver';
 		$config = array('datasource' => 'TestPlugin.Database/DboDummy');
 
@@ -268,7 +277,7 @@ class ConnectionManagerTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
 		));
-
+		CakePlugin::loadAll();
 		$expected = array(
 		    'datasource' => 'Test2Source'
 		);

@@ -528,6 +528,7 @@ class CakeSchemaTest extends CakeTestCase {
 		parent::tearDown();
 		@unlink(TMP . 'tests' . DS .'schema.php');
 		unset($this->Schema);
+		CakePlugin::unload();
 	}
 
 /**
@@ -666,6 +667,7 @@ class CakeSchemaTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 
 		$Schema = new CakeSchema();
 		$Schema->plugin = 'TestPlugin';
@@ -984,6 +986,7 @@ class CakeSchemaTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
 		$this->assertEqual($Other->name, 'TestPluginApp');
 		$this->assertEqual(array_keys($Other->tables), array('test_plugin_acos'));
