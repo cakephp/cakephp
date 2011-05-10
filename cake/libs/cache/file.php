@@ -136,13 +136,24 @@ class FileEngine extends CacheEngine {
 			}
 		}
 
-		if ($this->settings['lock']) {
-			$this->_File->lock = true;
-		}
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
-		$success = $this->_File->write($contents);
-		$this->_File->close();
+
+		if (!$handle = fopen($this->_File->path, 'c')) {
+		    return false;
+		}
+
+		if ($this->settings['lock']) {
+		    flock($handle, LOCK_EX);
+		}
+
+		$success = ftruncate($handle, 0) && fwrite($handle, $contents) && fflush($handle);
+
+		if ($this->settings['lock']) {
+		    flock($handle, LOCK_UN);
+		}
+
+		fclose($handle);
 		return $success;
 	}
 
