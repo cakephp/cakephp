@@ -1515,7 +1515,7 @@ class DboSource extends DataSource {
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
-				return "DELETE {$alias} FROM {$table} {$aliases}{$conditions}";
+				return "DELETE {$table} {$alias} FROM {$table} {$aliases}{$conditions}";
 			break;
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
