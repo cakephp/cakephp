@@ -802,8 +802,8 @@ class View extends Object {
 		$paths = array();
 		$viewPaths = App::path('View');
 		$corePaths = array_flip(App::core('View'));
-
 		if (!empty($plugin)) {
+			$plugin = Inflector::camelize($plugin);
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!isset($corePaths[$viewPaths[$i]])) {

@@ -243,18 +243,19 @@ class ConfigureTest extends CakeTestCase {
 	function testLoadPlugin() {
 		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
 		Configure::config('test', new PhpReader());
-
-		$result = Configure::load('test_plugin.load', 'test');
+		CakePlugin::load('TestPlugin');
+		$result = Configure::load('TestPlugin.load', 'test');
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/load.php';
 		$config = Configure::read('plugin_load');
 		$this->assertEqual($config, $expected);
 
-		$result = Configure::load('test_plugin.more.load', 'test');
+		$result = Configure::load('TestPlugin.more.load', 'test');
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
 		$config = Configure::read('plugin_more_load');
 		$this->assertEqual($config, $expected);
+		CakePlugin::unload();
 	}
 
 /**

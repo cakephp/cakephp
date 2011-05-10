@@ -92,7 +92,7 @@ class App {
 		'class' => array('extends' => null, 'core' => true),
 		'file' => array('extends' => null, 'core' => true),
 		'model' => array('extends' => 'AppModel', 'core' => false),
-		'behavior' => array('extends' => 'ModelBehavior', 'core' => true),
+		'behavior' => array( 'suffix' => 'Behavior', 'extends' => 'Model/ModelBehavior', 'core' => true),
 		'controller' => array('suffix' => 'Controller', 'extends' => 'AppController', 'core' => true),
 		'component' => array('suffix' => 'Component', 'extends' => null, 'core' => true),
 		'lib' => array('extends' => null, 'core' => true),
@@ -643,6 +643,9 @@ class App {
 		list($plugin, $name) = pluginSplit($name);
 		if (!empty($plugin)) {
 			$plugin = Inflector::camelize($plugin);
+			if (!CakePlugin::loaded($plugin)) {
+				return false;
+			}
 		}
 
 		if (!$specialPackage) {
@@ -679,10 +682,15 @@ class App {
 			$suffix = self::$types[$originalType]['suffix'];
 			$name .= ($suffix == $name) ? '' : $suffix;
 		}
-
 		if ($parent && isset(self::$types[$originalType]['extends'])) {
 			$extends = self::$types[$originalType]['extends'];
-			App::uses($extends, $type);
+			$extendType = $type;
+			if (strpos($extends, '/') !== false) {
+				$parts = explode('/', $extends);
+				$extends = array_pop($parts);
+				$extendType = implode('/', $parts);
+			}
+			App::uses($extends, $extendType);
 			if ($plugin && in_array($originalType, array('controller', 'model'))) {
 				App::uses($plugin . $extends, $plugin . '.' .$type);
 			}

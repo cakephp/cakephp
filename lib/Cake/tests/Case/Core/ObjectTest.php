@@ -18,6 +18,7 @@
  */
 
 App::uses('Object', 'Core');
+App::uses('Router', 'Routing');
 App::uses('Controller', 'Controller');
 App::uses('Model', 'Model');
 
@@ -355,17 +356,9 @@ class ObjectTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		unset($this->object);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		App::build();
+		CakePlugin::unload();
+		unset($this->object);
 	}
 
 /**
@@ -725,7 +718,7 @@ class ObjectTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		));
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 		Router::reload();
 		
 		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
@@ -753,7 +746,7 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		
 		App::build();
-		App::objects('plugin', null, false);
+		CakePlugin::unload();
 	}
 
 /**
@@ -765,9 +758,11 @@ class ObjectTest extends CakeTestCase {
 		App::build(array(
 			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
 			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS)
+			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins'. DS)
 		));
-	
+		CakePlugin::loadAll();
+
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')
 		);
