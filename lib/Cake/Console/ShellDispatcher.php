@@ -141,7 +141,7 @@ class ShellDispatcher {
 		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
 
 		if (!defined('FULL_BASE_URL')) {
-			define('FULL_BASE_URL', '/');
+			define('FULL_BASE_URL', 'http://localhost');
 		}
 
 		return true;
