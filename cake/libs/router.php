@@ -1060,7 +1060,7 @@ class Router {
  * @access public
  * @static
  */
-	function reverse($params, $full = false) {
+	function reverse($params) {
 		$pass = $params['pass'];
 		$named = $params['named'];
 		$url = $params['url'];
@@ -1072,7 +1072,7 @@ class Router {
 		if (!empty($url)) {
 			$params['?'] = $url;
 		}
-		return Router::url($params, $full);
+		return Router::url($params);
 	}
 
 /**
