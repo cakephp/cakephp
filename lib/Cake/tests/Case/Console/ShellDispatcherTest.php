@@ -123,6 +123,16 @@ class ShellDispatcherTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
+		CakePlugin::loadAll();
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		CakePlugin::unload();
 	}
 
 /**
@@ -391,7 +401,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertInstanceOf('SampleShell', $result);
 
 		$Dispatcher = new TestShellDispatcher();
-		$result = $Dispatcher->getShell('test_plugin.example');
+		$result = $Dispatcher->getShell('TestPlugin.example');
 		$this->assertInstanceOf('ExampleShell', $result);
 	}
 

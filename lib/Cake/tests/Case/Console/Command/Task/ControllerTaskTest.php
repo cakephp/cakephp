@@ -300,7 +300,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$components = array('Acl', 'Auth');
 		$uses = array('Comment', 'User');
 
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'Controller' . DS . 'ArticlesController.php';
+		//fake plugin path
+		CakePlugin::load('ControllerTest', array('path' => APP . 'plugins' . DS . 'ControllerTest' . DS));
+		$path = APP . 'plugins' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')->with(
 			$path,
@@ -313,11 +315,12 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
-		$this->Task->plugin = 'controllerTest';
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'Controller' . DS . 'ArticlesController.php';
+		$this->Task->plugin = 'ControllerTest';
+		$path = APP . 'plugins' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->assertEqual($this->Task->Template->templateVars['plugin'], 'ControllerTest');
+		CakePlugin::unload();
 	}
 
 /**

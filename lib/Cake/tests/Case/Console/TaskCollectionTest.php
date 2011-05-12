@@ -90,11 +90,13 @@ class TaskCollectionTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertInstanceOf('OtherTaskTask', $result, 'Task class is wrong.');
 		$this->assertInstanceOf('OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
+		CakePlugin::unload();
 	}
 
 /**

@@ -395,11 +395,14 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->plugin = 'TestTest';
 		$this->Task->name = 'View';
 
-		$path = APP . 'plugins' . DS . 'test_test' . DS . 'View' . DS . 'view_task_comments' . DS  . 'view.ctp';
+		//fake plugin path
+		CakePlugin::load('TestTest', array('path' => APP . 'plugins' . DS . 'TestTest' . DS));
+		$path = APP . 'plugins' . DS . 'TestTest' . DS . 'View' . DS . 'view_task_comments' . DS  . 'view.ctp';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->bake('view', true);
+		CakePlugin::unload();
 	}
 
 /**

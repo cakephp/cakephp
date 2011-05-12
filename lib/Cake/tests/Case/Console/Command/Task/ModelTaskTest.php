@@ -743,9 +743,11 @@ STRINGEND;
  * @return void
  */
 	public function testBakeWithPlugin() {
-		$this->Task->plugin = 'controllerTest';
+		$this->Task->plugin = 'ControllerTest';
 
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'Model' . DS . 'BakeArticle.php';
+		//fake plugin path
+		CakePlugin::load('ControllerTest', array('path' => APP . 'plugins' . DS . 'ControllerTest' . DS));
+		$path = APP . 'plugins' . DS . 'ControllerTest' . DS . 'Model' . DS . 'BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/BakeArticle extends ControllerTestAppModel/'));
 	
