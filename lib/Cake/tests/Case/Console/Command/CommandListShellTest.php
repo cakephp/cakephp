@@ -47,7 +47,7 @@ class CommandListTest extends CakeTestCase {
 				LIBS . 'tests' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::loadAll();
 
 		$out = new TestStringOutput();
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
@@ -67,6 +67,7 @@ class CommandListTest extends CakeTestCase {
 	function tearDown() {
 		parent::tearDown();
 		unset($this->Shell);
+		CakePlugin::unload();
 	}
 
 /**
@@ -150,8 +151,8 @@ class CommandListTest extends CakeTestCase {
 
 		$find = '<shell name="bake" call_as="bake" provider="CORE" help="bake -h"/>';
 		$this->assertContains($find, $output);
-		
-		$find = '<shell name="welcome" call_as="test_plugin_two.welcome" provider="TestPluginTwo" help="test_plugin_two.welcome -h"/>';
+
+		$find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"/>';
 		$this->assertContains($find, $output);
 	}
 }
