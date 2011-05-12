@@ -189,6 +189,7 @@ class SchemaShellTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.schema');
 		$this->Shell->startup();
 		$this->Shell->expects($this->exactly(2))->method('_stop');
@@ -201,6 +202,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->view();
 
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
@@ -238,6 +240,7 @@ class SchemaShellTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->params = array(
 			'connection' => 'test',
@@ -256,6 +259,7 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->file->delete();
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
@@ -334,7 +338,7 @@ class SchemaShellTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::load('TestPlugin');
 
 		$this->db->cacheSources = false;
 		$this->Shell->params = array(
@@ -355,6 +359,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertPattern('/var \$test_plugin_comments/', $contents);
 		$this->assertNoPattern('/var \$users/', $contents);
 		$this->assertNoPattern('/var \$articles/', $contents);
+		CakePlugin::unload();
 	}
 
 /**
@@ -447,13 +452,15 @@ class SchemaShellTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
 			'connection' => 'test'
 		);
 		$this->Shell->startup();
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema';
+		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'config' . DS . 'schema';
 		$this->assertEqual($this->Shell->Schema->path, $expected);
+		CakePlugin::unload();
 	}
 
 /**
@@ -465,6 +472,7 @@ class SchemaShellTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(
 			'connection' => 'test'
 		);
@@ -479,5 +487,6 @@ class SchemaShellTest extends CakeTestCase {
 
 		$schema = new TestPluginAppSchema();
 		$db->execute($db->dropSchema($schema, 'test_plugin_acos'));
+		CakePlugin::unload();
 	}
 }
