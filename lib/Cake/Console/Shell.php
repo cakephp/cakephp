@@ -756,6 +756,9 @@ class Shell extends Object {
  * @return string $path path to the correct plugin.
  */
 	function _pluginPath($pluginName) {
-		return App::pluginPath($pluginName);
+		if (CakePlugin::loaded($pluginName)) {
+			return CakePlugin::path($pluginName);
+		}
+		return current(App::path('plugins')) . $pluginName . DS;
 	}
 }

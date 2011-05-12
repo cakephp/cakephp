@@ -65,7 +65,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($this->_testPath));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 
-		$path = $this->Task->path . 'bake_test_plugin';
+		$path = $this->Task->path . 'BakeTestPlugin';
 
 		$file = $path . DS . 'Controller' . DS  .'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
@@ -77,7 +77,7 @@ class PluginTaskTest extends CakeTestCase {
 
 		$this->Task->bake('BakeTestPlugin');
 
-		$path = $this->Task->path . 'bake_test_plugin';
+		$path = $this->Task->path . 'BakeTestPlugin';
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
 		
 		$directories = array(
@@ -99,7 +99,7 @@ class PluginTaskTest extends CakeTestCase {
 			$this->assertTrue(is_dir($path . DS . $dir), 'Missing directory for ' . $dir);
 		}
 
-		$Folder = new Folder($this->Task->path . 'bake_test_plugin');
+		$Folder = new Folder($this->Task->path . 'BakeTestPlugin');
 		$Folder->delete();
 	}
 
@@ -113,7 +113,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('3'));
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 
-		$path = $this->Task->path . 'test_plugin';
+		$path = $this->Task->path . 'TestPlugin';
 		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
@@ -140,12 +140,12 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')
 			->will($this->returnValue('y'));
 
-		$path = $this->Task->path . 'bake_test_plugin';
+		$path = $this->Task->path . 'BakeTestPlugin';
 		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
-		$path = $this->Task->path . 'bake_test_plugin';
+		$path = $this->Task->path . 'BakeTestPlugin';
 		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
@@ -154,7 +154,7 @@ class PluginTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 
-		$Folder = new Folder($this->Task->path . 'bake_test_plugin');
+		$Folder = new Folder($this->Task->path . 'BakeTestPlugin');
 		$Folder->delete();
 	}
 
