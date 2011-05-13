@@ -454,12 +454,14 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertEquals($Apple->Behaviors->dispatchMethod($Apple, 'testMethod'), 'working');
 
 		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		CakePlugin::load('TestPlugin');
 		$this->assertTrue($Apple->Behaviors->load('SomeOther', array('className' => 'TestPlugin.TestPluginPersisterOne')));
 		$this->assertInstanceOf('TestPluginPersisterOneBehavior', $Apple->Behaviors->SomeOther);
 
 		$result = $Apple->Behaviors->attached();
 		$this->assertEquals(array('Test', 'SomeOther'), $result, 'attached() results are wrong.');
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
