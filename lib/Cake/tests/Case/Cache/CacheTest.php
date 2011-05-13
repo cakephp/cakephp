@@ -92,6 +92,7 @@ class CacheTest extends CakeTestCase {
 			'Lib' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
+		CakePlugin::load('TestPlugin');
 
 		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
 		$result = Cache::config('libEngine', $settings);
@@ -105,6 +106,7 @@ class CacheTest extends CakeTestCase {
 		Cache::drop('pluginLibEngine');
 
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
