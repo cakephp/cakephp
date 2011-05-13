@@ -36,8 +36,8 @@ if (!class_exists('AppController', false)) {
 class CakeTestCaseTest extends CakeTestCase {
 
 	public static function setUpBeforeClass() {
-		require_once LIBS . 'tests' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
-		require_once LIBS . 'tests' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';
+		require_once LIBS . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
+		require_once LIBS . 'Test' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';
 	}
 
 /**

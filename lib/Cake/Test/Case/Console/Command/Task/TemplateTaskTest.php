@@ -126,7 +126,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerate() {
 		App::build(array(
 			'Console' => array(
-				LIBS . 'tests' . DS .  'test_app' . DS . 'console' . DS
+				LIBS . 'Test' . DS .  'test_app' . DS . 'console' . DS
 			)
 		));
 		$this->Task->initialize();
@@ -146,7 +146,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerateWithTemplateFallbacks() {
 		App::build(array(
 			'Console' => array(
-				LIBS . 'tests' . DS .  'test_app' . DS . 'console' . DS,
+				LIBS . 'Test' . DS .  'test_app' . DS . 'console' . DS,
 				CAKE_CORE_INCLUDE_PATH . DS . 'console' . DS
 			)
 		));
