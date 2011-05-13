@@ -241,7 +241,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoadPlugin() {
-		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
+		App::build(array('plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)), true);
 		Configure::config('test', new PhpReader());
 		CakePlugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');

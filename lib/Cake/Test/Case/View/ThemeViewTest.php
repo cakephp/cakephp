@@ -117,7 +117,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->PostsController->index();
 		$this->ThemeView = new ThemeView($this->PostsController);
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		CakePlugin::loadAll();

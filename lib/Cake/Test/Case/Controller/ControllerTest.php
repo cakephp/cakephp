@@ -439,7 +439,7 @@ class ControllerTest extends CakeTestCase {
  */
 	function testLoadModelInPlugins() {
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
 			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
 		));
@@ -482,7 +482,7 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 
-		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		App::build(array('plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
 		CakePlugin::load('TestPlugin');
 
 		$Controller = new Controller($request);

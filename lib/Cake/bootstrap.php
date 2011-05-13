@@ -86,20 +86,20 @@ if (!defined('APP')) {
 /**
  * Path to the application's view's layouts directory.
  */
-	define('LAYOUTS', VIEWS.'layouts'.DS);
+	define('LAYOUTS', VIEWS.'Layouts'.DS);
 
 /**
  * Path to the application's view's elements directory.
  * It's supposed to hold pieces of PHP/HTML that are used on multiple pages
  * and are not linked to a particular layout (like polls, footers and so on).
  */
-	define('ELEMENTS', VIEWS.'elements'.DS);
+	define('ELEMENTS', VIEWS.'Elements'.DS);
 
 /**
  * Path to the configuration files directory.
  */
 if (!defined('CONFIGS')) {
-	define('CONFIGS', APP.'config'.DS);
+	define('CONFIGS', APP.'Config'.DS);
 }
 
 /**
@@ -138,7 +138,7 @@ if (!defined('TESTS')) {
  * Path to the core tests directory.
  */
 if (!defined('CAKE_TESTS')) {
-	define('CAKE_TESTS', CAKE.'tests'.DS);
+	define('CAKE_TESTS', CAKE.'Test'.DS);
 }
 
 /**

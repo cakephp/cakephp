@@ -122,7 +122,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
 			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS)

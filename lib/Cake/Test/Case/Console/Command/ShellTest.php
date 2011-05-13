@@ -169,7 +169,7 @@ class ShellTest extends CakeTestCase {
  */
 	public function testInitialize() {
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
 		), true);
 

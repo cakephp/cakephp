@@ -195,9 +195,9 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
 		CakePlugin::loadAll();
@@ -227,16 +227,16 @@ class ViewTest extends CakeTestCase {
 	function testPluginGetTemplate() {
 		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
-		$this->Controller->viewPath = 'tests';
+		$this->Controller->viewPath = 'Tests';
 		$this->Controller->action = 'index';
 
 		$View = new TestView($this->Controller);
 
-		$expected = CakePlugin::path('TestPlugin') . 'View' . DS .'tests' . DS .'index.ctp';
+		$expected = CakePlugin::path('TestPlugin') . 'View' . DS .'Tests' . DS .'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = CakePlugin::path('TestPlugin') . 'View' . DS . 'layouts' . DS .'default.ctp';
+		$expected = CakePlugin::path('TestPlugin') . 'View' . DS . 'Layouts' . DS .'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
@@ -249,7 +249,7 @@ class ViewTest extends CakeTestCase {
 	function testPluginPathGeneration() {
 		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
-		$this->Controller->viewPath = 'tests';
+		$this->Controller->viewPath = 'Tests';
 		$this->Controller->action = 'index';
 
 		$View = new TestView($this->Controller);
@@ -278,12 +278,12 @@ class ViewTest extends CakeTestCase {
 	function testCamelCasePluginGetTemplate() {
 		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
-		$this->Controller->viewPath = 'tests';
+		$this->Controller->viewPath = 'Tests';
 		$this->Controller->action = 'index';
 
 		$View = new TestView($this->Controller);
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));
 

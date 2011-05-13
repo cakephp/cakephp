@@ -280,7 +280,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		App::build(array(
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 	}
 

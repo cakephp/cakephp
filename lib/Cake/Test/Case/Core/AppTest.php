@@ -318,7 +318,7 @@ class AppImportTest extends CakeTestCase {
 	function testListObjectsInPlugin() {
 		App::build(array(
 			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
 
@@ -369,7 +369,7 @@ class AppImportTest extends CakeTestCase {
  */
 	function testPluginPath() {
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
 
@@ -491,7 +491,7 @@ class AppImportTest extends CakeTestCase {
 	function testPluginImporting() {
 		App::build(array(
 			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
 
@@ -668,7 +668,7 @@ class AppImportTest extends CakeTestCase {
 
 	function testLoadingVendor() {
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
 		), App::RESET);
 		CakePlugin::loadAll();
@@ -726,7 +726,7 @@ class AppImportTest extends CakeTestCase {
 	public function testLoadClassInLibs() {
 		App::build(array(
 			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), App::RESET);
 		CakePlugin::loadAll();
 

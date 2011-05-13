@@ -1042,7 +1042,7 @@ class DispatcherTest extends CakeTestCase {
 		}
 		Router::reload();
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		CakePlugin::loadAll();
 
@@ -1142,7 +1142,7 @@ class DispatcherTest extends CakeTestCase {
 	public function testTestPluginDispatch() {
 		$Dispatcher = new TestDispatcher();
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
 		Router::reload();
@@ -1200,7 +1200,7 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 
 		App::build(array(
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
 			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
 		));

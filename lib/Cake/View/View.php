@@ -740,7 +740,7 @@ class View extends Object {
 			$subDir = $this->layoutPath . DS;
 		}
 		$paths = $this->_paths($this->plugin);
-		$file = 'layouts' . DS . $subDir . $name;
+		$file = 'Layouts' . DS . $subDir . $name;
 
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
@@ -780,8 +780,8 @@ class View extends Object {
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'elements' . DS . $name . $ext)) {
-					return $path . 'elements' . DS . $name . $ext;
+				if (file_exists($path . 'Elements' . DS . $name . $ext)) {
+					return $path . 'Elements' . DS . $name . $ext;
 				}
 			}
 		}
