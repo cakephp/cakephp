@@ -951,7 +951,7 @@ class AuthTest extends CakeTestCase {
  */
 	function testAjaxLogin() {
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 

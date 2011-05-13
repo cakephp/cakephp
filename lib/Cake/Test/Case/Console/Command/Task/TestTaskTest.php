@@ -542,7 +542,7 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	function testInteractiveWithPlugin() {
-		$testApp = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS;
+		$testApp = LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array(
 			'plugins' => array($testApp)
 		), true);

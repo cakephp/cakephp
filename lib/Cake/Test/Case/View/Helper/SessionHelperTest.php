@@ -132,7 +132,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$result = $this->Session->flash('notification');
 		$result = str_replace("\r\n", "\n", $result);
@@ -165,7 +165,7 @@ class SessionHelperTest extends CakeTestCase {
  */
 	function testFlashElementInAttrs() {
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$result = $this->Session->flash('flash', array(
 			'element' => 'session_helper', 

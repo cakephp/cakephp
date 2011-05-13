@@ -34,7 +34,7 @@ class I18nTest extends CakeTestCase {
 	function setUp() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'locales' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'locale' . DS),
+			'locales' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		CakePlugin::loadAll();

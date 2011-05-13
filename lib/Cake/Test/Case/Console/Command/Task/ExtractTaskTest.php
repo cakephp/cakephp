@@ -70,7 +70,7 @@ class ExtractTaskTest extends CakeTestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'pages';
+		$this->Task->params['paths'] = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')
@@ -162,7 +162,7 @@ class ExtractTaskTest extends CakeTestCase {
 	function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = LIBS . 'tests' . DS . 'test_app' . DS . 'View';
+		$this->Task->params['paths'] = LIBS . 'Test' . DS . 'test_app' . DS . 'View';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'pages,layouts';
 
@@ -189,8 +189,8 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = 
-			LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'pages,' .
-			LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'posts';
+			LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages,' .
+			LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts';
 	
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');

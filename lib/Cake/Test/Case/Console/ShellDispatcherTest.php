@@ -117,10 +117,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			),
 			'Console/Command' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
 		CakePlugin::loadAll();

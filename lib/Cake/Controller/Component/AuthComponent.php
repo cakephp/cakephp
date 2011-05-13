@@ -322,7 +322,7 @@ class AuthComponent extends Component {
 					$controller->redirect($loginAction);
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
-					$controller->viewPath = 'elements';
+					$controller->viewPath = 'Elements';
 					echo $controller->render($this->ajaxLogin, $this->RequestHandler->ajaxLayout);
 					$this->_stop();
 					return false;

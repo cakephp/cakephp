@@ -471,9 +471,9 @@ class ObjectTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 
 		App::build(array(
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins'. DS),
-			'behaviors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS),
+			'models' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS),
+			'behaviors' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model'. DS . 'Behavior' . DS),
 		), true);
 
 		$this->assertFalse(class_exists('PersisterOneBehaviorBehavior'));
@@ -532,8 +532,8 @@ class ObjectTest extends CakeTestCase {
 		$this->assertFalse(class_exists('ContainableBehavior'));
 
 		App::build(array(
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'behaviors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS),
+			'models' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'behaviors' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model'. DS . 'Behavior' . DS),
 		), true);
 
 		$this->assertFalse(class_exists('PersistOneBehaviorBehavior'));
@@ -676,9 +676,9 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestAction() {
 		App::build(array(
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS)
+			'models' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'views' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'controllers' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
 		));
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
@@ -756,10 +756,10 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestActionArray() {
 		App::build(array(
-			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
-			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins'. DS)
+			'models' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'views' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'controllers' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
+			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
 		));
 		CakePlugin::loadAll();
 

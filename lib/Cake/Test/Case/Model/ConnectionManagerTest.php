@@ -151,7 +151,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Model/Datasource/Database' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
 			)
 		));
 
@@ -274,7 +274,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Model/Datasource' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
 		));
 		CakePlugin::loadAll();
@@ -328,7 +328,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	public function testDrop() {
 		App::build(array(
 			'Model/Datasource' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
 		));
 		ConnectionManager::create('droppable', array('datasource' => 'Test2Source'));

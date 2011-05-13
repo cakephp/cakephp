@@ -34,7 +34,7 @@ class BasicsTest extends CakeTestCase {
  */
 	public function setUp() {
 		App::build(array(
-			'locales' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
+			'locales' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		));
 		$this->_language = Configure::read('Config.language');
 	}

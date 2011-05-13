@@ -458,7 +458,7 @@ class SchemaShellTest extends CakeTestCase {
 			'connection' => 'test'
 		);
 		$this->Shell->startup();
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'config' . DS . 'schema';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'Config' . DS . 'Schema';
 		$this->assertEqual($this->Shell->Schema->path, $expected);
 		CakePlugin::unload();
 	}

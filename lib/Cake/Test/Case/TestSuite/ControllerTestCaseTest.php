@@ -123,9 +123,9 @@ class ControllerTestCaseTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS)
+			'Controller' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
+			'Model' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::loadAll();
 		$this->Case = new ControllerTestCase();
@@ -273,7 +273,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * Tests using loaded routes during tests
  */
 	function testUseRoutes() {
-		include LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
+		include LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$controller = $this->Case->generate('TestsApps');
 		$controller->Components->load('RequestHandler');
 		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
@@ -281,16 +281,16 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$expected = array('cakephp' => 'cool');
 		$this->assertEquals($result, $expected);
 
-		include LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
+		include LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$result = $this->Case->testAction('/some_alias');
 		$this->assertEquals($result, 5);
 
-		include LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
+		include LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$this->Case->testAction('/redirect_me_now');
 		$result = $this->Case->headers['Location'];
 		$this->assertEquals($result, 'http://cakephp.org');
 
-		include LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
+		include LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$this->Case->testAction('/redirect_me');
 		$result = $this->Case->headers['Location'];
 		$this->assertEquals($result, Router::url(array('controller' => 'tests_apps', 'action' => 'some_method'), true));		
@@ -302,7 +302,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @expectedException MissingActionException
  */
 	function testSkipRoutes() {
-		include LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
+		include LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 
 		$this->Case->loadRoutes = false;
 		$result = $this->Case->testAction('/tests_apps/missing_action.json', array('return' => 'view'));

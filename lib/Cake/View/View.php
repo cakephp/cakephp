@@ -353,7 +353,7 @@ class View extends Object {
 			}
 			return $element;
 		}
-		$file = 'elements' . DS . $name . $this->ext;
+		$file = 'Elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
 			return "Element Not Found: " . $file;
@@ -807,7 +807,7 @@ class View extends Object {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!isset($corePaths[$viewPaths[$i]])) {
-					$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
+					$paths[] = $viewPaths[$i] . 'Plugins' . DS . $plugin . DS;
 				}
 			}
 			$paths = array_merge($paths, App::path('View', $plugin));

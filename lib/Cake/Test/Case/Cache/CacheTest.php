@@ -89,7 +89,7 @@ class CacheTest extends CakeTestCase {
  */
 	function testConfigWithLibAndPluginEngines() {
 		App::build(array(
-			'Lib' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
+			'Lib' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		CakePlugin::load('TestPlugin');
@@ -252,7 +252,7 @@ class CacheTest extends CakeTestCase {
  */
 	function testDrop() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'libs' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 
@@ -305,7 +305,7 @@ class CacheTest extends CakeTestCase {
  */
 	function testWriteTriggerError() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'libs' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 	

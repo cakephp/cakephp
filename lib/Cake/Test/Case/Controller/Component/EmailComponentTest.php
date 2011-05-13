@@ -157,7 +157,7 @@ class EmailComponentTest extends CakeTestCase {
 		$this->Controller->EmailTest->initialize($this->Controller, array());
 
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 	}
 
@@ -432,7 +432,7 @@ HTMLBLOC;
  */
 	function testMessageRetrievalWithoutTemplate() {
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$this->Controller->EmailTest->to = 'postmaster@example.com';
@@ -470,7 +470,7 @@ HTMLBLOC;
  */
 	function testMessageRetrievalWithTemplate() {
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$this->Controller->set('value', 22091985);
@@ -800,7 +800,7 @@ HTMLBLOC;
 	function testPluginCustomViewClass() {
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$this->Controller->view = 'TestPlugin.Email';

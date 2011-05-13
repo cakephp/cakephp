@@ -519,7 +519,7 @@ class HelperTest extends CakeTestCase {
 		Configure::write('Asset.timestamp', 'force');
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS),
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 		));
 		CakePlugin::loadAll();
 
@@ -759,7 +759,7 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->theme = 'test_theme';
 
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
@@ -771,7 +771,7 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', LIBS . 'tests' . DS . 'test_app' . DS . 'webroot' . DS);
+		Configure::write('App.www_root', LIBS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS);
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';

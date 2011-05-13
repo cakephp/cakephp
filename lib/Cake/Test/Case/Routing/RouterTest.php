@@ -1186,7 +1186,7 @@ class RouterTest extends CakeTestCase {
 		$paths = App::path('plugins');
 		App::build(array(
 			'plugins' =>  array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		), true);
 		CakePlugin::loadAll();
@@ -2211,7 +2211,7 @@ class RouterTest extends CakeTestCase {
 	function testConnectDefaultRoutes() {
 		App::build(array(
 			'plugins' =>  array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		), true);
 		CakePlugin::loadAll();

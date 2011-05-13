@@ -300,7 +300,7 @@ class AppImportTest extends CakeTestCase {
 
 		App::build(array(
 			'plugins' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'Lib' . DS
 			)
 		));
 		$result = App::objects('plugin', null, false);
@@ -317,7 +317,7 @@ class AppImportTest extends CakeTestCase {
  */
 	function testListObjectsInPlugin() {
 		App::build(array(
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS),
+			'Model' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
@@ -374,11 +374,11 @@ class AppImportTest extends CakeTestCase {
 		CakePlugin::loadAll();
 
 		$path = App::pluginPath('TestPlugin');
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS;
 		$this->assertEqual($path, $expected);
 
 		$path = App::pluginPath('TestPluginTwo');
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPluginTwo' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPluginTwo' . DS;
 		$this->assertEqual($path, $expected);
 		App::build();
 	}
@@ -390,14 +390,14 @@ class AppImportTest extends CakeTestCase {
  */
 	function testThemePath() {
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		$path = App::themePath('test_theme');
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS;
 		$this->assertEqual($path, $expected);
 
 		$path = App::themePath('TestTheme');
-		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS;
 		$this->assertEqual($path, $expected);
 
 		App::build();
@@ -490,7 +490,7 @@ class AppImportTest extends CakeTestCase {
  */
 	function testPluginImporting() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Lib' . DS),
+			'libs' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
@@ -534,7 +534,7 @@ class AppImportTest extends CakeTestCase {
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
 		App::build(array(
 			'View/Helper' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'View' . DS . 'Helper' . DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Helper' . DS
 			)
 		));
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
@@ -649,7 +649,7 @@ class AppImportTest extends CakeTestCase {
 			$this->markTestSkipped('Cannot test loading of classes that exist.');
 		}
 		App::build(array(
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
+			'Model' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
 		));
 		$toLoad = array('PersisterOne', 'PersisterTwo');
 		$load = App::import('Model', $toLoad);
@@ -669,7 +669,7 @@ class AppImportTest extends CakeTestCase {
 	function testLoadingVendor() {
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'vendors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
+			'vendors' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
 		), App::RESET);
 		CakePlugin::loadAll();
 
@@ -725,7 +725,7 @@ class AppImportTest extends CakeTestCase {
  */
 	public function testLoadClassInLibs() {
 		App::build(array(
-			'libs' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'libs' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), App::RESET);
 		CakePlugin::loadAll();

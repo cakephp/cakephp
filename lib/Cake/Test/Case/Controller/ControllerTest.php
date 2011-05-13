@@ -440,8 +440,8 @@ class ControllerTest extends CakeTestCase {
 	function testLoadModelInPlugins() {
 		App::build(array(
 			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'Controller' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Controller' . DS),
-			'Model' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'Model' . DS)
+			'Controller' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
+			'Model' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		App::uses('TestPluginAppController', 'TestPlugin.Controller');
@@ -572,7 +572,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -634,7 +634,7 @@ class ControllerTest extends CakeTestCase {
  */
 	function testRender() {
 		App::build(array(
-			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		), true);
 		$request = new CakeRequest('controller_posts/index');
 		$request->params['action'] = 'index';
@@ -680,7 +680,7 @@ class ControllerTest extends CakeTestCase {
 	function testComponentBeforeRenderChangingViewClass() {
 		App::build(array(
 			'View' => array(
-				LIBS . 'tests' . DS . 'test_app' . DS . 'View'. DS
+				LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
 		$Controller = new Controller($this->getMock('CakeRequest'));
