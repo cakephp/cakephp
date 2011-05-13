@@ -131,7 +131,7 @@ if (!defined('CONFIGS')) {
  * Path to the tests directory.
  */
 if (!defined('TESTS')) {
-	define('TESTS', APP.'tests'.DS);
+	define('TESTS', APP.'Test'.DS);
 }
 
 /**
