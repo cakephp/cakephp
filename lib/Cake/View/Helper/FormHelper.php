@@ -1287,9 +1287,10 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Create a `<button>` tag with `<form>` using POST method.
+ * Create a `<button>` tag with a surrounding `<form>` that submits via POST.
  *
- * This method creates an element <form>. So do not use this method in some opened form.
+ * This method creates a `<form>` element. So do not use this method in some opened form.
+ * Instead use FormHelper::submit() or FormHelper::button() to create buttons inside opened forms.
  *
  * ### Options:
  *
@@ -1315,13 +1316,16 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates an HTML link, but access the url using method POST. Requires javascript enabled in browser.
+ * Creates an HTML link, but access the url using method POST. 
+ * Requires javascript to be enabled in browser.
  *
- * This method creates an element <form>. So do not use this method in some opened form.
+ * This method creates a `<form>` element. So do not use this method inside an existing form.
+ * Instead you should add a submit button using FormHelper::submit()
  *
  * ### Options:
  *
  * - `data` - Array with key/value to pass in input hidden
+ * - `confirm` - Can be used instead of $confirmMessage.
  * - Other options is the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
  *
