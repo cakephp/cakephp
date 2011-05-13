@@ -60,7 +60,7 @@ class ProjectTask extends Shell {
 
 		if ($project) {
 			$response = false;
-			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
+			while ($response == false && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
 				$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 				$response = $this->in($prompt, array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
@@ -236,7 +236,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function securitySalt($path) {
-		$File = new File($path . 'config' . DS . 'core.php');
+		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.salt\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			$string = Security::generateAuthKey();
@@ -256,7 +256,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
 	 */
 	public function securityCipherSeed($path) {
-		$File = new File($path . 'config' . DS . 'core.php');
+		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			if (!class_exists('Security')) {

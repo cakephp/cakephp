@@ -151,7 +151,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual($this->Shell->Schema->name, 'TestSchema');
 		$this->assertEqual($this->Shell->Schema->file, 'test_schema.php');
 		$this->assertEqual($this->Shell->Schema->connection, 'default');
-		$this->assertEqual($this->Shell->Schema->path, APP . 'config' . DS . 'schema');
+		$this->assertEqual($this->Shell->Schema->path, APP . 'Config' . DS . 'schema');
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(
@@ -173,7 +173,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testView() {
 		$this->Shell->startup();
-		$this->Shell->Schema->path = APP . 'config' . DS . 'schema';
+		$this->Shell->Schema->path = APP . 'Config' . DS . 'schema';
 		$this->Shell->params['file'] = 'i18n.php';
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->expects($this->once())->method('out');

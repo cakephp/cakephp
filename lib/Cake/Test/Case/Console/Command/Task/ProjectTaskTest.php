@@ -86,8 +86,8 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$this->assertTrue(is_dir($path), 'No project dir %s');
 		$dirs = array(
-			'config',
-			'config' . DS . 'schema',
+			'Config',
+			'Config' . DS . 'schema',
 			'Console',
 			'Console' . DS . 'Command',
 			'Console' . DS . 'Command' . DS . 'Task',
@@ -150,7 +150,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
 
-		$file = new File($path . 'config' . DS . 'core.php');
+		$file = new File($path . 'Config' . DS . 'core.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
@@ -167,7 +167,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->securityCipherSeed($path);
 		$this->assertTrue($result);
 
-		$file = new File($path . 'config' . DS . 'core.php');
+		$file = new File($path . 'Config' . DS . 'core.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
 	}
@@ -204,7 +204,7 @@ class ProjectTaskTest extends CakeTestCase {
 
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
-		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
+		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'Config' . DS;
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
@@ -242,7 +242,7 @@ class ProjectTaskTest extends CakeTestCase {
 	public function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
-		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
+		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'Config' . DS;
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();

@@ -128,7 +128,7 @@ class CakeSchema extends Object {
 		if (file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
 			$this->file = $file;
 		} elseif (!empty($this->plugin)) {
-			$this->path = App::pluginPath($this->plugin) . 'config' . DS . 'schema';
+			$this->path = App::pluginPath($this->plugin) . 'Config' . DS . 'schema';
 		}
 	}
 

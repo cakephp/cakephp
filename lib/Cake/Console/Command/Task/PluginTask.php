@@ -103,7 +103,7 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$Folder = new Folder($this->path . $pluginPath);
 			$directories = array(
-				'config' . DS . 'schema',
+				'Config' . DS . 'schema',
 				'Model' . DS . 'Behavior',
 				'Model' . DS . 'Datasource',
 				'Console' . DS . 'Command' . DS . 'Task',

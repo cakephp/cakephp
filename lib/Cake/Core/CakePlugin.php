@@ -137,12 +137,12 @@ class CakePlugin {
 
 		$path = self::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include($path . 'config' . DS . 'bootstrap.php');
+			return include($path . 'Config' . DS . 'bootstrap.php');
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
 		foreach ($bootstrap as $file) {
-			include $path . 'config' . DS . $file . '.php';
+			include $path . 'Config' . DS . $file . '.php';
 		}
 
 		return true;
@@ -159,7 +159,7 @@ class CakePlugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool) include self::path($plugin) . 'config' . DS . 'routes.php';
+		return (bool) include self::path($plugin) . 'Config' . DS . 'routes.php';
 	}
 
 /**
