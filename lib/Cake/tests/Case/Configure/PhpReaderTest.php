@@ -85,11 +85,13 @@ class PhpReaderTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
+		CakePlugin::load('TestPlugin');
 		$reader = new PhpReader($this->path);
 		$result = $reader->read('TestPlugin.load');
 		$this->assertTrue(isset($result['plugin_load']));
 
 		$result = $reader->read('TestPlugin.load.php');
 		$this->assertTrue(isset($result['plugin_load']));
+		CakePlugin::unload();
 	}
 }
