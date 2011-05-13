@@ -126,7 +126,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerate() {
 		App::build(array(
 			'Console' => array(
-				LIBS . 'tests' . DS .  'test_app' . DS . 'console' . DS
+				LIBS . 'tests' . DS .  'test_app' . DS . 'Console' . DS
 			)
 		));
 		$this->Task->initialize();
