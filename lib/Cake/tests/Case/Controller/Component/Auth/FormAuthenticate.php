@@ -157,7 +157,7 @@ class FormAuthenticateTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		), true);
-		App::objects('plugin', null, false);
+		CakePlugin::load('TestPlugin');
 
 		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
 		$user['id'] = 1;
@@ -182,6 +182,7 @@ class FormAuthenticateTest extends CakeTestCase {
 			'updated' => date('Y-m-d H:i:s')
 		);
 		$this->assertEquals($expected, $result);
+		CakePlugin::unload();
 	}
 
 }
