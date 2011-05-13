@@ -311,10 +311,11 @@ class App {
 				'locales' => array(
 					'%s' . 'locale' . DS
 				),
-				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
+				'vendors' => array('%s' . 'Vendor' . DS, VENDORS),
 				'plugins' => array(
-					APP . 'plugins' . DS,
-					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+					APP . 'Plugin' . DS,
+					APP . 'plugin' . DS,
+					dirname(dirname(CAKE)) . DS . 'Plugin' . DS,
 				)
 			);
 		}
