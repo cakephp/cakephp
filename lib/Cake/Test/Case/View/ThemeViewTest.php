@@ -147,20 +147,20 @@ class ThemeViewTest extends CakeTestCase {
 	function testPluginThemedGetTemplate() {
 		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
-		$this->Controller->viewPath = 'tests';
+		$this->Controller->viewPath = 'Tests';
 		$this->Controller->action = 'index';
 		$this->Controller->theme = 'test_theme';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'tests' . DS .'index.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'Plugins' . DS . 'TestPlugin' . DS . 'Tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'TestPlugin' . DS . 'layouts' . DS .'plugin_default.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'Plugins' . DS . 'TestPlugin' . DS . 'Layouts' . DS .'plugin_default.ctp';
 		$result = $ThemeView->getLayoutFileName('plugin_default');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'Layouts' . DS .'default.ctp';
 		$result = $ThemeView->getLayoutFileName('default');
 		$this->assertEqual($result, $expected);
 	}
@@ -174,31 +174,31 @@ class ThemeViewTest extends CakeTestCase {
 	function testGetTemplate() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
-		$this->Controller->viewPath = 'pages';
+		$this->Controller->viewPath = 'Pages';
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
 		$ThemeView = new TestThemeView($this->Controller);
 		$ThemeView->theme = 'test_theme';
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS .'pages' . DS .'home.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS .'Pages' . DS .'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'posts' . DS .'index.ctp';
-		$result = $ThemeView->getViewFileName('/posts/index');
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'Posts' . DS .'index.ctp';
+		$result = $ThemeView->getViewFileName('/Posts/index');
 		$this->assertEqual($result, $expected);
 
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'Layouts' . DS .'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
 		$ThemeView->layoutPath = 'rss';
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'rss' . DS . 'default.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'rss' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 
 		$ThemeView->layoutPath = 'emails' . DS . 'html';
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'layouts' . DS . 'emails' . DS . 'html' . DS . 'default.ctp';
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
@@ -213,7 +213,7 @@ class ThemeViewTest extends CakeTestCase {
 	function testMissingView() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
-		$this->Controller->viewPath = 'pages';
+		$this->Controller->viewPath = 'Pages';
 		$this->Controller->action = 'display';
 		$this->Controller->theme = 'my_theme';
 
