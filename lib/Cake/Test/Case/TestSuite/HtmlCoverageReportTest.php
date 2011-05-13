@@ -27,7 +27,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  */
 	public function setUp() {
 		App::build(array(
-			'plugins' => array(CAKE . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::loadAll();
 		$reporter = new CakeBaseReporter();

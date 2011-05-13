@@ -136,7 +136,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail = new TestCakeEmail();
 
 		App::build(array(
-			'views' => array(CAKE . 'tests' . DS . 'test_app' . DS . 'View'. DS)
+			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 	}
 

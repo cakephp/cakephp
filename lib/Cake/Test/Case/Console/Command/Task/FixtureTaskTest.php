@@ -362,10 +362,10 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->plugin = 'TestFixture';
-		$filename = APP . 'plugins' . DS . 'TestFixture' . DS . 'tests' . DS . 'Fixture' . DS . 'ArticleFixture.php';
+		$filename = APP . 'Plugin' . DS . 'TestFixture' . DS . 'tests' . DS . 'Fixture' . DS . 'ArticleFixture.php';
 
 		//fake plugin path
-		CakePlugin::load('TestFixture', array('path' => APP . 'plugins' . DS . 'TestFixture' . DS));
+		CakePlugin::load('TestFixture', array('path' =>  APP . 'Plugin' . DS . 'TestFixture' . DS));
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/Article/'));
 

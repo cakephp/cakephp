@@ -301,8 +301,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$uses = array('Comment', 'User');
 
 		//fake plugin path
-		CakePlugin::load('ControllerTest', array('path' => APP . 'plugins' . DS . 'ControllerTest' . DS));
-		$path = APP . 'plugins' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
+		CakePlugin::load('ControllerTest', array('path' =>  APP . 'Plugin' . DS . 'ControllerTest' . DS));
+		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')->with(
 			$path,
@@ -316,7 +316,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->Task->plugin = 'ControllerTest';
-		$path = APP . 'plugins' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
+		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->assertEqual($this->Task->Template->templateVars['plugin'], 'ControllerTest');

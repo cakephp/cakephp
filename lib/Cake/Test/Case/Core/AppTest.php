@@ -374,11 +374,11 @@ class AppImportTest extends CakeTestCase {
 		CakePlugin::loadAll();
 
 		$path = App::pluginPath('TestPlugin');
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPlugin' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertEqual($path, $expected);
 
 		$path = App::pluginPath('TestPluginTwo');
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'plugins' . DS . 'TestPluginTwo' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertEqual($path, $expected);
 		App::build();
 	}
