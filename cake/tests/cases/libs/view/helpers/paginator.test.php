@@ -128,6 +128,47 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+    function testDisabledLinkHasDisabledOptionsAndNoEscape() {
+        $this->Paginator->params['paging']['Article']['nextPage'] = false;
+        $this->Paginator->params['paging']['Article']['page'] = 1;
+        $result = $this->Paginator->prev('<span>prev</span>', null, null, array('class' => 'disabled'));
+        $expected = array(
+            'span' => array('class' => 'disabled'),
+            '&lt;span&gt;prev&lt;/span&gt;',
+            '/span'
+        );
+        $this->assertTags($result, $expected, true);
+
+        $result = $this->Paginator->prev('<span>prev</span>', array('escape' => false), null, array('class' => 'disabled'));
+        $expected = array(
+            'span' => array('class' => 'disabled'),
+            '<span',
+            'prev',
+            '/span',
+            '/span'
+        );
+        $this->assertTags($result, $expected, true);
+
+        $this->Paginator->params['paging']['Article']['prevPage'] = false;
+        $result = $this->Paginator->next('<span>next</span>', null, null, array('class' => 'disabled'));
+        $expected = array(
+            'span' => array('class' => 'disabled'),
+            '&lt;span&gt;next&lt;/span&gt;',
+            '/span'
+        );
+        $this->assertTags($result, $expected, true);
+
+        $result = $this->Paginator->next('<span>next</span>', array('escape' => false), null, array('class' => 'disabled'));
+        $expected = array(
+            'span' => array('class' => 'disabled'),
+            '<span',
+            'next',
+            '/span',
+            '/span'
+        );
+        $this->assertTags($result, $expected, true);
+    }
+
 /**
  * testSortLinks method
  *
