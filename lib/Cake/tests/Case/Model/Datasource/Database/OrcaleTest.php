@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo_source.php';
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_oracle.php';
+require_once LIBS . 'Model' . DS . 'Datasource' . DS . 'DboSource.php';
+require_once LIBS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS . 'Oracle.php';
 
 /**
  * DboOracleTest class
@@ -39,7 +39,7 @@ class DboOracleTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_initDb();
+		//$this->_initDb();
 	}
 
 /**
@@ -49,8 +49,8 @@ class DboOracleTest extends CakeTestCase {
  * @return void
  */
     function skip() {
-    	$this->_initDb();
-    	$this->skipUnless($this->db->config['driver'] == 'oracle', '%s Oracle connection not available');
+    	//$this->_initDb();
+    	$this->skipUnless($this->db->config['datasource'] == 'Database/Oracle', '%s Oracle connection not available');
     }
 
 /**
