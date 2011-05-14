@@ -157,7 +157,7 @@ class CakeTestFixture {
 					continue;
 				}
 
-				if (in_array($type, array('blob', 'text'))) {
+				if (in_array($type, array('blob', 'text', 'binary'))) {
 					$canUseMemory = false;
 					break;
 				}
