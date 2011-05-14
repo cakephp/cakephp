@@ -50,7 +50,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->skipIf(!class_exists('Memcache'), '%s Apc is not installed or configured properly');
+		$this->skipIf(!class_exists('Memcache'), '%s Memcache is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('memcache', array(
@@ -86,6 +86,7 @@ class MemcacheEngineTest extends CakeTestCase {
 			'duration'=> 3600,
 			'probability' => 100,
 			'servers' => array('127.0.0.1'),
+			'persistent' => true,
 			'compress' => false,
 			'engine' => 'Memcache'
 		);
