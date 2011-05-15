@@ -470,7 +470,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testPluginDotSyntaxWithCreate() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(

@@ -411,7 +411,7 @@ class App {
  * @return string full path to package
  */
 	public static function core($type) {
-		return array(LIBS . str_replace('/', DS, $type) . DS);
+		return array(CAKE . str_replace('/', DS, $type) . DS);
 	}
 
 /**
