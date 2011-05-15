@@ -18,6 +18,7 @@
  */
 
 App::uses('HtmlCoverageReport', 'TestSuite/Coverage');
+App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
 class HtmlCoverageReportTest extends CakeTestCase {
 /**

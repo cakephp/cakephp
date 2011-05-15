@@ -41,13 +41,6 @@ class AuthComponent extends Component {
 	const ALL = 'all';
 
 /**
- * Maintains current user login state.
- *
- * @var boolean
- */
-	protected $_loggedIn = false;
-
-/**
  * Other components utilized by AuthComponent
  *
  * @var array
@@ -511,16 +504,14 @@ class AuthComponent extends Component {
  */
 	public function login($user = null) {
 		$this->__setDefaults();
-		$this->_loggedIn = false;
 
 		if (empty($user)) {
 			$user = $this->identify($this->request, $this->response);
 		}
 		if ($user) {
 			$this->Session->write(self::$sessionKey, $user);
-			$this->_loggedIn = true;
 		}
-		return $this->_loggedIn;
+		return $this->loggedIn();
 	}
 
 /**
@@ -535,7 +526,6 @@ class AuthComponent extends Component {
 		$this->__setDefaults();
 		$this->Session->delete(self::$sessionKey);
 		$this->Session->delete('Auth.redirect');
-		$this->_loggedIn = false;
 		return Router::normalize($this->logoutRedirect);
 	}
 
@@ -679,23 +669,19 @@ class AuthComponent extends Component {
  * @param object $controller Instantiating controller
  */
 	public function shutdown($controller) {
-		if ($this->_loggedIn) {
+		if ($this->loggedIn()) {
 			$this->Session->delete('Auth.redirect');
 		}
 	}
 
 /**
- * Sets or gets whether the user is logged in
+ * Check whether or not the current user has data in the session, and is considered logged in.
  *
- * @param boolean $logged sets the status of the user, true to logged in, false to logged out
  * @return boolean true if the user is logged in, false otherwise
  * @access public
  */
-	public function loggedIn($logged = null) {
-		if (!is_null($logged)) {
-			$this->_loggedIn = $logged;
-		}
-		return $this->_loggedIn;
+	public function loggedIn() {
+		return $this->user() != array();
 	}
 
 /**

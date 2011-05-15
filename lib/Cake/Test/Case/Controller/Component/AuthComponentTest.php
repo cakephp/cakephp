@@ -1007,7 +1007,7 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testShutDown() {
-		$this->Controller->Auth->initialize($this->Controller, array('_loggedIn' => true));
+		$this->Auth->Session->write('Auth.User', 'not empty');
 		$this->Auth->Session->write('Auth.redirect', 'foo');
 		$this->Controller->Auth->loggedIn(true);
 
