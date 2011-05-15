@@ -41,7 +41,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	function initialize() {
-		$this->path = current(App::path('Plugin'));
+		$this->path = current(App::path('plugins'));
 	}
 
 /**
@@ -94,7 +94,7 @@ class PluginTask extends Shell {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
-		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s",  $plugin));
+		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s", $plugin));
 		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $pluginPath));
 		$this->hr();
 
