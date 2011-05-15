@@ -689,7 +689,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->constructClasses();
 		$Controller->Test->viewclass = 'Theme';
 		$Controller->viewPath = 'posts';
-		$Controller->theme = 'test_theme';
+		$Controller->theme = 'TestTheme';
 		$result = $Controller->render('index');
 		$this->assertPattern('/default test_theme layout/', $result);
 		App::build();
