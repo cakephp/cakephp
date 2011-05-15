@@ -19,7 +19,7 @@
 class TestsAppsPostsController extends AppController {
 	public $name = 'TestsAppsPosts';
 	public $uses = array('Post');
-	public $viewPath = 'tests_apps';
+	public $viewPath = 'TestsApps';
 
 	function add() {
 		$data = array(
