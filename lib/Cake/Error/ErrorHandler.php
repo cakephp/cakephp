@@ -107,22 +107,32 @@ class ErrorHandler {
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public static function handleException(Exception $exception) {
-		$config = Configure::read('Exception');
-		if (!empty($config['log'])) {
-			$message = sprintf("[%s] %s\n%s",
-				get_class($exception),
-				$exception->getMessage(),
-				$exception->getTraceAsString()
+		try {
+			$config = Configure::read('Exception');
+			if (!empty($config['log'])) {
+				$message = sprintf("[%s] %s\n%s",
+					get_class($exception),
+					$exception->getMessage(),
+					$exception->getTraceAsString()
+				);
+				CakeLog::write(LOG_ERR, $message);
+			}
+			$renderer = $config['renderer'];
+			if ($renderer !== 'ExceptionRenderer') {
+				list($plugin, $renderer) = pluginSplit($renderer, true);
+				App::uses($renderer, $plugin . 'Error');
+			}
+			$error = new $renderer($exception);
+			$error->render();
+		} catch (Exception $e) {
+			$message = $e->getMessage()."\nCall Stack:\n".$e->getTraceAsString();
+			ErrorHandler::handleError(
+				E_ERROR,
+				$message,
+				$e->getFile(),
+				$e->getLine()
 			);
-			CakeLog::write(LOG_ERR, $message);
 		}
-		$renderer = $config['renderer'];
-		if ($renderer !== 'ExceptionRenderer') {
-			list($plugin, $renderer) = pluginSplit($renderer, true);
-			App::uses($renderer, $plugin . 'Error');
-		}
-		$error = new $renderer($exception);
-		$error->render();
 	}
 
 /**
@@ -178,6 +188,7 @@ class ErrorHandler {
  * @return array Array of error word, and log location.
  */
 	protected static function _mapErrorCode($code) {
+		$error = $log = null;
 		switch ($code) {
 			case E_PARSE:
 			case E_ERROR:
