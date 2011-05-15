@@ -152,7 +152,7 @@ class ExceptionRenderer {
 			$controller = new CakeErrorController($request);
 		} catch (Exception $e) {
 			$controller = new Controller($request);
-			$controller->viewPath = 'errors';
+			$controller->viewPath = 'Errors';
 		}
 		return $controller;
 	}
