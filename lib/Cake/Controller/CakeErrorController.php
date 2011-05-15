@@ -26,7 +26,7 @@ class CakeErrorController extends AppController {
 		parent::__construct($request);
 		$this->constructClasses();
 		$this->Components->trigger('initialize', array(&$this));
-		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
+		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
 	}
 
 /**
