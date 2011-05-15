@@ -94,7 +94,7 @@ class CakeSchema extends Object {
 		}
 
 		if (empty($options['path'])) {
-			$this->path = CONFIGS . 'schema';
+			$this->path = CONFIGS . 'Schema';
 		}
 
 		$options = array_merge(get_object_vars($this), $options);
@@ -128,7 +128,7 @@ class CakeSchema extends Object {
 		if (file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
 			$this->file = $file;
 		} elseif (!empty($this->plugin)) {
-			$this->path = App::pluginPath($this->plugin) . 'config' . DS . 'schema';
+			$this->path = CakePlugin::path($this->plugin) . 'Config' . DS . 'Schema';
 		}
 	}
 

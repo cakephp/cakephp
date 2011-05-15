@@ -263,13 +263,13 @@ class I18n {
 		$core = true;
 		$merge = array();
 		$searchPaths = App::path('locales');
-		$plugins = App::objects('plugin');
+		$plugins = CakePlugin::loaded();
 
 		if (!empty($plugins)) {
 			foreach ($plugins as $plugin) {
-				$plugin = Inflector::underscore($plugin);
-				if ($plugin === $domain) {
-					$searchPaths[] = App::pluginPath($plugin) . DS . 'locale' . DS;
+				$pluginDomain = Inflector::underscore($plugin);
+				if ($pluginDomain === $domain) {
+					$searchPaths[] = CakePlugin::path($plugin) . DS . 'locale' . DS;
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}

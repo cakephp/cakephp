@@ -57,12 +57,12 @@ class ThemeView extends View {
 		if (!empty($this->theme)) {
 			$count = count($paths);
 			for ($i = 0; $i < $count; $i++) {
-				if (strpos($paths[$i], DS . 'plugins' . DS) === false
+				if (strpos($paths[$i], DS . 'Plugins' . DS) === false
 					&& strpos($paths[$i], DS . 'Cake' . DS . 'View') === false) {
 						if ($plugin) {
-							$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS . 'plugins' . DS . $plugin . DS;
+							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugins' . DS . $plugin . DS;
 						}
-						$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS;
+						$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS;
 					}
 			}
 			$paths = array_merge($themePaths, $paths);

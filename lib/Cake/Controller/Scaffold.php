@@ -125,7 +125,7 @@ class Scaffold {
 		}
 
 		$this->ScaffoldModel = $this->controller->{$this->modelClass};
-		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
+		$this->scaffoldTitle = Inflector::humanize(Inflector::underscore($this->viewPath));
 		$this->scaffoldActions = $controller->scaffold;
 		$title_for_layout = __d('cake', 'Scaffold :: ') . Inflector::humanize($request->action) . ' :: ' . $this->scaffoldTitle;
 		$modelClass = $this->controller->modelClass;

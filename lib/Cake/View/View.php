@@ -353,7 +353,7 @@ class View extends Object {
 			}
 			return $element;
 		}
-		$file = 'elements' . DS . $name . $this->ext;
+		$file = 'Elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
 			return "Element Not Found: " . $file;
@@ -740,7 +740,7 @@ class View extends Object {
 			$subDir = $this->layoutPath . DS;
 		}
 		$paths = $this->_paths($this->plugin);
-		$file = 'layouts' . DS . $subDir . $name;
+		$file = 'Layouts' . DS . $subDir . $name;
 
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
@@ -780,8 +780,8 @@ class View extends Object {
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'elements' . DS . $name . $ext)) {
-					return $path . 'elements' . DS . $name . $ext;
+				if (file_exists($path . 'Elements' . DS . $name . $ext)) {
+					return $path . 'Elements' . DS . $name . $ext;
 				}
 			}
 		}
@@ -802,12 +802,12 @@ class View extends Object {
 		$paths = array();
 		$viewPaths = App::path('View');
 		$corePaths = array_flip(App::core('View'));
-
 		if (!empty($plugin)) {
+			$plugin = Inflector::camelize($plugin);
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!isset($corePaths[$viewPaths[$i]])) {
-					$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
+					$paths[] = $viewPaths[$i] . 'Plugins' . DS . $plugin . DS;
 				}
 			}
 			$paths = array_merge($paths, App::path('View', $plugin));

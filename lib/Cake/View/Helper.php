@@ -211,15 +211,10 @@ class Helper extends Object {
 			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS  . $file)) {
 				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 			} else {
-				$viewPaths = App::path('views');
-
-				foreach ($viewPaths as $viewPath) {
-					$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $file;
-
-					if (file_exists($path)) {
-						$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
-						break;
-					}
+				$themePath = App::themePath($this->theme);
+				$path = $themePath . 'webroot' . DS  . $file;
+				if (file_exists($path)) {
+					$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 				}
 			}
 		}
@@ -253,10 +248,12 @@ class Helper extends Object {
 				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
 				return $path . '?' . @filemtime($themePath);
 			} else {
-				$plugin = $segments[0];
-				unset($segments[0]);
-				$pluginPath = App::pluginPath($plugin) . 'webroot' . DS . implode(DS, $segments);
-				return $path . '?' . @filemtime($pluginPath);
+				$plugin = Inflector::camelize($segments[0]);
+				if (CakePlugin::loaded($plugin)) {
+					unset($segments[0]);
+					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					return $path . '?' . @filemtime($pluginPath);
+				}
 			}
 		}
 		return $path;
@@ -264,7 +261,7 @@ class Helper extends Object {
 
 /**
  * Used to remove harmful tags from content.  Removes a number of well known XSS attacks
- * from content.  However, is not guaranteed to remove all possiblities.  Escaping
+ * from content.  However, is not guaranteed to remove all possibilities.  Escaping
  * content is the best way to prevent all possible attacks.
  *
  * @param mixed $output Either an array of strings to clean or a single string to clean.
@@ -287,7 +284,6 @@ class Helper extends Object {
 	}
 
 /**
-<<<<<<< HEAD:lib/Cake/View/Helper.php
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
  *

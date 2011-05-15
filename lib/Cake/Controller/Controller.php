@@ -315,7 +315,7 @@ class Controller extends Object {
 		}
 
 		if ($this->viewPath == null) {
-			$this->viewPath = Inflector::underscore($this->name);
+			$this->viewPath = $this->name;
 		}
 
 		$this->modelClass = Inflector::singularize($this->name);

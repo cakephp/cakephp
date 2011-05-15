@@ -417,6 +417,14 @@ class MissingTestLoaderException extends CakeException {
 	protected $_messageTemplate = 'Test loader %s could not be found.';
 }
 
+/**
+ * Exception Raised when a test loader could not be found
+ *
+ * @package cake.libs
+ */
+class MissingPluginException extends CakeException {
+	protected $_messageTemplate = 'Test plugin %s could not be found.';
+}
 
 /**
  * Exception class for Cache.  This exception will be thrown from Cache when it
