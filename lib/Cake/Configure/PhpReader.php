@@ -63,7 +63,7 @@ class PhpReader implements ConfigReaderInterface {
 		list($plugin, $key) = pluginSplit($key);
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'config' . DS . $key;
+			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

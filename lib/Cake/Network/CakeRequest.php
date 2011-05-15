@@ -106,6 +106,15 @@ class CakeRequest implements ArrayAccess {
 			'webOS', 'Windows CE', 'Xiino'
 		))
 	);
+
+/**
+ * Copy of php://input.  Since this stream can only be read once in most SAPI's
+ * keep a copy of it so users don't need to know about that detail.
+ *
+ * @var string
+ */
+	private $__input = '';
+
 /**
  * Constructor 
  *
@@ -133,28 +142,30 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * process the post data and set what is there into the object.
+ * processed data is available at $this->data
  *
  * @return void
  */
 	protected function _processPost() {
-		$this->params['form'] = $_POST;
+		$this->data = $_POST;
 		if (ini_get('magic_quotes_gpc') === '1') {
-			$this->params['form'] = stripslashes_deep($this->params['form']);
+			$this->data = stripslashes_deep($this->data);
 		}
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
-			$this->params['form']['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
+			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
-		if (isset($this->params['form']['_method'])) {
+		if (isset($this->data['_method'])) {
 			if (!empty($_SERVER)) {
-				$_SERVER['REQUEST_METHOD'] = $this->params['form']['_method'];
+				$_SERVER['REQUEST_METHOD'] = $this->data['_method'];
 			} else {
-				$_ENV['REQUEST_METHOD'] = $this->params['form']['_method'];
+				$_ENV['REQUEST_METHOD'] = $this->data['_method'];
 			}
-			unset($this->params['form']['_method']);
+			unset($this->data['_method']);
 		}
-		if (isset($this->params['form']['data'])) {
-			$this->data = $this->params['form']['data'];
-			unset($this->params['form']['data']);
+		if (isset($this->data['data'])) {
+			$data = $this->data['data'];
+			unset($this->data['data']);
+			$this->data = Set::merge($this->data, $data);
 		}
 	}
 
@@ -480,7 +491,7 @@ class CakeRequest implements ArrayAccess {
  * @return The current object, you can chain this method.
  */
 	public function addParams($params) {
-		$this->params = array_merge($this->params, $params);
+		$this->params = array_merge($this->params, (array)$params);
 		return $this;
 	}
 
@@ -533,6 +544,14 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Get the HTTP method used for this request.
+ * There are a few ways to specify a method.  
+ *
+ * - If your client supports it you can use native HTTP methods.
+ * - You can set the HTTP-X-Method-Override header. 
+ * - You can submit an input with the name `_method`
+ *
+ * Any of these 3 approaches can be used to set the HTTP method used
+ * by CakePHP internally, and will effect the result of this method.
  *
  * @return string The name of the HTTP method used.
  */
@@ -660,6 +679,51 @@ class CakeRequest implements ArrayAccess {
 			return $this;
 		}
 		return Set::classicExtract($this->data, $name);
+	}
+
+/**
+ * Read data from `php://stdin`. Useful when interacting with XML or JSON
+ * request body content.
+ * 
+ * Getting input with a decoding function:
+ *
+ * `$this->request->input('json_decode');`
+ *
+ * Getting input using a decoding function, and additional params:
+ *
+ * `$this->request->input('Xml::build', array('return' => 'DOMDocument'));`
+ *
+ * Any additional parameters are applied to the callback in the order they are given.
+ *
+ * @param string $callback A decoding callback that will convert the string data to another
+ *     representation. Leave empty to access the raw input data. You can also
+ *     supply additional parameters for the decoding callback using var args, see above.
+ * @return The decoded/processed request data.
+ */
+	public function input($callback = null) {
+		$input = $this->_readStdin();
+		$args = func_get_args();
+		if (!empty($args)) {
+			$callback = array_shift($args);
+			array_unshift($args, $input);
+			return call_user_func_array($callback, $args);
+		}
+		return $input;
+	}
+
+/**
+ * Read data from php://stdin, mocked in tests.
+ *
+ * @return string contents of stdin
+ */
+	protected function _readStdin() {
+		if (empty($this->__input)) {
+			$fh = fopen('php://input', 'r');
+			$content = stream_get_contents($fh);
+			fclose($fh);
+			$this->__input = $content;
+		}
+		return $this->__input;
 	}
 
 /**

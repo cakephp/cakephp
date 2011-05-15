@@ -41,7 +41,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	function initialize() {
-		$this->path = APP . 'plugins' . DS;
+		$this->path =  APP . 'Plugin' . DS;
 	}
 
 /**
@@ -76,7 +76,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::underscore($pluginPath)));
+			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::camelize($pluginPath)));
 		}
 	}
 
@@ -88,8 +88,7 @@ class PluginTask extends Shell {
  * @return bool
  */
 	public function bake($plugin) {
-		$pluginPath = Inflector::underscore($plugin);
-
+		$pluginPath = Inflector::camelize($plugin);
 		$pathOptions = App::path('plugins');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
@@ -104,7 +103,7 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$Folder = new Folder($this->path . $pluginPath);
 			$directories = array(
-				'config' . DS . 'schema',
+				'Config' . DS . 'schema',
 				'Model' . DS . 'Behavior',
 				'Model' . DS . 'Datasource',
 				'Console' . DS . 'Command' . DS . 'Task',

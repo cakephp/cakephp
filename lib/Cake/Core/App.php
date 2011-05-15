@@ -63,6 +63,27 @@
 class App {
 
 /**
+ * Append paths
+ *
+ * @constant APPEND
+ */
+	const APPEND = 'append';
+
+/**
+ * Prepend paths
+ *
+ * @constant PREPEND
+ */
+	const PREPEND = 'prepend';
+
+/**
+ * Reset paths instead of merging
+ *
+ * @constant RESET
+ */
+	const RESET = true;
+
+/**
  * List of object types and their properties
  *
  * @var array
@@ -71,7 +92,7 @@ class App {
 		'class' => array('extends' => null, 'core' => true),
 		'file' => array('extends' => null, 'core' => true),
 		'model' => array('extends' => 'AppModel', 'core' => false),
-		'behavior' => array('extends' => 'ModelBehavior', 'core' => true),
+		'behavior' => array( 'suffix' => 'Behavior', 'extends' => 'Model/ModelBehavior', 'core' => true),
 		'controller' => array('suffix' => 'Controller', 'extends' => 'AppController', 'core' => true),
 		'component' => array('suffix' => 'Component', 'extends' => null, 'core' => true),
 		'lib' => array('extends' => null, 'core' => true),
@@ -222,15 +243,17 @@ class App {
  *
  * `App::build(array(Model' => array('/a/full/path/to/models/'))); will setup a new search path for the Model package`
  *
- * `App::build(array('Model' => array('/path/to/models/')), true); will setup the path as the only valid path for searching models`
+ * `App::build(array('Model' => array('/path/to/models/')), App::RESET); will setup the path as the only valid path for searching models`
  *
- * `App::build(array('View/Helper' => array('/path/to/models/', '/another/path/))); will setup multiple search paths for helpers`
+ * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/))); will setup multiple search paths for helpers`
+ *
+ * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
  *
  * @param array $paths associative array with package names as keys and a list of directories for new search paths
- * @param boolean $reset true will set paths, false merges paths [default] false
+ * @param mixed $mode App::RESET will set paths, App::APPEND with append paths, App::PREPEND will prepend paths, [default] App::PREPEND
  * @return void
  */
-	public static function build($paths = array(), $reset = false) {
+	public static function build($paths = array(), $mode = App::PREPEND) {
 		if (empty(self::$__packageFormat)) {
 			self::$__packageFormat = array(
 				'Model' => array(
@@ -288,15 +311,16 @@ class App {
 				'locales' => array(
 					'%s' . 'locale' . DS
 				),
-				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
+				'vendors' => array('%s' . 'Vendor' . DS, VENDORS),
 				'plugins' => array(
-					APP . 'plugins' . DS,
-					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+					APP . 'Plugin' . DS,
+					APP . 'plugin' . DS,
+					dirname(dirname(CAKE)) . DS . 'Plugin' . DS,
 				)
 			);
 		}
 
-		if ($reset == true) {
+		if ($mode === App::RESET) {
 			foreach ($paths as $type => $new) {
 				if (!empty(self::$legacy[$type])) {
 					$type = self::$legacy[$type];
@@ -329,7 +353,11 @@ class App {
 			}
 
 			if (!empty($paths[$type])) {
-				$path = array_merge((array)$paths[$type], self::$__packages[$type]);
+				if ($mode === App::PREPEND) {
+					$path = array_merge((array)$paths[$type], self::$__packages[$type]);
+				} else {
+					$path = array_merge(self::$__packages[$type], (array)$paths[$type]);
+				}
 			} else {
 				$path = self::$__packages[$type];
 			}
@@ -349,13 +377,7 @@ class App {
  * @return string full path to the plugin.
  */
 	public static function pluginPath($plugin) {
-		$pluginDir = Inflector::underscore($plugin);
-		foreach (self::$__packages['plugins'] as $pluginPath) {
-			if (is_dir($pluginPath . $pluginDir)) {
-				return $pluginPath . $pluginDir . DS ;
-			}
-		}
-		return self::$__packages['plugins'][0] . $pluginDir . DS;
+		return CakePlugin::path($plugin);
 	}
 
 /**
@@ -365,11 +387,11 @@ class App {
  *
  * `App::themePath('MyTheme'); will return the full path to the 'MyTheme' theme`
  *
- * @param string $theme lower_cased theme name to find the path of.
+ * @param string $theme theme name to find the path of.
  * @return string full path to the theme.
  */
 	public static function themePath($theme) {
-		$themeDir = 'themed' . DS . Inflector::underscore($theme);
+		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
 		foreach (self::$__packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS ;
@@ -614,25 +636,28 @@ class App {
 			return true;
 		}
 
-		$originalType = $type = strtolower($type);
-		$specialPackage = in_array($type, array('file', 'vendor'));
-		if (!$specialPackage && isset(self::$legacy[$type . 's'])) {
-			$type = self::$legacy[$type . 's'];
+		$originalType = strtolower($type);
+		$specialPackage = in_array($originalType, array('file', 'vendor'));
+		if (!$specialPackage && isset(self::$legacy[$originalType . 's'])) {
+			$type = self::$legacy[$originalType . 's'];
 		}
 		list($plugin, $name) = pluginSplit($name);
 		if (!empty($plugin)) {
 			$plugin = Inflector::camelize($plugin);
+			if (!CakePlugin::loaded($plugin)) {
+				return false;
+			}
 		}
 
 		if (!$specialPackage) {
 			return self::_loadClass($name, $plugin, $type, $originalType, $parent);
 		}
 
-		if ($type == 'file' && !empty($file)) {
+		if ($originalType == 'file' && !empty($file)) {
 			return self::_loadFile($name, $plugin, $search, $file, $return);
 		}
 
-		if ($type == 'vendor') {
+		if ($originalType == 'vendor') {
 			return self::_loadVendor($name, $plugin, $file, $ext);
 		}
 
@@ -658,10 +683,15 @@ class App {
 			$suffix = self::$types[$originalType]['suffix'];
 			$name .= ($suffix == $name) ? '' : $suffix;
 		}
-
 		if ($parent && isset(self::$types[$originalType]['extends'])) {
 			$extends = self::$types[$originalType]['extends'];
-			App::uses($extends, $type);
+			$extendType = $type;
+			if (strpos($extends, '/') !== false) {
+				$parts = explode('/', $extends);
+				$extends = array_pop($parts);
+				$extendType = implode('/', $parts);
+			}
+			App::uses($extends, $extendType);
 			if ($plugin && in_array($originalType, array('controller', 'model'))) {
 				App::uses($plugin . $extends, $plugin . '.' .$type);
 			}
@@ -757,6 +787,7 @@ class App {
 		self::$__map = (array)Cache::read('file_map', '_cake_core_');
 		self::$__objects = (array)Cache::read('object_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
+		self::uses('CakePlugin', 'Core');
 	}
 
 /**

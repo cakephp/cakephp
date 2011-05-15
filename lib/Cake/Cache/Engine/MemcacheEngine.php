@@ -64,6 +64,7 @@ class MemcacheEngine extends CacheEngine {
 			'engine'=> 'Memcache',
 			'prefix' => Inflector::slug(APP_DIR) . '_',
 			'servers' => array('127.0.0.1'),
+			'persistent' => true,
 			'compress'=> false
 			), $settings)
 		);
@@ -79,7 +80,7 @@ class MemcacheEngine extends CacheEngine {
 			$this->_Memcache = new Memcache();
 			foreach ($this->settings['servers'] as $server) {
 				list($host, $port) = $this->_parseServerString($server);
-				if ($this->_Memcache->addServer($host, $port)) {
+				if ($this->_Memcache->addServer($host, $port, $this->settings['persistent'])) {
 					$return = true;
 				}
 			}

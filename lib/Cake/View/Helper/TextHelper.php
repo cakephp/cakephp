@@ -179,10 +179,10 @@ class TextHelper extends AppHelper {
 		$this->_linkOptions = $options;
 		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
 		return preg_replace_callback(
-			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*)/i',
+			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
 			array(&$this, '_linkEmails'),
 			$text
-		);
+		);	
 	}
 
 /**

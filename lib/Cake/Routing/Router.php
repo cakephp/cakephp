@@ -543,9 +543,6 @@ class Router {
 					}
 				}
 			}
-			if (empty($ext)) {
-				$ext = 'html';
-			}
 		}
 		return compact('ext', 'url');
 	}
@@ -582,7 +579,7 @@ class Router {
  * @access private
  */
 	private static function __connectDefaultRoutes() {
-		if ($plugins = App::objects('plugin')) {
+		if ($plugins = CakePlugin::loaded()) {
 			App::uses('PluginShortRoute', 'Routing/Route');
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
@@ -1016,9 +1013,11 @@ class Router {
  * are used for CakePHP internals and should not normally be part of an output url.
  *
  * @param mixed $param The params array or CakeRequest object that needs to be reversed.
+ * @param boolean $full Set to true to include the full url including the protocol when reversing
+ *     the url.
  * @return string The string that is the reversed result of the array
  */
-	public static function reverse($params) {
+	public static function reverse($params, $full = false) {
 		if ($params instanceof CakeRequest) {
 			$url = $params->query;
 			$params = $params->params;
@@ -1036,7 +1035,7 @@ class Router {
 		if (!empty($url)) {
 			$params['?'] = $url;
 		}
-		return Router::url($params);
+		return Router::url($params, $full);
 	}
 
 /**

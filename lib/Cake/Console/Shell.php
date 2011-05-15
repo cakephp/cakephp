@@ -220,7 +220,7 @@ class Shell extends Object {
 		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
-		App::import('Core', 'ClassRegistry');
+		App::uses('ClassRegistry', 'Utility');
 
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
@@ -756,6 +756,9 @@ class Shell extends Object {
  * @return string $path path to the correct plugin.
  */
 	function _pluginPath($pluginName) {
-		return App::pluginPath($pluginName);
+		if (CakePlugin::loaded($pluginName)) {
+			return CakePlugin::path($pluginName);
+		}
+		return current(App::path('plugins')) . $pluginName . DS;
 	}
 }

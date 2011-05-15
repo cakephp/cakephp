@@ -86,7 +86,7 @@ class CommandListShell extends Shell {
 		$appShells = App::objects('Console/Command', null, false);
 		$shellList = $this->_appendShells('app', $appShells, $shellList);
 
-		$plugins = App::objects('plugin');
+		$plugins = CakePlugin::loaded();
 		foreach ($plugins as $plugin) {
 			$pluginShells = App::objects($plugin . '.Console/Command');
 			$shellList = $this->_appendShells($plugin, $pluginShells, $shellList);
@@ -187,13 +187,13 @@ class CommandListShell extends Shell {
  * @return void
  */
 	protected function _asXml($shellList) {
-		$plugins = App::objects('plugin');
+		$plugins = CakePlugin::loaded();
 		$shells = new SimpleXmlElement('<shells></shells>');
 		foreach ($shellList as $name => $location) {
 			$source = current($location);
 			$callable = $name;
 			if (in_array($source, $plugins)) {
-				$callable = Inflector::underscore($source) . '.' . $name;
+				$callable = Inflector::camelize($source) . '.' . $name;
 			}
 			$shell = $shells->addChild('shell');
 			$shell->addAttribute('name', $name);

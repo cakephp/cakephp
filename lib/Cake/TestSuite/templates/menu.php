@@ -30,14 +30,12 @@ if (!empty($plugins)):
 ?>
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Plugins</span>
-	<?php foreach($plugins as $plugin):
-			$pluginPath = Inflector::underscore($plugin);
-	?>
+	<?php foreach($plugins as $plugin): ?>
 			<ul>
 				<li style="padding-top: 10px">
 					<span  style="font-size: 18px"><?php echo $plugin;?></span>
 					<ul>
-						<li><a href='<?php echo $cases;?>&amp;plugin=<?php echo $pluginPath; ?>'>Tests</a></li>
+						<li><a href='<?php echo $cases;?>&amp;plugin=<?php echo $plugin; ?>'>Tests</a></li>
 					</ul>
 				</li>
 			</ul>

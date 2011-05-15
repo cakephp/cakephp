@@ -129,11 +129,11 @@ class ShellDispatcher {
 		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
 			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
 		}
-		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
+		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
 
-		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
-			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+		if (!file_exists(APP_PATH . 'Config' . DS . 'core.php')) {
+			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'templates' . DS . 'skel' . DS . 'Config' . DS . 'core.php';
 			App::build();
 		}
 		require_once CONSOLE_LIBS . 'ConsoleErrorHandler.php';
@@ -141,7 +141,7 @@ class ShellDispatcher {
 		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
 
 		if (!defined('FULL_BASE_URL')) {
-			define('FULL_BASE_URL', '/');
+			define('FULL_BASE_URL', 'http://localhost');
 		}
 
 		return true;
