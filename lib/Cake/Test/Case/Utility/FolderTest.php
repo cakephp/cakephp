@@ -69,10 +69,10 @@ class FolderTest extends CakeTestCase {
 		$result = Folder::isSlashTerm($inside);
 		$this->assertTrue($result);
 
-		$result = $Folder->realpath('tests/');
-		$this->assertEqual($result, $path . DS .'tests' . DS);
+		$result = $Folder->realpath('Test/');
+		$this->assertEqual($result, $path . DS .'Test' . DS);
 
-		$result = $Folder->inPath('tests' . DS);
+		$result = $Folder->inPath('Test' . DS);
 		$this->assertTrue($result);
 
 		$result = $Folder->inPath(DS . 'non-existing' . $inside);
@@ -147,7 +147,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	function testOperations() {
-		$path = LIBS . 'console' . DS . 'templates' . DS . 'skel';
+		$path = LIBS . 'Console' . DS . 'templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
 		$result = is_dir($Folder->pwd());
@@ -220,7 +220,7 @@ class FolderTest extends CakeTestCase {
 	public function testChmod() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Folder permissions tests not supported on Windows');
 
-		$path = LIBS . 'console' . DS . 'templates' . DS . 'skel';
+		$path = LIBS . 'Console' . DS . 'templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
 		$subdir = 'test_folder_new';
