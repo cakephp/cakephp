@@ -80,7 +80,7 @@ class ScaffoldView extends ThemeView {
 		}
 
 		if ($name === 'scaffolds' . DS . $subDir . 'error') {
-			return CAKE . 'View' . DS . 'errors' . DS . 'scaffold_error.ctp';
+			return CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
 		}
 
 		throw new MissingViewException($paths[0] . $name . $this->ext);

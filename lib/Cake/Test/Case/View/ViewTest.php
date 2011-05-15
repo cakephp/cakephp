@@ -191,7 +191,7 @@ class ViewTest extends CakeTestCase {
 		$request = $this->getMock('CakeRequest');
 		$this->Controller = new Controller($request);
 		$this->PostsController = new ViewPostsController($request);
-		$this->PostsController->viewPath = 'posts';
+		$this->PostsController->viewPath = 'Posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
 		App::build(array(
@@ -350,7 +350,7 @@ class ViewTest extends CakeTestCase {
 	function testMissingView() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
-		$this->Controller->viewPath = 'pages';
+		$this->Controller->viewPath = 'Pages';
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
@@ -369,7 +369,7 @@ class ViewTest extends CakeTestCase {
 	function testMissingLayout() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
-		$this->Controller->viewPath = 'posts';
+		$this->Controller->viewPath = 'Posts';
 		$this->Controller->layout = 'whatever';
 
 		$View = new TestView($this->Controller);
@@ -751,7 +751,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestView($this->PostsController);
 
 		$result = $View->getViewFileName('index');
-		$this->assertPattern('/posts(\/|\\\)index.ctp/', $result);
+		$this->assertPattern('/Posts(\/|\\\)index.ctp/', $result);
 
 		$result = $View->getViewFileName('/Pages/home');
 		$this->assertPattern('/Pages(\/|\\\)home.ctp/', $result);
