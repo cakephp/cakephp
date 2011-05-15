@@ -334,11 +334,11 @@ class AppImportTest extends CakeTestCase {
 
 		$result = App::objects('TestPlugin.helper');
 		sort($result);
-		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
+		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
 		$this->assertEquals($result, $expected);
 		$result = App::objects('TestPlugin.View/Helper');
 		sort($result);
-		$expected = array('OtherHelperHelper', 'PluggedHelper', 'TestPluginApp');
+		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
 		$this->assertEquals($result, $expected);
 
 		$result = App::objects('TestPlugin.component');
