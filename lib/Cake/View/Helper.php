@@ -211,15 +211,10 @@ class Helper extends Object {
 			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS  . $file)) {
 				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 			} else {
-				$viewPaths = App::path('views');
-
-				foreach ($viewPaths as $viewPath) {
-					$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $file;
-
-					if (file_exists($path)) {
-						$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
-						break;
-					}
+				$themePath = App::themePath($this->theme);
+				$path = $themePath . 'webroot' . DS  . $file;
+				if (file_exists($path)) {
+					$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 				}
 			}
 		}

@@ -387,11 +387,11 @@ class App {
  *
  * `App::themePath('MyTheme'); will return the full path to the 'MyTheme' theme`
  *
- * @param string $theme lower_cased theme name to find the path of.
+ * @param string $theme theme name to find the path of.
  * @return string full path to the theme.
  */
 	public static function themePath($theme) {
-		$themeDir = 'themed' . DS . Inflector::underscore($theme);
+		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
 		foreach (self::$__packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS ;

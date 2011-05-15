@@ -1227,21 +1227,21 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->dispatch(new CakeRequest('theme/test_theme/flash/theme_test.swf'));
 		$result = ob_get_clean();
 
-		$file = file_get_contents(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'flash' . DS . 'theme_test.swf');
+		$file = file_get_contents(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'webroot' . DS . 'flash' . DS . 'theme_test.swf');
 		$this->assertEqual($file, $result);
 		$this->assertEqual('this is just a test to load swf file from the theme.', $result);
 
 		ob_start();
 		$Dispatcher->dispatch(new CakeRequest('theme/test_theme/pdfs/theme_test.pdf'));
 		$result = ob_get_clean();
-		$file = file_get_contents(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'pdfs' . DS . 'theme_test.pdf');
+		$file = file_get_contents(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'webroot' . DS . 'pdfs' . DS . 'theme_test.pdf');
 		$this->assertEqual($file, $result);
 		$this->assertEqual('this is just a test to load pdf file from the theme.', $result);
 
 		ob_start();
 		$Dispatcher->dispatch(new CakeRequest('theme/test_theme/img/test.jpg'));
 		$result = ob_get_clean();
-		$file = file_get_contents(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
+		$file = file_get_contents(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
 		$this->assertEqual($file, $result);
 
 		ob_start();

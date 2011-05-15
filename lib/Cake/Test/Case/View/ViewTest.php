@@ -753,14 +753,14 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getViewFileName('index');
 		$this->assertPattern('/posts(\/|\\\)index.ctp/', $result);
 
-		$result = $View->getViewFileName('/pages/home');
-		$this->assertPattern('/pages(\/|\\\)home.ctp/', $result);
+		$result = $View->getViewFileName('/Pages/home');
+		$this->assertPattern('/Pages(\/|\\\)home.ctp/', $result);
 
-		$result = $View->getViewFileName('../elements/test_element');
-		$this->assertPattern('/elements(\/|\\\)test_element.ctp/', $result);
+		$result = $View->getViewFileName('../Elements/test_element');
+		$this->assertPattern('/Elements(\/|\\\)test_element.ctp/', $result);
 
-		$result = $View->getViewFileName('../themed/test_theme/posts/index');
-		$this->assertPattern('/themed(\/|\\\)test_theme(\/|\\\)posts(\/|\\\)index.ctp/', $result);
+		$result = $View->getViewFileName('../Themed/TestTheme/Posts/index');
+		$this->assertPattern('/Themed(\/|\\\)TestTheme(\/|\\\)Posts(\/|\\\)index.ctp/', $result);
 
 		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS .'Posts' . DS .'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');

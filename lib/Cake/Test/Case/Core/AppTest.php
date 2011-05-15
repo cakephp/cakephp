@@ -393,11 +393,11 @@ class AppImportTest extends CakeTestCase {
 			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		$path = App::themePath('test_theme');
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 		$this->assertEqual($path, $expected);
 
 		$path = App::themePath('TestTheme');
-		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'test_theme' . DS;
+		$expected = LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 		$this->assertEqual($path, $expected);
 
 		App::build();
