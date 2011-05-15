@@ -387,7 +387,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		
 		$this->RequestHandler->renderAs($this->Controller, 'xml', array('attachment' => 'myfile.xml'));
 
-		$expected = 'request_handler_test' . DS . 'xml';
+		$expected = 'RequestHandlerTest' . DS . 'xml';
 		$this->assertEquals($expected, $this->Controller->viewPath);
 	}
 
@@ -445,11 +445,11 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	function testRenderAsCalledTwice() {
 		$this->RequestHandler->renderAs($this->Controller, 'xml');
-		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'xml');
+		$this->assertEqual($this->Controller->viewPath, 'RequestHandlerTest' . DS . 'xml');
 		$this->assertEqual($this->Controller->layoutPath, 'xml');
 
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'js');
+		$this->assertEqual($this->Controller->viewPath, 'RequestHandlerTest' . DS . 'js');
 		$this->assertEqual($this->Controller->layoutPath, 'js');
 		$this->assertTrue(in_array('Js', $this->Controller->helpers));
 	}
