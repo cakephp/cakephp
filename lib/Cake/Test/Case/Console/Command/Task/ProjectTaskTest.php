@@ -87,7 +87,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path), 'No project dir %s');
 		$dirs = array(
 			'Config',
-			'Config' . DS . 'schema',
+			'Config' . DS . 'Schema',
 			'Console',
 			'Console' . DS . 'Command',
 			'Console' . DS . 'Command' . DS . 'Task',
@@ -95,10 +95,10 @@ class ProjectTaskTest extends CakeTestCase {
 			'Model', 
 			'View',
 			'View' . DS . 'Helper',
-			'tests',
-			'tests' . DS . 'Case', 
-			'tests' . DS . 'Case' . DS . 'Model',
-			'tests' . DS . 'Fixture',
+			'Test',
+			'Test' . DS . 'Case', 
+			'Test' . DS . 'Case' . DS . 'Model',
+			'Test' . DS . 'Fixture',
 			'tmp',
 			'webroot',
 			'webroot' . DS . 'js',
@@ -124,12 +124,12 @@ class ProjectTaskTest extends CakeTestCase {
 			'Controller' . DS . 'Component', 
 			'Model' . DS . 'Behavior', 
 			'View' . DS . 'Helper',
-			'View' . DS . 'errors',
-			'View' . DS . 'scaffolds',
-			'tests' . DS . 'Case' . DS . 'Model', 
-			'tests' . DS . 'Case' . DS . 'Controller',
-			'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-			'tests' . DS . 'Fixture',
+			'View' . DS . 'Errors',
+			'View' . DS . 'Scaffolds',
+			'Test' . DS . 'Case' . DS . 'Model', 
+			'Test' . DS . 'Case' . DS . 'Controller',
+			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
+			'Test' . DS . 'Fixture',
 			'webroot' . DS . 'js'
 		);
 	
@@ -269,9 +269,9 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'Model'), 'No models dir');
 		$this->assertTrue(is_dir($path . DS . 'View'), 'No views dir');
 		$this->assertTrue(is_dir($path . DS . 'View' . DS . 'Helper'), 'No helpers dir');
-		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir');
-		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'Case'), 'No cases dir');
-		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'Fixture'), 'No fixtures dir');
+		$this->assertTrue(is_dir($path . DS . 'Test'), 'No tests dir');
+		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'Case'), 'No cases dir');
+		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'Fixture'), 'No fixtures dir');
 	}
 
 /**

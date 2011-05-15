@@ -151,7 +151,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual($this->Shell->Schema->name, 'TestSchema');
 		$this->assertEqual($this->Shell->Schema->file, 'test_schema.php');
 		$this->assertEqual($this->Shell->Schema->connection, 'default');
-		$this->assertEqual($this->Shell->Schema->path, APP . 'Config' . DS . 'schema');
+		$this->assertEqual($this->Shell->Schema->path, APP . 'Config' . DS . 'Schema');
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(

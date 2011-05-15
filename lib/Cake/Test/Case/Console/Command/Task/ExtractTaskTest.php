@@ -164,7 +164,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = LIBS . 'Test' . DS . 'test_app' . DS . 'View';
 		$this->Task->params['output'] = $this->path . DS;
-		$this->Task->params['exclude'] = 'pages,layouts';
+		$this->Task->params['exclude'] = 'Pages,Layouts';
 
 		$this->Task->expects($this->any())->method('in')
 			->will($this->returnValue('y'));

@@ -110,11 +110,12 @@ class PluginTaskTest extends CakeTestCase {
  */
 	public function testExecuteWithNoArgs() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestPlugin'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('3'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue($this->_testPath));
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'TestPlugin';
 		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
+
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
