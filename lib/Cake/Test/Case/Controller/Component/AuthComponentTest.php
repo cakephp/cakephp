@@ -887,7 +887,7 @@ class AuthTest extends CakeTestCase {
 	function testNoRedirectOnLoginAction() {
 		$controller = $this->getMock('Controller');
 		$controller->methods = array('login');
-		
+
 		$url = '/AuthTest/login';
 		$this->Auth->request = $controller->request = new CakeRequest($url);
 		$this->Auth->request->addParams(Router::parse($url));
@@ -951,7 +951,7 @@ class AuthTest extends CakeTestCase {
  */
 	function testAjaxLogin() {
 		App::build(array(
-			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
@@ -1127,7 +1127,7 @@ class AuthTest extends CakeTestCase {
 		$this->Auth->Session->expects($this->once())
 			->method('setFlash')
 			->with('Auth failure', 'custom', array(1), 'auth-key');
-		
+
 		$this->Auth->flash = array(
 			'element' => 'custom',
 			'params' => array(1),
@@ -1187,6 +1187,6 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Auth->password('password');
 		$expected = Security::hash('password', null, true);
 		$this->assertEquals($expected, $result);
-		
+
 	}
 }

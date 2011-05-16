@@ -75,6 +75,6 @@ if (Configure::read('debug') < 1) {
 	die(__d('cake', 'Debug setting does not allow access to this url.'));
 }
 
-require_once CAKE_TESTS_LIB . 'CakeTestSuiteDispatcher.php';
+require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 
 CakeTestSuiteDispatcher::run();

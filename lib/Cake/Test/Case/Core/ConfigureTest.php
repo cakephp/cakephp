@@ -90,7 +90,7 @@ class ConfigureTest extends CakeTestCase {
 
 		$result = Configure::read('debug');
 		$this->assertTrue($result >= 0);
-		
+
 		$result = Configure::read();
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(isset($result['debug']));
@@ -198,7 +198,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoadWithMerge() {
-		Configure::config('test', new PhpReader(LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
+		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -219,7 +219,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoadNoMerge() {
-		Configure::config('test', new PhpReader(LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
+		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -241,7 +241,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoadPlugin() {
-		App::build(array('plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)), true);
+		App::build(array('plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)), true);
 		Configure::config('test', new PhpReader());
 		CakePlugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');

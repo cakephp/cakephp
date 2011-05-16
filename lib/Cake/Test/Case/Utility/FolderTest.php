@@ -147,7 +147,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	function testOperations() {
-		$path = LIBS . 'Console' . DS . 'templates' . DS . 'skel';
+		$path = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
 		$result = is_dir($Folder->pwd());
@@ -220,7 +220,7 @@ class FolderTest extends CakeTestCase {
 	public function testChmod() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Folder permissions tests not supported on Windows');
 
-		$path = LIBS . 'Console' . DS . 'templates' . DS . 'skel';
+		$path = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
 		$subdir = 'test_folder_new';
@@ -316,41 +316,41 @@ class FolderTest extends CakeTestCase {
 		$Folder = new Folder();
 		$expected = array(
 			array(
-				LIBS . 'Config',
-				LIBS . 'Config' . DS . 'unicode',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding'
+				CAKE . 'Config',
+				CAKE . 'Config' . DS . 'unicode',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding'
 			),
 			array(
-				LIBS . 'Config' . DS . 'config.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0250_02af.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
-				LIBS . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'
+				CAKE . 'Config' . DS . 'config.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0250_02af.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
+				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'
 			)
 		);
 
-		$result = $Folder->tree(LIBS . 'Config', false);
+		$result = $Folder->tree(CAKE . 'Config', false);
 		$this->assertIdentical(array_diff($expected[0], $result[0]), array());
 		$this->assertIdentical(array_diff($result[0], $expected[0]), array());
 
-		$result = $Folder->tree(LIBS . 'Config', false, 'dir');
+		$result = $Folder->tree(CAKE . 'Config', false, 'dir');
 		$this->assertIdentical(array_diff($expected[0], $result), array());
 		$this->assertIdentical(array_diff($result, $expected[0]), array());
 
-		$result = $Folder->tree(LIBS . 'Config', false, 'files');
+		$result = $Folder->tree(CAKE . 'Config', false, 'files');
 		$this->assertIdentical(array_diff($expected[1], $result), array());
 		$this->assertIdentical(array_diff($result, $expected[1]), array());
 	}
@@ -486,7 +486,7 @@ class FolderTest extends CakeTestCase {
  */
 	function testFind() {
 		$Folder = new Folder();
-		$Folder->cd(LIBS . 'Config');
+		$Folder->cd(CAKE . 'Config');
 		$result = $Folder->find();
 		$expected = array('config.php');
 		$this->assertIdentical(array_diff($expected, $result), array());
@@ -539,17 +539,17 @@ class FolderTest extends CakeTestCase {
  */
 	function testFindRecursive() {
 		$Folder = new Folder();
-		$Folder->cd(LIBS);
+		$Folder->cd(CAKE);
 		$result = $Folder->findRecursive('(config|paths)\.php');
 		$expected = array(
-			LIBS . 'Config' . DS . 'config.php'
+			CAKE . 'Config' . DS . 'config.php'
 		);
 		$this->assertIdentical(array_diff($expected, $result), array());
 		$this->assertIdentical(array_diff($result, $expected), array());
 
 		$result = $Folder->findRecursive('(config|paths)\.php', true);
 		$expected = array(
-			LIBS . 'Config' . DS . 'config.php'
+			CAKE . 'Config' . DS . 'config.php'
 		);
 		$this->assertIdentical($result, $expected);
 
@@ -583,7 +583,7 @@ class FolderTest extends CakeTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 
-		$Folder->cd(LIBS . 'Config');
+		$Folder->cd(CAKE . 'Config');
 		$Folder->cd(TMP);
 		$Folder->delete($Folder->pwd() . DS . 'testme');
 		$File->delete();

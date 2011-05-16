@@ -65,7 +65,7 @@ class ConnectionManager {
  *
  */
 	private static function init() {
-		include_once CONFIGS . 'database.php';
+		include_once APP . 'Config' . DS . 'database.php';
 		if (class_exists('DATABASE_CONFIG')) {
 			self::$config = new DATABASE_CONFIG();
 		}

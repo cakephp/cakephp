@@ -172,10 +172,10 @@ class TestHelper extends Helper {
 /**
  * expose a method as public
  *
- * @param string $options 
- * @param string $exclude 
- * @param string $insertBefore 
- * @param string $insertAfter 
+ * @param string $options
+ * @param string $exclude
+ * @param string $insertBefore
+ * @param string $insertAfter
  * @return void
  */
 	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
@@ -518,8 +518,8 @@ class HelperTest extends CakeTestCase {
 		$_timestamp = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', 'force');
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 		));
 		CakePlugin::loadAll();
 
@@ -759,7 +759,7 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->theme = 'test_theme';
 
 		App::build(array(
-			'View' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
@@ -771,7 +771,7 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', LIBS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS);
+		Configure::write('App.www_root', CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS);
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';
@@ -799,7 +799,7 @@ class HelperTest extends CakeTestCase {
  */
 	function testLazyLoadingHelpers() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),	
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
 		CakePlugin::loadAll();
 		$Helper = new TestHelper($this->View);

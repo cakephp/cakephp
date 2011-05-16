@@ -37,7 +37,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function setUp() {
 		App::build(array(
 			'View' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
 		Router::reload();
@@ -230,7 +230,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testLoadPluginHanlder() {
 		App::build(array(
 			'plugins' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		), true);
 		CakePlugin::load('TestPlugin');

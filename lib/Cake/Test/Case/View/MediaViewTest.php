@@ -72,7 +72,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testRender() {
 		$this->MediaView->viewVars = array(
-			'path' =>  LIBS . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
+			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
 			'id' => 'test_asset.css',
 			'extension' => 'css',
 		);
@@ -120,7 +120,7 @@ class MediaViewTest extends CakeTestCase {
 		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 		$this->MediaView->viewVars = array(
-			'path' =>  LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
+			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
 			'id' => 'no_section.ini',
 			'extension' => 'ini',
 		);
@@ -180,7 +180,7 @@ class MediaViewTest extends CakeTestCase {
 		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
 		$this->MediaView->viewVars = array(
-			'path' =>  LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
+			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
 			'id' => 'no_section.ini',
 			'extension' => 'ini',
 		);
@@ -245,7 +245,7 @@ class MediaViewTest extends CakeTestCase {
 		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
 		$this->MediaView->viewVars = array(
-			'path' =>  LIBS . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
+			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
 			'id' => 'no_section.ini',
 			'extension' => 'ini',
 		);
@@ -308,7 +308,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testConnectionAborted() {
 		$this->MediaView->viewVars = array(
-			'path' =>  LIBS . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
+			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
 			'id' => 'test_asset.css',
 			'extension' => 'css',
 		);
@@ -332,7 +332,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testConnectionAbortedOnBuffering() {
 		$this->MediaView->viewVars = array(
-			'path' =>  LIBS . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
+			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
 			'id' => 'test_asset.css',
 			'extension' => 'css',
 		);

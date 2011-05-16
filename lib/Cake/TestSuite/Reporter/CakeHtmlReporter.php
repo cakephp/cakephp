@@ -51,7 +51,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 	public function paintDocumentStart() {
 		ob_start();
 		$baseDir = $this->params['baseDir'];
-		include CAKE_TESTS_LIB . 'templates' . DS . 'header.php';
+		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'header.php';
 	}
 
 /**
@@ -64,7 +64,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin', null, false);
 		sort($plugins);
-		include CAKE_TESTS_LIB . 'templates' . DS . 'menu.php';
+		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'menu.php';
 	}
 
 /**
@@ -212,7 +212,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintDocumentEnd() {
 		$baseDir = $this->params['baseDir'];
-		include CAKE_TESTS_LIB . 'templates/footer.php';
+		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'footer.php';
 		if (ob_get_length()) {
 			ob_end_flush();
 		}

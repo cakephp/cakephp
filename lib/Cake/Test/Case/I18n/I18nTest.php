@@ -34,8 +34,8 @@ class I18nTest extends CakeTestCase {
 	function setUp() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'locales' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		CakePlugin::loadAll();
 	}
@@ -89,7 +89,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertEqual($cachedDom2['LC_MESSAGES']['dom2.foo'], 'Dom 2 Foo');
 		$this->assertEqual($cachedDom2['LC_MESSAGES']['dom2.bar'], 'Dom 2 Bar');
 
-		// modify cache entry manually to verify that dom1 entries now will be read from cache 
+		// modify cache entry manually to verify that dom1 entries now will be read from cache
 		$cachedDom1['LC_MESSAGES']['dom1.foo'] = 'FOO';
 		Cache::write('dom1_' . $lang, $cachedDom1, '_cake_core_');
 		$this->assertEqual(I18n::translate('dom1.foo', false, 'dom1'), 'FOO');
@@ -2432,7 +2432,7 @@ class I18nTest extends CakeTestCase {
  */
 	function testPluginTranslation() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 
 		Configure::write('Config.language', 'po');
@@ -2649,9 +2649,9 @@ class I18nTest extends CakeTestCase {
 	function testTimeDefinitionJapanese(){
 		Configure::write('Config.language', 'ja_jp');
 		$result = __c('d_fmt', 5);
-		
+
 		$expected = "%Y年%m月%d日";
-		
+
 		$this->assertEqual($result, $expected);
 
 		$result = __c('am_pm', 5);

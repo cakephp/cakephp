@@ -36,12 +36,12 @@ class ViewTask extends BakeTask {
 	public $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
 
 /**
- * path to VIEWS directory
+ * path to View directory
  *
  * @var array
  * @access public
  */
-	public $path = VIEWS;
+	public $path = null;
 
 /**
  * Name of the controller being used
@@ -89,6 +89,7 @@ class ViewTask extends BakeTask {
  *
  */
 	public function initialize() {
+		$this->path = current(App::path('View'));
 	}
 
 /**
@@ -407,7 +408,7 @@ class ViewTask extends BakeTask {
 		}
 		if (!empty($this->template) && $action != $this->template) {
 			return $this->template;
-		} 
+		}
 		$template = $action;
 		$prefixes = Configure::read('Routing.prefixes');
 		foreach ((array)$prefixes as $prefix) {

@@ -339,6 +339,89 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * constants
+ *
+ * @access public
+ * @return void
+ */
+	public function constants() {
+		$this->_paths = array(
+			APP
+		);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		}
+		$patterns = array(
+			array(
+				"LIBS -> CAKE",
+				'/\bLIBS\b/',
+				'CAKE'
+			),
+			array(
+				"CONFIGS -> APP . 'Config' . DS",
+				'/\bCONFIGS\b/',
+				'APP . \'Config\' . DS'
+			),
+			array(
+				"CONTROLLERS -> APP . 'Controller' . DS",
+				'/\bCONTROLLERS\b/',
+				'APP . \'Controller\' . DS'
+			),
+			array(
+				"COMPONENTS -> APP . 'Controller' . DS . 'Component' . DS",
+				'/\bCOMPONENTS\b/',
+				'APP . \'Controller\' . DS . \'Component\''
+			),
+			array(
+				"MODELS -> APP . 'Model' . DS",
+				'/\bMODELS\b/',
+				'APP . \'Model\' . DS'
+			),
+			array(
+				"BEHAVIORS -> APP . 'Model' . DS . 'Behavior' . DS",
+				'/\bBEHAVIORS\b/',
+				'APP . \'Model\' . DS . \'Behavior\' . DS'
+			),
+			array(
+				"VIEWS -> APP . 'View' . DS",
+				'/\bVIEWS\b/',
+				'APP . \'View\' . DS'
+			),
+			array(
+				"HELPERS -> APP . 'View' . DS . 'Helper' . DS",
+				'/\bHELPERS\b/',
+				'APP . \'View\' . DS . \'Helper\' . DS'
+			),
+			array(
+				"LAYOUTS -> APP . 'View' . DS . 'Layouts' . DS",
+				'/\bLAYOUTS\b/',
+				'APP . \'View\' . DS . \'Layouts\' . DS'
+			),
+			array(
+				"ELEMENTS -> APP . 'View' . DS . 'Elements' . DS",
+				'/\bELEMENTS\b/',
+				'APP . \'View\' . DS . \'Elements\' . DS'
+			),
+			array(
+				"CONSOLE_LIBS -> CAKE . 'Console' . DS",
+				'/\bCONSOLE_LIBS\b/',
+				'CAKE . \'Console\' . DS'
+			),
+			array(
+				"CAKE_TESTS_LIB -> CAKE . 'TestSuite' . DS",
+				'/\bCAKE_TESTS_LIB\b/',
+				'CAKE . \'TestSuite\' . DS'
+			),
+			array(
+				"CAKE_TESTS -> CAKE . 'Test' . DS",
+				'/\bCAKE_TESTS\b/',
+				'CAKE . \'Test\' . DS'
+			)
+		);
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
  * Move application php files to where they now should be
  *
  * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
@@ -548,6 +631,10 @@ class UpgradeShell extends Shell {
 			))
 			->addSubcommand('configure', array(
 				'help' => "Update Configure::read() to Configure::read('debug')",
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('constants', array(
+				'help' => "Replace Obsolete constants",
 				'parser' => $subcommandParser
 			));
 	}

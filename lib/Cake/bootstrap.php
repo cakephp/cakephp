@@ -49,63 +49,9 @@ if (!defined('APP')) {
 }
 
 /**
- * Path to the application's models directory.
- */
-	define('MODELS', APP.'Model'.DS);
-
-/**
- * Path to model behaviors directory.
- */
-	define('BEHAVIORS', MODELS.'Behavior'.DS);
-
-/**
- * Path to the application's controllers directory.
- */
-	define('CONTROLLERS', APP.'Controller'.DS);
-
-/**
- * Path to the application's components directory.
- */
-	define('COMPONENTS', CONTROLLERS.'Component'.DS);
-
-/**
  * Path to the application's libs directory.
  */
 	define('APPLIBS', APP.'Lib'.DS);
-
-/**
- * Path to the application's views directory.
- */
-	define('VIEWS', APP.'View'.DS);
-
-/**
- * Path to the application's helpers directory.
- */
-	define('HELPERS', VIEWS.'Helper'.DS);
-
-/**
- * Path to the application's view's layouts directory.
- */
-	define('LAYOUTS', VIEWS.'Layouts'.DS);
-
-/**
- * Path to the application's view's elements directory.
- * It's supposed to hold pieces of PHP/HTML that are used on multiple pages
- * and are not linked to a particular layout (like polls, footers and so on).
- */
-	define('ELEMENTS', VIEWS.'Elements'.DS);
-
-/**
- * Path to the configuration files directory.
- */
-if (!defined('CONFIGS')) {
-	define('CONFIGS', APP.'Config'.DS);
-}
-
-/**
- * Path to the libs directory.
- */
-	define('LIBS', CAKE);
 
 /**
  * Path to the public CSS directory.
@@ -123,53 +69,11 @@ if (!defined('CONFIGS')) {
 	define('IMAGES', WWW_ROOT.'img'.DS);
 
 /**
- * Path to the console libs direcotry.
- */
-	define('CONSOLE_LIBS', CAKE . 'Console' . DS);
-
-/**
  * Path to the tests directory.
  */
 if (!defined('TESTS')) {
 	define('TESTS', APP.'Test'.DS);
 }
-
-/**
- * Path to the core tests directory.
- */
-if (!defined('CAKE_TESTS')) {
-	define('CAKE_TESTS', CAKE.'Test'.DS);
-}
-
-/**
- * Path to the test suite.
- */
-	define('CAKE_TESTS_LIB', LIBS . 'TestSuite' . DS);
-
-/**
- * Path to the controller test directory.
- */
-	define('CONTROLLER_TESTS', TESTS.'Case'.DS.'Controller'.DS);
-
-/**
- * Path to the components test directory.
- */
-	define('COMPONENT_TESTS', TESTS.'Case'.DS.'Component'.DS);
-
-/**
- * Path to the helpers test directory.
- */
-	define('HELPER_TESTS', TESTS.'Case'.DS.'View'.DS.'Helper'.DS);
-
-/**
- * Path to the models' test directory.
- */
-	define('MODEL_TESTS', TESTS.'Case'.DS.'Model'.DS);
-
-/**
- * Path to the lib test directory.
- */
-	define('LIB_TESTS', CAKE_TESTS.'Case'.DS.'Lib'.DS);
 
 /**
  * Path to the temporary files directory.
@@ -217,9 +121,9 @@ if (!defined('JS_URL')) {
 }
 
 
-require LIBS . 'basics.php';
-require LIBS . 'Core' . DS .'App.php';
-require LIBS . 'Error' . DS . 'exceptions.php';
+require CAKE . 'basics.php';
+require CAKE . 'Core' . DS .'App.php';
+require CAKE . 'Error' . DS . 'exceptions.php';
 
 spl_autoload_register(array('App', 'load'));
 

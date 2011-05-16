@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once LIBS . 'Model' . DS . 'Datasource' . DS . 'DboSource.php';
-require_once LIBS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS . 'Oracle.php';
+require_once CAKE . 'Model' . DS . 'Datasource' . DS . 'DboSource.php';
+require_once CAKE . 'Model' . DS . 'Datasource' . DS . 'Database' . DS . 'Oracle.php';
 
 /**
  * DboOracleTest class

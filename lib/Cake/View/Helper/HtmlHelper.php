@@ -648,7 +648,7 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
-	
+
 /**
  * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be
  * generated with the link pointed at `$options['url']`.  This method will set an empty
@@ -928,7 +928,10 @@ class HtmlHelper extends AppHelper {
  * @param string $path Path with config file
  * @return mixed False to error or loaded configs
  */
-	public function loadConfig($configFile, $path = CONFIGS) {
+	public function loadConfig($configFile, $path = null) {
+		if (!$path) {
+			$path = APP . 'Config' . DS;
+		}
 		$file = null;
 		$reader = 'php';
 
