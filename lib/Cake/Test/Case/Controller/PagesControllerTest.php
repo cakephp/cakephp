@@ -50,7 +50,7 @@ class PagesControllerTest extends CakeTestCase {
 		));
 		$Pages = new PagesController(new CakeRequest(null, false));
 
-		$Pages->viewPath = 'posts';
+		$Pages->viewPath = 'Posts';
 		$Pages->display('index');
 		$this->assertPattern('/posts index/', $Pages->getResponse()->body());
 		$this->assertEqual($Pages->viewVars['page'], 'index');
