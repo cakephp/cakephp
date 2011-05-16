@@ -890,7 +890,7 @@ class CakeEmail {
 	public function send($content = null) {
 		if (is_string($this->_config)) {
 			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$this->_config})) {
@@ -971,7 +971,7 @@ class CakeEmail {
 
 		if (is_string($transportConfig)) {
 			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . 'email.php'));
+				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$transportConfig})) {

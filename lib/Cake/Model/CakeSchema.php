@@ -94,7 +94,7 @@ class CakeSchema extends Object {
 		}
 
 		if (empty($options['path'])) {
-			$this->path = APP . 'Config' . 'Schema';
+			$this->path = APP . 'Config' . DS . 'Schema';
 		}
 
 		$options = array_merge(get_object_vars($this), $options);

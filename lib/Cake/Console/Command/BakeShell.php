@@ -68,7 +68,7 @@ class BakeShell extends Shell {
 		if (!is_dir($this->DbConfig->path)) {
 			$path = $this->Project->execute();
 			if (!empty($path)) {
-				$this->DbConfig->path = $path . 'config' . DS;
+				$this->DbConfig->path = $path . 'Config' . DS;
 			} else {
 				return false;
 			}
