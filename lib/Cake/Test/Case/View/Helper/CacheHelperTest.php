@@ -44,7 +44,7 @@ class CacheTestController extends Controller {
  * @return void
  */
 	function cache_parsing() {
-		$this->viewPath = 'posts';
+		$this->viewPath = 'Posts';
 		$this->layout = 'cache_layout';
 		$this->set('variable', 'variableValue');
 		$this->set('superman', 'clark kent');
@@ -248,7 +248,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->here = '/cacheTest/cache_complex';
 		$this->Controller->action = 'cache_complex';
 		$this->Controller->layout = 'multi_cache';
-		$this->Controller->viewPath = 'posts';
+		$this->Controller->viewPath = 'Posts';
 
 		$View = new View($this->Controller);
 		$result = $View->render('sequencial_nocache');
@@ -567,7 +567,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->here = '/cacheTest/cache_empty_sections';
 		$this->Controller->action = 'cache_empty_sections';
 		$this->Controller->layout = 'cache_empty_sections';
-		$this->Controller->viewPath = 'posts';
+		$this->Controller->viewPath = 'Posts';
 
 		$View = new View($this->Controller);
 		$result = $View->render('cache_empty_sections');
