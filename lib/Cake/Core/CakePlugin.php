@@ -23,19 +23,19 @@ class CakePlugin {
  * parameters (plugin name, plugin configuration)
  *
  * It is also possible to load multiple plugins at once. Examples:
- * 
+ *
  * `CakePlugin::load(array('DebugKit', 'ApiGenerator'))` will load the DebugKit and ApiGenerator plugins
  * `CakePlugin::load(array('DebugKit', 'ApiGenerator'), array('bootstrap' => true))` will load bootstrap file for both plugins
- * 
+ *
  * {{{
  * 	CakePlugin::load(array(
  * 		'DebugKit' => array('routes' => true),
  * 		'ApiGenerator'
  * 		), array('bootstrap' => true))
  * }}}
- * 
+ *
  * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit
- * 
+ *
  * @param mixed $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
  * @throws MissingPluginException if the folder for the plugin to be loaded is not found
@@ -94,7 +94,7 @@ class CakePlugin {
  * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
  * and will not look for any bootstrap script.
  *
- * @param array $options 
+ * @param array $options
  * @return void
  */
 	public function loadAll($options = array()) {
@@ -173,7 +173,9 @@ class CakePlugin {
 		if ($plugin) {
 			return isset(self::$_plugins[$plugin]);
 		}
-		return array_keys(self::$_plugins);
+		$return = array_keys(self::$_plugins);
+		sort($return);
+		return $return;
 	}
 
 /**
