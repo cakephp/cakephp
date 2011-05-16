@@ -28,11 +28,11 @@
  * You can specify multiple configurations for production, development and testing.
  *
  * driver => The name of a supported driver; valid options are as follows:
- *		Datasabe/Mysql 		- MySQL 4 & 5,
- *		Datasabe/Sqlite		- SQLite (PHP5 only),
- *		Datasabe/Postgres	- PostgreSQL 7 and higher,
- *		Datasabe/Mssql		- Microsoft SQL Server 2000 and higher,
- *		Datasabe/Oracle		- Oracle 8 and higher
+ *		Database/Mysql 		- MySQL 4 & 5,
+ *		Database/Sqlite		- SQLite (PHP5 only),
+ *		Database/Postgres	- PostgreSQL 7 and higher,
+ *		Database/Mssql		- Microsoft SQL Server 2000 and higher,
+ *		Database/Oracle		- Oracle 8 and higher
  *
  * You can add custom database drivers (or override existing drivers) by adding the
  * appropriate file to app/models/datasources/database.  Drivers should be named 'MyDriver.php',
