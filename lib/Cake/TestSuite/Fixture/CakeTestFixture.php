@@ -145,7 +145,30 @@ class CakeTestFixture {
 			return false;
 		}
 
+		if (empty($this->fields['tableParameters']['engine'])) {
+			$canUseMemory = true;
+			foreach($this->fields as $field => $args) {
+
+				if (is_string($args)) {
+					$type = $args;
+				} elseif (!empty($args['type'])) {
+					$type = $args['type'];
+				} else {
+					continue;
+				}
+
+				if (in_array($type, array('blob', 'text', 'binary'))) {
+					$canUseMemory = false;
+					break;
+				}
+			}
+
+			if ($canUseMemory) {
+				$this->fields['tableParameters']['engine'] = 'MEMORY';
+			}
+		}
 		$this->Schema->build(array($this->table => $this->fields));
+
 		return (
 			$db->execute($db->createSchema($this->Schema), array('log' => false)) !== false
 		);
