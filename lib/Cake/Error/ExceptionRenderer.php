@@ -39,12 +39,12 @@ App::uses('Router', 'Routing');
  *
  * #### Using AppController::appError();
  *
- * This controller method is called instead of the default exception handling.  It receives the 
+ * This controller method is called instead of the default exception handling.  It receives the
  * thrown exception as its only argument.  You should implement your error handling in that method.
  *
  * #### Using a subclass of ExceptionRenderer
  *
- * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you 
+ * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
  * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
  * You should place any custom exception renderers in `app/libs`.
  *
@@ -135,7 +135,7 @@ class ExceptionRenderer {
 
 /**
  * Get the controller instance to handle the exception.
- * Override this method in subclasses to customize the controller used. 
+ * Override this method in subclasses to customize the controller used.
  * This method returns the built in `CakeErrorController` normally, or if an error is repeated
  * a bare controller will be used.
  *
@@ -148,7 +148,7 @@ class ExceptionRenderer {
 			$controller = new CakeErrorController(Router::getRequest(false));
 		} catch (Exception $e) {
 			$controller = new Controller(Router::getRequest(false));
-			$controller->viewPath = 'errors';
+			$controller->viewPath = 'Errors';
 		}
 		return $controller;
 	}
