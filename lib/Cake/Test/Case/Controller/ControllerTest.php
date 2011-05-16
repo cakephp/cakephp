@@ -640,7 +640,7 @@ class ControllerTest extends CakeTestCase {
 		$request->params['action'] = 'index';
 
 		$Controller = new Controller($request, $this->getMock('CakeResponse'));
-		$Controller->viewPath = 'posts';
+		$Controller->viewPath = 'Posts';
 
 		$result = $Controller->render('index');
 		$this->assertPattern('/posts index/', $result);
@@ -649,7 +649,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->render();
 		$this->assertPattern('/posts index/', $result);
 
-		$result = $Controller->render('/elements/test_element');
+		$result = $Controller->render('/Elements/test_element');
 		$this->assertPattern('/this is the test element/', $result);
 		$Controller->view = null;
 
@@ -660,7 +660,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = $Controller->ControllerComment->validationErrors;
 
 		ClassRegistry::flush();
-		$Controller->viewPath = 'posts';
+		$Controller->viewPath = 'Posts';
 		$result = $Controller->render('index');
 		$View = $Controller->View;
 		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
@@ -688,7 +688,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->components = array('Test');
 		$Controller->constructClasses();
 		$Controller->Test->viewclass = 'Theme';
-		$Controller->viewPath = 'posts';
+		$Controller->viewPath = 'Posts';
 		$Controller->theme = 'TestTheme';
 		$result = $Controller->render('index');
 		$this->assertPattern('/default test_theme layout/', $result);
