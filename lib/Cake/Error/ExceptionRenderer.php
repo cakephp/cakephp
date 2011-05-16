@@ -141,14 +141,18 @@ class ExceptionRenderer {
  *
  * @param Exception $exception The exception to get a controller for.
  * @return Controller
+ * @access protected
  */
 	protected function _getController($exception) {
 		App::uses('CakeErrorController', 'Controller');
+		if(!$request = Router::getRequest(false)) {
+			$request = new CakeRequest();
+		}
 		try {
-			$controller = new CakeErrorController(Router::getRequest(false));
+			$controller = new CakeErrorController($request);
 		} catch (Exception $e) {
-			$controller = new Controller(Router::getRequest(false));
-			$controller->viewPath = 'errors';
+			$controller = new Controller($request);
+			$controller->viewPath = 'Errors';
 		}
 		return $controller;
 	}
