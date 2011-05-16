@@ -173,7 +173,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testView() {
 		$this->Shell->startup();
-		$this->Shell->Schema->path = APP . 'Config' . DS . 'schema';
+		$this->Shell->Schema->path = APP . 'Config' . DS . 'Schema';
 		$this->Shell->params['file'] = 'i18n.php';
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->expects($this->once())->method('out');
@@ -400,7 +400,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'name' => 'DbAcl',
-			'path' => APP . 'Config' . DS . 'schema'
+			'path' => APP . 'Config' . DS . 'Schema'
 		);
 		$this->Shell->args = array('DbAcl', 'acos');
 		$this->Shell->startup();
