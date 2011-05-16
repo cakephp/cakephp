@@ -20,6 +20,7 @@
 /**
  * Included libraries.
  */
+App::uses('CakePlugin', 'Core');
 App::uses('L10n', 'I18n');
 App::uses('Multibyte', 'I18n');
 
