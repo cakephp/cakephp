@@ -436,7 +436,7 @@ class TestCachedPagesController extends Controller {
  * @var string 'posts'
  * @access public
  */
-	public $viewPath = 'posts';
+	public $viewPath = 'Posts';
 
 /**
  * index method
