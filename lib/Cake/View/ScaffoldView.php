@@ -62,7 +62,7 @@ class ScaffoldView extends ThemeView {
 		}
 
 		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
-		$names[] = 'scaffolds' . DS . $subDir . $name;
+		$names[] = 'Scaffolds' . DS . $subDir . $name;
 
 		$paths = $this->_paths($this->plugin);
 		$exts = array($this->ext);
@@ -79,7 +79,7 @@ class ScaffoldView extends ThemeView {
 			}
 		}
 
-		if ($name === 'scaffolds' . DS . $subDir . 'error') {
+		if ($name === 'Scaffolds' . DS . $subDir . 'error') {
 			return CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
 		}
 
