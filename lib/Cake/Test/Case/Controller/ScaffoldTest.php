@@ -388,12 +388,12 @@ class ScaffoldViewTest extends CakeTestCase {
 	function testGetViewFileNameWithTheme() {
 		$this->Controller->request['action'] = 'index';
 		$this->Controller->viewPath = 'Posts';
-		$this->Controller->theme = 'test_theme';
+		$this->Controller->theme = 'TestTheme';
 		$ScaffoldView = new TestScaffoldView($this->Controller);
 
 		$result = $ScaffoldView->testGetFilename('index');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
-			. 'Themed' . DS . 'test_theme' . DS . 'Posts' . DS . 'scaffold.index.ctp';
+			. 'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'scaffold.index.ctp';
 		$this->assertEqual($expected, $result);
 	}
 
@@ -772,7 +772,7 @@ class ScaffoldTest extends CakeTestCase {
  */
 	function testScaffoldChangingViewProperty() {
 		$this->Controller->action = 'edit';
-		$this->Controller->theme = 'test_theme';
+		$this->Controller->theme = 'TestTheme';
 		$this->Controller->viewClass = 'Theme';
 		$this->Controller->constructClasses();
 		$Scaffold = new TestScaffoldMock($this->Controller, $this->Controller->request);
