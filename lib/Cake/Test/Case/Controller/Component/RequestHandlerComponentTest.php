@@ -51,7 +51,7 @@ class RequestHandlerTestController extends Controller {
  * @return void
  */
 	function destination() {
-		$this->viewPath = 'posts';
+		$this->viewPath = 'Posts';
 		$this->render('index');
 	}
 /**
