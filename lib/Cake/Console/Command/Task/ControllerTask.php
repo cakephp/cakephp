@@ -36,18 +36,19 @@ class ControllerTask extends BakeTask {
 	public $tasks = array('Model', 'Test', 'Template', 'DbConfig', 'Project');
 
 /**
- * path to CONTROLLERS directory
+ * path to Controller directory
  *
  * @var array
  * @access public
  */
-	public $path = CONTROLLERS;
+	public $path = null;
 
 /**
  * Override initialize
  *
  */
 	public function initialize() {
+		$this->path = current(App::path('Controller'));
 	}
 
 /**

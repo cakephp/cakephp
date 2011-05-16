@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-define('CORE_TEST_CASES', LIBS . 'Test' . DS . 'Case');
+define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');
 define('APP_TEST_CASES', TESTS . 'Case');
 
 App::uses('CakeTestSuiteCommand', 'TestSuite');
@@ -123,7 +123,7 @@ class CakeTestSuiteDispatcher {
 		$found = $this->loadTestFramework();
 		if (!$found) {
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates/phpunit.php';
+			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'phpunit.php';
 			exit();
 		}
 	}
@@ -166,7 +166,7 @@ class CakeTestSuiteDispatcher {
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates/xdebug.php';
+			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'xdebug.php';
 			exit();
 		}
 	}
@@ -238,7 +238,7 @@ class CakeTestSuiteDispatcher {
 			'baseUrl' => $this->_baseUrl,
 			'baseDir' => $this->_baseDir,
 		);
-		
+
 		$options = array(
 			'--filter', $this->params['filter'],
 			'--output', $this->params['output'],
@@ -252,7 +252,7 @@ class CakeTestSuiteDispatcher {
 		} catch (MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates' . DS . 'missing_connection.php';
+			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'missing_connection.php';
 			exit();
 		}
 	}

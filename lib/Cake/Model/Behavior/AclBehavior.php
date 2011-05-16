@@ -49,7 +49,7 @@ class AclBehavior extends ModelBehavior {
 
 		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!class_exists('AclNode')) {
-			require LIBS . 'model' . DS . 'db_acl.php';
+			require CAKE . 'model' . DS . 'db_acl.php';
 		}
 		if (!is_array($types)) {
 			$types = array($types);

@@ -503,7 +503,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @access public
  */
 	public $fixtures = array(
-		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment', 
+		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment',
 		'core.datatype', 'core.auth_user', 'core.author',
 		'core.test_plugin_article', 'core.user', 'core.comment'
 	);
@@ -665,7 +665,7 @@ class CakeSchemaTest extends CakeTestCase {
 	function testSchemaReadWithPlugins() {
 		App::objects('model', null, false);
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 
@@ -984,7 +984,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function testSchemaLoadingFromPlugin() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));

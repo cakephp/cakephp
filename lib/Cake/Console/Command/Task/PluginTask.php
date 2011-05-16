@@ -28,7 +28,7 @@ App::uses('Folder', 'Utility');
 class PluginTask extends Shell {
 
 /**
- * path to CONTROLLERS directory
+ * path to plugins directory
  *
  * @var array
  * @access public
@@ -41,7 +41,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	function initialize() {
-		$this->path =  APP . 'Plugin' . DS;
+		$this->path = current(App::path('plugins'));
 	}
 
 /**
@@ -94,7 +94,7 @@ class PluginTask extends Shell {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
-		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s",  $plugin));
+		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s", $plugin));
 		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $pluginPath));
 		$this->hr();
 
@@ -184,7 +184,7 @@ class PluginTask extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console', 
+		return $parser->description(__d('cake_console',
 			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', array(

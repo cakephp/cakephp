@@ -19,7 +19,7 @@ App::uses('AppModel', 'Model');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
-require_once  CAKE_TESTS . 'Case' . DS . 'Model' . DS . 'models.php';
+require_once  CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
 
 /**
  * Test case for DigestAuthentication
@@ -116,7 +116,7 @@ cnonce="0a4f113b",
 response="6629fae49393a05397450978507c4ef1",
 opaque="123abc"
 DIGEST;
-		
+
 		$this->response->expects($this->at(0))
 			->method('header')
 			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
@@ -124,7 +124,7 @@ DIGEST;
 		$this->response->expects($this->at(1))
 			->method('statusCode')
 			->with(401);
-		
+
 		$this->response->expects($this->at(2))
 			->method('send');
 
@@ -143,14 +143,14 @@ DIGEST;
 		$this->response->expects($this->at(0))
 			->method('header')
 			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-		
+
 		$this->response->expects($this->at(1))
 			->method('statusCode')
 			->with(401);
-		
+
 		$this->response->expects($this->at(2))
 			->method('send');
-		
+
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertFalse($result);
 	}
@@ -211,11 +211,11 @@ DIGEST;
 		$this->response->expects($this->at(0))
 			->method('header')
 			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-		
+
 		$this->response->expects($this->at(1))
 			->method('statusCode')
 			->with(401);
-		
+
 		$this->response->expects($this->at(2))
 			->method('send');
 

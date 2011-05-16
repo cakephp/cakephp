@@ -41,10 +41,10 @@ class CommandListTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			),
 			'Console/Command' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
 		CakePlugin::loadAll();
@@ -130,7 +130,7 @@ class CommandListTest extends CakeTestCase {
 
 		$expected = "/\[.*TestPlugin.*\]\n[ ]+example/";
 		$this->assertPattern($expected, $output);
-		
+
 		$expected = "/\[.*Core.*\]\n[ ]+acl, api, bake, command_list, console, i18n, schema, testsuite/";
 		$this->assertPattern($expected, $output);
 	}

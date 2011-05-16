@@ -41,14 +41,14 @@ class ApiShell extends Shell {
  */
 	public function initialize() {
 		$this->paths = array_merge($this->paths, array(
-			'behavior' => LIBS . 'Model' . DS . 'Behavior' . DS,
-			'cache' => LIBS . 'Cache' . DS,
-			'controller' => LIBS . 'Controller' . DS,
-			'component' => LIBS . 'Controller' . DS . 'Component' . DS,
-			'helper' => LIBS . 'View' . DS . 'Helper' . DS,
-			'model' => LIBS . 'Model' . DS,
-			'view' => LIBS . 'View' . DS,
-			'core' => LIBS
+			'behavior' => CAKE . 'Model' . DS . 'Behavior' . DS,
+			'cache' => CAKE . 'Cache' . DS,
+			'controller' => CAKE . 'Controller' . DS,
+			'component' => CAKE . 'Controller' . DS . 'Component' . DS,
+			'helper' => CAKE . 'View' . DS . 'Helper' . DS,
+			'model' => CAKE . 'Model' . DS,
+			'view' => CAKE . 'View' . DS,
+			'core' => CAKE
 		));
 	}
 

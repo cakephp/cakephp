@@ -23,7 +23,7 @@ class TestCakeSession extends CakeSession {
 	public static function setUserAgent($value) {
 		self::$_userAgent = $value;
 	}
-	
+
 	public static function setHost($host) {
 		self::_setHost($host);
 	}
@@ -143,7 +143,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @access public
  * @return void
- */	
+ */
 	function testCakeSessionPathEmpty() {
 		TestCakeSession::init('');
 		$this->assertEquals(TestCakeSession::$path, '/', 'Session path is empty, with "" as $base needs to be /');
@@ -302,7 +302,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testId() {
 		TestCakeSession::destroy();
-		
+
 		$result = TestCakeSession::id();
 		$expected = session_id();
 		$this->assertEquals($expected, $result);
@@ -528,9 +528,9 @@ class CakeSessionTest extends CakeTestCase {
 	function testUsingAppLibsHandler() {
 		App::build(array(
 			'Model/Datasource/Session' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
 			),
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
 		Configure::write('Session', array(
 			'defaults' => 'cake',
@@ -551,16 +551,16 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testUsingPluginHandler() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
-		
+
 		Configure::write('Session', array(
 			'defaults' => 'cake',
 			'handler' => array(
 				'engine' => 'TestPlugin.TestPluginSession'
 			)
 		));
-		
+
 		TestCakeSession::destroy();
 		$this->assertTrue(TestCakeSession::started());
 
@@ -611,7 +611,7 @@ class CakeSessionTest extends CakeTestCase {
 	function testReadAndWriteWithCustomCacheConfig() {
 		Configure::write('Session.defaults', 'cache');
 		Configure::write('Session.handler.config', 'session_test');
-		
+
 		Cache::config('session_test', array(
 			'engine' => 'File',
 			'prefix' => 'session_test_',
@@ -663,7 +663,7 @@ class CakeSessionTest extends CakeTestCase {
 
 		TestCakeSession::destroy();
 		$this->assertNull(TestCakeSession::read('SessionTestCase'));
-		
+
 		Configure::write('Session', array(
 			'defaults' => 'php'
 		));

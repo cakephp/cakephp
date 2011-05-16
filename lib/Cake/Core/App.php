@@ -411,7 +411,7 @@ class App {
  * @return string full path to package
  */
 	public static function core($type) {
-		return array(LIBS . str_replace('/', DS, $type) . DS);
+		return array(CAKE . str_replace('/', DS, $type) . DS);
 	}
 
 /**
@@ -563,7 +563,7 @@ class App {
 		if (empty($plugin)) {
 			$appLibs = empty(self::$__packages['Lib']) ? APPLIBS : current(self::$__packages['Lib']);
 			$paths[] =  $appLibs . $package . DS;
-			$paths[] = LIBS . $package . DS;
+			$paths[] = CAKE . $package . DS;
 		}
 
 		foreach ($paths as $path) {

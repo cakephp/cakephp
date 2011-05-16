@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once LIBS.'Model'.DS.'Model.php';
-require_once LIBS.'Model'.DS.'Datasource'.DS.'DataSource.php';
-require_once LIBS.'Model'.DS.'Datasource'.DS.'DboSource.php';
-require_once LIBS.'Model'.DS.'Datasource'.DS.'Database'.DS.'Mssql.php';
+require_once CAKE.'Model'.DS.'Model.php';
+require_once CAKE.'Model'.DS.'Datasource'.DS.'DataSource.php';
+require_once CAKE.'Model'.DS.'Datasource'.DS.'DboSource.php';
+require_once CAKE.'Model'.DS.'Datasource'.DS.'Database'.DS.'Mssql.php';
 
 /**
  * DboMssqlTestDb class

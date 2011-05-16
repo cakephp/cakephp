@@ -158,7 +158,7 @@ class ExceptionRendererTest extends CakeTestCase {
 	function setUp() {
 		App::build(array(
 			'views' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'View'. DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
 		Router::reload();
@@ -203,7 +203,7 @@ class ExceptionRendererTest extends CakeTestCase {
  */
 	function testSubclassMethodsNotBeingConvertedToError() {
 		Configure::write('debug', 2);
-		
+
 		$exception = new MissingWidgetThingException('Widget not found');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
@@ -240,10 +240,10 @@ class ExceptionRendererTest extends CakeTestCase {
  */
 	function testSubclassConvertingFrameworkErrors() {
 		Configure::write('debug', 0);
-		
+
 		$exception = new MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
-		
+
 		$this->assertEqual('error400', $ExceptionRenderer->method);
 
 		ob_start();

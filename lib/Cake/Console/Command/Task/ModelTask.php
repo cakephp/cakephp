@@ -30,12 +30,12 @@ App::uses('Validation', 'Utility');
 class ModelTask extends BakeTask {
 
 /**
- * path to MODELS directory
+ * path to Model directory
  *
  * @var string
  * @access public
  */
-	public $path = MODELS;
+	public $path = null;
 
 /**
  * tasks
@@ -68,6 +68,14 @@ class ModelTask extends BakeTask {
  * @access protected
  */
 	protected $_validations = array();
+
+/**
+ * Override initialize
+ *
+ */
+	public function initialize() {
+		$this->path = current(App::path('Model'));
+	}
 
 /**
  * Execution method always used for tasks

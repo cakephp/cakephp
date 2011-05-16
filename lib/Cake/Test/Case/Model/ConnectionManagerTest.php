@@ -80,7 +80,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetPluginDataSource() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$name = 'test_source';
@@ -102,7 +102,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetPluginDataSourceAndPluginDriver() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$name = 'test_plugin_source_and_driver';
@@ -126,7 +126,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetLocalDataSourceAndPluginDriver() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$name = 'test_local_source_and_plugin_driver';
@@ -149,9 +149,9 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetPluginDataSourceAndLocalDriver() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Model/Datasource/Database' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
 			)
 		));
 
@@ -272,9 +272,9 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testConnectionData() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Model/Datasource' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
 		));
 		CakePlugin::loadAll();
@@ -328,7 +328,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	public function testDrop() {
 		App::build(array(
 			'Model/Datasource' => array(
-				LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
 		));
 		ConnectionManager::create('droppable', array('datasource' => 'Test2Source'));

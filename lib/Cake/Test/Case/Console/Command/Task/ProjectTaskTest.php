@@ -43,8 +43,8 @@ class ProjectTaskTest extends CakeTestCase {
 		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		
-		$this->Task = $this->getMock('ProjectTask', 
+
+		$this->Task = $this->getMock('ProjectTask',
 			array('in', 'err', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
@@ -70,7 +70,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	protected function _setupTestProject() {
-		$skel = LIBS . 'Console' . DS . 'templates' . DS . 'skel';
+		$skel = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}
@@ -91,12 +91,12 @@ class ProjectTaskTest extends CakeTestCase {
 			'Console',
 			'Console' . DS . 'Command',
 			'Console' . DS . 'Command' . DS . 'Task',
-			'Controller', 
-			'Model', 
+			'Controller',
+			'Model',
 			'View',
 			'View' . DS . 'Helper',
 			'Test',
-			'Test' . DS . 'Case', 
+			'Test' . DS . 'Case',
 			'Test' . DS . 'Case' . DS . 'Model',
 			'Test' . DS . 'Fixture',
 			'tmp',
@@ -118,21 +118,21 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->params['empty'] = true;
 		$this->_setupTestProject();
 		$path = $this->Task->path . 'bake_test_app';
-	
+
 		$empty = array(
 			'Console' . DS . 'Command' . DS . 'Task',
-			'Controller' . DS . 'Component', 
-			'Model' . DS . 'Behavior', 
+			'Controller' . DS . 'Component',
+			'Model' . DS . 'Behavior',
 			'View' . DS . 'Helper',
 			'View' . DS . 'Errors',
 			'View' . DS . 'Scaffolds',
-			'Test' . DS . 'Case' . DS . 'Model', 
+			'Test' . DS . 'Case' . DS . 'Model',
 			'Test' . DS . 'Case' . DS . 'Controller',
 			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
 			'Test' . DS . 'Fixture',
 			'webroot' . DS . 'js'
 		);
-	
+
 		foreach ($empty as $dir) {
 			$this->assertTrue(is_file($path . DS . $dir . DS . 'empty'), 'Missing empty file in ' . $dir);
 		}
@@ -220,7 +220,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testCakeAdmin() {
-		$file = new File(CONFIGS . 'core.php');
+		$file = new File(APP . 'Config' . DS . 'core.php');
 		$contents = $file->read();;
 		$file = new File(TMP . 'tests' . DS . 'core.php');
 		$file->write($contents);
@@ -255,7 +255,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecute() {
-		$this->Task->params['skel'] = LIBS . 'Console' . DS. 'templates' . DS . 'skel';
+		$this->Task->params['skel'] = CAKE . 'Console' . DS. 'templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;
 
 		$path = $this->Task->path . 'bake_test_app';
@@ -281,7 +281,7 @@ class ProjectTaskTest extends CakeTestCase {
  */
 	function testConsolePath() {
 		$this->_setupTestProject();
-		
+
 		$path = $this->Task->path . 'bake_test_app' . DS;
 		$result = $this->Task->consolePath($path);
 		$this->assertTrue($result);

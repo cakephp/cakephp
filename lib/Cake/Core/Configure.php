@@ -69,14 +69,14 @@ class Configure {
 				'www_root' => WWW_ROOT
 			));
 
-			if (!include(CONFIGS . 'core.php')) {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
+			if (!include(APP . 'Config' . DS . 'core.php')) {
+				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
 			}
 
 			App::init();
 			App::build();
-			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
+			if (!include(APP . 'Config' . DS . 'bootstrap.php')) {
+				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
 			}
 			$level = -1;
 			if (isset(self::$_values['Error']['level'])) {
@@ -295,7 +295,7 @@ class Configure {
 			return false;
 		}
 		$values = self::$_readers[$config]->read($key);
-		
+
 		if ($merge) {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
@@ -304,7 +304,7 @@ class Configure {
 				}
 			}
 		}
-		
+
 		return self::write($values);
 	}
 
@@ -318,7 +318,7 @@ class Configure {
  */
 	public static function version() {
 		if (!isset(self::$_values['Cake']['version'])) {
-			require(LIBS . 'Config' . DS . 'config.php');
+			require(CAKE . 'Config' . DS . 'config.php');
 			self::write($config);
 		}
 		return self::$_values['Cake']['version'];

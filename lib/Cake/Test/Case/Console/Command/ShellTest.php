@@ -57,17 +57,17 @@ class ShellTestShell extends Shell {
 	}
 
 	public function do_something() {
-		
+
 	}
-	
+
 	public function _secret() {
-		
+
 	}
-	
+
 	protected function no_access() {
-		
+
 	}
-	
+
 	public function mergeVars($properties, $class, $normalize = true) {
 		return $this->_mergeVars($properties, $class, $normalize);
 	}
@@ -169,8 +169,8 @@ class ShellTest extends CakeTestCase {
  */
 	public function testInitialize() {
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'models' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
 		), true);
 
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
@@ -408,7 +408,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testLoadTasks() {	
+	public function testLoadTasks() {
 		$this->assertTrue($this->Shell->loadTasks());
 
 		$this->Shell->tasks = null;
@@ -451,9 +451,9 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->params = array('help' => false);
 		$this->Shell->loadTasks();
 		$result = $this->Shell->TestApple;
-		
+
 		$this->Shell->args = array('one', 'two');
-		
+
 		$this->assertSame($this->Shell->args, $result->args);
 		$this->assertSame($this->Shell->params, $result->params);
 	}
@@ -546,7 +546,7 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->stdin->expects($this->at(0))
 			->method('read')
 			->will($this->returnValue('n'));
-	
+
 		$this->Shell->stdin->expects($this->at(1))
 			->method('read')
 			->will($this->returnValue('y'));
@@ -651,11 +651,11 @@ class ShellTest extends CakeTestCase {
 	function testHasTask() {
 		$this->Shell->tasks = array('Extract', 'DbConfig');
 		$this->Shell->loadTasks();
-		
+
 		$this->assertTrue($this->Shell->hasTask('extract'));
 		$this->assertTrue($this->Shell->hasTask('Extract'));
 		$this->assertFalse($this->Shell->hasTask('random'));
-		
+
 		$this->assertTrue($this->Shell->hasTask('db_config'));
 		$this->assertTrue($this->Shell->hasTask('DbConfig'));
 	}
@@ -749,7 +749,7 @@ class ShellTest extends CakeTestCase {
 			->with(array('--help'))
 			->will($this->returnValue(array(array('help' => true), array())));
 		$Parser->expects($this->once())->method('help');
-		
+
 		$Shell = $this->getMock('Shell', array('getOptionParser', 'out', 'startup', '_welcome'), array(), '', false);
 		$Shell->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($Parser));

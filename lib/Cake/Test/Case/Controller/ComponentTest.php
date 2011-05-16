@@ -251,7 +251,7 @@ class ComponentTest extends CakeTestCase {
 	function setUp() {
 		$this->_pluginPaths = App::path('plugins');
 		App::build(array(
-			'plugins' => array(LIBS . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 	}
 
@@ -316,10 +316,10 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Banana = $Collection->load('Banana');
 		$Orange = $Collection->load('Orange');
-		
+
 		$this->assertSame($Banana, $Orange->Banana, 'Should be references');
 		$Banana->testField = 'OrangeField';
-		
+
 		$this->assertSame($Banana->testField, $Orange->Banana->testField, 'References are broken');
 	}
 
