@@ -108,7 +108,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$expected = array(array($modelClass => array('name' => '1.1', $leftField => 2, $rightField => 5)),
 			array($modelClass => array('name' => '1.2', $leftField => 6, $rightField => 11)),
 			array($modelClass => array('name' => '1.1.1', $leftField => 12, $rightField => 13)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$this->assertTrue($this->Tree->verify());
 	}
 

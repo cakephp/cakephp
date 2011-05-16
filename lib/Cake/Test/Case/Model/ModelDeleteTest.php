@@ -101,7 +101,7 @@ class ModelDeleteTest extends BaseModelTest {
 					'item_id' => 5,
 					'portfolio_id' => 1
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Portfolio->delete(1);
 
@@ -133,7 +133,7 @@ class ModelDeleteTest extends BaseModelTest {
 			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
 			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
 			);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->delete(1);
 		$result = $TestModel->ArticlesTag->find('all');
@@ -142,7 +142,7 @@ class ModelDeleteTest extends BaseModelTest {
 			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
 			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -172,7 +172,7 @@ class ModelDeleteTest extends BaseModelTest {
 		)));
 
 		$this->assertTrue(is_array($result));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Book->delete(1);
 
@@ -182,7 +182,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$expected = array();
 
 		$this->assertTrue(is_array($result));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -214,7 +214,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'id' => 3,
 				'title' => 'Third Article'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->delete(3);
 		$this->assertTrue($result);
@@ -232,7 +232,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'title' => 'First Article'
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		// make sure deleting a non-existent record doesn't break save()
 		// ticket #6293
@@ -261,10 +261,10 @@ class ModelDeleteTest extends BaseModelTest {
 				'id' => '8208C7FE-E89C-47C5-B378-DED6C271F9B8')),
 			array('Uuid' => array(
 				'id' => 'B607DAB9-88A2-46CF-B57C-842CA9E3B3B3')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
-	
+
 /**
  * test that delete() updates the correct records counterCache() records.
  *
@@ -361,7 +361,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'published' => 'N'
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->deleteAll(array('Article.published' => 'N'));
 		$this->assertTrue($result);
@@ -395,7 +395,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'title' => 'Fifth Article',
 				'published' => 'Y'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array('Article.user_id' => array(2, 3));
 		$result = $TestModel->deleteAll($data, true, true);
@@ -418,7 +418,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'title' => 'Third Article',
 				'published' => 'Y'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
@@ -513,7 +513,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'article_id' => '2',
 				'tag_id' => '3'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->delete(1);
 		$result = $TestModel->ArticlesTag->find('all');
@@ -527,7 +527,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'article_id' => '2',
 				'tag_id' => '3'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');

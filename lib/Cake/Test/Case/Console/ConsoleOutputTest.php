@@ -97,7 +97,7 @@ class ConsoleOutputTest extends CakeTestCase {
 	function testStylesGet() {
 		$result = $this->output->styles('error');
 		$expected = array('text' => 'red', 'underline' => true);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->assertNull($this->output->styles('made_up_goop'));
 
@@ -116,7 +116,7 @@ class ConsoleOutputTest extends CakeTestCase {
 		$result = $this->output->styles('test');
 		$expected = array('text' => 'red', 'background' => 'black');
 		$this->assertEquals($expected, $result);
-		
+
 		$this->assertTrue($this->output->styles('test', false), 'Removing a style should return true.');
 		$this->assertNull($this->output->styles('test'), 'Removed styles should be null.');
 	}

@@ -279,7 +279,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
 		$result = json_decode($result, true);
 		$expected = array('cakephp' => 'cool');
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$result = $this->Case->testAction('/some_alias');

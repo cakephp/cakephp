@@ -569,7 +569,7 @@ class ControllerTest extends CakeTestCase {
 		</html>';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
@@ -1035,7 +1035,7 @@ class ControllerTest extends CakeTestCase {
 		$comment->set('someVar', 'data');
 		$result = $TestController->validateErrors($comment);
 		$expected = array('some_field' => array('error_message'), 'some_field2' => array('error_message2'));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 		$this->assertEqual($TestController->validate($comment), 2);
 	}
 
@@ -1053,7 +1053,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $TestController->validateErrors($Post);
 
 		$expected = array('title' => array('This field cannot be left blank'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1078,7 +1078,7 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3' => '23',
 		);
 		$result = $Controller->postConditions($data);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 
 		$data = array();
@@ -1093,7 +1093,7 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3' => '23',
 		);
 		$result = $Controller->postConditions($data);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 
 		$data = array();
@@ -1119,7 +1119,7 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3 <=' => '23',
 		);
 		$result = $Controller->postConditions($data, $ops);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**

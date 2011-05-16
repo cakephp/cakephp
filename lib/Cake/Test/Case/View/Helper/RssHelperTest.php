@@ -64,7 +64,7 @@ class RssHelperTest extends CakeTestCase {
 				'version' => '2.0'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Rss->document(null, 'content');
 		$expected = array(
@@ -73,7 +73,7 @@ class RssHelperTest extends CakeTestCase {
 			),
 			'content'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Rss->document(array('contrived' => 'parameter'), 'content');
 		$expected = array(
@@ -83,7 +83,7 @@ class RssHelperTest extends CakeTestCase {
 			),
 			'content'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -113,7 +113,7 @@ class RssHelperTest extends CakeTestCase {
 			'content',
 			'/channel'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -163,7 +163,7 @@ class RssHelperTest extends CakeTestCase {
 			'content-here',
 			'/channel',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 	function testChannelElementAttributes() {
@@ -205,7 +205,7 @@ class RssHelperTest extends CakeTestCase {
 			'content-here',
 			'/channel',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -242,11 +242,11 @@ class RssHelperTest extends CakeTestCase {
 				'<description', 'description3', '/description',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Rss->items(array());
 		$expected = '';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -278,7 +278,7 @@ class RssHelperTest extends CakeTestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$item = array(
 			'title' => 'My Title',
@@ -308,7 +308,7 @@ class RssHelperTest extends CakeTestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$item = array(
 			'title' => 'My Title & more'
@@ -319,7 +319,7 @@ class RssHelperTest extends CakeTestCase {
 			'<title', 'My Title &amp; more', '/title',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$item = array(
 			'title' => 'Foo bar',
@@ -353,7 +353,7 @@ class RssHelperTest extends CakeTestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -377,7 +377,7 @@ class RssHelperTest extends CakeTestCase {
 			'/title',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$item = array(
 			'category' => array(
@@ -394,7 +394,7 @@ class RssHelperTest extends CakeTestCase {
 			'/category',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$item = array(
 			'category' => array(
@@ -420,7 +420,7 @@ class RssHelperTest extends CakeTestCase {
 			'/category',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$item = array(
 			'title' => array(
@@ -476,7 +476,7 @@ class RssHelperTest extends CakeTestCase {
 			'/category',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -514,6 +514,6 @@ class RssHelperTest extends CakeTestCase {
 			),
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 }

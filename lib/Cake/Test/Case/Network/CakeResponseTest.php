@@ -25,7 +25,7 @@ class CakeResponseTestCase extends CakeTestCase {
 		$this->assertEquals($response->body(), 'This is the body');
 		$this->assertEquals($response->charset(), 'my-custom-charset');
 		$this->assertEquals($response->type(), 'audio/mpeg');
-		$this->assertEquals($response->statusCode(), 203);	
+		$this->assertEquals($response->statusCode(), 203);
 	}
 
 /**
@@ -300,7 +300,7 @@ class CakeResponseTestCase extends CakeTestCase {
 
 		$result =  $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$codes = array(
 			1337 => 'Undefined Unicorn',
@@ -313,7 +313,7 @@ class CakeResponseTestCase extends CakeTestCase {
 
 		$result = $response->httpCodes(1337);
 		$expected = array(1337 => 'Undefined Unicorn');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
@@ -322,7 +322,7 @@ class CakeResponseTestCase extends CakeTestCase {
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

@@ -285,17 +285,17 @@ class DboPostgresTest extends CakeTestCase {
 
 		$result = $this->Dbo->fields($this->model);
 		$expected = $fields;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->model, null, 'PostgresTestModel.*');
 		$expected = $fields;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->model, null, array('*', 'AnotherModel.id', 'AnotherModel.name'));
 		$expected = array_merge($fields, array(
 			'"AnotherModel"."id" AS "AnotherModel__id"',
 			'"AnotherModel"."name" AS "AnotherModel__name"'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->model, null, array('*', 'PostgresClientTestModel.*'));
 		$expected = array_merge($fields, array(
@@ -304,7 +304,7 @@ class DboPostgresTest extends CakeTestCase {
     		'"PostgresClientTestModel"."email" AS "PostgresClientTestModel__email"',
     		'"PostgresClientTestModel"."created" AS "PostgresClientTestModel__created"',
     		'"PostgresClientTestModel"."updated" AS "PostgresClientTestModel__updated"'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -792,7 +792,7 @@ class DboPostgresTest extends CakeTestCase {
 	function testOrderAdditionalParams() {
 		$result = $this->Dbo->order(array('title' => 'DESC NULLS FIRST', 'body' => 'DESC'));
 		$expected = ' ORDER BY "title" DESC NULLS FIRST, "body" DESC';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -803,15 +803,15 @@ class DboPostgresTest extends CakeTestCase {
 		$Article = new Article;
 		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT Article.id)'));
 		$expected = array('COUNT(DISTINCT "Article"."id")');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT id)'));
 		$expected = array('COUNT(DISTINCT "id")');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT FUNC(id))'));
 		$expected = array('COUNT(DISTINCT FUNC("id"))');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

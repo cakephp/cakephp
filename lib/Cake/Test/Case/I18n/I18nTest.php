@@ -2487,7 +2487,7 @@ class I18nTest extends CakeTestCase {
 		$expected .= "broken up over multiple lines.\n";
 		$expected .= "This is the third line.\n";
 		$expected .= "This is the forth line. (translated)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		// Windows Newline is \r\n
 		$string = "This is a multiline translation\r\n";
@@ -2495,18 +2495,18 @@ class I18nTest extends CakeTestCase {
 		$string .= "This is the third line.\r\n";
 		$string .= "This is the forth line.";
 		$result = __($string);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$singular = "valid\nsecond line";
 		$plural = "valids\nsecond line";
 
 		$result = __n($singular, $plural, 1);
 		$expected = "v\nsecond line";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n($singular, $plural, 2);
 		$expected = "vs\nsecond line";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$string = "This is a multiline translation\n";
 		$string .= "broken up over multiple lines.\n";
@@ -2518,11 +2518,11 @@ class I18nTest extends CakeTestCase {
 
 		$result = __n($singular, $plural, 1);
 		$expected = "%d is 1\n" . $string;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n($singular, $plural, 2);
 		$expected = "%d is 2-4\n" . $string;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		// Windows Newline is \r\n
 		$string = "This is a multiline translation\r\n";
@@ -2535,11 +2535,11 @@ class I18nTest extends CakeTestCase {
 
 		$result = __n($singular, $plural, 1);
 		$expected = "%d is 1\n" . str_replace("\r\n", "\n", $string);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n($singular, $plural, 2);
 		$expected = "%d is 2-4\n" . str_replace("\r\n", "\n", $string);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2576,15 +2576,15 @@ class I18nTest extends CakeTestCase {
 
 		$result = __n('%d = 1', '%d = 0 or > 1', (float)1);
 		$expected = '%d is 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d = 1', '%d = 0 or > 1', (float)2);
 		$expected = "%d ends in 2-4, not 12-14 (translated)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d = 1', '%d = 0 or > 1', (float)5);
 		$expected = "%d everything else (translated)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2635,15 +2635,15 @@ class I18nTest extends CakeTestCase {
 		Configure::write('Config.language', 'po');
 		$result = __c('d_fmt', 5);
 		$expected = '%m/%d/%Y';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('am_pm', 5);
 		$expected = array('AM', 'PM');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('abmon', 5);
 		$expected = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 	function testTimeDefinitionJapanese(){
@@ -2652,15 +2652,15 @@ class I18nTest extends CakeTestCase {
 
 		$expected = "%Y年%m月%d日";
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('am_pm', 5);
 		$expected = array("午前", "午後");
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('abmon', 5);
 		$expected = array(" 1月", " 2月", " 3月", " 4月", " 5月", " 6月", " 7月", " 8月", " 9月", "10月", "11月", "12月");
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

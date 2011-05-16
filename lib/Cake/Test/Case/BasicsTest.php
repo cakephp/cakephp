@@ -59,19 +59,19 @@ class BasicsTest extends CakeTestCase {
 		$two = array('one' => 'one', 'two' => 'two');
 		$result = array_diff_key($one, $two);
 		$expected = array('three' => 3);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$one = array('one' => array('value', 'value-two'), 'two' => 2, 'three' => 3);
 		$two = array('two' => 'two');
 		$result = array_diff_key($one, $two);
 		$expected = array('one' => array('value', 'value-two'), 'three' => 3);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$one = array('one' => null, 'two' => 2, 'three' => '', 'four' => 0);
 		$two = array('two' => 'two');
 		$result = array_diff_key($one, $two);
 		$expected = array('one' => null, 'three' => '', 'four' => 0);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
@@ -244,11 +244,11 @@ class BasicsTest extends CakeTestCase {
 	public function testAm() {
 		$result = am(array('one', 'two'), 2, 3, 4);
 		$expected = array('one', 'two', 2, 3, 4);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = am(array('one' => array(2, 3), 'two' => array('foo')), array('one' => array(4, 5)));
 		$expected = array('one' => array(4, 5),'two' => array('foo'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -360,35 +360,35 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __('Plural Rule 1');
 		$expected = 'Plural Rule 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Plural Rule 1 (from core)');
 		$expected = 'Plural Rule 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Some string with %s', 'arguments');
 		$expected = 'Some string with arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Some string with %s %s', 'multiple', 'arguments');
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Some string with %s %s', array('multiple', 'arguments'));
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Testing %2$s %1$s', 'order', 'different');
 		$expected = 'Testing different order';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Testing %2$s %1$s', array('order', 'different'));
 		$expected = 'Testing different order';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __('Testing %.2f number', 1.2345);
 		$expected = 'Testing 1.23 number';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -401,27 +401,27 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __n('%d = 1', '%d = 0 or > 1', 0);
 		$expected = '%d = 0 or > 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d = 1', '%d = 0 or > 1', 1);
 		$expected = '%d = 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', 2);
 		$expected = '%d = 0 or > 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d item.', '%d items.', 1, 1);
 		$expected = '1 item.';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d item for id %s', '%d items for id %s', 2, 2, '1234');
 		$expected = '2 items for id 1234';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __n('%d item for id %s', '%d items for id %s', 2, array(2, '1234'));
 		$expected = '2 items for id 1234';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -434,27 +434,27 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __d('default', 'Plural Rule 1');
 		$expected = 'Plural Rule 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __d('core', 'Plural Rule 1');
 		$expected = 'Plural Rule 1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __d('core', 'Plural Rule 1 (from core)');
 		$expected = 'Plural Rule 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __d('core', 'Some string with %s', 'arguments');
 		$expected = 'Some string with arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __d('core', 'Some string with %s %s', 'multiple', 'arguments');
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __d('core', 'Some string with %s %s', array('multiple', 'arguments'));
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -467,31 +467,31 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __dn('default', '%d = 1', '%d = 0 or > 1', 0);
 		$expected = '%d = 0 or > 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dn('core', '%d = 1', '%d = 0 or > 1', 0);
 		$expected = '%d = 0 or > 1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dn('core', '%d = 1 (from core)', '%d = 0 or > 1 (from core)', 0);
 		$expected = '%d = 0 or > 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dn('default', '%d = 1', '%d = 0 or > 1', 1);
 		$expected = '%d = 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dn('core', '%d item.', '%d items.', 1, 1);
 		$expected = '1 item.';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dn('core', '%d item for id %s', '%d items for id %s', 2, 2, '1234');
 		$expected = '2 items for id 1234';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dn('core', '%d item for id %s', '%d items for id %s', 2, array(2, '1234'));
 		$expected = '2 items for id 1234';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -504,23 +504,23 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __c('Plural Rule 1', 6);
 		$expected = 'Plural Rule 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('Plural Rule 1 (from core)', 6);
 		$expected = 'Plural Rule 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('Some string with %s', 6, 'arguments');
 		$expected = 'Some string with arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('Some string with %s %s', 6, 'multiple', 'arguments');
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __c('Some string with %s %s', 6, array('multiple', 'arguments'));
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -533,31 +533,31 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __dc('default', 'Plural Rule 1', 6);
 		$expected = 'Plural Rule 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dc('default', 'Plural Rule 1 (from core)', 6);
 		$expected = 'Plural Rule 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dc('core', 'Plural Rule 1', 6);
 		$expected = 'Plural Rule 1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dc('core', 'Plural Rule 1 (from core)', 6);
 		$expected = 'Plural Rule 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dc('core', 'Some string with %s', 6, 'arguments');
 		$expected = 'Some string with arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dc('core', 'Some string with %s %s', 6, 'multiple', 'arguments');
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dc('core', 'Some string with %s %s', 6, array('multiple', 'arguments'));
 		$expected = 'Some string with multiple arguments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -570,27 +570,27 @@ class BasicsTest extends CakeTestCase {
 
 		$result = __dcn('default', '%d = 1', '%d = 0 or > 1', 0, 6);
 		$expected = '%d = 0 or > 1 (translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dcn('default', '%d = 1 (from core)', '%d = 0 or > 1 (from core)', 1, 6);
 		$expected = '%d = 1 (from core translated)';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dcn('core', '%d = 1', '%d = 0 or > 1', 0, 6);
 		$expected = '%d = 0 or > 1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dcn('core', '%d item.', '%d items.', 1, 6, 1);
 		$expected = '1 item.';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dcn('core', '%d item for id %s', '%d items for id %s', 2, 6, 2, '1234');
 		$expected = '2 items for id 1234';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = __dcn('core', '%d item for id %s', '%d items for id %s', 2, 6, array(2, '1234'));
 		$expected = '2 items for id 1234';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -662,11 +662,11 @@ class BasicsTest extends CakeTestCase {
 	public function testConvertSlash() {
 		$result = convertSlash('\path\to\location\\');
 		$expected = '\path\to\location\\';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = convertSlash('/path/to/location/');
 		$expected = 'path_to_location';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -710,13 +710,13 @@ class BasicsTest extends CakeTestCase {
 			pr('this is a test');
 		$result = ob_get_clean();
 		$expected = "<pre>this is a test</pre>";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		ob_start();
 			pr(array('this' => 'is', 'a' => 'test'));
 		$result = ob_get_clean();
 		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

@@ -147,10 +147,10 @@ class SessionComponentTest extends CakeTestCase {
 		$expected = $Session->id();
 
 		$result = $Object->requestAction('/session_test/session_id');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Object->requestAction('/orange_session_test/session_id');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

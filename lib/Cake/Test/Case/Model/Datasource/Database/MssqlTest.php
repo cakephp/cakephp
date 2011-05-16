@@ -393,19 +393,19 @@ class DboMssqlTest extends CakeTestCase {
 
 		$result = $this->db->fields($this->model);
 		$expected = $fields;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->db->clearFieldMappings();
 		$result = $this->db->fields($this->model, null, 'MssqlTestModel.*');
 		$expected = $fields;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->db->clearFieldMappings();
 		$result = $this->db->fields($this->model, null, array('*', 'AnotherModel.id', 'AnotherModel.name'));
 		$expected = array_merge($fields, array(
 			'[AnotherModel].[id] AS [AnotherModel__18]',
 			'[AnotherModel].[name] AS [AnotherModel__19]'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->db->clearFieldMappings();
 		$result = $this->db->fields($this->model, null, array('*', 'MssqlClientTestModel.*'));
@@ -415,7 +415,7 @@ class DboMssqlTest extends CakeTestCase {
 			'[MssqlClientTestModel].[email] AS [MssqlClientTestModel__20]',
 			'CONVERT(VARCHAR(20), [MssqlClientTestModel].[created], 20) AS [MssqlClientTestModel__21]',
 			'CONVERT(VARCHAR(20), [MssqlClientTestModel].[updated], 20) AS [MssqlClientTestModel__22]'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -427,11 +427,11 @@ class DboMssqlTest extends CakeTestCase {
 	function testDistinctFields() {
 		$result = $this->db->fields($this->model, null, array('DISTINCT Car.country_code'));
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__0]');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->db->fields($this->model, null, 'DISTINCT Car.country_code');
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -479,7 +479,7 @@ class DboMssqlTest extends CakeTestCase {
 				'length' => 4
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 /**
  * testBuildColumn
@@ -490,53 +490,53 @@ class DboMssqlTest extends CakeTestCase {
 		$column = array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary');
 		$result = $this->db->buildColumn($column);
 		$expected = '[id] int IDENTITY (1, 1) NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11');
 		$result = $this->db->buildColumn($column);
 		$expected = '[client_id] int DEFAULT 0 NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => true);
 		$result = $this->db->buildColumn($column);
 		$expected = '[client_id] int NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		// 'name' => 'type' format for columns
 		$column = array('type' => 'integer', 'name' => 'client_id');
 		$result = $this->db->buildColumn($column);
 		$expected = '[client_id] int NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('type' => 'string', 'name' => 'name');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) DEFAULT \'\' NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => null, 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) DEFAULT \'\'';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 /**
  * testBuildIndex method
@@ -553,7 +553,7 @@ class DboMssqlTest extends CakeTestCase {
 			'PRIMARY KEY ([id])',
 			'ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id]);'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$indexes = array('client_id' => array('column' => 'client_id'));
 		$result = $this->db->buildIndex($indexes, 'items');
@@ -562,7 +562,7 @@ class DboMssqlTest extends CakeTestCase {
 		$indexes = array('client_id' => array('column' => array('client_id', 'period_id'), 'unique' => 1));
 		$result = $this->db->buildIndex($indexes, 'items');
 		$expected = array('ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id], [period_id]);');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 /**
  * testUpdateAllSyntax method
@@ -620,7 +620,7 @@ class DboMssqlTest extends CakeTestCase {
     		'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (2, \'Renan\', \'renan.saddam\')',
 			'SET IDENTITY_INSERT [mssql_test_models] OFF'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$fields = array('name', 'login');
 		$values = array('(\'Larry\', \'PhpNut\')', '(\'Renan\', \'renan.saddam\')');
@@ -631,7 +631,7 @@ class DboMssqlTest extends CakeTestCase {
 			'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Larry\', \'PhpNut\')',
     		'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Renan\', \'renan.saddam\')'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 /**
  * testLastError

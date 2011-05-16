@@ -108,7 +108,7 @@ class DboMysqlTest extends CakeTestCase {
 			'`MysqlTestModel`.`created`',
 			'`MysqlTestModel`.`updated`'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$expected = 1.2;
 		$result = $this->Dbo->value(1.2, 'float');
@@ -283,7 +283,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`testName`  DEFAULT NULL COMMENT \'test\'';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -296,7 +296,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$this->Dbo->columns = $restore;
 	}
 
@@ -402,7 +402,7 @@ class DboMysqlTest extends CakeTestCase {
 			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
 			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -413,43 +413,43 @@ class DboMysqlTest extends CakeTestCase {
 	public function testColumn() {
 		$result = $this->Dbo->column('varchar(50)');
 		$expected = 'string';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('text');
 		$expected = 'text';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('int(11)');
 		$expected = 'integer';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('int(11) unsigned');
 		$expected = 'integer';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('tinyint(1)');
 		$expected = 'boolean';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('boolean');
 		$expected = 'boolean';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('float');
 		$expected = 'float';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('float unsigned');
 		$expected = 'float';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('double unsigned');
 		$expected = 'float';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->column('decimal(14,7) unsigned');
 		$expected = 'float';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -618,7 +618,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($result['Collation'], 'utf8_general_ci');
 		$this->assertEqual($result['Engine'], 'InnoDB');
 		$this->assertEqual($result['charset'], 'utf8');
-		
+
 		$this->Dbo->rawQuery($this->Dbo->dropSchema($schema1));
 	}
 
@@ -673,7 +673,7 @@ class DboMysqlTest extends CakeTestCase {
 			'charset' => 'utf8',
 			'collate' => 'utf8_unicode_ci',
 			'engine' => 'InnoDB');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$table = $this->Dbo->fullTableName($tableName);
 		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
@@ -683,7 +683,7 @@ class DboMysqlTest extends CakeTestCase {
 			'charset' => 'cp1250',
 			'collate' => 'cp1250_general_ci',
 			'engine' => 'MyISAM');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -703,7 +703,7 @@ class DboMysqlTest extends CakeTestCase {
 			'DEFAULT CHARSET=utf8',
 			'COLLATE=utf8_unicode_ci',
 			'ENGINE=InnoDB');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -736,7 +736,7 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->Dbo->fields($model, null, array('data', 'other__field'));
 
 		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  `BinaryTest_$_other__field`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1765,7 +1765,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Model = new TestModel4();
 		$result = $this->Dbo->fields($this->Model, 'Vendor', "DISTINCT Vendor.id, Vendor.name");
 		$expected = array('DISTINCT `Vendor`.`id`', '`Vendor`.`name`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1777,112 +1777,112 @@ class DboMysqlTest extends CakeTestCase {
 	function testStringConditionsParsing() {
 		$result = $this->Dbo->conditions("ProjectBid.project_id = Project.id");
 		$expected = " WHERE `ProjectBid`.`project_id` = `Project`.`id`";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("Candy.name LIKE 'a' AND HardCandy.name LIKE 'c'");
 		$expected = " WHERE `Candy`.`name` LIKE 'a' AND `HardCandy`.`name` LIKE 'c'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("HardCandy.name LIKE 'a' AND Candy.name LIKE 'c'");
 		$expected = " WHERE `HardCandy`.`name` LIKE 'a' AND `Candy`.`name` LIKE 'c'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("Post.title = '1.1'");
 		$expected = " WHERE `Post`.`title` = '1.1'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("User.id != 0 AND User.user LIKE '%arr%'");
 		$expected = " WHERE `User`.`id` != 0 AND `User`.`user` LIKE '%arr%'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("SUM(Post.comments_count) > 500");
 		$expected = " WHERE SUM(`Post`.`comments_count`) > 500";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
 		$expected = " WHERE (`Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(`Post`.`created`), MONTH(`Post`.`created`)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("score BETWEEN 90.1 AND 95.7");
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score' => array(2=>1, 2, 10)));
 		$expected = " WHERE score IN (1, 2, 10)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("Aro.rght = Aro.lft + 1.1");
 		$expected = " WHERE `Aro`.`rght` = `Aro`.`lft` + 1.1";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
 		$expected = " WHERE (`Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(`Post`.`created`), MONTH(`Post`.`created`)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('Sportstaette.sportstaette LIKE "%ru%" AND Sportstaette.sportstaettenart_id = 2');
 		$expected = ' WHERE `Sportstaette`.`sportstaette` LIKE "%ru%" AND `Sportstaette`.`sportstaettenart_id` = 2';
 		$this->assertPattern('/\s*WHERE\s+`Sportstaette`\.`sportstaette`\s+LIKE\s+"%ru%"\s+AND\s+`Sports/', $result);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('Sportstaette.sportstaettenart_id = 2 AND Sportstaette.sportstaette LIKE "%ru%"');
 		$expected = ' WHERE `Sportstaette`.`sportstaettenart_id` = 2 AND `Sportstaette`.`sportstaette` LIKE "%ru%"';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('SUM(Post.comments_count) > 500 AND NOT Post.title IS NULL AND NOT Post.extended_title IS NULL');
 		$expected = ' WHERE SUM(`Post`.`comments_count`) > 500 AND NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('NOT Post.title IS NULL AND NOT Post.extended_title IS NULL AND SUM(Post.comments_count) > 500');
 		$expected = ' WHERE NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL AND SUM(`Post`.`comments_count`) > 500';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('NOT Post.extended_title IS NULL AND NOT Post.title IS NULL AND Post.title != "" AND SPOON(SUM(Post.comments_count) + 1.1) > 500');
 		$expected = ' WHERE NOT `Post`.`extended_title` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title` != "" AND SPOON(SUM(`Post`.`comments_count`) + 1.1) > 500';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('NOT Post.title_extended IS NULL AND NOT Post.title IS NULL AND Post.title_extended != Post.title');
 		$expected = ' WHERE NOT `Post`.`title_extended` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title_extended` != `Post`.`title`';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("Comment.id = 'a'");
 		$expected = " WHERE `Comment`.`id` = 'a'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("lower(Article.title) LIKE 'a%'");
 		$expected = " WHERE lower(`Article`.`title`) LIKE 'a%'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('((MATCH(Video.title) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH(Video.description) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(Video.tags) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))');
 		$expected = ' WHERE ((MATCH(`Video`.`title`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH(`Video`.`description`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(`Video`.`tags`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('DATEDIFF(NOW(),Article.published) < 1 && Article.live=1');
 		$expected = " WHERE DATEDIFF(NOW(),`Article`.`published`) < 1 && `Article`.`live`=1";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('file = "index.html"');
 		$expected = ' WHERE file = "index.html"';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions("file = 'index.html'");
 		$expected = " WHERE file = 'index.html'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$letter = $letter = 'd.a';
 		$conditions = array('Company.name like ' => $letter . '%');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Company`.`name` like 'd.a%'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('Artist.name' => 'JUDY and MARY');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Artist`.`name` = 'JUDY and MARY'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('Artist.name' => 'JUDY AND MARY');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Artist`.`name` = 'JUDY AND MARY'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1894,20 +1894,20 @@ class DboMysqlTest extends CakeTestCase {
 	function testQuotesInStringConditions() {
 		$result = $this->Dbo->conditions('Member.email = \'mariano@cricava.com\'');
 		$expected = ' WHERE `Member`.`email` = \'mariano@cricava.com\'';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('Member.email = "mariano@cricava.com"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com"';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions('Member.email = \'mariano@cricava.com\' AND Member.user LIKE \'mariano.iglesias%\'');
 		$expected = ' WHERE `Member`.`email` = \'mariano@cricava.com\' AND `Member`.`user` LIKE \'mariano.iglesias%\'';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 
 		$result = $this->Dbo->conditions('Member.email = "mariano@cricava.com" AND Member.user LIKE "mariano.iglesias%"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com" AND `Member`.`user` LIKE "mariano.iglesias%"';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2026,67 +2026,67 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->conditions(array('HardCandy.name LIKE' => 'a', 'Candy.name LIKE' => 'c'));
 		$expected = " WHERE `HardCandy`.`name` LIKE 'a' AND `Candy`.`name` LIKE 'c'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('HardCandy.name LIKE' => 'a%', 'Candy.name LIKE' => '%c%'));
 		$expected = " WHERE `HardCandy`.`name` LIKE 'a%' AND `Candy`.`name` LIKE '%c%'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('HardCandy.name LIKE' => 'to be or%', 'Candy.name LIKE' => '%not to be%'));
 		$expected = " WHERE `HardCandy`.`name` LIKE 'to be or%' AND `Candy`.`name` LIKE '%not to be%'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score BETWEEN ? AND ?' => array(90.1, 95.7)));
 		$expected = " WHERE `score` BETWEEN 90.100000 AND 95.700000";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.title' => 1.1));
 		$expected = " WHERE `Post`.`title` = 1.100000";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.title' => 1.1), true, true, new Post());
 		$expected = " WHERE `Post`.`title` = '1.1'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('SUM(Post.comments_count) >' => '500'));
 		$expected = " WHERE SUM(`Post`.`comments_count`) > '500'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('MAX(Post.rating) >' => '50'));
 		$expected = " WHERE MAX(`Post`.`rating`) > '50'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.name' => 'mad(g)ik'));
 		$expected = " WHERE `Post`.`name` = 'mad(g)ik'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score' => array(1, 2, 10)));
 		$expected = " WHERE score IN (1, 2, 10)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score' => array()));
 		$expected = " WHERE `score` IS NULL";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score !=' => array()));
 		$expected = " WHERE `score` IS NOT NULL";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score !=' => '20'));
 		$expected = " WHERE `score` != '20'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score >' => '20'));
 		$expected = " WHERE `score` > '20'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('client_id >' => '20'), true, true, new TestModel());
 		$expected = " WHERE `client_id` > 20";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('OR' => array(
 			array('User.user' => 'mariano'),
@@ -2094,63 +2094,63 @@ class DboMysqlTest extends CakeTestCase {
 		)));
 
 		$expected = " WHERE ((`User`.`user` = 'mariano') OR (`User`.`user` = 'nate'))";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), 'rating >' => '20'
 		)));
 		$expected = " WHERE ((`score` BETWEEN '4' AND '5') OR (`rating` > '20'))";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
 		)));
 		$expected = " WHERE ((`score` BETWEEN '4' AND '5') OR (`score` > '20'))";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('and' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
 		)));
 		$expected = " WHERE ((`score` BETWEEN '4' AND '5') AND (`score` > '20'))";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
 			'published' => 1, 'or' => array('score >' => '2', array('score >' => '20'))
 		));
 		$expected = " WHERE `published` = 1 AND ((`score` > '2') OR (`score` > '20'))";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(array('Project.removed' => false)));
 		$expected = " WHERE `Project`.`removed` = '0'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(array('Project.removed' => true)));
 		$expected = " WHERE `Project`.`removed` = '1'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(array('Project.removed' => null)));
 		$expected = " WHERE `Project`.`removed` IS NULL";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(array('Project.removed !=' => null)));
 		$expected = " WHERE `Project`.`removed` IS NOT NULL";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('(Usergroup.permissions) & 4' => 4));
 		$expected = " WHERE (`Usergroup`.`permissions`) & 4 = 4";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('((Usergroup.permissions) & 4)' => 4));
 		$expected = " WHERE ((`Usergroup`.`permissions`) & 4) = 4";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.modified >=' => 'DATE_SUB(NOW(), INTERVAL 7 DAY)'));
 		$expected = " WHERE `Post`.`modified` >= 'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.modified >= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
 		$expected = " WHERE `Post`.`modified` >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
@@ -2163,7 +2163,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->conditions(array('TestModel.field =' => 'gribe$@()lu'));
 		$expected = " WHERE `TestModel`.`field` = 'gribe$@()lu'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions['NOT'] = array('Listing.expiration BETWEEN ? AND ?' => array("1", "100"));
 		$conditions[0]['OR'] = array(
@@ -2178,69 +2178,69 @@ class DboMysqlTest extends CakeTestCase {
 		$expected = " WHERE NOT (`Listing`.`expiration` BETWEEN '1' AND '100') AND" .
 		" ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND" .
 		" ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
 		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`)) = 'blah'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
 			'MD5(CONCAT(Reg.email,Reg.id))' => array('blah', 'blahblah')
 		));
 		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`)) IN ('blah', 'blahblah')";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('id' => array(2, 5, 6, 9, 12, 45, 78, 43, 76));
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE id IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('title' => 'user(s)');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `title` = 'user(s)'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('title' => 'user(s) data');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `title` = 'user(s) data'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('title' => 'user(s,arg) data');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `title` = 'user(s,arg) data'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array("Book.book_name" => 'Java(TM)'));
 		$expected = " WHERE `Book`.`book_name` = 'Java(TM)'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array("Book.book_name" => 'Java(TM) '));
 		$expected = " WHERE `Book`.`book_name` = 'Java(TM) '";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array("Book.id" => 0));
 		$expected = " WHERE `Book`.`id` = 0";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array("Book.id" => NULL));
 		$expected = " WHERE `Book`.`id` IS NULL";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
 			'ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN ? AND ?' => array(65, 90)
 		));
 		$expected = ' WHERE ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN 65 AND 90';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('or' => array(
 			'? BETWEEN Model.field1 AND Model.field2' => '2009-03-04'
 		)));
 		$expected = " WHERE '2009-03-04' BETWEEN Model.field1 AND Model.field2";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2254,19 +2254,19 @@ class DboMysqlTest extends CakeTestCase {
 			'CAST(Book.created AS DATE)' => '2008-08-02'
 		));
 		$expected = " WHERE CAST(`Book`.`created` AS DATE) = '2008-08-02'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
 			'CAST(Book.created AS DATE) <=' => '2008-08-02'
 		));
 		$expected = " WHERE CAST(`Book`.`created` AS DATE) <= '2008-08-02'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
 			'(Stats.clicks * 100) / Stats.views >' => 50
 		));
 		$expected = " WHERE (`Stats`.`clicks` * 100) / `Stats`.`views` > 50";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2280,7 +2280,7 @@ class DboMysqlTest extends CakeTestCase {
 		$conditions[] = array('User.last_name' => 'Lastname');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `User`.`first_name` = 'Firstname' AND `User`.`last_name` = 'Lastname'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array(
 			'Thread.project_id' => 5,
@@ -2316,27 +2316,27 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->conditions(array('Article2.viewed >=' => 0), true, true, $this->Model);
 		$expected = " WHERE `Article2`.`viewed` >= 0";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Article2.viewed >=' => '0'), true, true, $this->Model);
 		$expected = " WHERE `Article2`.`viewed` >= 0";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Article2.viewed >=' => '1'), true, true, $this->Model);
 		$expected = " WHERE `Article2`.`viewed` >= 1";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Article2.rate_sum BETWEEN ? AND ?' => array(0, 10)), true, true, $this->Model);
 		$expected = " WHERE `Article2`.`rate_sum` BETWEEN 0 AND 10";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Article2.rate_sum BETWEEN ? AND ?' => array('0', '10')), true, true, $this->Model);
 		$expected = " WHERE `Article2`.`rate_sum` BETWEEN 0 AND 10";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Article2.rate_sum BETWEEN ? AND ?' => array('1', '10')), true, true, $this->Model);
 		$expected = " WHERE `Article2`.`rate_sum` BETWEEN 1 AND 10";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2349,15 +2349,15 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Model = new TestModel();
 		$result = $this->Dbo->fields($this->Model, 'Vendor', "Vendor.id, COUNT(Model.vendor_id) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Vendor', "`Vendor`.`id`, COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Post', "CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name, Node.created");
 		$expected = array("CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", "`Node`.`created`");
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'round( (3.55441 * fooField), 3 ) AS test');
 		$this->assertEqual($result, array('round( (3.55441 * fooField), 3 ) AS test'));
@@ -2370,18 +2370,18 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->fields($this->Model, 'Post', "Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name");
 		$expected = array("`Node`.`created`", "CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name");
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Post', "2.2,COUNT(*), SUM(Something.else) as sum, Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name,Post.title,Post.1,1.1");
 		$expected = array(
 			'2.2', 'COUNT(*)', 'SUM(`Something`.`else`) as sum', '`Node`.`created`',
 			"CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", '`Post`.`title`', '`Post`.`1`', '1.1'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, "(`Provider`.`star_total` / `Provider`.`total_ratings`) as `rating`");
 		$expected = array("(`Provider`.`star_total` / `Provider`.`total_ratings`) as `rating`");
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Post');
 		$expected = array(
@@ -2391,7 +2391,7 @@ class DboMysqlTest extends CakeTestCase {
 			'`Post`.`url`', '`Post`.`email`', '`Post`.`comments`', '`Post`.`last_login`',
 			'`Post`.`created`', '`Post`.`updated`'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Other');
 		$expected = array(
@@ -2401,27 +2401,27 @@ class DboMysqlTest extends CakeTestCase {
 			'`Other`.`url`', '`Other`.`email`', '`Other`.`comments`', '`Other`.`last_login`',
 			'`Other`.`created`', '`Other`.`updated`'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, array(), false);
 		$expected = array('id', 'client_id', 'name', 'login', 'passwd', 'addr_1', 'addr_2', 'zip_code', 'city', 'country', 'phone', 'fax', 'url', 'email', 'comments', 'last_login', 'created', 'updated');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'COUNT(*)');
 		$expected = array('COUNT(*)');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'SUM(Thread.unread_buyer) AS ' . $this->Dbo->name('sum_unread_buyer'));
 		$expected = array('SUM(`Thread`.`unread_buyer`) AS `sum_unread_buyer`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'name, count(*)');
 		$expected = array('`TestModel`.`name`', 'count(*)');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'count(*), name');
 		$expected = array('count(*)', '`TestModel`.`name`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields(
 			$this->Model, null, 'field1, field2, field3, count(*), name'
@@ -2430,29 +2430,29 @@ class DboMysqlTest extends CakeTestCase {
 			'`TestModel`.`field1`', '`TestModel`.`field2`',
 			'`TestModel`.`field3`', 'count(*)', '`TestModel`.`name`'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, array('dayofyear(now())'));
 		$expected = array('dayofyear(now())');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, array('MAX(Model.field) As Max'));
 		$expected = array('MAX(`Model`.`field`) As Max');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, array('Model.field AS AnotherName'));
 		$expected = array('`Model`.`field` AS `AnotherName`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, array('field AS AnotherName'));
 		$expected = array('`field` AS `AnotherName`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, array(
 			'TestModel.field AS AnotherName'
 		));
 		$expected = array('`TestModel`.`field` AS `AnotherName`');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Foo', array(
 			'id', 'title', '(user_count + discussion_count + post_count) AS score'
@@ -2462,7 +2462,7 @@ class DboMysqlTest extends CakeTestCase {
 			'`Foo`.`title`',
 			'(user_count + discussion_count + post_count) AS score'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2478,7 +2478,7 @@ class DboMysqlTest extends CakeTestCase {
 			'`TestModel`.`id`',
 			"CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col"
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2537,7 +2537,7 @@ class DboMysqlTest extends CakeTestCase {
 	function testOrderParsing() {
 		$result = $this->Dbo->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
 		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->order("title, id");
 		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
@@ -2568,7 +2568,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->order("Dealer.id = 7 desc, Dealer.id = 3 desc, Dealer.title asc");
 		$expected = " ORDER BY `Dealer`.`id` = 7 desc, `Dealer`.`id` = 3 desc, `Dealer`.`title` asc";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->order(array("Page.name" => "='test' DESC"));
 		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*='test'\s+DESC\s*$/", $result);
@@ -2593,15 +2593,15 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->order("Anuncio.destaque & 2 DESC");
 		$expected = ' ORDER BY `Anuncio`.`destaque` & 2 DESC';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->order("3963.191 * id");
 		$expected = ' ORDER BY 3963.191 * id ASC';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->order(array('Property.sale_price IS NULL'));
 		$expected = ' ORDER BY `Property`.`sale_price` IS NULL ASC';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2666,27 +2666,27 @@ class DboMysqlTest extends CakeTestCase {
 	function testLength() {
 		$result = $this->Dbo->length('varchar(255)');
 		$expected = 255;
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->Dbo->length('int(11)');
 		$expected = 11;
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->Dbo->length('float(5,3)');
 		$expected = '5,3';
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->Dbo->length('decimal(5,2)');
 		$expected = '5,2';
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->Dbo->length("enum('test','me','now')");
 		$expected = 4;
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->Dbo->length("set('a','b','cd')");
 		$expected = 2;
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$this->expectError();
 		$result = $this->Dbo->length(false);
@@ -2694,11 +2694,11 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->length('datetime');
 		$expected = null;
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->Dbo->length('text');
 		$expected = null;
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -2713,21 +2713,21 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('PRIMARY KEY  (`id`)');
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$data = array(
 			'MyIndex' => array('column' => 'id', 'unique' => true)
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('UNIQUE KEY `MyIndex` (`id`)');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'MyIndex' => array('column' => array('id', 'name'), 'unique' => true)
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('UNIQUE KEY `MyIndex` (`id`, `name`)');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2757,7 +2757,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`testName` varchar(255) DEFAULT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'int_field',
@@ -2770,7 +2770,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Dbo->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'), );
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`int_field` int(11) NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Dbo->fieldParameters['param'] = array(
 			'value' => 'COLLATE',
@@ -2789,7 +2789,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`int_field` int(11) NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'int_field',
@@ -2800,7 +2800,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`int_field` int(11) COLLATE GOOD NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Dbo->columns = $restore;
 
@@ -2812,7 +2812,7 @@ class DboMysqlTest extends CakeTestCase {
  		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'created',
@@ -2822,7 +2822,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'modified',
@@ -2831,7 +2831,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`modified` timestamp NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'modified',
@@ -2841,7 +2841,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`modified` timestamp NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -2867,7 +2867,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$this->Dbo->hasAny($this->Model, array('TestModel.name' => 'harry'));
 		$this->Dbo->hasAny($this->Model, array());
-		
+
 	}
 
 /**
@@ -3143,7 +3143,7 @@ class DboMysqlTest extends CakeTestCase {
 		$commentTable = $this->Dbo->fullTableName('comments');
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentTable . 
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentTable .
 				' AS Comment WHERE Article.id = Comment.article_id'
 		);
 		$result = $Article->find('all');
@@ -3345,7 +3345,7 @@ class DboMysqlTest extends CakeTestCase {
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->fetchAll('SELECT name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
@@ -3357,14 +3357,14 @@ class DboMysqlTest extends CakeTestCase {
 			array($this->Dbo->fullTableName('apples', false) => array('name' => 'My new apple')),
 			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Some odd color'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->field($this->Dbo->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Apple->unbindModel(array(), false);
 		$result = $this->Dbo->read($Apple, array(
@@ -3381,7 +3381,7 @@ class DboMysqlTest extends CakeTestCase {
 			array('Apple' => array('name' => 'My new apple')),
 			array('Apple' => array('name' => 'Some odd color'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->read($Article, array(
 			'fields' => array('id', 'user_id', 'title'),

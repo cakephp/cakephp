@@ -166,59 +166,59 @@ class InflectorTest extends CakeTestCase {
 	function testInflectorSlug() {
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
 		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('this/is/a/path');
 		$expected = 'this_is_a_path';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "-");
 		$expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "+");
 		$expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('Äpfel Über Öl grün ärgert groß öko', '-');
 		$expected = 'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('The truth - and- more- news', '-');
 		$expected = 'The-truth-and-more-news';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('The truth: and more news', '-');
 		$expected = 'The-truth-and-more-news';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('La langue française est un attribut de souveraineté en France', '-');
 		$expected = 'La-langue-francaise-est-un-attribut-de-souverainete-en-France';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('!@$#exciting stuff! - what !@-# was that?', '-');
 		$expected = 'exciting-stuff-what-was-that';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('20% of profits went to me!', '-');
 		$expected = '20-of-profits-went-to-me';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('#this melts your face1#2#3', '-');
 		$expected = 'this-melts-your-face1-2-3';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('controller/action/りんご/1');
 		$expected = 'controller_action_りんご_1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('の話が出たので大丈夫かなあと');
 		$expected = 'の話が出たので大丈夫かなあと';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('posts/view/한국어/page:1/sort:asc');
 		$expected = 'posts_view_한국어_page_1_sort_asc';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -231,11 +231,11 @@ class InflectorTest extends CakeTestCase {
 	    Inflector::rules('transliteration', array('/r/' => '1'));
 		$result = Inflector::slug('replace every r');
 		$expected = '1eplace_eve1y_1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Inflector::slug('replace every r', '_');
 		$expected = '1eplace_eve1y_1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -248,7 +248,7 @@ class InflectorTest extends CakeTestCase {
 	    Inflector::rules('transliteration', array('/å/' => 'aa', '/ø/' => 'oe'));
 		$result = Inflector::slug('Testing æ ø å', '-');
 		$expected = 'Testing-ae-oe-aa';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

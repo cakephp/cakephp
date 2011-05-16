@@ -174,11 +174,11 @@ class HtmlHelperTest extends CakeTestCase {
 	function testDocType() {
 		$result = $this->Html->docType();
 		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Html->docType('html4-strict');
 		$expected = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->assertNull($this->Html->docType('non-existing-doctype'));
 	}
@@ -194,11 +194,11 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->link('/home');
 		$expected = array('a' => array('href' => '/home'), 'preg:/\/home/', '/a');
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true));
 		$expected = array('a' => array('href' => FULL_BASE_URL . '/posts'), 'Posts', '/a');
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
 		$expected = array(
@@ -206,7 +206,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Home',
 			'/a'
 		);
-		$this->assertTags($result, $expected, true);
+		$this->assertTags($expected, $result, true);
 
 		$result = $this->Html->link('Home', '/home', array('default' => false));
 		$expected = array(
@@ -214,7 +214,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Home',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Next >', '#');
 		$expected = array(
@@ -222,7 +222,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Next &gt;',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Next >', '#', array('escape' => true));
 		$expected = array(
@@ -230,7 +230,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Next &gt;',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Next >', '#', array('escape' => 'utf-8'));
 		$expected = array(
@@ -238,7 +238,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Next &gt;',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Next >', '#', array('escape' => false));
 		$expected = array(
@@ -246,7 +246,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Next >',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Next >', '#', array(
 			'title' => 'to escape &#8230; or not escape?',
@@ -257,7 +257,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Next >',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Next >', '#', array(
 			'title' => 'to escape &#8230; or not escape?',
@@ -268,7 +268,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Next &gt;',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->link('Original size', array(
 			'controller' => 'images', 'action' => 'view', 3, '?' => array('height' => 100, 'width' => 200)
@@ -278,7 +278,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Original size',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('Asset.timestamp', false);
 
@@ -288,7 +288,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'img' => array('src' => 'img/test.gif', 'alt' => ''),
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->image('test.gif', array('url' => '#'));
 		$expected = array(
@@ -296,7 +296,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'img' => array('src' => 'img/test.gif', 'alt' => ''),
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('Asset.timestamp', 'force');
 
@@ -306,7 +306,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->image('../favicon.ico', array('url' => '#'));
 		$expected = array(
@@ -314,7 +314,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -362,7 +362,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'img' => array('src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => '')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -426,14 +426,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/webroot_test\.css/')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('theme_webroot');
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('App.www_root', $webRoot);
 	}
@@ -468,27 +468,27 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->css('screen.css');
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->css('my.css.library');
 		$expected['link']['href'] = 'preg:/.*css\/my\.css\.library\.css/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->css('screen.css?1234');
 		$expected['link']['href'] = 'preg:/.*css\/screen\.css\?1234/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->css('http://whatever.com/screen.css?1234');
 		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('Asset.filter.css', 'css.php');
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('Asset.filter.css', false);
 
@@ -528,29 +528,29 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('debug', 0);
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$this->Html->request->webroot = '/testing/';
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$this->Html->request->webroot = '/testing/longer/';
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -591,7 +591,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->script(array('foobar', 'bar'));
 		$expected = array(
@@ -600,31 +600,31 @@ class HtmlHelperTest extends CakeTestCase {
 			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
 			'/script',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->script('jquery-1.3');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.js')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->script('test.json');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->script('/plugin/js/jquery-1.3.2.js?someparam=foo');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->script('test.json.js?foo=bar');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->script('foo');
 		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
@@ -639,7 +639,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$this->View->expects($this->any())->method('addScript')
 			->with($this->matchesRegularExpression('/script_in_head.js/'));
@@ -671,7 +671,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'script' => array('src' => '/theme/test_theme/js/__test_js.js', 'type' => 'text/javascript')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$folder->delete();
@@ -692,7 +692,7 @@ class HtmlHelperTest extends CakeTestCase {
 			$this->cDataEnd,
 			'/script',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
 		$expected = array(
@@ -700,7 +700,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'window.foo = 2;',
 			'/script',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => true));
 		$expected = array(
@@ -710,7 +710,7 @@ class HtmlHelperTest extends CakeTestCase {
 			$this->cDataEnd,
 			'/script',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 
 		$this->View->expects($this->any())->method('addScript')
@@ -725,7 +725,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'window.foo = 2;',
 			'/script',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -746,7 +746,7 @@ class HtmlHelperTest extends CakeTestCase {
 			$this->cDataEnd,
 			'/script'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 
 		$result = $this->Html->scriptStart(array('safe' => false));
@@ -759,7 +759,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'this is some javascript',
 			'/script'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$this->View->expects($this->once())->method('addScript');
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
@@ -814,7 +814,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Third',
 			'/a',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->getCrumbs(' &gt; ');
 		$expected = array(
@@ -830,7 +830,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'Third',
 			'/a',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$this->assertPattern('/^<a[^<>]+>First<\/a> &gt; <a[^<>]+>Second<\/a> &gt; <a[^<>]+>Third<\/a>$/', $result);
 		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
@@ -856,7 +856,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'&raquo;',
 			'Fourth'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -914,7 +914,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ul'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, null);
 		$expected = array(
@@ -944,7 +944,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ul'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, array(), array(), 'ol');
 		$expected = array(
@@ -974,7 +974,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ol'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, 'ol');
 		$expected = array(
@@ -1004,7 +1004,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ol'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, array('class'=>'list'));
 		$expected = array(
@@ -1034,7 +1034,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ul'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, array(), array('class' => 'item'));
 		$expected = array(
@@ -1064,7 +1064,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ul'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, array(), array('even' => 'even', 'odd' => 'odd'));
 		$expected = array(
@@ -1094,7 +1094,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ul'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->nestedList($list, array('class'=>'list'), array('class' => 'item'));
 		$expected = array(
@@ -1124,7 +1124,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/li',
 			'/ul'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -1160,14 +1160,14 @@ class HtmlHelperTest extends CakeTestCase {
 			'link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'icon'),
 			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'shortcut icon'))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->meta('icon', 'favicon.ico');
 		$expected = array(
 			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
 			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
 		$this->assertTags($result, array('meta' => array('name' => 'keywords', 'content' => 'these, are, some, meta, keywords')));
@@ -1197,7 +1197,7 @@ class HtmlHelperTest extends CakeTestCase {
 	function testTableHeaders() {
 		$result = $this->Html->tableHeaders(array('ID', 'Name', 'Date'));
 		$expected = array('<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr');
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 	}
 
 /**
@@ -1220,7 +1220,7 @@ class HtmlHelperTest extends CakeTestCase {
 			array('td' => array('width' => 'preg:/100px/')), 'td content 3', '/td',
 			'/tr'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$tr = array('td content 1', 'td content 2', 'td content 3');
 		$result = $this->Html->tableCells($tr, null, null, true);
@@ -1231,7 +1231,7 @@ class HtmlHelperTest extends CakeTestCase {
 			array('td' => array('class' => 'column-3')), 'td content 3', '/td',
 			'/tr'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$tr = array('td content 1', 'td content 2', 'td content 3');
 		$result = $this->Html->tableCells($tr, true);
@@ -1242,7 +1242,7 @@ class HtmlHelperTest extends CakeTestCase {
 			array('td' => array('class' => 'column-3')), 'td content 3', '/td',
 			'/tr'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($expected, $result);
 
 		$tr = array(
 			array('td content 1', 'td content 2', 'td content 3'),
@@ -1251,7 +1251,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$expected = "<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$tr = array(
 			array('td content 1', 'td content 2', 'td content 3'),
@@ -1261,7 +1261,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$tr = array(
 			array('td content 1', 'td content 2', 'td content 3'),
@@ -1271,7 +1271,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'), false, false);
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1392,7 +1392,7 @@ class HtmlHelperTest extends CakeTestCase {
 				'formend' => 'finish form'
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$tags = $this->Html->getAttribute('_tags');
 		$this->assertEqual($tags['form'], 'start form');
 		$this->assertEqual($tags['formend'], 'finish form');
@@ -1402,7 +1402,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'minimizedAttributeFormat' => 'format'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$this->assertEqual($this->Html->getAttribute('_minimizedAttributeFormat'), 'format');
 	}
 

@@ -198,7 +198,7 @@ class DboSqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"int_field" integer NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'name',
@@ -208,7 +208,7 @@ class DboSqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"name" varchar(20) NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -220,7 +220,7 @@ class DboSqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" varchar(20) DEFAULT NULL COLLATE NOCASE';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -231,7 +231,7 @@ class DboSqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" varchar(20) DEFAULT \'test-value\' NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -242,8 +242,8 @@ class DboSqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
-		$this->assertEqual($result, $expected);
-		
+		$this->assertEqual($expected, $result);
+
 		$data = array(
 			'name' => 'testName',
 			'type' => 'integer',
@@ -254,7 +254,7 @@ class DboSqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -299,7 +299,7 @@ class DboSqliteTest extends CakeTestCase {
 				'length' => null,
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

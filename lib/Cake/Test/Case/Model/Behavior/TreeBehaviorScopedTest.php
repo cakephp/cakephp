@@ -80,7 +80,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
 			array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
 		$this->assertEqual($this->Tree->children(), array());
@@ -90,7 +90,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 
 		$result = $this->Tree->children();
 		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->assertTrue($this->Tree->delete());
 		$this->assertEqual($this->Tree->find('count'), 11);
@@ -117,7 +117,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
 			array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
 		$this->assertEqual($this->Tree->children(), array());
@@ -127,7 +127,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 
 		$result = $this->Tree->children();
 		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->assertTrue($this->Tree->delete());
 		$this->assertEqual($this->Tree->find('count'), 11);
@@ -197,7 +197,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			'flag' => 0,
 			'locale' => 'eng',
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		//update existing record, same locale
 		$this->Tree->create();
@@ -214,7 +214,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			'flag' => 0,
 			'locale' => 'eng',
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		//update different locale, same record
 		$this->Tree->create();
@@ -239,7 +239,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			'flag' => 0,
 			'locale' => 'deu',
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		//Save with bindTranslation
 		$this->Tree->locale = 'eng';
@@ -263,7 +263,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			array('id' => 22, 'locale' => 'spa', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'Nuevo leyenda')
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -319,6 +319,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			'lft' => 1,
 			'rght' => 2
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 }

@@ -293,7 +293,7 @@ class AppImportTest extends CakeTestCase {
 
 		$result = App::objects('file', 'non_existing_configure');
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = App::objects('NonExistingType');
 		$this->assertEqual($result, array());
@@ -335,11 +335,11 @@ class AppImportTest extends CakeTestCase {
 		$result = App::objects('TestPlugin.helper');
 		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		$result = App::objects('TestPlugin.View/Helper');
 		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = App::objects('TestPlugin.component');
 		$this->assertTrue(in_array('OtherComponent', $result));

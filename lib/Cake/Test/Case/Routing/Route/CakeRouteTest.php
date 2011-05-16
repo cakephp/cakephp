@@ -43,7 +43,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$route = new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$result = $route->compile();
 		$expected = '#^/*$#';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$this->assertEqual($route->keys, array());
 
 		$route = new CakeRoute('/:controller/:action', array('controller' => 'posts'));
@@ -178,7 +178,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result['month'], '08');
 		$this->assertEqual($result['day'], '01');
 		$this->assertEquals($result['pass'][0], 'title-of-post');
-		
+
 
 		$route = new CakeRoute(
 			"/:extra/page/:slug/*",
@@ -287,7 +287,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$url = array('controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -486,8 +486,8 @@ class CakeRouteTestCase extends CakeTestCase {
  */
 	function testPatternOnAction() {
 		$route = new CakeRoute(
-			'/blog/:action/*', 
-			array('controller' => 'blog_posts'), 
+			'/blog/:action/*',
+			array('controller' => 'blog_posts'),
 			array('action' => 'other|actions')
 		);
 		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'foo'));
@@ -646,7 +646,7 @@ class CakeRouteTestCase extends CakeTestCase {
 			),
 			'pass' => array(),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $route->parse('/tests/action/theanswer[is]:42/var[]:val2/var[]:val3');
 		$expected = array(
@@ -663,7 +663,7 @@ class CakeRouteTestCase extends CakeTestCase {
 			),
 			'pass' => array(),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $route->parse('/tests/action/theanswer[is][not]:42/theanswer[]:5/theanswer[is]:6');
 		$expected = array(
@@ -680,7 +680,7 @@ class CakeRouteTestCase extends CakeTestCase {
 			),
 			'pass' => array(),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

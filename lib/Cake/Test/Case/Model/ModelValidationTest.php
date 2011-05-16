@@ -520,7 +520,7 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'title' => array('tooShort')
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->validate = array(
 			'title' => array(
@@ -541,7 +541,7 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'title' => array('tooShort', 'onlyLetters')
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

@@ -1263,7 +1263,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->asset('test_plugin/root.js');
 		$result = ob_get_clean();
 		$expected = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'root.js');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		ob_start();
 		$Dispatcher->dispatch(new CakeRequest('test_plugin/flash/plugin_test.swf'));
@@ -1304,13 +1304,13 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->asset('plugin_js/js/plugin_js.js');
 		$result = ob_get_clean();
 		$expected = "alert('win sauce');";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		ob_start();
 		$Dispatcher->asset('plugin_js/js/one/plugin_one.js');
 		$result = ob_get_clean();
 		$expected = "alert('plugin one nested js file');";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/unknown.extension');
@@ -1406,7 +1406,7 @@ class DispatcherTest extends CakeTestCase {
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$filename = $this->__cachePath($request->here);
 		unlink($filename);
@@ -1428,7 +1428,7 @@ class DispatcherTest extends CakeTestCase {
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
@@ -1446,7 +1446,7 @@ class DispatcherTest extends CakeTestCase {
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
@@ -1464,7 +1464,7 @@ class DispatcherTest extends CakeTestCase {
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
@@ -1482,7 +1482,7 @@ class DispatcherTest extends CakeTestCase {
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 
@@ -1500,7 +1500,7 @@ class DispatcherTest extends CakeTestCase {
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$filename = $this->__cachePath($request->here);
 		$this->assertTrue(file_exists($filename));
 

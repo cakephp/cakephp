@@ -648,7 +648,7 @@ class HelperTest extends CakeTestCase {
 			}
 		}
 		$expected = array('what', 'how', 'how', 'what', 'how', 'how');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Helper->request->data['HelperTestComment']['5']['id'] = 'ok';
 		$result = $this->Helper->value('HelperTestComment.5.id');
@@ -754,7 +754,7 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->request->webroot = '/';
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/img/cake.power.gif';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Helper->theme = 'test_theme';
 
@@ -764,30 +764,30 @@ class HelperTest extends CakeTestCase {
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Helper->webroot('/img/test.jpg');
 		$expected = '/theme/test_theme/img/test.jpg';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS);
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Helper->webroot('/img/test.jpg');
 		$expected = '/theme/test_theme/img/test.jpg';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Helper->webroot('/img/cake.icon.gif');
 		$expected = '/img/cake.icon.gif';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Helper->webroot('/img/cake.icon.gif?some=param');
 		$expected = '/img/cake.icon.gif?some=param';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		Configure::write('App.www_root', $webRoot);
 	}

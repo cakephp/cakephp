@@ -117,13 +117,13 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$expected = array('BakeArticles', 'BakeArticlesBakeTags', 'BakeComments', 'BakeTags');
 		$result = $this->Task->listAll('test');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Task->interactive = false;
 		$result = $this->Task->listAll();
 
 		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -143,11 +143,11 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getName('test');
 		$expected = 'BakeComments';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->getName('test');
 		$expected = 'BakeArticles';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -187,7 +187,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -200,7 +200,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne, , '));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -225,7 +225,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -239,7 +239,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

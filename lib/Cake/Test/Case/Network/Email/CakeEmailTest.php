@@ -278,19 +278,19 @@ class CakeEmailTest extends CakeTestCase {
 	public function testFormatAddress() {
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'cake@cakephp.org'));
 		$expected = array('cake@cakephp.org');
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'cake@cakephp.org', 'php@cakephp.org' => 'php@cakephp.org'));
 		$expected = array('cake@cakephp.org', 'php@cakephp.org');
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'CakePHP', 'php@cakephp.org' => 'Cake'));
 		$expected = array('CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>');
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'ÄÖÜTest'));
 		$expected = array('=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>');
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -771,7 +771,7 @@ class CakeEmailTest extends CakeTestCase {
 			'non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.',
 			''
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$text = 'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan amet.';
 		$result = $this->CakeEmail->wrap($text);
@@ -781,7 +781,7 @@ class CakeEmailTest extends CakeTestCase {
 			'amet.',
 			''
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$text = '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula pellentesque accumsan amet.<hr></p>';
 		$result = $this->CakeEmail->wrap($text);
@@ -791,7 +791,7 @@ class CakeEmailTest extends CakeTestCase {
 			'pellentesque accumsan amet.<hr></p>',
 			''
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
 		$result = $this->CakeEmail->wrap($text);
@@ -801,7 +801,7 @@ class CakeEmailTest extends CakeTestCase {
 			'nisi, vehicula pellentesque accumsan amet.',
 			''
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$text = 'Lorem ipsum <a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">ok</a>';
 		$result = $this->CakeEmail->wrap($text);
@@ -811,7 +811,7 @@ class CakeEmailTest extends CakeTestCase {
 			'ok</a>',
 			''
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$text = 'Lorem ipsum withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite ok.';
 		$result = $this->CakeEmail->wrap($text);
@@ -821,7 +821,7 @@ class CakeEmailTest extends CakeTestCase {
 			'ok.',
 			''
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 }

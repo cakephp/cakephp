@@ -133,39 +133,39 @@ class NumberHelperTest extends CakeTestCase {
 
 		$result = $this->Number->currency(1, null, array('wholeSymbol' => '$ '));
 		$expected = '$ 1.00';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(1, null, array('wholeSymbol' => ' $', 'wholePosition' => 'after'));
 		$expected = '1.00 $';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(.2, null, array('wholeSymbol' => ' $', 'wholePosition' => 'after', 'fractionSymbol' => 'cents'));
 		$expected = '20cents';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(.2, null, array('wholeSymbol' => ' $', 'wholePosition' => 'after', 'fractionSymbol' => 'cents', 'fractionPosition' => 'before'));
 		$expected = 'cents20';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(311, 'USD', array('wholePosition' => 'after'));
 		$expected = '311.00$';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(.2, 'EUR');
 		$expected = '&#8364;0,20';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(12, null, array('wholeSymbol' => ' dollars', 'wholePosition' => 'after', 'fractionSymbol' => ' cents', 'fractionPosition' => 'after'));
 		$expected = '12.00 dollars';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(.12, null, array('wholeSymbol' => ' dollars', 'wholePosition' => 'after', 'fractionSymbol' => ' cents', 'fractionPosition' => 'after'));
 		$expected = '12 cents';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency(.5, null, array('fractionSymbol' => false, 'fractionPosition' => 'before', 'wholeSymbol' => '$'));
 		$expected = '$0.50';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -381,7 +381,7 @@ class NumberHelperTest extends CakeTestCase {
 		$result = $this->Number->currency('0.35', 'GBP');
 		$expected = '35p';
 		$this->assertEqual($expected, $result);
-		
+
 		$result = $this->Number->currency('0.35', 'EUR');
 		$expected = '&#8364;0,35';
 		$this->assertEqual($expected, $result);
@@ -460,18 +460,18 @@ class NumberHelperTest extends CakeTestCase {
 	function testToPercentage() {
 		$result = $this->Number->toPercentage(45, 0);
 		$expected = '45%';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->toPercentage(45, 2);
 		$expected = '45.00%';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->toPercentage(0, 0);
 		$expected = '0%';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->toPercentage(0, 4);
 		$expected = '0.0000%';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 }

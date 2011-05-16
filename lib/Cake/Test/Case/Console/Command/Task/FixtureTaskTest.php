@@ -50,7 +50,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('FixtureTask', 
+		$this->Task = $this->getMock('FixtureTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
@@ -97,7 +97,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array('schema' => 'Article', 'records' => true);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -112,9 +112,9 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
-	
+
 /**
  * test importOptions choosing from Table.
  *
@@ -126,7 +126,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 		$result = $this->Task->importOptions('Article');
 		$expected = array('fromTable' => true);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -178,7 +178,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
-			
+
 		$this->Task->execute();
 	}
 

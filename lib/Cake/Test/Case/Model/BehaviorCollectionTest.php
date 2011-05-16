@@ -625,11 +625,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 			array('Apple' => array('id' => '3', 'name' => 'green blue', 'mytime' => '22:57:17'))
 		);
 		$result = $Apple->find('all', array('conditions' => array('Apple.id <' => '4')));
-		$this->assertEqual($result, $expected2);
+		$this->assertEqual($expected, $result2);
 
 		$Apple->Behaviors->disable('Test');
 		$result = $Apple->find('all');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'on'));
 		$this->assertIdentical($Apple->find('all'), array());
@@ -697,11 +697,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 
 		$Apple->Child->Behaviors->attach('Test', array('before' => 'modify'));
 		$result = $Apple->find('all', array('fields' => array('Apple.id'), 'conditions' => array('Apple.id <' => '4')));
-		//$this->assertEqual($result, $expected2);
+		//$this->assertEqual($expected, $result2);
 
 		$Apple->Child->Behaviors->disable('Test');
 		$result = $Apple->find('all');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Apple->Child->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
 		//$this->assertIdentical($Apple->find('all'), array());
@@ -768,11 +768,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 				'Child' => array())
 		);
 		$result = $Apple->find('all', array('fields' => array('Apple.id'), 'conditions' => array('Apple.id <' => '4')));
-		//$this->assertEqual($result, $expected2);
+		//$this->assertEqual($expected, $result2);
 
 		$Apple->Sample->Behaviors->disable('Test');
 		$result = $Apple->find('all');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Apple->Sample->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
 		//$this->assertIdentical($Apple->find('all'), array());
@@ -837,11 +837,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 			'fields' => array('Apple.id', 'Parent.id', 'Parent.name', 'Parent.mytime'),
 			'conditions' => array('Apple.id <' => '4')
 		));
-		$this->assertEqual($result, $expected2);
+		$this->assertEqual($expected, $result2);
 
 		$Apple->Parent->Behaviors->disable('Test');
 		$result = $Apple->find('all');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Apple->Parent->Behaviors->attach('Test', array('after' => 'off'));
 		$this->assertEqual($Apple->find('all'), $expected);
@@ -1045,11 +1045,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 
 		$result = $Apple->{'look for the remote'}('in the couch');
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Apple->{'look for THE REMOTE'}('in the couch');
 		$expected = "Item.name = 'THE REMOTE' AND Location.name = 'the couch'";
-		$this->assertEqual($result, $expected, 'Mapped method was lowercased.');
+		$this->assertEqual($expected, $result, 'Mapped method was lowercased.');
 	}
 
 /**

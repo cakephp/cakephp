@@ -401,7 +401,7 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getUserFixtures();
 		$expected = array('app.pizza', 'app.topping', 'app.side_dish');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -497,15 +497,15 @@ class TestTaskTest extends CakeTestCase {
 	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
 		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->generateConstructor('model', 'Post');
 		$expected = "ClassRegistry::init('Post');\n";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->generateConstructor('helper', 'FormHelper');
 		$expected = "new FormHelper();\n";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -578,29 +578,29 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->testCaseFileName('Model', 'Post');
 		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'PostTest.php';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->testCaseFileName('Helper', 'Form');
 		$expected = $this->Task->path . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->testCaseFileName('Controller', 'Posts');
 		$expected = $this->Task->path . 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->testCaseFileName('Behavior', 'Containable');
 		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Task->testCaseFileName('Component', 'Auth');
 		$expected = $this->Task->path . 'Case' . DS . 'Controller' . DS  . 'Component' . DS . 'AuthComponentTest.php';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS ));
 		$this->Task->plugin = 'TestTest';
 		$result = $this->Task->testCaseFileName('Model', 'Post');
 		$expected =  APP . 'Plugin' . DS . 'TestTest' . DS . 'tests' . DS . 'Case' . DS . 'Model' . DS . 'PostTest.php';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

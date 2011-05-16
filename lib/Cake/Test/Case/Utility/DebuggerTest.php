@@ -250,7 +250,7 @@ class DebuggerTest extends CakeTestCase {
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

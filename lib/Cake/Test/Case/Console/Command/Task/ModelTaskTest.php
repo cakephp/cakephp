@@ -131,12 +131,12 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->listAll('test');
 		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags', 'category_threads');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$this->Task->connection = 'test';
 		$result = $this->Task->listAll();
 		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags', 'category_threads');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -187,7 +187,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$result = $this->Task->getTable('BakeArticle', 'test');
 		$expected = 'bake_articles';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -199,7 +199,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
 		$result = $this->Task->getTable('BakeArticle', 'test');
 		$expected = 'my_table';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -254,7 +254,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -275,7 +275,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -291,7 +291,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('a_z_0_9' => '/^[a-z]{0,9}$/');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -352,7 +352,7 @@ class ModelTaskTest extends CakeTestCase {
 				'time' => 'time'
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -370,10 +370,10 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')
 			->with($anything, null, 'key')
 			->will($this->returnValue('my_field'));
-	
+
 		$result = $this->Task->findPrimaryKey($fields);
 		$expected = 'my_field';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -430,7 +430,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
 		$result = $this->Task->findBelongsTo($model, array());
@@ -443,7 +443,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -472,7 +472,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
 		$result = $this->Task->findHasOneAndMany($model, array());
@@ -492,7 +492,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -516,7 +516,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -750,7 +750,7 @@ STRINGEND;
 		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Model' . DS . 'BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/BakeArticle extends ControllerTestAppModel/'));
-	
+
 		$this->Task->bake('BakeArticle', array(), array());
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
@@ -767,7 +767,7 @@ STRINGEND;
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticle');
 		$filename = '/my/path/BakeArticle.php';
-		
+
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 		$this->Task->expects($this->once())->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle extends AppModel/'));
@@ -818,7 +818,7 @@ STRINGEND;
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticle');
 		$filename = '/my/path/BakeArticle.php';
-	
+
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch("/'BakeComment' \=\> array\(/"));
@@ -860,7 +860,7 @@ STRINGEND;
 		$filename = '/my/path/BakeTag.php';
 		$this->Task->expects($this->at(4))
 			->method('createFile')->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeTag/'));
-		
+
 		$filename = '/my/path/CategoryThread.php';
 		$this->Task->expects($this->at(5))->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));

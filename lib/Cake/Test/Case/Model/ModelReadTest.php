@@ -79,7 +79,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle; 
+		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle;
 		$message = 'Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
@@ -128,7 +128,7 @@ class ModelReadTest extends BaseModelTest {
 						'thread_id' => 3,
 						'name' => 'Thread 3, Message 1'
 		))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$rows = $Thread->find('all', array(
 			'group' => 'Thread.project_id',
@@ -142,7 +142,7 @@ class ModelReadTest extends BaseModelTest {
 			1 => 2,
 			2 => 1
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$rows = $Thread->find('all', array(
 			'group' => 'Thread.project_id',
@@ -157,7 +157,7 @@ class ModelReadTest extends BaseModelTest {
 			1 => 2,
 			2 => 1
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
@@ -180,37 +180,37 @@ class ModelReadTest extends BaseModelTest {
 						'thread_id' => 1,
 						'name' => 'Thread 1, Message 1'
 		))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => 'Thread.project_id, Project.id'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => 'project_id'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => array('project_id')
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => array('project_id', 'Project.id')
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => array('Thread.project_id', 'Project.id')
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$expected = array(
 			array('Product' => array('type' => 'Clothing'), array('price' => 32)),
@@ -223,13 +223,13 @@ class ModelReadTest extends BaseModelTest {
 			'group'=> 'Product.type',
 			'order' => 'Product.type ASC'
 			));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $Product->find('all', array(
 			'fields'=>array('Product.type', 'MIN(Product.price) as price'),
 			'group'=> array('Product.type'),
 			'order' => 'Product.type ASC'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -297,7 +297,7 @@ class ModelReadTest extends BaseModelTest {
 			unset($expected[0][$this->db->fullTableName('articles', false)]);
 		}
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse(empty($result));
 
@@ -1083,7 +1083,7 @@ class ModelReadTest extends BaseModelTest {
 					'name' => ''
 				),
 				'Child' => array()));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->Parent->unbindModel(array('hasOne' => array('Sample')));
 		$this->assertTrue($result);
@@ -1749,7 +1749,7 @@ class ModelReadTest extends BaseModelTest {
 				'Child' => array()
 		));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->Parent->unbindModel(array('hasOne' => array('Sample')));
 		$this->assertTrue($result);
@@ -2178,7 +2178,7 @@ class ModelReadTest extends BaseModelTest {
 				'name' => ''
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->unbindModel(array('hasMany' => array('Child')));
 		$this->assertTrue($result);
@@ -2597,7 +2597,7 @@ class ModelReadTest extends BaseModelTest {
 					'apple_id' => '',
 					'name' => ''
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->Parent->unbindModel(array('belongsTo' => array('Parent')));
 		$this->assertTrue($result);
@@ -2982,7 +2982,7 @@ class ModelReadTest extends BaseModelTest {
 					'apple_id' => '',
 					'name' => ''
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -3102,7 +3102,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array(
 			'conditions' => array('Category.name LIKE' => 'Category 1%')
@@ -3155,7 +3155,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array(
 			'fields' => 'id, parent_id, name'
@@ -3223,7 +3223,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array('order' => 'id DESC'));
 
@@ -3305,7 +3305,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array(
 			'conditions' => array('Category.name LIKE' => 'Category 3%')
@@ -3333,7 +3333,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array(
 			'conditions' => array('Category.name LIKE' => 'Category 1.1%')
@@ -3361,7 +3361,7 @@ class ModelReadTest extends BaseModelTest {
 								'created' => '2007-03-18 15:30:23',
 								'updated' => '2007-03-18 15:32:31'),
 								'children' => array()))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array(
 			'fields' => 'id, parent_id, name',
@@ -3411,7 +3411,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array(
 			'fields' => 'id, name, parent_id',
@@ -3453,7 +3453,7 @@ class ModelReadTest extends BaseModelTest {
 				'name' => 'Category 1.1.2',
 				'parent_id' => '2'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('threaded', array(
 			'fields' => 'id, parent_id, name',
@@ -3487,7 +3487,7 @@ class ModelReadTest extends BaseModelTest {
 				'children' => array()
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -3522,7 +3522,7 @@ class ModelReadTest extends BaseModelTest {
 				'Article' => array(
 					'id' => 3
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 3;
 		$TestModel->recursive = 1;
@@ -3549,7 +3549,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 2;
 		$result = $TestModel->find('neighbors', array('recursive' => -1));
@@ -3577,7 +3577,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 3;
 		$result = $TestModel->find('neighbors', array('recursive' => -1));
@@ -3595,7 +3595,7 @@ class ModelReadTest extends BaseModelTest {
 			),
 			'next' => null
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->recursive = 0;
 		$TestModel->id = 1;
@@ -3608,17 +3608,17 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors');
 		$expected = array('prev' => null, 'next' => $two);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 2;
 		$result = $TestModel->find('neighbors');
 		$expected = array('prev' => $one, 'next' => $three);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 3;
 		$result = $TestModel->find('neighbors');
 		$expected = array('prev' => $two, 'next' => null);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->recursive = 2;
 		$TestModel->id = 1;
@@ -3631,17 +3631,17 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors', array('recursive' => 2));
 		$expected = array('prev' => null, 'next' => $two);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 2;
 		$result = $TestModel->find('neighbors', array('recursive' => 2));
 		$expected = array('prev' => $one, 'next' => $three);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 3;
 		$result = $TestModel->find('neighbors', array('recursive' => 2));
 		$expected = array('prev' => $two, 'next' => null);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -3918,7 +3918,7 @@ class ModelReadTest extends BaseModelTest {
 				),
 				'Child' => array()
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -3977,7 +3977,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4017,7 +4017,7 @@ class ModelReadTest extends BaseModelTest {
 		$recursive = -1;
 		$order = 'Article.id ASC';
 		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		if ($this->skipIf($this->db instanceof Postgres, 'The rest of testFindAllWithConditionsHavingMixedDataTypes test is not compatible with Postgres')) {
 			return;
@@ -4060,7 +4060,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4085,7 +4085,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $TestModel->hasMany;
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->bindModel(array('hasMany' => array('Comment')));
 		$this->assertTrue($result);
@@ -4174,7 +4174,7 @@ class ModelReadTest extends BaseModelTest {
 						'updated' => '2007-03-18 10:49:31'
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->resetAssociations();
 		$result = $TestModel->hasMany;
@@ -4268,7 +4268,7 @@ class ModelReadTest extends BaseModelTest {
 						'updated' => '2007-03-18 10:49:31'
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->hasMany;
 		$expected = array(
@@ -4285,14 +4285,14 @@ class ModelReadTest extends BaseModelTest {
 				'finderQuery' => null,
 				'counterQuery' => null
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->unbindModel(array('hasMany' => array('Comment')));
 		$this->assertTrue($result);
 
 		$result = $TestModel->hasMany;
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array(
 			'fields' => 'User.id, User.user'
@@ -4302,7 +4302,7 @@ class ModelReadTest extends BaseModelTest {
 			array('User' => array('id' => '2', 'user' => 'nate')),
 			array('User' => array('id' => '3', 'user' => 'larry')),
 			array('User' => array('id' => '4', 'user' => 'garrett')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array(
 			'fields' => 'User.id, User.user'
@@ -4388,7 +4388,7 @@ class ModelReadTest extends BaseModelTest {
 						'created' => '2007-03-18 10:47:23',
 						'updated' => '2007-03-18 10:49:31'
 		))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->unbindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
@@ -4399,11 +4399,11 @@ class ModelReadTest extends BaseModelTest {
 			array('User' => array('id' => '2', 'user' => 'nate')),
 			array('User' => array('id' => '3', 'user' => 'larry')),
 			array('User' => array('id' => '4', 'user' => 'garrett')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->hasMany;
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->bindModel(array('hasMany' => array(
 			'Comment' => array('className' => 'Comment', 'conditions' => 'Comment.published = \'Y\'')
@@ -4483,7 +4483,7 @@ class ModelReadTest extends BaseModelTest {
 						'updated' => '2007-03-18 10:49:31'
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel2 = new DeviceType();
 
@@ -4559,7 +4559,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $TestModel->hasMany;
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->bindModel(array(
 			'hasMany' => array(
@@ -4651,7 +4651,7 @@ class ModelReadTest extends BaseModelTest {
 							'created' => '2007-03-18 10:47:23',
 							'updated' => '2007-03-18 10:49:31'
 		))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->bindModel(array(
 			'hasMany' => array(
@@ -4717,7 +4717,7 @@ class ModelReadTest extends BaseModelTest {
 				'Items' => array()
 		));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4748,7 +4748,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $TestModel->hasMany;
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->bindModel(array(
 			'hasMany' => array('Comment')
@@ -4762,13 +4762,13 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = array_keys($TestModel->hasMany);
 		$expected = array('Comment', 'Article');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->resetAssociations();
 
 		$result = array_keys($TestModel->hasMany);
 		$expected = array('Article');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4819,7 +4819,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = array_keys($TestModel->belongsTo);
 		$expected = array('Article', 'User');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->unbindModel(array(
 			'belongsTo' => array('User')
@@ -4833,13 +4833,13 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = array_keys($TestModel->belongsTo);
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->resetAssociations();
 
 		$result = array_keys($TestModel->belongsTo);
 		$expected = array('User');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4907,7 +4907,7 @@ class ModelReadTest extends BaseModelTest {
 					'updated' => '2007-03-17 01:18:31',
 					'test' => 'working'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		unset($TestModel);
 
 		$Author = new Author();
@@ -4947,19 +4947,19 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = Set::extract($TestModel->find('all'), '/Author/user');
 		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::extract($TestModel->find('all', array('callbacks' => 'after')), '/Author/user');
 		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::extract($TestModel->find('all', array('callbacks' => 'before')), '/Author/user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::extract($TestModel->find('all', array('callbacks' => false)), '/Author/user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5133,7 +5133,7 @@ class ModelReadTest extends BaseModelTest {
 						'Image' => array()
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5234,7 +5234,7 @@ class ModelReadTest extends BaseModelTest {
 				),
 				'Tag' => array()
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5348,13 +5348,13 @@ class ModelReadTest extends BaseModelTest {
 					'updated' => '2007-03-18 12:28:31'
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->hasAndBelongsToMany['Tag']['limit'] = 1;
 		$result = $TestModel->read(null, 2);
 		unset($expected['Tag'][1]);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5469,7 +5469,7 @@ class ModelReadTest extends BaseModelTest {
 				'Thread' => array()
 		));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5576,7 +5576,7 @@ class ModelReadTest extends BaseModelTest {
 							'updated' => '2007-03-18 10:43:31'
 		)))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5644,7 +5644,7 @@ class ModelReadTest extends BaseModelTest {
 								'name' => 'computer'
 		))))));
 
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -5709,7 +5709,7 @@ class ModelReadTest extends BaseModelTest {
 		)))))));
 
 		$this->db->fullDebug = $fullDebug;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5774,7 +5774,7 @@ class ModelReadTest extends BaseModelTest {
 		)))))));
 
 		$this->db->fullDebug = $fullDebug;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5995,7 +5995,7 @@ class ModelReadTest extends BaseModelTest {
 		))))))));
 
 		$this->db->fullDebug = $fullDebug;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -6061,7 +6061,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-17 01:22:23',
 					'updated' => '2007-03-17 01:24:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array('conditions' => 'User.id > 2'));
 		$expected = array(
@@ -6081,7 +6081,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-17 01:22:23',
 					'updated' => '2007-03-17 01:24:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array(
 			'conditions' => array('User.id !=' => '0', 'User.user LIKE' => '%arr%')
@@ -6103,11 +6103,11 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-17 01:22:23',
 					'updated' => '2007-03-17 01:24:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array('conditions' => array('User.id' => '0')));
 		$expected = array();
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array(
 			'conditions' => array('or' => array('User.id' => '0', 'User.user LIKE' => '%a%')
@@ -6146,7 +6146,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-17 01:22:23',
 					'updated' => '2007-03-17 01:24:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
 		$expected = array(
@@ -6154,7 +6154,7 @@ class ModelReadTest extends BaseModelTest {
 				array('User' => array('id' => '2', 'user' => 'nate')),
 				array('User' => array('id' => '3', 'user' => 'larry')),
 				array('User' => array('id' => '4', 'user' => 'garrett')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array('fields' => 'User.user', 'order' => 'User.user ASC'));
 		$expected = array(
@@ -6162,7 +6162,7 @@ class ModelReadTest extends BaseModelTest {
 				array('User' => array('user' => 'larry')),
 				array('User' => array('user' => 'mariano')),
 				array('User' => array('user' => 'nate')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array('fields' => 'User.user', 'order' => 'User.user DESC'));
 		$expected = array(
@@ -6170,7 +6170,7 @@ class ModelReadTest extends BaseModelTest {
 				array('User' => array('user' => 'mariano')),
 				array('User' => array('user' => 'larry')),
 				array('User' => array('user' => 'garrett')));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array('limit' => 3, 'page' => 1));
 
@@ -6199,7 +6199,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-17 01:20:23',
 					'updated' => '2007-03-17 01:22:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$ids = array(4 => 1, 5 => 3);
 		$result = $TestModel->find('all', array(
@@ -6223,7 +6223,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-17 01:20:23',
 					'updated' => '2007-03-17 01:22:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
@@ -6238,11 +6238,11 @@ class ModelReadTest extends BaseModelTest {
 						'created' => '2007-03-17 01:22:23',
 						'updated' => '2007-03-17 01:24:31'
 			)));
-			$this->assertEqual($result, $expected);
+			$this->assertEqual($expected, $result);
 
 			$result = $TestModel->find('all', array('limit' => 3, 'page' => 3));
 			$expected = array();
-			$this->assertEqual($result, $expected);
+			$this->assertEqual($expected, $result);
 		}
 	}
 
@@ -6267,7 +6267,7 @@ class ModelReadTest extends BaseModelTest {
 			2 => 'Second Article',
 			3 => 'Third Article'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$db = ConnectionManager::getDataSource('test');
 		if ($db instanceof Mysql) {
@@ -6279,7 +6279,7 @@ class ModelReadTest extends BaseModelTest {
 				3 => 'Third Article',
 				2 => 'Second Article'
 			);
-			$this->assertEqual($result, $expected);
+			$this->assertEqual($expected, $result);
 		}
 
 		$result = Set::combine(
@@ -6294,7 +6294,7 @@ class ModelReadTest extends BaseModelTest {
 			2 => 'Second Article',
 			3 => 'Third Article'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::combine(
 			$TestModel->find('all', array(
@@ -6331,7 +6331,7 @@ class ModelReadTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:45:31'
 		));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::combine(
 			$TestModel->find('all', array(
@@ -6370,7 +6370,7 @@ class ModelReadTest extends BaseModelTest {
 					'updated' => '2007-03-18 10:43:31'
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::combine(
 			$TestModel->find('all', array(
@@ -6388,7 +6388,7 @@ class ModelReadTest extends BaseModelTest {
 			3 => array(
 				2 => 'Second Article'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new Apple();
 		$expected = array(
@@ -6413,7 +6413,7 @@ class ModelReadTest extends BaseModelTest {
 			2 => 'Second Post',
 			3 => 'Third Post'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('list', array(
 			'fields' => 'title'
@@ -6423,7 +6423,7 @@ class ModelReadTest extends BaseModelTest {
 			2 => 'Second Post',
 			3 => 'Third Post'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('list', array(
 			'fields' => array('title', 'id')
@@ -6433,7 +6433,7 @@ class ModelReadTest extends BaseModelTest {
 			'Second Post' => '2',
 			'Third Post' => '3'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('list', array(
 			'fields' => array('title', 'id', 'created')
@@ -6449,7 +6449,7 @@ class ModelReadTest extends BaseModelTest {
 				'Third Post' => '3'
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('list', array(
 			'fields' => array('Post.body')
@@ -6459,7 +6459,7 @@ class ModelReadTest extends BaseModelTest {
 			2 => 'Second Post Body',
 			3 => 'Third Post Body'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('list', array(
 			'fields' => array('Post.title', 'Post.body')
@@ -6469,7 +6469,7 @@ class ModelReadTest extends BaseModelTest {
 			'Second Post' => 'Second Post Body',
 			'Third Post' => 'Third Post Body'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('list', array(
 			'fields' => array('Post.id', 'Post.title', 'Author.user'),
@@ -6483,7 +6483,7 @@ class ModelReadTest extends BaseModelTest {
 			'larry' => array(
 				2 => 'Second Post'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new User();
 		$result = $TestModel->find('list', array(
@@ -6495,7 +6495,7 @@ class ModelReadTest extends BaseModelTest {
 			'larry' => '5f4dcc3b5aa765d61d8327deb882cf99',
 			'garrett' => '5f4dcc3b5aa765d61d8327deb882cf99'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new ModifiedAuthor();
 		$result = $TestModel->find('list', array(
@@ -6507,7 +6507,7 @@ class ModelReadTest extends BaseModelTest {
 			3 => 'larry (CakePHP)',
 			4 => 'garrett (CakePHP)'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new Article();
 		$TestModel->displayField = 'title';
@@ -6519,7 +6519,7 @@ class ModelReadTest extends BaseModelTest {
 			1 => 'First Article',
 			3 => 'Third Article'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -6682,7 +6682,7 @@ class ModelReadTest extends BaseModelTest {
 				'created' => '2007-03-17 01:16:23',
 				'updated' => '2007-03-17 01:18:31'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->findByPassword('5f4dcc3b5aa765d61d8327deb882cf99');
 		$expected = array('User' => array(
@@ -6692,7 +6692,7 @@ class ModelReadTest extends BaseModelTest {
 			'created' => '2007-03-17 01:16:23',
 			'updated' => '2007-03-17 01:18:31'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -6718,7 +6718,7 @@ class ModelReadTest extends BaseModelTest {
 				'created' => '2007-03-17 01:18:23',
 				'updated' => '2007-03-17 01:20:31'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->read(null, 2);
 		$expected = array(
@@ -6729,12 +6729,12 @@ class ModelReadTest extends BaseModelTest {
 				'created' => '2007-03-17 01:18:23',
 				'updated' => '2007-03-17 01:20:31'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->id = 2;
 		$result = $TestModel->read(array('id', 'user'));
 		$expected = array('User' => array('id' => '2', 'user' => 'nate'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->read('id, user', 2);
 		$expected = array(
@@ -6742,7 +6742,7 @@ class ModelReadTest extends BaseModelTest {
 				'id' => '2',
 				'user' => 'nate'
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->bindModel(array('hasMany' => array('Article')));
 		$this->assertTrue($result);
@@ -6773,7 +6773,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-18 10:43:23',
 					'updated' => '2007-03-18 10:45:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -6802,7 +6802,7 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array(
 			'User' => array('id' => '1', 'user' => 'mariano'),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->recursive = 1;
 		$result = $TestModel->read('id, user', 1);
@@ -6830,7 +6830,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-18 10:43:23',
 					'updated' => '2007-03-18 10:45:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->recursive = 2;
 		$result = $TestModel->read('id, user', 3);
@@ -6887,7 +6887,7 @@ class ModelReadTest extends BaseModelTest {
 							'created' => '2007-03-18 12:26:23',
 							'updated' => '2007-03-18 12:28:31'
 		)))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 	function testRecursiveFindAll() {
@@ -6996,7 +6996,7 @@ class ModelReadTest extends BaseModelTest {
 				'Tag' => array()
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all', array(
 			'conditions' => array('Article.user_id' => 3),
@@ -7096,7 +7096,7 @@ class ModelReadTest extends BaseModelTest {
 						'updated' => '2007-03-18 12:28:31'
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$Featured = new Featured();
 
@@ -7199,7 +7199,7 @@ class ModelReadTest extends BaseModelTest {
 					'created' => '2007-03-18 15:30:23',
 					'updated' => '2007-03-18 15:32:31'
 		)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -7289,7 +7289,7 @@ class ModelReadTest extends BaseModelTest {
 				'Tag' => array()
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->hasMany['Comment']['limit'] = 1;
 
@@ -7366,7 +7366,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 /**
  * Testing availability of $this->findQueryType in Model callbacks

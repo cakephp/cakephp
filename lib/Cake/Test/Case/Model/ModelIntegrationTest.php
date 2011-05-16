@@ -411,7 +411,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->recursive = 0;
 		$result = $TestModel->find('all');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		foreach ($expected as $key => $value) {
 			unset($value['Comment'], $value['Tag']);
@@ -420,7 +420,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->recursive = 0;
 		$result = $TestModel->find('all');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = Set::extract($TestModel->User->find('all'), '{n}.User.id');
 		$this->assertEqual($result, array('1', '2', '3', '4'));
@@ -1141,7 +1141,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'TestPluginComment' => array()
 		));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1185,7 +1185,7 @@ class ModelIntegrationTest extends BaseModelTest {
 			'counterQuery' => '',
 			'association' => 'hasMany',
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1210,7 +1210,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
 				'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
 		));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new ArticleFeatured();
 		$TestFakeModel = new ArticleFeatured(array('table' => false));
@@ -1375,17 +1375,17 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel = new Test();
 		$result = $TestModel->alias;
 		$expected = 'Test';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new TestAlias();
 		$result = $TestModel->alias;
 		$expected = 'TestAlias';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new Test(array('alias' => 'AnotherTest'));
 		$result = $TestModel->alias;
 		$expected = 'AnotherTest';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1475,7 +1475,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'created' => '2007-03-18 10:41:23',
 							'updated' => '2007-03-18 10:43:31'
 		)))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -1545,7 +1545,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'something_id' => '3',
 							'something_else_id' => '1'
 		)))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->findById(1);
 		$expected = array(
@@ -1570,13 +1570,13 @@ class ModelIntegrationTest extends BaseModelTest {
 						'something_id' => '1',
 						'something_else_id' => '2'
 		))));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$expected = $TestModel->findById(1);
 		$TestModel->set($expected);
 		$TestModel->save();
 		$result = $TestModel->findById(1);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->hasAndBelongsToMany['SomethingElse']['unique'] = false;
 		$TestModel->create(array(
@@ -1637,7 +1637,7 @@ class ModelIntegrationTest extends BaseModelTest {
 							'something_else_id' => '3'
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1694,7 +1694,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'father_id' => 0
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel->recursive = 3;
 		$result = $TestModel->read(null, 1);
@@ -1747,7 +1747,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'Father' => array()
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1855,7 +1855,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'updated' => '2007-03-18 10:57:31'
 		))));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1869,7 +1869,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel = new Test();
 		$result = $TestModel->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$TestModel = new User();
 		$result = $TestModel->schema();
 
@@ -1919,12 +1919,12 @@ class ModelIntegrationTest extends BaseModelTest {
 				'length' => null
 		));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$TestModel = new Article();
 		$result = $TestModel->create();
 		$expected = array('Article' => array('published' => 'N'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$FeaturedModel = new Featured();
 		$data = array(
@@ -1990,15 +1990,15 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$result = $TestModel->escapeField('test_field');
 		$expected = $db->name('Test.test_field');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->escapeField('TestField');
 		$expected = $db->name('Test.TestField');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $TestModel->escapeField('DomainHandle', 'Domain');
 		$expected = $db->name('Domain.DomainHandle');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		ConnectionManager::create('mock', array('datasource' => 'DboMock'));
 		$TestModel->setDataSource('mock');
@@ -2006,7 +2006,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$result = $TestModel->escapeField('DomainHandle', 'Domain');
 		$expected = $db->name('Domain.DomainHandle');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

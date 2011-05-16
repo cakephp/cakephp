@@ -292,7 +292,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
 		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddOrphan', $parentField => null));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$validTree = $this->Tree->verify();
 		$this->assertIdentical($validTree, true);
@@ -315,7 +315,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->create();
 		$result = $this->Tree->save(array($modelClass => array('name' => 'testAddMiddle', $parentField => $data[$modelClass]['id'])));
 		$expected = array_merge(array($modelClass => array('name' => 'testAddMiddle', $parentField => '2')), $result);
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 
 		$laterCount = $this->Tree->find('count');
 
@@ -371,7 +371,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->save(array('name' => 'testAddNotIndexed', $parentField => null));
 		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddNotIndexed', $parentField => null));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$validTree = $this->Tree->verify();
 		$this->assertIdentical($validTree, true);
@@ -428,7 +428,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$expected = array(array($modelClass => array('id' => 2, 'name' => '1.1', $parentField => 1, $leftField => 2, $rightField => 5)),
 			array($modelClass => array('id' => 5, 'name' => '1.2', $parentField => 1, $leftField => 6, $rightField => 11)),
 			array($modelClass => array('id' => 3, 'name' => '1.1.1', $parentField => 1, $leftField => 12, $rightField => 13)));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 		$this->assertTrue($this->Tree->verify());
 	}
 
@@ -616,7 +616,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(array($modelClass => array('name' => '1.2', )),
 			array($modelClass => array('name' => '1.1', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -639,7 +639,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(array($modelClass => array('name' => '1.1', )),
 			array($modelClass => array('name' => '1.2', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -670,7 +670,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.8', )),
 			array($modelClass => array('name' => '1.9', )),
 			array($modelClass => array('name' => '1.10', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -701,7 +701,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.8', )),
 			array($modelClass => array('name' => '1.9', )),
 			array($modelClass => array('name' => '1.10', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -723,7 +723,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(array($modelClass => array('name' => '1.2', )),
 			array($modelClass => array('name' => '1.1', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -745,7 +745,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(array($modelClass => array('name' => '1.1', )),
 			array($modelClass => array('name' => '1.2', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -776,7 +776,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.9', )),
 			array($modelClass => array('name' => '1.10', )),
 			array($modelClass => array('name' => '1.5', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -807,7 +807,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.8', )),
 			array($modelClass => array('name' => '1.9', )),
 			array($modelClass => array('name' => '1.10', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -838,7 +838,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.8', )),
 			array($modelClass => array('name' => '1.9', )),
 			array($modelClass => array('name' => '1.10', )));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -863,7 +863,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$result = $this->Tree->find('all', array('fields' => 'name', 'order' => $modelClass . '.' . $leftField . ' ASC'));
 		$expected = array(array($modelClass => array('name' => '1.1')),
 			array($modelClass => array('name' => '1. Root')));
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -1257,7 +1257,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 
 		$result = $this->Tree->generateTreeList();
 		$expected = array(1 => '1. Root', 2 => '_1.1', 3 => '__1.1.1', 4 => '__1.1.2', 5 => '_1.2', 6 => '__1.2.1', 7 => '__1.2.2');
-		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($expected, $result);
 	}
 
 /**

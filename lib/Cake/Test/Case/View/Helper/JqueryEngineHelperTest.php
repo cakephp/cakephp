@@ -79,15 +79,15 @@ class JqueryEngineHelperTest extends CakeTestCase {
 		$this->Jquery->get('#myLink');
 		$result = $this->Jquery->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("#myLink").bind("click", doClick);';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->event('click', '$(this).show();', array('stop' => false));
 		$expected = '$("#myLink").bind("click", function (event) {$(this).show();});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->event('click', '$(this).hide();');
 		$expected = '$("#myLink").bind("click", function (event) {$(this).hide();'."\n".'return false;});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -98,7 +98,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 	function testDomReady() {
 		$result = $this->Jquery->domReady('foo.name = "bar";');
 		$expected = '$(document).ready(function () {foo.name = "bar";});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -110,7 +110,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 		$this->Jquery->get('#foo');
 		$result = $this->Jquery->each('$(this).hide();');
 		$expected = '$("#foo").each(function () {$(this).hide();});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -122,39 +122,39 @@ class JqueryEngineHelperTest extends CakeTestCase {
 		$this->Jquery->get('#foo');
 		$result = $this->Jquery->effect('show');
 		$expected = '$("#foo").show();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('hide');
 		$expected = '$("#foo").hide();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('hide', array('speed' => 'fast'));
 		$expected = '$("#foo").hide("fast");';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('fadeIn');
 		$expected = '$("#foo").fadeIn();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('fadeOut');
 		$expected = '$("#foo").fadeOut();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('slideIn');
 		$expected = '$("#foo").slideDown();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('slideOut');
 		$expected = '$("#foo").slideUp();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('slideDown');
 		$expected = '$("#foo").slideDown();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->effect('slideUp');
 		$expected = '$("#foo").slideUp();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -165,13 +165,13 @@ class JqueryEngineHelperTest extends CakeTestCase {
 	function testRequest() {
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = '$.ajax({url:"\\/posts\\/view\\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1), array(
 			'update' => '#content'
 		));
 		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#content").html(data);}, url:"\/posts\/view\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'method' => 'post',
@@ -184,7 +184,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, success:doSuccess, type:"post", url:"\\/people\\/edit\\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'update' => '#updated',
@@ -193,7 +193,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {doFoo$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'update' => '#updated',
@@ -204,7 +204,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$.ajax({data:$("#someId").serialize(), dataType:"html", success:function (data, textStatus) {doFoo$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'success' => 'doFoo',
@@ -214,7 +214,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'data' => '$("#someId").serialize()',
 		));
 		$expected = '$.ajax({beforeSend:function (XMLHttpRequest) {doBefore}, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\\/people\\/edit\\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -234,7 +234,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$j.ajax({data:$j("#someId").serialize(), dataType:"html", success:function (data, textStatus) {doFoo$j("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -253,7 +253,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:onSort, start:onStart, stop:onStop});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->sortable(array(
 			'distance' => 5,
@@ -263,7 +263,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'sort' => 'onSort',
 		));
 		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:function (event, ui) {onSort}, start:function (event, ui) {onStart}, stop:function (event, ui) {onStop}});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -282,7 +282,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$("#element").draggable({containment:"#content", drag:onDrag, grid:[10,10], start:onStart, stop:onStop});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->drag(array(
 			'container' => '#content',
@@ -292,7 +292,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'snapGrid' => array(10, 10),
 		));
 		$expected = '$("#element").draggable({containment:"#content", drag:function (event, ui) {onDrag}, grid:[10,10], start:function (event, ui) {onStart}, stop:function (event, ui) {onStop}});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -310,7 +310,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$("#element").droppable({accept:".items", drop:onDrop, out:onExit, over:onHover});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->drop(array(
 			'accept' => '.items',
@@ -319,7 +319,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'drop' => 'onDrop',
 		));
 		$expected = '$("#element").droppable({accept:".items", drop:function (event, ui) {onDrop}, out:function (event, ui) {onExit}, over:function (event, ui) {onHover}});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -339,7 +339,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$("#element").slider({change:onChange, max:10, min:0, orientation:"vertical", stop:onComplete, value:2});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->slider(array(
 			'complete' => 'onComplete',
@@ -350,7 +350,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'direction' => 'vertical',
 		));
 		$expected = '$("#element").slider({change:function (event, ui) {onChange}, max:10, min:0, orientation:"vertical", stop:function (event, ui) {onComplete}, value:2});';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -362,14 +362,14 @@ class JqueryEngineHelperTest extends CakeTestCase {
 		$this->Jquery->get('#element');
 		$result = $this->Jquery->serializeForm(array('isForm' => false));
 		$expected = '$("#element").closest("form").serialize();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->serializeForm(array('isForm' => true));
 		$expected = '$("#element").serialize();';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$result = $this->Jquery->serializeForm(array('isForm' => false, 'inline' => true));
 		$expected = '$("#element").closest("form").serialize()';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 }

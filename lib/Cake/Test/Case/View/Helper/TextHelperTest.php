@@ -112,7 +112,7 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Ich <b>saß</b> in einem <b>Café</b> am <b>Übergang</b>';
 		$phrases = array('saß', 'café', 'übergang');
 		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -205,32 +205,32 @@ class TextHelperTest extends CakeTestCase {
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$text = 'This is a test text with URL http://www.cakephp.org and some more text';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a> and some more text';
 		$result = $this->Text->autoLink($text);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$text = "This is a test text with URL http://www.cakephp.org\tand some more text";
 		$expected = "This is a test text with URL <a href=\"http://www.cakephp.org\">http://www.cakephp.org</a>\tand some more text";
 		$result = $this->Text->autoLink($text);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$text = 'This is a test text with URL http://www.cakephp.org(and some more text)';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>(and some more text)';
 		$result = $this->Text->autoLink($text);
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text, array('class'=>'link'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link" id="MyLink">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text, array('class'=>'link', 'id'=>'MyLink'));
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -274,12 +274,12 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a url <a href="http://www.cot.ag/cuIb2Q">www.cot.ag/cuIb2Q</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEqual($expected, $result);
-		
+
 		$text = 'Text with a url http://www.does--not--work.com and more';
 		$expected = 'Text with a url <a href="http://www.does--not--work.com">http://www.does--not--work.com</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEqual($expected, $result);
-		
+
 		$text = 'Text with a url http://www.not--work.com and more';
 		$expected = 'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
@@ -302,7 +302,7 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with <a href="mailto:email@example.com"\s*>email@example.com</a> address';
 		$result = $this->Text->autoLinkEmails($text);
 		$this->assertPattern('#^' . $expected . '$#', $result);
-		
+
 		$text = "Text with o'hare._-bob@example.com address";
 		$expected = 'Text with <a href="mailto:o&#039;hare._-bob@example.com">o&#039;hare._-bob@example.com</a> address';
 		$result = $this->Text->autoLinkEmails($text);
@@ -427,7 +427,7 @@ class TextHelperTest extends CakeTestCase {
 
 		$result = $this->Text->toList(array( 'name1' => 'Dusty', 'name2' => 'Lucky'));
 		$this->assertEqual($result, 'Dusty and Lucky');
-		
+
 		$result = $this->Text->toList(array( 'test_0' => 'banana', 'test_1' => 'apple', 'test_2' => 'lemon'));
 		$this->assertEqual($result, 'banana, apple and lemon');
 	}

@@ -582,18 +582,18 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->strip($content, true);
 		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
 		$result  = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 
 		$content  = '<p>Some HTML content with an ';
 		$content .= '<a href="mailto:test@example.com,test2@example.com">email link</a>';
 		$result  = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
