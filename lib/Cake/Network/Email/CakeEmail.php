@@ -1276,7 +1276,7 @@ class CakeEmail {
 			$msg[] = 'Content-Transfer-Encoding: 7bit';
 			$msg[] = '';
 
-			$View->viewPath = $View->layoutPath = 'emails' . DS . 'text';
+			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'text';
 			$View->viewVars['content'] = $originalContent;
 			$this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($this->_template, $this->_layout));
 			$content = explode("\n", $this->_textMessage);
@@ -1288,7 +1288,7 @@ class CakeEmail {
 			$msg[] = 'Content-Transfer-Encoding: 7bit';
 			$msg[] = '';
 
-			$View->viewPath = $View->layoutPath = 'emails' . DS . 'html';
+			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'html';
 			$View->viewVars['content'] = $originalContent;
 			$View->hasRendered = false;
 			$this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($this->_template, $this->_layout));
@@ -1317,7 +1317,7 @@ class CakeEmail {
 			}
 		}
 
-		$View->viewPath = $View->layoutPath = 'emails' . DS . $this->_emailFormat;
+		$View->viewPath = $View->layoutPath = 'Emails' . DS . $this->_emailFormat;
 		$View->viewVars['content'] = $content;
 		$rendered = $View->render($this->_template, $this->_layout);
 		$content = explode("\n", $rendered);
