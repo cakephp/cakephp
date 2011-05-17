@@ -116,7 +116,7 @@ class CakeFixtureManager {
 				$pluginName = $parts[1];
 				$fixture = $parts[2];
 				$fixturePaths = array(
-					App::pluginPath($pluginName) . 'Test' . DS . 'Fixture',
+					CakePlugin::path($pluginName) . 'Test' . DS . 'Fixture',
 					TESTS . 'Fixture'
 				);
 			} else {
