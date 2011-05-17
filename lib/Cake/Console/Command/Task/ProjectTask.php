@@ -282,7 +282,7 @@ class ProjectTask extends Shell {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File = new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
-			if (preg_match('/([\s]*define\(\'CAKE_CORE_INCLUDE_PATH\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
+			if (preg_match('/([\s]*define\(\'CAKE_CORE_INCLUDE_PATH\',[\s\'A-z0-9\.]*\);)/', $contents, $match)) {
 				$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
 				$result = str_replace($match[0], "\n\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
 				if (!$File->write($result)) {
