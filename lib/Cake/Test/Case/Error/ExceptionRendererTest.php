@@ -636,4 +636,28 @@ class ExceptionRendererTest extends CakeTestCase {
 		sort($ExceptionRenderer->controller->helpers);
 		$this->assertEquals(array('Form', 'Html', 'Session'), $ExceptionRenderer->controller->helpers);
 	}
+
+/**
+ * Test that exceptions can be rendered when an request hasn't been registered
+ * with Router
+ *
+ * @return void
+ */
+	function testRenderWithNoRequest() {
+		Router::reload();
+		$this->assertNull(Router::getRequest(false));
+
+		$exception = new Exception('Terrible');
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
+		$ExceptionRenderer->controller->response->expects($this->once())
+			->method('statusCode')
+			->with(500);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertContains('Internal Error', $result);
+	}
 }
