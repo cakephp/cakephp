@@ -116,13 +116,13 @@ class CakeFixtureManager {
 				$pluginName = $parts[1];
 				$fixture = $parts[2];
 				$fixturePaths = array(
-					App::pluginPath($pluginName) . 'tests' . DS . 'Fixture',
+					App::pluginPath($pluginName) . 'Test' . DS . 'Fixture',
 					TESTS . 'Fixture'
 				);
 			} else {
 				$fixturePaths = array(
 					TESTS . 'Fixture',
-					CAKE  . 'tests' . DS . 'Fixture'
+					CAKE  . 'Test' . DS . 'Fixture'
 				);
 			}
 
