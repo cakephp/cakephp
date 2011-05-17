@@ -269,7 +269,7 @@ class JsHelperTest extends CakeTestCase {
 			$this->cDataEnd,
 			'/script',
 		);
-		$this->assertTags($expected, $result, true);
+		$this->assertTags($result, $expected);
 
 		$this->Js->TestJsEngine->expects($this->atLeastOnce())->method('domReady');
 		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false, 'clear' => false));
@@ -326,7 +326,7 @@ class JsHelperTest extends CakeTestCase {
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'preg:/(.)*\.js/'),
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 		preg_match('/src="(.*\.js)"/', $result, $filename);
 		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
 		$contents = file_get_contents(WWW_ROOT . $filename[1]);
@@ -363,7 +363,7 @@ class JsHelperTest extends CakeTestCase {
 			'test link',
 			'/a'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -400,7 +400,7 @@ class JsHelperTest extends CakeTestCase {
 			'test link »',
 			'/a'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -419,7 +419,7 @@ class JsHelperTest extends CakeTestCase {
 			'test link',
 			'/a'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -451,7 +451,7 @@ class JsHelperTest extends CakeTestCase {
 			$this->cDataEnd,
 			'/script'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -482,7 +482,7 @@ class JsHelperTest extends CakeTestCase {
 			'-event handler-',
 			'/script'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -521,7 +521,7 @@ class JsHelperTest extends CakeTestCase {
 			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save', 'style' => 'margin: 0'),
 			'/div'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -567,7 +567,7 @@ class JsHelperTest extends CakeTestCase {
 			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
 			'/div'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -612,7 +612,7 @@ class JsHelperTest extends CakeTestCase {
 			'event-handler',
 			'/script'
 		);
-		$this->assertTags($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
