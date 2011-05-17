@@ -625,7 +625,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 			array('Apple' => array('id' => '3', 'name' => 'green blue', 'mytime' => '22:57:17'))
 		);
 		$result = $Apple->find('all', array('conditions' => array('Apple.id <' => '4')));
-		$this->assertEqual($expected, $result2);
+		$this->assertEqual($expected2, $result);
 
 		$Apple->Behaviors->disable('Test');
 		$result = $Apple->find('all');
@@ -833,11 +833,11 @@ class BehaviorCollectionTest extends CakeTestCase {
 				'Apple' => array('id' => 3),
 				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))
 		);
-		$result = $Apple->find('all', array(
+		$result2 = $Apple->find('all', array(
 			'fields' => array('Apple.id', 'Parent.id', 'Parent.name', 'Parent.mytime'),
 			'conditions' => array('Apple.id <' => '4')
 		));
-		$this->assertEqual($expected, $result2);
+		$this->assertEqual($expected2, $result2);
 
 		$Apple->Parent->Behaviors->disable('Test');
 		$result = $Apple->find('all');
