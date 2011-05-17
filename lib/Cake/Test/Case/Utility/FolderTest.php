@@ -348,11 +348,11 @@ class FolderTest extends CakeTestCase {
 
 		$result = $Folder->tree(CAKE . 'Config', false, 'dir');
 		$this->assertIdentical(array_diff($expected[0], $result), array());
-		$this->assertIdentical(array_diff($expected, $result[0]), array());
+		$this->assertIdentical(array_diff($expected[0], $result), array());
 
 		$result = $Folder->tree(CAKE . 'Config', false, 'files');
 		$this->assertIdentical(array_diff($expected[1], $result), array());
-		$this->assertIdentical(array_diff($expected, $result[1]), array());
+		$this->assertIdentical(array_diff($expected[1], $result), array());
 	}
 
 /**
