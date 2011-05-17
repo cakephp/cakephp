@@ -93,6 +93,7 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testAssociationLazyLoadWithHABTM() {
 		$this->loadFixtures('FruitsUuidTag', 'ArticlesTag');
+		$this->db->cacheSources = false;
 		$Article = new ArticleB();
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['TagB']));
 		$this->assertFalse(property_exists($Article, 'TagB'));
