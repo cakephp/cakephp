@@ -2285,7 +2285,8 @@ class RouterTest extends CakeTestCase {
 			'autoRender' => 1,
 			'bare' => 1,
 			'return' => 1,
-			'requested' => 1
+			'requested' => 1,
+			'_Token' => array('key' => 'sekret')
 		);
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/posts/view/1');

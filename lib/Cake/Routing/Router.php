@@ -1029,7 +1029,8 @@ class Router {
 
 		unset(
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
-			$params['autoRender'], $params['bare'], $params['requested'], $params['return']
+			$params['autoRender'], $params['bare'], $params['requested'], $params['return'],
+			$params['_Token']
 		);
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {

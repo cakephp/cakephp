@@ -495,8 +495,11 @@ class SecurityComponent extends Component {
 		if ($this->csrfCheck && ($this->csrfUseOnce || empty($tokenData['csrfTokens'])) ) {
 			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
-		$controller->request->params['_Token'] = $token;
 		$this->Session->write('_Token', $token);
+		$controller->request->params['_Token'] = array(
+			'key' => $token['key'],
+			'disabledFields' => $token['disabledFields']
+		);
 		return true;
 	}
 

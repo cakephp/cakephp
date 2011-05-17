@@ -996,6 +996,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$token = $this->Security->Session->read('_Token');
 		$this->assertEquals(count($token['csrfTokens']), 1, 'Missing the csrf token.');
 		$this->assertEquals(strtotime('+10 minutes'), current($token['csrfTokens']), 'Token expiry does not match');
+		$this->assertEquals(array('key', 'disabledFields'), array_keys($this->Controller->request->params['_Token']), 'Keys don not match');
 	}
 
 /**
