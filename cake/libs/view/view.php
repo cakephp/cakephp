@@ -489,7 +489,7 @@ class View extends Object {
 		$this->output = $this->_render($layoutFileName, $dataForLayout, $loadHelpers, true);
 
 		if ($this->output === false) {
-			$this->output = $this->_render($layoutFileName, $data_for_layout);
+			$this->output = $this->_render($layoutFileName, $dataForLayout);
 			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layoutFileName, $this->output), E_USER_ERROR);
 			return false;
 		}
