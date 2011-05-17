@@ -201,7 +201,7 @@ class ProjectTask extends Shell {
  */
 	public function createHome($dir) {
 		$app = basename($dir);
-		$path = $dir . 'View' . DS . 'pages' . DS;
+		$path = $dir . 'View' . DS . 'Pages' . DS;
 		$source = CAKE . 'Console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
 		include($source);
 		return $this->createFile($path.'home.ctp', $output);
