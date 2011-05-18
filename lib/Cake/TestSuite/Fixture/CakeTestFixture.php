@@ -211,7 +211,7 @@ class CakeTestFixture {
 					$fields = array_keys($record);
 					$values[] = array_values(array_merge($default, $record));
 				}
-				return $db->insertMulti($this->table, $fields, $values, $this->fields);
+				return $db->insertMulti($this->table, $fields, $values);
 			}
 			return true;
 		}

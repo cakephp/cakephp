@@ -1522,7 +1522,7 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$db->insertMulti($this->{$join}, $fields, $newValues, $this->{$join}->schema());
+					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
 		}

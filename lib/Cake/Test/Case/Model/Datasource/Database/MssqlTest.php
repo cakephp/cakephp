@@ -91,13 +91,14 @@ class MssqlTestDb extends Mssql {
 /**
  * getPrimaryKey method
  *
- * @param array $schema
+ * @param mixed $model
  * @access public
  * @return void
  */
-	function getPrimaryKey($schema) {
-		return parent::_getPrimaryKey($schema);
+	function getPrimaryKey($model) {
+		return parent::_getPrimaryKey($model);
 	}
+
 /**
  * clearFieldMappings method
  *
@@ -106,6 +107,17 @@ class MssqlTestDb extends Mssql {
  */
 	function clearFieldMappings() {
 		$this->_fieldMappings = array();
+	}
+	
+/**
+ * describe method
+ *
+ * @param object $model
+ * @access public
+ * @return void
+ */
+	function describe($model) {
+		return empty($this->describe) ? parent::describe($model) : $this->describe;
 	}
 }
 
@@ -312,6 +324,7 @@ class MssqlTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		unset($this->db->describe);
 		unset($this->model);
 	}
 
@@ -564,11 +577,14 @@ class MssqlTest extends CakeTestCase {
  */
 	public function testGetPrimaryKey() {
 		$schema = $this->model->schema();
-		$result = $this->db->getPrimaryKey($schema);
+		
+		$this->db->describe = $schema;
+		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertEqual($result, 'id');
 		
 		unset($schema['id']['key']);
-		$result = $this->db->getPrimaryKey($schema);
+		$this->db->describe = $schema;
+		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertNull($result);
 	}
 
@@ -578,12 +594,14 @@ class MssqlTest extends CakeTestCase {
  * @return void
  */
 	public function testInsertMulti() {
+		$this->db->describe = $this->model->schema();
+		
 		$fields = array('id', 'name', 'login');
 		$values = array(
 			array(1, 'Larry', 'PhpNut'),
 			array(2, 'Renan', 'renan.saddam'));
 		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values, $this->model->schema());
+		$this->db->insertMulti($this->model, $fields, $values);
 		$result = $this->db->simulated;
 		$expected = array(
 			'SET IDENTITY_INSERT [mssql_test_models] ON',
@@ -596,7 +614,7 @@ class MssqlTest extends CakeTestCase {
 			array('Larry', 'PhpNut'),
 			array('Renan', 'renan.saddam'));
 		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values, $this->model->schema());
+		$this->db->insertMulti($this->model, $fields, $values);
 		$result = $this->db->simulated;
 		$expected = array();
 		$this->assertEqual($expected, $result);

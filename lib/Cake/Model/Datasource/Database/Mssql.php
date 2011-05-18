@@ -349,7 +349,7 @@ class Mssql extends DboSource {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
-		$primaryKey = $this->_getPrimaryKey($model->schema());
+		$primaryKey = $this->_getPrimaryKey($model);
 
 		if (array_key_exists($primaryKey, $fields)) {
 			if (empty($fields[$primaryKey])) {
@@ -609,10 +609,9 @@ class Mssql extends DboSource {
  * @param string $table
  * @param string $fields
  * @param array $values
- * @param array $schema
  */
-	public function insertMulti($table, $fields, $values, $schema) {
-		$primaryKey = $this->_getPrimaryKey($schema);
+	public function insertMulti($table, $fields, $values) {
+		$primaryKey = $this->_getPrimaryKey($table);
 		$hasPrimaryKey = $primaryKey != null && (
 			(is_array($fields) && in_array($primaryKey, $fields)
 			|| (is_string($fields) && strpos($fields, $this->startQuote . $primaryKey . $this->endQuote) !== false))
@@ -621,7 +620,7 @@ class Mssql extends DboSource {
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' ON');
 		}
-		parent::insertMulti($table, $fields, $values, $schema);
+		parent::insertMulti($table, $fields, $values);
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' OFF');
 		}
@@ -675,11 +674,15 @@ class Mssql extends DboSource {
 /**
  * Makes sure it will return the primary key
  *
- * @param array $schema
+ * @param mixed $model Model instance of table name
  * @access protected
  * @return string
  */
-	function _getPrimaryKey($schema) {
+	function _getPrimaryKey($model) {
+		if (!is_object($model)) {
+			$model = new Model(false, $model);
+		}
+		$schema = $this->describe($model);
 		foreach ($schema as $field => $props) {
 			if (isset($props['key']) && $props['key'] == 'primary') {
 				return $field;

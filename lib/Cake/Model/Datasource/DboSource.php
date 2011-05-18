@@ -2796,9 +2796,8 @@ class DboSource extends DataSource {
  * @param string $table
  * @param string $fields
  * @param array $values
- * @param array $schema
  */
-	public function insertMulti($table, $fields, $values, $schema) {
+	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		$holder = implode(',', array_fill(0, count($fields), '?'));
 		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
