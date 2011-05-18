@@ -36,19 +36,20 @@ class MssqlTestDb extends Mssql {
 	public $simulated = array();
 
 /**
- * simalate property
+ * simulate property
  *
  * @var array
  * @access public
  */
-	public $simulate = true;
+	public $simulate = false;
+
 /**
- * fetchAllResultsStack
+ * execute results stack
  *
  * @var array
  * @access public
  */
-	public $fetchAllResultsStack = array();
+	public $executeResultsStack = array();
 
 /**
  * execute method
@@ -60,7 +61,7 @@ class MssqlTestDb extends Mssql {
 	function _execute($sql) {
 		if ($this->simulate) {
 			$this->simulated[] = $sql;
-			return null;
+			return empty($this->executeResultsStack) ? null : array_pop($this->executeResultsStack);
 		} else {
 			return parent::_execute($sql);
 		}
@@ -78,21 +79,6 @@ class MssqlTestDb extends Mssql {
 	}
 
 /**
- * fetchAll method
- *
- * @param mixed $sql
- * @access protected
- * @return void
- */
-	function fetchAll($sql, $cache = true, $modelName = null) {
-		$result = parent::fetchAll($sql, $cache, $modelName);
-		if (!empty($this->fetchAllResultsStack)) {
-    		return array_pop($this->fetchAllResultsStack);
-		}
-		return $result;
-	}
-
-/**
  * getLastQuery method
  *
  * @access public
@@ -105,12 +91,12 @@ class MssqlTestDb extends Mssql {
 /**
  * getPrimaryKey method
  *
- * @param mixed $model
+ * @param array $schema
  * @access public
  * @return void
  */
-	function getPrimaryKey($model) {
-		return parent::_getPrimaryKey($model);
+	function getPrimaryKey($schema) {
+		return parent::_getPrimaryKey($schema);
 	}
 /**
  * clearFieldMappings method
@@ -211,17 +197,6 @@ class MssqlTestModel extends Model {
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
-/**
- * setSchema method
- *
- * @param array $schema
- * @access public
- * @return void
- */
-	function setSchema($schema) {
-		$this->_schema = $schema;
-	}
 }
 
 /**
@@ -258,6 +233,21 @@ class MssqlClientTestModel extends Model {
 		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
+
+/**
+ * MssqlTestResultIterator class
+ *
+ * @package       cake.tests.cases.libs.model.datasources
+ */
+class MssqlTestResultIterator extends ArrayIterator {
+/**
+ * closeCursor method
+ *
+ * @access public
+ */
+	public function closeCursor() {}
+}
+
 /**
  * MssqlTest class
  *
@@ -292,19 +282,15 @@ class MssqlTest extends CakeTestCase {
  * Make sure all fixtures tables are being created
  *
  */
-	public function start() {
-		$this->db->simulate = false;
-		parent::start();
+	public function startTest($method) {
 		$this->db->simulate = true;
 	}
 /**
  * Make sure all fixtures tables are being dropped
  *
  */
-	public function end() {
+	public function endTest($method) {
 		$this->db->simulate = false;
-		parent::end();
-		$this->db->simulate = true;
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -449,19 +435,17 @@ class MssqlTest extends CakeTestCase {
  * @return void
  */
 	function testDescribe() {
-		$MssqlTableDescription = array(
-			0 => array(
-				0 => array(
-					'Default' => '((0))',
-					'Field' => 'count',
-					'Key' => 0,
-					'Length' => '4',
-					'Null' => 'NO',
-					'Type' => 'integer',
-				)
+		$MssqlTableDescription = new MssqlTestResultIterator(array(
+			(object) array(
+				'Default' => '((0))',
+				'Field' => 'count',
+				'Key' => 0,
+				'Length' => '4',
+				'Null' => 'NO',
+				'Type' => 'integer'
 			)
-		);
-		$this->db->fetchAllResultsStack = array($MssqlTableDescription);
+		));
+		$this->db->executeResultsStack = array($MssqlTableDescription);
 		$dummyModel = $this->model;
 		$result = $this->db->describe($dummyModel);
 		$expected = array(
@@ -480,12 +464,12 @@ class MssqlTest extends CakeTestCase {
  * @return unknown_type
  */
 	public function testBuildColumn() {
-		$column = array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary');
+		$column = array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '8', 'key' => 'primary');
 		$result = $this->db->buildColumn($column);
 		$expected = '[id] int IDENTITY (1, 1) NOT NULL';
 		$this->assertEqual($expected, $result);
 
-		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11');
+		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '11');
 		$result = $this->db->buildColumn($column);
 		$expected = '[client_id] int DEFAULT 0 NOT NULL';
 		$this->assertEqual($expected, $result);
@@ -506,7 +490,7 @@ class MssqlTest extends CakeTestCase {
 		$expected = '[name] varchar(255) NULL';
 		$this->assertEqual($expected, $result);
 
-		$column = array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255');
+		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) DEFAULT \'\' NOT NULL';
 		$this->assertEqual($expected, $result);
@@ -579,21 +563,13 @@ class MssqlTest extends CakeTestCase {
  * @return void
  */
 	public function testGetPrimaryKey() {
-		// When param is a model
-		$result = $this->db->getPrimaryKey($this->model);
-		$this->assertEqual($result, 'id');
-
 		$schema = $this->model->schema();
-		unset($schema['id']['key']);
-		$this->model->setSchema($schema);
-		$result = $this->db->getPrimaryKey($this->model);
-		$this->assertNull($result);
-
-		// When param is a table name
-		$this->db->simulate = false;
-		$this->loadFixtures('Category');
-		$result = $this->db->getPrimaryKey('categories');
+		$result = $this->db->getPrimaryKey($schema);
 		$this->assertEqual($result, 'id');
+		
+		unset($schema['id']['key']);
+		$result = $this->db->getPrimaryKey($schema);
+		$this->assertNull($result);
 	}
 
 /**
@@ -603,51 +579,26 @@ class MssqlTest extends CakeTestCase {
  */
 	public function testInsertMulti() {
 		$fields = array('id', 'name', 'login');
-		$values = array('(1, \'Larry\', \'PhpNut\')', '(2, \'Renan\', \'renan.saddam\')');
+		$values = array(
+			array(1, 'Larry', 'PhpNut'),
+			array(2, 'Renan', 'renan.saddam'));
 		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values);
+		$this->db->insertMulti($this->model, $fields, $values, $this->model->schema());
 		$result = $this->db->simulated;
 		$expected = array(
 			'SET IDENTITY_INSERT [mssql_test_models] ON',
-			'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (1, \'Larry\', \'PhpNut\')',
-    		'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (2, \'Renan\', \'renan.saddam\')',
 			'SET IDENTITY_INSERT [mssql_test_models] OFF'
 		);
 		$this->assertEqual($expected, $result);
 
 		$fields = array('name', 'login');
-		$values = array('(\'Larry\', \'PhpNut\')', '(\'Renan\', \'renan.saddam\')');
+		$values = array(
+			array('Larry', 'PhpNut'),
+			array('Renan', 'renan.saddam'));
 		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values);
+		$this->db->insertMulti($this->model, $fields, $values, $this->model->schema());
 		$result = $this->db->simulated;
-		$expected = array(
-			'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Larry\', \'PhpNut\')',
-    		'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Renan\', \'renan.saddam\')'
-		);
+		$expected = array();
 		$this->assertEqual($expected, $result);
-	}
-/**
- * testLastError
- *
- * @return void
- */
-	public function testLastError() {
-		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
-
-		$this->db->simulate = false;
-		$query = 'SELECT [name] FROM [categories]';
-		$this->assertTrue($this->db->execute($query) !== false);
-		$this->assertNull($this->db->lastError());
-
-		$query = 'SELECT [inexistent_field] FROM [categories]';
-		$this->assertFalse($this->db->execute($query));
-		$this->assertNotNull($this->db->lastError());
-
-		$query = 'SELECT [name] FROM [categories]';
-		$this->assertTrue($this->db->execute($query) !== false);
-		$this->assertNull($this->db->lastError());
-
-		Configure::write('debug', $debug);
 	}
 }

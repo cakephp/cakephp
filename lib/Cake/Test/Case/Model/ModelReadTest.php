@@ -397,6 +397,10 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testRecursiveUnbind() {
+		if ($this->skipIf($this->db instanceof Mssql, 'The test of testRecursiveUnbind test is not compatible with Mssql, because it check for time columns.')) {
+			return;
+		}
+		
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
 		$TestModel->recursive = 2;
@@ -2992,7 +2996,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testSelfAssociationAfterFind() {
-		$this->loadFixtures('Apple');
+		$this->loadFixtures('Apple', 'Sample');
 		$afterFindModel = new NodeAfterFind();
 		$afterFindModel->recursive = 3;
 		$afterFindData = $afterFindModel->find('all');
@@ -3651,6 +3655,10 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testFindCombinedRelations() {
+		if ($this->skipIf($this->db instanceof Mssql, 'The test of testRecursiveUnbind test is not compatible with Mssql, because it check for time columns.')) {
+			return;
+		}
+		
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
 
@@ -6227,7 +6235,7 @@ class ModelReadTest extends BaseModelTest {
 
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
-		if ($this->db instanceof Mssql) {
+		if (!($this->db instanceof Mssql)) {
 			$result = $TestModel->find('all', array('limit' => 3, 'page' => 2));
 			$expected = array(
 				array(
@@ -7398,10 +7406,13 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->find('first');
 		$this->assertEqual($result['Post']['two'], 2);
 
-		$Post->Author->virtualFields = array('false' => '1 = 2');
-		$result = $Post->find('first');
-		$this->assertEqual($result['Post']['two'], 2);
-		$this->assertFalse((bool)$result['Author']['false']);
+		// SQL Server does not support operators in expressions
+		if (!($this->db instanceof Mssql)) {
+			$Post->Author->virtualFields = array('false' => '1 = 2');
+			$result = $Post->find('first');
+			$this->assertEqual($result['Post']['two'], 2);
+			$this->assertFalse((bool)$result['Author']['false']);
+		}
 
 		$result = $Post->find('first',array('fields' => array('author_id')));
 		$this->assertFalse(isset($result['Post']['two']));
@@ -7470,7 +7481,7 @@ class ModelReadTest extends BaseModelTest {
  *
  */
 	public function testVirtualFieldsMysql() {
-		if ($this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test is not compatible with Postgres')) {
+		if ($this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test only compatible with Mysql')) {
 			return;
 		}
 		$this->loadFixtures('Post', 'Author');

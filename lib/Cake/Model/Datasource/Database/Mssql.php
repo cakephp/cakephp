@@ -161,16 +161,17 @@ class Mssql extends DboSource {
 		if (!$result) {
 			$result->closeCursor();
 			return array();
-		}
+		} else {
+			$tables = array();
 
-		$tables = array();
-		while ($line = $result->fetch(PDO::FETCH_ASSOC)) {
-			$tables[] = $line['TABLE_NAME'];
-		}
+			while ($line = $result->fetch()) {
+				$tables[] = $line[0];
+			}
 
-		$result->closeCursor();
-		parent::listSources($tables);
-		return $tables;
+			$result->closeCursor();
+			parent::listSources($tables);
+			return $tables;
+		}
 	}
 
 /**
@@ -197,7 +198,7 @@ class Mssql extends DboSource {
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column->Default),
-				'length' => intval($column->Type),
+				'length' => intval($column->Length),
 				'key' => ($column->Key == '1') ? 'primary' : false
 			);
 
@@ -348,7 +349,7 @@ class Mssql extends DboSource {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
-		$primaryKey = $this->_getPrimaryKey($model);
+		$primaryKey = $this->_getPrimaryKey($model->schema());
 
 		if (array_key_exists($primaryKey, $fields)) {
 			if (empty($fields[$primaryKey])) {
@@ -463,24 +464,24 @@ class Mssql extends DboSource {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
-		$j = 0;
 
 		while ($numFields-- > 0) {
 			$column = $results->getColumnMeta($index);
+			$name = $column['name'];
 
-			if (strpos($column, '__')) {
-				if (isset($this->_fieldMappings[$column]) && strpos($this->_fieldMappings[$column], '.')) {
-					$map = explode('.', $this->_fieldMappings[$column]);
-				} elseif (isset($this->_fieldMappings[$column])) {
-					$map = array(0, $this->_fieldMappings[$column]);
+			if (strpos($name, '__')) {
+				if (isset($this->_fieldMappings[$name]) && strpos($this->_fieldMappings[$name], '.')) {
+					$map = explode('.', $this->_fieldMappings[$name]);
+				} elseif (isset($this->_fieldMappings[$name])) {
+					$map = array(0, $this->_fieldMappings[$name]);
 				} else {
-					$map = array(0, $column);
+					$map = array(0, $name);
 				}
-				$this->map[$index++] = $map;
 			} else {
-				$this->map[$index++] = array(0, $column);
+				$map = array(0, $name);
 			}
-			$j++;
+			$map[] = ($column['sqlsrv:decl_type'] == 'bit') ? 'boolean' : $column['native_type'];
+			$this->map[$index++] = $map;
 		}
 	}
 
@@ -608,9 +609,10 @@ class Mssql extends DboSource {
  * @param string $table
  * @param string $fields
  * @param array $values
+ * @param array $schema
  */
-	public function insertMulti($table, $fields, $values) {
-		$primaryKey = $this->_getPrimaryKey($table);
+	public function insertMulti($table, $fields, $values, $schema) {
+		$primaryKey = $this->_getPrimaryKey($schema);
 		$hasPrimaryKey = $primaryKey != null && (
 			(is_array($fields) && in_array($primaryKey, $fields)
 			|| (is_string($fields) && strpos($fields, $this->startQuote . $primaryKey . $this->endQuote) !== false))
@@ -619,7 +621,7 @@ class Mssql extends DboSource {
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' ON');
 		}
-		parent::insertMulti($table, $fields, $values);
+		parent::insertMulti($table, $fields, $values, $schema);
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' OFF');
 		}
@@ -673,17 +675,11 @@ class Mssql extends DboSource {
 /**
  * Makes sure it will return the primary key
  *
- * @param mixed $model
+ * @param array $schema
  * @access protected
  * @return string
  */
-	function _getPrimaryKey($model) {
-		if (is_object($model)) {
-			$schema = $model->schema();
-		} else {
-			$schema = $this->describe($model);
-		}
-
+	function _getPrimaryKey($schema) {
 		foreach ($schema as $field => $props) {
 			if (isset($props['key']) && $props['key'] == 'primary') {
 				return $field;
