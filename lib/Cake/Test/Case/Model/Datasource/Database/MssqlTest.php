@@ -1,6 +1,6 @@
 <?php
 /**
- * DboMssqlTest file
+ * MssqlTest file
  *
  * PHP 5
  *
@@ -17,17 +17,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once CAKE.'Model'.DS.'Model.php';
-require_once CAKE.'Model'.DS.'Datasource'.DS.'DataSource.php';
-require_once CAKE.'Model'.DS.'Datasource'.DS.'DboSource.php';
-require_once CAKE.'Model'.DS.'Datasource'.DS.'Database'.DS.'Mssql.php';
+App::uses('Model', 'Model');
+App::uses('Mssql', 'Model/Datasource/Database');
 
 /**
- * DboMssqlTestDb class
+ * MssqlTestDb class
  *
  * @package       cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMssqlTestDb extends DboMssql {
+class MssqlTestDb extends Mssql {
 
 /**
  * simulated property
@@ -121,7 +119,7 @@ class DboMssqlTestDb extends DboMssql {
  * @return void
  */
 	function clearFieldMappings() {
-		$this->__fieldMappings = array();
+		$this->_fieldMappings = array();
 	}
 }
 
@@ -261,11 +259,11 @@ class MssqlClientTestModel extends Model {
 	);
 }
 /**
- * DboMssqlTest class
+ * MssqlTest class
  *
  * @package       cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMssqlTest extends CakeTestCase {
+class MssqlTest extends CakeTestCase {
 
 /**
  * The Dbo instance to be tested
@@ -289,14 +287,6 @@ class DboMssqlTest extends CakeTestCase {
  * @access public
  */
 	public $fixtures = array('core.category');
-/**
- * Skip if cannot connect to mssql
- *
- */
-	public function skip() {
-		$this->_initDb();
-		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
-	}
 
 /**
  * Make sure all fixtures tables are being created
@@ -321,8 +311,11 @@ class DboMssqlTest extends CakeTestCase {
  *
  */
 	public function setUp() {
-		$db = ConnectionManager::getDataSource('test');
-		$this->db = new DboMssqlTestDb($db->config);
+		$this->Dbo = ConnectionManager::getDataSource('test');
+		if (!($this->Dbo instanceof Mssql)) {
+			$this->markTestSkipped('Please configure the test datasource to use SQL Server.');
+		}
+		$this->db = new MssqlTestDb($this->Dbo->config);
 		$this->model = new MssqlTestModel();
 	}
 

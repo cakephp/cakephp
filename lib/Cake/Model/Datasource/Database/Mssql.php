@@ -17,6 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('DboSource', 'Model/Datasource');
+
 /**
  * MS SQL layer for DBO
  *
@@ -24,7 +26,7 @@
  *
  * @package       cake.libs.model.datasources.dbo
  */
-class DboMssql extends DboSource {
+class Mssql extends DboSource {
 
 /**
  * Driver description
@@ -53,7 +55,7 @@ class DboMssql extends DboSource {
  *
  * @var array
  */
-	private $__fieldMappings = array();
+	protected $_fieldMappings = array();
 
 /**
  * Base configuration settings for MS SQL driver
@@ -62,11 +64,10 @@ class DboMssql extends DboSource {
  */
 	protected $_baseConfig = array(
 		'persistent' => true,
-		'host' => 'localhost',
-		'login' => 'root',
+		'host' => '(local)\sqlexpress',
+		'login' => '',
 		'password' => '',
-		'database' => 'cake',
-		'port' => '1433',
+		'database' => 'cake'
 	);
 
 /**
@@ -107,22 +108,6 @@ class DboMssql extends DboSource {
  * @access private
  */
 	private $__lastQueryHadError = false;
-/**
- * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
- *
- * @param array $config Configuration data from app/config/databases.php
- * @return boolean True if connected successfully, false on error
- */
-	function __construct($config, $autoConnect = true) {
-		if ($autoConnect) {
-			if (!function_exists('mssql_min_message_severity')) {
-				trigger_error(__d('cake_dev', "PHP SQL Server interface is not installed, cannot continue. For troubleshooting information, see http://php.net/mssql/"), E_USER_WARNING);
-			}
-			mssql_min_message_severity(15);
-			mssql_min_error_severity(2);
-		}
-		return parent::__construct($config, $autoConnect);
-	}
 
 /**
  * Connects to the database using options in the given configuration array.
@@ -131,65 +116,34 @@ class DboMssql extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-
-		$os = env('OS');
-		if (!empty($os) && strpos($os, 'Windows') !== false) {
-			$sep = ',';
-		} else {
-			$sep = ':';
-		}
 		$this->connected = false;
-
-		if (is_numeric($config['port'])) {
-			$port = $sep . $config['port'];	// Port number
-		} elseif ($config['port'] === null) {
-			$port = '';						// No port - SQL Server 2005
-		} else {
-			$port = '\\' . $config['port'];	// Named pipe
-		}
-
-		if (!$config['persistent']) {
-			$this->connection = mssql_connect($config['host'] . $port, $config['login'], $config['password'], true);
-		} else {
-			$this->connection = mssql_pconnect($config['host'] . $port, $config['login'], $config['password']);
-		}
-
-		if (mssql_select_db($config['database'], $this->connection)) {
-			$this->_execute("SET DATEFORMAT ymd");
+		try {
+			$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
+			if (!empty($config['encoding'])) {
+				$flags[PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
+			}
+			$this->_connection = new PDO(
+				"sqlsrv:server={$config['host']};Database={$config['database']}",
+				$config['login'],
+				$config['password'],
+				$flags
+			);
 			$this->connected = true;
+		} catch (PDOException $e) {
+			throw new MissingConnectionException(array('class' => $e->getMessage()));
 		}
+
+//		$this->_execute("SET DATEFORMAT ymd");
 		return $this->connected;
 	}
 
 /**
- * Check that MsSQL is installed/loaded
+ * Check that PDO SQL Server is installed/loaded
  *
  * @return boolean
  */
-	function enabled() {
-		return extension_loaded('mssql');
-	}
-/**
- * Disconnects from database.
- *
- * @return boolean True if the database could be disconnected, else false
- */
-	function disconnect() {
-		@mssql_free_result($this->results);
-		$this->connected = !@mssql_close($this->connection);
-		return !$this->connected;
-	}
-
-/**
- * Executes given SQL statement.
- *
- * @param string $sql SQL statement
- * @return resource Result resource identifier
- */
-	protected function _execute($sql) {
-		$result = @mssql_query($sql, $this->connection);
-		$this->__lastQueryHadError = ($result === false);
-		return $result;
+	public function enabled() {
+		return in_array('sqlsrv', PDO::getAvailableDrivers());
 	}
 
 /**
@@ -197,26 +151,26 @@ class DboMssql extends DboSource {
  *
  * @return array Array of tablenames in the database
  */
-	function listSources() {
+	public function listSources() {
 		$cache = parent::listSources();
-
-		if ($cache != null) {
+		if ($cache !== null) {
 			return $cache;
 		}
-		$result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES', false);
+		$result = $this->_execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'");
 
-		if (!$result || empty($result)) {
+		if (!$result) {
+			$result->closeCursor();
 			return array();
-		} else {
-			$tables = array();
-
-			foreach ($result as $table) {
-				$tables[] = $table[0]['TABLE_NAME'];
-			}
-
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+		while ($line = $result->fetch(PDO::FETCH_ASSOC)) {
+			$tables[] = $line['TABLE_NAME'];
+		}
+
+		$result->closeCursor();
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -227,40 +181,43 @@ class DboMssql extends DboSource {
  */
 	function describe($model) {
 		$cache = parent::describe($model);
-
 		if ($cache != null) {
 			return $cache;
 		}
-
-		$table = $this->fullTableName($model, false);
-		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $table . "'", false);
-
 		$fields = false;
+		$table = $this->fullTableName($model, false);
+		$cols = $this->_execute("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $table . "'");
+		if (!$cols) {
+			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $model->name));
+		}
+
 		foreach ($cols as $column) {
-			$field = $column[0]['Field'];
+			$field = $column->Field;
 			$fields[$field] = array(
-				'type' => $this->column($column[0]['Type']),
-				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column[0]['Default']),
-				'length' => intval($column[0]['Length']),
-				'key' => ($column[0]['Key'] == '1') ? 'primary' : false
+				'type' => $this->column($column->Type),
+				'null' => ($column->Null === 'YES' ? true : false),
+				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column->Default),
+				'length' => intval($column->Type),
+				'key' => ($column->Key == '1') ? 'primary' : false
 			);
+
 			if ($fields[$field]['default'] === 'null') {
 				$fields[$field]['default'] = null;
 			} else {
 				$this->value($fields[$field]['default'], $fields[$field]['type']);
 			}
 
-			if ($fields[$field]['key'] && $fields[$field]['type'] == 'integer') {
+			if ($fields[$field]['key'] !== false && $fields[$field]['type'] == 'integer') {
 				$fields[$field]['length'] = 11;
-			} elseif (!$fields[$field]['key']) {
+			} elseif ($fields[$field]['key'] === false) {
 				unset($fields[$field]['key']);
 			}
 			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
 				$fields[$field]['length'] = null;
 			}
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->__cacheDescription($table, $fields);
+		$cols->closeCursor();
 		return $fields;
 	}
 
@@ -275,6 +232,12 @@ class DboMssql extends DboSource {
 	function value($data, $column = null, $safe = false) {
 		$parent = parent::value($data, $column, $safe);
 
+		if ($column === 'float' && strpos($data, '.') !== false) {
+			return rtrim($data, '0');
+		}
+		if ($parent === "''") {
+			return 'NULL';
+		}
 		if ($parent != null) {
 			return $parent;
 		}
@@ -331,7 +294,7 @@ class DboMssql extends DboSource {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
-				$fieldAlias = count($this->__fieldMappings);
+				$fieldAlias = count($this->_fieldMappings);
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
 					if (substr($fields[$i], -1) == '*') {
@@ -348,12 +311,12 @@ class DboMssql extends DboSource {
 					}
 
 					if (strpos($fields[$i], '.') === false) {
-						$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
+						$this->_fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
 						$fieldName  = $this->name($alias . '.' . $fields[$i]);
 						$fieldAlias = $this->name($alias . '__' . $fieldAlias);
 					} else {
 						$build = explode('.', $fields[$i]);
-						$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
+						$this->_fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
 						$fieldName  = $this->name($build[0] . '.' . $build[1]);
 						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $fieldAlias);
 					}
@@ -425,58 +388,6 @@ class DboMssql extends DboSource {
 	}
 
 /**
- * Returns a formatted error message from previous database operation.
- *
- * @return string Error message with error number
- */
-	function lastError() {
-		if ($this->__lastQueryHadError) {
-			$error = mssql_get_last_message();
-			if ($error && !preg_match('/contexto de la base de datos a|contesto di database|changed database|contexte de la base de don|datenbankkontext/i', $error)) {
-				return $error;
-			}
-		}
-		return null;
-	}
-
-/**
- * Returns number of affected rows in previous database operation. If no previous operation exists,
- * this returns false.
- *
- * @return integer Number of affected rows
- */
-	function lastAffected() {
-		if ($this->_result) {
-			return mssql_rows_affected($this->connection);
-		}
-		return null;
-	}
-
-/**
- * Returns number of rows in previous resultset. If no previous resultset exists,
- * this returns false.
- *
- * @return integer Number of rows in resultset
- */
-	function lastNumRows() {
-		if ($this->_result) {
-			return @mssql_num_rows($this->_result);
-		}
-		return null;
-	}
-
-/**
- * Returns the ID generated from the previous INSERT operation.
- *
- * @param unknown_type $source
- * @return in
- */
-	function lastInsertId($source = null) {
-		$id = $this->fetchRow('SELECT SCOPE_IDENTITY() AS insertID', false);
-		return $id[0]['insertID'];
-	}
-
-/**
  * Returns a limit statement in the correct format for the particular database.
  *
  * @param integer $limit Limit of results returned
@@ -544,25 +455,24 @@ class DboMssql extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Builds a map of the columns contained in a result
  *
- * @param unknown_type $results
+ * @param PDOStatement $results
  */
-	function resultSet(&$results) {
-		$this->results =& $results;
+	function resultSet($results) {
 		$this->map = array();
-		$numFields = mssql_num_fields($results);
+		$numFields = $results->columnCount();
 		$index = 0;
 		$j = 0;
 
-		while ($j < $numFields) {
-			$column = mssql_field_name($results, $j);
+		while ($numFields-- > 0) {
+			$column = $results->getColumnMeta($index);
 
 			if (strpos($column, '__')) {
-				if (isset($this->__fieldMappings[$column]) && strpos($this->__fieldMappings[$column], '.')) {
-					$map = explode('.', $this->__fieldMappings[$column]);
-				} elseif (isset($this->__fieldMappings[$column])) {
-					$map = array(0, $this->__fieldMappings[$column]);
+				if (isset($this->_fieldMappings[$column]) && strpos($this->_fieldMappings[$column], '.')) {
+					$map = explode('.', $this->_fieldMappings[$column]);
+				} elseif (isset($this->_fieldMappings[$column])) {
+					$map = array(0, $this->_fieldMappings[$column]);
 				} else {
 					$map = array(0, $column);
 				}
@@ -647,10 +557,10 @@ class DboMssql extends DboSource {
  * @access private
  */
 	function __mapFields($sql) {
-		if (empty($sql) || empty($this->__fieldMappings)) {
+		if (empty($sql) || empty($this->_fieldMappings)) {
 			return $sql;
 		}
-		foreach ($this->__fieldMappings as $key => $val) {
+		foreach ($this->_fieldMappings as $key => $val) {
 			$sql = preg_replace('/' . preg_quote($val) . '/', $this->name($key), $sql);
 			$sql = preg_replace('/' . preg_quote($this->name($val)) . '/', $this->name($key), $sql);
 		}
@@ -667,29 +577,29 @@ class DboMssql extends DboSource {
  */
 	function read($model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
-		$this->__fieldMappings = array();
+		$this->_fieldMappings = array();
 		return $results;
 	}
 
 /**
  * Fetches the next row from the current result set
  *
- * @return unknown
+ * @return mixed
  */
 	function fetchResult() {
-		if ($row = mssql_fetch_row($this->results)) {
+		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
-			$i = 0;
-
-			foreach ($row as $index => $field) {
-				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column] = $row[$index];
-				$i++;
+			foreach ($this->map as $col => $meta) {
+				list($table, $column, $type) = $meta;
+				$resultRow[$table][$column] = $row[$col];
+				if ($type === 'boolean' && !is_null($row[$col])) {
+					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
+				}
 			}
 			return $resultRow;
-		} else {
-			return false;
 		}
+		$this->_result->closeCursor();
+		return false;
 	}
 
 /**
