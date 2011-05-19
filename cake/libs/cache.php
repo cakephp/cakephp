@@ -548,6 +548,18 @@ class Cache {
 		}
 		return array();
 	}
+
+/**
+ * Write the session when session data is persisted with cache.
+ *
+ * @return void
+ * @access public
+ */ 
+	function __destruct() {
+		if (Configure::read('Session.save') == 'cache' && function_exists('session_write_close')) {
+			session_write_close();
+		}
+	}
 }
 
 /**

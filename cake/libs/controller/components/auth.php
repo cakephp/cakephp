@@ -841,7 +841,7 @@ class AuthComponent extends Object {
  */
 	function identify($user = null, $conditions = null) {
 		if ($conditions === false) {
-			$conditions = null;
+			$conditions = array();
 		} elseif (is_array($conditions)) {
 			$conditions = array_merge((array)$this->userScope, $conditions);
 		} else {
