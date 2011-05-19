@@ -18,6 +18,7 @@ class CakePluginTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
+		App::objects('plugins', null, false);
 	}
 
 /**
