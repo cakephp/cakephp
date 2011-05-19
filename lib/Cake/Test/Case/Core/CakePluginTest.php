@@ -38,6 +38,7 @@ class CakePluginTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadSingle() {
+		CakePlugin::unload();
 		CakePlugin::load('TestPlugin');
 		$expected = array('TestPlugin');
 		$this->assertEquals($expected, CakePlugin::loaded());
