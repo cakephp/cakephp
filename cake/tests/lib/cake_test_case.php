@@ -288,7 +288,8 @@ class CakeTestCase extends UnitTestCase {
 	function endController(&$controller, $params = array()) {
 		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures) && $this->dropTables) {
 			foreach ($this->_actionFixtures as $fixture) {
-				$fixture->drop($this->db);
+				$db = $fixture->db === null ? $this->db : $fixture->db;
+				$fixture->drop($db);
 			}
 		}
 	}
@@ -417,7 +418,8 @@ class CakeTestCase extends UnitTestCase {
 		// Create records
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(strtolower($method), array('start', 'end')) && $this->__truncated && $this->autoFixtures == true) {
 			foreach ($this->_fixtures as $fixture) {
-				$inserts = $fixture->insert($this->db);
+				$db = $fixture->db === null ? $this->db : $fixture->db;
+				$inserts = $fixture->insert($db);
 			}
 		}
 
@@ -444,12 +446,13 @@ class CakeTestCase extends UnitTestCase {
 				return;
 			}
 			foreach ($this->_fixtures as $fixture) {
-				$table = $this->db->config['prefix'] . $fixture->table;
+				$db = $fixture->db === null ? $this->db : $fixture->db;
+				$table = $db->config['prefix'] . $fixture->table;
 				if (in_array($table, $sources)) {
-					$fixture->drop($this->db);
-					$fixture->create($this->db);
+					$fixture->drop($db);
+					$fixture->create($db);
 				} elseif (!in_array($table, $sources)) {
-					$fixture->create($this->db);
+					$fixture->create($db);
 				}
 			}
 		}
@@ -465,7 +468,8 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			if ($this->dropTables) {
 				foreach (array_reverse($this->_fixtures) as $fixture) {
-					$fixture->drop($this->db);
+					$db = $fixture->db === null ? $this->db : $fixture->db;
+					$fixture->drop($db);
 				}
 			}
 			$this->db->sources(true);
@@ -489,7 +493,8 @@ class CakeTestCase extends UnitTestCase {
 
 		if (isset($this->_fixtures) && isset($this->db) && $isTestMethod) {
 			foreach ($this->_fixtures as $fixture) {
-				$fixture->truncate($this->db);
+				$db = $fixture->db === null ? $this->db : $fixture->db;
+				$fixture->truncate($db);
 			}
 			$this->__truncated = true;
 		} else {
@@ -534,8 +539,9 @@ class CakeTestCase extends UnitTestCase {
 			if (isset($this->_fixtureClassMap[$class])) {
 				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
 
-				$fixture->truncate($this->db);
-				$fixture->insert($this->db);
+				$db = $fixture->db === null ? $this->db : $fixture->db;
+				$fixture->truncate($db);
+				$fixture->insert($db);
 			} else {
 				trigger_error(sprintf(__('Referenced fixture class %s not found', true), $class), E_USER_WARNING);
 			}
