@@ -671,6 +671,7 @@ class AppImportTest extends CakeTestCase {
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'vendors' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
 		), App::RESET);
+		App::objects('plugins', null, false);
 		CakePlugin::loadAll();
 
 		ob_start();

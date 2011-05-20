@@ -123,6 +123,7 @@ class ShellDispatcherTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
+		App::objects('plugins', null, false);
 		CakePlugin::loadAll();
 	}
 
