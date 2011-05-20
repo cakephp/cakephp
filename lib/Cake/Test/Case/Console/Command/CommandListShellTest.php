@@ -47,6 +47,7 @@ class CommandListTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
+		App::objects('plugins', null, false);
 		CakePlugin::loadAll();
 
 		$out = new TestStringOutput();
@@ -67,6 +68,8 @@ class CommandListTest extends CakeTestCase {
 	function tearDown() {
 		parent::tearDown();
 		unset($this->Shell);
+		App::build();
+		App::objects('plugins', null, false);
 		CakePlugin::unload();
 	}
 
