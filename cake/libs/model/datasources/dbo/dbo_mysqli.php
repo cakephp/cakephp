@@ -329,4 +329,14 @@ class DboMysqli extends DboMysqlBase {
 	function hasResult() {
 		return is_object($this->_result);
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	function getSchemaName() {
+		return !empty($this->config['database']) ? $this->config['database'] : false;
+	}
+
 }

@@ -1156,4 +1156,13 @@ class DboOracle extends DboSource {
 			}
 			return $out;
 		}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+		function getSchemaName() {
+			return !empty($this->config['login']) ? $this->config['login'] : false;
+		}
 }

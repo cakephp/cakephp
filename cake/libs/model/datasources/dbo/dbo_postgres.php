@@ -977,4 +977,13 @@ class DboPostgres extends DboSource {
 			break;
 		}
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	function getSchemaName() {
+		return !empty($this->config['schema']) ? $this->config['schema'] : false;
+	}
 }

@@ -805,4 +805,14 @@ class DboMysql extends DboMysqlBase {
 		}
 		return false;
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	function getSchemaName() {
+		return !empty($this->config['database']) ? $this->config['database'] : false;
+	}
+
 }

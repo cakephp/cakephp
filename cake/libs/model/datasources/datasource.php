@@ -584,6 +584,16 @@ class DataSource extends Object {
 	}
 
 /**
+ * To-be-overridden in subclasses.
+ *
+ * @return string schema name
+ * @access public
+ */
+	function getSchemaName() {
+		return false;
+	}
+
+/**
  * Closes the current datasource.
  *
  * @return void
