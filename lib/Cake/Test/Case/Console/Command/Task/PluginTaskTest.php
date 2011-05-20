@@ -88,11 +88,11 @@ class PluginTaskTest extends CakeTestCase {
 			'Controller' . DS . 'Component',
 			'Lib',
 			'View' . DS . 'Helper',
-			'tests' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
-			'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-			'tests' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
-			'tests' . DS . 'Fixture',
-			'vendors',
+			'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
+			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
+			'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
+			'Test' . DS . 'Fixture',
+			'Vendor',
 			'webroot'
 		);
 		foreach ($directories as $dir) {
