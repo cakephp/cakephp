@@ -334,7 +334,7 @@ class AuthComponent extends Object {
 		$url = '';
 
 		if (isset($controller->params['url']['url'])) {
-			$url = $controller->params['url']['url'];
+			$url = Router::parse($controller->params['url']['url']);
 		}
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
