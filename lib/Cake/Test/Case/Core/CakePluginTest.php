@@ -28,7 +28,6 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function tearDown() {
 		App::build();
-		App::objects('plugins', null, false);
 		CakePlugin::unload();
 		Configure::delete('CakePluginTest');
 	}
