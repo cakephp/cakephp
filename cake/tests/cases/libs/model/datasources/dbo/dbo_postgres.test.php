@@ -458,7 +458,7 @@ class DboPostgresTest extends CakeTestCase {
 	function testLastInsertIdMultipleInsert() {
 		$db1 = ConnectionManager::getDataSource('test_suite');
 
-		$table = $db1->fullTableName('users', false);
+		$table = $db1->fullTableName('users', false, false);
 		$password = '5f4dcc3b5aa765d61d8327deb882cf99';
 		$db1->execute(
 			"INSERT INTO {$table} (\"user\", password) VALUES ('mariano', '{$password}')"
@@ -626,7 +626,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testIndexGeneration() {
-		$name = $this->db->fullTableName('index_test', false);
+		$name = $this->db->fullTableName('index_test', false, false);
 		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->db->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->db->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -640,7 +640,7 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$this->db->query('DROP TABLE ' . $name);
-		$name = $this->db->fullTableName('index_test_2', false);
+		$name = $this->db->fullTableName('index_test_2', false, false);
 		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->db->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(

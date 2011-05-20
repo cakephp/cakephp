@@ -392,7 +392,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testIndexOnMySQL4Output() {
-		$name = $this->db->fullTableName('simple');
+		$name = $this->db->fullTableName('simple', true, false);
 
 		$mockDbo =& new QueryMockDboMysql($this);
 		$columnData = array(
@@ -837,7 +837,7 @@ class DboMysqlTest extends CakeTestCase {
 	function testDeleteWithJoins() {
 		$model =& new Post();
 		$mockDbo =& new QueryMockDboMysql($this);
-		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
+		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN ' . $mockDbo->fullTableName($model->Author) . '/')));
 		$mockDbo->setReturnValue('execute', true);
 
 		$mockDbo->delete($model, array('Author.id' => 1));
@@ -851,8 +851,8 @@ class DboMysqlTest extends CakeTestCase {
 	function testDeleteWithJoinsAndMultipleConditions() {
 		$model =& new Post();
 		$mockDbo =& new QueryMockDboMysql($this);
-		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
-		$mockDbo->expectAt(1, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
+		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN ' . $mockDbo->fullTableName($model->Author) . '/')));
+		$mockDbo->expectAt(1, 'execute', array(new PatternExpectation('/LEFT JOIN ' . $mockDbo->fullTableName($model->Author) . '/')));
 		$mockDbo->setReturnValue('execute', true);
 
 		$mockDbo->delete($model, array('Author.id' => 1, 'Post.id' => 2));
