@@ -90,7 +90,6 @@ abstract class BaseCoverageReport {
 
 /**
  * Gets the base path that the files we are interested in live in.
- * If appTest ist
  *
  * @return void
  */
