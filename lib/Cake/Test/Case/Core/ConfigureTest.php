@@ -132,6 +132,9 @@ class ConfigureTest extends CakeTestCase {
 
 		$result = Configure::read('Key.One.Two.Three.Four.Five');
 		$this->assertEqual('cool', $result);
+
+		Configure::write('one.two.three.four', '4');
+		$result = Configure::read('one.two.three.four');
 	}
 
 /**
