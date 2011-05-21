@@ -833,39 +833,39 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel = new Apple();
 		$TestModel->setDataSource('database1');
-		$this->assertEqual($this->db->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEqual($db1->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEqual($db2->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertEqual($this->db->fullTableName($TestModel, false, false), 'aaa_apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false, false), 'aaa_apples');
+		$this->assertEqual($db2->fullTableName($TestModel, false, false), 'aaa_apples');
 
 		$TestModel->setDataSource('database2');
-		$this->assertEqual($this->db->fullTableName($TestModel, false), 'bbb_apples');
-		$this->assertEqual($db1->fullTableName($TestModel, false), 'bbb_apples');
-		$this->assertEqual($db2->fullTableName($TestModel, false), 'bbb_apples');
+		$this->assertEqual($this->db->fullTableName($TestModel, false, false), 'bbb_apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false, false), 'bbb_apples');
+		$this->assertEqual($db2->fullTableName($TestModel, false, false), 'bbb_apples');
 
 		$TestModel = new Apple();
 		$TestModel->tablePrefix = 'custom_';
-		$this->assertEqual($this->db->fullTableName($TestModel, false), 'custom_apples');
+		$this->assertEqual($this->db->fullTableName($TestModel, false, false), 'custom_apples');
 		$TestModel->setDataSource('database1');
-		$this->assertEqual($this->db->fullTableName($TestModel, false), 'custom_apples');
-		$this->assertEqual($db1->fullTableName($TestModel, false), 'custom_apples');
+		$this->assertEqual($this->db->fullTableName($TestModel, false, false), 'custom_apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false, false), 'custom_apples');
 
 		$TestModel = new Apple();
 		$TestModel->setDataSource('database1');
-		$this->assertEqual($this->db->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertEqual($this->db->fullTableName($TestModel, false, false), 'aaa_apples');
 		$TestModel->tablePrefix = '';
 		$TestModel->setDataSource('database2');
-		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
-		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
+		$this->assertEqual($db2->fullTableName($TestModel, false, false), 'apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false, false), 'apples');
 
 		$TestModel->tablePrefix = null;
 		$TestModel->setDataSource('database1');
-		$this->assertEqual($db2->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEqual($db1->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertEqual($db2->fullTableName($TestModel, false, false), 'aaa_apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false, false), 'aaa_apples');
 
 		$TestModel->tablePrefix = false;
 		$TestModel->setDataSource('database2');
-		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
-		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
+		$this->assertEqual($db2->fullTableName($TestModel, false, false), 'apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false, false), 'apples');
 	}
 
 /**

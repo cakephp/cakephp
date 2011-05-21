@@ -1387,6 +1387,19 @@ class Model extends Overloadable {
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
+				if ($with = $this->hasAndBelongsToMany[$assoc]['with']) {
+					if (is_array($with)) {
+						$tmp = array_keys($with);
+						$withModel = $tmp[0];
+					} else {
+						$withModel = $with;
+					}
+					$ds = $this->{$withModel}->useDbConfig;
+					$dbMulti = ConnectionManager::getDataSource($ds);
+				} else {
+					$dbMulti = $db;
+				}
+
 				$isUUID = !empty($this->{$join}->primaryKey) && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] == 36 && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
@@ -1398,8 +1411,8 @@ class Model extends Overloadable {
 				$primaryAdded = false;
 
 				$fields =  array(
-					$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
-					$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
+					$dbMulti->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
+					$dbMulti->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
 				);
 
 				$idField = $db->name($this->{$join}->primaryKey);
@@ -1411,8 +1424,8 @@ class Model extends Overloadable {
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
 						$values = array(
-							$db->value($id, $this->getColumnType($this->primaryKey)),
-							$db->value($row)
+							$dbMulti->value($id, $this->getColumnType($this->primaryKey)),
+							$dbMulti->value($row)
 						);
 						if ($isUUID && $primaryAdded) {
 							$values[] = $db->value(String::uuid());
@@ -1444,7 +1457,7 @@ class Model extends Overloadable {
 					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
  						$conditions[$associationForeignKey] = $oldLinks;
-						$db->delete($this->{$join}, $conditions);
+						$dbMulti->delete($this->{$join}, $conditions);
 					}
 				}
 
@@ -1458,7 +1471,7 @@ class Model extends Overloadable {
 
 				if (!empty($newValues)) {
 					$fields = implode(',', $fields);
-					$db->insertMulti($this->{$join}, $fields, $newValues);
+					$dbMulti->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
 		}

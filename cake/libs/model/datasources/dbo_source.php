@@ -694,21 +694,33 @@ class DboSource extends DataSource {
  *
  * @param mixed $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
+ * @param boolean $schema Whether you want to include the schema name.
  * @return string Full quoted table name
  * @access public
  */
-	function fullTableName($model, $quote = true) {
+	function fullTableName($model, $quote = true, $schema = true) {
 		if (is_object($model)) {
 			$table = $model->tablePrefix . $model->table;
+			$db = ConnectionManager::getDataSource($model->useDbConfig);
+			$database = $db->config['database'];
 		} elseif (isset($this->config['prefix'])) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
 			$table = strval($model);
 		}
+
 		if ($quote) {
-			return $this->name($table);
+			if ($schema === false || empty($database)) {
+				return $this->name($table);
+			} else {
+				return $this->name($database) . '.' . $this->name($table);
+			}
 		}
-		return $table;
+		if ($schema === false || empty($database)) {
+			return $table;
+		} else {
+			return $database . '.' . $table;
+		}
 	}
 
 /**
@@ -1511,7 +1523,7 @@ class DboSource extends DataSource {
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
-				return "DELETE {$alias} FROM {$table} {$aliases}{$conditions}";
+				return "DELETE {$table} {$alias} FROM {$table} {$aliases}{$conditions}";
 			break;
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
