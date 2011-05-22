@@ -616,7 +616,16 @@ class Mssql extends DboSource {
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' ON');
 		}
-		parent::insertMulti($table, $fields, $values);
+
+		$table = $this->fullTableName($table);
+		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
+		$this->_connection->beginTransaction();
+		foreach ($values as $value) {
+			$holder = implode(', ', array_map(array(&$this, 'value'), $value));
+			$this->_execute("INSERT INTO {$table} ({$fields}) VALUES ({$holder})");
+		}
+		$this->_connection->commit();
+
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' OFF');
 		}
@@ -694,14 +703,17 @@ class Mssql extends DboSource {
  * Executes given SQL statement.
  *
  * @param string $sql SQL statement
- * @param array $params list of params to be bound to query
+ * @param array $params list of params to be bound to query (supported only in select)
  * @param array $prepareOptions Options to be used in the prepare statement
  * @return PDOStatement if query executes with no problem, true as the result of a succesfull
  * query returning no rows, suchs as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
-		$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
-		return parent::_execute($sql, $params, $prepareOptions);
+		if (strncasecmp($sql, 'SELECT', 6) == 0) {
+			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
+			return parent::_execute($sql, $params, $prepareOptions);
+		}
+		return $this->_connection->exec($sql);
 	}
 
 }
