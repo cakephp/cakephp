@@ -689,4 +689,19 @@ class Mssql extends DboSource {
 		}
 		return null;
 	}
+
+/**
+ * Executes given SQL statement.
+ *
+ * @param string $sql SQL statement
+ * @param array $params list of params to be bound to query
+ * @param array $prepareOptions Options to be used in the prepare statement
+ * @return PDOStatement if query executes with no problem, true as the result of a succesfull
+ * query returning no rows, suchs as a CREATE statement, false otherwise
+ */
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
+		$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
+		return parent::_execute($sql, $params, $prepareOptions);
+	}
+
 }
