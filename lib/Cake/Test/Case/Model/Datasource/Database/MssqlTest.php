@@ -557,6 +557,8 @@ class MssqlTest extends CakeTestCase {
 		$result = $this->db->simulated;
 		$expected = array(
 			'SET IDENTITY_INSERT [mssql_test_models] ON',
+			"INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (1, 'Larry', 'PhpNut')",
+			"INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (2, 'Renan', 'renan.saddam')",
 			'SET IDENTITY_INSERT [mssql_test_models] OFF'
 		);
 		$this->assertEqual($expected, $result);
@@ -568,7 +570,10 @@ class MssqlTest extends CakeTestCase {
 		$this->db->simulated = array();
 		$this->db->insertMulti($this->model, $fields, $values);
 		$result = $this->db->simulated;
-		$expected = array();
+		$expected = array(
+			"INSERT INTO [mssql_test_models] ([name], [login]) VALUES ('Larry', 'PhpNut')",
+			"INSERT INTO [mssql_test_models] ([name], [login]) VALUES ('Renan', 'renan.saddam')",
+		);
 		$this->assertEqual($expected, $result);
 	}
 }
