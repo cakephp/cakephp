@@ -93,7 +93,6 @@ class Mssql extends DboSource {
  * Index of basic SQL commands
  *
  * @var array
- * @access protected
  */
 	protected $_commands = array(
 		'begin'    => 'BEGIN TRANSACTION',
@@ -105,7 +104,6 @@ class Mssql extends DboSource {
  * Define if the last query had error
  *
  * @var string
- * @access private
  */
 	private $__lastQueryHadError = false;
 
@@ -114,7 +112,7 @@ class Mssql extends DboSource {
  *
  * @return boolean True if the database could be connected, else false
  */
-	function connect() {
+	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
 		try {
@@ -180,7 +178,7 @@ class Mssql extends DboSource {
  * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
  */
-	function describe($model) {
+	public function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -230,7 +228,7 @@ class Mssql extends DboSource {
  * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
-	function value($data, $column = null, $safe = false) {
+	public function value($data, $column = null, $safe = false) {
 		$parent = parent::value($data, $column, $safe);
 
 		if ($column === 'float' && strpos($data, '.') !== false) {
@@ -279,7 +277,7 @@ class Mssql extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields($model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -345,7 +343,7 @@ class Mssql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function create($model, $fields = null, $values = null) {
+	public function create($model, $fields = null, $values = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -375,7 +373,7 @@ class Mssql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -395,7 +393,7 @@ class Mssql extends DboSource {
  * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
-	function limit($limit, $offset = null) {
+	public function limit($limit, $offset = null) {
 		if ($limit) {
 			$rt = '';
 			if (!strpos(strtolower($limit), 'top') || strpos(strtolower($limit), 'top') === 0) {
@@ -416,7 +414,7 @@ class Mssql extends DboSource {
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
-	function column($real) {
+	public function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
 
@@ -460,7 +458,7 @@ class Mssql extends DboSource {
  *
  * @param PDOStatement $results
  */
-	function resultSet($results) {
+	public function resultSet($results) {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
@@ -492,7 +490,7 @@ class Mssql extends DboSource {
  * @param array $data Query data
  * @return string
  */
-	function renderStatement($type, $data) {
+	public function renderStatement($type, $data) {
 		switch (strtolower($type)) {
 			case 'select':
 				extract($data);
@@ -542,9 +540,8 @@ class Mssql extends DboSource {
  *
  * @param string $order
  * @return string
- * @access private
  */
-	function __switchSort($order) {
+	private function __switchSort($order) {
 		$order = preg_replace('/\s+ASC/i', '__tmp_asc__', $order);
 		$order = preg_replace('/\s+DESC/i', ' ASC', $order);
 		return preg_replace('/__tmp_asc__/', ' DESC', $order);
@@ -555,9 +552,8 @@ class Mssql extends DboSource {
  *
  * @param string $sql A snippet of SQL representing an ORDER or WHERE statement
  * @return string The value of $sql with field names replaced
- * @access private
  */
-	function __mapFields($sql) {
+	private function __mapFields($sql) {
 		if (empty($sql) || empty($this->_fieldMappings)) {
 			return $sql;
 		}
@@ -576,7 +572,7 @@ class Mssql extends DboSource {
  * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
-	function read($model, $queryData = array(), $recursive = null) {
+	public function read($model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
 		$this->_fieldMappings = array();
 		return $results;
@@ -587,7 +583,7 @@ class Mssql extends DboSource {
  *
  * @return mixed
  */
-	function fetchResult() {
+	public function fetchResult() {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
@@ -633,7 +629,7 @@ class Mssql extends DboSource {
  *   where options can be 'default', 'length', or 'key'.
  * @return string
  */
-	function buildColumn($column) {
+	public function buildColumn($column) {
 		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
 		if (strpos($result, 'DEFAULT NULL') !== false) {
 			if (isset($column['default']) && $column['default'] === '') {
@@ -654,7 +650,7 @@ class Mssql extends DboSource {
  * @param string $table
  * @return string
  */
-	function buildIndex($indexes, $table = null) {
+	public function buildIndex($indexes, $table = null) {
 		$join = array();
 
 		foreach ($indexes as $name => $value) {
@@ -679,10 +675,9 @@ class Mssql extends DboSource {
  * Makes sure it will return the primary key
  *
  * @param mixed $model Model instance of table name
- * @access protected
  * @return string
  */
-	function _getPrimaryKey($model) {
+	protected function _getPrimaryKey($model) {
 		if (!is_object($model)) {
 			$model = new Model(false, $model);
 		}

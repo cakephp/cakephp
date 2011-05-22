@@ -31,7 +31,6 @@ class MssqlTestDb extends Mssql {
  * simulated property
  *
  * @var array
- * @access public
  */
 	public $simulated = array();
 
@@ -39,7 +38,6 @@ class MssqlTestDb extends Mssql {
  * execute results stack
  *
  * @var array
- * @access public
  */
 	public $executeResultsStack = array();
 
@@ -47,10 +45,9 @@ class MssqlTestDb extends Mssql {
  * execute method
  *
  * @param mixed $sql
- * @access protected
- * @return void
+ * @return mixed
  */
-	function _execute($sql) {
+	protected function _execute($sql) {
 		$this->simulated[] = $sql;
 		return empty($this->executeResultsStack) ? null : array_pop($this->executeResultsStack);
 	}
@@ -59,20 +56,18 @@ class MssqlTestDb extends Mssql {
  * fetchAll method
  *
  * @param mixed $sql
- * @access protected
  * @return void
  */
-	function _matchRecords($model, $conditions = null) {
+	protected function _matchRecords($model, $conditions = null) {
 		return $this->conditions(array('id' => array(1, 2)));
 	}
 
 /**
  * getLastQuery method
  *
- * @access public
- * @return void
+ * @return string
  */
-	function getLastQuery() {
+	public function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
 
@@ -80,20 +75,18 @@ class MssqlTestDb extends Mssql {
  * getPrimaryKey method
  *
  * @param mixed $model
- * @access public
- * @return void
+ * @return string
  */
-	function getPrimaryKey($model) {
+	public function getPrimaryKey($model) {
 		return parent::_getPrimaryKey($model);
 	}
 
 /**
  * clearFieldMappings method
  *
- * @access public
  * @return void
  */
-	function clearFieldMappings() {
+	public function clearFieldMappings() {
 		$this->_fieldMappings = array();
 	}
 	
@@ -101,10 +94,9 @@ class MssqlTestDb extends Mssql {
  * describe method
  *
  * @param object $model
- * @access public
  * @return void
  */
-	function describe($model) {
+	public function describe($model) {
 		return empty($this->describe) ? parent::describe($model) : $this->describe;
 	}
 }
@@ -120,7 +112,6 @@ class MssqlTestModel extends Model {
  * name property
  *
  * @var string 'MssqlTestModel'
- * @access public
  */
 	public $name = 'MssqlTestModel';
 
@@ -128,7 +119,6 @@ class MssqlTestModel extends Model {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -136,7 +126,6 @@ class MssqlTestModel extends Model {
  * _schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array(
 		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
@@ -163,7 +152,6 @@ class MssqlTestModel extends Model {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'MssqlClientTestModel' => array(
@@ -177,10 +165,9 @@ class MssqlTestModel extends Model {
  * @param mixed $fields
  * @param mixed $order
  * @param mixed $recursive
- * @access public
  * @return void
  */
-	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
 
@@ -191,10 +178,9 @@ class MssqlTestModel extends Model {
  * @param mixed $fields
  * @param mixed $order
  * @param mixed $recursive
- * @access public
- * @return void
+ * @return array
  */
-	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+	public function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
 }
@@ -209,21 +195,20 @@ class MssqlClientTestModel extends Model {
  * name property
  *
  * @var string 'MssqlAssociatedTestModel'
- * @access public
  */
 	public $name = 'MssqlClientTestModel';
+
 /**
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
+
 /**
  * _schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array(
 		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
@@ -243,7 +228,7 @@ class MssqlTestResultIterator extends ArrayIterator {
 /**
  * closeCursor method
  *
- * @access public
+ * @return void
  */
 	public function closeCursor() {}
 }
@@ -259,7 +244,6 @@ class MssqlTest extends CakeTestCase {
  * The Dbo instance to be tested
  *
  * @var DboSource
- * @access public
  */
 	public $db = null;
 
@@ -267,14 +251,13 @@ class MssqlTest extends CakeTestCase {
  * autoFixtures property
  *
  * @var bool false
- * @access public
  */
 	public $autoFixtures = false;
+
 /**
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.category');
 
@@ -294,21 +277,20 @@ class MssqlTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
-	function tearDown() {
-		unset($this->db->describe);
+	public function tearDown() {
+		unset($this->Dbo);
+		unset($this->db);
 		unset($this->model);
 	}
 
 /**
  * testQuoting method
  *
- * @access public
  * @return void
  */
-	function testQuoting() {
+	public function testQuoting() {
 		$expected = "1.2";
 		$result = $this->db->value(1.2, 'float');
 		$this->assertIdentical($expected, $result);
@@ -332,10 +314,9 @@ class MssqlTest extends CakeTestCase {
 /**
  * testFields method
  *
- * @access public
  * @return void
  */
-	function testFields() {
+	public function testFields() {
 		$fields = array(
 			'[MssqlTestModel].[id] AS [MssqlTestModel__0]',
 			'[MssqlTestModel].[client_id] AS [MssqlTestModel__1]',
@@ -387,10 +368,9 @@ class MssqlTest extends CakeTestCase {
 /**
  * testDistinctFields method
  *
- * @access public
  * @return void
  */
-	function testDistinctFields() {
+	public function testDistinctFields() {
 		$result = $this->db->fields($this->model, null, array('DISTINCT Car.country_code'));
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__0]');
 		$this->assertEqual($expected, $result);
@@ -403,10 +383,9 @@ class MssqlTest extends CakeTestCase {
 /**
  * testDistinctWithLimit method
  *
- * @access public
  * @return void
  */
-	function testDistinctWithLimit() {
+	public function testDistinctWithLimit() {
 		$this->db->read($this->model, array(
 			'fields' => array('DISTINCT MssqlTestModel.city', 'MssqlTestModel.country'),
 			'limit' => 5
@@ -418,10 +397,9 @@ class MssqlTest extends CakeTestCase {
 /**
  * testDescribe method
  *
- * @access public
  * @return void
  */
-	function testDescribe() {
+	public function testDescribe() {
 		$MssqlTableDescription = new MssqlTestResultIterator(array(
 			(object) array(
 				'Default' => '((0))',
@@ -448,7 +426,7 @@ class MssqlTest extends CakeTestCase {
 /**
  * testBuildColumn
  *
- * @return unknown_type
+ * @return void
  */
 	public function testBuildColumn() {
 		$column = array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '8', 'key' => 'primary');
