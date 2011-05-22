@@ -17,4 +17,4 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-return $config['Cake.version'] = '2.0.0-dev';
+return $config['Cake.version'] = '2.0.0-alpha';
