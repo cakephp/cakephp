@@ -568,7 +568,7 @@ class DboSqlite extends DboSource {
  */
 	function index(&$model) {
 		$index = array();
-		$table = $this->fullTableName($model);
+		$table = $this->fullTableName($model, true, false);
 		if ($table) {
 			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
 			$tableInfo = $this->query('PRAGMA table_info(' . $table . ')');

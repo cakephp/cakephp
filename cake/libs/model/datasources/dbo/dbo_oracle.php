@@ -655,7 +655,7 @@ class DboOracle extends DboSource {
  */
 	function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		if ($table) {
 			$indexes = $this->query('SELECT
 			  cc.table_name,

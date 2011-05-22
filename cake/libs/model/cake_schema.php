@@ -253,7 +253,7 @@ class CakeSchema extends Object {
 				}
 
 				if (is_object($Object) && $Object->useTable !== false) {
-					$fulltable = $table = $db->fullTableName($Object, false);
+					$fulltable = $table = $db->fullTableName($Object, false, false);
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
@@ -273,7 +273,7 @@ class CakeSchema extends Object {
 									$class = $assocData['with'];
 								}
 								if (is_object($Object->$class)) {
-									$withTable = $db->fullTableName($Object->$class, false);
+									$withTable = $db->fullTableName($Object->$class, false, false);
 									if ($prefix && strpos($withTable, $prefix) !== 0) {
 										continue;
 									}
