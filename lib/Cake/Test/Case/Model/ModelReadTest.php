@@ -79,8 +79,8 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle;
-		$message = 'Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
+		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Mssql;
+		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
 			return;
@@ -367,13 +367,6 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testVeryStrangeUseCase() {
-		$message = "skipping SELECT * FROM ? WHERE ? = ? AND ? = ?; prepared query.";
-		$message .= " MSSQL is incompatible with this test.";
-
-		if ($this->skipIf($this->db instanceof Mssql, $message)) {
-			return;
-		}
-
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
@@ -3955,7 +3948,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$TestModel = new Basket();
 		$recursive = 3;
-		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+		$result = $TestModel->find('all', compact('recursive'));
 
 		$expected = array(
 			array(
@@ -6629,13 +6622,9 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testFindCountDistinct() {
-		$skip = $this->skipIf(
-			$this->db instanceof Sqlite,
-			'SELECT COUNT(DISTINCT field) is not compatible with SQLite'
-		);
-		if ($skip) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite');
+		$this->skipIf($this->db instanceof Mssql, 'This test is not compatible with Mssql.');
+
 		$this->loadFixtures('Project');
 		$TestModel = new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
