@@ -36,14 +36,6 @@ class MssqlTestDb extends Mssql {
 	public $simulated = array();
 
 /**
- * simulate property
- *
- * @var array
- * @access public
- */
-	public $simulate = false;
-
-/**
  * execute results stack
  *
  * @var array
@@ -59,12 +51,8 @@ class MssqlTestDb extends Mssql {
  * @return void
  */
 	function _execute($sql) {
-		if ($this->simulate) {
-			$this->simulated[] = $sql;
-			return empty($this->executeResultsStack) ? null : array_pop($this->executeResultsStack);
-		} else {
-			return parent::_execute($sql);
-		}
+		$this->simulated[] = $sql;
+		return empty($this->executeResultsStack) ? null : array_pop($this->executeResultsStack);
 	}
 
 /**
@@ -290,20 +278,6 @@ class MssqlTest extends CakeTestCase {
  */
 	public $fixtures = array('core.category');
 
-/**
- * Make sure all fixtures tables are being created
- *
- */
-	public function startTest($method) {
-		$this->db->simulate = true;
-	}
-/**
- * Make sure all fixtures tables are being dropped
- *
- */
-	public function endTest($method) {
-		$this->db->simulate = false;
-	}
 /**
  * Sets up a Dbo class instance for testing
  *
