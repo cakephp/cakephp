@@ -49,23 +49,21 @@ class ProjectTask extends Shell {
 			$project = $this->args[0];
 		}
 
-		if ($project && isset($_SERVER['PWD'])) {
-			$project = $_SERVER['PWD'] . DS . $project;
-		}
-
 		while (!$project) {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
 			$project = $this->in($prompt, null, APP_PATH . 'myapp');
 		}
 
-		if ($project) {
-			$response = false;
-			while ($response == false && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
-				$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
-				$response = $this->in($prompt, array('y','n'), 'n');
-				if (strtolower($response) === 'n') {
-					$response = $project = false;
-				}
+		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
+			$project = $_SERVER['PWD'] . DS . $project;
+		}
+
+		$response = false;
+		while ($response == false && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
+			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
+			$response = $this->in($prompt, array('y','n'), 'n');
+			if (strtolower($response) === 'n') {
+				$response = $project = false;
 			}
 		}
 

@@ -110,6 +110,20 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test bake with an absolute path.
+ *
+ * @return void
+ */
+	public function testExecuteWithAbsolutePath() {
+		$this->Task->args[0] = TMP . 'tests' . DS . 'bake_test';
+		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->execute();
+
+		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
+	}
+
+/**
  * test bake() method with -empty flag,  directory creation and empty files.
  *
  * @return void
