@@ -163,31 +163,34 @@ class ProjectTask extends Shell {
 
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
 
-		if (strtolower($looksGood) == 'y') {
-			$Folder = new Folder($skel);
-			if (!empty($this->params['empty'])) {
-				$skip = array();
-			}
+		switch (strtolower($looksGood)) {
+			case 'y':
+				$Folder = new Folder($skel);
+				if (!empty($this->params['empty'])) {
+					$skip = array();
+				}
 
-			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
-				$this->hr();
-				$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $app, $path));
-				$this->hr();
-			} else {
-				$this->err(__d('cake_console', "<error>Could not create</error> '%s' properly.", $app));
+				if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
+					$this->hr();
+					$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $app, $path));
+					$this->hr();
+				} else {
+					$this->err(__d('cake_console', "<error>Could not create</error> '%s' properly.", $app));
+					return false;
+				}
+
+				foreach ($Folder->messages() as $message) {
+					$this->out(String::wrap(' * ' . $message), 1, Shell::VERBOSE);
+				}
+
+				return true;
+			case 'n':
+				unset($this->args[0]);
+				$this->execute();
 				return false;
-			}
-
-			foreach ($Folder->messages() as $message) {
-				$this->out(String::wrap(' * ' . $message), 1, Shell::VERBOSE);
-			}
-
-			return true;
-		} elseif (strtolower($looksGood) == 'q') {
-			$this->out(__d('cake_console', 'Bake Aborted.'));
-		} else {
-			$this->execute(false);
-			return false;
+			case 'q':
+				$this->out(__d('cake_console', '<error>Bake Aborted.</error>'));
+				return false;
 		}
 	}
 
