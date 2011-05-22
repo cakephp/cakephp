@@ -636,7 +636,11 @@ class Mssql extends DboSource {
 	function buildColumn($column) {
 		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
 		if (strpos($result, 'DEFAULT NULL') !== false) {
-			$result = str_replace('DEFAULT NULL', 'NULL', $result);
+			if (isset($column['default']) && $column['default'] === '') {
+				$result = str_replace('DEFAULT NULL', "DEFAULT ''", $result);
+			} else {
+				$result = str_replace('DEFAULT NULL', 'NULL', $result);
+			}
 		} else if (array_keys($column) == array('type', 'name')) {
 			$result .= ' NULL';
 		}
