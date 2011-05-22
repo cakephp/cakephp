@@ -326,11 +326,10 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testBakeView() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'view.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/View Task Articles/')
 			);
 
@@ -344,11 +343,10 @@ class ViewTaskTest extends CakeTestCase {
  */
 	function testBakeEdit() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'edit.ctp',
+				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->bake('edit', true);
@@ -361,11 +359,10 @@ class ViewTaskTest extends CakeTestCase {
  */
 	function testBakeIndex() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/\$viewTaskComment\[\'Article\'\]\[\'title\'\]/')
 			);
 		$this->Task->bake('index', true);
@@ -378,7 +375,6 @@ class ViewTaskTest extends CakeTestCase {
  */
 	function testBakeWithNoTemplate() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 
 		$this->Task->expects($this->never())->method('createFile');
 		$this->Task->bake('delete', true);
@@ -391,13 +387,12 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testBakeWithPlugin() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 		$this->Task->plugin = 'TestTest';
 		$this->Task->name = 'View';
 
 		//fake plugin path
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS));
-		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'View' . DS . 'view_task_comments' . DS  . 'view.ctp';
+		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'View' . DS . 'ViewTaskComments' . DS  . 'view.ctp';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
 
@@ -412,21 +407,20 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testBakeActions() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'view.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/View Task Comments/')
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'edit.ctp',
+				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/Edit View Task Comment/')
 			);
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/ViewTaskComment/')
 			);
 
@@ -440,7 +434,6 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testCustomAction() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->controllerPath = 'view_task_comments';
 		$this->Task->params['app'] = APP;
 
 		$this->Task->expects($this->any())->method('in')
@@ -448,7 +441,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'my_action.ctp',
+				TMP . 'ViewTaskComments' . DS . 'my_action.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 
@@ -468,12 +461,12 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'add.ctp',
+				TMP . 'ViewTaskComments' . DS . 'add.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->expects($this->exactly(2))->method('createFile');
@@ -494,7 +487,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 
@@ -512,7 +505,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'view.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->execute();
@@ -529,12 +522,12 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'add.ctp',
+				TMP . 'ViewTaskComments' . DS . 'add.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->expects($this->exactly(2))->method('createFile');
@@ -562,12 +555,12 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'add.ctp',
+				TMP . 'ViewTaskComments' . DS . 'add.ctp',
 				new PHPUnit_Framework_Constraint_IsAnything()
 			);
 		$this->Task->execute();
@@ -593,7 +586,7 @@ class ViewTaskTest extends CakeTestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					TMP . 'view_task_articles' . DS . $view,
+					TMP . 'ViewTaskArticles' . DS . $view,
 					new PHPUnit_Framework_Constraint_IsAnything()
 				);
 		}
@@ -620,25 +613,25 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/ViewTaskComment/')
 			);
 	
 		$this->Task->expects($this->at(4))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'view.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/ViewTaskComment/')
 			);
 
 		$this->Task->expects($this->at(5))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'add.ctp',
+				TMP . 'ViewTaskComments' . DS . 'add.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/Add View Task Comment/')
 			);
 
 		$this->Task->expects($this->at(6))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'edit.ctp',
+				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/Edit View Task Comment/')
 			);
 	
@@ -658,7 +651,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'list.ctp',
+				TMP . 'ViewTaskComments' . DS . 'list.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/ViewTaskComment/')
 			);
 		$this->Task->execute();
@@ -685,25 +678,25 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'admin_index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'admin_index.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/ViewTaskComment/')
 			);
 	
 		$this->Task->expects($this->at(4))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'admin_view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'admin_view.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/ViewTaskComment/')
 			);
 
 		$this->Task->expects($this->at(5))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'admin_add.ctp',
+				TMP . 'ViewTaskComments' . DS . 'admin_add.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/Add View Task Comment/')
 			);
 
 		$this->Task->expects($this->at(6))->method('createFile')
 			->with(
-				TMP . 'view_task_comments' . DS . 'admin_edit.ctp',
+				TMP . 'ViewTaskComments' . DS . 'admin_edit.ctp',
 				new PHPUnit_Framework_Constraint_PCREMatch('/Edit View Task Comment/')
 			);
 	
