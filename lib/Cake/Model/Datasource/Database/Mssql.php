@@ -619,12 +619,12 @@ class Mssql extends DboSource {
 
 		$table = $this->fullTableName($table);
 		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
-		$this->_connection->beginTransaction();
+		$this->begin();
 		foreach ($values as $value) {
 			$holder = implode(', ', array_map(array(&$this, 'value'), $value));
 			$this->_execute("INSERT INTO {$table} ({$fields}) VALUES ({$holder})");
 		}
-		$this->_connection->commit();
+		$this->commit();
 
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' OFF');
