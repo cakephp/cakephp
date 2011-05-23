@@ -1,6 +1,6 @@
 <?php
 /**
- * MS SQL layer for DBO
+ * MS SQL Server layer for DBO
  *
  * PHP 5
  *
@@ -26,14 +26,14 @@ App::uses('DboSource', 'Model/Datasource');
  *
  * @package       cake.libs.model.datasources.dbo
  */
-class Mssql extends DboSource {
+class Sqlserver extends DboSource {
 
 /**
  * Driver description
  *
  * @var string
  */
-	public $description = "MS SQL DBO Driver";
+	public $description = "SQL Server DBO Driver";
 
 /**
  * Starting quote character for quoted identifiers

@@ -1,6 +1,6 @@
 <?php
 /**
- * MssqlTest file
+ * SqlserverTest file
  *
  * PHP 5
  *
@@ -18,14 +18,14 @@
  */
 
 App::uses('Model', 'Model');
-App::uses('Mssql', 'Model/Datasource/Database');
+App::uses('Sqlserver', 'Model/Datasource/Database');
 
 /**
- * MssqlTestDb class
+ * SqlserverTestDb class
  *
  * @package       cake.tests.cases.libs.model.datasources.dbo
  */
-class MssqlTestDb extends Mssql {
+class SqlserverTestDb extends Sqlserver {
 
 /**
  * simulated property
@@ -102,18 +102,18 @@ class MssqlTestDb extends Mssql {
 }
 
 /**
- * MssqlTestModel class
+ * SqlserverTestModel class
  *
  * @package       cake.tests.cases.libs.model.datasources
  */
-class MssqlTestModel extends Model {
+class SqlserverTestModel extends Model {
 
 /**
  * name property
  *
- * @var string 'MssqlTestModel'
+ * @var string 'SqlserverTestModel'
  */
-	public $name = 'MssqlTestModel';
+	public $name = 'SqlserverTestModel';
 
 /**
  * useTable property
@@ -154,7 +154,7 @@ class MssqlTestModel extends Model {
  * @var array
  */
 	public $belongsTo = array(
-		'MssqlClientTestModel' => array(
+		'SqlserverClientTestModel' => array(
 			'foreignKey' => 'client_id'
 		)
 	);
@@ -186,17 +186,17 @@ class MssqlTestModel extends Model {
 }
 
 /**
- * MssqlClientTestModel class
+ * SqlserverClientTestModel class
  *
  * @package       cake.tests.cases.libs.model.datasources
  */
-class MssqlClientTestModel extends Model {
+class SqlserverClientTestModel extends Model {
 /**
  * name property
  *
- * @var string 'MssqlAssociatedTestModel'
+ * @var string 'SqlserverAssociatedTestModel'
  */
-	public $name = 'MssqlClientTestModel';
+	public $name = 'SqlserverClientTestModel';
 
 /**
  * useTable property
@@ -220,11 +220,11 @@ class MssqlClientTestModel extends Model {
 }
 
 /**
- * MssqlTestResultIterator class
+ * SqlserverTestResultIterator class
  *
  * @package       cake.tests.cases.libs.model.datasources
  */
-class MssqlTestResultIterator extends ArrayIterator {
+class SqlserverTestResultIterator extends ArrayIterator {
 /**
  * closeCursor method
  *
@@ -234,11 +234,11 @@ class MssqlTestResultIterator extends ArrayIterator {
 }
 
 /**
- * MssqlTest class
+ * SqlserverTest class
  *
  * @package       cake.tests.cases.libs.model.datasources.dbo
  */
-class MssqlTest extends CakeTestCase {
+class SqlserverTest extends CakeTestCase {
 
 /**
  * The Dbo instance to be tested
@@ -267,11 +267,11 @@ class MssqlTest extends CakeTestCase {
  */
 	public function setUp() {
 		$this->Dbo = ConnectionManager::getDataSource('test');
-		if (!($this->Dbo instanceof Mssql)) {
+		if (!($this->Dbo instanceof Sqlserver)) {
 			$this->markTestSkipped('Please configure the test datasource to use SQL Server.');
 		}
-		$this->db = new MssqlTestDb($this->Dbo->config);
-		$this->model = new MssqlTestModel();
+		$this->db = new SqlserverTestDb($this->Dbo->config);
+		$this->model = new SqlserverTestModel();
 	}
 
 /**
@@ -318,24 +318,24 @@ class MssqlTest extends CakeTestCase {
  */
 	public function testFields() {
 		$fields = array(
-			'[MssqlTestModel].[id] AS [MssqlTestModel__0]',
-			'[MssqlTestModel].[client_id] AS [MssqlTestModel__1]',
-			'[MssqlTestModel].[name] AS [MssqlTestModel__2]',
-			'[MssqlTestModel].[login] AS [MssqlTestModel__3]',
-			'[MssqlTestModel].[passwd] AS [MssqlTestModel__4]',
-			'[MssqlTestModel].[addr_1] AS [MssqlTestModel__5]',
-			'[MssqlTestModel].[addr_2] AS [MssqlTestModel__6]',
-			'[MssqlTestModel].[zip_code] AS [MssqlTestModel__7]',
-			'[MssqlTestModel].[city] AS [MssqlTestModel__8]',
-			'[MssqlTestModel].[country] AS [MssqlTestModel__9]',
-			'[MssqlTestModel].[phone] AS [MssqlTestModel__10]',
-			'[MssqlTestModel].[fax] AS [MssqlTestModel__11]',
-			'[MssqlTestModel].[url] AS [MssqlTestModel__12]',
-			'[MssqlTestModel].[email] AS [MssqlTestModel__13]',
-			'[MssqlTestModel].[comments] AS [MssqlTestModel__14]',
-			'CONVERT(VARCHAR(20), [MssqlTestModel].[last_login], 20) AS [MssqlTestModel__15]',
-			'[MssqlTestModel].[created] AS [MssqlTestModel__16]',
-			'CONVERT(VARCHAR(20), [MssqlTestModel].[updated], 20) AS [MssqlTestModel__17]'
+			'[SqlserverTestModel].[id] AS [SqlserverTestModel__0]',
+			'[SqlserverTestModel].[client_id] AS [SqlserverTestModel__1]',
+			'[SqlserverTestModel].[name] AS [SqlserverTestModel__2]',
+			'[SqlserverTestModel].[login] AS [SqlserverTestModel__3]',
+			'[SqlserverTestModel].[passwd] AS [SqlserverTestModel__4]',
+			'[SqlserverTestModel].[addr_1] AS [SqlserverTestModel__5]',
+			'[SqlserverTestModel].[addr_2] AS [SqlserverTestModel__6]',
+			'[SqlserverTestModel].[zip_code] AS [SqlserverTestModel__7]',
+			'[SqlserverTestModel].[city] AS [SqlserverTestModel__8]',
+			'[SqlserverTestModel].[country] AS [SqlserverTestModel__9]',
+			'[SqlserverTestModel].[phone] AS [SqlserverTestModel__10]',
+			'[SqlserverTestModel].[fax] AS [SqlserverTestModel__11]',
+			'[SqlserverTestModel].[url] AS [SqlserverTestModel__12]',
+			'[SqlserverTestModel].[email] AS [SqlserverTestModel__13]',
+			'[SqlserverTestModel].[comments] AS [SqlserverTestModel__14]',
+			'CONVERT(VARCHAR(20), [SqlserverTestModel].[last_login], 20) AS [SqlserverTestModel__15]',
+			'[SqlserverTestModel].[created] AS [SqlserverTestModel__16]',
+			'CONVERT(VARCHAR(20), [SqlserverTestModel].[updated], 20) AS [SqlserverTestModel__17]'
 		);
 
 		$result = $this->db->fields($this->model);
@@ -343,7 +343,7 @@ class MssqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$this->db->clearFieldMappings();
-		$result = $this->db->fields($this->model, null, 'MssqlTestModel.*');
+		$result = $this->db->fields($this->model, null, 'SqlserverTestModel.*');
 		$expected = $fields;
 		$this->assertEqual($expected, $result);
 
@@ -355,13 +355,13 @@ class MssqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$this->db->clearFieldMappings();
-		$result = $this->db->fields($this->model, null, array('*', 'MssqlClientTestModel.*'));
+		$result = $this->db->fields($this->model, null, array('*', 'SqlserverClientTestModel.*'));
 		$expected = array_merge($fields, array(
-			'[MssqlClientTestModel].[id] AS [MssqlClientTestModel__18]',
-			'[MssqlClientTestModel].[name] AS [MssqlClientTestModel__19]',
-			'[MssqlClientTestModel].[email] AS [MssqlClientTestModel__20]',
-			'CONVERT(VARCHAR(20), [MssqlClientTestModel].[created], 20) AS [MssqlClientTestModel__21]',
-			'CONVERT(VARCHAR(20), [MssqlClientTestModel].[updated], 20) AS [MssqlClientTestModel__22]'));
+			'[SqlserverClientTestModel].[id] AS [SqlserverClientTestModel__18]',
+			'[SqlserverClientTestModel].[name] AS [SqlserverClientTestModel__19]',
+			'[SqlserverClientTestModel].[email] AS [SqlserverClientTestModel__20]',
+			'CONVERT(VARCHAR(20), [SqlserverClientTestModel].[created], 20) AS [SqlserverClientTestModel__21]',
+			'CONVERT(VARCHAR(20), [SqlserverClientTestModel].[updated], 20) AS [SqlserverClientTestModel__22]'));
 		$this->assertEqual($expected, $result);
 	}
 
@@ -387,7 +387,7 @@ class MssqlTest extends CakeTestCase {
  */
 	public function testDistinctWithLimit() {
 		$this->db->read($this->model, array(
-			'fields' => array('DISTINCT MssqlTestModel.city', 'MssqlTestModel.country'),
+			'fields' => array('DISTINCT SqlserverTestModel.city', 'SqlserverTestModel.country'),
 			'limit' => 5
 		));
 		$result = $this->db->getLastQuery();
@@ -400,7 +400,7 @@ class MssqlTest extends CakeTestCase {
  * @return void
  */
 	public function testDescribe() {
-		$MssqlTableDescription = new MssqlTestResultIterator(array(
+		$SqlserverTableDescription = new SqlserverTestResultIterator(array(
 			(object) array(
 				'Default' => '((0))',
 				'Field' => 'count',
@@ -410,7 +410,7 @@ class MssqlTest extends CakeTestCase {
 				'Type' => 'integer'
 			)
 		));
-		$this->db->executeResultsStack = array($MssqlTableDescription);
+		$this->db->executeResultsStack = array($SqlserverTableDescription);
 		$dummyModel = $this->model;
 		$result = $this->db->describe($dummyModel);
 		$expected = array(
@@ -512,13 +512,13 @@ class MssqlTest extends CakeTestCase {
  * @return void
  */
 	public function testUpdateAllSyntax() {
-		$fields = array('MssqlTestModel.client_id' => '[MssqlTestModel].[client_id] + 1');
-		$conditions = array('MssqlTestModel.updated <' => date('2009-01-01 00:00:00'));
+		$fields = array('SqlserverTestModel.client_id' => '[SqlserverTestModel].[client_id] + 1');
+		$conditions = array('SqlserverTestModel.updated <' => date('2009-01-01 00:00:00'));
 		$this->db->update($this->model, $fields, null, $conditions);
 
 		$result = $this->db->getLastQuery();
-		$this->assertNoPattern('/MssqlTestModel/', $result);
-		$this->assertPattern('/^UPDATE \[mssql_test_models\]/', $result);
+		$this->assertNoPattern('/SqlserverTestModel/', $result);
+		$this->assertPattern('/^UPDATE \[sqlserver_test_models\]/', $result);
 		$this->assertPattern('/SET \[client_id\] = \[client_id\] \+ 1/', $result);
 	}
 
@@ -556,10 +556,10 @@ class MssqlTest extends CakeTestCase {
 		$this->db->insertMulti($this->model, $fields, $values);
 		$result = $this->db->simulated;
 		$expected = array(
-			'SET IDENTITY_INSERT [mssql_test_models] ON',
-			"INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (1, 'Larry', 'PhpNut')",
-			"INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (2, 'Renan', 'renan.saddam')",
-			'SET IDENTITY_INSERT [mssql_test_models] OFF'
+			'SET IDENTITY_INSERT [sqlserver_test_models] ON',
+			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (1, 'Larry', 'PhpNut')",
+			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (2, 'Renan', 'renan.saddam')",
+			'SET IDENTITY_INSERT [sqlserver_test_models] OFF'
 		);
 		$this->assertEqual($expected, $result);
 
@@ -571,8 +571,8 @@ class MssqlTest extends CakeTestCase {
 		$this->db->insertMulti($this->model, $fields, $values);
 		$result = $this->db->simulated;
 		$expected = array(
-			"INSERT INTO [mssql_test_models] ([name], [login]) VALUES ('Larry', 'PhpNut')",
-			"INSERT INTO [mssql_test_models] ([name], [login]) VALUES ('Renan', 'renan.saddam')",
+			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES ('Larry', 'PhpNut')",
+			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES ('Renan', 'renan.saddam')",
 		);
 		$this->assertEqual($expected, $result);
 	}

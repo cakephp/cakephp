@@ -79,7 +79,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Mssql;
+		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Sqlserver;
 		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
@@ -390,7 +390,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testRecursiveUnbind() {
-		if ($this->skipIf($this->db instanceof Mssql, 'The test of testRecursiveUnbind test is not compatible with Mssql, because it check for time columns.')) {
+		if ($this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.')) {
 			return;
 		}
 		
@@ -3648,7 +3648,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testFindCombinedRelations() {
-		if ($this->skipIf($this->db instanceof Mssql, 'The test of testRecursiveUnbind test is not compatible with Mssql, because it check for time columns.')) {
+		if ($this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.')) {
 			return;
 		}
 		
@@ -6228,7 +6228,7 @@ class ModelReadTest extends BaseModelTest {
 
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
-		if (!($this->db instanceof Mssql)) {
+		if (!($this->db instanceof Sqlserver)) {
 			$result = $TestModel->find('all', array('limit' => 3, 'page' => 2));
 			$expected = array(
 				array(
@@ -6623,7 +6623,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testFindCountDistinct() {
 		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite');
-		$this->skipIf($this->db instanceof Mssql, 'This test is not compatible with Mssql.');
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
 		$this->loadFixtures('Project');
 		$TestModel = new Project();
@@ -7396,7 +7396,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($result['Post']['two'], 2);
 
 		// SQL Server does not support operators in expressions
-		if (!($this->db instanceof Mssql)) {
+		if (!($this->db instanceof Sqlserver)) {
 			$Post->Author->virtualFields = array('false' => '1 = 2');
 			$result = $Post->find('first');
 			$this->assertEqual($result['Post']['two'], 2);

@@ -172,7 +172,7 @@ class CakeRequestTestCase extends CakeTestCase {
 	function testFILESParsing() {
 		$_FILES = array('data' => array('name' => array(
 			'File' => array(
-					array('data' => 'cake_mssql_patch.patch'),
+					array('data' => 'cake_sqlserver_patch.patch'),
 					array('data' => 'controller.diff'),
 					array('data' => ''),
 					array('data' => ''),
@@ -221,7 +221,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$expected = array(
 			'File' => array(
 				array('data' => array(
-					'name' => 'cake_mssql_patch.patch',
+					'name' => 'cake_sqlserver_patch.patch',
 					'type' => '',
 					'tmp_name' => '/private/var/tmp/phpy05Ywj',
 					'error' => 0,
