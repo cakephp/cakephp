@@ -76,7 +76,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::camelize($pluginPath)));
+			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::camelize($plugin)));
 		}
 	}
 
@@ -90,6 +90,7 @@ class PluginTask extends Shell {
 	public function bake($plugin) {
 		$pluginPath = Inflector::camelize($plugin);
 		$pathOptions = App::path('plugins');
+		var_dump($pathOptions);
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
