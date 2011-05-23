@@ -315,7 +315,7 @@ class App {
 				'plugins' => array(
 					APP . 'Plugin' . DS,
 					APP . 'plugins' . DS,
-					dirname(dirname(CAKE)) . DS . 'Plugin' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS,
 				)
 			);
 		}
