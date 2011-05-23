@@ -326,6 +326,7 @@ class App {
 					$type = self::$legacy[$type];
 				}
 				self::$__packages[$type] = (array)$new;
+				self::objects($type, null, false);
 			}
 			return $paths;
 		}
