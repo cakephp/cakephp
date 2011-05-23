@@ -606,6 +606,8 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testBehaviorFindCallbacks() {
+		$this->skipIf($this->db instanceof Mssql, 'This test is not compatible with Mssql.');
+
 		$Apple = new Apple();
 		$expected = $Apple->find('all');
 
@@ -805,6 +807,8 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testBehaviorBelongsToFindCallbacks() {
+		$this->skipIf($this->db instanceof Mssql, 'This test is not compatible with Mssql.');
+
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasMany' => array('Child'), 'hasOne' => array('Sample')), false);
 		$expected = $Apple->find('all');
