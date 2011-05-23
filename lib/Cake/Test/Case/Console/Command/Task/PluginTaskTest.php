@@ -42,16 +42,21 @@ class PluginTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Task = $this->getMock('PluginTask', 
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array($out, $out, $in)
+			array($this->out, $this->out, $this->in)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
 		
 		$this->_paths = $paths = App::path('plugins');
+		foreach ($paths as $i => $p) {
+			if (!is_dir($p)) {
+				array_splice($paths, $i, 1);
+			}
+		}
 		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
 		App::build(array('plugins' => $paths));
 	}
@@ -159,4 +164,30 @@ class PluginTaskTest extends CakeTestCase {
 		$Folder->delete();
 	}
 
+/**
+ * Test that findPath ignores paths that don't exist.
+ *
+ * @return void
+ */
+	public function testFindPathNonExistant() {
+		$paths = App::path('plugins');
+		$last = count($paths);
+		$paths[] = '/fake/path';
+
+		$this->Task = $this->getMock('PluginTask', 
+			array('in', 'out', 'err', 'createFile', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+		$this->Task->path = TMP . 'tests' . DS;
+
+		// Make sure the added path is filtered out.
+		$this->Task->expects($this->exactly($last))
+			->method('out');
+	
+		$this->Task->expects($this->once())
+			->method('in')
+			->will($this->returnValue($last));
+
+		$this->Task->findPath($paths);
+	}
 }

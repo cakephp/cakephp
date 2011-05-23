@@ -76,7 +76,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::camelize($pluginPath)));
+			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::camelize($plugin)));
 		}
 	}
 
@@ -163,6 +163,11 @@ class PluginTask extends Shell {
  */
 	public function findPath($pathOptions) {
 		$valid = false;
+		foreach ($pathOptions as $i =>$path) {
+			if(!is_dir($path)) {
+				array_splice($pathOptions, $i, 1);
+			}
+		}
 		$max = count($pathOptions);
 		while (!$valid) {
 			foreach ($pathOptions as $i => $option) {
