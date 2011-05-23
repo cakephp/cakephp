@@ -85,6 +85,8 @@ class CakePluginTest extends CakeTestCase {
 		CakePlugin::load('TestPlugin', array('bootstrap' => true, 'routes' => true));
 		$this->assertTrue(CakePlugin::loaded('TestPlugin'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
+
+		CakePlugin::routes();
 		$this->assertEquals('loaded plugin routes', Configure::read('CakePluginTest.test_plugin.routes'));
 	}
 
@@ -159,6 +161,7 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testLoadMultipleWithDefaultsMissingFile() {
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'), array('bootstrap' => true, 'routes' => true));
+		CakePlugin::routes();
 	}
 
 /**
@@ -229,6 +232,8 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function testLoadAllWithDefaultsAndOverride() {
 		CakePlugin::loadAll(array('bootstrap' => true, 'TestPlugin' => array('routes' => true)));
+		CakePlugin::routes();
+
 		$expected = array('PluginJs', 'TestPlugin', 'TestPluginTwo');
 		$this->assertEquals($expected, CakePlugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('CakePluginTest.js_plugin.bootstrap'));

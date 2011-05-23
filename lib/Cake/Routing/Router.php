@@ -183,7 +183,7 @@ class Router {
 	}
 
 /**
- * Gets the named route elements for use in app/config/routes.php
+ * Gets the named route elements for use in app/Config/routes.php
  *
  * @return array Named route elements
  * @see Router::$__namedExpressions

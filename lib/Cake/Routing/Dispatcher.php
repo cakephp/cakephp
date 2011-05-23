@@ -237,6 +237,7 @@ class Dispatcher {
  */
 	protected function _loadRoutes() {
 		include APP . 'Config' . DS . 'routes.php';
+		CakePlugin::routes();
 	}
 
 /**

@@ -74,9 +74,6 @@ class CakePlugin {
 		if (!empty(self::$_plugins[$plugin]['bootstrap'])) {
 			self::bootstrap($plugin);
 		}
-		if (!empty(self::$_plugins[$plugin]['routes'])) {
-			self::routes($plugin);
-		}
 	}
 
 /**
@@ -149,12 +146,19 @@ class CakePlugin {
 	}
 
 /**
- * Loads the routes file for a plugin
+ * Loads the routes file for a plugin, or all plugins configured to load their respective routes file
  *
- * @param string $plugin name of the plugin
+ * @param string $plugin name of the plugin, if null will operate on all plugins having enabled the
+ * loading of routes files
  * @return boolean
  */
-	public static function routes($plugin) {
+	public static function routes($plugin = null) {
+		if ($plugin === null) {
+			foreach (self::loaded() as $p) {
+				self::routes($p);
+			}
+			return true;
+		}
 		$config = self::$_plugins[$plugin];
 		if ($config['routes'] === false) {
 			return false;
