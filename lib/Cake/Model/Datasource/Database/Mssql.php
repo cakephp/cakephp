@@ -705,7 +705,7 @@ class Mssql extends DboSource {
  * @param string $sql SQL statement
  * @param array $params list of params to be bound to query (supported only in select)
  * @param array $prepareOptions Options to be used in the prepare statement
- * @return PDOStatement if query executes with no problem, true as the result of a succesfull
+ * @return mixed PDOStatement if query executes with no problem, true as the result of a succesfull, false on error
  * query returning no rows, suchs as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
@@ -713,7 +713,14 @@ class Mssql extends DboSource {
 			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
 			return parent::_execute($sql, $params, $prepareOptions);
 		}
-		return $this->_connection->exec($sql);
+		try {
+			$this->_connection->exec($sql);
+			return true;
+		} catch (PDOException $e) {
+			$this->_results = null;
+			$this->error = $e->getMessage();
+			return false;
+		}
 	}
 
 }

@@ -451,7 +451,7 @@ class DboSource extends DataSource {
  * @param string $sql SQL statement
  * @param array $params list of params to be bound to query
  * @param array $prepareOptions Options to be used in the prepare statement
- * @return PDOStatement if query executes with no problem, true as the result of a succesfull
+ * @return mixed PDOStatement if query executes with no problem, true as the result of a succesfull, false on error
  * query returning no rows, suchs as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
