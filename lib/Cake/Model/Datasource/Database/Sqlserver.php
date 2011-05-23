@@ -58,6 +58,13 @@ class Sqlserver extends DboSource {
 	protected $_fieldMappings = array();
 
 /**
+ * Storing the last affected value
+ *
+ * @var mixed
+ */
+	protected $_lastAffected = false;
+
+/**
  * Base configuration settings for MS SQL driver
  *
  * @var array
@@ -700,6 +707,19 @@ class Sqlserver extends DboSource {
 	}
 
 /**
+ * Returns number of affected rows in previous database operation. If no previous operation exists,
+ * this returns false.
+ *
+ * @return integer Number of affected rows
+ */
+	public function lastAffected() {
+		$affected = parent::lastAffected();
+		if ($affected === null && $this->_lastAffected !== false) {
+			return $this->_lastAffected;
+		}
+		return $affected;
+	}
+/**
  * Executes given SQL statement.
  *
  * @param string $sql SQL statement
@@ -709,12 +729,19 @@ class Sqlserver extends DboSource {
  * query returning no rows, suchs as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
+		$this->_lastAffected = false;
 		if (strncasecmp($sql, 'SELECT', 6) == 0) {
 			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
 			return parent::_execute($sql, $params, $prepareOptions);
 		}
 		try {
-			$this->_connection->exec($sql);
+			$this->_lastAffected = $this->_connection->exec($sql);
+			if ($this->_lastAffected === false) {
+				$this->_results = null;
+				$error = $this->_connection->errorInfo();
+				$this->error = $error[2];
+				return false;
+			}
 			return true;
 		} catch (PDOException $e) {
 			$this->_results = null;
