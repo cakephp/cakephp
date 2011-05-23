@@ -509,20 +509,6 @@ class App {
 	}
 
 /**
- * Allows you to modify the object listings that App maintains inside of it
- * Useful for testing
- *
- * @param string $type Type of object listing you are changing
- * @param array $values The values $type should be set to.
- * @return void
- */
-	public static function setObjects($type, $values) {
-		list($plugin, $type) = pluginSplit($type);
-		$cacheLocation = empty($plugin) ? 'app' : $plugin;
-		self::$__objects[$cacheLocation][$type] = $values;
-	}
-
-/**
  * Declares a package for a class. This package location will be used
  * by the automatic class loader if the class is tried to be used
  *
