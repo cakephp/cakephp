@@ -90,7 +90,6 @@ class PluginTask extends Shell {
 	public function bake($plugin) {
 		$pluginPath = Inflector::camelize($plugin);
 		$pathOptions = App::path('plugins');
-		var_dump($pathOptions);
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
@@ -164,6 +163,11 @@ class PluginTask extends Shell {
  */
 	public function findPath($pathOptions) {
 		$valid = false;
+		foreach ($pathOptions as $i =>$path) {
+			if(!is_dir($path)) {
+				array_splice($pathOptions, $i, 1);
+			}
+		}
 		$max = count($pathOptions);
 		while (!$valid) {
 			foreach ($pathOptions as $i => $option) {
