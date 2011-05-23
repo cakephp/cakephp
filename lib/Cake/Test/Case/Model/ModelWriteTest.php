@@ -415,7 +415,12 @@ class ModelWriteTest extends BaseModelTest {
 		}
 
 		$this->loadFixtures('CategoryThread');
-		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD COLUMN child_count INTEGER");
+		$column = 'COLUMN ';
+		if ($this->db instanceof Sqlserver) {
+			$column = '';
+		}
+		$column .= $this->db->buildColumn(array('name' => 'child_count', 'type' => 'integer'));
+		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . ' ADD ' . $column);
 		$Category = new CategoryThread();
 		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
 		$this->assertFalse(empty($result));
@@ -424,7 +429,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Category->belongsTo['ParentCategory']['counterCache'] = 'child_count';
 		$Category->updateCounterCache(array('parent_id' => 5));
 		$result = Set::extract($Category->find('all', array('conditions' => array('CategoryThread.id' => 5))), '{n}.CategoryThread.child_count');
-		$expected = array_fill(0, 1, 1);
+		$expected = array(1);
 		$this->assertEqual($expected, $result);
 	}
 
