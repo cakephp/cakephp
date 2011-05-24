@@ -41,8 +41,10 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 			'ConnectionManager',
 			'Datasource' . DS . 'DboSource',
 			'Datasource' . DS . 'Database' . DS . 'Mysql',
+			'Datasource' . DS . 'Database' . DS . 'Oracle',
 			'Datasource' . DS . 'Database' . DS . 'Postgres',
-			'Datasource' . DS . 'Database' . DS . 'Sqlite'
+			'Datasource' . DS . 'Database' . DS . 'Sqlite',
+			'Datasource' . DS . 'Database' . DS . 'Sqlserver'
 		);
 		foreach ($tasks as $task) {
 			$suite->addTestFile($path . $task . 'Test.php');
