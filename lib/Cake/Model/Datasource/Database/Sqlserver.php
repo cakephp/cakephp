@@ -241,7 +241,7 @@ class Sqlserver extends DboSource {
 		if ($column === 'float' && strpos($data, '.') !== false) {
 			return rtrim($data, '0');
 		}
-		if ($parent === "''") {
+		if ($parent === "''" && ($column === null || $column !== 'string')) {
 			return 'NULL';
 		}
 		if ($parent != null) {
