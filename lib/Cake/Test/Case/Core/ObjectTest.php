@@ -679,7 +679,7 @@ class ObjectTest extends CakeTestCase {
 			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
-		));
+		), true);
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
 
@@ -705,8 +705,6 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction('/request_action/normal_request_action');
 		$expected = 'Hello World';
 		$this->assertEqual($expected, $result);
-
-		App::build();
 	}
 
 /**
@@ -717,7 +715,7 @@ class ObjectTest extends CakeTestCase {
 	function testRequestActionPlugins() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-		));
+		), true);
 		CakePlugin::loadAll();
 		Router::reload();
 
@@ -744,9 +742,6 @@ class ObjectTest extends CakeTestCase {
 		);
 		$expected = 25;
 		$this->assertEqual($expected, $result);
-
-		App::build();
-		CakePlugin::unload();
 	}
 
 /**
@@ -760,7 +755,7 @@ class ObjectTest extends CakeTestCase {
 			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
-		));
+		), true);
 		CakePlugin::loadAll();
 
 		$result = $this->object->requestAction(
@@ -802,8 +797,6 @@ class ObjectTest extends CakeTestCase {
 			array('pass' => array(5), 'named' => array('param' => 'value'))
 		);
 		$this->assertTrue($result);
-
-		App::build();
 	}
 
 /**
