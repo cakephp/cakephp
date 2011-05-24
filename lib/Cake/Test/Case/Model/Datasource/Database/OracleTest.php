@@ -39,19 +39,11 @@ class DboOracleTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		//$this->_initDb();
+		$this->Dbo = ConnectionManager::getDataSource('test');
+		if (!($this->Dbo instanceof Oracle)) {
+			$this->markTestSkipped('The Oracle extension is not available.');
+		}
 	}
-
-/**
- * skip method
- *
- * @access public
- * @return void
- */
-    function skip() {
-    	//$this->_initDb();
-    	$this->skipUnless($this->db->config['datasource'] == 'Database/Oracle', '%s Oracle connection not available');
-    }
 
 /**
  * testLastErrorStatement method
@@ -60,10 +52,6 @@ class DboOracleTest extends CakeTestCase {
  * @return void
  */
 	function testLastErrorStatement() {
-		if ($this->skip('testLastErrorStatement')) {
-			return;
-		}
-
 		$this->expectError();
 		$this->db->execute("SELECT ' FROM dual");
 		$e = $this->db->lastError();
@@ -78,10 +66,6 @@ class DboOracleTest extends CakeTestCase {
  * @return void
  */
 	function testLastErrorConnect() {
-		if ($this->skip('testLastErrorConnect')) {
-			return;
-		}
-
 		$config = $this->db->config;
 		$old_pw = $this->db->config['password'];
 		$this->db->config['password'] = 'keepmeout';
