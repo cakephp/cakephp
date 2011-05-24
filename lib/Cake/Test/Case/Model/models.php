@@ -3217,6 +3217,24 @@ class TransactionManyTestModel extends CakeTestModel {
 	}
 }
 
+class Site extends CakeTestModel {
+	var $name = 'Site';
+	var $useTable = 'sites';
+
+	var $hasAndBelongsToMany = array(
+		'Domain' => array('unique' => true),
+		);
+}
+
+class Domain extends CakeTestModel {
+	var $name = 'Domain';
+	var $useTable = 'domains';
+
+	var $hasAndBelongsToMany = array(
+		'Site' => array('unique' => true),
+		);
+}
+
 /**
  * TestModel class
  *
