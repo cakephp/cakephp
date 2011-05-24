@@ -3834,6 +3834,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testUpdateAllEmptyValues() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
 		$this->loadFixtures('Author', 'Post');
 		$model = new Author();
 		$result = $model->updateAll(array('user' => '""'));
@@ -3953,6 +3955,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveAllEmptyData() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
 		$this->loadFixtures('Article', 'ProductUpdateAll', 'Comment', 'Attachment');
 		$model = new Article();
 		$result = $model->saveAll(array(), array('validate' => 'first'));
