@@ -1,11 +1,11 @@
 <?php
 
 /**
- * AppImportTest class
+ * AppTest class
  *
  * @package       cake.tests.cases.libs
  */
-class AppImportTest extends CakeTestCase {
+class AppTest extends CakeTestCase {
 
 /**
  * tearDown method
