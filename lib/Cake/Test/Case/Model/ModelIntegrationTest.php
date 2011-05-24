@@ -634,6 +634,8 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testDeconstructFieldsTime() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
 		$this->loadFixtures('Apple');
 		$TestModel = new Apple();
 
@@ -721,6 +723,8 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testDeconstructFieldsDateTime() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
 		$this->loadFixtures('Apple');
 		$TestModel = new Apple();
 

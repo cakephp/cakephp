@@ -79,8 +79,8 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle;
-		$message = 'Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
+		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Sqlserver;
+		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
 			return;
@@ -367,13 +367,6 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testVeryStrangeUseCase() {
-		$message = "skipping SELECT * FROM ? WHERE ? = ? AND ? = ?; prepared query.";
-		$message .= " MSSQL is incompatible with this test.";
-
-		if ($this->skipIf($this->db instanceof Mssql, $message)) {
-			return;
-		}
-
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
@@ -397,6 +390,10 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testRecursiveUnbind() {
+		if ($this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.')) {
+			return;
+		}
+		
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
 		$TestModel->recursive = 2;
@@ -2992,7 +2989,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testSelfAssociationAfterFind() {
-		$this->loadFixtures('Apple');
+		$this->loadFixtures('Apple', 'Sample');
 		$afterFindModel = new NodeAfterFind();
 		$afterFindModel->recursive = 3;
 		$afterFindData = $afterFindModel->find('all');
@@ -3651,6 +3648,10 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testFindCombinedRelations() {
+		if ($this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.')) {
+			return;
+		}
+		
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
 
@@ -3947,7 +3948,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$TestModel = new Basket();
 		$recursive = 3;
-		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+		$result = $TestModel->find('all', compact('recursive'));
 
 		$expected = array(
 			array(
@@ -6227,7 +6228,7 @@ class ModelReadTest extends BaseModelTest {
 
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
-		if ($this->db instanceof Mssql) {
+		if (!($this->db instanceof Sqlserver)) {
 			$result = $TestModel->find('all', array('limit' => 3, 'page' => 2));
 			$expected = array(
 				array(
@@ -6621,13 +6622,9 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testFindCountDistinct() {
-		$skip = $this->skipIf(
-			$this->db instanceof Sqlite,
-			'SELECT COUNT(DISTINCT field) is not compatible with SQLite'
-		);
-		if ($skip) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite');
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
 		$this->loadFixtures('Project');
 		$TestModel = new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
@@ -7398,10 +7395,13 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->find('first');
 		$this->assertEqual($result['Post']['two'], 2);
 
-		$Post->Author->virtualFields = array('false' => '1 = 2');
-		$result = $Post->find('first');
-		$this->assertEqual($result['Post']['two'], 2);
-		$this->assertFalse((bool)$result['Author']['false']);
+		// SQL Server does not support operators in expressions
+		if (!($this->db instanceof Sqlserver)) {
+			$Post->Author->virtualFields = array('false' => '1 = 2');
+			$result = $Post->find('first');
+			$this->assertEqual($result['Post']['two'], 2);
+			$this->assertFalse((bool)$result['Author']['false']);
+		}
 
 		$result = $Post->find('first',array('fields' => array('author_id')));
 		$this->assertFalse(isset($result['Post']['two']));
@@ -7470,7 +7470,7 @@ class ModelReadTest extends BaseModelTest {
  *
  */
 	public function testVirtualFieldsMysql() {
-		if ($this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test is not compatible with Postgres')) {
+		if ($this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test only compatible with Mysql')) {
 			return;
 		}
 		$this->loadFixtures('Post', 'Author');

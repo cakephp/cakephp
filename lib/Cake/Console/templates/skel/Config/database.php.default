@@ -2,7 +2,7 @@
 /**
  * This is core configuration file.
  *
- * Use it to configure core behaviour ofCake.
+ * Use it to configure core behaviour of Cake.
  *
  * PHP 5
  *
@@ -31,7 +31,7 @@
  *		Database/Mysql 		- MySQL 4 & 5,
  *		Database/Sqlite		- SQLite (PHP5 only),
  *		Database/Postgres	- PostgreSQL 7 and higher,
- *		Database/Mssql		- Microsoft SQL Server 2000 and higher,
+ *		Database/Sqlserver	- Microsoft SQL Server 2005 and higher,
  *		Database/Oracle		- Oracle 8 and higher
  *
  * You can add custom database drivers (or override existing drivers) by adding the

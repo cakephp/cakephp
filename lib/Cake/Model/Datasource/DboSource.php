@@ -450,10 +450,11 @@ class DboSource extends DataSource {
  *
  * @param string $sql SQL statement
  * @param array $params list of params to be bound to query
- * @return PDOStatement if query executes with no problem, true as the result of a succesfull
+ * @param array $prepareOptions Options to be used in the prepare statement
+ * @return mixed PDOStatement if query executes with no problem, true as the result of a succesfull, false on error
  * query returning no rows, suchs as a CREATE statement, false otherwise
  */
-	protected function _execute($sql, $params = array()) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$sql = trim($sql);
 		if (preg_match('/^(?:CREATE|ALTER|DROP)/i', $sql)) {
 			$statements = array_filter(explode(';', $sql));
@@ -464,7 +465,7 @@ class DboSource extends DataSource {
 		}
 
 		try {
-			$query = $this->_connection->prepare($sql);
+			$query = $this->_connection->prepare($sql, $prepareOptions);
 			$query->setFetchMode(PDO::FETCH_LAZY);
 			if (!$query->execute($params)) {
 				$this->_results = $query;
