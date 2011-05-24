@@ -281,7 +281,6 @@ class SqlserverTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Dbo);
-		unset($this->db);
 		unset($this->model);
 	}
 
