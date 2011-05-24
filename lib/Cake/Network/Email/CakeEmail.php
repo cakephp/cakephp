@@ -221,7 +221,7 @@ class CakeEmail {
  *
  * @var string
  */
-	protected $_transportName = 'mail';
+	protected $_transportName = 'Mail';
 
 /**
  * Instance of transport class
