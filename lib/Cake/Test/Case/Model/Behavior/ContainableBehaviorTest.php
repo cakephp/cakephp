@@ -3511,8 +3511,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		}
 
 		$db = ConnectionManager::getDataSource('test2');
-		$this->_fixtures[$this->_fixtureClassMap['User']]->create($db);
-		$this->_fixtures[$this->_fixtureClassMap['User']]->insert($db);
+		$this->fixtureManager->loadSingle('User', $db);
 
 		$this->Article->User->setDataSource('test2');
 
@@ -3522,8 +3521,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 		));
 		$this->assertTrue(isset($result[0]['Article']));
 		$this->assertTrue(isset($result[0]['User']));
-
-		$this->_fixtures[$this->_fixtureClassMap['User']]->drop($db);
 	}
 /**
  * test that autoFields doesn't splice in columns that aren't part of the join.
