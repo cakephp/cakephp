@@ -399,7 +399,8 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel->find('all'), $expected);
 
 		$db2 = ConnectionManager::getDataSource('test2');
-		$this->loadFixtures('User', 'Comment');
+		$this->fixtureManager->loadSingle('User', $db2);
+		$this->fixtureManager->loadSingle('Comment', $db2);
 		$this->assertEqual($TestModel->find('count'), 3);
 
 		$TestModel->User->setDataSource('test2');

@@ -149,11 +149,11 @@ class CakeFixtureManager {
  * @return void
  */
 	protected function _setupTable($fixture, $db = null, $drop = true) {
-		if (!empty($fixture->created)) {
-			return;
-		}
 		if (!$db) {
 			$db = $this->_db;
+		}
+		if (!empty($fixture->created) && $fixture->created == $db->configKeyName) {
+			return;
 		}
 
 		$cacheSources = $db->cacheSources;
@@ -165,10 +165,10 @@ class CakeFixtureManager {
 		if ($drop && in_array($table, $sources)) {
 			$fixture->drop($db);
 			$fixture->create($db);
-			$fixture->created = true;
+			$fixture->created = $db->configKeyName;
 		} elseif (!in_array($table, $sources)) {
 			$fixture->create($db);
-			$fixture->created = true;
+			$fixture->created = $db->configKeyName;
 		}
 	}
 
