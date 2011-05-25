@@ -440,7 +440,7 @@ class Controller extends Object {
  */
 	public function setRequest(CakeRequest $request) {
 		$this->request = $request;
-		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
+		$this->plugin = isset($request->params['plugin']) ? Inflector::camelize($request->params['plugin']) : null;
 		$this->view = isset($request->params['action']) ? $request->params['action'] : null;
 		if (isset($request->params['pass']) && isset($request->params['named'])) {
 			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
@@ -460,15 +460,14 @@ class Controller extends Object {
  * @return void
  */
 	protected function __mergeVars() {
-		$pluginName = $pluginController = $plugin = null;
+		$pluginController = $pluginDot = null;
 
 		if (!empty($this->plugin)) {
-			$pluginName = Inflector::camelize($this->plugin);
-			$pluginController = $pluginName . 'AppController';
+			$pluginController = $this->plugin . 'AppController';
 			if (!is_subclass_of($this, $pluginController)) {
 				$pluginController = null;
 			}
-			$plugin = $pluginName . '.';
+			$pluginDot = $this->plugin . '.';
 		}
 
 		if (is_subclass_of($this, $this->_mergeParent) || !empty($pluginController)) {
@@ -477,13 +476,13 @@ class Controller extends Object {
 			$merge = array('components', 'helpers');
 
 			if ($uses == $this->uses && !empty($this->uses)) {
-				if (!in_array($plugin . $this->modelClass, $this->uses)) {
-					array_unshift($this->uses, $plugin . $this->modelClass);
-				} elseif ($this->uses[0] !== $plugin . $this->modelClass) {
+				if (!in_array($pluginDot . $this->modelClass, $this->uses)) {
+					array_unshift($this->uses, $pluginDot . $this->modelClass);
+				} elseif ($this->uses[0] !== $pluginDot . $this->modelClass) {
 					$this->uses = array_flip($this->uses);
-					unset($this->uses[$plugin . $this->modelClass]);
+					unset($this->uses[$pluginDot . $this->modelClass]);
 					$this->uses = array_flip($this->uses);
-					array_unshift($this->uses, $plugin . $this->modelClass);
+					array_unshift($this->uses, $pluginDot . $this->modelClass);
 				}
 			} elseif (
 				($this->uses !== null || $this->uses !== false) &&
@@ -494,7 +493,7 @@ class Controller extends Object {
 			$this->_mergeVars($merge, $this->_mergeParent, true);
 		}
 
-		if ($pluginController && $pluginName != null) {
+		if ($pluginController && $this->plugin != null) {
 			$merge = array('components', 'helpers');
 			$appVars = get_class_vars($pluginController);
 			if (

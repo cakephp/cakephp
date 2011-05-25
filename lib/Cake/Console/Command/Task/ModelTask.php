@@ -741,7 +741,7 @@ class ModelTask extends BakeTask {
 		$data = array_merge($defaults, $data);
 
 		$this->Template->set($data);
-		$this->Template->set('plugin', Inflector::camelize($this->plugin));
+		$this->Template->set('plugin', $this->plugin);
 		$out = $this->Template->generate('classes', 'model');
 
 		$path = $this->getPath();

@@ -630,7 +630,6 @@ class App {
 		}
 		list($plugin, $name) = pluginSplit($name);
 		if (!empty($plugin)) {
-			$plugin = Inflector::camelize($plugin);
 			if (!CakePlugin::loaded($plugin)) {
 				return false;
 			}

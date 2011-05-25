@@ -316,7 +316,11 @@ class View extends Object {
 		}
 
 		if (isset($options['cache'])) {
-			$keys = array_merge(array($plugin, $name), array_keys($options), array_keys($data));
+			$underscored = null;
+			if ($plugin) {
+				$underscored = Inflector::underscore($plugin);
+			}
+			$keys = array_merge(array($underscored, $name), array_keys($options), array_keys($data));
 			$caching = array(
 				'config' => $this->elementCache,
 				'key' => implode('_', $keys)
@@ -803,7 +807,6 @@ class View extends Object {
 		$viewPaths = App::path('View');
 		$corePaths = array_flip(App::core('View'));
 		if (!empty($plugin)) {
-			$plugin = Inflector::camelize($plugin);
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!isset($corePaths[$viewPaths[$i]])) {

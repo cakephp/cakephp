@@ -76,7 +76,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::camelize($plugin)));
+			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . $plugin));
 		}
 	}
 
@@ -88,20 +88,19 @@ class PluginTask extends Shell {
  * @return bool
  */
 	public function bake($plugin) {
-		$pluginPath = Inflector::camelize($plugin);
 		$pathOptions = App::path('plugins');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
 		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s", $plugin));
-		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $pluginPath));
+		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $plugin));
 		$this->hr();
 
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
-			$Folder = new Folder($this->path . $pluginPath);
+			$Folder = new Folder($this->path . $plugin);
 			$directories = array(
 				'Config' . DS . 'schema',
 				'Model' . DS . 'Behavior',
@@ -119,7 +118,7 @@ class PluginTask extends Shell {
 			);
 
 			foreach ($directories as $directory) {
-				$dirPath = $this->path . $pluginPath . DS . $directory;
+				$dirPath = $this->path . $plugin . DS . $directory;
 				$Folder->create($dirPath);
 				$File = new File($dirPath . DS . 'empty', true);
 			}
@@ -139,7 +138,7 @@ class PluginTask extends Shell {
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n\n";
 			$out .= "?>";
-			$this->createFile($this->path . $pluginPath. DS . 'Controller' . DS . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin. DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$modelFileName = $plugin . 'AppModel.php';
 
@@ -147,10 +146,10 @@ class PluginTask extends Shell {
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n\n";
 			$out .= "?>";
-			$this->createFile($this->path . $pluginPath . DS . 'Model' . DS . $modelFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
 
 			$this->hr();
-			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $pluginPath), 2);
+			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
 		}
 
 		return true;

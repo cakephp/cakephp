@@ -261,8 +261,12 @@ class FormHelper extends AppHelper {
 				$options['action'] = $this->request->params['action'];
 			}
 
+			$plugin = null;
+			if ($this->plugin) {
+				$plugin = Inflector::underscore($this->plugin);
+			}
 			$actionDefaults = array(
-				'plugin' => $this->plugin,
+				'plugin' => $plugin,
 				'controller' => $this->_View->viewPath,
 				'action' => $options['action'],
 			);

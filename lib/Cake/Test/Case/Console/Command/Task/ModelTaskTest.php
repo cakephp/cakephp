@@ -555,7 +555,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeFixture() {
-		$this->Task->plugin = 'test_plugin';
+		$this->Task->plugin = 'TestPlugin';
 		$this->Task->interactive = true;
 		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('BakeArticle', 'bake_articles');
 		$this->Task->bakeFixture('BakeArticle', 'bake_articles');
@@ -571,7 +571,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeTest() {
-		$this->Task->plugin = 'test_plugin';
+		$this->Task->plugin = 'TestPlugin';
 		$this->Task->interactive = true;
 		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'BakeArticle');
 		$this->Task->bakeTest('BakeArticle');

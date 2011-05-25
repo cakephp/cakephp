@@ -206,7 +206,7 @@ class CakeSchema extends Object {
 		$db = ConnectionManager::getDataSource($connection);
 
 		if (isset($this->plugin)) {
-			App::uses(Inflector::camelize($this->plugin) . 'AppModel', $this->plugin . '.Model');
+			App::uses($this->plugin . 'AppModel', $this->plugin . '.Model');
 		}
 
 		$tables = array();
