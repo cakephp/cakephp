@@ -319,7 +319,7 @@ class AppTest extends CakeTestCase {
 		App::build(array(
 			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		));
+		), true);
 		CakePlugin::loadAll();
 
 		$result = App::objects('TestPlugin.model');
@@ -333,11 +333,9 @@ class AppTest extends CakeTestCase {
 		$this->assertTrue(in_array('TestPluginPersisterOne', $result));
 
 		$result = App::objects('TestPlugin.helper');
-		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
 		$this->assertEquals($expected, $result);
 		$result = App::objects('TestPlugin.View/Helper');
-		sort($result);
 		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
 		$this->assertEquals($expected, $result);
 
