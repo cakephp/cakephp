@@ -502,6 +502,7 @@ class App {
 			if ($plugin) {
 				return $objects;
 			}
+			sort($objects);
 			self::$__objects[$cacheLocation][$name] = $objects;
 			self::$_objectCacheChange = true;
 		}
