@@ -543,13 +543,13 @@ class AuthComponent extends Component {
 
 		if ($key == null) {
 			return CakeSession::read(self::$sessionKey);
-		} else {
-			$user = CakeSession::read(self::$sessionKey);
-			if (isset($user[$key])) {
-				return $user[$key];
-			}
-			return null;
 		}
+
+		$user = CakeSession::read(self::$sessionKey);
+		if (isset($user[$key])) {
+			return $user[$key];
+		}
+		return null;
 	}
 
 /**
