@@ -3592,3 +3592,21 @@ class TransactionTestModel extends CakeTestModel {
 		$this->saveAll($data, array('atomic' => true, 'callbacks' => false));
 	}
 }
+
+class Site extends CakeTestModel {
+	var $name = 'Site';
+	var $useTable = 'sites';
+
+	var $hasAndBelongsToMany = array(
+		'Domain' => array('unique' => true),
+		);
+}
+
+class Domain extends CakeTestModel {
+	var $name = 'Domain';
+	var $useTable = 'domains';
+
+	var $hasAndBelongsToMany = array(
+		'Site' => array('unique' => true),
+		);
+}
