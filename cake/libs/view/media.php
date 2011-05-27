@@ -131,7 +131,7 @@ class MediaView extends View {
 			$this->mimeType = array_merge($this->mimeType, $mimeType);
 		}
 
-		if (isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
+		if (isset($extension) && isset($this->mimeType[strtolower($extension)]) && connection_status() == 0) {
 			$chunkSize = 8192;
 			$buffer = '';
 			$fileSize = @filesize($path);
@@ -202,7 +202,7 @@ class MediaView extends View {
 				}
 				$this->_header(array(
 					'Last-Modified: ' . $modified,
-					'Content-Type: ' . $this->mimeType[$extension],
+					'Content-Type: ' . $this->mimeType[strtolower($extension)],
 					'Content-Length: ' . $fileSize));
 			}
 			$this->_output();
