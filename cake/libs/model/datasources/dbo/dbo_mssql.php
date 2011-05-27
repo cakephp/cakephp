@@ -235,7 +235,7 @@ class DboMssql extends DboSource {
 			return $cache;
 		}
 
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $table . "'", false);
 
 		$fields = false;
@@ -263,7 +263,7 @@ class DboMssql extends DboSource {
 				$fields[$field]['length'] = null;
 			}
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->__cacheDescription($this->fullTableName($model, false, false), $fields);
 		return $fields;
 	}
 

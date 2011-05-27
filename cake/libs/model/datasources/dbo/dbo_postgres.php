@@ -205,7 +205,7 @@ class DboPostgres extends DboSource {
  */
 	function &describe(&$model) {
 		$fields = parent::describe($model);
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		$this->_sequenceMap[$table] = array();
 
 		if ($fields === null) {
@@ -522,7 +522,7 @@ class DboPostgres extends DboSource {
  */
 	function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		if ($table) {
 			$indexes = $this->query("SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) as statement, c2.reltablespace
 			FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
@@ -976,5 +976,14 @@ class DboPostgres extends DboSource {
 				return parent::renderStatement($type, $data);
 			break;
 		}
+	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	function getSchemaName() {
+		return !empty($this->config['schema']) ? $this->config['schema'] : false;
 	}
 }

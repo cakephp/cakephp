@@ -655,7 +655,7 @@ class DboOracle extends DboSource {
  */
 	function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		if ($table) {
 			$indexes = $this->query('SELECT
 			  cc.table_name,
@@ -1155,5 +1155,14 @@ class DboOracle extends DboSource {
 				}
 			}
 			return $out;
+		}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+		function getSchemaName() {
+			return !empty($this->config['login']) ? $this->config['login'] : false;
 		}
 }

@@ -257,7 +257,7 @@ class DboMysqlBase extends DboSource {
  */
 	function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model);
+		$table = $this->fullTableName($model, true, false);
 		if ($table) {
 			$indexes = $this->query('SHOW INDEX FROM ' . $table);
 			if (isset($indexes[0]['STATISTICS'])) {
@@ -805,4 +805,14 @@ class DboMysql extends DboMysqlBase {
 		}
 		return false;
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	function getSchemaName() {
+		return !empty($this->config['database']) ? $this->config['database'] : false;
+	}
+
 }

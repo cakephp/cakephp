@@ -694,21 +694,33 @@ class DboSource extends DataSource {
  *
  * @param mixed $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
+ * @param boolean $schema Whether you want the schema name included.
  * @return string Full quoted table name
  * @access public
  */
-	function fullTableName($model, $quote = true) {
+	function fullTableName($model, $quote = true, $schema = true) {
+		$schemaName = $this->getSchemaName();
 		if (is_object($model)) {
+			$schemaName = $model->getDataSource()->getSchemaName();
 			$table = $model->tablePrefix . $model->table;
 		} elseif (isset($this->config['prefix'])) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
 			$table = strval($model);
 		}
+
 		if ($quote) {
-			return $this->name($table);
+			if ($schema && $schemaName) {
+				return $this->name($schemaName) . '.' . $this->name($table);
+			} else {
+				return $this->name($table);
+			}
 		}
-		return $table;
+		if ($schema && $schemaName) {
+			return $schemaName . '.' . $table;
+		} else {
+			return $table;
+		}
 	}
 
 /**
