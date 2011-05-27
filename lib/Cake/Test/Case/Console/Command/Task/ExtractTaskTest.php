@@ -202,4 +202,33 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/msgid "Add User"/';
 		$this->assertPattern($pattern, $result);
 	}
+
+/**
+ * Tests that it is possible to exclude plugin paths by enabling the param option for the ExtractTask
+ *
+ * @return void
+ */
+	public function testExtractExcludePlugins() {
+		$this->Task->params['paths'] = array(
+			CAKE . 'Test' . DS . 'test_app'
+		);
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ExtractTask',
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+		$this->Task->expects($this->once())->method('_isExtractingApp')->will($this->returnValue(true));
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['exclude-plugins'] = true;
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'default.pot');
+		$this->assertNoPattern('#TesPlugin#', $result);
+	}
 }
