@@ -113,7 +113,7 @@ class ConnectionManager {
 		if (empty(self::$_init)) {
 			self::init();
 		}
-		return array_keys(self::$_dataSources);
+		return array_keys((array)self::$config);
 	}
 
 /**
@@ -132,7 +132,7 @@ class ConnectionManager {
 				return $name;
 			}
 		}
-		return '';
+		return null;
 	}
 
 /**
