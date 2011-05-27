@@ -20,7 +20,6 @@
  */
 
 App::uses('DataSource', 'Model/Datasource');
-config('database');
 
 /**
  * Manages loaded instances of DataSource objects
@@ -54,7 +53,7 @@ class ConnectionManager {
 	protected static $_connectionsEnum = array();
 
 /**
- * Indicates if the init code for this class has alredy been executed
+ * Indicates if the init code for this class has already been executed
  *
  * @var boolean
  */
