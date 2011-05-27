@@ -366,7 +366,7 @@ class ScaffoldViewTest extends CakeTestCase {
 			'action' => 'admin_add',
 			'admin' => true
 		));
-		$Controller->plugin = 'test_plugin';
+		$Controller->plugin = 'TestPlugin';
 
 		$ScaffoldView = new TestScaffoldView($Controller);
 		$result = $ScaffoldView->testGetFilename('admin_add');
@@ -826,6 +826,7 @@ class ScaffoldTest extends CakeTestCase {
  * @return void
  */
 	function testHabtmFieldAdditionWithScaffoldForm() {
+		CakePlugin::unload();
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),

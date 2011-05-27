@@ -185,6 +185,7 @@ class ConnectionManagerTest extends CakeTestCase {
  * @return void
  */
 	function testSourceList() {
+		ConnectionManager::getDataSource('test');
 		$sources = ConnectionManager::sourceList();
 		$this->assertTrue(count($sources) >= 1);
 		$this->assertTrue(in_array('test', array_keys($sources)));

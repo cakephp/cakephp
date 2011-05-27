@@ -106,6 +106,8 @@ class ConnectionManager {
 
 /**
  * Gets the list of available DataSource connections
+ * This will only return the datasources instantiated by this manager
+ * It differs from enumConnectionObjects, since the latter will return all configured connections
  *
  * @return array List of available connections
  */
@@ -113,7 +115,7 @@ class ConnectionManager {
 		if (empty(self::$_init)) {
 			self::init();
 		}
-		return array_keys((array)self::$config);
+		return array_keys(self::$_dataSources);
 	}
 
 /**
