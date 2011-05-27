@@ -148,7 +148,7 @@ class BehaviorCollection extends ObjectCollection {
 		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
 		$callbacks = array(
 			'setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave',
-			'beforeDelete', 'afterDelete', 'afterError'
+			'beforeDelete', 'afterDelete', 'onError'
 		);
 
 		foreach ($methods as $m) {
