@@ -170,12 +170,12 @@ class SanitizeTest extends CakeTestCase {
 
 		$array = array(array('\\$', array('key' => 'test & "quote" \'other\' ;.$ \\$ symbol.' . "\r" . 'another line')));
 		$expected = array(array('$', array('key' => 'test & "quote" \'other\' ;.$ $ symbol.another line')));
-		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false));
+		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false, 'connection' => 'test'));
 		$this->assertEqual($expected, $result);
 
 		$string = '';
 		$expected = '';
-		$result = Sanitize::clean($string);
+		$result = Sanitize::clean($string, array('connection' => 'test'));
 		$this->assertEqual($string, $expected);
 
 		$data = array(
@@ -198,7 +198,7 @@ class SanitizeTest extends CakeTestCase {
 				)
 			)
 		);
-		$result = Sanitize::clean($data);
+		$result = Sanitize::clean($data, array('connection' => 'test'));
 		$this->assertEqual($result, $data);
 	}
 
