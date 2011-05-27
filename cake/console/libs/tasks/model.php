@@ -353,6 +353,7 @@ class ModelTask extends BakeTask {
 				$default++;
 			}
 		}
+		$choices[$default] = 'none'; // Needed since index starts at 1
 		$this->_validations = $choices;
 		return $choices;
 	}
@@ -391,6 +392,8 @@ class ModelTask extends BakeTask {
 			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
 				if ($fieldName == 'email') {
 					$guess = $methods['email'];
+				} elseif ($metaData['type'] == 'string' && $metaData['length'] == 36) {
+					$guess = $methods['uuid'];
 				} elseif ($metaData['type'] == 'string') {
 					$guess = $methods['notempty'];
 				} elseif ($metaData['type'] == 'integer') {
@@ -897,6 +900,11 @@ class ModelTask extends BakeTask {
 		$this->out("<name>");
 		$this->out("\tName of the model to bake. Can use Plugin.name");
 		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
+		$this->out('Params:');
+		$this->out();
+		$this->out('-connection <config>');
+		$this->out("\tset db config <config>. uses 'default' if none is specified");
 		$this->out();
 		$this->out('Commands:');
 		$this->out();
