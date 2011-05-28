@@ -18,6 +18,7 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('AclNode', 'Model');
 
 /**
  * ACL behavior
@@ -48,9 +49,7 @@ class AclBehavior extends ModelBehavior {
 		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
 
 		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
-		if (!class_exists('AclNode')) {
-			require CAKE . 'model' . DS . 'db_acl.php';
-		}
+
 		if (!is_array($types)) {
 			$types = array($types);
 		}
