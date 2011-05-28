@@ -1,6 +1,6 @@
 <?php
 /**
- * AllModelTest file
+ * ModelTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllModelTest class
+ * ModelTest class
  *
  * This test group will run model class tests
  *
  * @package       cake.tests.groups
  */
-class AllModelTest extends PHPUnit_Framework_TestSuite {
+class ModelTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
