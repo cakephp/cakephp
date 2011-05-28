@@ -337,6 +337,11 @@ class TestShell extends Shell {
 			return false;
 		}
 
+		$_file = realpath($file);
+		if ($_file) {
+			$file = $_file;
+		}
+
 		$testFile = $testCase = null;
 
 		if (preg_match('@Test[\\\/]@', $file)) {
@@ -376,11 +381,15 @@ class TestShell extends Shell {
 			return false;
 		}
 
-		$testFile = preg_replace(
-			'@(.*)((?:(?:Config|Console|Controller|Lib|Locale|Model|plugins|Plugin|Test|Vendor|View|webroot)[\\\/]).*$|App[-a-z]*$)@',
-			'\1Test/Case/\2Test.php',
-			$file
-		);
+		if ($category === 'app') {
+			$testFile = str_replace(APP, APP . 'Test/Case/', $file) . 'Test.php';
+		} else {
+			$testFile = preg_replace(
+				"@((?:plugins|Plugin)[\\/]{$category}[\\/])(.*)$@",
+				'\1Test/Case/\2Test.php',
+				$file
+			);
+		}
 
 		if (!file_exists($testFile)) {
 			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
