@@ -285,9 +285,8 @@ class CookieComponent extends Object {
 				foreach ($this->__values[$key] as $idx => $val) {
 					$this->__delete("[$key][$idx]");
 				}
-			} else {
-				$this->__delete("[$key]");
 			}
+			$this->__delete("[$key]");
 			unset($this->__values[$key]);
 			return;
 		}
