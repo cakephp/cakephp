@@ -300,8 +300,9 @@ class FolderTest extends CakeTestCase {
 		$result = $Folder->read(true, true);
 		$this->assertEqual($result[0], $expected);
 
-		$Folder->path = TMP . DS . 'non-existent';
+		$Folder->path = TMP . 'non-existent';
 		$expected = array(array(), array());
+		$this->setExpectedException('PHPUnit_Framework_Error_Warning');
 		$result = $Folder->read(true, true);
 		$this->assertEqual($expected, $result);
 	}

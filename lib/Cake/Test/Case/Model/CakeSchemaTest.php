@@ -526,7 +526,9 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
-		@unlink(TMP . 'tests' . DS .'schema.php');
+		if (file_exists(TMP . 'tests' . DS .'schema.php')) {
+			unlink(TMP . 'tests' . DS .'schema.php');
+		}
 		unset($this->Schema);
 		CakePlugin::unload();
 	}

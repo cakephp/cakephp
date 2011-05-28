@@ -368,7 +368,9 @@ class ObjectTest extends CakeTestCase {
  * @return void
  */
 	function testLog() {
-		@unlink(LOGS . 'error.log');
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
 		$this->assertTrue($this->object->log('Test warning 1'));
 		$this->assertTrue($this->object->log(array('Test' => 'warning 2')));
 		$result = file(LOGS . 'error.log');
@@ -379,7 +381,6 @@ class ObjectTest extends CakeTestCase {
 		$this->assertPattern('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
 
-		@unlink(LOGS . 'error.log');
 		$this->assertTrue($this->object->log('Test warning 1', LOG_WARNING));
 		$this->assertTrue($this->object->log(array('Test' => 'warning 2'), LOG_WARNING));
 		$result = file(LOGS . 'error.log');
