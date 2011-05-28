@@ -558,7 +558,7 @@ class I18n {
  * @param string $domain Domain where format is stored
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
  */
-	function __translateTime($format, $domain) {
+	private function __translateTime($format, $domain) {
 		if (!empty($this->__domains[$domain][$this->__lang]['LC_TIME'][$format])) {
 			if (($trans = $this->__domains[$domain][$this->__lang][$this->category][$format])) {
 				return $trans;

@@ -110,7 +110,7 @@ class Postgres extends DboSource {
  *
  * @return True if successfully connected.
  */
-	function connect() {
+	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
 		try {
@@ -143,7 +143,7 @@ class Postgres extends DboSource {
  *
  * @return boolean
  */
-	function enabled() {
+	public function enabled() {
 		return in_array('pgsql', PDO::getAvailableDrivers());
 	}
 
@@ -152,7 +152,7 @@ class Postgres extends DboSource {
  *
  * @return array Array of tablenames in the database
  */
-	function listSources($data = null) {
+	public function listSources($data = null) {
 		$cache = parent::listSources();
 
 		if ($cache != null) {
@@ -184,7 +184,7 @@ class Postgres extends DboSource {
  * @param string $tableName Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-	function describe($model) {
+	public function describe($model) {
 		$fields = parent::describe($model);
 		$table = $this->fullTableName($model, false);
 		$this->_sequenceMap[$table] = array();
@@ -253,7 +253,7 @@ class Postgres extends DboSource {
 		}
 
 		if ($cols) {
-			$cols->closeCursor();	
+			$cols->closeCursor();
 		}
 		return $fields;
 	}
@@ -265,7 +265,7 @@ class Postgres extends DboSource {
  * @param string $field Name of the ID database field. Defaults to "id"
  * @return integer
  */
-	function lastInsertId($source, $field = 'id') {
+	public function lastInsertId($source, $field = 'id') {
 		$seq = $this->getSequence($source, $field);
 		return $this->_connection->lastInsertId($seq);
 	}
@@ -277,7 +277,7 @@ class Postgres extends DboSource {
  * @param string $field Name of the ID database field. Defaults to "id"
  * @return string The associated sequence name from the sequence map, defaults to "{$table}_{$field}_seq"
  */
-	function getSequence($table, $field = 'id') {
+	public function getSequence($table, $field = 'id') {
 		if (is_object($table)) {
 			$table = $this->fullTableName($table, false);
 		}
@@ -321,7 +321,7 @@ class Postgres extends DboSource {
  * @param string $data
  * @return string SQL field
  */
-	function name($data) {
+	public function name($data) {
 		if (is_string($data)) {
 			$data = str_replace('"__"', '__', $data);
 		}
@@ -336,7 +336,7 @@ class Postgres extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields($model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -393,7 +393,7 @@ class Postgres extends DboSource {
  * @return string quoted strig
  * @access private
  */
-	function __quoteFunctionField($match) {
+	private function __quoteFunctionField($match) {
 		$prepend = '';
 		if (strpos($match[1], 'DISTINCT') !== false) {
 			$prepend = 'DISTINCT ';
@@ -416,7 +416,7 @@ class Postgres extends DboSource {
  * @param string $model Name of model to inspect
  * @return array Fields in table. Keys are column and unique
  */
-	function index($model) {
+	public function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model, false);
 		if ($table) {
@@ -457,7 +457,7 @@ class Postgres extends DboSource {
  * @access public
  * @return array
  */
-	function alterSchema($compare, $table = null) {
+	public function alterSchema($compare, $table = null) {
 		if (!is_array($compare)) {
 			return false;
 		}
@@ -545,7 +545,7 @@ class Postgres extends DboSource {
  * @param array $new Indexes to add and drop
  * @return array Index alteration statements
  */
-	function _alterIndexes($table, $indexes) {
+	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
 			foreach($indexes['drop'] as $name => $value) {
@@ -587,7 +587,7 @@ class Postgres extends DboSource {
  * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
-	function limit($limit, $offset = null) {
+	public function limit($limit, $offset = null) {
 		if ($limit) {
 			$rt = '';
 			if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0) {
@@ -610,7 +610,7 @@ class Postgres extends DboSource {
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
-	function column($real) {
+	public function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
 			if (isset($real['limit'])) {
@@ -659,7 +659,7 @@ class Postgres extends DboSource {
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return int An integer representing the length of the column
  */
-	function length($real) {
+	public function length($real) {
 		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
 
@@ -680,7 +680,7 @@ class Postgres extends DboSource {
  *
  * @param unknown_type $results
  */
-	function resultSet(&$results) {
+	public function resultSet(&$results) {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
@@ -703,7 +703,7 @@ class Postgres extends DboSource {
  *
  * @return unknown
  */
-	function fetchResult() {
+	public function fetchResult() {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 
@@ -733,11 +733,11 @@ class Postgres extends DboSource {
 /**
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
- * @param mixed $data Value to be translated  
+ * @param mixed $data Value to be translated
  * @param boolean $quote true to quote a boolean to be used in a query, flase to return the boolean value
  * @return boolean Converted boolean value
  */
-	function boolean($data, $quote = false) {
+	public function boolean($data, $quote = false) {
 		switch (true) {
 			case ($data === true || $data === false):
 				$result = $data;
@@ -768,7 +768,7 @@ class Postgres extends DboSource {
  * @param mixed $enc Database encoding
  * @return boolean True on success, false on failure
  */
-	function setEncoding($enc) {
+	public function setEncoding($enc) {
 		if ($this->_execute('SET NAMES ?', array($enc))) {
 			return true;
 		}
@@ -780,7 +780,7 @@ class Postgres extends DboSource {
  *
  * @return string The database encoding
  */
-	function getEncoding() {
+	public function getEncoding() {
 		$cosa = $this->_execute('SHOW client_encoding')->fetch();
 	}
 
@@ -792,7 +792,7 @@ class Postgres extends DboSource {
  *                      where options can be 'default', 'length', or 'key'.
  * @return string
  */
-	function buildColumn($column) {
+	public function buildColumn($column) {
 		$col = $this->columns[$column['type']];
 		if (!isset($col['length']) && !isset($col['limit'])) {
 			unset($column['length']);
@@ -825,7 +825,7 @@ class Postgres extends DboSource {
  * @param string $table
  * @return string
  */
-	function buildIndex($indexes, $table = null) {
+	public function buildIndex($indexes, $table = null) {
 		$join = array();
 		if (!is_array($indexes)) {
 			return array();
@@ -857,7 +857,7 @@ class Postgres extends DboSource {
  * @param array $data
  * @return string
  */
-	function renderStatement($type, $data) {
+	public function renderStatement($type, $data) {
 		switch (strtolower($type)) {
 			case 'schema':
 				extract($data);

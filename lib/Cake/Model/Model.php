@@ -412,7 +412,7 @@ class Model extends Object {
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
-	function __construct($id = false, $table = null, $ds = null) {
+	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct();
 
 		if (is_array($id)) {
@@ -569,7 +569,7 @@ class Model extends Object {
  * @param string $name variable requested for it's value or reference
  * @return mixed value of requested variable if it is set
  */
-	function __get($name) {
+	public function __get($name) {
 		if ($name === 'displayField') {
 			return $this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
 		}
@@ -598,7 +598,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1045/Creating-and-Destroying-Associations-on-the-Fly
  */
-	function bindModel($params, $reset = true) {
+	public function bindModel($params, $reset = true) {
 		foreach ($params as $assoc => $model) {
 			if ($reset === true && !isset($this->__backAssociation[$assoc])) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
@@ -643,7 +643,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1045/Creating-and-Destroying-Associations-on-the-Fly
  */
-	function unbindModel($params, $reset = true) {
+	public function unbindModel($params, $reset = true) {
 		foreach ($params as $assoc => $models) {
 			if ($reset === true && !isset($this->__backAssociation[$assoc])) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
@@ -664,7 +664,7 @@ class Model extends Object {
  * @return void
  * @access private
  */
-	function __createLinks() {
+	private function __createLinks() {
 		foreach ($this->__associations as $type) {
 			if (!is_array($this->{$type})) {
 				$this->{$type} = explode(',', $this->{$type});
@@ -711,7 +711,7 @@ class Model extends Object {
  * @return void
  * @access private
  */
-	function __constructLinkedModel($assoc, $className = null, $plugin = null) {
+	private function __constructLinkedModel($assoc, $className = null, $plugin = null) {
 		if (empty($className)) {
 			$className = $assoc;
 		}
@@ -736,7 +736,7 @@ class Model extends Object {
  * @return void
  * @access private
  */
-	function __generateAssociation($type, $assocKey) {
+	private function __generateAssociation($type, $assocKey) {
 		$class = $assocKey;
 		$dynamicWith = false;
 
@@ -829,7 +829,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function set($one, $two = null) {
+	public function set($one, $two = null) {
 		if (!$one) {
 			return;
 		}
@@ -1146,7 +1146,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function create($data = array(), $filterKey = false) {
+	public function create($data = array(), $filterKey = false) {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
@@ -1177,7 +1177,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1017/Retrieving-Your-Data#read-1029
  */
-	function read($fields = null, $id = null) {
+	public function read($fields = null, $id = null) {
 		$this->validationErrors = array();
 
 		if ($id != null) {
@@ -1212,7 +1212,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1017/Retrieving-Your-Data#field-1028
  */
-	function field($name, $conditions = null, $order = null) {
+	public function field($name, $conditions = null, $order = null) {
 		if ($conditions === null && $this->id !== false) {
 			$conditions = array($this->alias . '.' . $this->primaryKey => $this->id);
 		}
@@ -1253,7 +1253,7 @@ class Model extends Object {
  * @see Model::save()
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function saveField($name, $value, $validate = false) {
+	public function saveField($name, $value, $validate = false) {
 		$id = $this->id;
 		$this->create(false);
 
@@ -1278,7 +1278,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function save($data = null, $validate = true, $fieldList = array()) {
+	public function save($data = null, $validate = true, $fieldList = array()) {
 		$defaults = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
 		$_whitelist = $this->whitelist;
 		$fields = array();
@@ -1449,7 +1449,7 @@ class Model extends Object {
  * @param mixed $id ID of record in this model
  * @access private
  */
-	function __saveMulti($joined, $id, $db) {
+	private function __saveMulti($joined, $id, $db) {
 		foreach ($joined as $assoc => $data) {
 
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
@@ -1634,7 +1634,7 @@ class Model extends Object {
  * @link http://book.cakephp.org/view/1032/Saving-Related-Model-Data-hasOne-hasMany-belongsTo
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function saveAll($data = null, $options = array()) {
+	public function saveAll($data = null, $options = array()) {
 		if (empty($data)) {
 			$data = $this->data;
 		}
@@ -1833,7 +1833,7 @@ class Model extends Object {
  * @access private
  * @see Model::saveAll()
  */
-	function __save($data, $options) {
+	private function __save($data, $options) {
 		if ($options['validate'] === 'first' || $options['validate'] === 'only') {
 			if (!($this->create($data) && $this->validates($options))) {
 				return false;
@@ -1854,7 +1854,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function updateAll($fields, $conditions = true) {
+	public function updateAll($fields, $conditions = true) {
 		return $this->getDataSource()->update($this, $fields, null, $conditions);
 	}
 
@@ -1867,7 +1867,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1036/delete
  */
-	function delete($id = null, $cascade = true) {
+	public function delete($id = null, $cascade = true) {
 		if (!empty($id)) {
 			$this->id = $id;
 		}
@@ -1983,7 +1983,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1038/deleteAll
  */
-	function deleteAll($conditions, $cascade = true, $callbacks = false) {
+	public function deleteAll($conditions, $cascade = true, $callbacks = false) {
 		if (empty($conditions)) {
 			return false;
 		}
@@ -2031,7 +2031,7 @@ class Model extends Object {
  * @return array
  * @access private
  */
-	function __collectForeignKeys($type = 'belongsTo') {
+	private function __collectForeignKeys($type = 'belongsTo') {
 		$result = array();
 
 		foreach ($this->{$type} as $assoc => $data) {
@@ -2499,7 +2499,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1027/query
  */
-	function query() {
+	public function query() {
 		$params = func_get_args();
 		$db = $this->getDataSource();
 		return call_user_func_array(array(&$db, 'query'), $params);
@@ -2516,7 +2516,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1182/Validating-Data-from-the-Controller
  */
-	function validates($options = array()) {
+	public function validates($options = array()) {
 		$errors = $this->invalidFields($options);
 		if (empty($errors) && $errors !== false) {
 			$errors = $this->__validateWithModels($options);
@@ -2536,7 +2536,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1182/Validating-Data-from-the-Controller
  */
-	function invalidFields($options = array()) {
+	public function invalidFields($options = array()) {
 		if (
 			!$this->Behaviors->trigger(
 				'beforeValidate',
@@ -2688,7 +2688,7 @@ class Model extends Object {
  * @access private
  * @see Model::validates()
  */
-	function __validateWithModels($options) {
+	private function __validateWithModels($options) {
 		$valid = true;
 		foreach ($this->hasAndBelongsToMany as $assoc => $association) {
 			if (empty($association['with']) || !isset($this->data[$assoc])) {
@@ -2972,7 +2972,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeFind-1049
  */
-	function beforeFind($queryData) {
+	public function beforeFind($queryData) {
 		return true;
 	}
 
@@ -2986,7 +2986,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#afterFind-1050
  */
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		return $results;
 	}
 
@@ -2998,7 +2998,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeSave-1052
  */
-	function beforeSave($options = array()) {
+	public function beforeSave($options = array()) {
 		return true;
 	}
 
@@ -3009,7 +3009,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#afterSave-1053
  */
-	function afterSave($created) {
+	public function afterSave($created) {
 	}
 
 /**
@@ -3020,7 +3020,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeDelete-1054
  */
-	function beforeDelete($cascade = true) {
+	public function beforeDelete($cascade = true) {
 		return true;
 	}
 
@@ -3030,7 +3030,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#afterDelete-1055
  */
-	function afterDelete() {
+	public function afterDelete() {
 	}
 
 /**
@@ -3042,7 +3042,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeValidate-1051
  */
-	function beforeValidate($options = array()) {
+	public function beforeValidate($options = array()) {
 		return true;
 	}
 
@@ -3052,7 +3052,7 @@ class Model extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#onError-1056
  */
-	function onError() {
+	public function onError() {
 	}
 
 /**
@@ -3064,7 +3064,7 @@ class Model extends Object {
  * @access protected
  * @todo
  */
-	function _clearCache($type = null) {
+	protected function _clearCache($type = null) {
 		if ($type === null) {
 			if (Configure::read('Cache.check') === true) {
 				$assoc[] = strtolower(Inflector::pluralize($this->alias));
@@ -3092,7 +3092,7 @@ class Model extends Object {
  * @return array Set of object variable names this model has
  * @access private
  */
-	function __sleep() {
+	private function __sleep() {
 		$return = array_keys(get_object_vars($this));
 		return $return;
 	}
@@ -3103,7 +3103,6 @@ class Model extends Object {
  * @access private
  * @todo
  */
-	function __wakeup() {
+	private function __wakeup() {
 	}
 }
-

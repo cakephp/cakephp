@@ -328,7 +328,7 @@ class L10n {
 /**
  * Class constructor
  */
-	function __construct() {
+	public function __construct() {
 		if (defined('DEFAULT_LANGUAGE')) {
 			$this->default = DEFAULT_LANGUAGE;
 		}
@@ -356,7 +356,7 @@ class L10n {
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
  * @access private
  */
-	function __setLanguage($language = null) {
+	private function __setLanguage($language = null) {
 		$langKey = null;
 		if ($language !== null && isset($this->__l10nMap[$language]) && isset($this->__l10nCatalog[$this->__l10nMap[$language]])) {
 			$langKey = $this->__l10nMap[$language];
@@ -405,7 +405,7 @@ class L10n {
  * @return boolean Success
  * @access private
  */
-	function __autoLanguage() {
+	private function __autoLanguage() {
 		$_detectableLanguages = CakeRequest::acceptLanguage();
 		foreach ($_detectableLanguages as $key => $langKey) {
 			if (isset($this->__l10nCatalog[$langKey])) {
@@ -426,7 +426,7 @@ class L10n {
  * Attempts to find locale for language, or language for locale
  *
  * @param mixed $mixed 2/3 char string (language/locale), array of those strings, or null
- * @return mixed string language/locale, array of those values, whole map as an array, 
+ * @return mixed string language/locale, array of those values, whole map as an array,
  *    or false when language/locale doesn't exist
  */
 	public function map($mixed = null) {
@@ -453,7 +453,7 @@ class L10n {
  * Attempts to find catalog record for requested language
  *
  * @param mixed $language string requested language, array of requested languages, or null for whole catalog
- * @return mixed array catalog record for requested language, array of catalog records, whole catalog, 
+ * @return mixed array catalog record for requested language, array of catalog records, whole catalog,
  *    or false when language doesn't exist
  */
 	public function catalog($language = null) {

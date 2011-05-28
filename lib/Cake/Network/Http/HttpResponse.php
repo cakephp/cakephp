@@ -429,7 +429,7 @@ class HttpResponse implements ArrayAccess {
  *
  * @return string
  */
-	public function __toString() {
+	function __toString() {
 		return $this->body();
 	}
 

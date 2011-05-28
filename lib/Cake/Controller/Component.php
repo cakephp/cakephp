@@ -19,7 +19,7 @@ App::uses('ComponentCollection', 'Controller');
 
 /**
  * Base class for an individual Component.  Components provide resuable bits of
- * controller logic that can be composed into a controller.  Components also 
+ * controller logic that can be composed into a controller.  Components also
  * provide request life-cycle callbacks for injecting logic at specific points.
  *
  * ## Life cycle callbacks
@@ -30,8 +30,8 @@ App::uses('ComponentCollection', 'Controller');
  * - `initialize()` - Fired before the controller's beforeFilter method.
  * - `startup()` - Fired after the controller's beforeFilter method.
  * - `beforeRender()` - Fired before the view + layout are rendered.
- * - `shutdown()` - Fired after the action is complete and the view has been rendered 
- *    but before Controller::afterFilter(). 
+ * - `shutdown()` - Fired after the action is complete and the view has been rendered
+ *    but before Controller::afterFilter().
  * - `beforeRedirect()` - Fired before a redirect() is done.
  *
  * @package       cake.libs.controller
@@ -132,18 +132,18 @@ class Component extends Object {
  * @param object $controller Controller with components to shutdown
  * @return void
  */
-	function shutdown($controller) { }
+	public function shutdown($controller) { }
 
 /**
  * Called before Controller::redirect().  Allows you to replace the url that will
  * be redirected to with a new url. The return of this method can either be an array or a string.
  *
  * If the return is an array and contains a 'url' key.  You may also supply the following:
- * 
+ *
  * - `status` The status code for the redirect
  * - `exit` Whether or not the redirect should exit.
  *
- * If your response is a string or an array that does not contain a 'url' key it will 
+ * If your response is a string or an array that does not contain a 'url' key it will
  * be used as the new url to redirect to.
  *
  * @param object $controller Controller with components to beforeRedirect

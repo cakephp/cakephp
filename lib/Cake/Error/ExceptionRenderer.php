@@ -89,7 +89,7 @@ class ExceptionRenderer {
  * @param string $method Method producing the error
  * @param array $messages Error messages
  */
-	function __construct(Exception $exception) {
+	public function __construct(Exception $exception) {
 		$this->controller = $this->_getController($exception);
 
 		if (method_exists($this->controller, 'apperror')) {

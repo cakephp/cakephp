@@ -177,7 +177,7 @@ class Object {
  * @access protected
  * @todo add examples to manual
  */
-	function _persist($name, $return = null, &$object, $type = null) {
+	protected function _persist($name, $return = null, &$object, $type = null) {
 		$file = CACHE . 'persistent' . DS . strtolower($name) . '.php';
 		if ($return === null) {
 			if (!file_exists($file)) {
@@ -256,7 +256,7 @@ class Object {
  * @return void
  * @access private
  */
-	function __openPersistent($name, $type = null) {
+	private function __openPersistent($name, $type = null) {
 		$file = CACHE . 'persistent' . DS . strtolower($name) . '.php';
 		include($file);
 

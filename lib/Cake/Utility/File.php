@@ -87,7 +87,7 @@ class File {
  * @param boolean $create Create file if it does not exist (if true)
  * @param integer $mode Mode to apply to the folder holding the file
  */
-	function __construct($path, $create = false, $mode = 0755) {
+	public function __construct($path, $create = false, $mode = 0755) {
 		$this->Folder = new Folder(dirname($path), $create, $mode);
 		if (!is_dir($path)) {
 			$this->name = basename($path);
@@ -100,7 +100,7 @@ class File {
  * Closes the current file if it is opened
  *
  */
-	function __destruct() {
+	public function __destruct() {
 		$this->close();
 	}
 
@@ -201,7 +201,7 @@ class File {
 	}
 
 /**
- * Prepares a ascii string for writing.  Converts line endings to the 
+ * Prepares a ascii string for writing.  Converts line endings to the
  * correct terminator for the current platform.  If windows "\r\n" will be used
  * all other platforms will use "\n"
  *

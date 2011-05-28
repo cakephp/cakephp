@@ -79,7 +79,7 @@ class CakeSchema extends Object {
  *
  * @param array $options optional load object properties
  */
-	function __construct($options = array()) {
+	public function __construct($options = array()) {
 		parent::__construct();
 
 		if (empty($options['name'])) {
@@ -391,7 +391,7 @@ class CakeSchema extends Object {
  * @param array $fields Array of field information to generate the table with.
  * @return string Variable declaration for a schema class
  */
-	function generateTable($table, $fields) {
+	public function generateTable($table, $fields) {
 		$out = "\tvar \${$table} = array(\n";
 		if (is_array($fields)) {
 			$cols = array();
@@ -529,7 +529,7 @@ class CakeSchema extends Object {
  *     where match was not found.
  * @access protected
  */
-	function _arrayDiffAssoc($array1, $array2) {
+	public function _arrayDiffAssoc($array1, $array2) {
 		$difference = array();
 		foreach ($array1 as $key => $value) {
 			if (!array_key_exists($key, $array2)) {
@@ -626,7 +626,7 @@ class CakeSchema extends Object {
  * @param array $old Old indexes
  * @return mixed False on failure, or an array of parameters to add & drop.
  */
-	function _compareTableParameters($new, $old) {
+	protected function _compareTableParameters($new, $old) {
 		if (!is_array($new) || !is_array($old)) {
 			return false;
 		}
@@ -641,7 +641,7 @@ class CakeSchema extends Object {
  * @param array $old Old indexes
  * @return mixed false on failure or array of indexes to add and drop
  */
-	function _compareIndexes($new, $old) {
+	protected function _compareIndexes($new, $old) {
 		if (!is_array($new) || !is_array($old)) {
 			return false;
 		}

@@ -271,7 +271,7 @@ class View extends Object {
  *
  * @param Controller $controller A controller object to pull View::__passedArgs from.
  */
-	function __construct($controller) {
+	public function __construct($controller) {
 		if (is_object($controller)) {
 			$count = count($this->__passedVars);
 			for ($j = 0; $j < $count; $j++) {
@@ -764,7 +764,7 @@ class View extends Object {
  * @return array Array of extensions view files use.
  * @access protected
  */
-	function _getExtensions() {
+	protected function _getExtensions() {
 		$exts = array($this->ext);
 		if ($this->ext !== '.ctp') {
 			array_push($exts, '.ctp');

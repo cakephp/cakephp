@@ -87,7 +87,7 @@ class DataSource extends Object {
  * @param array $config Array of configuration information for the datasource.
  * @return void.
  */
-	function __construct($config = array()) {
+	public function __construct($config = array()) {
 		parent::__construct();
 		$this->setConfig($config);
 	}
@@ -329,7 +329,7 @@ class DataSource extends Object {
  * @access public
  * @todo Remove and refactor $assocData, ensure uses of the method have the param removed too.
  */
-	function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {
+	public function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {
 		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
 
 		foreach ($keys as $key) {

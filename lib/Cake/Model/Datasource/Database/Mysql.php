@@ -138,7 +138,7 @@ class Mysql extends DboSource {
  *
  * @return boolean True if the database could be connected, else false
  */
-	function connect() {
+	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
 		try {
@@ -170,7 +170,7 @@ class Mysql extends DboSource {
  *
  * @return boolean
  */
-	function enabled() {
+	public function enabled() {
 		return in_array('mysql', PDO::getAvailableDrivers());
 	}
 
@@ -179,7 +179,7 @@ class Mysql extends DboSource {
  *
  * @return array Array of tablenames in the database
  */
-	function listSources($data = null) {
+	public function listSources($data = null) {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
@@ -207,7 +207,7 @@ class Mysql extends DboSource {
  *
  * @param PDOStatement $results
  */
-	function resultSet($results) {
+	public function resultSet($results) {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
@@ -232,7 +232,7 @@ class Mysql extends DboSource {
  *
  * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
-	function fetchResult() {
+	public function fetchResult() {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
@@ -290,7 +290,7 @@ class Mysql extends DboSource {
  * @param mixed $tableName Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
  */
-	function describe($model) {
+	public function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -337,7 +337,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::update($model, $fields, $values, $conditions);
 		}
@@ -379,7 +379,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	function delete($model, $conditions = null) {
+	public function delete($model, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::delete($model, $conditions);
 		}
@@ -417,7 +417,7 @@ class Mysql extends DboSource {
  *
  * @param string $enc Database encoding
  */
-	function setEncoding($enc) {
+	public function setEncoding($enc) {
 		return $this->_execute('SET NAMES ' . $enc) !== false;
 	}
 
@@ -427,7 +427,7 @@ class Mysql extends DboSource {
  * @param string $model Name of model to inspect
  * @return array Fields in table. Keys are column and unique
  */
-	function index($model) {
+	public function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model);
 		$old = version_compare($this->getVersion(), '4.1', '<=');
@@ -460,7 +460,7 @@ class Mysql extends DboSource {
  * @param array $compare Result of a CakeSchema::compare()
  * @return array Array of alter statements to make.
  */
-	function alterSchema($compare, $table = null) {
+	public function alterSchema($compare, $table = null) {
 		if (!is_array($compare)) {
 			return false;
 		}
@@ -522,7 +522,7 @@ class Mysql extends DboSource {
  *                      Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	function dropSchema(CakeSchema $schema, $table = null) {
+	public function dropSchema(CakeSchema $schema, $table = null) {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table === $curTable) {
@@ -540,7 +540,7 @@ class Mysql extends DboSource {
  * @return array Array of table property alteration statementes.
  * @todo Implement this method.
  */
-	function _alterTableParameters($table, $parameters) {
+	protected function _alterTableParameters($table, $parameters) {
 		if (isset($parameters['change'])) {
 			return $this->buildTableParameters($parameters['change']);
 		}
@@ -554,7 +554,7 @@ class Mysql extends DboSource {
  * @param array $new Indexes to add and drop
  * @return array Index alteration statements
  */
-	function _alterIndexes($table, $indexes) {
+	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
 			foreach($indexes['drop'] as $name => $value) {
@@ -595,7 +595,7 @@ class Mysql extends DboSource {
  * @param string $name Table name to get parameters
  * @return array Array of tablenames in the database
  */
-	function listDetailedSources($name = null) {
+	public function listDetailedSources($name = null) {
 		$condition = '';
 		$params = array();
 		if (is_string($name)) {
@@ -633,7 +633,7 @@ class Mysql extends DboSource {
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
-	function column($real) {
+	public function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
 			if (isset($real['limit'])) {

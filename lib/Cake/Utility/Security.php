@@ -69,7 +69,7 @@ class Security {
  * @return boolean Success
  * @todo Complete implementation
  */
-	function validateAuthKey($authKey) {
+	public static function validateAuthKey($authKey) {
 		return true;
 	}
 
