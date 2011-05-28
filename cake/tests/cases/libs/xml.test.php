@@ -1624,4 +1624,17 @@ class XmlTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 	}
 	
+
+	function testToStringSlugging() {
+		$array = array(
+			'Response' => array(
+				'OneKey' => 'foo',
+				'TwoKey' => array('bar', 'baz')
+			)
+		);
+		$xml = new Xml($array, array('format' => 'tags'));
+		$result = $xml->toString(array('cdata' => false));
+		$expected = '<response><one_key>foo</one_key><two_key>bar</two_key><two_key>baz</two_key></response>';
+		$this->assertEqual($result, $expected);
+	}
 }

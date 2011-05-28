@@ -275,6 +275,9 @@ class XmlNode extends Object {
 
 							$node->normalize($val, $n, $options);
 						} elseif ($options['format'] == 'tags' && $this->__tagOptions($key) !== false) {
+							if ($options['slug'] == true) {
+								$key = Inflector::slug(Inflector::underscore($key));
+							}
 							$tmp =& $node->createElement($key);
 							if (!empty($val) || $val === 0 || $val === '0') {
 								$tmp->createTextNode($val);
