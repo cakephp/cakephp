@@ -29,7 +29,7 @@ class TranslateBehavior extends ModelBehavior {
 
 /**
  * Used for runtime configuration of model
- * 
+ *
  * @var array
  */
 	public $runtime = array();
@@ -381,7 +381,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $reset
  * @return bool
  */
-	function bindTranslation($model, $fields, $reset = true) {
+	public function bindTranslation($model, $fields, $reset = true) {
 		if (is_string($fields)) {
 			$fields = array($fields);
 		}
@@ -450,11 +450,11 @@ class TranslateBehavior extends ModelBehavior {
  * fake field
  *
  * @param object $model instance of model
- * @param mixed $fields string with field, or array(field1, field2=>AssocName, field3), or null for 
+ * @param mixed $fields string with field, or array(field1, field2=>AssocName, field3), or null for
  *    unbind all original translations
  * @return bool
  */
-	function unbindTranslation($model, $fields = null) {
+	public function unbindTranslation($model, $fields = null) {
 		if (empty($fields) && empty($this->settings[$model->alias])) {
 			return false;
 		}

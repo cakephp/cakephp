@@ -22,7 +22,7 @@ class CakeErrorController extends AppController {
  * @access public
  * @return void
  */
-	function __construct($request = null) {
+	public function __construct($request = null) {
 		parent::__construct($request);
 		$this->constructClasses();
 		$this->Components->trigger('initialize', array(&$this));
@@ -34,7 +34,7 @@ class CakeErrorController extends AppController {
  *
  * @return void
  */
-	function beforeRender() {
+	public function beforeRender() {
 		parent::beforeRender();
 		foreach ($this->viewVars as $key => $value) {
 			if (!is_object($value)){

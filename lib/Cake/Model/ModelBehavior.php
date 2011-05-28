@@ -36,13 +36,13 @@
  *		//do something
  * }
  * }}}
- * 
+ *
  * Would be called like `$this->Model->doSomething($arg1, $arg2);`.
  *
  * ### Mapped methods
  *
  * Behaviors can also define mapped methods.  Mapped methods use pattern matching for method invocation. This
- * allows you to create methods similar to Model::findAllByXXX methods on your behaviors.  Mapped methods need to 
+ * allows you to create methods similar to Model::findAllByXXX methods on your behaviors.  Mapped methods need to
  * be declared in your behaviors `$mapMethods` array.  The method signature for a mapped method is slightly different
  * than a normal behavior mixin method.
  *
@@ -100,7 +100,7 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @see BehaviorCollection::detach()
  */
-	function cleanup($model) {
+	public function cleanup($model) {
 		if (isset($this->settings[$model->alias])) {
 			unset($this->settings[$model->alias]);
 		}
@@ -113,7 +113,7 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return mixed False or null will abort the operation. You can return an array to replace the 
+ * @return mixed False or null will abort the operation. You can return an array to replace the
  *   $query that will be eventually run.
  */
 	public function beforeFind($model, $query) {
@@ -131,7 +131,7 @@ class ModelBehavior extends Object {
 	public function afterFind($model, $results, $primary) { }
 
 /**
- * beforeValidate is called before a model is validated, you can use this callback to 
+ * beforeValidate is called before a model is validated, you can use this callback to
  * add behavior validation rules into a models validate array.  Returning false
  * will allow you to make the validation fail.
  *
@@ -139,7 +139,7 @@ class ModelBehavior extends Object {
  * @return mixed False or null will abort the operation. Any other result will continue.
  * @access public
  */
-	public function beforeValidate($model) { 
+	public function beforeValidate($model) {
 		return true;
 	}
 
@@ -150,7 +150,7 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @return mixed False if the operation should abort. Any other result will continue.
  */
-	public function beforeSave($model) { 
+	public function beforeSave($model) {
 		return true;
 	}
 
@@ -173,7 +173,7 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. Any other result will continue.
  * @access public
  */
-	public function beforeDelete($model, $cascade = true) { 
+	public function beforeDelete($model, $cascade = true) {
 		return true;
 	}
 
@@ -202,7 +202,7 @@ class ModelBehavior extends Object {
  * @param string $field Field to be added to $model's whitelist
  * @return void
  */
-	function _addToWhitelist($model, $field) {
+	protected function _addToWhitelist($model, $field) {
 		if (is_array($field)) {
 			foreach ($field as $f) {
 				$this->_addToWhitelist($model, $f);

@@ -197,7 +197,7 @@ class DboOracle extends DboSource {
  * Keeps track of the most recent Oracle error
  *
  */
-	function _setError($source = null, $clear = false) {
+	protected function _setError($source = null, $clear = false) {
 		if ($source) {
 			$e = ocierror($source);
 		} else {
@@ -215,7 +215,7 @@ class DboOracle extends DboSource {
  * @param string $lang language constant
  * @return bool
  */
-	function setEncoding($lang) {
+	public function setEncoding($lang) {
 		if (!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
 			return false;
 		}
@@ -227,7 +227,7 @@ class DboOracle extends DboSource {
  *
  * @return string language constant
  */
-	function getEncoding() {
+	public function getEncoding() {
 		$sql = 'SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER=\'NLS_LANGUAGE\'';
 		if (!$this->execute($sql)) {
 			return false;
@@ -404,7 +404,7 @@ class DboOracle extends DboSource {
  *
  * @return unknown
  */
-	function fetchResult() {
+	public function fetchResult() {
 		return $this->fetchRow();
 	}
 
@@ -522,7 +522,7 @@ class DboOracle extends DboSource {
  * @access public
  *
  */
-	function truncate($table, $reset = 0) {
+	public function truncate($table, $reset = 0) {
 
 		if (empty($this->_sequences)) {
 			$sql = "SELECT sequence_name FROM all_sequences";
@@ -569,7 +569,7 @@ class DboOracle extends DboSource {
  * @param string $table
  * @return mixed boolean true or array of constraints
  */
-	function constraint($action, $table) {
+	public function constraint($action, $table) {
 		if (empty($table)) {
 			trigger_error(__d('cake_dev', 'Must specify table to operate on constraints'));
 		}
@@ -641,7 +641,7 @@ class DboOracle extends DboSource {
  * @param string $model Name of model to inspect
  * @return array Fields in table. Keys are column and unique
  */
-	function index($model) {
+	public function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model, false);
 		if ($table) {
@@ -683,7 +683,7 @@ class DboOracle extends DboSource {
  * @param unknown_type $schema
  * @return unknown
  */
-	function alterSchema($compare, $table = null) {
+	public function alterSchema($compare, $table = null) {
 		if (!is_array($compare)) {
 			return false;
 		}
@@ -754,7 +754,7 @@ class DboOracle extends DboSource {
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
-	function begin() {
+	public function begin() {
 		$this->__transactionStarted = true;
 		return true;
 	}
@@ -767,7 +767,7 @@ class DboOracle extends DboSource {
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	function rollback() {
+	public function rollback() {
 		return ocirollback($this->connection);
 	}
 
@@ -779,7 +779,7 @@ class DboOracle extends DboSource {
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	function commit() {
+	public function commit() {
 		$this->__transactionStarted = false;
 		return ocicommit($this->connection);
 	}
@@ -919,7 +919,7 @@ class DboOracle extends DboSource {
  * @param array $data
  * @return string
  */
-	function renderStatement($type, $data) {
+	public function renderStatement($type, $data) {
 		extract($data);
 		$aliases = null;
 
@@ -972,7 +972,7 @@ class DboOracle extends DboSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
@@ -1124,14 +1124,14 @@ class DboOracle extends DboSource {
  *						Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-		function dropSchema(CakeSchema $schema, $table = null) {
-			$out = '';
+	public function dropSchema(CakeSchema $schema, $table = null) {
+		$out = '';
 
-			foreach ($schema->tables as $curTable => $columns) {
-				if (!$table || $table == $curTable) {
-					$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . "\n";
-				}
+		foreach ($schema->tables as $curTable => $columns) {
+			if (!$table || $table == $curTable) {
+				$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . "\n";
 			}
-			return $out;
 		}
+		return $out;
+	}
 }

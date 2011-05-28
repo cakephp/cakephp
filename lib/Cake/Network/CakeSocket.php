@@ -87,7 +87,7 @@ class CakeSocket {
  * @param array $config Socket configuration, which will be merged with the base configuration
  * @see CakeSocket::$_baseConfig
  */
-	function __construct($config = array()) {
+	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
@@ -258,7 +258,7 @@ class CakeSocket {
  *
  * @access private
  */
-	function __destruct() {
+	public function __destruct() {
 		$this->disconnect();
 	}
 

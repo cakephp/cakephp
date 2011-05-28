@@ -109,7 +109,7 @@ class Sqlite extends DboSource {
  * @return mixed
  * @access public
  */
-	function connect() {
+	public function connect() {
 		$config = $this->config;
 		$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
 		try {
@@ -127,7 +127,7 @@ class Sqlite extends DboSource {
  *
  * @return boolean
  */
-	function enabled() {
+	public function enabled() {
 		return in_array('sqlite', PDO::getAvailableDrivers());
 	}
 
@@ -137,7 +137,7 @@ class Sqlite extends DboSource {
  * @return array Array of tablenames in the database
  * @access public
  */
-	function listSources($data = null) {
+	public function listSources($data = null) {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
@@ -165,7 +165,7 @@ class Sqlite extends DboSource {
  * @return array Fields in table. Keys are name and type
  * @access public
  */
-	function describe($model) {
+	public function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -207,7 +207,7 @@ class Sqlite extends DboSource {
  * @return array
  * @access public
  */
-	function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (empty($values) && !empty($fields)) {
 			foreach ($fields as $field => $value) {
 				if (strpos($field, $model->alias . '.') !== false) {
@@ -229,7 +229,7 @@ class Sqlite extends DboSource {
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  * @access public
  */
-	function truncate($table) {
+	public function truncate($table) {
 		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->fullTableName($table));
 		return $this->execute('DELETE FROM ' . $this->fullTableName($table));
 	}
@@ -241,7 +241,7 @@ class Sqlite extends DboSource {
  * @return string Abstract column type (i.e. "string")
  * @access public
  */
-	function column($real) {
+	public function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
 			if (isset($real['limit'])) {
@@ -275,7 +275,7 @@ class Sqlite extends DboSource {
  * @param mixed $results
  * @access public
  */
-	function resultSet($results) {
+	public function resultSet($results) {
 		$this->results = $results;
 		$this->map = array();
 		$num_fields = $results->columnCount();
@@ -332,7 +332,7 @@ class Sqlite extends DboSource {
  *
  * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
-	function fetchResult() {
+	public function fetchResult() {
 		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
@@ -358,7 +358,7 @@ class Sqlite extends DboSource {
  * @return string SQL limit/offset statement
  * @access public
  */
-	function limit($limit, $offset = null) {
+	public function limit($limit, $offset = null) {
 		if ($limit) {
 			$rt = '';
 			if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0) {
@@ -381,7 +381,7 @@ class Sqlite extends DboSource {
  * @return string
  * @access public
  */
-	function buildColumn($column) {
+	public function buildColumn($column) {
 		$name = $type = null;
 		$column = array_merge(array('null' => true), $column);
 		extract($column);
@@ -410,7 +410,7 @@ class Sqlite extends DboSource {
  * @param string $enc Database encoding
  * @access public
  */
-	function setEncoding($enc) {
+	public function setEncoding($enc) {
 		if (!in_array($enc, array("UTF-8", "UTF-16", "UTF-16le", "UTF-16be"))) {
 			return false;
 		}
@@ -423,7 +423,7 @@ class Sqlite extends DboSource {
  * @return string The database encoding
  * @access public
  */
-	function getEncoding() {
+	public function getEncoding() {
 		return $this->fetchRow('PRAGMA encoding');
 	}
 
@@ -435,7 +435,7 @@ class Sqlite extends DboSource {
  * @return string
  * @access public
  */
-	function buildIndex($indexes, $table = null) {
+	public function buildIndex($indexes, $table = null) {
 		$join = array();
 
 		foreach ($indexes as $name => $value) {
@@ -468,7 +468,7 @@ class Sqlite extends DboSource {
  * @return array Fields in table. Keys are column and unique
  * @access public
  */
-	function index($model) {
+	public function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model);
 		if ($table) {
@@ -509,7 +509,7 @@ class Sqlite extends DboSource {
  * @return string
  * @access public
  */
-	function renderStatement($type, $data) {
+	public function renderStatement($type, $data) {
 		switch (strtolower($type)) {
 			case 'schema':
 				extract($data);
@@ -533,7 +533,7 @@ class Sqlite extends DboSource {
  * @return boolean
  * @access public
  */
-	function hasResult() {
+	public function hasResult() {
 		return is_object($this->_result);
 	}
 

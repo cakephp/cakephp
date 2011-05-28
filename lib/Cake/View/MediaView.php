@@ -74,7 +74,7 @@ class MediaView extends View {
  *
  * @param object $controller The controller with viewVars
  */
-	function __construct($controller = null) {
+	public function __construct($controller = null) {
 		parent::__construct($controller);
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
@@ -88,7 +88,7 @@ class MediaView extends View {
  *
  * @return mixed
  */
-	function render() {
+	public function render() {
 		$name = $download = $extension = $id = $modified = $path = $cache = $mimeType = $compress = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 

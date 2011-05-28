@@ -36,7 +36,7 @@ class ThemeView extends View {
  *
  * @param Controller $controller Controller object to be rendered.
  */
-	function __construct($controller) {
+	public function __construct($controller) {
 		parent::__construct($controller);
 		$this->theme = $controller->theme;
 	}
@@ -50,7 +50,7 @@ class ThemeView extends View {
  * @access protected
  * @todo Make theme path building respect $cached parameter.
  */
-	function _paths($plugin = null, $cached = true) {
+	protected function _paths($plugin = null, $cached = true) {
 		$paths = parent::_paths($plugin, $cached);
 		$themePaths = array();
 

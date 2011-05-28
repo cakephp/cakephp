@@ -51,7 +51,7 @@ class Helper extends Object {
 	public $theme = null;
 
 /**
- * Request object 
+ * Request object
  *
  * @var CakeRequest
  */
@@ -430,8 +430,8 @@ class Helper extends Object {
 			$ModelObj = ClassRegistry::getObject($model);
 			for ($i = 0; $i < $count; $i++) {
 				if (
-					is_a($ModelObj, 'Model') && 
-					($ModelObj->hasField($parts[$i]) || 
+					is_a($ModelObj, 'Model') &&
+					($ModelObj->hasField($parts[$i]) ||
 					array_key_exists($parts[$i], $ModelObj->validate))
 				) {
 					$hasField = $i;
@@ -821,7 +821,7 @@ class Helper extends Object {
  * @return array
  * @access private
  */
-	function __selectedArray($data, $key = 'id') {
+	private function __selectedArray($data, $key = 'id') {
 		if (!is_array($data)) {
 			$model = $data;
 			if (!empty($this->request->data[$model][$model])) {
@@ -846,7 +846,7 @@ class Helper extends Object {
  * @return void
  * @access private
  */
-	function __reset() {
+	private function __reset() {
 		$this->__tainted = null;
 		$this->__cleaned = null;
 	}
@@ -857,7 +857,7 @@ class Helper extends Object {
  * @return void
  * @access private
  */
-	function __clean() {
+	private function __clean() {
 		if (get_magic_quotes_gpc()) {
 			$this->__cleaned = stripslashes($this->__tainted);
 		} else {

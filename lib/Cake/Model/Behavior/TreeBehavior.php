@@ -632,7 +632,7 @@ class TreeBehavior extends ModelBehavior {
  * @link http://book.cakephp.org/view/1355/reorder
  * @link http://book.cakephp.org/view/1629/Reorder
  */
-	function reorder($Model, $options = array()) {
+	public function reorder($Model, $options = array()) {
 		$options = array_merge(array('id' => null, 'field' => $Model->displayField, 'order' => 'ASC', 'verify' => true), $options);
 		extract($options);
 		if ($verify && !$this->verify($Model)) {
@@ -702,7 +702,7 @@ class TreeBehavior extends ModelBehavior {
 
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$Model->updateAll(
-			array($parent => $db->value($node[$parent], $parent)), 
+			array($parent => $db->value($node[$parent], $parent)),
 			array($Model->escapeField($parent) => $node[$Model->primaryKey])
 		);
 		$this->__sync($Model, 1, '-', 'BETWEEN ' . ($node[$left] + 1) . ' AND ' . ($node[$right] - 1));
@@ -885,7 +885,7 @@ class TreeBehavior extends ModelBehavior {
  * @return int
  * @access private
  */
-	function __getMax($Model, $scope, $right, $recursive = -1, $created = false) {
+	private function __getMax($Model, $scope, $right, $recursive = -1, $created = false) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		if ($created) {
 			if (is_string($scope)) {
@@ -913,7 +913,7 @@ class TreeBehavior extends ModelBehavior {
  * @return int
  * @access private
  */
-	function __getMin($Model, $scope, $left, $recursive = -1) {
+	private function __getMin($Model, $scope, $left, $recursive = -1) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$name = $Model->alias . '.' . $left;
 		list($edge) = array_values($Model->find('first', array(
@@ -936,7 +936,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string $field
  * @access private
  */
-	function __sync($Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
+	private function __sync($Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
 		$ModelRecursive = $Model->recursive;
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;

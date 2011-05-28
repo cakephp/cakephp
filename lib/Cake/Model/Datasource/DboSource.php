@@ -280,7 +280,7 @@ class DboSource extends DataSource {
  * @param array $config An array defining the new configuration settings
  * @return boolean True on success, false on failure
  */
-	function reconnect($config = array()) {
+	public function reconnect($config = array()) {
 		$this->disconnect();
 		$this->setConfig($config);
 		$this->_sources = null;
@@ -293,7 +293,7 @@ class DboSource extends DataSource {
  *
  * @return boolean True if the database could be disconnected, else false
  */
-	function disconnect() {
+	public function disconnect() {
 		if ($this->_result instanceof PDOStatement) {
 			$this->_result->closeCursor();
 		}
@@ -318,7 +318,7 @@ class DboSource extends DataSource {
  * @param string $column The column into which this data will be inserted
  * @return string Quoted and escaped data
  */
-	function value($data, $column = null) {
+	public function value($data, $column = null) {
 		if (is_array($data) && !empty($data)) {
 			return array_map(
 				array(&$this, 'value'),
@@ -491,7 +491,7 @@ class DboSource extends DataSource {
  * @param PDOStatement $query the query to extract the error from if any
  * @return string Error message with error number
  */
-	function lastError(PDOStatement $query = null) {
+	public function lastError(PDOStatement $query = null) {
 		$error = $query->errorInfo();
 		if (empty($error[2])) {
 			return null;
@@ -505,7 +505,7 @@ class DboSource extends DataSource {
  *
  * @return integer Number of affected rows
  */
-	function lastAffected() {
+	public function lastAffected() {
 		if ($this->hasResult()) {
 			return $this->_result->rowCount();
 		}
@@ -518,7 +518,7 @@ class DboSource extends DataSource {
  *
  * @return integer Number of rows in resultset
  */
-	function lastNumRows() {
+	public function lastNumRows() {
 		return $this->lastAffected();
 	}
 
@@ -1333,7 +1333,7 @@ class DboSource extends DataSource {
  * @param object $linkModel Model being merged
  * @return void
  */
-	function __mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
+	private function __mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
 		$modelAlias = $model->alias;
 		$modelPK = $model->primaryKey;
 		$modelFK = $model->hasMany[$association]['foreignKey'];
@@ -2073,7 +2073,7 @@ class DboSource extends DataSource {
  * @param unknown_type $source
  * @return in
  */
-	function lastInsertId($source = null) {
+	public function lastInsertId($source = null) {
 		return $this->_connection->lastInsertId();
 	}
 
@@ -2133,7 +2133,7 @@ class DboSource extends DataSource {
  * @param array $data
  * @return array
  */
-	public function __scrubQueryData($data) {
+	function __scrubQueryData($data) {
 		static $base = null;
 		if ($base === null) {
 			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());
@@ -2453,7 +2453,7 @@ class DboSource extends DataSource {
  * @return string
  * @access private
  */
-	function __parseKey($model, $key, $value) {
+	private function __parseKey($model, $key, $value) {
 		$operatorMatch = '/^((' . implode(')|(', $this->__sqlOps);
 		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
@@ -2540,7 +2540,7 @@ class DboSource extends DataSource {
  * @return string or false if no match
  * @access private
  */
-	function __quoteFields($conditions) {
+	private function __quoteFields($conditions) {
 		$start = $end = null;
 		$original = $conditions;
 
@@ -2566,7 +2566,7 @@ class DboSource extends DataSource {
  * @return string quoted strig
  * @access private
  */
-	function __quoteMatchedField($match) {
+	private function __quoteMatchedField($match) {
 		if (is_numeric($match[0])) {
 			return $match[0];
 		}
@@ -2881,7 +2881,7 @@ class DboSource extends DataSource {
  * @param unknown_type $schema
  * @return boolean
  */
-	function alterSchema($compare, $table = null) {
+	public function alterSchema($compare, $table = null) {
 		return false;
 	}
 
@@ -2975,7 +2975,7 @@ class DboSource extends DataSource {
  * @param string $position The position type to use. 'beforeDefault' or 'afterDefault' are common
  * @return string a built column with the field parameters added.
  */
-	public function _buildFieldParameters($columnString, $columnData, $position) {
+	protected function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
 			if (isset($columnData[$paramName]) && $value['position'] == $position) {
 				if (isset($value['options']) && !in_array($columnData[$paramName], $value['options'])) {
