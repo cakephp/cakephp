@@ -32,7 +32,9 @@ class FileLogTest extends CakeTestCase {
  * @return void
  */
 	function testLogFileWriting() {
-		@unlink(LOGS . 'error.log');
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
 		$log = new FileLog();
 		$log->write('warning', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
@@ -41,7 +43,9 @@ class FileLogTest extends CakeTestCase {
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
 		unlink(LOGS . 'error.log');
 
-		@unlink(LOGS . 'debug.log');
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
 		$log->write('debug', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'debug.log'));
 
@@ -49,7 +53,9 @@ class FileLogTest extends CakeTestCase {
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test warning/', $result);
 		unlink(LOGS . 'debug.log');
 
-		@unlink(LOGS . 'random.log');
+		if (file_exists(LOGS . 'random.log')) {
+			unlink(LOGS . 'random.log');
+		}
 		$log->write('random', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'random.log'));
 
@@ -65,7 +71,9 @@ class FileLogTest extends CakeTestCase {
  */
 	function testPathSetting() {
 		$path = TMP . 'tests' . DS;
-		@unlink($path . 'error.log');
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
 
 		$log = new FileLog(compact('path'));
 		$log->write('warning', 'Test warning');

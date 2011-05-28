@@ -790,7 +790,9 @@ class ViewTest extends CakeTestCase {
 
 		$result = $View->renderCache($path, '+1 second');
 		$this->assertFalse($result);
-		@unlink($path);
+		if (file_exists($path)) {
+			unlink($path);
+		}
 
 		$cacheText = '<!--cachetime:' . (time() + 10) . '-->some cacheText';
 		$f = fopen($path, 'w+');
