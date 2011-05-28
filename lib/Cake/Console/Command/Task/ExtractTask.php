@@ -98,6 +98,13 @@ class ExtractTask extends Shell {
 	protected $_exclude = array();
 
 /**
+ * Holds whether this call should extract model validation messages
+ *
+ * @var boolean
+ */
+	protected $_extractValidation = true;
+
+/**
  * Execution method always used for tasks
  *
  * @return void
@@ -135,6 +142,10 @@ class ExtractTask extends Shell {
 
 		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
 			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
+		}
+
+		if (!empty($this->params['ignore-model-validation']) || !$this->_isExtractingApp()) {
+			$this->_extractValidation = false;
 		}
 
 		if (isset($this->params['output'])) {
@@ -188,10 +199,12 @@ class ExtractTask extends Shell {
 		$this->out(__d('cake_console', 'Output Directory: ') . $this->_output);
 		$this->hr();
 		$this->_extractTokens();
+		$this->_extractValidationMessages();
 		$this->_buildFiles();
 		$this->_writeFiles();
 		$this->_paths = $this->_files = $this->_storage = array();
 		$this->_strings = $this->_tokens = array();
+		$this->_extractValidation = true;
 		$this->out();
 		$this->out(__d('cake_console', 'Done.'));
 	}
@@ -307,6 +320,60 @@ class ExtractTask extends Shell {
 				}
 			}
 			$count++;
+		}
+	}
+
+/**
+ * Looks for models in the application and extracts the validation messages
+ * to be added to the translation map
+ *
+ * @return void
+ */
+	protected function _extractValidationMessages() {
+		if (!$this->_extractValidation) {
+			return;
+		}
+		$models = App::objects('Model');
+		App::uses('AppModel', 'Model');
+		foreach ($models as $model) {
+			App::uses($model, 'Model');
+			$reflection = new ReflectionClass($model);
+			$properties = $reflection->getDefaultProperties();
+			$validate = $properties['validate'];
+			if (empty($validate)) {
+				continue;
+			}
+			$file = $reflection->getFileName();
+			$domain = 'default';
+			foreach ($validate as $field => $rules) {
+				$this->_processValidationRules($field, $rules, $file, $domain);
+			}
+		}
+	}
+
+/**
+ * Process a validation rule for a field and looks for a message to be added
+ * to the translation map
+ *
+ * @param string $field the name of the field that is being processed
+ * @param array $rules the set of validation rules for the field
+ * @param string $file the file name where this validation rule was found
+ * @param string domain default domain to bind the validations to
+ * @return void
+ */
+	protected function _processValidationRules($field, $rules, $file, $domain) {
+		if (is_array($rules)) {
+
+			$dims = Set::countDim($rules);
+			if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
+				$rules = array($rules);
+			}
+
+			foreach ($rules as $rule => $validateProp) {
+				if (isset($validateProp['message'])) {
+					$this->_strings[$domain][$validateProp['message']][$file][] = 'validation for field ' . $field;
+				}
+			}
 		}
 	}
 
