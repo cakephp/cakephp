@@ -333,7 +333,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  * @link http://book.cakephp.org/view/1437/css
  */
-	function css($path, $rel = null, $options = array()) {
+	function css($path, $rel = 'stylesheet', $options = array()) {
 		$options += array('inline' => true);
 		if (is_array($path)) {
 			$out = '';
@@ -346,7 +346,7 @@ class HtmlHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($path, '://') !== false) {
+		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
 			if ($path[0] !== '/') {
@@ -371,9 +371,6 @@ class HtmlHelper extends AppHelper {
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
 		} else {
-			if ($rel == null) {
-				$rel = 'stylesheet';
-			}
 			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
 		}
 
@@ -427,7 +424,7 @@ class HtmlHelper extends AppHelper {
 		}
 		$this->__includedScripts[$url] = true;
 
-		if (strpos($url, '://') === false) {
+		if (strpos($url, '//') === false) {
 			if ($url[0] !== '/') {
 				$url = JS_URL . $url;
 			}
