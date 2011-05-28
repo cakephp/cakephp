@@ -351,10 +351,10 @@ class TestShell extends Shell {
 				$testCase = substr($file, 0, -8);
 				$testCase = str_replace(DS, '/', $testCase);
 
-				if ($testCase = preg_replace('@.*Test\/cases\/@', '', $testCase)) {
+				if ($testCase = preg_replace('@.*Test\/Case\/@', '', $testCase)) {
 
 					if ($category === 'core') {
-						$testCase = str_replace('lib/Cake/Test/Case/', '', $testCase);
+						$testCase = str_replace('lib/Cake', '', $testCase);
 					}
 
 					return $testCase;
