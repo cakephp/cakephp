@@ -528,7 +528,7 @@ class TestTaskTest extends CakeTestCase {
 
 		//fake plugin path
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS));
-		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS  .'FormHelperTest.php';
+		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS  .'FormHelperTest.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
 
@@ -549,7 +549,7 @@ class TestTaskTest extends CakeTestCase {
 		CakePlugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'TestPlugin' . DS . 'tests' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperHelperTest.php';
+		$path = $testApp . 'TestPlugin' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperHelperTest.php';
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls(
@@ -599,7 +599,7 @@ class TestTaskTest extends CakeTestCase {
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS ));
 		$this->Task->plugin = 'TestTest';
 		$result = $this->Task->testCaseFileName('Model', 'Post');
-		$expected =  APP . 'Plugin' . DS . 'TestTest' . DS . 'tests' . DS . 'Case' . DS . 'Model' . DS . 'PostTest.php';
+		$expected =  APP . 'Plugin' . DS . 'TestTest' . DS . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'PostTest.php';
 		$this->assertEqual($expected, $result);
 	}
 
