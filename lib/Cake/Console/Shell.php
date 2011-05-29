@@ -149,7 +149,7 @@ class Shell extends Object {
  */
 	function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if ($this->name == null) {
-			$this->name = Inflector::underscore(str_replace(array('Shell', 'Task'), '', get_class($this)));
+			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
 		$this->Tasks = new TaskCollection($this);
 
