@@ -800,4 +800,17 @@ TEXT;
 TEXT;
 		$this->assertEquals($expected, $result, 'Text not wrapped.');
 	}
+
+/**
+ * Testing camel cased naming of tasks
+ * 
+ * @access public
+ * @return void
+ */
+	public function testShellNaming() {
+		$this->Shell->tasks = array('TestApple');
+		$this->Shell->loadTasks();
+		$expected = 'TestApple';
+		$this->assertEqual($expected, $this->Shell->TestApple->name);
+	}
 }
