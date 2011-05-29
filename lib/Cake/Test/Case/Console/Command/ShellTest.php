@@ -172,21 +172,22 @@ class ShellTest extends CakeTestCase {
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
 		), true);
-		CakePlugin::load('TestPlugin');
 
+		CakePlugin::load('TestPlugin');
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 
 		$this->assertTrue(isset($this->Shell->TestPluginPost));
 		$this->assertInstanceOf('TestPluginPost', $this->Shell->TestPluginPost);
 		$this->assertEqual($this->Shell->modelClass, 'TestPluginPost');
+		CakePlugin::unload('TestPlugin');
 
 		$this->Shell->uses = array('Comment');
 		$this->Shell->initialize();
 		$this->assertTrue(isset($this->Shell->Comment));
 		$this->assertInstanceOf('Comment', $this->Shell->Comment);
 		$this->assertEqual($this->Shell->modelClass, 'Comment');
-
+		
 		App::build();
 	}
 
