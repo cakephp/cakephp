@@ -83,7 +83,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEqual($Task->path, APP . 'tests' . DS . 'Fixture' . DS);
+		$this->assertEqual($Task->path, APP . 'Test' . DS . 'Fixture' . DS);
 	}
 
 /**
@@ -362,7 +362,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->plugin = 'TestFixture';
-		$filename = APP . 'Plugin' . DS . 'TestFixture' . DS . 'tests' . DS . 'Fixture' . DS . 'ArticleFixture.php';
+		$filename = APP . 'Plugin' . DS . 'TestFixture' . DS . 'Test' . DS . 'Fixture' . DS . 'ArticleFixture.php';
 
 		//fake plugin path
 		CakePlugin::load('TestFixture', array('path' =>  APP . 'Plugin' . DS . 'TestFixture' . DS));
