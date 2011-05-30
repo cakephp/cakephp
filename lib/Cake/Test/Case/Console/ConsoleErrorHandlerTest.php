@@ -31,7 +31,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return Mock object
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		ConsoleErrorHandler::$stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
 	}
@@ -41,7 +41,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 	}
 
@@ -50,7 +50,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHandleError() {
+	public function testHandleError() {
 		$content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($content);
@@ -63,7 +63,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCakeErrors() {
+	public function testCakeErrors() {
 		$exception = new MissingActionException('Missing action');
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
@@ -76,7 +76,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testNonCakeExceptions() {
+	public function testNonCakeExceptions() {
 		$exception = new InvalidArgumentException('Too many parameters.');
 
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
@@ -90,7 +90,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testError404Exception() {
+	public function testError404Exception() {
 		$exception = new NotFoundException('dont use me in cli.');
 		
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
@@ -104,7 +104,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testError500Exception() {
+	public function testError500Exception() {
 		$exception = new InternalErrorException('dont use me in cli.');
 
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')

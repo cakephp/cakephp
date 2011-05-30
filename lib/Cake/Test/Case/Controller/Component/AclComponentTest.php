@@ -189,7 +189,7 @@ class AclComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		if (!class_exists('MockAclImplementation', false)) {
 			$this->getMock('AclInterface', array(), array(), 'MockAclImplementation');
@@ -204,7 +204,7 @@ class AclComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Acl);
 	}
@@ -216,7 +216,7 @@ class AclComponentTest extends CakeTestCase {
  * @expectedException CakeException
  * @return void
  */
-	function testConstrutorException() {
+	public function testConstrutorException() {
 		Configure::write('Acl.classname', 'AclClassNameThatDoesNotExist');
 		$Collection = new ComponentCollection();
 		$acl = new AclComponent($Collection);
@@ -227,7 +227,7 @@ class AclComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAdapter() {
+	public function testAdapter() {
 		$implementation = new MockAclImplementation();
 		$implementation->expects($this->once())->method('initialize')->with($this->Acl);
 		$this->assertNull($this->Acl->adapter($implementation));
@@ -241,7 +241,7 @@ class AclComponentTest extends CakeTestCase {
  * @expectedException CakeException
  * @return void
  */
-	function testAdapterException() {
+	public function testAdapterException() {
 		$thing = new StdClass();
 		$this->Acl->adapter($thing);
 	}
@@ -261,7 +261,7 @@ class IniAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheck() {
+	public function testCheck() {
 		$iniFile = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
@@ -284,7 +284,7 @@ class IniAclTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCheckArray() {
+	public function testCheckArray() {
 		$iniFile = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
@@ -318,7 +318,7 @@ class DbAclTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Acl.classname', 'DbAclTwoTest');
 		Configure::write('Acl.database', 'test');
@@ -332,7 +332,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Acl);
 	}
@@ -343,7 +343,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCreate() {
+	public function testCreate() {
 		$this->Acl->Aro->create(array('alias' => 'Chotchkey'));
 		$this->assertTrue((bool)$this->Acl->Aro->save());
 
@@ -371,7 +371,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCreateWithParent() {
+	public function testCreateWithParent() {
 		$parent = $this->Acl->Aro->findByAlias('Peter', null, null, -1);
 		$this->Acl->Aro->create();
 		$this->Acl->Aro->save(array(
@@ -391,7 +391,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAllow() {
+	public function testAllow() {
 		$this->assertFalse($this->Acl->check('Micheal', 'tpsReports', 'read'));
 		$this->assertTrue($this->Acl->allow('Micheal', 'tpsReports', array('read', 'delete', 'update')));
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'update'));
@@ -440,7 +440,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheck() {
+	public function testCheck() {
 		$this->assertTrue($this->Acl->check('Samir', 'print', 'read'));
 		$this->assertTrue($this->Acl->check('Lumbergh', 'current', 'read'));
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
@@ -497,7 +497,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAclCascadingDeny() {
+	public function testAclCascadingDeny() {
 		$this->Acl->inherit('Bobs', 'ROOT', '*');
 		$this->assertTrue($this->Acl->check('admin', 'tpsReports', 'delete'));
 		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'delete'));
@@ -512,7 +512,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDeny() {
+	public function testDeny() {
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'delete'));
 		$this->Acl->deny('Micheal', 'smash', 'delete');
 		$this->assertFalse($this->Acl->check('Micheal', 'smash', 'delete'));
@@ -542,7 +542,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAclNodeLookup() {
+	public function testAclNodeLookup() {
 		$result = $this->Acl->Aro->node('root/users/Samir');
 		$expected = array(
 			array('AroTwoTest' => array('id' => '7', 'parent_id' => '4', 'model' => 'User', 'foreign_key' => 3, 'alias' => 'Samir')),
@@ -567,7 +567,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInherit() {
+	public function testInherit() {
 		//parent doesn't have access inherit should still deny
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'delete'));
 		$this->Acl->inherit('Milton', 'smash', 'delete');
@@ -585,7 +585,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGrant() {
+	public function testGrant() {
 		$this->assertFalse($this->Acl->check('Samir', 'tpsReports', 'create'));
 		$this->Acl->allow('Samir', 'tpsReports', 'create');
 		$this->assertTrue($this->Acl->check('Samir', 'tpsReports', 'create'));
@@ -607,7 +607,7 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRevoke() {
+	public function testRevoke() {
 		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'read'));
 		$this->Acl->deny('Bobs', 'tpsReports', 'read');
 		$this->assertFalse($this->Acl->check('Bobs', 'tpsReports', 'read'));

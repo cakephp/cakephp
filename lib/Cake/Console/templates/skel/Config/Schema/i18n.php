@@ -31,11 +31,11 @@ class i18nSchema extends CakeSchema {
 
 	public $name = 'i18n';
 
-	function before($event = array()) {
+	public function before($event = array()) {
 		return true;
 	}
 
-	function after($event = array()) {
+	public function after($event = array()) {
 	}
 
 	public $i18n = array(

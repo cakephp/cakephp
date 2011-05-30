@@ -293,7 +293,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMethodIntrospection() {
+	public function testMethodIntrospection() {
 		$result = $this->Task->getTestableMethods('TestTaskArticle');
 		$expected = array('dosomething', 'dosomethingelse');
 		$this->assertEqual(array_map('strtolower', $result), $expected);
@@ -541,7 +541,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInteractiveWithPlugin() {
+	public function testInteractiveWithPlugin() {
 		$testApp = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array(
 			'plugins' => array($testApp)

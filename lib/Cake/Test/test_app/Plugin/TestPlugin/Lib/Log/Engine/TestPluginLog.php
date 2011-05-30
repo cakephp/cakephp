@@ -18,7 +18,7 @@
  */
 class TestPluginLog implements CakeLogInterface {
 
-	function write($type, $message) {
+	public function write($type, $message) {
 		
 	}
 }

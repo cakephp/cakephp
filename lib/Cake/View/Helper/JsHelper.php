@@ -165,7 +165,7 @@ class JsHelper extends AppHelper {
  * @return string a JavaScript-safe/JSON representation of $val
  * @access public
  **/
-	function value($val, $quoteString = true) {
+	public function value($val, $quoteString = true) {
 		return $this->{$this->__engineName}->value($val, $quoteString);
 	}
 

@@ -27,7 +27,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->_server = $_SERVER;
 		$this->_get = $_GET;
@@ -48,7 +48,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		$_SERVER = $this->_server;
 		$_GET = $this->_get;
@@ -65,7 +65,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testNoAutoParseConstruction() {
+	public function testNoAutoParseConstruction() {
 		$_GET = array(
 			'one' => 'param'
 		);
@@ -78,7 +78,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testConstructionGetParsing() {
+	public function testConstructionGetParsing() {
 		$_GET = array(
 			'one' => 'param',
 			'two' => 'banana'
@@ -100,7 +100,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testQueryStringParsingFromInputUrl() {
+	public function testQueryStringParsingFromInputUrl() {
 		$_GET = array();
 		$request = new CakeRequest('some/path?one=something&two=else');
 		$expected = array('one' => 'something', 'two' => 'else');
@@ -114,7 +114,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testAddParams() {
+	public function testAddParams() {
 		$request = new CakeRequest('some/path');
 		$request->params = array('controller' => 'posts', 'action' => 'view');
 		$result = $request->addParams(array('plugin' => null, 'action' => 'index'));
@@ -131,7 +131,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testAddPaths() {
+	public function testAddPaths() {
 		$request = new CakeRequest('some/path');
 		$request->webroot = '/some/path/going/here/';
 		$result = $request->addPaths(array(
@@ -152,7 +152,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testPostParsing() {
+	public function testPostParsing() {
 		$_POST = array('data' => array(
 			'Article' => array('title')
 		));
@@ -169,7 +169,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testFILESParsing() {
+	public function testFILESParsing() {
 		$_FILES = array('data' => array('name' => array(
 			'File' => array(
 					array('data' => 'cake_sqlserver_patch.patch'),
@@ -430,7 +430,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testMethodOverrides() {
+	public function testMethodOverrides() {
 		$_POST = array('_method' => 'POST');
 		$request = new CakeRequest('some/path');
 		$this->assertEqual(env('REQUEST_METHOD'), 'POST');
@@ -449,7 +449,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testclientIp() {
+	public function testclientIp() {
 		$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.5, 10.0.1.1, proxy.com';
 		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.3';
@@ -472,7 +472,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testReferer() {
+	public function testReferer() {
 		$request = new CakeRequest('some/path');
 		$request->webroot = '/';
 
@@ -510,7 +510,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testIsHttpMethods() {
+	public function testIsHttpMethods() {
 		$request = new CakeRequest('some/path');
 
 		$this->assertFalse($request->is('undefined-behavior'));
@@ -538,7 +538,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testMethod() {
+	public function testMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'delete';
 		$request = new CakeRequest('some/path');
 
@@ -550,7 +550,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testHost() {
+	public function testHost() {
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		$request = new CakeRequest('some/path');
 		
@@ -562,7 +562,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testDomain() {
+	public function testDomain() {
 		$_SERVER['HTTP_HOST'] = 'something.example.com';
 		$request = new CakeRequest('some/path');
 
@@ -577,7 +577,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testSubdomain() {
+	public function testSubdomain() {
 		$_SERVER['HTTP_HOST'] = 'something.example.com';
 		$request = new CakeRequest('some/path');
 
@@ -598,7 +598,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testisAjaxFlashAndFriends() {
+	public function testisAjaxFlashAndFriends() {
 		$request = new CakeRequest('some/path');
 
 		$_SERVER['HTTP_USER_AGENT'] = 'Shockwave Flash';
@@ -629,7 +629,7 @@ class CakeRequestTestCase extends CakeTestCase {
  * @expectedException CakeException
  * @return void
  */
-	function test__callExceptionOnUnknownMethod() {
+	public function test__callExceptionOnUnknownMethod() {
 		$request = new CakeRequest('some/path');
 		$request->IamABanana();
 	}
@@ -639,7 +639,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testIsSsl() {
+	public function testIsSsl() {
 		$request = new CakeRequest('some/path');
 
 		$_SERVER['HTTPS'] = 1;
@@ -672,7 +672,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function test__get() {
+	public function test__get() {
 		$request = new CakeRequest('some/path');
 		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
 
@@ -687,7 +687,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testArrayAccess() {
+	public function testArrayAccess() {
 		$request = new CakeRequest('some/path');
 		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
 
@@ -718,7 +718,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testAddDetector() {
+	public function testAddDetector() {
 		$request = new CakeRequest('some/path');
 		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
@@ -765,7 +765,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testHeader() {
+	public function testHeader() {
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16';
 		$request = new CakeRequest('/', false);
@@ -779,7 +779,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testAccepts() {
+	public function testAccepts() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png';
 		$request = new CakeRequest('/', false);
 		
@@ -891,7 +891,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testBaseUrlWithNoModRewrite() {
+	public function testBaseUrlWithNoModRewrite() {
 		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites';
 		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake/index.php';
 		$_SERVER['PHP_SELF'] = '/cake/index.php/posts/index';
@@ -964,7 +964,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testBaseUrlNoRewriteTopLevelIndex() {
+	public function testBaseUrlNoRewriteTopLevelIndex() {
 		Configure::write('App.baseUrl', '/index.php');
 		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
 		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
@@ -979,7 +979,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testBaseUrlNoRewriteWebrootIndex() {
+	public function testBaseUrlNoRewriteWebrootIndex() {
 		Configure::write('App.baseUrl', '/index.php');
 		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/app/webroot';
 		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/app/webroot/index.php';
@@ -1335,7 +1335,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testDataReading() {
+	public function testDataReading() {
 		$_POST['data'] = array(
 			'Model' => array(
 				'field' => 'value'
@@ -1354,7 +1354,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testDataWriting() {
+	public function testDataWriting() {
 		$_POST['data'] = array(
 			'Model' => array(
 				'field' => 'value'
@@ -1376,7 +1376,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testDataWritingFalsey() {
+	public function testDataWritingFalsey() {
 		$request = new CakeRequest('posts/index');
 
 		$request->data('Post.null', null);
@@ -1397,7 +1397,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testAcceptLanguage() {
+	public function testAcceptLanguage() {
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 		$result = CakeRequest::acceptLanguage();
 		$this->assertEquals(array('inexistent', 'en-ca'), $result, 'Languages do not match');
@@ -1418,7 +1418,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testHere() {
+	public function testHere() {
 		Configure::write('App.base', '/base_path');
 		$_GET = array('test' => 'value');
 		$request = new CakeRequest('/posts/add/1/name:value');
@@ -1442,7 +1442,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testInput() {
+	public function testInput() {
 		$request = $this->getMock('CakeRequest', array('_readStdin'));
 		$request->expects($this->once())->method('_readStdin')
 			->will($this->returnValue('I came from stdin'));
@@ -1456,7 +1456,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testInputDecode() {
+	public function testInputDecode() {
 		$request = $this->getMock('CakeRequest', array('_readStdin'));
 		$request->expects($this->once())->method('_readStdin')
 			->will($this->returnValue('{"name":"value"}'));
@@ -1470,7 +1470,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testInputDecodeExtraParams() {
+	public function testInputDecodeExtraParams() {
 		$xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <post>

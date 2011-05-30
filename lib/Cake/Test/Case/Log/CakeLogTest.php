@@ -32,7 +32,7 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$streams = CakeLog::configured();
 		foreach ($streams as $stream) {
@@ -45,7 +45,7 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  */
-	function testImportingLoggers() {
+	public function testImportingLoggers() {
 		App::build(array(
 			'libs' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
@@ -74,7 +74,7 @@ class CakeLogTest extends CakeTestCase {
  * @expectedException CakeLogException
  * @return void
  */
-	function testImportingLoggerFailure() {
+	public function testImportingLoggerFailure() {
 		CakeLog::config('fail', array());
 	}
 
@@ -84,7 +84,7 @@ class CakeLogTest extends CakeTestCase {
  * @expectedException CakeLogException
  * @return void
  */
-	function testNotImplementingInterface() {
+	public function testNotImplementingInterface() {
 		CakeLog::config('fail', array('engine' => 'stdClass'));
 	}
 
@@ -94,7 +94,7 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAutoConfig() {
+	public function testAutoConfig() {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
@@ -111,7 +111,7 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConfig() {
+	public function testConfig() {
 		CakeLog::config('file', array(
 			'engine' => 'FileLog',
 			'path' => LOGS
@@ -135,7 +135,7 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testDrop() {
+	public function testDrop() {
 		CakeLog::config('file', array(
 			'engine' => 'FileLog',
 			'path' => LOGS
@@ -154,7 +154,7 @@ class CakeLogTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLogFileWriting() {
+	public function testLogFileWriting() {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}

@@ -21,7 +21,7 @@ App::uses('CakeLogInterface', 'Log');
 
 class TestAppLog implements CakeLogInterface {
 
-	function write($type, $message) {
+	public function write($type, $message) {
 		
 	}
 }

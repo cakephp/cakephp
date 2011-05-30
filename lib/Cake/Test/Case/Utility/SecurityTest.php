@@ -39,7 +39,7 @@ class SecurityTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInactiveMins() {
+	public function testInactiveMins() {
 		Configure::write('Security.level', 'high');
 		$this->assertEqual(10, Security::inactiveMins());
 
@@ -56,7 +56,7 @@ class SecurityTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAuthkey() {
+	public function testGenerateAuthkey() {
 		$this->assertEqual(strlen(Security::generateAuthKey()), 40);
 	}
 
@@ -66,7 +66,7 @@ class SecurityTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testValidateAuthKey() {
+	public function testValidateAuthKey() {
 		$authKey = Security::generateAuthKey();
 		$this->assertTrue(Security::validateAuthKey($authKey));
 	}
@@ -77,7 +77,7 @@ class SecurityTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHash() {
+	public function testHash() {
 		$_hashType = Security::$hashType;
 
 		$key = 'someKey';
@@ -126,7 +126,7 @@ class SecurityTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCipher() {
+	public function testCipher() {
 		$length = 10;
 		$txt = '';
 		for ($i = 0; $i < $length; $i++) {

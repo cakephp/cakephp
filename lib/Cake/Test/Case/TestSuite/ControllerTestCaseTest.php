@@ -119,7 +119,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
@@ -137,7 +137,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
 		$this->Case->controller = null;
@@ -146,7 +146,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Test that ControllerTestCase::generate() creates mock objects correctly
  */
-	function testGenerate() {
+	public function testGenerate() {
 		if (defined('APP_CONTROLLER_EXISTS')) {
 			$this->markTestSkipped('AppController exists, cannot run.');
 		}
@@ -211,7 +211,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests ControllerTestCase::generate() using classes from plugins
  */
-	function testGenerateWithPlugin() {
+	public function testGenerateWithPlugin() {
 		$Tests = $this->Case->generate('TestPlugin.Tests', array(
 			'models' => array(
 				'TestPlugin.TestPluginComment'
@@ -246,7 +246,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests testAction
  */
-	function testTestAction() {
+	public function testTestAction() {
 		$Controller = $this->Case->generate('TestsApps');
 		$this->Case->testAction('/tests_apps/index');
 		$this->assertInternalType('array', $this->Case->controller->viewVars);
@@ -272,7 +272,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests using loaded routes during tests
  */
-	function testUseRoutes() {
+	public function testUseRoutes() {
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$controller = $this->Case->generate('TestsApps');
 		$controller->Components->load('RequestHandler');
@@ -301,7 +301,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  *
  * @expectedException MissingActionException
  */
-	function testSkipRoutes() {
+	public function testSkipRoutes() {
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 
 		$this->Case->loadRoutes = false;
@@ -311,7 +311,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests backwards compatibility with setting the return type
  */
-	function testBCSetReturn() {
+	public function testBCSetReturn() {
 		$this->Case->autoMock = true;
 
 		$result = $this->Case->testAction('/tests_apps/some_method');
@@ -340,7 +340,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests sending POST data to testAction
  */
-	function testTestActionPostData() {
+	public function testTestActionPostData() {
 		$this->Case->autoMock = true;
 
 		$data = array(
@@ -381,7 +381,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests sending GET data to testAction
  */
-	function testTestActionGetData() {
+	public function testTestActionGetData() {
 		$this->Case->autoMock = true;
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var', array(
@@ -422,7 +422,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Tests autoMock ability
  */
-	function testAutoMock() {
+	public function testAutoMock() {
 		$this->Case->autoMock = true;
 		$this->Case->testAction('/tests_apps/set_action');
 		$results = $this->Case->controller->viewVars;
@@ -435,7 +435,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 /**
  * Test using testAction and not mocking
  */
-	function testNoMocking() {
+	public function testNoMocking() {
 		$result = $this->Case->testAction('/tests_apps/some_method');
 		$this->Case->assertEquals($result, 5);
 

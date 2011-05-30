@@ -65,7 +65,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInitialize() {
+	public function testInitialize() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -83,7 +83,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectInvalidLeft() {
+	public function testDetectInvalidLeft() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -110,7 +110,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectInvalidRight() {
+	public function testDetectInvalidRight() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -137,7 +137,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectInvalidParent() {
+	public function testDetectInvalidParent() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -163,7 +163,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectNoneExistantParent() {
+	public function testDetectNoneExistantParent() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -187,7 +187,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRecoverFromMissingParent() {
+	public function testRecoverFromMissingParent() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -211,7 +211,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectInvalidParents() {
+	public function testDetectInvalidParents() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -234,7 +234,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectInvalidLftsRghts() {
+	public function testDetectInvalidLftsRghts() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -256,7 +256,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDetectEqualLftsRghts() {
+	public function testDetectEqualLftsRghts() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 3);
@@ -284,7 +284,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddOrphan() {
+	public function testAddOrphan() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -304,7 +304,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddMiddle() {
+	public function testAddMiddle() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -338,7 +338,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddInvalid() {
+	public function testAddInvalid() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -363,7 +363,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddNotIndexedByModel() {
+	public function testAddNotIndexedByModel() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -383,7 +383,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMovePromote() {
+	public function testMovePromote() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -410,7 +410,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveWithWhitelist() {
+	public function testMoveWithWhitelist() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -438,7 +438,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInsertWithWhitelist() {
+	public function testInsertWithWhitelist() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -457,7 +457,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveBefore() {
+	public function testMoveBefore() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -486,7 +486,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveAfter() {
+	public function testMoveAfter() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -515,7 +515,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveDemoteInvalid() {
+	public function testMoveDemoteInvalid() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -549,7 +549,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveInvalid() {
+	public function testMoveInvalid() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -576,7 +576,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveSelfInvalid() {
+	public function testMoveSelfInvalid() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -603,7 +603,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveUpSuccess() {
+	public function testMoveUpSuccess() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -625,7 +625,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveUpFail() {
+	public function testMoveUpFail() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -648,7 +648,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveUp2() {
+	public function testMoveUp2() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
@@ -679,7 +679,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveUpFirst() {
+	public function testMoveUpFirst() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
@@ -710,7 +710,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveDownSuccess() {
+	public function testMoveDownSuccess() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -732,7 +732,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveDownFail() {
+	public function testMoveDownFail() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -754,7 +754,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveDownLast() {
+	public function testMoveDownLast() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
@@ -785,7 +785,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveDown2() {
+	public function testMoveDown2() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
@@ -816,7 +816,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSaveNoMove() {
+	public function testSaveNoMove() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
@@ -847,7 +847,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveToRootAndMoveUp() {
+	public function testMoveToRootAndMoveUp() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 1);
@@ -872,7 +872,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDelete() {
+	public function testDelete() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -908,7 +908,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRemove() {
+	public function testRemove() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -941,7 +941,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRemoveLastTopParent() {
+	public function testRemoveLastTopParent() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1009,7 +1009,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRemoveAndDelete() {
+	public function testRemoveAndDelete() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1074,7 +1074,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testChildren() {
+	public function testChildren() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1105,7 +1105,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCountChildren() {
+	public function testCountChildren() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1126,7 +1126,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGetParentNode() {
+	public function testGetParentNode() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1145,7 +1145,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGetPath() {
+	public function testGetPath() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1166,7 +1166,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNoAmbiguousColumn() {
+	public function testNoAmbiguousColumn() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
@@ -1199,7 +1199,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReorderTree() {
+	public function testReorderTree() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(3, 3);
@@ -1231,7 +1231,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReorderBigTreeWithQueryCaching() {
+	public function testReorderBigTreeWithQueryCaching() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 10);
@@ -1248,7 +1248,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateTreeListWithSelfJoin() {
+	public function testGenerateTreeListWithSelfJoin() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
@@ -1266,7 +1266,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testArraySyntax() {
+	public function testArraySyntax() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(3, 3);

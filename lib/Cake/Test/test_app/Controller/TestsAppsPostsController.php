@@ -21,7 +21,7 @@ class TestsAppsPostsController extends AppController {
 	public $uses = array('Post');
 	public $viewPath = 'TestsApps';
 
-	function add() {
+	public function add() {
 		$data = array(
 			'Post' => array(
 				'title' => 'Test article',
@@ -39,7 +39,7 @@ class TestsAppsPostsController extends AppController {
  * check url params
  *
  */
-	function url_var() {
+	public function url_var() {
 		$this->set('params', $this->request->params);
 		$this->render('index');
 	}
@@ -48,7 +48,7 @@ class TestsAppsPostsController extends AppController {
  * post var testing
  *
  */
-	function post_var() {
+	public function post_var() {
 		$this->set('data', $this->request->data);
 		$this->render('index');
 	}
@@ -57,7 +57,7 @@ class TestsAppsPostsController extends AppController {
  * Fixturized action for testAction()
  *
  */
-	function fixtured() {
+	public function fixtured() {
 		$this->set('posts', $this->Post->find('all'));
 		$this->render('index');
 	}

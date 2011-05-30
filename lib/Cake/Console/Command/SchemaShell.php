@@ -245,7 +245,7 @@ class SchemaShell extends Shell {
  *
  * @return void
  */
-	function create() {
+	public function create() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__create($Schema, $table);
 	}
@@ -255,7 +255,7 @@ class SchemaShell extends Shell {
  *
  * @return void
  */
-	function update() {
+	public function update() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__update($Schema, $table);
 	}

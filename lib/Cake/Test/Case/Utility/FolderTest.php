@@ -32,7 +32,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBasic() {
+	public function testBasic() {
 		$path = dirname(__FILE__);
 		$Folder = new Folder($path);
 
@@ -57,7 +57,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInPath() {
+	public function testInPath() {
 		$path = dirname(dirname(__FILE__));
 		$inside = dirname($path) . DS;
 
@@ -84,7 +84,7 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCreation() {
+	public function testCreation() {
 		$folder = new Folder(TMP . 'tests');
 		$result = $folder->create(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
 		$this->assertTrue($result);
@@ -104,7 +104,7 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCreateWithTrailingDs() {
+	public function testCreateWithTrailingDs() {
 		$folder = new Folder(TMP);
 		$path = TMP . 'tests' . DS . 'trailing' . DS . 'dir' . DS;
 		$result = $folder->create($path);
@@ -121,7 +121,7 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRecursiveCreateFailure() {
+	public function testRecursiveCreateFailure() {
 		if ($this->skipIf(DS == '\\', 'Cant perform operations using permissions on windows. %s')) {
 			return;
 		}
@@ -146,7 +146,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testOperations() {
+	public function testOperations() {
 		$path = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
@@ -247,7 +247,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRealPathForWebroot() {
+	public function testRealPathForWebroot() {
 		$Folder = new Folder('files/');
 		$this->assertEqual(realpath('files/'), $Folder->path);
 	}
@@ -258,7 +258,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testZeroAsDirectory() {
+	public function testZeroAsDirectory() {
 		$Folder = new Folder(TMP);
 		$new = TMP . '0';
 		$this->assertTrue($Folder->create($new));
@@ -280,7 +280,7 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAddPathElement() {
+	public function testAddPathElement() {
 		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', 'another_path');
 		$this->assertEqual($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
 
@@ -293,7 +293,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFolderRead() {
+	public function testFolderRead() {
 		$Folder = new Folder(TMP);
 
 		$expected = array('cache', 'logs', 'sessions', 'tests');
@@ -313,7 +313,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFolderTree() {
+	public function testFolderTree() {
 		$Folder = new Folder();
 		$expected = array(
 			array(
@@ -362,7 +362,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWindowsPath() {
+	public function testWindowsPath() {
 		$this->assertFalse(Folder::isWindowsPath('0:\\cake\\is\\awesome'));
 		$this->assertTrue(Folder::isWindowsPath('C:\\cake\\is\\awesome'));
 		$this->assertTrue(Folder::isWindowsPath('d:\\cake\\is\\awesome'));
@@ -375,7 +375,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsAbsolute() {
+	public function testIsAbsolute() {
 		$this->assertFalse(Folder::isAbsolute('path/to/file'));
 		$this->assertFalse(Folder::isAbsolute('cake/'));
 		$this->assertFalse(Folder::isAbsolute('path\\to\\file'));
@@ -397,7 +397,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsSlashTerm() {
+	public function testIsSlashTerm() {
 		$this->assertFalse(Folder::isSlashTerm('cake'));
 
 		$this->assertTrue(Folder::isSlashTerm('C:\\cake\\'));
@@ -410,7 +410,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSlashTerm() {
+	public function testSlashTerm() {
 		$result = Folder::slashTerm('/path/to/file');
 		$this->assertEqual($result, '/path/to/file/');
 	}
@@ -421,7 +421,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNormalizePath() {
+	public function testNormalizePath() {
 		$path = '/path/to/file';
 		$result = Folder::normalizePath($path);
 		$this->assertEqual($result, '/');
@@ -441,7 +441,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCorrectSlashFor() {
+	public function testCorrectSlashFor() {
 		$path = '/path/to/file';
 		$result = Folder::correctSlashFor($path);
 		$this->assertEqual($result, '/');
@@ -461,7 +461,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInCakePath() {
+	public function testInCakePath() {
 		$Folder = new Folder();
 		$Folder->cd(ROOT);
 		$path = 'C:\\path\\to\\file';
@@ -485,7 +485,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFind() {
+	public function testFind() {
 		$Folder = new Folder();
 		$Folder->cd(CAKE . 'Config');
 		$result = $Folder->find();
@@ -538,7 +538,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFindRecursive() {
+	public function testFindRecursive() {
 		$Folder = new Folder();
 		$Folder->cd(CAKE);
 		$result = $Folder->findRecursive('(config|paths)\.php');
@@ -596,7 +596,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConstructWithNonExistantPath() {
+	public function testConstructWithNonExistantPath() {
 		$Folder = new Folder(TMP . 'config_non_existant', true);
 		$this->assertTrue(is_dir(TMP . 'config_non_existant'));
 		$Folder->cd(TMP);
@@ -609,7 +609,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDirSize() {
+	public function testDirSize() {
 		$Folder = new Folder(TMP . 'config_non_existant', true);
 		$this->assertEqual($Folder->dirSize(), 0);
 
@@ -629,7 +629,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDelete() {
+	public function testDelete() {
 		$path = TMP . 'folder_delete_test';
 		$Folder = new Folder($path, true);
 		touch(TMP . 'folder_delete_test' . DS . 'file1');
@@ -662,7 +662,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testCopy() {
+	public function testCopy() {
 		$path = TMP . 'folder_test';
 		$folder1 = $path . DS . 'folder1';
 		$folder2 = $folder1 . DS . 'folder2';
@@ -720,7 +720,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testMove() {
+	public function testMove() {
 		$path = TMP . 'folder_test';
 		$folder1 = $path . DS . 'folder1';
 		$folder2 = $folder1 . DS . 'folder2';

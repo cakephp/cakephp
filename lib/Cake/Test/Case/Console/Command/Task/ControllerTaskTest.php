@@ -155,7 +155,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetNameInvalidIndex() {
+	public function testGetNameInvalidIndex() {
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls(50, 'q'));
@@ -182,7 +182,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDoHelpersTrailingSpace() {
+	public function testDoHelpersTrailingSpace() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
 		$result = $this->Task->doHelpers();
@@ -195,7 +195,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDoHelpersTrailingCommas() {
+	public function testDoHelpersTrailingCommas() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne, , '));
 		$result = $this->Task->doHelpers();
@@ -219,7 +219,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDoComponentsTrailingSpaces() {
+	public function testDoComponentsTrailingSpaces() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
 
@@ -233,7 +233,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDoComponentsTrailingCommas() {
+	public function testDoComponentsTrailingCommas() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
 
@@ -459,7 +459,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInteractiveAdminMethodsNotInteractive() {
+	public function testInteractiveAdminMethodsNotInteractive() {
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');

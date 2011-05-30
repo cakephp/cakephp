@@ -75,7 +75,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setup() {
+	public function setup() {
 		parent::setup();
 		Configure::write('Session', array(
 			'defaults' => 'php',
@@ -93,7 +93,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function teardown() {
+	public function teardown() {
 		if (TestCakeSession::started()) {
 			TestCakeSession::clear();
 		}
@@ -106,7 +106,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSessionConfigIniSetting() {
+	public function testSessionConfigIniSetting() {
 		$_SESSION = null;
 
 		Configure::write('Session', array(
@@ -130,7 +130,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSessionPath() {
+	public function testSessionPath() {
 		TestCakeSession::init('/index.php');
 		$this->assertEquals(TestCakeSession::$path, '/');
 
@@ -144,7 +144,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCakeSessionPathEmpty() {
+	public function testCakeSessionPathEmpty() {
 		TestCakeSession::init('');
 		$this->assertEquals(TestCakeSession::$path, '/', 'Session path is empty, with "" as $base needs to be /');
 	}
@@ -155,7 +155,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCakeSessionPathContainsQuestion() {
+	public function testCakeSessionPathContainsQuestion() {
 		TestCakeSession::init('/index.php?');
 		$this->assertEquals(TestCakeSession::$path, '/');
 	}
@@ -166,7 +166,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSetHost() {
+	public function testSetHost() {
 		TestCakeSession::init();
 		TestCakeSession::setHost('cakephp.org');
 		$this->assertEquals(TestCakeSession::$host, 'cakephp.org');
@@ -178,7 +178,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSetHostWithPort() {
+	public function testSetHostWithPort() {
 		TestCakeSession::init();
 		TestCakeSession::setHost('cakephp.org:443');
 		$this->assertEquals(TestCakeSession::$host, 'cakephp.org');
@@ -189,7 +189,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValidBogusUserAgent() {
+	public function testValidBogusUserAgent() {
 		Configure::write('Session.checkAgent', true);
 		TestCakeSession::start();
 		$this->assertTrue(TestCakeSession::valid(), 'Newly started session should be valid');
@@ -203,7 +203,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValidTimeExpiry() {
+	public function testValidTimeExpiry() {
 		Configure::write('Session.checkAgent', true);
 		TestCakeSession::start();
 		$this->assertTrue(TestCakeSession::valid(), 'Newly started session should be valid');
@@ -218,7 +218,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheck() {
+	public function testCheck() {
 		TestCakeSession::write('SessionTestCase', 'value');
 		$this->assertTrue(TestCakeSession::check('SessionTestCase'));
 
@@ -231,7 +231,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSimpleRead() {
+	public function testSimpleRead() {
 		TestCakeSession::write('testing', '1,2,3');
 		$result = TestCakeSession::read('testing');
 		$this->assertEquals('1,2,3', $result);
@@ -259,7 +259,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testReadyEmpty() {
+	public function testReadyEmpty() {
 		$this->assertFalse(TestCakeSession::read(''));
 	}
 
@@ -269,7 +269,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testWriteArray() {
+	public function testWriteArray() {
 		$result = TestCakeSession::write(array(
 			'one' => 1,
 			'two' => 2,
@@ -288,7 +288,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testWriteEmptyKey() {
+	public function testWriteEmptyKey() {
 		$this->assertFalse(TestCakeSession::write('', 'graham'));
 		$this->assertFalse(TestCakeSession::write('', ''));
 		$this->assertFalse(TestCakeSession::write(''));
@@ -300,7 +300,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testId() {
+	public function testId() {
 		TestCakeSession::destroy();
 
 		$result = TestCakeSession::id();
@@ -318,7 +318,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStarted() {
+	public function testStarted() {
 		unset($_SESSION);
 		$_SESSION = null;
 
@@ -333,7 +333,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testError() {
+	public function testError() {
 		TestCakeSession::read('Does.not.exist');
 		$result = TestCakeSession::error();
 		$this->assertEquals("Does.not.exist doesn't exist", $result);
@@ -349,7 +349,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDelete() {
+	public function testDelete() {
 		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
 		$this->assertTrue(TestCakeSession::delete('Delete.me'));
 		$this->assertFalse(TestCakeSession::check('Delete.me'));
@@ -367,7 +367,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDestroy() {
+	public function testDestroy() {
 		TestCakeSession::write('bulletProof', 'invicible');
 		$id = TestCakeSession::id();
 		TestCakeSession::destroy();
@@ -382,7 +382,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheckingSavedEmpty() {
+	public function testCheckingSavedEmpty() {
 		$this->assertTrue(TestCakeSession::write('SessionTestCase', 0));
 		$this->assertTrue(TestCakeSession::check('SessionTestCase'));
 
@@ -402,7 +402,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheckKeyWithSpaces() {
+	public function testCheckKeyWithSpaces() {
 		$this->assertTrue(TestCakeSession::write('Session Test', "test"));
 		$this->assertEquals('test', TestCakeSession::check('Session Test'));
 		TestCakeSession::delete('Session Test');
@@ -417,7 +417,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheckEmpty() {
+	public function testCheckEmpty() {
 		$this->assertFalse(TestCakeSession::check());
 	}
 
@@ -426,7 +426,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testKeyExploit() {
+	public function testKeyExploit() {
 		$key = "a'] = 1; phpinfo(); \$_SESSION['a";
 		$result = TestCakeSession::write($key, 'haxored');
 		$this->assertTrue($result);
@@ -441,7 +441,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadingSavedEmpty() {
+	public function testReadingSavedEmpty() {
 		TestCakeSession::write('SessionTestCase', 0);
 		$this->assertEquals(0, TestCakeSession::read('SessionTestCase'));
 
@@ -462,7 +462,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheckUserAgentFalse() {
+	public function testCheckUserAgentFalse() {
 		Configure::write('Session.checkAgent', false);
 		TestCakeSession::setUserAgent(md5('http://randomdomainname.com' . Configure::read('Security.salt')));
 		$this->assertTrue(TestCakeSession::valid());
@@ -474,7 +474,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheckUserAgentTrue() {
+	public function testCheckUserAgentTrue() {
 		Configure::write('Session.checkAgent', true);
 		TestCakeSession::$error = false;
 		$agent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
@@ -490,7 +490,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteWithCakeStorage() {
+	public function testReadAndWriteWithCakeStorage() {
 		Configure::write('Session.defaults', 'cake');
 
 		TestCakeSession::init();
@@ -525,7 +525,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUsingAppLibsHandler() {
+	public function testUsingAppLibsHandler() {
 		App::build(array(
 			'Model/Datasource/Session' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
@@ -549,7 +549,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUsingPluginHandler() {
+	public function testUsingPluginHandler() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), true);
@@ -573,7 +573,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteWithCacheStorage() {
+	public function testReadAndWriteWithCacheStorage() {
 		Configure::write('Session.defaults', 'cache');
 
 		TestCakeSession::init();
@@ -608,7 +608,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testReadAndWriteWithCustomCacheConfig() {
+	public function testReadAndWriteWithCustomCacheConfig() {
 		Configure::write('Session.defaults', 'cache');
 		Configure::write('Session.handler.config', 'session_test');
 
@@ -633,7 +633,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteWithDatabaseStorage() {
+	public function testReadAndWriteWithDatabaseStorage() {
 		Configure::write('Session.defaults', 'database');
 		Configure::write('Session.handler.table', 'sessions');
 		Configure::write('Session.handler.model', 'Session');
@@ -676,7 +676,7 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSessionTimeout() {
+	public function testSessionTimeout() {
 		Configure::write('debug', 2);
 		Configure::write('Session.autoRegenerate', false);
 

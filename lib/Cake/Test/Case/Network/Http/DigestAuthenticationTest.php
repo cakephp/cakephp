@@ -77,7 +77,7 @@ class DigestAuthenticationTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->HttpSocket);
 	}
 

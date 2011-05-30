@@ -20,19 +20,19 @@ class TestsAppsController extends AppController {
 	public $name = 'TestsApps';
 	public $uses = array();
 
-	function index() {
+	public function index() {
 	}
 
-	function some_method() {
+	public function some_method() {
 		return 5;
 	}
 
-	function set_action() {
+	public function set_action() {
 		$this->set('var', 'string');
 		$this->render('index');
 	}
 
-	function redirect_to() {
+	public function redirect_to() {
 		$this->redirect('http://cakephp.org');
 	}
 }

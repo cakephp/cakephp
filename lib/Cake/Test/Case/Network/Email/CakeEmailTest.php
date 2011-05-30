@@ -145,7 +145,7 @@ class CakeEmailTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		App::build();
 	}

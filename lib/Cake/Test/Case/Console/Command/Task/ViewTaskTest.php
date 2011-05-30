@@ -341,7 +341,7 @@ class ViewTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testBakeEdit() {
+	public function testBakeEdit() {
 		$this->Task->controllerName = 'ViewTaskComments';
 
 		$this->Task->expects($this->at(0))->method('createFile')
@@ -357,7 +357,7 @@ class ViewTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testBakeIndex() {
+	public function testBakeIndex() {
 		$this->Task->controllerName = 'ViewTaskComments';
 
 		$this->Task->expects($this->at(0))->method('createFile')
@@ -373,7 +373,7 @@ class ViewTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testBakeWithNoTemplate() {
+	public function testBakeWithNoTemplate() {
 		$this->Task->controllerName = 'ViewTaskComments';
 
 		$this->Task->expects($this->never())->method('createFile');
@@ -709,7 +709,7 @@ class ViewTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetTemplate() {
+	public function testGetTemplate() {
 		$result = $this->Task->getTemplate('delete');
 		$this->assertFalse($result);
 

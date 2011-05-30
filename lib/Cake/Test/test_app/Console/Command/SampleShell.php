@@ -24,7 +24,7 @@ class SampleShell extends Shell {
  * @access public
  * @return void
  */
-	function main() {
+	public function main() {
 		$this->out('This is the main method called from SampleShell');
 	}
 }

@@ -46,7 +46,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$this->_debug = Configure::read('debug');
 		$this->Reporter = $this->getMock('CakeHtmlReporter');
 	}
@@ -57,7 +57,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('debug', $this->_debug);
 		unset($this->Result);
 		unset($this->Reporter);
@@ -69,7 +69,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAssertTagsQuotes() {
+	public function testAssertTagsQuotes() {
 		$test = new AssertTagsTestCase('testAssertTagsQuotes');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
@@ -107,7 +107,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNumericValuesInExpectationForAssertTags() {
+	public function testNumericValuesInExpectationForAssertTags() {
 		$test = new AssertTagsTestCase('testNumericValuesInExpectationForAssertTags');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
@@ -121,7 +121,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBadAssertTags() {
+	public function testBadAssertTags() {
 		$test = new AssertTagsTestCase('testBadAssertTags');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
@@ -141,7 +141,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLoadFixtures() {
+	public function testLoadFixtures() {
 		$test = new FixturizedTestCase('testFixturePresent');
 		$manager = $this->getMock('CakeFixtureManager');
 		$manager->fixturize($test);
@@ -160,7 +160,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLoadFixturesOnDemand() {
+	public function testLoadFixturesOnDemand() {
 		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
 		$test->autoFixtures = false;
 		$manager = $this->getMock('CakeFixtureManager');
@@ -177,7 +177,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testUnoadFixturesAfterFailure() {
+	public function testUnoadFixturesAfterFailure() {
 		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
 		$test->autoFixtures = false;
 		$manager = $this->getMock('CakeFixtureManager');
@@ -194,7 +194,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testThrowException() {
+	public function testThrowException() {
 		$test = new FixturizedTestCase('testThrowException');
 		$test->autoFixtures = false;
 		$manager = $this->getMock('CakeFixtureManager');
@@ -210,7 +210,7 @@ class CakeTestCaseTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSkipIf() {
+	public function testSkipIf() {
 		$test = new FixturizedTestCase('testSkipIfTrue');
 		$result = $test->run();
 		$this->assertEquals(1, $result->skippedCount());

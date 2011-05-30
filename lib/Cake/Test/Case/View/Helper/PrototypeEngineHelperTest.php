@@ -30,7 +30,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$controller = null;
 		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
@@ -42,7 +42,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Proto);
 	}
@@ -52,7 +52,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSelector() {
+	public function testSelector() {
 		$result = $this->Proto->get('#content');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, '$("content")');
@@ -83,7 +83,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEvent() {
+	public function testEvent() {
 		$this->Proto->get('#myLink');
 		$result = $this->Proto->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("myLink").observe("click", doClick);';
@@ -103,7 +103,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDomReady() {
+	public function testDomReady() {
 		$result = $this->Proto->domReady('foo.name = "bar";');
 		$expected = 'document.observe("dom:loaded", function (event) {foo.name = "bar";});';
 		$this->assertEqual($expected, $result);
@@ -114,7 +114,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEach() {
+	public function testEach() {
 		$this->Proto->get('#foo li');
 		$result = $this->Proto->each('item.hide();');
 		$expected = '$$("#foo li").each(function (item, index) {item.hide();});';
@@ -126,7 +126,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEffect() {
+	public function testEffect() {
 		$this->Proto->get('#foo');
 		$result = $this->Proto->effect('show');
 		$expected = '$("foo").show();';
@@ -182,7 +182,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRequest() {
+	public function testRequest() {
 		$result = $this->Proto->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1");';
 		$this->assertEqual($expected, $result);
@@ -273,7 +273,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSortable() {
+	public function testSortable() {
 		$this->Proto->get('#myList');
 		$result = $this->Proto->sortable(array(
 			'complete' => 'onComplete',
@@ -290,7 +290,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDrag() {
+	public function testDrag() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->drag(array(
 			'start' => 'onStart',
@@ -319,7 +319,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDrop() {
+	public function testDrop() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->drop(array(
 			'hover' => 'onHover',
@@ -336,7 +336,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSlider() {
+	public function testSlider() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->slider(array(
 			'handle' => '#handle',
@@ -367,7 +367,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSerializeForm() {
+	public function testSerializeForm() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->serializeForm(array('isForm' => true));
 		$expected = '$("element").serialize();';

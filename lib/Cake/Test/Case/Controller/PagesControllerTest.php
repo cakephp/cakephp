@@ -32,7 +32,7 @@ class PagesControllerTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	public function endTest() {
 		App::build();
 	}
 
@@ -42,7 +42,7 @@ class PagesControllerTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDisplay() {
+	public function testDisplay() {
 		App::build(array(
 			'View' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS

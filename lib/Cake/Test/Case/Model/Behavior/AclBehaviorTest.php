@@ -265,7 +265,7 @@ class AclBehaviorTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testSetupMulti() {
+	public function testSetupMulti() {
 		$User = new AclPerson();
 		$this->assertTrue(isset($User->Behaviors->Acl->settings['AclPerson']));
 		$this->assertEqual($User->Behaviors->Acl->settings['AclPerson']['type'], 'both');
@@ -371,7 +371,7 @@ class AclBehaviorTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAfterSaveUpdateParentIdNotNull() {
+	public function testAfterSaveUpdateParentIdNotNull() {
 		$aroData = array(
 			'Aro' => array(
 				'model' => 'AclPerson',

@@ -39,7 +39,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);
@@ -74,7 +74,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->View, $this->Paginator);
 	}
 
@@ -84,7 +84,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHasPrevious() {
+	public function testHasPrevious() {
 		$this->assertIdentical($this->Paginator->hasPrev(), false);
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = true;
 		$this->assertIdentical($this->Paginator->hasPrev(), true);
@@ -97,7 +97,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHasNext() {
+	public function testHasNext() {
 		$this->assertIdentical($this->Paginator->hasNext(), true);
 		$this->Paginator->request->params['paging']['Article']['nextPage'] = false;
 		$this->assertIdentical($this->Paginator->hasNext(), false);
@@ -110,7 +110,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDisabledLink() {
+	public function testDisabledLink() {
 		$this->Paginator->request->params['paging']['Article']['nextPage'] = false;
 		$this->Paginator->request->params['paging']['Article']['page'] = 1;
 		$result = $this->Paginator->next('Next', array(), true);
@@ -131,7 +131,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSortLinks() {
+	public function testSortLinks() {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
@@ -239,7 +239,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSortLinkWithVirtualField() {
+	public function testSortLinkWithVirtualField() {
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/')),
 			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
@@ -286,7 +286,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSortLinksUsingDirectionOption(){
+	public function testSortLinksUsingDirectionOption(){
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
@@ -319,7 +319,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSortLinksUsingDotNotation() {
+	public function testSortLinksUsingDotNotation() {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
@@ -362,7 +362,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSortKey() {
+	public function testSortKey() {
 		$result = $this->Paginator->sortKey(null, array(
 			'order' => array('Article.title' => 'desc'
 		)));
@@ -381,7 +381,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSortDir() {
+	public function testSortDir() {
 		$result = $this->Paginator->sortDir();
 		$expected = 'asc';
 
@@ -451,7 +451,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSortAdminLinks() {
+	public function testSortAdminLinks() {
 		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
@@ -502,7 +502,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testUrlGeneration() {
+	public function testUrlGeneration() {
 		$result = $this->Paginator->sort('controller');
 		$expected = array(
 			'a' => array('href' => '/index/page:1/sort:controller/direction:asc'),
@@ -534,7 +534,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testUrlGenerationWithPrefixes() {
+	public function testUrlGenerationWithPrefixes() {
 		$_back = Configure::read('Routing');
 
 		Configure::write('Routing.prefixes', array('members'));
@@ -603,7 +603,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testOptions() {
+	public function testOptions() {
 		$this->Paginator->options('myDiv');
 		$this->assertEqual('myDiv', $this->Paginator->options['update']);
 
@@ -651,7 +651,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPassedArgsMergingWithUrlOptions() {
+	public function testPassedArgsMergingWithUrlOptions() {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
@@ -718,7 +718,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPagingLinks() {
+	public function testPagingLinks() {
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
 				'page' => 1,
@@ -943,7 +943,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testPagingLinksOptionsReplaceEmptyDisabledOptions() {
+	public function testPagingLinksOptionsReplaceEmptyDisabledOptions() {
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
 				'page' => 1,
@@ -985,7 +985,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPagingLinksNotDefaultModel() {
+	public function testPagingLinksNotDefaultModel() {
 		// Multiple Model Paginate
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
@@ -1036,7 +1036,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenericLinks() {
+	public function testGenericLinks() {
 		$result = $this->Paginator->link('Sort by title on page 5', array('sort' => 'title', 'page' => 5, 'direction' => 'desc'));
 		$expected = array(
 			'a' => array('href' => '/index/page:5/sort:title/direction:desc'),
@@ -1070,7 +1070,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenericLinksWithPresetOptions() {
+	public function testGenericLinksWithPresetOptions() {
 		$result = $this->Paginator->link('Foo!', array('page' => 1));
 		$this->assertTags($result, array('a' => array('href' => '/index/page:1'), 'Foo!', '/a'));
 
@@ -1108,7 +1108,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNumbers() {
+	public function testNumbers() {
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
 				'page' => 8,
@@ -1779,7 +1779,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFirstAndLastTag() {
+	public function testFirstAndLastTag() {
 		$result = $this->Paginator->first('<<', array('tag' => 'li'));
 		$expected = array(
 			'<li',
@@ -1810,7 +1810,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLastNoOutput() {
+	public function testLastNoOutput() {
 		$this->Paginator->request->params['paging']['Article']['page'] = 15;
 		$this->Paginator->request->params['paging']['Article']['pageCount'] = 15;
 
@@ -1824,7 +1824,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFirstEmpty() {
+	public function testFirstEmpty() {
 		$this->Paginator->request->params['paging']['Article']['page'] = 1;
 
 		$result = $this->Paginator->first();
@@ -1837,7 +1837,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFirstFullBaseUrl() {
+	public function testFirstFullBaseUrl() {
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'DESC');
 
 		$this->Paginator->options(array('url' => array('full_base' => true)));
@@ -1860,7 +1860,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFirstBoundaries() {
+	public function testFirstBoundaries() {
 		$result = $this->Paginator->first();
 		$expected = array(
 			'<span',
@@ -1894,7 +1894,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLast() {
+	public function testLast() {
 		$result = $this->Paginator->last();
 		$expected = array(
 			'<span',
@@ -1940,7 +1940,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLastOptions() {
+	public function testLastOptions() {
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
 				'page' => 4,
@@ -2011,7 +2011,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCounter() {
+	public function testCounter() {
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
 				'page' => 1,
@@ -2064,7 +2064,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHasPage() {
+	public function testHasPage() {
 		$result = $this->Paginator->hasPage('Article', 15);
 		$this->assertFalse($result);
 
@@ -2084,7 +2084,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWithPlugin() {
+	public function testWithPlugin() {
 		Router::reload();
 		Router::setRequestInfo(array(
 			array(
@@ -2134,7 +2134,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNextLinkUsingDotNotation() {
+	public function testNextLinkUsingDotNotation() {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
@@ -2172,7 +2172,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAjaxLinkGenerationNumbers() {
+	public function testAjaxLinkGenerationNumbers() {
 		$this->Paginator->Js->expectCallCount('link', 2);
 		$result = $this->Paginator->numbers(array(
 			'modulus'=> '2',
@@ -2186,7 +2186,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAjaxLinkGenerationLink() {
+	public function testAjaxLinkGenerationLink() {
 		$this->Paginator->Js->expects($this->once())
 			->method('link')
 			->will($this->returnValue('I am a link'));
@@ -2200,7 +2200,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMockAjaxProviderClassInjection() {
+	public function testMockAjaxProviderClassInjection() {
 		$mock = $this->getMock('PaginatorHelper', array(), array($this->View), 'PaginatorMockJsHelper');
 		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'PaginatorMockJs'));
 		$Paginator->request->params['paging'] = array(
@@ -2228,7 +2228,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testQuerystringUrlGeneration() {
+	public function testQuerystringUrlGeneration() {
 		$this->Paginator->request->params['paging']['Article']['paramType'] = 'querystring';
 		$result = $this->Paginator->url(array('page' => '4'));
 		$expected = '/?page=4';
@@ -2244,7 +2244,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testQuerystringNextAndPrev() {
+	public function testQuerystringNextAndPrev() {
 		$this->Paginator->request->params['paging']['Article']['paramType'] = 'querystring';
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
 		$this->Paginator->request->params['paging']['Article']['nextPage'] = true;
@@ -2276,7 +2276,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testOptionsConvertKeys() {
+	public function testOptionsConvertKeys() {
 		$this->Paginator->options(array(
 			'convertKeys' => array('something'),
 			'Article' => array('paramType' => 'querystring')
@@ -2292,7 +2292,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCurrent() {
+	public function testCurrent() {
 		$result = $this->Paginator->current();
 		$this->assertEquals($this->Paginator->request->params['paging']['Article']['page'], $result);
 

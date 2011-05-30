@@ -31,11 +31,11 @@ class SessionsSchema extends CakeSchema {
 
 	public $name = 'Sessions';
 
-	function before($event = array()) {
+	public function before($event = array()) {
 		return true;
 	}
 
-	function after($event = array()) {
+	public function after($event = array()) {
 	}
 
 	public $cake_sessions = array(

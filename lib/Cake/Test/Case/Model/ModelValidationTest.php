@@ -33,7 +33,7 @@ class ModelValidationTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testValidationParams() {
+	public function testValidationParams() {
 		$TestModel = new ValidationTest1();
 		$TestModel->validate['title'] = array(
 			'rule' => 'customValidatorWithParams',
@@ -125,7 +125,7 @@ class ModelValidationTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testInvalidFieldsWithFieldListParams() {
+	public function testInvalidFieldsWithFieldListParams() {
 		$TestModel = new ValidationTest1();
 		$TestModel->validate = $validate = array(
 			'title' => array(
@@ -172,7 +172,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testInvalidFieldsWhitelist() {
+	public function testInvalidFieldsWhitelist() {
 		$TestModel = new ValidationTest1();
 		$TestModel->validate = array(
 			'title' => array(
@@ -197,7 +197,7 @@ class ModelValidationTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testValidates() {
+	public function testValidates() {
 		$TestModel = new TestValidate();
 
 		$TestModel->validate = array(
@@ -550,7 +550,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testValidatesWithAssociations() {
+	public function testValidatesWithAssociations() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
 		$data = array(
 			'Something' => array(
@@ -605,7 +605,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testValidatesWithModelsAndSaveAll() {
+	public function testValidatesWithModelsAndSaveAll() {
 		$data = array(
 			'Something' => array(
 				'id' => 5,
@@ -648,7 +648,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testMissingValidationErrorTriggering() {
+	public function testMissingValidationErrorTriggering() {
 		Configure::write('debug', 2);
 
 		$TestModel = new ValidationTest1();
@@ -668,7 +668,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testMissingValidationErrorNoTriggering() {
+	public function testMissingValidationErrorNoTriggering() {
 		Configure::write('debug', 0);
 		$TestModel = new ValidationTest1();
 		$TestModel->create(array('title' => 'foo'));

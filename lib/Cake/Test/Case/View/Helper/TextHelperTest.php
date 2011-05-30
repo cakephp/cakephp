@@ -33,7 +33,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Text = new TextHelper($this->View);
@@ -45,7 +45,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->View, $this->Text);
 	}
 
@@ -55,7 +55,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTruncate() {
+	public function testTruncate() {
 		$text1 = 'The quick brown fox jumps over the lazy dog';
 		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
 		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
@@ -96,7 +96,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHighlight() {
+	public function testHighlight() {
 		$text = 'This is a test text';
 		$phrases = array('This', 'text');
 		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
@@ -121,7 +121,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHighlightHtml() {
+	public function testHighlightHtml() {
 		$text1 = '<p>strongbow isn&rsquo;t real cider</p>';
 		$text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
 		$text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
@@ -148,7 +148,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHighlightMulti() {
+	public function testHighlightMulti() {
 		$text = 'This is a test text';
 		$phrases = array('This', 'text');
 		$result = $this->Text->highlight($text, $phrases, array('format' => array('<b>\1</b>', '<em>\1</em>')));
@@ -163,7 +163,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStripLinks() {
+	public function testStripLinks() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
 		$result = $this->Text->stripLinks($text);
@@ -191,7 +191,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAutoLink() {
+	public function testAutoLink() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
 		$result = $this->Text->autoLink($text);
@@ -239,7 +239,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAutoLinkUrls() {
+	public function testAutoLinkUrls() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
 		$result = $this->Text->autoLinkUrls($text);
@@ -292,7 +292,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAutoLinkEmails() {
+	public function testAutoLinkEmails() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
 		$result = $this->Text->autoLinkUrls($text);
@@ -319,7 +319,7 @@ class TextHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAutoLinkEmailInvalid() {
+	public function testAutoLinkEmailInvalid() {
 		$result = $this->Text->autoLinkEmails('this is a myaddress@gmx-de test');
 		$expected = 'this is a myaddress@gmx-de test';
 		$this->assertEqual($expected, $result);
@@ -331,7 +331,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHighlightCaseInsensitivity() {
+	public function testHighlightCaseInsensitivity() {
 		$text = 'This is a Test text';
 		$expected = 'This is a <b>Test</b> text';
 
@@ -348,7 +348,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExcerpt() {
+	public function testExcerpt() {
 		$text = 'This is a phrase with test text to play with';
 
 		$expected = '...with test text...';
@@ -388,7 +388,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExcerptCaseInsensitivity() {
+	public function testExcerptCaseInsensitivity() {
 		$text = 'This is a phrase with test text to play with';
 
 		$expected = '...with test text...';
@@ -406,7 +406,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testListGeneration() {
+	public function testListGeneration() {
 		$result = $this->Text->toList(array());
 		$this->assertEqual($result, '');
 

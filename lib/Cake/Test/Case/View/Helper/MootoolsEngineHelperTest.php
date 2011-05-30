@@ -32,7 +32,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$controller = null;
 		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
@@ -44,7 +44,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Moo);
 	}
@@ -54,7 +54,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSelector() {
+	public function testSelector() {
 		$result = $this->Moo->get('#content');
 		$this->assertEqual($result, $this->Moo);
 		$this->assertEqual($this->Moo->selection, '$("content")');
@@ -84,7 +84,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEvent() {
+	public function testEvent() {
 		$this->Moo->get('#myLink');
 		$result = $this->Moo->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("myLink").addEvent("click", doClick);';
@@ -103,7 +103,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDomReady() {
+	public function testDomReady() {
 		$result = $this->Moo->domReady('foo.name = "bar";');
 		$expected = 'window.addEvent("domready", function (event) {foo.name = "bar";});';
 		$this->assertEqual($expected, $result);
@@ -113,7 +113,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEach() {
+	public function testEach() {
 		$this->Moo->get('#foo');
 		$result = $this->Moo->each('item.setStyle("display", "none");');
 		$expected = '$("foo").each(function (item, index) {item.setStyle("display", "none");});';
@@ -124,7 +124,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEffect() {
+	public function testEffect() {
 		$this->Moo->get('#foo');
 		$result = $this->Moo->effect('show');
 		$expected = '$("foo").setStyle("display", "");';
@@ -163,7 +163,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRequest() {
+	public function testRequest() {
 		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Request({url:"\\/posts\\/view\\/1"}).send();';
 		$this->assertEqual($expected, $result);
@@ -233,7 +233,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSortable() {
+	public function testSortable() {
 		$this->Moo->get('#myList');
 		$result = $this->Moo->sortable(array(
 			'distance' => 5,
@@ -251,7 +251,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDrag() {
+	public function testDrag() {
 		$this->Moo->get('#drag-me');
 		$result = $this->Moo->drag(array(
 			'start' => 'onStart',
@@ -268,7 +268,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDrop() {
+	public function testDrop() {
 		$this->expectError();
 		$this->Moo->get('#drop-me');
 		$this->Moo->drop(array(
@@ -302,7 +302,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSlider() {
+	public function testSlider() {
 		$this->Moo->get('#slider');
 		$result = $this->Moo->slider(array(
 			'handle' => '#my-handle',
@@ -343,7 +343,7 @@ class MooEngineHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSerializeForm() {
+	public function testSerializeForm() {
 		$this->Moo->get('#element');
 		$result = $this->Moo->serializeForm(array('isForm' => true));
 		$expected = '$("element").toQueryString();';

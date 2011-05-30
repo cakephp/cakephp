@@ -72,7 +72,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function setup() {
+	public function setup() {
 		$this->storage = new DatabaseSession();
 	}
 
@@ -81,7 +81,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function teardown() {
+	public function teardown() {
 		unset($this->storage);
 		ClassRegistry::flush();
 	}
@@ -91,7 +91,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConstructionSettings() {
+	public function testConstructionSettings() {
 		ClassRegistry::flush();
 		$storage = new DatabaseSession();
 
@@ -106,7 +106,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testOpen() {
+	public function testOpen() {
 		$this->assertTrue($this->storage->open());
 	}
 
@@ -115,7 +115,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWrite() {
+	public function testWrite() {
 		$result = $this->storage->write('foo', 'Some value');
 		$expected = array(
 			'Session' => array(
@@ -133,7 +133,7 @@ class DatabaseSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWriteEmptySessionId() {
+	public function testWriteEmptySessionId() {
 		$result = $this->storage->write('', 'This is a Test');
 		$this->assertFalse($result);
 	}
@@ -142,7 +142,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRead() {
+	public function testRead() {
 		$this->storage->write('foo', 'Some value');
 
 		$result = $this->storage->read('foo');
@@ -158,7 +158,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDestroy() {
+	public function testDestroy() {
 		$this->storage->write('foo', 'Some value');
 		
 		$this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
@@ -170,7 +170,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGc() {
+	public function testGc() {
 		Configure::write('Session.timeout', 0);
 		$this->storage->write('foo', 'Some value');
 

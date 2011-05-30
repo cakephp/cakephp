@@ -40,7 +40,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Cache.disable', false);
 		Cache::config('file_test', array('engine' => 'File', 'path' => CACHE));
@@ -52,7 +52,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		Cache::clear(false, 'file_test');
 		Cache::drop('file_test');
@@ -64,7 +64,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCacheDirChange() {
+	public function testCacheDirChange() {
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
 		$this->assertEqual($result['settings'], Cache::settings('sessions'));
 
@@ -79,7 +79,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteCache() {
+	public function testReadAndWriteCache() {
 		Cache::config('default');
 
 		$result = Cache::write(null, 'here', 'file_test');
@@ -108,7 +108,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExpiry() {
+	public function testExpiry() {
 		Cache::set(array('duration' => 1), 'file_test');
 
 		$result = Cache::read('test', 'file_test');
@@ -139,7 +139,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDeleteCache() {
+	public function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('delete_test', $data, 'file_test');
 		$this->assertTrue($result);
@@ -158,7 +158,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSerialize() {
+	public function testSerialize() {
 		Cache::config('file_test', array('engine' => 'File', 'serialize' => true));
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test', $data, 'file_test');
@@ -182,7 +182,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClear() {
+	public function testClear() {
 		Cache::config('file_test', array('engine' => 'File', 'duration' => 1));
 
 		$data = 'this is a test of the emergency broadcasting system';
@@ -219,7 +219,7 @@ class FileEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testClearWithPrefixes() {
+	public function testClearWithPrefixes() {
 		$FileOne = new FileEngine();
 		$FileOne->init(array(
 			'prefix' => 'prefix_one_',
@@ -249,7 +249,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testKeyPath() {
+	public function testKeyPath() {
 		$result = Cache::write('views.countries.something', 'here', 'file_test');
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists(CACHE . 'cake_views_countries_something'));
@@ -267,7 +267,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRemoveWindowsSlashesFromCache() {
+	public function testRemoveWindowsSlashesFromCache() {
 		Cache::config('windows_test', array('engine' => 'File', 'isWindows' => true, 'prefix' => null, 'path' => TMP));
 
 		$expected = array (
@@ -313,7 +313,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWriteQuotedString() {
+	public function testWriteQuotedString() {
 		Cache::config('file_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"', 'file_test');
 		$this->assertIdentical(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
@@ -331,7 +331,7 @@ class FileEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testErrorWhenPathDoesNotExist() {
+	public function testErrorWhenPathDoesNotExist() {
 		if ($this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists. %s')) {
 			return;
 		}

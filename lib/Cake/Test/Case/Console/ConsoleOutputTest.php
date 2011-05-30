@@ -26,7 +26,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->output = $this->getMock('ConsoleOutput', array('_write'));
 		$this->output->outputAs(ConsoleOutput::COLOR);
@@ -37,7 +37,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->output);
 	}
 
@@ -46,7 +46,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWriteNoNewLine() {
+	public function testWriteNoNewLine() {
 		$this->output->expects($this->once())->method('_write')
 			->with('Some output');
 
@@ -58,7 +58,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWriteNewLine() {
+	public function testWriteNewLine() {
 		$this->output->expects($this->once())->method('_write')
 			->with('Some output' . PHP_EOL);
 
@@ -70,7 +70,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWriteMultipleNewLines() {
+	public function testWriteMultipleNewLines() {
 		$this->output->expects($this->once())->method('_write')
 			->with('Some output' . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL);
 
@@ -82,7 +82,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWriteArray() {
+	public function testWriteArray() {
 		$this->output->expects($this->once())->method('_write')
 			->with('Line' . PHP_EOL . 'Line' . PHP_EOL . 'Line' . PHP_EOL);
 
@@ -94,7 +94,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testStylesGet() {
+	public function testStylesGet() {
 		$result = $this->output->styles('error');
 		$expected = array('text' => 'red', 'underline' => true);
 		$this->assertEqual($expected, $result);
@@ -111,7 +111,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testStylesAdding() {
+	public function testStylesAdding() {
 		$this->output->styles('test', array('text' => 'red', 'background' => 'black'));
 		$result = $this->output->styles('test');
 		$expected = array('text' => 'red', 'background' => 'black');
@@ -126,7 +126,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormattingSimple() {
+	public function testFormattingSimple() {
 		$this->output->expects($this->once())->method('_write')
 			->with("\033[31;4mError:\033[0m Something bad");
 
@@ -138,7 +138,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormattingNotEatingTags() {
+	public function testFormattingNotEatingTags() {
 		$this->output->expects($this->once())->method('_write')
 			->with("<red> Something bad");
 
@@ -150,7 +150,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormattingCustom() {
+	public function testFormattingCustom() {
 		$this->output->styles('annoying', array(
 			'text' => 'magenta',
 			'background' => 'cyan',
@@ -169,7 +169,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormattingMissingStyleName() {
+	public function testFormattingMissingStyleName() {
 		$this->output->expects($this->once())->method('_write')
 			->with("<not_there>Error:</not_there> Something bad");
 
@@ -181,7 +181,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormattingMultipleStylesName() {
+	public function testFormattingMultipleStylesName() {
 		$this->output->expects($this->once())->method('_write')
 			->with("\033[31;4mBad\033[0m \033[33mWarning\033[0m Regular");
 
@@ -193,7 +193,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormattingMultipleSameTags() {
+	public function testFormattingMultipleSameTags() {
 		$this->output->expects($this->once())->method('_write')
 			->with("\033[31;4mBad\033[0m \033[31;4mWarning\033[0m Regular");
 
@@ -205,7 +205,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testOutputAsRaw() {
+	public function testOutputAsRaw() {
 		$this->output->outputAs(ConsoleOutput::RAW);
 		$this->output->expects($this->once())->method('_write')
 			->with('<error>Bad</error> Regular');
@@ -218,7 +218,7 @@ class ConsoleOutputTest extends CakeTestCase {
  *
  * @return void
  */
-	function testOutputAsPlain() {
+	public function testOutputAsPlain() {
 		$this->output->outputAs(ConsoleOutput::PLAIN);
 		$this->output->expects($this->once())->method('_write')
 			->with('Bad Regular');

@@ -31,7 +31,7 @@ class StringTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testUuidGeneration() {
+	public function testUuidGeneration() {
 		$result = String::uuid();
 		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
 		$match = (bool) preg_match($pattern, $result);
@@ -44,7 +44,7 @@ class StringTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMultipleUuidGeneration() {
+	public function testMultipleUuidGeneration() {
 		$check = array();
 		$count = mt_rand(10, 1000);
 		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
@@ -64,7 +64,7 @@ class StringTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInsert() {
+	public function testInsert() {
 		$string = 'some string';
 		$expected = 'some string';
 		$result = String::insert($string, array());
@@ -225,7 +225,7 @@ class StringTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCleanInsert() {
+	public function testCleanInsert() {
 		$result = String::cleanInsert(':incomplete', array(
 			'clean' => true, 'before' => ':', 'after' => ''
 		));
@@ -265,7 +265,7 @@ class StringTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAutoIgnoreBadInsertData() {
+	public function testAutoIgnoreBadInsertData() {
 		$data = array('foo' => 'alpha', 'bar' => 'beta', 'fale' => array());
 		$result = String::insert('(:foo > :bar || :fale!)', $data, array('clean' => 'text'));
 		$this->assertEqual($result, '(alpha > beta || !)');
@@ -277,7 +277,7 @@ class StringTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTokenize() {
+	public function testTokenize() {
 		$result = String::tokenize('A,(short,boring test)');
 		$expected = array('A', '(short,boring test)');
 		$this->assertEqual($expected, $result);
@@ -299,7 +299,7 @@ class StringTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
-	function testReplaceWithQuestionMarkInString() {
+	public function testReplaceWithQuestionMarkInString() {
 		$string = ':a, :b and :c?';
 		$expected = '2 and 3?';
 		$result = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
@@ -311,7 +311,7 @@ class StringTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWrap() {
+	public function testWrap() {
 		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
 		$result = String::wrap($text, 33);
 		$expected = <<<TEXT
@@ -338,7 +338,7 @@ TEXT;
  *
  * @return void
  */
-	function testWrapIndent() {
+	public function testWrapIndent() {
 		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
 		$result = String::wrap($text, array('width' => 33, 'indent' => "\t", 'indentAt' => 1));
 		$expected = <<<TEXT

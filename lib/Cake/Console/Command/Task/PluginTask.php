@@ -40,7 +40,7 @@ class PluginTask extends Shell {
  *
  * @return void
  */
-	function initialize() {
+	public function initialize() {
 		$this->path = current(App::path('plugins'));
 	}
 

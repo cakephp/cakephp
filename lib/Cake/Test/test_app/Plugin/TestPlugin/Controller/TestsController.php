@@ -22,10 +22,10 @@ class TestsController extends TestPluginAppController {
 	public $helpers = array('TestPlugin.OtherHelper', 'Html');
 	public $components = array('TestPlugin.PluginsComponent');
 
-	function index() {
+	public function index() {
 	}
 
-	function some_method() {
+	public function some_method() {
 		return 25;
 	}
 }

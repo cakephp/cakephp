@@ -31,7 +31,7 @@ class L10nTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGet() {
+	public function testGet() {
 		$l10n = new L10n();
 
 		// Catalog Entry
@@ -84,7 +84,7 @@ class L10nTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGetAutoLanguage() {
+	public function testGetAutoLanguage() {
 		$__SERVER = $_SERVER;
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 
@@ -118,7 +118,7 @@ class L10nTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMap() {
+	public function testMap() {
 		$l10n = new L10n();
 
 		$result = $l10n->map(array('afr', 'af'));
@@ -448,7 +448,7 @@ class L10nTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCatalog() {
+	public function testCatalog() {
 		$l10n = new L10n();
 
 		$result = $l10n->catalog(array('af'));

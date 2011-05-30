@@ -159,7 +159,7 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testImportOptionsAlternateConnection() {
+	public function testImportOptionsAlternateConnection() {
 		$this->Task->connection = 'test';
 		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
 		$this->assertPattern("/'connection' => 'test'/", $result);

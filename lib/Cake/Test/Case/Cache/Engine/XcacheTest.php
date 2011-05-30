@@ -32,7 +32,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$this->skipUnless(function_exists('xcache_set'), 'Xcache is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
@@ -45,7 +45,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
@@ -56,7 +56,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSettings() {
+	public function testSettings() {
 		$settings = Cache::settings();
 		$expecting = array(
 			'prefix' => 'cake_',
@@ -77,7 +77,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteCache() {
+	public function testReadAndWriteCache() {
 		Cache::set(array('duration' => 1));
 
 		$result = Cache::read('test');
@@ -101,7 +101,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExpiry() {
+	public function testExpiry() {
 		Cache::set(array('duration' => 1));
 		$result = Cache::read('test');
 		$this->assertFalse($result);
@@ -131,7 +131,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDeleteCache() {
+	public function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('delete_test', $data);
 		$this->assertTrue($result);
@@ -146,7 +146,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClearCache() {
+	public function testClearCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('clear_test_1', $data);
 		$this->assertTrue($result);
@@ -164,7 +164,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDecrement() {
+	public function testDecrement() {
 		$result = Cache::write('test_decrement', 5);
 		$this->assertTrue($result);
 
@@ -187,7 +187,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIncrement() {
+	public function testIncrement() {
 		$result = Cache::write('test_increment', 5);
 		$this->assertTrue($result);
 

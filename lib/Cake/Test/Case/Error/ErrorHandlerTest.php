@@ -34,7 +34,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		App::build(array(
 			'View' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
@@ -55,7 +55,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function teardown() {
+	public function teardown() {
 		Configure::write('debug', $this->_debug);
 		Configure::write('Error', $this->_error);
 		App::build();
@@ -69,7 +69,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHandleErrorDebugOn() {
+	public function testHandleErrorDebugOn() {
 		set_error_handler('ErrorHandler::handleError');
 		$this->_restoreError = true;
 
@@ -101,7 +101,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @dataProvider errorProvider
  * @return void
  */
-	function testErrorMapping($error, $expected) {
+	public function testErrorMapping($error, $expected) {
 		set_error_handler('ErrorHandler::handleError');
 		$this->_restoreError = true;
 
@@ -117,7 +117,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testErrorSuppressed() {
+	public function testErrorSuppressed() {
 		set_error_handler('ErrorHandler::handleError');
 		$this->_restoreError = true;
 
@@ -132,7 +132,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHandleErrorDebugOff() {
+	public function testHandleErrorDebugOff() {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', false);
 		if (file_exists(LOGS . 'debug.log')) {
@@ -158,7 +158,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHandleErrorLoggingTrace() {
+	public function testHandleErrorLoggingTrace() {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', true);
 		if (file_exists(LOGS . 'debug.log')) {
@@ -185,7 +185,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHandleException() {
+	public function testHandleException() {
 		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
 			return;
 		}
@@ -202,7 +202,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHandleExceptionLog() {
+	public function testHandleExceptionLog() {
 		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
 			return;
 		}
@@ -227,7 +227,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadPluginHanlder() {
+	public function testLoadPluginHanlder() {
 		App::build(array(
 			'plugins' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS

@@ -37,7 +37,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->Collection = $this->getMock('ComponentCollection');
 		$this->auth = new BasicAuthenticate($this->Collection, array(
@@ -57,7 +57,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		$_SERVER = $this->server;
 	}
@@ -67,7 +67,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConstructor() {
+	public function testConstructor() {
 		$object = new BasicAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
 			'fields' => array('username' => 'user', 'password' => 'password')
@@ -82,7 +82,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateNoData() {
+	public function testAuthenticateNoData() {
 		$request = new CakeRequest('posts/index', false);
 
 		$this->response->expects($this->once())
@@ -97,7 +97,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateNoUsername() {
+	public function testAuthenticateNoUsername() {
 		$request = new CakeRequest('posts/index', false);
 		$_SERVER['PHP_AUTH_PW'] = 'foobar';
 
@@ -113,7 +113,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateNoPassword() {
+	public function testAuthenticateNoPassword() {
 		$request = new CakeRequest('posts/index', false);
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = null;
@@ -130,7 +130,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateInjection() {
+	public function testAuthenticateInjection() {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
@@ -145,7 +145,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateChallenge() {
+	public function testAuthenticateChallenge() {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
@@ -164,7 +164,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateSuccess() {
+	public function testAuthenticateSuccess() {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
@@ -186,7 +186,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthenticateFailReChallenge() {
+	public function testAuthenticateFailReChallenge() {
 		$this->auth->settings['scope'] = array('user' => 'nate');
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));

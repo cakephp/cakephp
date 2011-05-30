@@ -155,7 +155,7 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetNameValidOption() {
+	public function testGetNameValidOption() {
 		$listing = $this->Task->listAll('test');
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(1, 4));
 
@@ -171,7 +171,7 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetNameWithOutOfBoundsOption() {
+	public function testGetNameWithOutOfBoundsOption() {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
 		$this->Task->expects($this->once())->method('err');
 
@@ -195,7 +195,7 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetTableNameCustom() {
+	public function testGetTableNameCustom() {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
 		$result = $this->Task->getTable('BakeArticle', 'test');
 		$expected = 'my_table';
@@ -262,7 +262,7 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInteractiveFieldValidationWithBogusResponse() {
+	public function testInteractiveFieldValidationWithBogusResponse() {
 		$this->_useMockedOut();
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
@@ -283,7 +283,7 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInteractiveFieldValidationWithRegexp() {
+	public function testInteractiveFieldValidationWithRegexp() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
@@ -876,7 +876,7 @@ STRINGEND;
  *
  * @return void
  */
-	function testSkipTablesAndAll() {
+	public function testSkipTablesAndAll() {
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');

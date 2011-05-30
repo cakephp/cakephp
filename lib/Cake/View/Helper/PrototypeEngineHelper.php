@@ -108,7 +108,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
  */
-	function get($selector) {
+	public function get($selector) {
 		$this->_multiple = false;
 		if ($selector == 'window' || $selector == 'document') {
 			$this->selection = "$(" . $selector .")";
@@ -136,7 +136,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param array $options Options for the event.
  * @return string completed event handler
  */
-	function event($type, $callback, $options = array()) {
+	public function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
 		$options = array_merge($defaults, $options);
 
@@ -184,7 +184,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::effect()
  */
-	function effect($name, $options = array()) {
+	public function effect($name, $options = array()) {
 		$effect = '';
 		$optionString = null;
 		if (isset($options['speed'])) {
@@ -265,7 +265,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::sortable() for options list.
  */
-	function sortable($options = array()) {
+	public function sortable($options = array()) {
 		$options = $this->_processOptions('sortable', $options);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -283,7 +283,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::draggable() for options list.
  */
-	function drag($options = array()) {
+	public function drag($options = array()) {
 		$options = $this->_processOptions('drag', $options);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -304,7 +304,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::droppable() for options list.
  */
-	function drop($options = array()) {
+	public function drop($options = array()) {
 		$options = $this->_processOptions('drop', $options);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -322,7 +322,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::slider() for options list.
  */
-	function slider($options = array()) {
+	public function slider($options = array()) {
 		$slider = $this->selection;
 		$this->get($options['handle']);
 		unset($options['handle']);
@@ -352,7 +352,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::serializeForm()
  */
-	function serializeForm($options = array()) {
+	public function serializeForm($options = array()) {
 		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
 		$selection = $this->selection;
 		if (!$options['isForm']) {

@@ -15,7 +15,7 @@ class RedirectRouteTestCase extends  CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
 		Router::reload();
@@ -26,7 +26,7 @@ class RedirectRouteTestCase extends  CakeTestCase {
  *
  * @return void
  */
-	function testParsing() {
+	public function testParsing() {
 		$route = new RedirectRoute('/home', array('controller' => 'posts'));
 		$route->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$result = $route->parse('/home');

@@ -146,7 +146,7 @@ class DboMysqlTest extends CakeTestCase {
  * @group quoting
  * @return void
  */
-	function testLocalizedFloats() {
+	public function testLocalizedFloats() {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
 
 		$restore = setlocale(LC_ALL, null);
@@ -167,7 +167,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testTinyintCasting() {
+	public function testTinyintCasting() {
 		$this->Dbo->cacheSources = false;
 		$tableName = 'tinyint_' . uniqid();
 		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
@@ -270,7 +270,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testBuildColumn() {
+	public function testBuildColumn() {
 		$restore = $this->Dbo->columns;
 		$this->Dbo->columns = array('varchar(255)' => 1);
 		$data = array(
@@ -307,7 +307,7 @@ class DboMysqlTest extends CakeTestCase {
  * @group indices
  * @return void
  */
-	function testIndexOnMySQL4Output() {
+	public function testIndexOnMySQL4Output() {
 		$name = $this->Dbo->fullTableName('simple');
 
 		$mockDbo = $this->getMock('Mysql', array('connect', '_execute', 'getVersion'));
@@ -458,7 +458,7 @@ class DboMysqlTest extends CakeTestCase {
  * @group indices
  * @return void
  */
-	function testAlterSchemaIndexes() {
+	public function testAlterSchemaIndexes() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$table = $this->Dbo->fullTableName('altertest');
 
@@ -558,7 +558,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testBlobSaving() {
+	public function testBlobSaving() {
 		$this->loadFixtures('BinaryTest');
 		$this->Dbo->cacheSources = false;
 		$data = "GIF87ab 
@@ -578,7 +578,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAlteringTableParameters() {
+	public function testAlteringTableParameters() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 
 		$schema1 = new CakeSchema(array(
@@ -627,7 +627,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAlteringTwoTables() {
+	public function testAlteringTwoTables() {
 		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
@@ -662,7 +662,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadTableParameters() {
+	public function testReadTableParameters() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$tableName = 'tinyint_' . uniqid();
 		$table = $this->Dbo->fullTableName($tableName);
@@ -692,7 +692,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBuildTableParameters() {
+	public function testBuildTableParameters() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$data = array(
 			'charset' => 'utf8',
@@ -712,7 +712,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGetCharsetName() {
+	public function testGetCharsetName() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$result = $this->Dbo->getCharsetName('utf8_unicode_ci');
 		$this->assertEqual($result, 'utf8');
@@ -725,7 +725,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldSeparators() {
+	public function testVirtualFieldSeparators() {
 		$this->loadFixtures('BinaryTest');
 		$model = new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test', 'name' => 'BinaryTest'));
 		$model->virtualFields = array(
@@ -744,7 +744,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDescribeGettingFieldParameters() {
+	public function testDescribeGettingFieldParameters() {
 		$schema = new CakeSchema(array(
 			'connection' => 'test',
 			'testdescribes' => array(
@@ -805,7 +805,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testListDetailedSourcesNamed() {
+	public function testListDetailedSourcesNamed() {
 		$this->loadFixtures('Apple');
 
 		$result = $this->Dbo->listDetailedSources('imaginary');
@@ -853,7 +853,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFieldDoubleEscaping() {
+	public function testFieldDoubleEscaping() {
 		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
 		$this->Model = $this->getMock('Article2', array('getDataSource'));
 		$this->Model->alias = 'Article';
@@ -895,7 +895,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGenerateAssociationQuerySelfJoin() {
+	public function testGenerateAssociationQuerySelfJoin() {
 		$this->Dbo = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
 		$this->startTime = microtime(true);
 		$this->Model = new Article2();
@@ -1031,7 +1031,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateInnerJoinAssociationQuery() {
+	public function testGenerateInnerJoinAssociationQuery() {
 		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
 		$this->Model = $this->getMock('TestModel9', array('getDataSource'));
 		$this->Model->expects($this->any())
@@ -1060,7 +1060,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
+	public function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
 		$this->Model = new TestModel8();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1088,7 +1088,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding() {
+	public function testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding() {
 		$this->Model = new TestModel9();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1115,7 +1115,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQuerySelfJoinWithConditions() {
+	public function testGenerateAssociationQuerySelfJoinWithConditions() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1177,7 +1177,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasOne() {
+	public function testGenerateAssociationQueryHasOne() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1210,7 +1210,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasOneWithConditions() {
+	public function testGenerateAssociationQueryHasOneWithConditions() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1240,7 +1240,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryBelongsTo() {
+	public function testGenerateAssociationQueryBelongsTo() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1272,7 +1272,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryBelongsToWithConditions() {
+	public function testGenerateAssociationQueryBelongsToWithConditions() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1304,7 +1304,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasMany() {
+	public function testGenerateAssociationQueryHasMany() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1334,7 +1334,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasManyWithLimit() {
+	public function testGenerateAssociationQueryHasManyWithLimit() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1374,7 +1374,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasManyWithConditions() {
+	public function testGenerateAssociationQueryHasManyWithConditions() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1403,7 +1403,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasManyWithOffsetAndLimit() {
+	public function testGenerateAssociationQueryHasManyWithOffsetAndLimit() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1441,7 +1441,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasManyWithPageAndLimit() {
+	public function testGenerateAssociationQueryHasManyWithPageAndLimit() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1478,7 +1478,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasManyWithFields() {
+	public function testGenerateAssociationQueryHasManyWithFields() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1603,7 +1603,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGenerateAssociationQueryHasManyAndAggregateFunction() {
+	public function testGenerateAssociationQueryHasManyAndAggregateFunction() {
 		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1626,7 +1626,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasAndBelongsToMany() {
+	public function testGenerateAssociationQueryHasAndBelongsToMany() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1658,7 +1658,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasAndBelongsToManyWithConditions() {
+	public function testGenerateAssociationQueryHasAndBelongsToManyWithConditions() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1687,7 +1687,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit() {
+	public function testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1724,7 +1724,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit() {
+	public function testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit() {
 		$this->Model = new TestModel4();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
@@ -1761,7 +1761,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSelectDistict() {
+	public function testSelectDistict() {
 		$this->Model = new TestModel4();
 		$result = $this->Dbo->fields($this->Model, 'Vendor', "DISTINCT Vendor.id, Vendor.name");
 		$expected = array('DISTINCT `Vendor`.`id`', '`Vendor`.`name`');
@@ -1774,7 +1774,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStringConditionsParsing() {
+	public function testStringConditionsParsing() {
 		$result = $this->Dbo->conditions("ProjectBid.project_id = Project.id");
 		$expected = " WHERE `ProjectBid`.`project_id` = `Project`.`id`";
 		$this->assertEqual($expected, $result);
@@ -1891,7 +1891,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testQuotesInStringConditions() {
+	public function testQuotesInStringConditions() {
 		$result = $this->Dbo->conditions('Member.email = \'mariano@cricava.com\'');
 		$expected = ' WHERE `Member`.`email` = \'mariano@cricava.com\'';
 		$this->assertEqual($expected, $result);
@@ -1916,7 +1916,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testParenthesisInStringConditions() {
+	public function testParenthesisInStringConditions() {
 		$result = $this->Dbo->conditions('Member.name = \'(lu\'');
 		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(lu\'$/', $result);
 
@@ -1966,7 +1966,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testParenthesisInArrayConditions() {
+	public function testParenthesisInArrayConditions() {
 		$result = $this->Dbo->conditions(array('Member.name' => '(lu'));
 		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(lu\'$/', $result);
 
@@ -2016,7 +2016,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testArrayConditionsParsing() {
+	public function testArrayConditionsParsing() {
 		$this->loadFixtures('Post', 'Author');
 		$result = $this->Dbo->conditions(array('Stereo.type' => 'in dash speakers'));
 		$this->assertPattern("/^\s+WHERE\s+`Stereo`.`type`\s+=\s+'in dash speakers'/", $result);
@@ -2249,7 +2249,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testArrayConditionsParsingComplexKeys() {
+	public function testArrayConditionsParsingComplexKeys() {
 		$result = $this->Dbo->conditions(array(
 			'CAST(Book.created AS DATE)' => '2008-08-02'
 		));
@@ -2275,7 +2275,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMixedConditionsParsing() {
+	public function testMixedConditionsParsing() {
 		$conditions[] = 'User.first_name = \'Firstname\'';
 		$conditions[] = array('User.last_name' => 'Lastname');
 		$result = $this->Dbo->conditions($conditions);
@@ -2297,7 +2297,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConditionsOptionalArguments() {
+	public function testConditionsOptionalArguments() {
 		$result = $this->Dbo->conditions( array('Member.name' => 'Mariano'), true, false);
 		$this->assertPattern('/^\s*`Member`.`name`\s*=\s*\'Mariano\'\s*$/', $result);
 
@@ -2311,7 +2311,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConditionsWithModel() {
+	public function testConditionsWithModel() {
 		$this->Model = new Article2();
 
 		$result = $this->Dbo->conditions(array('Article2.viewed >=' => 0), true, true, $this->Model);
@@ -2345,7 +2345,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFieldParsing() {
+	public function testFieldParsing() {
 		$this->Model = new TestModel();
 		$result = $this->Dbo->fields($this->Model, 'Vendor', "Vendor.id, COUNT(Model.vendor_id) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');
@@ -2470,7 +2470,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFieldsWithExpression() {
+	public function testFieldsWithExpression() {
 		$this->Model = new TestModel;
 		$expression = $this->Dbo->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
 		$result = $this->Dbo->fields($this->Model, null, array("id", $expression));
@@ -2487,7 +2487,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRenderStatement() {
+	public function testRenderStatement() {
 		$result = $this->Dbo->renderStatement('select', array(
 			'fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1',
 			'alias' => '', 'joins' => '', 'order' => '', 'limit' => '', 'group' => ''
@@ -2513,7 +2513,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSchema() {
+	public function testSchema() {
 		$Schema = new CakeSchema();
 		$Schema->tables = array('table' => array(), 'anotherTable' => array());
 
@@ -2534,7 +2534,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testOrderParsing() {
+	public function testOrderParsing() {
 		$result = $this->Dbo->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
 		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
 		$this->assertEqual($expected, $result);
@@ -2620,7 +2620,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCalculations() {
+	public function testCalculations() {
 		$this->Model = new TestModel();
 		$result = $this->Dbo->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
@@ -2663,7 +2663,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLength() {
+	public function testLength() {
 		$result = $this->Dbo->length('varchar(255)');
 		$expected = 255;
 		$this->assertIdentical($expected, $result);
@@ -2707,7 +2707,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBuildIndex() {
+	public function testBuildIndex() {
 		$data = array(
 			'PRIMARY' => array('column' => 'id')
 		);
@@ -2736,7 +2736,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBuildColumn2() {
+	public function testBuildColumn2() {
 		$this->expectError();
 		$data = array(
 			'name' => 'testName',
@@ -2849,7 +2849,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHasAny() {
+	public function testHasAny() {
 		$this->Dbo = $this->getMock('Mysql', array('connect', '_execute', 'execute', 'value'));
 		$this->Model = $this->getMock('TestModel', array('getDataSource'));
 		$this->Model->expects($this->any())
@@ -2875,7 +2875,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFields() {
+	public function testVirtualFields() {
 		$this->loadFixtures('Article', 'Comment', 'Tag');
 		$this->Dbo->virtualFieldSeparator = '__';
 		$Article = ClassRegistry::init('Article');
@@ -2947,7 +2947,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldsInConditions() {
+	public function testVirtualFieldsInConditions() {
 		$Article = ClassRegistry::init('Article');
 		$commentsTable = $this->Dbo->fullTableName('comments', false);
 
@@ -2983,7 +2983,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConditionsWithComplexVirtualFields() {
+	public function testConditionsWithComplexVirtualFields() {
 		$Article = ClassRegistry::init('Article', 'Comment', 'Tag');
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
@@ -3006,7 +3006,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldsInCalculate() {
+	public function testVirtualFieldsInCalculate() {
 		$Article = ClassRegistry::init('Article');
 		$commentsTable = $this->Dbo->fullTableName('comments', false);
 		$Article->virtualFields = array(
@@ -3030,7 +3030,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testReadVirtualFieldsWithNewLines() {
+	public function testReadVirtualFieldsWithNewLines() {
 		$Article = new Article();
 		$Article->recursive = 1;
 		$Article->virtualFields = array(
@@ -3048,7 +3048,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldsInGroup() {
+	public function testVirtualFieldsInGroup() {
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_year' => 'YEAR(Article.created)'
@@ -3065,7 +3065,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFieldsWithComplexVirtualFields() {
+	public function testFieldsWithComplexVirtualFields() {
 		$Article = new Article();
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
@@ -3092,7 +3092,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testExecute() {
+	public function testExecute() {
 		$query = 'SELECT * FROM ' . $this->Dbo->fullTableName('articles') . ' WHERE 1 = 1';
 		$this->Dbo->took = null;
 		$this->Dbo->affected = null;
@@ -3112,7 +3112,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldsFetch() {
+	public function testVirtualFieldsFetch() {
 		$this->loadFixtures('Article', 'Comment');
 
 		$Article = ClassRegistry::init('Article');
@@ -3136,7 +3136,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldsComplexRead() {
+	public function testVirtualFieldsComplexRead() {
 		$this->loadFixtures('DataTest', 'Article', 'Comment', 'User', 'Tag', 'ArticlesTag');
 
 		$Article = ClassRegistry::init('Article');
@@ -3170,7 +3170,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIntrospectType() {
+	public function testIntrospectType() {
 		$this->assertEqual($this->Dbo->introspectType(0), 'integer');
 		$this->assertEqual($this->Dbo->introspectType(2), 'integer');
 		$this->assertEqual($this->Dbo->introspectType('2'), 'string');
@@ -3331,7 +3331,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRealQueries() {
+	public function testRealQueries() {
 		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag', 'Sample', 'ArticlesTag');
 
 		$Apple = ClassRegistry::init('Apple');
@@ -3399,7 +3399,7 @@ class DboMysqlTest extends CakeTestCase {
  * @expectedException MissingConnectionException
  * @return void
  */
-	function testExceptionOnBrokenConnection() {
+	public function testExceptionOnBrokenConnection() {
 		$dbo = new Mysql(array(
 			'driver' => 'mysql',
 			'host' => 'imaginary_host',

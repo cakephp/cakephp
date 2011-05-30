@@ -153,7 +153,7 @@ class TestValidate extends CakeTestModel {
  * @access public
  * @return void
  */
-	function validateNumber($value, $options) {
+	public function validateNumber($value, $options) {
 		$options = array_merge(array('min' => 0, 'max' => 100), $options);
 		$valid = ($value['number'] >= $options['min'] && $value['number'] <= $options['max']);
 		return $valid;
@@ -166,7 +166,7 @@ class TestValidate extends CakeTestModel {
  * @access public
  * @return void
  */
-	function validateTitle($value) {
+	public function validateTitle($value) {
 		return (!empty($value) && strpos(strtolower($value['title']), 'title-') === 0);
 	}
 }
@@ -256,7 +256,7 @@ class Article extends CakeTestModel {
  * @access public
  * @return void
  */
-	function beforeSave($options = array()) {
+	public function beforeSave($options = array()) {
 		return $this->beforeSaveReturn;
 	}
 
@@ -286,7 +286,7 @@ class BeforeDeleteComment extends CakeTestModel {
 
 	var $useTable = 'comments';
 
-	function beforeDelete($cascade = true) {
+	public function beforeDelete($cascade = true) {
 		$db = $this->getDataSource();
 		$db->delete($this, array($this->alias . '.' . $this->primaryKey => array(1, 3)));
 		return true;
@@ -545,7 +545,7 @@ class ModifiedComment extends CakeTestModel {
  *
  * @return void
  */
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
 		}
@@ -589,7 +589,7 @@ class AgainModifiedComment extends CakeTestModel {
  *
  * @return void
  */
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['querytype'] = $this->findQueryType;
 		}
@@ -886,14 +886,14 @@ class Post extends CakeTestModel {
  */
 	public $belongsTo = array('Author');
 
-	function beforeFind($queryData) {
+	public function beforeFind($queryData) {
 		if (isset($queryData['connection'])) {
 			$this->useDbConfig = $queryData['connection'];
 		}
 		return true;
 	}
 
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		$this->useDbConfig = 'test';
 		return $results;
 	}
@@ -929,7 +929,7 @@ class Author extends CakeTestModel {
  * @access public
  * @return void
  */
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		$results[0]['Author']['test'] = 'working';
 		return $results;
 	}
@@ -957,7 +957,7 @@ class ModifiedAuthor extends Author {
  * @access public
  * @return void
  */
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		foreach($results as $index => $result) {
 			$results[$index]['Author']['user'] .= ' (CakePHP)';
 		}
@@ -1131,7 +1131,7 @@ class NodeAfterFind extends CakeTestModel {
  * @access public
  * @return void
  */
-	function afterFind($results, $primary = false) {
+	public function afterFind($results, $primary = false) {
 		return $results;
 	}
 }
@@ -2006,7 +2006,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeSave($options = array()) {
+	public function beforeSave($options = array()) {
 		return $this->beforeSaveReturn;
 	}
 /**
@@ -2014,7 +2014,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeValidate($options = array()) {
+	public function beforeValidate($options = array()) {
 		return $this->beforeValidateReturn;
 	}
 /**
@@ -2022,7 +2022,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeDelete($cascade = true) {
+	public function beforeDelete($cascade = true) {
 		return $this->beforeDeleteReturn;
 	}
 }
@@ -2137,7 +2137,7 @@ class ValidationTest1 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function customValidationMethod($data) {
+	public function customValidationMethod($data) {
 		return $data === 1;
 	}
 
@@ -2147,7 +2147,7 @@ class ValidationTest1 extends CakeTestModel {
  * @access public
  * @return array
  */
-	function customValidatorWithParams($data, $validator, $or = true, $ignore_on_same = 'id') {
+	public function customValidatorWithParams($data, $validator, $or = true, $ignore_on_same = 'id') {
 		$this->validatorParams = get_defined_vars();
 		unset($this->validatorParams['this']);
 		return true;
@@ -2159,7 +2159,7 @@ class ValidationTest1 extends CakeTestModel {
  * @access public
  * @return array
  */
-	function customValidatorWithMessage($data) {
+	public function customValidatorWithMessage($data) {
 		return 'This field will *never* validate! Muhahaha!';
 	}
 /**
@@ -2167,7 +2167,7 @@ class ValidationTest1 extends CakeTestModel {
  *
  * @return void
  */
-	function customValidatorWithSixParams($data, $one = 1, $two = 2, $three = 3, $four = 4, $five = 5, $six = 6) {
+	public function customValidatorWithSixParams($data, $one = 1, $two = 2, $three = 3, $four = 4, $five = 5, $six = 6) {
 		$this->validatorParams = get_defined_vars();
 		unset($this->validatorParams['this']);
 		return true;
@@ -2220,7 +2220,7 @@ class ValidationTest2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function customValidationMethod($data) {
+	public function customValidationMethod($data) {
 		return $data === 1;
 	}
 
@@ -2541,7 +2541,7 @@ class NumberTree extends CakeTestModel {
  * @access public
  * @return void
  */
-	function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
+	public function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
 			$db = ConnectionManager::getDataSource($this->useDbConfig);
 			$db->truncate($this->table);
@@ -2730,7 +2730,7 @@ class AfterTree extends NumberTree {
  */
 	public $actsAs = array('Tree');
 
-	function afterSave($created) {
+	public function afterSave($created) {
 		if ($created && isset($this->data['AfterTree'])) {
 			$this->data['AfterTree']['name'] = 'Six and One Half Changed in AfterTree::afterSave() but not in database';
 		}
@@ -3441,7 +3441,7 @@ class TransactionTestModel extends CakeTestModel {
 	var $name = 'TransactionTestModel';
 	var $useTable = 'samples';
 
-	function afterSave($created) {
+	public function afterSave($created) {
 		$data = array(
 			array('apple_id' => 1, 'name' => 'sample6'),
 		);
@@ -3509,7 +3509,7 @@ class TestModel extends CakeTestModel {
  * @access public
  * @return void
  */
-	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return array($conditions, $fields);
 	}
 
@@ -3523,7 +3523,7 @@ class TestModel extends CakeTestModel {
  * @access public
  * @return void
  */
-	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+	public function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
 }
@@ -4687,7 +4687,7 @@ class MysqlTestModel extends Model {
  * @access public
  * @return void
  */
-	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
 
@@ -4701,7 +4701,7 @@ class MysqlTestModel extends Model {
  * @access public
  * @return void
  */
-	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+	public function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
 

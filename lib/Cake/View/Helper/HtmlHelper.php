@@ -624,7 +624,7 @@ class HtmlHelper extends AppHelper {
  * @return string breadcrumbs html list
  * @access public
  */
-	function getCrumbList($options = array()) {
+	public function getCrumbList($options = array()) {
 		if (!empty($this->_crumbs)) {
 			$result = '';
 			$crumbCount = count($this->_crumbs);

@@ -132,7 +132,7 @@ class ProjectTask extends Shell {
  * @param string $skip array of directories to skip when copying
  * @access private
  */
-	function bake($path, $skel = null, $skip = array('empty')) {
+	public function bake($path, $skel = null, $skip = array('empty')) {
 		if (!$skel && !empty($this->params['skel'])) {
 			$skel = $this->params['skel'];
 		}

@@ -45,7 +45,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function setup($model, $config = array()) {
+	public function setup($model, $config = array()) {
 		parent::setup($model, $config);
 		if (isset($config['mangle'])) {
 			$config['mangle'] .= ' mangled';
@@ -61,7 +61,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function beforeFind($model, $query) {
+	public function beforeFind($model, $query) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeFind']) || $settings['beforeFind'] == 'off') {
 			return parent::beforeFind($model, $query);
@@ -90,7 +90,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function afterFind($model, $results, $primary) {
+	public function afterFind($model, $results, $primary) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterFind']) || $settings['afterFind'] == 'off') {
 			return parent::afterFind($model, $results, $primary);
@@ -118,7 +118,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function beforeSave($model) {
+	public function beforeSave($model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeSave']) || $settings['beforeSave'] == 'off') {
 			return parent::beforeSave($model);
@@ -145,7 +145,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function afterSave($model, $created) {
+	public function afterSave($model, $created) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterSave']) || $settings['afterSave'] == 'off') {
 			return parent::afterSave($model, $created);
@@ -177,7 +177,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function beforeValidate($model) {
+	public function beforeValidate($model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['validate']) || $settings['validate'] == 'off') {
 			return parent::beforeValidate($model);
@@ -209,7 +209,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function beforeDelete($model, $cascade = true) {
+	public function beforeDelete($model, $cascade = true) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeDelete']) || $settings['beforeDelete'] == 'off') {
 			return parent::beforeDelete($model, $cascade);
@@ -238,7 +238,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function afterDelete($model) {
+	public function afterDelete($model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterDelete']) || $settings['afterDelete'] == 'off') {
 			return parent::afterDelete($model);
@@ -257,7 +257,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function onError($model, $error) {
+	public function onError($model, $error) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['onError']) || $settings['onError'] == 'off') {
 			return parent::onError($model, $error);
@@ -271,7 +271,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function beforeTest($model) {
+	public function beforeTest($model) {
 		if (!isset($model->beforeTestResult)) {
 			$model->beforeTestResult = array();
 		}
@@ -287,7 +287,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function testMethod(Model $model, $param = true) {
+	public function testMethod(Model $model, $param = true) {
 		if ($param === true) {
 			return 'working';
 		}
@@ -300,7 +300,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function testData(Model $model) {
+	public function testData(Model $model) {
 		if (!isset($model->data['Apple']['field'])) {
 			return false;
 		}
@@ -316,7 +316,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function validateField(Model $model, $field) {
+	public function validateField(Model $model, $field) {
 		return current($field) === 'Orange';
 	}
 
@@ -329,7 +329,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	function speakEnglish(Model $model, $method, $query) {
+	public function speakEnglish(Model $model, $method, $query) {
 		$method = preg_replace('/look for\s+/', 'Item.name = \'', $method);
 		$query = preg_replace('/^in\s+/', 'Location.name = \'', $query);
 		return $method . '\' AND ' . $query . '\'';
@@ -344,11 +344,11 @@ class TestBehavior extends ModelBehavior {
 class Test2Behavior extends TestBehavior {
 	public $mapMethods = array('/mappingRobot(\w+)/' => 'mapped');
 
-	function resolveMethod($model, $stuff) {
+	public function resolveMethod($model, $stuff) {
 
 	}
 
-	function mapped($model, $method, $query) {
+	public function mapped($model, $method, $query) {
 
 	}
 }
@@ -367,7 +367,7 @@ class Test3Behavior extends TestBehavior{
  * @package       cake.tests.cases.libs.model
  */
 class Test4Behavior extends ModelBehavior{
-	function setup($model, $config = null) {
+	public function setup($model, $config = null) {
 		$model->bindModel(
 			array('hasMany' => array('Comment'))
 		);
@@ -380,7 +380,7 @@ class Test4Behavior extends ModelBehavior{
  * @package       cake.tests.cases.libs.model
  */
 class Test5Behavior extends ModelBehavior{
-	function setup($model, $config = null) {
+	public function setup($model, $config = null) {
 		$model->bindModel(
 			array('belongsTo' => array('User'))
 		);
@@ -393,7 +393,7 @@ class Test5Behavior extends ModelBehavior{
  * @package       cake.tests.cases.libs.model
  */
 class Test6Behavior extends ModelBehavior{
-	function setup($model, $config = null) {
+	public function setup($model, $config = null) {
 		$model->bindModel(
 			array('hasAndBelongsToMany' => array('Tag'))
 		);
@@ -406,7 +406,7 @@ class Test6Behavior extends ModelBehavior{
  * @package       cake.tests.cases.libs.model
  */
 class Test7Behavior extends ModelBehavior{
-	function setup($model, $config = null) {
+	public function setup($model, $config = null) {
 		$model->bindModel(
 			array('hasOne' => array('Attachment'))
 		);
@@ -440,7 +440,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 /**
  * Tests loading aliased behaviors
  */
-	function testLoadAlias() {
+	public function testLoadAlias() {
 		$Apple = new Apple();
 		$this->assertIdentical($Apple->Behaviors->attached(), array());
 
@@ -470,7 +470,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorBinding() {
+	public function testBehaviorBinding() {
 		$Apple = new Apple();
 		$this->assertIdentical($Apple->Behaviors->attached(), array());
 
@@ -535,7 +535,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDetachWithPluginNames() {
+	public function testDetachWithPluginNames() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Plugin.Test');
 		$this->assertTrue(isset($Apple->Behaviors->Test), 'Missing behavior');
@@ -558,7 +558,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @expectedException MissingBehaviorClassException
  * @return void
  */
-	function testInvalidBehaviorCausingCakeError() {
+	public function testInvalidBehaviorCausingCakeError() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('NoSuchBehavior');
 	}
@@ -569,7 +569,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorToggling() {
+	public function testBehaviorToggling() {
 		$Apple = new Apple();
 		$expected = $Apple->find('all');
 		$this->assertIdentical($Apple->Behaviors->enabled(), array());
@@ -605,7 +605,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorFindCallbacks() {
+	public function testBehaviorFindCallbacks() {
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
 		$Apple = new Apple();
@@ -664,7 +664,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorHasManyFindCallbacks() {
+	public function testBehaviorHasManyFindCallbacks() {
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasOne' => array('Sample'), 'belongsTo' => array('Parent')), false);
 		$expected = $Apple->find('all');
@@ -736,7 +736,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorHasOneFindCallbacks() {
+	public function testBehaviorHasOneFindCallbacks() {
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasMany' => array('Child'), 'belongsTo' => array('Parent')), false);
 		$expected = $Apple->find('all');
@@ -806,7 +806,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorBelongsToFindCallbacks() {
+	public function testBehaviorBelongsToFindCallbacks() {
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
 		$Apple = new Apple();
@@ -875,7 +875,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorSaveCallbacks() {
+	public function testBehaviorSaveCallbacks() {
 		$Sample = new Sample();
 		$record = array('Sample' => array('apple_id' => 6, 'name' => 'sample99'));
 
@@ -938,7 +938,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorDeleteCallbacks() {
+	public function testBehaviorDeleteCallbacks() {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'beforeDelete' => 'off'));
@@ -973,7 +973,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorOnErrorCallback() {
+	public function testBehaviorOnErrorCallback() {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'onError' => 'on'));
@@ -988,7 +988,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorValidateCallback() {
+	public function testBehaviorValidateCallback() {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test');
@@ -1017,7 +1017,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorValidateMethods() {
+	public function testBehaviorValidateMethods() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
 		$Apple->validate['color'] = 'validateField';
@@ -1036,7 +1036,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorMethodDispatching() {
+	public function testBehaviorMethodDispatching() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
 
@@ -1062,7 +1062,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorMethodDispatchingWithData() {
+	public function testBehaviorMethodDispatchingWithData() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
 
@@ -1126,7 +1126,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testBehaviorAttachAndDetach() {
+	public function testBehaviorAttachAndDetach() {
 		$Sample = new Sample();
 		$Sample->actsAs = array('Test3' => array('bar'), 'Test2' => array('foo', 'bar'));
 		$Sample->Behaviors->init($Sample->alias, $Sample->actsAs);
@@ -1141,7 +1141,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHasMethodBasic() {
+	public function testHasMethodBasic() {
 		$Sample = new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));
@@ -1157,7 +1157,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHasMethodMappedMethods() {
+	public function testHasMethodMappedMethods() {
 		$Sample = new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));
@@ -1171,7 +1171,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHasMethodAsCallback() {
+	public function testHasMethodAsCallback() {
 		$Sample = new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));

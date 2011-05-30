@@ -64,7 +64,7 @@ class TreeBehaviorAfterTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAftersaveCallback() {
+	public function testAftersaveCallback() {
 		$this->Tree = new AfterTree();
 
 		$expected = array('AfterTree' => array('name' => 'Six and One Half Changed in AfterTree::afterSave() but not in database', 'parent_id' => 6, 'lft' => 11, 'rght' => 12));

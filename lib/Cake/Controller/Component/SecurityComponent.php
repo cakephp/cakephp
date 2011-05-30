@@ -284,7 +284,7 @@ class SecurityComponent extends Component {
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/view/1307/blackHole-object-controller-string-error
  */
-	function blackHole($controller, $error = '') {
+	public function blackHole($controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
 			if ($error == 'login') {

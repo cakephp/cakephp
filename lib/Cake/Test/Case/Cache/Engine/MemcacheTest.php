@@ -27,11 +27,11 @@ class TestMemcacheEngine extends MemcacheEngine {
  * @param string $server 
  * @return array
  */
-	function parseServerString($server) {
+	public function parseServerString($server) {
 		return $this->_parseServerString($server);
 	}
 	
-	function setMemcache($memcache) {
+	public function setMemcache($memcache) {
 		$this->_Memcache = $memcache;
 	}
 }
@@ -49,7 +49,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$this->skipIf(!class_exists('Memcache'), '%s Memcache is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
@@ -66,7 +66,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('memcache');
 		Cache::config('default');
@@ -78,7 +78,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSettings() {
+	public function testSettings() {
 		$settings = Cache::settings('memcache');
 		unset($settings['serialize'], $settings['path']);
 		$expecting = array(
@@ -99,7 +99,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMultipleServers() {
+	public function testMultipleServers() {
 		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
 		$available = true;
 		$Memcache = new Memcache();
@@ -129,7 +129,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConnect() {
+	public function testConnect() {
 		$Memcache = new MemcacheEngine();
 		$Memcache->init(Cache::settings('memcache'));
 		$result = $Memcache->connect('127.0.0.1');
@@ -141,7 +141,7 @@ class MemcacheEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConnectIpv6() {
+	public function testConnectIpv6() {
 		$Memcache = new MemcacheEngine();
 		$result = $Memcache->init(array(
 			'prefix' => 'cake_',
@@ -159,7 +159,7 @@ class MemcacheEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testParseServerStringNonLatin() {
+	public function testParseServerStringNonLatin() {
 		$Memcache = new TestMemcacheEngine();
 		$result = $Memcache->parseServerString('schülervz.net:13211');
 		$this->assertEqual($result, array('schülervz.net', '13211'));
@@ -174,7 +174,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteCache() {
+	public function testReadAndWriteCache() {
 		Cache::set(array('duration' => 1), null, 'memcache');
 
 		$result = Cache::read('test', 'memcache');
@@ -198,7 +198,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExpiry() {
+	public function testExpiry() {
 		Cache::set(array('duration' => 1), 'memcache');
 
 		$result = Cache::read('test', 'memcache');
@@ -247,7 +247,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDeleteCache() {
+	public function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('delete_test', $data, 'memcache');
 		$this->assertTrue($result);
@@ -262,7 +262,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDecrement() {
+	public function testDecrement() {
 		$result = Cache::write('test_decrement', 5, 'memcache');
 		$this->assertTrue($result);
 
@@ -285,7 +285,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIncrement() {
+	public function testIncrement() {
 		$result = Cache::write('test_increment', 5, 'memcache');
 		$this->assertTrue($result);
 
@@ -307,7 +307,7 @@ class MemcacheEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConfigurationConflict() {
+	public function testConfigurationConflict() {
 		Cache::config('long_memcache', array(
 		  'engine' => 'Memcache',
 		  'duration'=> '+2 seconds',
@@ -342,7 +342,7 @@ class MemcacheEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testClear() {
+	public function testClear() {
 		Cache::write('some_value', 'value', 'memcache');
 
 		$result = Cache::clear(false, 'memcache');
@@ -354,7 +354,7 @@ class MemcacheEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testZeroDuration() {
+	public function testZeroDuration() {
 		Cache::config('memcache', array('duration' => 0));
 		$result = Cache::write('test_key', 'written!', 'memcache');
 
@@ -368,7 +368,7 @@ class MemcacheEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLongDurationEqualToZero() {
+	public function testLongDurationEqualToZero() {
 		$memcache =& new TestMemcacheEngine();
 		$memcache->settings['compress'] = false;
 

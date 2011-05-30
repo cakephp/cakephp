@@ -87,7 +87,7 @@ class InterceptContentHelper extends Helper {
  *
  * @param string $viewFile The view file
  */
-	function afterRender($viewFile) {
+	public function afterRender($viewFile) {
 		$this->_View->_viewNoLayout = $this->_View->output;
 		$this->_View->Helpers->unload('InterceptContent');
 	}

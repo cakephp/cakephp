@@ -26,7 +26,7 @@ class TaskCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function setup() {
+	public function setup() {
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
@@ -37,7 +37,7 @@ class TaskCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function teardown() {
+	public function teardown() {
 		unset($this->Tasks);
 	}
 
@@ -46,7 +46,7 @@ class TaskCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoad() {
+	public function testLoad() {
 		$result = $this->Tasks->load('DbConfig');
 		$this->assertInstanceOf('DbConfigTask', $result);
 		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
@@ -62,7 +62,7 @@ class TaskCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadWithEnableFalse() {
+	public function testLoadWithEnableFalse() {
 		$result = $this->Tasks->load('DbConfig', array('enabled' => false));
 		$this->assertInstanceOf('DbConfigTask', $result);
 		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
@@ -75,7 +75,7 @@ class TaskCollectionTest extends CakeTestCase {
  * @expectedException MissingTaskClassException
  * @return void
  */
-	function testLoadMissingTaskFile() {
+	public function testLoadMissingTaskFile() {
 		$result = $this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
 	}
 
@@ -84,7 +84,7 @@ class TaskCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadPluginTask() {
+	public function testLoadPluginTask() {
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		App::build(array(
@@ -104,7 +104,7 @@ class TaskCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUnload() {
+	public function testUnload() {
 		$this->Tasks->load('Extract');
 		$this->Tasks->load('DbConfig');
 

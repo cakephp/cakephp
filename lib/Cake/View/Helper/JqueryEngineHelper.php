@@ -210,7 +210,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::effect()
  */
-	function effect($name, $options = array()) {
+	public function effect($name, $options = array()) {
 		$speed = null;
 		if (isset($options['speed']) && in_array($options['speed'], array('fast', 'slow'))) {
 			$speed = $this->value($options['speed']);
@@ -243,7 +243,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::request() for options list.
  */
-	function request($url, $options = array()) {
+	public function request($url, $options = array()) {
 		$url = $this->url($url);
 		$options = $this->_mapOptions('request', $options);
 		if (isset($options['data']) && is_array($options['data'])) {
@@ -284,7 +284,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::sortable() for options list.
  */
-	function sortable($options = array()) {
+	public function sortable($options = array()) {
 		$template = '%s.sortable({%s});';
 		return $this->_methodTemplate('sortable', $template, $options);
 	}
@@ -299,7 +299,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::drag() for options list.
  */
-	function drag($options = array()) {
+	public function drag($options = array()) {
 		$template = '%s.draggable({%s});';
 		return $this->_methodTemplate('drag', $template, $options);
 	}
@@ -314,7 +314,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::drop() for options list.
  */
-	function drop($options = array()) {
+	public function drop($options = array()) {
 		$template = '%s.droppable({%s});';
 		return $this->_methodTemplate('drop', $template, $options);
 	}
@@ -329,7 +329,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::slider() for options list.
  */
-	function slider($options = array()) {
+	public function slider($options = array()) {
 		$callbacks = array('start', 'change', 'slide', 'stop');
 		$template = '%s.slider({%s});';
 		return $this->_methodTemplate('slider', $template, $options, $callbacks);
@@ -344,7 +344,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @see JsBaseEngineHelper::serializeForm() for option list.
  */
-	function serializeForm($options = array()) {
+	public function serializeForm($options = array()) {
 		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
 		$selector = $this->selection;
 		if (!$options['isForm']) {

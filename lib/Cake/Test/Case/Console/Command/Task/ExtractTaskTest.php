@@ -159,7 +159,7 @@ class ExtractTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testExtractWithExclude() {
+	public function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View';
@@ -185,7 +185,7 @@ class ExtractTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testExtractMultiplePaths() {
+	public function testExtractMultiplePaths() {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] =

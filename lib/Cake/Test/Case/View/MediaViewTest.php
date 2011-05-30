@@ -33,7 +33,7 @@ class MediaViewTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$controller = new Controller();
 		$this->MediaView = $this->getMock('MediaView', array('_isActive', '_clearBuffer', '_flushBuffer'));
@@ -45,7 +45,7 @@ class MediaViewTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->MediaView);
 	}
@@ -70,7 +70,7 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRender() {
+	public function testRender() {
 		$this->MediaView->viewVars = array(
 			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
 			'id' => 'test_asset.css',
@@ -116,7 +116,7 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRenderWithUnknownFileTypeGeneric() {
+	public function testRenderWithUnknownFileTypeGeneric() {
 		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 		$this->MediaView->viewVars = array(
@@ -176,7 +176,7 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRenderWithUnknownFileTypeOpera() {
+	public function testRenderWithUnknownFileTypeOpera() {
 		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
 		$this->MediaView->viewVars = array(
@@ -241,7 +241,7 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRenderWithUnknownFileTypeIE() {
+	public function testRenderWithUnknownFileTypeIE() {
 		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
 		$this->MediaView->viewVars = array(
@@ -306,7 +306,7 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConnectionAborted() {
+	public function testConnectionAborted() {
 		$this->MediaView->viewVars = array(
 			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
 			'id' => 'test_asset.css',
@@ -330,7 +330,7 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConnectionAbortedOnBuffering() {
+	public function testConnectionAbortedOnBuffering() {
 		$this->MediaView->viewVars = array(
 			'path' =>  CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS .'css' . DS,
 			'id' => 'test_asset.css',

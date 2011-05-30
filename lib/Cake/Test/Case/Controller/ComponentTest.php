@@ -51,7 +51,7 @@ class ParamTestComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize(&$controller, $settings) {
+	public function initialize(&$controller, $settings) {
 		foreach ($settings as $key => $value) {
 			if (is_numeric($key)) {
 				$this->{$value} = true;
@@ -117,7 +117,7 @@ class AppleComponent extends Component {
  * @access public
  * @return void
  */
-	function startup(&$controller) {
+	public function startup(&$controller) {
 		$this->testName = $controller->name;
 	}
 }
@@ -144,7 +144,7 @@ class OrangeComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize(&$controller) {
+	public function initialize(&$controller) {
 		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
 	}
@@ -248,7 +248,7 @@ class ComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$this->_pluginPaths = App::path('plugins');
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
@@ -261,7 +261,7 @@ class ComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		App::build();
 		ClassRegistry::flush();
 	}
@@ -271,7 +271,7 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInnerComponentConstruction() {
+	public function testInnerComponentConstruction() {
 		$Collection = new ComponentCollection();
 		$Component = new AppleComponent($Collection);
 
@@ -283,7 +283,7 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testNestedComponentLoading() {
+	public function testNestedComponentLoading() {
 		$Collection = new ComponentCollection();
 		$Apple = new AppleComponent($Collection);
 
@@ -298,7 +298,7 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInnerComponentsAreNotEnabled() {
+	public function testInnerComponentsAreNotEnabled() {
 		$Collection = new ComponentCollection();
 		$Apple = $Collection->load('Apple');
 
@@ -312,7 +312,7 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMultipleComponentInitialize() {
+	public function testMultipleComponentInitialize() {
 		$Collection = new ComponentCollection();
 		$Banana = $Collection->load('Banana');
 		$Orange = $Collection->load('Orange');
@@ -328,7 +328,7 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSomethingReferencingEmailComponent() {
+	public function testSomethingReferencingEmailComponent() {
 		$Controller = new ComponentTestController();
 		$Controller->components = array('SomethingWithEmail');
 		$Controller->uses = false;

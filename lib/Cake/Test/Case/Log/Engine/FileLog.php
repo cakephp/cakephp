@@ -31,7 +31,7 @@ class FileLogTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLogFileWriting() {
+	public function testLogFileWriting() {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
@@ -69,7 +69,7 @@ class FileLogTest extends CakeTestCase {
  *
  * @return void
  */
-	function testPathSetting() {
+	public function testPathSetting() {
 		$path = TMP . 'tests' . DS;
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');

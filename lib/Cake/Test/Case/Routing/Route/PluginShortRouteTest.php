@@ -12,7 +12,7 @@ class PluginShortRouteTestCase extends  CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
 		Router::reload();
@@ -23,7 +23,7 @@ class PluginShortRouteTestCase extends  CakeTestCase {
  *
  * @return void
  */
-	function testParsing() {
+	public function testParsing() {
 		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
 
 		$result = $route->parse('/foo');
@@ -40,7 +40,7 @@ class PluginShortRouteTestCase extends  CakeTestCase {
  *
  * @return void
  */
-	function testMatch() {
+	public function testMatch() {
 		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
 
 		$result = $route->match(array('plugin' => 'foo', 'controller' => 'posts', 'action' => 'index'));

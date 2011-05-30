@@ -32,7 +32,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->Socket = new CakeSocket(array('timeout' => 1));
 	}
@@ -43,7 +43,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Socket);
 	}
@@ -54,7 +54,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConstruct() {
+	public function testConstruct() {
 		$this->Socket = new CakeSocket();
 		$config = $this->Socket->config;
 		$this->assertIdentical($config, array(
@@ -86,7 +86,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSocketConnection() {
+	public function testSocketConnection() {
 		$this->assertFalse($this->Socket->connected);
 		$this->Socket->disconnect();
 		$this->assertFalse($this->Socket->connected);
@@ -132,7 +132,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSocketHost() {
+	public function testSocketHost() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->address(), '127.0.0.1');
@@ -154,7 +154,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSocketWriting() {
+	public function testSocketWriting() {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 		$this->assertTrue((bool)$this->Socket->write($request));
 	}
@@ -165,7 +165,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSocketReading() {
+	public function testSocketReading() {
 		$this->Socket = new CakeSocket(array('timeout' => 5));
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->read(26), null);
@@ -182,7 +182,7 @@ class CakeSocketTest extends CakeTestCase {
  *
  * @return void
  */
-	function testTimeOutConnection() {
+	public function testTimeOutConnection() {
 		$config = array('host' => '127.0.0.1', 'timeout' => 0.5);
 		$this->Socket = new CakeSocket($config);
 		$this->assertTrue($this->Socket->connect());
@@ -198,7 +198,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLastError() {
+	public function testLastError() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->setLastError(4, 'some error here');
 		$this->assertEqual($this->Socket->lastError(), '4: some error here');
@@ -210,7 +210,7 @@ class CakeSocketTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReset() {
+	public function testReset() {
 		$config = array(
 			'persistent'	=> true,
 			'host'			=> '127.0.0.1',

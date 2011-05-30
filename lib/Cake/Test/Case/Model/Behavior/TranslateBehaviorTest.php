@@ -57,7 +57,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		ClassRegistry::flush();
 	}
 
@@ -67,7 +67,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTranslateModel() {
+	public function testTranslateModel() {
 		$this->loadFixtures('TranslateTable', 'Tag', 'TranslatedItem', 'Translate', 'User', 'TranslatedArticle', 'TranslateArticle');
 		$TestModel = new Tag();
 		$TestModel->translateTable = 'another_i18n';
@@ -99,7 +99,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLocaleFalsePlain() {
+	public function testLocaleFalsePlain() {
 		$this->loadFixtures('Translate', 'TranslatedItem', 'User');
 
 		$TestModel = new TranslatedItem();
@@ -124,7 +124,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLocaleFalseAssociations() {
+	public function testLocaleFalseAssociations() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -179,7 +179,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLocaleSingle() {
+	public function testLocaleSingle() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -236,7 +236,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLocaleSingleWithConditions() {
+	public function testLocaleSingleWithConditions() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -276,7 +276,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLocaleSingleAssociations() {
+	public function testLocaleSingleAssociations() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -337,7 +337,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLocaleMultiple() {
+	public function testLocaleMultiple() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -393,7 +393,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMissingTranslation() {
+	public function testMissingTranslation() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -421,7 +421,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTranslatedFindList() {
+	public function testTranslatedFindList() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -455,7 +455,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadSelectedFields() {
+	public function testReadSelectedFields() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -491,7 +491,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSaveCreate() {
+	public function testSaveCreate() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -510,7 +510,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSaveUpdate() {
+	public function testSaveUpdate() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -533,7 +533,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMultipleCreate() {
+	public function testMultipleCreate() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -572,7 +572,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMultipleUpdate() {
+	public function testMultipleUpdate() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -615,7 +615,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMixedCreateUpdateWithArrayLocale() {
+	public function testMixedCreateUpdateWithArrayLocale() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -657,7 +657,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testValidation() {
+	public function testValidation() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -690,7 +690,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAttachDetach() {
+	public function testAttachDetach() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
@@ -740,7 +740,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAnotherTranslateTable() {
+	public function testAnotherTranslateTable() {
 		$this->loadFixtures('Translate', 'TranslatedItem', 'TranslateTable');
 
 		$TestModel = new TranslatedItemWithTable();
@@ -764,7 +764,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTranslateWithAssociations() {
+	public function testTranslateWithAssociations() {
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User', 'Comment', 'ArticlesTag', 'Tag');
 
 		$TestModel = new TranslatedArticle();
@@ -858,7 +858,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTranslateTableWithPrefix() {
+	public function testTranslateTableWithPrefix() {
 		$this->loadFixtures('TranslateWithPrefix', 'TranslatedItem');
 		$TestModel = new TranslatedItem2;
 		$TestModel->locale = 'eng';
@@ -878,7 +878,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUnbindTranslationInfinteLoop() {
+	public function testUnbindTranslationInfinteLoop() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();

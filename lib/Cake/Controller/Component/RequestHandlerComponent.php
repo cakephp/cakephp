@@ -278,7 +278,7 @@ class RequestHandlerComponent extends Component {
  *
  * @return boolean True if user agent is a mobile web browser
  */
-	function isMobile() {
+	public function isMobile() {
 		return $this->request->is('mobile') || $this->accepts('wap');
 	}
 

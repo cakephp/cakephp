@@ -89,7 +89,7 @@ class CakeTestSuiteDispatcher {
  *
  * @return void
  */
-	function dispatch() {
+	public function dispatch() {
 		$this->_checkPHPUnit();
 		$this->_parseParams();
 

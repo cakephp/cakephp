@@ -64,7 +64,7 @@ class CommandListTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Shell);
 		CakePlugin::unload();
@@ -75,7 +75,7 @@ class CommandListTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMain() {
+	public function testMain() {
 		$this->Shell->main();
 		$output = $this->Shell->stdout->output;
 
@@ -116,7 +116,7 @@ class CommandListTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSortPlugin() {
+	public function testSortPlugin() {
 		$this->Shell->params['sort'] = true;
 		$this->Shell->main();
 
@@ -140,7 +140,7 @@ class CommandListTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMainXml() {
+	public function testMainXml() {
 		$this->Shell->params['xml'] = true;
 		$this->Shell->main();
 

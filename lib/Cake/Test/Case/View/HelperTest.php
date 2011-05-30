@@ -43,7 +43,7 @@ class HelperTestPost extends Model {
  * @access public
  * @return void
  */
-	function schema($field = false) {
+	public function schema($field = false) {
 		$this->_schema = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
 			'title' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
@@ -86,7 +86,7 @@ class HelperTestComment extends Model {
  * @access public
  * @return void
  */
-	function schema($field = false) {
+	public function schema($field = false) {
 		$this->_schema = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
 			'author_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
@@ -120,7 +120,7 @@ class HelperTestTag extends Model {
  * @access public
  * @return void
  */
-	function schema($field = false) {
+	public function schema($field = false) {
 		$this->_schema = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
 			'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
@@ -152,7 +152,7 @@ class HelperTestPostsTag extends Model {
  * @access public
  * @return void
  */
-	function schema($field = false) {
+	public function schema($field = false) {
 		$this->_schema = array(
 			'helper_test_post_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
 			'helper_test_tag_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
@@ -178,7 +178,7 @@ class TestHelper extends Helper {
  * @param string $insertAfter
  * @return void
  */
-	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+	public function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
 	}
 }
@@ -196,7 +196,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		ClassRegistry::flush();
 		Router::reload();
 		$null = null;
@@ -215,7 +215,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		CakePlugin::unload();
 		unset($this->Helper, $this->View);
 		ClassRegistry::flush();
@@ -227,7 +227,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSetEntity() {
+	public function testSetEntity() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
 		ClassRegistry::addObject('view', $this->View);
@@ -363,7 +363,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSetEntityWithView() {
+	public function testSetEntityWithView() {
 		$this->assertNull($this->Helper->setEntity('Allow.view.group_id'));
 		$this->assertNull($this->Helper->setEntity('Allow.view'));
 		$this->assertNull($this->Helper->setEntity('View.view'));
@@ -374,7 +374,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValue() {
+	public function testValue() {
 		$this->Helper->request->data = array('fullname' => 'This is me');
 		$this->Helper->setEntity('fullname');
 		$result = $this->Helper->value('fullname');
@@ -439,7 +439,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUrlConversion() {
+	public function testUrlConversion() {
 		$result = $this->Helper->url('/controller/action/1');
 		$this->assertEqual($result, '/controller/action/1');
 
@@ -475,7 +475,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAssetTimestamp() {
+	public function testAssetTimestamp() {
 		$_timestamp = Configure::read('Asset.timestamp');
 		$_debug = Configure::read('debug');
 
@@ -514,7 +514,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAssetTimestampPluginsAndThemes() {
+	public function testAssetTimestampPluginsAndThemes() {
 		$_timestamp = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', 'force');
 		App::build(array(
@@ -546,7 +546,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFieldsWithSameName() {
+	public function testFieldsWithSameName() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
 		ClassRegistry::addObject('view', $this->View);
@@ -582,7 +582,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFieldSameAsModel() {
+	public function testFieldSameAsModel() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
 		ClassRegistry::addObject('view', $this->View);
@@ -611,7 +611,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFieldSuffixForDate() {
+	public function testFieldSuffixForDate() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
 		ClassRegistry::addObject('view', $this->View);
@@ -637,7 +637,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMulitDimensionValue() {
+	public function testMulitDimensionValue() {
 		$this->Helper->data = array();
 		for ($i = 0; $i < 2; $i++) {
 			$this->Helper->request->data['Model'][$i] = 'what';
@@ -671,7 +671,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClean() {
+	public function testClean() {
 		$result = $this->Helper->clean(array());
 		$this->assertEqual($result, null);
 
@@ -700,7 +700,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMultiDimensionalField() {
+	public function testMultiDimensionalField() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
 		ClassRegistry::addObject('view', $this->View);
@@ -751,7 +751,7 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($result,'My Title');
 	}
 
-	function testWebrootPaths() {
+	public function testWebrootPaths() {
 		$this->Helper->request->webroot = '/';
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/img/cake.power.gif';
@@ -798,7 +798,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLazyLoadingHelpers() {
+	public function testLazyLoadingHelpers() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
@@ -814,7 +814,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testThatHelperHelpersAreNotAttached() {
+	public function testThatHelperHelpersAreNotAttached() {
 		$Helper = new TestHelper($this->View);
 		$Helper->OtherHelper;
 
@@ -828,7 +828,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLazyLoadingUsesReferences() {
+	public function testLazyLoadingUsesReferences() {
 		$Helper = new TestHelper($this->View);
 		$result1 = $Helper->Html;
 		$result2 = $Helper->Html;

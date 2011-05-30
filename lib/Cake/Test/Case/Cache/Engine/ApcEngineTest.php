@@ -32,7 +32,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$this->skipIf(!function_exists('apc_store'), '%s Apc is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
@@ -45,7 +45,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('apc');
 		Cache::config('default');
@@ -57,7 +57,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteCache() {
+	public function testReadAndWriteCache() {
 		Cache::set(array('duration' => 1), 'apc');
 
 		$result = Cache::read('test', 'apc');
@@ -81,7 +81,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExpiry() {
+	public function testExpiry() {
 		Cache::set(array('duration' => 1), 'apc');
 
 		$result = Cache::read('test', 'apc');
@@ -116,7 +116,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDeleteCache() {
+	public function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('delete_test', $data, 'apc');
 		$this->assertTrue($result);
@@ -131,7 +131,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDecrement() {
+	public function testDecrement() {
 		if ($this->skipIf(!function_exists('apc_dec'), 'No apc_dec() function, cannot test decrement() %s')) {
 			return;
 		}
@@ -158,7 +158,7 @@ class ApcEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIncrement() {
+	public function testIncrement() {
 		if ($this->skipIf(!function_exists('apc_inc'), 'No apc_inc() function, cannot test increment() %s')) {
 			return;
 		}
@@ -183,7 +183,7 @@ class ApcEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	function testClear() {
+	public function testClear() {
 		Cache::write('some_value', 'value', 'apc');
 
 		$result = Cache::clear(false, 'apc');

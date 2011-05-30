@@ -20,7 +20,7 @@ App::uses('BaseAuthorize', 'Controller/Component/Auth');
  * Your controller's isAuthorized() method should return a boolean to indicate whether or not the user is authorized.
  *
  * {{{
- *	function isAuthorized($user) {
+ *	public function isAuthorized($user) {
  *		if (!empty($this->request->params['admin'])) {
  *			return $user['role'] == 'admin';
  *		}

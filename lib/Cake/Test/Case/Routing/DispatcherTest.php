@@ -311,7 +311,7 @@ class ArticlesTestController extends ArticlesTestAppController {
  *
  * @return void
  */
-	function index() {
+	public function index() {
 		return true;
 	}
 }
@@ -469,7 +469,7 @@ class TestCachedPagesController extends Controller {
  *
  * @return void
  */
-	function cache_form() {
+	public function cache_form() {
 		$this->cacheAction = 10;
 		$this->helpers[] = 'Form';
 	}
@@ -745,7 +745,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMissingActionFromBaseClassMethods() {
+	public function testMissingActionFromBaseClassMethods() {
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = new CakeRequest('some_pages/redirect/param:value/param2:value2');
@@ -1035,7 +1035,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	function testPluginShortCutUrlsWithControllerThatNeedsToBeLoaded() {
+	public function testPluginShortCutUrlsWithControllerThatNeedsToBeLoaded() {
 		$loaded = class_exists('TestPluginController', false);
 		if ($this->skipIf($loaded, 'TestPluginController already loaded, this test will always pass, skipping %s')) {
 			return true;
@@ -1334,7 +1334,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMissingAssetProcessor404() {
+	public function testMissingAssetProcessor404() {
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		Configure::write('Asset.filter', array(
@@ -1352,7 +1352,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAssetFilterForThemeAndPlugins() {
+	public function testAssetFilterForThemeAndPlugins() {
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		Configure::write('Asset.filter', array(

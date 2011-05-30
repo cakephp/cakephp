@@ -38,7 +38,7 @@ class DboOracleTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$this->Dbo = ConnectionManager::getDataSource('test');
 		if (!($this->Dbo instanceof Oracle)) {
 			$this->markTestSkipped('The Oracle extension is not available.');
@@ -51,7 +51,7 @@ class DboOracleTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLastErrorStatement() {
+	public function testLastErrorStatement() {
 		$this->expectError();
 		$this->db->execute("SELECT ' FROM dual");
 		$e = $this->db->lastError();
@@ -65,7 +65,7 @@ class DboOracleTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLastErrorConnect() {
+	public function testLastErrorConnect() {
 		$config = $this->db->config;
 		$old_pw = $this->db->config['password'];
 		$this->db->config['password'] = 'keepmeout';
@@ -83,7 +83,7 @@ class DboOracleTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testName() {
+	public function testName() {
 		$Db = $this->db;
 		#$Db = new DboOracle($config = null, $autoConnect = false);
 

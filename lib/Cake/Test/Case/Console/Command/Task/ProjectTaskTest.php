@@ -293,7 +293,7 @@ class ProjectTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConsolePath() {
+	public function testConsolePath() {
 		$this->_setupTestProject();
 
 		$path = $this->Task->path . 'bake_test_app' . DS;

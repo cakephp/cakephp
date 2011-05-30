@@ -67,7 +67,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->__config = $this->db->config;
 
@@ -95,7 +95,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-				function getLastQuery() {
+				public function getLastQuery() {
 					return \$this->simulated[count(\$this->simulated) - 1];
 				}
 			}");
@@ -115,7 +115,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Model);
 	}
@@ -126,7 +126,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testBooleanNullConditionsParsing() {
+	public function testBooleanNullConditionsParsing() {
 		$result = $this->testDb->conditions(true);
 		$this->assertEqual($result, ' WHERE 1 = 1', 'true conditions failed %s');
 
@@ -151,7 +151,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testOrderWithExpression() {
+	public function testOrderWithExpression() {
 		$expression = $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
 		$result = $this->testDb->order($expression);
 		$expected = " ORDER BY CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col";
@@ -164,7 +164,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMergeAssociations() {
+	public function testMergeAssociations() {
 		$data = array('Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
 				'body' => 'First Article Body', 'published' => 'Y',
@@ -439,7 +439,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMagicMethodQuerying() {
+	public function testMagicMethodQuerying() {
 		$result = $this->testDb->query('findByFieldName', array('value'), $this->Model);
 		$expected = array('first', array(
 			'conditions' => array('TestModel.field_name' => 'value'),
@@ -512,7 +512,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testValue() {
+	public function testValue() {
 		$result = $this->testDb->value('{$__cakeForeignKey__$}');
 		$this->assertEqual($result, '{$__cakeForeignKey__$}');
 
@@ -527,7 +527,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReconnect() {
+	public function testReconnect() {
 		$this->testDb->reconnect(array('prefix' => 'foo'));
 		$this->assertTrue($this->testDb->connected);
 		$this->assertEqual($this->testDb->config['prefix'], 'foo');
@@ -539,7 +539,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testName() {
+	public function testName() {
 		$result = $this->testDb->name('name');
 		$expected = '`name`';
 		$this->assertEqual($expected, $result);
@@ -598,7 +598,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCacheMethod() {
+	public function testCacheMethod() {
 		$this->testDb->cacheMethods = true;
 		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
 		$this->assertEqual($result, 'stuff');
@@ -626,7 +626,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testLog() {
+	public function testLog() {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
 
@@ -671,7 +671,7 @@ class DboSourceTest extends CakeTestCase {
 		Configure::write('debug', $oldDebug);
 	}
 
-	function testShowQueryError() {
+	public function testShowQueryError() {
 		$this->testDb->error = true;
 		try {
 			$this->testDb->showQuery('Error 2');
@@ -687,7 +687,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetLog() {
+	public function testGetLog() {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
 
@@ -711,7 +711,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFetchAllBooleanReturns() {
+	public function testFetchAllBooleanReturns() {
 		$name = $this->db->fullTableName('test_query');
 		$query = "CREATE TABLE {$name} (name varchar(10));";
 		$result = $this->db->query($query);
@@ -727,7 +727,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testShowQuery() {
+	public function testShowQuery() {
 		$this->testDb->error = false;
 		ob_start();
 		$this->testDb->showQuery('Some Query');
@@ -743,7 +743,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldsInOrder() {
+	public function testVirtualFieldsInOrder() {
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
@@ -767,7 +767,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFullTablePermutations() {
+	public function testFullTablePermutations() {
 		$Article = ClassRegistry::init('Article');
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'articles');
@@ -787,7 +787,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testReadOnlyCallingQueryAssociationWhenDefined() {
+	public function testReadOnlyCallingQueryAssociationWhenDefined() {
 		$this->loadFixtures('Article', 'User', 'ArticlesTag', 'Tag');
 		ConnectionManager::create('test_no_queryAssociation', array(
 			'datasource' => 'MockDataSource'
@@ -803,7 +803,7 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFieldsUsingMethodCache() {
+	public function testFieldsUsingMethodCache() {
 		$this->testDb->cacheMethods = false;
 		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
 
@@ -818,7 +818,7 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStatements() {
+	public function testStatements() {
 		$this->skipIf(!$this->testDb instanceof DboMysql);
 		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
 		$Article = new Article();

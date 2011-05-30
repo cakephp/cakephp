@@ -95,7 +95,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testEscapeAlphaNumeric() {
+	public function testEscapeAlphaNumeric() {
 		$resultAlpha = Sanitize::escape('abc', 'test');
 		$this->assertEqual($resultAlpha, 'abc');
 
@@ -127,7 +127,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClean() {
+	public function testClean() {
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
 		$expected = 'test &amp; &quot;quote&quot; &#039;other&#039; ;.$ symbol.another line';
 		$result = Sanitize::clean($string, array('connection' => 'test'));
@@ -208,7 +208,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testHtml() {
+	public function testHtml() {
 		$string = '<p>This is a <em>test string</em> & so is this</p>';
 		$expected = 'This is a test string &amp; so is this';
 		$result = Sanitize::html($string, array('remove' => true));
@@ -250,7 +250,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStripWhitespace() {
+	public function testStripWhitespace() {
 		$string = "This     sentence \t\t\t has lots of \n\n white\nspace \rthat \r\n needs to be    \t    \n trimmed.";
 		$expected = "This sentence has lots of whitespace that needs to be trimmed.";
 		$result = Sanitize::stripWhitespace($string);
@@ -263,7 +263,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testParanoid() {
+	public function testParanoid() {
 		$string = 'I would like to !%@#% & dance & sing ^$&*()-+';
 		$expected = 'Iwouldliketodancesing';
 		$result = Sanitize::paranoid($string);
@@ -305,7 +305,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStripImages() {
+	public function testStripImages() {
 		$string = '<img src="/img/test.jpg" alt="my image" />';
 		$expected = 'my image<br />';
 		$result = Sanitize::stripImages($string);
@@ -333,7 +333,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStripScripts() {
+	public function testStripScripts() {
 		$string = '<link href="/css/styles.css" media="screen" rel="stylesheet" />';
 		$expected = '';
 		$result = Sanitize::stripScripts($string);
@@ -397,7 +397,7 @@ HTML;
  * @access public
  * @return void
  */
-	function testStripAll() {
+	public function testStripAll() {
 		$string = '<img """><script>alert("xss")</script>"/>';
 		$expected ='"/>';
 		$result = Sanitize::stripAll($string);
@@ -429,7 +429,7 @@ HTML;
  * @access public
  * @return void
  */
-	function testStripTags() {
+	public function testStripTags() {
 		$string = '<h2>Headline</h2><p><a href="http://example.com">My Link</a> could go to a bad site</p>';
 		$expected = 'Headline<p>My Link could go to a bad site</p>';
 		$result = Sanitize::stripTags($string, 'h2', 'a');
@@ -472,7 +472,7 @@ HTML;
  * @access public
  * @return void
  */
-	function testFormatColumns() {
+	public function testFormatColumns() {
 		$this->autoFixtures = true;
 		$this->fixtureManager->load($this);
 		$this->loadFixtures('DataTest', 'Article');

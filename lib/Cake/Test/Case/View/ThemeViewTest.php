@@ -44,7 +44,7 @@ class ThemePostsController extends Controller {
  * @access public
  * @return void
  */
-	function index() {
+	public function index() {
 		$this->set('testData', 'Some test data');
 		$test2 = 'more data';
 		$test3 = 'even more data';
@@ -67,7 +67,7 @@ class TestThemeView extends ThemeView {
  * @access public
  * @return void
  */
-	function renderElement($name, $params = array()) {
+	public function renderElement($name, $params = array()) {
 		return $name;
 	}
 
@@ -78,7 +78,7 @@ class TestThemeView extends ThemeView {
  * @access public
  * @return void
  */
-	function getViewFileName($name = null) {
+	public function getViewFileName($name = null) {
 		return $this->_getViewFileName($name);
 	}
 
@@ -89,7 +89,7 @@ class TestThemeView extends ThemeView {
  * @access public
  * @return void
  */
-	function getLayoutFileName($name = null) {
+	public function getLayoutFileName($name = null) {
 		return $this->_getLayoutFileName($name);
 	}
 
@@ -108,7 +108,7 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		Router::reload();
 		$request = new CakeRequest('posts/index');
 		$this->Controller = new Controller($request);
@@ -129,7 +129,7 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->ThemeView);
 		unset($this->PostsController);
 		unset($this->Controller);
@@ -144,7 +144,7 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPluginThemedGetTemplate() {
+	public function testPluginThemedGetTemplate() {
 		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
 		$this->Controller->viewPath = 'Tests';
@@ -171,7 +171,7 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGetTemplate() {
+	public function testGetTemplate() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
@@ -210,7 +210,7 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMissingView() {
+	public function testMissingView() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
@@ -234,7 +234,7 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMissingLayout() {
+	public function testMissingLayout() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
 		$this->Controller->viewPath = 'posts';
@@ -254,7 +254,7 @@ class ThemeViewTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMemoryLeakInPaths() {
+	public function testMemoryLeakInPaths() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
 		$this->Controller->viewPath = 'posts';

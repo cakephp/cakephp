@@ -65,7 +65,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStringScope() {
+	public function testStringScope() {
 		$this->Tree = new FlagTree();
 		$this->Tree->initialize(2, 3);
 
@@ -102,7 +102,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testArrayScope() {
+	public function testArrayScope() {
 		$this->Tree = new FlagTree();
 		$this->Tree->initialize(2, 3);
 
@@ -139,7 +139,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveUpWithScope() {
+	public function testMoveUpWithScope() {
 		$this->Ad = new Ad();
 		$this->Ad->Behaviors->attach('Tree', array('scope'=>'Campaign'));
 		$this->Ad->moveUp(6);
@@ -156,7 +156,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveDownWithScope() {
+	public function testMoveDownWithScope() {
 		$this->Ad = new Ad();
 		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveDown(6);
@@ -174,7 +174,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTranslatingTree() {
+	public function testTranslatingTree() {
 		$this->Tree = new FlagTree();
 		$this->Tree->cacheQueries = false;
 		$this->Tree->Behaviors->attach('Translate', array('name'));

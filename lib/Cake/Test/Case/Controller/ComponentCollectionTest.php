@@ -33,7 +33,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function setup() {
+	public function setup() {
 		$this->Components = new ComponentCollection();
 	}
 
@@ -42,7 +42,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function teardown() {
+	public function teardown() {
 		unset($this->Components);
 	}
 
@@ -51,7 +51,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoad() {
+	public function testLoad() {
 		$result = $this->Components->load('Cookie');
 		$this->assertInstanceOf('CookieComponent', $result);
 		$this->assertInstanceOf('CookieComponent', $this->Components->Cookie);
@@ -70,7 +70,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadWithAlias() {
+	public function testLoadWithAlias() {
 		$result = $this->Components->load('Cookie', array('className' => 'CookieAlias', 'somesetting' => true));
 		$this->assertInstanceOf('CookieAliasComponent', $result);
 		$this->assertInstanceOf('CookieAliasComponent', $this->Components->Cookie);
@@ -101,7 +101,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadWithEnableFalse() {
+	public function testLoadWithEnableFalse() {
 		$result = $this->Components->load('Cookie', array('enabled' => false));
 		$this->assertInstanceOf('CookieComponent', $result);
 		$this->assertInstanceOf('CookieComponent', $this->Components->Cookie);
@@ -114,7 +114,7 @@ class ComponentCollectionTest extends CakeTestCase {
  * @expectedException MissingComponentClassException
  * @return void
  */
-	function testLoadMissingComponentFile() {
+	public function testLoadMissingComponentFile() {
 		$this->Components->load('ThisComponentShouldAlwaysBeMissing');
 	}
 
@@ -123,7 +123,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadPluginComponent() {
+	public function testLoadPluginComponent() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
@@ -140,7 +140,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUnload() {
+	public function testUnload() {
 		$this->Components->load('Cookie');
 		$this->Components->load('Security');
 
@@ -163,7 +163,7 @@ class ComponentCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetController() {
+	public function testGetController() {
 		$controller = $this->getMock('Controller');
 		$controller->components = array('Security');
 		$this->Components->init($controller);

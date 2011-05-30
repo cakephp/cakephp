@@ -523,7 +523,7 @@ class AclShell extends Shell {
  * @param string $identifier Identifier to parse
  * @return mixed a string for aliases, and an array for model.foreignKey
  */
-	function parseIdentifier($identifier) {
+	public function parseIdentifier($identifier) {
 		if (preg_match('/^([\w]+)\.(.*)$/', $identifier, $matches)) {
 			return array(
 				'model' => $matches[1],

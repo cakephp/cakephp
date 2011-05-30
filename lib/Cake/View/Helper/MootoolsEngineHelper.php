@@ -117,7 +117,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
  */
-	function get($selector) {
+	public function get($selector) {
 		$this->_multipleSelection = false;
 		if ($selector == 'window' || $selector == 'document') {
 			$this->selection = "$(" . $selector .")";
@@ -145,7 +145,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @param array $options Options for the event.
  * @return string completed event handler
  */
-	function event($type, $callback, $options = array()) {
+	public function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
 		$options = array_merge($defaults, $options);
 
@@ -166,7 +166,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
  */
-	function domReady($functionBody) {
+	public function domReady($functionBody) {
 		$this->selection = 'window';
 		return $this->event('domready', $functionBody, array('stop' => false));
 	}
@@ -178,7 +178,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */
-	function each($callback) {
+	public function each($callback) {
 		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
 
@@ -190,7 +190,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string completed string with effect.
  * @see JsBaseEngineHelper::effect()
  */
-	function effect($name, $options = array()) {
+	public function effect($name, $options = array()) {
 		$speed = null;
 		if (isset($options['speed']) && in_array($options['speed'], array('fast', 'slow'))) {
 			if ($options['speed'] == 'fast') {
@@ -232,7 +232,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @param array $options
  * @return string The completed ajax call.
  */
-	function request($url, $options = array()) {
+	public function request($url, $options = array()) {
 		$url = $this->url($url);
 		$options = $this->_mapOptions('request', $options);
 		$type = $data = null;
@@ -271,7 +271,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string Completed sortable script.
  * @see JsBaseEngineHelper::sortable() for options list.
  */
-	function sortable($options = array()) {
+	public function sortable($options = array()) {
 		$options = $this->_processOptions('sortable', $options);
 		return 'var jsSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
@@ -285,7 +285,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string Completed draggable script.
  * @see JsHelper::drag() for options list.
  */
-	function drag($options = array()) {
+	public function drag($options = array()) {
 		$options = $this->_processOptions('drag', $options);
 		return $this->selection . '.makeDraggable({' . $options . '});';
 	}
@@ -304,7 +304,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string Completed droppable script.
  * @see JsBaseEngineHelper::drop() for options list.
  */
-	function drop($options = array()) {
+	public function drop($options = array()) {
 		if (empty($options['drag'])) {
 			trigger_error(
 				__d('cake_dev', 'MootoolsEngine::drop() requires a "drag" option to properly function'), E_USER_WARNING
@@ -334,7 +334,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string Completed slider script.
  * @see JsBaseEngineHelper::slider() for options list.
  */
-	function slider($options = array()) {
+	public function slider($options = array()) {
 		$slider = $this->selection;
 		$this->get($options['handle']);
 		unset($options['handle']);
@@ -359,7 +359,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string Completed serializeForm() snippet
  * @see JsBaseEngineHelper::serializeForm()
  */
-	function serializeForm($options = array()) {
+	public function serializeForm($options = array()) {
 		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
 		$selection = $this->selection;
 		if (!$options['isForm']) {

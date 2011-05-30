@@ -210,7 +210,7 @@ class DbAroUserTest extends CakeTestModel {
  * @access public
  * @return void
  */
-	function bindNode($ref = null) {
+	public function bindNode($ref = null) {
 		if (Configure::read('DbAclbindMode') == 'string') {
 			return 'ROOT/admins/Gandalf';
 		} elseif (Configure::read('DbAclbindMode') == 'array') {
@@ -261,7 +261,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		Configure::write('Acl.classname', 'TestDbAcl');
 		Configure::write('Acl.database', 'test');
 	}
@@ -272,7 +272,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNode() {
+	public function testNode() {
 		$Aco = new DbAcoTest();
 		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
 		$expected = array(2, 1);
@@ -313,7 +313,7 @@ class AclNodeTest extends CakeTestCase {
  *
  * @return void
  */
-	function testNodeWithDuplicatePathSegments() {
+	public function testNodeWithDuplicatePathSegments() {
 		$Aco = new DbAcoTest();
 		$nodes = $Aco->node('ROOT/Users');
 		$this->assertEqual($nodes[0]['DbAcoTest']['parent_id'], 1, 'Parent id does not point at ROOT. %s');
@@ -325,7 +325,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNodeArrayFind() {
+	public function testNodeArrayFind() {
 		$Aro = new DbAroTest();
 		Configure::write('DbAclbindMode', 'string');
 		$result = Set::extract($Aro->node(array('DbAroUserTest' => array('id' => '1', 'foreign_key' => '1'))), '{n}.DbAroTest.id');
@@ -343,7 +343,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNodeObjectFind() {
+	public function testNodeObjectFind() {
 		$Aro = new DbAroTest();
 		$Model = new DbAroUserTest();
 		$Model->id = 1;
@@ -364,7 +364,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNodeAliasParenting() {
+	public function testNodeAliasParenting() {
 		$Aco = ClassRegistry::init('DbAcoTest');
 		$db = $Aco->getDataSource();
 		$db->truncate($Aco);

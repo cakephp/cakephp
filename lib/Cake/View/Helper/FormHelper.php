@@ -186,7 +186,7 @@ class FormHelper extends AppHelper {
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/view/1384/Creating-Forms
  */
-	function create($model = null, $options = array()) {
+	public function create($model = null, $options = array()) {
 		$created = $id = false;
 		$append = '';
 
@@ -565,7 +565,7 @@ class FormHelper extends AppHelper {
  * @return string The formatted LABEL element
  * @link http://book.cakephp.org/view/1427/label
  */
-	function label($fieldName = null, $text = null, $options = array()) {
+	public function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
 			$fieldName = implode('.', $this->_View->entity());
 		}

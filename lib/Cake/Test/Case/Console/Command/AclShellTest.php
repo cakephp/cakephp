@@ -300,7 +300,7 @@ class AclShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInitDb() {
+	public function testInitDb() {
 		$this->Task->expects($this->once())->method('dispatchShell')
 			->with('schema create DbAcl');
 	

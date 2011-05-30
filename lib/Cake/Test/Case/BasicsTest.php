@@ -794,7 +794,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testPluginSplit() {
+	public function testPluginSplit() {
 		$result = pluginSplit('Something.else');
 		$this->assertEqual($result, array('Something', 'else'));
 

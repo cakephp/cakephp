@@ -34,7 +34,7 @@ class UpgradeShell extends Shell {
  *
  * @return void
  */
-	function startup() {
+	public function startup() {
 		parent::startup();
 		if ($this->params['dry-run']) {
 			$this->out('<warning>Dry-run mode enabled!</warning>', 1, Shell::QUIET);
@@ -50,7 +50,7 @@ class UpgradeShell extends Shell {
  * @access public
  * @return void
  */
-	function all() {
+	public function all() {
 		foreach($this->OptionParser->subcommands() as $command) {
 			$name = $command->name();
 			if ($name === 'all') {
@@ -71,7 +71,7 @@ class UpgradeShell extends Shell {
  * @access public
  * @return void
  */
-	function locations() {
+	public function locations() {
 		$cwd = getcwd();
 
 		if (is_dir('plugins')) {
@@ -137,7 +137,7 @@ class UpgradeShell extends Shell {
  *
  * @return void
  */
-	function helpers() {
+	public function helpers() {
 		$this->_paths = array_diff(App::path('views'), App::core('views'));
 
 		if (!empty($this->params['plugin'])) {
@@ -175,7 +175,7 @@ class UpgradeShell extends Shell {
  *
  * @return void
  */
-	function i18n() {
+	public function i18n() {
 		$this->_paths = array(
 			APP
 		);
@@ -578,7 +578,7 @@ class UpgradeShell extends Shell {
  *
  * @return ConsoleOptionParser
  */
-	function getOptionParser() {
+	public function getOptionParser() {
 		$subcommandParser = array(
 			'options' => array(
 				'plugin' => array(

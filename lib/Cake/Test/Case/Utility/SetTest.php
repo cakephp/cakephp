@@ -32,7 +32,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNumericKeyExtraction() {
+	public function testNumericKeyExtraction() {
 		$data = array('plugin' => null, 'controller' => '', 'action' => '', 1, 'whatever');
 		$this->assertEquals(Set::extract($data, '{n}'), array(1, 'whatever'));
 		$this->assertEquals(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
@@ -44,7 +44,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testEnum() {
+	public function testEnum() {
 		$result = Set::enum(1, 'one, two');
 		$this->assertEquals($result, 'two');
 		$result = Set::enum(2, 'one, two');
@@ -85,7 +85,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFilter() {
+	public function testFilter() {
 		$result = Set::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
 		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be'));
 		$this->assertSame($expected, $result);
@@ -116,7 +116,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNumericArrayCheck() {
+	public function testNumericArrayCheck() {
 		$data = array('one');
 		$this->assertTrue(Set::numeric(array_keys($data)));
 
@@ -154,7 +154,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testKeyCheck() {
+	public function testKeyCheck() {
 		$data = array('Multi' => array('dimensonal' => array('array')));
 		$this->assertTrue(Set::check($data, 'Multi.dimensonal'));
 		$this->assertFalse(Set::check($data, 'Multi.dimensonal.array'));
@@ -192,7 +192,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMerge() {
+	public function testMerge() {
 		$r = Set::merge(array('foo'));
 		$this->assertEquals($r, array('foo'));
 
@@ -277,7 +277,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSort() {
+	public function testSort() {
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
 			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
@@ -377,7 +377,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSortWithOutOfOrderKeys() {
+	public function testSortWithOutOfOrderKeys() {
 		$data = array(
 			9 => array('class' => 510, 'test2' => 2),
 			1 => array('class' => 500, 'test2' => 1),
@@ -405,7 +405,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExtract() {
+	public function testExtract() {
 		$a = array(
 			array(
 				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
@@ -998,7 +998,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	function testExtractParentSelector() {
+	public function testExtractParentSelector() {
 		$tree = array(
 			array(
 				'Category' => array(
@@ -1174,7 +1174,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	function testExtractWithNonZeroArrays() {
+	public function testExtractWithNonZeroArrays() {
 		$nonZero = array(
 			1 => array(
 				'User' => array(
@@ -1279,7 +1279,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testExtractWithArrays() {
+	public function testExtractWithArrays() {
 		$data = array(
 			'Level1' => array(
 				'Level2' => array('test1', 'test2'),
@@ -1295,7 +1295,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	function testExtractWithNonArrayElements() {
+	public function testExtractWithNonArrayElements() {
 		$data = array(
 			'node' => array(
 				array('foo'),
@@ -1344,7 +1344,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMatches() {
+	public function testMatches() {
 		$a = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
@@ -1417,7 +1417,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSetExtractReturnsEmptyArray() {
+	public function testSetExtractReturnsEmptyArray() {
 
 		$this->assertEquals(Set::extract(array(), '/Post/id'), array());
 
@@ -1438,7 +1438,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClassicExtract() {
+	public function testClassicExtract() {
 		$a = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
@@ -1602,7 +1602,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testInsert() {
+	public function testInsert() {
 		$a = array(
 			'pages' => array('name' => 'page')
 		);
@@ -1646,7 +1646,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRemove() {
+	public function testRemove() {
 		$a = array(
 			'pages'     => array('name' => 'page'),
 			'files'		=> array('name' => 'files')
@@ -1685,7 +1685,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheck() {
+	public function testCheck() {
 		$set = array(
 			'My Index 1' => array('First' => 'The first item')
 		);
@@ -1708,7 +1708,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWritingWithFunkyKeys() {
+	public function testWritingWithFunkyKeys() {
 		$set = Set::insert(array(), 'Session Test', "test");
 		$this->assertEqual(Set::extract($set, 'Session Test'), 'test');
 
@@ -1726,7 +1726,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDiff() {
+	public function testDiff() {
 		$a = array(
 			0 => array('name' => 'main'),
 			1 => array('name' => 'about')
@@ -1810,7 +1810,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testContains() {
+	public function testContains() {
 		$a = array(
 			0 => array('name' => 'main'),
 			1 => array('name' => 'about')
@@ -1833,7 +1833,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCombine() {
+	public function testCombine() {
 		$result = Set::combine(array(), '{n}.User.id', '{n}.User.Data');
 		$this->assertTrue(empty($result));
 		$result = Set::combine('', '{n}.User.id', '{n}.User.Data');
@@ -1969,7 +1969,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMapReverse() {
+	public function testMapReverse() {
 		$result = Set::reverse(null);
 		$this->assertEqual($result, null);
 
@@ -2197,7 +2197,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFormatting() {
+	public function testFormatting() {
 		$data = array(
 			array('Person' => array('first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42')),
 			array('Person' => array('first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => '{0}')),
@@ -2245,7 +2245,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCountDim() {
+	public function testCountDim() {
 		$data = array('one', '2', 'three');
 		$result = Set::countDim($data);
 		$this->assertEqual($result, 1);
@@ -2300,7 +2300,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMapNesting() {
+	public function testMapNesting() {
 		$expected = array(
 			array(
 				"IndexedPage" => array(
@@ -2425,7 +2425,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNestedMappedData() {
+	public function testNestedMappedData() {
 		$result = Set::map(array(
 				array(
 					'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
@@ -2674,7 +2674,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPushDiff() {
+	public function testPushDiff() {
 		$array1 = array('ModelOne' => array('id'=>1001, 'field_one'=>'a1.m1.f1', 'field_two'=>'a1.m1.f2'));
 		$array2 = array('ModelTwo' => array('id'=>1002, 'field_one'=>'a2.m2.f1', 'field_two'=>'a2.m2.f2'));
 
@@ -2721,7 +2721,7 @@ class SetTest extends CakeTestCase {
  * @return void
  *
  */
-	function testApply() {
+	public function testApply() {
 		$data = array(
 			array('Movie' => array('id' => 1, 'title' => 'movie 3', 'rating' => 5)),
 			array('Movie' => array('id' => 1, 'title' => 'movie 1', 'rating' => 1)),
@@ -2771,7 +2771,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testXmlSetReverse() {
+	public function testXmlSetReverse() {
 		App::uses('Xml', 'Utility');
 
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -3014,7 +3014,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStrictKeyCheck() {
+	public function testStrictKeyCheck() {
 		$set = array('a' => 'hi');
 		$this->assertFalse(Set::check($set, 'a.b'));
 	}
@@ -3025,7 +3025,7 @@ class SetTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFlatten() {
+	public function testFlatten() {
 		$data = array('Larry', 'Curly', 'Moe');
 		$result = Set::flatten($data);
 		$this->assertEqual($result, $data);
@@ -3060,7 +3060,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	function testNormalizeStrings() {
+	public function testNormalizeStrings() {
 		$result = Set::normalize('one,two,three');
 		$expected = array('one' => null, 'two' => null, 'three' => null);
 		$this->assertEqual($expected, $result);
@@ -3079,7 +3079,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	function testNormalizeArrays() {
+	public function testNormalizeArrays() {
 		$result = Set::normalize(array('one', 'two', 'three'));
 		$expected = array('one' => null, 'two' => null, 'three' => null);
 		$this->assertEqual($expected, $result);

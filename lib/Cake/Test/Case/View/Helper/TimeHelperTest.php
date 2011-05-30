@@ -32,7 +32,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		$controller = null;
 		$View = new View($controller);
 		$this->Time = new TimeHelper($View);
@@ -44,7 +44,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->Time);
 	}
 
@@ -54,7 +54,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testToQuarter() {
+	public function testToQuarter() {
 		$result = $this->Time->toQuarter('2007-12-25');
 		$this->assertEqual($result, 4);
 
@@ -83,7 +83,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testTimeAgoInWords() {
+	public function testTimeAgoInWords() {
 		$result = $this->Time->timeAgoInWords('-1 week');
 		$this->assertEqual($result, '1 week ago');
 
@@ -302,7 +302,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNice() {
+	public function testNice() {
 		$time = time() + 2 * DAY;
 		$this->assertEqual(date('D, M jS Y, H:i', $time), $this->Time->nice($time));
 
@@ -332,7 +332,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNiceShort() {
+	public function testNiceShort() {
 		$time = time() + 2 * DAY;
 		if (date('Y', $time) == date('Y')) {
 			$this->assertEqual(date('M jS, H:i', $time), $this->Time->niceShort($time));
@@ -353,7 +353,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDaysAsSql() {
+	public function testDaysAsSql() {
 		$begin = time();
 		$end = time() + DAY;
 		$field = 'my_field';
@@ -367,7 +367,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDayAsSql() {
+	public function testDayAsSql() {
 		$time = time();
 		$field = 'my_field';
 		$expected = '(my_field >= \''.date('Y-m-d', $time).' 00:00:00\') AND (my_field <= \''.date('Y-m-d', $time).' 23:59:59\')';
@@ -380,7 +380,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testToUnix() {
+	public function testToUnix() {
 		$this->assertEqual(time(), $this->Time->toUnix(time()));
 		$this->assertEqual(strtotime('+1 day'), $this->Time->toUnix('+1 day'));
 		$this->assertEqual(strtotime('+0 days'), $this->Time->toUnix('+0 days'));
@@ -395,7 +395,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testToAtom() {
+	public function testToAtom() {
 		$this->assertEqual(date('Y-m-d\TH:i:s\Z'), $this->Time->toAtom(time()));
 	}
 
@@ -405,7 +405,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testToRss() {
+	public function testToRss() {
 		$this->assertEqual(date('r'), $this->Time->toRss(time()));
 	}
 
@@ -415,7 +415,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFormat() {
+	public function testFormat() {
 		$format = 'D-M-Y';
 		$arr = array(time(), strtotime('+1 days'), strtotime('+1 days'), strtotime('+0 days'));
 		foreach ($arr as $val) {
@@ -432,7 +432,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGmt() {
+	public function testGmt() {
 		$hour = 3;
 		$min = 4;
 		$sec = 2;
@@ -459,7 +459,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsToday() {
+	public function testIsToday() {
 		$result = $this->Time->isToday('+1 day');
 		$this->assertFalse($result);
 		$result = $this->Time->isToday('+1 days');
@@ -476,7 +476,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsThisWeek() {
+	public function testIsThisWeek() {
 		// A map of days which goes from -1 day of week to +1 day of week
 		$map = array(
 			'Mon' => array(-1, 7), 'Tue' => array(-2, 6), 'Wed' => array(-3, 5),
@@ -498,7 +498,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsThisMonth() {
+	public function testIsThisMonth() {
 		$result = $this->Time->isThisMonth('+0 day');
 		$this->assertTrue($result);
 		$result = $this->Time->isThisMonth($time = mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y')));
@@ -516,7 +516,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsThisYear() {
+	public function testIsThisYear() {
 		$result = $this->Time->isThisYear('+0 day');
 		$this->assertTrue($result);
 		$result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
@@ -528,7 +528,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWasYesterday() {
+	public function testWasYesterday() {
 		$result = $this->Time->wasYesterday('+1 day');
 		$this->assertFalse($result);
 		$result = $this->Time->wasYesterday('+1 days');
@@ -548,7 +548,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIsTomorrow() {
+	public function testIsTomorrow() {
 		$result = $this->Time->isTomorrow('+1 day');
 		$this->assertTrue($result);
 		$result = $this->Time->isTomorrow('+1 days');
@@ -565,7 +565,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testWasWithinLast() {
+	public function testWasWithinLast() {
 		$this->assertTrue($this->Time->wasWithinLast('1 day', '-1 day'));
 		$this->assertTrue($this->Time->wasWithinLast('1 week', '-1 week'));
 		$this->assertTrue($this->Time->wasWithinLast('1 year', '-1 year'));
@@ -610,7 +610,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testUserOffset() {
+	public function testUserOffset() {
 		if ($this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
 			return;
 		}
@@ -631,7 +631,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFromString() {
+	public function testFromString() {
 		$result = $this->Time->fromString('');
 		$this->assertFalse($result);
 
@@ -654,7 +654,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testConvertSpecifiers() {
+	public function testConvertSpecifiers() {
 		App::build(array(
 			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		), true);
@@ -743,7 +743,7 @@ class TimeHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testConvertPercentE() {
+	public function testConvertPercentE() {
 		if ($this->skipIf(DS !== '\\', 'Cannot run windows tests on non-windows OS')) {
 			return;
 		}
@@ -763,7 +763,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testI18nFormat() {
+	public function testI18nFormat() {
 		App::build(array(
 			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		), true);
@@ -793,7 +793,7 @@ class TimeHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFormatNewSyntax() {
+	public function testFormatNewSyntax() {
 		$time = time();
 		$this->assertEqual($this->Time->format($time), $this->Time->i18nFormat($time));
 		$this->assertEqual($this->Time->format($time, '%c'), $this->Time->i18nFormat($time, '%c'));

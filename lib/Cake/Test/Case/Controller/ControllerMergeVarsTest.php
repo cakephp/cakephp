@@ -145,7 +145,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testComponentParamMergingNoDuplication() {
+	public function testComponentParamMergingNoDuplication() {
 		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
@@ -158,7 +158,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testComponentMergingWithRedeclarations() {
+	public function testComponentMergingWithRedeclarations() {
 		$Controller = new MergeVariablesController();
 		$Controller->components['MergeVar'] = array('remote', 'redirect' => true);
 		$Controller->constructClasses();
@@ -172,7 +172,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHelperSettingMergingNoDuplication() {
+	public function testHelperSettingMergingNoDuplication() {
 		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
@@ -186,7 +186,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHelperOrderPrecedence() {
+	public function testHelperOrderPrecedence() {
 		$Controller = new MergeVariablesController();
 		$Controller->helpers = array('Custom', 'Foo' => array('something'));
 		$Controller->constructClasses();
@@ -204,7 +204,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMergeVarsWithPlugin() {
+	public function testMergeVarsWithPlugin() {
 		$Controller = new MergePostsController();
 		$Controller->components = array('Email' => array('ports' => 'open'));
 		$Controller->plugin = 'MergeVarPlugin';
@@ -241,7 +241,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMergeVarsNotGreedy() {
+	public function testMergeVarsNotGreedy() {
 		$Controller = new Controller();
 		$Controller->components = array();
 		$Controller->uses = array();

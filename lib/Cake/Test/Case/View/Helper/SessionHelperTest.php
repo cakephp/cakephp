@@ -34,7 +34,7 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$controller = null;
 		$this->View = new View($controller);
@@ -79,7 +79,7 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		$_SESSION = array();
 		unset($this->View, $this->Session);
 		parent::tearDown();
@@ -91,7 +91,7 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testRead() {
+	public function testRead() {
 		$result = $this->Session->read('Deeply.nested.key');
 		$this->assertEqual($result, 'value');
 
@@ -105,7 +105,7 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testCheck() {
+	public function testCheck() {
 		$this->assertTrue($this->Session->check('test'));
 
 		$this->assertTrue($this->Session->check('Message.flash.element'));
@@ -121,7 +121,7 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFlash() {
+	public function testFlash() {
 		$result = $this->Session->flash('flash');
 		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
 		$this->assertEqual($expected, $result);
@@ -151,7 +151,7 @@ class SessionHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFlashAttributes() {
+	public function testFlashAttributes() {
 		$result = $this->Session->flash('flash', array('params' => array('class' => 'test-message')));
 		$expected = '<div id="flashMessage" class="test-message">This is a calling</div>';
 		$this->assertEqual($expected, $result);
@@ -163,7 +163,7 @@ class SessionHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFlashElementInAttrs() {
+	public function testFlashElementInAttrs() {
 		App::build(array(
 			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));

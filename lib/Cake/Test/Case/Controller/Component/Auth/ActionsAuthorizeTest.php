@@ -27,7 +27,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->controller = $this->getMock('Controller', array(), array(), '', false);
 		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
@@ -54,7 +54,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthorizeFailure() {
+	public function testAuthorizeFailure() {
 		$user = array(
 			'User' => array(
 				'id' => 1,
@@ -83,7 +83,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAuthorizeSuccess() {
+	public function testAuthorizeSuccess() {
 		$user = array(
 			'User' => array(
 				'id' => 1,
@@ -112,7 +112,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  *
  * @return void
  */
-	function testActionMethod() {
+	public function testActionMethod() {
 		$request = new CakeRequest('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,
@@ -130,7 +130,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  *
  * @return void
  */
-	function testActionWithPlugin() {
+	public function testActionWithPlugin() {
 		$request = new CakeRequest('/debug_kit/posts/index', false);
 		$request->addParams(array(
 			'plugin' => 'debug_kit',

@@ -33,7 +33,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function setup() {
+	public function setup() {
 		$this->View = $this->getMock('View', array(), array(null));
 		$this->Helpers = new HelperCollection($this->View);
 	}
@@ -43,7 +43,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function teardown() {
+	public function teardown() {
 		CakePlugin::unload();
 		unset($this->Helpers, $this->View);
 	}
@@ -53,7 +53,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoad() {
+	public function testLoad() {
 		$result = $this->Helpers->load('Html');
 		$this->assertInstanceOf('HtmlHelper', $result);
 		$this->assertInstanceOf('HtmlHelper', $this->Helpers->Html);
@@ -69,7 +69,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadWithAlias() {
+	public function testLoadWithAlias() {
 		$result = $this->Helpers->load('Html', array('className' => 'HtmlAlias'));
 		$this->assertInstanceOf('HtmlAliasHelper', $result);
 		$this->assertInstanceOf('HtmlAliasHelper', $this->Helpers->Html);
@@ -98,7 +98,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadWithEnabledFalse() {
+	public function testLoadWithEnabledFalse() {
 		$result = $this->Helpers->load('Html', array('enabled' => false));
 		$this->assertInstanceOf('HtmlHelper', $result);
 		$this->assertInstanceOf('HtmlHelper', $this->Helpers->Html);
@@ -112,7 +112,7 @@ class HelperCollectionTest extends CakeTestCase {
  * @expectedException MissingHelperClassException
  * @return void
  */
-	function testLoadMissingHelperFile() {
+	public function testLoadMissingHelperFile() {
 		$result = $this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
 	}
 
@@ -121,7 +121,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadPluginHelper() {
+	public function testLoadPluginHelper() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
@@ -138,7 +138,7 @@ class HelperCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testUnload() {
+	public function testUnload() {
 		$this->Helpers->load('Form');
 		$this->Helpers->load('Html');
 

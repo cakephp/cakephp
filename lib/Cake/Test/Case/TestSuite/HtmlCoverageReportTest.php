@@ -42,7 +42,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetPathFilter() {
+	public function testGetPathFilter() {
 		$this->Coverage->appTest = false;
 		$result = $this->Coverage->getPathFilter();
 		$this->assertEquals(CAKE, $result);
@@ -62,7 +62,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFilterCoverageDataByPathRemovingElements() {
+	public function testFilterCoverageDataByPathRemovingElements() {
 		$data = array(
 			CAKE . 'dispatcher.php' => array(
 				10 => -1,
@@ -84,7 +84,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGenerateDiff() {
+	public function testGenerateDiff() {
 		$file = array(
 			'line 1',
 			'line 2',
@@ -131,7 +131,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCoveredLinesTitleAttributes() {
+	public function testCoveredLinesTitleAttributes() {
 		$file = array(
 			'line 1',
 			'line 2',
@@ -174,7 +174,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		CakePlugin::unload();
 		unset($this->Coverage);
 	}

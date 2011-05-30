@@ -148,7 +148,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testMergeVars() {
+	public function testMergeVars() {
 		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
 		$this->Shell->uses = array('Posts');
 		$this->Shell->mergeVars(array('tasks'), 'TestMergeShell');
@@ -274,7 +274,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVerboseOutput() {
+	public function testVerboseOutput() {
 		$this->Shell->stdout->expects($this->at(0))->method('write')
 			->with('Verbose', 1);
 		$this->Shell->stdout->expects($this->at(1))->method('write')
@@ -295,7 +295,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testQuietOutput() {
+	public function testQuietOutput() {
 		$this->Shell->stdout->expects($this->once())->method('write')
 			->with('Quiet', 1);
 
@@ -447,7 +447,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function test__getArgAndParamReferences() {
+	public function test__getArgAndParamReferences() {
 		$this->Shell->tasks = array('TestApple');
 		$this->Shell->args = array('one');
 		$this->Shell->params = array('help' => false);
@@ -536,7 +536,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCreateFileInteractive() {
+	public function testCreateFileInteractive() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
 
 		$path = TMP . 'shell_test';
@@ -613,7 +613,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCreateFileWindowsInteractive() {
+	public function testCreateFileWindowsInteractive() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsInteractive supported on Windows only');
 
 		$path = TMP . 'shell_test';
@@ -650,7 +650,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHasTask() {
+	public function testHasTask() {
 		$this->Shell->tasks = array('Extract', 'DbConfig');
 		$this->Shell->loadTasks();
 
@@ -667,7 +667,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHasMethod() {
+	public function testHasMethod() {
 		$this->assertTrue($this->Shell->hasMethod('do_something'));
 		$this->assertFalse($this->Shell->hasMethod('hr'), 'hr is callable');
 		$this->assertFalse($this->Shell->hasMethod('_secret'), '_secret is callable');
@@ -679,7 +679,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRunCommandMain() {
+	public function testRunCommandMain() {
 		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
 
@@ -693,7 +693,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRunCommandWithMethod() {
+	public function testRunCommandWithMethod() {
 		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('hit_me', 'startup'), array(), '', false);
 
@@ -707,7 +707,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRunCommandBaseclassMethod() {
+	public function testRunCommandBaseclassMethod() {
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 
@@ -725,7 +725,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRunCommandMissingMethod() {
+	public function testRunCommandMissingMethod() {
 		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
@@ -745,7 +745,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRunCommandTriggeringHelp() {
+	public function testRunCommandTriggeringHelp() {
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 		$Parser->expects($this->once())->method('parse')
 			->with(array('--help'))
@@ -765,7 +765,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRunCommandHittingTask() {
+	public function testRunCommandHittingTask() {
 		$Shell = $this->getMock('Shell', array('hasTask', 'startup'), array(), '', false);
 		$task = $this->getMock('Shell', array('execute', 'runCommand'), array(), '', false);
 		$task->expects($this->any())->method('runCommand')
@@ -783,7 +783,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWrapText() {
+	public function testWrapText() {
 		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
 		$result = $this->Shell->wrapText($text, 33);
 		$expected = <<<TEXT

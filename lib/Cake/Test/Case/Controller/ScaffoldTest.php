@@ -246,7 +246,7 @@ class TestScaffoldView extends ScaffoldView {
  * @access public
  * @return void
  */
-	function testGetFilename($action) {
+	public function testGetFilename($action) {
 		return $this->_getViewFileName($action);
 	}
 }
@@ -272,7 +272,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($this->request);
@@ -290,7 +290,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Controller, $this->request);
 		CakePlugin::unload();
@@ -302,7 +302,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testGetViewFilename() {
+	public function testGetViewFilename() {
 		$_admin = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 
@@ -387,7 +387,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetViewFileNameWithTheme() {
+	public function testGetViewFileNameWithTheme() {
 		$this->Controller->request['action'] = 'index';
 		$this->Controller->viewPath = 'Posts';
 		$this->Controller->theme = 'TestTheme';
@@ -405,7 +405,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIndexScaffold() {
+	public function testIndexScaffold() {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
@@ -444,7 +444,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testViewScaffold() {
+	public function testViewScaffold() {
 		$this->Controller->request->base = '';
 		$this->Controller->request->here = '/scaffold_mock';
 		$this->Controller->request->webroot = '/';
@@ -486,7 +486,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testEditScaffold() {
+	public function testEditScaffold() {
 		$this->Controller->request->base = '';
 		$this->Controller->request->webroot = '/';
 		$this->Controller->request->here = '/scaffold_mock/edit/1';
@@ -527,7 +527,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAdminIndexScaffold() {
+	public function testAdminIndexScaffold() {
 		$_backAdmin = Configure::read('Routing.prefixes');
 
 		Configure::write('Routing.prefixes', array('admin'));
@@ -572,7 +572,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAdminEditScaffold() {
+	public function testAdminEditScaffold() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$params = array(
 			'plugin' => null,
@@ -611,7 +611,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMultiplePrefixScaffold() {
+	public function testMultiplePrefixScaffold() {
 		$_backAdmin = Configure::read('Routing.prefixes');
 
 		Configure::write('Routing.prefixes', array('admin', 'member'));
@@ -679,7 +679,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($request);
@@ -691,7 +691,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Controller);
 	}
@@ -703,7 +703,7 @@ class ScaffoldTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testScaffoldParams() {
+	public function testScaffoldParams() {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
@@ -733,7 +733,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function testScaffoldVariableSetting() {
+	public function testScaffoldVariableSetting() {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
@@ -772,7 +772,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function testScaffoldChangingViewProperty() {
+	public function testScaffoldChangingViewProperty() {
 		$this->Controller->action = 'edit';
 		$this->Controller->theme = 'TestTheme';
 		$this->Controller->viewClass = 'Theme';
@@ -787,7 +787,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function testScaffoldFlashMessages() {
+	public function testScaffoldFlashMessages() {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
@@ -825,7 +825,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHabtmFieldAdditionWithScaffoldForm() {
+	public function testHabtmFieldAdditionWithScaffoldForm() {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
@@ -858,7 +858,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function testEditScaffoldWithScaffoldFields() {
+	public function testEditScaffoldWithScaffoldFields() {
 		$request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockControllerWithFields($request);
 		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));

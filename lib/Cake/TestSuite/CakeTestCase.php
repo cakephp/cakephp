@@ -183,7 +183,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @access public
  * @see CakeTestCase::$autoFixtures
  */
-	function loadFixtures() {
+	public function loadFixtures() {
 		if (empty($this->fixtureManager)) {
 			throw new Exception(__d('cake_dev', 'No fixture manager to load the test fixture'));
 		}

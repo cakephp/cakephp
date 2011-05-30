@@ -278,7 +278,7 @@ class RssHelper extends AppHelper {
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  */
-	function time($time) {
+	public function time($time) {
 		return $this->Time->toRSS($time);
 	}
 
@@ -291,7 +291,7 @@ class RssHelper extends AppHelper {
  * @param boolean $endTag Whether the end tag of the element should be printed
  * @return string XML
  */
-	function elem($name, $attrib = array(), $content = null, $endTag = true) {
+	public function elem($name, $attrib = array(), $content = null, $endTag = true) {
 		$namespace = null;
 		if (isset($attrib['namespace'])) {
 			$namespace = $attrib['namespace'];

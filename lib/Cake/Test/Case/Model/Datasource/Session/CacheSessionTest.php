@@ -57,7 +57,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->storage = new CacheSession();
 	}
@@ -67,7 +67,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->storage);
 	}
@@ -77,7 +77,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testOpen() {
+	public function testOpen() {
 		$this->assertTrue($this->storage->open());
 	}
 
@@ -86,7 +86,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testWrite() {
+	public function testWrite() {
 		$this->storage->write('abc', 'Some value');
 		$this->assertEquals('Some value', Cache::read('abc', 'session_test'), 'Value was not written.');
 		$this->assertFalse(Cache::read('abc', 'default'), 'Cache should only write to the given config.');
@@ -97,7 +97,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRead() {
+	public function testRead() {
 		$this->storage->write('test_one', 'Some other value');
 		$this->assertEquals('Some other value', $this->storage->read('test_one'), 'Incorrect value.');
 	}
@@ -107,7 +107,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDestroy() {
+	public function testDestroy() {
 		$this->storage->write('test_one', 'Some other value');
 		$this->assertTrue($this->storage->destroy('test_one'), 'Value was not deleted.');
 

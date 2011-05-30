@@ -143,7 +143,7 @@ class ClassRegistryTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddModel() {
+	public function testAddModel() {
 
 		$Tag = ClassRegistry::init('RegisterArticleTag');
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
@@ -201,7 +201,7 @@ class ClassRegistryTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClassRegistryFlush() {
+	public function testClassRegistryFlush() {
 		$Tag = ClassRegistry::init('RegisterArticleTag');
 
 		$ArticleTag = ClassRegistry::getObject('RegisterArticleTag');
@@ -219,7 +219,7 @@ class ClassRegistryTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddMultipleModels() {
+	public function testAddMultipleModels() {
 		$Article = ClassRegistry::isKeySet('Article');
 		$this->assertFalse($Article);
 
@@ -261,7 +261,7 @@ class ClassRegistryTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPluginAppModel() {
+	public function testPluginAppModel() {
 		$TestRegistryPluginModel = ClassRegistry::isKeySet('TestRegistryPluginModel');
 		$this->assertFalse($TestRegistryPluginModel);
 

@@ -539,7 +539,7 @@ class Shell extends Object {
  * @access public
  * @return string
  */
-	function nl($multiplier = 1) {
+	public function nl($multiplier = 1) {
 		return str_repeat(ConsoleOutput::LF, $multiplier);
 	}
 
