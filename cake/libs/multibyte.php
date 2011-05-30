@@ -1066,6 +1066,34 @@ class Multibyte extends Object {
 	}
 
 /**
+ * Format a local time/date according to locale settings, using the app's encoding
+ *
+ * @return string
+ * @access public
+ * @static
+ */
+	function strftime() {
+		$args = func_get_args();
+		$format = call_user_func_array('strftime', $args);
+		if (function_exists('mb_internal_encoding')) {
+			$encoding = mb_internal_encoding();
+		} else {
+			$encoding = Configure::read('App.encoding');
+		}
+		if (!empty($encoding) && $encoding === 'UTF-8') {
+			if (function_exists('mb_check_encoding')) {
+				$valid = mb_check_encoding($format, $encoding);
+			} else {
+				$valid = !Multibyte::checkMultibyte($format);
+			}
+			if (!$valid) {
+				$format = utf8_encode($format);
+			}
+		}
+		return $format;
+	}
+
+/**
  * Return the Code points range for Unicode characters
  *
  * @param interger $decimal
