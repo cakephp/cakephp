@@ -27,10 +27,20 @@ if (Configure::read() > 0):
 	Debugger::checkSecurityKeys();
 endif;
 ?>
-<div id="url-rewriting-warning" style="background-color:#e32; color:#fff; padding:3px;">
+<div  style="background-color:#e32; color:#fff; padding:3px; margin: 20px 0">
 	<?php __('URL rewriting is not properly configured on your server. '); ?>
-	1) <a target="_blank" href="http://book.cakephp.org/view/917/Apache-and-mod_rewrite-and-htaccess" style="color:#fff;">Help me configure it</a>
-	2) <a target="_blank" href="http://book.cakephp.org/view/931/CakePHP-Core-Configuration-Variables" style="color:#fff;">I don't / can't use URL rewriting</a>
+	<ol style="padding-left:20px">
+		<li>
+			<a target="_blank" href="http://book.cakephp.org/view/917/Apache-and-mod_rewrite-and-htaccess" style="color:#fff;">
+				<?php __('Help me configure it')?>
+			</a>
+		</li>
+		<li>
+			<a target="_blank" href="http://book.cakephp.org/view/931/CakePHP-Core-Configuration-Variables" style="color:#fff;">
+				<?php __('I don\'t / can\'t use URL rewriting')?>
+			</a>
+		</li>
+	</ol>
 </div>
 <p>
 	<?php
