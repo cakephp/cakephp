@@ -457,18 +457,4 @@ class TestTask extends BakeTask {
 				'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
-
-/**
- * Gets the path for output.  Checks the plugin property
- * and returns the correct path.
- *
- * @return string Path to output.
- */
-	public function getPath() {
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'Test' . DS;
-		}
-		return $path;
-	}
 }
