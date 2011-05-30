@@ -196,7 +196,7 @@ class TemplateTask extends Shell {
  * @access public
  * @return string filename will exit program if template is not found.
  */
-	public function _findTemplate($path, $directory, $filename) {
+	protected function _findTemplate($path, $directory, $filename) {
 		$themeFile = $path . $directory . DS . $filename . '.ctp';
 		if (file_exists($themeFile)) {
 			return $themeFile;

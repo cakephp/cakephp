@@ -122,7 +122,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $callbacks Array of callback / special options.
  * @return string Composed method string
  */
-	public function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
+	protected function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
 		$options = $this->_mapOptions($method, $options);
 		$options = $this->_prepareCallbacks($method, $options);
 		$callbacks = array_keys($this->_callbackArguments[$method]);

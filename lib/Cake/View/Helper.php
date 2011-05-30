@@ -322,7 +322,7 @@ class Helper extends Object {
  * @param string $insertAfter String to be inserted after options.
  * @return string Composed attributes.
  */
-	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+	protected function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (!is_string($options)) {
 			$options = (array) $options + array('escape' => true);
 

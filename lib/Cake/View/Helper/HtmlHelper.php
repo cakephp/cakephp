@@ -1011,7 +1011,7 @@ class HtmlHelper extends AppHelper {
  * @param string $insertAfter String to be inserted after options.
  * @return string Composed attributes.
  */
-	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+	protected function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (is_array($options)) {
 			$options = array_merge(array('escape' => true), $options);
 

@@ -60,7 +60,7 @@ class ShellTestShell extends Shell {
 
 	}
 
-	public function _secret() {
+	protected function _secret() {
 
 	}
 

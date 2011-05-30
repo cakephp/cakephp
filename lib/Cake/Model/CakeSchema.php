@@ -529,7 +529,7 @@ class CakeSchema extends Object {
  *     where match was not found.
  * @access protected
  */
-	public function _arrayDiffAssoc($array1, $array2) {
+	protected function _arrayDiffAssoc($array1, $array2) {
 		$difference = array();
 		foreach ($array1 as $key => $value) {
 			if (!array_key_exists($key, $array2)) {

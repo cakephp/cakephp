@@ -215,7 +215,7 @@ class Folder {
  * @return array Files matching pattern
  * @access private
  */
-	public function _findRecursive($pattern, $sort = false) {
+	protected function _findRecursive($pattern, $sort = false) {
 		list($dirs, $files) = $this->read($sort);
 		$found = array();
 
