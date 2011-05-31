@@ -1151,6 +1151,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$token2 = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(1, count($token2), 'Should only be one token.');
 		$this->assertEquals($token, $token2, 'Tokens should not be different.');
+
+		$key = $this->Controller->request->params['_Token']['key'];
+		$this->assertEquals(array($key), array_keys($token), '_Token.key and csrfToken do not match request will blackhole.');
 	}
 
 /**
