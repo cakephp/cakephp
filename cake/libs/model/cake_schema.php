@@ -300,7 +300,7 @@ class CakeSchema extends Object {
 					if (strpos($table, $prefix) !== 0) {
 						continue;
 					}
-					$table = str_replace($prefix, '', $table);
+					$table = preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
 				}
 				$Object = new AppModel(array(
 					'name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection
