@@ -140,7 +140,7 @@ class ProjectTask extends Shell {
 			$skel = $this->in(
 				__d('cake_console', "What is the path to the directory layout you wish to copy?"),
 				null,
-				CAKE . 'Console' . DS . 'templates' . DS . 'skel'
+				CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
 			);
 			if (!$skel) {
 				$this->err(__d('cake_console', 'The directory path you supplied was empty. Please try again.'));
@@ -149,7 +149,7 @@ class ProjectTask extends Shell {
 					$skel = $this->in(
 						__d('cake_console', 'Directory path does not exist please choose another:'),
 						null,
-						CAKE . 'Console' . DS . 'templates' . DS . 'skel'
+						CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
 					);
 				}
 			}
@@ -203,7 +203,7 @@ class ProjectTask extends Shell {
 	public function createHome($dir) {
 		$app = basename($dir);
 		$path = $dir . 'View' . DS . 'Pages' . DS;
-		$source = CAKE . 'Console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
+		$source = CAKE . 'Console' . DS . 'Templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
 		include($source);
 		return $this->createFile($path.'home.ctp', $output);
 	}
@@ -388,8 +388,8 @@ class ProjectTask extends Shell {
 			))->addOption('empty', array(
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
 			))->addOption('skel', array(
-				'default' => current(App::core('Console')) . 'templates' . DS . 'skel',
-				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/console/templates/skel of CakePHP used to create the project.')
+				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',
+				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/Console/Templates/skel of CakePHP used to create the project.')
 			));
 	}
 

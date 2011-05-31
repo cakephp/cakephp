@@ -49,7 +49,7 @@ class TemplateTask extends Shell {
 /**
  * Find the paths to all the installed shell themes in the app.
  *
- * Bake themes are directories not named `skel` inside a `vendors/shells/templates` path.
+ * Bake themes are directories not named `skel` inside a `Console/Templates` path.
  *
  * @return array Array of bake themes that are installed.
  */
@@ -59,15 +59,14 @@ class TemplateTask extends Shell {
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
 
-		$Folder = new Folder($core . 'templates' . DS . 'default');
+		$Folder = new Folder($core . 'Templates' . DS . 'default');
 
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
 
 		$plugins = App::objects('plugin');
 		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'console' . DS . 'shells' . DS;
-			$paths[] = $this->_pluginPath($plugin) . 'vendors' . DS . 'shells' . DS;
+			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
 		}
 		$paths[] = $core;
 
@@ -78,18 +77,18 @@ class TemplateTask extends Shell {
 
 		$themes = array();
 		foreach ($paths as $path) {
-			$Folder = new Folder($path . 'templates', false);
+			$Folder = new Folder($path . 'Templates', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
 				if (empty($dir) || preg_match('@^skel$|_skel$@', $dir)) {
 					continue;
 				}
-				$Folder = new Folder($path . 'templates' . DS . $dir);
+				$Folder = new Folder($path . 'Templates' . DS . $dir);
 				$contents = $Folder->read();
 				$subDirs = $contents[0];
 				if (array_intersect($contents[0], $themeFolders)) {
-					$templateDir = $path . 'templates' . DS . $dir . DS;
+					$templateDir = $path . 'Templates' . DS . $dir . DS;
 					$themes[$dir] = $templateDir;
 				}
 			}

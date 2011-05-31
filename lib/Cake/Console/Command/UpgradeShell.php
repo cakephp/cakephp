@@ -88,7 +88,7 @@ class UpgradeShell extends Shell {
 
 		$moves = array(
 			'libs' => 'Lib',
-			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'templates',
+			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
 		);
 		foreach($moves as $old => $new) {
 			if (is_dir($old)) {
