@@ -3592,3 +3592,14 @@ class TransactionTestModel extends CakeTestModel {
 		$this->saveAll($data, array('atomic' => true, 'callbacks' => false));
 	}
 }
+
+/**
+ * Test model for datasource prefixes
+ *
+ */
+class PrefixTestModel extends CakeTestModel {
+}
+class PrefixTestUseTableModel extends CakeTestModel {
+	var $name = 'PrefixTest';
+	var $useTable = 'prefix_tests';
+}

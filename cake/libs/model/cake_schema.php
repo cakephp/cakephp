@@ -257,7 +257,7 @@ class CakeSchema extends Object {
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
-					$table = str_replace($prefix, '', $table);
+					$table = preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
 
 					if (in_array($fulltable, $currentTables)) {
 						$key = array_search($fulltable, $currentTables);
