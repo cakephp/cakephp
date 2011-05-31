@@ -257,7 +257,7 @@ class CakeSchema extends Object {
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
-					$table = preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
+					$table = $this->_noPrefixTable($prefix, $table);
 
 					if (in_array($fulltable, $currentTables)) {
 						$key = array_search($fulltable, $currentTables);
@@ -279,7 +279,7 @@ class CakeSchema extends Object {
 									}
 									if (in_array($withTable, $currentTables)) {
 										$key = array_search($withTable, $currentTables);
-										$noPrefixWith = str_replace($prefix, '', $withTable);
+										$noPrefixWith = $this->_noPrefixTable($prefix, $withTable);
 	
 										$tables[$noPrefixWith] = $this->__columns($Object->$class);
 										$tables[$noPrefixWith]['indexes'] = $db->index($Object->$class);
@@ -300,7 +300,7 @@ class CakeSchema extends Object {
 					if (strpos($table, $prefix) !== 0) {
 						continue;
 					}
-					$table = preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
+					$table = $this->_noPrefixTable($prefix, $table);
 				}
 				$Object = new AppModel(array(
 					'name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection
@@ -694,5 +694,9 @@ class CakeSchema extends Object {
 			}
 		}
 		return array_filter(compact('add', 'drop'));
+	}
+	
+	function _noPrefixTable($prefix, $table) {
+		return preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
 	}
 }
