@@ -291,7 +291,9 @@ class CookieComponent extends Object {
 			return;
 		}
 		$names = explode('.', $key, 2);
-		$this->__values[$names[0]] = Set::remove($this->__values[$names[0]], $names[1]);
+		if (isset($this->__values[$names[0]])) {
+			$this->__values[$names[0]] = Set::remove($this->__values[$names[0]], $names[1]);
+		}
 		$this->__delete('[' . implode('][', $names) . ']');
 	}
 
