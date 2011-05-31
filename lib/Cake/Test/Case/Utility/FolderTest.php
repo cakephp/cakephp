@@ -146,7 +146,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testOperations() {
-		$path = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
+		$path = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
 		$result = is_dir($Folder->pwd());
@@ -219,7 +219,7 @@ class FolderTest extends CakeTestCase {
 	public function testChmod() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Folder permissions tests not supported on Windows.');
 
-		$path = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
+		$path = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
 		$Folder = new Folder($path);
 
 		$subdir = 'test_folder_new';
