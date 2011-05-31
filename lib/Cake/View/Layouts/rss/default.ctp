@@ -1,6 +1,4 @@
 <?php
-echo $this->Rss->header();
-
 if (!isset($channel)) {
 	$channel = array();
 }
