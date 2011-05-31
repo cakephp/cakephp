@@ -146,7 +146,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	public function testAutoSaveUuid() {
 		// SQLite does not support non-integer primary keys
-		$this->skipIf($this->db instanceof Sqlite);
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with SQLite.');
 
 		$this->loadFixtures('Uuid');
 		$TestModel = new Uuid();
@@ -168,7 +168,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	public function testSaveUuidNull() {
 		// SQLite does not support non-integer primary keys
-		$this->skipIf($this->db instanceof Sqlite);
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with SQLite.');
 
 		$this->loadFixtures('Uuid');
 		$TestModel = new Uuid();
@@ -189,10 +189,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testZeroDefaultFieldValue() {
-		$this->skipIf(
-			$this->db instanceof Sqlite,
-			'%s SQLite uses loose typing, this operation is unsupported'
-		);
+		$this->skipIf($this->db instanceof Sqlite, 'SQLite uses loose typing, this operation is unsupported.');
+
 		$this->loadFixtures('DataTest');
 		$TestModel = new DataTest();
 
@@ -406,13 +404,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testCounterCacheWithSelfJoin() {
-		$skip = $this->skipIf(
-			($this->db instanceof Sqlite),
-			'SQLite 2.x does not support ALTER TABLE ADD COLUMN'
-		);
-		if ($skip) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Sqlite, 'SQLite 2.x does not support ALTER TABLE ADD COLUMN');
 
 		$this->loadFixtures('CategoryThread');
 		$column = 'COLUMN ';
@@ -3849,10 +3841,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testUpdateAllWithJoins() {
-		$this->skipIf(
-			!$this->db instanceof Mysql,
-			'%s Currently, there is no way of doing joins in an update statement in postgresql or sqlite'
-		);
+		$this->skipIf(!$this->db instanceof Mysql, 'Currently, there is no way of doing joins in an update statement in postgresql or sqlite');
+
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
 		$ProductUpdateAll = new ProductUpdateAll();
 
@@ -3899,10 +3889,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
     function testUpdateAllWithoutForeignKey() {
-		$this->skipIf(
-			!$this->db instanceof Mysql,
-			'%s Currently, there is no way of doing joins in an update statement in postgresql'
-		);
+		$this->skipIf(!$this->db instanceof Mysql, 'Currently, there is no way of doing joins in an update statement in postgresql');
+
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
 		$ProductUpdateAll = new ProductUpdateAll();
 

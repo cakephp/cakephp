@@ -329,11 +329,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeActionsUsingSessions() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
-			'Testing bakeActions requires Article, Comment & Tag Model to be undefined. %s');
-		if ($skip) {
-			return;
-		}
+		$this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article, Comment & Tag Model to be undefined.');
+
 		$result = $this->Task->bakeActions('BakeArticles', null, true);
 
 		$this->assertContains('function index() {', $result);
@@ -371,11 +368,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeActionsWithNoSessions() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
-			'Testing bakeActions requires Article, Tag, Comment Models to be undefined. %s');
-		if ($skip) {
-			return;
-		}
+		$this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article, Tag, Comment Models to be undefined.');
+
 		$result = $this->Task->bakeActions('BakeArticles', null, false);
 
 		$this->assertContains('function index() {', $result);

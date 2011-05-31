@@ -85,7 +85,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function testEnv() {
-		$this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', '%s safe mode is on');
+		$this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', 'Safe mode is on.');
 
 		$__SERVER = $_SERVER;
 		$__ENV = $_ENV;
@@ -258,9 +258,7 @@ class BasicsTest extends CakeTestCase {
  */
 	public function testCache() {
 		$_cacheDisable = Configure::read('Cache.disable');
-		if ($this->skipIf($_cacheDisable, 'Cache is disabled, skipping cache() tests. %s')) {
-			return;
-		}
+		$this->skipIf($_cacheDisable, 'Cache is disabled, skipping cache() tests.');
 
 		Configure::write('Cache.disable', true);
 		$result = cache('basics_test', 'simple cache write');
@@ -293,9 +291,7 @@ class BasicsTest extends CakeTestCase {
  */
 	public function testClearCache() {
 		$cacheOff = Configure::read('Cache.disable');
-		if ($this->skipIf($cacheOff, 'Cache is disabled, skipping clearCache() tests. %s')) {
-			return;
-		}
+		$this->skipIf($cacheOff, 'Cache is disabled, skipping clearCache() tests.');
 
 		cache('views' . DS . 'basics_test.cache', 'simple cache write');
 		$this->assertTrue(file_exists(CACHE . 'views' . DS . 'basics_test.cache'));
@@ -725,7 +721,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function testStripslashesDeep() {
-		$this->skipIf(ini_get('magic_quotes_sybase') === '1', '%s magic_quotes_sybase is on');
+		$this->skipIf(ini_get('magic_quotes_sybase') === '1', 'magic_quotes_sybase is on.');
 
 		$this->assertEqual(stripslashes_deep("tes\'t"), "tes't");
 		$this->assertEqual(stripslashes_deep('tes\\' . chr(0) .'t'), 'tes' . chr(0) .'t');

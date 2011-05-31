@@ -294,10 +294,8 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testInitModelTablePrefix() {
-		$hasPrefix = !empty($this->db->config['prefix']);
-		if ($this->skipIf($hasPrefix, 'Cannot run this test, you have a database connection prefix.')) {
-			return;
-		}
+		$this->skipIf(!empty($this->db->config['prefix']), 'Cannot run this test, you have a database connection prefix.');
+
 		$Source = new CakeTestFixtureTestFixture();
 		$Source->create($this->db);
 		$Source->insert($this->db);

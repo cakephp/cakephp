@@ -122,9 +122,8 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testRecursiveCreateFailure() {
-		if ($this->skipIf(DS == '\\', 'Cant perform operations using permissions on windows. %s')) {
-			return;
-		}
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on windows.');
+
 		$path = TMP . 'tests' . DS . 'one';
 		mkdir($path);
 		chmod($path, '0444');
@@ -218,7 +217,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testChmod() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Folder permissions tests not supported on Windows');
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Folder permissions tests not supported on Windows.');
 
 		$path = CAKE . 'Console' . DS . 'templates' . DS . 'skel';
 		$Folder = new Folder($path);

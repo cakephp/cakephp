@@ -3500,15 +3500,11 @@ class ContainableBehaviorTest extends CakeTestCase {
 	public function testAutoFieldsWithMultipleDatabases() {
 		$config = new DATABASE_CONFIG();
 
-		$skip = $this->skipIf(
+		$this->skipIf(
 			!isset($config->test) || !isset($config->test2),
-			 '%s Primary and secondary test databases not configured, skipping cross-database '
-			.'join tests.'
-			.' To run these tests, you must define $test and $test2 in your database configuration.'
+			'Primary and secondary test databases not configured, skipping cross-database join tests.'
+			. ' To run these tests, you must define $test and $test2 in your database configuration.'
 		);
-		if ($skip) {
-			return;
-		}
 
 		$db = ConnectionManager::getDataSource('test2');
 		$this->fixtureManager->loadSingle('User', $db);

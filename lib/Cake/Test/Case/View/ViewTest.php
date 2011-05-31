@@ -775,10 +775,8 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderCache() {
-		$writable = is_writable(CACHE . 'views' . DS);
-		if ($this->skipIf(!$writable, 'CACHE/views dir is not writable, cannot test renderCache. %s')) {
-			return;
-		}
+		$this->skipIf(!is_writable(CACHE . 'views' . DS), 'CACHE/views dir is not writable, cannot test renderCache.');
+
 		$view = 'test_view';
 		$View = new View($this->PostsController);
 		$path = CACHE . 'views' . DS . 'view_cache_' . $view;

@@ -611,10 +611,7 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testUserOffset() {
-		if ($this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
-			return;
-		}
-
+		$this->skipIf(!class_exists('DateTimeZone'), 'DateTimeZone class not available.');
 
 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
 		$timeServer = new DateTime('now', $timezoneServer);
@@ -744,9 +741,8 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testConvertPercentE() {
-		if ($this->skipIf(DS !== '\\', 'Cannot run windows tests on non-windows OS')) {
-			return;
-		}
+		$this->skipIf(DIRECTORY_SEPARATOR !== '\\', 'Cannot run windows tests on non-windows OS.');
+
 		$time = strtotime('Thu Jan 14 11:43:39 2010');
 		$result = $this->Time->convertSpecifiers('%e', $time);
 		$expected = '14';

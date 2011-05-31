@@ -820,6 +820,7 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testStatements() {
 		$this->skipIf(!$this->testDb instanceof DboMysql);
+
 		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
 		$Article = new Article();
 

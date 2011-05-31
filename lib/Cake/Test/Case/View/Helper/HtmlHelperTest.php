@@ -372,9 +372,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testImageTagWithTheme() {
-		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {
-			return;
-		}
+		$this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme.');
+
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
@@ -559,10 +558,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testScriptTimestamping() {
-		$skip = $this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped');
-		if ($skip) {
-			return;
-		}
+		$this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped.');
+
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
 
@@ -653,9 +650,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testScriptInTheme() {
-		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {
-			return;
-		}
+		$this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme.');
+
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';

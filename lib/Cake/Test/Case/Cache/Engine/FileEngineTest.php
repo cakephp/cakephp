@@ -332,9 +332,8 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testErrorWhenPathDoesNotExist() {
-		if ($this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists. %s')) {
-			return;
-		}
+		$this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists.');
+
 		$this->expectError();
 		Cache::config('failure', array(
 			'engine' => 'File',

@@ -610,7 +610,8 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaReadWithOddTablePrefix() {
 		$config = ConnectionManager::getDataSource('test')->config;
-		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set');
+		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set.');
+
 		$SchemaPost = ClassRegistry::init('SchemaPost');
 		$SchemaPost->tablePrefix = 'po';
 		$SchemaPost->useTable = 'sts';
@@ -630,7 +631,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaReadWithTablePrefix() {
 		$config = ConnectionManager::getDataSource('test')->config;
-		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set');
+		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set.');
 
 		$model = new SchemaPrefixAuthUser();
 
@@ -695,15 +696,11 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaReadWithCrossDatabase() {
 		$config = new DATABASE_CONFIG();
-		$skip = $this->skipIf(
+		$this->skipIf(
 			!isset($config->test) || !isset($config->test2),
-			 '%s Primary and secondary test databases not configured, skipping cross-database '
-			.'join tests.'
-			.' To run these tests, you must define $test and $test2 in your database configuration.'
+			'Primary and secondary test databases not configured, skipping cross-database join tests.'
+			. ' To run these tests, you must define $test and $test2 in your database configuration.'
 		);
-		if ($skip) {
-			return;
-		}
 
 		$db2 = ConnectionManager::getDataSource('test2');
 		$fixture = new SchemaCrossDatabaseFixture();

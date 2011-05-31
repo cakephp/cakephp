@@ -507,7 +507,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileNonInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Not supported on Windows.');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -537,7 +537,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Not supported on Windows.');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -583,7 +583,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileWindowsNonInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindows supported on Windows only');
+		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsNonInteractive supported on Windows only.');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -614,7 +614,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileWindowsInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsInteractive supported on Windows only');
+		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsInteractive supported on Windows only.');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';

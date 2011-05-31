@@ -4794,10 +4794,8 @@ class MultibyteTest extends CakeTestCase {
  * @return void
  */
 	public function testUsingMbStrrpos() {
-		$skip = extension_loaded('mbstring') && version_compare(PHP_VERSION, '5.2.0', '<');
-		if ($this->skipIf($skip, '%s PHP version does not support $offset parameter in mb_strrpos().')) {
-			return;
-		}
+		$this->skipIf(extension_loaded('mbstring') && version_compare(PHP_VERSION, '5.2.0', '<'), 'PHP version does not support $offset parameter in mb_strrpos().');
+
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
 		$result = mb_strrpos($string, $find);

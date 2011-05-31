@@ -270,7 +270,8 @@ class CakeResponseTestCase extends CakeTestCase {
 *
 */
 	public function testCompress() {
-		$this->skipIf(php_sapi_name() !== 'cli', 'The response compression can only be tested in cli');
+		$this->skipIf(php_sapi_name() !== 'cli', 'The response compression can only be tested in cli.');
+
 		$response = new CakeResponse();
 		if (ini_get("zlib.output_compression") === '1' || !extension_loaded("zlib")) {
 			$this->assertFalse($response->compress());

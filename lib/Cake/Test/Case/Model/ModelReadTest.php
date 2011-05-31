@@ -82,9 +82,7 @@ class ModelReadTest extends BaseModelTest {
 		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Sqlserver;
 		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
 
-		if ($this->skipIf($isStrictGroupBy, $message )) {
-			return;
-		}
+		$this->skipIf($isStrictGroupBy, $message);
 
 		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread = new Thread();
@@ -390,9 +388,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testRecursiveUnbind() {
-		if ($this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.')) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.');
 		
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
@@ -3648,9 +3644,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindCombinedRelations() {
-		if ($this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.')) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.');
 		
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
@@ -4020,9 +4014,8 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
 		$this->assertEqual($expected, $result);
 
-		if ($this->skipIf($this->db instanceof Postgres, 'The rest of testFindAllWithConditionsHavingMixedDataTypes test is not compatible with Postgres')) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Postgres, 'The rest of testFindAllWithConditionsHavingMixedDataTypes test is not compatible with Postgres.');
+
 		$conditions = array('id' => array('1', 2, '3.0'));
 		$order = 'Article.id ASC';
 		$result = $TestModel->find('all', compact('recursive', 'conditions', 'order'));
@@ -6622,7 +6615,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindCountDistinct() {
-		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite');
+		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite.');
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
 		$this->loadFixtures('Project');
@@ -6642,9 +6635,8 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindCountWithDbExpressions() {
-		if ($this->skipIf($this->db instanceof Postgres, 'testFindCountWithExpressions is not compatible with Postgres')) {
-			return;
-		}
+		$this->skipIf($this->db instanceof Postgres, 'testFindCountWithDbExpressions is not compatible with Postgres.');
+
 		$this->loadFixtures('Project');
 		$db = ConnectionManager::getDataSource('test');
 		$TestModel = new Project();
@@ -7470,9 +7462,8 @@ class ModelReadTest extends BaseModelTest {
  *
  */
 	public function testVirtualFieldsMysql() {
-		if ($this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test only compatible with Mysql')) {
-			return;
-		}
+		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test only compatible with Mysql.');
+
 		$this->loadFixtures('Post', 'Author');
 		$Post = ClassRegistry::init('Post');
 

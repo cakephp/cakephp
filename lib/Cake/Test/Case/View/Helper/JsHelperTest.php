@@ -315,9 +315,8 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testWriteScriptsInFile() {
-		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped')) {
-			return;
-		}
+		$this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped.');
+
 		$this->Js->request->webroot = '/';
 		$this->Js->JsBaseEngine = new TestJsEngineHelper($this->View);
 		$this->Js->buffer('one = 1;');
