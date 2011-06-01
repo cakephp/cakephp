@@ -617,6 +617,47 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderPlugin method
+ *
+ * @return void
+ */
+	public function testSendRenderPlugin() {
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestPlugin');
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		DebugTransport::$includeAddresses = true;
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+
+		$this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'default')->send();
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Into TestPlugin.'));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the CakePHP Framework'));
+
+		$this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'TestPlugin.plug_default')->send();
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Into TestPlugin.'));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the TestPlugin.'));
+
+		DebugTransport::$lastEmail = '';
+		$this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Into TestPlugin.'));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the TestPlugin.'));
+
+		$this->CakeEmail->viewVars(array('value' => 12345));
+		$this->CakeEmail->template('custom', 'TestPlugin.plug_default')->send();
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Here is your value: 12345'));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the TestPlugin.'));
+
+		$this->expectException();
+		$this->CakeEmail->template('test_plugin_tpl', 'plug_default')->send();
+	}
+
+/**
  * testSendMultipleMIME method
  *
  * @return void

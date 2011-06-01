@@ -1262,6 +1262,14 @@ class CakeEmail {
 		$View->viewVars = $this->_viewVars;
 		$msg = array();
 
+		list($templatePlugin, $template) = pluginSplit($this->_template, true);
+		list($layoutPlugin, $layout) = pluginSplit($this->_layout, true);
+		if (!empty($templatePlugin)) {
+			$View->plugin = rtrim($templatePlugin, '.');
+		} elseif (!empty($layoutPlugin)) {
+			$View->plugin = rtrim($layoutPlugin, '.');
+		}
+
 		$content = implode("\n", $content);
 
 		if ($this->_emailFormat === 'both') {
@@ -1278,7 +1286,7 @@ class CakeEmail {
 
 			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'text';
 			$View->viewVars['content'] = $originalContent;
-			$this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($this->_template, $this->_layout));
+			$this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($template, $layout));
 			$content = explode("\n", $this->_textMessage);
 			$msg = array_merge($msg, $content);
 
@@ -1291,7 +1299,7 @@ class CakeEmail {
 			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'html';
 			$View->viewVars['content'] = $originalContent;
 			$View->hasRendered = false;
-			$this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($this->_template, $this->_layout));
+			$this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($template, $layout));
 			$content = explode("\n", $this->_htmlMessage);
 			$msg = array_merge($msg, $content);
 
@@ -1319,7 +1327,7 @@ class CakeEmail {
 
 		$View->viewPath = $View->layoutPath = 'Emails' . DS . $this->_emailFormat;
 		$View->viewVars['content'] = $content;
-		$rendered = $View->render($this->_template, $this->_layout);
+		$rendered = $View->render($template, $layout);
 		$content = explode("\n", $rendered);
 
 		if ($this->_emailFormat === 'html') {
