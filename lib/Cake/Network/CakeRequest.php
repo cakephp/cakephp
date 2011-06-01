@@ -38,9 +38,9 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Array of POST data.  Will contain form data as well as uploaded files.
- * Will only contain data from inputs that start with 'data'.  So
- * `<input name="some_input" />` will not end up in data. However,
- * `<input name="data[something]" />`
+ * Inputs prefixed with 'data' will have the data prefix removed.  If there is
+ * overlap between an input prefixed with data and one without, the 'data' prefixed
+ * value will take precedence.
  *
  * @var array
  */
