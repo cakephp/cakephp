@@ -188,6 +188,7 @@ class Postgres extends DboSource {
 		$fields = parent::describe($model);
 		$table = $this->fullTableName($model, false);
 		$this->_sequenceMap[$table] = array();
+		$cols = null;
 
 		if ($fields === null) {
 			$cols = $this->_execute(
