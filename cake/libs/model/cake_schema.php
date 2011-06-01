@@ -695,7 +695,14 @@ class CakeSchema extends Object {
 		}
 		return array_filter(compact('add', 'drop'));
 	}
-	
+
+/**
+ * Trim the table prefix from the full table name, and return the prefix-less table
+ *
+ * @param string $prefix Table prefix
+ * @param string $table Full table name
+ * @return string Prefix-less table name
+ */
 	function _noPrefixTable($prefix, $table) {
 		return preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
 	}
