@@ -74,7 +74,7 @@ abstract class BaseCoverageReport {
 			$this->appTest = true;
 		}
 		if ($reporter->params['plugin']) {
-			$this->pluginTest = Inflector::underscore($reporter->params['plugin']);
+			$this->pluginTest = Inflector::camelize($reporter->params['plugin']);
 		}
 	}
 
