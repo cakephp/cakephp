@@ -151,7 +151,7 @@ class Sanitize {
  * Strips scripts and stylesheets from output
  *
  * @param string $str String to sanitize
- * @return string String with <script>, <style>, <link> elements removed.
+ * @return string String with <script>, <style>, <link>, <img> elements removed.
  * @access public
  * @static
  */
