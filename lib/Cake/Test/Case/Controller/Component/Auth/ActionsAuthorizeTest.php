@@ -75,7 +75,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 			->with($user, '/controllers/Posts/index')
 			->will($this->returnValue(false));
 	
-		$this->assertFalse($this->auth->authorize($user, $request));
+		$this->assertFalse($this->auth->authorize($user['User'], $request));
 	}
 
 /**
@@ -104,7 +104,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 			->with($user, '/controllers/Posts/index')
 			->will($this->returnValue(true));
 	
-		$this->assertTrue($this->auth->authorize($user, $request));
+		$this->assertTrue($this->auth->authorize($user['User'], $request));
 	}
 
 /**
