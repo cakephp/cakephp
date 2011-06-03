@@ -138,11 +138,11 @@ HTML;
 	public function coverageScript() {
 		return <<<HTML
 		<script type="text/javascript">
-		public function coverage_show_hide(selector) {
+		function coverage_show_hide(selector) {
 			var element = document.getElementById(selector);
 			element.style.display = (element.style.display == 'none') ? '' : 'none';
 		}
-		public function coverage_toggle_all () {
+		function coverage_toggle_all () {
 			var divs = document.querySelectorAll('div.coverage-container');
 			var i = divs.length;
 			while (i--) {
