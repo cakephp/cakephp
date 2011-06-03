@@ -6,12 +6,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -493,7 +493,8 @@ class CakeSchemaTest extends CakeTestCase {
 	var $fixtures = array(
 		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment',
 		'core.datatype', 'core.auth_user', 'core.author',
-		'core.test_plugin_article', 'core.user', 'core.comment'
+		'core.test_plugin_article', 'core.user', 'core.comment',
+		'core.prefix_test'
 	);
 
 /**
@@ -609,6 +610,14 @@ class CakeSchemaTest extends CakeTestCase {
 		ConnectionManager::create('schema_prefix', $config);
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
+
+		$config['prefix'] = 'prefix_';
+		ConnectionManager::create('schema_prefix2', $config);
+		$read = $this->Schema->read(array(
+			'connection' => 'schema_prefix2',
+			'name' => 'TestApp',
+			'models' => false));
+		$this->assertTrue(isset($read['tables']['prefix_tests']));
 	}
 
 /**

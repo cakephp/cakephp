@@ -5,12 +5,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model
@@ -257,7 +257,7 @@ class CakeSchema extends Object {
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
-					$table = str_replace($prefix, '', $table);
+					$table = $this->_noPrefixTable($prefix, $table);
 
 					if (in_array($fulltable, $currentTables)) {
 						$key = array_search($fulltable, $currentTables);
@@ -279,7 +279,7 @@ class CakeSchema extends Object {
 									}
 									if (in_array($withTable, $currentTables)) {
 										$key = array_search($withTable, $currentTables);
-										$noPrefixWith = str_replace($prefix, '', $withTable);
+										$noPrefixWith = $this->_noPrefixTable($prefix, $withTable);
 	
 										$tables[$noPrefixWith] = $this->__columns($Object->$class);
 										$tables[$noPrefixWith]['indexes'] = $db->index($Object->$class);
@@ -300,7 +300,7 @@ class CakeSchema extends Object {
 					if (strpos($table, $prefix) !== 0) {
 						continue;
 					}
-					$table = str_replace($prefix, '', $table);
+					$table = $this->_noPrefixTable($prefix, $table);
 				}
 				$Object = new AppModel(array(
 					'name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection
@@ -694,5 +694,16 @@ class CakeSchema extends Object {
 			}
 		}
 		return array_filter(compact('add', 'drop'));
+	}
+
+/**
+ * Trim the table prefix from the full table name, and return the prefix-less table
+ *
+ * @param string $prefix Table prefix
+ * @param string $table Full table name
+ * @return string Prefix-less table name
+ */
+	function _noPrefixTable($prefix, $table) {
+		return preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
 	}
 }

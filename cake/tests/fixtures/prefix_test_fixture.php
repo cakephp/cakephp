@@ -24,32 +24,12 @@
  * @package       cake
  * @subpackage    cake.tests.fixtures
  */
-class ThePaperMonkiesFixture extends CakeTestFixture {
+class PrefixTestFixture extends CakeTestFixture {
 
-/**
- * name property
- *
- * @var string 'ThePaperMonkies'
- * @access public
- */
-	var $name = 'ThePaperMonkies';
+	var $name = 'PrefixTest';
+	var $table = 'prefix_prefix_tests';
 
-/**
- * fields property
- *
- * @var array
- * @access public
- */
 	var $fields = array(
-		'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'device_id' => array('type' => 'integer', 'length' => 10, 'null' => true)
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 	);
-
-/**
- * records property
- *
- * @var array
- * @access public
- */
-	var $records = array();
 }
