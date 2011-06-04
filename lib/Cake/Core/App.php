@@ -309,6 +309,7 @@ class App {
 					'%s' . 'libs' . DS
 				),
 				'locales' => array(
+					'%s' . 'Locale' . DS,
 					'%s' . 'locale' . DS
 				),
 				'vendors' => array('%s' . 'Vendor' . DS, VENDORS),
