@@ -21,7 +21,7 @@ App::uses('Controller', 'Controller');
 App::uses('Helper', 'View');
 App::uses('AppHelper', 'View/Helper');
 App::uses('HtmlHelper', 'View/Helper');
-App::uses('FomrHelper', 'View/Helper');
+App::uses('FormHelper', 'View/Helper');
 App::uses('ClassRegistry', 'Utility');
 App::uses('Folder', 'Utility');
 
