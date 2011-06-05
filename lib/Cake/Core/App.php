@@ -92,7 +92,7 @@ class App {
 		'class' => array('extends' => null, 'core' => true),
 		'file' => array('extends' => null, 'core' => true),
 		'model' => array('extends' => 'AppModel', 'core' => false),
-		'behavior' => array( 'suffix' => 'Behavior', 'extends' => 'Model/ModelBehavior', 'core' => true),
+		'behavior' => array('suffix' => 'Behavior', 'extends' => 'Model/ModelBehavior', 'core' => true),
 		'controller' => array('suffix' => 'Controller', 'extends' => 'AppController', 'core' => true),
 		'component' => array('suffix' => 'Component', 'extends' => null, 'core' => true),
 		'lib' => array('extends' => null, 'core' => true),
@@ -187,13 +187,13 @@ class App {
 	);
 
 /**
- * Inicates whether the class cache should be stored again because of an addition to it
+ * Indicates whether the class cache should be stored again because of an addition to it
  *
  */
 	private static $_cacheChange = false;
 
 /**
- * Inicates whether the object cache should be stored again because of an addition to it
+ * Indicates whether the object cache should be stored again because of an addition to it
  *
  */
 	private static $_objectCacheChange = false;
