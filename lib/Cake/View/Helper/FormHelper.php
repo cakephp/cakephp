@@ -1518,6 +1518,7 @@ class FormHelper extends AppHelper {
 		$showParents = $this->_extractOption('showParents', $attributes);
 		$hiddenField = $this->_extractOption('hiddenField', $attributes);
 		unset($attributes['escape'], $attributes['secure'], $attributes['empty'], $attributes['showParents'], $attributes['hiddenField']);
+		$id = $this->_extractOption('id', $attributes);
 
 		$attributes = $this->_initInputField($fieldName, array_merge(
 			(array)$attributes, array('secure' => false)
@@ -1573,11 +1574,22 @@ class FormHelper extends AppHelper {
 			$options = array_reverse($options, true);
 		}
 
+		if (!$id) {
+			$attributes['id'] = Inflector::camelize($attributes['id']);
+		}
+
 		$select = array_merge($select, $this->__selectOptions(
 			array_reverse($options, true),
 			array(),
 			$showParents,
-			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'], 'value' => $attributes['value'], 'class' => $attributes['class'])
+			array(
+				'escape' => $escapeOptions,
+				'style' => $style,
+				'name' => $attributes['name'],
+				'value' => $attributes['value'],
+				'class' => $attributes['class'],
+				'id' => $attributes['id']
+			)
 		));
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
@@ -2119,9 +2131,7 @@ class FormHelper extends AppHelper {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
 
-						$tagName = Inflector::camelize(
-							$this->model() . '_' . $this->field().'_'.Inflector::slug($name)
-						);
+						$tagName = $attributes['id'] . Inflector::camelize(Inflector::slug($name));
 						$htmlOptions['id'] = $tagName;
 						$label = array('for' => $tagName);
 

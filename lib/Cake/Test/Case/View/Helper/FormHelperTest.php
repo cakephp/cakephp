@@ -3949,6 +3949,53 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that 'id' overrides all the checkbox id's as well.
+ *
+ * @return void
+ */
+	public function testSelectCheckboxMultipleId() {
+		$result = $this->Form->select(
+			'Model.multi_field',
+			array('first', 'second', 'third'),
+			array('multiple' => 'checkbox', 'id' => 'CustomId')
+		);
+
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'CustomId'
+			),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'value' => '0', 'id' => 'CustomId0'
+			)),
+			array('label' => array('for' => 'CustomId0')),
+			'first',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'value' => '1', 'id' => 'CustomId1'
+			)),
+			array('label' => array('for' => 'CustomId1')),
+			'second',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'value' => '2', 'id' => 'CustomId2'
+			)),
+			array('label' => array('for' => 'CustomId2')),
+			'third',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testCheckbox method
  *
  * Test generation of checkboxes
