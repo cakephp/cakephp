@@ -112,7 +112,8 @@ class SecurityComponent extends Component {
 	public $allowedActions = array();
 
 /**
- * Form fields to disable
+ * Form fields to exclude from POST validation. Fields can be disabled
+ * either in the Component, or with FormHelper::disableField()
  *
  * @var array
  * @access public
@@ -402,13 +403,14 @@ class SecurityComponent extends Component {
 		}
 		$data = $controller->request->data;
 
-		if (!isset($data['_Token']) || !isset($data['_Token']['fields'])) {
+		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['disabled'])) {
 			return false;
 		}
 
-		$locked = null;
+		$locked = '';
 		$check = $controller->request->data;
 		$token = urldecode($check['_Token']['fields']);
+		$disabled = urldecode($check['_Token']['disabled']);
 
 		if (strpos($token, ':')) {
 			list($token, $locked) = explode(':', $token, 2);
@@ -416,6 +418,7 @@ class SecurityComponent extends Component {
 		unset($check['_Token']);
 
 		$locked = explode('|', $locked);
+		$disabled = explode('|', $disabled);
 
 		$lockedFields = array();
 		$fields = Set::flatten($check);
@@ -432,15 +435,17 @@ class SecurityComponent extends Component {
 			$fieldList += array_unique($multi);
 		}
 
+		$disabledFields = array_unique(array_merge((array)$this->disabledFields, $disabled));
+
 		foreach ($fieldList as $i => $key) {
 			$isDisabled = false;
 			$isLocked = (is_array($locked) && in_array($key, $locked));
 
-			if (!empty($this->disabledFields)) {
-				foreach ((array)$this->disabledFields as $disabled) {
-					$disabled = explode('.', $disabled);
-					$field = array_values(array_intersect(explode('.', $key), $disabled));
-					$isDisabled = ($field === $disabled);
+			if (!empty($disabledFields)) {
+				foreach ($disabledFields as $off) {
+					$off = explode('.', $off);
+					$field = array_values(array_intersect(explode('.', $key), $off));
+					$isDisabled = ($field === $off);
 					if ($isDisabled) {
 						break;
 					}
@@ -454,11 +459,13 @@ class SecurityComponent extends Component {
 				}
 			}
 		}
+		sort($disabled, SORT_STRING);
 		sort($fieldList, SORT_STRING);
 		ksort($lockedFields, SORT_STRING);
 
 		$fieldList += $lockedFields;
-		$check = Security::hash(serialize($fieldList) . Configure::read('Security.salt'));
+		$disabled = implode('|', $disabled);
+		$check = Security::hash(serialize($fieldList) . $disabled . Configure::read('Security.salt'));
 		return ($token === $check);
 	}
 
