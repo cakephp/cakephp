@@ -830,10 +830,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => urlencode($expected), 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => '', 'id' => 'preg:/TokenDisabled\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -893,10 +897,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => '', 'id' => 'preg:/TokenDisabled\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -935,10 +943,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => '', 'id' => 'preg:/TokenDisabled\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -982,10 +994,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => '', 'id' => 'preg:/TokenDisabled\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1023,14 +1039,18 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.1.phone');
 
 		$result = $this->Form->secure($this->Form->fields);
-		$hash = '774df31936dc850b7d8a5277dc0b890123788b09%3AAddresses.0.id%7CAddresses.1.id';
+		$hash = '629b6536dcece48aa41a117045628ce602ccbbb2%3AAddresses.0.id%7CAddresses.1.id';
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenDisabled\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1070,13 +1090,17 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->secure($expected);
 
-		$hash = '449b7e889128e8e52c5e81d19df68f5346571492%3AAddresses.id';
+		$hash = '2981c38990f3f6ba935e6561dc77277966fabd6d%3AAddresses.id';
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenDisabled\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1197,6 +1221,10 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][disabled]',
+				'value' => '', 'id' => 'preg:/TokenDisabled\d+/'
 			)),
 			'/div'
 		);

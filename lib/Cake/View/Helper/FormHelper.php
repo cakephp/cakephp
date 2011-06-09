@@ -417,6 +417,7 @@ class FormHelper extends AppHelper {
 			return;
 		}
 		$locked = array();
+		$disabledFields = $this->_disabledFields;
 
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
@@ -424,16 +425,23 @@ class FormHelper extends AppHelper {
 				unset($fields[$key]);
 			}
 		}
+
+		sort($disabledFields, SORT_STRING);
 		sort($fields, SORT_STRING);
 		ksort($locked, SORT_STRING);
 		$fields += $locked;
 
-		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
 		$locked = implode(array_keys($locked), '|');
+		$disabled = implode($disabledFields, '|');
+		$fields = Security::hash(serialize($fields) . $disabled . Configure::read('Security.salt'));
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand()
+		));
+		$out .= $this->hidden('_Token.disabled', array(
+			'value' => urlencode($disabled),
+			'id' => 'TokenDisabled' . mt_rand()
 		));
 		return $this->Html->useTag('block', ' style="display:none;"', $out);
 	}
