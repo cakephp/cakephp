@@ -1001,7 +1001,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testFormSecurityMultipleInputDisabledFields() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array(
+		$this->Form->request->params['_Token'] = array(
 			'key' => $key,
 			'disabledFields' => array('first_name', 'address')
 		);

@@ -61,9 +61,16 @@ class FormHelper extends AppHelper {
  * List of fields created, used with secure forms.
  *
  * @var array
- * @access public
  */
 	public $fields = array();
+
+/**
+ * Constant used internally to skip the securing process, 
+ * and neither add the field to the hash or to the disabled fields.
+ *
+ * @var string
+ */
+	const SECURE_SKIP = 'skip';
 
 /**
  * Defines the type of form being created.  Set by FormHelper::create().
@@ -89,7 +96,16 @@ class FormHelper extends AppHelper {
  * @access protected
  */
 	protected $_inputDefaults = array();
-
+/**
+ * An array of fieldnames that have been excluded from
+ * the Token hash used by SecurityComponent's validatePost method
+ *
+ * @see FormHelper::__secure()
+ * @see SecurityComponent::validatePost()
+ * @var array
+ */
+	protected $_disabledFields = array();
+	
 /**
  * Introspects model information and extracts information related
  * to validation, field length and field type. Appends information into
@@ -318,10 +334,16 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		if (isset($this->request->params['_Token']) && !empty($this->request->params['_Token'])) {
+		if (!empty($this->request->params['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
 				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand())
 			);
+
+			if (!empty($this->request['_Token']['disabledFields'])) {
+				foreach ((array)$this->request['_Token']['disabledFields'] as $disabled) {
+					$this->_disabledFields[] = $disabled;
+				}
+			}
 		}
 
 		if (!empty($append)) {
@@ -420,32 +442,39 @@ class FormHelper extends AppHelper {
  * Determine which fields of a form should be used for hash.
  * Populates $this->fields
  *
+ * @param boolean $lock Whether this field should be part of the validation
+ *     or excluded as part of the disabledFields.
  * @param mixed $field Reference to field to be secured
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
- * @access private
  */
-	function __secure($field = null, $value = null) {
+	protected function __secure($lock, $field = null, $value = null) {
 		if (!$field) {
 			$field = $this->_View->entity();
 		} elseif (is_string($field)) {
 			$field = Set::filter(explode('.', $field), true);
 		}
 
-		if (!empty($this->request['_Token']['disabledFields'])) {
-			foreach ((array)$this->request['_Token']['disabledFields'] as $disabled) {
-				$disabled = explode('.', $disabled);
-				if (array_values(array_intersect($field, $disabled)) === $disabled) {
-					return;
-				}
+		foreach ($this->_disabledFields as $disableField) {
+			$disableParts = explode('.', $disableField);
+			if (array_values(array_intersect($field, $disableParts)) === $disableParts) {
+				return;
 			}
 		}
+
 		$field = implode('.', $field);
-		if (!in_array($field, $this->fields)) {
-			if ($value !== null) {
-				return $this->fields[$field] = $value;
+
+		if ($lock) {
+			if (!in_array($field, $this->fields)) {
+				if ($value !== null) {
+					return $this->fields[$field] = $value;
+				}
+				$this->fields[] = $field;
 			}
-			$this->fields[] = $field;
+		} else {
+			if (!in_array($field, $this->_disabledFields)) {
+				$this->_disabledFields[] = $field;
+			}
 		}
 	}
 
@@ -1236,12 +1265,12 @@ class FormHelper extends AppHelper {
 			unset($options['secure']);
 		}
 		$options = $this->_initInputField($fieldName, array_merge(
-			$options, array('secure' => false)
+			$options, array('secure' => self::SECURE_SKIP)
 		));
 		$model = $this->model();
 
 		if ($fieldName !== '_method' && $model !== '_Token' && $secure) {
-			$this->__secure(null, '' . $options['value']);
+			$this->__secure(true, null, '' . $options['value']);
 		}
 
 		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '')));
@@ -1257,12 +1286,15 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1424/file
  */
 	public function file($fieldName, $options = array()) {
-		$options = array_merge($options, array('secure' => false));
+		$options += array('secure' => true);
+		$secure = $options['secure'];
+		$options['secure'] = self::SECURE_SKIP;
+
 		$options = $this->_initInputField($fieldName, $options);
 		$field = $this->_View->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
-			$this->__secure(array_merge($field, array($suffix)));
+			$this->__secure($secure, array_merge($field, array($suffix)));
 		}
 
 		return $this->Html->useTag('file', $options['name'], array_diff_key($options, array('name' => '')));
@@ -1506,7 +1538,7 @@ class FormHelper extends AppHelper {
 		$attributes += array(
 			'class' => null,
 			'escape' => true,
-			'secure' => null,
+			'secure' => true,
 			'empty' => '',
 			'showParents' => false,
 			'hiddenField' => true
@@ -1521,7 +1553,7 @@ class FormHelper extends AppHelper {
 		$id = $this->_extractOption('id', $attributes);
 
 		$attributes = $this->_initInputField($fieldName, array_merge(
-			(array)$attributes, array('secure' => false)
+			(array)$attributes, array('secure' => self::SECURE_SKIP)
 		));
 
 		if (is_string($options) && isset($this->__options[$options])) {
@@ -1556,7 +1588,7 @@ class FormHelper extends AppHelper {
 
 		if (!empty($tag) || isset($template)) {
 			if (!isset($secure) || $secure == true) {
-				$this->__secure();
+				$this->__secure(true);
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
 		}
@@ -2289,9 +2321,8 @@ class FormHelper extends AppHelper {
 		}
 
 		$result = parent::_initInputField($field, $options);
-
-		if ($secure) {
-			$this->__secure($fieldName);
+		if ($secure !== self::SECURE_SKIP) {
+			$this->__secure($secure, $fieldName);
 		}
 		return $result;
 	}
