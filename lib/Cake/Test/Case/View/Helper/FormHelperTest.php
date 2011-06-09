@@ -1051,6 +1051,7 @@ class FormHelperTest extends CakeTestCase {
 			'disabledFields' => array('first_name', 'address')
 		);
 		$this->Form->create();
+		$this->assertEquals($this->Form->request['_Token']['disabledFields'], $this->Form->disableField());
 
 		$this->Form->hidden('Addresses.id', array('value' => '123456'));
 		$this->Form->input('Addresses.title');
@@ -1283,12 +1284,52 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $result);
 	}
+
+/**
+ * test disableField
+ *
+ * @return void
+ */
+	public function testDisableFieldAddsToList() {
+		$this->Form->request['_Token'] = array(
+			'key' => 'testKey',
+			'disabledFields' => array()
+		);
+		$this->Form->create('Contact');
+		$this->Form->disableField('Contact.name');
+		$this->Form->text('Contact.name');
+
+		$this->assertEquals(array('Contact.name'), $this->Form->disableField());
+		$this->assertEquals(array(), $this->Form->fields);
+	}
+
+/**
+ * test disableField removing from fields array.
+ *
+ * @return void
+ */
+	public function testDisableFieldRemovingFromFields() {
+		$this->Form->request['_Token'] = array(
+			'key' => 'testKey',
+			'disabledFields' => array()
+		);
+		$this->Form->create('Contact');
+		$this->Form->hidden('Contact.id', array('value' => 1));
+		$this->Form->text('Contact.name');
+
+		$this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
+		$this->assertTrue(in_array('Contact.name', $this->Form->fields), 'Field should be secured.');
+
+		$this->Form->disableField('Contact.name');
+		$this->Form->disableField('Contact.id');
+		$this->assertEquals(array(), $this->Form->fields);
+	}
+
 /**
  * testPasswordValidation method
  *
  * test validation errors on password input.
  *
- * @access public
  * @return void
  */
 	public function testPasswordValidation() {
@@ -7127,4 +7168,5 @@ class FormHelperTest extends CakeTestCase {
 	public function testHtml5InputException() {
 		$this->Form->email();
 	}
+
 }

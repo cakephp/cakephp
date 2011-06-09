@@ -439,6 +439,29 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Add to or get the list of fields that are currently disabled.
+ * Disabled fields are not included in the field hash used by SecurityComponent
+ * disabling a field once its been added to the list of secured fields will remove
+ * it from the list of fields.
+ *
+ * @param string $name The dot separated name for the field.
+ * @return mixed Either null, or the list of fields.
+ */
+	public function disableField($name = null) {
+		if ($name === null) {
+			return $this->_disabledFields;
+		}
+		if (!in_array($name, $this->_disabledFields)) {
+			$this->_disabledFields[] = $name;
+		}
+		$index = array_search($name, $this->fields);
+		if ($index !== false) {
+			unset($this->fields[$index]);
+		}
+		unset($this->fields[$name]);
+	}
+
+/**
  * Determine which fields of a form should be used for hash.
  * Populates $this->fields
  *
@@ -472,9 +495,7 @@ class FormHelper extends AppHelper {
 				$this->fields[] = $field;
 			}
 		} else {
-			if (!in_array($field, $this->_disabledFields)) {
-				$this->_disabledFields[] = $field;
-			}
+			$this->disableField($field);
 		}
 	}
 
