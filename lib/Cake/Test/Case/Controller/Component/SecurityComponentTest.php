@@ -51,7 +51,6 @@ class SecurityTestController extends Controller {
  * name property
  *
  * @var string 'SecurityTest'
- * @access public
  */
 	public $name = 'SecurityTest';
 
@@ -59,7 +58,6 @@ class SecurityTestController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Session', 'TestSecurity');
 
@@ -67,7 +65,6 @@ class SecurityTestController extends Controller {
  * failed property
  *
  * @var bool false
- * @access public
  */
 	public $failed = false;
 
@@ -75,14 +72,12 @@ class SecurityTestController extends Controller {
  * Used for keeping track of headers in test
  *
  * @var array
- * @access public
  */
 	public $testHeaders = array();
 
 /**
  * fail method
  *
- * @access public
  * @return void
  */
 	public function fail() {
@@ -95,7 +90,6 @@ class SecurityTestController extends Controller {
  * @param mixed $option
  * @param mixed $code
  * @param mixed $exit
- * @access public
  * @return void
  */
 	public function redirect($url, $status = null, $exit = true) {
@@ -124,7 +118,6 @@ class SecurityComponentTest extends CakeTestCase {
  * Controller property
  *
  * @var SecurityTestController
- * @access public
  */
 	public $Controller;
 
@@ -132,14 +125,12 @@ class SecurityComponentTest extends CakeTestCase {
  * oldSalt property
  *
  * @var string
- * @access public
  */
 	public $oldSalt;
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -193,7 +184,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testStartup method
  *
- * @access public
  * @return void
  */
 	public function testStartup() {
@@ -206,7 +196,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequirePostFail method
  *
- * @access public
  * @return void
  */
 	public function testRequirePostFail() {
@@ -220,7 +209,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequirePostSucceed method
  *
- * @access public
  * @return void
  */
 	public function testRequirePostSucceed() {
@@ -234,7 +222,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireSecureFail method
  *
- * @access public
  * @return void
  */
 	public function testRequireSecureFail() {
@@ -249,7 +236,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireSecureSucceed method
  *
- * @access public
  * @return void
  */
 	public function testRequireSecureSucceed() {
@@ -264,7 +250,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireAuthFail method
  *
- * @access public
  * @return void
  */
 	public function testRequireAuthFail() {
@@ -295,7 +280,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireAuthSucceed method
  *
- * @access public
  * @return void
  */
 	public function testRequireAuthSucceed() {
@@ -323,7 +307,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequirePostSucceedWrongMethod method
  *
- * @access public
  * @return void
  */
 	public function testRequirePostSucceedWrongMethod() {
@@ -337,7 +320,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireGetFail method
  *
- * @access public
  * @return void
  */
 	public function testRequireGetFail() {
@@ -351,7 +333,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireGetSucceed method
  *
- * @access public
  * @return void
  */
 	public function testRequireGetSucceed() {
@@ -365,7 +346,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireGetSucceedWrongMethod method
  *
- * @access public
  * @return void
  */
 	public function testRequireGetSucceedWrongMethod() {
@@ -379,7 +359,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequirePutFail method
  *
- * @access public
  * @return void
  */
 	public function testRequirePutFail() {
@@ -393,7 +372,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequirePutSucceed method
  *
- * @access public
  * @return void
  */
 	public function testRequirePutSucceed() {
@@ -407,7 +385,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequirePutSucceedWrongMethod method
  *
- * @access public
  * @return void
  */
 	public function testRequirePutSucceedWrongMethod() {
@@ -421,7 +398,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireDeleteFail method
  *
- * @access public
  * @return void
  */
 	public function testRequireDeleteFail() {
@@ -435,7 +411,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireDeleteSucceed method
  *
- * @access public
  * @return void
  */
 	public function testRequireDeleteSucceed() {
@@ -449,7 +424,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRequireDeleteSucceedWrongMethod method
  *
- * @access public
  * @return void
  */
 	public function testRequireDeleteSucceedWrongMethod() {
@@ -463,7 +437,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * Simple hash validation test
  *
- * @access public
  * @return void
  */
 	public function testValidatePost() {
@@ -526,7 +499,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * Tests validation of checkbox arrays
  *
- * @access public
  * @return void
  */
 	public function testValidatePostArray() {
@@ -546,7 +518,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testValidatePostNoModel method
  *
- * @access public
  * @return void
  */
 	public function testValidatePostNoModel() {
@@ -568,7 +539,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testValidatePostSimple method
  *
- * @access public
  * @return void
  */
 	public function testValidatePostSimple() {
@@ -590,7 +560,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * Tests hash validation for multiple records, including locked fields
  *
- * @access public
  * @return void
  */
 	public function testValidatePostComplex() {
@@ -666,7 +635,6 @@ class SecurityComponentTest extends CakeTestCase {
  * First block tests un-checked checkbox
  * Second block tests checked checkbox
  *
- * @access public
  * @return void
  */
 	public function testValidatePostCheckbox() {
@@ -710,7 +678,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testValidatePostHidden method
  *
- * @access public
  * @return void
  */
 	public function testValidatePostHidden() {
@@ -733,7 +700,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testValidatePostWithDisabledFields method
  *
- * @access public
  * @return void
  */
 	public function testValidatePostWithDisabledFields() {
@@ -755,9 +721,85 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test validating post data with posted disabled fields.
+ *
+ * @return void
+ */
+	public function testValidatePostDisabledFieldsInData() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->request->params['_Token']['key'];
+		$disabled = 'Model.username';
+		$fields = array('Model.hidden', 'Model.password');
+		$fields = urlencode(Security::hash(serialize($fields) . $disabled . Configure::read('Security.salt')));
+
+		$this->Controller->request->data = array(
+			'Model' => array(
+				'username' => 'mark',
+				'password' => 'sekret',
+				'hidden' => '0'
+			),
+			'_Token' => compact('fields', 'key', 'disabled')
+		);
+
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+	}
+
+/**
+ * test that missing 'disabled' input causes failure
+ *
+ * @return void
+ */
+	public function testValidatePostFailNoDisabled() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->request->params['_Token']['key'];
+		$fields = array('Model.hidden', 'Model.password', 'Model.username');
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+
+		$this->Controller->request->data = array(
+			'Model' => array(
+				'username' => 'mark',
+				'password' => 'sekret',
+				'hidden' => '0'
+			),
+			'_Token' => compact('fields', 'key')
+		);
+
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result);
+	}
+
+/**
+ * Test that validatePost fails when disabled fields are changed.
+ *
+ * @return
+ */
+	public function testValidatePostFailDisabledFieldTampering() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->request->params['_Token']['key'];
+		$disabled = 'Model.username';
+		$fields = array('Model.hidden', 'Model.password');
+		$fields = urlencode(Security::hash(serialize($fields) . $disabled . Configure::read('Security.salt')));
+
+		// Tamper the values.
+		$disabled = 'Model.username|Model.password';
+
+		$this->Controller->request->data = array(
+			'Model' => array(
+				'username' => 'mark',
+				'password' => 'sekret',
+				'hidden' => '0'
+			),
+			'_Token' => compact('fields', 'key', 'disabled')
+		);
+
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result);
+	}
+
+/**
  * testValidateHiddenMultipleModel method
  *
- * @access public
  * @return void
  */
 	public function testValidateHiddenMultipleModel() {
@@ -779,7 +821,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testValidateHasManyModel method
  *
- * @access public
  * @return void
  */
 	public function testValidateHasManyModel() {
@@ -810,7 +851,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testValidateHasManyRecordsPass method
  *
- * @access public
  * @return void
  */
 	public function testValidateHasManyRecordsPass() {
@@ -855,7 +895,6 @@ class SecurityComponentTest extends CakeTestCase {
  *
  * validatePost should fail, hidden fields have been changed.
  *
- * @access public
  * @return void
  */
 	public function testValidateHasManyRecordsFail() {
@@ -898,7 +937,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testFormDisabledFields method
  *
- * @access public
  * @return void
  */
 	public function testFormDisabledFields() {
@@ -930,7 +968,6 @@ class SecurityComponentTest extends CakeTestCase {
 /**
  * testRadio method
  *
- * @access public
  * @return void
  */
 	public function testRadio() {
