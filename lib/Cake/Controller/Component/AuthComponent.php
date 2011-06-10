@@ -329,7 +329,7 @@ class AuthComponent extends Component {
 		}
 
 		$this->flash($this->authError);
-		$controller->redirect($controller->referer(), null, true);
+		$controller->redirect($controller->referer('/'), null, true);
 		return false;
 	}
 
