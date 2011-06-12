@@ -50,11 +50,11 @@ endif;
 		$settings = Cache::settings();
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for caching. To change the config edit APP/config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for caching. To change the config edit APP/Config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/config/core.php');
+				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/core.php');
 			echo '</span>';
 		endif;
 	?>
@@ -71,7 +71,7 @@ endif;
 			echo '<span class="notice">';
 				echo __d('cake_dev', 'Your database configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename config/database.php.default to config/database.php');
+				echo __d('cake_dev', 'Rename Config/database.php.default to Config/database.php');
 			echo '</span>';
 		endif;
 	?>
@@ -103,17 +103,17 @@ if (isset($filePresent)):
 	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';
-		__('PCRE has not been compiled with Unicode support.');
+		__d('cake_dev', 'PCRE has not been compiled with Unicode support.');
 		echo '<br/>';
-		__('Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+		__d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
 		echo '</span></p>';
 	}
 ?>
 <h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
 <p>
 <?php
-echo __d('cake_dev', 'To change the content of this page, create: APP/views/pages/home.ctp.<br />
-To change its layout, create: APP/views/layouts/default.ctp.<br />
+echo __d('cake_dev', 'To change the content of this page, create: APP/View/Pages/home.ctp.<br />
+To change its layout, create: APP/View/Layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: APP/webroot/css.');
 ?>
 </p>
