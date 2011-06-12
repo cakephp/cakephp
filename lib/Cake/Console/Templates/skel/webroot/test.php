@@ -45,11 +45,11 @@ ini_set('display_errors', 1);
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
 /**
- * The absolute path to the "cake" directory, WITHOUT a trailing DS.
+ * The absolute path to the "Cake" directory, WITHOUT a trailing DS.
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT);
+		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 	}
 
 /**
@@ -72,7 +72,7 @@ if (!include(CORE_PATH . 'Cake' . DS . 'bootstrap.php')) {
 }
 
 if (Configure::read('debug') < 1) {
-	die(__('Debug setting does not allow access to this url.'));
+	die(__d('cake', 'Debug setting does not allow access to this url.'));
 }
 
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
