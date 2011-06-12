@@ -1,12 +1,12 @@
-;<?php die() ?>
+;<?php exit() ?>
 ; SVN FILE: $Id$
 ;/**
-; * ACL configuration
+; * ACL Configuration
 ; *
 ; *
 ; * PHP 5
 ; *
-; * CakePHP(tm) :  Rapid Development Framework http://cakephp.org
+; * CakePHP(tm) : Rapid Development Framework http://www.cakephp.org/
 ; * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
 ; *
 ; *  Licensed under The MIT License
