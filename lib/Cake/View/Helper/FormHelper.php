@@ -66,7 +66,7 @@ class FormHelper extends AppHelper {
 
 /**
  * Constant used internally to skip the securing process, 
- * and neither add the field to the hash or to the disabled fields.
+ * and neither add the field to the hash or to the unlocked fields.
  *
  * @var string
  */
@@ -104,7 +104,7 @@ class FormHelper extends AppHelper {
  * @see SecurityComponent::validatePost()
  * @var array
  */
-	protected $_disabledFields = array();
+	protected $_unlockedFields = array();
 	
 /**
  * Introspects model information and extracts information related
@@ -339,9 +339,9 @@ class FormHelper extends AppHelper {
 				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand())
 			);
 
-			if (!empty($this->request['_Token']['disabledFields'])) {
-				foreach ((array)$this->request['_Token']['disabledFields'] as $disabled) {
-					$this->_disabledFields[] = $disabled;
+			if (!empty($this->request['_Token']['unlockedFields'])) {
+				foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
+					$this->_unlockedFields[] = $unlocked;
 				}
 			}
 		}
@@ -417,7 +417,7 @@ class FormHelper extends AppHelper {
 			return;
 		}
 		$locked = array();
-		$disabledFields = $this->_disabledFields;
+		$unlockedFields = $this->_unlockedFields;
 
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
@@ -426,41 +426,41 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		sort($disabledFields, SORT_STRING);
+		sort($unlockedFields, SORT_STRING);
 		sort($fields, SORT_STRING);
 		ksort($locked, SORT_STRING);
 		$fields += $locked;
 
 		$locked = implode(array_keys($locked), '|');
-		$disabled = implode($disabledFields, '|');
-		$fields = Security::hash(serialize($fields) . $disabled . Configure::read('Security.salt'));
+		$unlocked = implode($unlockedFields, '|');
+		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'));
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand()
 		));
-		$out .= $this->hidden('_Token.disabled', array(
-			'value' => urlencode($disabled),
-			'id' => 'TokenDisabled' . mt_rand()
+		$out .= $this->hidden('_Token.unlocked', array(
+			'value' => urlencode($unlocked),
+			'id' => 'TokenUnlocked' . mt_rand()
 		));
 		return $this->Html->useTag('block', ' style="display:none;"', $out);
 	}
 
 /**
- * Add to or get the list of fields that are currently disabled.
- * Disabled fields are not included in the field hash used by SecurityComponent
- * disabling a field once its been added to the list of secured fields will remove
+ * Add to or get the list of fields that are currently unlocked.
+ * Unlocked fields are not included in the field hash used by SecurityComponent
+ * unlocking a field once its been added to the list of secured fields will remove
  * it from the list of fields.
  *
  * @param string $name The dot separated name for the field.
  * @return mixed Either null, or the list of fields.
  */
-	public function disableField($name = null) {
+	public function unlockField($name = null) {
 		if ($name === null) {
-			return $this->_disabledFields;
+			return $this->_unlockedFields;
 		}
-		if (!in_array($name, $this->_disabledFields)) {
-			$this->_disabledFields[] = $name;
+		if (!in_array($name, $this->_unlockedFields)) {
+			$this->_unlockedFields[] = $name;
 		}
 		$index = array_search($name, $this->fields);
 		if ($index !== false) {
@@ -474,7 +474,7 @@ class FormHelper extends AppHelper {
  * Populates $this->fields
  *
  * @param boolean $lock Whether this field should be part of the validation
- *     or excluded as part of the disabledFields.
+ *     or excluded as part of the unlockedFields.
  * @param mixed $field Reference to field to be secured
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
@@ -486,9 +486,9 @@ class FormHelper extends AppHelper {
 			$field = Set::filter(explode('.', $field), true);
 		}
 
-		foreach ($this->_disabledFields as $disableField) {
-			$disableParts = explode('.', $disableField);
-			if (array_values(array_intersect($field, $disableParts)) === $disableParts) {
+		foreach ($this->_unlockedFields as $unlockField) {
+			$unlockParts = explode('.', $unlockField);
+			if (array_values(array_intersect($field, $unlockParts)) === $unlockParts) {
 				return;
 			}
 		}
@@ -503,7 +503,7 @@ class FormHelper extends AppHelper {
 				$this->fields[] = $field;
 			}
 		} else {
-			$this->disableField($field);
+			$this->unlockField($field);
 		}
 	}
 
