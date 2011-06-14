@@ -23,7 +23,7 @@
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s in file: %s', '<em>' . $class . '</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'Create the class %s in file: %s', '<em>' . $class . '</em>', APP_DIR . DS . 'Controller' . DS . 'Component' . DS . Inflector::camelize($file)); ?>
 </p>
 <pre>
 &lt;?php
@@ -34,7 +34,7 @@ class <?php echo $class;?> extends Component {<br />
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_component_file.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_component_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>
