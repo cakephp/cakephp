@@ -19,11 +19,11 @@
 <h2><?php echo __d('cake_dev', 'Missing Behavior File'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The Behavior file %s can not be found or does not exist.', APP_DIR . DS . 'Model' . DS . 'Behavior' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'The Behavior file %s can not be found or does not exist.', APP_DIR . DS . 'Model' . DS . 'Behavior' . DS . Inflector::camelize($file)); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'Model' . DS . 'Behavior' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'Model' . DS . 'Behavior' . DS . Inflector::camelize($file)); ?>
 </p>
 <pre>
 &lt;?php

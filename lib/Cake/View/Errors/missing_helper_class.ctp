@@ -23,7 +23,7 @@
 </p>
 <p  class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'View' . DS . 'Helper' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'View' . DS . 'Helper' . DS . Inflector::camelize($file)); ?>
 </p>
 <pre>
 &lt;?php
