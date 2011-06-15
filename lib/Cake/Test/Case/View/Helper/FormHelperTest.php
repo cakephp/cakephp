@@ -830,10 +830,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => urlencode($expected), 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -893,10 +897,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -935,10 +943,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => 'cancel%7Csave', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -982,10 +994,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1001,9 +1017,9 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testFormSecurityMultipleInputDisabledFields() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array(
+		$this->Form->request->params['_Token'] = array(
 			'key' => $key,
-			'disabledFields' => array('first_name', 'address')
+			'unlockedFields' => array('first_name', 'address')
 		);
 		$this->Form->create();
 
@@ -1023,14 +1039,18 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.1.phone');
 
 		$result = $this->Form->secure($this->Form->fields);
-		$hash = '774df31936dc850b7d8a5277dc0b890123788b09%3AAddresses.0.id%7CAddresses.1.id';
+		$hash = '629b6536dcece48aa41a117045628ce602ccbbb2%3AAddresses.0.id%7CAddresses.1.id';
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1044,13 +1064,14 @@ class FormHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	public function testFormSecurityInputDisabledFields() {
+	public function testFormSecurityInputUnlockedFields() {
 		$key = 'testKey';
 		$this->Form->request['_Token'] = array(
 			'key' => $key,
-			'disabledFields' => array('first_name', 'address')
+			'unlockedFields' => array('first_name', 'address')
 		);
 		$this->Form->create();
+		$this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
 
 		$this->Form->hidden('Addresses.id', array('value' => '123456'));
 		$this->Form->input('Addresses.title');
@@ -1069,13 +1090,17 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->secure($expected);
 
-		$hash = '449b7e889128e8e52c5e81d19df68f5346571492%3AAddresses.id';
+		$hash = '2981c38990f3f6ba935e6561dc77277966fabd6d%3AAddresses.id';
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			'input' => array(
+			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
-			),
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1197,6 +1222,10 @@ class FormHelperTest extends CakeTestCase {
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1283,12 +1312,52 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $result);
 	}
+
+/**
+ * test disableField
+ *
+ * @return void
+ */
+	public function testUnlockFieldAddsToList() {
+		$this->Form->request['_Token'] = array(
+			'key' => 'testKey',
+			'unlockedFields' => array()
+		);
+		$this->Form->create('Contact');
+		$this->Form->unlockField('Contact.name');
+		$this->Form->text('Contact.name');
+
+		$this->assertEquals(array('Contact.name'), $this->Form->unlockField());
+		$this->assertEquals(array(), $this->Form->fields);
+	}
+
+/**
+ * test unlockField removing from fields array.
+ *
+ * @return void
+ */
+	public function testUnlockFieldRemovingFromFields() {
+		$this->Form->request['_Token'] = array(
+			'key' => 'testKey',
+			'unlockedFields' => array()
+		);
+		$this->Form->create('Contact');
+		$this->Form->hidden('Contact.id', array('value' => 1));
+		$this->Form->text('Contact.name');
+
+		$this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
+		$this->assertTrue(in_array('Contact.name', $this->Form->fields), 'Field should be secured.');
+
+		$this->Form->unlockField('Contact.name');
+		$this->Form->unlockField('Contact.id');
+		$this->assertEquals(array(), $this->Form->fields);
+	}
+
 /**
  * testPasswordValidation method
  *
  * test validation errors on password input.
  *
- * @access public
  * @return void
  */
 	public function testPasswordValidation() {
@@ -5504,6 +5573,20 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that button() makes unlocked fields by default.
+ *
+ * @return void
+ */
+	public function testButtonUnlockedByDefault() {
+		$this->Form->request->params['_Token']['key'] = 'secured';
+		$this->Form->button('Save', array('name' => 'save'));
+		$this->Form->button('Clear');
+
+		$result = $this->Form->unlockField();
+		$this->assertEquals(array('save'), $result);
+	}
+
+/**
  * testPostButton method
  *
  * @return void
@@ -5740,6 +5823,21 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Submit buttons should be unlocked by default as there could be multiples, and only one will
+ * be submitted at a time.
+ *
+ * @return void
+ */
+	public function testSubmitUnlockedByDefault() {
+		$this->Form->request->params['_Token']['key'] = 'secured';
+		$this->Form->submit('Go go');
+		$this->Form->submit('Save', array('name' => 'save'));
+
+		$result = $this->Form->unlockField();
+		$this->assertEquals(array('save'), $result, 'Only submits with name attributes should be unlocked.');
 	}
 
 /**
@@ -7127,4 +7225,5 @@ class FormHelperTest extends CakeTestCase {
 	public function testHtml5InputException() {
 		$this->Form->email();
 	}
+
 }

@@ -19,11 +19,11 @@
 <h2><?php echo __d('cake_dev', 'Missing Behavior File'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The Behavior file %s can not be found or does not exist.', APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'The Behavior file %s can not be found or does not exist.', APP_DIR . DS . 'Model' . DS . 'Behavior' . DS . Inflector::camelize($file)); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'Model' . DS . 'Behavior' . DS . Inflector::camelize($file)); ?>
 </p>
 <pre>
 &lt;?php
@@ -34,7 +34,7 @@ class <?php echo $class;?> extends ModelBehavior {
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_behavior_file.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_behavior_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

@@ -61,9 +61,16 @@ class FormHelper extends AppHelper {
  * List of fields created, used with secure forms.
  *
  * @var array
- * @access public
  */
 	public $fields = array();
+
+/**
+ * Constant used internally to skip the securing process, 
+ * and neither add the field to the hash or to the unlocked fields.
+ *
+ * @var string
+ */
+	const SECURE_SKIP = 'skip';
 
 /**
  * Defines the type of form being created.  Set by FormHelper::create().
@@ -89,7 +96,16 @@ class FormHelper extends AppHelper {
  * @access protected
  */
 	protected $_inputDefaults = array();
-
+/**
+ * An array of fieldnames that have been excluded from
+ * the Token hash used by SecurityComponent's validatePost method
+ *
+ * @see FormHelper::__secure()
+ * @see SecurityComponent::validatePost()
+ * @var array
+ */
+	protected $_unlockedFields = array();
+	
 /**
  * Introspects model information and extracts information related
  * to validation, field length and field type. Appends information into
@@ -318,10 +334,16 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		if (isset($this->request->params['_Token']) && !empty($this->request->params['_Token'])) {
+		if (!empty($this->request->params['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
 				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand())
 			);
+
+			if (!empty($this->request['_Token']['unlockedFields'])) {
+				foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
+					$this->_unlockedFields[] = $unlocked;
+				}
+			}
 		}
 
 		if (!empty($append)) {
@@ -395,6 +417,7 @@ class FormHelper extends AppHelper {
 			return;
 		}
 		$locked = array();
+		$unlockedFields = $this->_unlockedFields;
 
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
@@ -402,50 +425,85 @@ class FormHelper extends AppHelper {
 				unset($fields[$key]);
 			}
 		}
+
+		sort($unlockedFields, SORT_STRING);
 		sort($fields, SORT_STRING);
 		ksort($locked, SORT_STRING);
 		$fields += $locked;
 
-		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
 		$locked = implode(array_keys($locked), '|');
+		$unlocked = implode($unlockedFields, '|');
+		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'));
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand()
 		));
+		$out .= $this->hidden('_Token.unlocked', array(
+			'value' => urlencode($unlocked),
+			'id' => 'TokenUnlocked' . mt_rand()
+		));
 		return $this->Html->useTag('block', ' style="display:none;"', $out);
+	}
+
+/**
+ * Add to or get the list of fields that are currently unlocked.
+ * Unlocked fields are not included in the field hash used by SecurityComponent
+ * unlocking a field once its been added to the list of secured fields will remove
+ * it from the list of fields.
+ *
+ * @param string $name The dot separated name for the field.
+ * @return mixed Either null, or the list of fields.
+ */
+	public function unlockField($name = null) {
+		if ($name === null) {
+			return $this->_unlockedFields;
+		}
+		if (!in_array($name, $this->_unlockedFields)) {
+			$this->_unlockedFields[] = $name;
+		}
+		$index = array_search($name, $this->fields);
+		if ($index !== false) {
+			unset($this->fields[$index]);
+		}
+		unset($this->fields[$name]);
 	}
 
 /**
  * Determine which fields of a form should be used for hash.
  * Populates $this->fields
  *
+ * @param boolean $lock Whether this field should be part of the validation
+ *     or excluded as part of the unlockedFields.
  * @param mixed $field Reference to field to be secured
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
- * @access private
  */
-	function __secure($field = null, $value = null) {
+	protected function __secure($lock, $field = null, $value = null) {
 		if (!$field) {
 			$field = $this->_View->entity();
 		} elseif (is_string($field)) {
 			$field = Set::filter(explode('.', $field), true);
 		}
 
-		if (!empty($this->request['_Token']['disabledFields'])) {
-			foreach ((array)$this->request['_Token']['disabledFields'] as $disabled) {
-				$disabled = explode('.', $disabled);
-				if (array_values(array_intersect($field, $disabled)) === $disabled) {
-					return;
-				}
+		foreach ($this->_unlockedFields as $unlockField) {
+			$unlockParts = explode('.', $unlockField);
+			if (array_values(array_intersect($field, $unlockParts)) === $unlockParts) {
+				return;
 			}
 		}
+
 		$field = implode('.', $field);
-		if (!in_array($field, $this->fields)) {
-			if ($value !== null) {
-				return $this->fields[$field] = $value;
+
+		if ($lock) {
+			if (!in_array($field, $this->fields)) {
+				if ($value !== null) {
+					return $this->fields[$field] = $value;
+				}
+				$this->fields[] = $field;
 			}
-			$this->fields[] = $field;
+		} else {
+			$this->unlockField($field);
 		}
 	}
 
@@ -1236,12 +1294,12 @@ class FormHelper extends AppHelper {
 			unset($options['secure']);
 		}
 		$options = $this->_initInputField($fieldName, array_merge(
-			$options, array('secure' => false)
+			$options, array('secure' => self::SECURE_SKIP)
 		));
 		$model = $this->model();
 
 		if ($fieldName !== '_method' && $model !== '_Token' && $secure) {
-			$this->__secure(null, '' . $options['value']);
+			$this->__secure(true, null, '' . $options['value']);
 		}
 
 		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '')));
@@ -1257,12 +1315,15 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1424/file
  */
 	public function file($fieldName, $options = array()) {
-		$options = array_merge($options, array('secure' => false));
+		$options += array('secure' => true);
+		$secure = $options['secure'];
+		$options['secure'] = self::SECURE_SKIP;
+
 		$options = $this->_initInputField($fieldName, $options);
 		$field = $this->_View->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
-			$this->__secure(array_merge($field, array($suffix)));
+			$this->__secure($secure, array_merge($field, array($suffix)));
 		}
 
 		return $this->Html->useTag('file', $options['name'], array_diff_key($options, array('name' => '')));
@@ -1283,9 +1344,12 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1415/button
  */
 	public function button($title, $options = array()) {
-		$options += array('type' => 'submit', 'escape' => false);
+		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
 		if ($options['escape']) {
 			$title = h($title);
+		}
+		if (isset($options['name'])) {
+			$this->__secure($options['secure'], $options['name']);
 		}
 		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
 	}
@@ -1409,7 +1473,7 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-		$options += array('type' => 'submit', 'before' => null, 'after' => null);
+		$options += array('type' => 'submit', 'before' => null, 'after' => null, 'secure' => false);
 		$divOptions = array('tag' => 'div');
 
 		if ($div === true) {
@@ -1421,6 +1485,11 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
+
+		if (isset($options['name'])) {
+			$this->__secure($options['secure'], $options['name']);
+		}
+		unset($options['secure']);
 
 		$before = $options['before'];
 		$after = $options['after'];
@@ -1506,7 +1575,7 @@ class FormHelper extends AppHelper {
 		$attributes += array(
 			'class' => null,
 			'escape' => true,
-			'secure' => null,
+			'secure' => true,
 			'empty' => '',
 			'showParents' => false,
 			'hiddenField' => true
@@ -1521,7 +1590,7 @@ class FormHelper extends AppHelper {
 		$id = $this->_extractOption('id', $attributes);
 
 		$attributes = $this->_initInputField($fieldName, array_merge(
-			(array)$attributes, array('secure' => false)
+			(array)$attributes, array('secure' => self::SECURE_SKIP)
 		));
 
 		if (is_string($options) && isset($this->__options[$options])) {
@@ -1556,7 +1625,7 @@ class FormHelper extends AppHelper {
 
 		if (!empty($tag) || isset($template)) {
 			if (!isset($secure) || $secure == true) {
-				$this->__secure();
+				$this->__secure(true);
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
 		}
@@ -2289,9 +2358,8 @@ class FormHelper extends AppHelper {
 		}
 
 		$result = parent::_initInputField($field, $options);
-
-		if ($secure) {
-			$this->__secure($fieldName);
+		if ($secure !== self::SECURE_SKIP) {
+			$this->__secure($secure, $fieldName);
 		}
 		return $result;
 	}

@@ -19,11 +19,11 @@
 <h2><?php echo __d('cake_dev', 'Missing Helper File'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The helper file %s can not be found or does not exist.', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'The helper file %s can not be found or does not exist.', APP_DIR . DS . 'View' . DS . 'Helper' . DS . Inflector::camelize($file)); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
+	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'View' . DS . 'Helper' . DS . Inflector::camelize($file)); ?>
 </p>
 <pre>
 &lt;?php
@@ -34,7 +34,7 @@ class <?php echo $class;?> extends AppHelper {
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_helper_file.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_helper_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

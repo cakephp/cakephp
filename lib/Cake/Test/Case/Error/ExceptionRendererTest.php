@@ -508,55 +508,55 @@ class ExceptionRendererTest extends CakeTestCase {
 				500
 			),
 			array(
-				new MissingHelperFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper')),
+				new MissingHelperFileException(array('file' => 'MyCustomHelper.php', 'class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper File<\/h2>/',
 					'/Create the class below in file:/',
-					'/(\/|\\\)my_custom.php/'
+					'/(\/|\\\)MyCustomHelper.php/'
 				),
 				500
 			),
 			array(
-				new MissingHelperClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper')),
+				new MissingHelperClassException(array('file' => 'MyCustomHelper.php', 'class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper Class<\/h2>/',
 					'/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./',
-					'/(\/|\\\)my_custom.php/',
+					'/(\/|\\\)MyCustomHelper.php/',
 				),
 				500
 			),
 			array(
-				new MissingBehaviorFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior')),
+				new MissingBehaviorFileException(array('file' => 'MyCustomBehavior.php', 'class' => 'MyCustomBehavior')),
 				array(
 					'/<h2>Missing Behavior File<\/h2>/',
 					'/Create the class below in file:/',
-					'/(\/|\\\)my_custom.php/',
+					'/(\/|\\\)MyCustomBehavior.php/',
 				),
 				500
 			),
 			array(
-				new MissingBehaviorClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior')),
+				new MissingBehaviorClassException(array('file' => 'MyCustomBehavior.php', 'class' => 'MyCustomBehavior')),
 				array(
 					'/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./',
-					'/(\/|\\\)my_custom.php/'
+					'/(\/|\\\)MyCustomBehavior.php/'
 				),
 				500
 			),
 			array(
-				new MissingComponentFileException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent')),
+				new MissingComponentFileException(array('file' => 'SideboxComponent.php', 'class' => 'SideboxComponent')),
 				array(
 					'/<h2>Missing Component File<\/h2>/',
 					'/Create the class <em>SideboxComponent<\/em> in file:/',
-					'/(\/|\\\)sidebox.php/'
+					'/(\/|\\\)SideboxComponent.php/'
 				),
 				500
 			),
 			array(
-				new MissingComponentClassException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent')),
+				new MissingComponentClassException(array('file' => 'SideboxComponent.php', 'class' => 'SideboxComponent')),
 				array(
 					'/<h2>Missing Component Class<\/h2>/',
 					'/Create the class <em>SideboxComponent<\/em> in file:/',
-					'/(\/|\\\)sidebox.php/'
+					'/(\/|\\\)SideboxComponent.php/'
 				),
 				500
 			),
