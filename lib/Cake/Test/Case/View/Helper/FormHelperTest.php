@@ -949,7 +949,7 @@ class FormHelperTest extends CakeTestCase {
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+				'value' => 'cancel%7Csave', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
 		);
@@ -5573,6 +5573,20 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that button() makes unlocked fields by default.
+ *
+ * @return void
+ */
+	public function testButtonUnlockedByDefault() {
+		$this->Form->request->params['_Token']['key'] = 'secured';
+		$this->Form->button('Save', array('name' => 'save'));
+		$this->Form->button('Clear');
+
+		$result = $this->Form->unlockField();
+		$this->assertEquals(array('save'), $result);
+	}
+
+/**
  * testPostButton method
  *
  * @return void
@@ -5809,6 +5823,21 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Submit buttons should be unlocked by default as there could be multiples, and only one will
+ * be submitted at a time.
+ *
+ * @return void
+ */
+	public function testSubmitUnlockedByDefault() {
+		$this->Form->request->params['_Token']['key'] = 'secured';
+		$this->Form->submit('Go go');
+		$this->Form->submit('Save', array('name' => 'save'));
+
+		$result = $this->Form->unlockField();
+		$this->assertEquals(array('save'), $result, 'Only submits with name attributes should be unlocked.');
 	}
 
 /**

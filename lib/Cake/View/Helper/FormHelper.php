@@ -1344,9 +1344,12 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1415/button
  */
 	public function button($title, $options = array()) {
-		$options += array('type' => 'submit', 'escape' => false);
+		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
 		if ($options['escape']) {
 			$title = h($title);
+		}
+		if (isset($options['name'])) {
+			$this->__secure($options['secure'], $options['name']);
 		}
 		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
 	}
@@ -1470,7 +1473,7 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-		$options += array('type' => 'submit', 'before' => null, 'after' => null);
+		$options += array('type' => 'submit', 'before' => null, 'after' => null, 'secure' => false);
 		$divOptions = array('tag' => 'div');
 
 		if ($div === true) {
@@ -1482,6 +1485,11 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
+
+		if (isset($options['name'])) {
+			$this->__secure($options['secure'], $options['name']);
+		}
+		unset($options['secure']);
 
 		$before = $options['before'];
 		$after = $options['after'];
