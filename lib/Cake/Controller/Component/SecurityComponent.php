@@ -500,7 +500,7 @@ class SecurityComponent extends Component {
 			'key' => $authKey,
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
-			'disabledFields' => $this->disabledFields,
+			'unlockedFields' => array_merge($this->disabledFields, $this->unlockedFields),
 			'csrfTokens' => array()
 		);
 
@@ -521,7 +521,7 @@ class SecurityComponent extends Component {
 		$this->Session->write('_Token', $token);
 		$controller->request->params['_Token'] = array(
 			'key' => $token['key'],
-			'disabledFields' => $token['disabledFields']
+			'unlockedFields' => $token['unlockedFields']
 		);
 		return true;
 	}
