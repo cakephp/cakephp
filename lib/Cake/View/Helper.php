@@ -197,7 +197,7 @@ class Helper extends Object {
 	public function webroot($file) {
 		$asset = explode('?', $file);
 		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
-		$webPath = "{$this->request->webroot}" . $asset[0];
+		$webPath = isset($this->request->webroot) ? "{$this->request->webroot}" . $asset[0] : $asset[0];
 		$file = $asset[0];
 
 		if (!empty($this->theme)) {

@@ -266,7 +266,7 @@ class AuthComponent extends Component {
 		}
 
 		$methods = array_flip($controller->methods);
-		$action = $controller->request->params['action'];
+		$action = isset($controller->request->params['action']) ? $controller->request->params['action'] : null;
 
 		$isMissingAction = (
 			$controller->scaffold === false &&
@@ -289,7 +289,6 @@ class AuthComponent extends Component {
 		}
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
-
 		$allowedActions = $this->allowedActions;
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
