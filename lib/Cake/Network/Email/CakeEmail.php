@@ -1061,7 +1061,7 @@ class CakeEmail {
 		$this->_htmlMessage = '';
 		$this->_message = '';
 		$this->_emailFormat = 'text';
-		$this->_transportName = 'mail';
+		$this->_transportName = 'Mail';
 		$this->_transportClass = null;
 		$this->_attachments = array();
 		$this->_config = 'default';
