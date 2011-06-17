@@ -213,6 +213,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testDumpWithFileWriting() {
 		$this->Shell->params = array(
 			'name' => 'i18n',
+			'connection' => 'test',
 			'write' => TMP . 'tests' . DS . 'i18n.sql'
 		);
 		$this->Shell->expects($this->once())->method('_stop');

@@ -20,7 +20,6 @@
  */
 
 App::uses('DataSource', 'Model/Datasource');
-config('database');
 
 /**
  * Manages loaded instances of DataSource objects
@@ -54,7 +53,7 @@ class ConnectionManager {
 	protected static $_connectionsEnum = array();
 
 /**
- * Indicates if the init code for this class has alredy been executed
+ * Indicates if the init code for this class has already been executed
  *
  * @var boolean
  */
@@ -107,6 +106,8 @@ class ConnectionManager {
 
 /**
  * Gets the list of available DataSource connections
+ * This will only return the datasources instantiated by this manager
+ * It differs from enumConnectionObjects, since the latter will return all configured connections
  *
  * @return array List of available connections
  */
@@ -133,7 +134,7 @@ class ConnectionManager {
 				return $name;
 			}
 		}
-		return '';
+		return null;
 	}
 
 /**

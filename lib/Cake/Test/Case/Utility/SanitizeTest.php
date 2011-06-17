@@ -170,12 +170,12 @@ class SanitizeTest extends CakeTestCase {
 
 		$array = array(array('\\$', array('key' => 'test & "quote" \'other\' ;.$ \\$ symbol.' . "\r" . 'another line')));
 		$expected = array(array('$', array('key' => 'test & "quote" \'other\' ;.$ $ symbol.another line')));
-		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false));
+		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false, 'connection' => 'test'));
 		$this->assertEqual($expected, $result);
 
 		$string = '';
 		$expected = '';
-		$result = Sanitize::clean($string);
+		$result = Sanitize::clean($string, array('connection' => 'test'));
 		$this->assertEqual($string, $expected);
 
 		$data = array(
@@ -198,7 +198,7 @@ class SanitizeTest extends CakeTestCase {
 				)
 			)
 		);
-		$result = Sanitize::clean($data);
+		$result = Sanitize::clean($data, array('connection' => 'test'));
 		$this->assertEqual($result, $data);
 	}
 
@@ -463,57 +463,6 @@ HTML;
 		$string = '<h2 onclick="alert(\'evil\'); onmouseover="badness()">Important</h2><p>Additional information here <a href="/about"><img src="/img/test.png" /></a>. Read even more here</p>';
 		$expected = 'Important<p>Additional information here . Read even more here</p>';
 		$result = Sanitize::stripTags($string, 'h2', 'a', 'img');
-		$this->assertEqual($expected, $result);
-	}
-
-/**
- * testFormatColumns method
- *
- * @access public
- * @return void
- */
-	public function testFormatColumns() {
-		$this->autoFixtures = true;
-		$this->fixtureManager->load($this);
-		$this->loadFixtures('DataTest', 'Article');
-
-		$this->DataTest = new SanitizeDataTest(array('alias' => 'DataTest'));
-		$data = array('DataTest' => array(
-						'id' => 'z',
-						'count' => '12a',
-						'float' => '2.31456',
-						'updated' => '2008-01-01'
-						)
-					);
-		$this->DataTest->set($data);
-		$expected = array('DataTest' => array(
-			'id' => '0',
-			'count' => '12',
-			'float' => 2.31456,
-			'updated' => '2008-01-01 00:00:00',
-		));
-		Sanitize::formatColumns($this->DataTest);
-		$result = $this->DataTest->data;
-		$this->assertEqual($expected, $result);
-
-		$this->Article = new SanitizeArticle(array('alias' => 'Article'));
-		$data = array('Article' => array(
-			'id' => 'ZB',
-			'user_id' => '12',
-			'title' => 'title of article',
-			'body' => 'body text',
-			'published' => 'QQQQQQQ',
-		));
-		$this->Article->set($data);
-		$expected = array('Article' => array(
-			'id' => '0',
-			'user_id' => '12',
-			'title' => 'title of article',
-			'body' => 'body text',
-			'published' => 'QQQQQQQ',
-		));
-		Sanitize::formatColumns($this->Article);
-		$result = $this->Article->data;
 		$this->assertEqual($expected, $result);
 	}
 }
