@@ -33,7 +33,6 @@ class DebugTransportTest extends CakeTestCase {
  */
 	public function setUp() {
 		$this->DebugTransport = new DebugTransport();
-		$this->DebugTransport->config();
 	}
 
 /**
