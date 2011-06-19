@@ -617,6 +617,29 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderWithHelpers method
+ *
+ * @return void
+ */
+	public function testSendRenderWithHelpers() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		DebugTransport::$includeAddresses = true;
+
+		$timestamp = time();
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('custom_helper', 'default');
+		$this->CakeEmail->viewVars(array('time' => $timestamp));
+		$this->CakeEmail->helpers(array('Time'));
+		$result = $this->CakeEmail->send();
+
+		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
+	}
+
+/**
  * testSendRenderPlugin method
  *
  * @return void

@@ -182,6 +182,13 @@ class CakeEmail {
 	protected $_viewVars = array();
 
 /**
+ * Helpers to be used in the render
+ *
+ * @var array
+ */
+	protected $_helpers = array();
+
+/**
  * Text message
  *
  * @var string
@@ -716,6 +723,20 @@ class CakeEmail {
 	}
 
 /**
+ * Helpers to be used in render
+ *
+ * @param array $helpers
+ * @return mixed
+ */
+	public function helpers($helpers = null) {
+		if ($helpers === null) {
+			return $this->_helpers;
+		}
+		$this->_helpers = (array)$helpers;
+		return $this;
+	}
+
+/**
  * Email format
  *
  * @param string $format
@@ -1057,6 +1078,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_viewRender = 'View';
 		$this->_viewVars = array();
+		$this->_helpers = array();
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
 		$this->_message = '';
@@ -1260,6 +1282,7 @@ class CakeEmail {
 
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;
+		$View->helpers = $this->_helpers;
 		$msg = array();
 
 		list($templatePlugin, $template) = pluginSplit($this->_template, true);

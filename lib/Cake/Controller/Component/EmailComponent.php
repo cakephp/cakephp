@@ -332,6 +332,7 @@ class EmailComponent extends Component {
 		}
 
 		$lib->subject($this->subject)->messageID($this->messageId);
+		$lib->helpers($this->_controller->helpers);
 
 		$headers = array('X-Mailer' => $this->xMailer);
 		foreach ($this->headers as $key => $value) {

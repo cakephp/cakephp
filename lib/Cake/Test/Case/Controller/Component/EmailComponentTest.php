@@ -501,6 +501,7 @@ TEXTBLOC;
 
 <body>
 	<p>Here is your value: <b>22091985</b></p>
+
 	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>
@@ -520,6 +521,35 @@ HTMLBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send());
 		$this->assertNull($this->Controller->EmailTest->textMessage);
 		$this->assertEqual($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+	}
+
+/**
+ * testMessageRetrievalWithHelper method
+ *
+ * @access public
+ * @return void
+ */
+	public function testMessageRetrievalWithHelper() {
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+		));
+
+		$timestamp = time();
+		$this->Controller->set('time', $timestamp);
+		$this->Controller->set('title_for_layout', 'EmailTest');
+		$this->Controller->helpers = array('Time');
+
+		$this->Controller->EmailTest->to = 'postmaster@example.com';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->layout = 'default';
+		$this->Controller->EmailTest->template = 'custom_helper';
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->Controller->EmailTest->delivery = 'DebugComp';
+
+		$this->assertTrue($this->Controller->EmailTest->send());
+		$this->assertTrue((bool)strpos($this->Controller->EmailTest->textMessage, 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
 	}
 
 /**
