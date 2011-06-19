@@ -2056,6 +2056,9 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->counter(array('format' => 'range'));
 		$expected = '1 - 3 of 13';
 		$this->assertEqual($expected, $result);
+
+		$result = $this->Paginator->counter('Showing %page% of %pages% %model%');
+		$this->assertEquals('Showing 1 of 5 clients', $result);
 	}
 
 /**

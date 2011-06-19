@@ -537,7 +537,7 @@ class PaginatorHelper extends AppHelper {
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
  * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
  *    set to 'range' to generate output like '1 - 3 of 13'.  Can also be set to a custom string, containing
- *    the following placeholders `%page%`, `%pages%`, `%current%`, `%count%`, `%start%`, `%end%` and any
+ *    the following placeholders `%page%`, `%pages%`, `%current%`, `%count%`, `%model%`, `%start%`, `%end%` and any
  *    custom content you would like.
  * - `separator` The separator string to use, default to ' of '
  *
@@ -588,12 +588,13 @@ class PaginatorHelper extends AppHelper {
 					'%current%' => $paging['current'],
 					'%count%' => $paging['count'],
 					'%start%' => $start,
-					'%end%' => $end
+					'%end%' => $end,
+					'%model%' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
 				);
 				$out = str_replace(array_keys($map), array_values($map), $options['format']);
 
 				$newKeys = array(
-					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}'
+					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}', '{:model}'
 				);
 				$out = str_replace($newKeys, array_values($map), $out);
 			break;
