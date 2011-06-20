@@ -308,7 +308,7 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Enables Configure::read('Routing.prefixes') in /app/config/core.php
+ * Enables Configure::read('Routing.prefixes') in /app/Config/core.php
  *
  * @param string $name Name to use as admin routing
  * @return boolean Success
@@ -358,15 +358,15 @@ class ProjectTask extends Shell {
 		}
 		if ($this->interactive) {
 			$this->hr();
-			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.'));
+			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: www.example.com/admin/controller'));
 			while ($admin == '') {
 				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__d('cake_console', '<error>Unable to write to</error> /app/config/core.php.'));
-				$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.'));
+				$this->out(__d('cake_console', '<error>Unable to write to</error> /app/Config/core.php.'));
+				$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
 				$this->_stop();
 			}
 			return $admin . '_';

@@ -2849,7 +2849,7 @@ class Model extends Object {
 /**
  * Sets the DataSource to which this model is bound.
  *
- * @param string $dataSource The name of the DataSource, as defined in app/config/database.php
+ * @param string $dataSource The name of the DataSource, as defined in app/Config/database.php
  * @return boolean True on success
  */
 	public function setDataSource($dataSource = null) {

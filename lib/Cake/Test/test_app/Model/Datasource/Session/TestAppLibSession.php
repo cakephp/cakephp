@@ -1,6 +1,6 @@
 <?php
 /**
- * Test suite app/libs session handler
+ * Test suite app/Model/Datasource/Session session handler
  *
  */
 class TestAppLibSession implements CakeSessionHandlerInterface {

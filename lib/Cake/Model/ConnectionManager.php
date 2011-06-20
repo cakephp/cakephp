@@ -2,7 +2,7 @@
 /**
  * Datasource connection manager
  *
- * Provides an interface for loading and enumerating connections defined in app/config/database.php
+ * Provides an interface for loading and enumerating connections defined in app/Config/database.php
  *
  * PHP 5
  *
@@ -75,7 +75,7 @@ class ConnectionManager {
 /**
  * Gets a reference to a DataSource object
  *
- * @param string $name The name of the DataSource, as defined in app/config/database.php
+ * @param string $name The name of the DataSource, as defined in app/Config/database.php
  * @return object Instance
  * @throws MissingDatasourceConfigException
  * @throws MissingDatasourceFileException
@@ -140,9 +140,9 @@ class ConnectionManager {
 /**
  * Loads the DataSource class for the given connection name
  *
- * @param mixed $connName A string name of the connection, as defined in app/config/database.php,
+ * @param mixed $connName A string name of the connection, as defined in app/Config/database.php,
  *                        or an array containing the filename (without extension) and class name of the object,
- *                        to be found in app/models/datasources/ or cake/libs/model/datasources/.
+ *                        to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
  * @return boolean True on success, null on failure or false if the class is already loaded
  * @throws MissingDatasourceFileException
  */

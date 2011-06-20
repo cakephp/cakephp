@@ -56,7 +56,7 @@ class CakeLog {
 
 /**
  * Configure and add a new logging stream to CakeLog
- * You can use add loggers from app/libs use app.loggername, or any plugin/libs using plugin.loggername.
+ * You can use add loggers from app/Log/Engine use app.loggername, or any plugin/Log/Engine using plugin.loggername.
  *
  * ### Usage:
  *

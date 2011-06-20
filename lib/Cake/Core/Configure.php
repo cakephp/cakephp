@@ -53,10 +53,10 @@ class Configure {
  * Bootstrapping includes the following steps:
  *
  * - Setup App array in Configure.
- * - Include app/config/core.php.
+ * - Include app/Config/core.php.
  * - Configure core cache configurations.
  * - Load App cache files.
- * - Include app/config/bootstrap.php.
+ * - Include app/Config/bootstrap.php.
  * - Setup error/exception handlers.
  *
  * @return void

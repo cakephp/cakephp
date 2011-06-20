@@ -26,7 +26,7 @@ App::uses('View', 'View');
  * the default app view files will be used. You can set `$this->theme` and `$this->viewClass = 'Theme'`
  * in your Controller to use the ThemeView.
  *
- * Example of theme path with `$this->theme = 'super_hot';` Would be `app/views/themed/super_hot/posts`
+ * Example of theme path with `$this->theme = 'super_hot';` Would be `app/View/Themed/SuperHot/Posts`
  *
  * @package       cake.libs.view
  */

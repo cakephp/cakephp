@@ -166,7 +166,7 @@ class Dispatcher {
 
 /**
  * Applies Routing and additionalParameters to the request to be dispatched.
- * If Routes have not been loaded they will be loaded, and app/config/routes.php will be run.
+ * If Routes have not been loaded they will be loaded, and app/Config/routes.php will be run.
  *
  * @param CakeRequest $request CakeRequest object to mine for parameter information.
  * @param array $additionalParams An array of additional parameters to set to the request.

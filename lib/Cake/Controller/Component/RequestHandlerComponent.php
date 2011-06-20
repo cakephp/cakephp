@@ -133,9 +133,9 @@ class RequestHandlerComponent extends Component {
  * - Disabling layout rendering for Ajax requests (based on the HTTP_X_REQUESTED_WITH header)
  * - If Router::parseExtensions() is enabled, the layout and template type are
  *   switched based on the parsed extension or Accept-Type header.  For example, if `controller/action.xml`
- *   is requested, the view path becomes `app/views/controller/xml/action.ctp`. Also if
+ *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
  *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
- *   the view path will become `app/views/controller/xml/action.ctp`.
+ *   the view path will become `app/View/Controller/xml/action.ctp`.
  * - If a helper with the same name as the extension exists, it is added to the controller.
  * - If the extension is of a type that RequestHandler understands, it will set that
  *   Content-type in the response header.

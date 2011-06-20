@@ -4,7 +4,7 @@
  *
  *  This file collects requests if:
  *	- no mod_rewrite is avilable or .htaccess files are not supported
- *  - requires App.baseUrl to be uncommented in app/config/core.php
+ *  - requires App.baseUrl to be uncommented in app/Config/core.php
  *	- app/webroot is not set as a document root.
  *
  * PHP 5

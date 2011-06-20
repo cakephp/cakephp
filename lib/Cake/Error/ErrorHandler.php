@@ -46,7 +46,7 @@ App::uses('AppController', 'Controller');
  * #### Create your own Exception handler with `Exception.handler`
  *
  * This gives you full control over the exception handling process.  The class you choose should be
- * loaded in your app/config/bootstrap.php, so its available to handle any exceptions.  You can
+ * loaded in your app/Config/bootstrap.php, so its available to handle any exceptions.  You can
  * define the handler as any callback type. Using Exception.handler overrides all other exception 
  * handling settings and logic.
  *
@@ -60,7 +60,7 @@ App::uses('AppController', 'Controller');
  *
  * If you don't want to take control of the exception handling, but want to change how exceptions are
  * rendered you can use `Exception.renderer` to choose a class to render exception pages.  By default
- * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Lib/Error.
+ * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Error.
  *
  * Your custom renderer should expect an exception in its constructor, and implement a render method.
  * Failing to do so will cause additional errors.

@@ -106,7 +106,7 @@ class Cache {
  * - `user` Used by Xcache.  Username for XCache
  * - `password` Used by Xcache.  Password for XCache
  *
- * @see app/config/core.php for configuration settings
+ * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
  * @return array(engine, settings) on success, false on failure

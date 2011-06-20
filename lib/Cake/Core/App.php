@@ -36,7 +36,7 @@
  *
  * For instance if you'd like to use your own HttpSocket class, put it under
  *
- *		app/libs/Network/Http/HttpSocket.php
+ *		app/Network/Http/HttpSocket.php
  *
  * ### Inspecting loaded paths
  *

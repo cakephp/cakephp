@@ -521,7 +521,7 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
- * test using a handler from app/libs.
+ * test using a handler from app/Model/Datasource/Session.
  *
  * @return void
  */

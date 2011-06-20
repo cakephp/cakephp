@@ -134,7 +134,7 @@ class Object {
  * for more information on writing to logs.
  *
  * @param string $msg Log message
- * @param integer $type Error type constant. Defined in app/config/core.php.
+ * @param integer $type Error type constant. Defined in app/Config/core.php.
  * @return boolean Success of log write
  */
 	public function log($msg, $type = LOG_ERROR) {

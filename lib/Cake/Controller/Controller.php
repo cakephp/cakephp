@@ -136,7 +136,7 @@ class Controller extends Object {
 
 /**
  * The name of the view file to render. The name specified
- * is the filename in /app/views/<sub_folder> without the .ctp extension.
+ * is the filename in /app/View/<SubFolder> without the .ctp extension.
  *
  * @var string
  * @link http://book.cakephp.org/view/962/Page-related-Attributes-layout-and-pageTitle
@@ -145,7 +145,7 @@ class Controller extends Object {
 
 /**
  * The name of the layout file to render the view inside of. The name specified
- * is the filename of the layout in /app/views/layouts without the .ctp
+ * is the filename of the layout in /app/View/Layouts without the .ctp
  * extension.
  *
  * @var string
