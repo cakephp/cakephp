@@ -237,15 +237,6 @@ class Controller extends Object {
 	public $cacheAction = false;
 
 /**
- * Used to create cached instances of models a controller uses.
- * When set to true, all models related to the controller will be cached.
- * This can increase performance in many cases.
- *
- * @var boolean
- */
-	public $persistModel = false;
-
-/**
  * Holds all params passed and named.
  *
  * @var mixed
@@ -593,8 +584,6 @@ class Controller extends Object {
 
 /**
  * Loads and instantiates models required by this controller.
- * If Controller::$persistModel; is true, controller will cache model instances on first request,
- * additional request will used cached models.
  * If the model is non existent, it will throw a missing database table error, as Cake generates
  * dynamic models for the time being.
  *
@@ -607,36 +596,16 @@ class Controller extends Object {
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
-		$cached = false;
-		$object = null;
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
-		if ($this->persistModel === true) {
-			$cached = $this->_persist($modelClass, null, $object);
+		$this->modelNames[] = $modelClass;
+
+		$this->{$modelClass} = ClassRegistry::init(array(
+			'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
+		));
+		if (!$this->{$modelClass}) {
+			throw new MissingModelException($modelClass);
 		}
-
-		if (($cached === false)) {
-			$this->modelNames[] = $modelClass;
-
-			$this->{$modelClass} = ClassRegistry::init(array(
-				'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
-			));
-
-			if (!$this->{$modelClass}) {
-				throw new MissingModelException($modelClass);
-			}
-
-			if ($this->persistModel === true) {
-				$this->_persist($modelClass, true, $this->{$modelClass});
-				$registry = ClassRegistry::getInstance();
-				$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
-			}
-		} else {
-			$this->_persist($modelClass . 'registry', true, $object, 'registry');
-			$this->_persist($modelClass, true, $object);
-			$this->modelNames[] = $modelClass;
-		}
-
 		return true;
 	}
 

@@ -514,29 +514,6 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * testPersistent method
- *
- * @access public
- * @return void
- */
-	public function testPersistent() {
-		$this->markTestIncomplete('persistModel is totally broken right now.');
-
-		Configure::write('Cache.disable', false);
-		$Controller = new Controller();
-		$Controller->modelClass = 'ControllerPost';
-		$Controller->persistModel = true;
-		$Controller->constructClasses();
-		$this->assertTrue(file_exists(CACHE . 'persistent' . DS .'controllerpost.php'));
-		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		@unlink(CACHE . 'persistent' . DS . 'controllerpost.php');
-		@unlink(CACHE . 'persistent' . DS . 'controllerpostregistry.php');
-
-		unset($Controller);
-		Configure::write('Cache.disable', true);
-	}
-
-/**
  * testFlash method
  *
  * @access public
