@@ -221,6 +221,9 @@ class Sqlserver extends DboSource {
 			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
 				$fields[$field]['length'] = null;
 			}
+			if ($fields[$field]['type'] == 'float' && !empty($column->Size)) {
+				$fields[$field]['length'] = $fields[$field]['length'] . ',' . $column->Size;
+			}
 		}
 		$this->__cacheDescription($table, $fields);
 		$cols->closeCursor();
