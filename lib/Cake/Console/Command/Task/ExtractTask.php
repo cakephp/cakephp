@@ -105,6 +105,13 @@ class ExtractTask extends Shell {
 	protected $_extractValidation = true;
 
 /**
+ * Holds the validation string domain to use for validation messages when extracting
+ *
+ * @var boolean
+ */
+	protected $_validationDomain = 'default';
+
+/**
  * Execution method always used for tasks
  *
  * @return void
@@ -146,6 +153,9 @@ class ExtractTask extends Shell {
 
 		if (!empty($this->params['ignore-model-validation']) || !$this->_isExtractingApp()) {
 			$this->_extractValidation = false;
+		}
+		if (!empty($this->params['validation-domain'])) {
+			$this->_validationDomain = $this->params['validation-domain'];
 		}
 
 		if (isset($this->params['output'])) {
@@ -228,12 +238,12 @@ class ExtractTask extends Shell {
 			->addOption('exclude-plugins', array(
 				'boolean' => true,
 				'default' => true,
-				'help' => __d('cake_console', 'Ignores all files in plugins.')
+				'help' => __d('cake_console', 'Ignores all files in plugins if this command is run inside from the same app directory')
 			))
 			->addOption('ignore-model-validation', array(
 				'boolean' => true,
 				'default' => false,
-				'help' => __d('cake_console', 'Ignores validation messages in the $validate property. Needs to be run in from the same app directory')
+				'help' => __d('cake_console', 'Ignores validation messages in the $validate property. If this flag is not set and the command is run from the same app directory, all messages in model validation rules will be extracted as tokens')
 			))
 			->addOption('validation-domain', array(
 				'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages')
@@ -333,7 +343,7 @@ class ExtractTask extends Shell {
 		if (!$this->_extractValidation) {
 			return;
 		}
-		$models = App::objects('Model');
+		$models = App::objects('Model', null, false);
 		App::uses('AppModel', 'Model');
 		foreach ($models as $model) {
 			App::uses($model, 'Model');
@@ -343,8 +353,12 @@ class ExtractTask extends Shell {
 			if (empty($validate)) {
 				continue;
 			}
+
 			$file = $reflection->getFileName();
-			$domain = 'default';
+			$domain = $this->_validationDomain;
+			if (!empty($properties['validationDomain'])) {
+				$domain = $properties['validationDomain'];
+			}
 			foreach ($validate as $field => $rules) {
 				$this->_processValidationRules($field, $rules, $file, $domain);
 			}
