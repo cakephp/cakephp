@@ -154,8 +154,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => '/var/www/htdocs/new',
-			'root' => '/var/www/htdocs'
+			'working' => str_replace('/', DS, '/var/www/htdocs/new'),
+			'root' => str_replace('/', DS,'/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
@@ -164,8 +164,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'app'),
-			'root' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH)),
+			'working' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'app'),
+			'root' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH)),
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -179,8 +179,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
-			'root' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH))
+			'working' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
+			'root' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH))
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -198,8 +198,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
-			'root' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH))
+			'working' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
+			'root' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH))
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -217,8 +217,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
-			'root' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH))
+			'working' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
+			'root' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH))
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -235,8 +235,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		);
 		$expected = array(
 			'app' => 'new',
-			'working' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
-			'root' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH)),
+			'working' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'new'),
+			'root' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH)),
 			'webroot' => 'webroot'
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -258,8 +258,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'app'),
-			'root' => str_replace('\\', '/', dirname(CAKE_CORE_INCLUDE_PATH)),
+			'working' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH) . DS . 'app'),
+			'root' => str_replace('\\', DS, dirname(CAKE_CORE_INCLUDE_PATH)),
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -284,8 +284,8 @@ class ShellDispatcherTest extends CakeTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => '/cake/1.2.x.x/app',
-			'root' => '/cake/1.2.x.x',
+			'working' => str_replace('/', DS, '/cake/1.2.x.x/app'),
+			'root' => str_replace('/', DS, '/cake/1.2.x.x'),
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -375,9 +375,9 @@ class ShellDispatcherTest extends CakeTestCase {
 			'my_app',
 		);
 		$expected = array(
-			'working' => 'D:\www',
+			'working' => 'D:\\\\www',
 			'app' => 'www',
-			'root' => 'D:',
+			'root' => 'D:\\',
 			'webroot' => 'webroot'
 		);
 
