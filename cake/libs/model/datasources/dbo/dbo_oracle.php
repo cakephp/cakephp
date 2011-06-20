@@ -140,7 +140,7 @@ class DboOracle extends DboSource {
 	var $_error;
 
 /**
- * Base configuration settings for MySQL driver
+ * Base configuration settings for Oracle driver
  *
  * @var array
  */
@@ -188,7 +188,7 @@ class DboOracle extends DboSource {
 				$this->execute('ALTER SESSION SET NLS_COMP='.$config['nls_comp']);
 			}
 			if (!empty($config['schema'])) {
-			  $this->execute('ALTER SESSION SET CURRENT_SCHEMA='.$config['schema']);
+				$this->execute('ALTER SESSION SET CURRENT_SCHEMA='.$config['schema']);
 			}
 			$this->execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 		} else {
@@ -459,6 +459,76 @@ class DboOracle extends DboSource {
 	}
 
 /**
+ * Cache the sequence details
+ * 
+ * @param object $model
+ * @access private
+ * @return mixed
+ * 
+ */
+	function _cacheSequence(&$model) {
+		if ($this->cacheSources === false) {
+			return null;
+		}
+		
+		$cache = null;
+		
+		$table = $this->fullTableName($model, false);
+		$key = ConnectionManager::getSourceName($this) . '_' . $table . '_seq';
+		$cached = $this->_persist($key, null, $cache);
+				
+		if ($cached === false) {
+			$cache = $this->_getSequenceName($model);
+			$this->_persist($key, true, $cache);
+		} else {
+			$this->_persist($key, true, $cache);
+			$cache = $this->{$key};
+		}
+		
+		return $cache;
+	}
+	
+/**
+ * Get cached sequence details from a table name only.
+ * Required for proper functionality of lastInsertId when models are cached.
+ * 
+ * @param String table
+ * @access private
+ * @return mixed
+ */
+	function _getCachedSequence($table) {
+		if ($this->cacheSources === false) {
+			return null;
+		}
+		
+		$cache = null;
+		
+		$key = ConnectionManager::getSourceName($this) . '_' . $table . '_seq';
+		$this->_persist($key, true, $cache);
+		$cache = $this->{$key};
+		
+		return $cache;
+	}
+	
+/**
+ * Get the sequence name for a model
+ * 
+ * @param object model
+ * @access private
+ * @return String
+ * 
+ */
+	function _getSequenceName(&$model) {
+		if (!empty($model->sequence)) {
+			$seq = $model->sequence;
+		} elseif (!empty($model->table)) {
+			$seq = $this->fullTableName($model, false) . '_seq';
+		}
+		
+		return $seq;
+	}
+
+/**
  * Returns an array of tables in the database. If there are no tables, an error is
  * raised and the application exits.
  *
@@ -473,9 +543,9 @@ class DboOracle extends DboSource {
 		}
 		
 		if (!empty($config['schema'])) {
-		  $sql = 'SELECT view_name AS name FROM all_views WHERE owner = \'' . $config['schema'] . '\' UNION SELECT table_name AS name FROM all_tables  WHERE owner = \'' . $config['schema'] . '\'';
+			$sql = 'SELECT view_name AS name FROM all_views WHERE owner = \'' . $config['schema'] . '\' UNION SELECT table_name AS name FROM all_tables WHERE owner = \'' . $config['schema'] . '\'';
 		} else {
-		  $sql = 'SELECT view_name AS name FROM all_views UNION SELECT table_name AS name FROM all_tables';
+			$sql = 'SELECT view_name AS name FROM all_views UNION SELECT table_name AS name FROM all_tables';
 		}
 
 		if (!$this->execute($sql)) {
@@ -499,13 +569,9 @@ class DboOracle extends DboSource {
  */
 	function describe(&$model) {
 		$table = $this->fullTableName($model, false);
-
-		if (!empty($model->sequence)) {
-			$this->_sequenceMap[$table] = $model->sequence;
-		} elseif (!empty($model->table)) {
-			$this->_sequenceMap[$table] = $model->tablePrefix . $model->table . '_seq';
-		}
-
+		
+		$this->_sequenceMap[$table] = $this->_cacheSequence($model);
+		
 		$cache = parent::describe($model);
 
 		if ($cache != null) {
@@ -906,7 +972,11 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastInsertId($source) {
-		$sequence = $this->_sequenceMap[$source];
+		if (isset($this->_sequenceMap[$source])) {
+			$sequence = $this->_sequenceMap[$source];
+		} else {
+			$sequence = $this->_getCachedSequence($source);
+		}
 		$sql = "SELECT $sequence.currval FROM dual";
 
 		if (!$this->execute($sql)) {
