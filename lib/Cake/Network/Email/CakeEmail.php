@@ -21,6 +21,7 @@ App::uses('Multibyte', 'I18n');
 App::uses('AbstractTransport', 'Network/Email');
 App::uses('String', 'Utility');
 App::uses('View', 'View');
+App::import('I18n', 'Multibyte');
 
 /**
  * Cake e-mail class.
