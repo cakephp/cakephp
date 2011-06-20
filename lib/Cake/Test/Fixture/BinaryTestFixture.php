@@ -40,7 +40,7 @@ class BinaryTestFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'data' => 'binary'
+		'data' => array('type' => 'binary', 'length' => 100)
 	);
 
 /**

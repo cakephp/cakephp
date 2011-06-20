@@ -92,7 +92,7 @@ class Sqlserver extends DboSource {
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date'		=> array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
-		'binary'	=> array('name' => 'image'),
+		'binary'	=> array('name' => 'varbinary'),
 		'boolean'	=> array('name' => 'bit')
 	);
 
