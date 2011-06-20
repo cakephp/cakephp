@@ -2584,6 +2584,10 @@ class Model extends Object {
 				}
 				$validator = array_merge($default, $validator);
 
+				$validationDomain = $this->validationDomain;
+				if (empty($validationDomain)) {
+					$validationDomain = 'default';
+				}
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
 				} else {
@@ -2603,7 +2607,7 @@ class Model extends Object {
 					);
 
 					if ($required) {
-						$this->invalidate($fieldName, $message);
+						$this->invalidate($fieldName, __d($validationDomain, $message));
 						if ($validator['last']) {
 							break;
 						}
@@ -2647,7 +2651,7 @@ class Model extends Object {
 								} elseif (is_numeric($index) && count($ruleSet) > 1) {
 									$validator['message'] = $index + 1;
 								} else {
-									$validator['message'] = $message;
+									$validator['message'] = __d($validationDomain, $message);
 								}
 							}
 							$this->invalidate($fieldName, $validator['message']);

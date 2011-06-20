@@ -21,26 +21,4 @@
 class Post extends AppModel {
 	public $useTable = 'posts';
 	public $name = 'Post';
-	public $validate = array(
-		'title' => array(
-			'rule' => array('custom', '.*'),
-			'allowEmpty' => true,
-			'required' => false,
-			'message' => 'Post title is required'
-		),
-		'body' => array(
-			'first_rule' => array(
-				'rule' => array('custom', '.*'),
-				'allowEmpty' => true,
-				'required' => false,
-				'message' => 'Post body is required'
-			),
-			'second_rule' => array(
-				'rule' => array('custom', '.*'),
-				'allowEmpty' => true,
-				'required' => false,
-				'message' => 'Post body is super required'
-			)
-		),
-	);
 }

@@ -239,7 +239,7 @@ class ExtractTaskTest extends CakeTestCase {
 		App::build(array(
 			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		));
+		), App::RESET);
 		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ExtractTask',
@@ -256,10 +256,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
-		$pattern = '#Model/Post.php:validation for field title#';
+		$pattern = '#Model/PersisterOne.php:validation for field title#';
 		$this->assertPattern($pattern, $result);
 
-		$pattern = '#Model/Post.php:validation for field body#';
+		$pattern = '#Model/PersisterOne.php:validation for field body#';
 		$this->assertPattern($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
