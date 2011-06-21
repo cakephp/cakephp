@@ -304,24 +304,24 @@ class SqlserverTest extends CakeTestCase {
  */
 	public function testFields() {
 		$fields = array(
-			'[SqlserverTestModel].[id] AS [SqlserverTestModel__0]',
-			'[SqlserverTestModel].[client_id] AS [SqlserverTestModel__1]',
-			'[SqlserverTestModel].[name] AS [SqlserverTestModel__2]',
-			'[SqlserverTestModel].[login] AS [SqlserverTestModel__3]',
-			'[SqlserverTestModel].[passwd] AS [SqlserverTestModel__4]',
-			'[SqlserverTestModel].[addr_1] AS [SqlserverTestModel__5]',
-			'[SqlserverTestModel].[addr_2] AS [SqlserverTestModel__6]',
-			'[SqlserverTestModel].[zip_code] AS [SqlserverTestModel__7]',
-			'[SqlserverTestModel].[city] AS [SqlserverTestModel__8]',
-			'[SqlserverTestModel].[country] AS [SqlserverTestModel__9]',
-			'[SqlserverTestModel].[phone] AS [SqlserverTestModel__10]',
-			'[SqlserverTestModel].[fax] AS [SqlserverTestModel__11]',
-			'[SqlserverTestModel].[url] AS [SqlserverTestModel__12]',
-			'[SqlserverTestModel].[email] AS [SqlserverTestModel__13]',
-			'[SqlserverTestModel].[comments] AS [SqlserverTestModel__14]',
-			'CONVERT(VARCHAR(20), [SqlserverTestModel].[last_login], 20) AS [SqlserverTestModel__15]',
-			'[SqlserverTestModel].[created] AS [SqlserverTestModel__16]',
-			'CONVERT(VARCHAR(20), [SqlserverTestModel].[updated], 20) AS [SqlserverTestModel__17]'
+			'[SqlserverTestModel].[id] AS [SqlserverTestModel__id]',
+			'[SqlserverTestModel].[client_id] AS [SqlserverTestModel__client_id]',
+			'[SqlserverTestModel].[name] AS [SqlserverTestModel__name]',
+			'[SqlserverTestModel].[login] AS [SqlserverTestModel__login]',
+			'[SqlserverTestModel].[passwd] AS [SqlserverTestModel__passwd]',
+			'[SqlserverTestModel].[addr_1] AS [SqlserverTestModel__addr_1]',
+			'[SqlserverTestModel].[addr_2] AS [SqlserverTestModel__addr_2]',
+			'[SqlserverTestModel].[zip_code] AS [SqlserverTestModel__zip_code]',
+			'[SqlserverTestModel].[city] AS [SqlserverTestModel__city]',
+			'[SqlserverTestModel].[country] AS [SqlserverTestModel__country]',
+			'[SqlserverTestModel].[phone] AS [SqlserverTestModel__phone]',
+			'[SqlserverTestModel].[fax] AS [SqlserverTestModel__fax]',
+			'[SqlserverTestModel].[url] AS [SqlserverTestModel__url]',
+			'[SqlserverTestModel].[email] AS [SqlserverTestModel__email]',
+			'[SqlserverTestModel].[comments] AS [SqlserverTestModel__comments]',
+			'CONVERT(VARCHAR(20), [SqlserverTestModel].[last_login], 20) AS [SqlserverTestModel__last_login]',
+			'[SqlserverTestModel].[created] AS [SqlserverTestModel__created]',
+			'CONVERT(VARCHAR(20), [SqlserverTestModel].[updated], 20) AS [SqlserverTestModel__updated]'
 		);
 
 		$result = $this->db->fields($this->model);
@@ -336,18 +336,18 @@ class SqlserverTest extends CakeTestCase {
 		$this->db->clearFieldMappings();
 		$result = $this->db->fields($this->model, null, array('*', 'AnotherModel.id', 'AnotherModel.name'));
 		$expected = array_merge($fields, array(
-			'[AnotherModel].[id] AS [AnotherModel__18]',
-			'[AnotherModel].[name] AS [AnotherModel__19]'));
+			'[AnotherModel].[id] AS [AnotherModel__id]',
+			'[AnotherModel].[name] AS [AnotherModel__name]'));
 		$this->assertEqual($expected, $result);
 
 		$this->db->clearFieldMappings();
 		$result = $this->db->fields($this->model, null, array('*', 'SqlserverClientTestModel.*'));
 		$expected = array_merge($fields, array(
-			'[SqlserverClientTestModel].[id] AS [SqlserverClientTestModel__18]',
-			'[SqlserverClientTestModel].[name] AS [SqlserverClientTestModel__19]',
-			'[SqlserverClientTestModel].[email] AS [SqlserverClientTestModel__20]',
-			'CONVERT(VARCHAR(20), [SqlserverClientTestModel].[created], 20) AS [SqlserverClientTestModel__21]',
-			'CONVERT(VARCHAR(20), [SqlserverClientTestModel].[updated], 20) AS [SqlserverClientTestModel__22]'));
+			'[SqlserverClientTestModel].[id] AS [SqlserverClientTestModel__id]',
+			'[SqlserverClientTestModel].[name] AS [SqlserverClientTestModel__name]',
+			'[SqlserverClientTestModel].[email] AS [SqlserverClientTestModel__email]',
+			'CONVERT(VARCHAR(20), [SqlserverClientTestModel].[created], 20) AS [SqlserverClientTestModel__created]',
+			'CONVERT(VARCHAR(20), [SqlserverClientTestModel].[updated], 20) AS [SqlserverClientTestModel__updated]'));
 		$this->assertEqual($expected, $result);
 	}
 
@@ -358,11 +358,11 @@ class SqlserverTest extends CakeTestCase {
  */
 	public function testDistinctFields() {
 		$result = $this->db->fields($this->model, null, array('DISTINCT Car.country_code'));
-		$expected = array('DISTINCT [Car].[country_code] AS [Car__0]');
+		$expected = array('DISTINCT [Car].[country_code] AS [Car__country_code]');
 		$this->assertEqual($expected, $result);
 
 		$result = $this->db->fields($this->model, null, 'DISTINCT Car.country_code');
-		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
+		$expected = array('DISTINCT [Car].[country_code] AS [Car__country_code]');
 		$this->assertEqual($expected, $result);
 	}
 

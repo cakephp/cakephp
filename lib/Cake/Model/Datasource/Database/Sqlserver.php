@@ -257,7 +257,6 @@ class Sqlserver extends DboSource {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
-				$fieldAlias = count($this->_fieldMappings);
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
 					if (substr($fields[$i], -1) == '*') {
@@ -274,14 +273,14 @@ class Sqlserver extends DboSource {
 					}
 
 					if (strpos($fields[$i], '.') === false) {
-						$this->_fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
+						$this->_fieldMappings[$alias . '__' . $fields[$i]] = $alias . '.' . $fields[$i];
 						$fieldName  = $this->name($alias . '.' . $fields[$i]);
-						$fieldAlias = $this->name($alias . '__' . $fieldAlias);
+						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
-						$this->_fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
+						$this->_fieldMappings[$build[0] . '__' .$build[1]] = $fields[$i];
 						$fieldName  = $this->name($build[0] . '.' . $build[1]);
-						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $fieldAlias);
+						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $build[1]);
 					}
 					if ($model->getColumnType($fields[$i]) == 'datetime') {
 						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";
@@ -508,35 +507,6 @@ class Sqlserver extends DboSource {
 				return parent::renderStatement($type, $data);
 			break;
 		}
-	}
-
-/**
- * Reverses the sort direction of ORDER statements to get paging offsets to work correctly
- *
- * @param string $order
- * @return string
- */
-	private function __switchSort($order) {
-		$order = preg_replace('/\s+ASC/i', '__tmp_asc__', $order);
-		$order = preg_replace('/\s+DESC/i', ' ASC', $order);
-		return preg_replace('/__tmp_asc__/', ' DESC', $order);
-	}
-
-/**
- * Translates field names used for filtering and sorting to shortened names using the field map
- *
- * @param string $sql A snippet of SQL representing an ORDER or WHERE statement
- * @return string The value of $sql with field names replaced
- */
-	private function __mapFields($sql) {
-		if (empty($sql) || empty($this->_fieldMappings)) {
-			return $sql;
-		}
-		foreach ($this->_fieldMappings as $key => $val) {
-			$sql = preg_replace('/' . preg_quote($val) . '/', $this->name($key), $sql);
-			$sql = preg_replace('/' . preg_quote($this->name($val)) . '/', $this->name($key), $sql);
-		}
-		return $sql;
 	}
 
 /**
