@@ -475,17 +475,12 @@ class FileTest extends CakeTestCase {
 		};
 
 		if ($paintSkip) {
-			$caller = 'test';
-			if (function_exists('debug_backtrace')) {
-				$trace = debug_backtrace();
-				$caller = $trace[1]['function'] . '()';
-			}
-			$assertLine = new SimpleStackTrace(array(__FUNCTION__));
-			$assertLine = $assertLine->traceMethod();
-			$shortPath = substr($tmpFile, strlen(ROOT));
+			$trace = debug_backtrace();
+			$caller = $trace[0]['function'];
+			$shortPath = dirname($tmpFile);
 
-			$message = __d('cake_dev', '[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath).$assertLine;
-			$this->_reporter->paintSkip($message);
+			$message = __d('cake_dev', '[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
+			$this->markTestSkipped($message);
 		}
 		return false;
 	}
