@@ -613,7 +613,8 @@ class Shell extends Object {
 			$this->out(__d('cake_console', 'Creating file %s', $path));
 		}
 
-		if ($File = new File($path, true)) {
+		$File = new File($path, true);
+		if ($File->exists()) {
 			$data = $File->prepare($contents);
 			$File->write($data);
 			$this->out(__d('cake_console', '<success>Wrote</success> `%s`', $path));
