@@ -352,7 +352,8 @@ class AuthTest extends CakeTestCase {
 		$this->initialized = true;
 		Router::reload();
 
-		ClassRegistry::init('AuthUser')->updateAll(array('password' => '"' . Security::hash('cake', null, true) . '"'));
+		$User = ClassRegistry::init('AuthUser');
+		$User->updateAll(array('password' => $User->getDataSource()->value(Security::hash('cake', null, true))));
 	}
 
 /**
