@@ -474,7 +474,7 @@ class CakeSchema extends Object {
 			}
 
 			foreach ($fields as $field => $value) {
-				if (isset($old[$table][$field])) {
+				if (!empty($old[$table][$field])) {
 					$diff = $this->_arrayDiffAssoc($value, $old[$table][$field]);
 					if (!empty($diff) && $field !== 'indexes' && $field !== 'tableParameters') {
 						$tables[$table]['change'][$field] = array_merge($old[$table][$field], $diff);
