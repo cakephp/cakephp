@@ -191,13 +191,12 @@ class TestTask extends BakeTask {
 	public function getClassName($objectType) {
 		$type = strtolower($objectType);
 		if ($this->plugin) {
-			$path = Inflector::pluralize($type);
 			if ($type === 'helper') {
-				$path = 'View/Helper';
+				$type = 'View/Helper';
 			} elseif ($type === 'component') {
-				$path = 'Controller/Component';
+				$type = 'Controller/Component';
 			} elseif ($type === 'behavior') {
-				$path = 'Model/Behavior';
+				$type = 'Model/Behavior';
 			}
 			$plugin = $this->plugin . '.';
 			$options = App::objects($plugin . $type);
@@ -436,7 +435,7 @@ class TestTask extends BakeTask {
 		if (!$this->interactive) {
 			$className = $this->getRealClassName($type, $className);
 		}
-		return $path . Inflector::camelize($className) . 'Test.php';
+		return str_replace('/', DS, $path) . Inflector::camelize($className) . 'Test.php';
 	}
 
 /**

@@ -572,7 +572,7 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testTestCaseFileName() {
-		$this->Task->path = '/my/path/tests/';
+		$this->Task->path = DS . 'my' . DS . 'path' . DS . 'tests' . DS;
 
 		$result = $this->Task->testCaseFileName('Model', 'Post');
 		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'PostTest.php';
