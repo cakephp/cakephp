@@ -517,9 +517,6 @@ class Sqlserver extends DboSource {
 					$limit = preg_replace('/\s*offset.*$/i', '', $limit);
 					preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
 					$offset = intval($offset[1]) + intval($limitVal[1]);
-					$rOrder = $this->__switchSort($order);
-					list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
-					$limit2 = str_replace('TOP', '', $limit);
 					if (!$order) {
 						$order = 'ORDER BY (SELECT NULL)';
 					}
@@ -530,7 +527,7 @@ class Sqlserver extends DboSource {
 							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS {$rowCounter}
 							FROM {$table} {$alias} {$joins} {$conditions} {$group}
 						) AS _cake_paging_
-						WHERE _cake_paging_.{$rowCounter} > {$limit2}
+						WHERE _cake_paging_.{$rowCounter} >= {$offset}
 						ORDER BY _cake_paging_.{$rowCounter}
 					";
 					return $pagination;
