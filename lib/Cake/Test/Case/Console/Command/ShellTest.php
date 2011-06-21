@@ -344,11 +344,15 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testNl() {
-		$this->assertEqual($this->Shell->nl(), "\n");
-		$this->assertEqual($this->Shell->nl(true), "\n");
+		$newLine = '\n';
+		if (DS === '\\') {
+			$newLine = "\r\n";
+		}
+		$this->assertEqual($this->Shell->nl(), $newLine);
+		$this->assertEqual($this->Shell->nl(true), $newLine);
 		$this->assertEqual($this->Shell->nl(false), "");
-		$this->assertEqual($this->Shell->nl(2), "\n\n");
-		$this->assertEqual($this->Shell->nl(1), "\n");
+		$this->assertEqual($this->Shell->nl(2), $newLine . $newLine);
+		$this->assertEqual($this->Shell->nl(1), $newLine);
 	}
 
 /**
@@ -592,13 +596,13 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\necho 'test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$contents = "<?php\necho 'another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -615,32 +619,40 @@ class ShellTest extends CakeTestCase {
  */
 	public function testCreateFileWindowsInteractive() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsInteractive supported on Windows only.');
-
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
-
 		$Folder = new Folder($path, true);
 
 		$this->Shell->interactive = true;
 
-		$this->Shell->Dispatch->expects($this->at(5))
-			->method('getInput')
-			->will($this->returnValue('y'));
-
-		$this->Shell->Dispatch->expects($this->at(9))
-			->method('getInput')
+		$this->Shell->stdin->expects($this->at(0))
+			->method('read')
 			->will($this->returnValue('n'));
 
-		$contents = "<?php\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertFalse($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertNotEqual(file_get_contents($file), $contents);
+		$this->Shell->stdin->expects($this->at(1))
+			->method('read')
+			->will($this->returnValue('y'));
 
+
+		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
+
+		// no overwrite
+		$contents = 'new contents';
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertFalse($result);
+		$this->assertTrue(file_exists($file));
+		$this->assertNotEqual($contents, file_get_contents($file));
+
+		// overwrite
+		$contents = 'more new contents';
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists($file));
+		$this->assertEquals($contents, file_get_contents($file));
 
 		$Folder->delete();
 	}
