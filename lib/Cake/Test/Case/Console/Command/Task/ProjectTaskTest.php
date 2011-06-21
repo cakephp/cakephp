@@ -245,7 +245,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$this->assertEqual(Configure::read('Routing.prefixes'), array('my_prefix'));
-		$file->delete();
+		@$file->delete();
 	}
 
 /**

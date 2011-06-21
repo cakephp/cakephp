@@ -44,7 +44,8 @@ class FormAuthenticateTest extends CakeTestCase {
 			'userModel' => 'User'
 		));
 		$password = Security::hash('password', null, true);
-		ClassRegistry::init('User')->updateAll(array('password' => '"' . $password . '"'));
+		$User = ClassRegistry::init('User');
+		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('CakeResponse');
 	}
 
