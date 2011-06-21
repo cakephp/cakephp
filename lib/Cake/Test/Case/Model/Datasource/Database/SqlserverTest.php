@@ -277,7 +277,7 @@ class SqlserverTest extends CakeTestCase {
  * @return void
  */
 	public function testQuoting() {
-		$expected = "1.2";
+		$expected = "1.200000";
 		$result = $this->db->value(1.2, 'float');
 		$this->assertIdentical($expected, $result);
 
@@ -293,7 +293,7 @@ class SqlserverTest extends CakeTestCase {
 		$result = $this->db->value('', 'float');
 		$this->assertIdentical($expected, $result);
 
-		$expected = 'NULL';
+		$expected = "''";
 		$result = $this->db->value('', 'binary');
 		$this->assertIdentical($expected, $result);
 	}
