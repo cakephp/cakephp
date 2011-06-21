@@ -114,6 +114,8 @@ class Sqlserver extends DboSource {
  */
 	private $__lastQueryHadError = false;
 
+	const ROW_COUNTER = '_cake_page_rownum_';
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -522,13 +524,14 @@ class Sqlserver extends DboSource {
 						$order = 'ORDER BY (SELECT NULL)';
 					}
 
+					$rowCounter = self::ROW_COUNTER;
 					$pagination = "
 						SELECT {$limit} * FROM (
-							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS ssma\$rownum
+							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS {$rowCounter}
 							FROM {$table} {$alias} {$joins} {$conditions} {$group}
-						) AS ssma\$sub1
-						WHERE ssma\$sub1.[ssma\$rownum] > {$limit2}
-						ORDER BY ssma\$sub1.[ssma\$rownum]
+						) AS _cake_paging_
+						WHERE _cake_paging_.{$rowCounter} > {$limit2}
+						ORDER BY _cake_paging_.{$rowCounter}
 					";
 					return $pagination;
 				} else {
@@ -602,7 +605,8 @@ class Sqlserver extends DboSource {
 	}
 
 /**
- * Fetches the next row from the current result set
+ * Fetches the next row from the current result set.
+ * Eats the magic ROW_COUNTER variable.
  *
  * @return mixed
  */
@@ -611,6 +615,9 @@ class Sqlserver extends DboSource {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
+				if ($table === 0 && $column === self::ROW_COUNTER) {
+					continue;
+				}
 				$resultRow[$table][$column] = $row[$col];
 				if ($type === 'boolean' && !is_null($row[$col])) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);

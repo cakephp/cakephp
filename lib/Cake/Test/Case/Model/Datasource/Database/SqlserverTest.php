@@ -170,19 +170,6 @@ class SqlserverTestModel extends Model {
 	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
-/**
- * findAll method
- *
- * @param mixed $conditions
- * @param mixed $fields
- * @param mixed $order
- * @param mixed $recursive
- * @return array
- */
-	public function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
-		return $conditions;
-	}
 }
 
 /**
@@ -259,7 +246,7 @@ class SqlserverTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.category');
+	public $fixtures = array('core.category', 'core.post');
 
 /**
  * Sets up a Dbo class instance for testing
@@ -574,5 +561,35 @@ class SqlserverTest extends CakeTestCase {
 			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES ('Renan', 'renan.saddam')",
 		);
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * SQL server < 11 doesn't have proper limit/offset support, test that our hack works.
+ *
+ * @return void
+ */
+	public function testLimitOffsetHack() {
+		$this->loadFixtures('Post');
+		$query = array(
+			'limit' => 1,
+			'page' => 1,
+			'order' => 'Post.title ASC',
+		);
+		$Post = ClassRegistry::init('Post');
+		$results = $Post->find('all', $query);
+
+		$this->assertEquals(1, count($results));
+		$this->assertEquals('First Post', $results[0]['Post']['title']);
+
+		$query = array(
+			'limit' => 1,
+			'page' => 2,
+			'order' => 'Post.title ASC',
+		);
+		$Post = ClassRegistry::init('Post');
+		$results = $Post->find('all', $query);
+		$this->assertEquals(1, count($results));
+		$this->assertFalse(isset($results[0][0]));
+		$this->assertEquals('Second Post', $results[0]['Post']['title']);
 	}
 }
