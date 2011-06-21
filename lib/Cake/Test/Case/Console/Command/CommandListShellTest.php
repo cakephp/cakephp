@@ -122,16 +122,16 @@ class CommandListTest extends CakeTestCase {
 
 		$output = $this->Shell->stdout->output;
 
-		$expected = "/\[.*App.*\]\n[ ]+sample/";
+		$expected = "/\[.*App.*\]\\v*[ ]+sample/";
 		$this->assertPattern($expected, $output);
 
-		$expected = "/\[.*TestPluginTwo.*\]\n[ ]+example, welcome/";
+		$expected = "/\[.*TestPluginTwo.*\]\\v*[ ]+example, welcome/";
 		$this->assertPattern($expected, $output);
 
-		$expected = "/\[.*TestPlugin.*\]\n[ ]+example/";
+		$expected = "/\[.*TestPlugin.*\]\\v*[ ]+example/";
 		$this->assertPattern($expected, $output);
 
-		$expected = "/\[.*Core.*\]\n[ ]+acl, api, bake, command_list, console, i18n, schema, testsuite/";
+		$expected = "/\[.*Core.*\]\\v*[ ]+acl, api, bake, command_list, console, i18n, schema, testsuite/";
 		$this->assertPattern($expected, $output);
 	}
 
@@ -146,7 +146,7 @@ class CommandListTest extends CakeTestCase {
 
 		$output = $this->Shell->stdout->output;
 
-		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
+		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';	
 		$this->assertContains($find, $output);
 
 		$find = '<shell name="bake" call_as="bake" provider="CORE" help="bake -h"/>';
