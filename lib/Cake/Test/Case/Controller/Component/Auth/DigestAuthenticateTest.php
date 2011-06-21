@@ -48,7 +48,8 @@ class DigestAuthenticateTest extends CakeTestCase {
 		));
 
 		$password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
-		ClassRegistry::init('User')->updateAll(array('password' => '"' . $password . '"'));
+		$User = ClassRegistry::init('User');
+		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->response = $this->getMock('CakeResponse');
