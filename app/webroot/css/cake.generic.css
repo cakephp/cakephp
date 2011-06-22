@@ -168,8 +168,8 @@ table td.actions a {
 	margin: 0px 6px;
 	padding:2px 5px;
 }
-.cake-sql-log table {
-	background: #f4f4f4;
+.cake-sql-log {
+	background: #fff;
 }
 .cake-sql-log td {
 	padding: 4px 8px;
