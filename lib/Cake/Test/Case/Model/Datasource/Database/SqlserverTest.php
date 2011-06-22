@@ -415,6 +415,15 @@ class SqlserverTest extends CakeTestCase {
 				'Null' => 'YES',
 				'Size' => ''
 			),
+			(object) array(
+				'Default' => '',
+				'Field' => 'id',
+				'Key' => 1,
+				'Type' => 'nchar',
+				'Length' => 72,
+				'Null' => 'NO',
+				'Size' => ''
+			)
 		));
 		$this->db->executeResultsStack = array($SqlserverTableDescription);
 		$dummyModel = $this->model;
@@ -437,6 +446,13 @@ class SqlserverTest extends CakeTestCase {
 				'null' => true,
 				'default' => '',
 				'length' => null
+			),
+			'id' => array(
+				'type' => 'string',
+				'null' => false,
+				'default' => '',
+				'length' => 36,
+				'key' => 'primary'
 			)
 		);
 		$this->assertEqual($expected, $result);

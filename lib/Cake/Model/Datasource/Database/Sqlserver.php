@@ -439,6 +439,9 @@ class Sqlserver extends DboSource {
 			if ($length->Length == -1 && strpos($length->Type, 'char') !== false) {
 				return null;
 			}
+			if (in_array($length->Type, array('nchar', 'nvarchar'))) {
+				return floor($length->Length / 2);
+			}
 			return $length->Length;
 		}
 		return parent::length($length);
