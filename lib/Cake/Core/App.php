@@ -284,6 +284,10 @@ class App {
 					'%s' . 'Controller' . DS . 'Component' . DS,
 					'%s' . 'controllers' . DS . 'components' . DS
 				),
+				'Controller/Component/Auth' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS,
+					'%s' . 'controllers' . DS . 'components' . DS . 'auth' . DS
+				),
 				'View' => array(
 					'%s' . 'View' . DS,
 					'%s' . 'views' . DS
