@@ -18,7 +18,10 @@
  */
 
 App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
 App::uses('Sqlserver', 'Model/Datasource/Database');
+
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
 /**
  * SqlserverTestDb class
@@ -246,7 +249,7 @@ class SqlserverTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.category', 'core.post');
+	public $fixtures = array('core.category', 'core.author', 'core.post');
 
 /**
  * Sets up a Dbo class instance for testing
@@ -399,7 +402,7 @@ class SqlserverTest extends CakeTestCase {
 				'Default' => '',
 				'Field' => 'body',
 				'Key' => 0,
-				'Length' => -1,
+				'Length' => '-1',
 				'Null' => 'YES',
 				'Type' => 'nvarchar'
 			),
@@ -598,7 +601,7 @@ class SqlserverTest extends CakeTestCase {
  * @return void
  */
 	public function testLimitOffsetHack() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Author', 'Post');
 		$query = array(
 			'limit' => 1,
 			'page' => 1,
