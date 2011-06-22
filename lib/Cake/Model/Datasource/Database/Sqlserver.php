@@ -213,10 +213,10 @@ class Sqlserver extends DboSource {
 		foreach ($cols as $column) {
 			$field = $column->Field;
 			$fields[$field] = array(
-				'type' => $this->column($column->Type),
+				'type' => $this->column($column),
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column->Default),
-				'length' => intval($column->Length),
+				'length' => $this->length($column),
 				'key' => ($column->Key == '1') ? 'primary' : false
 			);
 
@@ -385,22 +385,16 @@ class Sqlserver extends DboSource {
 /**
  * Converts database-layer column types to basic types
  *
- * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @param mixed $real Either the string value of the fields type.
+ *    or the Result object from Sqlserver::describe()
  * @return string Abstract column type (i.e. "string")
  */
 	public function column($real) {
-		if (is_array($real)) {
-			$col = $real['name'];
-
-			if (isset($real['limit'])) {
-				$col .= '(' . $real['limit'] . ')';
-			}
-			return $col;
-		}
-		$col = str_replace(')', '', $real);
 		$limit = null;
-		if (strpos($col, '(') !== false) {
-			list($col, $limit) = explode('(', $col);
+		$col = $real;
+		if (is_object($real) && isset($real->Field)) {
+			$limit = $real->Length;
+			$col = $real->Type;
 		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
@@ -411,6 +405,9 @@ class Sqlserver extends DboSource {
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
+		}
+		if (strpos($col, 'char') !== false && $limit === -1) {
+			return 'text';
 		}
 		if (strpos($col, 'char') !== false) {
 			return 'string';
@@ -425,6 +422,23 @@ class Sqlserver extends DboSource {
 			return 'float';
 		}
 		return 'text';
+	}
+
+/**
+ * Handle SQLServer specific length properties.
+ * SQLServer handles text types as nvarchar/varchar with a length of -1.
+ *
+ * @param mixed $length Either the length as a string, or a Column descriptor object.
+ * @return mixed null|integer with length of column.
+ */
+	public function length($length) {
+		if (is_object($length) && isset($length->Length)) {
+			if ($length->Length === -1 && strpos($length->Type, 'char') !== false) {
+				return null;
+			}
+			return $length->Length;
+		}
+		return parent::length($length);
 	}
 
 /**
