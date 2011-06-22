@@ -22,24 +22,20 @@
 <?php
 $i = 0;
 foreach ($scaffoldFields as $_field) {
-	$class = null;
-	if ($i++ % 2 == 0) {
-		$class = ' class="altrow"';
-	}
 	$isKey = false;
 	if (!empty($associations['belongsTo'])) {
 		foreach ($associations['belongsTo'] as $_alias => $_details) {
 			if ($_field === $_details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt{$class}>" . Inflector::humanize($_alias) . "</dt>\n";
-				echo "\t\t<dd{$class}>\n\t\t\t" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
+				echo "\t\t<dt>" . Inflector::humanize($_alias) . "</dt>\n";
+				echo "\t\t<dd>\n\t\t\t" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
 				break;
 			}
 		}
 	}
 	if ($isKey !== true) {
-		echo "\t\t<dt{$class}>" . Inflector::humanize($_field) . "</dt>\n";
-		echo "\t\t<dd{$class}>" . h(${$singularVar}[$modelClass][$_field]) . "&nbsp;</dd>\n";
+		echo "\t\t<dt>" . Inflector::humanize($_field) . "</dt>\n";
+		echo "\t\t<dd>" . h(${$singularVar}[$modelClass][$_field]) . "&nbsp;</dd>\n";
 	}
 }
 ?>
@@ -78,12 +74,8 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 		$i = 0;
 		$otherFields = array_keys(${$singularVar}[$_alias]);
 		foreach ($otherFields as $_field) {
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-			echo "\t\t<dt{$class}>" . Inflector::humanize($_field) . "</dt>\n";
-			echo "\t\t<dd{$class}>\n\t" . ${$singularVar}[$_alias][$_field] . "\n&nbsp;</dd>\n";
+			echo "\t\t<dt>" . Inflector::humanize($_field) . "</dt>\n";
+			echo "\t\t<dd>\n\t" . ${$singularVar}[$_alias][$_field] . "\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
@@ -129,11 +121,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php
 		$i = 0;
 		foreach (${$singularVar}[$_alias] as ${$otherSingularVar}):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-			echo "\t\t<tr{$class}>\n";
+			echo "\t\t<tr>\n";
 
 			foreach ($otherFields as $_field) {
 				echo "\t\t\t<td>" . ${$otherSingularVar}[$_field] . "</td>\n";

@@ -128,7 +128,6 @@ div.actions h3 {
 
 /** Tables **/
 table {
-	background: #fff;
 	border-right:0;
 	clear: both;
 	color: #333;
@@ -153,16 +152,12 @@ th a.desc:after {
 	content: ' ⇡';
 }
 table tr td {
-	background: #fff;
 	padding: 6px;
 	text-align: left;
 	vertical-align: top;
 	border-bottom:1px solid #ddd;
 }
-table tr:nth-child(2n) td {
-	background: #f5f5f5;
-}
-table .altrow td {
+table tr:nth-child(even) {
 	background: #f5f5f5;
 }
 td.actions {
@@ -208,9 +203,11 @@ dl {
 	margin: 0em 0em;
 	width: 60%;
 }
-dl .altrow {
+dl dd:nth-child(4n+2),
+dl dt:nth-child(4n+1) {
 	background: #f4f4f4;
 }
+
 dt {
 	font-weight: bold;
 	padding-left: 4px;

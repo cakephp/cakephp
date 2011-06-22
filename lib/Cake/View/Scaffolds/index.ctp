@@ -28,11 +28,7 @@
 <?php
 $i = 0;
 foreach (${$pluralVar} as ${$singularVar}):
-	$class = null;
-	if ($i++ % 2 == 0) {
-		$class = ' class="altrow"';
-	}
-	echo "<tr{$class}>";
+	echo "<tr>";
 		foreach ($scaffoldFields as $_field) {
 			$isKey = false;
 			if (!empty($associations['belongsTo'])) {
