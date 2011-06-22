@@ -238,6 +238,7 @@ class Sqlserver extends DboSource {
 				$fields[$field]['length'] = $fields[$field]['length'] . ',' . $column->Size;
 			}
 		}
+		debug($fields);
 		$this->__cacheDescription($table, $fields);
 		$cols->closeCursor();
 		return $fields;
@@ -397,6 +398,9 @@ class Sqlserver extends DboSource {
 			$col = $real->Type;
 		}
 
+		if ($col == 'datetime2') {
+			return 'datetime';
+		}
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
@@ -433,7 +437,7 @@ class Sqlserver extends DboSource {
  */
 	public function length($length) {
 		if (is_object($length) && isset($length->Length)) {
-			if ($length->Length === -1 && strpos($length->Type, 'char') !== false) {
+			if ($length->Length == -1 && strpos($length->Type, 'char') !== false) {
 				return null;
 			}
 			return $length->Length;
