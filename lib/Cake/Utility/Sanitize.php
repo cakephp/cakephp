@@ -243,8 +243,6 @@ class Sanitize {
 				$data = str_replace("\r", "", $data);
 			}
 
-			$data = str_replace("'", "'", str_replace("!", "!", $data));
-
 			if ($options['unicode']) {
 				$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
 			}
