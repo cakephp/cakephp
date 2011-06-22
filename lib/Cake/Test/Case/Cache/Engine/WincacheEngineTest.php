@@ -66,7 +66,6 @@ class WincacheEngineTest extends CakeTestCase {
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 'wincache');
-		var_dump(wincache_ucache_get('cake_test'));
 		$this->assertTrue($result);
 
 		$result = Cache::read('test', 'wincache');
