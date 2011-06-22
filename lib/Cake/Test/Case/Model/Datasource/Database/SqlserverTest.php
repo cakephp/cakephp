@@ -402,7 +402,16 @@ class SqlserverTest extends CakeTestCase {
 				'Length' => -1,
 				'Null' => 'YES',
 				'Type' => 'nvarchar'
-			)
+			),
+			(object) array(
+				'Default' => '',
+				'Field' => 'published',
+				'Key' => 0,
+				'Type' => 'datetime2',
+				'Length' => 8,
+				'Null' => 'YES',
+				'Size' => ''
+			),
 		));
 		$this->db->executeResultsStack = array($SqlserverTableDescription);
 		$dummyModel = $this->model;
@@ -418,6 +427,12 @@ class SqlserverTest extends CakeTestCase {
 				'type' => 'text',
 				'null' => true,
 				'default' => null,
+				'length' => null
+			),
+			'published' => array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => '',
 				'length' => null
 			)
 		);
