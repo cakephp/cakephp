@@ -18,7 +18,7 @@
 ?>
 <div class="<?php echo $pluralVar;?> view">
 <h2><?php echo "<?php  echo __('{$singularHumanName}');?>";?></h2>
-	<dl><?php echo "<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
+	<dl>
 <?php
 foreach ($fields as $field) {
 	$isKey = false;
@@ -26,15 +26,15 @@ foreach ($fields as $field) {
 		foreach ($associations['belongsTo'] as $alias => $details) {
 			if ($field === $details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php echo __('" . Inflector::humanize(Inflector::underscore($alias)) . "'); ?></dt>\n";
-				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \$this->Html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+				echo "\t\t<dt><?php echo __('" . Inflector::humanize(Inflector::underscore($alias)) . "'); ?></dt>\n";
+				echo "\t\t<dd>\n\t\t\t<?php echo \$this->Html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 				break;
 			}
 		}
 	}
 	if ($isKey !== true) {
-		echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php echo __('" . Inflector::humanize($field) . "'); ?></dt>\n";
-		echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo h(\${$singularVar}['{$modelClass}']['{$field}']); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dt><?php echo __('" . Inflector::humanize($field) . "'); ?></dt>\n";
+		echo "\t\t<dd>\n\t\t\t<?php echo h(\${$singularVar}['{$modelClass}']['{$field}']); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
 ?>
@@ -68,11 +68,11 @@ if (!empty($associations['hasOne'])) :
 	<div class="related">
 		<h3><?php echo "<?php echo __('Related " . Inflector::humanize($details['controller']) . "');?>";?></h3>
 	<?php echo "<?php if (!empty(\${$singularVar}['{$alias}'])):?>\n";?>
-		<dl><?php echo "\t<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
+		<dl>
 	<?php
 			foreach ($details['fields'] as $field) {
-				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php echo __('" . Inflector::humanize($field) . "');?></dt>\n";
-				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
+				echo "\t\t<dt><?php echo __('" . Inflector::humanize($field) . "');?></dt>\n";
+				echo "\t\t<dd>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
 			}
 	?>
 		</dl>
@@ -113,24 +113,18 @@ foreach ($relations as $alias => $details):
 <?php
 echo "\t<?php
 		\$i = 0;
-		foreach (\${$singularVar}['{$alias}'] as \${$otherSingularVar}):
-			\$class = null;
-			if (\$i++ % 2 == 0) {
-				\$class = ' class=\"altrow\"';
+		foreach (\${$singularVar}['{$alias}'] as \${$otherSingularVar}): ?>\n";
+		echo "\t\t<tr>\n";
+			foreach ($details['fields'] as $field) {
+				echo "\t\t\t<td><?php echo \${$otherSingularVar}['{$field}'];?></td>\n";
 			}
-		?>\n";
-		echo "\t\t<tr<?php echo \$class;?>>\n";
 
-				foreach ($details['fields'] as $field) {
-					echo "\t\t\t<td><?php echo \${$otherSingularVar}['{$field}'];?></td>\n";
-				}
-
-				echo "\t\t\t<td class=\"actions\">\n";
-				echo "\t\t\t\t<?php echo \$this->Html->link(__('View'), array('controller' => '{$details['controller']}', 'action' => 'view', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
-				echo "\t\t\t\t<?php echo \$this->Html->link(__('Edit'), array('controller' => '{$details['controller']}', 'action' => 'edit', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
-				echo "\t\t\t\t<?php echo \$this->Form->postLink(__('Delete'), array('controller' => '{$details['controller']}', 'action' => 'delete', \${$otherSingularVar}['{$details['primaryKey']}']), null, __('Are you sure you want to delete # %s?', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
-				echo "\t\t\t</td>\n";
-			echo "\t\t</tr>\n";
+			echo "\t\t\t<td class=\"actions\">\n";
+			echo "\t\t\t\t<?php echo \$this->Html->link(__('View'), array('controller' => '{$details['controller']}', 'action' => 'view', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
+			echo "\t\t\t\t<?php echo \$this->Html->link(__('Edit'), array('controller' => '{$details['controller']}', 'action' => 'edit', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
+			echo "\t\t\t\t<?php echo \$this->Form->postLink(__('Delete'), array('controller' => '{$details['controller']}', 'action' => 'delete', \${$otherSingularVar}['{$details['primaryKey']}']), null, __('Are you sure you want to delete # %s?', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
+			echo "\t\t\t</td>\n";
+		echo "\t\t</tr>\n";
 
 echo "\t<?php endforeach; ?>\n";
 ?>

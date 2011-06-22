@@ -28,13 +28,8 @@
 	<?php
 	echo "<?php
 	\$i = 0;
-	foreach (\${$pluralVar} as \${$singularVar}):
-		\$class = null;
-		if (\$i++ % 2 == 0) {
-			\$class = ' class=\"altrow\"';
-		}
-	?>\n";
-	echo "\t<tr<?php echo \$class;?>>\n";
+	foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
+	echo "\t<tr>\n";
 		foreach ($fields as $field) {
 			$isKey = false;
 			if (!empty($associations['belongsTo'])) {
