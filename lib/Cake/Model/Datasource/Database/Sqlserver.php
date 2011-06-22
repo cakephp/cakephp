@@ -406,7 +406,7 @@ class Sqlserver extends DboSource {
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
 		}
-		if (strpos($col, 'char') !== false && $limit === -1) {
+		if (strpos($col, 'char') !== false && $limit == -1) {
 			return 'text';
 		}
 		if (strpos($col, 'char') !== false) {
