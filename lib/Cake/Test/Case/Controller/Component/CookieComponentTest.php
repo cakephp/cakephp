@@ -519,8 +519,8 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	function testDeleteChildrenNotExist() {
-		$this->assertNull($this->Controller->Cookie->delete('NotFound'));
-		$this->assertNull($this->Controller->Cookie->delete('Not.Found'));
+		$this->assertNull($this->Cookie->delete('NotFound'));
+		$this->assertNull($this->Cookie->delete('Not.Found'));
 	}
 
 /**

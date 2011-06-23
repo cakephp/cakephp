@@ -370,11 +370,16 @@ class MediaViewTest extends CakeTestCase {
 			'extension' => 'JPG',
 		);
 
-		$result = $this->MediaView->render();
+		$this->MediaView->response->expects($this->any())
+			->method('type')
+			->with('jpg')
+			->will($this->returnArgument(0));
 
-		$fileName = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'img' . DS . 'test_2.JPG';
-		$file = file_get_contents($fileName, 'r');
-		$this->assertEqual(base64_encode($output), base64_encode($file));
+		$this->MediaView->expects($this->at(0))
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$this->MediaView->render();
 	}
 
 }

@@ -18,6 +18,10 @@
  */
 
 App::uses('Multibyte', 'I18n');
+// Load multibyte if the extension is missing.
+if (!function_exists('mb_strlen')) {
+	class_exists('Multibyte');
+}
 
 /**
  * Offers different validation methods.
