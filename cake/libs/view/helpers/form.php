@@ -290,7 +290,7 @@ class FormHelper extends AppHelper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$htmlAttributes['action'] = $this->url($options['action']);
+		$action = $this->url($options['action']);
 		unset($options['type'], $options['action']);
 
 		if ($options['default'] == false) {
@@ -321,7 +321,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->setEntity($model . '.', true);
-		$attributes = $this->_parseAttributes($htmlAttributes, null, '');
+		$attributes = sprintf('action="%s" ', $action) . $this->_parseAttributes($htmlAttributes, null, '');
 		return sprintf($this->Html->tags['form'], $attributes) . $append;
 	}
 
