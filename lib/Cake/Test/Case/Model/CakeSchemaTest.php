@@ -505,7 +505,8 @@ class CakeSchemaTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment',
 		'core.datatype', 'core.auth_user', 'core.author',
-		'core.test_plugin_article', 'core.user', 'core.comment'
+		'core.test_plugin_article', 'core.user', 'core.comment',
+		'core.prefix_test'
 	);
 
 /**
@@ -658,6 +659,14 @@ class CakeSchemaTest extends CakeTestCase {
 		ConnectionManager::create('schema_prefix', $config);
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
+
+		$config['prefix'] = 'prefix_';
+		ConnectionManager::create('schema_prefix2', $config);
+		$read = $this->Schema->read(array(
+			'connection' => 'schema_prefix2',
+			'name' => 'TestApp',
+			'models' => false));
+		$this->assertTrue(isset($read['tables']['prefix_tests']));
 	}
 
 /**

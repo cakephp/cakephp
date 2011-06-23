@@ -89,7 +89,8 @@ class MemcacheEngineTest extends CakeTestCase {
 			'servers' => array('127.0.0.1'),
 			'persistent' => true,
 			'compress' => false,
-			'engine' => 'Memcache'
+			'engine' => 'Memcache',
+			'persistent' => true,
 		);
 		$this->assertEqual($settings, $expecting);
 	}

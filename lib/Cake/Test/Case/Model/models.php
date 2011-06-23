@@ -4734,3 +4734,15 @@ class MysqlTestModel extends Model {
 		);
 	}
 }
+
+/**
+ * Test model for datasource prefixes
+ *
+ */
+class PrefixTestModel extends CakeTestModel {
+}
+class PrefixTestUseTableModel extends CakeTestModel {
+       var $name = 'PrefixTest';
+       var $useTable = 'prefix_tests';
+}
+

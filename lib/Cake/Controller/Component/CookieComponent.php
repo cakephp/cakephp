@@ -286,14 +286,15 @@ class CookieComponent extends Component {
 				foreach ($this->_values[$key] as $idx => $val) {
 					$this->_delete("[$key][$idx]");
 				}
-			} else {
-				$this->_delete("[$key]");
 			}
+			$this->_delete("[$key]");
 			unset($this->_values[$key]);
 			return;
 		}
 		$names = explode('.', $key, 2);
-		$this->_values[$names[0]] = Set::remove($this->_values[$names[0]], $names[1]);
+		if (isset($this->_values[$names[0]])) {
+			$this->_values[$names[0]] = Set::remove($this->_values[$names[0]], $names[1]);
+		}
 		$this->_delete('[' . implode('][', $names) . ']');
 	}
 

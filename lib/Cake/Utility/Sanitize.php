@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'ConnectionManager');
 /**
  * Washes strings from unwanted noise.
  *

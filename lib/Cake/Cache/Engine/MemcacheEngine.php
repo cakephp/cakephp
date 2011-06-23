@@ -64,8 +64,8 @@ class MemcacheEngine extends CacheEngine {
 			'engine'=> 'Memcache',
 			'prefix' => Inflector::slug(APP_DIR) . '_',
 			'servers' => array('127.0.0.1'),
-			'persistent' => true,
-			'compress'=> false
+			'compress'=> false,
+			'persistent' => true
 			), $settings)
 		);
 

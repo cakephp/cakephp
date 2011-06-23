@@ -852,4 +852,15 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->hasAny($Article, '1=2');
 		$this->assertFalse($result);
 	}
+
+/**
+ * Test that group works without a model
+ *
+ * @return void
+ */
+	function testGroupNoModel() {
+		$result = $this->db->group('created');
+		$this->assertEqual(' GROUP BY created', $result);
+	}
+
 }

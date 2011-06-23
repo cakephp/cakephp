@@ -356,6 +356,7 @@ class ModelTask extends BakeTask {
 				$default++;
 			}
 		}
+		$choices[$default] = 'none'; // Needed since index starts at 1
 		$this->_validations = $choices;
 		return $choices;
 	}
@@ -394,6 +395,8 @@ class ModelTask extends BakeTask {
 			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
 				if ($fieldName == 'email') {
 					$guess = $methods['email'];
+				} elseif ($metaData['type'] == 'string' && $metaData['length'] == 36) {
+					$guess = $methods['uuid'];
 				} elseif ($metaData['type'] == 'string') {
 					$guess = $methods['notempty'];
 				} elseif ($metaData['type'] == 'integer') {
