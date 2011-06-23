@@ -549,6 +549,30 @@ class Sqlserver extends DboSource {
 	}
 
 /**
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column The column into which this data will be inserted
+ * @return string Quoted and escaped data
+ */
+	public function value($data, $column = null) {
+		if (is_array($data) || is_object($data)) {
+			return parent::value($data, $column);
+		}
+
+		if (empty($column)) {
+			$column = $this->introspectType($data);
+		}
+
+		switch ($column) {
+			case 'string':
+			case 'text':
+				return 'N' . $this->_connection->quote($data, PDO::PARAM_STR);
+			default:
+				return parent::value($data, $column);
+		}
+	}
+/**
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *

@@ -491,7 +491,7 @@ class SqlserverTest extends CakeTestCase {
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT \'\' NOT NULL';
+		$expected = '[name] varchar(255) DEFAULT N\'\' NOT NULL';
 		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'length' => '255');
@@ -511,7 +511,7 @@ class SqlserverTest extends CakeTestCase {
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT \'\'';
+		$expected = '[name] varchar(255) DEFAULT N\'\'';
 		$this->assertEqual($expected, $result);
 	}
 /**
@@ -591,8 +591,8 @@ class SqlserverTest extends CakeTestCase {
 		$result = $this->db->simulated;
 		$expected = array(
 			'SET IDENTITY_INSERT [sqlserver_test_models] ON',
-			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (1, 'Larry', 'PhpNut')",
-			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (2, 'Renan', 'renan.saddam')",
+			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (1, N'Larry', N'PhpNut')",
+			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (2, N'Renan', N'renan.saddam')",
 			'SET IDENTITY_INSERT [sqlserver_test_models] OFF'
 		);
 		$this->assertEqual($expected, $result);
@@ -605,8 +605,8 @@ class SqlserverTest extends CakeTestCase {
 		$this->db->insertMulti($this->model, $fields, $values);
 		$result = $this->db->simulated;
 		$expected = array(
-			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES ('Larry', 'PhpNut')",
-			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES ('Renan', 'renan.saddam')",
+			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES (N'Larry', N'PhpNut')",
+			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES (N'Renan', N'renan.saddam')",
 		);
 		$this->assertEqual($expected, $result);
 	}
