@@ -314,7 +314,8 @@ class FormHelper extends AppHelper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$htmlAttributes['action'] = $this->url($options['action']);
+
+		$action = $this->url($options['action']);
 		unset($options['type'], $options['action']);
 
 		if ($options['default'] == false) {
@@ -351,7 +352,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->setEntity($model . '.', true);
-		return $this->Html->useTag('form', $htmlAttributes) . $append;
+		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
 /**
