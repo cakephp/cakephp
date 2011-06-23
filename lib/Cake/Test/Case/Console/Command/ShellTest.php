@@ -344,7 +344,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testNl() {
-		$newLine = '\n';
+		$newLine = "\n";
 		if (DS === '\\') {
 			$newLine = "\r\n";
 		}
