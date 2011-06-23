@@ -116,6 +116,8 @@ class Sqlserver extends DboSource {
 
 	const ROW_COUNTER = '_cake_page_rownum_';
 
+	protected $_version;
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -140,7 +142,7 @@ class Sqlserver extends DboSource {
 			throw new MissingConnectionException(array('class' => $e->getMessage()));
 		}
 
-//		$this->_execute("SET DATEFORMAT ymd");
+		$this->_version = $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 		return $this->connected;
 	}
 
@@ -375,7 +377,7 @@ class Sqlserver extends DboSource {
 			}
 			$rt .= ' ' . $limit;
 			if (is_int($offset) && $offset > 0) {
-				$rt .= ' OFFSET ' . $offset;
+				$rt = ' OFFSET ' . intval($offset)  . ' ROWS FETCH FIRST ' . intval($limit) . ' ROWS ONLY';
 			}
 			return $rt;
 		}
@@ -495,24 +497,33 @@ class Sqlserver extends DboSource {
 					$fields = substr($fields, 9);
 				}
 
-				if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
-					$limit = preg_replace('/\s*offset.*$/i', '', $limit);
-					preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
-					$offset = intval($offset[1]) + intval($limitVal[1]);
+				// hack order as SQLServer requires an order if there is a limit.
+				if ($limit && !$order) {
+					$order = 'ORDER BY (SELECT NULL)';
+				}
+
+				// For older versions use the subquery version of pagination.
+				if (version_compare($this->_version, '11', '<') && preg_match('/FETCH\sFIRST\s+([0-9]+)/i', $limit, $offset)) {
+					preg_match('/OFFSET\s*(\d+)\s*.*?(\d+)\s*ROWS/', $limit, $limitOffset);
+
+					$limit = 'TOP ' . intval($limitOffset[2]);
+					$page = intval($limitOffset[1] / $limitOffset[2]);
+					$offset = intval($limitOffset[2] * $page);
 					if (!$order) {
 						$order = 'ORDER BY (SELECT NULL)';
 					}
 
 					$rowCounter = self::ROW_COUNTER;
-					$pagination = "
+					return "
 						SELECT {$limit} * FROM (
 							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS {$rowCounter}
 							FROM {$table} {$alias} {$joins} {$conditions} {$group}
 						) AS _cake_paging_
-						WHERE _cake_paging_.{$rowCounter} >= {$offset}
+						WHERE _cake_paging_.{$rowCounter} > {$offset}
 						ORDER BY _cake_paging_.{$rowCounter}
 					";
-					return $pagination;
+				} elseif (strpos($limit, 'FETCH') !== false) {
+					return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
 				} else {
 					return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}";
 				}

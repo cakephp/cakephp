@@ -249,7 +249,7 @@ class SqlserverTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.category', 'core.author', 'core.post');
+	public $fixtures = array('core.user', 'core.category', 'core.author', 'core.post');
 
 /**
  * Sets up a Dbo class instance for testing
@@ -617,27 +617,31 @@ class SqlserverTest extends CakeTestCase {
  * @return void
  */
 	public function testLimitOffsetHack() {
-		$this->loadFixtures('Author', 'Post');
+		$this->loadFixtures('Author', 'Post', 'User');
 		$query = array(
-			'limit' => 1,
+			'limit' => 2,
 			'page' => 1,
-			'order' => 'Post.title ASC',
+			'order' => 'User.user ASC',
 		);
-		$Post = ClassRegistry::init('Post');
-		$results = $Post->find('all', $query);
+		$User = ClassRegistry::init('User');
+		$results = $User->find('all', $query);
 
-		$this->assertEquals(1, count($results));
-		$this->assertEquals('First Post', $results[0]['Post']['title']);
+		$this->assertEquals(2, count($results));
+		$this->assertEquals('garrett', $results[0]['User']['user']);
+		$this->assertEquals('larry', $results[1]['User']['user']);
 
 		$query = array(
-			'limit' => 1,
+			'limit' => 2,
 			'page' => 2,
-			'order' => 'Post.title ASC',
+			'order' => 'User.user ASC',
 		);
-		$Post = ClassRegistry::init('Post');
-		$results = $Post->find('all', $query);
-		$this->assertEquals(1, count($results));
+		$User = ClassRegistry::init('User');
+		$results = $User->find('all', $query);
+
+		$this->assertEquals(2, count($results));
 		$this->assertFalse(isset($results[0][0]));
-		$this->assertEquals('Second Post', $results[0]['Post']['title']);
+		$this->assertEquals('mariano', $results[0]['User']['user']);
+		$this->assertEquals('nate', $results[1]['User']['user']);
 	}
+
 }
