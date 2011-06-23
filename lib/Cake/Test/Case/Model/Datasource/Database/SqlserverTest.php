@@ -491,7 +491,7 @@ class SqlserverTest extends CakeTestCase {
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT N\'\' NOT NULL';
+		$expected = '[name] varchar(255) DEFAULT \'\' NOT NULL';
 		$this->assertEqual($expected, $result);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'length' => '255');
@@ -511,7 +511,7 @@ class SqlserverTest extends CakeTestCase {
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT N\'\'';
+		$expected = '[name] varchar(255) DEFAULT \'\'';
 		$this->assertEqual($expected, $result);
 	}
 /**
