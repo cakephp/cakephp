@@ -558,6 +558,8 @@ class Sqlserver extends DboSource {
 	public function value($data, $column = null) {
 		if (is_array($data) || is_object($data)) {
 			return parent::value($data, $column);
+		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
+			return $data;
 		}
 
 		if (empty($column)) {
@@ -658,8 +660,10 @@ class Sqlserver extends DboSource {
 			} else {
 				$result = str_replace('DEFAULT NULL', 'NULL', $result);
 			}
-		} else if (array_keys($column) == array('type', 'name')) {
+		} elseif (array_keys($column) == array('type', 'name')) {
 			$result .= ' NULL';
+		} elseif (strpos($result, "DEFAULT N'")) {
+			$result = str_replace("DEFAULT N'", "DEFAULT '", $result);
 		}
 		return $result;
 	}
