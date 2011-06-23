@@ -509,9 +509,6 @@ class Sqlserver extends DboSource {
 					$limit = 'TOP ' . intval($limitOffset[2]);
 					$page = intval($limitOffset[1] / $limitOffset[2]);
 					$offset = intval($limitOffset[2] * $page);
-					if (!$order) {
-						$order = 'ORDER BY (SELECT NULL)';
-					}
 
 					$rowCounter = self::ROW_COUNTER;
 					return "
