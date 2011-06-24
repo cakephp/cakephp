@@ -249,7 +249,7 @@ class Sanitize {
 			return $data;
 		} else {
 			if ($options['odd_spaces']) {
-				$data = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
+				$data = str_replace(chr(0xCA), '', $data);
 			}
 			if ($options['encode']) {
 				$data = Sanitize::html($data, array('remove' => $options['remove_html']));
@@ -260,7 +260,6 @@ class Sanitize {
 			if ($options['carriage']) {
 				$data = str_replace("\r", "", $data);
 			}
-
 			if ($options['unicode']) {
 				$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
 			}
