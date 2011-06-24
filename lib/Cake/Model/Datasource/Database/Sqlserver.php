@@ -20,9 +20,10 @@
 App::uses('DboSource', 'Model/Datasource');
 
 /**
- * MS SQL layer for DBO
+ * Dbo driver for SQLServer
  *
- * Long description for class
+ * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
+ * and `pdo_sqlsrv` extensions to be enabled.
  *
  * @package       cake.libs.model.datasources.dbo
  */
@@ -71,7 +72,7 @@ class Sqlserver extends DboSource {
  */
 	protected $_baseConfig = array(
 		'persistent' => true,
-		'host' => '(local)\sqlexpress',
+		'host' => 'localhost\SQLEXPRESS',
 		'login' => '',
 		'password' => '',
 		'database' => 'cake'
@@ -84,8 +85,8 @@ class Sqlserver extends DboSource {
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
-		'string'	=> array('name' => 'varchar', 'limit' => '255'),
-		'text'		=> array('name' => 'text'),
+		'string'	=> array('name' => 'nvarchar', 'limit' => '255'),
+		'text'		=> array('name' => 'nvarchar', 'limit' => 'MAX'),
 		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
 		'float'		=> array('name' => 'numeric', 'formatter' => 'floatval'),
 		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -114,8 +115,18 @@ class Sqlserver extends DboSource {
  */
 	private $__lastQueryHadError = false;
 
+/**
+ * Magic column name used to provide pagination support for SQLServer 2008
+ * which lacks proper limit/offset support.
+ */
 	const ROW_COUNTER = '_cake_page_rownum_';
 
+/**
+ * The version of SQLServer being used.  If greater than 11
+ * Normal limit offset statements will be used
+ *
+ * @var string
+ */
 	protected $_version;
 
 /**
