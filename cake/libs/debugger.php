@@ -499,6 +499,16 @@ class Debugger extends Object {
 			case 'object':
 				return get_class($var) . "\n" . $_this->__object($var);
 			case 'array':
+				$var = array_merge($var,  array_intersect_key(array(
+					'password' => '*****',
+					'login'  => '*****',
+					'host' => '*****',
+					'database' => '*****',
+					'port' => '*****',
+					'prefix' => '*****',
+					'schema' => '*****'
+				), $var));
+
 				$out = "array(";
 				$vars = array();
 				foreach ($var as $key => $val) {
