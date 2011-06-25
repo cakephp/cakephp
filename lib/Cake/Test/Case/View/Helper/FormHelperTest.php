@@ -1528,12 +1528,12 @@ class FormHelperTest extends CakeTestCase {
 		));
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'Contact2Name'),
+			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name', 'id',
+				'type' => 'text', 'name' => 'data[Contact][2][name]', 'id' => 'Contact2Name',
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
