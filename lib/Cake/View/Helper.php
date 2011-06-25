@@ -381,6 +381,30 @@ class Helper extends Object {
  */
 	public function setEntity($entity, $setScope = false) {
 		$view = $this->_View;
+		if ($entity === null) {
+			$view->modelScope = false;
+		}
+
+		if ($setScope === true) {
+			$view->modelScope = $entity;
+		}
+		$parts = array_values(Set::filter(explode('.', $entity), true));
+		if (empty($parts)) {
+			return;
+		}
+
+		$count = count($parts);
+		if (
+			$count === 1 &&
+			$view->modelScope && 
+			$parts[0] !== $view->modelScope
+		) {
+			$entity = $view->modelScope . '.' . $entity;
+		}
+		$view->entityPath = $entity;
+		return;
+
+		// old implementation.
 		if ($setScope) {
 			$view->modelScope = false;
 		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
@@ -680,10 +704,10 @@ class Helper extends Object {
 
 		$entity = $this->_View->entity();
 		if (!empty($data) && !empty($entity)) {
-			$result = Set::extract($data, join('.', $entity));
+			$result = Set::extract($data, implode('.', $entity));
 		}
 
-		$habtmKey = $this->field();
+		$habtmKey = $entity[0];
 		if (empty($result) && isset($data[$habtmKey][$habtmKey]) && is_array($data[$habtmKey])) {
 			$result = $data[$habtmKey][$habtmKey];
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
@@ -692,7 +716,6 @@ class Helper extends Object {
 				$result = $this->__selectedArray($data[$habtmKey], $model->primaryKey);
 			}
 		}
-
 		if (is_array($result)) {
 			if (array_key_exists($this->_View->fieldSuffix, $result)) {
 				$result = $result[$this->_View->fieldSuffix];

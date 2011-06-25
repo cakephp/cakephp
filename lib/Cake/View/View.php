@@ -551,6 +551,9 @@ class View extends Object {
  * @return array An array containing the identity elements of an entity
  */
 	public function entity() {
+		return explode('.', $this->entityPath);
+
+		// old implementation.
 		$assoc = ($this->association) ? $this->association : $this->model;
 		if (!empty($this->entityPath)) {
 			$path = explode('.', $this->entityPath);
