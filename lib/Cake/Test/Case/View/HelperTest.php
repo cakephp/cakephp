@@ -504,33 +504,19 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	public function testFieldsWithSameName() {
-		// PHP4 reference hack
-		ClassRegistry::removeObject('view');
-		ClassRegistry::addObject('view', $this->View);
-
 		$this->Helper->setEntity('HelperTestTag', true);
 
 		$this->Helper->setEntity('HelperTestTag.id');
-		$this->assertEqual($this->View->model, 'HelperTestTag');
-		$this->assertEqual($this->View->field, 'id');
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, null);
-		$this->assertEqual($this->View->fieldSuffix, null);
+		$expected = array('HelperTestTag', 'id');
+		$this->assertEquals($expected, $this->View->entity());
 
 		$this->Helper->setEntity('My.id');
-		$this->assertEqual($this->View->model, 'HelperTestTag');
-		$this->assertEqual($this->View->field, 'id');
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, 'My');
-		$this->assertEqual($this->View->fieldSuffix, null);
+		$expected = array('My', 'id');
+		$this->assertEquals($expected, $this->View->entity());
 
 		$this->Helper->setEntity('MyOther.id');
-		$this->assertEqual($this->View->model, 'HelperTestTag');
-		$this->assertEqual($this->View->field, 'id');
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, 'MyOther');
-		$this->assertEqual($this->View->fieldSuffix, null);
-
+		$expected = array('MyOther', 'id');
+		$this->assertEquals($expected, $this->View->entity());
 	}
 
 /**
@@ -540,26 +526,15 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	public function testFieldSameAsModel() {
-		// PHP4 reference hack
-		ClassRegistry::removeObject('view');
-		ClassRegistry::addObject('view', $this->View);
-
 		$this->Helper->setEntity('HelperTestTag', true);
 
 		$this->Helper->setEntity('helper_test_post');
-		$this->assertEqual($this->View->model, 'HelperTestTag');
-		$this->assertEqual($this->View->field, 'helper_test_post');
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, null);
-		$this->assertEqual($this->View->fieldSuffix, null);
+		$expected = array('HelperTestTag', 'helper_test_post');
+		$this->assertEquals($expected, $this->View->entity());
 
 		$this->Helper->setEntity('HelperTestTag');
-		$this->assertEqual($this->View->model, 'HelperTestTag');
-		$this->assertEqual($this->View->field, 'HelperTestTag');
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, null);
-		$this->assertEqual($this->View->fieldSuffix, null);
-		$this->assertEqual($this->View->entityPath, 'HelperTestTag');
+		$expected = array('HelperTestTag', 'HelperTestTag');
+		$this->assertEquals($expected, $this->View->entity());
 	}
 
 /**
@@ -569,23 +544,13 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	public function testFieldSuffixForDate() {
-		// PHP4 reference hack
-		ClassRegistry::removeObject('view');
-		ClassRegistry::addObject('view', $this->View);
-
 		$this->Helper->setEntity('HelperTestPost', true);
-		$this->assertEqual($this->View->model, 'HelperTestPost');
-		$this->assertEqual($this->View->field, null);
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, null);
-		$this->assertEqual($this->View->fieldSuffix, null);
+		$expected = array('HelperTestPost');
+		$this->assertEquals($expected, $this->View->entity());
 
 		$this->Helper->setEntity('date.month');
-		$this->assertEqual($this->View->model, 'HelperTestPost');
-		$this->assertEqual($this->View->field, 'date');
-		$this->assertEqual($this->View->modelId, null);
-		$this->assertEqual($this->View->association, null);
-		$this->assertEqual($this->View->fieldSuffix, 'month');
+		$expected = array('HelperTestPost', 'date', 'month');
+		$this->assertEquals($expected, $this->View->entity());
 	}
 
 /**
@@ -594,7 +559,7 @@ class HelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	public function testMulitDimensionValue() {
+	public function testMultiDimensionValue() {
 		$this->Helper->data = array();
 		for ($i = 0; $i < 2; $i++) {
 			$this->Helper->request->data['Model'][$i] = 'what';
@@ -618,7 +583,7 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($result, 10);
 
 		$this->Helper->request->data['HelperTestPost']['0']['id'] = 100;
-		$result = $this->Helper->value('0.id');
+		$result = $this->Helper->value('HelperTestPost.0.id');
 		$this->assertEqual($result, 100);
 	}
 

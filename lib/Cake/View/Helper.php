@@ -104,6 +104,17 @@ class Helper extends Object {
 	protected $_View;
 
 /**
+ * A list of strings that should be treated as suffixes, or
+ * sub inputs for a parent input.  This is used for date/time
+ * inputs primarily.
+ *
+ * @var array
+ */
+	protected $_fieldSuffixes = array(
+		'year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'
+	);
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -394,10 +405,14 @@ class Helper extends Object {
 		}
 
 		$count = count($parts);
+		$lastPart = isset($parts[$count - 1]) ? $parts[$count - 1] : null;
 		if (
-			$count === 1 &&
-			$view->modelScope && 
-			$parts[0] !== $view->modelScope
+			($count === 1 &&
+			$view->modelScope &&
+			$setScope == false) ||
+			(in_array($lastPart, $this->_fieldSuffixes) &&
+			$view->modelScope &&
+			$parts[0] !== $view->modelScope)
 		) {
 			$entity = $view->modelScope . '.' . $entity;
 		}
