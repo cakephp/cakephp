@@ -4702,19 +4702,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ContactTag');
-		$expected = array(
-			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ContactTagContactTag'),
-			'Contact Tag',
-			'/label',
-			array('input' => array('type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_')),
-			array('select' => array('name' => 'data[ContactTag][ContactTag][]', 'multiple' => 'multiple', 'id' => 'ContactTagContactTag')),
-			'/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
 		$this->Form->create('Contact');
 		$result = $this->Form->input('published', array('monthNames' => false));
 		$now = strtotime('now');
