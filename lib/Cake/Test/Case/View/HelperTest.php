@@ -276,6 +276,11 @@ class HelperTest extends CakeTestCase {
 		$expected = array('HelperTestPost', 'body');
 		$this->assertEquals($expected, $this->View->entity());
 
+
+		$this->Helper->setEntity('2.body');
+		$expected = array('HelperTestPost', '2', 'body');
+		$this->assertEquals($expected, $this->View->entity());
+
 		$this->Helper->setEntity('Something.else');
 		$expected = array('Something', 'else');
 		$this->assertEquals($expected, $this->View->entity());
@@ -548,9 +553,11 @@ class HelperTest extends CakeTestCase {
 		$expected = array('HelperTestPost');
 		$this->assertEquals($expected, $this->View->entity());
 
-		$this->Helper->setEntity('date.month');
-		$expected = array('HelperTestPost', 'date', 'month');
-		$this->assertEquals($expected, $this->View->entity());
+		foreach (array('year', 'month', 'day', 'hour', 'minute', 'meridian') as $d) {
+			$this->Helper->setEntity('date.' . $d);
+			$expected = array('HelperTestPost', 'date', $d);
+			$this->assertEquals($expected, $this->View->entity());
+		}
 	}
 
 /**

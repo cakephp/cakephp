@@ -416,6 +416,13 @@ class Helper extends Object {
 		) {
 			$entity = $view->modelScope . '.' . $entity;
 		}
+		if (
+			$count === 2 &&
+			is_numeric($parts[0]) &&
+			!is_numeric($parts[1])
+		) {
+			$entity = $view->modelScope . '.' . $entity;
+		}
 		$view->entityPath = $entity;
 		return;
 
@@ -567,11 +574,8 @@ class Helper extends Object {
  * @return string
  */
 	public function model() {
-		if (!empty($this->_View->association)) {
-			return $this->_View->association;
-		} else {
-			return $this->_View->model;
-		}
+		$entity = $this->_View->entity();
+		return isset($entity[0]) ? $entity[0] : null;
 	}
 
 /**
@@ -589,7 +593,13 @@ class Helper extends Object {
  * @return string
  */
 	public function field() {
-		return $this->_View->field;
+		$entity = $this->_View->entity();
+		$count = count($entity);
+		$last = $entity[$count - 1];
+		if (in_array($last, $this->_fieldSuffixes)) {
+			$last = isset($entity[$count - 2]) ? $entity[$count - 2] : null;
+		}
+		return $last;
 	}
 
 /**
