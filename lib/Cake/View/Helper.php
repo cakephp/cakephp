@@ -447,147 +447,6 @@ class Helper extends Object {
 
 		$view->entityPath = $entity;
 		return;
-
-		// old implementation.
-		if ($setScope) {
-			$view->modelScope = false;
-		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
-			return;
-		}
-
-		if ($entity === null) {
-			$view->model = null;
-			$view->association = null;
-			$view->modelId = null;
-			$view->modelScope = false;
-			$view->entityPath = null;
-			return;
-		}
-
-		$view->entityPath = $entity;
-		$model = $view->model;
-		$sameScope = $hasField = false;
-		$parts = array_values(Set::filter(explode('.', $entity), true));
-
-		if (empty($parts)) {
-			return;
-		}
-
-		$count = count($parts);
-		if ($count === 1) {
-			$sameScope = true;
-		} else {
-			if (is_numeric($parts[0])) {
-				$sameScope = true;
-			}
-			$reverse = array_reverse($parts);
-			$field = array_shift($reverse);
-			while(!empty($reverse)) {
-				$subject = array_shift($reverse);
-				if (is_numeric($subject)) {
-					continue;
-				}
-				if (ClassRegistry::isKeySet($subject)) {
-					$model = $subject;
-					break;
-				}
-			}
-		}
-
-		if (ClassRegistry::isKeySet($model)) {
-			$ModelObj = ClassRegistry::getObject($model);
-			for ($i = 0; $i < $count; $i++) {
-				if (
-					is_a($ModelObj, 'Model') &&
-					($ModelObj->hasField($parts[$i]) ||
-					array_key_exists($parts[$i], $ModelObj->validate))
-				) {
-					$hasField = $i;
-					if ($hasField === 0 || ($hasField === 1 && is_numeric($parts[0]))) {
-						$sameScope = true;
-					}
-					break;
-				}
-			}
-
-			if ($sameScope === true && in_array($parts[0], array_keys($ModelObj->hasAndBelongsToMany))) {
-				$sameScope = false;
-			}
-		}
-
-		if (!$view->association && $parts[0] == $view->field && $view->field != $view->model) {
-			array_unshift($parts, $model);
-			$hasField = true;
-		}
-		$view->field = $view->modelId = $view->fieldSuffix = $view->association = null;
-
-		switch (count($parts)) {
-			case 1:
-				if ($view->modelScope === false) {
-					$view->model = $parts[0];
-				} else {
-					$view->field = $parts[0];
-					if ($sameScope === false) {
-						$view->association = $parts[0];
-					}
-				}
-			break;
-			case 2:
-				if ($view->modelScope === false) {
-					list($view->model, $view->field) = $parts;
-				} elseif ($sameScope === true && $hasField === 0) {
-					list($view->field, $view->fieldSuffix) = $parts;
-				} elseif ($sameScope === true && $hasField === 1) {
-					list($view->modelId, $view->field) = $parts;
-				} else {
-					list($view->association, $view->field) = $parts;
-				}
-			break;
-			case 3:
-				if ($sameScope === true && $hasField === 1) {
-					list($view->modelId, $view->field, $view->fieldSuffix) = $parts;
-				} elseif ($hasField === 2) {
-					list($view->association, $view->modelId, $view->field) = $parts;
-				} else {
-					list($view->association, $view->field, $view->fieldSuffix) = $parts;
-				}
-			break;
-			case 4:
-				if ($parts[0] === $view->model) {
-					list($view->model, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
-				} else {
-					list($view->association, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
-				}
-			break;
-			default:
-				$reverse = array_reverse($parts);
-
-				if ($hasField) {
-						$view->field = $field;
-						if (!is_numeric($reverse[1]) && $reverse[1] != $model) {
-							$view->field = $reverse[1];
-							$view->fieldSuffix = $field;
-						}
-				}
-				if (is_numeric($parts[0])) {
-					$view->modelId = $parts[0];
-				} elseif ($view->model == $parts[0] && is_numeric($parts[1])) {
-					$view->modelId = $parts[1];
-				}
-				$view->association = $model;
-			break;
-		}
-
-		if (!isset($view->model) || empty($view->model)) {
-			$view->model = $view->association;
-			$view->association = null;
-		} elseif ($view->model === $view->association) {
-			$view->association = null;
-		}
-
-		if ($setScope) {
-			$view->modelScope = true;
-		}
 	}
 
 /**
@@ -601,15 +460,6 @@ class Helper extends Object {
 			return $this->_View->association;
 		}
 		return $this->_View->modelScope;
-	}
-
-/**
- * Gets the ID of the currently-used model of the rendering context.
- *
- * @return mixed
- */
-	public function modelID() {
-		return $this->_View->modelId;
 	}
 
 /**
@@ -764,11 +614,6 @@ class Helper extends Object {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model = ClassRegistry::getObject($habtmKey);
 				$result = $this->__selectedArray($data[$habtmKey], $model->primaryKey);
-			}
-		}
-		if (is_array($result)) {
-			if (array_key_exists($this->_View->fieldSuffix, $result)) {
-				$result = $result[$this->_View->fieldSuffix];
 			}
 		}
 

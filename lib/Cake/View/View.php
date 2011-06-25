@@ -552,26 +552,6 @@ class View extends Object {
  */
 	public function entity() {
 		return explode('.', $this->entityPath);
-
-		// old implementation.
-		$assoc = ($this->association) ? $this->association : $this->model;
-		if (!empty($this->entityPath)) {
-			$path = explode('.', $this->entityPath);
-			$count = count($path);
-			if (
-				($count == 1 && !empty($this->association)) ||
-				($count == 1 && $this->model != $this->entityPath) ||
-				($count == 1 && empty($this->association) && !empty($this->field)) ||
-				($count  == 2 && !empty($this->fieldSuffix)) ||
-				is_numeric($path[0]) && !empty($assoc)
-			) {
-				array_unshift($path, $assoc);
-			}
-			return Set::filter($path);
-		}
-		return array_values(Set::filter(
-			array($assoc, $this->modelId, $this->field, $this->fieldSuffix)
-		));
 	}
 
 /**
