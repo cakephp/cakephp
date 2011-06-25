@@ -603,7 +603,7 @@ class Folder extends Object {
  *
  * - `to` The directory to copy to.
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
- * - `chmod` The mode to copy the files/directories with.
+ * - `mode` The mode to copy the files/directories with.
  * - `skip` Files/directories to skip.
  *
  * @param mixed $options Either an array of options (see above) or a string of the destination directory.
