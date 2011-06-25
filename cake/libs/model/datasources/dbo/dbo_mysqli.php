@@ -64,6 +64,8 @@ class DboMysqli extends DboMysqlBase {
 
 		if ($this->connection !== false) {
 			$this->connected = true;
+		} else {
+			return false;
 		}
 
 		$this->_useAlias = (bool)version_compare(mysqli_get_server_info($this->connection), "4.1", ">=");
