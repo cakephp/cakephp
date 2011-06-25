@@ -2122,9 +2122,12 @@ class FormHelper extends AppHelper {
 				return $options;
 			}
 
-			$name = !empty($this->_View->field) ? $this->_View->field : $this->_View->model;
-			if (!empty($this->_View->fieldSuffix)) {
-				$name .= '[' . $this->_View->fieldSuffix . ']';
+			$entity = $this->_View->entity();
+			$model = $this->model();
+			$name = $model === $entity[0] && isset($entity[1]) ? $entity[1] : $entity[0];
+			$last = $entity[count($entity) - 1];
+			if (in_array($last, $this->_fieldSuffixes)) {
+				$name .= '[' . $last . ']';
 			}
 
 			if (is_array($options)) {

@@ -111,7 +111,7 @@ class Helper extends Object {
  * @var array
  */
 	protected $_fieldSuffixes = array(
-		'year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'
+		'year', 'month', 'day', 'hour', 'min', 'second', 'meridian'
 	);
 
 /**
@@ -395,7 +395,6 @@ class Helper extends Object {
 		if ($entity === null) {
 			$view->modelScope = false;
 		}
-
 		if ($setScope === true) {
 			$view->modelScope = $entity;
 		}
@@ -403,9 +402,10 @@ class Helper extends Object {
 		if (empty($parts)) {
 			return;
 		}
-
 		$count = count($parts);
 		$lastPart = isset($parts[$count - 1]) ? $parts[$count - 1] : null;
+
+		// Either 'body' or 'date.month' type inputs.
 		if (
 			($count === 1 &&
 			$view->modelScope &&
@@ -416,6 +416,8 @@ class Helper extends Object {
 		) {
 			$entity = $view->modelScope . '.' . $entity;
 		}
+
+		// 0.name style inputs.
 		if (
 			$count === 2 &&
 			is_numeric($parts[0]) &&
@@ -423,6 +425,26 @@ class Helper extends Object {
 		) {
 			$entity = $view->modelScope . '.' . $entity;
 		}
+
+		$view->association = null;
+
+		// check for associated model.
+		$reversed = array_reverse($parts);
+		foreach ($reversed as $part) {
+			if (preg_match('/^[A-Z]/', $part)) {
+				$view->association = $part;
+				break;
+			}
+		}
+
+		// habtm models are special
+		if (
+			isset($this->fieldset[$view->modelScope]['fields'][$parts[0]]['type']) && 
+			$this->fieldset[$view->modelScope]['fields'][$parts[0]]['type'] === 'multiple'
+		) {
+			$entity = $parts[0] . '.' . $parts[0];
+		}
+
 		$view->entityPath = $entity;
 		return;
 
@@ -575,7 +597,10 @@ class Helper extends Object {
  */
 	public function model() {
 		$entity = $this->_View->entity();
-		return isset($entity[0]) ? $entity[0] : null;
+		if ($this->_View->association) {
+			return $this->_View->association;
+		}
+		return $this->_View->modelScope;
 	}
 
 /**
@@ -881,11 +906,13 @@ class Helper extends Object {
 		}
 		$array = array();
 		if (!empty($data)) {
-			foreach ($data as $var) {
-				$array[$var[$key]] = $var[$key];
+			foreach ($data as $row) {
+				if (isset($row[$key])) {
+					$array[$row[$key]] = $row[$key];
+				}
 			}
 		}
-		return $array;
+		return empty($array) ? null : $array;
 	}
 
 /**

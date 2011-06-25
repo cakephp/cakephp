@@ -276,7 +276,6 @@ class HelperTest extends CakeTestCase {
 		$expected = array('HelperTestPost', 'body');
 		$this->assertEquals($expected, $this->View->entity());
 
-
 		$this->Helper->setEntity('2.body');
 		$expected = array('HelperTestPost', '2', 'body');
 		$this->assertEquals($expected, $this->View->entity());
@@ -301,6 +300,21 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('HelperTestTag');
 		$expected = array('HelperTestTag', 'HelperTestTag');
 		$this->assertEquals($expected, $this->View->entity());
+	}
+
+/**
+ * Test that setEntity() and model()/field() work with associated models.
+ *
+ * @return void
+ */
+	public function testSetEntityAssociated() {
+		$this->Helper->setEntity('HelperTestPost', true);
+
+		$this->Helper->setEntity('HelperTestPost.1.HelperTestComment.1.title');
+		$expected = array('HelperTestPost', '1', 'HelperTestComment', '1', 'title');
+		$this->assertEquals($expected, $this->View->entity());
+
+		$this->assertEquals('HelperTestComment', $this->Helper->model());
 	}
 
 /**
@@ -553,7 +567,7 @@ class HelperTest extends CakeTestCase {
 		$expected = array('HelperTestPost');
 		$this->assertEquals($expected, $this->View->entity());
 
-		foreach (array('year', 'month', 'day', 'hour', 'minute', 'meridian') as $d) {
+		foreach (array('year', 'month', 'day', 'hour', 'min', 'meridian') as $d) {
 			$this->Helper->setEntity('date.' . $d);
 			$expected = array('HelperTestPost', 'date', $d);
 			$this->assertEquals($expected, $this->View->entity());
