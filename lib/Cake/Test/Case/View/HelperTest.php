@@ -526,7 +526,6 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
 		$this->assertPattern('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
 
-		$this->setExpectedException('PHPUnit_Framework_Error_Warning');
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
 		$this->assertPattern('#/test_plugin/css/i_dont_exist.css\?$#', $result, 'No error on missing file');
 
