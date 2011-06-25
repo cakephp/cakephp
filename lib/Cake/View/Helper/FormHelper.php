@@ -352,6 +352,7 @@ class FormHelper extends AppHelper {
 			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
 		}
 
+		$this->setEntity($model, true);
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
