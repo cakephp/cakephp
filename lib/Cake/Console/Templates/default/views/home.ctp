@@ -46,7 +46,7 @@ endif;
 		echo '<span class=\"notice\">';
 			echo __d('cake_dev', 'Your database configuration file is NOT present.');
 			echo '<br/>';
-			echo __d('cake_dev', 'Rename Config/database.php.default to Config/database.php');
+			echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
 		echo '</span>';
 	endif;
 ?>
