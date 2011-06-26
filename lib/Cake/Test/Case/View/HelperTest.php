@@ -252,7 +252,7 @@ class HelperTest extends CakeTestCase {
  */
 	public function testSetEntity($entity, $expected) {
 		$this->Helper->setEntity($entity);
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 	}
 
 /**
@@ -262,44 +262,44 @@ class HelperTest extends CakeTestCase {
  */
 	public function testSetEntityScoped() {
 		$this->Helper->setEntity('HelperTestPost', true);
-		$this->assertEquals(array('HelperTestPost'), $this->View->entity());
+		$this->assertEquals(array('HelperTestPost'), $this->Helper->entity());
 
 		$this->Helper->setEntity('id');
 		$expected = array('HelperTestPost', 'id');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('HelperTestComment.body');
 		$expected = array('HelperTestComment', 'body');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('body');
 		$expected = array('HelperTestPost', 'body');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('2.body');
 		$expected = array('HelperTestPost', '2', 'body');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('Something.else');
 		$expected = array('Something', 'else');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('HelperTestComment.5.id');
 		$expected = array('HelperTestComment', 5, 'id');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('HelperTestComment.id.time');
 		$expected = array('HelperTestComment', 'id', 'time');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity(null);
 		$this->Helper->setEntity('ModelThatDoesntExist.field_that_doesnt_exist');
 		$expected = array('ModelThatDoesntExist', 'field_that_doesnt_exist');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('HelperTestTag');
 		$expected = array('HelperTestTag', 'HelperTestTag');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 	}
 
 /**
@@ -312,7 +312,7 @@ class HelperTest extends CakeTestCase {
 
 		$this->Helper->setEntity('HelperTestPost.1.HelperTestComment.1.title');
 		$expected = array('HelperTestPost', '1', 'HelperTestComment', '1', 'title');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->assertEquals('HelperTestComment', $this->Helper->model());
 	}
@@ -527,15 +527,15 @@ class HelperTest extends CakeTestCase {
 
 		$this->Helper->setEntity('HelperTestTag.id');
 		$expected = array('HelperTestTag', 'id');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('My.id');
 		$expected = array('My', 'id');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('MyOther.id');
 		$expected = array('MyOther', 'id');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 	}
 
 /**
@@ -549,11 +549,11 @@ class HelperTest extends CakeTestCase {
 
 		$this->Helper->setEntity('helper_test_post');
 		$expected = array('HelperTestTag', 'helper_test_post');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity('HelperTestTag');
 		$expected = array('HelperTestTag', 'HelperTestTag');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 	}
 
 /**
@@ -565,12 +565,12 @@ class HelperTest extends CakeTestCase {
 	public function testFieldSuffixForDate() {
 		$this->Helper->setEntity('HelperTestPost', true);
 		$expected = array('HelperTestPost');
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		foreach (array('year', 'month', 'day', 'hour', 'min', 'meridian') as $d) {
 			$this->Helper->setEntity('date.' . $d);
 			$expected = array('HelperTestPost', 'date', $d);
-			$this->assertEquals($expected, $this->View->entity());
+			$this->assertEquals($expected, $this->Helper->entity());
 		}
 	}
 
@@ -651,7 +651,7 @@ class HelperTest extends CakeTestCase {
 		$expected = array(
 			'HelperTestPost', '2', 'HelperTestComment', '1', 'title'
 		);
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$entity = 'HelperTestPost.1.HelperTestComment.1.HelperTestTag.1.created';
 		$this->Helper->setEntity($entity);
@@ -659,7 +659,7 @@ class HelperTest extends CakeTestCase {
 			'HelperTestPost', '1', 'HelperTestComment', '1',
 			'HelperTestTag', '1', 'created'
 		);
-		$this->assertEquals($expected, $this->View->entity());
+		$this->assertEquals($expected, $this->Helper->entity());
 
 		$entity = 'HelperTestPost.0.HelperTestComment.1.HelperTestTag.1.fake';
 		$expected = array(

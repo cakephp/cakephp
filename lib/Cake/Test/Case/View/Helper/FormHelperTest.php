@@ -775,23 +775,23 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testDuplicateFieldNameResolution() {
 		$result = $this->Form->create('ValidateUser');
-		$this->assertEqual($this->View->entity(), array('ValidateUser'));
+		$this->assertEqual($this->Form->entity(), array('ValidateUser'));
 
 		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEqual($this->View->entity(), array('ValidateItem', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateItem', 'name'));
 
 		$result = $this->Form->input('ValidateUser.name');
-		$this->assertEqual($this->View->entity(), array('ValidateUser', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateUser', 'name'));
 		$this->assertPattern('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertPattern('/type="text"/', $result);
 
 		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEqual($this->View->entity(), array('ValidateItem', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateItem', 'name'));
 		$this->assertPattern('/name="data\[ValidateItem\]\[name\]"/', $result);
 		$this->assertPattern('/<textarea/', $result);
 
 		$result = $this->Form->input('name');
-		$this->assertEqual($this->View->entity(), array('ValidateUser', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateUser', 'name'));
 		$this->assertPattern('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertPattern('/type="text"/', $result);
 	}

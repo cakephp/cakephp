@@ -483,7 +483,7 @@ class FormHelper extends AppHelper {
  */
 	protected function __secure($lock, $field = null, $value = null) {
 		if (!$field) {
-			$field = $this->_View->entity();
+			$field = $this->entity();
 		} elseif (is_string($field)) {
 			$field = Set::filter(explode('.', $field), true);
 		}
@@ -627,7 +627,7 @@ class FormHelper extends AppHelper {
  */
 	public function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
-			$fieldName = implode('.', $this->_View->entity());
+			$fieldName = implode('.', $this->entity());
 		}
 
 		if ($text === null) {
@@ -1321,7 +1321,7 @@ class FormHelper extends AppHelper {
 		$options['secure'] = self::SECURE_SKIP;
 
 		$options = $this->_initInputField($fieldName, $options);
-		$field = $this->_View->entity();
+		$field = $this->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
 			$this->__secure($secure, array_merge($field, array($suffix)));
@@ -2122,7 +2122,7 @@ class FormHelper extends AppHelper {
 				return $options;
 			}
 
-			$entity = $this->_View->entity();
+			$entity = $this->entity();
 			$model = $this->model();
 			$name = $model === $entity[0] && isset($entity[1]) ? $entity[1] : $entity[0];
 			$last = $entity[count($entity) - 1];

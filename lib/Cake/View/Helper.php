@@ -114,6 +114,10 @@ class Helper extends Object {
 		'year', 'month', 'day', 'hour', 'min', 'second', 'meridian'
 	);
 
+	protected $_modelScope;
+	protected $_association;
+	protected $_entityPath;
+
 /**
  * Default Constructor
  *
@@ -391,12 +395,11 @@ class Helper extends Object {
  * @return void
  */
 	public function setEntity($entity, $setScope = false) {
-		$view = $this->_View;
 		if ($entity === null) {
-			$view->modelScope = false;
+			$this->_modelScope = false;
 		}
 		if ($setScope === true) {
-			$view->modelScope = $entity;
+			$this->_modelScope = $entity;
 		}
 		$parts = array_values(Set::filter(explode('.', $entity), true));
 		if (empty($parts)) {
@@ -408,13 +411,13 @@ class Helper extends Object {
 		// Either 'body' or 'date.month' type inputs.
 		if (
 			($count === 1 &&
-			$view->modelScope &&
+			$this->_modelScope &&
 			$setScope == false) ||
 			(in_array($lastPart, $this->_fieldSuffixes) &&
-			$view->modelScope &&
-			$parts[0] !== $view->modelScope)
+			$this->_modelScope &&
+			$parts[0] !== $this->_modelScope)
 		) {
-			$entity = $view->modelScope . '.' . $entity;
+			$entity = $this->_modelScope . '.' . $entity;
 		}
 
 		// 0.name style inputs.
@@ -423,30 +426,39 @@ class Helper extends Object {
 			is_numeric($parts[0]) &&
 			!is_numeric($parts[1])
 		) {
-			$entity = $view->modelScope . '.' . $entity;
+			$entity = $this->_modelScope . '.' . $entity;
 		}
 
-		$view->association = null;
+		$this->_association = null;
 
 		// check for associated model.
 		$reversed = array_reverse($parts);
 		foreach ($reversed as $part) {
 			if (preg_match('/^[A-Z]/', $part)) {
-				$view->association = $part;
+				$this->_association = $part;
 				break;
 			}
 		}
 
 		// habtm models are special
 		if (
-			isset($this->fieldset[$view->modelScope]['fields'][$parts[0]]['type']) && 
-			$this->fieldset[$view->modelScope]['fields'][$parts[0]]['type'] === 'multiple'
+			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
 		) {
 			$entity = $parts[0] . '.' . $parts[0];
 		}
 
-		$view->entityPath = $entity;
+		$this->_entityPath = $entity;
 		return;
+	}
+
+/**
+ * Returns the entity reference of the current context as an array of identity parts
+ *
+ * @return array An array containing the identity elements of an entity
+ */
+	public function entity() {
+		return explode('.', $this->_entityPath);
 	}
 
 /**
@@ -455,11 +467,10 @@ class Helper extends Object {
  * @return string
  */
 	public function model() {
-		$entity = $this->_View->entity();
-		if ($this->_View->association) {
-			return $this->_View->association;
+		if ($this->_association) {
+			return $this->_association;
 		}
-		return $this->_View->modelScope;
+		return $this->_modelScope;
 	}
 
 /**
@@ -468,7 +479,7 @@ class Helper extends Object {
  * @return string
  */
 	public function field() {
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		$count = count($entity);
 		$last = $entity[$count - 1];
 		if (in_array($last, $this->_fieldSuffixes)) {
@@ -488,7 +499,7 @@ class Helper extends Object {
  */
 	public function tagIsInvalid($model = null, $field = null, $modelID = null) {
 		$errors = $this->validationErrors;
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		if (!empty($entity)) {
 			return Set::extract($errors, join('.', $entity));
 		}
@@ -514,7 +525,7 @@ class Helper extends Object {
 			return $this->domId();
 		}
 
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		$model = array_shift($entity);
 		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
 
@@ -560,7 +571,7 @@ class Helper extends Object {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . implode('][', $this->_View->entity()) . ']';
+				$name = 'data[' . implode('][', $this->entity()) . ']';
 			break;
 		}
 
@@ -602,7 +613,7 @@ class Helper extends Object {
 		$result = null;
 		$data = $this->request->data;
 
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		if (!empty($data) && !empty($entity)) {
 			$result = Set::extract($data, implode('.', $entity));
 		}
