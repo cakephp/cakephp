@@ -292,6 +292,41 @@ class AjaxAuthController extends Controller {
 }
 
 /**
+* TestGetUserAuthenticate class
+*
+* @package       cake
+* @package       cake.tests.cases.libs.controller.components
+*/
+class TestGetUserAuthenticate extends BaseAuthenticate {
+
+	public static $testUser = array(
+		'id' => 5,
+		'username' => 'John Titor',
+	);
+
+/**
+ * authenticate method
+ *
+ * @access public
+ * @return boolean false
+ */
+	public function authenticate(CakeRequest $request, CakeResponse $response) {
+		return false;
+	}
+
+/**
+ * getUser method
+ *
+ * @access public
+ * @return array test User object
+ */
+	public function getUser() {
+		return self::$testUser;
+	}
+
+}
+
+/**
 * AuthTest class
 *
 * @package       cake
@@ -1189,5 +1224,20 @@ class AuthTest extends CakeTestCase {
 		$expected = Security::hash('password', null, true);
 		$this->assertEquals($expected, $result);
 
+	}
+
+/**
+ * testLoggedInAfterGetUser method
+ *
+ * @access public
+ * @return void
+ */
+	public function testLoggedInAfterGetUser() {
+		$this->Controller->Auth->authorize = false;
+		$this->Controller->Auth->authenticate = 'TestGetUser';
+		$this->Controller->request->addParams(Router::parse('auth_test/add'));
+		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
+		$this->assertTrue($this->Controller->Auth->loggedIn());
+		$this->assertEquals(TestGetUserAuthenticate::$testUser, $this->Controller->Auth->user());
 	}
 }
