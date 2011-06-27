@@ -569,7 +569,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->getUser($this->request);
 			if (!empty($result) && is_array($result)) {
-				return true;
+				return $this->login($result);
 			}
 		}
 		return false;
