@@ -74,7 +74,7 @@ class UpgradeShell extends Shell {
 	public function locations() {
 		$cwd = getcwd();
 
-		$plugins = App::path('plugins');
+		$pluginsFolders = App::path('plugins');
 		if (!$pluginsFolders)
 			$pluginsFolders = array('plugins');
 
