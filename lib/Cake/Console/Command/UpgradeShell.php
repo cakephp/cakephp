@@ -74,17 +74,24 @@ class UpgradeShell extends Shell {
 	public function locations() {
 		$cwd = getcwd();
 
-		if (is_dir('plugins')) {
-
-			$Folder = new Folder('plugins');
-			list($plugins) = $Folder->read();
-			foreach($plugins as $plugin) {
-				chdir($cwd . DS . 'plugins' . DS . $plugin);
-				$this->locations();
-			}
-			$this->_files = array();
-			chdir($cwd);
+		$pluginsFolders = App::path('plugins');
+		if (!$pluginsFolders){
+			$pluginsFolders = array('plugins');
 		}
+
+		foreach ($pluginsFolders as $pluginsFolder){
+			if (is_dir($pluginsFolder)) {
+	
+				$Folder = new Folder($pluginsFolder);
+				list($plugins) = $Folder->read();
+				foreach($plugins as $plugin) {
+					chdir($pluginsFolder . $plugin);
+					$this->locations();
+				}
+			}
+		}
+		$this->_files = array();
+		chdir($cwd);
 
 		$moves = array(
 			'libs' => 'Lib',
