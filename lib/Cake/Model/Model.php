@@ -3085,24 +3085,4 @@ class Model extends Object {
 			//Will use for query cache deleting
 		}
 	}
-
-/**
- * Called when serializing a model.
- *
- * @return array Set of object variable names this model has
- * @access private
- */
-	private function __sleep() {
-		$return = array_keys(get_object_vars($this));
-		return $return;
-	}
-
-/**
- * Called when de-serializing a model.
- *
- * @access private
- * @todo
- */
-	private function __wakeup() {
-	}
 }
