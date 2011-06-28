@@ -84,7 +84,7 @@ class UpgradeShell extends Shell {
 				$Folder = new Folder($pluginsFolder);
 				list($plugins) = $Folder->read();
 					foreach($plugins as $plugin) {
-					chdir($cwd . DS . 'plugins' . DS . $plugin);
+					chdir($cwd . DS . $pluginsFolder . DS . $plugin);
 					$this->locations();
 				}
 				$this->_files = array();
