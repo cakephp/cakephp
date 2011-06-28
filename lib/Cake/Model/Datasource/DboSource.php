@@ -196,14 +196,6 @@ class DboSource extends DataSource {
 	public $endQuote = null;
 
 /**
- * Bypass automatic adding of joined fields/associations.
- *
- * @var boolean
- * @access private
- */
-	private $__bypass = false;
-
-/**
  * The set of valid SQL operations usable in a WHERE statement
  *
  * @var array
@@ -1036,7 +1028,7 @@ class DboSource extends DataSource {
 		$null = null;
 		$array = array();
 		$linkedModels = array();
-		$this->__bypass = false;
+		$bypass = false;
 
 		if ($recursive === null && isset($queryData['recursive'])) {
 			$recursive = $queryData['recursive'];
@@ -1048,7 +1040,7 @@ class DboSource extends DataSource {
 		}
 
 		if (!empty($queryData['fields'])) {
-			$this->__bypass = true;
+			$bypass = true;
 			$queryData['fields'] = $this->fields($model, null, $queryData['fields']);
 		} else {
 			$queryData['fields'] = $this->fields($model);
@@ -1069,6 +1061,9 @@ class DboSource extends DataSource {
 
 				$linkModel->getDataSource();
 				if ($model->useDbConfig === $linkModel->useDbConfig) {
+					if ($bypass) {
+						$assocData['fields'] = false;
+					}
 					if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
 						$linkedModels[$type . '/' . $assoc] = true;
 					}
@@ -1501,7 +1496,7 @@ class DboSource extends DataSource {
 		$self = $model->name === $linkModel->name;
 		$fields = array();
 
-		if ($external || (in_array($type, array('hasOne', 'belongsTo')) && $this->__bypass === false)) {
+		if ($external || (in_array($type, array('hasOne', 'belongsTo')) && $assocData['fields'] !== false)) {
 			$fields = $this->fields($linkModel, $association, $assocData['fields']);
 		}
 		if (empty($assocData['offset']) && !empty($assocData['page'])) {
