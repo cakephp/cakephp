@@ -114,8 +114,28 @@ class Helper extends Object {
 		'year', 'month', 'day', 'hour', 'min', 'second', 'meridian'
 	);
 
+/**
+ * The name of the current model entities are in scope of.
+ *
+ * @see Helper::setEntity()
+ * @var string
+ */
 	protected $_modelScope;
+
+/**
+ * The name of the current model association entities are in scope of.
+ *
+ * @see Helper::setEntity()
+ * @var string
+ */
 	protected $_association;
+
+/**
+ * The dot separated list of elements the current field entity is for.
+ *
+ * @see Helper::setEntity()
+ * @var string
+ */
 	protected $_entityPath;
 
 /**

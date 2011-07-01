@@ -237,12 +237,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$cacheAction = false
 		View::$validationErrors = array
 		View::$hasRendered = false
-		View::$modelScope = false
-		View::$model = NULL
-		View::$association = NULL
-		View::$field = NULL
-		View::$fieldSuffix = NULL
-		View::$modelId = NULL
 		View::$uuids = array
 		View::$output = false
 		View::$request = NULL
