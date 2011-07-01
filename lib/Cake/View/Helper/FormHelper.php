@@ -2099,6 +2099,26 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Add support for special HABTM syntax.
+ *
+ * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
+ *
+ * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
+ * @param boolean $setScope Sets the view scope to the model specified in $tagValue
+ * @return void
+ */
+	function setEntity($entity, $setScope = false) {
+		parent::setEntity($entity, $setScope);
+		$parts = explode('.', $entity);
+		if (
+			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
+		) {
+			$this->_entityPath = $parts[0] . '.' . $parts[0];
+		}
+	}
+
+/**
  * Gets the input field name for the current tag
  *
  * @param array $options

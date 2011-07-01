@@ -296,10 +296,6 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('ModelThatDoesntExist.field_that_doesnt_exist');
 		$expected = array('ModelThatDoesntExist', 'field_that_doesnt_exist');
 		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('HelperTestTag');
-		$expected = array('HelperTestTag', 'HelperTestTag');
-		$this->assertEquals($expected, $this->Helper->entity());
 	}
 
 /**
