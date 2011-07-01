@@ -74,59 +74,63 @@ class UpgradeShell extends Shell {
 	public function locations() {
 		$cwd = getcwd();
 
-		if (is_dir('plugins')) {
-
-			$Folder = new Folder('plugins');
-			list($plugins) = $Folder->read();
-			foreach($plugins as $plugin) {
-				chdir($cwd . DS . 'plugins' . DS . $plugin);
-				$this->locations();
+		$folders = array($cwd);
+		$pluginsFolders = App::path('plugins');
+		foreach ($pluginsFolders as $pluginsFolder){
+			if (is_dir($pluginsFolder)) {
+				$Folder = new Folder($pluginsFolder);
+				list($plugins) = $Folder->read();
+				foreach($plugins as $plugin) {
+					$folders[] = $pluginsFolder . $plugin;
+				}
 			}
+		}
+
+		foreach ($folders as $folder){
 			$this->_files = array();
-			chdir($cwd);
-		}
-
-		$moves = array(
-			'libs' => 'Lib',
-			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
-		);
-		foreach($moves as $old => $new) {
-			if (is_dir($old)) {
-				$this->out("Moving $old to $new");
-				if (!$this->params['dry-run']) {
-					$Folder = new Folder($old);
-					$Folder->move($new);
-				}
-				if ($this->params['git']) {
-					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+			chdir($folder);
+			$moves = array(
+				'libs' => 'Lib',
+				'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
+			);
+			foreach($moves as $old => $new) {
+				if (is_dir($old)) {
+					$this->out("Moving $old to $new");
+					if (!$this->params['dry-run']) {
+						$Folder = new Folder($old);
+						$Folder->move($new);
+					}
+					if ($this->params['git']) {
+						exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+					}
 				}
 			}
-		}
-		$sourceDirs = array(
-			'.' => array('recursive' => false),
-			'Console',
-			'Controller',
-			'controllers',
-			'Lib' => array('checkFolder' => false),
-			'Model',
-			'models',
-			'tests',
-			'View',
-			'views',
-			'vendors/shells',
-		);
+			$sourceDirs = array(
+				'.' => array('recursive' => false),
+				'Console',
+				'Controller',
+				'controllers',
+				'Lib' => array('checkFolder' => false),
+				'Model',
+				'models',
+				'tests',
+				'View',
+				'views',
+				'vendors/shells',
+			);
 
-		$defaultOptions = array(
-			'recursive' => true,
-			'checkFolder' => true,
-		);
-		foreach($sourceDirs as $dir => $options) {
-			if (is_numeric($dir)) {
-				$dir = $options;
-				$options = array();
+			$defaultOptions = array(
+				'recursive' => true,
+				'checkFolder' => true,
+			);
+			foreach($sourceDirs as $dir => $options) {
+				if (is_numeric($dir)) {
+					$dir = $options;
+					$options = array();
+				}
+				$options = array_merge($defaultOptions, $options);
+				$this->_movePhpFiles($dir, $options);
 			}
-			$options = array_merge($defaultOptions, $options);
-			$this->_movePhpFiles($dir, $options);
 		}
 	}
 
