@@ -306,7 +306,7 @@ class View extends Object {
 		$callbacks = false;
 
 		if (isset($options['plugin'])) {
-			$plugin = $options['plugin'];
+			$plugin = Inflector::camelize($options['plugin']);
 		}
 		if (isset($this->plugin) && !$plugin) {
 			$plugin = $this->plugin;
