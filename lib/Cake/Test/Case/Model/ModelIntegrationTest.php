@@ -2037,4 +2037,94 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertTrue($Article->hasMethod('pass'));
 		$this->assertFalse($Article->hasMethod('fail'));
 	}
+
+/**
+ * test HABM operations without clobbering existing records #275
+ *
+ * @return void
+ */
+	function testHABTMKeep() {
+		$this->loadFixtures('Site', 'Domain', 'DomainsSite');
+
+		$Site =& new Site();
+		$results = $Site->find('count');
+		$expected = 3;
+		$this->assertEqual($results, $expected);
+
+		$data = $Site->findById(1);
+
+		// include api.cakephp.org
+		$data['Domain'] = array('Domain' => array(10, 11, 12));
+		$Site->save($data);
+
+		$Site->id = 1;
+		$results = $Site->read();
+		$expected = 3; // 3 domains belonging to site 1: cakephp
+		$this->assertEqual(count($results['Domain']), $expected);
+
+
+		$Site->id = 2;
+		$results = $Site->read();
+		$expected = 2; // 2 domains belonging to markstory
+		$this->assertEqual(count($results['Domain']), $expected);
+
+		$Site->id = 3;
+		$results = $Site->read();
+		$expected = 2;
+		$this->assertEqual(count($results['Domain']), $expected);
+		$results['Domain'] = array('Domain' => array(31));
+		$Site->save($results); // remove association from domain 30
+		$results = $Site->read();
+		$expected = 1; // only 1 domain left belonging to rchavik
+		$this->assertEqual(count($results['Domain']), $expected);
+
+		// add deleted domain back
+		$results['Domain'] = array('Domain' => array(30, 31));
+		$Site->save($results);
+		$results = $Site->read();
+		$expected = 2; // 2 domains belonging to rchavik
+		$this->assertEqual(count($results['Domain']), $expected);
+
+		$Site->DomainsSite->id = $results['Domain'][0]['DomainsSite']['id'];
+		$Site->DomainsSite->saveField('active', true);
+
+		$results = $Site->Domain->DomainsSite->find('count', array(
+			'conditions' => array(
+				'DomainsSite.active' => true,
+				),
+			));
+		$expected = 5;
+		$this->assertEqual($results, $expected);
+
+		// activate api.cakephp.org
+		$activated = $Site->DomainsSite->findByDomainId(12);
+		$activated['DomainsSite']['active'] = true;
+		$Site->DomainsSite->save($activated);
+
+		$results = $Site->DomainsSite->find('count', array(
+			'conditions' => array(
+				'DomainsSite.active' => true,
+				),
+			));
+		$expected = 6;
+		$this->assertEqual($results, $expected);
+
+		// remove 2 previously active domains, and leave $activated alone
+		$data = array(
+			'Site' => array('id' => 1, 'name' => 'cakephp (modified)'),
+			'Domain' => array(
+				'Domain' => array(12),
+				)
+			);
+		$Site->create($data);
+		$Site->save($data);
+
+		// tests that record is still identical prior to removal
+		$Site->id = 1;
+		$results = $Site->read();
+		unset($results['Domain'][0]['DomainsSite']['updated']);
+		unset($activated['DomainsSite']['updated']);
+		$this->assertEqual($results['Domain'][0]['DomainsSite'], $activated['DomainsSite']);
+	}
+
 }
