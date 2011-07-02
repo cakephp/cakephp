@@ -435,7 +435,7 @@ class UpgradeShell extends Shell {
 		}
 		$patterns = array(
 			array(
-				'*Component extents Object to *Component extends Component',
+				'*Component extends Object to *Component extends Component',
 				'/([a-zA-Z]*Component extends) Object/',
 				'\1 Component'
 			),
