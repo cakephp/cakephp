@@ -422,6 +422,29 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update components.
+ *
+ * - Make components that extend Object to extend Component.
+ *
+ * @return void
+ */
+	public function components() {
+		$this->_paths = App::Path('Controller/Component');
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = App::Path('Controller/Component', $this->params['plugin']);
+		}
+		$patterns = array(
+			array(
+				'*Component extents Object to *Component extends Component',
+				'/([a-zA-Z]*Component extends) Object/',
+				'\1 Component'
+			),
+		);
+
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
  * Move application php files to where they now should be
  *
  * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
@@ -635,6 +658,10 @@ class UpgradeShell extends Shell {
 			))
 			->addSubcommand('constants', array(
 				'help' => "Replace Obsolete constants",
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('components', array(
+				'help' => 'Update components to extend Component class.',
 				'parser' => $subcommandParser
 			));
 	}
