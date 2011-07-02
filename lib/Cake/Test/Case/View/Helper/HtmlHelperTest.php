@@ -1299,11 +1299,11 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->useTag('formend');
 		$this->assertTags($result, '/form');
 
-		$result = $this->Html->useTag('form', ' test');
-		$this->assertEqual($result, '<form test>');
+		$result = $this->Html->useTag('form', 'url', ' test');
+		$this->assertEqual($result, '<form action="url" test>');
 
-		$result = $this->Html->useTag('form', array('test' => 'ok'));
-		$this->assertTags($result, array('form' => array('test' => 'ok')));
+		$result = $this->Html->useTag('form', 'example.com', array('test' => 'ok'));
+		$this->assertTags($result, array('form' => array('test' => 'ok', 'action' => 'example.com')));
 	}
 
 /**

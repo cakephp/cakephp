@@ -775,23 +775,23 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testDuplicateFieldNameResolution() {
 		$result = $this->Form->create('ValidateUser');
-		$this->assertEqual($this->View->entity(), array('ValidateUser'));
+		$this->assertEqual($this->Form->entity(), array('ValidateUser'));
 
 		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEqual($this->View->entity(), array('ValidateItem', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateItem', 'name'));
 
 		$result = $this->Form->input('ValidateUser.name');
-		$this->assertEqual($this->View->entity(), array('ValidateUser', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateUser', 'name'));
 		$this->assertPattern('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertPattern('/type="text"/', $result);
 
 		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEqual($this->View->entity(), array('ValidateItem', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateItem', 'name'));
 		$this->assertPattern('/name="data\[ValidateItem\]\[name\]"/', $result);
 		$this->assertPattern('/<textarea/', $result);
 
 		$result = $this->Form->input('name');
-		$this->assertEqual($this->View->entity(), array('ValidateUser', 'name'));
+		$this->assertEqual($this->Form->entity(), array('ValidateUser', 'name'));
 		$this->assertPattern('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertPattern('/type="text"/', $result);
 	}
@@ -1528,12 +1528,12 @@ class FormHelperTest extends CakeTestCase {
 		));
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'Contact2Name'),
+			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name', 'id',
+				'type' => 'text', 'name' => 'data[Contact][2][name]', 'id' => 'Contact2Name',
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
@@ -4698,19 +4698,6 @@ class FormHelperTest extends CakeTestCase {
 			date('Y', $now),
 			'/option',
 			'*/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('ContactTag');
-		$expected = array(
-			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ContactTagContactTag'),
-			'Contact Tag',
-			'/label',
-			array('input' => array('type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_')),
-			array('select' => array('name' => 'data[ContactTag][ContactTag][]', 'multiple' => 'multiple', 'id' => 'ContactTagContactTag')),
-			'/select',
 			'/div'
 		);
 		$this->assertTags($result, $expected);

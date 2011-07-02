@@ -161,48 +161,6 @@ class View extends Object {
 	public $hasRendered = false;
 
 /**
- * True if in scope of model-specific region
- *
- * @var boolean
- */
-	public $modelScope = false;
-
-/**
- * Name of current model this view context is attached to
- *
- * @var string
- */
-	public $model = null;
-
-/**
- * Name of association model this view context is attached to
- *
- * @var string
- */
-	public $association = null;
-
-/**
- * Name of current model field this view context is attached to
- *
- * @var string
- */
-	public $field = null;
-
-/**
- * Suffix of current field this view context is attached to
- *
- * @var string
- */
-	public $fieldSuffix = null;
-
-/**
- * The current model ID this view context is attached to
- *
- * @var mixed
- */
-	public $modelId = null;
-
-/**
  * List of generated DOM UUIDs
  *
  * @var array
@@ -543,32 +501,6 @@ class View extends Object {
 		}
 		$this->uuids[] = $hash;
 		return $hash;
-	}
-
-/**
- * Returns the entity reference of the current context as an array of identity parts
- *
- * @return array An array containing the identity elements of an entity
- */
-	public function entity() {
-		$assoc = ($this->association) ? $this->association : $this->model;
-		if (!empty($this->entityPath)) {
-			$path = explode('.', $this->entityPath);
-			$count = count($path);
-			if (
-				($count == 1 && !empty($this->association)) ||
-				($count == 1 && $this->model != $this->entityPath) ||
-				($count == 1 && empty($this->association) && !empty($this->field)) ||
-				($count  == 2 && !empty($this->fieldSuffix)) ||
-				is_numeric($path[0]) && !empty($assoc)
-			) {
-				array_unshift($path, $assoc);
-			}
-			return Set::filter($path);
-		}
-		return array_values(Set::filter(
-			array($assoc, $this->modelId, $this->field, $this->fieldSuffix)
-		));
 	}
 
 /**

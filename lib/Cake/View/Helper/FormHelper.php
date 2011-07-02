@@ -229,12 +229,11 @@ class FormHelper extends AppHelper {
 
 		if ($model !== false) {
 			$object = $this->_introspectModel($model);
-			$this->setEntity($model . '.', true);
 		}
+		$this->setEntity($model, true);
 
-		$modelEntity = $this->model();
-		if ($model !== false && isset($this->fieldset[$modelEntity]['key'])) {
-			$data = $this->fieldset[$modelEntity];
+		if ($model !== false && isset($this->fieldset[$model]['key'])) {
+			$data = $this->fieldset[$model];
 			$recordExists = (
 				isset($this->request->data[$model]) &&
 				!empty($this->request->data[$model][$data['key']]) &&
@@ -306,7 +305,8 @@ class FormHelper extends AppHelper {
 			case 'put':
 			case 'delete':
 				$append .= $this->hidden('_method', array(
-					'name' => '_method', 'value' => strtoupper($options['type']), 'id' => null
+					'name' => '_method', 'value' => strtoupper($options['type']), 'id' => null,
+					'secure' => self::SECURE_SKIP
 				));
 			default:
 				$htmlAttributes['method'] = 'post';
@@ -337,8 +337,9 @@ class FormHelper extends AppHelper {
 		$this->fields = array();
 		if (!empty($this->request->params['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
-				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand())
-			);
+				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
+				'secure' => self::SECURE_SKIP
+			));
 
 			if (!empty($this->request['_Token']['unlockedFields'])) {
 				foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
@@ -351,7 +352,7 @@ class FormHelper extends AppHelper {
 			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
 		}
 
-		$this->setEntity($model . '.', true);
+		$this->setEntity($model, true);
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
@@ -482,7 +483,7 @@ class FormHelper extends AppHelper {
  */
 	protected function __secure($lock, $field = null, $value = null) {
 		if (!$field) {
-			$field = $this->_View->entity();
+			$field = $this->entity();
 		} elseif (is_string($field)) {
 			$field = Set::filter(explode('.', $field), true);
 		}
@@ -626,7 +627,7 @@ class FormHelper extends AppHelper {
  */
 	public function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
-			$fieldName = implode('.', $this->_View->entity());
+			$fieldName = implode('.', $this->entity());
 		}
 
 		if ($text === null) {
@@ -1297,9 +1298,8 @@ class FormHelper extends AppHelper {
 		$options = $this->_initInputField($fieldName, array_merge(
 			$options, array('secure' => self::SECURE_SKIP)
 		));
-		$model = $this->model();
 
-		if ($fieldName !== '_method' && $model !== '_Token' && $secure) {
+		if ($secure && $secure !== self::SECURE_SKIP) {
 			$this->__secure(true, null, '' . $options['value']);
 		}
 
@@ -1321,7 +1321,7 @@ class FormHelper extends AppHelper {
 		$options['secure'] = self::SECURE_SKIP;
 
 		$options = $this->_initInputField($fieldName, $options);
-		$field = $this->_View->entity();
+		$field = $this->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
 			$this->__secure($secure, array_merge($field, array($suffix)));
@@ -2099,6 +2099,26 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Add support for special HABTM syntax.
+ *
+ * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
+ *
+ * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
+ * @param boolean $setScope Sets the view scope to the model specified in $tagValue
+ * @return void
+ */
+	function setEntity($entity, $setScope = false) {
+		parent::setEntity($entity, $setScope);
+		$parts = explode('.', $entity);
+		if (
+			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
+		) {
+			$this->_entityPath = $parts[0] . '.' . $parts[0];
+		}
+	}
+
+/**
  * Gets the input field name for the current tag
  *
  * @param array $options
@@ -2122,9 +2142,12 @@ class FormHelper extends AppHelper {
 				return $options;
 			}
 
-			$name = !empty($this->_View->field) ? $this->_View->field : $this->_View->model;
-			if (!empty($this->_View->fieldSuffix)) {
-				$name .= '[' . $this->_View->fieldSuffix . ']';
+			$entity = $this->entity();
+			$model = $this->model();
+			$name = $model === $entity[0] && isset($entity[1]) ? $entity[1] : $entity[0];
+			$last = $entity[count($entity) - 1];
+			if (in_array($last, $this->_fieldSuffixes)) {
+				$name .= '[' . $last . ']';
 			}
 
 			if (is_array($options)) {
@@ -2349,18 +2372,20 @@ class FormHelper extends AppHelper {
 			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
 
+		$result = parent::_initInputField($field, $options);
+		if ($secure === self::SECURE_SKIP) {
+			return $result;
+		}
+
 		$fieldName = null;
-		if ($secure && !empty($options['name'])) {
+		if (!empty($options['name'])) {
 			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
 			if (isset($matches[1])) {
 				$fieldName = $matches[1];
 			}
 		}
 
-		$result = parent::_initInputField($field, $options);
-		if ($secure !== self::SECURE_SKIP) {
-			$this->__secure($secure, $fieldName);
-		}
+		$this->__secure($secure, $fieldName);
 		return $result;
 	}
 }

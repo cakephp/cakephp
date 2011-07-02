@@ -104,6 +104,41 @@ class Helper extends Object {
 	protected $_View;
 
 /**
+ * A list of strings that should be treated as suffixes, or
+ * sub inputs for a parent input.  This is used for date/time
+ * inputs primarily.
+ *
+ * @var array
+ */
+	protected $_fieldSuffixes = array(
+		'year', 'month', 'day', 'hour', 'min', 'second', 'meridian'
+	);
+
+/**
+ * The name of the current model entities are in scope of.
+ *
+ * @see Helper::setEntity()
+ * @var string
+ */
+	protected $_modelScope;
+
+/**
+ * The name of the current model association entities are in scope of.
+ *
+ * @see Helper::setEntity()
+ * @var string
+ */
+	protected $_association;
+
+/**
+ * The dot separated list of elements the current field entity is for.
+ *
+ * @see Helper::setEntity()
+ * @var string
+ */
+	protected $_entityPath;
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -380,146 +415,70 @@ class Helper extends Object {
  * @return void
  */
 	public function setEntity($entity, $setScope = false) {
-		$view = $this->_View;
-		if ($setScope) {
-			$view->modelScope = false;
-		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
-			return;
-		}
-
 		if ($entity === null) {
-			$view->model = null;
-			$view->association = null;
-			$view->modelId = null;
-			$view->modelScope = false;
-			$view->entityPath = null;
-			return;
+			$this->_modelScope = false;
 		}
-
-		$view->entityPath = $entity;
-		$model = $view->model;
-		$sameScope = $hasField = false;
+		if ($setScope === true) {
+			$this->_modelScope = $entity;
+		}
 		$parts = array_values(Set::filter(explode('.', $entity), true));
-
 		if (empty($parts)) {
 			return;
 		}
-
 		$count = count($parts);
-		if ($count === 1) {
-			$sameScope = true;
-		} else {
-			if (is_numeric($parts[0])) {
-				$sameScope = true;
-			}
-			$reverse = array_reverse($parts);
-			$field = array_shift($reverse);
-			while(!empty($reverse)) {
-				$subject = array_shift($reverse);
-				if (is_numeric($subject)) {
-					continue;
-				}
-				if (ClassRegistry::isKeySet($subject)) {
-					$model = $subject;
-					break;
-				}
-			}
+		$lastPart = isset($parts[$count - 1]) ? $parts[$count - 1] : null;
+
+		// Either 'body' or 'date.month' type inputs.
+		if (
+			($count === 1 &&
+			$this->_modelScope &&
+			$setScope == false) ||
+			(in_array($lastPart, $this->_fieldSuffixes) &&
+			$this->_modelScope &&
+			$parts[0] !== $this->_modelScope)
+		) {
+			$entity = $this->_modelScope . '.' . $entity;
 		}
 
-		if (ClassRegistry::isKeySet($model)) {
-			$ModelObj = ClassRegistry::getObject($model);
-			for ($i = 0; $i < $count; $i++) {
-				if (
-					is_a($ModelObj, 'Model') &&
-					($ModelObj->hasField($parts[$i]) ||
-					array_key_exists($parts[$i], $ModelObj->validate))
-				) {
-					$hasField = $i;
-					if ($hasField === 0 || ($hasField === 1 && is_numeric($parts[0]))) {
-						$sameScope = true;
-					}
-					break;
-				}
-			}
+		// 0.name style inputs.
+		if (
+			$count === 2 &&
+			is_numeric($parts[0]) &&
+			!is_numeric($parts[1])
+		) {
+			$entity = $this->_modelScope . '.' . $entity;
+		}
 
-			if ($sameScope === true && in_array($parts[0], array_keys($ModelObj->hasAndBelongsToMany))) {
-				$sameScope = false;
+		$this->_association = null;
+
+		// check for associated model.
+		$reversed = array_reverse($parts);
+		foreach ($reversed as $part) {
+			if (preg_match('/^[A-Z]/', $part)) {
+				$this->_association = $part;
+				break;
 			}
 		}
 
-		if (!$view->association && $parts[0] == $view->field && $view->field != $view->model) {
-			array_unshift($parts, $model);
-			$hasField = true;
-		}
-		$view->field = $view->modelId = $view->fieldSuffix = $view->association = null;
-
-		switch (count($parts)) {
-			case 1:
-				if ($view->modelScope === false) {
-					$view->model = $parts[0];
-				} else {
-					$view->field = $parts[0];
-					if ($sameScope === false) {
-						$view->association = $parts[0];
-					}
-				}
-			break;
-			case 2:
-				if ($view->modelScope === false) {
-					list($view->model, $view->field) = $parts;
-				} elseif ($sameScope === true && $hasField === 0) {
-					list($view->field, $view->fieldSuffix) = $parts;
-				} elseif ($sameScope === true && $hasField === 1) {
-					list($view->modelId, $view->field) = $parts;
-				} else {
-					list($view->association, $view->field) = $parts;
-				}
-			break;
-			case 3:
-				if ($sameScope === true && $hasField === 1) {
-					list($view->modelId, $view->field, $view->fieldSuffix) = $parts;
-				} elseif ($hasField === 2) {
-					list($view->association, $view->modelId, $view->field) = $parts;
-				} else {
-					list($view->association, $view->field, $view->fieldSuffix) = $parts;
-				}
-			break;
-			case 4:
-				if ($parts[0] === $view->model) {
-					list($view->model, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
-				} else {
-					list($view->association, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
-				}
-			break;
-			default:
-				$reverse = array_reverse($parts);
-
-				if ($hasField) {
-						$view->field = $field;
-						if (!is_numeric($reverse[1]) && $reverse[1] != $model) {
-							$view->field = $reverse[1];
-							$view->fieldSuffix = $field;
-						}
-				}
-				if (is_numeric($parts[0])) {
-					$view->modelId = $parts[0];
-				} elseif ($view->model == $parts[0] && is_numeric($parts[1])) {
-					$view->modelId = $parts[1];
-				}
-				$view->association = $model;
-			break;
+		// habtm models are special
+		if (
+			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
+		) {
+			$entity = $parts[0] . '.' . $parts[0];
 		}
 
-		if (!isset($view->model) || empty($view->model)) {
-			$view->model = $view->association;
-			$view->association = null;
-		} elseif ($view->model === $view->association) {
-			$view->association = null;
-		}
+		$this->_entityPath = $entity;
+		return;
+	}
 
-		if ($setScope) {
-			$view->modelScope = true;
-		}
+/**
+ * Returns the entity reference of the current context as an array of identity parts
+ *
+ * @return array An array containing the identity elements of an entity
+ */
+	public function entity() {
+		return explode('.', $this->_entityPath);
 	}
 
 /**
@@ -528,20 +487,10 @@ class Helper extends Object {
  * @return string
  */
 	public function model() {
-		if (!empty($this->_View->association)) {
-			return $this->_View->association;
-		} else {
-			return $this->_View->model;
+		if ($this->_association) {
+			return $this->_association;
 		}
-	}
-
-/**
- * Gets the ID of the currently-used model of the rendering context.
- *
- * @return mixed
- */
-	public function modelID() {
-		return $this->_View->modelId;
+		return $this->_modelScope;
 	}
 
 /**
@@ -550,7 +499,13 @@ class Helper extends Object {
  * @return string
  */
 	public function field() {
-		return $this->_View->field;
+		$entity = $this->entity();
+		$count = count($entity);
+		$last = $entity[$count - 1];
+		if (in_array($last, $this->_fieldSuffixes)) {
+			$last = isset($entity[$count - 2]) ? $entity[$count - 2] : null;
+		}
+		return $last;
 	}
 
 /**
@@ -564,7 +519,7 @@ class Helper extends Object {
  */
 	public function tagIsInvalid($model = null, $field = null, $modelID = null) {
 		$errors = $this->validationErrors;
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		if (!empty($entity)) {
 			return Set::extract($errors, join('.', $entity));
 		}
@@ -590,7 +545,7 @@ class Helper extends Object {
 			return $this->domId();
 		}
 
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		$model = array_shift($entity);
 		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
 
@@ -636,7 +591,7 @@ class Helper extends Object {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . implode('][', $this->_View->entity()) . ']';
+				$name = 'data[' . implode('][', $this->entity()) . ']';
 			break;
 		}
 
@@ -678,24 +633,18 @@ class Helper extends Object {
 		$result = null;
 		$data = $this->request->data;
 
-		$entity = $this->_View->entity();
+		$entity = $this->entity();
 		if (!empty($data) && !empty($entity)) {
-			$result = Set::extract($data, join('.', $entity));
+			$result = Set::extract($data, implode('.', $entity));
 		}
 
-		$habtmKey = $this->field();
+		$habtmKey = $entity[0];
 		if (empty($result) && isset($data[$habtmKey][$habtmKey]) && is_array($data[$habtmKey])) {
 			$result = $data[$habtmKey][$habtmKey];
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model = ClassRegistry::getObject($habtmKey);
 				$result = $this->__selectedArray($data[$habtmKey], $model->primaryKey);
-			}
-		}
-
-		if (is_array($result)) {
-			if (array_key_exists($this->_View->fieldSuffix, $result)) {
-				$result = $result[$this->_View->fieldSuffix];
 			}
 		}
 
@@ -833,11 +782,13 @@ class Helper extends Object {
 		}
 		$array = array();
 		if (!empty($data)) {
-			foreach ($data as $var) {
-				$array[$var[$key]] = $var[$key];
+			foreach ($data as $row) {
+				if (isset($row[$key])) {
+					$array[$row[$key]] = $row[$key];
+				}
 			}
 		}
-		return $array;
+		return empty($array) ? null : $array;
 	}
 
 /**
