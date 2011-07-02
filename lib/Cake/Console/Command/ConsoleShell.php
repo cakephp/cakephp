@@ -330,7 +330,7 @@ class ConsoleShell extends Shell {
 	}
 
 /**
- * Reloads the routes configuration from config/routes.php, and compiles
+ * Reloads the routes configuration from app/Config/routes.php, and compiles
  * all routes found
  *
  * @return boolean True if config reload was a success, otherwise false

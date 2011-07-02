@@ -473,7 +473,7 @@ class Router {
 	}
 
 /**
- * Parses given URL string.  Returns 'routing' parametets for that url.
+ * Parses given URL string.  Returns 'routing' parameters for that url.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
