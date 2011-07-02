@@ -1990,7 +1990,7 @@ class FormHelper extends AppHelper {
 						$meridian = 'pm';
 					} elseif ($time[0] == '00' && $timeFormat == '12') {
 						$time[0] = 12;
-					} elseif ($time[0] > 12) {
+					} elseif ($time[0] >= 12) {
 						$meridian = 'pm';
 					}
 					if ($time[0] == 0 && $timeFormat == '12') {
