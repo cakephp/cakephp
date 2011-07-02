@@ -92,6 +92,20 @@ class ApcEngineTest extends CakeTestCase {
 	}
 
 /**
+ * Writing cache entries with duration = 0 (forever) should work.
+ *
+ * @return void
+ */
+	function testReadWriteDurationZero() {
+		Cache::config('apc', array('engine' => 'Apc', 'duration' => 0, 'prefix' => 'cake_'));
+		Cache::write('zero', 'Should save', 'apc');
+		sleep(1);
+
+		$result = Cache::read('zero', 'apc');
+		$this->assertEqual('Should save', $result);
+	}
+
+/**
  * testExpiry method
  *
  * @access public
