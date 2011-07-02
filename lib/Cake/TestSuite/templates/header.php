@@ -23,6 +23,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>CakePHP Test Suite 2.0</title>
 		<style type="text/css">
+			body h2 {color: #777;}
 			h3 {font-size: 170%; padding-top: 1em}
 			a {font-size: 120%}
 			li {line-height: 140%}
