@@ -418,7 +418,8 @@ class ControllerTest extends CakeTestCase {
  */
 	public function testLoadModel() {
 		$request = new CakeRequest('controller_posts/index');
-		$Controller = new Controller($request);
+		$response = $this->getMock('CakeResponse');
+		$Controller = new Controller($request, $response);
 
 		$this->assertFalse(isset($Controller->ControllerPost));
 
@@ -617,7 +618,7 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 		$request->params['action'] = 'index';
 
-		$Controller = new Controller($request, $this->getMock('CakeResponse'));
+		$Controller = new Controller($request, new CakeResponse());
 		$Controller->viewPath = 'Posts';
 
 		$result = $Controller->render('index');
@@ -631,7 +632,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertPattern('/this is the test element/', $result);
 		$Controller->view = null;
 
-		$Controller = new TestController($request);
+		$Controller = new TestController($request, new CakeResponse());
 		$Controller->helpers = array('Html');
 		$Controller->constructClasses();
 		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
@@ -668,7 +669,7 @@ class ControllerTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
-		$Controller = new Controller($this->getMock('CakeRequest'));
+		$Controller = new Controller($this->getMock('CakeRequest'), new CakeResponse());
 		$Controller->uses = array();
 		$Controller->components = array('Test');
 		$Controller->constructClasses();
@@ -689,7 +690,7 @@ class ControllerTest extends CakeTestCase {
 	public function testToBeInheritedGuardmethods() {
 		$request = new CakeRequest('controller_posts/index');
 
-		$Controller = new Controller($request);
+		$Controller = new Controller($request, $this->getMock('CakeResponse'));
 		$this->assertTrue($Controller->_beforeScaffold(''));
 		$this->assertTrue($Controller->_afterScaffoldSave(''));
 		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
@@ -1119,7 +1120,7 @@ class ControllerTest extends CakeTestCase {
 
 		$request = new CakeRequest('controller_posts/index');
 
-		$Controller = new Controller($request);
+		$Controller = new Controller($request, $this->getMock('CakeResponse'));
 
 		$Controller->components = array("RequestHandler");
 		$Controller->modelClass='ControllerPost';
@@ -1140,8 +1141,8 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testControllerHttpCodes() {
-		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('CakeResponse', array('httpCodes'));
+		$response = $this->getMock('CakeResponse', array('httpCodes'));
+		$Controller = new Controller(null, $response);
 		$Controller->response->expects($this->at(0))->method('httpCodes')->with(null);
 		$Controller->response->expects($this->at(1))->method('httpCodes')->with(100);
 		$Controller->httpCodes();
@@ -1237,8 +1238,9 @@ class ControllerTest extends CakeTestCase {
 	public function testPaginateBackwardsCompatibility() {
 		$request = new CakeRequest('controller_posts/index');
 		$request->params['pass'] = $request->params['named'] = array();
+		$response = $this->getMock('CakeResponse', array('httpCodes'));
 
-		$Controller = new Controller($request);
+		$Controller = new Controller($request, $response);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
