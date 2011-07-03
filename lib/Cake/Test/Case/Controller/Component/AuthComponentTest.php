@@ -122,12 +122,12 @@ class AuthTestController extends Controller {
  * @access private
  * @return void
  */
-	function __construct($request) {
+	function __construct($request, $response) {
 		$request->addParams(Router::parse('/auth_test'));
 		$request->here = '/auth_test';
 		$request->webroot = '/';
 		Router::setRequestInfo($request);
-		parent::__construct($request);
+		parent::__construct($request, $response);
 	}
 
 /**
@@ -339,7 +339,7 @@ class AuthTest extends CakeTestCase {
 
 		$request = new CakeRequest(null, false);
 
-		$this->Controller = new AuthTestController($request);
+		$this->Controller = new AuthTestController($request, $this->getMock('CakeResponse'));
 
 		$collection = new ComponentCollection();
 		$collection->init($this->Controller);
@@ -960,7 +960,7 @@ class AuthTest extends CakeTestCase {
 
 		ob_start();
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), array('return' => 1));
+		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), new CakeResponse(), array('return' => 1));
 		$result = ob_get_clean();
 
 		$this->assertEqual("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
@@ -1024,7 +1024,7 @@ class AuthTest extends CakeTestCase {
  */
 	public function testComponentSettings() {
 		$request = new CakeRequest(null, false);
-		$this->Controller = new AuthTestController($request);
+		$this->Controller = new AuthTestController($request, $this->getMock('CakeResponse'));
 
 		$this->Controller->components = array(
 			'Auth' => array(

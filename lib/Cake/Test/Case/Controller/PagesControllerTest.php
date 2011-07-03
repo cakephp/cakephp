@@ -48,7 +48,7 @@ class PagesControllerTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		));
-		$Pages = new PagesController(new CakeRequest(null, false));
+		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
 
 		$Pages->viewPath = 'Posts';
 		$Pages->display('index');

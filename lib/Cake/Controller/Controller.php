@@ -520,9 +520,6 @@ class Controller extends Object {
  * @return CakeResponse
  */
 	public function getResponse() {
-		if (empty($this->response)) {
-			$this->response = new $this->_responseClass(array('charset' => Configure::read('App.encoding')));
-		}
 		return $this->response;
 	}
 
