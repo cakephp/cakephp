@@ -22,6 +22,7 @@
 
 App::uses('Sanitize', 'Utility');
 App::uses('Router', 'Routing');
+App::uses('CakeResponse', 'Network');
 
 /**
  * Exception Renderer.
@@ -148,10 +149,11 @@ class ExceptionRenderer {
 		if (!$request = Router::getRequest(false)) {
 			$request = new CakeRequest();
 		}
+		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		try {
-			$controller = new CakeErrorController($request);
+			$controller = new CakeErrorController($request, $response);
 		} catch (Exception $e) {
-			$controller = new Controller($request);
+			$controller = new Controller($request, $response);
 			$controller->viewPath = 'Errors';
 		}
 		return $controller;
