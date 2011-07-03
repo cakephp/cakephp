@@ -516,6 +516,9 @@ class AuthComponent extends Component {
 
 /**
  * Logs a user out, and returns the login action to redirect to.
+ * Triggers the logout() method of all the authenticate objects, so they can perform
+ * custom logout logic.  AuthComponent will remove the session data, so
+ * there is no need to do that in an authentication object.
  *
  * @param mixed $url Optional URL to redirect the user to after logout
  * @return string AuthComponent::$loginAction
@@ -524,6 +527,13 @@ class AuthComponent extends Component {
  */
 	public function logout() {
 		$this->__setDefaults();
+		if (empty($this->_authenticateObjects)) {
+			$this->constructAuthenticate();
+		}
+		$user = $this->user();
+		foreach ($this->_authenticateObjects as $auth) {
+			$auth->logout($user);
+		}
 		$this->Session->delete(self::$sessionKey);
 		$this->Session->delete('Auth.redirect');
 		return Router::normalize($this->logoutRedirect);

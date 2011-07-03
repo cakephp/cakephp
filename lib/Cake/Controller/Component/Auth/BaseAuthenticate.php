@@ -99,6 +99,18 @@ abstract class BaseAuthenticate {
 	abstract public function authenticate(CakeRequest $request, CakeResponse $response);
 
 /**
+ * Allows you to hook into AuthComponent::logout(), 
+ * and implement specialized logout behaviour.
+ * 
+ * All attached authentication objects will have this method 
+ * called when a user logs out.
+ *
+ * @param array $user The user about to be logged out.
+ * @return void
+ */
+	public function logout($user) { }
+
+/**
  * Get a user based on information in the request.  Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
