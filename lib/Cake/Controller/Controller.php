@@ -291,10 +291,11 @@ class Controller extends Object {
 /**
  * Constructor.
  *
- * @param CakeRequest $request Request object for this controller can be null for testing.
- *  But expect that features that use the params will not work.
+ * @param CakeRequest $request Request object for this controller. Can be null for testing,
+ *  but expect that features that use the request parameters will not work.
+ * @param CakeResponse $response Response object for this controller. 
  */
-	public function __construct($request = null) {
+	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
 			$this->name = substr(get_class($this), 0, strlen(get_class($this)) -10);
 		}
@@ -315,7 +316,9 @@ class Controller extends Object {
 		if ($request instanceof CakeRequest) {
 			$this->setRequest($request);
 		}
-		$this->getResponse();
+		if ($response instanceof CakeResponse) {
+			$this->response = $response;
+		}
 		parent::__construct();
 	}
 
