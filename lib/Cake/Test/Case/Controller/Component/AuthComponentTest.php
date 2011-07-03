@@ -1061,6 +1061,17 @@ class AuthTest extends CakeTestCase {
 		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
 	}
 
+	public function testLogoutTrigger() {
+		$this->getMock('BaseAuthenticate', array('authenticate', 'logout'), array(), 'LogoutTriggerMockAuthenticate', false);
+
+		$this->Auth->authenticate = array('LogoutTriggerMock');
+		$mock = $this->Auth->constructAuthenticate();
+		$mock[0]->expects($this->once())
+			->method('logout');
+
+		$this->Auth->logout();
+	}
+
 /**
  * test mapActions loading and delegating to authorize objects.
  *
