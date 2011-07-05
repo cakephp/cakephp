@@ -52,3 +52,7 @@ Cache::config('default', array('engine' => 'File'));
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
+
+
+// Load all the plugins located in the configured plugins folders
+CakePlugin::loadAll();
