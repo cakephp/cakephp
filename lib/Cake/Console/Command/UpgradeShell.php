@@ -479,14 +479,6 @@ class UpgradeShell extends Shell {
 				}
 			}
 
-			preg_match('@^.*[\\\/]plugins[\\\/](.*?)[\\\/]@', $file, $match);
-			$base = $cwd . DS;
-			$plugin = false;
-			if ($match) {
-				$base = $match[0];
-				$plugin = $match[1];
-			}
-
 			if ($options['checkFolder'] && !empty($this->_map[$type])) {
 				$folder = str_replace('/', DS, $this->_map[$type]);
 				$new = $base . $folder . DS . $class . '.php';
