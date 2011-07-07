@@ -151,8 +151,11 @@ class Dispatcher {
 		}
 		$result = call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
 
+		if ($result instanceof CakeResponse) {
+			$response = $result;
+		}
 		if ($controller->autoRender) {
-			$controller->render();
+			$response = $controller->render();
 		} elseif ($response->body() === null) {
 			$response->body($result);
 		}

@@ -828,7 +828,8 @@ class Controller extends Object {
 
 		$this->autoRender = false;
 		$this->View = $View;
-		return $this->response->body($View->render($view, $layout));
+		$this->response->body($View->render($view, $layout));
+		return $this->response;
 	}
 
 /**
