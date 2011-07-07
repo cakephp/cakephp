@@ -136,7 +136,7 @@ class Model extends Object {
 
 
 /**
- * Nane of the validation string domain to use when translating validation errors.
+ * Name of the validation string domain to use when translating validation errors.
  *
  * @var string
  * @access public
