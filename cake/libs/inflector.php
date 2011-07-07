@@ -147,7 +147,8 @@ class Inflector {
 			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
 		),
 		'irregular' => array(
-			'waves' => 'wave'
+			'waves' => 'wave',
+			'curves' => 'curve'
 		)
 	);
 
