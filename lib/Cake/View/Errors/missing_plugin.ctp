@@ -12,7 +12,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake.libs.view.templates.errors
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
@@ -32,7 +32,7 @@ CakePlugin::load('<?php echo $plugin?>');
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Loading all plugins'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your ' . APP_DIR . DS . 'bootstrap.php file'); ?>
+	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your ' . APP_DIR . DS . 'Config' . DS . 'bootstrap.php file'); ?>
 </p>
 <pre>
 CakePlugin::loadAll();
