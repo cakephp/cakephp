@@ -60,6 +60,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$Folder = new Folder($this->path);
 		$Folder->delete();
+		App::build();
 	}
 
 /**
@@ -202,4 +203,115 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/msgid "Add User"/';
 		$this->assertPattern($pattern, $result);
 	}
+
+/**
+ * Tests that it is possible to exclude plugin paths by enabling the param option for the ExtractTask
+ *
+ * @return void
+ */
+	public function testExtractExcludePlugins() {
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ExtractTask',
+			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['exclude-plugins'] = true;
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'default.pot');
+		$this->assertNoPattern('#TesPlugin#', $result);
+	}
+
+/**
+ * Tests that the task will inspect application models and extract the validation messages from them
+ *
+ * @return void
+ */
+	public function testExtractModelValidation() {
+		App::build(array(
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ExtractTask',
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['exclude-plugins'] = true;
+		$this->Task->params['ignore-model-validation'] = false;
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$pattern = '#Model/PersisterOne.php:validation for field title#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#Model/PersisterOne.php:validation for field body#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post title is required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post body is required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post body is super required"#';
+		$this->assertPattern($pattern, $result);
+	}
+
+/**
+ *  Tests that the task will inspect application models and extract the validation messages from them
+ *	while using a custom validation domain for the messages set on the model itself
+ *
+ * @return void
+ */
+	public function testExtractModelValidationWithDomainInModel() {
+		App::build(array(
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS)
+		));
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ExtractTask',
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['exclude-plugins'] = true;
+		$this->Task->params['ignore-model-validation'] = false;
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
+
+		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post title is required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post body is required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post body is super required"#';
+		$this->assertPattern($pattern, $result);
+	}
+
 }

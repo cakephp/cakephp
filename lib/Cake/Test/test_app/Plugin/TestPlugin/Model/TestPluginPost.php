@@ -33,4 +33,40 @@ class TestPluginPost extends TestPluginAppModel {
  * @var string
  */
 	public $useTable = 'posts';
+
+/**
+ * Validation rules
+ *
+ * @var array
+ */
+	public $validate = array(
+		'title' => array(
+			'rule' => array('custom', '.*'),
+			'allowEmpty' => true,
+			'required' => false,
+			'message' => 'Post title is required'
+		),
+		'body' => array(
+			'first_rule' => array(
+				'rule' => array('custom', '.*'),
+				'allowEmpty' => true,
+				'required' => false,
+				'message' => 'Post body is required'
+			),
+			'second_rule' => array(
+				'rule' => array('custom', '.*'),
+				'allowEmpty' => true,
+				'required' => false,
+				'message' => 'Post body is super required'
+			)
+		),
+	);
+
+/**
+ * Translation domain to use for validation messages
+ *
+ * @var string
+ */
+	public $validationDomain = 'test_plugin';
+
 }

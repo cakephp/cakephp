@@ -134,6 +134,15 @@ class Model extends Object {
  */
 	public $validationErrors = array();
 
+
+/**
+ * Nane of the validation string domain to use when translating validation errors.
+ *
+ * @var string
+ * @access public
+ */
+	public $validationDomain = null;
+
 /**
  * Database table prefix for tables in model.
  *
@@ -167,14 +176,6 @@ class Model extends Object {
  * @access public
  */
 	public $tableToModel = array();
-
-/**
- * Whether or not to log transactions for this model.
- *
- * @var boolean
- * @access public
- */
-	public $logTransactions = false;
 
 /**
  * Whether or not to cache queries for this model.  This enables in-memory
@@ -344,22 +345,6 @@ class Model extends Object {
  * @access private
  */
 	private $__insertID = null;
-
-/**
- * The number of records returned by the last query.
- *
- * @var integer
- * @access private
- */
-	private $__numRows = null;
-
-/**
- * The number of records affected by the last query.
- *
- * @var integer
- * @access private
- */
-	private $__affectedRows = null;
 
 /**
  * Has the datasource been configured.
@@ -2599,6 +2584,10 @@ class Model extends Object {
 				}
 				$validator = array_merge($default, $validator);
 
+				$validationDomain = $this->validationDomain;
+				if (empty($validationDomain)) {
+					$validationDomain = 'default';
+				}
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
 				} else {
@@ -2618,7 +2607,7 @@ class Model extends Object {
 					);
 
 					if ($required) {
-						$this->invalidate($fieldName, $message);
+						$this->invalidate($fieldName, __d($validationDomain, $message));
 						if ($validator['last']) {
 							break;
 						}
@@ -2662,7 +2651,7 @@ class Model extends Object {
 								} elseif (is_numeric($index) && count($ruleSet) > 1) {
 									$validator['message'] = $index + 1;
 								} else {
-									$validator['message'] = $message;
+									$validator['message'] = __d($validationDomain, $message);
 								}
 							}
 							$this->invalidate($fieldName, $validator['message']);
