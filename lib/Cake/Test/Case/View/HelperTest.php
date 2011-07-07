@@ -366,7 +366,34 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('Post.2.created.year');
 		$result = $this->Helper->value('Post.2.created.year');
 		$this->assertEqual($result, '2008');
+	}
 
+/**
+ * Test default values with value()
+ *
+ * @return void
+ */
+	function testValueWithDefault() {
+		$this->Helper->request->data = array('zero' => 0);
+		$this->Helper->setEntity('zero');
+		$result = $this->Helper->value(array('default' => 'something'), 'zero');
+		$this->assertEqual($result, array('value' => 0));
+
+		$this->Helper->request->data = array('zero' => '0');
+		$result = $this->Helper->value(array('default' => 'something'), 'zero');
+		$this->assertEqual($result, array('value' => '0'));
+
+		$this->Helper->setEntity('inexistent');
+		$result = $this->Helper->value(array('default' => 'something'), 'inexistent');
+		$this->assertEqual($result, array('value' => 'something'));
+	}
+
+/**
+ * Test habtm data fetching and ensure no pollution happens.
+ *
+ * @return void
+ */
+	function testValueHabtmKeys() {
 		$this->Helper->request->data = array(
 			'HelperTestTag' => array('HelperTestTag' => '')
 		);
@@ -393,18 +420,15 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
 		$this->assertEqual($result, array(3 => 3, 5 => 5));
 
-		$this->Helper->request->data = array('zero' => 0);
-		$this->Helper->setEntity('zero');
-		$result = $this->Helper->value(array('default' => 'something'), 'zero');
-		$this->assertEqual($result, array('value' => 0));
-
-		$this->Helper->request->data = array('zero' => '0');
-		$result = $this->Helper->value(array('default' => 'something'), 'zero');
-		$this->assertEqual($result, array('value' => '0'));
-
-		$this->Helper->setEntity('inexistent');
-		$result = $this->Helper->value(array('default' => 'something'), 'inexistent');
-		$this->assertEqual($result, array('value' => 'something'));
+		$this->Helper->request->data = array(
+			'HelperTestTag' => array(
+				'body' => '',
+				'title' => 'winning'
+			),
+		);
+		$this->Helper->setEntity('HelperTestTag.body');
+		$result = $this->Helper->value('HelperTestTag.body');
+		$this->assertEqual($result, '');
 	}
 
 /**

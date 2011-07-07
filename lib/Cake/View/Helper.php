@@ -638,7 +638,7 @@ class Helper extends Object {
 			$result = Set::extract($data, implode('.', $entity));
 		}
 
-		$habtmKey = $entity[0];
+		$habtmKey = $this->field();
 		if (empty($result) && isset($data[$habtmKey][$habtmKey]) && is_array($data[$habtmKey])) {
 			$result = $data[$habtmKey][$habtmKey];
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
