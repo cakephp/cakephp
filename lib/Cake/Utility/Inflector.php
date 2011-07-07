@@ -143,7 +143,8 @@ class Inflector {
 			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
 		),
 		'irregular' => array(
-			'waves' => 'wave'
+			'waves' => 'wave',
+			'curves' => 'curve'
 		)
 	);
 
@@ -397,14 +398,14 @@ class Inflector {
 
 		if (!isset(self::$_singular['merged']['uninflected'])) {
 			self::$_singular['merged']['uninflected'] = array_merge(
-				self::$_singular['uninflected'], 
+				self::$_singular['uninflected'],
 				self::$_uninflected
 			);
 		}
 
 		if (!isset(self::$_singular['merged']['irregular'])) {
 			self::$_singular['merged']['irregular'] = array_merge(
-				self::$_singular['irregular'], 
+				self::$_singular['irregular'],
 				array_flip(self::$_plural['irregular'])
 			);
 		}
