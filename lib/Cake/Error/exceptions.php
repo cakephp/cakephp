@@ -39,7 +39,7 @@ class BadRequestException extends HttpException {
  * Constructor
  *
  * @param string $message If no message is given 'Bad Request' will be the message
- * @param string $code Status code, defaults to 401
+ * @param string $code Status code, defaults to 400
  */
 	public function __construct($message = null, $code = 400) {
 		if (empty($message)) {
@@ -79,7 +79,7 @@ class ForbiddenException extends HttpException {
  * Constructor
  *
  * @param string $message If no message is given 'Forbidden' will be the message
- * @param string $code Status code, defaults to 401
+ * @param string $code Status code, defaults to 403
  */
 	public function __construct($message = null, $code = 403) {
 		if (empty($message)) {
@@ -119,7 +119,7 @@ class MethodNotAllowedException extends HttpException {
  * Constructor
  *
  * @param string $message If no message is given 'Method Not Allowed' will be the message
- * @param string $code Status code, defaults to 401
+ * @param string $code Status code, defaults to 405
  */
 	public function __construct($message = null, $code = 405) {
 		if (empty($message)) {
@@ -138,8 +138,8 @@ class InternalErrorException extends HttpException {
 /**
  * Constructor
  *
- * @param string $message If no message is given 'Not Found' will be the message
- * @param string $code Status code, defaults to 404
+ * @param string $message If no message is given 'Internal Server Error' will be the message
+ * @param string $code Status code, defaults to 500
  */
 	public function __construct($message = null, $code = 500) {
 		if (empty($message)) {
@@ -228,7 +228,7 @@ class MissingActionException extends CakeException {
 }
 /**
  * Private Action exception - used when a controller action
- * is protected, or starts with a `_`.
+ * starts with a  `_`.
  *
  * @package cake.libs
  */
@@ -246,7 +246,7 @@ class PrivateActionException extends CakeException {
  * @package cake.libs
  */
 class MissingComponentFileException extends CakeException {
-	protected $_messageTemplate = 'Component File  "%s" is missing.';
+	protected $_messageTemplate = 'Component file  "%s" is missing.';
 }
 
 /**
@@ -296,7 +296,7 @@ class MissingLayoutException extends CakeException {
  * @package cake.libs
  */
 class MissingHelperFileException extends CakeException {
-	protected $_messageTemplate = 'Helper File "%s" is missing.';
+	protected $_messageTemplate = 'Helper file "%s" is missing.';
 }
 
 /**
@@ -364,7 +364,7 @@ class MissingShellClassException extends CakeException {
 }
 
 /**
- * Used when a shell class cannot be found.
+ * Used when a shell file cannot be found.
  *
  * @package cake.libs
  */
@@ -373,21 +373,21 @@ class MissingShellFileException extends CakeException {
 }
 
 /**
- * Exception class to be thrown when a database file is not found
+ * Exception class to be thrown when a datasource configuration is not found
  *
  * @package cake.libs
  */
 class MissingDatasourceConfigException extends CakeException {
-	protected $_messageTemplate = 'Database connection "%s" could not be loaded.';
+	protected $_messageTemplate = 'The datasource configuration "%s" was not found in database.php';
 }
 
 /**
- * Exception class to be thrown when a database file is not found
+ * Exception class to be thrown when a datasource is not found
  *
  * @package cake.libs
  */
 class MissingDatasourceFileException extends CakeException {
-	protected $_messageTemplate = 'Database connection "%s" could not be loaded.';
+	protected $_messageTemplate = 'Datasource "%s" was not found.';
 }
 
 /**
@@ -400,7 +400,7 @@ class MissingTableException extends CakeException {
 }
 
 /**
- * Exception Raised when a Model could not be found.
+ * Exception raised when a Model could not be found.
  *
  * @package cake.libs
  */
@@ -409,7 +409,7 @@ class MissingModelException extends CakeException {
 }
 
 /**
- * Exception Raised when a test loader could not be found
+ * Exception raised when a test loader could not be found
  *
  * @package cake.libs
  */
@@ -418,7 +418,7 @@ class MissingTestLoaderException extends CakeException {
 }
 
 /**
- * Exception Raised when a plugin could not be found
+ * Exception raised when a plugin could not be found
  *
  * @package cake.libs
  */
@@ -468,7 +468,7 @@ class ConfigureException extends CakeException { }
 
 /**
  * Exception class for Socket. This exception will be thrown from CakeSocket, CakeEmail, HttpSocket
- * and HttpResponse when it encounters an error.
+ * SmtpTransport and HttpResponse when it encounters an error.
  *
  * @package cake.libs
  */
