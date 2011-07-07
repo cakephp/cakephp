@@ -227,7 +227,35 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
-		$this->assertNoPattern('#TesPlugin#', $result);
+		$this->assertNoPattern('#TestPlugin#', $result);
+	}
+
+/**
+ * Test that is possible to extract messages form a single plugin
+ *
+ * @return void
+ */
+	public function testExtractPlugin() {
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ExtractTask',
+			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['plugin'] = 'TestPlugin';
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'default.pot');
+		$this->assertNoPattern('#Pages#', $result);
+		$this->assertContains('translate.ctp:1', $result);
+		$this->assertContains('This is a translatable string', $result);
+		CakePlugin::unload();
 	}
 
 /**

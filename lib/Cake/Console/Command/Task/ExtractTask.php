@@ -126,6 +126,12 @@ class ExtractTask extends Shell {
 		}
 		if (isset($this->params['paths'])) {
 			$this->_paths = explode(',', $this->params['paths']);
+		} else if (isset($this->params['plugin'])) {
+			$plugin = Inflector::camelize($this->params['plugin']);
+			if (!CakePlugin::loaded($plugin)) {
+				CakePlugin::load($plugin);
+			}
+			$this->_paths = array(CakePlugin::path($plugin));
 		} else {
 			$defaultPath = APP;
 			$message = __d('cake_console', "What is the path you would like to extract?\n[Q]uit [D]one");
@@ -160,10 +166,12 @@ class ExtractTask extends Shell {
 
 		if (isset($this->params['output'])) {
 			$this->_output = $this->params['output'];
+		} else if (isset($this->params['plugin'])) {
+			$this->_output = $this->_paths[0] . DS . 'Locale';
 		} else {
-			$message = __d('cake_console', "What is the path you would like to output?\n[Q]uit", $this->_paths[0] . DS . 'locale');
+			$message = __d('cake_console', "What is the path you would like to output?\n[Q]uit", $this->_paths[0] . DS . 'Locale');
 			while (true) {
-				$response = $this->in($message, null, $this->_paths[0] . DS . 'locale');
+				$response = $this->in($message, null, $this->_paths[0] . DS . 'Locale');
 				if (strtoupper($response) === 'Q') {
 					$this->out(__d('cake_console', 'Extract Aborted'));
 					$this->_stop();
@@ -238,15 +246,18 @@ class ExtractTask extends Shell {
 			->addOption('exclude-plugins', array(
 				'boolean' => true,
 				'default' => true,
-				'help' => __d('cake_console', 'Ignores all files in plugins if this command is run inside from the same app directory')
+				'help' => __d('cake_console', 'Ignores all files in plugins if this command is run inside from the same app directory.')
+			))
+			->addOption('plugin', array(
+				'help' => __d('cake_console', 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.')
 			))
 			->addOption('ignore-model-validation', array(
 				'boolean' => true,
 				'default' => false,
-				'help' => __d('cake_console', 'Ignores validation messages in the $validate property. If this flag is not set and the command is run from the same app directory, all messages in model validation rules will be extracted as tokens')
+				'help' => __d('cake_console', 'Ignores validation messages in the $validate property. If this flag is not set and the command is run from the same app directory, all messages in model validation rules will be extracted as tokens.')
 			))
 			->addOption('validation-domain', array(
-				'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages')
+				'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages.')
 			))
 			->addOption('exclude', array(
 				'help' => __d('cake_console', 'Comma separated list of directories to exclude. Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
