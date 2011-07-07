@@ -508,6 +508,22 @@ class ExceptionRendererTest extends CakeTestCase {
 				500
 			),
 			array(
+				new MissingDatasourceConfigException(array('config' => 'default')),
+				array(
+					'/<h2>Missing Datasource Configuration<\/h2>/',
+					'/The datasource configuration <em>default<\/em> was not found in database.php/'
+				),
+				500
+			),
+			array(
+				new MissingDatasourceFileException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
+				array(
+					'/<h2>Missing Datasource Class<\/h2>/',
+					'/Datasource class <em>MyDatasource<\/em> was not found/'
+				),
+				500
+			),
+			array(
 				new MissingHelperFileException(array('file' => 'MyCustomHelper.php', 'class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper File<\/h2>/',
