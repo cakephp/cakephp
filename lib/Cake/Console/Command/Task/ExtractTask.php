@@ -132,6 +132,7 @@ class ExtractTask extends Shell {
 				CakePlugin::load($plugin);
 			}
 			$this->_paths = array(CakePlugin::path($plugin));
+			$this->params['plugin'] = $plugin;
 		} else {
 			$defaultPath = APP;
 			$message = __d('cake_console', "What is the path you would like to extract?\n[Q]uit [D]one");
@@ -157,7 +158,7 @@ class ExtractTask extends Shell {
 			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
 		}
 
-		if (!empty($this->params['ignore-model-validation']) || !$this->_isExtractingApp()) {
+		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {
 			$this->_extractValidation = false;
 		}
 		if (!empty($this->params['validation-domain'])) {
@@ -354,10 +355,16 @@ class ExtractTask extends Shell {
 		if (!$this->_extractValidation) {
 			return;
 		}
-		$models = App::objects('Model', null, false);
 		App::uses('AppModel', 'Model');
+		$plugin = null;
+		if (!empty($this->params['plugin'])) {
+			App::uses($this->params['plugin'] . 'AppModel', $this->params['plugin'] . '.Model');
+			$plugin = $this->params['plugin'] . '.';
+		}
+		$models = App::objects($plugin . 'Model', null, false);
+
 		foreach ($models as $model) {
-			App::uses($model, 'Model');
+			App::uses($model, $plugin . 'Model');
 			$reflection = new ReflectionClass($model);
 			$properties = $reflection->getDefaultProperties();
 			$validate = $properties['validate'];

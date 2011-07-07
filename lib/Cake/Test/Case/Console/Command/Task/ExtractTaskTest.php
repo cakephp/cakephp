@@ -61,6 +61,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$Folder = new Folder($this->path);
 		$Folder->delete();
 		App::build();
+		CakePlugin::unload();
 	}
 
 /**
@@ -255,7 +256,6 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertNoPattern('#Pages#', $result);
 		$this->assertContains('translate.ctp:1', $result);
 		$this->assertContains('This is a translatable string', $result);
-		CakePlugin::unload();
 	}
 
 /**
@@ -342,4 +342,46 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 	}
 
+
+/**
+ *  Test that the extract shell can obtain validation messages from models inside a specific plugin
+ *
+ * @return void
+ */
+	public function testExtractModelValidationInPlugin() {
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ExtractTask',
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
+			array($this->out, $this->out, $this->in)
+		);
+
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['ignore-model-validation'] = false;
+		$this->Task->params['plugin'] = 'TestPlugin';
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
+
+		$pattern = '#Model/TestPluginPost.php:validation for field title#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#Model/TestPluginPost.php:validation for field body#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post title is required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post body is required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#msgid "Post body is super required"#';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
+		$this->assertNoPattern($pattern, $result);
+	}
 }
