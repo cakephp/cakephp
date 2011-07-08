@@ -525,8 +525,7 @@ class ControllerTest extends CakeTestCase {
 		$request->webroot = '/';
 		$request->base = '/';
 
-		$Controller = new Controller($request);
-		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$Controller = new Controller($request, $this->getMock('CakeResponse', array('_sendHeader')));
 		$Controller->flash('this should work', '/flash');
 		$result = $Controller->response->body();
 
@@ -622,14 +621,14 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'Posts';
 
 		$result = $Controller->render('index');
-		$this->assertPattern('/posts index/', $result);
+		$this->assertPattern('/posts index/', (string)$result);
 
 		$Controller->view = 'index';
 		$result = $Controller->render();
-		$this->assertPattern('/posts index/', $result);
+		$this->assertPattern('/posts index/', (string)$result);
 
 		$result = $Controller->render('/Elements/test_element');
-		$this->assertPattern('/this is the test element/', $result);
+		$this->assertPattern('/this is the test element/', (string)$result);
 		$Controller->view = null;
 
 		$Controller = new TestController($request, new CakeResponse());
@@ -677,7 +676,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'Posts';
 		$Controller->theme = 'TestTheme';
 		$result = $Controller->render('index');
-		$this->assertPattern('/default test_theme layout/', $result);
+		$this->assertPattern('/default test_theme layout/', (string)$result);
 		App::build();
 	}
 

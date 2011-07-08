@@ -300,7 +300,7 @@ class CakeResponse {
  *
  * @var string
  */
-	protected $_body = null;
+	protected $_body = '';
 
 /**
  * The charset the response body is encoded with
@@ -653,5 +653,15 @@ class CakeResponse {
  */
 	public function download($filename) {
 		$this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+	}
+
+/**
+ * String conversion.  Fetches the response body as a string.
+ * Does *not* send headers.
+ *
+ * @return string
+ */
+	public function __toString() {
+		return $this->_body;
 	}
 }

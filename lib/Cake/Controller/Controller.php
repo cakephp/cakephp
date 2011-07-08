@@ -790,7 +790,7 @@ class Controller extends Object {
  *
  * @param string $view View to use for rendering
  * @param string $layout Layout to use
- * @return string Full output string of view contents
+ * @return CakeResponse A response object containing the rendered view.
  * @link http://book.cakephp.org/view/980/render
  */
 	public function render($view = null, $layout = null) {
@@ -880,7 +880,7 @@ class Controller extends Object {
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->response->body($this->render(false, $layout));
+		$this->render(false, $layout);
 	}
 
 /**
