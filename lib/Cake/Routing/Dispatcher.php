@@ -110,12 +110,14 @@ class Dispatcher {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
+		$render = true;
 		$result = $controller->invokeAction($request);
 		if ($result instanceof CakeResponse) {
+			$render = false;
 			$response = $result;
 		}
 		
-		if ($controller->autoRender) {
+		if ($render && $controller->autoRender) {
 			$response = $controller->render();
 		} elseif ($response->body() === null) {
 			$response->body($result);

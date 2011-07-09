@@ -168,6 +168,15 @@ class SomePagesController extends AppController {
 	}
 
 /**
+ * Test method for returning responses.
+ *
+ * @return CakeResponse
+ */
+	public function responseGenerator() {
+		return new CakeResponse(array('body' => 'new response'));
+	}
+
+/**
  * redirect method overriding
  *
  * @return void
@@ -804,6 +813,23 @@ class DispatcherTest extends CakeTestCase {
 		$url = new CakeRequest('test_dispatch_pages/camelCased/something. .');
 		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
 		$this->assertEqual($controller->params['pass'][0], 'something. .', 'Period was chopped off. %s');
+	}
+
+/**
+ * Test that Dispatcher handles actions that return response objects.
+ *
+ * @return void
+ */
+	public function testDispatchActionReturnsResponse() {
+		$Dispatcher = new Dispatcher();
+		$request = new CakeRequest('some_pages/responseGenerator');
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+
+		ob_start();
+		$Dispatcher->dispatch($request, $response);
+		$result = ob_get_clean();
+
+		$this->assertEquals('new response', $result);
 	}
 
 /**
