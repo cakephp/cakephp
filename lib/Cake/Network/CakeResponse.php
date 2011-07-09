@@ -300,7 +300,7 @@ class CakeResponse {
  *
  * @var string
  */
-	protected $_body = '';
+	protected $_body = null;
 
 /**
  * The charset the response body is encoded with
@@ -662,6 +662,6 @@ class CakeResponse {
  * @return string
  */
 	public function __toString() {
-		return $this->_body;
+		return (string)$this->_body;
 	}
 }
