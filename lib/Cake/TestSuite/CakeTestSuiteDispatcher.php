@@ -235,6 +235,7 @@ class CakeTestSuiteDispatcher {
 			'app' => $this->params['app'],
 			'plugin' => $this->params['plugin'],
 			'codeCoverage' => $this->params['codeCoverage'],
+			'showPasses' => !empty($this->params['show_passes']),
 			'baseUrl' => $this->_baseUrl,
 			'baseDir' => $this->_baseDir,
 		);
