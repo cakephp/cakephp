@@ -249,7 +249,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintPass(PHPUnit_Framework_Test $test, $time = null) {
-		if (isset($this->params['show_passes']) && $this->params['show_passes']) {
+		if (isset($this->params['showPasses']) && $this->params['showPasses']) {
 			echo "<li class='pass'>\n";
 			echo "<span>Passed</span> ";
 
