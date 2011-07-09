@@ -93,35 +93,7 @@ class Dispatcher {
 			));
 		}
 
-		if ($this->_isPrivateAction($request)) {
-			throw new PrivateActionException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
-				'action' => $request->params['action']
-			));
-		}
-
 		return $this->_invoke($controller, $request, $response);
-	}
-
-/**
- * Check if the request's action is marked as private, with an underscore, of if the request is attempting to
- * directly accessing a prefixed action.
- *
- * @param CakeRequest $request The request to check
- * @return boolean
- */
-	protected function _isPrivateAction($request) {
-		$privateAction = $request->params['action'][0] === '_';
-		$prefixes = Router::prefixes();
-
-		if (!$privateAction && !empty($prefixes)) {
-			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
-				list($prefix, $action) = explode('_', $request->params['action']);
-				$privateAction = in_array($prefix, $prefixes);
-			}
-		}
-
-		return $privateAction;
 	}
 
 /**
@@ -138,22 +110,11 @@ class Dispatcher {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
-		$methods = array_flip($controller->methods);
-
-		if (!isset($methods[$request->params['action']])) {
-			if ($controller->scaffold !== false) {
-				return new Scaffold($controller, $request);
-			}
-			throw new MissingActionException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
-				'action' => $request->params['action']
-			));
-		}
-		$result = call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
-
+		$result = $controller->invokeAction($request);
 		if ($result instanceof CakeResponse) {
 			$response = $result;
 		}
+		
 		if ($controller->autoRender) {
 			$response = $controller->render();
 		} elseif ($response->body() === null) {

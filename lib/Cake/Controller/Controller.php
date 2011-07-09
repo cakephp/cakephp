@@ -443,6 +443,61 @@ class Controller extends Object {
 	}
 
 /**
+ * Dispatches the controller action.  Checks that the action 
+ * exists and isn't private.
+ *
+ * @param CakeRequest $request
+ * @return The resulting response.
+ */
+	public function invokeAction(CakeRequest $request) {
+		$reflection = new ReflectionClass($this);
+		try {
+			$method = $reflection->getMethod($request->params['action']);
+
+			if ($this->_isPrivateAction($method, $request)) {
+				throw new PrivateActionException(array(
+					'controller' => $this->name . "Controller",
+					'action' => $request->params['action']
+				));
+			}
+			return $method->invokeArgs($this, $request->params['pass']);
+
+		} catch (ReflectionException $e) {
+			if ($this->scaffold !== false) {
+				return new Scaffold($this, $request);
+			}
+			throw new MissingActionException(array(
+				'controller' => $this->name . "Controller",
+				'action' => $request->params['action']
+			));
+		}
+	}
+
+/**
+ * Check if the request's action is marked as private, with an underscore, of if the request is attempting to
+ * directly accessing a prefixed action.
+ *
+ * @param ReflectionMethod $method The method to be invoked.
+ * @param CakeRequest $request The request to check.
+ * @return boolean
+ */
+	protected function _isPrivateAction(ReflectionMethod $method, CakeRequest $request) {
+		$privateAction = (
+			$method->name[0] === '_' || 
+			!$method->isPublic() ||
+			!in_array($method->name,  $this->methods)
+		);
+		$prefixes = Router::prefixes();
+
+		if (!$privateAction && !empty($prefixes)) {
+			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
+				list($prefix, $action) = explode('_', $request->params['action']);
+				$privateAction = in_array($prefix, $prefixes);
+			}
+		}
+		return $privateAction;
+	}
+/**
  * Merge components, helpers, and uses vars from Controller::$_mergeParent and PluginAppController.
  *
  * @return void

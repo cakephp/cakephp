@@ -50,11 +50,7 @@ class TestDispatcher extends Dispatcher {
  * @return void
  */
 	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
-		if ($result = parent::_invoke($controller, $request, $response)) {
-			if ($result[0] === 'missingAction') {
-				return $result;
-			}
-		}
+		$result = parent::_invoke($controller, $request, $response);
 		return $controller;
 	}
 
@@ -733,13 +729,13 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * test that methods declared in Controller are treated as missing methods.
+ * test that methods declared in Controller are treated as private methods.
  *
- * @expectedException MissingActionException
- * @expectedExceptionMessage Action SomePagesController::redirect() could not be found.
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action SomePagesController::redirect() is not directly accessible.
  * @return void
  */
-	public function testMissingActionFromBaseClassMethods() {
+	public function testPrivateActionFromBaseClassMethods() {
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = new CakeRequest('some_pages/redirect/param:value/param2:value2');
