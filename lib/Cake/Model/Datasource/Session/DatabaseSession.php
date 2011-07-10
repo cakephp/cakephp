@@ -31,23 +31,18 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  */
 	public function __construct() {
 		$modelName = Configure::read('Session.handler.model');
-		$database = Configure::read('Session.handler.database');
-		$table = Configure::read('Session.handler.table');
-
-		if (empty($database)) {
-			$database = 'default';
-		}
-		$settings = array(
-			'class' => 'Session',
-			'alias' => 'Session',
-			'table' => 'cake_sessions',
-			'ds' => $database
-		);
-		if (!empty($modelName)) {
-			$settings['class'] = $modelName;
-		}
-		if (!empty($table)) {
-			$settings['table'] = $table;
+		
+		if (empty($modelName)) {
+			$settings = array(
+				'class' =>'Session',
+				'alias' => 'Session',
+				'table' => 'cake_sessions',
+			);
+		} else {
+			$settings = array(
+				'class' =>$modelName,
+				'alias' => 'Session',
+			);
 		}
 		ClassRegistry::init($settings);
 	}
@@ -71,7 +66,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 	public function close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
-			DatabaseSession::gc();
+			$this->gc();
 		}
 		return true;
 	}
