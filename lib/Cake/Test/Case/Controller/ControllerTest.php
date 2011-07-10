@@ -253,7 +253,7 @@ class TestController extends ControllerTestAppController {
  * @var string 'Name'
  * @access public
  */
-	public $name = 'TestController';
+	public $name = 'Test';
 
 /**
  * helpers property
@@ -261,7 +261,7 @@ class TestController extends ControllerTestAppController {
  * @var array
  * @access public
  */
-	public $helpers = array('Session', 'Xml');
+	public $helpers = array('Session');
 
 /**
  * components property
@@ -294,6 +294,22 @@ class TestController extends ControllerTestAppController {
 			'testId' => $testId,
 			'test2Id' => $test2Id
 		);
+	}
+	
+	protected function protected_m() {
+	
+	}
+
+	private function private_m() {
+	
+	}
+
+	public function _hidden() {
+	
+	}
+
+	public function admin_add() {
+	
 	}
 }
 
@@ -1258,5 +1274,104 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
+	}
+
+/**
+ * testMissingAction method
+ *
+ * @expectedException MissingActionException
+ * @expectedExceptionMessage Action TestController::missing() could not be found.
+ * @return void
+ */
+	public function testInvokeActionMissingAction() {
+		$url = new CakeRequest('test/missing');
+		$url->addParams(array('controller' => 'test_controller', 'action' => 'missing'));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$Controller->invokeAction($url);
+	}
+
+/**
+ * test invoking private methods.
+ *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::private_m() is not directly accessible.
+ * @return void
+ */
+	public function testInvokeActionPrivate() {
+		$url = new CakeRequest('test/private_m/');
+		$url->addParams(array('controller' => 'test_controller', 'action' => 'private_m'));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$Controller->invokeAction($url);
+	}
+
+/**
+ * test invoking protected methods.
+ *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::protected_m() is not directly accessible.
+ * @return void
+ */
+	public function testInvokeActionProtected() {
+		$url = new CakeRequest('test/protected_m/');
+		$url->addParams(array('controller' => 'test_controller', 'action' => 'protected_m'));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$Controller->invokeAction($url);
+	}
+
+/**
+ * test invoking hidden methods.
+ *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::_hidden() is not directly accessible.
+ * @return void
+ */
+	public function testInvokeActionHidden() {
+		$url = new CakeRequest('test/_hidden/');
+		$url->addParams(array('controller' => 'test_controller', 'action' => '_hidden'));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$Controller->invokeAction($url);
+	}
+
+/**
+ * test invoking controller methods.
+ *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::redirect() is not directly accessible.
+ * @return void
+ */
+	public function testInvokeActionBaseMethods() {
+		$url = new CakeRequest('test/redirect/');
+		$url->addParams(array('controller' => 'test_controller', 'action' => 'redirect'));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$Controller->invokeAction($url);
+	}
+
+/**
+ * test invoking controller methods.
+ *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::admin_add() is not directly accessible.
+ * @return void
+ */
+	public function testInvokeActionPrefixProtection() {
+		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('prefix'=>'admin'));
+
+		$url = new CakeRequest('test/admin_add/');
+		$url->addParams(array('controller' => 'test_controller', 'action' => 'admin_add'));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$Controller->invokeAction($url);
 	}
 }

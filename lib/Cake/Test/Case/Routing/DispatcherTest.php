@@ -159,15 +159,6 @@ class SomePagesController extends AppController {
 	}
 
 /**
- * protected method
- *
- * @return void
- */
-	protected function _protected() {
-		return true;
-	}
-
-/**
  * Test method for returning responses.
  *
  * @return CakeResponse
@@ -176,14 +167,6 @@ class SomePagesController extends AppController {
 		return new CakeResponse(array('body' => 'new response'));
 	}
 
-/**
- * redirect method overriding
- *
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		echo 'this should not be accessible';
-	}
 }
 
 /**
@@ -706,54 +689,6 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * testPrivate method
- *
- * @expectedException PrivateActionException
- * @expectedExceptionMessage Private Action SomePagesController::_protected() is not directly accessible.
- * @return void
- */
-	public function testPrivate() {
-		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
-		$url = new CakeRequest('some_pages/_protected/param:value/param2:value2');
-		$response = $this->getMock('CakeResponse');
-
-		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
-	}
-
-/**
- * testMissingAction method
- *
- * @expectedException MissingActionException
- * @expectedExceptionMessage Action SomePagesController::home() could not be found.
- * @return void
- */
-	public function testMissingAction() {
-		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl', '/index.php');
-		$url = new CakeRequest('some_pages/home/param:value/param2:value2');
-		$response = $this->getMock('CakeResponse');
-
-		$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
-	}
-
-/**
- * test that methods declared in Controller are treated as private methods.
- *
- * @expectedException PrivateActionException
- * @expectedExceptionMessage Private Action SomePagesController::redirect() is not directly accessible.
- * @return void
- */
-	public function testPrivateActionFromBaseClassMethods() {
-		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
-		$url = new CakeRequest('some_pages/redirect/param:value/param2:value2');
-		$response = $this->getMock('CakeResponse');
-
-		$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
-	}
-
-/**
  * testDispatch method
  *
  * @return void
@@ -1122,25 +1057,6 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher = new TestDispatcher();
 
 		$url = new CakeRequest('my_plugin/param:value/param2:value2');
-		$response = $this->getMock('CakeResponse');
-
-		$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
-	}
-
-/**
- * testPrefixProtection method
- *
- * @expectedException PrivateActionException
- * @expectedExceptionMessage Private Action TestDispatchPagesController::admin_index() is not directly accessible.
- * @return void
- */
-	public function testPrefixProtection() {
-		Router::reload();
-		Router::connect('/admin/:controller/:action/*', array('prefix'=>'admin'), array('controller', 'action'));
-
-		$Dispatcher = new TestDispatcher();
-
-		$url = new CakeRequest('test_dispatch_pages/admin_index/param:value/param2:value2');
 		$response = $this->getMock('CakeResponse');
 
 		$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
