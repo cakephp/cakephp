@@ -464,7 +464,7 @@ class Controller extends Object {
 
 		} catch (ReflectionException $e) {
 			if ($this->scaffold !== false) {
-				return new Scaffold($this, $request);
+				return $this->_getScaffold($request);
 			}
 			throw new MissingActionException(array(
 				'controller' => $this->name . "Controller",
@@ -474,8 +474,8 @@ class Controller extends Object {
 	}
 
 /**
- * Check if the request's action is marked as private, with an underscore, of if the request is attempting to
- * directly accessing a prefixed action.
+ * Check if the request's action is marked as private, with an underscore, 
+ * or if the request is attempting to directly accessing a prefixed action.
  *
  * @param ReflectionMethod $method The method to be invoked.
  * @param CakeRequest $request The request to check.
@@ -497,6 +497,17 @@ class Controller extends Object {
 		}
 		return $privateAction;
 	}
+
+/**
+ * Returns a scaffold object to use for dynamically scaffolded controllers.
+ *
+ * @param CakeRequest $request
+ * @return Scaffold
+ */
+	protected function _getScaffold(CakeRequest $request) {
+		return new Scaffold($this, $request);
+	}
+
 /**
  * Merge components, helpers, and uses vars from Controller::$_mergeParent and PluginAppController.
  *
