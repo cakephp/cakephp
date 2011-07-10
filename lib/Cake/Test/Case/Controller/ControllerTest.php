@@ -295,6 +295,10 @@ class TestController extends ControllerTestAppController {
 			'test2Id' => $test2Id
 		);
 	}
+
+	public function returner() {
+		return 'I am from the controller.';
+	}
 	
 	protected function protected_m() {
 	
@@ -319,7 +323,6 @@ class TestController extends ControllerTestAppController {
  * @package       cake.tests.cases.libs.controller
  */
 class TestComponent extends Object {
-
 /**
  * beforeRedirect method
  *
@@ -1374,4 +1377,25 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new TestController($url, $response);
 		$Controller->invokeAction($url);
 	}
+
+/**
+ * test invoking controller methods.
+ *
+ * @return void
+ */
+	public function testInvokeActionReturnValue() {
+		$url = new CakeRequest('test/returner/');
+		$url->addParams(array(
+			'controller' => 'test_controller',
+			'action' => 'returner',
+			'pass' => array()
+		));
+		$response = $this->getMock('CakeResponse');
+
+		$Controller = new TestController($url, $response);
+		$result = $Controller->invokeAction($url);
+		$this->assertEquals('I am from the controller.', $result);
+	}
+
+	
 }
