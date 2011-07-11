@@ -967,7 +967,7 @@ class Model extends Object {
 			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 			if (method_exists($db, 'describe') && $this->useTable !== false) {
-				$this->_schema = $db->describe($this, $field);
+				$this->_schema = $db->describe($this);
 			} elseif ($this->useTable === false) {
 				$this->_schema = array();
 			}
