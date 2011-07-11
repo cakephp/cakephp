@@ -840,8 +840,8 @@ class DboOracle extends DboSource {
  * @param string $data String to be prepared for use in an SQL statement
  * @return string Quoted and escaped
  */
-	public function value($data, $column = null, $safe = false) {
-		$parent = parent::value($data, $column, $safe);
+	public function value($data, $column = null) {
+		$parent = parent::value($data, $column);
 
 		if ($parent != null) {
 			return $parent;

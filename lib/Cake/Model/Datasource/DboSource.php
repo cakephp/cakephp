@@ -986,7 +986,7 @@ class DboSource extends DataSource {
 		$count = count($fields);
 
 		for ($i = 0; $i < $count; $i++) {
-			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]), false);
+			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
 		}
 		for ($i = 0; $i < $count; $i++) {
 			$fieldInsert[] = $this->name($fields[$i]);
