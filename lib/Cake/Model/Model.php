@@ -2102,7 +2102,7 @@ class Model extends Object {
  *  - Otherwise, first and second fields are used for key and value.
  *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
- * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks / returnQuery)
  * @return array Array of records
  * @link http://book.cakephp.org/view/1018/find
  */
@@ -2113,7 +2113,8 @@ class Model extends Object {
 		$query = array_merge(
 			array(
 				'conditions' => null, 'fields' => null, 'joins' => array(), 'limit' => null,
-				'offset' => null, 'order' => null, 'page' => 1, 'group' => null, 'callbacks' => true
+				'offset' => null, 'order' => null, 'page' => 1, 'group' => null, 'callbacks' => true,
+				'returnQuery' => false
 			),
 			(array)$query
 		);
@@ -2154,6 +2155,10 @@ class Model extends Object {
 			if ($return === false) {
 				return null;
 			}
+		}
+
+		if ($query['returnQuery'] == true) {
+			return $query;
 		}
 
 		$results = $this->getDataSource()->read($this, $query);
