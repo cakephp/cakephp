@@ -46,7 +46,7 @@ class SessionFixture extends CakeTestFixture {
  * @access public
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 255, 'key' => 'primary'),
+		'id' => array('type' => 'string', 'length' => 128, 'key' => 'primary'),
 		'data' => array('type' => 'text','null' => true),
 		'expires' => array('type' => 'integer', 'length' => 11, 'null' => true)
 	);
