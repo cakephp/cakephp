@@ -2102,7 +2102,7 @@ class Model extends Object {
  *  - Otherwise, first and second fields are used for key and value.
  *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
- * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks / returnQuery)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array Array of records
  * @link http://book.cakephp.org/view/1018/find
  */
@@ -2110,11 +2110,42 @@ class Model extends Object {
 		$this->findQueryType = $type;
 		$this->id = $this->getID();
 
+		$query = $this->buildQuery($type, $query);
+		if (is_null($query)) {
+			return null;
+		}
+
+		$results = $this->getDataSource()->read($this, $query);
+		$this->resetAssociations();
+
+		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
+			$results = $this->_filterResults($results);
+		}
+
+		$this->findQueryType = null;
+
+		if ($type === 'all') {
+			return $results;
+		} else {
+			if ($this->findMethods[$type] === true) {
+				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
+			}
+		}
+	}
+
+/**
+ * Builds the query array that is used by the data source to generate the query to fetch the data.
+ *
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @return array Query array or null if it could not be build for some reasons
+ * @see Model::find()
+ */
+	public function buildQuery($type = 'first', $query = array()) {
 		$query = array_merge(
 			array(
 				'conditions' => null, 'fields' => null, 'joins' => array(), 'limit' => null,
 				'offset' => null, 'order' => null, 'page' => 1, 'group' => null, 'callbacks' => true,
-				'returnQuery' => false
 			),
 			(array)$query
 		);
@@ -2156,27 +2187,8 @@ class Model extends Object {
 				return null;
 			}
 		}
-
-		if ($query['returnQuery'] == true) {
-			return $query;
-		}
-
-		$results = $this->getDataSource()->read($this, $query);
-		$this->resetAssociations();
-
-		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
-			$results = $this->_filterResults($results);
-		}
-
-		$this->findQueryType = null;
-
-		if ($type === 'all') {
-			return $results;
-		} else {
-			if ($this->findMethods[$type] === true) {
-				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
-			}
-		}
+		
+		return $query;
 	}
 
 /**

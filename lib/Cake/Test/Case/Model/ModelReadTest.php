@@ -6011,12 +6011,12 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
- * test find() with the returnQuery opton in the 2nd argument to get the query array back
+ * test buildQuery()
  *
  * @access public
  * @return void
  */
-	public function testFindReturnQuery() {
+	public function testBuildQuery() {
 		$this->loadFixtures('User');
 		$TestModel = new User();
 		$TestModel->cacheQueries = false;
@@ -6034,7 +6034,7 @@ class ModelReadTest extends BaseModelTest {
 			'group' => NULL,
 			'callbacks' => true,
 			'returnQuery' => true);
-		$result = $TestModel->find('all', array('returnQuery' => true, 'conditions' => array('user' => 'larry')));
+		$result = $TestModel->buildQuery('all', array('returnQuery' => true, 'conditions' => array('user' => 'larry')));
 		$this->assertEqual($expected, $result);
 	}
 
