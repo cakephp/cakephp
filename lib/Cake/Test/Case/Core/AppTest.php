@@ -736,4 +736,14 @@ class AppTest extends CakeTestCase {
 		App::uses('TestUtilityClass', 'Utility');
 		$this->assertTrue(class_exists('CustomLibClass'));
 	}
+
+/**
+ * Tests that  App::location() returns the defined path for a class
+ *
+ * @return void
+ */
+	public function testClassLocation() {
+		App::uses('MyCustomClass', 'MyPackage/Name');
+		$this->assertEquals('MyPackage/Name', App::location('MyCustomClass'));
+	}
 }
