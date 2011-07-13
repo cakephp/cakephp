@@ -173,7 +173,7 @@ class MediaViewTest extends CakeTestCase {
 		$this->assertEqual($output, 'this is the test asset css file');
 	}
 	
-	function testRenderUpperExtesnion() {
+	function testRenderUpperExtension() {
 		ob_start();
 		$this->MediaController->downloadUpper();
 		$this->MediaView =& new TestMediaView($this->MediaController);
