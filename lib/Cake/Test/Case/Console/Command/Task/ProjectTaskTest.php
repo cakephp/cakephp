@@ -115,12 +115,40 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithAbsolutePath() {
-		$this->Task->args[0] = TMP . 'tests' . DS . 'bake_test_app';
+		$path = $this->Task->args[0] = TMP . 'tests' . DS . 'bake_test_app';
 		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('n'));
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
+		$file = new File($path . DS  . 'webroot' . DS . 'index.php');
+		$contents = $file->read();
+		$this->assertPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
+		$file = new File($path . DS  . 'webroot' . DS . 'test.php');
+		$contents = $file->read();
+		$this->assertPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
+	}
+
+/**
+ * test bake with setting CAKE_CORE_INCLUDE_PATH in webroot/index.php
+ *
+ * @return void
+ */
+	public function testExecuteWithSettingIncludePath() {
+		$path = $this->Task->args[0] = TMP . 'tests' . DS . 'bake_test_app';
+		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('y'));
+		$this->Task->execute();
+
+		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
+		$file = new File($path . DS  . 'webroot' . DS . 'index.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
+		$file = new File($path . DS  . 'webroot' . DS . 'test.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 	}
 
 /**
@@ -199,11 +227,10 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$file = new File($path . 'webroot' . DS . 'index.php');
 		$contents = $file->read();
-		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
-
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 		$file = new File($path . 'webroot' . DS . 'test.php');
 		$contents = $file->read();
-		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 	}
 
 /**

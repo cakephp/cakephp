@@ -91,19 +91,27 @@ class ProjectTask extends Shell {
 				$success = false;
 			}
 
-			if ($this->corePath($path) === true) {
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake_console', '   * <warning>Remember to check these value after moving to production server</warning>'));
-			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
-				$success = false;
-			}
 			if ($this->consolePath($path) === true) {
 				$this->out(__d('cake_console', ' * app/Console/cake.php path set.'));
 			} else {
 				$this->err(__d('cake_console', 'Unable to set console path for app/Console.'));
 				$success = false;
+			}
+
+			$this->out(__d('cake_console', 'The value for CAKE_CORE_INCLUDE_PATH can be hardcoded set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
+			$this->out(__d('cake_console', '<warning>If you hard code it, the project will possibly run only in your computer.</warning>'));
+			$setConstants = $this->in(__d('cake_console', 'Do you want to set CAKE_CORE_INCLUDE_PATH in webroot/index.php?'), array('y', 'n'), 'n');
+			if (strtolower($setConstants) === 'y') {
+				if ($this->corePath($path) === true) {
+					$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
+					$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
+					$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
+				} else {
+					$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
+					$success = false;
+				}
+			} else {
+				$this->out(__d('cake_console', '<warning>Please make sure your cake core is accessible, if you have problems edit CAKE_CORE_INCLUDE_PATH in webroot/index.php</warning>'));
 			}
 
 			$Folder = new Folder($path);
