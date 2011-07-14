@@ -7313,7 +7313,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse(ClassRegistry::isKeySet('TestPluginPost'));
 		$this->Form->create('TestPluginPost');
 		$this->assertTrue(ClassRegistry::isKeySet('TestPluginPost'));
-		$this->assertType('TestPluginPost', ClassRegistry::getObject('TestPluginPost'));
+		$this->assertInstanceOf('TestPluginPost', ClassRegistry::getObject('TestPluginPost'));
 
 		CakePlugin::unload();
 		App::build();
