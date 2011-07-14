@@ -1882,7 +1882,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'ObjectField'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[Object][field]', 'id' => 'ModelField'),
+			'input' => array('type' => 'text', 'name' => 'data[Object][field]', 'id' => 'ObjectField'),
 			'A message to you, Rudy',
 			'/div'
 		);
@@ -2212,14 +2212,14 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
-		$this->Form->request->data = array('Model' => array('user_id' => null));
-		$result = $this->Form->input('Model.user_id', array('empty' => 'Some Empty'));
+		$this->Form->request->data = array('Thing' => array('user_id' => null));
+		$result = $this->Form->input('Thing.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ModelUserId'),
+			'label' => array('for' => 'ThingUserId'),
 			'User',
 			'/label',
-			'select' => array('name' => 'data[Model][user_id]', 'id' => 'ModelUserId'),
+			'select' => array('name' => 'data[Thing][user_id]', 'id' => 'ThingUserId'),
 			array('option' => array('value' => '')),
 			'Some Empty',
 			'/option',
@@ -2235,14 +2235,14 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
-		$this->Form->request->data = array('Model' => array('user_id' => 'value'));
-		$result = $this->Form->input('Model.user_id', array('empty' => 'Some Empty'));
+		$this->Form->request->data = array('Thing' => array('user_id' => 'value'));
+		$result = $this->Form->input('Thing.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ModelUserId'),
+			'label' => array('for' => 'ThingUserId'),
 			'User',
 			'/label',
-			'select' => array('name' => 'data[Model][user_id]', 'id' => 'ModelUserId'),
+			'select' => array('name' => 'data[Thing][user_id]', 'id' => 'ThingUserId'),
 			array('option' => array('value' => '')),
 			'Some Empty',
 			'/option',
