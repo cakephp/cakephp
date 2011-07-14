@@ -65,14 +65,6 @@ class Helper extends Object {
 	public $plugin = null;
 
 /**
- * Contains model validation errors of form post-backs
- *
- * @access public
- * @var array
- */
-	public $validationErrors = null;
-
-/**
  * Holds tag templates.
  *
  * @access public
@@ -506,23 +498,6 @@ class Helper extends Object {
 			$last = isset($entity[$count - 2]) ? $entity[$count - 2] : null;
 		}
 		return $last;
-	}
-
-/**
- * Returns false if given FORM field has no errors. Otherwise it returns the constant set in
- * the array Model->validationErrors.
- *
- * @param string $model Model name as a string
- * @param string $field Fieldname as a string
- * @param integer $modelID Unique index identifying this record within the form
- * @return boolean True on errors.
- */
-	public function tagIsInvalid($model = null, $field = null, $modelID = null) {
-		$errors = $this->validationErrors;
-		$entity = $this->entity();
-		if (!empty($entity)) {
-			return Set::extract($errors, join('.', $entity));
-		}
 	}
 
 /**

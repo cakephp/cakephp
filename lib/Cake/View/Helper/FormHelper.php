@@ -181,6 +181,22 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Returns false if given FORM field has no errors. Otherwise it returns the validation message
+ *
+ * @param string $model Model name as a string
+ * @param string $field Fieldname as a string
+ * @param integer $modelID Unique index identifying this record within the form
+ * @return boolean True on errors.
+ */
+	public function tagIsInvalid($model = null, $field = null, $modelID = null) {
+		$entity = $this->entity();
+		if (!empty($entity) && $object = $this->_getModel($entity[0])) {
+			array_shift($entity);
+			return Set::extract($object->validationErrors, join('.', $entity));
+		}
+	}
+
+/**
  * Returns an HTML FORM element.
  *
  * ### Options:
