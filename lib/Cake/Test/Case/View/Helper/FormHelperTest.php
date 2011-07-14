@@ -7138,7 +7138,8 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->validationErrors['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = 'Error';
+		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
+		$ValidateProfile->validationErrors[1]['ValidateItem'][2]['profile_id'] = 'Error';
 		$this->Form->request->data['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = '1';
 		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.profile_id');
 		$expected = array(
@@ -7167,11 +7168,12 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testMultiRecordFormValidationErrors() {
 		$this->Form->create('ValidateProfile');
-		$this->Form->validationErrors['ValidateProfile'][2]['ValidateItem'][1]['name'] = array('Error in field name');
+		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
+		$ValidateProfile->validationErrors[2]['ValidateItem'][1]['name'] = array('Error in field name');
 		$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
 
-		$this->Form->validationErrors['ValidateProfile'][2]['city'] = array('Error in field city');
+		$ValidateProfile->validationErrors[2]['city'] = array('Error in field city');
 		$result = $this->Form->error('ValidateProfile.2.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 
