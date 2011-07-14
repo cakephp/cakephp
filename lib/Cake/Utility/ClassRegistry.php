@@ -137,9 +137,9 @@ class ClassRegistry {
 
 				if (class_exists($class)) {
 					${$class} = new $class($settings);
-					$$class = ($$class instanceof Mdoel) ? $$class : null;
+					${$class} = (${$class} instanceof Model) ? ${$class} : null;
 				}
-				if (!isset($$class) && $strict) {
+				if (!isset(${$class}) && $strict) {
 					return false;
 				} elseif ($plugin && class_exists($plugin . 'AppModel')) {
 					$appModel = $plugin . 'AppModel';
