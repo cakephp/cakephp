@@ -1361,7 +1361,9 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testPasswordValidation() {
-		$this->Form->validationErrors['Contact']['password'] = array('Please provide a password');
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors['password'] =  array('Please provide a password');
+
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
 			'div' => array('class' => 'input password error'),
@@ -1414,9 +1416,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$expected = array('OpenidUrl' => array('openid_not_registered' => array(true)));
-		$this->assertEqual($this->Form->validationErrors, $expected);
-
 		$result = $this->Form->error(
 			'OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false)
 		);
@@ -1457,11 +1456,20 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$expected = array(
-			'ValidateUser' => array('email' => array(true)),
-			'ValidateProfile' => array('full_name' => array(true), 'city' => array(true))
+		$result = $this->Form->error(
+			'ValidateUser.email', 'Invalid email', array('wrap' => false)
 		);
-		$this->assertEqual($this->Form->validationErrors, $expected);
+		$this->assertEqual($result, 'Invalid email');
+
+		$result = $this->Form->error(
+			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
+		);
+		$this->assertEqual($result, 'Invalid name');
+
+		$result = $this->Form->error(
+			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
+		);
+		$this->assertEqual($result, 'Invalid city');
 
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
@@ -1501,13 +1509,25 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-
-		$expected = array(
-			'ValidateUser' => array('email' => array(true)),
-			'ValidateProfile' => array('full_name' => array(true), 'city' => array(true)),
-			'ValidateItem' => array('description' => array(true))
+		
+		$result = $this->Form->error(
+			'ValidateUser.email', 'Invalid email', array('wrap' => false)
 		);
-		$this->assertEqual($this->Form->validationErrors, $expected);
+		$this->assertEqual($result, 'Invalid email');
+
+		$result = $this->Form->error(
+			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
+		);
+		$this->assertEqual($result, 'Invalid name');
+
+		$result = $this->Form->error(
+			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
+		);
+
+		$result = $this->Form->error(
+			'ValidateItem.description', 'Invalid description', array('wrap' => false)
+		);
+		$this->assertEqual($result, 'Invalid description');
 
 		unset($this->ValidateUser->ValidateProfile->ValidateItem);
 		unset($this->ValidateUser->ValidateProfile);
@@ -1523,9 +1543,10 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testFormValidationMultiRecord() {
-		$this->Form->validationErrors['Contact'] = array(2 => array(
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors[2] = array(
 			'name' => array('This field cannot be left blank')
-		));
+		);
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
 			'div' => array('class' => 'input text error'),
@@ -1553,10 +1574,15 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testMultipleInputValidation() {
+		$Address = ClassRegistry::getObject('Address');
+		$Address->validationErrors[0] = array(
+			'title' => array('This field cannot be empty'),
+			'first_name' => array('This field cannot be empty')
+		);
+		$Address->validationErrors[1] = array(
+			'last_name' => array('You must have a last name')
+		);
 		$this->Form->create();
-		$this->Form->validationErrors['Address'][0]['title'] = array('This field cannot be empty');
-		$this->Form->validationErrors['Address'][0]['first_name'] = array('This field cannot be empty');
-		$this->Form->validationErrors['Address'][1]['last_name'] = array('You must have a last name');
 
 		$result = $this->Form->input('Address.0.title');
 		$expected = array(
