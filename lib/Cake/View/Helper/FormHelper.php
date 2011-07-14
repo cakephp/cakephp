@@ -105,51 +105,94 @@ class FormHelper extends AppHelper {
  * @var array
  */
 	protected $_unlockedFields = array();
+
+	protected $_models = array();
 	
 /**
- * Introspects model information and extracts information related
- * to validation, field length and field type. Appends information into
- * $this->fieldset.
+ * Guess the location for a model based on its name and tries to create a new instance
+ * or get an already created instance of the model
  *
- * @return Model Returns a model instance
+ * @return Model model instance
  */
-	protected function &_introspectModel($model) {
+	protected function _getModel($model) {
 		$object = null;
-		if (is_string($model) && strpos($model, '.') !== false) {
-			$path = explode('.', $model);
-			$model = end($path);
+		if (!$model) {
+			return $object;
+		}
+
+		if (!empty($this->_models[$model])) {
+			return $this->_models[$model];
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
 			$object = ClassRegistry::getObject($model);
+		} elseif (isset($this->request->params['models'][$model])) {
+			$plugin = $this->request->params['models'][$model]['plugin'];
+			$plugin .= ($plugin) ? '.' : null;
+			$object = ClassRegistry::init(array(
+				'class' => $plugin . $this->request->params['models'][$model]['className'],
+				'alias' => $model
+			));
+		} else {
+			$object = ClassRegistry::init($model);
 		}
 
-		if (!empty($object)) {
-			$fields = $object->schema();
-			foreach ($fields as $key => $value) {
-				unset($fields[$key]);
-				$fields[$key] = $value;
+		if (get_class($object) === 'AppModel') {
+			return null;
+		}
+
+		$this->_models[$model] = $object;
+		$this->fieldset[$model] = array('fields' => null, 'key' =>  $object->primaryKey, 'validates' => null);
+		return $object;
+	}
+
+	protected function _introspectModel($model, $key, $field = null) {
+			$object = $this->_getModel($model);
+			if (!$object) {
+				return;
 			}
 
-			if (!empty($object->hasAndBelongsToMany)) {
-				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
-					$fields[$alias] = array('type' => 'multiple');
+			if ($key === 'key') {
+				return $this->fieldset[$object->alias]['key'];
+			}
+
+			if (!isset($this->fieldset[$object->alias]['fields'])) {
+				$fields = $this->fieldset[$object->alias]['fields'] = $object->schema();
+			}
+
+			if ($key === 'fields') {
+				if (empty($field)) {
+					foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
+						$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
+					}
+					return $this->fieldset[$object->alias]['fields'];
+				} elseif (isset($this->fieldset[$object->alias]['fields'][$field])) {
+					return $this->fieldset[$object->alias]['fields'][$field];
+				} else {
+					return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
 				}
 			}
-			$validates = array();
-			if (!empty($object->validate)) {
-				foreach ($object->validate as $validateField => $validateProperties) {
-					if ($this->_isRequiredField($validateProperties)) {
-						$validates[] = $validateField;
+
+			if ($key === 'validates' && !isset($this->fieldset[$object->alias]['validates'])) {
+				$validates = array();
+				if (!empty($object->validate)) {
+					foreach ($object->validate as $validateField => $validateProperties) {
+						if ($this->_isRequiredField($validateProperties)) {
+							$validates[$validateField] = true;
+						}
 					}
 				}
+				$this->fieldset[$object->alias]['validates'] = $validates;
 			}
-			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
-			$key = $object->primaryKey;
-			$this->fieldset[$model] = array_merge($defaults, compact('fields', 'key', 'validates'));
-		}
 
-		return $object;
+			if ($key === 'validates') {
+				if (empty($field)) {
+					return $this->fieldset[$object->alias]['validates'];
+				} else {
+					return isset($this->fieldset[$object->alias]['validates'][$field]) ? 
+						$this->fieldset[$object->alias]['validates'] : null;
+				}
+			}
 	}
 
 /**
@@ -226,39 +269,29 @@ class FormHelper extends AppHelper {
 			$options = $model;
 			$model = null;
 		}
-		if (empty($model) && $model !== false && !empty($this->request['models'])) {
-			$model = $this->request['models'][0];
-			$this->defaultModel = $this->request['models'][0];
-		} elseif (empty($model) && empty($this->request['models'])) {
+		if (empty($model) && $model !== false && !empty($this->request->params['models'])) {
+			$model = key($this->request->params['models']);
+			$this->defaultModel = $model;
+		} elseif (empty($model) && empty($this->request->params['models'])) {
 			$model = false;
 		}
 
-		$models = ClassRegistry::keys();
-		foreach ($models as $currentModel) {
-			if (ClassRegistry::isKeySet($currentModel)) {
-				$currentObject = ClassRegistry::getObject($currentModel);
-				if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
-					$this->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
-				}
-			}
-		}
-
 		if ($model !== false) {
-			$object = $this->_introspectModel($model);
+			$object = $this->_getModel($model);
 		}
 		$this->setEntity($model, true);
 
-		if ($model !== false && isset($this->fieldset[$model]['key'])) {
-			$data = $this->fieldset[$model];
+		$key = $this->_introspectModel($model, 'key');
+		if ($model !== false && $key) {
 			$recordExists = (
 				isset($this->request->data[$model]) &&
-				!empty($this->request->data[$model][$data['key']]) &&
-				!is_array($this->request->data[$model][$data['key']])
+				!empty($this->request->data[$model][$key]) &&
+				!is_array($this->request->data[$model][$key])
 			);
 
 			if ($recordExists) {
 				$created = true;
-				$id = $this->request->data[$model][$data['key']];
+				$id = $this->request->data[$model][$key];
 			}
 		}
 
@@ -721,7 +754,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (empty($fields)) {
-			$fields = array_keys($this->fieldset[$model]['fields']);
+			$fields = array_keys($this->_introspectModel($model, 'fields'));
 		}
 
 		if ($legend === true) {
@@ -812,9 +845,6 @@ class FormHelper extends AppHelper {
 
 		$modelKey = $this->model();
 		$fieldKey = $this->field();
-		if (!isset($this->fieldset[$modelKey])) {
-			$this->_introspectModel($modelKey);
-		}
 
 		if (!isset($options['type'])) {
 			$magicType = true;
@@ -825,8 +855,7 @@ class FormHelper extends AppHelper {
 				$options['type'] = 'password';
 			} elseif (isset($options['checked'])) {
 				$options['type'] = 'checkbox';
-			} elseif (isset($this->fieldset[$modelKey]['fields'][$fieldKey])) {
-				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
+			} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
 				$type = $fieldDef['type'];
 				$primaryKey = $this->fieldset[$modelKey]['key'];
 			}
@@ -897,10 +926,7 @@ class FormHelper extends AppHelper {
 			} elseif (is_array($div)) {
 				$divOptions = array_merge($divOptions, $div);
 			}
-			if (
-				isset($this->fieldset[$modelKey]) &&
-				in_array($fieldKey, $this->fieldset[$modelKey]['validates'])
-			) {
+			if ($this->_introspectModel($modelKey, 'validates', $fieldKey)) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
@@ -2126,10 +2152,8 @@ class FormHelper extends AppHelper {
 	function setEntity($entity, $setScope = false) {
 		parent::setEntity($entity, $setScope);
 		$parts = explode('.', $entity);
-		if (
-			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
-		) {
+		$field = $this->_introspectModel($this->_modelScope, 'fields', $parts[0]);
+		if (!empty($field) && $field['type'] === 'multiple') {
 			$this->_entityPath = $parts[0] . '.' . $parts[0];
 		}
 	}
