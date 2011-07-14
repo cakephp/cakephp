@@ -116,7 +116,7 @@ class FormHelper extends AppHelper {
  */
 	protected function _getModel($model) {
 		$object = null;
-		if (!$model) {
+		if (!$model || $model === 'Model') {
 			return $object;
 		}
 
