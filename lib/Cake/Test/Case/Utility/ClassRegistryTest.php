@@ -280,4 +280,12 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertSame($PluginUser, $PluginUserCopy);
 		CakePlugin::unload();
 	}
+
+/**
+ * Tests that passing the string parameter to init() will return false if the model does not exists
+ *
+ */
+	public function testInitStrict() {
+		$this->assertFalse(ClassRegistry::init('NonExistent', true));
+	}
 }
