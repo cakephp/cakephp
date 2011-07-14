@@ -139,21 +139,23 @@ class ClassRegistry {
 					${$class} = new $class($settings);
 					${$class} = (${$class} instanceof Model) ? ${$class} : null;
 				}
-				if (!isset(${$class}) && $strict) {
-					return false;
-				} elseif ($plugin && class_exists($plugin . 'AppModel')) {
-					$appModel = $plugin . 'AppModel';
-				} else {
-					$appModel = 'AppModel';
-				}
-				if (!empty($appModel)) {
-					$settings['name'] = $class;
-					${$class} = new $appModel($settings);
-				}
-
 				if (!isset(${$class})) {
-					trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
-					return $false;
+					if ($strict) {
+						return false;
+					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
+						$appModel = $plugin . 'AppModel';
+					} else {
+						$appModel = 'AppModel';
+					}
+					if (!empty($appModel)) {
+						$settings['name'] = $class;
+						${$class} = new $appModel($settings);
+					}
+
+					if (!isset(${$class})) {
+						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
+						return $false;
+					}
 				}
 				$_this->map($alias, $class);
 			} elseif (is_numeric($settings)) {

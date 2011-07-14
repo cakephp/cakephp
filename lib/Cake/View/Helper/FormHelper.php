@@ -120,7 +120,7 @@ class FormHelper extends AppHelper {
 			return $object;
 		}
 
-		if (!empty($this->_models[$model])) {
+		if (array_key_exists($model, $this->_models)) {
 			return $this->_models[$model];
 		}
 
@@ -137,11 +137,11 @@ class FormHelper extends AppHelper {
 			$object = ClassRegistry::init($model, true);
 		}
 
-		if (!$object) {
+		$this->_models[$model] = $object;
+		if (!$object) {;
 			return null;
 		}
 
-		$this->_models[$model] = $object;
 		$this->fieldset[$model] = array('fields' => null, 'key' =>  $object->primaryKey, 'validates' => null);
 		return $object;
 	}
@@ -426,9 +426,6 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1389/Closing-the-Form
  */
 	public function end($options = null) {
-		if (!empty($this->request['models'])) {
-			$models = $this->request['models'][0];
-		}
 		$out = null;
 		$submit = null;
 

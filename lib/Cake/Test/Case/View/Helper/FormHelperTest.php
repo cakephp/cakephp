@@ -660,6 +660,20 @@ class TestMail extends CakeTestModel {
 class FormHelperTest extends CakeTestCase {
 
 /**
+ * Fixtures to be used
+ *
+ * @var array
+ */
+	public $fixtures = array('core.post');
+
+/**
+ * Do not load the fixtures by default
+ *
+ * @var boolean
+ */
+	public $autoFixtures = false;
+
+/**
  * setUp method
  *
  * @access public
@@ -1574,7 +1588,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testMultipleInputValidation() {
-		$Address = ClassRegistry::init(array('class' => 'Address', 'table' => false));
+		$Address = ClassRegistry::init(array('class' => 'Address', 'table' => false, 'ds' => 'test'));
 		$Address->validationErrors[0] = array(
 			'title' => array('This field cannot be empty'),
 			'first_name' => array('This field cannot be empty')
@@ -6023,7 +6037,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request['controller'] = 'pages';
-		$this->Form->request['models'] = array('User', 'Post');
 		$result = $this->Form->create('User', array('action' => 'signup'));
 		$expected = array(
 			'form' => array(
@@ -6038,7 +6051,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data = array();
 		$this->Form->request['controller'] = 'contacts';
-		$this->Form->request['models'] = array('Contact' => 'Contact');
+		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
 		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
 		$expected = array(
 			'form' => array(
@@ -7284,4 +7297,25 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->email();
 	}
 
+/**
+ * Tests that a model can be loaded from the model names passed in the request object
+ *
+ * @return void
+ */
+	public function testIntrospectModelFromRequest() {
+		$this->loadFixtures('Post');
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestPlugin');
+		$this->Form->request['models'] = array('TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost'));
+
+		$this->assertFalse(ClassRegistry::isKeySet('TestPluginPost'));
+		$this->Form->create('TestPluginPost');
+		$this->assertTrue(ClassRegistry::isKeySet('TestPluginPost'));
+		$this->assertType('TestPluginPost', ClassRegistry::getObject('TestPluginPost'));
+
+		CakePlugin::unload();
+		App::build();
+	}
 }
