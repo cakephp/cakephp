@@ -65,19 +65,20 @@ class ApiShellTest extends CakeTestCase {
 			'8. getResponse()',
 			'9. header($status)',
 			'10. httpCodes($code = NULL)',
-			'11. loadModel($modelClass = NULL, $id = NULL)',
-			'12. paginate($object = NULL, $scope = array (), $whitelist = array ())',
-			'13. postConditions($data = array (), $op = NULL, $bool = \'AND\', $exclusive = false)',
-			'14. redirect($url, $status = NULL, $exit = true)',
-			'15. referer($default = NULL, $local = false)',
-			'16. render($view = NULL, $layout = NULL)',
-			'17. set($one, $two = NULL)',
-			'18. setAction($action)',
-			'19. setRequest($request)',
-			'20. shutdownProcess()',
-			'21. startupProcess()',
-			'22. validate()',
-			'23. validateErrors()'
+			'11. invokeAction($request)',
+			'12. loadModel($modelClass = NULL, $id = NULL)',
+			'13. paginate($object = NULL, $scope = array (), $whitelist = array ())',
+			'14. postConditions($data = array (), $op = NULL, $bool = \'AND\', $exclusive = false)',
+			'15. redirect($url, $status = NULL, $exit = true)',
+			'16. referer($default = NULL, $local = false)',
+			'17. render($view = NULL, $layout = NULL)',
+			'18. set($one, $two = NULL)',
+			'19. setAction($action)',
+			'20. setRequest($request)',
+			'21. shutdownProcess()',
+			'22. startupProcess()',
+			'23. validate()',
+			'24. validateErrors()'
 		);
 		$this->Shell->expects($this->at(2))->method('out')->with($expected);
 
