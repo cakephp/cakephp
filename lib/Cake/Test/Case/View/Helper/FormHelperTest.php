@@ -6038,7 +6038,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data = array();
 		$this->Form->request['controller'] = 'contacts';
-		$this->Form->request['models'] = array('Contact');
+		$this->Form->request['models'] = array('Contact' => 'Contact');
 		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
 		$expected = array(
 			'form' => array(
