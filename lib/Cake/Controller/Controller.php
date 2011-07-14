@@ -808,8 +808,8 @@ class Controller extends Object {
 
 		if (!empty($this->uses)) {
 			foreach ($this->uses as $model) {
-				list($plugin, $model) = pluginSplit($model);
-				$this->request->params['models'][$model] = $plugin; 
+				list($plugin, $className) = pluginSplit($model);
+				$this->request->params['models'][$model] = compact('plugin', 'className'); 
 			}
 		}
 
@@ -817,10 +817,10 @@ class Controller extends Object {
 		foreach ($models as $currentModel) {
 			$currentObject = ClassRegistry::getObject($currentModel);
 			if (is_a($currentObject, 'Model')) {
-				list($plugin, $package) = pluginSplit(App::location(get_class($currentObject)));
-				$this->request->params['models'][$currentObject->alias] = $plugin;
-				$View->validationErrors[$currentObject->alias] =&
-					$currentObject->validationErrors;
+				$className = get_class($currentObject);
+				list($plugin, $package) = pluginSplit(App::location($className));
+				$this->request->params['models'][$currentObject->alias] = compact('plugin', 'className');
+				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}
 		}
 
