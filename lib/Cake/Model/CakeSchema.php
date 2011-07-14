@@ -216,17 +216,18 @@ class CakeSchema extends Object {
 		if (isset($db->config['prefix'])) {
 			$prefix = $db->config['prefix'];
 		}
+		
+ 		if (!is_array($models) && $models !== false) {
+ 			if (isset($this->plugin)) {
+ 				$models = App::objects($this->plugin . '.Model', null, false);
+ 			} else {
+ 				$models = App::objects('Model');
+ 			}
+ 		}
 
-		if (!is_array($models) && $models !== false) {
-			if (isset($this->plugin)) {
-				$models = App::objects($this->plugin . '.Model', null, false);
-			} else {
-				$models = App::objects('Model');
-			}
-		}
-
-		if (is_array($models)) {
-			foreach ($models as $model) {
+ 		if (is_array($models)) {
+			$models = array_diff($models, array('AppModel'));
+ 			foreach ($models as $model) {
 				$importModel = $model;
 				$plugin = null;
 				if (isset($this->plugin)) {
@@ -321,8 +322,6 @@ class CakeSchema extends Object {
 				}
 			}
 		}
-
-		ksort($tables);
 		return compact('name', 'tables');
 	}
 
