@@ -644,9 +644,9 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($expected, $View->validationErrors['ControllerComment']);
 
 		$expectedModels = array(
-			'ControllerAlias' => null,
-			'ControllerComment' => null,
-			'ControllerPost' => null
+			'ControllerAlias' => array('plugin' => null, 'className' => 'ControllerAlias'),
+			'ControllerComment' => array('plugin' => null, 'className' => 'ControllerComment'),
+			'ControllerPost' => array('plugin' => null, 'className' => 'ControllerPost')
 		);
 		$this->assertEqual($expectedModels, $Controller->request->params['models']);
 		
