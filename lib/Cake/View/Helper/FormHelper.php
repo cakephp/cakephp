@@ -134,10 +134,10 @@ class FormHelper extends AppHelper {
 				'alias' => $model
 			));
 		} else {
-			$object = ClassRegistry::init($model);
+			$object = ClassRegistry::init($model, true);
 		}
 
-		if (get_class($object) === 'AppModel') {
+		if (!$object) {
 			return null;
 		}
 
@@ -153,11 +153,11 @@ class FormHelper extends AppHelper {
 			}
 
 			if ($key === 'key') {
-				return $this->fieldset[$object->alias]['key'];
+				return $this->fieldset[$model]['key'];
 			}
 
-			if (!isset($this->fieldset[$object->alias]['fields'])) {
-				$fields = $this->fieldset[$object->alias]['fields'] = $object->schema();
+			if (!isset($this->fieldset[$model]['fields'])) {
+				$fields = $this->fieldset[$model]['fields'] = $object->schema();
 			}
 
 			if ($key === 'fields') {
@@ -165,15 +165,15 @@ class FormHelper extends AppHelper {
 					foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 						$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
 					}
-					return $this->fieldset[$object->alias]['fields'];
-				} elseif (isset($this->fieldset[$object->alias]['fields'][$field])) {
-					return $this->fieldset[$object->alias]['fields'][$field];
+					return $this->fieldset[$model]['fields'];
+				} elseif (isset($this->fieldset[$model]['fields'][$field])) {
+					return $this->fieldset[$model]['fields'][$field];
 				} else {
 					return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
 				}
 			}
 
-			if ($key === 'validates' && !isset($this->fieldset[$object->alias]['validates'])) {
+			if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
 				$validates = array();
 				if (!empty($object->validate)) {
 					foreach ($object->validate as $validateField => $validateProperties) {
@@ -182,15 +182,15 @@ class FormHelper extends AppHelper {
 						}
 					}
 				}
-				$this->fieldset[$object->alias]['validates'] = $validates;
+				$this->fieldset[$model]['validates'] = $validates;
 			}
 
 			if ($key === 'validates') {
 				if (empty($field)) {
-					return $this->fieldset[$object->alias]['validates'];
+					return $this->fieldset[$model]['validates'];
 				} else {
-					return isset($this->fieldset[$object->alias]['validates'][$field]) ? 
-						$this->fieldset[$object->alias]['validates'] : null;
+					return isset($this->fieldset[$model]['validates'][$field]) ? 
+						$this->fieldset[$model]['validates'] : null;
 				}
 			}
 	}
@@ -593,74 +593,72 @@ class FormHelper extends AppHelper {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
 		$options = array_merge($defaults, $options);
 		$this->setEntity($field);
-
-		if ($error = $this->tagIsInvalid()) {
-			if (is_array($text)) {
-				if (isset($text['attributes']) && is_array($text['attributes'])) {
-					$options = array_merge($options, $text['attributes']);
-					unset($text['attributes']);
-				}
-				$tmp = array();
-				foreach ($error as &$e) {
-					if (isset($text[$e])) {
-						$tmp []= $text[$e];
-					} else {
-						$tmp []= $e;
-					}
-				}
-				$text = $tmp;
-			}
-
-			if ($text != null) {
-				$error = $text;
-			}
-			if (is_array($error)) {
-				foreach ($error as &$e) {
-					if (is_numeric($e)) {
-						$e = __d('cake', 'Error in field %s', Inflector::humanize($this->field()));
-					}
-				}
-			}
-			if ($options['escape']) {
-				$error = h($error);
-				unset($options['escape']);
-			}
-			if (is_array($error)) {
-				if (count($error) > 1) {
-					$listParams = array();
-					if (isset($options['listOptions'])) {
-						if (is_string($options['listOptions'])) {
-							$listParams []= $options['listOptions'];
-						} else {
-							if (isset($options['listOptions']['itemOptions'])) {
-								$listParams []= $options['listOptions']['itemOptions'];
-								unset($options['listOptions']['itemOptions']);
-							} else {
-								$listParams []= array();
-							}
-							if (isset($options['listOptions']['tag'])) {
-								$listParams []= $options['listOptions']['tag'];
-								unset($options['listOptions']['tag']);
-							}
-							array_unshift($listParams, $options['listOptions']);
-						}
-						unset($options['listOptions']);
-					}
-					array_unshift($listParams, $error);
-					$error = call_user_func_array(array($this->Html, 'nestedList'), $listParams);
-				} else {
-					$error = array_pop($error);
-				}
-			}
-			if ($options['wrap']) {
-				$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
-				unset($options['wrap']);
-				return $this->Html->tag($tag, $error, $options);
-			} else {
-				return $error;
-			}
-		} else {
+		if (!$error = $this->tagIsInvalid()) {
 			return null;
+		}
+		if (is_array($text)) {
+			if (isset($text['attributes']) && is_array($text['attributes'])) {
+				$options = array_merge($options, $text['attributes']);
+				unset($text['attributes']);
+			}
+			$tmp = array();
+			foreach ($error as &$e) {
+				if (isset($text[$e])) {
+					$tmp []= $text[$e];
+				} else {
+					$tmp []= $e;
+				}
+			}
+			$text = $tmp;
+		}
+
+		if ($text != null) {
+			$error = $text;
+		}
+		if (is_array($error)) {
+			foreach ($error as &$e) {
+				if (is_numeric($e)) {
+					$e = __d('cake', 'Error in field %s', Inflector::humanize($this->field()));
+				}
+			}
+		}
+		if ($options['escape']) {
+			$error = h($error);
+			unset($options['escape']);
+		}
+		if (is_array($error)) {
+			if (count($error) > 1) {
+				$listParams = array();
+				if (isset($options['listOptions'])) {
+					if (is_string($options['listOptions'])) {
+						$listParams []= $options['listOptions'];
+					} else {
+						if (isset($options['listOptions']['itemOptions'])) {
+							$listParams []= $options['listOptions']['itemOptions'];
+							unset($options['listOptions']['itemOptions']);
+						} else {
+							$listParams []= array();
+						}
+						if (isset($options['listOptions']['tag'])) {
+							$listParams []= $options['listOptions']['tag'];
+							unset($options['listOptions']['tag']);
+						}
+						array_unshift($listParams, $options['listOptions']);
+					}
+					unset($options['listOptions']);
+				}
+				array_unshift($listParams, $error);
+				$error = call_user_func_array(array($this->Html, 'nestedList'), $listParams);
+			} else {
+				$error = array_pop($error);
+			}
+		}
+		if ($options['wrap']) {
+			$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
+			unset($options['wrap']);
+			return $this->Html->tag($tag, $error, $options);
+		} else {
+			return $error;
 		}
 	}
 
