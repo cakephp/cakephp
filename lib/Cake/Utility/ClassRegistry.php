@@ -135,16 +135,18 @@ class ClassRegistry {
 				App::uses($plugin . 'AppModel', $pluginPath . 'Model');
 				App::uses($class, $pluginPath . 'Model');
 
-				if (class_exists($class) && $class instanceof Model) {
+				if (class_exists($class)) {
 					${$class} = new $class($settings);
+					$$class = ($$class instanceof Mdoel) ? $$class : null;
+				}
+				if (!isset($$class) && $strict) {
+					return false;
+				} elseif ($plugin && class_exists($plugin . 'AppModel')) {
+					$appModel = $plugin . 'AppModel';
 				} else {
-					 if ($strict) {
-						return false;
-					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
-						$appModel = $plugin . 'AppModel';
-					} else {
-						$appModel = 'AppModel';
-					}
+					$appModel = 'AppModel';
+				}
+				if (!empty($appModel)) {
 					$settings['name'] = $class;
 					${$class} = new $appModel($settings);
 				}

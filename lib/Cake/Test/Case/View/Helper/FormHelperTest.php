@@ -1882,7 +1882,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'ObjectField'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[Object][field]', 'id' => 'ObjectField'),
+			'input' => array('type' => 'text', 'name' => 'data[Object][field]', 'id' => 'ModelField'),
 			'A message to you, Rudy',
 			'/div'
 		);
