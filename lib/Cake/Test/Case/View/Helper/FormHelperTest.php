@@ -7318,4 +7318,15 @@ class FormHelperTest extends CakeTestCase {
 		CakePlugin::unload();
 		App::build();
 	}
+
+/**
+ * Tests that it is possible to set the validation errors directly in the helper for a field
+ *
+ * @return void
+ */
+	public function testCustomValidationErrors() {
+		$this->Form->validationErrors['Thing']['field'] = 'Badness!';
+		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
+		$this->assertEquals('Badness!', $result);
+	}
 }
