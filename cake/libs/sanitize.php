@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'ConnectionManager');
 /**
  * Washes strings from unwanted noise.
  *
@@ -7,12 +8,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -151,7 +152,7 @@ class Sanitize {
  * Strips scripts and stylesheets from output
  *
  * @param string $str String to sanitize
- * @return string String with <script>, <style>, <link> elements removed.
+ * @return string String with <script>, <style>, <link>, <img> elements removed.
  * @access public
  * @static
  */
@@ -248,7 +249,7 @@ class Sanitize {
 			return $data;
 		} else {
 			if ($options['odd_spaces']) {
-				$data = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
+				$data = str_replace(chr(0xCA), '', $data);
 			}
 			if ($options['encode']) {
 				$data = Sanitize::html($data, array('remove' => $options['remove_html']));
@@ -259,9 +260,6 @@ class Sanitize {
 			if ($options['carriage']) {
 				$data = str_replace("\r", "", $data);
 			}
-
-			$data = str_replace("'", "'", str_replace("!", "!", $data));
-
 			if ($options['unicode']) {
 				$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
 			}

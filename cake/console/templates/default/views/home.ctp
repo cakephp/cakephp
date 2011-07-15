@@ -19,7 +19,7 @@ endif;
 	endif;
 ?>
 </p>
-<div  style=\"background-color:#e32; color:#fff; padding:3px; margin: 20px 0\">
+<div id=\"url-rewriting-warning\" style=\"background-color:#e32; color:#fff; padding:3px; margin: 20px 0\">
 	<?php __('URL rewriting is not properly configured on your server. '); ?>
 	<ol style=\"padding-left:20px\">
 		<li>

@@ -7,12 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing
  * @package       cake.tests
  * @subpackage    cake.tests.cases.libs
@@ -115,6 +115,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('diagnoses'), 'diagnosis');
 		$this->assertEqual(Inflector::singularize('bases'), 'basis');
 		$this->assertEqual(Inflector::singularize('analyses'), 'analysis');
+		$this->assertEqual(Inflector::singularize('curves'), 'curve');
 
 		$this->assertEqual(Inflector::singularize(''), '');
 	}

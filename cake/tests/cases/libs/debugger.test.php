@@ -5,12 +5,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -332,5 +332,41 @@ class DebuggerTest extends CakeTestCase {
 
 		$result =& Debugger::getInstance('Debugger');
 		$this->assertIsA($result, 'Debugger');
+	}
+
+/**
+ * testNoDbCredentials
+ *
+ * If a connection error occurs, the config variable is passed through exportVar
+ * *** our database login credentials such that they are never visible
+ *
+ * @access public
+ * @return void
+ */
+	function testNoDbCredentials() {
+		$config = array(
+			'driver' => 'mysql',
+			'persistent' => false,
+			'host' => 'void.cakephp.org',
+			'login' => 'cakephp-user',
+			'password' => 'cakephp-password',
+			'database' => 'cakephp-database',
+			'prefix' => ''
+		);
+
+		$output = Debugger::exportVar($config);
+
+		$expectedArray = array(
+			'driver' => 'mysql',
+			'persistent' => false,
+			'host' => '*****',
+			'login' => '*****',
+			'password' => '*****',
+			'database' => '*****',
+			'prefix' => ''
+		);
+		$expected = Debugger::exportVar($expectedArray);
+
+		$this->assertEqual($expected, $output);
 	}
 }
