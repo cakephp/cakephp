@@ -602,6 +602,41 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts_tags']), 'Join table marked as missing');
 	}
+	
+/**
+* testSchemaReadWithAppModel method
+*
+* @access public
+* @return void
+*/
+	public function testSchemaReadWithAppModel() {
+		$connections = ConnectionManager::enumConnectionObjects();
+		if (!empty($connections['default'])) { 
+			$backup = $connections['default']; 
+			ConnectionManager::drop('default'); 
+		}
+		ConnectionManager::create('default', $connections['test']);
+		try {
+			$read = $this->Schema->read(array(
+					'connection' => 'default',
+					'name' => 'TestApp',
+					'models' => array('AppModel')
+			));
+			unset($read['tables']['missing']);
+			$this->assertTrue(empty($read['tables']));
+			if (!empty($backup)) {
+				ConnectionManager::drop('default');
+				ConnectionManager::create('default', $backup);
+			}
+		} catch(MissingTableException $mte) {
+			if (!empty($backup)) {
+				ConnectionManager::drop('default');
+				ConnectionManager::create('default', $backup);
+			}
+			$this->fail($mte->getMessage());
+		}
+		
+	}
 
 /**
  * testSchemaReadWithOddTablePrefix method
