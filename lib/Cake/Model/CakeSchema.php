@@ -229,6 +229,10 @@ class CakeSchema extends Object {
 			foreach ($models as $model) {
 				$importModel = $model;
 				$plugin = null;
+				if ($model == 'AppModel') {
+					continue;
+				}
+
 				if (isset($this->plugin)) {
 					if ($model == $this->plugin . 'AppModel') {
 						continue;
