@@ -316,6 +316,38 @@ class Validation {
 	}
 
 /**
+ * Validates a datetime value
+ * All values matching the "date" core validation rule, and the "time" one will be valid
+ * 
+ * @param array $check Value to check
+ * @param mixed $dateFormat Format of the date part
+ * Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
+ * ## Keys:
+ *
+ *	- dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+ *	- mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+ *	- ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+ *  - dMy 27 December 2006 or 27 Dec 2006
+ *	- Mdy December 27, 2006 or Dec 27, 2006 comma is optional
+ *	- My December 2006 or Dec 2006
+ * 	- my 12/2006 separators can be a space, period, dash, forward slash
+ * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
+ * @return boolean True if the value is valid, false otherwise
+ * @see Validation::date
+ * @see Validation::time
+ */
+	function datetime($check, $dateFormat = 'ymd', $regex = null) {
+		$valid = false;
+		$parts = explode(' ', $check);
+		if (!empty($parts) && count($parts) > 1) {
+			$time = array_pop($parts);
+			$date = implode(' ', $parts);
+			$valid = self::date($date, $dateFormat, $regex) && self::time($time);
+		}
+		return $valid;
+	}
+
+/**
  * Time validation, determines if the string passed is a valid time.
  * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
  * Does not allow/validate seconds.

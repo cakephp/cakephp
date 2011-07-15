@@ -2152,4 +2152,34 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::userDefined('333', $validator, 'customValidate'));
 	}
 
+/**
+ * testDatetime method
+ *
+ * @access public
+ * @return void
+ */
+    function testDatetime() {
+		$this->assertTrue(Validation::datetime('27-12-2006 01:00', 'dmy'));
+		$this->assertTrue(Validation::datetime('27-12-2006 01:00', array('dmy')));
+		$this->assertFalse(Validation::datetime('27-12-2006 1:00', 'dmy'));
+
+		$this->assertTrue(Validation::datetime('27.12.2006 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('27.12.2006 13:00pm', 'dmy'));
+
+		$this->assertTrue(Validation::datetime('27/12/2006 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('27/12/2006 9:00', 'dmy'));
+
+		$this->assertTrue(Validation::datetime('27 12 2006 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('27 12 2006 24:00', 'dmy'));
+
+		$this->assertFalse(Validation::datetime('00-00-0000 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('00.00.0000 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('00/00/0000 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('00 00 0000 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('31-11-2006 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('31.11.2006 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('31/11/2006 1:00pm', 'dmy'));
+		$this->assertFalse(Validation::datetime('31 11 2006 1:00pm', 'dmy'));
+	}
+
 }
