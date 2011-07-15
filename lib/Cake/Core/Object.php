@@ -166,37 +166,6 @@ class Object {
 	}
 
 /**
- * Checks for a persistent class file, if found file is opened and true returned
- * If file is not found a file is created and false returned
- * If used in other locations of the model you should choose a unique name for the persistent file
- * There are many uses for this method, see manual for examples
- *
- * @param string $name name of the class to persist
- * @param string $object the object to persist
- * @return boolean Success
- * @access protected
- * @todo add examples to manual
- */
-	protected function _persist($name, $return = null, &$object, $type = null) {
-		$file = CACHE . 'persistent' . DS . strtolower($name) . '.php';
-		if ($return === null) {
-			if (!file_exists($file)) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-		if (!file_exists($file)) {
-			$this->_savePersistent($name, $object);
-			return false;
-		} else {
-			$this->__openPersistent($name, $type);
-			return true;
-		}
-	}
-
-/**
  * Merges this objects $property with the property in $class' definition.
  * This classes value for the property will be merged on top of $class'
  *
@@ -223,67 +192,6 @@ class Object {
 				}
 				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
 			}
-		}
-	}
-
-/**
- * You should choose a unique name for the persistent file
- *
- * There are many uses for this method, see manual for examples
- *
- * @param string $name name used for object to cache
- * @param object $object the object to persist
- * @return boolean true on save, throws error if file can not be created
- */
-	protected function _savePersistent($name, &$object) {
-		$file = 'persistent' . DS . strtolower($name) . '.php';
-		$objectArray = array(&$object);
-		$data = str_replace('\\', '\\\\', serialize($objectArray));
-		$data = '<?php $' . $name . ' = \'' . str_replace('\'', '\\\'', $data) . '\' ?>';
-		$duration = '+999 days';
-		if (Configure::read('debug') >= 1) {
-			$duration = '+10 seconds';
-		}
-		cache($file, $data, $duration);
-	}
-
-/**
- * Open the persistent class file for reading
- * Used by Object::_persist()
- *
- * @param string $name Name of persisted class
- * @param string $type Type of persistance (e.g: registry)
- * @return void
- * @access private
- */
-	private function __openPersistent($name, $type = null) {
-		$file = CACHE . 'persistent' . DS . strtolower($name) . '.php';
-		include($file);
-
-		switch ($type) {
-			case 'registry':
-				$vars = unserialize(${$name});
-				foreach ($vars['0'] as $key => $value) {
-					if (strpos($key, '_behavior') !== false) {
-						App::import('Behavior', Inflector::classify(substr($key, 0, -9)));
-					} else {
-						App::import('Model', Inflector::camelize($key));
-					}
-					unset ($value);
-				}
-				unset($vars);
-				$vars = unserialize(${$name});
-				foreach ($vars['0'] as $key => $value) {
-					ClassRegistry::addObject($key, $value);
-					unset ($value);
-				}
-				unset($vars);
-			break;
-			default:
-				$vars = unserialize(${$name});
-				$this->{$name} = $vars['0'];
-				unset($vars);
-			break;
 		}
 	}
 }
