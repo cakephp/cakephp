@@ -224,16 +224,15 @@ class CakeSchema extends Object {
 				$models = App::objects('Model');
 			}
 		}
-		
+
 		if (is_array($models)) {
 			foreach ($models as $model) {
 				$importModel = $model;
 				$plugin = null;
-				
 				if ($model == 'AppModel') {
 					continue;
 				}
-				
+
 				if (isset($this->plugin)) {
 					if ($model == $this->plugin . 'AppModel') {
 						continue;
@@ -241,7 +240,7 @@ class CakeSchema extends Object {
 					$importModel = $model;
 					$plugin = $this->plugin . '.';
 				}
-				
+
 				App::uses($importModel, $plugin . 'Model');
 				if (!class_exists($importModel)) {
 					continue;
@@ -295,7 +294,7 @@ class CakeSchema extends Object {
 				}
 			}
 		}
-		
+
 		if (!empty($currentTables)) {
 			foreach ($currentTables as $table) {
 				if ($prefix) {
@@ -329,7 +328,6 @@ class CakeSchema extends Object {
 
 		ksort($tables);
 		return compact('name', 'tables');
-		
 	}
 
 /**
