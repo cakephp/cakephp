@@ -216,7 +216,8 @@ class CakePluginTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadAllWithDefaults() {
-		CakePlugin::loadAll(array('bootstrap' => true));
+		$defaults = array('bootstrap' => true);
+		CakePlugin::loadAll(array($defaults));
 		$expected = array('PluginJs', 'TestPlugin', 'TestPluginTwo');
 		$this->assertEquals($expected, CakePlugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('CakePluginTest.js_plugin.bootstrap'));
@@ -231,7 +232,7 @@ class CakePluginTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadAllWithDefaultsAndOverride() {
-		CakePlugin::loadAll(array('bootstrap' => true, 'TestPlugin' => array('routes' => true)));
+		CakePlugin::loadAll(array(array('bootstrap' => true), 'TestPlugin' => array('routes' => true)));
 		CakePlugin::routes();
 
 		$expected = array('PluginJs', 'TestPlugin', 'TestPluginTwo');

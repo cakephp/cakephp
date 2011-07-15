@@ -97,8 +97,11 @@ class CakePlugin {
 	public function loadAll($options = array()) {
 		$plugins = App::objects('plugins');
 		foreach ($plugins as $p) {
-			$opts = isset($options[$p]) ? $options[$p] : $options;
-			self::load($p, $opts);
+			$opts = isset($options[$p]) ? $options[$p] : null;
+			if ($opts === null && isset($options[0])) {
+				$opts = $options[0];
+			}
+			self::load($p, (array) $opts);
 		}
 	}
 
