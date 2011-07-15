@@ -6011,6 +6011,34 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * test buildQuery()
+ *
+ * @access public
+ * @return void
+ */
+	public function testBuildQuery() {
+		$this->loadFixtures('User');
+		$TestModel = new User();
+		$TestModel->cacheQueries = false;
+
+		$expected = array(
+			'conditions' => array(
+				'user' => 'larry'),
+			'fields' => NULL,
+			'joins' => array (),
+			'limit' => NULL,
+			'offset' => NULL,
+			'order' => array(
+				0 => NULL),
+			'page' => 1,
+			'group' => NULL,
+			'callbacks' => true,
+			'returnQuery' => true);
+		$result = $TestModel->buildQuery('all', array('returnQuery' => true, 'conditions' => array('user' => 'larry')));
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * test find('all') method
  *
  * @access public
