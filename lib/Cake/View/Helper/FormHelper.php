@@ -96,6 +96,7 @@ class FormHelper extends AppHelper {
  * @access protected
  */
 	protected $_inputDefaults = array();
+
 /**
  * An array of fieldnames that have been excluded from
  * the Token hash used by SecurityComponent's validatePost method
@@ -106,6 +107,12 @@ class FormHelper extends AppHelper {
  */
 	protected $_unlockedFields = array();
 
+/**
+ * Holds the model references already loaded by this helper
+ * product of trying to inspect them out of field names
+ *
+ * @var array
+ */
 	protected $_models = array();
 	
 /**
@@ -146,6 +153,25 @@ class FormHelper extends AppHelper {
 		return $object;
 	}
 
+/**
+ * Inspects the model properties to extract information from them.
+ * Currently it can extract information from the the fields, the primary key and required fields
+ *
+ * The $key parameter accepts the following list of values:
+ *
+ *	- key: Returns the name of the primary key for the model
+ *	- fields: Returns the model schema
+ *  - validates: returns the list of fields that are required
+ *
+ * If the $field parameter is passed if will return the information for that sole field.
+ *
+ *	`$this->_introspectModel('Post', 'fields', 'title');` will return the schema information for title column
+ *
+ * @param string $model name of the model to extract information from
+ * @param string $key name of the special information key to obtain (key, fields, validates)
+ * @param string $field name of the model field to get information from
+ * @return mixed information extracted for the special key and field in a model
+ */
 	protected function _introspectModel($model, $key, $field = null) {
 			$object = $this->_getModel($model);
 			if (!$object) {
@@ -275,12 +301,13 @@ class FormHelper extends AppHelper {
 			$model = false;
 		}
 
+		$key = null;
 		if ($model !== false) {
 			$object = $this->_getModel($model);
+			$key = $this->_introspectModel($model, 'key');
 		}
 		$this->setEntity($model, true);
 
-		$key = $this->_introspectModel($model, 'key');
 		if ($model !== false && $key) {
 			$recordExists = (
 				isset($this->request->data[$model]) &&
