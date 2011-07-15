@@ -53,7 +53,7 @@ class Validation extends Object {
  * @access private
  */
 	var $__pattern = array(
-		'hostname' => '(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,4}|museum|travel)'
+		'hostname' => '(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2,3}\.)?[a-z]{2,4}|museum|travel)'
 	);
 
 /**
