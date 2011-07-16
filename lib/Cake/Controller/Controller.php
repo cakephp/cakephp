@@ -127,12 +127,6 @@ class Controller extends Object {
  */
 	public $viewVars = array();
 
-/**
- * An array containing the class names of the models this controller uses.
- *
- * @var array Array of model objects.
- */
-	public $modelNames = array();
 
 /**
  * The name of the view file to render. The name specified
@@ -596,9 +590,13 @@ class Controller extends Object {
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
-		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
-		$this->modelNames[] = $modelClass;
+		$this->uses = ($this->uses) ? $this->uses : array();
+		if (!in_array($modelClass, $this->uses)) {
+			$this->uses[] = $modelClass;
+		}
+
+		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
 		$this->{$modelClass} = ClassRegistry::init(array(
 			'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
@@ -806,34 +804,25 @@ class Controller extends Object {
 			App::uses($viewClass, $plugin . 'View');
 		}
 
-		$this->request->params['models'] = $this->modelNames;
-
 		$View = new $viewClass($this);
 
-		if (!empty($this->modelNames)) {
-			$models = array();
-			foreach ($this->modelNames as $currentModel) {
-				if (isset($this->$currentModel) && is_a($this->$currentModel, 'Model')) {
-					$models[] = Inflector::underscore($currentModel);
-				}
-				$isValidModel = (
-					isset($this->$currentModel) && is_a($this->$currentModel, 'Model') &&
-					!empty($this->$currentModel->validationErrors)
-				);
-				if ($isValidModel) {
-					$View->validationErrors[Inflector::camelize($currentModel)] =&
-						$this->$currentModel->validationErrors;
-				}
+		if (!empty($this->uses)) {
+			foreach ($this->uses as $model) {
+				list($plugin, $className) = pluginSplit($model);
+				$this->request->params['models'][$model] = compact('plugin', 'className'); 
 			}
-			$models = array_diff(ClassRegistry::keys(), $models);
-			foreach ($models as $currentModel) {
-				if (ClassRegistry::isKeySet($currentModel)) {
-					$currentObject = ClassRegistry::getObject($currentModel);
-					if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
-						$View->validationErrors[Inflector::camelize($currentModel)] =&
-							$currentObject->validationErrors;
-					}
-				}
+		} if ($this->uses === false || $this->uses === array()) {
+			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass); 
+		}
+
+		$models = ClassRegistry::keys();
+		foreach ($models as $currentModel) {
+			$currentObject = ClassRegistry::getObject($currentModel);
+			if (is_a($currentObject, 'Model')) {
+				$className = get_class($currentObject);
+				list($plugin, $package) = pluginSplit(App::location($className));
+				$this->request->params['models'][$currentObject->alias] = compact('plugin', 'className');
+				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}
 		}
 

@@ -74,7 +74,7 @@ class ClassRegistry {
  * Examples
  * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
  *
- * Exapanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
+ * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
  *
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
@@ -82,24 +82,21 @@ class ClassRegistry {
  *  no instance of the object will be returned
  * {{{
  * array(
- *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model'),
- *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model'),
- *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model')
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry'),
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry'),
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry')
  * );
  * }}}
  * @param mixed $class as a string or a single key => value array instance will be created,
  *  stored in the registry and returned.
- * @param string $type Only model is accepted as a valid value for $type.
+ * @param boolean $strict if set to true it will return false if the class was not found instead 
+ *	of trying to create an AppModel
  * @return object instance of ClassName
  */
-	public static function &init($class, $type = null) {
+	public static function init($class, $strict = false) {
 		$_this = ClassRegistry::getInstance();
 		$false = false;
 		$true = true;
-
-		if (!$type) {
-			$type = 'Model';
-		}
 
 		if (is_array($class)) {
 			$objects = $class;
@@ -109,7 +106,7 @@ class ClassRegistry {
 		} else {
 			$objects = array(array('class' => $class));
 		}
-		$defaults = isset($_this->__config[$type]) ? $_this->__config[$type] : array();
+		$defaults = isset($_this->__config['Model']) ? $_this->__config['Model'] : array();
 		$count = count($objects);
 
 		foreach ($objects as $key => $settings) {
@@ -135,30 +132,32 @@ class ClassRegistry {
 
 				App::uses('Model', 'Model');
 				App::uses('AppModel', 'Model');
-				App::uses($plugin . 'AppModel', $pluginPath . $type);
-				App::uses($class, $pluginPath . $type);
+				App::uses($plugin . 'AppModel', $pluginPath . 'Model');
+				App::uses($class, $pluginPath . 'Model');
+
 				if (class_exists($class)) {
 					${$class} = new $class($settings);
-				} elseif ($type === 'Model') {
-					if ($plugin && class_exists($plugin . 'AppModel')) {
+					${$class} = (${$class} instanceof Model) ? ${$class} : null;
+				}
+				if (!isset(${$class})) {
+					if ($strict) {
+						return false;
+					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
 						$appModel = $plugin . 'AppModel';
 					} else {
 						$appModel = 'AppModel';
 					}
-					$settings['name'] = $class;
-					${$class} = new $appModel($settings);
-				}
+					if (!empty($appModel)) {
+						$settings['name'] = $class;
+						${$class} = new $appModel($settings);
+					}
 
-				if (!isset(${$class})) {
-					trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
-					return $false;
+					if (!isset(${$class})) {
+						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
+						return $false;
+					}
 				}
-
-				if ($type !== 'Model') {
-					$_this->addObject($alias, ${$class});
-				} else {
-					$_this->map($alias, $class);
-				}
+				$_this->map($alias, $class);
 			} elseif (is_numeric($settings)) {
 				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
 				return $false;

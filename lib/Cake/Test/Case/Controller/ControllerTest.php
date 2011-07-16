@@ -425,7 +425,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->loadModel('ControllerPost');
 		$this->assertTrue($result);
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		$this->assertTrue(in_array('ControllerPost', $Controller->modelNames));
+		$this->assertTrue(in_array('ControllerPost', $Controller->uses));
 
 		ClassRegistry::flush();
 		unset($Controller);
@@ -456,7 +456,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->loadModel('Comment');
 		$this->assertTrue($result);
 		$this->assertInstanceOf('Comment', $Controller->Comment);
-		$this->assertTrue(in_array('Comment', $Controller->modelNames));
+		$this->assertTrue(in_array('Comment', $Controller->uses));
 
 		ClassRegistry::flush();
 		unset($Controller);
@@ -613,6 +613,7 @@ class ControllerTest extends CakeTestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		), true);
+		ClassRegistry::flush();
 		$request = new CakeRequest('controller_posts/index');
 		$request->params['action'] = 'index';
 
@@ -636,12 +637,19 @@ class ControllerTest extends CakeTestCase {
 		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
 		$expected = $Controller->ControllerComment->validationErrors;
 
-		ClassRegistry::flush();
 		$Controller->viewPath = 'Posts';
 		$result = $Controller->render('index');
 		$View = $Controller->View;
 		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
 		$this->assertEqual($expected, $View->validationErrors['ControllerComment']);
+
+		$expectedModels = array(
+			'ControllerAlias' => array('plugin' => null, 'className' => 'ControllerAlias'),
+			'ControllerComment' => array('plugin' => null, 'className' => 'ControllerComment'),
+			'ControllerPost' => array('plugin' => null, 'className' => 'ControllerPost')
+		);
+		$this->assertEqual($expectedModels, $Controller->request->params['models']);
+		
 
 		$Controller->ControllerComment->validationErrors = array();
 		ClassRegistry::flush();
@@ -998,6 +1006,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testValidateErrors() {
+		ClassRegistry::flush();
 		$request = new CakeRequest('controller_posts/index');
 
 		$TestController = new TestController($request);

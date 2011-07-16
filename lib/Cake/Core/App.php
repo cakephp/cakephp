@@ -588,6 +588,19 @@ class App {
 	}
 
 /**
+ * Returns the package name where a class was defined to be located at
+ *
+ * @param string $className name of the class to obtain the package name from
+ * @return string package name or null if not declared
+ */
+	public static function location($className) {
+		if (!empty(self::$__classMap[$className])) {
+			return self::$__classMap[$className];
+		}
+		return null;
+	}
+
+/**
  * Finds classes based on $name or specific file(s) to search.  Calling App::import() will
  * not construct any classes contained in the files. It will only find and require() the file.
  *
