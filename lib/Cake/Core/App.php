@@ -118,13 +118,6 @@ class App {
 	public static $return = false;
 
 /**
- * Determines if $__maps and $__paths cache should be written.
- *
- * @var boolean
- */
-	private static $__cache = false;
-
-/**
  * Holds key/value pairs of $type => file path.
  *
  * @var array
@@ -197,6 +190,13 @@ class App {
  *
  */
 	private static $_objectCacheChange = false;
+
+/**
+ * Indicates the the Application is in the bootstrapping process. Used to better cache
+ * loaded classes while the cache libraries have not been yet initialized
+ *
+ */
+	public static $bootstrapping = false;
 
 /**
  * Used to read information stored path
@@ -501,15 +501,15 @@ class App {
 				}
 			}
 
-			if ($cache === true) {
-				self::$__cache = true;
-			}
 			sort($objects);
 			if ($plugin) {
 				return $objects;
 			}
+
 			self::$__objects[$cacheLocation][$name] = $objects;
-			self::$_objectCacheChange = true;
+			if ($cache) {
+				self::$_objectCacheChange = true;
+			}
 		}
 
 		return self::$__objects[$cacheLocation][$name];
@@ -776,8 +776,8 @@ class App {
  * @return void
  */
 	public static function init() {
-		self::$__map = (array)Cache::read('file_map', '_cake_core_');
-		self::$__objects = (array)Cache::read('object_map', '_cake_core_');
+		self::$__map += (array)Cache::read('file_map', '_cake_core_');
+		self::$__objects += (array)Cache::read('object_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
 		self::uses('CakePlugin', 'Core');
 	}
@@ -797,7 +797,9 @@ class App {
 		} else {
 			self::$__map[$name] = $file;
 		}
-		self::$_cacheChange = true;
+		if (!self::$bootstrapping) {
+			self::$_cacheChange = true;
+		}
 	}
 
 /**
@@ -830,10 +832,10 @@ class App {
  * @return void
  */
 	public static function shutdown() {
-		if (self::$__cache && self::$_cacheChange) {
+		if (self::$_cacheChange) {
 			Cache::write('file_map', array_filter(self::$__map), '_cake_core_');
 		}
-		if (self::$__cache && self::$_objectCacheChange) {
+		if (self::$_objectCacheChange) {
 			Cache::write('object_map', self::$__objects, '_cake_core_');
 		}
 	}

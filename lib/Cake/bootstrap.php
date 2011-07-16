@@ -131,6 +131,7 @@ App::uses('ErrorHandler', 'Error');
 App::uses('Configure', 'Core');
 App::uses('Cache', 'Cache');
 App::uses('Object', 'Core');
+App::$bootstrapping = true;
 
 Configure::bootstrap(isset($boot) ? $boot : true);
 
