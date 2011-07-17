@@ -1609,7 +1609,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->_buildRelatedModels($this->Model);
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
-		$queryData = array('fields' => array('MIN(TestModel5.test_model4_id)'));
+		$queryData = array('fields' => array('MIN(`TestModel5`.`test_model4_id`)'));
 		$resultSet = null;
 		$null = null;
 

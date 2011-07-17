@@ -1460,7 +1460,7 @@ class DboSource extends DataSource {
 			$queryData['fields'] = $this->fields($model, $modelAlias);
 		} elseif (!empty($model->hasMany) && $model->recursive > -1) {
 			$assocFields = $this->fields($model, $modelAlias, array("{$modelAlias}.{$model->primaryKey}"));
-			$passedFields = $this->fields($model, $modelAlias, $queryData['fields']);
+			$passedFields = $queryData['fields'];
 			if (count($passedFields) === 1) {
 				if (strpos($passedFields[0], $assocFields[0]) === false && !preg_match('/^[a-z]+\(/i', $passedFields[0])) {
 					$queryData['fields'] = array_merge($passedFields, $assocFields);
