@@ -342,16 +342,16 @@ class FolderTest extends CakeTestCase {
 		);
 
 		$result = $Folder->tree(CAKE . 'Config', false);
-		$this->assertIdentical(array_diff($expected[0], $result[0]), array());
-		$this->assertIdentical(array_diff($result[0], $expected[0]), array());
+		$this->assertSame(array_diff($expected[0], $result[0]), array());
+		$this->assertSame(array_diff($result[0], $expected[0]), array());
 
 		$result = $Folder->tree(CAKE . 'Config', false, 'dir');
-		$this->assertIdentical(array_diff($expected[0], $result), array());
-		$this->assertIdentical(array_diff($expected[0], $result), array());
+		$this->assertSame(array_diff($expected[0], $result), array());
+		$this->assertSame(array_diff($expected[0], $result), array());
 
 		$result = $Folder->tree(CAKE . 'Config', false, 'files');
-		$this->assertIdentical(array_diff($expected[1], $result), array());
-		$this->assertIdentical(array_diff($expected[1], $result), array());
+		$this->assertSame(array_diff($expected[1], $result), array());
+		$this->assertSame(array_diff($expected[1], $result), array());
 	}
 
 /**
@@ -488,29 +488,29 @@ class FolderTest extends CakeTestCase {
 		$Folder->cd(CAKE . 'Config');
 		$result = $Folder->find();
 		$expected = array('config.php');
-		$this->assertIdentical(array_diff($expected, $result), array());
-		$this->assertIdentical(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*', true);
-		$expected = array('config.php');
-		$this->assertIdentical($expected, $result);
+		$expected = array('config.php', 'routes.php');
+		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*\.php');
 		$expected = array('config.php');
-		$this->assertIdentical(array_diff($expected, $result), array());
-		$this->assertIdentical(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*\.php', true);
-		$expected = array('config.php');
-		$this->assertIdentical($expected, $result);
+		$expected = array('config.php', 'routes.php');
+		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*ig\.php');
 		$expected = array('config.php');
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('config\.php');
 		$expected = array('config.php');
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$Folder->cd(TMP);
 		$file = new File($Folder->pwd() . DS . 'paths.php', true);
@@ -518,12 +518,12 @@ class FolderTest extends CakeTestCase {
 		$Folder->cd('testme');
 		$result = $Folder->find('paths\.php');
 		$expected = array();
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$Folder->cd($Folder->pwd() . '/..');
 		$result = $Folder->find('paths\.php');
 		$expected = array('paths.php');
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$Folder->cd(TMP);
 		$Folder->delete($Folder->pwd() . DS . 'testme');
@@ -543,14 +543,14 @@ class FolderTest extends CakeTestCase {
 		$expected = array(
 			CAKE . 'Config' . DS . 'config.php'
 		);
-		$this->assertIdentical(array_diff($expected, $result), array());
-		$this->assertIdentical(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->findRecursive('(config|paths)\.php', true);
 		$expected = array(
 			CAKE . 'Config' . DS . 'config.php'
 		);
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$Folder->cd(TMP);
 		$Folder->create($Folder->pwd() . DS . 'testme');
@@ -560,7 +560,7 @@ class FolderTest extends CakeTestCase {
 		$Folder->cd(TMP . 'sessions');
 		$result = $Folder->findRecursive('paths\.php');
 		$expected = array();
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$Folder->cd(TMP . 'testme');
 		$File = new File($Folder->pwd() . DS . 'my.php');
@@ -572,15 +572,15 @@ class FolderTest extends CakeTestCase {
 			TMP . 'testme' . DS . 'my.php',
 			TMP . 'testme' . DS . 'paths.php'
 		);
-		$this->assertIdentical(array_diff($expected, $result), array());
-		$this->assertIdentical(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
+		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->findRecursive('(paths|my)\.php', true);
 		$expected = array(
 			TMP . 'testme' . DS . 'my.php',
 			TMP . 'testme' . DS . 'paths.php'
 		);
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$Folder->cd(CAKE . 'Config');
 		$Folder->cd(TMP);
