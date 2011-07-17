@@ -424,7 +424,7 @@ class Controller extends Object {
 					$this->uses = array_flip($this->uses);
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
-			} elseif ($this->uses !== null || $this->uses !== false) {
+			} else {
 				$merge[] = 'uses';
 			}
 
@@ -448,7 +448,7 @@ class Controller extends Object {
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
-			if ($this->uses !== null || $this->uses !== false) {
+			if ($this->uses !== null && $this->uses !== false) {
 				$merge[] = 'uses';
 			}
 
