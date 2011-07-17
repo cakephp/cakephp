@@ -1048,9 +1048,6 @@ class FormHelper extends AppHelper {
 			case 'radio':
 				$input = $this->radio($fieldName, $radioOptions, $options);
 			break;
-			case 'file':
-				$input = $this->file($fieldName, $options);
-			break;
 			case 'select':
 				$options += array('options' => array(), 'value' => $selected);
 				$list = $options['options'];
@@ -1072,8 +1069,12 @@ class FormHelper extends AppHelper {
 			case 'textarea':
 				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
 			break;
-			default:
+			case 'file':
 				$input = $this->{$type}($fieldName, $options);
+			break;
+			default:
+				$options['type'] = $type;
+				$input = $this->text($fieldName, $options);
 		}
 
 		if ($type != 'hidden' && $error !== false) {
