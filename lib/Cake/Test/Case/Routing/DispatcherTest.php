@@ -651,6 +651,7 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+		Router::connect('/:controller/:action/*');
 
 		$_GET = array('coffee' => 'life', 'sleep' => 'sissies');
 		$Dispatcher = new Dispatcher();
@@ -680,6 +681,8 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testMissingController() {
+		Router::connect('/:controller/:action/*');
+
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl', '/index.php');
 		$url = new CakeRequest('some_controller/home/param:value/param2:value2');
@@ -726,6 +729,7 @@ class DispatcherTest extends CakeTestCase {
 
 		unset($Dispatcher);
 
+		require CAKE . 'Config' . DS . 'routes.php';
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl', '/timesheets/index.php');
 
@@ -756,6 +760,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testDispatchActionReturnsResponse() {
+		Router::connect('/:controller/:action');
 		$Dispatcher = new Dispatcher();
 		$request = new CakeRequest('some_pages/responseGenerator');
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -892,6 +897,7 @@ class DispatcherTest extends CakeTestCase {
 
 
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
 
@@ -914,6 +920,7 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 		$Dispatcher = new TestDispatcher();
 
 		$url = new CakeRequest('admin/my_plugin/my_plugin/add/5/param:value/param2:value2');
@@ -936,6 +943,7 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 		CakePlugin::load('ArticlesTest', array('path' => '/fake/path'));
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$Dispatcher = new TestDispatcher();
 
@@ -1313,6 +1321,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
+		Router::connect('/:controller/:action/*');
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
