@@ -247,6 +247,14 @@ class DboSource extends DataSource {
 	public $fieldParameters = array();
 
 /**
+ * Indicates whether there was a change on the cached results on the methods of this class
+ * This will be used for storing in a more persistent cache
+ *
+ * @var boolean
+ */
+	protected $_methodCacheChange = false;
+
+/**
  * Constructor
  *
  * @param array $config Array of configuration information for the Datasource.
@@ -764,9 +772,13 @@ class DboSource extends DataSource {
 		if ($this->cacheMethods === false) {
 			return $value;
 		}
+		if (empty($this->methodCache)) {
+			$this->methodCache = Cache::read('method_cache', '_cake_core_');
+		}
 		if ($value === null) {
 			return (isset($this->methodCache[$method][$key])) ? $this->methodCache[$method][$key] : null;
 		}
+		$this->_methodCacheChange = true;
 		return $this->methodCache[$method][$key] = $value;
 	}
 
@@ -2167,17 +2179,15 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
+		$virtualFields = $model->getVirtualField();
 		$cacheKey = array(
-			$model->useDbConfig,
-			$model->table,
-			array_keys($model->schema()),
-			$model->name,
-			$model->getVirtualField(),
 			$alias,
+			$model->alias,
+			$virtualFields,
 			$fields,
 			$quote
 		);
-		$cacheKey = crc32(serialize($cacheKey));
+		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -2191,7 +2201,6 @@ class DboSource extends DataSource {
 		$allFields = $allFields || in_array('*', $fields) || in_array($model->alias . '.*', $fields);
 
 		$virtual = array();
-		$virtualFields = $model->getVirtualField();
 		if (!empty($virtualFields)) {
 			$virtualKeys = array_keys($virtualFields);
 			foreach ($virtualKeys as $field) {
@@ -3121,6 +3130,17 @@ class DboSource extends DataSource {
 			}
 		}
 		return false;
+	}
+
+/**
+ * Used for storing in cache the results of the in-memory methodCache
+ *
+ * @return void
+ */
+	public function __destruct() {
+		if ($this->_methodCacheChange) {
+			Cache::write('method_cache', $this->methodCache, '_cake_core_');
+		}
 	}
 
 }
