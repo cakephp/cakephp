@@ -62,7 +62,7 @@ class DboSource extends DataSource {
  * @var array
  * @access public
  */
-	public $methodCache = array();
+	public static $methodCache = array();
 
 /**
  * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
@@ -753,7 +753,8 @@ class DboSource extends DataSource {
  * @return void
  */
 	public function flushMethodCache() {
-		$this->methodCache = array();
+		$this->_methodCacheChange = true;
+		self::$methodCache = array();
 	}
 
 /**
@@ -772,14 +773,14 @@ class DboSource extends DataSource {
 		if ($this->cacheMethods === false) {
 			return $value;
 		}
-		if (empty($this->methodCache)) {
-			$this->methodCache = Cache::read('method_cache', '_cake_core_');
+		if (empty(self::$methodCache)) {
+			self::$methodCache = Cache::read('method_cache', '_cake_core_');
 		}
 		if ($value === null) {
-			return (isset($this->methodCache[$method][$key])) ? $this->methodCache[$method][$key] : null;
+			return (isset(self::$methodCache[$method][$key])) ? self::$methodCache[$method][$key] : null;
 		}
 		$this->_methodCacheChange = true;
-		return $this->methodCache[$method][$key] = $value;
+		return self::$methodCache[$method][$key] = $value;
 	}
 
 /**
