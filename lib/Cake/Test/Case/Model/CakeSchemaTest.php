@@ -622,8 +622,6 @@ class CakeSchemaTest extends CakeTestCase {
 					'name' => 'TestApp',
 					'models' => array('AppModel')
 			));
-			unset($read['tables']['missing']);
-			$this->assertTrue(empty($read['tables']));
 			if (!empty($backup)) {
 				ConnectionManager::drop('default');
 				ConnectionManager::create('default', $backup);

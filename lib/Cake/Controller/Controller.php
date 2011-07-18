@@ -811,7 +811,7 @@ class Controller extends Object {
 				list($plugin, $className) = pluginSplit($model);
 				$this->request->params['models'][$model] = compact('plugin', 'className'); 
 			}
-		} if ($this->uses === false || $this->uses === array()) {
+		} if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
 			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass); 
 		}
 
