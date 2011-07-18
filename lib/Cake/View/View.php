@@ -253,6 +253,13 @@ class View extends Object {
 	protected $_scripts = array();
 
 /**
+ * Styles (and/or other <head /> tags) for the layout
+ *
+ * @var array
+ */
+	protected $_styles = array();
+
+/**
  * Holds an array of paths.
  *
  * @var array
@@ -435,6 +442,7 @@ class View extends Object {
 		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
 			'scripts_for_layout' => implode("\n\t", $this->_scripts),
+			'styles_for_layout' => implode("\n\t", $this->_styles),
 		));
 
 		if (!isset($this->viewVars['title_for_layout'])) {
@@ -523,6 +531,25 @@ class View extends Object {
 			}
 		} else {
 			$this->_scripts[$name] = $content;
+		}
+	}
+	
+/**
+ * Adds a stylesheet to be inserted in $styles_for_layout in
+ * the `<head />` of a document layout
+ *
+ * @param string $name Either the key name for the style, or the style content. Name can be used to
+ *   update/replace a script element.
+ * @param string $content The content of the style being added, optional.
+ * @return void
+ */
+	public function addStyle($name, $content = null) {
+		if (empty($content)) {
+			if (!in_array($name, array_values($this->_styles))) {
+				$this->_styles[] = $name;
+			}
+		} else {
+			$this->_styles[$name] = $content;
 		}
 	}
 
