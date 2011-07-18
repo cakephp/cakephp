@@ -3140,7 +3140,7 @@ class DboSource extends DataSource {
  */
 	public function __destruct() {
 		if ($this->_methodCacheChange) {
-			Cache::write('method_cache', $this->methodCache, '_cake_core_');
+			Cache::write('method_cache', self::$methodCache, '_cake_core_');
 		}
 	}
 
