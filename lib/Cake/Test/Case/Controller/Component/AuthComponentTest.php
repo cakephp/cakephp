@@ -292,12 +292,12 @@ class AjaxAuthController extends Controller {
 }
 
 /**
-* AuthTest class
+* AuthComponentTest class
 *
 * @package       cake
 * @package       cake.tests.cases.libs.controller.components
 */
-class AuthTest extends CakeTestCase {
+class AuthComponentTest extends CakeTestCase {
 
 /**
  * name property
@@ -351,6 +351,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->initialized = true;
 		Router::reload();
+		Router::connect('/:controller/:action/*');
 
 		$User = ClassRegistry::init('AuthUser');
 		$User->updateAll(array('password' => $User->getDataSource()->value(Security::hash('cake', null, true))));
@@ -925,6 +926,7 @@ class AuthTest extends CakeTestCase {
 		$prefixes = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$url = '/admin/auth_test/add';
 		$this->Auth->request->addParams(Router::parse($url));
@@ -977,6 +979,7 @@ class AuthTest extends CakeTestCase {
 		$admin = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$url = '/admin/auth_test/login';
 		$this->Auth->request->addParams(Router::parse($url));

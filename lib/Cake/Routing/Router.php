@@ -921,8 +921,8 @@ class Router {
 		} else {
 			$url = $params['url'];
 		}
-		$pass = $params['pass'];
-		$named = $params['named'];
+		$pass = isset($params['pass']) ? $params['pass'] : array();
+		$named = isset($params['named']) ? $params['named'] : array();
 
 		unset(
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
