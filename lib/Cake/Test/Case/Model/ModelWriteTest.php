@@ -413,6 +413,7 @@ class ModelWriteTest extends BaseModelTest {
 		}
 		$column .= $this->db->buildColumn(array('name' => 'child_count', 'type' => 'integer'));
 		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . ' ADD ' . $column);
+		$this->db->flushMethodCache();
 		$Category = new CategoryThread();
 		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
 		$this->assertFalse(empty($result));

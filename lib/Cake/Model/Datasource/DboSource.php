@@ -2183,6 +2183,7 @@ class DboSource extends DataSource {
 		$virtualFields = $model->getVirtualField();
 		$cacheKey = array(
 			$alias,
+			get_class($model),
 			$model->alias,
 			$virtualFields,
 			$fields,
