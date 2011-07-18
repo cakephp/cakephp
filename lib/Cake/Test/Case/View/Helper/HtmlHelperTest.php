@@ -148,6 +148,7 @@ class HtmlHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
+		$this->View = $this->getMock('View', array('addStyle'), array(new TheHtmlTestController()));
 		$this->Html = new TestHtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
@@ -499,11 +500,11 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
 
-		$this->View->expects($this->at(0))->method('addScript')
+		$this->View->expects($this->at(0))->method('addStyle')
 			->with($this->matchesRegularExpression('/css_in_head.css/'));
 
 		$this->View->expects($this->at(1))
-			->method('addScript')
+			->method('addStyle')
 			->with($this->matchesRegularExpression('/more_css_in_head.css/'));
 
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
