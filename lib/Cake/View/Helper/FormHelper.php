@@ -335,8 +335,8 @@ class FormHelper extends AppHelper {
 		if ($model !== false) {
 			$object = $this->_getModel($model);
 			$key = $this->_introspectModel($model, 'key');
+			$this->setEntity($model, true);
 		}
-		$this->setEntity($model, true);
 
 		if ($model !== false && $key) {
 			$recordExists = (
@@ -419,7 +419,6 @@ class FormHelper extends AppHelper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-
 		$action = $this->url($options['action']);
 		unset($options['type'], $options['action']);
 
@@ -457,7 +456,9 @@ class FormHelper extends AppHelper {
 			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
 		}
 
-		$this->setEntity($model, true);
+		if ($model !== false) {
+			$this->setEntity($model, true);
+		}
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
@@ -1504,14 +1505,16 @@ class FormHelper extends AppHelper {
 		}
 
 		$formName = uniqid('post_');
-		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
+		$formUrl = $this->url($url);
+		$out = $this->Html->useTag('form', $formUrl, array('name' => $formName, 'id' => $formName, 'style' => 'display:none;', 'method' => 'post'));
+		$out .= $this->Html->useTag('block', ' style="display:none;"', $this->Html->useTag('hidden', '_method', ' value="POST"'));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
 				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
 			}
 			unset($options['data']);
 		}
-		$out .= $this->end();
+		$out .= $this->Html->useTag('formend');
 
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';

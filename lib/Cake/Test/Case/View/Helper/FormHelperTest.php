@@ -5666,7 +5666,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
 		$this->assertTags($result, array(
 			'form' => array(
-				'method' => 'post', 'action' => '/posts/delete/1', 'accept-charset' => 'utf-8',
+				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'div' => array('style' => 'display:none;'),
@@ -5681,7 +5681,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array(), 'Confirm?');
 		$this->assertTags($result, array(
 			'form' => array(
-				'method' => 'post', 'action' => '/posts/delete/1', 'accept-charset' => 'utf-8',
+				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'div' => array('style' => 'display:none;'),
