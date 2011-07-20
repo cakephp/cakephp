@@ -488,7 +488,7 @@ class CakeTestCase extends UnitTestCase {
 		$isTestMethod = !in_array(strtolower($method), array('start', 'end'));
 
 		if (isset($this->_fixtures) && isset($this->db) && $isTestMethod) {
-			foreach ($this->_fixtures as $fixture) {
+			foreach (array_reverse($this->_fixtures) as $fixture) {
 				$fixture->truncate($this->db);
 			}
 			$this->__truncated = true;
