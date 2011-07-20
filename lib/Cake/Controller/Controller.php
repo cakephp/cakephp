@@ -581,15 +581,6 @@ class Controller extends Object {
 	}
 
 /**
- * Gets the response object for this controller.  Will construct the response if it has not already been built.
- *
- * @return CakeResponse
- */
-	public function getResponse() {
-		return $this->response;
-	}
-
-/**
  * Perform the startup process for this controller.
  * Fire the Components and Controller callbacks in the correct order.
  *
