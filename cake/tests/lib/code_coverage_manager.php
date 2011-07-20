@@ -532,7 +532,7 @@ class CodeCoverageManager {
 
 		$path = TESTS;
 		if (!$isApp) {
-			$path = ROOT . DS . 'cake' . DS . 'tests';
+			$path = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests';
 		}
 		if (!!$manager->pluginTest) {
 			$path = App::pluginPath($manager->pluginTest) . DS . 'tests';
