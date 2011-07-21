@@ -1887,11 +1887,10 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * test form->input() with datetime, date and time types
+ * test form->input() with time types.
  *
- * @return void
  */
-	function testInputDatetime() {
+	function testInputTime() {
 		extract($this->dateRegex);
 		$result = $this->Form->input('Contact.created', array('type' => 'time', 'timeFormat' => 24));
 		$result = explode(':', $result);
@@ -1929,6 +1928,22 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
 		$this->assertPattern('#<option value="30"[^>]*>30</option>#', $result[1]);
 
+		$result = $this->Form->input('Random.start_time', array(
+			'type' => 'time',
+			'selected' => '18:15'
+		));
+		$this->assertPattern('#<option value="06"[^>]*>6</option>#', $result);
+		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result);
+		$this->assertPattern('#<option value="pm"[^>]*>pm</option>#', $result);
+	}
+
+/**
+ * test form->input() with datetime, date and time types
+ *
+ * @return void
+ */
+	function testInputDatetime() {
+		extract($this->dateRegex);
 		$result = $this->Form->input('prueba', array(
 			'type' => 'datetime', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008,
 			'maxYear' => date('Y') + 1 ,'interval' => 15
@@ -3347,6 +3362,26 @@ class FormHelperTest extends CakeTestCase {
 			'select' => array(
 				'name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField',
 				'multiple' => 'multiple'
+			),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'first',
+			'/option',
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'second',
+			'/option',
+			array('option' => array('value' => '2')),
+			'third',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.multi_field', $options, array(0, 1), array('multiple' => false)
+		);
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Model][multi_field]', 'id' => 'ModelMultiField'
 			),
 			array('option' => array('value' => '0', 'selected' => 'selected')),
 			'first',

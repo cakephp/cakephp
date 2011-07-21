@@ -123,13 +123,14 @@ class Configure extends Object {
 			}
 
 			if (isset($_this->log) && $_this->log) {
-				if (!class_exists('CakeLog')) {
-					require LIBS . 'cake_log.php';
-				}
 				if (is_integer($_this->log) && !$_this->debug) {
 					$reporting = $_this->log;
 				} else {
 					$reporting = E_ALL & ~E_DEPRECATED;
+				}
+				error_reporting($reporting);
+				if (!class_exists('CakeLog')) {
+					require LIBS . 'cake_log.php';
 				}
 			}
 			error_reporting($reporting);

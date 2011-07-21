@@ -227,7 +227,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testInitSettings() {
-		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
+		Cache::config('for_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 
 		$settings = Cache::settings();
 		$expecting = array(

@@ -4556,6 +4556,16 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test that group works without a model
+ *
+ * @return void
+ */
+	function testGroupNoModel() {
+		$result = $this->db->group('created');
+		$this->assertEqual(' GROUP BY created', $result);
+	}
+
+/**
  * test the permutations of fullTableName()
  *
  * @return void
