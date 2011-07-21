@@ -658,7 +658,7 @@ class DboMysql extends DboMysqlBase {
 			break;
 			case 'bit':
 				if(is_int($data)) {
-					return "b'" . dec2bin($data) . "'";
+					return "b'" . decbin($data) . "'";
 				} else {
 					return "b'" . $data . "'";
 				}
