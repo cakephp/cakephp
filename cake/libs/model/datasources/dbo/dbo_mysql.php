@@ -618,7 +618,7 @@ class DboMysql extends DboMysqlBase {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$cache = parent::listSources();
+		$cache = $this->cachedListSources();
 		if ($cache != null) {
 			return $cache;
 		}
@@ -632,7 +632,7 @@ class DboMysql extends DboMysqlBase {
 			while ($line = mysql_fetch_row($result)) {
 				$tables[] = $line[0];
 			}
-			parent::listSources($tables);
+			$this->cachedListSources($tables);
 			return $tables;
 		}
 	}
