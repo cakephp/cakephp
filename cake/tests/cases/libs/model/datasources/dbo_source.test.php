@@ -3512,6 +3512,10 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->order(array('Property.sale_price IS NULL'));
 		$expected = ' ORDER BY `Property`.`sale_price` IS NULL ASC';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->order(array('Export.column-name' => 'ASC'));
+		$expected = ' ORDER BY `Export`.`column-name` ASC';
+		$this->assertEqual($result, $expected, 'Columns with -s are not working with order()');
 	}
 
 /**
@@ -4549,6 +4553,16 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->group('this_year',$Article);
 		$expected = " GROUP BY (YEAR(`Article`.`created`))";
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * Test that group works without a model
+ *
+ * @return void
+ */
+	function testGroupNoModel() {
+		$result = $this->db->group('created');
+		$this->assertEqual(' GROUP BY created', $result);
 	}
 
 /**

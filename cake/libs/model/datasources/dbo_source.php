@@ -2439,7 +2439,7 @@ class DboSource extends DataSource {
 			}
 
 			if (strpos($key, '.')) {
-				$key = preg_replace_callback('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', array(&$this, '__quoteMatchedField'), $key);
+				$key = preg_replace_callback('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', array(&$this, '__quoteMatchedField'), $key);
 			}
 			if (!preg_match('/\s/', $key) && !strpos($key, '.')) {
 				$key = $this->name($key);
@@ -2466,7 +2466,7 @@ class DboSource extends DataSource {
 				$group = array($group);
 			}
 			foreach($group as $index => $key) {
-				if ($model->isVirtualField($key)) {
+				if (is_object($model) && $model->isVirtualField($key)) {
 					$group[$index] = '(' . $model->getVirtualField($key) . ')';
 				}
 			}

@@ -159,7 +159,8 @@ class XmlHelperTest extends CakeTestCase {
 		$result .= $this->Xml->closeElem();
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testRenderElementWithComplexContent method
  *
  * @access public
@@ -283,5 +284,15 @@ class XmlHelperTest extends CakeTestCase {
 		$result = $this->Xml->header($attrib);
 		$expected = '<?xml encoding="UTF-8" someOther="value" ?>';
 		$this->assertIdentical($result, $expected);
+	}
+
+/**
+ * test that calling elem() and then header() doesn't break
+ *
+ * @return void
+ */
+	function testElemThenHeader() {
+		$this->Xml->elem('test', array(), 'foo', false);
+		$this->assertPattern('/<\?xml/', $this->Xml->header());
 	}
 }

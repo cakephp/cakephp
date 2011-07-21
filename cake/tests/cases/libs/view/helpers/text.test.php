@@ -321,6 +321,17 @@ class TextHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test invalid email addresses.
+ *
+ * @return void
+ */
+	function testAutoLinkEmailInvalid() {
+		$result = $this->Text->autoLinkEmails('this is a myaddress@gmx-de test');
+		$expected = 'this is a myaddress@gmx-de test';
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testHighlightCaseInsensitivity method
  *
  * @access public

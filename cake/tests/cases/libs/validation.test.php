@@ -1880,6 +1880,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://www.zwischenraume.de'));
 		$this->assertTrue(Validation::url('http://www.zwischenraume.cz'));
 		$this->assertTrue(Validation::url('http://www.last.fm/music/浜崎あゆみ'), 'utf8 path failed');
+		$this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
 
 		$this->assertTrue(Validation::url('http://cakephp.org:80'));
 		$this->assertTrue(Validation::url('http://cakephp.org:443'));

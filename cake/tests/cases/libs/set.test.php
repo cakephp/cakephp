@@ -939,6 +939,40 @@ class SetTest extends CakeTestCase {
 		$result = Set::extract('/ParentNode/name', $hasMany);
 		$expected = array('Second');
 		$this->assertEqual($result, $expected);
+		
+		$data = array(
+			array(
+				'Category' => array(
+					'id' => 1,
+					'name' => 'First'
+				),
+				0 => array(
+					'value' => 50
+				)
+			),
+			array(
+				'Category' => array(
+					'id' => 2,
+					'name' => 'Second'
+				),
+				0 => array(
+					'value' => 60
+				)
+			)
+		);
+		$expected = array(
+			array(
+				'Category' => array(
+					'id' => 1,
+					'name' => 'First'
+				),
+				0 => array(
+					'value' => 50
+				)
+			)
+		);
+		$result = Set::extract('/Category[id=1]/..', $data);
+		$this->assertEqual($result, $expected);
 	}
 
 /**

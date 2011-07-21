@@ -17,4 +17,4 @@
  * @since         CakePHP(tm) v 1.1.11.4062
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-return $config['Cake.version'] = '1.3.8';
+return $config['Cake.version'] = '1.3.10';

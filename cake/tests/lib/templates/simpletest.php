@@ -27,6 +27,7 @@
 		<li><?php echo CAKE; ?>vendors </li>
 		<li><?php echo APP_DIR . DS; ?>vendors</li>
 	</ul>
+	<p>Changes made in SimpleTest v1.1 are incompatible with CakePHP. Please ensure you download SimpleTest v1.0.x</p>
 	<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>
 </div>
 <?php include dirname(__FILE__) . DS . 'footer.php'; ?>
