@@ -173,7 +173,7 @@ class DboPostgres extends DboSource {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$cache = parent::listSources();
+		$cache = $this->cachedListSources();
 
 		if ($cache != null) {
 			return $cache;
@@ -192,7 +192,7 @@ class DboPostgres extends DboSource {
 				$tables[] = $item[0]['name'];
 			}
 
-			parent::listSources($tables);
+			$this->cachedListSources($tables);
 			return $tables;
 		}
 	}

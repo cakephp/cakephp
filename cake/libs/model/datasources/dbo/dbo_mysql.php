@@ -513,6 +513,9 @@ class DboMysqlBase extends DboSource {
 		if (strpos($col, 'enum') !== false) {
 			return "enum($vals)";
 		}
+		if (strpos($col, 'bit') !== false) {
+			return 'bit';
+		}
 		return 'text';
 	}
 }
@@ -615,7 +618,7 @@ class DboMysql extends DboMysqlBase {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$cache = parent::listSources();
+		$cache = $this->cachedListSources();
 		if ($cache != null) {
 			return $cache;
 		}
@@ -629,7 +632,7 @@ class DboMysql extends DboMysqlBase {
 			while ($line = mysql_fetch_row($result)) {
 				$tables[] = $line[0];
 			}
-			parent::listSources($tables);
+			$this->cachedListSources($tables);
 			return $tables;
 		}
 	}
@@ -661,6 +664,13 @@ class DboMysql extends DboMysqlBase {
 		switch ($column) {
 			case 'boolean':
 				return $this->boolean((bool)$data);
+			break;
+			case 'bit':
+				if(is_int($data)) {
+					return "b'" . decbin($data) . "'";
+				} else {
+					return "b'" . $data . "'";
+				}
 			break;
 			case 'integer':
 			case 'float':

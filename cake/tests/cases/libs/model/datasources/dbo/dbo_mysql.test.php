@@ -227,6 +227,14 @@ class DboMysqlTest extends CakeTestCase {
 		$expected = "'00010010001'";
 		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
+		
+		$expected = "b'00010010001'";
+		$result = $this->db->value('00010010001', 'bit');
+		$this->assertEqual($expected, $result);
+		
+		$expected = "b'1101'";
+		$result = $this->db->value(13, 'bit');
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -524,6 +532,10 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->db->column('decimal(14,7) unsigned');
 		$expected = 'float';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->db->column('bit(3)');
+		$expected = 'bit';
 		$this->assertEqual($result, $expected);
 	}
 
