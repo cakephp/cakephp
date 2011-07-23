@@ -77,30 +77,6 @@ class RequestHandlerTestController extends Controller {
 	}
 }
 
-/**
- * RequestHandlerTestDisabledController class
- *
- * @package       cake.tests.cases.libs.controller.components
- */
-class RequestHandlerTestDisabledController extends Controller {
-
-/**
- * uses property
- *
- * @var mixed null
- * @access public
- */
-	public $uses = null;
-
-/**
- * beforeFilter method
- *
- * @return void
- */
-	public function beforeFilter() {
-		$this->RequestHandler->enabled = false;
-	}
-}
 
 /**
  * RequestHandlerComponentTest class

@@ -654,4 +654,14 @@ class CakeResponse {
 	public function download($filename) {
 		$this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
 	}
+
+/**
+ * String conversion.  Fetches the response body as a string.
+ * Does *not* send headers.
+ *
+ * @return string
+ */
+	public function __toString() {
+		return (string)$this->_body;
+	}
 }

@@ -77,4 +77,4 @@
 
 	App::uses('Dispatcher', 'Routing');
 	$Dispatcher = new Dispatcher();
-	$Dispatcher->dispatch(new CakeRequest());
+	$Dispatcher->dispatch(new CakeRequest(), new CakeResponse(array('charset' => Configure::read('App.encoding'))));
