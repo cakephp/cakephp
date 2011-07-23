@@ -5529,6 +5529,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testTextAreaWithStupidCharacters() {
+		$this->loadFixtures('Post');
 		$result = $this->Form->input('Post.content', array(
 			'label' => 'Current Text', 'value' => "GREAT®", 'rows' => '15', 'cols' => '75'
 		));
