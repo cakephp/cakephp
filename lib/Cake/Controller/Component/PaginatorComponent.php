@@ -153,21 +153,8 @@ class PaginatorComponent extends Component {
 			$extra['type'] = $type;
 		}
 
-		if ($object->hasMethod('paginateCount')) {
-			$count = $object->paginateCount($conditions, $recursive, $extra);
-		} else {
-			$parameters = compact('conditions');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$count = $object->find('count', array_merge($parameters, $extra));
-		}
-		$pageCount = intval(ceil($count / $limit));
-
-		if ($page === 'last' || $page >= $pageCount) {
-			$options['page'] = $page = $pageCount;
-		} elseif (intval($page) < 1) {
-			$options['page'] = $page = 1;
+		if (intval($page) < 1) {
+			$page = 1;
 		}
 		$page = $options['page'] = (int)$page;
 
@@ -184,6 +171,17 @@ class PaginatorComponent extends Component {
 		}
 		$defaults = $this->getDefaults($object->alias);
 		unset($defaults[0]);
+
+		if ($object->hasMethod('paginateCount')) {
+			$count = $object->paginateCount($conditions, $recursive, $extra);
+		} else {
+			$parameters = compact('conditions');
+			if ($recursive != $object->recursive) {
+				$parameters['recursive'] = $recursive;
+			}
+			$count = $object->find('count', array_merge($parameters, $extra));
+		}
+		$pageCount = intval(ceil($count / $limit));
 
 		$paging = array(
 			'page' => $page,
