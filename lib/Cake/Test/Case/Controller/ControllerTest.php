@@ -651,6 +651,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->view = null;
 
 		$Controller = new TestController($request, new CakeResponse());
+		$Controller->uses = array('ControllerAlias', 'TestPlugin.ControllerComment', 'ControllerPost');
 		$Controller->helpers = array('Html');
 		$Controller->constructClasses();
 		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
@@ -664,15 +665,12 @@ class ControllerTest extends CakeTestCase {
 
 		$expectedModels = array(
 			'ControllerAlias' => array('plugin' => null, 'className' => 'ControllerAlias'),
-			'ControllerComment' => array('plugin' => null, 'className' => 'ControllerComment'),
+			'ControllerComment' => array('plugin' => 'TestPlugin', 'className' => 'ControllerComment'),
 			'ControllerPost' => array('plugin' => null, 'className' => 'ControllerPost')
 		);
 		$this->assertEqual($expectedModels, $Controller->request->params['models']);
-		
 
-		$Controller->ControllerComment->validationErrors = array();
 		ClassRegistry::flush();
-
 		App::build();
 	}
 
