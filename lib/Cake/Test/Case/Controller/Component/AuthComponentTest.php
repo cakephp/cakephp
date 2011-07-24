@@ -122,12 +122,12 @@ class AuthTestController extends Controller {
  * @access private
  * @return void
  */
-	function __construct($request) {
+	function __construct($request, $response) {
 		$request->addParams(Router::parse('/auth_test'));
 		$request->here = '/auth_test';
 		$request->webroot = '/';
 		Router::setRequestInfo($request);
-		parent::__construct($request);
+		parent::__construct($request, $response);
 	}
 
 /**
@@ -292,12 +292,12 @@ class AjaxAuthController extends Controller {
 }
 
 /**
-* AuthTest class
+* AuthComponentTest class
 *
 * @package       cake
 * @package       cake.tests.cases.libs.controller.components
 */
-class AuthTest extends CakeTestCase {
+class AuthComponentTest extends CakeTestCase {
 
 /**
  * name property
@@ -339,7 +339,7 @@ class AuthTest extends CakeTestCase {
 
 		$request = new CakeRequest(null, false);
 
-		$this->Controller = new AuthTestController($request);
+		$this->Controller = new AuthTestController($request, $this->getMock('CakeResponse'));
 
 		$collection = new ComponentCollection();
 		$collection->init($this->Controller);
@@ -351,6 +351,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->initialized = true;
 		Router::reload();
+		Router::connect('/:controller/:action/*');
 
 		$User = ClassRegistry::init('AuthUser');
 		$User->updateAll(array('password' => $User->getDataSource()->value(Security::hash('cake', null, true))));
@@ -925,6 +926,7 @@ class AuthTest extends CakeTestCase {
 		$prefixes = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$url = '/admin/auth_test/add';
 		$this->Auth->request->addParams(Router::parse($url));
@@ -960,7 +962,7 @@ class AuthTest extends CakeTestCase {
 
 		ob_start();
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), array('return' => 1));
+		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), new CakeResponse(), array('return' => 1));
 		$result = ob_get_clean();
 
 		$this->assertEqual("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
@@ -977,6 +979,7 @@ class AuthTest extends CakeTestCase {
 		$admin = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$url = '/admin/auth_test/login';
 		$this->Auth->request->addParams(Router::parse($url));
@@ -1024,7 +1027,7 @@ class AuthTest extends CakeTestCase {
  */
 	public function testComponentSettings() {
 		$request = new CakeRequest(null, false);
-		$this->Controller = new AuthTestController($request);
+		$this->Controller = new AuthTestController($request, $this->getMock('CakeResponse'));
 
 		$this->Controller->components = array(
 			'Auth' => array(

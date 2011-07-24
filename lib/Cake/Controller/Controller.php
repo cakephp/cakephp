@@ -291,10 +291,11 @@ class Controller extends Object {
 /**
  * Constructor.
  *
- * @param CakeRequest $request Request object for this controller can be null for testing.
- *  But expect that features that use the params will not work.
+ * @param CakeRequest $request Request object for this controller. Can be null for testing,
+ *  but expect that features that use the request parameters will not work.
+ * @param CakeResponse $response Response object for this controller. 
  */
-	public function __construct($request = null) {
+	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
 			$this->name = substr(get_class($this), 0, strlen(get_class($this)) -10);
 		}
@@ -315,7 +316,9 @@ class Controller extends Object {
 		if ($request instanceof CakeRequest) {
 			$this->setRequest($request);
 		}
-		$this->getResponse();
+		if ($response instanceof CakeResponse) {
+			$this->response = $response;
+		}
 		parent::__construct();
 	}
 
@@ -440,6 +443,72 @@ class Controller extends Object {
 	}
 
 /**
+ * Dispatches the controller action.  Checks that the action 
+ * exists and isn't private.
+ *
+ * @param CakeRequest $request
+ * @return The resulting response.
+ */
+	public function invokeAction(CakeRequest $request) {
+		$reflection = new ReflectionClass($this);
+		try {
+			$method = $reflection->getMethod($request->params['action']);
+
+			if ($this->_isPrivateAction($method, $request)) {
+				throw new PrivateActionException(array(
+					'controller' => $this->name . "Controller",
+					'action' => $request->params['action']
+				));
+			}
+			return $method->invokeArgs($this, $request->params['pass']);
+
+		} catch (ReflectionException $e) {
+			if ($this->scaffold !== false) {
+				return $this->_getScaffold($request);
+			}
+			throw new MissingActionException(array(
+				'controller' => $this->name . "Controller",
+				'action' => $request->params['action']
+			));
+		}
+	}
+
+/**
+ * Check if the request's action is marked as private, with an underscore, 
+ * or if the request is attempting to directly accessing a prefixed action.
+ *
+ * @param ReflectionMethod $method The method to be invoked.
+ * @param CakeRequest $request The request to check.
+ * @return boolean
+ */
+	protected function _isPrivateAction(ReflectionMethod $method, CakeRequest $request) {
+		$privateAction = (
+			$method->name[0] === '_' || 
+			!$method->isPublic() ||
+			!in_array($method->name,  $this->methods)
+		);
+		$prefixes = Router::prefixes();
+
+		if (!$privateAction && !empty($prefixes)) {
+			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
+				list($prefix, $action) = explode('_', $request->params['action']);
+				$privateAction = in_array($prefix, $prefixes);
+			}
+		}
+		return $privateAction;
+	}
+
+/**
+ * Returns a scaffold object to use for dynamically scaffolded controllers.
+ *
+ * @param CakeRequest $request
+ * @return Scaffold
+ */
+	protected function _getScaffold(CakeRequest $request) {
+		return new Scaffold($this, $request);
+	}
+
+/**
  * Merge components, helpers, and uses vars from Controller::$_mergeParent and PluginAppController.
  *
  * @return void
@@ -509,18 +578,6 @@ class Controller extends Object {
 			list(, $this->modelClass) = pluginSplit(current($this->uses));
 		}
 		return true;
-	}
-
-/**
- * Gets the response object for this controller.  Will construct the response if it has not already been built.
- *
- * @return CakeResponse
- */
-	public function getResponse() {
-		if (empty($this->response)) {
-			$this->response = new $this->_responseClass(array('charset' => Configure::read('App.encoding')));
-		}
-		return $this->response;
 	}
 
 /**
@@ -790,7 +847,7 @@ class Controller extends Object {
  *
  * @param string $view View to use for rendering
  * @param string $layout Layout to use
- * @return string Full output string of view contents
+ * @return CakeResponse A response object containing the rendered view.
  * @link http://book.cakephp.org/view/980/render
  */
 	public function render($view = null, $layout = null) {
@@ -809,7 +866,7 @@ class Controller extends Object {
 		if (!empty($this->uses)) {
 			foreach ($this->uses as $model) {
 				list($plugin, $className) = pluginSplit($model);
-				$this->request->params['models'][$model] = compact('plugin', 'className'); 
+				$this->request->params['models'][$className] = compact('plugin', 'className');
 			}
 		} if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
 			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass); 
@@ -828,7 +885,8 @@ class Controller extends Object {
 
 		$this->autoRender = false;
 		$this->View = $View;
-		return $this->response->body($View->render($view, $layout));
+		$this->response->body($View->render($view, $layout));
+		return $this->response;
 	}
 
 /**
@@ -879,7 +937,7 @@ class Controller extends Object {
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->response->body($this->render(false, $layout));
+		$this->render(false, $layout);
 	}
 
 /**

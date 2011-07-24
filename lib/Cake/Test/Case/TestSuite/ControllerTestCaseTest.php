@@ -273,7 +273,9 @@ class ControllerTestCaseTest extends CakeTestCase {
  * Tests using loaded routes during tests
  */
 	public function testUseRoutes() {
+		Router::connect('/:controller/:action/*');
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
+
 		$controller = $this->Case->generate('TestsApps');
 		$controller->Components->load('RequestHandler');
 		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
@@ -302,6 +304,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @expectedException MissingActionException
  */
 	public function testSkipRoutes() {
+		Router::connect('/:controller/:action/*');
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 
 		$this->Case->loadRoutes = false;

@@ -87,7 +87,7 @@ class Object {
 		}
 
 		$dispatcher = new Dispatcher();
-		return $dispatcher->dispatch($request, $extra);
+		return $dispatcher->dispatch($request, new CakeResponse(), $extra);
 	}
 
 /**

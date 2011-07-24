@@ -146,21 +146,6 @@ class Router {
 	protected static $_requests = array();
 
 /**
- * Keeps Router state to determine if default routes have already been connected
- *
- * @var boolean
- * @access private
- */
-	protected static $_defaultsMapped = false;
-
-/**
- * Keeps track of whether the connection of default routes is enabled or disabled.
- *
- * @var boolean
- */
-	protected static $_connectDefaults = true;
-
-/**
  * Initial state is popualated the first time reload() is called which is at the bottom
  * of this file.  This is a cheat as get_class_vars() returns the value of static vars even if they
  * have changed.
@@ -414,19 +399,6 @@ class Router {
 	}
 
 /**
- * Tell router to connect or not connect the default routes.
- *
- * If default routes are disabled all automatic route generation will be disabled
- * and you will need to manually configure all the routes you want.
- *
- * @param boolean $connect Set to true or false depending on whether you want or don't want default routes.
- * @return void
- */
-	public static function defaults($connect = true) {
-		self::$_connectDefaults = $connect;
-	}
-
-/**
  * Creates REST resource routes for the given controller(s)
  *
  * ### Options:
@@ -479,15 +451,8 @@ class Router {
  * @return array Parsed elements from URL
  */
 	public static function parse($url) {
-		if (!self::$_defaultsMapped && self::$_connectDefaults) {
-			self::__connectDefaultRoutes();
-		}
-		$out = array(
-			'pass' => array(),
-			'named' => array()
-		);
-
 		$ext = null;
+		$out = array();
 
 		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
@@ -545,74 +510,6 @@ class Router {
 			}
 		}
 		return compact('ext', 'url');
-	}
-
-/**
- * Connects the default, built-in routes, including prefix and plugin routes. The following routes are created
- * in the order below:
- *
- * For each of the Routing.prefixes the following routes are created. Routes containing `:plugin` are only
- * created when your application has one or more plugins.
- *
- * - `/:prefix/:plugin` a plugin shortcut route.
- * - `/:prefix/:plugin/:action/*` a plugin shortcut route.
- * - `/:prefix/:plugin/:controller`
- * - `/:prefix/:plugin/:controller/:action/*`
- * - `/:prefix/:controller`
- * - `/:prefix/:controller/:action/*`
- *
- * If plugins are found in your application the following routes are created:
- *
- * - `/:plugin` a plugin shortcut route.
- * - `/:plugin/:action/*` a plugin shortcut route.
- * - `/:plugin/:controller`
- * - `/:plugin/:controller/:action/*`
- *
- * And lastly the following catch-all routes are connected.
- *
- * - `/:controller'
- * - `/:controller/:action/*'
- *
- * You can disable the connection of default routes with Router::defaults().
- *
- * @return void
- * @access private
- */
-	private static function __connectDefaultRoutes() {
-		if ($plugins = CakePlugin::loaded()) {
-			App::uses('PluginShortRoute', 'Routing/Route');
-			foreach ($plugins as $key => $value) {
-				$plugins[$key] = Inflector::underscore($value);
-			}
-			$pluginPattern = implode('|', $plugins);
-			$match = array('plugin' => $pluginPattern);
-			$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
-
-			foreach (self::$_prefixes as $prefix) {
-				$params = array('prefix' => $prefix, $prefix => true);
-				$indexParams = $params + array('action' => 'index');
-				self::connect("/{$prefix}/:plugin", $indexParams, $shortParams);
-				self::connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
-				self::connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
-			}
-			self::connect('/:plugin', array('action' => 'index'), $shortParams);
-			self::connect('/:plugin/:controller', array('action' => 'index'), $match);
-			self::connect('/:plugin/:controller/:action/*', array(), $match);
-		}
-
-		foreach (self::$_prefixes as $prefix) {
-			$params = array('prefix' => $prefix, $prefix => true);
-			$indexParams = $params + array('action' => 'index');
-			self::connect("/{$prefix}/:controller", $indexParams);
-			self::connect("/{$prefix}/:controller/:action/*", $params);
-		}
-		self::connect('/:controller', array('action' => 'index'));
-		self::connect('/:controller/:action/*');
-
-		if (self::$_namedConfig['rules'] === false) {
-			self::connectNamed(true);
-		}
-		self::$_defaultsMapped = true;
 	}
 
 /**
@@ -1024,8 +921,8 @@ class Router {
 		} else {
 			$url = $params['url'];
 		}
-		$pass = $params['pass'];
-		$named = $params['named'];
+		$pass = isset($params['pass']) ? $params['pass'] : array();
+		$named = isset($params['named']) ? $params['named'] : array();
 
 		unset(
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],

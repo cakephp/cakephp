@@ -52,9 +52,9 @@ class ControllerTestDispatcher extends Dispatcher {
  *
  * @return Controller
  */
-	function _getController($request) {
+	function _getController($request, $response) {
 		if ($this->testController === null) {
-			$this->testController = parent::_getController($request);
+			$this->testController = parent::_getController($request, $response);
 		}
 		$this->testController->helpers = array_merge(array('InterceptContent'), $this->testController->helpers);
 		$this->testController->setRequest($request);
@@ -224,7 +224,7 @@ class ControllerTestCase extends CakeTestCase {
 		}
 		$Dispatch->testController = $this->controller;
 		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
-		$this->result = $Dispatch->dispatch($request, $params);
+		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
 		if ($options['return'] != 'result') {
 			$this->vars = $this->controller->View->viewVars;
@@ -275,7 +275,9 @@ class ControllerTestCase extends CakeTestCase {
 		list($plugin, $name) = pluginSplit($controller);
 		$_controller = $this->getMock($name.'Controller', $mocks['methods'], array(), '', false);
 		$_controller->name = $name;
-		$_controller->__construct();
+		$request = $this->getMock('CakeRequest');
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$_controller->__construct($request, $response);
 
 		$config = ClassRegistry::config('Model');
 		foreach ($mocks['models'] as $model => $methods) {

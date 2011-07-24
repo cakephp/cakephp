@@ -48,16 +48,16 @@ class PagesControllerTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		));
-		$Pages = new PagesController(new CakeRequest(null, false));
+		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
 
 		$Pages->viewPath = 'Posts';
 		$Pages->display('index');
-		$this->assertPattern('/posts index/', $Pages->getResponse()->body());
+		$this->assertPattern('/posts index/', $Pages->response->body());
 		$this->assertEqual($Pages->viewVars['page'], 'index');
 
 		$Pages->viewPath = 'Themed';
 		$Pages->display('TestTheme', 'Posts', 'index');
-		$this->assertPattern('/posts index themed view/', $Pages->getResponse()->body());
+		$this->assertPattern('/posts index themed view/', $Pages->response->body());
 		$this->assertEqual($Pages->viewVars['page'], 'TestTheme');
 		$this->assertEqual($Pages->viewVars['subpage'], 'Posts');
 	}

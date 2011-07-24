@@ -72,19 +72,20 @@ class Dispatcher {
  * If the controller is found, and the action is not found an exception will be thrown.
  *
  * @param CakeRequest $request Request object to dispatch.
+ * @param CakeResponse $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
  * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
  *    are encountered.
  */
-	public function dispatch(CakeRequest $request, $additionalParams = array()) {
-		if ($this->asset($request->url) || $this->cached($request->here)) {
+	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
+		if ($this->asset($request->url, $response) || $this->cached($request->here)) {
 			return;
 		}
 
 		$request = $this->parseParams($request, $additionalParams);
 		Router::setRequestInfo($request);
-		$controller = $this->_getController($request);
+		$controller = $this->_getController($request, $response);
 
 		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
@@ -92,35 +93,7 @@ class Dispatcher {
 			));
 		}
 
-		if ($this->_isPrivateAction($request)) {
-			throw new PrivateActionException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
-				'action' => $request->params['action']
-			));
-		}
-
-		return $this->_invoke($controller, $request);
-	}
-
-/**
- * Check if the request's action is marked as private, with an underscore, of if the request is attempting to
- * directly accessing a prefixed action.
- *
- * @param CakeRequest $request The request to check
- * @return boolean
- */
-	protected function _isPrivateAction($request) {
-		$privateAction = $request->params['action'][0] === '_';
-		$prefixes = Router::prefixes();
-
-		if (!$privateAction && !empty($prefixes)) {
-			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
-				list($prefix, $action) = explode('_', $request->params['action']);
-				$privateAction = in_array($prefix, $prefixes);
-			}
-		}
-
-		return $privateAction;
+		return $this->_invoke($controller, $request, $response);
 	}
 
 /**
@@ -133,26 +106,19 @@ class Dispatcher {
  * @return string Output as sent by controller
  * @throws MissingActionException when the action being called is missing.
  */
-	protected function _invoke(Controller $controller, CakeRequest $request) {
+	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
-		$methods = array_flip($controller->methods);
-
-		if (!isset($methods[$request->params['action']])) {
-			if ($controller->scaffold !== false) {
-				return new Scaffold($controller, $request);
-			}
-			throw new MissingActionException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
-				'action' => $request->params['action']
-			));
+		$render = true;
+		$result = $controller->invokeAction($request);
+		if ($result instanceof CakeResponse) {
+			$render = false;
+			$response = $result;
 		}
-		$result = call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
-		$response = $controller->getResponse();
-
-		if ($controller->autoRender) {
-			$controller->render();
+		
+		if ($render && $controller->autoRender) {
+			$response = $controller->render();
 		} elseif ($response->body() === null) {
 			$response->body($result);
 		}
@@ -192,15 +158,16 @@ class Dispatcher {
 /**
  * Get controller to use, either plugin controller or application controller
  *
- * @param array $params Array of parameters
+ * @param CakeRequest $request Request object
+ * @param CakeResponse $response Response for the controller.
  * @return mixed name of controller if not loaded, or object if loaded
  */
-	protected function _getController($request) {
+	protected function _getController($request, $response) {
 		$ctrlClass = $this->_loadController($request);
 		if (!$ctrlClass) {
 			return false;
 		}
-		return new $ctrlClass($request);
+		return new $ctrlClass($request, $response);
 	}
 
 /**
@@ -237,7 +204,6 @@ class Dispatcher {
  */
 	protected function _loadRoutes() {
 		include APP . 'Config' . DS . 'routes.php';
-		CakePlugin::routes();
 	}
 
 /**
@@ -270,10 +236,11 @@ class Dispatcher {
 /**
  * Checks if a requested asset exists and sends it to the browser
  *
- * @param $url string $url Requested URL
+ * @param string $url Requested URL
+ * @param CakeResponse $response The response object to put the file contents in.
  * @return boolean True on success if the asset file was found and sent
  */
-	public function asset($url) {
+	public function asset($url, CakeResponse $response) {
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return false;
 		}
@@ -286,12 +253,9 @@ class Dispatcher {
 			strpos($url, 'cjs/') === 0 ||
 			preg_match('#^/((theme/[^/]+)/cjs/)|(([^/]+)(?<!js)/cjs)/#i', $url)
 		);
-		if (!$this->response) {
-			$this->response = new CakeResponse();
-		}
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
-			$this->response->statusCode(404);
-			$this->response->send();
+			$response->statusCode(404);
+			$response->send();
 			return true;
 		} elseif ($isCss) {
 			include WWW_ROOT . DS . $filters['css'];
@@ -326,7 +290,7 @@ class Dispatcher {
 		}
 
 		if ($assetFile !== null) {
-			$this->_deliverAsset($assetFile, $ext);
+			$this->_deliverAsset($response, $assetFile, $ext);
 			return true;
 		}
 		return false;
@@ -335,23 +299,24 @@ class Dispatcher {
 /**
  * Sends an asset file to the client
  *
+ * @param CakeResponse $response The response object to use.
  * @param string $assetFile Path to the asset file in the file system
  * @param string $ext The extension of the file to determine its mime type
  * @return void
  */
-	protected function _deliverAsset($assetFile, $ext) {
+	protected function _deliverAsset(CakeResponse $response, $assetFile, $ext) {
 		ob_start();
-		$compressionEnabled = Configure::read('Asset.compress') && $this->response->compress();
-		if ($this->response->type($ext) == $ext) {
+		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
+		if ($response->type($ext) == $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = env('HTTP_USER_AGENT');
 			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 				$contentType = 'application/octetstream';
 			}
-			$this->response->type($contentType);
+			$response->type($contentType);
 		}
-		$this->response->cache(filemtime($assetFile));
-		$this->response->send();
+		$response->cache(filemtime($assetFile));
+		$response->send();
 		ob_clean();
 		if ($ext === 'css' || $ext === 'js') {
 			include($assetFile);
