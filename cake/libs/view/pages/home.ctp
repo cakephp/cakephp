@@ -20,6 +20,9 @@ if (Configure::read() == 0):
 	$this->cakeError('error404');
 endif;
 ?>
+<iframe src="http://cakephp.org/bake-banner" width="830" height="160" style="overflow:hidden; border:none;">
+	<p>For updates and important announcements, visit http://cakefest.org</p>
+</iframe>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
 <a href="http://cakephp.org/changelogs/1.3.10"><?php __('Read the changelog'); ?> </a>
 <?php
