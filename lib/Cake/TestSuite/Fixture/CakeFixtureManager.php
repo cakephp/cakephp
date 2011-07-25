@@ -206,7 +206,7 @@ class CakeFixtureManager {
  */
 	public function unload(CakeTestCase $test) {
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
-		foreach ($fixtures as $f) {
+		foreach (array_reverse($fixtures) as $f) {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {

@@ -40,6 +40,7 @@ if (!empty($plugins)):
 				</li>
 			</ul>
 	<?php endforeach; ?>
+	</li>
 <?php endif;?>
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Core</span>
