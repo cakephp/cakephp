@@ -137,7 +137,9 @@ class ClassRegistry {
 
 				if (class_exists($class)) {
 					${$class} = new $class($settings);
-					${$class} = (${$class} instanceof Model) ? ${$class} : null;
+					if ($strict) {
+						${$class} = (${$class} instanceof Model) ? ${$class} : null;
+					}
 				}
 				if (!isset(${$class})) {
 					if ($strict) {
