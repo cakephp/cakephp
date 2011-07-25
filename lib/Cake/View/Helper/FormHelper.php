@@ -459,8 +459,7 @@ class FormHelper extends AppHelper {
 		if ($model !== false) {
 			$this->setEntity($model, true);
 		}
-		$attributes = sprintf('action="%s" ', $action) . $this->_parseAttributes($htmlAttributes, null, '');
-		return $this->Html->useTag('form', $action, $attributes) . $append;
+		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
 /**
