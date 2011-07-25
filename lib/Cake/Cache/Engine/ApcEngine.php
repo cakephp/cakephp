@@ -49,7 +49,11 @@ class ApcEngine extends CacheEngine {
  * @return boolean True if the data was successfully cached, false on failure
  */
 	public function write($key, $value, $duration) {
-		$expires = time() + $duration;
+		if ($duration == 0) {
+			$expires = 0;
+		} else {
+			$expires = time() + $duration;
+		}
 		apc_store($key.'_expires', $expires, $duration);
 		return apc_store($key, $value, $duration);
 	}
@@ -63,7 +67,7 @@ class ApcEngine extends CacheEngine {
 	public function read($key) {
 		$time = time();
 		$cachetime = intval(apc_fetch($key.'_expires'));
-		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
+		if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			return false;
 		}
 		return apc_fetch($key);
