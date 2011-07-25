@@ -3449,6 +3449,18 @@ class TransactionTestModel extends CakeTestModel {
 	}
 }
 
+class TransactionManyTestModel extends CakeTestModel {
+	var $name = 'TransactionManyTestModel';
+	var $useTable = 'samples';
+
+	public function afterSave($created) {
+		$data = array(
+			array('apple_id' => 1, 'name' => 'sample6'),
+		);
+		$this->saveMany($data, array('atomic' => true, 'callbacks' => false));
+	}
+}
+
 /**
  * TestModel class
  *
