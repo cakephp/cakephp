@@ -1634,14 +1634,9 @@ class Model extends Object {
 			return $this->saveMany($data, $options);
 		}
 		if ($options['validate'] === 'only') {
-			$this->create($data);
-			$validates = $this->validates($options);
 			$validatesAssoc = $this->validateAssociated($data, $options);
-			if (!$validates) {
+			if (isset($this->validationErrors[$this->alias]) && $this->validationErrors[$this->alias] === false) {
 				return false;
-			}
-			if (is_bool($validatesAssoc)) {
-				return $validates && $validatesAssoc;
 			}
 			return $validatesAssoc;
 		}
@@ -1912,7 +1907,7 @@ class Model extends Object {
 		if (!$options['atomic']) {
 			return $return;
 		}
-		if (!empty($this->validationErrors)) {
+		if ($return[$this->alias] === false || !empty($this->validationErrors)) {
 			return false;
 		}
 		return true;
