@@ -1634,7 +1634,16 @@ class Model extends Object {
 			return $this->saveMany($data, $options);
 		}
 		if ($options['validate'] === 'only') {
-			return $this->validateAssociated($data, $options);
+			$this->create($data);
+			$validates = $this->validates($options);
+			$validatesAssoc = $this->validateAssociated($data, $options);
+			if (!$validates) {
+				return false;
+			}
+			if (is_bool($validatesAssoc)) {
+				return $validates && $validatesAssoc;
+			}
+			return $validatesAssoc;
 		}
 		return $this->saveAssociated($data, $options);
 	}
