@@ -15,7 +15,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
+ * @package       Cake.Model
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -30,7 +30,7 @@ App::uses('Model', 'Model');
  * Create the same file in app/app_model.php
  * Add your application-wide methods to the class, your models will inherit them.
  *
- * @package       cake
+ * @package       Cake.Model
  * @subpackage    cake.cake.libs.model
  */
 class AppModel extends Model {

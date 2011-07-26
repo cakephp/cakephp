@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('AbstractTransport', 'Network/Email');
 /**
  * EmailTestComponent class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class EmailTestComponent extends EmailComponent {
 
@@ -44,7 +44,7 @@ class EmailTestComponent extends EmailComponent {
 /**
  * DebugCompTransport class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class DebugCompTransport extends AbstractTransport {
 
@@ -87,7 +87,7 @@ class DebugCompTransport extends AbstractTransport {
 /**
  * EmailTestController class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class EmailTestController extends Controller {
 
@@ -120,7 +120,7 @@ class EmailTestController extends Controller {
 /**
  * EmailTest class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class EmailComponentTest extends CakeTestCase {
 

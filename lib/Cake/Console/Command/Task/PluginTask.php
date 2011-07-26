@@ -22,7 +22,7 @@ App::uses('Folder', 'Utility');
 /**
  * Task class for creating a plugin
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class PluginTask extends Shell {
 

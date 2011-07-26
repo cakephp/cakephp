@@ -18,7 +18,7 @@
  *
  * @copyright       Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link            http://cakephp.org CakePHP Project
- * @package         cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 

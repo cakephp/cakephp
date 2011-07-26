@@ -18,7 +18,7 @@
 /**
  * Base class for Bake Tasks.
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class BakeTask extends Shell {
 

@@ -20,7 +20,7 @@
  * the all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
  *
- * @package cake.libs
+ * @package       Cake.Utility
  * @since CakePHP(tm) v 2.0
  */
 abstract class ObjectCollection {

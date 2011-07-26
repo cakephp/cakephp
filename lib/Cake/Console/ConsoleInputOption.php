@@ -21,7 +21,7 @@
  * ConsoleOptionParser creates these when you use addOption()
  *
  * @see ConsoleOptionParser::addOption()
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class ConsoleInputOption {
 /**

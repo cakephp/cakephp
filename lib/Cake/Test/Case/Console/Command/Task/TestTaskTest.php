@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,8 +31,8 @@ App::uses('Model', 'Model');
 /**
  * Test Article model
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskArticle extends Model {
 
@@ -108,8 +108,8 @@ class TestTaskArticle extends Model {
 /**
  * Tag Testing Model
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTag extends Model {
 
@@ -148,8 +148,8 @@ class TestTaskTag extends Model {
 /**
  * Simulated plugin
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskAppModel extends Model {
 }
@@ -157,8 +157,8 @@ class TestTaskAppModel extends Model {
 /**
  * Testing AppMode (TaskComment)
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskComment extends TestTaskAppModel {
 
@@ -195,8 +195,8 @@ class TestTaskComment extends TestTaskAppModel {
 /**
  * Test Task Comments Controller
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskCommentsController extends Controller {
 
@@ -220,7 +220,7 @@ class TestTaskCommentsController extends Controller {
 /**
  * TestTaskTest class
  *
- * @package       cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTest extends CakeTestCase {
 

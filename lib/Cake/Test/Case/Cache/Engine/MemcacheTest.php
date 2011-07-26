@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.cache
+ * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -39,7 +39,7 @@ class TestMemcacheEngine extends MemcacheEngine {
 /**
  * MemcacheEngineTest class
  *
- * @package       cake.tests.cases.libs.cache
+ * @package       Cake.Test.Case.Cache.Engine
  */
 class MemcacheEngineTest extends CakeTestCase {
 

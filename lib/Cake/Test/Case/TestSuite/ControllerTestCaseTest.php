@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.libs.
+ * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -30,13 +30,13 @@ require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
 /**
  * AppController class
  *
- * @package       cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.TestSuite
  */
 if (!class_exists('AppController', false)) {
 	/**
 	 * AppController class
 	 *
-		 * @package       cake.tests.cases.libs.controller
+		 * @package       Cake.Test.Case.TestSuite
 	 */
 	class AppController extends Controller {
 	/**
@@ -102,7 +102,7 @@ class ControllerTestCaseTestController extends AppController {
 /**
  * ControllerTestCaseTest
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.TestSuite
  */
 class ControllerTestCaseTest extends CakeTestCase {
 

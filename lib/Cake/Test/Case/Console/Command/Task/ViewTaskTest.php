@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -34,8 +34,8 @@ App::uses('Controller', 'Controller');
 /**
  * Test View Task Comment Model
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskComment extends Model {
 
@@ -72,8 +72,8 @@ class ViewTaskComment extends Model {
 /**
  * Test View Task Article Model
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskArticle extends Model {
 
@@ -97,8 +97,8 @@ class ViewTaskArticle extends Model {
 /**
  * Test View Task Comments Controller
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskCommentsController extends Controller {
 
@@ -130,8 +130,8 @@ class ViewTaskCommentsController extends Controller {
 /**
  * Test View Task Articles Controller
  *
- * @package cake
- * @package    cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskArticlesController extends Controller {
 
@@ -203,7 +203,7 @@ class ViewTaskArticlesController extends Controller {
 /**
  * ViewTaskTest class
  *
- * @package       cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskTest extends CakeTestCase {
 

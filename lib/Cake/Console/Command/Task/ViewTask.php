@@ -22,7 +22,7 @@ App::uses('BakeTask', 'Console/Command/Task');
 /**
  * Task class for creating and updating view files.
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class ViewTask extends BakeTask {
 

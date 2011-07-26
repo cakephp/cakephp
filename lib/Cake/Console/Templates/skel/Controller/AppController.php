@@ -15,7 +15,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app
+ * @package       app.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -28,7 +28,7 @@ App::uses('Controller', 'Controller');
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
- * @package       app
+ * @package       Cake.Console.Templates.skel.Controller
  */
 class AppController extends Controller {
 }

@@ -23,7 +23,7 @@
  * Add your application-wide methods in the class below, your shells
  * will inherit them.
  *
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class AppShell extends Shell {
 

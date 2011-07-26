@@ -19,7 +19,7 @@
 /**
  * Provides a very basic 'interactive' console for CakePHP apps.
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class ConsoleShell extends Shell {
 

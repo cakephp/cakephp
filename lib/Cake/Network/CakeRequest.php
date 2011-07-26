@@ -26,7 +26,7 @@ App::uses('Set', 'Utility');
  *
  * `$request['controller']` or `$request->controller`.
  *
- * @package cake.libs
+ * @package       Cake.Network
  */
 class CakeRequest implements ArrayAccess {
 /**

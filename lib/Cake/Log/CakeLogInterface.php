@@ -4,7 +4,7 @@
  * CakeLogStreamInterface is the interface that should be implemented
  * by all classes that are going to be used as Log streams.
  *
- * @package cake.libs
+ * @package       Cake.Log
  */
 interface CakeLogInterface {
 /**

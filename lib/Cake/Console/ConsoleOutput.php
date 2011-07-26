@@ -40,7 +40,7 @@
  * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
  * at this time.
  *
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class ConsoleOutput {
 /**

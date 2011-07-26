@@ -26,7 +26,7 @@ App::uses('File', 'Utility');
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class Shell extends Object {
 

@@ -21,7 +21,7 @@ App::uses('Folder', 'Utility');
  * Template Task can generate templated output Used in other Tasks.
  * Acts like a simplified View class.
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class TemplateTask extends Shell {
 

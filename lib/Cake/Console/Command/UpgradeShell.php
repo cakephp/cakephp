@@ -4,7 +4,7 @@ App::uses('Folder', 'Utility');
 /**
  * A shell class to help developers upgrade applications to CakePHP 2.0
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class UpgradeShell extends Shell {
 

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -48,7 +48,7 @@ class TEST_DATABASE_CONFIG {
 /**
  * DbConfigTest class
  *
- * @package       cake.tests.cases.console.libs.tasks
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class DbConfigTaskTest extends CakeTestCase {
 

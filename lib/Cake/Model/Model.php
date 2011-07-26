@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.model
+ * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -38,7 +38,7 @@ App::uses('Xml', 'Utility');
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment' primary key.
  *
- * @package       cake.libs.model
+ * @package       Cake.Model
  * @link          http://book.cakephp.org/view/1000/Models
  */
 class Model extends Object {

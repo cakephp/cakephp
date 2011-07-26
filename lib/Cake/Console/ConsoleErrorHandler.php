@@ -23,7 +23,7 @@ App::uses('CakeLog', 'Log');
  * Error Handler for Cake console. Does simple printing of the 
  * exception that occurred and the stack trace of the error.
  *
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class ConsoleErrorHandler extends ErrorHandler {
 

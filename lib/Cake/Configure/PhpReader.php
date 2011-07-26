@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.libs.config
+ * @package       Cake.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@
  * Files compatible with PhpReader should define a `$config` variable, that
  * contains all of the configuration data contained in the file.
  *
- * @package cake.libs.config
+ * @package       Cake.Configure
  */
 class PhpReader implements ConfigReaderInterface {
 /**

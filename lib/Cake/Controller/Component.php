@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.controller
+ * @package       Cake.Controller
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -34,7 +34,7 @@ App::uses('ComponentCollection', 'Controller');
  *    but before Controller::afterFilter().
  * - `beforeRedirect()` - Fired before a redirect() is done.
  *
- * @package       cake.libs.controller
+ * @package       Cake.Controller
  * @link          http://book.cakephp.org/view/993/Components
  * @see Controller::$components
  */

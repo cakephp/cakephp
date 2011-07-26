@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.tests.cases.console.libs.Shells
+ * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,7 +27,7 @@ App::uses('SchemaShell', 'Console/Command');
 /**
  * Test for Schema database management
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Console.Command
  */
 class SchemaShellTestSchema extends CakeSchema {
 
@@ -87,7 +87,7 @@ class SchemaShellTestSchema extends CakeSchema {
 /**
  * SchemaShellTest class
  *
- * @package       cake.tests.cases.console.libs.Shells
+ * @package       Cake.Test.Case.Console.Command
  */
 class SchemaShellTest extends CakeTestCase {
 

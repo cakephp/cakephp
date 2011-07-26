@@ -23,7 +23,7 @@ App::uses('DbAcl', 'Model');
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
  * being enabled.  Be sure to turn it off when using this shell.
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class AclShell extends Shell {
 

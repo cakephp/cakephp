@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 /**
  * Test for Schema database management
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Model
  */
 class MyAppSchema extends CakeSchema {
 
@@ -125,7 +125,7 @@ class MyAppSchema extends CakeSchema {
 /**
  * TestAppSchema class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class TestAppSchema extends CakeSchema {
 
@@ -239,7 +239,7 @@ class TestAppSchema extends CakeSchema {
 /**
  * SchmeaPost class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaPost extends CakeTestModel {
 
@@ -279,7 +279,7 @@ class SchemaPost extends CakeTestModel {
 /**
  * SchemaComment class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaComment extends CakeTestModel {
 
@@ -311,7 +311,7 @@ class SchemaComment extends CakeTestModel {
 /**
  * SchemaTag class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaTag extends CakeTestModel {
 
@@ -343,7 +343,7 @@ class SchemaTag extends CakeTestModel {
 /**
  * SchemaDatatype class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaDatatype extends CakeTestModel {
 
@@ -373,7 +373,7 @@ class SchemaDatatype extends CakeTestModel {
  *
  * @uses          CakeTestModel
  * @package
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class Testdescribe extends CakeTestModel {
 
@@ -389,7 +389,7 @@ class Testdescribe extends CakeTestModel {
 /**
  * SchemaCrossDatabase class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaCrossDatabase extends CakeTestModel {
 
@@ -421,7 +421,7 @@ class SchemaCrossDatabase extends CakeTestModel {
 /**
  * SchemaCrossDatabaseFixture class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaCrossDatabaseFixture extends CakeTestFixture {
 
@@ -466,7 +466,7 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
 /**
  * SchemaPrefixAuthUser class
  *
- * @package       cake.tests.cases.libs.model
+ * @package       Cake.Test.Case.Model
  */
 class SchemaPrefixAuthUser extends CakeTestModel {
 /**
@@ -492,7 +492,7 @@ class SchemaPrefixAuthUser extends CakeTestModel {
 /**
  * CakeSchemaTest
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Model
  */
 class CakeSchemaTest extends CakeTestCase {
 

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Core
  * @since         CakePHP(tm) v 1.2.0.6001
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -58,7 +58,7 @@
  * which application controllers App knows about.
  *
  * @link          http://book.cakephp.org/view/933/The-App-Class
- * @package       cake.libs
+ * @package       Cake.Core
  */
 class App {
 

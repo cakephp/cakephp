@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('SessionHelper', 'View/Helper');
 /**
  * SessionHelperTest class
  *
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  */
 class SessionHelperTest extends CakeTestCase {
 

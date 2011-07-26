@@ -22,7 +22,7 @@ App::uses('File', 'Utility');
 /**
  * API shell to show method signatures of CakePHP core classes.
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class ApiShell extends Shell {
 

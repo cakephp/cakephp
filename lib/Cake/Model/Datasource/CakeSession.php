@@ -17,7 +17,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v .0.10.0.1222
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +31,7 @@ App::uses('Security', 'Utility');
  * Cake abstracts the handling of sessions. There are several convenient methods to access session information.
  * This class is the implementation of those methods. They are mostly used by the Session Component.
  *
- * @package       cake.libs
+ * @package       Cake.Model.Datasource
  */
 class CakeSession {
 
@@ -693,7 +693,7 @@ class CakeSession {
  * Interface for Session handlers.  Custom session handler classes should implement
  * this interface as it allows CakeSession know how to map methods to session_set_save_handler()
  *
- * @package cake.libs
+ * @package       Cake.Model.Datasource
  */
 interface CakeSessionHandlerInterface {
 /**

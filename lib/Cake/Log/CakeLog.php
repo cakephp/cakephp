@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Log
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -42,7 +42,7 @@
  * using CakeLogs's methods.  If you don't configure any adapters, and write to the logs
  * a default FileLog will be autoconfigured for you.
  *
- * @package       cake.libs
+ * @package       Cake.Log
  */
 class CakeLog {
 

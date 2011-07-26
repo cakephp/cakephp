@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.9.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('AppHelper', 'View/Helper');
  *
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
- * @package       cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @link http://book.cakephp.org/view/1434/HTML
  */
 class HtmlHelper extends AppHelper {

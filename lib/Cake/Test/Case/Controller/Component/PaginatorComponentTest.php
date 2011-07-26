@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,7 +27,7 @@ App::uses('CakeResponse', 'Network');
 /**
  * PaginatorTestController class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class PaginatorTestController extends Controller {
 /**
@@ -58,7 +58,7 @@ class PaginatorTestController extends Controller {
 /**
  * PaginatorControllerPost class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class PaginatorControllerPost extends CakeTestModel {
 
@@ -125,7 +125,7 @@ class PaginatorControllerPost extends CakeTestModel {
 /**
  * ControllerPaginateModel class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class ControllerPaginateModel extends CakeTestModel {
 
@@ -168,7 +168,7 @@ class ControllerPaginateModel extends CakeTestModel {
 /**
  * PaginatorControllerCommentclass
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class PaginatorControllerComment extends CakeTestModel {
 

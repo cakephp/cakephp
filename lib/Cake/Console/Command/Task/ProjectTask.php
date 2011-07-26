@@ -25,7 +25,7 @@ App::uses('Security', 'Utility');
 /**
  * Task class for creating new project apps and plugins
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class ProjectTask extends Shell {
 

@@ -24,7 +24,7 @@ App::uses('Validation', 'Utility');
 /**
  * Task class for creating and updating model files.
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class ModelTask extends BakeTask {
 

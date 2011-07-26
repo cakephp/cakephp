@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.cases.libs.controller.components.auth
+ * @package       Cake.Test.Case.Controller.Component.Auth
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ require_once  CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
 /**
  * Test case for DigestAuthentication
  *
- * @package cake.test.cases.controller.components.auth
+ * @package       Cake.Test.Case.Controller.Component.Auth
  */
 class DigestAuthenticateTest extends CakeTestCase {
 

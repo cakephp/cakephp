@@ -5,7 +5,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 /**
  * This class helpes in indirectly testing the functionaliteies of CakeTestCase::assertTags
  *
- * @package       cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  */
 class AssertTagsTestCase extends CakeTestCase {
 

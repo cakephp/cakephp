@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.config
+ * @package       Cake.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -47,7 +47,7 @@
  * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be 
  * converted to their boolean equivalents.
  *
- * @package cake.config
+ * @package       Cake.Configure
  * @see http://php.net/parse_ini_file
  */
 class IniReader implements ConfigReaderInterface {

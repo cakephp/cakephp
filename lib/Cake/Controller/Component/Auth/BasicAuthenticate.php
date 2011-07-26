@@ -37,7 +37,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * In your login function just call `$this->Auth->login()` without any checks for POST data.  This
  * will send the authentication headers, and trigger the login dialog in the browser/client.
  *
- * @package cake.libs.controller.components.auth
+ * @package       Cake.Controller.Component.Auth
  * @since 2.0
  */
 class BasicAuthenticate extends BaseAuthenticate {

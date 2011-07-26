@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.4560
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +31,7 @@ App::uses('String', 'Utility');
  *
  * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
  *
- * @package       cake.libs
+ * @package       Cake.Utility
  * @link          http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 class Debugger {

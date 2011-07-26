@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('Model', 'Model');
 /**
  * RequestActionPost class
  *
- * @package       cake.tests.cases.libs.object
+ * @package       Cake.Test.Case.Core
  */
 class RequestActionPost extends CakeTestModel {
 
@@ -49,7 +49,7 @@ class RequestActionPost extends CakeTestModel {
 /**
  * RequestActionController class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Core
  */
 class RequestActionController extends Controller {
 
@@ -136,7 +136,7 @@ class RequestActionController extends Controller {
 /**
  * TestObject class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Core
  */
 class TestObject extends Object {
 
@@ -278,7 +278,7 @@ class TestObject extends Object {
 /**
  * ObjectTestModel class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Core
  */
 class ObjectTestModel extends CakeTestModel {
 	public $useTable = false;
@@ -288,7 +288,7 @@ class ObjectTestModel extends CakeTestModel {
 /**
  * Object Test class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Core
  */
 class ObjectTest extends CakeTestCase {
 

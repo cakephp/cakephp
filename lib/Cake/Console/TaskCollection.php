@@ -21,7 +21,7 @@ App::uses('ObjectCollection', 'Utility');
  * Collection object for Tasks.  Provides features
  * for lazily loading tasks, and firing callbacks on loaded tasks.
  *
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class TaskCollection extends ObjectCollection {
 /**

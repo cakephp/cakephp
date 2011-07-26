@@ -18,7 +18,7 @@ App::uses('Security', 'Utility');
 /**
  * Base Authentication class with common methods and properties.
  *
- * @package cake.libs.controller.components.auth
+ * @package       Cake.Controller.Component.Auth
  */
 abstract class BaseAuthenticate {
 

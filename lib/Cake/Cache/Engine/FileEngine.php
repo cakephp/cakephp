@@ -23,7 +23,7 @@
 /**
  * File Storage engine for cache
  *
- * @package       cake.libs.cache
+ * @package       Cake.Cache.Engine
  */
 class FileEngine extends CacheEngine {
 

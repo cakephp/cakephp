@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Cache
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -41,7 +41,7 @@ App::uses('Inflector', 'Utility');
  * general all Cache operations are supported by all cache engines.  However, Cache::increment() and
  * Cache::decrement() are not supported by File caching.
  *
- * @package    cake.libs
+ * @package       Cake.Cache
  */
 class Cache {
 
@@ -484,7 +484,7 @@ class Cache {
 /**
  * Storage engine for CakePHP caching
  *
- * @package       cake.libs
+ * @package       Cake.Cache
  */
 abstract class CacheEngine {
 

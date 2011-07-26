@@ -22,7 +22,7 @@ App::uses('ClassRegistry', 'Utility');
 /**
  * Task class for creating and updating test files.
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class TestTask extends BakeTask {
 

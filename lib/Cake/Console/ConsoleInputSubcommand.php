@@ -21,7 +21,7 @@
  * Created when you call ConsoleOptionParser::addSubcommand()
  *
  * @see ConsoleOptionParser::addSubcommand()
- * @package Cake.Console
+ * @package       Cake.Console
  */
 class ConsoleInputSubcommand {
 

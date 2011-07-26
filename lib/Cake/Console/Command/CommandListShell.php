@@ -21,7 +21,7 @@ App::uses('Inflector', 'Utility');
 /**
  * Shows a list of commands available from the console.
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class CommandListShell extends Shell {
 

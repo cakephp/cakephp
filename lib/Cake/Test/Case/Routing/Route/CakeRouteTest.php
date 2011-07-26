@@ -6,7 +6,7 @@ App::uses('Router', 'Routing');
 /**
  * Test case for CakeRoute
  *
- * @package cake.tests.cases.libs.
+ * @package       Cake.Test.Case.Routing.Route
  **/
 class CakeRouteTestCase extends CakeTestCase {
 /**

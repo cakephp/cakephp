@@ -4,7 +4,7 @@ App::uses('Router', 'Routing');
 /**
  * test case for PluginShortRoute
  *
- * @package cake.tests.libs
+ * @package       Cake.Test.Case.Routing.Route
  */
 class PluginShortRouteTestCase extends  CakeTestCase {
 /**

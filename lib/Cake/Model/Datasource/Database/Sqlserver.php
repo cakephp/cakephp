@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.model.datasources.dbo
+ * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('DboSource', 'Model/Datasource');
  * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
  * and `pdo_sqlsrv` extensions to be enabled.
  *
- * @package       cake.libs.model.datasources.dbo
+ * @package       Cake.Model.Datasource.Database
  */
 class Sqlserver extends DboSource {
 

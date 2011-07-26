@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -49,7 +49,7 @@
  *
  * This would allow you to have different pagination settings for `Comment` and `Post` models.
  *
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  */
 class PaginatorComponent extends Component {
 

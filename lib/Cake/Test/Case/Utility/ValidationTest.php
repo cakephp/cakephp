@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +21,7 @@ App::uses('Validation', 'Utility');
 /**
  * CustomValidator class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Utility
  */
 class CustomValidator {
 
@@ -42,7 +42,7 @@ class CustomValidator {
  *
  * Used to test pass through of Validation
  *
- * @package cake.tests.cases.libs
+ * @package       Cake.Test.Case.Utility
  */
 class TestNlValidation {
 /**
@@ -69,7 +69,7 @@ class TestNlValidation {
  *
  * Used to test pass through of Validation
  *
- * @package cake.tests.cases.libs
+ * @package       Cake.Test.Case.Utility
  */
 class TestDeValidation {
 /**
@@ -86,7 +86,7 @@ class TestDeValidation {
 /**
  * Test Case for Validation Class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Utility
  */
 class ValidationTest extends CakeTestCase {
 

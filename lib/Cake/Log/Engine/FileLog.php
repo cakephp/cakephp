@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       cake.libs.log
+ * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('CakeLogInterface', 'Log');
  * File Storage stream for Logging.  Writes logs to different files
  * based on the type of log it is.
  *
- * @package cake.libs.log
+ * @package       Cake.Log.Engine
  */
 class FileLog implements CakeLogInterface {
 

@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.5331
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@
  *
  * Generates a tree of data for use testing the tree behavior
  *
- * @package       cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  */
 class NumberTreeTwoFixture extends CakeTestFixture {
 

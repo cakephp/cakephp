@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Core
  * @since         CakePHP(tm) v 1.0.0.2363
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +26,7 @@ App::uses('Set', 'Utility');
  * as methods for loading additional configuration files or storing runtime configuration
  * for future use.
  *
- * @package       cake.libs
+ * @package       Cake.Core
  * @link          http://book.cakephp.org/view/924/The-Configuration-Class
  */
 class Configure {
@@ -363,7 +363,7 @@ class Configure {
 /**
  * An interface for creating objects compatible with Configure::load()
  *
- * @package cake.libs
+ * @package       Cake.Core
  */
 interface ConfigReaderInterface {
 /**

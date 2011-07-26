@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.4116
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +21,7 @@ App::uses('CakeRequest', 'Network');
 /**
  * Localization
  *
- * @package       cake.libs
+ * @package       Cake.I18n
  */
 class L10n {
 

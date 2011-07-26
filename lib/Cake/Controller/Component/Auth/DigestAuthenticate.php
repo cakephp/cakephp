@@ -51,7 +51,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * login methods.  For example `User.digest_pass` could be used for a digest password, while `User.password` would
  * store the password hash for use with other methods like Basic or Form.
  *
- * @package cake.libs.controller.components.auth
+ * @package       Cake.Controller.Component.Auth
  * @since 2.0
  */
 class DigestAuthenticate extends BaseAuthenticate {

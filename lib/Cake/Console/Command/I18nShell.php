@@ -19,7 +19,7 @@
 /**
  * Shell for I18N management.
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class I18nShell extends Shell {
 

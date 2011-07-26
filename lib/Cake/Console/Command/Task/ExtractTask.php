@@ -21,7 +21,7 @@ App::uses('Folder', 'Utility');
 /**
  * Language string extractor
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class ExtractTask extends Shell {
 

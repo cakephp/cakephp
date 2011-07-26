@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.view
+ * @package       Cake.View
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('Router', 'Routing');
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * @package       cake.libs.view
+ * @package       Cake.View
  */
 class Helper extends Object {
 

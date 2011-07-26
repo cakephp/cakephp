@@ -27,7 +27,7 @@ App::uses('CakeTestLoader', 'TestSuite');
  * Provides a CakePHP wrapper around PHPUnit.
  * Adds in CakePHP's fixtures and gives access to plugin, app and core test cases
  *
- * @package Cake.Console.Command
+ * @package       Cake.Console.Command
  */
 class TestsuiteShell extends Shell {
 

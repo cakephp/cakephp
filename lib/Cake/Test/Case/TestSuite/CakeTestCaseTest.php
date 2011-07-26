@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.libs.
+ * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +31,7 @@ if (!class_exists('AppController', false)) {
 /**
  * CakeTestCaseTest
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestCaseTest extends CakeTestCase {
 

@@ -30,7 +30,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * When configuring FormAuthenticate you can pass in settings to which fields, model and additional conditions
  * are used. See FormAuthenticate::$settings for more information.
  *
- * @package cake.libs.controller.components.auth
+ * @package       Cake.Controller.Component.Auth
  * @since 2.0
  * @see AuthComponent::$authenticate
  */

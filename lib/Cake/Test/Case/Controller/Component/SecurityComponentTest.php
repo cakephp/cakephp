@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +23,8 @@ App::uses('Controller', 'Controller');
 /**
 * TestSecurityComponent
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Controller.Component
+* @package       Cake.Test.Case.Controller.Component
 */
 class TestSecurityComponent extends SecurityComponent {
 
@@ -42,8 +42,8 @@ class TestSecurityComponent extends SecurityComponent {
 /**
 * SecurityTestController
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Controller.Component
+* @package       Cake.Test.Case.Controller.Component
 */
 class SecurityTestController extends Controller {
 
@@ -110,7 +110,7 @@ class SecurityTestController extends Controller {
 /**
  * SecurityComponentTest class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class SecurityComponentTest extends CakeTestCase {
 

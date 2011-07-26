@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,7 +22,7 @@ App::uses('String', 'Utility');
 /**
  * Class used for manipulation of arrays.
  *
- * @package       cake.libs
+ * @package       Cake.Utility
  */
 class Set {
 

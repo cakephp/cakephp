@@ -15,7 +15,7 @@ App::import('Model', 'ConnectionManager');
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +26,7 @@ App::import('Model', 'ConnectionManager');
  * Removal of alpahnumeric characters, SQL-safe slash-added strings, HTML-friendly strings,
  * and all of the above on arrays.
  *
- * @package       cake.libs
+ * @package       Cake.Utility
  */
 class Sanitize {
 

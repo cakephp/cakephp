@@ -19,7 +19,7 @@
 /**
  * Task class for creating and updating the database configuration file.
  *
- * @package Cake.Console.Command.Task
+ * @package       Cake.Console.Command.Task
  */
 class DbConfigTask extends Shell {
 

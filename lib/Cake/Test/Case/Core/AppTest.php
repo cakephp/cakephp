@@ -3,7 +3,7 @@
 /**
  * AppTest class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Core
  */
 class AppTest extends CakeTestCase {
 

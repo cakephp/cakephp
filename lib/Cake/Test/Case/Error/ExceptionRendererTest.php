@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +26,7 @@ App::uses('Router', 'Routing');
 /**
  * Short description for class.
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Error
  */
 class AuthBlueberryUser extends CakeTestModel {
 
@@ -50,7 +50,7 @@ class AuthBlueberryUser extends CakeTestModel {
 /**
  * BlueberryComponent class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Error
  */
 class BlueberryComponent extends Component {
 
@@ -76,7 +76,7 @@ class BlueberryComponent extends Component {
 /**
  * TestErrorController class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Error
  */
 class TestErrorController extends Controller {
 
@@ -121,7 +121,7 @@ class TestErrorController extends Controller {
 /**
  * MyCustomExceptionRenderer class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Error
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer {
 
@@ -137,7 +137,7 @@ class MyCustomExceptionRenderer extends ExceptionRenderer {
 /**
  * Exception class for testing app error handlers and custom errors.
  *
- * @package cake.test.cases.libs
+ * @package       Cake.Test.Case.Error
  */
 class MissingWidgetThingException extends NotFoundException { }
 
@@ -145,7 +145,7 @@ class MissingWidgetThingException extends NotFoundException { }
 /**
  * ExceptionRendererTest class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Error
  */
 class ExceptionRendererTest extends CakeTestCase {
 
