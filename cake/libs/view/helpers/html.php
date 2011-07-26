@@ -346,7 +346,7 @@ class HtmlHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($path, '://') !== false) {
+		if (strpos($path, '//') === 0) {
 			$url = $path;
 		} else {
 			if ($path[0] !== '/') {
@@ -427,7 +427,7 @@ class HtmlHelper extends AppHelper {
 		}
 		$this->__includedScripts[$url] = true;
 
-		if (strpos($url, '://') === false) {
+		if (strpos($url, '//') !== 0) {
 			if ($url[0] !== '/') {
 				$url = JS_URL . $url;
 			}
