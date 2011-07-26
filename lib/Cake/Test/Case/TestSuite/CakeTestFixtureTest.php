@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.libs
+ * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +23,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 /**
  * CakeTestFixtureTestFixture class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureTestFixture extends CakeTestFixture {
 
@@ -67,7 +67,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
 /**
  * StringFieldsTestFixture class
  *
- * @package       cake
+ * @package       Cake.Test.Case.TestSuite
  * @subpackage    cake.cake.tests.cases.libs
  */
 class StringsTestFixture extends CakeTestFixture {
@@ -114,7 +114,7 @@ class StringsTestFixture extends CakeTestFixture {
 /**
  * CakeTestFixtureImportFixture class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureImportFixture extends CakeTestFixture {
 
@@ -136,7 +136,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
 /**
  * CakeTestFixtureDefaultImportFixture class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 
@@ -151,8 +151,8 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 /**
  * FixtureImportTestModel class
  *
- * @package       default
- * @package       cake.tests.cases.libs.
+ * @package       Cake.Test.Case.TestSuite
+ * @package       Cake.Test.Case.TestSuite
  */
 class FixtureImportTestModel extends Model {
 	public $name = 'FixtureImport';
@@ -171,7 +171,7 @@ class FixturePrefixTest extends Model {
 /**
  * Test case for CakeTestFixture
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureTest extends CakeTestCase {
 

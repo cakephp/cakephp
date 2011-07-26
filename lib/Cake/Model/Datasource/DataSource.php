@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.model.datasources
+ * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -20,7 +20,7 @@
 /**
  * DataSource base class
  *
- * @package       cake.libs.model.datasources
+ * @package       Cake.Model.Datasource
  */
 class DataSource extends Object {
 

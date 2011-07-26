@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +30,42 @@ App::uses('HelpFormatter', 'Console');
  * for GetOpt compatible option definition.  Provides a builder pattern implementation
  * for creating shell option parsers.
  *
- * @package       cake.console.libs
+ * ### Options
+ *
+ * Named arguments come in two forms, long and short. Long arguments are preceded
+ * by two - and give a more verbose option name. i.e. `--version`. Short arguments are
+ * preceded by one - and are only one character long.  They usually match with a long option,
+ * and provide a more terse alternative.
+ *
+ * ### Using Options
+ *
+ * Options can be defined with both long and short forms.  By using `$parser->addOption()`
+ * you can define new options.  The name of the option is used as its long form, and you
+ * can supply an additional short form, with the `short` option.
+ *
+ * Calling options can be done using syntax similar to most *nix command line tools. Long options
+ * cane either include an `=` or leave it out.
+ *
+ * `cake myshell command --connection default --name=something`
+ *
+ * Short options can be defined signally or in groups.
+ *
+ * `cake myshell command -cn`
+ *
+ * ### Positional arguments
+ *
+ * If no positional arguments are defined, all of them will be parsed.  If you define positional
+ * arguments any arguments greater than those defined will cause exceptions.  Additionally you can
+ * declare arguments as optional, by setting the required param to false.
+ *
+ * `$parser->addArgument('model', array('required' => false));`
+ *
+ * ### Providing Help text
+ *
+ * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
+ * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
+ *
+ * @package       Cake.Console
  */
 class ConsoleOptionParser {
 
@@ -77,6 +111,7 @@ class ConsoleOptionParser {
 /**
  * Subcommands for this Shell.
  *
+ * @see ConsoleOptionParser::addSubcommand()
  * @var array
  */
 	protected $_subcommands = array();
@@ -84,43 +119,9 @@ class ConsoleOptionParser {
 /**
  * Construct an OptionParser so you can define its behavior
  *
- * ### Options
- *
- * Named arguments come in two forms, long and short. Long arguments are preceded
- * by two - and give a more verbose option name. i.e. `--version`. Short arguments are
- * preceded by one - and are only one character long.  They usually match with a long option,
- * and provide a more terse alternative.
- *
- * ### Using Options
- *
- * Options can be defined with both long and short forms.  By using `$parser->addOption()`
- * you can define new options.  The name of the option is used as its long form, and you
- * can supply an additional short form, with the `short` option.
- *
- * Calling options can be done using syntax similar to most *nix command line tools. Long options
- * cane either include an `=` or leave it out.
- *
- * `cake myshell command --connection default --name=something`
- *
- * Short options can be defined signally or in groups.
- *
- * `cake myshell command -cn`
- *
- * ### Positional arguments
- *
- * If no positional arguments are defined, all of them will be parsed.  If you define positional
- * arguments any arguments greater than those defined will cause exceptions.  Additionally you can
- * declare arguments as optional, by setting the required param to false.
- *
- * `$parser->addArgument('model', array('required' => false));`
- *
- * ### Providing Help text
- *
- * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
- * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
- *
  * @param string $command The command name this parser is for.  The command name is used for generating help.
- * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set. Setting
+ *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
 	public function __construct($command = null, $defaultOptions = true) {
 		$this->_command = $command;
@@ -214,7 +215,8 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task.
  *
- * @param mixed $text The text to set, or null if you want to read. . If an array the text will be imploded with "\n"
+ * @param mixed $text The text to set, or null if you want to read. If an array the 
+ *   text will be imploded with "\n"
  * @return mixed If reading, the value of the description. If setting $this will be returned
  */
 	public function description($text = null) {

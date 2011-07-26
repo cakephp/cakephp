@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.log
+ * @package       Cake.Test.Case.Log.Engine
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +21,7 @@ App::uses('FileLog', 'Log/Engine');
 /**
  * CakeLogTest class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Log.Engine
  */
 class FileLogTest extends CakeTestCase {
 

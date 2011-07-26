@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -32,7 +32,7 @@ if (!defined('FULL_BASE_URL')) {
 /**
  * TheHtmlTestController class
  *
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  */
 class TheHtmlTestController extends Controller {
 
@@ -85,7 +85,7 @@ class TestHtmlHelper extends HtmlHelper {
 /**
  * Html5TestHelper class
  *
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  */
 class Html5TestHelper extends TestHtmlHelper {
 
@@ -114,7 +114,7 @@ class Html5TestHelper extends TestHtmlHelper {
 /**
  * HtmlHelperTest class
  *
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  */
 class HtmlHelperTest extends CakeTestCase {
 

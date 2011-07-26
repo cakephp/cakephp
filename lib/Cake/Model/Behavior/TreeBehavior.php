@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.libs.model.behaviors
+ * @package       Cake.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@
  * Enables a model object to act as a node-based tree. Using Modified Preorder Tree Traversal
  *
  * @see http://en.wikipedia.org/wiki/Tree_traversal
- * @package       cake.libs.model.behaviors
+ * @package       Cake.Model.Behavior
  * @link http://book.cakephp.org/view/1339/Tree
  */
 class TreeBehavior extends ModelBehavior {

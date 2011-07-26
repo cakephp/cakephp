@@ -12,14 +12,14 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Model.Datasource.Session
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * DatabaseSession provides methods to be used with CakeSession.
  *
- * @package cake.libs.session
+ * @package       Cake.Model.Datasource.Session
  */
 class DatabaseSession implements CakeSessionHandlerInterface {
 

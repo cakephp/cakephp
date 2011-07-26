@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +23,7 @@ App::uses('DbAcl', 'Model');
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
  * being enabled.  Be sure to turn it off when using this shell.
  *
- * @package       cake.console.libs
+ * @package       Cake.Console.Command
  */
 class AclShell extends Shell {
 
@@ -32,7 +31,6 @@ class AclShell extends Shell {
  * Contains instance of AclComponent
  *
  * @var AclComponent
- * @access public
  */
 	public $Acl;
 
@@ -40,7 +38,6 @@ class AclShell extends Shell {
  * Contains arguments parsed from the command line.
  *
  * @var array
- * @access public
  */
 	public $args;
 
@@ -48,7 +45,6 @@ class AclShell extends Shell {
  * Contains database source to use
  *
  * @var string
- * @access public
  */
 	public $connection = 'default';
 
@@ -56,7 +52,6 @@ class AclShell extends Shell {
  * Contains tasks to load and instantiate
  *
  * @var array
- * @access public
  */
 	public $tasks = array('DbConfig');
 
@@ -556,7 +551,6 @@ class AclShell extends Shell {
  * get params for standard Acl methods
  *
  * @return array aro, aco, action
- * @access private
  */
 	function __getParams() {
 		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
@@ -585,7 +579,6 @@ class AclShell extends Shell {
  *
  * @param string $type Node type  (ARO/ACO)
  * @return array Variables
- * @access private
  */
 	function __dataVars($type = null) {
 		if ($type == null) {

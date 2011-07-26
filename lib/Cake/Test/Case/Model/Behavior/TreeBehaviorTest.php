@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.cases
+ * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,7 +22,7 @@
  *
  * A test group to run all the component parts
  *
- * @package       cake.tests.cases
+ * @package       Cake.Test.Case.Model.Behavior
  */
 class TreeBehaviorTest extends PHPUnit_Framework_TestSuite {
 

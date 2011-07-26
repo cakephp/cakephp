@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.libs.tests.model.behaviors.acl
+ * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +29,8 @@ App::uses('DbAcl', 'Model');
 /**
 * Test Person class - self joined model
 *
-* @package       cake
-* @package       cake.tests.cases.libs.model.behaviors
+* @package       Cake.Test.Case.Model.Behavior
+* @package       Cake.Test.Case.Model.Behavior
 */
 class AclPerson extends CakeTestModel {
 
@@ -109,8 +109,8 @@ class AclPerson extends CakeTestModel {
 /**
 * AclUser class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.model.behaviors
+* @package       Cake.Test.Case.Model.Behavior
+* @package       Cake.Test.Case.Model.Behavior
 */
 class AclUser extends CakeTestModel {
 
@@ -150,8 +150,8 @@ class AclUser extends CakeTestModel {
 /**
 * AclPost class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.model.behaviors
+* @package       Cake.Test.Case.Model.Behavior
+* @package       Cake.Test.Case.Model.Behavior
 */
 class AclPost extends CakeTestModel {
 
@@ -191,8 +191,8 @@ class AclPost extends CakeTestModel {
 /**
 * AclBehaviorTest class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Model.Behavior
+* @package       Cake.Test.Case.Model.Behavior
 */
 class AclBehaviorTest extends CakeTestCase {
 

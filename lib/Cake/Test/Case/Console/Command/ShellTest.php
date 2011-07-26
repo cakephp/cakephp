@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.tests.cases.console.libs
+ * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +26,7 @@ App::uses('Folder', 'Utility');
 /**
  * ShellTestShell class
  *
- * @package       cake.tests.cases.console.libs
+ * @package       Cake.Test.Case.Console.Command
  */
 class ShellTestShell extends Shell {
 
@@ -76,7 +76,7 @@ class ShellTestShell extends Shell {
 /**
  * Class for testing merging vars
  *
- * @package cake.tests.cases.console
+ * @package       Cake.Test.Case.Console.Command
  */
 class TestMergeShell extends Shell {
 	var $tasks = array('DbConfig', 'Fixture');
@@ -86,7 +86,7 @@ class TestMergeShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       cake.tests.cases.console.libs
+ * @package       Cake.Test.Case.Console.Command
  */
 class TestAppleTask extends Shell {
 }
@@ -94,7 +94,7 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       cake.tests.cases.console.libs
+ * @package       Cake.Test.Case.Console.Command
  */
 class TestBananaTask extends Shell {
 }
@@ -102,7 +102,7 @@ class TestBananaTask extends Shell {
 /**
  * ShellTest class
  *
- * @package       cake.tests.cases.console.libs
+ * @package       Cake.Test.Case.Console.Command
  */
 class ShellTest extends CakeTestCase {
 

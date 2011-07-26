@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.model
+ * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -38,7 +38,7 @@ App::uses('Xml', 'Utility');
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment' primary key.
  *
- * @package       cake.libs.model
+ * @package       Cake.Model
  * @link          http://book.cakephp.org/view/1000/Models
  */
 class Model extends Object {
@@ -1600,6 +1600,9 @@ class Model extends Object {
 	}
 
 /**
+ * Backwards compatible passtrough method for:
+ * saveMany(), validateMany(), saveAssociated() and validateAssociated()
+ *
  * Saves multiple individual records for a single model; Also works with a single record, as well as
  * all its associated records.
  *
@@ -1612,7 +1615,7 @@ class Model extends Object {
  *   Should be set to false if database/table does not support transactions.
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
  *
- * @param array $data Record data to save.  This can be either a numerically-indexed array (for saving multiple
+ * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
  * @return mixed If atomic: True on success, or false on failure.
@@ -1623,210 +1626,288 @@ class Model extends Object {
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
 	public function saveAll($data = null, $options = array()) {
+		$options = array_merge(array('validate' => 'first'), $options);
+		if (Set::numeric(array_keys($data))) {
+			if ($options['validate'] === 'only') {
+				return $this->validateMany($data, $options);
+			}
+			return $this->saveMany($data, $options);
+		}
+		if ($options['validate'] === 'only') {
+			$validatesAssoc = $this->validateAssociated($data, $options);
+			if (isset($this->validationErrors[$this->alias]) && $this->validationErrors[$this->alias] === false) {
+				return false;
+			}
+			return $validatesAssoc;
+		}
+		return $this->saveAssociated($data, $options);
+	}
+
+/**
+ * Saves multiple individual records for a single model
+ *
+ * #### Options
+ *
+ * - validate: Set to false to disable validation, true to validate each record before saving,
+ *   'first' to validate *all* records before any are saved (default),
+ * - atomic: If true (default), will attempt to save all records in a single transaction.
+ *   Should be set to false if database/table does not support transactions.
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ *
+ * @param array $data Record data to save. This should be a numerically-indexed array
+ * @param array $options Options to use when saving record data, See $options above.
+ * @return mixed If atomic: True on success, or false on failure.
+ *    Otherwise: array similar to the $data array passed, but values are set to true/false
+ *    depending on whether each record saved successfully.
+ * @access public
+ */
+	public function saveMany($data = null, $options = array()) {
 		if (empty($data)) {
 			$data = $this->data;
 		}
-		$db = $this->getDataSource();
 
 		$options = array_merge(array('validate' => 'first', 'atomic' => true), $options);
 		$this->validationErrors = $validationErrors = array();
-		$validates = true;
-		$return = array();
 
 		if (empty($data) && $options['validate'] !== false) {
 			$result = $this->save($data, $options);
 			return !empty($result);
 		}
 
-		if ($options['atomic'] && $options['validate'] !== 'only') {
+		if ($options['validate'] === 'first') {
+			$validates = $this->validateMany($data, $options);
+			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
+				return $validates;
+			}
+		}
+
+		if ($options['atomic']) {
+			$db = $this->getDataSource();
 			$transactionBegun = $db->begin($this);
 		}
-
-		if (Set::numeric(array_keys($data))) {
-			while ($validates) {
-				$return = array();
-				foreach ($data as $key => $record) {
-					if (!$currentValidates = $this->__save($record, $options)) {
-						$validationErrors[$key] = $this->validationErrors;
-					}
-
-					if ($options['validate'] === 'only' || $options['validate'] === 'first') {
-						$validating = true;
-						if ($options['atomic']) {
-							$validates = $validates && $currentValidates;
-						} else {
-							$validates = $currentValidates;
-						}
-					} else {
-						$validating = false;
-						$validates = $currentValidates;
-					}
-
-					if (!$options['atomic']) {
-						$return[] = $validates;
-					} elseif (!$validates && !$validating) {
-						break;
-					}
-				}
-				$this->validationErrors = $validationErrors;
-
-				switch (true) {
-					case ($options['validate'] === 'only'):
-						return ($options['atomic'] ? $validates : $return);
-					break;
-					case ($options['validate'] === 'first'):
-						$options['validate'] = true;
-					break;
-					default:
-						if ($options['atomic']) {
-							if ($validates) {
-								if ($transactionBegun) {
-									return $db->commit($this) !== false;
-								} else {
-									return true;
-								}
-							}
-							$db->rollback($this);
-							return false;
-						}
-						return $return;
-					break;
-				}
-			}
-			if ($options['atomic'] && !$validates) {
-				$db->rollback($this);
-				return false;
-			}
-			return $return;
-		}
-		$associations = $this->getAssociated();
-
-		while ($validates) {
-			foreach ($data as $association => $values) {
-				if (isset($associations[$association])) {
-					switch ($associations[$association]) {
-						case 'belongsTo':
-							if ($this->{$association}->__save($values, $options)) {
-								$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
-							} else {
-								$validationErrors[$association] = $this->{$association}->validationErrors;
-								$validates = false;
-							}
-							if (!$options['atomic']) {
-								$return[$association][] = $validates;
-							}
-						break;
-					}
-				}
-			}
-
-			if (!$this->__save($data, $options)) {
-				$validationErrors[$this->alias] = $this->validationErrors;
-				$validates = false;
+		$return = array();
+		foreach ($data as $key => $record) {
+			$validates = ($this->create(null) !== null && $this->save($record, $options));
+			if (!$validates) {
+				$validationErrors[$key] = $this->validationErrors;
 			}
 			if (!$options['atomic']) {
-				$return[$this->alias] = $validates;
-			}
-			$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
-
-			foreach ($data as $association => $values) {
-				if (!$validates && !$validating) {
-					break;
-				}
-				if (isset($associations[$association])) {
-					$type = $associations[$association];
-					switch ($type) {
-						case 'hasOne':
-							$values[$this->{$type}[$association]['foreignKey']] = $this->id;
-							if (!$this->{$association}->__save($values, $options)) {
-								$validationErrors[$association] = $this->{$association}->validationErrors;
-								$validates = false;
-							}
-							if (!$options['atomic']) {
-								$return[$association][] = $validates;
-							}
-						break;
-						case 'hasMany':
-							foreach ($values as $i => $value) {
-								$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
-							}
-							$_options = array_merge($options, array('atomic' => false));
-
-							if ($_options['validate'] === 'first') {
-								$_options['validate'] = 'only';
-							}
-							$_return = $this->{$association}->saveAll($values, $_options);
-
-							if ($_return === false || (is_array($_return) && in_array(false, $_return, true))) {
-								$validationErrors[$association] = $this->{$association}->validationErrors;
-								$validates = false;
-							}
-							if (is_array($_return)) {
-								foreach ($_return as $val) {
-									if (!isset($return[$association])) {
-										$return[$association] = array();
-									} elseif (!is_array($return[$association])) {
-										$return[$association] = array($return[$association]);
-									}
-									$return[$association][] = $val;
-								}
-							} else {
-								$return[$association] = $_return;
-							}
-						break;
-					}
-				}
-			}
-			$this->validationErrors = $validationErrors;
-
-			if (isset($validationErrors[$this->alias])) {
-				$this->validationErrors = $validationErrors[$this->alias];
-			}
-
-			switch (true) {
-				case ($options['validate'] === 'only'):
-					return ($options['atomic'] ? $validates : $return);
+				$return[] = $validates;
+			} elseif (!$validates) {
 				break;
-				case ($options['validate'] === 'first'):
-					$options['validate'] = true;
-					$return = array();
-				break;
-				default:
-					if ($options['atomic']) {
-						if ($validates) {
-							if ($transactionBegun) {
-								return $db->commit($this) !== false;
-							} else {
-								return true;
-							}
-						} else {
-							$db->rollback($this);
-						}
-					}
-					return $return;
-				break;
-			}
-			if ($options['atomic'] && !$validates) {
-				$db->rollback($this);
-				return false;
 			}
 		}
-		return $return;
+		$this->validationErrors = $validationErrors;
+
+		if (!$options['atomic']) {
+			return $return;
+		}
+		if ($validates) {
+			if ($transactionBegun) {
+				return $db->commit($this) !== false;
+			} else {
+				return true;
+			}
+		}
+		$db->rollback($this);
+		return false;
 	}
 
 /**
- * Private helper method used by saveAll.
+ * Validates multiple individual records for a single model
  *
- * @return boolean Success
- * @access private
- * @see Model::saveAll()
+ * #### Options
+ *
+ * - atomic: If true (default), returns boolean. If false returns array.
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ *
+ * @param array $data Record data to validate. This should be a numerically-indexed array
+ * @param array $options Options to use when validating record data (see above), See also $options of validates().
+ * @return boolean True on success, or false on failure.
+ * @return mixed If atomic: True on success, or false on failure.
+ *    Otherwise: array similar to the $data array passed, but values are set to true/false
+ *    depending on whether each record validated successfully.
+ * @access public
  */
-	private function __save($data, $options) {
-		if ($options['validate'] === 'first' || $options['validate'] === 'only') {
-			if (!($this->create($data) && $this->validates($options))) {
-				return false;
+	public function validateMany($data, $options = array()) {
+		$options = array_merge(array('atomic' => true), $options);
+		$this->validationErrors = $validationErrors = $return = array();
+		foreach ($data as $key => $record) {
+			$validates = $this->create($record) && $this->validates($options);
+			if (!$validates) {
+				$validationErrors[$key] = $this->validationErrors;
 			}
-		} elseif (!($this->create(null) !== null && $this->save($data, $options))) {
+			$return[] = $validates;
+		}
+		$this->validationErrors = $validationErrors;
+		if (!$options['atomic']) {
+			return $return;
+		}
+		if (empty($this->validationErrors)) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Saves a single record, as well as all its directly associated records.
+ *
+ * #### Options
+ *
+ * - validate: Set to false to disable validation, true to validate each record before saving,
+ *   'first' to validate *all* records before any are saved (default),
+ * - atomic: If true (default), will attempt to save all records in a single transaction.
+ *   Should be set to false if database/table does not support transactions.
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ *
+ * @param array $data Record data to save. This should be an array indexed by association name.
+ * @param array $options Options to use when saving record data, See $options above.
+ * @return mixed If atomic: True on success, or false on failure.
+ *    Otherwise: array similar to the $data array passed, but values are set to true/false
+ *    depending on whether each record saved successfully.
+ * @access public
+ */
+	public function saveAssociated($data = null, $options = array()) {
+		if (empty($data)) {
+			$data = $this->data;
+		}
+
+		$options = array_merge(array('validate' => true, 'atomic' => true), $options);
+		$this->validationErrors = $validationErrors = array();
+
+		if (empty($data) && $options['validate'] !== false) {
+			$result = $this->save($data, $options);
+			return !empty($result);
+		}
+
+		if ($options['validate'] === 'first') {
+			$validates = $this->validateAssociated($data, $options);
+			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
+				return $validates;
+			}
+		}
+		if ($options['atomic']) {
+			$db = $this->getDataSource();
+			$transactionBegun = $db->begin($this);
+		}
+		$associations = $this->getAssociated();
+		$return = array();
+		$validates = true;
+		foreach ($data as $association => $values) {
+			if (isset($associations[$association]) && $associations[$association] === 'belongsTo') {
+				if ($this->{$association}->create(null) !== null && $this->{$association}->save($values, $options)) {
+					$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
+				} else {
+					$validationErrors[$association] = $this->{$association}->validationErrors;
+					$validates = false;
+				}
+				$return[$association][] = $validates;
+			}
+		}
+		if ($validates && !($this->create(null) !== null && $this->save($data, $options))) {
+			$validationErrors[$this->alias] = $this->validationErrors;
+			$validates = false;
+		}
+		$return[$this->alias] = $validates;
+
+		foreach ($data as $association => $values) {
+			if (!$validates) {
+				break;
+			}
+			if (isset($associations[$association])) {
+				$type = $associations[$association];
+				switch ($type) {
+					case 'hasOne':
+						$values[$this->{$type}[$association]['foreignKey']] = $this->id;
+						if (!($this->{$association}->create(null) !== null && $this->{$association}->save($values, $options))) {
+							$validationErrors[$association] = $this->{$association}->validationErrors;
+							$validates = false;
+						}
+						$return[$association][] = $validates;
+					break;
+					case 'hasMany':
+						foreach ($values as $i => $value) {
+							$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
+						}
+						$_return = $this->{$association}->saveMany($values, array_merge($options, array('atomic' => false)));
+						if (in_array(false, $_return, true)) {
+							$validationErrors[$association] = $this->{$association}->validationErrors;
+							$validates = false;
+						}
+						$return[$association] = $_return;
+					break;
+				}
+			}
+		}
+		$this->validationErrors = $validationErrors;
+
+		if (isset($validationErrors[$this->alias])) {
+			$this->validationErrors = $validationErrors[$this->alias];
+		}
+
+		if (!$options['atomic']) {
+			return $return;
+		}
+		if ($validates) {
+			if ($transactionBegun) {
+				return $db->commit($this) !== false;
+			} else {
+				return true;
+			}
+		}
+		$db->rollback($this);
+		return false;
+	}
+
+/**
+ * Validates a single record, as well as all its directly associated records.
+ *
+ * #### Options
+ *
+ * - atomic: If true (default), returns boolean. If false returns array.
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ *
+ * @param array $data Record data to validate. This should be an array indexed by association name.
+ * @param array Options to use when validating record data (see above), See also $options of validates().
+ * @return mixed If atomic: True on success, or false on failure.
+ *    Otherwise: array similar to the $data array passed, but values are set to true/false
+ *    depending on whether each record validated successfully.
+ * @access public
+ */
+	public function validateAssociated($data, $options = array()) {
+		$options = array_merge(array('atomic' => true), $options);
+		$this->validationErrors = $validationErrors = $return = array();
+		if (!($this->create($data) && $this->validates($options))) {
+			$validationErrors[$this->alias] = $this->validationErrors;
+			$return[$this->alias] = false;
+		} else {
+			$return[$this->alias] = true;
+		}
+		$associations = $this->getAssociated();
+		$validates = true;
+		foreach ($data as $association => $values) {
+			if (isset($associations[$association])) {
+				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
+					$validates = $this->{$association}->create($values) && $this->{$association}->validates($options);
+					$return[$association][] = $validates;
+				} elseif($associations[$association] === 'hasMany') {
+					$validates = $this->{$association}->validateMany($values, $options);
+					$return[$association] = $validates;
+				}
+				if (!$validates || (is_array($validates) && in_array(false, $validates, true))) {
+					$validationErrors[$association] = $this->{$association}->validationErrors;
+				}
+			}
+		}
+
+		$this->validationErrors = $validationErrors;
+		if (isset($validationErrors[$this->alias])) {
+			$this->validationErrors = $validationErrors[$this->alias];
+		}
+		if (!$options['atomic']) {
+			return $return;
+		}
+		if ($return[$this->alias] === false || !empty($this->validationErrors)) {
 			return false;
 		}
 		return true;

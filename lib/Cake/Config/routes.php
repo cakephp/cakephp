@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.config
+ * @package       Cake.Config
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -81,3 +81,6 @@
 	if ($namedConfig['rules'] === false) {
 		Router::connectNamed(true);
 	}
+
+	unset($namedConfig, $params, $indexParams, $prefix, $prefixes, $shortParams, $match,
+		$pluginPattern, $plugins, $key, $value);

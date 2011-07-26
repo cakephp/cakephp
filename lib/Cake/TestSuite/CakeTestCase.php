@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.libs
+ * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 /**
  * CakeTestCase class
  *
- * @package       cake.tests.lib
+ * @package       Cake.TestSuite
  */
 abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 

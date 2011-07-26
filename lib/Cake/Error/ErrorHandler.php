@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.error
+ * @package       Cake.Error
  * @since         CakePHP(tm) v 0.10.5.1732
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -92,7 +92,7 @@ App::uses('AppController', 'Controller');
  *
  * Would enable handling for all non Notice errors.
  *
- * @package       cake.libs.error
+ * @package       Cake.Error
  * @see ExceptionRenderer for more information on how to customize exception rendering.
  */
 class ErrorHandler {

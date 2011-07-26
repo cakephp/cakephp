@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Test.Case.Model.Datasource.Database
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +26,7 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 /**
  * DboPostgresTestDb class
  *
- * @package       cake.tests.cases.libs.model.datasources
+ * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class DboPostgresTestDb extends Postgres {
 
@@ -64,7 +64,7 @@ class DboPostgresTestDb extends Postgres {
 /**
  * PostgresTestModel class
  *
- * @package       cake.tests.cases.libs.model.datasources
+ * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class PostgresTestModel extends Model {
 
@@ -157,7 +157,7 @@ class PostgresTestModel extends Model {
 /**
  * PostgresClientTestModel class
  *
- * @package       cake.tests.cases.libs.model.datasources
+ * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class PostgresClientTestModel extends Model {
 
@@ -197,7 +197,7 @@ class PostgresClientTestModel extends Model {
 /**
  * DboPostgresTest class
  *
- * @package       cake.tests.cases.libs.model.datasources.dbo
+ * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class DboPostgresTest extends CakeTestCase {
 

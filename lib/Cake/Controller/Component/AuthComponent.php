@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -33,7 +33,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  *
  * Binds access control with user authentication and session management.
  *
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/view/1250/Authentication
  */
 class AuthComponent extends Component {

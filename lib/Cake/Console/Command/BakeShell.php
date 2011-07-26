@@ -16,7 +16,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +25,7 @@ App::uses('Model', 'Model');
 /**
  * Bake is a command-line code generation utility for automating programmer chores.
  *
- * @package       cake.console.libs
+ * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/view/1522/Code-Generation-with-Bake
  */
 class BakeShell extends Shell {
@@ -35,7 +34,6 @@ class BakeShell extends Shell {
  * Contains tasks to load and instantiate
  *
  * @var array
- * @access public
  */
 	public $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
 

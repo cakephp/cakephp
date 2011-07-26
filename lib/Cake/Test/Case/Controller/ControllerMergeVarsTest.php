@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +23,8 @@ App::uses('Controller', 'Controller');
 /**
  * Test case AppController
  *
- * @package cake
- * @package    cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
+ * @package       Cake.Test.Case.Controller
  */
 class MergeVarsAppController extends Controller {
 
@@ -46,7 +46,7 @@ class MergeVarsAppController extends Controller {
 /**
  * MergeVar Component
  *
- * @package cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
  */
 class MergeVarComponent extends Object {
 
@@ -55,7 +55,7 @@ class MergeVarComponent extends Object {
 /**
  * Additional controller for testing
  *
- * @package cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
  */
 class MergeVariablesController extends MergeVarsAppController {
 
@@ -84,7 +84,7 @@ class MergeVariablesController extends MergeVarsAppController {
 /**
  * MergeVarPlugin App Controller
  *
- * @package cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
  */
 class MergeVarPluginAppController extends MergeVarsAppController {
 
@@ -113,7 +113,7 @@ class MergeVarPluginAppController extends MergeVarsAppController {
 /**
  * MergePostsController
  *
- * @package cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
  */
 class MergePostsController extends MergeVarPluginAppController {
 
@@ -136,7 +136,7 @@ class MergePostsController extends MergeVarPluginAppController {
 /**
  * Test Case for Controller Merging of Vars.
  *
- * @package cake.tests.cases.libs.controller
+ * @package       Cake.Test.Case.Controller
  */
 class ControllerMergeVarsTest extends CakeTestCase {
 

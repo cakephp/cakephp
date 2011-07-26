@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -73,7 +73,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 /**
  * JsHelper TestCase.
  *
- * @package       cake.tests.cases.libs.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  */
 class JsHelperTest extends CakeTestCase {
 /**
@@ -685,7 +685,7 @@ class JsHelperTest extends CakeTestCase {
 /**
  * JsBaseEngine Class Test case
  *
- * @package cake.tests.view.helpers
+ * @package       Cake.Test.Case.View.Helper
  */
 class JsBaseEngineTest extends CakeTestCase {
 /**

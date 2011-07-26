@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.libs
+ * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +31,7 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 /**
  * Class to customize loading of test suites from CLI
  *
- * @package       cake.tests.lib
+ * @package       Cake.TestSuite
  */
 class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 

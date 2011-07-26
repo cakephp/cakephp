@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +23,7 @@ App::uses('CakeLog', 'Log');
  * Error Handler for Cake console. Does simple printing of the 
  * exception that occurred and the stack trace of the error.
  *
- * @package       cake.console.libs
+ * @package       Cake.Console
  */
 class ConsoleErrorHandler extends ErrorHandler {
 
@@ -64,7 +63,8 @@ class ConsoleErrorHandler extends ErrorHandler {
 	}
 
 /**
- * Handle errors in the console environment.
+ * Handle errors in the console environment. Writes errors to stderr,
+ * and logs messages if Configure::read('debug') is 0.
  *
  * @param int $code Error code
  * @param string $description Description of the error.

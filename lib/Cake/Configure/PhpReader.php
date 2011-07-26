@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.libs.config
+ * @package       Cake.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +21,10 @@
  * PHP Reader allows Configure to load configuration values from
  * files containing simple PHP arrays.
  *
- * @package cake.libs.config
+ * Files compatible with PhpReader should define a `$config` variable, that
+ * contains all of the configuration data contained in the file.
+ *
+ * @package       Cake.Configure
  */
 class PhpReader implements ConfigReaderInterface {
 /**
@@ -46,12 +49,11 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Read a config file and return its contents.
  *
- * Keys with `.` will be treated as values in plugins.  Instead of reading from
+ * Files with `.` in the name will be treated as values in plugins.  Instead of reading from
  * the initialized path, plugin keys will be located using App::pluginPath().
  *
- *
  * @param string $key The identifier to read from.  If the key has a . it will be treated
- *   as a plugin prefix.
+ *  as a plugin prefix.
  * @return array Parsed configuration values.
  * @throws ConfigureException when files don't exist or they don't contain `$config`.
  *  Or when files contain '..' as this could lead to abusive reads.

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.model.datasources.dbo
+ * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.9.1.114
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('DboSource', 'Model/Datasource');
  *
  * Long description for class
  *
- * @package       cake.libs.model.datasources.dbo
+ * @package       Cake.Model.Datasource.Database
  */
 class Postgres extends DboSource {
 

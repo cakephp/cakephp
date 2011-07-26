@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       cake.libs.model.behaviors
+ * @package       Cake.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +23,7 @@ App::uses('AclNode', 'Model');
 /**
  * ACL behavior
  *
- * @package       cake.libs.model.behaviors
+ * @package       Cake.Model.Behavior
  * @link http://book.cakephp.org/view/1320/ACL
  */
 class AclBehavior extends ModelBehavior {

@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.cache
+ * @package       Cake.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +21,7 @@
 /**
  * APC storage engine for cache
  *
- * @package       cake.libs.cache
+ * @package       Cake.Cache.Engine
  */
 class ApcEngine extends CacheEngine {
 

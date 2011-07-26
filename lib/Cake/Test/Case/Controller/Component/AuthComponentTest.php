@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,8 +25,8 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
 /**
 * TestAuthComponent class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Controller.Component
+* @package       Cake.Test.Case.Controller.Component
 */
 class TestAuthComponent extends AuthComponent {
 
@@ -53,8 +53,8 @@ class TestAuthComponent extends AuthComponent {
 /**
 * AuthUser class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Controller.Component
+* @package       Cake.Test.Case.Controller.Component
 */
 class AuthUser extends CakeTestModel {
 
@@ -79,8 +79,8 @@ class AuthUser extends CakeTestModel {
 /**
 * AuthTestController class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Controller.Component
+* @package       Cake.Test.Case.Controller.Component
 */
 class AuthTestController extends Controller {
 
@@ -216,7 +216,7 @@ class AuthTestController extends Controller {
 /**
  * AjaxAuthController class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class AjaxAuthController extends Controller {
 
@@ -294,8 +294,8 @@ class AjaxAuthController extends Controller {
 /**
 * AuthComponentTest class
 *
-* @package       cake
-* @package       cake.tests.cases.libs.controller.components
+* @package       Cake.Test.Case.Controller.Component
+* @package       Cake.Test.Case.Controller.Component
 */
 class AuthComponentTest extends CakeTestCase {
 
@@ -923,7 +923,7 @@ class AuthComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testAdminRoute() {
-		$prefixes = Configure::read('Routing.prefixes');
+		$pref = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
@@ -943,7 +943,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->startup($this->Controller);
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
-		Configure::write('Routing.prefixes', $prefixes);
+		Configure::write('Routing.prefixes', $pref);
 	}
 
 /**

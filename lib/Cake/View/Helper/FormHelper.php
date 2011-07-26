@@ -14,7 +14,7 @@
  *
  * @copyright   Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link        http://cakephp.org CakePHP(tm) Project
- * @package     cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @since       CakePHP(tm) v 0.10.0.1076
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +26,7 @@ App::uses('AppHelper', 'View/Helper');
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @package     cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @link http://book.cakephp.org/view/1383/Form
  */
 class FormHelper extends AppHelper {
@@ -459,8 +459,7 @@ class FormHelper extends AppHelper {
 		if ($model !== false) {
 			$this->setEntity($model, true);
 		}
-		$attributes = sprintf('action="%s" ', $action) . $this->_parseAttributes($htmlAttributes, null, '');
-		return $this->Html->useTag('form', $action, $attributes) . $append;
+		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
 /**

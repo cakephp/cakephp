@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ class_exists('AclComponent');
 /**
  * AclNodeTwoTestBase class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class AclNodeTwoTestBase extends AclNode {
 
@@ -48,7 +48,7 @@ class AclNodeTwoTestBase extends AclNode {
 /**
  * AroTwoTest class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class AroTwoTest extends AclNodeTwoTestBase {
 
@@ -80,7 +80,7 @@ class AroTwoTest extends AclNodeTwoTestBase {
 /**
  * AcoTwoTest class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class AcoTwoTest extends AclNodeTwoTestBase {
 
@@ -112,7 +112,7 @@ class AcoTwoTest extends AclNodeTwoTestBase {
 /**
  * PermissionTwoTest class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class PermissionTwoTest extends CakeTestModel {
 
@@ -160,7 +160,7 @@ class PermissionTwoTest extends CakeTestModel {
 /**
  * DbAclTwoTest class
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class DbAclTwoTest extends DbAcl {
 
@@ -181,7 +181,7 @@ class DbAclTwoTest extends DbAcl {
 /**
  * Short description for class.
  *
- * @package       cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class AclComponentTest extends CakeTestCase {
 /**
@@ -251,7 +251,7 @@ class AclComponentTest extends CakeTestCase {
 /**
  * Test case for the IniAcl implementation
  *
- * @package cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class IniAclTest extends CakeTestCase {
 
@@ -302,7 +302,7 @@ class IniAclTest extends CakeTestCase {
 /**
  * Test case for AclComponent using the DbAcl implementation.
  *
- * @package cake.tests.cases.libs.controller.components
+ * @package       Cake.Test.Case.Controller.Component
  */
 class DbAclTest extends CakeTestCase {
 /**

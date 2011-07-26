@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.model
+ * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.x.1402
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('DataSource', 'Model/Datasource');
 /**
  * Manages loaded instances of DataSource objects
  *
- * @package       cake.libs.model
+ * @package       Cake.Model
  */
 class ConnectionManager {
 

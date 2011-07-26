@@ -12,13 +12,14 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
- * @package       cake.console.shells
+ * Provides a very basic 'interactive' console for CakePHP apps.
+ *
+ * @package       Cake.Console.Command
  */
 class ConsoleShell extends Shell {
 
@@ -26,7 +27,6 @@ class ConsoleShell extends Shell {
  * Available binding types
  *
  * @var array
- * @access public
  */
 	public $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
 
@@ -34,7 +34,6 @@ class ConsoleShell extends Shell {
  * Chars that describe invalid commands
  *
  * @var array
- * @access public
  */
 	public $badCommandChars = array('$', ';');
 
@@ -42,7 +41,6 @@ class ConsoleShell extends Shell {
  * Available models
  *
  * @var array
- * @access public
  */
 	public $models = array();
 

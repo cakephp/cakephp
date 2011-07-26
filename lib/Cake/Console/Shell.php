@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,7 +26,7 @@ App::uses('File', 'Utility');
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
- * @package       cake.console.shells
+ * @package       Cake.Console
  */
 class Shell extends Object {
 
@@ -72,7 +71,6 @@ class Shell extends Object {
  * Contains arguments parsed from the command line.
  *
  * @var array
- * @access public
  */
 	public $args = array();
 
@@ -80,7 +78,6 @@ class Shell extends Object {
  * The name of the shell in camelized.
  *
  * @var string
- * @access public
  */
 	public $name = null;
 
@@ -88,7 +85,6 @@ class Shell extends Object {
  * Contains tasks to load and instantiate
  *
  * @var array
- * @access public
  */
 	public $tasks = array();
 
@@ -96,7 +92,6 @@ class Shell extends Object {
  * Contains the loaded tasks
  *
  * @var array
- * @access public
  */
 	public $taskNames = array();
 
@@ -104,7 +99,6 @@ class Shell extends Object {
  * Contains models to load and instantiate
  *
  * @var array
- * @access public
  */
 	public $uses = array();
 
@@ -146,6 +140,9 @@ class Shell extends Object {
 /**
  *  Constructs this Shell instance.
  *
+ * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
+ * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
+ * @param ConsoleInput $stdin A ConsoleInput object for stdin.
  */
 	function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if ($this->name == null) {
@@ -180,16 +177,20 @@ class Shell extends Object {
  * acts as constructor for subclasses
  * allows configuration of tasks prior to shell execution
  *
+ * @return void
  */
 	public function initialize() {
 		$this->_loadModels();
 	}
 
 /**
- * Starts up the Shell
- * allows for checking and configuring prior to command or main execution
- * can be overridden in subclasses
+ * Starts up the Shell and displays the welcome message.
+ * Allows for checking and configuring prior to command or main execution
  *
+ * Override this method if you want to remove the welcome information,
+ * or otherwise modify the pre-command flow.
+ *
+ * @return void
  */
 	public function startup() {
 		$this->_welcome();
@@ -198,6 +199,7 @@ class Shell extends Object {
 /**
  * Displays a header for the shell
  *
+ * @return void
  */
 	protected function _welcome() {
 		$this->out();
@@ -209,10 +211,10 @@ class Shell extends Object {
 	}
 
 /**
- * if public $uses = true
+ * If $uses = true
  * Loads AppModel file and constructs AppModel class
  * makes $this->AppModel available to subclasses
- * if public $uses is an array of models will load those models
+ * If public $uses is an array of models will load those models
  *
  * @return bool
  */
@@ -300,6 +302,10 @@ class Shell extends Object {
  *
  *	`return $this->dispatchShell('schema create DbAcl');`
  *
+ * Avoid using this form if you have string arguments, with spaces in them.
+ * The dispatched will be invoked incorrectly. Only use this form for simple
+ * command dispatching.
+ *
  * With an array command:
  *
  * `return $this->dispatchShell('schema', 'create', 'i18n', '--dry');`
@@ -319,8 +325,20 @@ class Shell extends Object {
 	}
 
 /**
- * Runs the Shell with the provided argv
+ * Runs the Shell with the provided argv.
  *
+ * Delegates calls to Tasks and resolves methods inside the class. Commands are looked
+ * up with the following order:
+ *
+ * - Method on the shell.
+ * - Matching task name.
+ * - `main()` method.
+ *
+ * If a shell implements a `main()` method, all missing method calls will be sent to
+ * `main()` with the original method name in the argv.
+ *
+ * @param string $command The command name to run on this shell. If this argument is empty,
+ *   and the shell has a `main()` method, that will be called instead.
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
  * @return void
  */

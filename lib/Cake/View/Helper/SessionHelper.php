@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.1.7.3328
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('CakeSession', 'Model/Datasource');
  *
  * Session reading from the view.
  *
- * @package       cake.libs.view.helpers
+ * @package       Cake.View.Helper
  * @link http://book.cakephp.org/view/1465/Session
  */
 class SessionHelper extends AppHelper {

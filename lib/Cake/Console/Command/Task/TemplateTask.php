@@ -12,13 +12,17 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Folder', 'Utility');
-
+/**
+ * Template Task can generate templated output Used in other Tasks.
+ * Acts like a simplified View class.
+ *
+ * @package       Cake.Console.Command.Task
+ */
 class TemplateTask extends Shell {
 
 /**
@@ -39,7 +43,6 @@ class TemplateTask extends Shell {
 /**
  * Initialize callback.  Setup paths for the template task.
  *
- * @access public
  * @return void
  */
 	public function initialize() {
@@ -127,7 +130,6 @@ class TemplateTask extends Shell {
  * @param string $directory directory / type of thing you want
  * @param string $filename template name
  * @param string $vars Additional vars to set to template scope.
- * @access public
  * @return contents of generated code template
  */
 	public function generate($directory, $filename, $vars = null) {
@@ -192,7 +194,6 @@ class TemplateTask extends Shell {
  * @param string $path The initial path to look for the file on. If it is not found fallbacks will be used.
  * @param string $directory Subdirectory to look for ie. 'views', 'objects'
  * @param string $filename lower_case_underscored filename you want.
- * @access public
  * @return string filename will exit program if template is not found.
  */
 	protected function _findTemplate($path, $directory, $filename) {

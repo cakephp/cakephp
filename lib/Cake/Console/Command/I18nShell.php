@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -20,7 +19,7 @@
 /**
  * Shell for I18N management.
  *
- * @package       cake.console.shells
+ * @package       Cake.Console.Command
  */
 class I18nShell extends Shell {
 
@@ -28,7 +27,6 @@ class I18nShell extends Shell {
  * Contains database source to use
  *
  * @var string
- * @access public
  */
 	public $dataSource = 'default';
 
@@ -36,7 +34,6 @@ class I18nShell extends Shell {
  * Contains tasks to load and instantiate
  *
  * @var array
- * @access public
  */
 	public $tasks = array('DbConfig', 'Extract');
 

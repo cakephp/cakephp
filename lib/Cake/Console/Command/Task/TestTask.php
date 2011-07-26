@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,7 @@ App::uses('ClassRegistry', 'Utility');
 /**
  * Task class for creating and updating test files.
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class TestTask extends BakeTask {
 
@@ -31,7 +30,6 @@ class TestTask extends BakeTask {
  * path to TESTS directory
  *
  * @var string
- * @access public
  */
 	public $path = TESTS;
 
@@ -39,7 +37,6 @@ class TestTask extends BakeTask {
  * Tasks used.
  *
  * @var array
- * @access public
  */
 	public $tasks = array('Template');
 
@@ -47,7 +44,6 @@ class TestTask extends BakeTask {
  * class types that methods can be generated for
  *
  * @var array
- * @access public
  */
 	public $classTypes =  array(
 		'Model' => 'Model',
@@ -61,7 +57,6 @@ class TestTask extends BakeTask {
  * Internal list of fixtures that have been added so far.
  *
  * @var string
- * @access protected
  */
 	protected $_fixtures = array();
 
@@ -90,7 +85,6 @@ class TestTask extends BakeTask {
 /**
  * Handles interactive baking
  *
- * @access private
  */
 	protected function _interactive($type = null) {
 		$this->interactive = true;

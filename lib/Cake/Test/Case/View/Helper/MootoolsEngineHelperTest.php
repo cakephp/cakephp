@@ -16,8 +16,8 @@
  *
  * @copyright       Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link            http://cakephp.org CakePHP Project
- * @package         cake.tests
- * @package         cake.tests.cases.views.helpers
+ * @package       Cake.Test.Case.View.Helper
+ * @package       Cake.Test.Case.View.Helper
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 

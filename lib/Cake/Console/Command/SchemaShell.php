@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +25,7 @@ App::uses('CakeSchema', 'Model');
 /**
  * Schema is a command-line database management utility for automating programmer chores.
  *
- * @package       cake.console.shells
+ * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/view/1523/Schema-management-and-migrations
  */
 class SchemaShell extends Shell {
@@ -35,7 +34,6 @@ class SchemaShell extends Shell {
  * is this a dry run?
  *
  * @var boolean
- * @access private
  */
 	private $__dry = null;
 
@@ -302,7 +300,6 @@ class SchemaShell extends Shell {
  * Create database from Schema object
  * Should be called via the run method
  *
- * @access private
  */
 	function __create($Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
@@ -345,7 +342,6 @@ class SchemaShell extends Shell {
  * Update database with Schema object
  * Should be called via the run method
  *
- * @access private
  */
 	function __update(&$Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
@@ -387,7 +383,6 @@ class SchemaShell extends Shell {
 /**
  * Runs sql from __create() or __update()
  *
- * @access private
  */
 	function __run($contents, $event, &$Schema) {
 		if (empty($contents)) {

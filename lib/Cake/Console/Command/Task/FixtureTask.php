@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,7 @@ App::uses('Model', 'Model');
 /**
  * Task class for creating and updating fixtures files.
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class FixtureTask extends BakeTask {
 
@@ -31,7 +30,6 @@ class FixtureTask extends BakeTask {
  * Tasks to be loaded by this Task
  *
  * @var array
- * @access public
  */
 	public $tasks = array('DbConfig', 'Model', 'Template');
 
@@ -39,7 +37,6 @@ class FixtureTask extends BakeTask {
  * path to fixtures directory
  *
  * @var string
- * @access public
  */
 	public $path = null;
 
@@ -47,7 +44,6 @@ class FixtureTask extends BakeTask {
  * Schema instance
  *
  * @var object
- * @access protected
  */
 	protected $_Schema = null;
 

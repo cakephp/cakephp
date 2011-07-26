@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.libs.reporter
+ * @package       Cake.TestSuite.Reporter
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,8 +24,8 @@ PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
  *
- * @package cake
- * @package    cake.tests.lib
+ * @package       Cake.TestSuite.Reporter
+ * @package       Cake.TestSuite.Reporter
  */
 class CakeHtmlReporter extends CakeBaseReporter {
 

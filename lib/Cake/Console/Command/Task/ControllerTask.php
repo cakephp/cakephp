@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,7 @@ App::uses('AppModel', 'Model');
 /**
  * Task class for creating and updating controller files.
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class ControllerTask extends BakeTask {
 
@@ -31,7 +30,6 @@ class ControllerTask extends BakeTask {
  * Tasks to be loaded by this Task
  *
  * @var array
- * @access public
  */
 	public $tasks = array('Model', 'Test', 'Template', 'DbConfig', 'Project');
 
@@ -39,7 +37,6 @@ class ControllerTask extends BakeTask {
  * path to Controller directory
  *
  * @var array
- * @access public
  */
 	public $path = null;
 
@@ -265,7 +262,6 @@ class ControllerTask extends BakeTask {
  * @param string $admin Admin route to use
  * @param boolean $wannaUseSession Set to true to use sessions, false otherwise
  * @return string Baked actions
- * @access private
  */
 	public function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $modelImport = $this->_modelName($controllerName);

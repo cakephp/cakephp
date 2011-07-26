@@ -12,17 +12,16 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * An object to represent a single subcommand used in the command line.
- * ConsoleOptionParser creates these when you use addSubcommand()
+ * Created when you call ConsoleOptionParser::addSubcommand()
  *
  * @see ConsoleOptionParser::addSubcommand()
- * @package cake.console.libs
+ * @package       Cake.Console
  */
 class ConsoleInputSubcommand {
 

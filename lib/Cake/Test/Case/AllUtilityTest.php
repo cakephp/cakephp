@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.cases
+ * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,7 +22,7 @@
  *
  * This test group will run all non mvc related lib class tests
  *
- * @package       cake.tests.cases
+ * @package       Cake.Test.Case
  */
 class AllUtilityTest extends PHPUnit_Framework_TestSuite {
 

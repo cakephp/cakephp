@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +25,7 @@ App::uses('Security', 'Utility');
 /**
  * Task class for creating new project apps and plugins
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class ProjectTask extends Shell {
 
@@ -138,7 +137,6 @@ class ProjectTask extends Shell {
  * @param string $path Project path
  * @param string $skel Path to copy from
  * @param string $skip array of directories to skip when copying
- * @access private
  */
 	public function bake($path, $skel = null, $skip = array('empty')) {
 		if (!$skel && !empty($this->params['skel'])) {

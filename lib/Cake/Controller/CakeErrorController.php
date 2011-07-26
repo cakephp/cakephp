@@ -4,7 +4,7 @@
  *
  * Controller used by ErrorHandler to render error views.
  *
- * @package       cake.libs
+ * @package       Cake.Controller
  */
 class CakeErrorController extends AppController {
 	public $name = 'CakeError';

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.tests.lib
+ * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('CakeTestSuiteCommand', 'TestSuite');
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
- * @package cake.tests.libs
+ * @package       Cake.TestSuite
  */
 class CakeTestSuiteDispatcher {
 /**

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Network.Http
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,8 +23,8 @@ App::uses('HttpResponse', 'Network/Http');
 /**
  * TestAuthentication class
  *
- * @package cake
- * @package    cake.tests.cases.libs
+ * @package       Cake.Test.Case.Network.Http
+ * @package       Cake.Test.Case.Network.Http
  */
 class TestAuthentication {
 
@@ -169,7 +169,7 @@ class TestHttpSocket extends HttpSocket {
 /**
  * HttpSocketTest class
  *
- * @package       cake.tests.cases.libs
+ * @package       Cake.Test.Case.Network.Http
  */
 class HttpSocketTest extends CakeTestCase {
 

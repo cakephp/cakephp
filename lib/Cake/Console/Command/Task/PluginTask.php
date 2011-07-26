@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,7 @@ App::uses('Folder', 'Utility');
 /**
  * Task class for creating a plugin
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class PluginTask extends Shell {
 
@@ -31,7 +30,6 @@ class PluginTask extends Shell {
  * path to plugins directory
  *
  * @var array
- * @access public
  */
 	public $path = null;
 
@@ -67,7 +65,6 @@ class PluginTask extends Shell {
 /**
  * Interactive interface
  *
- * @access private
  * @return void
  */
 	protected function _interactive($plugin = null) {
@@ -84,7 +81,6 @@ class PluginTask extends Shell {
  * Bake the plugin, create directories and files
  *
  * @params $plugin name of the plugin in CamelCased format
- * @access public
  * @return bool
  */
 	public function bake($plugin) {

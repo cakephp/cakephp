@@ -13,7 +13,7 @@
  *
  * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * @link          http://www.cakephp.org
- * @package       cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  * @since         1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +21,7 @@
 /**
  * CampaignFixture class
  *
- * @package       cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  */
 class CampaignFixture extends CakeTestFixture {
 

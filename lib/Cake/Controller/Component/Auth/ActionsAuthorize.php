@@ -19,7 +19,7 @@ App::uses('BaseAuthorize', 'Controller/Component/Auth');
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using the AclComponent,
  * If AclComponent is not already loaded it will be loaded using the Controller's ComponentCollection.
  *
- * @package cake.libs.controller.components.auth
+ * @package       Cake.Controller.Component.Auth
  * @since 2.0
  * @see AuthComponent::$authenticate
  * @see AclComponent::check()

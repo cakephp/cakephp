@@ -7,7 +7,7 @@ App::uses('Router', 'Routing');
 /**
  * test case for RedirectRoute
  *
- * @package cake.tests.libs.route
+ * @package       Cake.Test.Case.Routing.Route
  */
 class RedirectRouteTestCase extends  CakeTestCase {
 /**

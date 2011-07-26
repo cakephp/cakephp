@@ -16,7 +16,7 @@
 /**
  * Abstract base authorization adapter for AuthComponent.
  *
- * @package cake.libs.controller.components.auth
+ * @package       Cake.Controller.Component.Auth
  * @since 2.0
  * @see AuthComponent::$authenticate
  */

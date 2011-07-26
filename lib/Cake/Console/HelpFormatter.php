@@ -25,8 +25,8 @@ App::uses('String', 'Utility');
  *
  * Xml output is useful for integration with other tools like IDE's or other build tools.
  *
- * @package    cake.console.libs
- * @since      CakePHP(tm) v 2.0
+ * @package       Cake.Console
+ * @since  CakePHP(tm) v 2.0
  */
 class HelpFormatter {
 /**

@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,7 @@ App::uses('BakeTask', 'Console/Command/Task');
 /**
  * Task class for creating and updating view files.
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class ViewTask extends BakeTask {
 
@@ -31,7 +30,6 @@ class ViewTask extends BakeTask {
  * Tasks to be loaded by this Task
  *
  * @var array
- * @access public
  */
 	public $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
 
@@ -39,7 +37,6 @@ class ViewTask extends BakeTask {
  * path to View directory
  *
  * @var array
- * @access public
  */
 	public $path = null;
 
@@ -47,7 +44,6 @@ class ViewTask extends BakeTask {
  * Name of the controller being used
  *
  * @var string
- * @access public
  */
 	public $controllerName = null;
 
@@ -55,7 +51,6 @@ class ViewTask extends BakeTask {
  * The template file to use
  *
  * @var string
- * @access public
  */
 	public $template = null;
 
@@ -63,7 +58,6 @@ class ViewTask extends BakeTask {
  * Actions to use for scaffolding
  *
  * @var array
- * @access public
  */
 	public $scaffoldActions = array('index', 'view', 'add', 'edit');
 
@@ -72,7 +66,6 @@ class ViewTask extends BakeTask {
  * actions will not emit errors when doing bakeActions()
  *
  * @var array
- * @access public
  */
 	public $noTemplateActions = array('delete');
 
@@ -253,7 +246,6 @@ class ViewTask extends BakeTask {
  *	'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
  *
  * @return array Returns an variables to be made available to a view template
- * @access private
  */
 	private function __loadController() {
 		if (!$this->controllerName) {
@@ -445,7 +437,6 @@ class ViewTask extends BakeTask {
  * Returns associations for controllers models.
  *
  * @return  array $associations
- * @access private
  */
 	private function __associations($model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');

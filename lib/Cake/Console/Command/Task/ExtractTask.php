@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,7 +21,7 @@ App::uses('Folder', 'Utility');
 /**
  * Language string extractor
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class ExtractTask extends Shell {
 
@@ -30,7 +29,6 @@ class ExtractTask extends Shell {
  * Paths to use when looking for strings
  *
  * @var string
- * @access protected
  */
 	protected $_paths = array();
 
@@ -38,7 +36,6 @@ class ExtractTask extends Shell {
  * Files from where to extract
  *
  * @var array
- * @access protected
  */
 	protected $_files = array();
 
@@ -46,7 +43,6 @@ class ExtractTask extends Shell {
  * Merge all domains string into the default.pot file
  *
  * @var boolean
- * @access protected
  */
 	protected $_merge = false;
 
@@ -54,7 +50,6 @@ class ExtractTask extends Shell {
  * Current file being processed
  *
  * @var string
- * @access protected
  */
 	protected $_file = null;
 
@@ -62,7 +57,6 @@ class ExtractTask extends Shell {
  * Contains all content waiting to be write
  *
  * @var string
- * @access protected
  */
 	protected $_storage = array();
 
@@ -70,7 +64,6 @@ class ExtractTask extends Shell {
  * Extracted tokens
  *
  * @var array
- * @access protected
  */
 	protected $_tokens = array();
 
@@ -78,7 +71,6 @@ class ExtractTask extends Shell {
  * Extracted strings
  *
  * @var array
- * @access protected
  */
 	protected $_strings = array();
 
@@ -86,7 +78,6 @@ class ExtractTask extends Shell {
  * Destination path
  *
  * @var string
- * @access protected
  */
 	protected $_output = null;
 
@@ -115,7 +106,6 @@ class ExtractTask extends Shell {
  * Execution method always used for tasks
  *
  * @return void
- * @access public
  */
 	public function execute() {
 		if (!empty($this->params['exclude'])) {
@@ -204,7 +194,6 @@ class ExtractTask extends Shell {
  * Extract text
  *
  * @return void
- * @access protected
  */
 	protected function _extract() {
 		$this->out();
@@ -269,7 +258,6 @@ class ExtractTask extends Shell {
  * Extract tokens out of all files to be processed
  *
  * @return void
- * @access protected
  */
 	protected function _extractTokens() {
 		foreach ($this->_files as $file) {
@@ -302,7 +290,6 @@ class ExtractTask extends Shell {
  * @param string $functionName Function name that indicates translatable string (e.g: '__')
  * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
  * @return void
- * @access protected
  */
 	protected function _parse($functionName, $map) {
 		$count = 0;
@@ -413,7 +400,6 @@ class ExtractTask extends Shell {
  * Build the translate template file contents out of obtained strings
  *
  * @return void
- * @access protected
  */
 	protected function _buildFiles() {
 		foreach ($this->_strings as $domain => $strings) {
@@ -448,7 +434,6 @@ class ExtractTask extends Shell {
  * Prepare a file to be stored
  *
  * @return void
- * @access protected
  */
 	protected function _store($domain, $header, $sentence) {
 		if (!isset($this->_storage[$domain])) {
@@ -465,7 +450,6 @@ class ExtractTask extends Shell {
  * Write the files that need to be stored
  *
  * @return void
- * @access protected
  */
 	protected function _writeFiles() {
 		$overwriteAll = false;
@@ -501,7 +485,6 @@ class ExtractTask extends Shell {
  * Build the translation template header
  *
  * @return string Translation template header
- * @access protected
  */
 	protected function _writeHeader() {
 		$output  = "# LANGUAGE translation of CakePHP Application\n";
@@ -528,7 +511,6 @@ class ExtractTask extends Shell {
  * @param int $position Actual position on tokens array
  * @param int $target Number of strings to extract
  * @return array Strings extracted
- * @access protected
  */
 	protected function _getStrings(&$position, $target) {
 		$strings = array();
@@ -555,7 +537,6 @@ class ExtractTask extends Shell {
  *
  * @param string $string String to format
  * @return string Formatted string
- * @access protected
  */
 	protected function _formatString($string) {
 		$quote = substr($string, 0, 1);
@@ -577,7 +558,6 @@ class ExtractTask extends Shell {
  * @param string $marker Marker found
  * @param integer $count Count
  * @return void
- * @access protected
  */
 	protected function _markerError($file, $line, $marker, $count) {
 		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
@@ -607,7 +587,6 @@ class ExtractTask extends Shell {
  * Search files that may contain translatable strings
  *
  * @return void
- * @access protected
  */
 	protected function _searchFiles() {
 		$pattern = false;

@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -20,7 +19,7 @@
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
- * @package       cake.console
+ * @package       Cake.Console
  */
 class ShellDispatcher {
 
@@ -28,7 +27,6 @@ class ShellDispatcher {
  * Contains command switches parsed from the command line.
  *
  * @var array
- * @access public
  */
 	public $params = array();
 
@@ -36,7 +34,6 @@ class ShellDispatcher {
  * Contains arguments parsed from the command line.
  *
  * @var array
- * @access public
  */
 	public $args = array();
 
@@ -46,14 +43,15 @@ class ShellDispatcher {
  * The execution of the script is stopped after dispatching the request with
  * a status code of either 0 or 1 according to the result of the dispatch.
  *
- * @param array $args the argv
+ * @param array $args the argv from PHP
+ * @param bool $bootstrap Should the environment be bootstrapped.
  * @return void
  */
 	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);
 
 		if ($bootstrap) {
-			$this->__initConstants();
+			$this->_initConstants();
 		}
 		$this->parseParams($args);
 		if ($bootstrap) {
@@ -64,6 +62,7 @@ class ShellDispatcher {
 /**
  * Run the dispatcher
  *
+ * @param array $argv The argv from PHP
  * @return void
  */
 	public static function run($argv) {
@@ -74,9 +73,9 @@ class ShellDispatcher {
 /**
  * Defines core configuration.
  *
- * @access private
+ * @return void
  */
-	function __initConstants() {
+	protected function _initConstants() {
 		if (function_exists('ini_set')) {
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
@@ -96,6 +95,7 @@ class ShellDispatcher {
 /**
  * Defines current working environment.
  *
+ * @return void
  */
 	protected function _initEnvironment() {
 		if (!$this->__bootstrap()) {
@@ -118,10 +118,8 @@ class ShellDispatcher {
  * Initializes the environment and loads the Cake core.
  *
  * @return boolean Success.
- * @access private
  */
-	function __bootstrap() {
-
+	private function __bootstrap() {
 		define('ROOT', $this->params['root']);
 		define('APP_DIR', $this->params['app']);
 		define('APP_PATH', $this->params['working'] . DS);
@@ -308,6 +306,7 @@ class ShellDispatcher {
 /**
  * Shows console help.  Performs an internal dispatch to the CommandList Shell
  *
+ * @return void
  */
 	public function help() {
 		$this->args = array_merge(array('command_list'), $this->args);

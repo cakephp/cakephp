@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs
+ * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -37,7 +37,7 @@ App::uses('CakeRoute', 'Routing/Route');
  * Named parameters allow you to embed key:value pairs into path segments.  This allows you create hash
  * structures using urls.  You can define how named parameters work in your application using Router::connectNamed()
  *
- * @package       cake.libs
+ * @package       Cake.Routing
  */
 class Router {
 

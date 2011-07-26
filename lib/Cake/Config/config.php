@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.config
+ * @package       Cake.Config
  * @since         CakePHP(tm) v 1.1.11.4062
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

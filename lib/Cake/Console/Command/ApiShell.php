@@ -14,7 +14,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,7 @@ App::uses('File', 'Utility');
 /**
  * API shell to show method signatures of CakePHP core classes.
  *
- * @package       cake.console.libs
+ * @package       Cake.Console.Command
  */
 class ApiShell extends Shell {
 
@@ -31,7 +30,6 @@ class ApiShell extends Shell {
  * Map between short name for paths and real paths.
  *
  * @var array
- * @access public
  */
 	public $paths = array();
 
@@ -192,9 +190,8 @@ class ApiShell extends Shell {
  * @param object $File File object
  * @param string $class Class name
  * @return array Methods and signatures indexed by method name
- * @access private
  */
-	function __parseClass($path, $class) {
+	private function __parseClass($path, $class) {
 		$parsed = array();
 
 		if (!class_exists($class)) {

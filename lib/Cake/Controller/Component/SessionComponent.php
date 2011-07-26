@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1232
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ App::uses('CakeSession', 'Model/Datasource');
  *
  * Session handling from the controller.
  *
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/view/1310/Sessions
  *
  */

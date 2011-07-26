@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.8.2156
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@ App::uses('Security', 'Utility');
 /**
  * SecurityComponent
  *
- * @package       cake.libs.controller.components
+ * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/view/1296/Security-Component
  */
 class SecurityComponent extends Component {

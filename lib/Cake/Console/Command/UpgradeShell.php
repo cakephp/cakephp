@@ -1,12 +1,11 @@
 <?php
+App::uses('Folder', 'Utility');
+
 /**
  * A shell class to help developers upgrade applications to CakePHP 2.0
  *
- * @package cake.console/shells
+ * @package       Cake.Console.Command
  */
-
-App::uses('Folder', 'Utility');
-
 class UpgradeShell extends Shell {
 
 	protected $_files = array();
@@ -47,7 +46,6 @@ class UpgradeShell extends Shell {
 /**
  * Run all upgrade steps one at a time
  *
- * @access public
  * @return void
  */
 	public function all() {
@@ -68,7 +66,6 @@ class UpgradeShell extends Shell {
  * and then looks for all php files except vendors, and moves them to where Cake 2.0 expects
  * to find them.
  *
- * @access public
  * @return void
  */
 	public function locations() {
@@ -341,7 +338,6 @@ class UpgradeShell extends Shell {
 /**
  * constants
  *
- * @access public
  * @return void
  */
 	public function constants() {
@@ -452,7 +448,6 @@ class UpgradeShell extends Shell {
  *
  * @param mixed $path
  * @param mixed $options array(recursive, checkFolder)
- * @access protected
  * @return void
  */
 	protected function _movePhpFiles($path, $options) {

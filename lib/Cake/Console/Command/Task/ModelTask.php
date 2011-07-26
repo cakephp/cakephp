@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.shells.tasks
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +24,7 @@ App::uses('Validation', 'Utility');
 /**
  * Task class for creating and updating model files.
  *
- * @package       cake.console.shells.tasks
+ * @package       Cake.Console.Command.Task
  */
 class ModelTask extends BakeTask {
 
@@ -33,7 +32,6 @@ class ModelTask extends BakeTask {
  * path to Model directory
  *
  * @var string
- * @access public
  */
 	public $path = null;
 
@@ -41,7 +39,6 @@ class ModelTask extends BakeTask {
  * tasks
  *
  * @var array
- * @access public
  */
 	public $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
 
@@ -49,7 +46,6 @@ class ModelTask extends BakeTask {
  * Tables to skip when running all()
  *
  * @var array
- * @access protected
  */
 	public $skipTables = array('i18n');
 
@@ -57,7 +53,6 @@ class ModelTask extends BakeTask {
  * Holds tables found on connection.
  *
  * @var array
- * @access protected
  */
 	protected $_tables = array();
 
@@ -65,7 +60,6 @@ class ModelTask extends BakeTask {
  * Holds validation method map.
  *
  * @var array
- * @access protected
  */
 	protected $_validations = array();
 
@@ -172,7 +166,6 @@ class ModelTask extends BakeTask {
 /**
  * Handles interactive baking
  *
- * @access private
  */
 	protected function _interactive() {
 		$this->hr();
