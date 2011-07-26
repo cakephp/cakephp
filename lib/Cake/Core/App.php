@@ -176,7 +176,10 @@ class App {
 		'views' => 'View',
 		'helpers' => 'View/Helper',
 		'shells' => 'Console/Command',
-		'libs' => 'Lib'
+		'libs' => 'Lib',
+		'locales' => 'Locale',
+		'vendors' => 'Vendor',
+		'plugins' => 'Plugin'
 	);
 
 /**
@@ -241,7 +244,7 @@ class App {
  *
  * Usage:
  *
- * `App::build(array(Model' => array('/a/full/path/to/models/'))); will setup a new search path for the Model package`
+ * `App::build(array('Model' => array('/a/full/path/to/models/'))); will setup a new search path for the Model package`
  *
  * `App::build(array('Model' => array('/path/to/models/')), App::RESET); will setup the path as the only valid path for searching models`
  *
@@ -302,7 +305,7 @@ class App {
 				),
 				'Console/Command' => array(
 					'%s' . 'Console' . DS . 'Command' . DS,
-					'%s' . 'console' . DS . 'shells' . DS,
+					'%s' . 'console' . DS . 'shells' . DS
 				),
 				'Console/Command/Task' => array(
 					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS,
@@ -312,15 +315,18 @@ class App {
 					'%s' . 'Lib' . DS,
 					'%s' . 'libs' . DS
 				),
-				'locales' => array(
+				'Locale' => array(
 					'%s' . 'Locale' . DS,
 					'%s' . 'locale' . DS
 				),
-				'vendors' => array('%s' . 'Vendor' . DS, VENDORS),
-				'plugins' => array(
+				'Vendor' => array(
+					'%s' . 'Vendor' . DS,
+					VENDORS
+				),
+				'Plugin' => array(
 					APP . 'Plugin' . DS,
 					APP . 'plugins' . DS,
-					dirname(dirname(CAKE)) . DS . 'plugins' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS
 				)
 			);
 		}
