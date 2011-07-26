@@ -23,14 +23,29 @@
  * regards to boolean and null values.
  *
  * In addition to the native parse_ini_file features, IniReader also allows you
- * to create nested array structures through usage of . delimited names.  This allows
+ * to create nested array structures through usage of `.` delimited names.  This allows
  * you to create nested arrays structures in an ini config file. For example:
  *
  * `db.password = secret` would turn into `array('db' => array('password' => 'secret'))`
  *
- * You can nest properties as deeply as needed using .'s.  IniReader also manipulates
- * how the special ini values of 'yes', 'no', 'on', 'off', 'null' are handled.
- * These values will be converted to their boolean equivalents.
+ * You can nest properties as deeply as needed using `.`'s. In addition to using `.` you
+ * can use standard ini section notation to create nested structures:
+ *
+ * {{{
+ * [section]
+ * key = value
+ * }}}
+ *
+ * Once loaded into Configure, the above would be accessed using:
+ *
+ * `Configure::read('section.key');
+ *
+ * You can combine `.` separated values with sections to create more deeply
+ * nested structures.
+ *
+ * IniReader also manipulates how the special ini values of 
+ * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be 
+ * converted to their boolean equivalents.
  *
  * @package cake.config
  * @see http://php.net/parse_ini_file
@@ -56,7 +71,8 @@ class IniReader implements ConfigReaderInterface {
  * ini files that are on the filesystem.
  *
  * @param string $path Path to load ini config files from.
- * @param string $section Only get one section.
+ * @param string $section Only get one section, leave null to parse and fetch
+ *     all sections in the ini file.
  */
 	public function __construct($path, $section = null) {
 		$this->_path = $path;
@@ -66,7 +82,8 @@ class IniReader implements ConfigReaderInterface {
 /**
  * Read an ini file and return the results as an array.
  *
- * @param string $file Name of the file to read.
+ * @param string $file Name of the file to read. The chosen file
+ *    must be on the reader's path.
  * @return array
  */
 	public function read($file) {
