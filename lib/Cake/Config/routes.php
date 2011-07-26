@@ -81,3 +81,6 @@
 	if ($namedConfig['rules'] === false) {
 		Router::connectNamed(true);
 	}
+
+	unset($namedConfig, $params, $indexParams, $prefix, $prefixes, $shortParams, $match,
+		$pluginPattern, $plugins, $key, $value);
