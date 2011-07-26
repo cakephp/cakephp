@@ -923,7 +923,7 @@ class AuthComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testAdminRoute() {
-		$prefixes = Configure::read('Routing.prefixes');
+		$pref = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
@@ -943,7 +943,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->startup($this->Controller);
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
-		Configure::write('Routing.prefixes', $prefixes);
+		Configure::write('Routing.prefixes', $pref);
 	}
 
 /**
