@@ -1555,6 +1555,8 @@ class FormHelper extends AppHelper {
 					if (($check > 115959) && $timeFormat == '12') {
 						$time[0] = $time[0] - 12;
 						$meridian = 'pm';
+					} elseif ($time[0] == '12' && $timeFormat == '12') {
+						$meridian = 'pm';
 					} elseif ($time[0] == '00' && $timeFormat == '12') {
 						$time[0] = 12;
 					} elseif ($time[0] > 12) {
