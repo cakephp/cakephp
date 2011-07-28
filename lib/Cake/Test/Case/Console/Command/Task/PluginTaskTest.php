@@ -86,7 +86,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
 		
 		$directories = array(
-			'Config' . DS . 'schema',
+			'Config' . DS . 'Schema',
 			'Model' . DS . 'Behavior',
 			'Model' . DS . 'Datasource',
 			'Console' . DS . 'Command' . DS . 'Task',
