@@ -153,16 +153,6 @@ class Scaffold {
 	}
 
 /**
- * Outputs the content of a scaffold method passing it through the Controller::afterFilter()
- *
- * @return void
- */
-	protected function _output() {
-		$this->controller->afterFilter();
-		$this->controller->response->send();
-	}
-
-/**
  * Renders a view action of scaffolded model.
  *
  * @param CakeRequest $request Request Object for scaffolding
@@ -182,7 +172,6 @@ class Scaffold {
 				Inflector::variable($this->controller->modelClass), $this->request->data
 			);
 			$this->controller->render($this->request['action'], $this->layout);
-			$this->_output();
 		} elseif ($this->controller->_scaffoldError('view') === false) {
 			return $this->_scaffoldError();
 		}
@@ -201,7 +190,6 @@ class Scaffold {
 				Inflector::variable($this->controller->name), $this->controller->paginate()
 			);
 			$this->controller->render($this->request['action'], $this->layout);
-			$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->_scaffoldError();
 		}
@@ -219,7 +207,6 @@ class Scaffold {
 			array_keys($this->ScaffoldModel->hasAndBelongsToMany)
 		);
 		$this->controller->render($action, $this->layout);
-		$this->_output();
 	}
 
 /**
@@ -343,7 +330,6 @@ class Scaffold {
 			$this->controller->redirect($this->redirect);
 		} else {
 			$this->controller->flash($message, $this->redirect);
-			$this->_output();
 		}
 	}
 
@@ -354,7 +340,6 @@ class Scaffold {
  */
 	protected function _scaffoldError() {
 		return $this->controller->render('error', $this->layout);
-		$this->_output();
 	}
 
 /**

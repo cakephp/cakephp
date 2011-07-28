@@ -427,6 +427,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 		ob_start();
 		new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertPattern('#<h2>Scaffold Mock</h2>#', $result);
@@ -466,6 +467,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		ob_start();
 		new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertPattern('/<h2>View Scaffold Mock<\/h2>/', $result);
@@ -506,11 +508,13 @@ class ScaffoldViewTest extends CakeTestCase {
 		Router::reload();
 		Router::setRequestInfo($this->Controller->request);
 		$this->Controller->constructClasses();
+
 		ob_start();
 		new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertContains('<form id="ScaffoldMockEditForm" method="post" action="/scaffold_mock/edit/1"', $result);
+		$this->assertContains('<form action="/scaffold_mock/edit/1" id="ScaffoldMockEditForm" method="post"', $result);
 		$this->assertContains('<legend>Edit Scaffold Mock</legend>', $result);
 
 		$this->assertContains('input type="hidden" name="data[ScaffoldMock][id]" value="1" id="ScaffoldMockId"', $result);
@@ -556,6 +560,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		ob_start();
 		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertPattern('/<h2>Scaffold Mock<\/h2>/', $result);
@@ -599,6 +604,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		ob_start();
 		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertPattern('#admin/scaffold_mock/edit/1#', $result);
@@ -640,6 +646,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		ob_start();
 		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertPattern('/<h2>Scaffold Mock<\/h2>/', $result);
@@ -817,6 +824,7 @@ class ScaffoldTest extends CakeTestCase {
 
 		ob_start();
 		new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 		$this->assertPattern('/Scaffold Mock has been updated/', $result);
 	}
@@ -848,6 +856,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 		ob_start();
 		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 		$this->assertPattern('/name="data\[ScaffoldTag\]\[ScaffoldTag\]"/', $result);
 
@@ -885,6 +894,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 		ob_start();
 		new Scaffold($this->Controller, $this->Controller->request);
+		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertNoPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
