@@ -41,21 +41,13 @@ App::uses('Debugger', 'Utility');
 class Dispatcher {
 
 /**
- * Response object used for asset/cached responses.
- *
- * @var CakeResponse
- */
-	public $response = null;
-
-/**
  * Constructor.
+ *
+ * @param string $base The base directory for the application. Writes `App.base` to Configure.
  */
-	public function __construct($url = null, $base = false) {
+	public function __construct($base = false) {
 		if ($base !== false) {
 			Configure::write('App.base', $base);
-		}
-		if ($url !== null) {
-			$this->dispatch($url);
 		}
 	}
 
