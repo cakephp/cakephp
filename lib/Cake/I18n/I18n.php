@@ -277,7 +277,7 @@ class I18n {
 			foreach ($plugins as $plugin) {
 				$pluginDomain = Inflector::underscore($plugin);
 				if ($pluginDomain === $domain) {
-					$searchPaths[] = CakePlugin::path($plugin) . DS . 'Locale' . DS;
+					$searchPaths[] = CakePlugin::path($plugin) . 'Locale' . DS;
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}
