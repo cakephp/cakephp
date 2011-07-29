@@ -351,6 +351,7 @@ class Helper extends Object {
  * @param string $insertBefore String to be inserted before options.
  * @param string $insertAfter String to be inserted after options.
  * @return string Composed attributes.
+ * @deprecated This method has been moved to HtmlHelper
  */
 	protected function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (!is_string($options)) {
@@ -384,6 +385,7 @@ class Helper extends Object {
  * @param string $value The value of the attribute to create.
  * @param boolean $escape Define if the value must be escaped
  * @return string The composed attribute.
+ * @deprecated This method has been moved to HtmlHelper
  */
 	protected function _formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
