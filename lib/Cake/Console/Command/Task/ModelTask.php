@@ -66,6 +66,7 @@ class ModelTask extends BakeTask {
 /**
  * Override initialize
  *
+ * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('Model'));
@@ -74,6 +75,7 @@ class ModelTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @return void
  */
 	public function execute() {
 		parent::execute();
@@ -127,7 +129,8 @@ class ModelTask extends BakeTask {
  * Get a model object for a class name.
  *
  * @param string $className Name of class you want model to be.
- * @return object Model instance
+ * @param string $table Table name
+ * @return Model Model instance
  */
 	protected function &_getModelObject($className, $table = null) {
 		if (!$table) {
@@ -166,6 +169,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles interactive baking
  *
+ * @return boolean
  */
 	protected function _interactive() {
 		$this->hr();
@@ -359,6 +363,7 @@ class ModelTask extends BakeTask {
  *
  * @param string $fieldName Name of field to be validated.
  * @param array $metaData metadata for field
+ * @param string $primaryKey
  * @return array Array of validation for the field.
  */
 	public function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
@@ -717,6 +722,7 @@ class ModelTask extends BakeTask {
  *
  * @param mixed $name Model name or object
  * @param mixed $data if array and $name is not an object assume bake data, otherwise boolean.
+ * @return string
  */
 	public function bake($name, $data = array()) {
 		if (is_object($name)) {
@@ -752,6 +758,7 @@ class ModelTask extends BakeTask {
  * Assembles and writes a unit test file
  *
  * @param string $className Model class name
+ * @return string
  */
 	public function bakeTest($className) {
 		$this->Test->interactive = $this->interactive;
@@ -764,6 +771,7 @@ class ModelTask extends BakeTask {
  * outputs the a list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
+ * @return array
  */
 	public function listAll($useDbConfig = null) {
 		$this->_tables = $this->getAllTables($useDbConfig);
@@ -843,6 +851,7 @@ class ModelTask extends BakeTask {
 /**
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
+ * @param string $useDbConfig Database config name
  * @return string the model name
  */
 	public function getName($useDbConfig = null) {

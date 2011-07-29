@@ -56,13 +56,14 @@ class TestTask extends BakeTask {
 /**
  * Internal list of fixtures that have been added so far.
  *
- * @var string
+ * @var array
  */
 	protected $_fixtures = array();
 
 /**
  * Execution method always used for tasks
  *
+ * @return void
  */
 	public function execute() {
 		parent::execute();
@@ -85,6 +86,8 @@ class TestTask extends BakeTask {
 /**
  * Handles interactive baking
  *
+ * @param string $type
+ * @return string|boolean
  */
 	protected function _interactive($type = null) {
 		$this->interactive = true;
@@ -110,6 +113,7 @@ class TestTask extends BakeTask {
  *
  * @param string $type Type of object to bake test case for ie. Model, Controller
  * @param string $className the 'cake name' for the class ie. Posts for the PostsController
+ * @return string|boolean
  */
 	public function bake($type, $className) {
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
@@ -215,7 +219,6 @@ class TestTask extends BakeTask {
  * Currently only model, and controller are supported
  *
  * @param string $type The Type of object you are generating tests for eg. controller
- * @param string $className the Classname of the class the test is being generated for.
  * @return boolean
  */
 	public function typeCanDetectFixtures($type) {
@@ -227,7 +230,7 @@ class TestTask extends BakeTask {
  * Check if a class with the given type is loaded or can be loaded.
  *
  * @param string $type The Type of object you are generating tests for eg. controller
- * @param string $className the Classname of the class the test is being generated for.
+ * @param string $class the Classname of the class the test is being generated for.
  * @return boolean
  */
 	public function isLoadableClass($type, $class) {
@@ -398,7 +401,7 @@ class TestTask extends BakeTask {
  * Generate a constructor code snippet for the type and classname
  *
  * @param string $type The Type of object you are generating tests for eg. controller
- * @param string $className the Classname of the class the test is being generated for.
+ * @param string $fullClassName The Classname of the class the test is being generated for.
  * @return string Constructor snippet for the thing you are building.
  */
 	public function generateConstructor($type, $fullClassName) {

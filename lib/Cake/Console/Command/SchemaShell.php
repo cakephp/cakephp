@@ -47,6 +47,7 @@ class SchemaShell extends Shell {
 /**
  * Override initialize
  *
+ * @return string
  */
 	public function initialize() {
 		$this->_welcome();
@@ -57,6 +58,7 @@ class SchemaShell extends Shell {
 /**
  * Override startup
  *
+ * @return void
  */
 	public function startup() {
 		$name = $path = $connection = $plugin = null;
@@ -103,6 +105,7 @@ class SchemaShell extends Shell {
  * Read and output contents of schema object
  * path to read as second arg
  *
+ * @return void
  */
 	public function view() {
 		$File = new File($this->Schema->path . DS . $this->params['file']);
@@ -120,6 +123,7 @@ class SchemaShell extends Shell {
  * Read database and Write schema object
  * accepts a connection as first arg or path to save as second arg
  *
+ * @return void
  */
 	public function generate() {
 		$this->out(__d('cake_console', 'Generating Schema...'));
@@ -197,6 +201,7 @@ class SchemaShell extends Shell {
  * If -write contains a full path name the file will be saved there. If -write only
  * contains no DS, that will be used as the file name, in the same dir as the schema file.
  *
+ * @return string
  */
 	public function dump() {
 		$write = false;
@@ -300,6 +305,9 @@ class SchemaShell extends Shell {
  * Create database from Schema object
  * Should be called via the run method
  *
+ * @param CakeSchema $Schema
+ * @param string $table
+ * @return void
  */
 	function __create($Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
@@ -342,6 +350,9 @@ class SchemaShell extends Shell {
  * Update database with Schema object
  * Should be called via the run method
  *
+ * @param CakeSchema $Schema
+ * @param string $table
+ * @return void
  */
 	function __update(&$Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
@@ -383,6 +394,10 @@ class SchemaShell extends Shell {
 /**
  * Runs sql from __create() or __update()
  *
+ * @param array $contents
+ * @param string $event
+ * @param CakeSchema $Schema
+ * @return void
  */
 	function __run($contents, $event, &$Schema) {
 		if (empty($contents)) {

@@ -527,6 +527,7 @@ class App {
  *
  * @param string $className the name of the class to configure package for
  * @param string $location the package name
+ * @return void
  */
 	public static function uses($className, $location) {
 		self::$__classMap[$className] = $location;
@@ -539,6 +540,7 @@ class App {
  * if a class is name `MyCustomClass` the file name should be `MyCustomClass.php`
  *
  * @param string $className the name of the class to load
+ * @return boolean
  */
 	public static function load($className) {
 		if (!isset(self::$__classMap[$className])) {
@@ -676,7 +678,6 @@ class App {
  * @param string $name unique name of the file for identifying it inside the application
  * @param string $plugin camel cased plugin name if any
  * @param string $type name of the packed where the class is located
- * @param string $file filename if known, the $name param will be used otherwise
  * @param string $originalType type name as supplied initially by the user
  * @param boolean $parent whether to load the class parent or not
  * @return boolean true indicating the successful load and existence of the class

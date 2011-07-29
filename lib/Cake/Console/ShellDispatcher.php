@@ -198,8 +198,8 @@ class ShellDispatcher {
  * All paths in the loaded shell paths are searched.
  *
  * @param string $shell Optionally the name of a plugin
- * @return mixed False if no shell could be found or an object on success
- * @throws MissingShellFileException, MissingShellClassException when errors are encountered.
+ * @return mixed An object
+ * @throws MissingShellFileException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
@@ -221,7 +221,8 @@ class ShellDispatcher {
 /**
  * Parses command line options and extracts the directory paths from $params
  *
- * @param array $params Parameters to parse
+ * @param array $args Parameters to parse
+ * @return void
  */
 	public function parseParams($args) {
 		$this->_parsePaths($args);
@@ -276,6 +277,7 @@ class ShellDispatcher {
 /**
  * Parses out the paths from from the argv
  *
+ * @param array $args
  * @return void
  */
 	protected function _parsePaths($args) {
@@ -316,7 +318,7 @@ class ShellDispatcher {
 /**
  * Stop execution of the current script
  *
- * @param $status see http://php.net/exit for values
+ * @param integer|string $status see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($status = 0) {

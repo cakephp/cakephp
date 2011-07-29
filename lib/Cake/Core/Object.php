@@ -122,7 +122,7 @@ class Object {
  * Stop execution of the current script.  Wraps exit() making
  * testing easier.
  *
- * @param $status see http://php.net/exit for values
+ * @param integer|string $status see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($status = 0) {

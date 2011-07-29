@@ -47,6 +47,7 @@ class ConsoleShell extends Shell {
 /**
  * Override initialize of the Shell
  *
+ * @return void
  */
 	public function initialize() {
 		App::uses('Dispatcher', 'Routing');
@@ -71,6 +72,7 @@ class ConsoleShell extends Shell {
 /**
  * Prints the help message
  *
+ * @return void
  */
 	public function help() {
 		$out  = 'Console help:';
@@ -133,6 +135,8 @@ class ConsoleShell extends Shell {
 /**
  * Override main() to handle action
  *
+ * @param string $command
+ * @return void
  */
 	public function main($command = null) {
 		while (true) {

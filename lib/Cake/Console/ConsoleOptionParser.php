@@ -267,8 +267,8 @@ class ConsoleOptionParser {
  *
  * @param mixed $name The long name you want to the value to be parsed out as when options are parsed.
  *   Will also accept an instance of ConsoleInputOption
- * @param array $params An array of parameters that define the behavior of the option
- * @return returns $this.
+ * @param array $options An array of parameters that define the behavior of the option
+ * @return ConsoleOptionParser $this.
  */
 	public function addOption($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
@@ -308,7 +308,7 @@ class ConsoleOptionParser {
  *
  * @param mixed $name The name of the argument.  Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
- * @return $this.
+ * @return ConsoleOptionParser $this.
  */
 	public function addArgument($name, $params = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputArgument) {
@@ -337,7 +337,7 @@ class ConsoleOptionParser {
  *
  * @param array $args Array of arguments to add.
  * @see ConsoleOptionParser::addArgument()
- * @return $this
+ * @return ConsoleOptionParser $this
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
@@ -352,7 +352,7 @@ class ConsoleOptionParser {
  *
  * @param array $options Array of options to add.
  * @see ConsoleOptionParser::addOption()
- * @return $this
+ * @return ConsoleOptionParser $this
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
@@ -373,8 +373,8 @@ class ConsoleOptionParser {
  *    it will be used.
  *
  * @param mixed $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
- * @param array $params Array of params, see above.
- * @return $this.
+ * @param array $options Array of params, see above.
+ * @return ConsoleOptionParser $this.
  */
 	public function addSubcommand($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
@@ -397,7 +397,7 @@ class ConsoleOptionParser {
  * Add multiple subcommands at once.
  *
  * @param array $commands Array of subcommands.
- * @return $this
+ * @return ConsoleOptionParser $this
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
@@ -489,6 +489,7 @@ class ConsoleOptionParser {
  *
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
+ * @param string $format Define the output format, can be text or xml
  * @param int $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
@@ -551,7 +552,7 @@ class ConsoleOptionParser {
 /**
  * Parse an option by its name index.
  *
- * @param string $option The option to parse.
+ * @param string $name The name to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
  */

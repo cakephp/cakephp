@@ -58,6 +58,7 @@ class AclShell extends Shell {
 /**
  * Override startup of the Shell
  *
+ * @return void
  */
 	public function startup() {
 		parent::startup();
@@ -96,6 +97,7 @@ class AclShell extends Shell {
 /**
  * Override main() for help message hook
  *
+ * @return voids
  */
 	public function main() {
 		$this->out($this->OptionParser->help());
@@ -104,6 +106,7 @@ class AclShell extends Shell {
 /**
  * Creates an ARO/ACO node
  *
+ * @return void
  */
 	public function create() {
 		extract($this->__dataVars());
@@ -136,6 +139,7 @@ class AclShell extends Shell {
 /**
  * Delete an ARO/ACO node.
  *
+ * @return void
  */
 	public function delete() {
 		extract($this->__dataVars());
@@ -152,6 +156,7 @@ class AclShell extends Shell {
 /**
  * Set parent for an ARO/ACO node.
  *
+ * @return void
  */
 	public function setParent() {
 		extract($this->__dataVars());
@@ -175,6 +180,7 @@ class AclShell extends Shell {
 /**
  * Get path to specified ARO/ACO node.
  *
+ * @return void
  */
 	public function getPath() {
 		extract($this->__dataVars());
@@ -217,6 +223,7 @@ class AclShell extends Shell {
 /**
  * Check permission for a given ARO to a given ACO.
  *
+ * @return void
  */
 	public function check() {
 		extract($this->__getParams());
@@ -231,6 +238,7 @@ class AclShell extends Shell {
 /**
  * Grant permission for a given ARO to a given ACO.
  *
+ * @return void
  */
 	public function grant() {
 		extract($this->__getParams());
@@ -245,6 +253,7 @@ class AclShell extends Shell {
 /**
  * Deny access for an ARO to an ACO.
  *
+ * @return void
  */
 	public function deny() {
 		extract($this->__getParams());
@@ -259,6 +268,7 @@ class AclShell extends Shell {
 /**
  * Set an ARO to inherit permission to an ACO.
  *
+ * @return void
  */
 	public function inherit() {
 		extract($this->__getParams());
@@ -273,6 +283,7 @@ class AclShell extends Shell {
 /**
  * Show a specific ARO/ACO node.
  *
+ * @return void
  */
 	public function view() {
 		extract($this->__dataVars());
@@ -332,6 +343,7 @@ class AclShell extends Shell {
 /**
  * Initialize ACL database.
  *
+ * @return mixed
  */
 	public function initdb() {
 		return $this->dispatchShell('schema create DbAcl');
@@ -493,8 +505,6 @@ class AclShell extends Shell {
 /**
  * Checks that given node exists
  *
- * @param string $type Node type (ARO/ACO)
- * @param integer $id Node id
  * @return boolean Success
  */
 	public function nodeExists() {

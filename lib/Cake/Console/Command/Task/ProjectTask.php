@@ -40,7 +40,7 @@ class ProjectTask extends Shell {
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls bake() with that information.
  *
- * @param string $project Project path
+ * @return mixed
  */
 	public function execute() {
 		$project = null;
@@ -137,6 +137,7 @@ class ProjectTask extends Shell {
  * @param string $path Project path
  * @param string $skel Path to copy from
  * @param string $skip array of directories to skip when copying
+ * @return mixed
  */
 	public function bake($path, $skel = null, $skip = array('empty')) {
 		if (!$skel && !empty($this->params['skel'])) {

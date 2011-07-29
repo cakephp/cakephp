@@ -72,6 +72,7 @@ class ViewTask extends BakeTask {
 /**
  * Override initialize
  *
+ * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('View'));
@@ -80,6 +81,7 @@ class ViewTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @return mixed
  */
 	public function execute() {
 		parent::execute();
@@ -188,6 +190,7 @@ class ViewTask extends BakeTask {
 /**
  * Handles interactive baking
  *
+ * @return void
  */
 	protected function _interactive() {
 		$this->hr();
@@ -295,6 +298,7 @@ class ViewTask extends BakeTask {
  * Bake a view file for each of the supplied actions
  *
  * @param array $actions Array of actions to make files for.
+ * @param array $vars
  * @return void
  */
 	public function bakeActions($actions, $vars) {
@@ -436,7 +440,8 @@ class ViewTask extends BakeTask {
 /**
  * Returns associations for controllers models.
  *
- * @return  array $associations
+ * @param Model $model
+ * @return array $associations
  */
 	private function __associations($model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');

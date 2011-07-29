@@ -98,6 +98,9 @@ class CommandListShell extends Shell {
 /**
  * Scan the provided paths for shells, and append them into $shellList
  *
+ * @param string $type
+ * @param array $shells
+ * @param array $shellList
  * @return array
  */
 	protected function _appendShells($type, $shells, $shellList) {
@@ -111,6 +114,7 @@ class CommandListShell extends Shell {
 /**
  * Output text.
  *
+ * @param array $shellList
  * @return void
  */
 	protected function _asText($shellList) {
@@ -146,6 +150,7 @@ class CommandListShell extends Shell {
 /**
  * Generates the shell list sorted by where the shells are found.
  *
+ * @param array $shellList
  * @return void
  */
 	protected function _asSorted($shellList) {
@@ -184,6 +189,7 @@ class CommandListShell extends Shell {
 /**
  * Output as XML
  *
+ * @param array $shellList
  * @return void
  */
 	protected function _asXml($shellList) {

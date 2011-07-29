@@ -171,7 +171,9 @@ class ConsoleInputOption {
 /**
  * Check that a value is a valid choice for this option.
  *
+ * @param string $value
  * @return boolean
+ * @throws ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
@@ -189,7 +191,7 @@ class ConsoleInputOption {
 /**
  * Append the option's xml into the parent.
  *
- * @param SimpleXmlElement The parent element.
+ * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this option appended.
  */
 	public function xml(SimpleXmlElement $parent) {

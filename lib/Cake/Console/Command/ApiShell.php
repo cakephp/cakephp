@@ -36,6 +36,7 @@ class ApiShell extends Shell {
 /**
  * Override initialize of the Shell
  *
+ * @return void
  */
 	public function initialize() {
 		$this->paths = array_merge($this->paths, array(
@@ -53,6 +54,7 @@ class ApiShell extends Shell {
 /**
  * Override main() to handle action
  *
+ * @return void
  */
 	public function main() {
 		if (empty($this->args)) {
@@ -150,6 +152,7 @@ class ApiShell extends Shell {
 /**
  * Show help for this shell.
  *
+ * @return void
  */
 	public function help() {
 		$head  = "Usage: cake api [<type>] <className> [-m <method>]\n";
@@ -187,7 +190,7 @@ class ApiShell extends Shell {
  * Parse a given class (located on given file) and get public methods and their
  * signatures.
  *
- * @param object $File File object
+ * @param string $path File path
  * @param string $class Class name
  * @return array Methods and signatures indexed by method name
  */

@@ -40,6 +40,7 @@ class I18nShell extends Shell {
 /**
  * Override startup of the Shell
  *
+ * @return mixed
  */
 	public function startup() {
 		$this->_welcome();
@@ -58,6 +59,7 @@ class I18nShell extends Shell {
 /**
  * Override main() for help message hook
  *
+ * @return void
  */
 	public function main() {
 		$this->out(__d('cake_console', '<info>I18n Shell</info>'));
@@ -91,6 +93,7 @@ class I18nShell extends Shell {
 /**
  * Initialize I18N database.
  *
+ * @return void
  */
 	public function initdb() {
 		$this->dispatchShell('schema create i18n');

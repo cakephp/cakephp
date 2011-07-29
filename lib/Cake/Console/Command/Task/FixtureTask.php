@@ -50,6 +50,9 @@ class FixtureTask extends BakeTask {
 /**
  * Override initialize
  *
+ * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
+ * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
+ * @param ConsoleInput $stdin A ConsoleInput object for stdin.
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);
@@ -236,7 +239,7 @@ class FixtureTask extends BakeTask {
  * Generate the fixture file, and write to disk
  *
  * @param string $model name of the model being generated
- * @param string $fixture Contents of the fixture file.
+ * @param string $otherVars Contents of the fixture file.
  * @return string Content saved into fixture file.
  */
 	public function generateFixtureFile($model, $otherVars) {
@@ -271,7 +274,7 @@ class FixtureTask extends BakeTask {
 /**
  * Generates a string representation of a schema.
  *
- * @param array $table Table schema array
+ * @param array $tableInfo Table schema array
  * @return string fields definitions
  */
 	protected function _generateSchema($tableInfo) {
@@ -282,7 +285,8 @@ class FixtureTask extends BakeTask {
 /**
  * Generate String representation of Records
  *
- * @param array $table Table schema array
+ * @param array $tableInfo Table schema array
+ * @param integer $recordCount
  * @return array Array of records to use in the fixture.
  */
 	protected function _generateRecords($tableInfo, $recordCount = 1) {

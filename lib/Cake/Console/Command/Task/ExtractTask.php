@@ -377,7 +377,7 @@ class ExtractTask extends Shell {
  * @param string $field the name of the field that is being processed
  * @param array $rules the set of validation rules for the field
  * @param string $file the file name where this validation rule was found
- * @param string domain default domain to bind the validations to
+ * @param string $domain default domain to bind the validations to
  * @return void
  */
 	protected function _processValidationRules($field, $rules, $file, $domain) {
@@ -433,6 +433,9 @@ class ExtractTask extends Shell {
 /**
  * Prepare a file to be stored
  *
+ * @param string $domain
+ * @param string $header
+ * @param string $sentence
  * @return void
  */
 	protected function _store($domain, $header, $sentence) {

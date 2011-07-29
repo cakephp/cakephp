@@ -310,9 +310,7 @@ class Shell extends Object {
  *
  * `return $this->dispatchShell('schema', 'create', 'i18n', '--dry');`
  *
- * @param mixed $command Either an array of args similar to $argv. Or a string command, that can be
- *   exploded on space to simulate argv.
- * @return mixed. The return of the other shell.
+ * @return mixed The return of the other shell.
  */
 	public function dispatchShell() {
 		$args = func_get_args();
@@ -383,6 +381,7 @@ class Shell extends Object {
 /**
  * Display the help in the correct format
  *
+ * @param string $command
  * @return void
  */
 	protected function _displayHelp($command) {
@@ -410,7 +409,8 @@ class Shell extends Object {
 /**
  * Overload get for lazy building of tasks
  *
- * @return void
+ * @param string $name
+ * @return Shell Object of Task
  */
 	public function __get($name) {
 		if (empty($this->{$name}) && in_array($name, $this->taskNames)) {
@@ -523,7 +523,7 @@ class Shell extends Object {
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
  * @param integer $level The message's output level, see above.
- * @return integer Returns the number of bytes returned from writing to stdout.
+ * @return integer|boolean Returns the number of bytes returned from writing to stdout.
  */
 	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
 		$currentLevel = Shell::NORMAL;
@@ -545,6 +545,7 @@ class Shell extends Object {
  *
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
+ * @return void
  */
 	public function err($message = null, $newlines = 1) {
 		$this->stderr->write($message, $newlines);
@@ -554,7 +555,6 @@ class Shell extends Object {
  * Returns a single or multiple linefeeds sequences.
  *
  * @param integer $multiplier Number of times the linefeed sequence should be repeated
- * @access public
  * @return string
  */
 	public function nl($multiplier = 1) {
@@ -566,6 +566,7 @@ class Shell extends Object {
  *
  * @param integer $newlines Number of newlines to pre- and append
  * @param integer $width Width of the line, defaults to 63
+ * @return void
  */
 	public function hr($newlines = 0, $width = 63) {
 		$this->out(null, $newlines);
@@ -579,6 +580,7 @@ class Shell extends Object {
  *
  * @param string $title Title of the error
  * @param string $message An optional error message
+ * @return void
  */
 	public function error($title, $message = null) {
 		$this->err(__d('cake_console', '<error>Error:</error> %s', $title));

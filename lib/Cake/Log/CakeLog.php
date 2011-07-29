@@ -127,7 +127,7 @@ class CakeLog {
  * Removes a stream from the active streams.  Once a stream has been removed
  * it will no longer have messages sent to it.
  *
- * @param string $keyname Key name of a configured stream to remove.
+ * @param string $streamName Key name of a configured stream to remove.
  * @return void
  */
 	public static function drop($streamName) {

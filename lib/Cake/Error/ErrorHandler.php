@@ -103,6 +103,7 @@ class ErrorHandler {
  * This will either use an AppError class if your application has one,
  * or use the default ExceptionRenderer.
  *
+ * @param Exception $exception
  * @return void
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */

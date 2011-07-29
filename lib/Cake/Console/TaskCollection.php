@@ -27,7 +27,7 @@ class TaskCollection extends ObjectCollection {
 /**
  * Shell to use to set params to tasks.
  *
- * @var array
+ * @var Shell
  */
 	protected $_Shell;
 
@@ -41,7 +41,7 @@ class TaskCollection extends ObjectCollection {
 /**
  * Constructor
  *
- * @param array $paths Array of paths to search for tasks on .
+ * @param Shell $Shell
  * @return void
  */
 	public function __construct(Shell $Shell) {

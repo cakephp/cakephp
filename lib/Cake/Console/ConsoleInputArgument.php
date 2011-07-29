@@ -131,7 +131,9 @@ class ConsoleInputArgument {
 /**
  * Check that $value is a valid choice for this argument.
  *
+ * @param string $value
  * @return boolean
+ * @throws ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
@@ -149,7 +151,7 @@ class ConsoleInputArgument {
 /**
  * Append this arguments XML representation to the passed in SimpleXml object.
  *
- * @param SimpleXmlElement The parent element.
+ * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this argument appended.
  */
 	public function xml(SimpleXmlElement $parent) {

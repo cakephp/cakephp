@@ -30,16 +30,14 @@ class ConsoleErrorHandler extends ErrorHandler {
 /**
  * Standard error stream.
  *
- * @var filehandle
- * @access public
+ * @var ConsoleOutput
  */
 	public static $stderr;
 
 /**
  * Get the stderr object for the console error handling.
  *
- * @param Exception $error Exception to handle.
- * @param array $messages Error messages
+ * @return ConsoleOutput
  */
 	public static function getStderr() {
 		if (empty(self::$stderr)) {
