@@ -403,7 +403,7 @@ class DboPostgres extends DboSource {
  * @access public
  */
 	function truncate($table, $reset = 0) {
-		if (parent::truncate($table)) {
+		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
 			$table = $this->fullTableName($table, false);
 			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
