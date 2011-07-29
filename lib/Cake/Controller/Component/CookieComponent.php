@@ -180,6 +180,8 @@ class CookieComponent extends Component {
 /**
  * Start CookieComponent for use in the controller
  *
+ * @param Controller $controller
+ * @return void
  */
 	public function startup($controller) {
 		$this->_expire($this->time);
@@ -205,6 +207,7 @@ class CookieComponent extends Component {
  * @param mixed $value Value
  * @param boolean $encrypt Set to true to encrypt value, false otherwise
  * @param string $expires Can be either Unix timestamp, or date string
+ * @return void
  */
 	public function write($key, $value = null, $encrypt = true, $expires = null) {
 		if (is_null($encrypt)) {
@@ -327,7 +330,7 @@ class CookieComponent extends Component {
  * Will allow overriding default encryption method.
  *
  * @param string $type Encryption method
- * @access public
+ * @return void
  * @todo NOT IMPLEMENTED
  */
 	public function type($type = 'cipher') {
@@ -369,6 +372,7 @@ class CookieComponent extends Component {
  *
  * @param string $name Name for cookie
  * @param string $value Value for cookie
+ * @return void
  */
 	protected function _write($name, $value) {
 		$this->_setcookie(
@@ -399,6 +403,7 @@ class CookieComponent extends Component {
  * Object wrapper for setcookie() so it can be mocked in unit tests.
  *
  * @param string $name Name of the cookie
+ * @param string $value Value of the cookie
  * @param integer $expire Time the cookie expires in
  * @param string $path Path the cookie applies to
  * @param string $domain Domain the cookie is for.

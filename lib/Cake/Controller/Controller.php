@@ -326,6 +326,7 @@ class Controller extends Object {
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
  * Lazy loads models using the loadModel() method if declared in $uses
  *
+ * @param string $name
  * @return void
  */
 	public function __isset($name) {
@@ -366,6 +367,7 @@ class Controller extends Object {
  * Provides backwards compatibility access to the request object properties.
  * Also provides the params alias.
  *
+ * @param string $name
  * @return void
  */
 	public function __get($name) {
@@ -393,6 +395,8 @@ class Controller extends Object {
 /**
  * Provides backwards compatibility access for setting values to the request object.
  *
+ * @param string $name
+ * @param mixed $value
  * @return void
  */
 	public function __set($name, $value) {
@@ -1017,6 +1021,7 @@ class Controller extends Object {
  * Called before the controller action.  You can use this method to configure and customize components
  * or perform logic that needs to happen before each controller action.
  *
+ * @return void
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function beforeFilter() {
@@ -1026,6 +1031,7 @@ class Controller extends Object {
  * Called after the controller action is run, but before the view is rendered. You can use this method
  * to perform logic or set view variables that are required on every request.
  *
+ * @return void
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function beforeRender() {
@@ -1051,6 +1057,7 @@ class Controller extends Object {
 /**
  * Called after the controller action is run and rendered.
  *
+ * @return void
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function afterFilter() {

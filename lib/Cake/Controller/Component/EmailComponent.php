@@ -291,6 +291,7 @@ class EmailComponent extends Component {
  * Initialize component
  *
  * @param object $controller Instantiating controller
+ * @return void
  */
 	public function initialize($controller) {
 		if (Configure::read('App.encoding') !== null) {
@@ -384,6 +385,7 @@ class EmailComponent extends Component {
 /**
  * Reset all EmailComponent internal variables to be able to send out a new email.
  *
+ * @return void
  * @link http://book.cakephp.org/view/1285/Sending-Multiple-Emails-in-a-loop
  */
 	public function reset() {

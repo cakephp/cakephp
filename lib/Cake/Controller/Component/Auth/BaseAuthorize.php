@@ -61,7 +61,7 @@ abstract class BaseAuthorize {
 /**
  * Constructor
  *
- * @param Controller $controller The controller for this request.
+ * @param ComponentCollection $collection The controller for this request.
  * @param string $settings An array of settings.  This class does not use any settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
@@ -102,6 +102,7 @@ abstract class BaseAuthorize {
  * that need to get information about the plugin, controller, and action being invoked.
  *
  * @param CakeRequest $request The request a path is needed for.
+ * @param string $path
  * @return string the action path for the given request.
  */
 	public function action($request, $path = '/:plugin/:controller/:action') {

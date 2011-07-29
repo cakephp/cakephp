@@ -191,9 +191,11 @@ class RequestHandlerComponent extends Component {
 /**
  * Handles (fakes) redirects for Ajax requests using requestAction()
  *
- * @param object $controller A reference to the controller
- * @param mixed $url A string or array containing the redirect location
- * @param mixed HTTP Status for redirect
+ * @param Controller $controller A reference to the controller
+ * @param string|array $url A string or array containing the redirect location
+ * @param mixed $status HTTP Status for redirect
+ * @param boolean $exit
+ * @return void
  */
 	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
 		if (!$this->request->is('ajax')) {
@@ -373,6 +375,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Gets remote client IP
  *
+ * @param boolean $safe
  * @return string Client IP address
  * @deprecated use $this->request->clientIp() from your,  controller instead.
  */
