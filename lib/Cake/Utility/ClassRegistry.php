@@ -298,6 +298,7 @@ class ClassRegistry {
  *
  * @param string $key Key to include in map
  * @param string $name Key that is being mapped
+ * @return void
  */
 	public static function map($key, $name) {
 		$_this = ClassRegistry::getInstance();

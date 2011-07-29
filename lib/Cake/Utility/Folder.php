@@ -181,7 +181,7 @@ class Folder {
 /**
  * Returns an array of all matching files in current directory.
  *
- * @param string $pattern Preg_match pattern (Defaults to: .*)
+ * @param string $regexpPattern Preg_match pattern (Defaults to: .*)
  * @param boolean $sort Whether results should be sorted.
  * @return array Files that match given pattern
  */
@@ -426,7 +426,7 @@ class Folder {
  *
  * @param string $path The Path to read.
  * @param mixed $exceptions Array of files to exclude from the read that will be performed.
- * @access private
+ * @return void
  */
 	public function __tree($path, $exceptions) {
 		$this->path = $path;
@@ -479,7 +479,6 @@ class Folder {
 /**
  * Returns the size in bytes of this Folder and its contents.
  *
- * @param string $directory Path to directory
  * @return int size in bytes of current folder
  */
 	public function dirsize() {

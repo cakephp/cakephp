@@ -438,9 +438,8 @@ class Inflector {
 /**
  * Returns the given lower_case_and_underscored_word as a CamelCased word.
  *
- * @param string $lower_case_and_underscored_word Word to camelize
+ * @param string $lowerCaseAndUnderscoredWord Word to camelize
  * @return string Camelized word. LikeThis.
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function camelize($lowerCaseAndUnderscoredWord) {
@@ -456,7 +455,6 @@ class Inflector {
  *
  * @param string $camelCasedWord Camel-cased word to be "underscorized"
  * @return string Underscore-syntaxed version of the $camelCasedWord
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function underscore($camelCasedWord) {
@@ -471,9 +469,8 @@ class Inflector {
  * Returns the given underscored_word_group as a Human Readable Word Group.
  * (Underscores are replaced by spaces and capitalized following words.)
  *
- * @param string $lower_case_and_underscored_word String to be made more readable
+ * @param string $lowerCaseAndUnderscoredWord String to be made more readable
  * @return string Human-readable string
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
@@ -489,7 +486,6 @@ class Inflector {
  *
  * @param string $className Name of class to get database table name for
  * @return string Name of the database table for given class
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function tableize($className) {
@@ -505,7 +501,6 @@ class Inflector {
  *
  * @param string $tableName Name of database table to get class name for
  * @return string Class name
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function classify($tableName) {
@@ -521,7 +516,6 @@ class Inflector {
  *
  * @param string $string
  * @return string in variable form
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function variable($string) {
@@ -540,9 +534,7 @@ class Inflector {
  *
  * @param string $string the string you want to slug
  * @param string $replacement will replace keys in map
- * @param array $map extra elements to map to the replacement
  * @return string
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function slug($string, $replacement = '_') {

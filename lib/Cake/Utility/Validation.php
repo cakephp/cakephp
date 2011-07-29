@@ -462,7 +462,7 @@ class Validation {
  * Validation of an IP address.
  *
  * @param string $check The string to test.
- * @param string $ipVersion The IP Protocol version to validate against
+ * @param string $type The IP Protocol version to validate against
  * @return boolean Success
  */
 	public static function ip($check, $type = 'both') {
@@ -697,7 +697,6 @@ class Validation {
  *
  * @param string $check Value to check
  * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
- * @param string $ipVersion The IP Protocol version to validate against
  * @return boolean Success
  */
 	public static function url($check, $strict = false) {
@@ -814,8 +813,10 @@ class Validation {
 /**
  * Luhn algorithm
  *
- * @see http://en.wikipedia.org/wiki/Luhn_algorithm
+ * @param string|array $check
+ * @param boolean $deep
  * @return boolean Success
+ * @see http://en.wikipedia.org/wiki/Luhn_algorithm
  */
 	public static function luhn($check, $deep = false) {
 		if (is_array($check)) {

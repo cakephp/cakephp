@@ -59,8 +59,7 @@ class Set {
 /**
  * Filters empty elements out of a route array, excluding '0'.
  *
- * @param mixed $var Either an array to filter, or value when in callback
- * @param boolean $isArray Force to tell $var is an array when $var is empty
+ * @param array $var Either an array to filter, or value when in callback
  * @return mixed Either filtered array, or true/false when in callback
  */
 	public static function filter(array $var) {
@@ -159,7 +158,7 @@ class Set {
  * returned object (recursively). If $key is numeric will maintain array
  * structure
  *
- * @param mixed $value Value to map
+ * @param array $array Array to map
  * @param string $class Class name
  * @param boolean $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
@@ -506,6 +505,7 @@ class Set {
  * @param mixed $conditions An array of condition strings or an XPath expression
  * @param array $data  An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
+ * @param integer $length
  * @return boolean
  */
 	public static function matches($conditions, $data = array(), $i = null, $length = null) {

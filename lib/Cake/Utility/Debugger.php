@@ -166,9 +166,8 @@ class Debugger {
 /**
  * Returns a reference to the Debugger singleton object instance.
  *
+ * @param string $class
  * @return object
- * @access public
- * @static
  */
 	public static function &getInstance($class = null) {
 		static $instance = array();
@@ -193,10 +192,9 @@ class Debugger {
 /**
  * Formats and outputs the contents of the supplied variable.
  *
- * @param $var mixed the variable to dump
+ * @param mixed $var the variable to dump
  * @return void
  * @see Debugger::exportVar()
- * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
 */
 	public static function dump($var) {
@@ -207,10 +205,9 @@ class Debugger {
  * Creates an entry in the log file.  The log entry will contain a stack trace from where it was called.
  * as well as export the variable using exportVar. By default the log is written to the debug log.
  *
- * @param $var mixed Variable or content to log
- * @param $level int type of log to use. Defaults to LOG_DEBUG
+ * @param mixed $var Variable or content to log
+ * @param integer $level type of log to use. Defaults to LOG_DEBUG
  * @return void
- * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	public static function log($var, $level = LOG_DEBUG) {
@@ -442,8 +439,8 @@ class Debugger {
  * Converts a variable to a string for debug output.
  *
  * @param string $var Variable to convert
+ * @param integer $recursion
  * @return string Variable as a formatted string
- * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	public static function exportVar($var, $recursion = 0) {
@@ -537,6 +534,7 @@ class Debugger {
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
+ * @return string
  */
 	public function output($format = null, $strings = array()) {
 		$_this = Debugger::getInstance();
@@ -650,7 +648,7 @@ class Debugger {
 /**
  * Verifies that the application's salt and cipher seed value has been changed from the default value.
  *
- * @static
+ * @return void
  */
 	public static function checkSecurityKeys() {
 		if (Configure::read('Security.salt') == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {

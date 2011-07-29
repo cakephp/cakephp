@@ -206,6 +206,7 @@ class File {
  * all other platforms will use "\n"
  *
  * @param string $data Data to prepare for writing.
+ * @param boolean $forceWindows
  * @return string The with converted line endings.
  */
 	public static function prepare($data, $forceWindows = false) {
