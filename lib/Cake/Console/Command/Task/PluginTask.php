@@ -69,7 +69,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	protected function _interactive($plugin = null) {
-		if ($plugin === null) {
+		while ($plugin === null) {
 			$plugin = $this->in(__d('cake_console', 'Enter the name of the plugin in CamelCase format'));
 		}
 
