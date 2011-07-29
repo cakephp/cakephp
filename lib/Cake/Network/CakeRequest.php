@@ -769,7 +769,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Array access unset() implementation
  *
- * @param $name Name to unset.
+ * @param string $name Name to unset.
  * @return void
  */
 	public function offsetUnset($name) {

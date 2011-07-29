@@ -34,7 +34,7 @@ abstract class AbstractTransport {
 /**
  * Send mail
  *
- * @params object $email CakeEmail
+ * @param CakeEmail $email CakeEmail
  * @return boolean
  */
 	abstract public function send(CakeEmail $email);

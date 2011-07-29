@@ -71,6 +71,7 @@ class HttpResponse implements ArrayAccess {
 /**
  * Contructor
  *
+ * @param string $message
  */
 	public function __construct($message = null) {
 		if ($message !== null) {
@@ -91,6 +92,7 @@ class HttpResponse implements ArrayAccess {
  * Get header in case insensitive
  *
  * @param string $name Header name
+ * @param array $headers
  * @return mixed String if header exists or null
  */
 	public function getHeader($name, $headers = null) {
@@ -417,7 +419,7 @@ class HttpResponse implements ArrayAccess {
 /**
  * ArrayAccess - Offset Unset
  *
- * @param mixed @offset
+ * @param mixed $offset
  * @return void
  */
 	public function offsetUnset($offset) {

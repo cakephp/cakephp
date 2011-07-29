@@ -28,21 +28,21 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Socket to SMTP server
  *
- * @var object CakeScoket
+ * @var CakeSocket
  */
 	protected $_socket;
 
 /**
  * CakeEmail
  *
- * @var object CakeEmail
+ * @var CakeEmail
  */
 	protected $_cakeEmail;
 
 /**
  * Send mail
  *
- * @params object $email CakeEmail
+ * @param CakeEmail $email CakeEmail
  * @return boolean
  * @throws SocketException
  */

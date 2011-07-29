@@ -340,6 +340,7 @@ class L10n {
  * the method will get the settings from L10n::__setLanguage();
  *
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
+ * @return mixed
  */
 	public function get($language = null) {
 		if ($language !== null) {
@@ -354,7 +355,7 @@ class L10n {
  * If $language is null it will use the DEFAULT_LANGUAGE if defined
  *
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
- * @access private
+ * @return mixed
  */
 	private function __setLanguage($language = null) {
 		$langKey = null;

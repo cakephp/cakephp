@@ -358,8 +358,8 @@ class CakeResponse {
 /**
  * Sends a header to the client.
  *
- * @param $name the header name
- * @param $value the header value
+ * @param string $name the header name
+ * @param string $value the header value
  * @return void
  */
 	protected function _sendHeader($name, $value = null) {
@@ -375,7 +375,7 @@ class CakeResponse {
 /**
  * Sends a content string to the client.
  *
- * @param $content string to send as response body
+ * @param string $content string to send as response body
  * @return void
  */
 	protected function _sendContent($content) {
@@ -565,7 +565,7 @@ class CakeResponse {
  *
  * e.g `mapType('application/pdf'); // returns 'pdf'`
  *
- * @param mixed $type Either a string content type to map, or an array of types.
+ * @param mixed $ctype Either a string content type to map, or an array of types.
  * @return mixed Aliases for the types provided.
  */
 	public function mapType($ctype) {

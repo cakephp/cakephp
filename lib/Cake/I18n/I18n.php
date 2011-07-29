@@ -356,6 +356,7 @@ class I18n {
  *
  * @param resource $file Binary .mo file to load
  * @param string $domain Domain where to load file in
+ * @return void
  */
 	private function __loadMo($file, $domain) {
 		$data = file_get_contents($file);

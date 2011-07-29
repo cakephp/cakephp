@@ -533,7 +533,7 @@ class CakeEmail {
 /**
  * Sets headers for the message
  *
- * @param array Associative array containing headers to be set.
+ * @param array $headers Associative array containing headers to be set.
  * @return object $this
  * @throws SocketException
  */
@@ -906,6 +906,7 @@ class CakeEmail {
 /**
  * Send an email using the specified content, template and layout
  *
+ * @param string|array $content
  * @return boolean Success
  * @throws SocketException
  */

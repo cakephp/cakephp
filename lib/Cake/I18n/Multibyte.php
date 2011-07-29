@@ -278,7 +278,7 @@ class Multibyte {
  * Converts a multibyte character string
  * to the decimal value of the character
  *
- * @param multibyte string $string
+ * @param string $string
  * @return array
  */
 	public static function utf8($string) {
@@ -341,8 +341,8 @@ class Multibyte {
 /**
  * Find position of first occurrence of a case-insensitive string.
  *
- * @param multi-byte string $haystack The string from which to get the position of the first occurrence of $needle.
- * @param multi-byte string $needle The string to find in $haystack.
+ * @param string $haystack The string from which to get the position of the first occurrence of $needle.
+ * @param string $needle The string to find in $haystack.
  * @param integer $offset The position in $haystack to start searching.
  * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string,
  *    or false if $needle is not found.
@@ -803,10 +803,7 @@ class Multibyte {
  * Make a string uppercase
  *
  * @param string $string The string being uppercased.
- * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string with all alphabetic characters converted to uppercase.
- * @access public
- * @static
  */
 	public static function strtoupper($string) {
 		$utf8Map = Multibyte::utf8($string);
