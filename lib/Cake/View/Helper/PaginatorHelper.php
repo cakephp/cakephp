@@ -111,6 +111,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Before render callback. Overridden to merge passed args with url options.
  *
+ * @param string $viewFile
  * @return void
  */
 	public function beforeRender($viewFile) {
@@ -246,10 +247,10 @@ class PaginatorHelper extends AppHelper {
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
- * @param  string $title Title for the link. Defaults to '<< Previous'.
- * @param  mixed $options Options for pagination link. See #options for list of keys.
- * @param  string $disabledTitle Title when the link is disabled.
- * @param  mixed $disabledOptions Options for the disabled pagination link. See #options for list of keys.
+ * @param string $title Title for the link. Defaults to '<< Previous'.
+ * @param array $options Options for pagination link. See #options for list of keys.
+ * @param string $disabledTitle Title when the link is disabled.
+ * @param array $disabledOptions Options for the disabled pagination link. See #options for list of keys.
  * @return string A "previous" link or $disabledTitle text if the link is disabled.
  */
 	public function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
@@ -403,6 +404,7 @@ class PaginatorHelper extends AppHelper {
  * Converts the keys being used into the format set by options.paramType
  *
  * @param array $url Array of url params to convert
+ * @param string $type
  * @return converted url params.
  */
 	protected function _convertUrlKeys($url, $type) {
@@ -424,6 +426,12 @@ class PaginatorHelper extends AppHelper {
 /**
  * Protected method for generating prev/next links
  *
+ * @param string $which
+ * @param string $title
+ * @param array $options
+ * @param string $disabledTitle
+ * @param array $disabledOptions
+ * @return string
  */
 	protected function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;

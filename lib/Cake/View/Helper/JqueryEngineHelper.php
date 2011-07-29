@@ -108,18 +108,16 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * when jQuery is put into noConflict() mode.
  *
  * @var string
- * @access public
  */
-	 public $jQueryObject = '$';
+	public $jQueryObject = '$';
 
 /**
  * Helper function to wrap repetitive simple method templating.
  *
  * @param string $method The method name being generated.
  * @param string $template The method template
- * @param string $selection the selection to apply
- * @param string $options Array of options for method
- * @param string $callbacks Array of callback / special options.
+ * @param array $options Array of options for method
+ * @param array $extraSafeKeys Extra safe keys
  * @return string Composed method string
  */
 	protected function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
@@ -193,7 +191,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an iteration over the current selection result.
  *
- * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */

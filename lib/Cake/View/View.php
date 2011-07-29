@@ -377,6 +377,7 @@ class View extends Object {
  * - `scripts_for_layout` - contains scripts added to header
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
+ * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
  * @throws CakeException if there is an error in the view.
  */

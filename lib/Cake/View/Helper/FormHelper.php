@@ -139,6 +139,7 @@ class FormHelper extends AppHelper {
  * Guess the location for a model based on its name and tries to create a new instance
  * or get an already created instance of the model
  *
+ * @param string $model
  * @return Model model instance
  */
 	protected function _getModel($model) {
@@ -251,6 +252,7 @@ class FormHelper extends AppHelper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object
  *
+ * @param array $validateProperties
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validateProperties) {
@@ -1117,6 +1119,8 @@ class FormHelper extends AppHelper {
 /**
  * Generate a label for an input() call.
  *
+ * @param string $fieldName
+ * @param string $label
  * @param array $options Options for the label element.
  * @return string Generated label element
  */
@@ -1992,7 +1996,6 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $attributes Array of Attributes
- * @param bool $showEmpty Show/Hide an empty option
  * @return string Completed meridian select input
  * @access public
  * @link http://book.cakephp.org/view/1422/meridian
@@ -2216,6 +2219,7 @@ class FormHelper extends AppHelper {
  * Gets the input field name for the current tag
  *
  * @param array $options
+ * @param string $field
  * @param string $key
  * @return array
  */
@@ -2256,7 +2260,11 @@ class FormHelper extends AppHelper {
 
 /**
  * Returns an array of formatted OPTION/OPTGROUP elements
- * @access private
+ *
+ * @param array $elements
+ * @param array $parents
+ * @param boolean $showParents
+ * @param array $attributes
  * @return array
  */
 	function __selectOptions($elements = array(), $parents = array(), $showParents = null, $attributes = array()) {
@@ -2347,7 +2355,10 @@ class FormHelper extends AppHelper {
 
 /**
  * Generates option lists for common <select /> menus
- * @access private
+ *
+ * @param string $name
+ * @param array $options
+ * @return array
  */
 	function __generateOptions($name, $options = array()) {
 		if (!empty($this->options[$name])) {

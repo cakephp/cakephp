@@ -101,9 +101,9 @@ class SessionHelper extends AppHelper {
  * }}}
  *
  * @param string $key The [Message.]key you are rendering in the view.
- * @return array $attrs Additional attributes to use for the creation of this flash message.
+ * @param array $attrs Additional attributes to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
- * @access public
+ * @return string
  * @link http://book.cakephp.org/view/1466/Methods
  * @link http://book.cakephp.org/view/1467/flash
  */

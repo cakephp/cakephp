@@ -114,9 +114,8 @@ class TextHelper extends AppHelper {
  * strings like http:// and ftp://.
  *
  * @param string $text Text to add links to
- * @param array $options Array of HTML options.
+ * @param array $htmlOptions Array of HTML options.
  * @return string The text with links
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#autoLinkUrls-1619
  */
 	public function autoLinkUrls($text, $htmlOptions = array()) {
@@ -210,11 +209,10 @@ class TextHelper extends AppHelper {
  * - `exact` If false, $text will not be cut mid-word
  * - `html` If true, HTML tags would be handled correctly
  *
- * @param string  $text String to truncate.
+ * @param string $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#truncate-1625
  */
 	public function truncate($text, $length = 100, $options = array()) {

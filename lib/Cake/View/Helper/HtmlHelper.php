@@ -1040,6 +1040,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.
+ * @param boolean $escape Define if the value must be escaped
  * @return string The composed attribute.
  */
 	protected function _formatAttribute($key, $value, $escape = true) {

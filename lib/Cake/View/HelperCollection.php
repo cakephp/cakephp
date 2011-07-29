@@ -30,6 +30,7 @@ class HelperCollection extends ObjectCollection {
 /**
  * Constructor
  *
+ * @param View $view
  * @return void
  */
 	public function __construct(View $view) {

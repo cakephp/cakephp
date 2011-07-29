@@ -165,7 +165,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an iteration over the current selection result.
  *
- * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */

@@ -161,7 +161,7 @@ class JsHelper extends AppHelper {
  * See JsBaseEngineHelper::value() for more information on this method.
  *
  * @param mixed $val A PHP variable to be converted to JSON
- * @param boolean $quoteStrings If false, leaves string values unquoted
+ * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
  * @access public
  **/
@@ -354,7 +354,7 @@ class JsHelper extends AppHelper {
  * - `buffer` Whether or not you wish the script code to be buffered, defaults to true.
  * - Also see options for JsHelper::request() and JsHelper::event()
  *
- * @param string $title The display text of the submit button.
+ * @param string $caption The display text of the submit button.
  * @param array $options Array of options to use. See the options for the above mentioned methods.
  * @return string Completed submit button.
  */

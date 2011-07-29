@@ -149,6 +149,7 @@ class Helper extends Object {
  *
  * @param string $method Method to invoke
  * @param array $params Array of params for the method.
+ * @return void
  */
 	public function __call($method, $params) {
 		trigger_error(__d('cake_dev', 'Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
@@ -184,7 +185,9 @@ class Helper extends Object {
 /**
  * Provides backwards compatiblity access for setting values to the request object.
  *
- * @return void
+ * @param string $name Name of the property being accessed.
+ * @param mixed $value
+ * @return mixed Return the $value
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -379,6 +382,7 @@ class Helper extends Object {
  *
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.
+ * @param boolean $escape Define if the value must be escaped
  * @return string The composed attribute.
  */
 	protected function _formatAttribute($key, $value, $escape = true) {

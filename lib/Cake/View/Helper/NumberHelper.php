@@ -80,9 +80,8 @@ class NumberHelper extends AppHelper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @param integer $length Size in bytes
+ * @param integer $size Size in bytes
  * @return string Human readable size
- * @access public
  * @link http://book.cakephp.org/view/1456/toReadableSize
  */
 	public function toReadableSize($size) {
