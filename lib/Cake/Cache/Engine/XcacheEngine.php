@@ -124,6 +124,7 @@ class XcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
+ * @param boolean $check
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
@@ -144,7 +145,7 @@ class XcacheEngine extends CacheEngine {
  * (see xcache.admin configuration settings)
  *
  * @param boolean $reverse Revert changes
- * @access private
+ * @return void
  */
 	function __auth($reverse = false) {
 		static $backup = array();

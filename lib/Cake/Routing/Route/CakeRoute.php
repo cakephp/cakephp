@@ -27,7 +27,6 @@ class CakeRoute {
  * `/:controller/:action/:id` has 3 key elements
  *
  * @var array
- * @access public
  */
 	public $keys = array();
 
@@ -35,7 +34,6 @@ class CakeRoute {
  * An array of additional parameters for the Route.
  *
  * @var array
- * @access public
  */
 	public $options = array();
 
@@ -43,7 +41,6 @@ class CakeRoute {
  * Default parameters for a Route
  *
  * @var array
- * @access public
  */
 	public $defaults = array();
 
@@ -51,7 +48,6 @@ class CakeRoute {
  * The routes template string.
  *
  * @var string
- * @access public
  */
 	public $template = null;
 
@@ -60,7 +56,6 @@ class CakeRoute {
  * template
  *
  * @var string
- * @access protected
  */
 	protected $_greedy = false;
 
@@ -68,7 +63,6 @@ class CakeRoute {
  * The compiled route regular expresssion
  *
  * @var string
- * @access protected
  */
 	protected $_compiledRoute = null;
 
@@ -76,7 +70,6 @@ class CakeRoute {
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
  *
  * @var array
- * @access private
  */
 	private $__headerMap = array(
 		'type' => 'content_type',
@@ -89,7 +82,7 @@ class CakeRoute {
  *
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
- * @param string $params Array of parameters and additional options for the Route
+ * @param array $options Array of additional options for the Route
  * @return void
  */
 	public function __construct($template, $defaults = array(), $options = array()) {

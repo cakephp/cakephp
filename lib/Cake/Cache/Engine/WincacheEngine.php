@@ -115,6 +115,7 @@ class WincacheEngine extends CacheEngine {
  * Delete all keys from the cache.  This will clear every cache value stored 
  * in wincache.
  *
+ * @param boolean $check
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {

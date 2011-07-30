@@ -247,6 +247,8 @@ class FileEngine extends CacheEngine {
 /**
  * Not implemented
  *
+ * @param string $key
+ * @param integer $offset
  * @return void
  * @throws CacheException
  */
@@ -257,6 +259,8 @@ class FileEngine extends CacheEngine {
 /**
  * Not implemented
  *
+ * @param string $key
+ * @param integer $offset
  * @return void
  * @throws CacheException
  */

@@ -108,6 +108,7 @@ class ApcEngine extends CacheEngine {
 /**
  * Delete all keys from the cache.  This will clear every cache config using APC.
  *
+ * @param boolean $check
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {

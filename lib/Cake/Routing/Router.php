@@ -520,7 +520,7 @@ class Router {
  * Will accept either a CakeRequest object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
  *
- * @param mixed $params Parameters and path information or a CakeRequest object.
+ * @param CakeRequest|array $request Parameters and path information or a CakeRequest object.
  * @return void
  */
 	public static function setRequestInfo($request) {
@@ -618,7 +618,7 @@ class Router {
 /**
  * Promote a route (by default, the last one added) to the beginning of the list
  *
- * @param $which A zero-based array index representing the route to move. For example,
+ * @param integer $which A zero-based array index representing the route to move. For example,
  *    if 3 routes have been added, the last route would be 2.
  * @return boolean Returns false if no route exists at the position specified by $which.
  */
@@ -909,7 +909,7 @@ class Router {
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output url.
  *
- * @param mixed $param The params array or CakeRequest object that needs to be reversed.
+ * @param CakeRequest|array $params The params array or CakeRequest object that needs to be reversed.
  * @param boolean $full Set to true to include the full url including the protocol when reversing
  *     the url.
  * @return string The string that is the reversed result of the array
