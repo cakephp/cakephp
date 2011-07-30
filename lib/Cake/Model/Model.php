@@ -1082,7 +1082,7 @@ class Model extends Object {
 /**
  * Returns true if the supplied field is a model Virtual Field
  *
- * @param mixed $name Name of field to look for
+ * @param string $field Name of field to look for
  * @return boolean indicating whether the field exists as a model virtual field.
  */
 	public function isVirtualField($field) {
@@ -1104,7 +1104,7 @@ class Model extends Object {
 /**
  * Returns the expression for a model virtual field
  *
- * @param mixed $name Name of field to look for
+ * @param string $field Name of field to look for
  * @return mixed If $field is string expression bound to virtual field $field
  *    If $field is null, returns an array of all model virtual fields
  *    or false if none $field exist.
@@ -1435,7 +1435,8 @@ class Model extends Object {
  *
  * @param array $joined Data to save
  * @param mixed $id ID of record in this model
- * @access private
+ * @param DataSource $db
+ * @return void
  */
 	private function __saveMulti($joined, $id, $db) {
 		foreach ($joined as $assoc => $data) {
@@ -1868,11 +1869,10 @@ class Model extends Object {
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
  *
  * @param array $data Record data to validate. This should be an array indexed by association name.
- * @param array Options to use when validating record data (see above), See also $options of validates().
- * @return mixed If atomic: True on success, or false on failure.
+ * @param array $options Options to use when validating record data (see above), See also $options of validates().
+ * @return array|boolean If atomic: True on success, or false on failure.
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
  *    depending on whether each record validated successfully.
- * @access public
  */
 	public function validateAssociated($data, $options = array()) {
 		$options = array_merge(array('atomic' => true), $options);
@@ -2097,8 +2097,8 @@ class Model extends Object {
 /**
  * Collects foreign keys from associations.
  *
+ * @param string $type
  * @return array
- * @access private
  */
 	private function __collectForeignKeys($type = 'belongsTo') {
 		$result = array();
@@ -2280,7 +2280,7 @@ class Model extends Object {
  *
  * @param string $state Either "before" or "after"
  * @param array $query
- * @param array $data
+ * @param array $results
  * @return array
  * @see Model::find()
  */
@@ -2301,7 +2301,7 @@ class Model extends Object {
  *
  * @param string $state Either "before" or "after"
  * @param array $query
- * @param array $data
+ * @param array $results
  * @return int The number of records found, or false
  * @see Model::find()
  */
@@ -2332,7 +2332,7 @@ class Model extends Object {
  *
  * @param string $state Either "before" or "after"
  * @param array $query
- * @param array $data
+ * @param array $results
  * @return array Key/value pairs of primary keys/display field values of all records found
  * @see Model::find()
  */
@@ -2491,7 +2491,7 @@ class Model extends Object {
 /**
  * Passes query results through model and behavior afterFilter() methods.
  *
- * @param array Results to filter
+ * @param array $results Results to filter
  * @param boolean $primary If this is the primary model results (results from model where the find operation was performed)
  * @return array Set of filtered results
  */
@@ -2582,7 +2582,6 @@ class Model extends Object {
  *
  * @param string $sql SQL statement
  * @return array Resultset
- * @access public
  * @link http://book.cakephp.org/view/1027/query
  */
 	public function query() {
@@ -2813,6 +2812,7 @@ class Model extends Object {
  * @param string $field The name of the field to invalidate
  * @param mixed $value Name of validation rule that was not failed, or validation message to
  *    be returned. If no validation key is provided, defaults to true.
+ * @return void
  */
 	public function invalidate($field, $value = true) {
 		if (!is_array($this->validationErrors)) {
@@ -2912,7 +2912,8 @@ class Model extends Object {
 /**
  * Sets the ID of the last record this model inserted
  *
- * @param mixed Last inserted ID
+ * @param mixed $id Last inserted ID
+ * @return void
  */
 	public function setInsertID($id) {
 		$this->__insertID = $id;
@@ -3033,8 +3034,7 @@ class Model extends Object {
  * Gets the name and fields to be used by a join model.  This allows specifying join fields
  * in the association definition.
  *
- * @param object $model The model to be joined
- * @param mixed $with The 'with' key of the model association
+ * @param string|array $assoc The model to be joined
  * @param array $keys Any join keys which must be merged with the keys queried
  * @return array
  */
@@ -3084,8 +3084,8 @@ class Model extends Object {
  * Called before each save operation, after validation. Return a non-true result
  * to halt the save.
  *
+ * @param array $options
  * @return boolean True if the operation should continue, false if it should abort
- * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeSave-1052
  */
 	public function beforeSave($options = array()) {
@@ -3096,7 +3096,7 @@ class Model extends Object {
  * Called after each successful save operation.
  *
  * @param boolean $created True if this save created a new record
- * @access public
+ * @return void
  * @link http://book.cakephp.org/view/1048/Callback-Methods#afterSave-1053
  */
 	public function afterSave($created) {
@@ -3107,7 +3107,6 @@ class Model extends Object {
  *
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort
- * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeDelete-1054
  */
 	public function beforeDelete($cascade = true) {
@@ -3117,7 +3116,7 @@ class Model extends Object {
 /**
  * Called after every deletion operation.
  *
- * @access public
+ * @return void
  * @link http://book.cakephp.org/view/1048/Callback-Methods#afterDelete-1055
  */
 	public function afterDelete() {
@@ -3127,9 +3126,8 @@ class Model extends Object {
  * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
+ * @param array $options Options passed from model::save(), see $options of model::save().
  * @return boolean True if validate operation should continue, false to abort
- * @param $options array Options passed from model::save(), see $options of model::save().
- * @access public
  * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeValidate-1051
  */
 	public function beforeValidate($options = array()) {
@@ -3139,7 +3137,7 @@ class Model extends Object {
 /**
  * Called when a DataSource-level error occurs.
  *
- * @access public
+ * @return void
  * @link http://book.cakephp.org/view/1048/Callback-Methods#onError-1056
  */
 	public function onError() {
@@ -3151,7 +3149,6 @@ class Model extends Object {
  * @param string $type If null this deletes cached views if Cache.check is true
  *     Will be used to allow deleting query cache also
  * @return boolean true on delete
- * @access protected
  * @todo
  */
 	protected function _clearCache($type = null) {

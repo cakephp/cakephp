@@ -58,8 +58,9 @@ class ContainableBehavior extends ModelBehavior {
  * - autoFields: (boolean, optional) auto-add needed fields to fetch requested
  *   bindings. DEFAULTS TO: true
  *
- * @param object $Model Model using the behavior
+ * @param Model $Model Model using the behavior
  * @param array $settings Settings to override for model.
+ * @return void
  */
 	public function setup($Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
@@ -226,9 +227,10 @@ class ContainableBehavior extends ModelBehavior {
  * Resets original associations on models that may have receive multiple,
  * subsequent unbindings.
  *
- * @param object $Model Model on which we are resetting
+ * @param Model $Model Model on which we are resetting
  * @param array $results Results of the find operation
  * @param bool $primary true if this is the primary model that issued the find operation, false otherwise
+ * @return void
  */
 	public function afterFind($Model, $results, $primary) {
 		if (!empty($Model->__backContainableAssociation)) {

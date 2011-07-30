@@ -150,6 +150,7 @@ class Postgres extends DboSource {
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
+ * @param mixed $data
  * @return array Array of tablenames in the database
  */
 	public function listSources($data = null) {
@@ -181,7 +182,7 @@ class Postgres extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param string $tableName Name of database table to inspect
+ * @param Model $model Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
@@ -335,6 +336,7 @@ class Postgres extends DboSource {
  * @param Model $model
  * @param string $alias Alias tablename
  * @param mixed $fields
+ * @param boolean $quote
  * @return array
  */
 	public function fields($model, $alias = null, $fields = array(), $quote = true) {
@@ -390,9 +392,8 @@ class Postgres extends DboSource {
 /**
  * Auxiliary function to quote matched `(Model.fields)` from a preg_replace_callback call
  *
- * @param string matched string
+ * @param string $match matched string
  * @return string quoted strig
- * @access private
  */
 	private function __quoteFunctionField($match) {
 		$prepend = '';
@@ -543,7 +544,7 @@ class Postgres extends DboSource {
  * Generate PostgreSQL index alteration statements for a table.
  *
  * @param string $table Table to alter indexes for
- * @param array $new Indexes to add and drop
+ * @param array $indexes Indexes to add and drop
  * @return array Index alteration statements
  */
 	protected function _alterIndexes($table, $indexes) {
@@ -679,7 +680,8 @@ class Postgres extends DboSource {
 /**
  * Enter description here...
  *
- * @param unknown_type $results
+ * @param array $results
+ * @return void
  */
 	public function resultSet(&$results) {
 		$this->map = array();

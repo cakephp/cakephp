@@ -376,8 +376,8 @@ class TranslateBehavior extends ModelBehavior {
  * Bind translation for fields, optionally with hasMany association for
  * fake field
  *
- * @param object instance of model
- * @param mixed string with field or array(field1, field2=>AssocName, field3)
+ * @param Model $model instance of model
+ * @param string|array $fields string with field or array(field1, field2=>AssocName, field3)
  * @param boolean $reset
  * @return bool
  */

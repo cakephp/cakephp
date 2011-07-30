@@ -228,6 +228,7 @@ class DataSource extends Object {
  *
  * @param Model $model The model class having record(s) deleted
  * @param mixed $id Primary key of the model
+ * @return void
  */
 	public function delete(Model $model, $id = null) {
 		if ($id == null) {
@@ -238,7 +239,7 @@ class DataSource extends Object {
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @param unknown_type $source
+ * @param mixed $source
  * @return mixed Last ID key generated in previous INSERT
  */
 	public function lastInsertId($source = null) {
@@ -248,7 +249,7 @@ class DataSource extends Object {
 /**
  * Returns the number of rows returned by last operation.
  *
- * @param unknown_type $source
+ * @param mixed $source
  * @return integer Number of rows returned by last operation
  */
 	public function lastNumRows($source = null) {
@@ -258,7 +259,7 @@ class DataSource extends Object {
 /**
  * Returns the number of rows affected by last query.
  *
- * @param unknown_type $source
+ * @param mixed $source
  * @return integer Number of rows affected by last query.
  */
 	public function lastAffected($source = null) {
@@ -321,12 +322,11 @@ class DataSource extends Object {
  * @param string $query Query string needing replacements done.
  * @param array $data Array of data with values that will be inserted in placeholders.
  * @param string $association Name of association model being replaced
- * @param unknown_type $assocData
+ * @param array $assocData
  * @param Model $model Instance of the model to replace $__cakeID__$
  * @param Model $linkModel Instance of model to replace $__cakeForeignKey__$
  * @param array $stack
  * @return string String of query data with placeholders replaced.
- * @access public
  * @todo Remove and refactor $assocData, ensure uses of the method have the param removed too.
  */
 	public function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {

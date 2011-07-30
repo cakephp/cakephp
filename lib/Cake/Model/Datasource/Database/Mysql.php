@@ -177,6 +177,7 @@ class Mysql extends DboSource {
 /**
  * Returns an array of sources (tables) in the database.
  *
+ * @param mixed $data
  * @return array Array of tablenames in the database
  */
 	public function listSources($data = null) {
@@ -206,6 +207,7 @@ class Mysql extends DboSource {
  * Builds a map of the columns contained in a result
  *
  * @param PDOStatement $results
+ * @return void
  */
 	public function resultSet($results) {
 		$this->map = array();
@@ -287,7 +289,7 @@ class Mysql extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param mixed $tableName Name of database table to inspect or model instance
+ * @param Model $model Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
@@ -416,6 +418,7 @@ class Mysql extends DboSource {
  * Sets the database encoding
  *
  * @param string $enc Database encoding
+ * @return boolean
  */
 	public function setEncoding($enc) {
 		return $this->_execute('SET NAMES ' . $enc) !== false;
@@ -458,6 +461,7 @@ class Mysql extends DboSource {
  * Generate a MySQL Alter Table syntax for the given Schema comparison
  *
  * @param array $compare Result of a CakeSchema::compare()
+ * @param string $table
  * @return array Array of alter statements to make.
  */
 	public function alterSchema($compare, $table = null) {
@@ -551,7 +555,7 @@ class Mysql extends DboSource {
  * Generate MySQL index alteration statements for a table.
  *
  * @param string $table Table to alter indexes for
- * @param array $new Indexes to add and drop
+ * @param array $indexes Indexes to add and drop
  * @return array Index alteration statements
  */
 	protected function _alterIndexes($table, $indexes) {

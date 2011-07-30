@@ -133,6 +133,7 @@ class CakeSession {
  *
  * @param string $base The base path for the Session
  * @param boolean $start Should session be started right now
+ * @return void
  */
 	public static function init($base = null, $start = true) {
 		self::$time = time();
@@ -229,7 +230,7 @@ class CakeSession {
 /**
  * Returns the Session id
  *
- * @param id $name string
+ * @param string $id
  * @return string Session id
  */
 	public static function id($id = null) {
@@ -263,7 +264,7 @@ class CakeSession {
  *
  * @param array $old Set of old variables => values
  * @param array $new New set of variable => value
- * @access private
+ * @return void
  */
 	private static function __overwrite(&$old, $new) {
 		if (!empty($old)) {
@@ -508,6 +509,7 @@ class CakeSession {
 /**
  * Find the handler class and make sure it implements the correct interface.
  *
+ * @param string $handler
  * @return void
  */
 	protected static function _getHandler($handler) {
@@ -526,7 +528,8 @@ class CakeSession {
 /**
  * Get one of the prebaked default session configurations.
  *
- * @return void
+ * @param string $name
+ * @return boolean|array
  */
 	protected static function _defaultConfig($name) {
 		$defaults = array(

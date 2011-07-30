@@ -135,7 +135,7 @@ class CakeSchema extends Object {
 /**
  * Before callback to be implemented in subclasses
  *
- * @param array $events schema object properties
+ * @param array $event schema object properties
  * @return boolean Should process continue
  */
 	public function before($event = array()) {
@@ -145,7 +145,8 @@ class CakeSchema extends Object {
 /**
  * After callback to be implemented in subclasses
  *
- * @param array $events schema object properties
+ * @param array $event schema object properties
+ * @return void
  */
 	public function after($event = array()) {
 	}

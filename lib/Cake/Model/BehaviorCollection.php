@@ -56,7 +56,8 @@ class BehaviorCollection extends ObjectCollection {
  * Attaches a model object and loads a list of behaviors
  *
  * @todo Make this method a constructor instead..
- * @access public
+ * @param string $modelName
+ * @param array $behaviors
  * @return void
  */
 	public function init($modelName, $behaviors = array()) {
@@ -72,6 +73,8 @@ class BehaviorCollection extends ObjectCollection {
 /**
  * Backwards compatible alias for load()
  *
+ * @param string $behavior
+ * @param array $config
  * @return void
  * @deprecated Replaced with load()
  */

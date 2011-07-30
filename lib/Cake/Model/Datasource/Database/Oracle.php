@@ -196,6 +196,9 @@ class DboOracle extends DboSource {
 /**
  * Keeps track of the most recent Oracle error
  *
+ * @param mixed $source
+ * @param boolean $clear
+ * @return void
  */
 	protected function _setError($source = null, $clear = false) {
 		if ($source) {
@@ -473,7 +476,7 @@ class DboOracle extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param object instance of a model to inspect
+ * @param Model $model instance of a model to inspect
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
@@ -680,8 +683,9 @@ class DboOracle extends DboSource {
 /**
  * Generate a Oracle Alter Table syntax for the given Schema comparison
  *
- * @param unknown_type $schema
- * @return unknown
+ * @param mixed $compare
+ * @param mixed $table
+ * @return boolean|string
  */
 	public function alterSchema($compare, $table = null) {
 		if (!is_array($compare)) {
@@ -730,8 +734,8 @@ class DboOracle extends DboSource {
  * This method should quote Oracle identifiers. Well it doesn't.
  * It would break all scaffolding and all of Cake's default assumptions.
  *
- * @param unknown_type $var
- * @return unknown
+ * @param string $name
+ * @return string
  */
 	public function name($name) {
 		if (strpos($name, '.') !== false && strpos($name, '"') === false) {
@@ -838,6 +842,7 @@ class DboOracle extends DboSource {
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
  * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column
  * @return string Quoted and escaped
  */
 	public function value($data, $column = null) {
@@ -877,8 +882,8 @@ class DboOracle extends DboSource {
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @param string
- * @return integer
+ * @param string $source
+ * @return integer|boolean
  */
 	public function lastInsertId($source) {
 		$sequence = $this->_sequenceMap[$source];
@@ -962,15 +967,16 @@ class DboOracle extends DboSource {
  * Enter description here...
  *
  * @param Model $model
- * @param unknown_type $linkModel
+ * @param Model $linkModel
  * @param string $type Association type
- * @param unknown_type $association
- * @param unknown_type $assocData
- * @param unknown_type $queryData
- * @param unknown_type $external
- * @param unknown_type $resultSet
+ * @param string $association
+ * @param array $assocData
+ * @param array $queryData
+ * @param boolean $external
+ * @param array $resultSet
  * @param integer $recursive Number of levels of association
  * @param array $stack
+ * @return void
  */
 	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {

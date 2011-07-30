@@ -262,7 +262,8 @@ class Sqlserver extends DboSource {
  *
  * @param Model $model
  * @param string $alias Alias tablename
- * @param mixed $fields
+ * @param array $fields
+ * @param boolean $quote
  * @return array
  */
 	public function fields($model, $alias = null, $fields = array(), $quote = true) {
@@ -327,7 +328,6 @@ class Sqlserver extends DboSource {
  * @param Model $model
  * @param array $fields
  * @param array $values
- * @param mixed $conditions
  * @return array
  */
 	public function create($model, $fields = null, $values = null) {
@@ -464,6 +464,7 @@ class Sqlserver extends DboSource {
  * Builds a map of the columns contained in a result
  *
  * @param PDOStatement $results
+ * @return void
  */
 	public function resultSet($results) {
 		$this->map = array();
@@ -589,8 +590,9 @@ class Sqlserver extends DboSource {
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *
- * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
+ * @param Model $model
+ * @param array $queryData
+ * @param integer $recursive
  * @return array Array of resultset rows, or false if no rows matched
  */
 	public function read($model, $queryData = array(), $recursive = null) {
@@ -630,6 +632,7 @@ class Sqlserver extends DboSource {
  * @param string $table
  * @param string $fields
  * @param array $values
+ * @return void
  */
 	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);

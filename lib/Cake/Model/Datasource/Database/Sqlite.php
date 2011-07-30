@@ -105,9 +105,7 @@ class Sqlite extends DboSource {
 /**
  * Connects to the database using config['database'] as a filename.
  *
- * @param array $config Configuration array for connecting
- * @return mixed
- * @access public
+ * @return boolean
  */
 	public function connect() {
 		$config = $this->config;
@@ -134,8 +132,8 @@ class Sqlite extends DboSource {
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
+ * @param mixed $data
  * @return array Array of tablenames in the database
- * @access public
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -161,9 +159,8 @@ class Sqlite extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param string $tableName Name of database table to inspect
+ * @param Model $model
  * @return array Fields in table. Keys are name and type
- * @access public
  */
 	public function describe($model) {
 		$cache = parent::describe($model);
@@ -273,7 +270,7 @@ class Sqlite extends DboSource {
  * Generate ResultSet
  *
  * @param mixed $results
- * @access public
+ * @return void
  */
 	public function resultSet($results) {
 		$this->results = $results;
@@ -408,7 +405,7 @@ class Sqlite extends DboSource {
  * Sets the database encoding
  *
  * @param string $enc Database encoding
- * @access public
+ * @return boolean
  */
 	public function setEncoding($enc) {
 		if (!in_array($enc, array("UTF-8", "UTF-16", "UTF-16le", "UTF-16be"))) {
@@ -421,7 +418,6 @@ class Sqlite extends DboSource {
  * Gets the database encoding
  *
  * @return string The database encoding
- * @access public
  */
 	public function getEncoding() {
 		return $this->fetchRow('PRAGMA encoding');
@@ -433,7 +429,6 @@ class Sqlite extends DboSource {
  * @param array $indexes
  * @param string $table
  * @return string
- * @access public
  */
 	public function buildIndex($indexes, $table = null) {
 		$join = array();

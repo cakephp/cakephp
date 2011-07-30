@@ -62,6 +62,7 @@ class ConnectionManager {
 /**
  * Loads connections configuration.
  *
+ * @return void
  */
 	private static function init() {
 		include_once APP . 'Config' . DS . 'database.php';
@@ -231,7 +232,9 @@ class ConnectionManager {
 /**
  * Gets a list of class and file names associated with the user-defined DataSource connections
  *
+ * @param string $name Connection name
  * @return void
+ * @throws MissingDatasourceConfigException
  */
 	protected static function _getConnectionObject($name) {
 		if (!empty(self::$config->{$name})) {
@@ -244,6 +247,7 @@ class ConnectionManager {
 /**
  * Returns the file, class name, and parent for the given driver.
  *
+ * @param array $config Array with connection configuration. Key 'datasource' is required
  * @return array An indexed array with: filename, classname, plugin and parent
  */
 	private static function _connectionData($config) {
@@ -260,6 +264,7 @@ class ConnectionManager {
 /**
  * Destructor.
  *
+ * @return void
  */
 	public static function shutdown() {
 		if (Configure::read('Session.defaults') == 'database' && function_exists('session_write_close')) {

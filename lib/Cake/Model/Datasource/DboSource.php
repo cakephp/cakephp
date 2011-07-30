@@ -705,7 +705,7 @@ class DboSource extends DataSource {
 /**
  * Modifies $result array to place virtual fields in model entry where they belongs to
  *
- * @param array $resut Reference to the fetched row
+ * @param array $result Reference to the fetched row
  * @return void
  */
 	public function fetchVirtualField(&$result) {
@@ -913,6 +913,7 @@ class DboSource extends DataSource {
  * Log given SQL query.
  *
  * @param string $sql SQL statement
+ * @return void|boolean
  * @todo: Add hook to log errors instead of returning false
  */
 	public function logQuery($sql) {
@@ -938,6 +939,7 @@ class DboSource extends DataSource {
  * and execution time in microseconds. If the query fails, an error is output instead.
  *
  * @param string $sql Query to show information on.
+ * @return void
  */
 	public function showQuery($sql) {
 		$error = $this->error;
@@ -1166,13 +1168,14 @@ class DboSource extends DataSource {
  * @param Model $model Primary Model object
  * @param Model $linkModel Linked model that
  * @param string $type Association type, one of the model association types ie. hasMany
- * @param unknown_type $association
- * @param unknown_type $assocData
+ * @param string $association
+ * @param array $assocData
  * @param array $queryData
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @param array $resultSet Existing results
  * @param integer $recursive Number of levels of association
  * @param array $stack
+ * @return mixed
  */
 	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
@@ -1372,14 +1375,14 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Enter description here...
+ * Merge association of merge into data
  *
- * @param unknown_type $data
- * @param unknown_type $merge
- * @param unknown_type $association
- * @param unknown_type $type
+ * @param array $data
+ * @param array $merge
+ * @param string $association
+ * @param string $type
  * @param boolean $selfJoin
- * @access private
+ * @return void
  */
 	function __mergeAssociation(&$data, &$merge, $association, $type, $selfJoin = false) {
 		if (isset($merge[0]) && !isset($merge[0][$association])) {
@@ -1622,8 +1625,11 @@ class DboSource extends DataSource {
  * Returns a conditions array for the constraint between two models
  *
  * @param string $type Association type
- * @param object $model Model object
- * @param array $association Association array
+ * @param Model $model Model object
+ * @param string $linkModel
+ * @param string $alias
+ * @param array $assoc
+ * @param string $alias2
  * @return array Conditions array defining the constraint between $model and $association
  */
 	public function getConstraint($type, $model, $linkModel, $alias, $assoc, $alias2 = null) {
@@ -2078,8 +2084,8 @@ class DboSource extends DataSource {
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @param unknown_type $source
- * @return in
+ * @param mixed $source
+ * @return mixed
  */
 	public function lastInsertId($source = null) {
 		return $this->_connection->lastInsertId();
@@ -2120,9 +2126,9 @@ class DboSource extends DataSource {
 /**
  * Returns a key formatted like a string Model.fieldname(i.e. Post.title, or Country.name)
  *
- * @param unknown_type $model
- * @param unknown_type $key
- * @param unknown_type $assoc
+ * @param Model $model
+ * @param string $key
+ * @param string $assoc
  * @return string
  */
 	public function resolveKey($model, $key, $assoc = null) {
@@ -2549,9 +2555,8 @@ class DboSource extends DataSource {
 /**
  * Auxiliary function to quote matches `Model.fields` from a preg_replace_callback call
  *
- * @param string matched string
+ * @param string $match matched string
  * @return string quoted strig
- * @access private
  */
 	private function __quoteMatchedField($match) {
 		if (is_numeric($match[0])) {
@@ -2587,9 +2592,9 @@ class DboSource extends DataSource {
 /**
  * Returns an ORDER BY clause as a string.
  *
- * @param string $key Field reference, as a key (i.e. Post.title)
+ * @param array|string $keys Field reference, as a key (i.e. Post.title)
  * @param string $direction Direction (ASC or DESC)
- * @param object $model model reference (used to look for virtual field)
+ * @param Model $model model reference (used to look for virtual field)
  * @return string ORDER BY clause
  */
 	public function order($keys, $direction = 'ASC', $model = null) {
@@ -2656,7 +2661,8 @@ class DboSource extends DataSource {
  * Create a GROUP BY SQL clause
  *
  * @param string $group Group By Condition
- * @return mixed string condition or null
+ * @param Model $model
+ * @return null|string string condition or null
  */
 	public function group($group, $model = null) {
 		if ($group) {
@@ -2686,7 +2692,7 @@ class DboSource extends DataSource {
 /**
  * Checks if the specified table contains any record matching specified SQL
  *
- * @param Model $model Model to search
+ * @param Model $Model Model to search
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
@@ -2769,7 +2775,8 @@ class DboSource extends DataSource {
  * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated
- * @return int Converted boolean value
+ * @param boolean $quote
+ * @return string|boolean Converted boolean value
  */
 	public function boolean($data, $quote = false) {
 		if ($quote) {
@@ -2784,6 +2791,7 @@ class DboSource extends DataSource {
  * @param string $table
  * @param string $fields
  * @param array $values
+ * @return boolean
  */
 	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
@@ -2863,9 +2871,10 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Generate a alter syntax from	 CakeSchema::compare()
+ * Generate a alter syntax from	CakeSchema::compare()
  *
- * @param unknown_type $schema
+ * @param mixed $compare
+ * @param string $table
  * @return boolean
  */
 	public function alterSchema($compare, $table = null) {
@@ -3011,8 +3020,7 @@ class DboSource extends DataSource {
 /**
  * Read additional table parameters
  *
- * @param array $parameters
- * @param string $table
+ * @param string $name
  * @return array
  */
 	public function readTableParameters($name) {
