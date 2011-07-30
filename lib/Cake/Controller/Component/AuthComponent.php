@@ -337,9 +337,7 @@ class AuthComponent extends Component {
  * Attempts to introspect the correct values for object properties including
  * $userModel and $sessionKey.
  *
- * @param object $controller A reference to the instantiating controller object
  * @return boolean
- * @access private
  */
 	function __setDefaults() {
 		$defaults = array(
@@ -520,9 +518,8 @@ class AuthComponent extends Component {
  * custom logout logic.  AuthComponent will remove the session data, so
  * there is no need to do that in an authentication object.
  *
- * @param mixed $url Optional URL to redirect the user to after logout
- * @return string AuthComponent::$loginAction
- * @see AuthComponent::$loginAction
+ * @return string AuthComponent::$logoutRedirect
+ * @see AuthComponent::$logoutRedirect
  * @link http://book.cakephp.org/view/1262/logout
  */
 	public function logout() {
@@ -615,6 +612,7 @@ class AuthComponent extends Component {
  * by credentials contained in $request.
  *
  * @param CakeRequest $request The request that contains authentication data.
+ * @param CakeResponse $response The response
  * @return array User record data, or false, if the user could not be identified.
  */
 	public function identify(CakeRequest $request, CakeResponse $response) {
@@ -676,7 +674,8 @@ class AuthComponent extends Component {
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
  *
- * @param object $controller Instantiating controller
+ * @param Controller $controller Instantiating controller
+ * @return void
  */
 	public function shutdown($controller) {
 		if ($this->loggedIn()) {

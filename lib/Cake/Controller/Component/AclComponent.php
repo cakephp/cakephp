@@ -426,7 +426,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  * @link http://book.cakephp.org/view/1248/Assigning-Permissions
  */
@@ -439,7 +439,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  */
 	public function inherit($aro, $aco, $action = "*") {
@@ -451,7 +451,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  * @see allow()
  */
@@ -464,7 +464,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  * @see deny()
  */

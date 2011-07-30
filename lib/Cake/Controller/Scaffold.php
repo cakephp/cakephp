@@ -285,8 +285,9 @@ class Scaffold {
 /**
  * Performs a delete on given scaffolded Model.
  *
- * @param array $params Parameters for scaffolding
+ * @param CareRequest $request Request for scaffolding
  * @return mixed Success on delete, error if delete fails
+ * @throws NotFoundException
  */
 	protected function _scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {

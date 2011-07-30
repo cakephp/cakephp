@@ -97,7 +97,7 @@ class AclShell extends Shell {
 /**
  * Override main() for help message hook
  *
- * @return voids
+ * @return void
  */
 	public function main() {
 		$this->out($this->OptionParser->help());
