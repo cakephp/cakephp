@@ -190,6 +190,74 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array('name' => array('This field cannot be left blank'));
 		$this->assertEqual($TestModel->validationErrors, $expected);
 	}
+	
+/**
+ * Tests validation messages with parameters
+ *
+ * @access public
+ * @return void
+ */
+	public function testValidationMessagesWithParams() {
+		$TestModel = new ValidationTest1();
+		$TestModel->validate = $validate = array(
+			'title' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true
+			),
+			'name' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true,
+				'message' => 'alphaNumeric only'
+			),
+			'body' => array(
+				'rule' => 'notEmpty',
+				'required' => true,
+				'message' => array('%s cannot be left blank', 'Body')
+			),
+			'excerpt' => array(
+				'rule' => 'notEmpty',
+				'required' => true,
+				'message' => array('%d, %d, %d params', 1, 2, 3)
+			)
+		);
+		$TestModel->set(array('title' => '$$', 'name' => '##', 'body' => null, 'excerpt' => null));
+		$TestModel->invalidFields(array('fieldList' => array('title')));
+		$expected = array(
+			'title' => array('This field cannot be left blank')
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+
+		$TestModel->invalidFields(array('fieldList' => array('name')));
+		$expected = array(
+			'name' => array('alphaNumeric only')
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+		
+		$TestModel->invalidFields(array('fieldList' => array('body')));
+		$expected = array(
+			'body' => array('Body cannot be left blank')
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+		
+		$TestModel->invalidFields(array('fieldList' => array('excerpt')));
+		$expected = array(
+			'excerpt' => array('1, 2, 3 params')
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+
+		$TestModel->invalidFields(array('fieldList' => array('name', 'title', 'body', 'excerpt')));
+		$expected = array(
+			'title' => array('This field cannot be left blank'),
+			'name' => array('alphaNumeric only'),
+			'body' => array('Body cannot be left blank'),
+			'excerpt' => array('1, 2, 3 params')
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+	}
 
 /**
  * testValidates method
