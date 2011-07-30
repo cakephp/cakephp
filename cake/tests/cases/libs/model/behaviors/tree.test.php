@@ -1112,6 +1112,11 @@ class NumberTreeTest extends CakeTestCase {
 
 		$total = $this->Tree->childCount();
 		$this->assertEqual($total, 6);
+
+		$this->Tree->read(null, $data[$modelClass]['id']);
+		$id = $this->Tree->field('id', array($modelClass . '.name' => '1.2'));
+		$total = $this->Tree->childCount($id);
+		$this->assertEqual($total, 2);
 	}
 
 /**

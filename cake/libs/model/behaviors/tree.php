@@ -226,7 +226,7 @@ class TreeBehavior extends ModelBehavior {
 
 		if ($id === null) {
 			return $Model->find('count', array('conditions' => $scope));
-		} elseif (isset($Model->data[$Model->alias][$left]) && isset($Model->data[$Model->alias][$right])) {
+		} elseif ($Model->id === $id && isset($Model->data[$Model->alias][$left]) && isset($Model->data[$Model->alias][$right])) {
 			$data = $Model->data[$Model->alias];
 		} else {
 			$data = $Model->find('first', array('conditions' => array($scope, $Model->escapeField() => $id), 'recursive' => $recursive));
@@ -717,7 +717,7 @@ class TreeBehavior extends ModelBehavior {
 
 		$db =& ConnectionManager::getDataSource($Model->useDbConfig);
 		$Model->updateAll(
-			array($parent => $db->value($node[$parent], $parent)), 
+			array($parent => $db->value($node[$parent], $parent)),
 			array($Model->escapeField($parent) => $node[$Model->primaryKey])
 		);
 		$this->__sync($Model, 1, '-', 'BETWEEN ' . ($node[$left] + 1) . ' AND ' . ($node[$right] - 1));
