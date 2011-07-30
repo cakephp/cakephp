@@ -390,6 +390,9 @@ class ExtractTask extends Shell {
 
 			foreach ($rules as $rule => $validateProp) {
 				if (isset($validateProp['message'])) {
+					if (is_array($validateProp['message'])) {
+						$validateProp['message'] = current($validateProp['message']);
+					}
 					$this->_strings[$domain][$validateProp['message']][$file][] = 'validation for field ' . $field;
 				}
 			}
