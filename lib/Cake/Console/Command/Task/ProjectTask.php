@@ -97,20 +97,19 @@ class ProjectTask extends Shell {
 				$success = false;
 			}
 
-			$this->out(__d('cake_console', 'The value for CAKE_CORE_INCLUDE_PATH can be hardcoded set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
-			$this->out(__d('cake_console', '<warning>If you hard code it, the project will possibly run only in your computer.</warning>'));
-			$setConstants = $this->in(__d('cake_console', 'Do you want to set CAKE_CORE_INCLUDE_PATH in webroot/index.php?'), array('y', 'n'), 'n');
-			if (strtolower($setConstants) === 'y') {
-				if ($this->corePath($path) === true) {
-					$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
-					$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
-					$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
-				} else {
-					$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
-					$success = false;
-				}
+			$hardCode = false;
+			if (!$this->cakeOnIncludePath()) {
+				$this->out(__d('cake_console', '<warning>CakePHP is not on your `include_path`, CAKE_CORE_INCLUDE_PATH will be hard coded.</warning>'));
+				$this->out(__d('cake_console', 'You can fix this by adding CakePHP to your `include_path`.'));
+				$hardCode = true;
+			}
+			if ($this->corePath($path, $hardCode) === true) {
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
 			} else {
-				$this->out(__d('cake_console', '<warning>Please make sure your cake core is accessible, if you have problems edit CAKE_CORE_INCLUDE_PATH in webroot/index.php</warning>'));
+				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
+				$success = false;
 			}
 
 			$Folder = new Folder($path);
@@ -126,6 +125,21 @@ class ProjectTask extends Shell {
 			}
 			return $path;
 		}
+	}
+
+/**
+ * Checks PHP's include_path for CakePHP.
+ *
+ * @return bool Indicates whether or not CakePHP exists on include_path
+ */
+	public function cakeOnIncludePath() {
+		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
+		foreach ($paths as $path) {
+			if (file_exists($path . DS . 'Cake' . DS . 'bootstrap.php')) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 /**
@@ -225,8 +239,8 @@ class ProjectTask extends Shell {
 		$File = new File($path . 'Console' . DS . 'cake.php');
 		$contents = $File->read();
 		if (preg_match('/(__CAKE_PATH__)/', $contents, $match)) {
-			$path = CAKE . 'Console' . DS;
-			$replacement = "'" . str_replace(DS, "' . DIRECTORY_SEPARATOR . '", $path) . "'";
+			$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " \$ds . '" : "'";
+			$replacement = $root . str_replace(DS, "' . \$ds . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
 			$result = str_replace($match[0], $replacement, $contents);
 			if ($File->write($result)) {
 				return true;
@@ -285,13 +299,20 @@ class ProjectTask extends Shell {
  * @param string $path Project path
  * @return boolean Success
  */
-	public function corePath($path) {
+	public function corePath($path, $hardCode = true) {
+		$prefix = $hardCode == true ? '' : '//';
+
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File = new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
-			if (preg_match('/([\s]*define\(\'CAKE_CORE_INCLUDE_PATH\',[\s\'A-z0-9\.]*\);)/', $contents, $match)) {
-				$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
-				$result = str_replace($match[0], "\n\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
+			$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
+			$corePath = $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
+			if (preg_match('#(\s*[/]+define\(\'CAKE_CORE_INCLUDE_PATH\', .*?\);)#', $contents, $match)) {
+				$result = str_replace(
+					$match[0], 
+					"\n\t" . $prefix . "define('CAKE_CORE_INCLUDE_PATH', " . $corePath . ");", 
+					$contents
+				);
 				if (!$File->write($result)) {
 					return false;
 				}
@@ -301,8 +322,12 @@ class ProjectTask extends Shell {
 
 			$File = new File($path . 'webroot' . DS . 'test.php');
 			$contents = $File->read();
-			if (preg_match('/([\s]*define\(\'CAKE_CORE_INCLUDE_PATH\',[\s\'A-z0-9\.]*\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\n\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
+			if (preg_match('#(\s*[/]+define\(\'CAKE_CORE_INCLUDE_PATH\', .*?\);)#', $contents, $match)) {
+				$result = str_replace(
+					$match[0], 
+					"\n\t" . $prefix . "define('CAKE_CORE_INCLUDE_PATH', " . $corePath . ");",
+					$contents
+				);
 				if (!$File->write($result)) {
 					return false;
 				}
