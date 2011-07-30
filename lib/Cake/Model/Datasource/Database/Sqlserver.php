@@ -169,9 +169,10 @@ class Sqlserver extends DboSource {
 /**
  * Returns an array of sources (tables) in the database.
  *
+ * @param mixed $data
  * @return array Array of tablenames in the database
  */
-	public function listSources() {
+	public function listSources($data = null) {
 		$cache = parent::listSources();
 		if ($cache !== null) {
 			return $cache;
@@ -200,7 +201,7 @@ class Sqlserver extends DboSource {
  * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -330,7 +331,7 @@ class Sqlserver extends DboSource {
  * @param array $values
  * @return array
  */
-	public function create($model, $fields = null, $values = null) {
+	public function create(Model $model, $fields = null, $values = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -360,7 +361,7 @@ class Sqlserver extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	public function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -595,7 +596,7 @@ class Sqlserver extends DboSource {
  * @param integer $recursive
  * @return array Array of resultset rows, or false if no rows matched
  */
-	public function read($model, $queryData = array(), $recursive = null) {
+	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
 		$this->_fieldMappings = array();
 		return $results;
@@ -733,9 +734,10 @@ class Sqlserver extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
+ * @param mixed $source
  * @return integer Number of affected rows
  */
-	public function lastAffected() {
+	public function lastAffected($source = null) {
 		$affected = parent::lastAffected();
 		if ($affected === null && $this->_lastAffected !== false) {
 			return $this->_lastAffected;

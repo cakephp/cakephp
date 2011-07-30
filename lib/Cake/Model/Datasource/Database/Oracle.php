@@ -319,9 +319,10 @@ class DboOracle extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
+ * @param mixed $source
  * @return integer Number of rows in resultset
  */
-	public function lastNumRows() {
+	public function lastNumRows($source = null) {
 		return $this->_numRows;
 	}
 
@@ -329,9 +330,11 @@ class DboOracle extends DboSource {
  * Executes given SQL statement. This is an overloaded method.
  *
  * @param string $sql SQL statement
+ * @param array $params list of params to be bound to query
+ * @param array $prepareOptions Options to be used in the prepare statement
  * @return resource Result resource identifier or null
  */
-	protected function _execute($sql) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_statementId = @ociparse($this->connection, $sql);
 		if (!$this->_statementId) {
 			$this->_setError($this->connection);
@@ -375,10 +378,10 @@ class DboOracle extends DboSource {
 /**
  * Fetch result row
  *
+ * @param string $sql
  * @return array
- * @access public
  */
-	public function fetchRow() {
+	public function fetchRow($sql = null) {
 		if ($this->_currentRow >= $this->_numRows) {
 			ocifreestatement($this->_statementId);
 			$this->_map = null;
@@ -452,9 +455,10 @@ class DboOracle extends DboSource {
  * Returns an array of tables in the database. If there are no tables, an error is
  * raised and the application exits.
  *
+ * @param mixed $source
  * @return array tablenames in the database
  */
-	public function listSources() {
+	public function listSources($source = null) {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
@@ -479,7 +483,7 @@ class DboOracle extends DboSource {
  * @param Model $model instance of a model to inspect
  * @return array Fields in table. Keys are name and type
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
@@ -885,7 +889,7 @@ class DboOracle extends DboSource {
  * @param string $source
  * @return integer|boolean
  */
-	public function lastInsertId($source) {
+	public function lastInsertId($source = null) {
 		$sequence = $this->_sequenceMap[$source];
 		$sql = "SELECT $sequence.currval FROM dual";
 
@@ -902,18 +906,20 @@ class DboOracle extends DboSource {
 /**
  * Returns a formatted error message from previous database operation.
  *
+ * @param PDOStatement $query the query to extract the error from if any
  * @return string Error message with error number
  */
-	public function lastError() {
+	public function lastError(PDOStatement $query = null) {
 		return $this->_error;
 	}
 
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
+ * @param mixed $source
  * @return int Number of affected rows
  */
-	public function lastAffected() {
+	public function lastAffected($source = null) {
 		return $this->_statementId ? ocirowcount($this->_statementId): false;
 	}
 

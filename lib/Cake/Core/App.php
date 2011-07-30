@@ -682,7 +682,7 @@ class App {
  * @param boolean $parent whether to load the class parent or not
  * @return boolean true indicating the successful load and existence of the class
  */
-	private function _loadClass($name, $plugin, $type, $originalType, $parent) {
+	private static function _loadClass($name, $plugin, $type, $originalType, $parent) {
 		if ($type == 'Console/Command' && $name == 'Shell') {
 			$type = 'Console';
 		} else if (isset(self::$types[$originalType]['suffix'])) {

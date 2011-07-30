@@ -45,7 +45,7 @@ class XcacheEngine extends CacheEngine {
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings) {
+	public function init($settings = array()) {
 		parent::init(array_merge(array(
 			'engine' => 'Xcache',
 			'prefix' => Inflector::slug(APP_DIR) . '_',

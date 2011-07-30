@@ -185,7 +185,7 @@ class Postgres extends DboSource {
  * @param Model $model Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$fields = parent::describe($model);
 		$table = $this->fullTableName($model, false);
 		$this->_sequenceMap[$table] = array();
@@ -267,7 +267,7 @@ class Postgres extends DboSource {
  * @param string $field Name of the ID database field. Defaults to "id"
  * @return integer
  */
-	public function lastInsertId($source, $field = 'id') {
+	public function lastInsertId($source = null, $field = 'id') {
 		$seq = $this->getSequence($source, $field);
 		return $this->_connection->lastInsertId($seq);
 	}

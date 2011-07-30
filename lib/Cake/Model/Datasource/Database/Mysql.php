@@ -292,7 +292,7 @@ class Mysql extends DboSource {
  * @param Model $model Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -339,7 +339,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	public function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::update($model, $fields, $values, $conditions);
 		}
@@ -381,7 +381,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function delete($model, $conditions = null) {
+	public function delete(Model $model, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::delete($model, $conditions);
 		}

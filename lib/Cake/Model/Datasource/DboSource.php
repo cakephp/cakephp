@@ -503,9 +503,10 @@ class DboSource extends DataSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
+ * @param mixed $source
  * @return integer Number of affected rows
  */
-	public function lastAffected() {
+	public function lastAffected($source = null) {
 		if ($this->hasResult()) {
 			return $this->_result->rowCount();
 		}
@@ -516,9 +517,10 @@ class DboSource extends DataSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
+ * @param mixed $source Not used
  * @return integer Number of rows in resultset
  */
-	public function lastNumRows() {
+	public function lastNumRows($source = null) {
 		return $this->lastAffected();
 	}
 
@@ -990,7 +992,7 @@ class DboSource extends DataSource {
  *   be used to generate values.
  * @return boolean Success
  */
-	public function create($model, $fields = null, $values = null) {
+	public function create(Model $model, $fields = null, $values = null) {
 		$id = null;
 
 		if ($fields == null) {
@@ -1037,7 +1039,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure.  An array of results on success.
  */
-	public function read($model, $queryData = array(), $recursive = null) {
+	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$queryData = $this->__scrubQueryData($queryData);
 
 		$null = null;
@@ -1809,7 +1811,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if ($values == null) {
 			$combined = $fields;
 		} else {
@@ -1886,7 +1888,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function delete($model, $conditions = null) {
+	public function delete(Model $model, $conditions = null) {
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
 		$conditions = $this->_matchRecords($model, $conditions);
@@ -2131,7 +2133,7 @@ class DboSource extends DataSource {
  * @param string $assoc
  * @return string
  */
-	public function resolveKey($model, $key, $assoc = null) {
+	public function resolveKey(Model $model, $key, $assoc = null) {
 		if (empty($assoc)) {
 			$assoc = $model->alias;
 		}
