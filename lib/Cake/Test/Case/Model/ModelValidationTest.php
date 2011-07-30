@@ -166,6 +166,32 @@ class ModelValidationTest extends BaseModelTest {
 
 		$this->assertEqual($TestModel->validate, $validate);
 	}
+	
+/**
+ * Tests validation messages with rule parameters
+ *
+ * @access public
+ * @return void
+ */
+	public function testValidationMessagesWithRuleParams() {
+		$TestModel = new ValidationTest1();
+		$TestModel->validate = $validate = array(
+			'username' => array(
+				'rule' => array('minLength', 8),
+				'message' => 'Usernames must be at least %d characters long.'
+			),
+			'password' => array(
+				'rule' => array('between', 4, 8),
+				'message' => 'Passwords must be between %d and %d characters long.'
+		));
+		$TestModel->set(array('username' => '$$', 'password' => '##'));
+		$TestModel->invalidFields(array('fieldList' => array('username', 'password')));
+		$expected = array(
+			'username' => array('Usernames must be at least 8 characters long.'),
+			'password' => array('Passwords must be between 4 and 8 characters long.')
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+	}
 
 /**
  * Test that invalidFields() integrates well with save().  And that fieldList can be an empty type.
