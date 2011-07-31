@@ -471,7 +471,7 @@ class CakeEmail {
  * @param string $name
  * @param string $throwMessage
  * @return object $this
- * @throws SocketExpceiton
+ * @throws SocketException
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
 		$current = $this->{$varName};
@@ -490,6 +490,7 @@ class CakeEmail {
  * @param mixed $email
  * @param mixed $name
  * @return object $this
+ * @throws SocketException
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -987,6 +988,7 @@ class CakeEmail {
  * @param mixed $transportConfig String to use config from EmailConfig or array with configs
  * @param boolean $send Send the email or just return the instance pre-configured
  * @return object Instance of CakeEmail
+ * @throws SocketException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;

@@ -103,7 +103,8 @@ class Postgres extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return True if successfully connected.
+ * @return boolean True if successfully connected.
+ * @throws MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;

@@ -722,7 +722,7 @@ class TimeHelper extends AppHelper {
  * @param string $format strftime format string.
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)
- * @return string Formatted and translated date string @access public
+ * @return string Formatted and translated date string
  */
 	public function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
 		$date = $this->fromString($date, $userOffset);

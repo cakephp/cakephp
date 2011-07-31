@@ -510,6 +510,7 @@ class CakeSession {
  *
  * @param string $handler
  * @return void
+ * @throws CakeSessionException
  */
 	protected static function _getHandler($handler) {
 		list($plugin, $class) = pluginSplit($handler, true);

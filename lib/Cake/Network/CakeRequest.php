@@ -384,7 +384,7 @@ class CakeRequest implements ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
- * @throws BadMethodCallException when an invalid method is called.
+ * @throws CakeException when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {

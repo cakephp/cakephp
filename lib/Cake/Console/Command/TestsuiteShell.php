@@ -165,6 +165,7 @@ class TestsuiteShell extends Shell {
  * Initialization method installs PHPUnit and loads all plugins
  *
  * @return void
+ * @throws Exception
  */
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();

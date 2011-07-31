@@ -104,6 +104,7 @@ class PaginatorComponent extends Component {
  * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering 
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
+ * @throws MissingModelException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {

@@ -84,7 +84,8 @@ abstract class BaseAuthorize {
  * Accessor to the controller object.
  *
  * @param mixed $controller null to get, a controller to set.
- * @return mixed.
+ * @return mixed
+ * @throws CakeException
  */
 	public function controller($controller = null) {
 		if ($controller) {

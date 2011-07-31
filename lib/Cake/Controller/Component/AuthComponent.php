@@ -385,6 +385,7 @@ class AuthComponent extends Component {
  * Loads the authorization objects configured.
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
+ * @throws CakeException
  */
 	public function constructAuthorize() {
 		if (empty($this->authorize)) {
@@ -632,6 +633,7 @@ class AuthComponent extends Component {
  * loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
+ * @throws CakeException
  */
 	public function constructAuthenticate() {
 		if (empty($this->authenticate)) {

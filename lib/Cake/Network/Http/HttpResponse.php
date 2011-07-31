@@ -124,7 +124,7 @@ class HttpResponse implements ArrayAccess {
  *
  * @param string $message Message to parse
  * @return void
- * @throw SocketException
+ * @throws SocketException
  */
 	public function parseResponse($message) {
 		if (!is_string($message)) {

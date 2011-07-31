@@ -2888,6 +2888,7 @@ class Model extends Object {
  *
  * @param string $dataSource The name of the DataSource, as defined in app/Config/database.php
  * @return boolean True on success
+ * @throws MissingConnectionException
  */
 	public function setDataSource($dataSource = null) {
 		$oldConfig = $this->useDbConfig;

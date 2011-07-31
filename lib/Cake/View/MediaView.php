@@ -89,6 +89,7 @@ class MediaView extends View {
  * @param string $view Not used
  * @param string $layout Not used
  * @return mixed
+ * @throws NotFoundException
  */
 	public function render($view = null, $layout = null) {
 		$name = $download = $extension = $id = $modified = $path = $cache = $mimeType = $compress = null;

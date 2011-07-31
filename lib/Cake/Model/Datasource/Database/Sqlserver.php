@@ -133,6 +133,7 @@ class Sqlserver extends DboSource {
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
+ * @throws MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;
@@ -200,6 +201,7 @@ class Sqlserver extends DboSource {
  *
  * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
+ * @throws CakeException
  */
 	public function describe(Model $model) {
 		$cache = parent::describe($model);

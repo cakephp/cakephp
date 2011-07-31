@@ -32,6 +32,7 @@ class ScaffoldView extends ThemeView {
  *
  * @param string $name name of the view file to get.
  * @return string action
+ * @throws MissingViewException
  */
 	protected function _getViewFileName($name = null) {
 		if ($name === null) {

@@ -145,7 +145,8 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @return void
+ * @return boolean
+ * @throws CacheException
  */
 	protected static function _buildEngine($name) {
 		$config = self::$_config[$name];

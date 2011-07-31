@@ -85,6 +85,7 @@ class IniReader implements ConfigReaderInterface {
  * @param string $file Name of the file to read. The chosen file
  *    must be on the reader's path.
  * @return array
+ * @throws ConfigureException
  */
 	public function read($file) {
 		$filename = $this->_path . $file;

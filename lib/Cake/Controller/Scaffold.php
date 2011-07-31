@@ -102,6 +102,7 @@ class Scaffold {
  *
  * @param Controller $controller Controller to scaffold
  * @param CakeRequest $request Request parameters.
+ * @throws MissingModelException
  */
 	public function __construct(Controller $controller, CakeRequest $request) {
 		$this->controller = $controller;
@@ -154,6 +155,7 @@ class Scaffold {
  *
  * @param CakeRequest $request Request Object for scaffolding
  * @return mixed A rendered view of a row from Models database table
+ * @throws NotFoundException
  */
 	protected function _scaffoldView(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('view')) {
@@ -212,6 +214,7 @@ class Scaffold {
  * @param CakeRequest $request Request Object for scaffolding
  * @param string $action add or edt
  * @return mixed Success on save/update, add/edit form if data is empty or error if save or update fails
+ * @throws NotFoundException
  */
 	protected function _scaffoldSave(CakeRequest $request, $action = 'edit') {
 		$formAction = 'edit';
@@ -284,7 +287,7 @@ class Scaffold {
  *
  * @param CareRequest $request Request for scaffolding
  * @return mixed Success on delete, error if delete fails
- * @throws NotFoundException
+ * @throws MethodNotAllowedException, NotFoundException
  */
 	protected function _scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {
@@ -347,6 +350,7 @@ class Scaffold {
  *
  * @param CakeRequest $request Request object for scaffolding
  * @return mixed A rendered view of scaffold action, or showing the error
+ * @throws MissingActionException, MissingDatabaseException
  */
 	protected function _scaffold(CakeRequest $request) {
 		$db = ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);

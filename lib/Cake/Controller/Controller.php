@@ -451,7 +451,8 @@ class Controller extends Object {
  * exists and isn't private.
  *
  * @param CakeRequest $request
- * @return The resulting response.
+ * @return mixed The resulting response.
+ * @throws PrivateActionException, MissingActionException
  */
 	public function invokeAction(CakeRequest $request) {
 		$reflection = new ReflectionClass($this);

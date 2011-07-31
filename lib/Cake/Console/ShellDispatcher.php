@@ -96,6 +96,7 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
+ * @throws CakeException
  */
 	protected function _initEnvironment() {
 		if (!$this->__bootstrap()) {
@@ -149,6 +150,7 @@ class ShellDispatcher {
  * Dispatches a CLI request
  *
  * @return boolean
+ * @throws MissingShellMethodException
  */
 	public function dispatch() {
 		$shell = $this->shiftArgs();

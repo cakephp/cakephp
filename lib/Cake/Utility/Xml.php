@@ -180,6 +180,7 @@ class Xml {
  * @param array $data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
  * @return void
+ * @throws XmlException
  */
 	protected static function _fromArray($dom, $node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
