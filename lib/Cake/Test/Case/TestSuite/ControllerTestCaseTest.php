@@ -98,6 +98,10 @@ class ControllerTestCaseTestController extends AppController {
 
 }
 
+/**
+ * Used to get a testable concrete class of the test subject
+ */
+class TestingControllerTestCase extends ControllerTestCase {}
 
 /**
  * ControllerTestCaseTest
@@ -128,7 +132,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::loadAll();
-		$this->Case = new ControllerTestCase();
+		$this->Case = new TestingControllerTestCase();
 		Router::reload();
 	}
 
