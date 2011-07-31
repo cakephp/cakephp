@@ -50,7 +50,7 @@ class ProjectTask extends Shell {
 
 		while (!$project) {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
-			$project = $this->in($prompt, null, APP_PATH . 'myapp');
+			$project = $this->in($prompt, null, APP . 'myapp');
 		}
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {

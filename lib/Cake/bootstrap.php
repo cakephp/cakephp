@@ -31,10 +31,6 @@ if (!defined('CORE_PATH')) {
 	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 }
 
-if (!defined('APP_PATH')) {
-	define('APP_PATH', ROOT . DS . APP_DIR . DS);
-}
-
 if (!defined('WEBROOT_DIR')) {
 	define('WEBROOT_DIR', 'webroot');
 }

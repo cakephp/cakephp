@@ -37,10 +37,4 @@
 		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 	}
 
-/**
- * Set the include path or define app and core path
- */
-	define('APP_PATH', ROOT . DS . APP_DIR . DS);
-	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-
 	require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
