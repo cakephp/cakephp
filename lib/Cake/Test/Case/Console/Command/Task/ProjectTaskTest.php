@@ -123,10 +123,10 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
 		$file = new File($path . DS  . 'webroot' . DS . 'index.php');
 		$contents = $file->read();
-		$this->assertPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
+		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
 		$file = new File($path . DS  . 'webroot' . DS . 'test.php');
 		$contents = $file->read();
-		$this->assertPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
+		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
 	}
 
 /**
