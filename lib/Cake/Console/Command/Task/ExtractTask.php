@@ -390,7 +390,12 @@ class ExtractTask extends Shell {
 
 			foreach ($rules as $rule => $validateProp) {
 				if (isset($validateProp['message'])) {
-					$this->_strings[$domain][$validateProp['message']][$file][] = 'validation for field ' . $field;
+					if (is_array($validateProp['message'])) {
+						$message = $validateProp['message'][0];
+					} else {
+						$message = $validateProp['message'];
+					}
+					$this->_strings[$domain][$message][$file][] = 'validation for field ' . $field;
 				}
 			}
 		}
@@ -504,7 +509,7 @@ class ExtractTask extends Shell {
 		$output .= "\"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n\"\n\n";
 		return $output;
 	}
-	
+
 /**
  * Get the strings from the position forward
  *

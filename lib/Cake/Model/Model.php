@@ -2271,7 +2271,7 @@ class Model extends Object {
 				return null;
 			}
 		}
-		
+
 		return $query;
 	}
 
@@ -2754,6 +2754,13 @@ class Model extends Object {
 								} else {
 									$validator['message'] = __d($validationDomain, $message);
 								}
+							} elseif (is_array($validator['message'])) {
+								if (count($validator['message']) > 1) {
+									$args = array_slice($validator['message'], 1);
+								} else {
+									$args = $validator['rule'];
+								}
+								$validator['message'] = __d($validationDomain, $validator['message'][0], $args);
 							}
 							$this->invalidate($fieldName, $validator['message']);
 

@@ -682,4 +682,35 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($TestModel->validationErrors, array());
 	}
 
+/**
+ * Test placeholder replacement when validation message is an array
+ *
+ * @return void
+ */
+	public function testValidationMessageAsArray() {
+		$TestModel = new ValidationTest1();
+		$TestModel->create(array('title' => 'foo'));
+		$TestModel->validate = array(
+			'title' => array(
+				'minLength' => array(
+					'rule' => array('minLength', 6),
+					'message' => array('Minimum length allowed is %d chars'),
+					'last' => false
+				),
+				'between' => array(
+					'rule' => array('between', 5, 15),
+					'message' => array('You may enter up to %s chars (minimum is %s chars)', 14, 6)
+				)
+			)
+		);
+		$TestModel->invalidFields();
+		$expected = array(
+			'title' => array(
+				'Minimum length allowed is 6 chars',
+				'You may enter up to 14 chars (minimum is 6 chars)'
+			)
+		);
+		$this->assertEquals($TestModel->validationErrors, $expected);
+	}
+
 }
