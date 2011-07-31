@@ -749,7 +749,6 @@ class DboOracle extends DboSource {
 /**
  * Begin a transaction
  *
- * @param unknown_type $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
@@ -761,7 +760,6 @@ class DboOracle extends DboSource {
 /**
  * Rollback a transaction
  *
- * @param unknown_type $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
@@ -773,7 +771,6 @@ class DboOracle extends DboSource {
 /**
  * Commit a transaction
  *
- * @param unknown_type $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).

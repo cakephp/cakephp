@@ -285,7 +285,7 @@ class Scaffold {
 /**
  * Performs a delete on given scaffolded Model.
  *
- * @param CareRequest $request Request for scaffolding
+ * @param CakeRequest $request Request for scaffolding
  * @return mixed Success on delete, error if delete fails
  * @throws MethodNotAllowedException, NotFoundException
  */

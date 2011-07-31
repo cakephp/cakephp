@@ -1113,7 +1113,7 @@ class DboSource extends DataSource {
  * Passes association results thru afterFind filters of corresponding model
  *
  * @param array $results Reference of resultset to be filtered
- * @param object $model Instance of model to operate against
+ * @param Model $model Instance of model to operate against
  * @param array $filtered List of classes already filtered, to be skipped
  * @return array Array of results that have been filtered through $model->afterFind
  */

@@ -1029,7 +1029,7 @@ class CakeEmail {
 /**
  * Apply the config to an instance
  *
- * @param object $obj CakeEmail
+ * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
  */
