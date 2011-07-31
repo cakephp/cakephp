@@ -52,6 +52,7 @@ class ProjectTask extends Shell {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
 			$project = $this->in($prompt, null, APP . 'myapp');
 		}
+		
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
 			$project = $_SERVER['PWD'] . DS . $project;
@@ -297,45 +298,47 @@ class ProjectTask extends Shell {
  * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
  * @param string $path Project path
+ * @param bool $hardCode Wether or not define calls should be hardcoded.
  * @return boolean Success
  */
 	public function corePath($path, $hardCode = true) {
-		$prefix = $hardCode == true ? '' : '//';
-
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
-			$File = new File($path . 'webroot' . DS . 'index.php');
-			$contents = $File->read();
-			$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
-			$corePath = $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
-			if (preg_match('#(\s*[/]+define\(\'CAKE_CORE_INCLUDE_PATH\', .*?\);)#', $contents, $match)) {
-				$result = str_replace(
-					$match[0], 
-					"\n\t" . $prefix . "define('CAKE_CORE_INCLUDE_PATH', " . $corePath . ");", 
-					$contents
-				);
-				if (!$File->write($result)) {
-					return false;
-				}
-			} else {
+			$filename = $path . 'webroot' . DS . 'index.php';
+			if (!$this->_replaceCorePath($filename, $hardCode)) {
 				return false;
 			}
-
-			$File = new File($path . 'webroot' . DS . 'test.php');
-			$contents = $File->read();
-			if (preg_match('#(\s*[/]+define\(\'CAKE_CORE_INCLUDE_PATH\', .*?\);)#', $contents, $match)) {
-				$result = str_replace(
-					$match[0], 
-					"\n\t" . $prefix . "define('CAKE_CORE_INCLUDE_PATH', " . $corePath . ");",
-					$contents
-				);
-				if (!$File->write($result)) {
-					return false;
-				}
-			} else {
+			$filename = $path . 'webroot' . DS . 'test.php';
+			if (!$this->_replaceCorePath($filename, $hardCode)) {
 				return false;
 			}
 			return true;
 		}
+	}
+
+/**
+ * Replaces the __CAKE_PATH__ placeholder in the template files.
+ *
+ * @param string $filename The filename to operate on.
+ * @param boolean $hardCode Whether or not the define should be uncommented.
+ * @retun bool Success
+ */
+	protected function _replaceCorePath($filename, $hardCode) {
+		$contents = file_get_contents($filename);
+
+		$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
+		$corePath = $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
+
+		$result = str_replace('__CAKE_PATH__', $corePath, $contents, $count);
+		if ($hardCode) {
+			$result = str_replace('//define(\'CAKE_CORE', 'define(\'CAKE_CORE', $result);
+		}
+		if (!file_put_contents($filename, $result)) {
+			return false;
+		}
+		if ($count == 0) {
+			return false;
+		}
+		return true;
 	}
 
 /**
