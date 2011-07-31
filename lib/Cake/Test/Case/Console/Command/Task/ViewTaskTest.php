@@ -43,7 +43,6 @@ class ViewTaskComment extends Model {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'ViewTaskComment';
 
@@ -51,7 +50,6 @@ class ViewTaskComment extends Model {
  * Table name
  *
  * @var string
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -59,7 +57,6 @@ class ViewTaskComment extends Model {
  * Belongs To Associations
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'Article' => array(
@@ -81,7 +78,6 @@ class ViewTaskArticle extends Model {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'ViewTaskArticle';
 
@@ -89,7 +85,6 @@ class ViewTaskArticle extends Model {
  * Table name
  *
  * @var string
- * @access public
  */
 	public $useTable = 'articles';
 }
@@ -106,7 +101,6 @@ class ViewTaskCommentsController extends Controller {
  * Controller name
  *
  * @var string
- * @access public
  */
 	public $name = 'ViewTaskComments';
 
@@ -139,7 +133,6 @@ class ViewTaskArticlesController extends Controller {
  * Controller name
  *
  * @var string
- * @access public
  */
 	public $name = 'ViewTaskArticles';
 
@@ -211,7 +204,6 @@ class ViewTaskTest extends CakeTestCase {
  * Fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 

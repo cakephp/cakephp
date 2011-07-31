@@ -78,7 +78,6 @@ class Scaffold {
  * valid session.
  *
  * @var boolean
- * @access public
  */
 	protected $_validSession = null;
 
@@ -86,7 +85,6 @@ class Scaffold {
  * List of variables to collect from the associated controller
  *
  * @var array
- * @access private
  */
 	private $__passedVars = array(
 		'layout', 'name', 'viewPath', 'request'
@@ -96,7 +94,6 @@ class Scaffold {
  * Title HTML element for current scaffolded view
  *
  * @var string
- * @access public
  */
 	public $scaffoldTitle = null;
 

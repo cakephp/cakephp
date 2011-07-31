@@ -178,7 +178,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -191,7 +190,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * tearDown
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -202,7 +200,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * testInit
  *
- * @access public
  * @return void
  */
 	public function testInit() {
@@ -316,7 +313,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * testImport
  *
- * @access public
  * @return void
  */
 	public function testImport() {
@@ -374,7 +370,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * test create method
  *
- * @access public
  * @return void
  */
 	public function testCreate() {
@@ -393,7 +388,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * test the insert method
  *
- * @access public
  * @return void
  */
 	public function testInsert() {
@@ -434,7 +428,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * test the insert method
  *
- * @access public
  * @return void
  */
 	public function testInsertStrings() {
@@ -459,7 +452,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * Test the drop method
  *
- * @access public
  * @return void
  */
 	public function testDrop() {
@@ -483,7 +475,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * Test the truncate method.
  *
- * @access public
  * @return void
  */
 	public function testTruncate() {

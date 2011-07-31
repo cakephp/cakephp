@@ -43,7 +43,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * setUp
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -54,7 +53,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * tearDown
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -66,7 +64,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testAssertGoodTags
  *
- * @access public
  * @return void
  */
 	public function testAssertTagsQuotes() {
@@ -104,7 +101,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testNumericValuesInExpectationForAssertTags
  *
- * @access public
  * @return void
  */
 	public function testNumericValuesInExpectationForAssertTags() {
@@ -118,7 +114,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testBadAssertTags
  *
- * @access public
  * @return void
  */
 	public function testBadAssertTags() {
@@ -138,7 +133,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testLoadFixtures
  *
- * @access public
  * @return void
  */
 	public function testLoadFixtures() {
@@ -157,7 +151,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testLoadFixturesOnDemand
  *
- * @access public
  * @return void
  */
 	public function testLoadFixturesOnDemand() {
@@ -174,7 +167,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testLoadFixturesOnDemand
  *
- * @access public
  * @return void
  */
 	public function testUnoadFixturesAfterFailure() {
@@ -191,7 +183,6 @@ class CakeTestCaseTest extends CakeTestCase {
 /**
  * testThrowException
  *
- * @access public
  * @return void
  */
 	public function testThrowException() {

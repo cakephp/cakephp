@@ -31,7 +31,6 @@ class ParamTestComponent extends Component {
  * name property
  *
  * @var string 'ParamTest'
- * @access public
  */
 	public $name = 'ParamTest';
 
@@ -39,7 +38,6 @@ class ParamTestComponent extends Component {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Banana' => array('config' => 'value'));
 
@@ -48,7 +46,6 @@ class ParamTestComponent extends Component {
  *
  * @param mixed $controller
  * @param mixed $settings
- * @access public
  * @return void
  */
 	public function initialize(&$controller, $settings) {
@@ -73,7 +70,6 @@ class ComponentTestController extends Controller {
  * name property
  *
  * @var string 'ComponentTest'
- * @access public
  */
 	public $name = 'ComponentTest';
 
@@ -81,7 +77,6 @@ class ComponentTestController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array();
 
@@ -98,7 +93,6 @@ class AppleComponent extends Component {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Orange');
 
@@ -106,7 +100,6 @@ class AppleComponent extends Component {
  * testName property
  *
  * @var mixed null
- * @access public
  */
 	public $testName = null;
 
@@ -114,7 +107,6 @@ class AppleComponent extends Component {
  * startup method
  *
  * @param mixed $controller
- * @access public
  * @return void
  */
 	public function startup(&$controller) {
@@ -133,7 +125,6 @@ class OrangeComponent extends Component {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Banana');
 
@@ -141,7 +132,6 @@ class OrangeComponent extends Component {
  * initialize method
  *
  * @param mixed $controller
- * @access public
  * @return void
  */
 	public function initialize(&$controller) {
@@ -171,7 +161,6 @@ class BananaComponent extends Component {
  * testField property
  *
  * @var string 'BananaField'
- * @access public
  */
 	public $testField = 'BananaField';
 
@@ -197,7 +186,6 @@ class MutuallyReferencingOneComponent extends Component {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('MutuallyReferencingTwo');
 }
@@ -213,7 +201,6 @@ class MutuallyReferencingTwoComponent extends Component {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('MutuallyReferencingOne');
 }
@@ -229,7 +216,6 @@ class SomethingWithEmailComponent extends Component {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Email');
 }
@@ -245,7 +231,6 @@ class ComponentTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -258,7 +243,6 @@ class ComponentTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {

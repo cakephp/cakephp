@@ -38,7 +38,6 @@ class DboSourceTest extends CakeTestCase {
  * debug property
  *
  * @var mixed null
- * @access public
  */
 	public $debug = null;
 
@@ -46,7 +45,6 @@ class DboSourceTest extends CakeTestCase {
  * autoFixtures property
  *
  * @var bool false
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -54,7 +52,6 @@ class DboSourceTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
@@ -64,7 +61,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -81,7 +77,6 @@ class DboSourceTest extends CakeTestCase {
  * execute method
  *
  * @param \$sql
- * @access protected
  * @return void
  */
 				function _execute(\$sql) {
@@ -92,7 +87,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * getLastQuery method
  *
- * @access public
  * @return void
  */
 				public function getLastQuery() {
@@ -112,7 +106,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * endTest method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -161,7 +154,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testMergeAssociations method
  *
- * @access public
  * @return void
  */
 	public function testMergeAssociations() {
@@ -436,7 +428,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testMagicMethodQuerying method
  *
- * @access public
  * @return void
  */
 	public function testMagicMethodQuerying() {
@@ -509,7 +500,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testValue method
  *
- * @access public
  * @return void
  */
 	public function testValue() {
@@ -524,7 +514,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testReconnect method
  *
- * @access public
  * @return void
  */
 	public function testReconnect() {
@@ -536,7 +525,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testName method
  *
- * @access public
  * @return void
  */
 	public function testName() {
@@ -623,7 +611,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testLog method
  *
- * @access public
  * @return void
  */
 	public function testLog() {
@@ -815,7 +802,6 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testStatements method
  *
- * @access public
  * @return void
  */
 	public function testStatements() {

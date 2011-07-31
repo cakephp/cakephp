@@ -30,7 +30,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -43,7 +42,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -54,7 +52,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * testDocument method
  *
- * @access public
  * @return void
  */
 	public function testDocument() {
@@ -89,7 +86,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * testChannel method
  *
- * @access public
  * @return void
  */
 	public function testChannel() {
@@ -119,7 +115,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * test correct creation of channel sub elements.
  *
- * @access public
  * @return void
  */
 	public function testChannelElements() {
@@ -211,7 +206,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * testItems method
  *
- * @access public
  * @return void
  */
 	public function testItems() {
@@ -252,7 +246,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * testItem method
  *
- * @access public
  * @return void
  */
 	public function testItem() {
@@ -482,7 +475,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * testTime method
  *
- * @access public
  * @return void
  */
 	public function testTime() {
@@ -491,7 +483,6 @@ class RssHelperTest extends CakeTestCase {
 /**
  * testElementAttrNotInParent method
  *
- * @access public
  * @return void
  */
 	public function testElementAttrNotInParent() {

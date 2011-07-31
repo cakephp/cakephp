@@ -803,7 +803,6 @@ class App {
  * @param string $name unique name for this map
  * @param string $plugin camelized if object is from a plugin, the name of the plugin
  * @return void
- * @access private
  */
 	private static function __map($file, $name, $plugin = null) {
 		if ($plugin) {
@@ -822,7 +821,6 @@ class App {
  * @param string $name unique name
  * @param string $plugin camelized if object is from a plugin, the name of the plugin
  * @return mixed, file path if found, false otherwise
- * @access private
  */
 	private static function __mapped($name, $plugin = null) {
 		if ($plugin) {

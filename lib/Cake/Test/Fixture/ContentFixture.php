@@ -28,7 +28,6 @@ class ContentFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Aco'
- * @access public
  */
 	public $name = 'Content';
 	public $table = 'Content';
@@ -37,7 +36,6 @@ class ContentFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'iContentId'		=> array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class ContentFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('cDescription' => 'Test Content 1'),

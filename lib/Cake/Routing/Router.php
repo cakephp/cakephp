@@ -45,7 +45,6 @@ class Router {
  * Array of routes connected with Router::connect()
  *
  * @var array
- * @access public
  */
 	public static $routes = array();
 
@@ -54,7 +53,6 @@ class Router {
  * Includes admin prefix
  *
  * @var array
- * @access private
  */
 	protected static $_prefixes = array();
 
@@ -62,7 +60,6 @@ class Router {
  * Directive for Router to parse out file extensions for mapping to Content-types.
  *
  * @var boolean
- * @access private
  */
 	protected static $_parseExtensions = false;
 
@@ -70,7 +67,6 @@ class Router {
  * List of valid extensions to parse from a URL.  If null, any extension is allowed.
  *
  * @var array
- * @access private
  */
 	protected static $_validExtensions = array();
 
@@ -98,7 +94,6 @@ class Router {
  * Stores all information necessary to decide what named arguments are parsed under what conditions.
  *
  * @var string
- * @access public
  */
 	protected static $_namedConfig = array(
 		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
@@ -111,7 +106,6 @@ class Router {
  * The route matching the URL of the current request
  *
  * @var array
- * @access private
  */
 	protected static $_currentRoute = array();
 
@@ -119,7 +113,6 @@ class Router {
  * Default HTTP request method => controller action map.
  *
  * @var array
- * @access private
  */
 	protected static $_resourceMap = array(
 		array('action' => 'index',	'method' => 'GET',		'id' => false),
@@ -158,7 +151,6 @@ class Router {
  * Sets the Routing prefixes.
  *
  * @return void
- * @access private
  */
 	protected static function _setPrefixes() {
 		$routing = Configure::read('Routing');
@@ -487,7 +479,6 @@ class Router {
  *
  * @param string $url
  * @return array Returns an array containing the altered URL and the parsed extension.
- * @access private
  */
 	private static function __parseExtension($url) {
 		$ext = null;

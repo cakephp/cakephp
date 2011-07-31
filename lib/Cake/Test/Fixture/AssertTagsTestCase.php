@@ -43,7 +43,6 @@ class AssertTagsTestCase extends CakeTestCase {
 /**
  * testNumericValuesInExpectationForAssertTags
  *
- * @access public
  * @return void
  */
 	public function testNumericValuesInExpectationForAssertTags() {
@@ -93,7 +92,6 @@ class AssertTagsTestCase extends CakeTestCase {
  /**
  * testBadAssertTags
  *
- * @access public
  * @return void
  */
 	public function testBadAssertTags() {
@@ -109,7 +107,6 @@ class AssertTagsTestCase extends CakeTestCase {
 /**
  * testBadAssertTags
  *
- * @access public
  * @return void
  */
 	public function testBadAssertTags2() {

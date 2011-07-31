@@ -40,7 +40,6 @@ class TheHtmlTestController extends Controller {
  * name property
  *
  * @var string 'TheTest'
- * @access public
  */
 	public $name = 'TheTest';
 
@@ -48,7 +47,6 @@ class TheHtmlTestController extends Controller {
  * uses property
  *
  * @var mixed null
- * @access public
  */
 	public $uses = null;
 }
@@ -136,7 +134,6 @@ class HtmlHelperTest extends CakeTestCase {
  * html property
  *
  * @var object
- * @access public
  */
 	public $Html = null;
 
@@ -168,7 +165,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testDocType method
  *
- * @access public
  * @return void
  */
 	public function testDocType() {
@@ -186,7 +182,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testLink method
  *
- * @access public
  * @return void
  */
 	public function testLink() {
@@ -320,7 +315,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testImageTag method
  *
- * @access public
  * @return void
  */
 	public function testImageTag() {
@@ -368,7 +362,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * Tests creation of an image tag using a theme and asset timestamping
  *
- * @access public
  * @return void
  */
 	public function testImageTagWithTheme() {
@@ -410,7 +403,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * test theme assets in main webroot path
  *
- * @access public
  * @return void
  */
 	public function testThemeAssetsInMainWebrootPath() {
@@ -440,7 +432,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testStyle method
  *
- * @access public
  * @return void
  */
 	public function testStyle() {
@@ -457,7 +448,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testCssLink method
  *
- * @access public
  * @return void
  */
 	public function testCssLink() {
@@ -769,7 +759,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testCharsetTag method
  *
- * @access public
  * @return void
  */
 	public function testCharsetTag() {
@@ -788,7 +777,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testBreadcrumb method
  *
- * @access public
  * @return void
  */
 	public function testBreadcrumb() {
@@ -858,7 +846,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testNestedList method
  *
- * @access public
  * @return void
  */
 	public function testNestedList() {
@@ -1126,7 +1113,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testMeta method
  *
- * @access public
  * @return void
  */
 	public function testMeta() {
@@ -1187,7 +1173,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testTableHeaders method
  *
- * @access public
  * @return void
  */
 	public function testTableHeaders() {
@@ -1199,7 +1184,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testTableCells method
  *
- * @access public
  * @return void
  */
 	public function testTableCells() {
@@ -1273,7 +1257,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testTag method
  *
- * @access public
  * @return void
  */
 	public function testTag() {
@@ -1309,7 +1292,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testDiv method
  *
- * @access public
  * @return void
  */
 	public function testDiv() {
@@ -1326,7 +1308,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testPara method
  *
- * @access public
  * @return void
  */
 	public function testPara() {
@@ -1343,7 +1324,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * testCrumbList method
  *
- * @access public
  *
  * @return void
  */

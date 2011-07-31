@@ -34,7 +34,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * Whether backup global state for each test method or not
  *
  * @var bool false
- * @access public
  */
 	public $backupGlobals = false;
 
@@ -42,7 +41,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * settings property
  *
  * @var array
- * @access public
  */
 	public $settings = array(
 		'modelClass' => 'FlagTree',
@@ -55,14 +53,12 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.flag_tree', 'core.ad', 'core.campaign', 'core.translate', 'core.number_tree_two');
 
 /**
  * testStringScope method
  *
- * @access public
  * @return void
  */
 	public function testStringScope() {
@@ -99,7 +95,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 /**
  * testArrayScope method
  *
- * @access public
  * @return void
  */
 	public function testArrayScope() {
@@ -136,7 +131,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 /**
  * testMoveUpWithScope method
  *
- * @access public
  * @return void
  */
 	public function testMoveUpWithScope() {
@@ -153,7 +147,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 /**
  * testMoveDownWithScope method
  *
- * @access public
  * @return void
  */
 	public function testMoveDownWithScope() {
@@ -171,7 +164,6 @@ class TreeBehaviorScopedTest extends CakeTestCase {
  * Tests the interaction (non-interference) between TreeBehavior and other behaviors with respect
  * to callback hooks
  *
- * @access public
  * @return void
  */
 	public function testTranslatingTree() {

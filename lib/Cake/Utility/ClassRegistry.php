@@ -34,7 +34,6 @@ class ClassRegistry {
  * Names of classes with their objects.
  *
  * @var array
- * @access private
  */
 	private $__objects = array();
 
@@ -42,7 +41,6 @@ class ClassRegistry {
  * Names of class names mapped to the object in the registry.
  *
  * @var array
- * @access private
  */
 	private $__map = array();
 
@@ -50,7 +48,6 @@ class ClassRegistry {
  * Default constructor parameter settings, indexed by type
  *
  * @var array
- * @access private
  */
 	private $__config = array();
 

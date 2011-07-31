@@ -75,7 +75,6 @@ class PaginatorHelper extends AppHelper {
  *    if paramType == 'querystring'.
  *
  * @var array
- * @access public
  */
 	public $options = array(
 		'convertKeys' => array('page', 'limit', 'sort', 'direction')

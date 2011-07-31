@@ -38,7 +38,6 @@ class ModelTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',

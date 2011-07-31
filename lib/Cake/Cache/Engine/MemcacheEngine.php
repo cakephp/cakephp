@@ -31,7 +31,6 @@ class MemcacheEngine extends CacheEngine {
  * Memcache wrapper.
  *
  * @var Memcache
- * @access private
  */
 	protected $_Memcache = null;
 
@@ -43,7 +42,6 @@ class MemcacheEngine extends CacheEngine {
  *  - compress = boolean, default => false
  *
  * @var array
- * @access public
  */
 	public $settings = array();
 

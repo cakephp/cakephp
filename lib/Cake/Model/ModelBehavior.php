@@ -139,7 +139,6 @@ class ModelBehavior extends Object {
  *
  * @param Model $model Model using this behavior
  * @return mixed False or null will abort the operation. Any other result will continue.
- * @access public
  */
 	public function beforeValidate($model) {
 		return true;

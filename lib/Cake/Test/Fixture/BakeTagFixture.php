@@ -28,7 +28,6 @@ class BakeTagFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Tag'
- * @access public
  */
 	public $name = 'BakeTag';
 
@@ -36,7 +35,6 @@ class BakeTagFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class BakeTagFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array();
 }

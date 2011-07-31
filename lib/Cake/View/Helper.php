@@ -67,7 +67,6 @@ class Helper extends Object {
 /**
  * Holds tag templates.
  *
- * @access public
  * @var array
  */
 	public $tags = array();
@@ -75,7 +74,6 @@ class Helper extends Object {
 /**
  * Holds the content to be cleaned.
  *
- * @access private
  * @var mixed
  */
 	private $__tainted = null;
@@ -83,7 +81,6 @@ class Helper extends Object {
 /**
  * Holds the cleaned content.
  *
- * @access private
  * @var mixed
  */
 	private $__cleaned = null;
@@ -548,7 +545,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @access protected
  * @todo Refactor this method to not have as many input/output options.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
@@ -593,7 +589,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @access public
  * @todo Refactor this method to not have as many input/output options.
  */
 	public function value($options = array(), $field = null, $key = 'value') {
@@ -749,7 +744,6 @@ class Helper extends Object {
  * @param mixed $data
  * @param string $key
  * @return array
- * @access private
  */
 	private function __selectedArray($data, $key = 'id') {
 		if (!is_array($data)) {
@@ -776,7 +770,6 @@ class Helper extends Object {
  * Resets the vars used by Helper::clean() to null
  *
  * @return void
- * @access private
  */
 	private function __reset() {
 		$this->__tainted = null;
@@ -787,7 +780,6 @@ class Helper extends Object {
  * Removes harmful content from output
  *
  * @return void
- * @access private
  */
 	private function __clean() {
 		if (get_magic_quotes_gpc()) {

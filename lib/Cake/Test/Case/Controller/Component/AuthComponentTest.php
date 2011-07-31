@@ -34,14 +34,12 @@ class TestAuthComponent extends AuthComponent {
  * testStop property
  *
  * @var bool false
- * @access public
  */
 	public $testStop = false;
 
 /**
  * stop method
  *
- * @access public
  * @return void
  */
 	function _stop($status = 0) {
@@ -62,7 +60,6 @@ class AuthUser extends CakeTestModel {
  * name property
  *
  * @var string 'AuthUser'
- * @access public
  */
 	public $name = 'AuthUser';
 
@@ -70,7 +67,6 @@ class AuthUser extends CakeTestModel {
  * useDbConfig property
  *
  * @var string 'test'
- * @access public
  */
 	public $useDbConfig = 'test';
 
@@ -88,7 +84,6 @@ class AuthTestController extends Controller {
  * name property
  *
  * @var string 'AuthTest'
- * @access public
  */
 	public $name = 'AuthTest';
 
@@ -96,7 +91,6 @@ class AuthTestController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array('AuthUser');
 
@@ -104,7 +98,6 @@ class AuthTestController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Session', 'Auth');
 
@@ -112,14 +105,12 @@ class AuthTestController extends Controller {
  * testUrl property
  *
  * @var mixed null
- * @access public
  */
 	public $testUrl = null;
 
 /**
  * construct method
  *
- * @access private
  * @return void
  */
 	function __construct($request, $response) {
@@ -133,7 +124,6 @@ class AuthTestController extends Controller {
 /**
  * login method
  *
- * @access public
  * @return void
  */
 	public function login() {
@@ -142,7 +132,6 @@ class AuthTestController extends Controller {
 /**
  * admin_login method
  *
- * @access public
  * @return void
  */
 	public function admin_login() {
@@ -151,7 +140,6 @@ class AuthTestController extends Controller {
 /**
  * admin_add method
  *
- * @access public
  * @return void
  */
 	public function admin_add() {
@@ -160,7 +148,6 @@ class AuthTestController extends Controller {
 /**
  * logout method
  *
- * @access public
  * @return void
  */
 	public function logout() {
@@ -170,7 +157,6 @@ class AuthTestController extends Controller {
 /**
  * add method
  *
- * @access public
  * @return void
  */
 	public function add() {
@@ -180,7 +166,6 @@ class AuthTestController extends Controller {
 /**
  * add method
  *
- * @access public
  * @return void
  */
 	public function camelCase() {
@@ -193,7 +178,6 @@ class AuthTestController extends Controller {
  * @param mixed $url
  * @param mixed $status
  * @param mixed $exit
- * @access public
  * @return void
  */
 	public function redirect($url, $status = null, $exit = true) {
@@ -204,7 +188,6 @@ class AuthTestController extends Controller {
 /**
  * isAuthorized method
  *
- * @access public
  * @return void
  */
 	public function isAuthorized() {
@@ -224,7 +207,6 @@ class AjaxAuthController extends Controller {
  * name property
  *
  * @var string 'AjaxAuth'
- * @access public
  */
 	public $name = 'AjaxAuth';
 
@@ -232,7 +214,6 @@ class AjaxAuthController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Session', 'TestAuth');
 
@@ -240,7 +221,6 @@ class AjaxAuthController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array();
 
@@ -248,14 +228,12 @@ class AjaxAuthController extends Controller {
  * testUrl property
  *
  * @var mixed null
- * @access public
  */
 	public $testUrl = null;
 
 /**
  * beforeFilter method
  *
- * @access public
  * @return void
  */
 	public function beforeFilter() {
@@ -267,7 +245,6 @@ class AjaxAuthController extends Controller {
 /**
  * add method
  *
- * @access public
  * @return void
  */
 	public function add() {
@@ -282,7 +259,6 @@ class AjaxAuthController extends Controller {
  * @param mixed $url
  * @param mixed $status
  * @param mixed $exit
- * @access public
  * @return void
  */
 	public function redirect($url, $status = null, $exit = true) {
@@ -303,7 +279,6 @@ class AuthComponentTest extends CakeTestCase {
  * name property
  *
  * @var string 'Auth'
- * @access public
  */
 	public $name = 'Auth';
 
@@ -311,7 +286,6 @@ class AuthComponentTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.auth_user');
 
@@ -319,14 +293,12 @@ class AuthComponentTest extends CakeTestCase {
  * initialized property
  *
  * @var bool false
- * @access public
  */
 	public $initialized = false;
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -375,7 +347,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testNoAuth method
  *
- * @access public
  * @return void
  */
 	public function testNoAuth() {
@@ -385,7 +356,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testIsErrorOrTests
  *
- * @access public
  * @return void
  */
 	public function testIsErrorOrTests() {
@@ -406,7 +376,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testLogin method
  *
- * @access public
  * @return void
  */
 	public function testLogin() {
@@ -470,7 +439,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testAuthorizeFalse method
  *
- * @access public
  * @return void
  */
 	public function testAuthorizeFalse() {
@@ -633,7 +601,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * Tests that deny always takes precedence over allow
  *
- * @access public
  * @return void
  */
 	public function testAllowDenyAll() {
@@ -729,7 +696,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testLoginRedirect method
  *
- * @access public
  * @return void
  */
 	public function testLoginRedirect() {
@@ -919,7 +885,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testAdminRoute method
  *
- * @access public
  * @return void
  */
 	public function testAdminRoute() {
@@ -949,7 +914,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testAjaxLogin method
  *
- * @access public
  * @return void
  */
 	public function testAjaxLogin() {
@@ -972,7 +936,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testLoginActionRedirect method
  *
- * @access public
  * @return void
  */
 	public function testLoginActionRedirect() {
@@ -1007,7 +970,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * Tests that shutdown destroys the redirect session var
  *
- * @access public
  * @return void
  */
 	public function testShutDown() {
@@ -1022,7 +984,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * test $settings in Controller::$components
  *
- * @access public
  * @return void
  */
 	public function testComponentSettings() {

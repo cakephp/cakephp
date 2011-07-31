@@ -28,7 +28,6 @@ class DataTestFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'DataTest'
- * @access public
  */
 	var $name = 'DataTest';
 
@@ -36,7 +35,6 @@ class DataTestFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -51,7 +49,6 @@ class DataTestFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	var $records = array(
 		array(

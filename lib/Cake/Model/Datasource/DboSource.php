@@ -34,7 +34,6 @@ class DboSource extends DataSource {
  * Description string for this Database Data Source.
  *
  * @var string
- * @access public
  */
 	public $description = "Database Data Source";
 
@@ -49,7 +48,6 @@ class DboSource extends DataSource {
  * Database keyword used to assign aliases to identifiers.
  *
  * @var string
- * @access public
  */
 	public $alias = 'AS ';
 
@@ -60,7 +58,6 @@ class DboSource extends DataSource {
  * with collisions, set DboSource::$cacheMethods to false.
  *
  * @var array
- * @access public
  */
 	public static $methodCache = array();
 
@@ -69,7 +66,6 @@ class DboSource extends DataSource {
  * into the memory cache.  Set to false to disable the use of the memory cache.
  *
  * @var boolean.
- * @access public
  */
 	public $cacheMethods = true;
 
@@ -77,7 +73,6 @@ class DboSource extends DataSource {
  * Print full query debug info?
  *
  * @var boolean
- * @access public
  */
 	public $fullDebug = false;
 
@@ -85,7 +80,6 @@ class DboSource extends DataSource {
  * Error description of last query
  *
  * @var unknown_type
- * @access public
  */
 	public $error = null;
 
@@ -93,7 +87,6 @@ class DboSource extends DataSource {
  * String to hold how many rows were affected by the last SQL operation.
  *
  * @var string
- * @access public
  */
 	public $affected = null;
 
@@ -101,7 +94,6 @@ class DboSource extends DataSource {
  * Number of rows in current resultset
  *
  * @var int
- * @access public
  */
 	public $numRows = null;
 
@@ -109,7 +101,6 @@ class DboSource extends DataSource {
  * Time the last query took
  *
  * @var int
- * @access public
  */
 	public $took = null;
 
@@ -117,7 +108,6 @@ class DboSource extends DataSource {
  * Result
  *
  * @var array
- * @access protected
  */
 	protected $_result = null;
 
@@ -125,7 +115,6 @@ class DboSource extends DataSource {
  * Queries count.
  *
  * @var int
- * @access protected
  */
 	protected $_queriesCnt = 0;
 
@@ -133,7 +122,6 @@ class DboSource extends DataSource {
  * Total duration of all queries.
  *
  * @var unknown_type
- * @access protected
  */
 	protected $_queriesTime = null;
 
@@ -141,7 +129,6 @@ class DboSource extends DataSource {
  * Log of queries executed by this DataSource
  *
  * @var unknown_type
- * @access protected
  */
 	protected $_queriesLog = array();
 
@@ -151,7 +138,6 @@ class DboSource extends DataSource {
  * This is to prevent query log taking over too much memory.
  *
  * @var int Maximum number of queries in the queries log.
- * @access protected
  */
 	protected $_queriesLogMax = 200;
 
@@ -159,7 +145,6 @@ class DboSource extends DataSource {
  * Caches serialzed results of executed queries
  *
  * @var array Maximum number of queries in the queries log.
- * @access protected
  */
 	protected $_queryCache = array();
 
@@ -167,7 +152,6 @@ class DboSource extends DataSource {
  * A reference to the physical connection of this DataSource
  *
  * @var array
- * @access public
  */
 	public $connection = null;
 
@@ -175,7 +159,6 @@ class DboSource extends DataSource {
  * The DataSource configuration key name
  *
  * @var string
- * @access public
  */
 	public $configKeyName = null;
 
@@ -183,7 +166,6 @@ class DboSource extends DataSource {
  * The starting character that this DataSource uses for quoted identifiers.
  *
  * @var string
- * @access public
  */
 	public $startQuote = null;
 
@@ -191,7 +173,6 @@ class DboSource extends DataSource {
  * The ending character that this DataSource uses for quoted identifiers.
  *
  * @var string
- * @access public
  */
 	public $endQuote = null;
 
@@ -199,7 +180,6 @@ class DboSource extends DataSource {
  * The set of valid SQL operations usable in a WHERE statement
  *
  * @var array
- * @access private
  */
 	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
@@ -207,7 +187,6 @@ class DboSource extends DataSource {
  * Indicates the level of nested transactions
  *
  * @var integer
- * @access protected
  */
 	protected $_transactionNesting = 0;
 
@@ -215,7 +194,6 @@ class DboSource extends DataSource {
  * Index of basic SQL commands
  *
  * @var array
- * @access protected
  */
 	protected $_commands = array(
 		'begin' => 'BEGIN',
@@ -234,7 +212,6 @@ class DboSource extends DataSource {
  * List of table engine specific parameters used on table creating
  *
  * @var array
- * @access public
  */
 	public $tableParameters = array();
 
@@ -242,7 +219,6 @@ class DboSource extends DataSource {
  * List of engine specific additional field parameters used on table creating
  *
  * @var array
- * @access public
  */
 	public $fieldParameters = array();
 
@@ -1666,7 +1642,6 @@ class DboSource extends DataSource {
  *
  * @param array $join An array defining a JOIN statement in a query
  * @return string An SQL JOIN statement to be used in a query
- * @access public
  * @see DboSource::renderJoinStatement()
  * @see DboSource::buildStatement()
  */
@@ -1693,7 +1668,6 @@ class DboSource extends DataSource {
  * @param array $query An array defining an SQL query
  * @param object $model The model object which initiated the query
  * @return string An executable SQL statement
- * @access public
  * @see DboSource::renderStatement()
  */
 	public function buildStatement($query, $model) {
@@ -2446,7 +2420,6 @@ class DboSource extends DataSource {
  * @param string $key An SQL key snippet containing a field and optional SQL operator
  * @param mixed $value The value(s) to be inserted in the string
  * @return string
- * @access private
  */
 	private function __parseKey($model, $key, $value) {
 		$operatorMatch = '/^((' . implode(')|(', $this->__sqlOps);
@@ -2533,7 +2506,6 @@ class DboSource extends DataSource {
  *
  * @param string $conditions
  * @return string or false if no match
- * @access private
  */
 	private function __quoteFields($conditions) {
 		$start = $end = null;

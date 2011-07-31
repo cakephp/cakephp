@@ -30,7 +30,6 @@ class SessionTestController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array();
 
@@ -55,7 +54,6 @@ class OrangeSessionTestController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array();
 
@@ -111,7 +109,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -123,7 +120,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -134,7 +130,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * ensure that session ids don't change when request action is called.
  *
- * @access public
  * @return void
  */
 	public function testSessionIdConsistentAcrossRequestAction() {
@@ -156,7 +151,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionValid method
  *
- * @access public
  * @return void
  */
 	public function testSessionValid() {
@@ -176,7 +170,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionError method
  *
- * @access public
  * @return void
  */
 	public function testSessionError() {
@@ -187,7 +180,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionReadWrite method
  *
- * @access public
  * @return void
  */
 	public function testSessionReadWrite() {
@@ -221,7 +213,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionDelete method
  *
- * @access public
  * @return void
  */
 	public function testSessionDelete() {
@@ -236,7 +227,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionCheck method
  *
- * @access public
  * @return void
  */
 	public function testSessionCheck() {
@@ -252,7 +242,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionFlash method
  *
- * @access public
  * @return void
  */
 	public function testSessionFlash() {
@@ -278,7 +267,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionId method
  *
- * @access public
  * @return void
  */
 	public function testSessionId() {
@@ -291,7 +279,6 @@ class SessionComponentTest extends CakeTestCase {
 /**
  * testSessionDestroy method
  *
- * @access public
  * @return void
  */
 	public function testSessionDestroy() {

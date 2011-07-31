@@ -34,7 +34,6 @@ class BehaviorCollection extends ObjectCollection {
  * Stores a reference to the attached name
  *
  * @var string
- * @access public
  */
 	public $modelName = null;
 

@@ -28,7 +28,6 @@ class OverallFavoriteFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'OverallFavorite'
- * @access public
  */
 	public $name = 'OverallFavorite';
 
@@ -36,7 +35,6 @@ class OverallFavoriteFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class OverallFavoriteFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'model_type' => 'Cd', 'model_id' => '1', 'priority' => '1'),

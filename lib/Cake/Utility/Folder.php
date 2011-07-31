@@ -29,7 +29,6 @@ class Folder {
  * Path to Folder.
  *
  * @var string
- * @access public
  */
 	public $path = null;
 
@@ -38,7 +37,6 @@ class Folder {
  * should be sorted by name.
  *
  * @var boolean
- * @access public
  */
 	public $sort = false;
 
@@ -46,7 +44,6 @@ class Folder {
  * Mode to be used on create. Does nothing on windows platforms.
  *
  * @var integer
- * @access public
  */
 	public $mode = 0755;
 
@@ -54,7 +51,6 @@ class Folder {
  * Holds messages from last method.
  *
  * @var array
- * @access private
  */
 	private $__messages = array();
 
@@ -62,7 +58,6 @@ class Folder {
  * Holds errors from last method.
  *
  * @var array
- * @access private
  */
 	private $__errors = array();
 
@@ -70,7 +65,6 @@ class Folder {
  * Holds array of complete directory paths.
  *
  * @var array
- * @access private
  */
 	private $__directories;
 
@@ -78,7 +72,6 @@ class Folder {
  * Holds array of complete file paths.
  *
  * @var array
- * @access private
  */
 	private $__files;
 
@@ -213,7 +206,6 @@ class Folder {
  * @param string $pattern Pattern to match against
  * @param boolean $sort Whether results should be sorted.
  * @return array Files matching pattern
- * @access private
  */
 	protected function _findRecursive($pattern, $sort = false) {
 		list($dirs, $files) = $this->read($sort);

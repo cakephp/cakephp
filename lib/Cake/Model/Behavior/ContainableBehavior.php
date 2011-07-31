@@ -32,7 +32,6 @@ class ContainableBehavior extends ModelBehavior {
  * Types of relationships available for models
  *
  * @var array
- * @access private
  */
 	public $types = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
@@ -40,7 +39,6 @@ class ContainableBehavior extends ModelBehavior {
  * Runtime configuration for this behavior
  *
  * @var array
- * @access private
  */
 	public $runtime = array();
 

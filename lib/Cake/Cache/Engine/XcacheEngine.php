@@ -32,7 +32,6 @@ class XcacheEngine extends CacheEngine {
  *  - PHP_AUTH_PW = xcache.admin.password, default cake
  *
  * @var array
- * @access public
  */
 	public $settings = array();
 

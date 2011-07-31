@@ -687,7 +687,6 @@ class AuthComponent extends Component {
  * Check whether or not the current user has data in the session, and is considered logged in.
  *
  * @return boolean true if the user is logged in, false otherwise
- * @access public
  */
 	public function loggedIn() {
 		return $this->user() != array();

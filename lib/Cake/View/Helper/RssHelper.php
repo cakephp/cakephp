@@ -32,14 +32,12 @@ class RssHelper extends AppHelper {
  * Helpers used by RSS Helper
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Time');
 
 /**
  * Base URL
  *
- * @access public
  * @var string
  */
 	public $base = null;
@@ -47,7 +45,6 @@ class RssHelper extends AppHelper {
 /**
  * URL to current action.
  *
- * @access public
  * @var string
  */
 	public $here = null;
@@ -55,7 +52,6 @@ class RssHelper extends AppHelper {
 /**
  * Parameter array.
  *
- * @access public
  * @var array
  */
 	public $params = array();
@@ -63,7 +59,6 @@ class RssHelper extends AppHelper {
 /**
  * Current action.
  *
- * @access public
  * @var string
  */
 	public $action = null;
@@ -71,7 +66,6 @@ class RssHelper extends AppHelper {
 /**
  * POSTed model data
  *
- * @access public
  * @var array
  */
 	public $data = null;
@@ -79,7 +73,6 @@ class RssHelper extends AppHelper {
 /**
  * Name of the current model
  *
- * @access public
  * @var string
  */
 	public $model = null;
@@ -87,7 +80,6 @@ class RssHelper extends AppHelper {
 /**
  * Name of the current field
  *
- * @access public
  * @var string
  */
 	public $field = null;
@@ -95,7 +87,6 @@ class RssHelper extends AppHelper {
 /**
  * Default spec version of generated RSS
  *
- * @access public
  * @var string
  */
 	public $version = '2.0';

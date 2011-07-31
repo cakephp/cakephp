@@ -34,7 +34,6 @@ class File {
  * Folder object of the File
  *
  * @var Folder
- * @access public
  */
 	public $Folder = null;
 
@@ -42,7 +41,6 @@ class File {
  * Filename
  *
  * @var string
- * @access public
  */
 	public $name = null;
 
@@ -50,7 +48,6 @@ class File {
  * file info
  *
  * @var string
- * @access public
  */
 	public $info = array();
 
@@ -58,7 +55,6 @@ class File {
  * Holds the file handler resource if the file is opened
  *
  * @var resource
- * @access public
  */
 	public $handle = null;
 
@@ -66,7 +62,6 @@ class File {
  * enable locking for file reading and writing
  *
  * @var boolean
- * @access public
  */
 	public $lock = null;
 
@@ -76,7 +71,6 @@ class File {
  * Current file's absolute path
  *
  * @var mixed null
- * @access public
  */
 	public $path = null;
 

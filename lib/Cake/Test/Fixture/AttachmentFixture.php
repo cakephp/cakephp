@@ -28,7 +28,6 @@ class AttachmentFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Attachment'
- * @access public
  */
 	public $name = 'Attachment';
 
@@ -36,7 +35,6 @@ class AttachmentFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -50,7 +48,6 @@ class AttachmentFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('comment_id' => 5, 'attachment' => 'attachment.zip',  'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')

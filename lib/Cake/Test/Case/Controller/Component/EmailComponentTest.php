@@ -32,7 +32,6 @@ class EmailTestComponent extends EmailComponent {
 /**
  * Convenience method for testing.
  *
- * @access public
  * @return string
  */
 	public function strip($content, $message = false) {
@@ -95,7 +94,6 @@ class EmailTestController extends Controller {
  * name property
  *
  * @var string 'EmailTest'
- * @access public
  */
 	public $name = 'EmailTest';
 
@@ -103,7 +101,6 @@ class EmailTestController extends Controller {
  * uses property
  *
  * @var mixed null
- * @access public
  */
 	public $uses = null;
 
@@ -111,7 +108,6 @@ class EmailTestController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Session', 'EmailTest');
 
@@ -128,7 +124,6 @@ class EmailComponentTest extends CakeTestCase {
  * Controller property
  *
  * @var EmailTestController
- * @access public
  */
 	public $Controller;
 
@@ -136,14 +131,12 @@ class EmailComponentTest extends CakeTestCase {
  * name property
  *
  * @var string 'Email'
- * @access public
  */
 	public $name = 'Email';
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -164,7 +157,6 @@ class EmailComponentTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -177,7 +169,6 @@ class EmailComponentTest extends CakeTestCase {
  * osFix method
  *
  * @param string $string
- * @access private
  * @return string
  */
 	function __osFix($string) {
@@ -187,7 +178,6 @@ class EmailComponentTest extends CakeTestCase {
 /**
  * testSendFormats method
  *
- * @access public
  * @return void
  */
 	public function testSendFormats() {
@@ -239,7 +229,6 @@ MSGBLOC;
 /**
  * testTemplates method
  *
- * @access public
  * @return void
  */
 	public function testTemplates() {
@@ -365,7 +354,6 @@ HTMLBLOC;
 /**
  * testSendDebug method
  *
- * @access public
  * @return void
  */
 	public function testSendDebug() {
@@ -427,7 +415,6 @@ HTMLBLOC;
 /**
  * testMessageRetrievalWithoutTemplate method
  *
- * @access public
  * @return void
  */
 	public function testMessageRetrievalWithoutTemplate() {
@@ -465,7 +452,6 @@ HTMLBLOC;
 /**
  * testMessageRetrievalWithTemplate method
  *
- * @access public
  * @return void
  */
 	public function testMessageRetrievalWithTemplate() {
@@ -526,7 +512,6 @@ HTMLBLOC;
 /**
  * testMessageRetrievalWithHelper method
  *
- * @access public
  * @return void
  */
 	public function testMessageRetrievalWithHelper() {
@@ -555,7 +540,6 @@ HTMLBLOC;
 /**
  * testContentArray method
  *
- * @access public
  * @return void
  */
 	public function testSendContentArray() {
@@ -603,7 +587,6 @@ HTMLBLOC;
 /**
  * testContentStripping method
  *
- * @access public
  * @return void
  */
 	public function testContentStripping() {
@@ -662,7 +645,6 @@ HTMLBLOC;
 /**
  * testMultibyte method
  *
- * @access public
  * @return void
  */
 	public function testMultibyte() {
@@ -778,7 +760,6 @@ HTMLBLOC;
 /**
  * testReset method
  *
- * @access public
  * @return void
  */
 	public function testReset() {
@@ -849,7 +830,6 @@ HTMLBLOC;
 /**
  * testStartup method
  *
- * @access public
  * @return void
  */
 	public function testStartup() {
@@ -859,7 +839,6 @@ HTMLBLOC;
 /**
  * testMessageId method
  *
- * @access public
  * @return void
  */
 	public function testMessageId() {

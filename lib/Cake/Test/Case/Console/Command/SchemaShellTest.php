@@ -35,7 +35,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * name property
  *
  * @var string 'MyApp'
- * @access public
  */
 	public $name = 'SchemaShellTest';
 
@@ -43,7 +42,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * connection property
  *
  * @var string 'test'
- * @access public
  */
 	public $connection = 'test';
 
@@ -51,7 +49,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * comments property
  *
  * @var array
- * @access public
  */
 	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -69,7 +66,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * posts property
  *
  * @var array
- * @access public
  */
 	public $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -95,7 +91,6 @@ class SchemaShellTest extends CakeTestCase {
  * Fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
 		'core.comment', 'core.test_plugin_comment'

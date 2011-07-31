@@ -32,7 +32,6 @@ class Test extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -40,7 +39,6 @@ class Test extends CakeTestModel {
  * name property
  *
  * @var string 'Test'
- * @access public
  */
 	public $name = 'Test';
 
@@ -48,7 +46,6 @@ class Test extends CakeTestModel {
  * schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array(
 		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
@@ -71,7 +68,6 @@ class TestAlias extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -79,7 +75,6 @@ class TestAlias extends CakeTestModel {
  * name property
  *
  * @var string 'TestAlias'
- * @access public
  */
 	public $name = 'TestAlias';
 
@@ -87,7 +82,6 @@ class TestAlias extends CakeTestModel {
  * alias property
  *
  * @var string 'TestAlias'
- * @access public
  */
 	public $alias = 'TestAlias';
 
@@ -95,7 +89,6 @@ class TestAlias extends CakeTestModel {
  * schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array(
 		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
@@ -118,7 +111,6 @@ class TestValidate extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -126,7 +118,6 @@ class TestValidate extends CakeTestModel {
  * name property
  *
  * @var string 'TestValidate'
- * @access public
  */
 	public $name = 'TestValidate';
 
@@ -134,7 +125,6 @@ class TestValidate extends CakeTestModel {
  * schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -150,7 +140,6 @@ class TestValidate extends CakeTestModel {
  *
  * @param mixed $value
  * @param mixed $options
- * @access public
  * @return void
  */
 	public function validateNumber($value, $options) {
@@ -163,7 +152,6 @@ class TestValidate extends CakeTestModel {
  * validateTitle method
  *
  * @param mixed $value
- * @access public
  * @return void
  */
 	public function validateTitle($value) {
@@ -182,7 +170,6 @@ class User extends CakeTestModel {
  * name property
  *
  * @var string 'User'
- * @access public
  */
 	public $name = 'User';
 
@@ -190,7 +177,6 @@ class User extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('user' => 'notEmpty', 'password' => 'notEmpty');
 }
@@ -206,7 +192,6 @@ class Article extends CakeTestModel {
  * name property
  *
  * @var string 'Article'
- * @access public
  */
 	public $name = 'Article';
 
@@ -214,7 +199,6 @@ class Article extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('User');
 
@@ -222,7 +206,6 @@ class Article extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Comment' => array('dependent' => true));
 
@@ -230,7 +213,6 @@ class Article extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Tag');
 
@@ -238,7 +220,6 @@ class Article extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('user_id' => 'numeric', 'title' => array('allowEmpty' => false, 'rule' => 'notEmpty'), 'body' => 'notEmpty');
 
@@ -246,14 +227,12 @@ class Article extends CakeTestModel {
  * beforeSaveReturn property
  *
  * @var bool true
- * @access public
  */
 	public $beforeSaveReturn = true;
 
 /**
  * beforeSave method
  *
- * @access public
  * @return void
  */
 	public function beforeSave($options = array()) {
@@ -264,7 +243,6 @@ class Article extends CakeTestModel {
  * titleDuplicate method
  *
  * @param mixed $title
- * @access public
  * @return void
  */
 	static function titleDuplicate ($title) {
@@ -304,7 +282,6 @@ class NumericArticle extends CakeTestModel {
  * name property
  *
  * @var string 'NumericArticle'
- * @access public
  */
 	public $name = 'NumericArticle';
 
@@ -312,7 +289,6 @@ class NumericArticle extends CakeTestModel {
  * useTable property
  *
  * @var string 'numeric_articles'
- * @access public
  */
 	public $useTable = 'numeric_articles';
 }
@@ -328,7 +304,6 @@ class Article10 extends CakeTestModel {
  * name property
  *
  * @var string 'Article10'
- * @access public
  */
 	public $name = 'Article10';
 
@@ -336,7 +311,6 @@ class Article10 extends CakeTestModel {
  * useTable property
  *
  * @var string 'articles'
- * @access public
  */
 	public $useTable = 'articles';
 
@@ -344,7 +318,6 @@ class Article10 extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Comment' => array('dependent' => true, 'exclusive' => true));
 }
@@ -360,7 +333,6 @@ class ArticleFeatured extends CakeTestModel {
  * name property
  *
  * @var string 'ArticleFeatured'
- * @access public
  */
 	public $name = 'ArticleFeatured';
 
@@ -368,7 +340,6 @@ class ArticleFeatured extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('User', 'Category');
 
@@ -376,7 +347,6 @@ class ArticleFeatured extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Featured');
 
@@ -384,7 +354,6 @@ class ArticleFeatured extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Comment' => array('className' => 'Comment', 'dependent' => true));
 
@@ -392,7 +361,6 @@ class ArticleFeatured extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Tag');
 
@@ -400,7 +368,6 @@ class ArticleFeatured extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('user_id' => 'numeric', 'title' => 'notEmpty', 'body' => 'notEmpty');
 }
@@ -416,7 +383,6 @@ class Featured extends CakeTestModel {
  * name property
  *
  * @var string 'Featured'
- * @access public
  */
 	public $name = 'Featured';
 
@@ -424,7 +390,6 @@ class Featured extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('ArticleFeatured', 'Category');
 }
@@ -440,7 +405,6 @@ class Tag extends CakeTestModel {
  * name property
  *
  * @var string 'Tag'
- * @access public
  */
 	public $name = 'Tag';
 }
@@ -456,7 +420,6 @@ class ArticlesTag extends CakeTestModel {
  * name property
  *
  * @var string 'ArticlesTag'
- * @access public
  */
 	public $name = 'ArticlesTag';
 }
@@ -472,7 +435,6 @@ class ArticleFeaturedsTag extends CakeTestModel {
  * name property
  *
  * @var string 'ArticleFeaturedsTag'
- * @access public
  */
 	public $name = 'ArticleFeaturedsTag';
 }
@@ -488,7 +450,6 @@ class Comment extends CakeTestModel {
  * name property
  *
  * @var string 'Comment'
- * @access public
  */
 	public $name = 'Comment';
 
@@ -496,7 +457,6 @@ class Comment extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Article', 'User');
 
@@ -504,7 +464,6 @@ class Comment extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Attachment' => array('dependent' => true));
 }
@@ -520,7 +479,6 @@ class ModifiedComment extends CakeTestModel {
  * name property
  *
  * @var string 'Comment'
- * @access public
  */
 	public $name = 'Comment';
 
@@ -528,7 +486,6 @@ class ModifiedComment extends CakeTestModel {
  * useTable property
  *
  * @var string 'comments'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -536,7 +493,6 @@ class ModifiedComment extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Article');
 
@@ -564,7 +520,6 @@ class AgainModifiedComment extends CakeTestModel {
  * name property
  *
  * @var string 'Comment'
- * @access public
  */
 	public $name = 'Comment';
 
@@ -572,7 +527,6 @@ class AgainModifiedComment extends CakeTestModel {
  * useTable property
  *
  * @var string 'comments'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -580,7 +534,6 @@ class AgainModifiedComment extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Article');
 
@@ -674,7 +627,6 @@ class Attachment extends CakeTestModel {
  * name property
  *
  * @var string 'Attachment'
- * @access public
  */
 	public $name = 'Attachment';
 }
@@ -690,7 +642,6 @@ class Category extends CakeTestModel {
  * name property
  *
  * @var string 'Category'
- * @access public
  */
 	public $name = 'Category';
 }
@@ -706,7 +657,6 @@ class CategoryThread extends CakeTestModel {
  * name property
  *
  * @var string 'CategoryThread'
- * @access public
  */
 	public $name = 'CategoryThread';
 
@@ -714,7 +664,6 @@ class CategoryThread extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('ParentCategory' => array('className' => 'CategoryThread', 'foreignKey' => 'parent_id'));
 }
@@ -730,7 +679,6 @@ class Apple extends CakeTestModel {
  * name property
  *
  * @var string 'Apple'
- * @access public
  */
 	public $name = 'Apple';
 
@@ -738,7 +686,6 @@ class Apple extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('name' => 'notEmpty');
 
@@ -746,7 +693,6 @@ class Apple extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Sample');
 
@@ -754,7 +700,6 @@ class Apple extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Child' => array('className' => 'Apple', 'dependent' => true));
 
@@ -762,7 +707,6 @@ class Apple extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Parent' => array('className' => 'Apple', 'foreignKey' => 'apple_id'));
 }
@@ -778,7 +722,6 @@ class Sample extends CakeTestModel {
  * name property
  *
  * @var string 'Sample'
- * @access public
  */
 	public $name = 'Sample';
 
@@ -786,7 +729,6 @@ class Sample extends CakeTestModel {
  * belongsTo property
  *
  * @var string 'Apple'
- * @access public
  */
 	public $belongsTo = 'Apple';
 }
@@ -802,7 +744,6 @@ class AnotherArticle extends CakeTestModel {
  * name property
  *
  * @var string 'AnotherArticle'
- * @access public
  */
 	public $name = 'AnotherArticle';
 
@@ -810,7 +751,6 @@ class AnotherArticle extends CakeTestModel {
  * hasMany property
  *
  * @var string 'Home'
- * @access public
  */
 	public $hasMany = 'Home';
 }
@@ -826,7 +766,6 @@ class Advertisement extends CakeTestModel {
  * name property
  *
  * @var string 'Advertisement'
- * @access public
  */
 	public $name = 'Advertisement';
 
@@ -834,7 +773,6 @@ class Advertisement extends CakeTestModel {
  * hasMany property
  *
  * @var string 'Home'
- * @access public
  */
 	public $hasMany = 'Home';
 }
@@ -850,7 +788,6 @@ class Home extends CakeTestModel {
  * name property
  *
  * @var string 'Home'
- * @access public
  */
 	public $name = 'Home';
 
@@ -858,7 +795,6 @@ class Home extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('AnotherArticle', 'Advertisement');
 }
@@ -874,7 +810,6 @@ class Post extends CakeTestModel {
  * name property
  *
  * @var string 'Post'
- * @access public
  */
 	public $name = 'Post';
 
@@ -882,7 +817,6 @@ class Post extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Author');
 
@@ -910,7 +844,6 @@ class Author extends CakeTestModel {
  * name property
  *
  * @var string 'Author'
- * @access public
  */
 	public $name = 'Author';
 
@@ -918,7 +851,6 @@ class Author extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Post');
 
@@ -926,7 +858,6 @@ class Author extends CakeTestModel {
  * afterFind method
  *
  * @param mixed $results
- * @access public
  * @return void
  */
 	public function afterFind($results, $primary = false) {
@@ -946,7 +877,6 @@ class ModifiedAuthor extends Author {
  * name property
  *
  * @var string 'Author'
- * @access public
  */
 	public $name = 'Author';
 
@@ -954,7 +884,6 @@ class ModifiedAuthor extends Author {
  * afterFind method
  *
  * @param mixed $results
- * @access public
  * @return void
  */
 	public function afterFind($results, $primary = false) {
@@ -976,7 +905,6 @@ class Project extends CakeTestModel {
  * name property
  *
  * @var string 'Project'
- * @access public
  */
 	public $name = 'Project';
 
@@ -984,7 +912,6 @@ class Project extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Thread');
 }
@@ -1000,7 +927,6 @@ class Thread extends CakeTestModel {
  * name property
  *
  * @var string 'Thread'
- * @access public
  */
 	public $name = 'Thread';
 
@@ -1008,7 +934,6 @@ class Thread extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Project');
 
@@ -1016,7 +941,6 @@ class Thread extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Message');
 }
@@ -1032,7 +956,6 @@ class Message extends CakeTestModel {
  * name property
  *
  * @var string 'Message'
- * @access public
  */
 	public $name = 'Message';
 
@@ -1040,7 +963,6 @@ class Message extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Bid');
 }
@@ -1056,7 +978,6 @@ class Bid extends CakeTestModel {
  * name property
  *
  * @var string 'Bid'
- * @access public
  */
 	public $name = 'Bid';
 
@@ -1064,7 +985,6 @@ class Bid extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Message');
 }
@@ -1080,7 +1000,6 @@ class NodeAfterFind extends CakeTestModel {
  * name property
  *
  * @var string 'NodeAfterFind'
- * @access public
  */
 	public $name = 'NodeAfterFind';
 
@@ -1088,7 +1007,6 @@ class NodeAfterFind extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('name' => 'notEmpty');
 
@@ -1096,7 +1014,6 @@ class NodeAfterFind extends CakeTestModel {
  * useTable property
  *
  * @var string 'apples'
- * @access public
  */
 	public $useTable = 'apples';
 
@@ -1104,7 +1021,6 @@ class NodeAfterFind extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Sample' => array('className' => 'NodeAfterFindSample'));
 
@@ -1112,7 +1028,6 @@ class NodeAfterFind extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Child' => array('className' => 'NodeAfterFind', 'dependent' => true));
 
@@ -1120,7 +1035,6 @@ class NodeAfterFind extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Parent' => array('className' => 'NodeAfterFind', 'foreignKey' => 'apple_id'));
 
@@ -1128,7 +1042,6 @@ class NodeAfterFind extends CakeTestModel {
  * afterFind method
  *
  * @param mixed $results
- * @access public
  * @return void
  */
 	public function afterFind($results, $primary = false) {
@@ -1147,7 +1060,6 @@ class NodeAfterFindSample extends CakeTestModel {
  * name property
  *
  * @var string 'NodeAfterFindSample'
- * @access public
  */
 	public $name = 'NodeAfterFindSample';
 
@@ -1155,7 +1067,6 @@ class NodeAfterFindSample extends CakeTestModel {
  * useTable property
  *
  * @var string 'samples'
- * @access public
  */
 	public $useTable = 'samples';
 
@@ -1163,7 +1074,6 @@ class NodeAfterFindSample extends CakeTestModel {
  * belongsTo property
  *
  * @var string 'NodeAfterFind'
- * @access public
  */
 	public $belongsTo = 'NodeAfterFind';
 }
@@ -1179,7 +1089,6 @@ class NodeNoAfterFind extends CakeTestModel {
  * name property
  *
  * @var string 'NodeAfterFind'
- * @access public
  */
 	public $name = 'NodeAfterFind';
 
@@ -1187,7 +1096,6 @@ class NodeNoAfterFind extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('name' => 'notEmpty');
 
@@ -1195,7 +1103,6 @@ class NodeNoAfterFind extends CakeTestModel {
  * useTable property
  *
  * @var string 'apples'
- * @access public
  */
 	public $useTable = 'apples';
 
@@ -1203,7 +1110,6 @@ class NodeNoAfterFind extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Sample' => array('className' => 'NodeAfterFindSample'));
 
@@ -1211,7 +1117,6 @@ class NodeNoAfterFind extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Child' => array('className' => 'NodeAfterFind', 'dependent' => true));
 
@@ -1219,7 +1124,6 @@ class NodeNoAfterFind extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Parent' => array('className' => 'NodeAfterFind', 'foreignKey' => 'apple_id'));
 }
@@ -1235,7 +1139,6 @@ class Node extends CakeTestModel{
  * name property
  *
  * @var string 'Node'
- * @access public
  */
 	public $name = 'Node';
 
@@ -1243,7 +1146,6 @@ class Node extends CakeTestModel{
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array(
 		'ParentNode' => array(
@@ -1267,7 +1169,6 @@ class Dependency extends CakeTestModel {
  * name property
  *
  * @var string 'Dependency'
- * @access public
  */
 	public $name = 'Dependency';
 }
@@ -1283,7 +1184,6 @@ class ModelA extends CakeTestModel {
  * name property
  *
  * @var string 'ModelA'
- * @access public
  */
 	public $name = 'ModelA';
 
@@ -1291,7 +1191,6 @@ class ModelA extends CakeTestModel {
  * useTable property
  *
  * @var string 'apples'
- * @access public
  */
 	public $useTable = 'apples';
 
@@ -1299,7 +1198,6 @@ class ModelA extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('ModelB', 'ModelC');
 }
@@ -1315,7 +1213,6 @@ class ModelB extends CakeTestModel {
  * name property
  *
  * @var string 'ModelB'
- * @access public
  */
 	public $name = 'ModelB';
 
@@ -1323,7 +1220,6 @@ class ModelB extends CakeTestModel {
  * useTable property
  *
  * @var string 'messages'
- * @access public
  */
 	public $useTable = 'messages';
 
@@ -1331,7 +1227,6 @@ class ModelB extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('ModelD');
 }
@@ -1347,7 +1242,6 @@ class ModelC extends CakeTestModel {
  * name property
  *
  * @var string 'ModelC'
- * @access public
  */
 	public $name = 'ModelC';
 
@@ -1355,7 +1249,6 @@ class ModelC extends CakeTestModel {
  * useTable property
  *
  * @var string 'bids'
- * @access public
  */
 	public $useTable = 'bids';
 
@@ -1363,7 +1256,6 @@ class ModelC extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('ModelD');
 }
@@ -1379,7 +1271,6 @@ class ModelD extends CakeTestModel {
  * name property
  *
  * @var string 'ModelD'
- * @access public
  */
 	public $name = 'ModelD';
 
@@ -1387,7 +1278,6 @@ class ModelD extends CakeTestModel {
  * useTable property
  *
  * @var string 'threads'
- * @access public
  */
 	public $useTable = 'threads';
 }
@@ -1403,7 +1293,6 @@ class Something extends CakeTestModel {
  * name property
  *
  * @var string 'Something'
- * @access public
  */
 	public $name = 'Something';
 
@@ -1411,7 +1300,6 @@ class Something extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('SomethingElse' => array('with' => array('JoinThing' => array('doomed'))));
 }
@@ -1427,7 +1315,6 @@ class SomethingElse extends CakeTestModel {
  * name property
  *
  * @var string 'SomethingElse'
- * @access public
  */
 	public $name = 'SomethingElse';
 
@@ -1435,7 +1322,6 @@ class SomethingElse extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Something' => array('with' => 'JoinThing'));
 }
@@ -1451,7 +1337,6 @@ class JoinThing extends CakeTestModel {
  * name property
  *
  * @var string 'JoinThing'
- * @access public
  */
 	public $name = 'JoinThing';
 
@@ -1459,7 +1344,6 @@ class JoinThing extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Something', 'SomethingElse');
 }
@@ -1475,7 +1359,6 @@ class Portfolio extends CakeTestModel {
  * name property
  *
  * @var string 'Portfolio'
- * @access public
  */
 	public $name = 'Portfolio';
 
@@ -1483,7 +1366,6 @@ class Portfolio extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Item');
 }
@@ -1499,7 +1381,6 @@ class Item extends CakeTestModel {
  * name property
  *
  * @var string 'Item'
- * @access public
  */
 	public $name = 'Item';
 
@@ -1507,7 +1388,6 @@ class Item extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Syfile' => array('counterCache' => true));
 
@@ -1515,7 +1395,6 @@ class Item extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Portfolio' => array('unique' => false));
 }
@@ -1531,7 +1410,6 @@ class ItemsPortfolio extends CakeTestModel {
  * name property
  *
  * @var string 'ItemsPortfolio'
- * @access public
  */
 	public $name = 'ItemsPortfolio';
 }
@@ -1547,7 +1425,6 @@ class Syfile extends CakeTestModel {
  * name property
  *
  * @var string 'Syfile'
- * @access public
  */
 	public $name = 'Syfile';
 
@@ -1555,7 +1432,6 @@ class Syfile extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Image');
 }
@@ -1571,7 +1447,6 @@ class Image extends CakeTestModel {
  * name property
  *
  * @var string 'Image'
- * @access public
  */
 	public $name = 'Image';
 }
@@ -1587,7 +1462,6 @@ class DeviceType extends CakeTestModel {
  * name property
  *
  * @var string 'DeviceType'
- * @access public
  */
 	public $name = 'DeviceType';
 
@@ -1595,7 +1469,6 @@ class DeviceType extends CakeTestModel {
  * order property
  *
  * @var array
- * @access public
  */
 	public $order = array('DeviceType.order' => 'ASC');
 
@@ -1603,7 +1476,6 @@ class DeviceType extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'DeviceTypeCategory', 'FeatureSet', 'ExteriorTypeCategory',
@@ -1615,7 +1487,6 @@ class DeviceType extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Device' => array('order' => array('Device.id' => 'ASC')));
 }
@@ -1631,7 +1502,6 @@ class DeviceTypeCategory extends CakeTestModel {
  * name property
  *
  * @var string 'DeviceTypeCategory'
- * @access public
  */
 	public $name = 'DeviceTypeCategory';
 }
@@ -1647,7 +1517,6 @@ class FeatureSet extends CakeTestModel {
  * name property
  *
  * @var string 'FeatureSet'
- * @access public
  */
 	public $name = 'FeatureSet';
 }
@@ -1663,7 +1532,6 @@ class ExteriorTypeCategory extends CakeTestModel {
  * name property
  *
  * @var string 'ExteriorTypeCategory'
- * @access public
  */
 	public $name = 'ExteriorTypeCategory';
 
@@ -1671,7 +1539,6 @@ class ExteriorTypeCategory extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Image' => array('className' => 'Device'));
 }
@@ -1687,7 +1554,6 @@ class Document extends CakeTestModel {
  * name property
  *
  * @var string 'Document'
- * @access public
  */
 	public $name = 'Document';
 
@@ -1695,7 +1561,6 @@ class Document extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('DocumentDirectory');
 }
@@ -1711,7 +1576,6 @@ class Device extends CakeTestModel {
  * name property
  *
  * @var string 'Device'
- * @access public
  */
 	public $name = 'Device';
 }
@@ -1727,7 +1591,6 @@ class DocumentDirectory extends CakeTestModel {
  * name property
  *
  * @var string 'DocumentDirectory'
- * @access public
  */
 	public $name = 'DocumentDirectory';
 }
@@ -1743,7 +1606,6 @@ class PrimaryModel extends CakeTestModel {
  * name property
  *
  * @var string 'PrimaryModel'
- * @access public
  */
 	public $name = 'PrimaryModel';
 }
@@ -1759,7 +1621,6 @@ class SecondaryModel extends CakeTestModel {
  * name property
  *
  * @var string 'SecondaryModel'
- * @access public
  */
 	public $name = 'SecondaryModel';
 }
@@ -1775,7 +1636,6 @@ class JoinA extends CakeTestModel {
  * name property
  *
  * @var string 'JoinA'
- * @access public
  */
 	public $name = 'JoinA';
 
@@ -1783,7 +1643,6 @@ class JoinA extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('JoinB', 'JoinC');
 }
@@ -1799,7 +1658,6 @@ class JoinB extends CakeTestModel {
  * name property
  *
  * @var string 'JoinB'
- * @access public
  */
 	public $name = 'JoinB';
 
@@ -1807,7 +1665,6 @@ class JoinB extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('JoinA');
 }
@@ -1823,7 +1680,6 @@ class JoinC extends CakeTestModel {
  * name property
  *
  * @var string 'JoinC'
- * @access public
  */
 	public $name = 'JoinC';
 
@@ -1831,7 +1687,6 @@ class JoinC extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('JoinA');
 }
@@ -1847,7 +1702,6 @@ class ThePaper extends CakeTestModel {
  * name property
  *
  * @var string 'ThePaper'
- * @access public
  */
 	public $name = 'ThePaper';
 
@@ -1855,7 +1709,6 @@ class ThePaper extends CakeTestModel {
  * useTable property
  *
  * @var string 'apples'
- * @access public
  */
 	public $useTable = 'apples';
 
@@ -1863,7 +1716,6 @@ class ThePaper extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('Itself' => array('className' => 'ThePaper', 'foreignKey' => 'apple_id'));
 
@@ -1871,7 +1723,6 @@ class ThePaper extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Monkey' => array('joinTable' => 'the_paper_monkies', 'order' => 'id'));
 }
@@ -1887,7 +1738,6 @@ class Monkey extends CakeTestModel {
  * name property
  *
  * @var string 'Monkey'
- * @access public
  */
 	public $name = 'Monkey';
 
@@ -1895,7 +1745,6 @@ class Monkey extends CakeTestModel {
  * useTable property
  *
  * @var string 'devices'
- * @access public
  */
 	public $useTable = 'devices';
 }
@@ -1911,7 +1760,6 @@ class AssociationTest1 extends CakeTestModel {
  * useTable property
  *
  * @var string 'join_as'
- * @access public
  */
 	public $useTable = 'join_as';
 
@@ -1919,7 +1767,6 @@ class AssociationTest1 extends CakeTestModel {
  * name property
  *
  * @var string 'AssociationTest1'
- * @access public
  */
 	public $name = 'AssociationTest1';
 
@@ -1927,7 +1774,6 @@ class AssociationTest1 extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('AssociationTest2' => array(
 		'unique' => false, 'joinTable' => 'join_as_join_bs', 'foreignKey' => false
@@ -1945,7 +1791,6 @@ class AssociationTest2 extends CakeTestModel {
  * useTable property
  *
  * @var string 'join_bs'
- * @access public
  */
 	public $useTable = 'join_bs';
 
@@ -1953,7 +1798,6 @@ class AssociationTest2 extends CakeTestModel {
  * name property
  *
  * @var string 'AssociationTest2'
- * @access public
  */
 	public $name = 'AssociationTest2';
 
@@ -1961,7 +1805,6 @@ class AssociationTest2 extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('AssociationTest1' => array(
 		'unique' => false, 'joinTable' => 'join_as_join_bs'
@@ -2038,7 +1881,6 @@ class Uuid extends CakeTestModel {
  * name property
  *
  * @var string 'Uuid'
- * @access public
  */
 	public $name = 'Uuid';
 }
@@ -2054,7 +1896,6 @@ class DataTest extends CakeTestModel {
  * name property
  *
  * @var string 'DataTest'
- * @access public
  */
 	public $name = 'DataTest';
 }
@@ -2070,7 +1911,6 @@ class TheVoid extends CakeTestModel {
  * name property
  *
  * @var string 'TheVoid'
- * @access public
  */
 	public $name = 'TheVoid';
 
@@ -2078,7 +1918,6 @@ class TheVoid extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 }
@@ -2094,7 +1933,6 @@ class ValidationTest1 extends CakeTestModel {
  * name property
  *
  * @var string 'ValidationTest'
- * @access public
  */
 	public $name = 'ValidationTest1';
 
@@ -2102,7 +1940,6 @@ class ValidationTest1 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -2110,7 +1947,6 @@ class ValidationTest1 extends CakeTestModel {
  * schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array();
 
@@ -2118,7 +1954,6 @@ class ValidationTest1 extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array(
 		'title' => 'notEmpty',
@@ -2134,7 +1969,6 @@ class ValidationTest1 extends CakeTestModel {
  * customValidationMethod method
  *
  * @param mixed $data
- * @access public
  * @return void
  */
 	public function customValidationMethod($data) {
@@ -2144,7 +1978,6 @@ class ValidationTest1 extends CakeTestModel {
 /**
  * Custom validator with parameters + default values
  *
- * @access public
  * @return array
  */
 	public function customValidatorWithParams($data, $validator, $or = true, $ignore_on_same = 'id') {
@@ -2156,7 +1989,6 @@ class ValidationTest1 extends CakeTestModel {
 /**
  * Custom validator with messaage
  *
- * @access public
  * @return array
  */
 	public function customValidatorWithMessage($data) {
@@ -2185,7 +2017,6 @@ class ValidationTest2 extends CakeTestModel {
  * name property
  *
  * @var string 'ValidationTest2'
- * @access public
  */
 	public $name = 'ValidationTest2';
 
@@ -2193,7 +2024,6 @@ class ValidationTest2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -2201,7 +2031,6 @@ class ValidationTest2 extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array(
 		'title' => 'notEmpty',
@@ -2217,7 +2046,6 @@ class ValidationTest2 extends CakeTestModel {
  * customValidationMethod method
  *
  * @param mixed $data
- * @access public
  * @return void
  */
 	public function customValidationMethod($data) {
@@ -2227,7 +2055,6 @@ class ValidationTest2 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -2246,7 +2073,6 @@ class Person extends CakeTestModel {
  * name property
  *
  * @var string 'Person'
- * @access public
  */
 	public $name = 'Person';
 
@@ -2254,7 +2080,6 @@ class Person extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 			'Mother' => array(
@@ -2276,7 +2101,6 @@ class UnderscoreField extends CakeTestModel {
  * name property
  *
  * @var string 'UnderscoreField'
- * @access public
  */
 	public $name = 'UnderscoreField';
 }
@@ -2292,7 +2116,6 @@ class Product extends CakeTestModel {
  * name property
  *
  * @var string 'Product'
- * @access public
  */
 	public $name = 'Product';
 }
@@ -2308,7 +2131,6 @@ class Story extends CakeTestModel {
  * name property
  *
  * @var string 'Story'
- * @access public
  */
 	public $name = 'Story';
 
@@ -2316,7 +2138,6 @@ class Story extends CakeTestModel {
  * primaryKey property
  *
  * @var string 'story'
- * @access public
  */
 	public $primaryKey = 'story';
 
@@ -2324,7 +2145,6 @@ class Story extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Tag' => array('foreignKey' => 'story'));
 
@@ -2332,7 +2152,6 @@ class Story extends CakeTestModel {
  * validate property
  *
  * @var array
- * @access public
  */
 	public $validate = array('title' => 'notEmpty');
 }
@@ -2348,7 +2167,6 @@ class Cd extends CakeTestModel {
  * name property
  *
  * @var string 'Cd'
- * @access public
  */
 	public $name = 'Cd';
 
@@ -2356,7 +2174,6 @@ class Cd extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('OverallFavorite' => array('foreignKey' => 'model_id', 'dependent' => true, 'conditions' => array('model_type' => 'Cd')));
 }
@@ -2372,7 +2189,6 @@ class Book extends CakeTestModel {
  * name property
  *
  * @var string 'Book'
- * @access public
  */
 	public $name = 'Book';
 
@@ -2380,7 +2196,6 @@ class Book extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array('OverallFavorite' => array('foreignKey' => 'model_id', 'dependent' => true, 'conditions' => 'OverallFavorite.model_type = \'Book\''));
 }
@@ -2396,7 +2211,6 @@ class OverallFavorite extends CakeTestModel {
  * name property
  *
  * @var string 'OverallFavorite'
- * @access public
  */
 	public $name = 'OverallFavorite';
 }
@@ -2412,7 +2226,6 @@ class MyUser extends CakeTestModel {
  * name property
  *
  * @var string 'MyUser'
- * @access public
  */
 	public $name = 'MyUser';
 
@@ -2420,7 +2233,6 @@ class MyUser extends CakeTestModel {
  * undocumented variable
  *
  * @var string
- * @access public
  */
 	public $hasAndBelongsToMany = array('MyCategory');
 }
@@ -2436,7 +2248,6 @@ class MyCategory extends CakeTestModel {
  * name property
  *
  * @var string 'MyCategory'
- * @access public
  */
 	public $name = 'MyCategory';
 
@@ -2444,7 +2255,6 @@ class MyCategory extends CakeTestModel {
  * undocumented variable
  *
  * @var string
- * @access public
  */
 	public $hasAndBelongsToMany = array('MyProduct', 'MyUser');
 }
@@ -2460,7 +2270,6 @@ class MyProduct extends CakeTestModel {
  * name property
  *
  * @var string 'MyProduct'
- * @access public
  */
 	public $name = 'MyProduct';
 
@@ -2468,7 +2277,6 @@ class MyProduct extends CakeTestModel {
  * undocumented variable
  *
  * @var string
- * @access public
  */
 	public $hasAndBelongsToMany = array('MyCategory');
 }
@@ -2484,7 +2292,6 @@ class MyCategoriesMyUser extends CakeTestModel {
  * name property
  *
  * @var string 'MyCategoriesMyUser'
- * @access public
  */
 	public $name = 'MyCategoriesMyUser';
 }
@@ -2500,7 +2307,6 @@ class MyCategoriesMyProduct extends CakeTestModel {
  * name property
  *
  * @var string 'MyCategoriesMyProduct'
- * @access public
  */
 	public $name = 'MyCategoriesMyProduct';
 }
@@ -2517,7 +2323,6 @@ class NumberTree extends CakeTestModel {
  * name property
  *
  * @var string 'NumberTree'
- * @access public
  */
 	public $name = 'NumberTree';
 
@@ -2525,7 +2330,6 @@ class NumberTree extends CakeTestModel {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Tree');
 
@@ -2538,7 +2342,6 @@ class NumberTree extends CakeTestModel {
  * @param mixed $parent_id
  * @param string $prefix
  * @param bool $hierachial
- * @access public
  * @return void
  */
 	public function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
@@ -2583,7 +2386,6 @@ class NumberTreeTwo extends NumberTree {
  * name property
  *
  * @var string 'NumberTree'
- * @access public
  */
 	public $name = 'NumberTreeTwo';
 
@@ -2591,7 +2393,6 @@ class NumberTreeTwo extends NumberTree {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array();
 }
@@ -2607,7 +2408,6 @@ class FlagTree extends NumberTree {
  * name property
  *
  * @var string 'FlagTree'
- * @access public
  */
 	public $name = 'FlagTree';
 }
@@ -2623,7 +2423,6 @@ class UnconventionalTree extends NumberTree {
  * name property
  *
  * @var string 'FlagTree'
- * @access public
  */
 	public $name = 'UnconventionalTree';
 	public $actsAs = array(
@@ -2646,7 +2445,6 @@ class UuidTree extends NumberTree {
  * name property
  *
  * @var string 'FlagTree'
- * @access public
  */
 	public $name = 'UuidTree';
 }
@@ -2662,7 +2460,6 @@ class Campaign extends CakeTestModel {
  * name property
  *
  * @var string 'Campaign'
- * @access public
  */
 	public $name = 'Campaign';
 
@@ -2670,7 +2467,6 @@ class Campaign extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name')));
 }
@@ -2686,7 +2482,6 @@ class Ad extends CakeTestModel {
  * name property
  *
  * @var string 'Ad'
- * @access public
  */
 	public $name = 'Ad';
 
@@ -2694,7 +2489,6 @@ class Ad extends CakeTestModel {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Tree');
 
@@ -2702,7 +2496,6 @@ class Ad extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Campaign');
 }
@@ -2718,7 +2511,6 @@ class AfterTree extends NumberTree {
  * name property
  *
  * @var string 'AfterTree'
- * @access public
  */
 	public $name = 'AfterTree';
 
@@ -2726,7 +2518,6 @@ class AfterTree extends NumberTree {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Tree');
 
@@ -2748,7 +2539,6 @@ class Content extends CakeTestModel {
  * name property
  *
  * @var string 'Content'
- * @access public
  */
 	public $name = 'Content';
 
@@ -2756,7 +2546,6 @@ class Content extends CakeTestModel {
  * useTable property
  *
  * @var string 'Content'
- * @access public
  */
 	public $useTable = 'Content';
 
@@ -2764,7 +2553,6 @@ class Content extends CakeTestModel {
  * primaryKey property
  *
  * @var string 'iContentId'
- * @access public
  */
 	public $primaryKey = 'iContentId';
 
@@ -2772,7 +2560,6 @@ class Content extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Account' => array('className' => 'Account', 'with' => 'ContentAccount', 'joinTable' => 'ContentAccounts', 'foreignKey' => 'iContentId', 'associationForeignKey', 'iAccountId'));
 }
@@ -2788,7 +2575,6 @@ class Account extends CakeTestModel {
  * name property
  *
  * @var string 'Account'
- * @access public
  */
 	public $name = 'Account';
 
@@ -2796,7 +2582,6 @@ class Account extends CakeTestModel {
  * useTable property
  *
  * @var string 'Account'
- * @access public
  */
 	public $useTable = 'Accounts';
 
@@ -2804,7 +2589,6 @@ class Account extends CakeTestModel {
  * primaryKey property
  *
  * @var string 'iAccountId'
- * @access public
  */
 	public $primaryKey = 'iAccountId';
 }
@@ -2820,7 +2604,6 @@ class ContentAccount extends CakeTestModel {
  * name property
  *
  * @var string 'Account'
- * @access public
  */
 	public $name = 'ContentAccount';
 
@@ -2828,7 +2611,6 @@ class ContentAccount extends CakeTestModel {
  * useTable property
  *
  * @var string 'Account'
- * @access public
  */
 	public $useTable = 'ContentAccounts';
 
@@ -2836,7 +2618,6 @@ class ContentAccount extends CakeTestModel {
  * primaryKey property
  *
  * @var string 'iAccountId'
- * @access public
  */
 	public $primaryKey = 'iContentAccountsId';
 }
@@ -2880,7 +2661,6 @@ class TestPluginArticle extends CakeTestModel {
  * name property
  *
  * @var string 'TestPluginArticle'
- * @access public
  */
 	public $name = 'TestPluginArticle';
 
@@ -2888,7 +2668,6 @@ class TestPluginArticle extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('User');
 
@@ -2896,7 +2675,6 @@ class TestPluginArticle extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'TestPluginComment' => array(
@@ -2918,7 +2696,6 @@ class TestPluginComment extends CakeTestModel {
  * name property
  *
  * @var string 'TestPluginComment'
- * @access public
  */
 	public $name = 'TestPluginComment';
 
@@ -2926,7 +2703,6 @@ class TestPluginComment extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'TestPluginArticle' => array(
@@ -2948,7 +2724,6 @@ class Uuidportfolio extends CakeTestModel {
  * name property
  *
  * @var string 'Uuidportfolio'
- * @access public
  */
 	public $name = 'Uuidportfolio';
 
@@ -2956,7 +2731,6 @@ class Uuidportfolio extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Uuiditem');
 }
@@ -2972,7 +2746,6 @@ class Uuiditem extends CakeTestModel {
  * name property
  *
  * @var string 'Item'
- * @access public
  */
 	public $name = 'Uuiditem';
 
@@ -2980,7 +2753,6 @@ class Uuiditem extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolioNumericid'));
 
@@ -2997,7 +2769,6 @@ class UuiditemsUuidportfolio extends CakeTestModel {
  * name property
  *
  * @var string 'ItemsPortfolio'
- * @access public
  */
 	public $name = 'UuiditemsUuidportfolio';
 }
@@ -3013,7 +2784,6 @@ class UuiditemsUuidportfolioNumericid extends CakeTestModel {
  * name property
  *
  * @var string
- * @access public
  */
 	public $name = 'UuiditemsUuidportfolioNumericid';
 }
@@ -3029,7 +2799,6 @@ class TranslateTestModel extends CakeTestModel {
  * name property
  *
  * @var string 'TranslateTestModel'
- * @access public
  */
 	public $name = 'TranslateTestModel';
 
@@ -3037,7 +2806,6 @@ class TranslateTestModel extends CakeTestModel {
  * useTable property
  *
  * @var string 'i18n'
- * @access public
  */
 	public $useTable = 'i18n';
 
@@ -3045,7 +2813,6 @@ class TranslateTestModel extends CakeTestModel {
  * displayField property
  *
  * @var string 'field'
- * @access public
  */
 	public $displayField = 'field';
 }
@@ -3060,21 +2827,18 @@ class TranslateWithPrefix extends CakeTestModel {
  * name property
  *
  * @var string 'TranslateTestModel'
- * @access public
  */
 	public $name = 'TranslateWithPrefix';
 /**
  * tablePrefix property
  *
  * @var string 'i18n'
- * @access public
  */
 	public $tablePrefix = 'i18n_';
 /**
  * displayField property
  *
  * @var string 'field'
- * @access public
  */
 	public $displayField = 'field';
 }
@@ -3089,7 +2853,6 @@ class TranslatedItem extends CakeTestModel {
  * name property
  *
  * @var string 'TranslatedItem'
- * @access public
  */
 	public $name = 'TranslatedItem';
 
@@ -3097,7 +2860,6 @@ class TranslatedItem extends CakeTestModel {
  * cacheQueries property
  *
  * @var bool false
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -3105,7 +2867,6 @@ class TranslatedItem extends CakeTestModel {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Translate' => array('content', 'title'));
 
@@ -3113,7 +2874,6 @@ class TranslatedItem extends CakeTestModel {
  * translateModel property
  *
  * @var string 'TranslateTestModel'
- * @access public
  */
 	public $translateModel = 'TranslateTestModel';
 }
@@ -3128,28 +2888,24 @@ class TranslatedItem2 extends CakeTestModel {
  * name property
  *
  * @var string 'TranslatedItem'
- * @access public
  */
 	public $name = 'TranslatedItem';
 /**
  * cacheQueries property
  *
  * @var bool false
- * @access public
  */
 	public $cacheQueries = false;
 /**
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Translate' => array('content', 'title'));
 /**
  * translateModel property
  *
  * @var string 'TranslateTestModel'
- * @access public
  */
 	public $translateModel = 'TranslateWithPrefix';
 }
@@ -3164,7 +2920,6 @@ class TranslatedItemWithTable extends CakeTestModel {
  * name property
  *
  * @var string 'TranslatedItemWithTable'
- * @access public
  */
 	public $name = 'TranslatedItemWithTable';
 
@@ -3172,7 +2927,6 @@ class TranslatedItemWithTable extends CakeTestModel {
  * useTable property
  *
  * @var string 'translated_items'
- * @access public
  */
 	public $useTable = 'translated_items';
 
@@ -3180,7 +2934,6 @@ class TranslatedItemWithTable extends CakeTestModel {
  * cacheQueries property
  *
  * @var bool false
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -3188,7 +2941,6 @@ class TranslatedItemWithTable extends CakeTestModel {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Translate' => array('content', 'title'));
 
@@ -3196,7 +2948,6 @@ class TranslatedItemWithTable extends CakeTestModel {
  * translateModel property
  *
  * @var string 'TranslateTestModel'
- * @access public
  */
 	public $translateModel = 'TranslateTestModel';
 
@@ -3204,7 +2955,6 @@ class TranslatedItemWithTable extends CakeTestModel {
  * translateTable property
  *
  * @var string 'another_i18n'
- * @access public
  */
 	public $translateTable = 'another_i18n';
 }
@@ -3220,7 +2970,6 @@ class TranslateArticleModel extends CakeTestModel {
  * name property
  *
  * @var string 'TranslateArticleModel'
- * @access public
  */
 	public $name = 'TranslateArticleModel';
 
@@ -3228,7 +2977,6 @@ class TranslateArticleModel extends CakeTestModel {
  * useTable property
  *
  * @var string 'article_i18n'
- * @access public
  */
 	public $useTable = 'article_i18n';
 
@@ -3236,7 +2984,6 @@ class TranslateArticleModel extends CakeTestModel {
  * displayField property
  *
  * @var string 'field'
- * @access public
  */
 	public $displayField = 'field';
 }
@@ -3252,7 +2999,6 @@ class TranslatedArticle extends CakeTestModel {
  * name property
  *
  * @var string 'TranslatedArticle'
- * @access public
  */
 	public $name = 'TranslatedArticle';
 
@@ -3260,7 +3006,6 @@ class TranslatedArticle extends CakeTestModel {
  * cacheQueries property
  *
  * @var bool false
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -3268,7 +3013,6 @@ class TranslatedArticle extends CakeTestModel {
  * actsAs property
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Translate' => array('title', 'body'));
 
@@ -3276,7 +3020,6 @@ class TranslatedArticle extends CakeTestModel {
  * translateModel property
  *
  * @var string 'TranslateArticleModel'
- * @access public
  */
 	public $translateModel = 'TranslateArticleModel';
 
@@ -3284,7 +3027,6 @@ class TranslatedArticle extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('User');
 }
@@ -3472,7 +3214,6 @@ class TestModel extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel'
- * @access public
  */
 	public $name = 'TestModel';
 
@@ -3480,7 +3221,6 @@ class TestModel extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -3488,7 +3228,6 @@ class TestModel extends CakeTestModel {
  * schema property
  *
  * @var array
- * @access protected
  */
 	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -3518,7 +3257,6 @@ class TestModel extends CakeTestModel {
  * @param mixed $fields
  * @param mixed $order
  * @param mixed $recursive
- * @access public
  * @return void
  */
 	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
@@ -3532,7 +3270,6 @@ class TestModel extends CakeTestModel {
  * @param mixed $fields
  * @param mixed $order
  * @param mixed $recursive
- * @access public
  * @return void
  */
 	public function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
@@ -3551,7 +3288,6 @@ class TestModel2 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel2'
- * @access public
  */
 	public $name = 'TestModel2';
 
@@ -3559,7 +3295,6 @@ class TestModel2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 }
@@ -3575,7 +3310,6 @@ class TestModel3 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel3'
- * @access public
  */
 	public $name = 'TestModel3';
 
@@ -3583,7 +3317,6 @@ class TestModel3 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 }
@@ -3599,7 +3332,6 @@ class TestModel4 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel4'
- * @access public
  */
 	public $name = 'TestModel4';
 
@@ -3607,7 +3339,6 @@ class TestModel4 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model4'
- * @access public
  */
 	public $table = 'test_model4';
 
@@ -3615,7 +3346,6 @@ class TestModel4 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -3623,7 +3353,6 @@ class TestModel4 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'TestModel4Parent' => array(
@@ -3636,7 +3365,6 @@ class TestModel4 extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array(
 		'TestModel5' => array(
@@ -3649,7 +3377,6 @@ class TestModel4 extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('TestModel7' => array(
 		'className' => 'TestModel7',
@@ -3662,7 +3389,6 @@ class TestModel4 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -3689,7 +3415,6 @@ class TestModel4TestModel7 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel4TestModel7'
- * @access public
  */
 	public $name = 'TestModel4TestModel7';
 
@@ -3697,7 +3422,6 @@ class TestModel4TestModel7 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model4_test_model7'
- * @access public
  */
 	public $table = 'test_model4_test_model7';
 
@@ -3705,14 +3429,12 @@ class TestModel4TestModel7 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -3737,7 +3459,6 @@ class TestModel5 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel5'
- * @access public
  */
 	public $name = 'TestModel5';
 
@@ -3745,7 +3466,6 @@ class TestModel5 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model5'
- * @access public
  */
 	public $table = 'test_model5';
 
@@ -3753,7 +3473,6 @@ class TestModel5 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -3761,7 +3480,6 @@ class TestModel5 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('TestModel4' => array(
 		'className' => 'TestModel4',
@@ -3772,7 +3490,6 @@ class TestModel5 extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('TestModel6' => array(
 		'className' => 'TestModel6',
@@ -3782,7 +3499,6 @@ class TestModel5 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -3810,7 +3526,6 @@ class TestModel6 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel6'
- * @access public
  */
 	public $name = 'TestModel6';
 
@@ -3818,7 +3533,6 @@ class TestModel6 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model6'
- * @access public
  */
 	public $table = 'test_model6';
 
@@ -3826,7 +3540,6 @@ class TestModel6 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -3834,7 +3547,6 @@ class TestModel6 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('TestModel5' => array(
 		'className' => 'TestModel5',
@@ -3844,7 +3556,6 @@ class TestModel6 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -3872,7 +3583,6 @@ class TestModel7 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel7'
- * @access public
  */
 	public $name = 'TestModel7';
 
@@ -3880,7 +3590,6 @@ class TestModel7 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model7'
- * @access public
  */
 	public $table = 'test_model7';
 
@@ -3888,14 +3597,12 @@ class TestModel7 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -3922,7 +3629,6 @@ class TestModel8 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel8'
- * @access public
  */
 	public $name = 'TestModel8';
 
@@ -3930,7 +3636,6 @@ class TestModel8 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model8'
- * @access public
  */
 	public $table = 'test_model8';
 
@@ -3938,7 +3643,6 @@ class TestModel8 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -3946,7 +3650,6 @@ class TestModel8 extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array(
 		'TestModel9' => array(
@@ -3959,7 +3662,6 @@ class TestModel8 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -3987,7 +3689,6 @@ class TestModel9 extends CakeTestModel {
  * name property
  *
  * @var string 'TestModel9'
- * @access public
  */
 	public $name = 'TestModel9';
 
@@ -3995,7 +3696,6 @@ class TestModel9 extends CakeTestModel {
  * table property
  *
  * @var string 'test_model9'
- * @access public
  */
 	public $table = 'test_model9';
 
@@ -4003,7 +3703,6 @@ class TestModel9 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4011,7 +3710,6 @@ class TestModel9 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('TestModel8' => array(
 		'className' => 'TestModel8',
@@ -4022,7 +3720,6 @@ class TestModel9 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4050,7 +3747,6 @@ class Level extends CakeTestModel {
  * name property
  *
  * @var string 'Level'
- * @access public
  */
 	public $name = 'Level';
 
@@ -4058,7 +3754,6 @@ class Level extends CakeTestModel {
  * table property
  *
  * @var string 'level'
- * @access public
  */
 	public $table = 'level';
 
@@ -4066,7 +3761,6 @@ class Level extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4074,7 +3768,6 @@ class Level extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Group'=> array(
@@ -4088,7 +3781,6 @@ class Level extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4113,7 +3805,6 @@ class Group extends CakeTestModel {
  * name property
  *
  * @var string 'Group'
- * @access public
  */
 	public $name = 'Group';
 
@@ -4121,7 +3812,6 @@ class Group extends CakeTestModel {
  * table property
  *
  * @var string 'group'
- * @access public
  */
 	public $table = 'group';
 
@@ -4129,7 +3819,6 @@ class Group extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4137,7 +3826,6 @@ class Group extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Level');
 
@@ -4145,14 +3833,12 @@ class Group extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('Category2', 'User2');
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4179,7 +3865,6 @@ class User2 extends CakeTestModel {
  * name property
  *
  * @var string 'User2'
- * @access public
  */
 	public $name = 'User2';
 
@@ -4187,7 +3872,6 @@ class User2 extends CakeTestModel {
  * table property
  *
  * @var string 'user'
- * @access public
  */
 	public $table = 'user';
 
@@ -4195,7 +3879,6 @@ class User2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4203,7 +3886,6 @@ class User2 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'Group' => array(
@@ -4218,7 +3900,6 @@ class User2 extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Article2' => array(
@@ -4229,7 +3910,6 @@ class User2 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4256,7 +3936,6 @@ class Category2 extends CakeTestModel {
  * name property
  *
  * @var string 'Category2'
- * @access public
  */
 	public $name = 'Category2';
 
@@ -4264,7 +3943,6 @@ class Category2 extends CakeTestModel {
  * table property
  *
  * @var string 'category'
- * @access public
  */
 	public $table = 'category';
 
@@ -4272,7 +3950,6 @@ class Category2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4280,7 +3957,6 @@ class Category2 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'Group' => array(
@@ -4297,7 +3973,6 @@ class Category2 extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'ChildCat' => array(
@@ -4314,7 +3989,6 @@ class Category2 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4344,7 +4018,6 @@ class Article2 extends CakeTestModel {
  * name property
  *
  * @var string 'Article2'
- * @access public
  */
 	public $name = 'Article2';
 
@@ -4352,7 +4025,6 @@ class Article2 extends CakeTestModel {
  * table property
  *
  * @var string 'article'
- * @access public
  */
 	public $table = 'articles';
 
@@ -4360,7 +4032,6 @@ class Article2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4368,7 +4039,6 @@ class Article2 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'Category2' => array('className' => 'Category2'),
@@ -4378,7 +4048,6 @@ class Article2 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4420,7 +4089,6 @@ class CategoryFeatured2 extends CakeTestModel {
  * name property
  *
  * @var string 'CategoryFeatured2'
- * @access public
  */
 	public $name = 'CategoryFeatured2';
 
@@ -4428,7 +4096,6 @@ class CategoryFeatured2 extends CakeTestModel {
  * table property
  *
  * @var string 'category_featured'
- * @access public
  */
 	public $table = 'category_featured';
 
@@ -4436,14 +4103,12 @@ class CategoryFeatured2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4471,7 +4136,6 @@ class Featured2 extends CakeTestModel {
  * name property
  *
  * @var string 'Featured2'
- * @access public
  */
 	public $name = 'Featured2';
 
@@ -4479,7 +4143,6 @@ class Featured2 extends CakeTestModel {
  * table property
  *
  * @var string 'featured2'
- * @access public
  */
 	public $table = 'featured2';
 
@@ -4487,7 +4150,6 @@ class Featured2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4495,7 +4157,6 @@ class Featured2 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'CategoryFeatured2' => array(
@@ -4506,7 +4167,6 @@ class Featured2 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4533,7 +4193,6 @@ class Comment2 extends CakeTestModel {
  * name property
  *
  * @var string 'Comment2'
- * @access public
  */
 	public $name = 'Comment2';
 
@@ -4541,7 +4200,6 @@ class Comment2 extends CakeTestModel {
  * table property
  *
  * @var string 'comment'
- * @access public
  */
 	public $table = 'comment';
 
@@ -4549,7 +4207,6 @@ class Comment2 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('ArticleFeatured2', 'User2');
 
@@ -4557,14 +4214,12 @@ class Comment2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4591,7 +4246,6 @@ class ArticleFeatured2 extends CakeTestModel {
  * name property
  *
  * @var string 'ArticleFeatured2'
- * @access public
  */
 	public $name = 'ArticleFeatured2';
 
@@ -4599,7 +4253,6 @@ class ArticleFeatured2 extends CakeTestModel {
  * table property
  *
  * @var string 'article_featured'
- * @access public
  */
 	public $table = 'article_featured';
 
@@ -4607,7 +4260,6 @@ class ArticleFeatured2 extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4615,7 +4267,6 @@ class ArticleFeatured2 extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'CategoryFeatured2' => array('className' => 'CategoryFeatured2'),
@@ -4626,7 +4277,6 @@ class ArticleFeatured2 extends CakeTestModel {
  * hasOne property
  *
  * @var array
- * @access public
  */
 	public $hasOne = array(
 		'Featured2' => array('className' => 'Featured2')
@@ -4636,7 +4286,6 @@ class ArticleFeatured2 extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Comment2' => array('className'=>'Comment2', 'dependent' => true)
@@ -4645,7 +4294,6 @@ class ArticleFeatured2 extends CakeTestModel {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -4677,7 +4325,6 @@ class MysqlTestModel extends Model {
  * name property
  *
  * @var string 'MysqlTestModel'
- * @access public
  */
 	public $name = 'MysqlTestModel';
 
@@ -4685,7 +4332,6 @@ class MysqlTestModel extends Model {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
@@ -4696,7 +4342,6 @@ class MysqlTestModel extends Model {
  * @param mixed $fields
  * @param mixed $order
  * @param mixed $recursive
- * @access public
  * @return void
  */
 	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
@@ -4710,7 +4355,6 @@ class MysqlTestModel extends Model {
  * @param mixed $fields
  * @param mixed $order
  * @param mixed $recursive
- * @access public
  * @return void
  */
 	public function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
@@ -4720,7 +4364,6 @@ class MysqlTestModel extends Model {
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {

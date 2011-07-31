@@ -110,7 +110,6 @@ class ControllerTestCaseTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.post', 'core.author', 'core.test_plugin_comment');
 

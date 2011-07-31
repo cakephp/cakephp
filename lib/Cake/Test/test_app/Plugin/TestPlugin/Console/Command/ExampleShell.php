@@ -21,7 +21,6 @@ class ExampleShell extends Shell {
 /**
  * main method
  *
- * @access public
  * @return void
  */
 	public function main() {

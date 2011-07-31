@@ -151,7 +151,6 @@ class CakeLogTest extends CakeTestCase {
 /**
  * testLogFileWriting method
  *
- * @access public
  * @return void
  */
 	public function testLogFileWriting() {

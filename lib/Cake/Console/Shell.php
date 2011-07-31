@@ -48,7 +48,6 @@ class Shell extends Object {
  * If true, the script will ask for permission to perform actions.
  *
  * @var boolean
- * @access public
  */
 	public $interactive = true;
 
@@ -56,7 +55,6 @@ class Shell extends Object {
  * Contains command switches parsed from the command line.
  *
  * @var array
- * @access public
  */
 	public $params = array();
 

@@ -30,7 +30,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * Option mappings for jQuery
  *
  * @var array
- * @access protected
  */
 	protected $_optionMap = array(
 		'request' => array(
@@ -59,7 +58,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * Callback arguments lists
  *
  * @var string
- * @access protected
  */
 	protected $_callbackArguments = array(
 		'slider' => array(
@@ -204,7 +202,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $name The name of the effect to trigger.
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
- * @access public
  * @see JsBaseEngineHelper::effect()
  */
 	public function effect($name, $options = array()) {
@@ -237,7 +234,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param mixed $url
  * @param array $options See JsHelper::request() for options.
  * @return string The completed ajax call.
- * @access public
  * @see JsBaseEngineHelper::request() for options list.
  */
 	public function request($url, $options = array()) {
@@ -278,7 +274,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
- * @access public
  * @see JsBaseEngineHelper::sortable() for options list.
  */
 	public function sortable($options = array()) {
@@ -293,7 +288,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the draggable element.
  * @return string Completed Draggable script.
- * @access public
  * @see JsBaseEngineHelper::drag() for options list.
  */
 	public function drag($options = array()) {
@@ -308,7 +302,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the droppable element.
  * @return string Completed Droppable script.
- * @access public
  * @see JsBaseEngineHelper::drop() for options list.
  */
 	public function drop($options = array()) {
@@ -323,7 +316,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the droppable element.
  * @return string Completed Slider script.
- * @access public
  * @see JsBaseEngineHelper::slider() for options list.
  */
 	public function slider($options = array()) {
@@ -338,7 +330,6 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Options for the serialization
  * @return string completed form serialization script.
- * @access public
  * @see JsBaseEngineHelper::serializeForm() for option list.
  */
 	public function serializeForm($options = array()) {

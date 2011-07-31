@@ -28,7 +28,6 @@ class FilmFileFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'FilmFile'
- * @access public
  */
 	public $name = 'FilmFile';
 
@@ -36,7 +35,6 @@ class FilmFileFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -47,7 +45,6 @@ class FilmFileFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'name' => 'one'),

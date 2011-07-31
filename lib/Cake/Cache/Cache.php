@@ -470,8 +470,6 @@ class Cache {
  * @param string $name Name of the configuration to get settings for. Defaults to 'default'
  * @return array list of settings for this engine
  * @see Cache::config()
- * @access public
- * @static
  */
 	public static function settings($name = 'default') {
 		if (!empty(self::$_engines[$name])) {
@@ -492,7 +490,6 @@ abstract class CacheEngine {
  * Settings of current engine instance
  *
  * @var int
- * @access public
  */
 	public $settings = array();
 

@@ -47,7 +47,6 @@ class ThemeView extends View {
  * @param string $plugin The name of the plugin views are being found for.
  * @param boolean $cached Set to true to force dir scan.
  * @return array paths
- * @access protected
  * @todo Make theme path building respect $cached parameter.
  */
 	protected function _paths($plugin = null, $cached = true) {

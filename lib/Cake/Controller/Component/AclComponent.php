@@ -37,7 +37,6 @@ class AclComponent extends Component {
  * Instance of an ACL class
  *
  * @var object
- * @access protected
  */
 	protected $_Instance = null;
 
@@ -528,7 +527,6 @@ class IniAcl extends Object implements AclInterface {
  * Array with configuration, parsed from ini file
  *
  * @var array
- * @access public
  */
 	public $config = null;
 

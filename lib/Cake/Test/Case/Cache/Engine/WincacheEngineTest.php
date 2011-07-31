@@ -29,7 +29,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -42,7 +41,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -54,7 +52,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * testReadAndWriteCache method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteCache() {
@@ -78,7 +75,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * testExpiry method
  *
- * @access public
  * @return void
  */
 	public function testExpiry() {
@@ -113,7 +109,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * testDeleteCache method
  *
- * @access public
  * @return void
  */
 	public function testDeleteCache() {
@@ -128,7 +123,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * testDecrement method
  *
- * @access public
  * @return void
  */
 	public function testDecrement() {
@@ -157,7 +151,6 @@ class WincacheEngineTest extends CakeTestCase {
 /**
  * testIncrement method
  *
- * @access public
  * @return void
  */
 	public function testIncrement() {

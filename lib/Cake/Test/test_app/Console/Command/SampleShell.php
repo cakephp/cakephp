@@ -21,7 +21,6 @@ class SampleShell extends Shell {
 /**
  * main method
  *
- * @access public
  * @return void
  */
 	public function main() {

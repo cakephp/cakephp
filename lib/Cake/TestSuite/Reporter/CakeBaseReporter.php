@@ -41,7 +41,6 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * Character set for the output of test reporting.
  *
  * @var string
- * @access protected
  */
 	protected $_characterSet;
 

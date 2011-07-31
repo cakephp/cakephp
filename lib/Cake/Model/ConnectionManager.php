@@ -32,7 +32,6 @@ class ConnectionManager {
  * Holds a loaded instance of the Connections object
  *
  * @var DATABASE_CONFIG
- * @access public
  */
 	public static $config = null;
 
@@ -40,7 +39,6 @@ class ConnectionManager {
  * Holds instances DataSource objects
  *
  * @var array
- * @access protected
  */
 	protected static $_dataSources = array();
 
@@ -48,7 +46,6 @@ class ConnectionManager {
  * Contains a list of all file and class names used in Connection settings
  *
  * @var array
- * @access protected
  */
 	protected static $_connectionsEnum = array();
 

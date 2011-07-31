@@ -32,21 +32,18 @@ class TranslateWithPrefixFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Translate'
- * @access public
  */
 	public $name = 'TranslateWithPrefix';
 /**
  * table property
  *
  * @var string 'i18n'
- * @access public
  */
 	public $table = 'i18n_translate_with_prefixes';
 /**
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -60,7 +57,6 @@ class TranslateWithPrefixFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Title #1'),

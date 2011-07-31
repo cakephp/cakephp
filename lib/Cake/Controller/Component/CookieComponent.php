@@ -38,7 +38,6 @@ class CookieComponent extends Component {
  * $this->Cookie->name = 'CookieName';
  *
  * @var string
- * @access public
  */
 	public $name = 'CakeCookie';
 
@@ -51,7 +50,6 @@ class CookieComponent extends Component {
  * $this->Cookie->time = '5 Days';
  *
  * @var mixed
- * @access public
  */
 	public $time = null;
 
@@ -67,7 +65,6 @@ class CookieComponent extends Component {
  * The default value is the entire domain.
  *
  * @var string
- * @access public
  */
 	public $path = '/';
 
@@ -83,7 +80,6 @@ class CookieComponent extends Component {
  * Set $this->Cookie->domain = '.example.com'; in your controller beforeFilter
  *
  * @var string
- * @access public
  */
 	public $domain = '';
 
@@ -97,7 +93,6 @@ class CookieComponent extends Component {
  * When set to true, the cookie will only be set if a secure connection exists.
  *
  * @var boolean
- * @access public
  */
 	public $secure = false;
 
@@ -108,7 +103,6 @@ class CookieComponent extends Component {
  * $this->Cookie->key = 'SomeRandomString';
  *
  * @var string
- * @access protected
  */
 	public $key = null;
 
@@ -129,7 +123,6 @@ class CookieComponent extends Component {
  *
  * @see CookieComponent::read();
  * @var string
- * @access private
  */
 	protected $_values = array();
 
@@ -140,7 +133,6 @@ class CookieComponent extends Component {
  * Defaults to Security::cipher();
  *
  * @var string
- * @access private
  * @todo add additional encryption methods
  */
 	protected $_type = 'cipher';
@@ -149,7 +141,6 @@ class CookieComponent extends Component {
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
  *
  * @var string
- * @access private
  */
 	protected $_reset = null;
 
@@ -159,7 +150,6 @@ class CookieComponent extends Component {
  * This is controlled by CookieComponent::time;
  *
  * @var string
- * @access private
  */
 	protected $_expires = 0;
 

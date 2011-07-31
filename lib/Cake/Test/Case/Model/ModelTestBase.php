@@ -34,7 +34,6 @@ abstract class BaseModelTest extends CakeTestCase {
  * autoFixtures property
  *
  * @var bool false
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -42,14 +41,12 @@ abstract class BaseModelTest extends CakeTestCase {
  * Whether backup global state for each test method or not
  *
  * @var bool false
- * @access public
  */
 	public $backupGlobals = false;
 /**
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.my_category', 'core.my_product',
@@ -78,7 +75,6 @@ abstract class BaseModelTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -89,7 +85,6 @@ abstract class BaseModelTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {

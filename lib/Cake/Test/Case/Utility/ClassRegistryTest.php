@@ -29,7 +29,6 @@ class ClassRegisterModel extends CakeTestModel {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 }
@@ -45,7 +44,6 @@ class RegisterArticle extends ClassRegisterModel {
  * name property
  *
  * @var string 'RegisterArticle'
- * @access public
  */
 	public $name = 'RegisterArticle';
 }
@@ -61,7 +59,6 @@ class RegisterArticleFeatured extends ClassRegisterModel {
  * name property
  *
  * @var string 'RegisterArticleFeatured'
- * @access public
  */
 	public $name = 'RegisterArticleFeatured';
 }
@@ -77,7 +74,6 @@ class RegisterArticleTag extends ClassRegisterModel {
  * name property
  *
  * @var string 'RegisterArticleTag'
- * @access public
  */
 	public $name = 'RegisterArticleTag';
 }
@@ -93,7 +89,6 @@ class RegistryPluginAppModel extends ClassRegisterModel {
  * tablePrefix property
  *
  * @var string 'something_'
- * @access public
  */
 	public $tablePrefix = 'something_';
 }
@@ -109,7 +104,6 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
  * name property
  *
  * @var string 'TestRegistryPluginModel'
- * @access public
  */
 	public $name = 'TestRegistryPluginModel';
 }
@@ -125,7 +119,6 @@ class RegisterCategory extends ClassRegisterModel {
  * name property
  *
  * @var string 'RegisterCategory'
- * @access public
  */
 	public $name = 'RegisterCategory';
 }
@@ -140,7 +133,6 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * testAddModel method
  *
- * @access public
  * @return void
  */
 	public function testAddModel() {
@@ -198,7 +190,6 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * testClassRegistryFlush method
  *
- * @access public
  * @return void
  */
 	public function testClassRegistryFlush() {
@@ -216,7 +207,6 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * testAddMultipleModels method
  *
- * @access public
  * @return void
  */
 	public function testAddMultipleModels() {
@@ -258,7 +248,6 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * testPluginAppModel method
  *
- * @access public
  * @return void
  */
 	public function testPluginAppModel() {

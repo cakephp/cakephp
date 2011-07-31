@@ -29,7 +29,6 @@ abstract class ObjectCollection {
  * List of the currently-enabled objects
  *
  * @var array
- * @access protected
  */
 	protected $_enabled = array();
 

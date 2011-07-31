@@ -28,7 +28,6 @@ class UuidportfolioFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Uuidportfolio'
- * @access public
  */
 	public $name = 'Uuidportfolio';
 
@@ -36,7 +35,6 @@ class UuidportfolioFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
@@ -47,7 +45,6 @@ class UuidportfolioFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => '4806e091-6940-4d2b-b227-303740cf8569', 'name' => 'Portfolio 1'),

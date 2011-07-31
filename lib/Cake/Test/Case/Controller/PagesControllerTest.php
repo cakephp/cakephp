@@ -29,7 +29,6 @@ class PagesControllerTest extends CakeTestCase {
 /**
  * endTest method
  *
- * @access public
  * @return void
  */
 	public function endTest() {
@@ -39,7 +38,6 @@ class PagesControllerTest extends CakeTestCase {
 /**
  * testDisplay method
  *
- * @access public
  * @return void
  */
 	public function testDisplay() {

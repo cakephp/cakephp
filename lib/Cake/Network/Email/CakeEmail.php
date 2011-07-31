@@ -1271,7 +1271,6 @@ class CakeEmail {
  *
  * @param string $content Content to render
  * @return array Email ready to be sent
- * @access private
  */
 	protected function _render($content) {
 		$viewClass = $this->_viewRender;

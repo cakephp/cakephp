@@ -38,7 +38,6 @@ class BakeShellTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.user');
 

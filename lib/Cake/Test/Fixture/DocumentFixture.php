@@ -28,7 +28,6 @@ class DocumentFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Document'
- * @access public
  */
 	public $name = 'Document';
 
@@ -36,7 +35,6 @@ class DocumentFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class DocumentFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('document_directory_id' => 1, 'name' => 'Document 1')

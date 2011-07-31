@@ -28,7 +28,6 @@ class ArosAcoFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'ArosAco'
- * @access public
  */
 	public $name = 'ArosAco';
 
@@ -36,7 +35,6 @@ class ArosAcoFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -52,7 +50,6 @@ class ArosAcoFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array();
 }

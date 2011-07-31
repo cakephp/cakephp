@@ -32,7 +32,6 @@ class DbAclNodeTestBase extends AclNode {
  * useDbConfig property
  *
  * @var string 'test'
- * @access public
  */
 	public $useDbConfig = 'test';
 
@@ -40,7 +39,6 @@ class DbAclNodeTestBase extends AclNode {
  * cacheSources property
  *
  * @var bool false
- * @access public
  */
 	public $cacheSources = false;
 }
@@ -56,7 +54,6 @@ class DbAroTest extends DbAclNodeTestBase {
  * name property
  *
  * @var string 'DbAroTest'
- * @access public
  */
 	public $name = 'DbAroTest';
 
@@ -64,7 +61,6 @@ class DbAroTest extends DbAclNodeTestBase {
  * useTable property
  *
  * @var string 'aros'
- * @access public
  */
 	public $useTable = 'aros';
 
@@ -72,7 +68,6 @@ class DbAroTest extends DbAclNodeTestBase {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('DbAcoTest' => array('with' => 'DbPermissionTest'));
 }
@@ -88,7 +83,6 @@ class DbAcoTest extends DbAclNodeTestBase {
  * name property
  *
  * @var string 'DbAcoTest'
- * @access public
  */
 	public $name = 'DbAcoTest';
 
@@ -96,7 +90,6 @@ class DbAcoTest extends DbAclNodeTestBase {
  * useTable property
  *
  * @var string 'acos'
- * @access public
  */
 	public $useTable = 'acos';
 
@@ -104,7 +97,6 @@ class DbAcoTest extends DbAclNodeTestBase {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('DbAroTest' => array('with' => 'DbPermissionTest'));
 }
@@ -120,7 +112,6 @@ class DbPermissionTest extends CakeTestModel {
  * name property
  *
  * @var string 'DbPermissionTest'
- * @access public
  */
 	public $name = 'DbPermissionTest';
 
@@ -128,7 +119,6 @@ class DbPermissionTest extends CakeTestModel {
  * useTable property
  *
  * @var string 'aros_acos'
- * @access public
  */
 	public $useTable = 'aros_acos';
 
@@ -136,7 +126,6 @@ class DbPermissionTest extends CakeTestModel {
  * cacheQueries property
  *
  * @var bool false
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -144,7 +133,6 @@ class DbPermissionTest extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('DbAroTest' => array('foreignKey' => 'aro_id'), 'DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
@@ -160,7 +148,6 @@ class DbAcoActionTest extends CakeTestModel {
  * name property
  *
  * @var string 'DbAcoActionTest'
- * @access public
  */
 	public $name = 'DbAcoActionTest';
 
@@ -168,7 +155,6 @@ class DbAcoActionTest extends CakeTestModel {
  * useTable property
  *
  * @var string 'aco_actions'
- * @access public
  */
 	public $useTable = 'aco_actions';
 
@@ -176,7 +162,6 @@ class DbAcoActionTest extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
@@ -192,7 +177,6 @@ class DbAroUserTest extends CakeTestModel {
  * name property
  *
  * @var string 'AuthUser'
- * @access public
  */
 	public $name = 'AuthUser';
 
@@ -200,14 +184,12 @@ class DbAroUserTest extends CakeTestModel {
  * useTable property
  *
  * @var string 'auth_users'
- * @access public
  */
 	public $useTable = 'auth_users';
 /**
  * bindNode method
  *
  * @param mixed $ref
- * @access public
  * @return void
  */
 	public function bindNode($ref = null) {
@@ -229,7 +211,6 @@ class TestDbAcl extends DbAcl {
 /**
  * construct method
  *
- * @access private
  * @return void
  */
 	function __construct() {
@@ -251,14 +232,12 @@ class AclNodeTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -269,7 +248,6 @@ class AclNodeTest extends CakeTestCase {
 /**
  * testNode method
  *
- * @access public
  * @return void
  */
 	public function testNode() {
@@ -322,7 +300,6 @@ class AclNodeTest extends CakeTestCase {
 /**
  * testNodeArrayFind method
  *
- * @access public
  * @return void
  */
 	public function testNodeArrayFind() {
@@ -340,7 +317,6 @@ class AclNodeTest extends CakeTestCase {
 	/**
  * testNodeObjectFind method
  *
- * @access public
  * @return void
  */
 	public function testNodeObjectFind() {
@@ -361,7 +337,6 @@ class AclNodeTest extends CakeTestCase {
 /**
  * testNodeAliasParenting method
  *
- * @access public
  * @return void
  */
 	public function testNodeAliasParenting() {

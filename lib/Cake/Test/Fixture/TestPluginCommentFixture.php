@@ -28,7 +28,6 @@ class TestPluginCommentFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Comment'
- * @access public
  */
 	public $name = 'TestPluginComment';
 
@@ -36,7 +35,6 @@ class TestPluginCommentFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -52,7 +50,6 @@ class TestPluginCommentFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:45:23', 'updated' => '2008-09-24 10:47:31'),

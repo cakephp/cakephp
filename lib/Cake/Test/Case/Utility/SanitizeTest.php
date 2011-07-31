@@ -29,7 +29,6 @@ class SanitizeDataTest extends CakeTestModel {
  * name property
  *
  * @var string 'SanitizeDataTest'
- * @access public
  */
 	public $name = 'SanitizeDataTest';
 
@@ -37,7 +36,6 @@ class SanitizeDataTest extends CakeTestModel {
  * useTable property
  *
  * @var string 'data_tests'
- * @access public
  */
 	public $useTable = 'data_tests';
 }
@@ -53,7 +51,6 @@ class SanitizeArticle extends CakeTestModel {
  * name property
  *
  * @var string 'Article'
- * @access public
  */
 	public $name = 'SanitizeArticle';
 
@@ -61,7 +58,6 @@ class SanitizeArticle extends CakeTestModel {
  * useTable property
  *
  * @var string 'articles'
- * @access public
  */
 	public $useTable = 'articles';
 }
@@ -77,7 +73,6 @@ class SanitizeTest extends CakeTestCase {
  * autoFixtures property
  *
  * @var bool false
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -85,14 +80,12 @@ class SanitizeTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.data_test', 'core.article');
 
 /**
  * testEscapeAlphaNumeric method
  *
- * @access public
  * @return void
  */
 	public function testEscapeAlphaNumeric() {
@@ -124,7 +117,6 @@ class SanitizeTest extends CakeTestCase {
 /**
  * testClean method
  *
- * @access public
  * @return void
  */
 	public function testClean() {
@@ -205,7 +197,6 @@ class SanitizeTest extends CakeTestCase {
 /**
  * testHtml method
  *
- * @access public
  * @return void
  */
 	public function testHtml() {
@@ -247,7 +238,6 @@ class SanitizeTest extends CakeTestCase {
 /**
  * testStripWhitespace method
  *
- * @access public
  * @return void
  */
 	public function testStripWhitespace() {
@@ -260,7 +250,6 @@ class SanitizeTest extends CakeTestCase {
 /**
  * testParanoid method
  *
- * @access public
  * @return void
  */
 	public function testParanoid() {
@@ -302,7 +291,6 @@ class SanitizeTest extends CakeTestCase {
 /**
  * testStripImages method
  *
- * @access public
  * @return void
  */
 	public function testStripImages() {
@@ -330,7 +318,6 @@ class SanitizeTest extends CakeTestCase {
 /**
  * testStripScripts method
  *
- * @access public
  * @return void
  */
 	public function testStripScripts() {
@@ -394,7 +381,6 @@ HTML;
 /**
  * testStripAll method
  *
- * @access public
  * @return void
  */
 	public function testStripAll() {
@@ -426,7 +412,6 @@ HTML;
 /**
  * testStripTags method
  *
- * @access public
  * @return void
  */
 	public function testStripTags() {

@@ -32,7 +32,6 @@ class ContainableBehaviorTest extends CakeTestCase {
  * Fixtures associated with this test case
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.article', 'core.article_featured', 'core.article_featureds_tags',
@@ -79,7 +78,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testContainments method
  *
- * @access public
  * @return void
  */
 	public function testContainments() {
@@ -149,7 +147,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testInvalidContainments method
  *
- * @access public
  * @return void
  */
 	public function testInvalidContainments() {
@@ -163,7 +160,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testBeforeFind method
  *
- * @access public
  * @return void
  */
 	public function testBeforeFind() {
@@ -238,7 +234,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testContain method
  *
- * @access public
  * @return void
  */
 	public function testContain() {
@@ -254,7 +249,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindEmbeddedNoBindings method
  *
- * @access public
  * @return void
  */
 	public function testFindEmbeddedNoBindings() {
@@ -279,7 +273,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindFirstLevel method
  *
- * @access public
  * @return void
  */
 	public function testFindFirstLevel() {
@@ -388,7 +381,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindEmbeddedFirstLevel method
  *
- * @access public
  * @return void
  */
 	public function testFindEmbeddedFirstLevel() {
@@ -495,7 +487,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindSecondLevel method
  *
- * @access public
  * @return void
  */
 	public function testFindSecondLevel() {
@@ -842,7 +833,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindEmbeddedSecondLevel method
  *
- * @access public
  * @return void
  */
 	public function testFindEmbeddedSecondLevel() {
@@ -1185,7 +1175,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindThirdLevel method
  *
- * @access public
  * @return void
  */
 	public function testFindThirdLevel() {
@@ -1506,7 +1495,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindEmbeddedThirdLevel method
  *
- * @access public
  * @return void
  */
 	public function testFindEmbeddedThirdLevel() {
@@ -1824,7 +1812,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testSettingsThirdLevel method
  *
- * @access public
  * @return void
  */
 	public function testSettingsThirdLevel() {
@@ -2071,7 +2058,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindThirdLevelNonReset method
  *
- * @access public
  * @return void
  */
 	public function testFindThirdLevelNonReset() {
@@ -2396,7 +2382,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindEmbeddedThirdLevelNonReset method
  *
- * @access public
  * @return void
  */
 	public function testFindEmbeddedThirdLevelNonReset() {
@@ -2886,7 +2871,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testEmbeddedFindFields method
  *
- * @access public
  * @return void
  */
 	public function testEmbeddedFindFields() {
@@ -2990,7 +2974,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testFindConditionalBinding method
  *
- * @access public
  * @return void
  */
 	public function testFindConditionalBinding() {
@@ -3130,7 +3113,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testOtherFinds method
  *
- * @access public
  * @return void
  */
 	public function testOtherFinds() {
@@ -3194,7 +3176,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testOriginalAssociations method
  *
- * @access public
  * @return void
  */
 	public function testOriginalAssociations() {
@@ -3547,7 +3528,6 @@ class ContainableBehaviorTest extends CakeTestCase {
  *
  * @param mixed $Model
  * @param array $contain
- * @access private
  * @return void
  */
 	function __containments(&$Model, $contain = array()) {
@@ -3569,7 +3549,6 @@ class ContainableBehaviorTest extends CakeTestCase {
  *
  * @param mixed $Model
  * @param array $expected
- * @access private
  * @return void
  */
 	function __assertBindings(&$Model, $expected = array()) {
@@ -3586,7 +3565,6 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @param mixed $Model
  * @param array $extra
  * @param bool $output
- * @access private
  * @return void
  */
 	function __bindings(&$Model, $extra = array(), $output = true) {

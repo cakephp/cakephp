@@ -41,7 +41,6 @@ class TreeBehavior extends ModelBehavior {
  * Defaults
  *
  * @var array
- * @access protected
  */
 	protected $_defaults = array(
 		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',

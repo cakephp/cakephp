@@ -28,7 +28,6 @@ class AuthorFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Author'
- * @access public
  */
 	public $name = 'Author';
 
@@ -36,7 +35,6 @@ class AuthorFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -50,7 +48,6 @@ class AuthorFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),

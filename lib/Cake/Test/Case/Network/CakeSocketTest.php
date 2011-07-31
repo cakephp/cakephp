@@ -29,7 +29,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -40,7 +39,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -51,7 +49,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testConstruct method
  *
- * @access public
  * @return void
  */
 	public function testConstruct() {
@@ -83,7 +80,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testSocketConnection method
  *
- * @access public
  * @return void
  */
 	public function testSocketConnection() {
@@ -129,7 +125,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testSocketHost method
  *
- * @access public
  * @return void
  */
 	public function testSocketHost() {
@@ -151,7 +146,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testSocketWriting method
  *
- * @access public
  * @return void
  */
 	public function testSocketWriting() {
@@ -162,7 +156,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testSocketReading method
  *
- * @access public
  * @return void
  */
 	public function testSocketReading() {
@@ -195,7 +188,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testLastError method
  *
- * @access public
  * @return void
  */
 	public function testLastError() {
@@ -207,7 +199,6 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testReset method
  *
- * @access public
  * @return void
  */
 	public function testReset() {

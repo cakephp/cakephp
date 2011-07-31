@@ -298,7 +298,6 @@ class Inflector {
  * @param array $rules Array of rules to be added.
  * @param boolean $reset If true, will unset default inflections for all
  *        new rules that are being defined in $rules.
- * @access public
  * @return void
  */
 	public static function rules($type, $rules, $reset = false) {
@@ -342,7 +341,6 @@ class Inflector {
  *
  * @param string $word Word in singular
  * @return string Word in plural
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function pluralize($word) {
@@ -387,7 +385,6 @@ class Inflector {
  *
  * @param string $word Word in plural
  * @return string Word in singular
- * @access public
  * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	public static function singularize($word) {

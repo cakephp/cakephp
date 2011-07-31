@@ -140,7 +140,6 @@ class ExceptionRenderer {
  *
  * @param Exception $exception The exception to get a controller for.
  * @return Controller
- * @access protected
  */
 	protected function _getController($exception) {
 		App::uses('CakeErrorController', 'Controller');

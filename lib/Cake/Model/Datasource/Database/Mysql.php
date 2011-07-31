@@ -74,7 +74,6 @@ class Mysql extends DboSource {
  * use alias for update and delete. Set to true if version >= 4.1
  *
  * @var boolean
- * @access protected
  */
 	protected $_useAlias = true;
 
@@ -82,7 +81,6 @@ class Mysql extends DboSource {
  * Index of basic SQL commands
  *
  * @var array
- * @access protected
  */
 	protected $_commands = array(
 		'begin'    => 'START TRANSACTION',
@@ -94,7 +92,6 @@ class Mysql extends DboSource {
  * List of engine specific additional field parameters used on table creating
  *
  * @var array
- * @access public
  */
 	public $fieldParameters = array(
 		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
@@ -106,7 +103,6 @@ class Mysql extends DboSource {
  * List of table engine specific parameters used on table creating
  *
  * @var array
- * @access public
  */
 	public $tableParameters = array(
 		'charset' => array('value' => 'DEFAULT CHARSET', 'quote' => false, 'join' => '=', 'column' => 'charset'),

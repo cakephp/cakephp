@@ -48,7 +48,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -59,7 +58,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testFormatAndCurrency method
  *
- * @access public
  * @return void
  */
 	public function testFormat() {
@@ -85,7 +83,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * Test currency method.
  *
- * @access public
  * @return void
  */
 	public function testCurrency() {
@@ -171,7 +168,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * Test adding currency format options to the number helper
  *
- * @access public
  * @return void
  */
 	public function testCurrencyAddFormat() {
@@ -193,7 +189,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testCurrencyPositive method
  *
- * @access public
  * @return void
  */
 	public function testCurrencyPositive() {
@@ -227,7 +222,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testCurrencyNegative method
  *
- * @access public
  * @return void
  */
 	public function testCurrencyNegative() {
@@ -262,7 +256,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testCurrencyCentsPositive method
  *
- * @access public
  * @return void
  */
 	public function testCurrencyCentsPositive() {
@@ -284,7 +277,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testCurrencyCentsNegative method
  *
- * @access public
  * @return void
  */
 	public function testCurrencyCentsNegative() {
@@ -318,7 +310,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testCurrencyZero method
  *
- * @access public
  * @return void
  */
 	public function testCurrencyZero() {
@@ -344,7 +335,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testCurrencyOptions method
  *
- * @access public
  * @return void
  */
 	public function testCurrencyOptions() {
@@ -390,7 +380,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testToReadableSize method
  *
- * @access public
  * @return void
  */
 	public function testToReadableSize() {
@@ -454,7 +443,6 @@ class NumberHelperTest extends CakeTestCase {
 /**
  * testToPercentage method
  *
- * @access public
  * @return void
  */
 	public function testToPercentage() {

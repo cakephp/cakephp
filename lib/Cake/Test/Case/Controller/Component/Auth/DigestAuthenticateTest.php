@@ -226,7 +226,6 @@ DIGEST;
 /**
  * testParseDigestAuthData method
  *
- * @access public
  * @return void
  */
 	public function testParseAuthData() {

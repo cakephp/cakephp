@@ -129,7 +129,6 @@ class DatabaseSessionTest extends CakeTestCase {
 /**
  * testReadAndWriteWithDatabaseStorage method
  *
- * @access public
  * @return void
  */
 	public function testWriteEmptySessionId() {

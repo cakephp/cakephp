@@ -28,7 +28,6 @@ class JoinBFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'JoinB'
- * @access public
  */
 	public $name = 'JoinB';
 
@@ -36,7 +35,6 @@ class JoinBFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class JoinBFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('name' => 'Join B 1', 'created' => '2008-01-03 10:55:01', 'updated' => '2008-01-03 10:55:01'),

@@ -42,14 +42,12 @@ class CakeSessionTest extends CakeTestCase {
  * Fixtures used in the SessionTest
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.session');
 
 /**
  * setup before class.
  *
- * @access public
  * @return void
  */
 	public static function setupBeforeClass() {
@@ -61,7 +59,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * teardown after class
  *
- * @access public
  * @return void
  */
 	public static function teardownAfterClass() {
@@ -72,7 +69,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setup() {
@@ -90,7 +86,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function teardown() {
@@ -127,7 +122,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testSessionPath
  *
- * @access public
  * @return void
  */
 	public function testSessionPath() {
@@ -141,7 +135,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCakeSessionPathEmpty
  *
- * @access public
  * @return void
  */
 	public function testCakeSessionPathEmpty() {
@@ -152,7 +145,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCakeSessionPathContainsParams
  *
- * @access public
  * @return void
  */
 	public function testCakeSessionPathContainsQuestion() {
@@ -163,7 +155,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testSetHost
  *
- * @access public
  * @return void
  */
 	public function testSetHost() {
@@ -175,7 +166,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testSetHostWithPort
  *
- * @access public
  * @return void
  */
 	public function testSetHostWithPort() {
@@ -215,7 +205,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCheck method
  *
- * @access public
  * @return void
  */
 	public function testCheck() {
@@ -228,7 +217,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testSimpleRead method
  *
- * @access public
  * @return void
  */
 	public function testSimpleRead() {
@@ -257,7 +245,6 @@ class CakeSessionTest extends CakeTestCase {
  * testReadyEmpty
  *
  * @return void
- * @access public
  */
 	public function testReadyEmpty() {
 		$this->assertFalse(TestCakeSession::read(''));
@@ -267,7 +254,6 @@ class CakeSessionTest extends CakeTestCase {
  * test writing a hash of values/
  *
  * @return void
- * @access public
  */
 	public function testWriteArray() {
 		$result = TestCakeSession::write(array(
@@ -286,7 +272,6 @@ class CakeSessionTest extends CakeTestCase {
  * testWriteEmptyKey
  *
  * @return void
- * @access public
  */
 	public function testWriteEmptyKey() {
 		$this->assertFalse(TestCakeSession::write('', 'graham'));
@@ -297,7 +282,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testId method
  *
- * @access public
  * @return void
  */
 	public function testId() {
@@ -315,7 +299,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testStarted method
  *
- * @access public
  * @return void
  */
 	public function testStarted() {
@@ -330,7 +313,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testError method
  *
- * @access public
  * @return void
  */
 	public function testError() {
@@ -346,7 +328,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testDel method
  *
- * @access public
  * @return void
  */
 	public function testDelete() {
@@ -364,7 +345,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testDestroy method
  *
- * @access public
  * @return void
  */
 	public function testDestroy() {
@@ -379,7 +359,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCheckingSavedEmpty method
  *
- * @access public
  * @return void
  */
 	public function testCheckingSavedEmpty() {
@@ -399,7 +378,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCheckKeyWithSpaces method
  *
- * @access public
  * @return void
  */
 	public function testCheckKeyWithSpaces() {
@@ -414,7 +392,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCheckEmpty
  *
- * @access public
  * @return void
  */
 	public function testCheckEmpty() {
@@ -438,7 +415,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testReadingSavedEmpty method
  *
- * @access public
  * @return void
  */
 	public function testReadingSavedEmpty() {
@@ -459,7 +435,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCheckUserAgentFalse method
  *
- * @access public
  * @return void
  */
 	public function testCheckUserAgentFalse() {
@@ -471,7 +446,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testCheckUserAgentTrue method
  *
- * @access public
  * @return void
  */
 	public function testCheckUserAgentTrue() {
@@ -487,7 +461,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testReadAndWriteWithDatabaseStorage method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteWithCakeStorage() {
@@ -570,7 +543,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testReadAndWriteWithDatabaseStorage method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteWithCacheStorage() {
@@ -630,7 +602,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testReadAndWriteWithDatabaseStorage method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteWithDatabaseStorage() {
@@ -673,7 +644,6 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testSessionTimeout method
  *
- * @access public
  * @return void
  */
 	public function testSessionTimeout() {

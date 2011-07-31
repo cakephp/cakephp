@@ -29,7 +29,6 @@ class SetTest extends CakeTestCase {
 /**
  * testNumericKeyExtraction method
  *
- * @access public
  * @return void
  */
 	public function testNumericKeyExtraction() {
@@ -41,7 +40,6 @@ class SetTest extends CakeTestCase {
 /**
  * testEnum method
  *
- * @access public
  * @return void
  */
 	public function testEnum() {
@@ -82,7 +80,6 @@ class SetTest extends CakeTestCase {
 /**
  * testFilter method
  *
- * @access public
  * @return void
  */
 	public function testFilter() {
@@ -113,7 +110,6 @@ class SetTest extends CakeTestCase {
 /**
  * testNumericArrayCheck method
  *
- * @access public
  * @return void
  */
 	public function testNumericArrayCheck() {
@@ -151,7 +147,6 @@ class SetTest extends CakeTestCase {
 /**
  * testKeyCheck method
  *
- * @access public
  * @return void
  */
 	public function testKeyCheck() {
@@ -189,7 +184,6 @@ class SetTest extends CakeTestCase {
 /**
  * testMerge method
  *
- * @access public
  * @return void
  */
 	public function testMerge() {
@@ -274,7 +268,6 @@ class SetTest extends CakeTestCase {
 /**
  * testSort method
  *
- * @access public
  * @return void
  */
 	public function testSort() {
@@ -402,7 +395,6 @@ class SetTest extends CakeTestCase {
 /**
  * testExtract method
  *
- * @access public
  * @return void
  */
 	public function testExtract() {
@@ -1276,7 +1268,6 @@ class SetTest extends CakeTestCase {
 /**
  * testExtractWithArrays method
  *
- * @access public
  * @return void
  */
 	public function testExtractWithArrays() {
@@ -1341,7 +1332,6 @@ class SetTest extends CakeTestCase {
 /**
  * testMatches method
  *
- * @access public
  * @return void
  */
 	public function testMatches() {
@@ -1414,7 +1404,6 @@ class SetTest extends CakeTestCase {
 /**
  * testSetExtractReturnsEmptyArray method
  *
- * @access public
  * @return void
  */
 	public function testSetExtractReturnsEmptyArray() {
@@ -1435,7 +1424,6 @@ class SetTest extends CakeTestCase {
 /**
  * testClassicExtract method
  *
- * @access public
  * @return void
  */
 	public function testClassicExtract() {
@@ -1599,7 +1587,6 @@ class SetTest extends CakeTestCase {
 /**
  * testInsert method
  *
- * @access public
  * @return void
  */
 	public function testInsert() {
@@ -1643,7 +1630,6 @@ class SetTest extends CakeTestCase {
 /**
  * testRemove method
  *
- * @access public
  * @return void
  */
 	public function testRemove() {
@@ -1682,7 +1668,6 @@ class SetTest extends CakeTestCase {
 /**
  * testCheck method
  *
- * @access public
  * @return void
  */
 	public function testCheck() {
@@ -1705,7 +1690,6 @@ class SetTest extends CakeTestCase {
 /**
  * testWritingWithFunkyKeys method
  *
- * @access public
  * @return void
  */
 	public function testWritingWithFunkyKeys() {
@@ -1723,7 +1707,6 @@ class SetTest extends CakeTestCase {
 /**
  * testDiff method
  *
- * @access public
  * @return void
  */
 	public function testDiff() {
@@ -1807,7 +1790,6 @@ class SetTest extends CakeTestCase {
 /**
  * testContains method
  *
- * @access public
  * @return void
  */
 	public function testContains() {
@@ -1830,7 +1812,6 @@ class SetTest extends CakeTestCase {
 /**
  * testCombine method
  *
- * @access public
  * @return void
  */
 	public function testCombine() {
@@ -1966,7 +1947,6 @@ class SetTest extends CakeTestCase {
 /**
  * testMapReverse method
  *
- * @access public
  * @return void
  */
 	public function testMapReverse() {
@@ -2194,7 +2174,6 @@ class SetTest extends CakeTestCase {
 /**
  * testFormatting method
  *
- * @access public
  * @return void
  */
 	public function testFormatting() {
@@ -2242,7 +2221,6 @@ class SetTest extends CakeTestCase {
 /**
  * testCountDim method
  *
- * @access public
  * @return void
  */
 	public function testCountDim() {
@@ -2297,7 +2275,6 @@ class SetTest extends CakeTestCase {
 /**
  * testMapNesting method
  *
- * @access public
  * @return void
  */
 	public function testMapNesting() {
@@ -2422,7 +2399,6 @@ class SetTest extends CakeTestCase {
 /**
  * testNestedMappedData method
  *
- * @access public
  * @return void
  */
 	public function testNestedMappedData() {
@@ -2671,7 +2647,6 @@ class SetTest extends CakeTestCase {
 /**
  * testPushDiff method
  *
- * @access public
  * @return void
  */
 	public function testPushDiff() {
@@ -2717,7 +2692,6 @@ class SetTest extends CakeTestCase {
 
 /**
  * testSetApply method
- * @access public
  * @return void
  *
  */
@@ -2768,7 +2742,6 @@ class SetTest extends CakeTestCase {
 /**
  * testXmlSetReverse method
  *
- * @access public
  * @return void
  */
 	public function testXmlSetReverse() {
@@ -3011,7 +2984,6 @@ class SetTest extends CakeTestCase {
 /**
  * testStrictKeyCheck method
  *
- * @access public
  * @return void
  */
 	public function testStrictKeyCheck() {
@@ -3022,7 +2994,6 @@ class SetTest extends CakeTestCase {
 /**
  * Tests Set::flatten
  *
- * @access public
  * @return void
  */
 	public function testFlatten() {

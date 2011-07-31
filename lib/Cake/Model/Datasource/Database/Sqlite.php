@@ -32,7 +32,6 @@ class Sqlite extends DboSource {
  * Datasource Description
  *
  * @var string
- * @access public
  */
 	var $description = "SQLite DBO Driver";
 
@@ -40,7 +39,6 @@ class Sqlite extends DboSource {
  * Quote Start
  *
  * @var string
- * @access public
  */
 	var $startQuote = '"';
 
@@ -48,7 +46,6 @@ class Sqlite extends DboSource {
  * Quote End
  *
  * @var string
- * @access public
  */
 	var $endQuote = '"';
 
@@ -56,7 +53,6 @@ class Sqlite extends DboSource {
  * Base configuration settings for SQLite3 driver
  *
  * @var array
- * @access public
  */
 	var $_baseConfig = array(
 		'persistent' => false,
@@ -67,7 +63,6 @@ class Sqlite extends DboSource {
  * SQLite3 column definition
  *
  * @var array
- * @access public
  */
 	var $columns = array(
 		'primary_key' => array('name' => 'integer primary key autoincrement'),
@@ -87,7 +82,6 @@ class Sqlite extends DboSource {
  * List of engine specific additional field parameters used on table creating
  *
  * @var array
- * @access public
  */
 	var $fieldParameters = array(
 		'collate' => array(
@@ -202,7 +196,6 @@ class Sqlite extends DboSource {
  * @param array $values
  * @param mixed $conditions
  * @return array
- * @access public
  */
 	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if (empty($values) && !empty($fields)) {
@@ -224,7 +217,6 @@ class Sqlite extends DboSource {
  *
  * @param mixed $table A string or model class representing the table to be truncated
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
- * @access public
  */
 	public function truncate($table) {
 		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->fullTableName($table));
@@ -236,7 +228,6 @@ class Sqlite extends DboSource {
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
- * @access public
  */
 	public function column($real) {
 		if (is_array($real)) {
@@ -353,7 +344,6 @@ class Sqlite extends DboSource {
  * @param integer $limit Limit of results returned
  * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
- * @access public
  */
 	public function limit($limit, $offset = null) {
 		if ($limit) {
@@ -376,7 +366,6 @@ class Sqlite extends DboSource {
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
  *    where options can be 'default', 'length', or 'key'.
  * @return string
- * @access public
  */
 	public function buildColumn($column) {
 		$name = $type = null;
@@ -461,7 +450,6 @@ class Sqlite extends DboSource {
  *
  * @param string $model Name of model to inspect
  * @return array Fields in table. Keys are column and unique
- * @access public
  */
 	public function index($model) {
 		$index = array();
@@ -502,7 +490,6 @@ class Sqlite extends DboSource {
  * @param string $type
  * @param array $data
  * @return string
- * @access public
  */
 	public function renderStatement($type, $data) {
 		switch (strtolower($type)) {
@@ -526,7 +513,6 @@ class Sqlite extends DboSource {
  * PDO deals in objects, not resources, so overload accordingly.
  *
  * @return boolean
- * @access public
  */
 	public function hasResult() {
 		return is_object($this->_result);

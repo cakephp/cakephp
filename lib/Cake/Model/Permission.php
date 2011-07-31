@@ -34,7 +34,6 @@ class Permission extends AppModel {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'Permission';
 
@@ -42,7 +41,6 @@ class Permission extends AppModel {
  * Explicitly disable in-memory query caching
  *
  * @var boolean
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -50,7 +48,6 @@ class Permission extends AppModel {
  * Override default table name
  *
  * @var string
- * @access public
  */
 	public $useTable = 'aros_acos';
 
@@ -58,7 +55,6 @@ class Permission extends AppModel {
  * Permissions link AROs with ACOs
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Aro', 'Aco');
 
@@ -66,7 +62,6 @@ class Permission extends AppModel {
  * No behaviors for this model
  *
  * @var array
- * @access public
  */
 	public $actsAs = null;
 

@@ -29,7 +29,6 @@ class L10n {
  * The language for current locale
  *
  * @var string
- * @access public
  */
 	public $language = 'English (United States)';
 
@@ -37,7 +36,6 @@ class L10n {
  * Locale search paths
  *
  * @var array
- * @access public
  */
 	public $languagePath = array('eng');
 
@@ -45,7 +43,6 @@ class L10n {
  * ISO 639-3 for current locale
  *
  * @var string
- * @access public
  */
 	public $lang = 'eng';
 
@@ -53,7 +50,6 @@ class L10n {
  * Locale
  *
  * @var string
- * @access public
  */
 	public $locale = 'en_us';
 
@@ -63,7 +59,6 @@ class L10n {
  * DEFAULT_LANGUAGE is defined in an application this will be set as a fall back
  *
  * @var string
- * @access public
  */
 	public $default = null;
 
@@ -71,7 +66,6 @@ class L10n {
  * Encoding used for current locale
  *
  * @var string
- * @access public
  */
 	public $charset = 'utf-8';
 
@@ -79,7 +73,6 @@ class L10n {
  * Text direction for current locale
  *
  * @var string
- * @access public
  */
 	public $direction = 'ltr';
 
@@ -87,7 +80,6 @@ class L10n {
  * Set to true if a locale is found
  *
  * @var string
- * @access public
  */
 	public $found = false;
 
@@ -95,7 +87,6 @@ class L10n {
  * Maps ISO 639-3 to I10n::__l10nCatalog
  *
  * @var array
- * @access private
  */
 	private $__l10nMap = array(/* Afrikaans */ 'afr' => 'af',
 								/* Albanian */ 'alb' => 'sq',
@@ -182,7 +173,6 @@ class L10n {
  * holds all information related to a language
  *
  * @var array
- * @access private
  */
 	private $__l10nCatalog = array('af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'ar' => array('language' => 'Arabic', 'locale' => 'ara', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
@@ -404,7 +394,6 @@ class L10n {
  * Attempts to find the locale settings based on the HTTP_ACCEPT_LANGUAGE variable
  *
  * @return boolean Success
- * @access private
  */
 	private function __autoLanguage() {
 		$_detectableLanguages = CakeRequest::acceptLanguage();

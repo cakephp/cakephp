@@ -28,7 +28,6 @@ class SecondaryModelFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'SecondaryModel'
- * @access public
  */
 	public $name = 'SecondaryModel';
 
@@ -36,7 +35,6 @@ class SecondaryModelFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -47,7 +45,6 @@ class SecondaryModelFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('secondary_name' => 'Secondary Name Existing')

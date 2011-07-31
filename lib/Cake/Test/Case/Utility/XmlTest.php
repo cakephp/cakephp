@@ -93,7 +93,6 @@ class XmlTest extends CakeTestCase {
 /**
  * setup method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -105,7 +104,6 @@ class XmlTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {

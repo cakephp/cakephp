@@ -28,7 +28,6 @@ class ExteriorTypeCategoryFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'ExteriorTypeCategory'
- * @access public
  */
 	public $name = 'ExteriorTypeCategory';
 
@@ -36,7 +35,6 @@ class ExteriorTypeCategoryFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class ExteriorTypeCategoryFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('image_id' => 1, 'name' => 'ExteriorTypeCategory 1')

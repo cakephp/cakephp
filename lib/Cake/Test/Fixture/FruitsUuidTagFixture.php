@@ -28,7 +28,6 @@ class FruitsUuidTagFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'FruitsUuidTag'
- * @access public
  */
 	public $name = 'FruitsUuidTag';
 
@@ -36,7 +35,6 @@ class FruitsUuidTagFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'fruit_id' => array('type' => 'string', 'null' => false, 'length' => 36, 'key' => 'primary'),
@@ -50,7 +48,6 @@ class FruitsUuidTagFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('fruit_id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'uuid_tag_id' => '481fc6d0-b920-43e0-e50f-6d1740cf8569')

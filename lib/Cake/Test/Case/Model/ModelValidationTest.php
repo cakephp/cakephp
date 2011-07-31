@@ -30,7 +30,6 @@ class ModelValidationTest extends BaseModelTest {
 /**
  * Tests validation parameter order in custom validation methods
  *
- * @access public
  * @return void
  */
 	public function testValidationParams() {
@@ -122,7 +121,6 @@ class ModelValidationTest extends BaseModelTest {
 /**
  * Tests validation parameter fieldList in invalidFields
  *
- * @access public
  * @return void
  */
 	public function testInvalidFieldsWithFieldListParams() {
@@ -194,7 +192,6 @@ class ModelValidationTest extends BaseModelTest {
 /**
  * testValidates method
  *
- * @access public
  * @return void
  */
 	public function testValidates() {

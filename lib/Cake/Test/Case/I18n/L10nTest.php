@@ -28,7 +28,6 @@ class L10nTest extends CakeTestCase {
 /**
  * testGet method
  *
- * @access public
  * @return void
  */
 	public function testGet() {
@@ -81,7 +80,6 @@ class L10nTest extends CakeTestCase {
 /**
  * testGetAutoLanguage method
  *
- * @access public
  * @return void
  */
 	public function testGetAutoLanguage() {
@@ -115,7 +113,6 @@ class L10nTest extends CakeTestCase {
 /**
  * testMap method
  *
- * @access public
  * @return void
  */
 	public function testMap() {
@@ -445,7 +442,6 @@ class L10nTest extends CakeTestCase {
 /**
  * testCatalog method
  *
- * @access public
  * @return void
  */
 	public function testCatalog() {

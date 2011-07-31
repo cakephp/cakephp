@@ -28,7 +28,6 @@ class TranslateFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Translate'
- * @access public
  */
 	public $name = 'Translate';
 
@@ -36,7 +35,6 @@ class TranslateFixture extends CakeTestFixture {
  * table property
  *
  * @var string 'i18n'
- * @access public
  */
 	public $table = 'i18n';
 
@@ -44,7 +42,6 @@ class TranslateFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -59,7 +56,6 @@ class TranslateFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Title #1'),

@@ -28,7 +28,6 @@ class MessageFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Message'
- * @access public
  */
 	public $name = 'Message';
 
@@ -36,7 +35,6 @@ class MessageFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class MessageFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('thread_id' => 1, 'name' => 'Thread 1, Message 1'),

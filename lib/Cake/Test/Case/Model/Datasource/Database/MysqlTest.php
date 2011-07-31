@@ -33,7 +33,6 @@ class DboMysqlTest extends CakeTestCase {
  * autoFixtures property
  *
  * @var bool false
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -41,7 +40,6 @@ class DboMysqlTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
@@ -53,7 +51,6 @@ class DboMysqlTest extends CakeTestCase {
  * The Dbo instance to be tested
  *
  * @var DboSource
- * @access public
  */
 	public $Dbo = null;
 
@@ -659,7 +656,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testReadTableParameters method
  *
- * @access public
  * @return void
  */
 	public function testReadTableParameters() {
@@ -689,7 +685,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testBuildTableParameters method
  *
- * @access public
  * @return void
  */
 	public function testBuildTableParameters() {
@@ -709,7 +704,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testBuildTableParameters method
  *
- * @access public
  * @return void
  */
 	public function testGetCharsetName() {
@@ -850,7 +844,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testFieldDoubleEscaping method
  *
- * @access public
  * @return void
  */
 	public function testFieldDoubleEscaping() {
@@ -985,7 +978,6 @@ class DboMysqlTest extends CakeTestCase {
  * buildRelatedModels method
  *
  * @param mixed $model
- * @access protected
  * @return void
  */
 	function _buildRelatedModels($model) {
@@ -1008,7 +1000,6 @@ class DboMysqlTest extends CakeTestCase {
  * @param mixed $model
  * @param mixed $queryData
  * @param mixed $binding
- * @access public
  * @return void
  */
 	function &_prepareAssociationQuery($model, &$queryData, $binding) {
@@ -1028,7 +1019,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateInnerJoinAssociationQuery method
  *
- * @access public
  * @return void
  */
 	public function testGenerateInnerJoinAssociationQuery() {
@@ -1057,7 +1047,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
@@ -1085,7 +1074,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding() {
@@ -1112,7 +1100,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQuerySelfJoinWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQuerySelfJoinWithConditions() {
@@ -1174,7 +1161,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasOne method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasOne() {
@@ -1207,7 +1193,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasOneWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasOneWithConditions() {
@@ -1237,7 +1222,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryBelongsTo method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryBelongsTo() {
@@ -1269,7 +1253,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryBelongsToWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryBelongsToWithConditions() {
@@ -1301,7 +1284,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasMany method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasMany() {
@@ -1331,7 +1313,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasManyWithLimit method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasManyWithLimit() {
@@ -1371,7 +1352,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasManyWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasManyWithConditions() {
@@ -1400,7 +1380,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasManyWithOffsetAndLimit method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasManyWithOffsetAndLimit() {
@@ -1438,7 +1417,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasManyWithPageAndLimit method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasManyWithPageAndLimit() {
@@ -1475,7 +1453,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasManyWithFields method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasManyWithFields() {
@@ -1623,7 +1600,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasAndBelongsToMany method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasAndBelongsToMany() {
@@ -1655,7 +1631,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasAndBelongsToManyWithConditions() {
@@ -1684,7 +1659,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit() {
@@ -1721,7 +1695,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit() {
@@ -1758,7 +1731,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testSelectDistict method
  *
- * @access public
  * @return void
  */
 	public function testSelectDistict() {
@@ -1771,7 +1743,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testStringConditionsParsing method
  *
- * @access public
  * @return void
  */
 	public function testStringConditionsParsing() {
@@ -1888,7 +1859,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testQuotesInStringConditions method
  *
- * @access public
  * @return void
  */
 	public function testQuotesInStringConditions() {
@@ -1913,7 +1883,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testParenthesisInStringConditions method
  *
- * @access public
  * @return void
  */
 	public function testParenthesisInStringConditions() {
@@ -1963,7 +1932,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testParenthesisInArrayConditions method
  *
- * @access public
  * @return void
  */
 	public function testParenthesisInArrayConditions() {
@@ -2013,7 +1981,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testArrayConditionsParsing method
  *
- * @access public
  * @return void
  */
 	public function testArrayConditionsParsing() {
@@ -2246,7 +2213,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testArrayConditionsParsingComplexKeys method
  *
- * @access public
  * @return void
  */
 	public function testArrayConditionsParsingComplexKeys() {
@@ -2272,7 +2238,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testMixedConditionsParsing method
  *
- * @access public
  * @return void
  */
 	public function testMixedConditionsParsing() {
@@ -2294,7 +2259,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testConditionsOptionalArguments method
  *
- * @access public
  * @return void
  */
 	public function testConditionsOptionalArguments() {
@@ -2308,7 +2272,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testConditionsWithModel
  *
- * @access public
  * @return void
  */
 	public function testConditionsWithModel() {
@@ -2342,7 +2305,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testFieldParsing method
  *
- * @access public
  * @return void
  */
 	public function testFieldParsing() {
@@ -2484,7 +2446,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testRenderStatement method
  *
- * @access public
  * @return void
  */
 	public function testRenderStatement() {
@@ -2510,7 +2471,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testSchema method
  *
- * @access public
  * @return void
  */
 	public function testSchema() {
@@ -2531,7 +2491,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testOrderParsing method
  *
- * @access public
  * @return void
  */
 	public function testOrderParsing() {
@@ -2617,7 +2576,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testCalculations method
  *
- * @access public
  * @return void
  */
 	public function testCalculations() {
@@ -2660,7 +2618,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testLength method
  *
- * @access public
  * @return void
  */
 	public function testLength() {
@@ -2704,7 +2661,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testBuildIndex method
  *
- * @access public
  * @return void
  */
 	public function testBuildIndex() {
@@ -2733,7 +2689,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testBuildColumn method
  *
- * @access public
  * @return void
  */
 	public function testBuildColumn2() {
@@ -3167,7 +3122,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testIntrospectType method
  *
- * @access public
  * @return void
  */
 	public function testIntrospectType() {
@@ -3328,7 +3282,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testRealQueries method
  *
- * @access public
  * @return void
  */
 	public function testRealQueries() {

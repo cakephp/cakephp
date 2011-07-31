@@ -34,7 +34,6 @@ class AcoAction extends AppModel {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'AcoAction';
 
@@ -42,7 +41,6 @@ class AcoAction extends AppModel {
  * ACO Actions belong to ACOs
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('Aco');
 }

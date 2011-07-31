@@ -28,7 +28,6 @@ class ThePaperMonkiesFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'ThePaperMonkies'
- * @access public
  */
 	public $name = 'ThePaperMonkies';
 
@@ -36,7 +35,6 @@ class ThePaperMonkiesFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
@@ -47,7 +45,6 @@ class ThePaperMonkiesFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array();
 }

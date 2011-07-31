@@ -67,7 +67,6 @@ class MediaViewTest extends CakeTestCase {
 /**
  * testRender method
  *
- * @access public
  * @return void
  */
 	public function testRender() {
@@ -113,7 +112,6 @@ class MediaViewTest extends CakeTestCase {
 /**
  * testRenderWithUnknownFileTypeGeneric method
  *
- * @access public
  * @return void
  */
 	public function testRenderWithUnknownFileTypeGeneric() {
@@ -173,7 +171,6 @@ class MediaViewTest extends CakeTestCase {
 /**
  * testRenderWithUnknownFileTypeOpera method
  *
- * @access public
  * @return void
  */
 	public function testRenderWithUnknownFileTypeOpera() {
@@ -238,7 +235,6 @@ class MediaViewTest extends CakeTestCase {
 /**
  * testRenderWithUnknownFileTypeIE method
  *
- * @access public
  * @return void
  */
 	public function testRenderWithUnknownFileTypeIE() {
@@ -303,7 +299,6 @@ class MediaViewTest extends CakeTestCase {
 /**
  * testConnectionAborted method
  *
- * @access public
  * @return void
  */
 	public function testConnectionAborted() {
@@ -327,7 +322,6 @@ class MediaViewTest extends CakeTestCase {
 /**
  * testConnectionAbortedOnBuffering method
  *
- * @access public
  * @return void
  */
 	public function testConnectionAbortedOnBuffering() {

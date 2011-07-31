@@ -26,7 +26,6 @@ class BakeTask extends Shell {
  * Name of plugin
  *
  * @var string
- * @access public
  */
 	public $plugin = null;
 
@@ -34,7 +33,6 @@ class BakeTask extends Shell {
  * The db connection being used for baking
  *
  * @var string
- * @access public
  */
 	public $connection = null;
 

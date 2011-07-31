@@ -31,7 +31,6 @@ class CakeSchema extends Object {
  * Name of the schema
  *
  * @var string
- * @access public
  */
 	public $name = null;
 
@@ -39,7 +38,6 @@ class CakeSchema extends Object {
  * Path to write location
  *
  * @var string
- * @access public
  */
 	public $path = null;
 
@@ -47,7 +45,6 @@ class CakeSchema extends Object {
  * File to write
  *
  * @var string
- * @access public
  */
 	public $file = 'schema.php';
 
@@ -55,7 +52,6 @@ class CakeSchema extends Object {
  * Connection used for read
  *
  * @var string
- * @access public
  */
 	public $connection = 'default';
 
@@ -70,7 +66,6 @@ class CakeSchema extends Object {
  * Set of tables
  *
  * @var array
- * @access public
  */
 	public $tables = array();
 
@@ -532,7 +527,6 @@ class CakeSchema extends Object {
  * @param array $array2 Corresponding array checked for equality
  * @return array Difference as array with array(keys => values) from input array
  *     where match was not found.
- * @access protected
  */
 	protected function _arrayDiffAssoc($array1, $array2) {
 		$difference = array();

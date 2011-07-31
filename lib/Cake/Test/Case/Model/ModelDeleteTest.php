@@ -28,7 +28,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDeleteHabtmReferenceWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testDeleteHabtmReferenceWithConditions() {
@@ -119,7 +118,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDeleteArticleBLinks method
  *
- * @access public
  * @return void
  */
 	public function testDeleteArticleBLinks() {
@@ -148,7 +146,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDeleteDependentWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testDeleteDependentWithConditions() {
@@ -188,7 +185,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDel method
  *
- * @access public
  * @return void
  */
 	public function testDelete() {
@@ -285,7 +281,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDeleteAll method
  *
- * @access public
  * @return void
  */
 	public function testDeleteAll() {
@@ -433,7 +428,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testRecursiveDel method
  *
- * @access public
  * @return void
  */
 	public function testRecursiveDel() {
@@ -469,7 +463,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDependentExclusiveDelete method
  *
- * @access public
  * @return void
  */
 	public function testDependentExclusiveDelete() {
@@ -488,7 +481,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testDeleteLinks method
  *
- * @access public
  * @return void
  */
 	public function testDeleteLinks() {
@@ -588,7 +580,6 @@ class ModelDeleteTest extends BaseModelTest {
 /**
  * testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable method
  *
- * @access public
  * @return void
  */
 	public function testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable() {

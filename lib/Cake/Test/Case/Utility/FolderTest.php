@@ -29,7 +29,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testBasic method
  *
- * @access public
  * @return void
  */
 	public function testBasic() {
@@ -54,7 +53,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testInPath method
  *
- * @access public
  * @return void
  */
 	public function testInPath() {
@@ -142,7 +140,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testOperations method
  *
- * @access public
  * @return void
  */
 	public function testOperations() {
@@ -243,7 +240,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testRealPathForWebroot method
  *
- * @access public
  * @return void
  */
 	public function testRealPathForWebroot() {
@@ -254,7 +250,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testZeroAsDirectory method
  *
- * @access public
  * @return void
  */
 	public function testZeroAsDirectory() {
@@ -289,7 +284,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testFolderRead method
  *
- * @access public
  * @return void
  */
 	public function testFolderRead() {
@@ -308,7 +302,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testFolderTree method
  *
- * @access public
  * @return void
  */
 	public function testFolderTree() {
@@ -357,7 +350,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testWindowsPath method
  *
- * @access public
  * @return void
  */
 	public function testWindowsPath() {
@@ -370,7 +362,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testIsAbsolute method
  *
- * @access public
  * @return void
  */
 	public function testIsAbsolute() {
@@ -392,7 +383,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testIsSlashTerm method
  *
- * @access public
  * @return void
  */
 	public function testIsSlashTerm() {
@@ -405,7 +395,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testStatic method
  *
- * @access public
  * @return void
  */
 	public function testSlashTerm() {
@@ -416,7 +405,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testNormalizePath method
  *
- * @access public
  * @return void
  */
 	public function testNormalizePath() {
@@ -436,7 +424,6 @@ class FolderTest extends CakeTestCase {
 /**
  * correctSlashFor method
  *
- * @access public
  * @return void
  */
 	public function testCorrectSlashFor() {
@@ -456,7 +443,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testInCakePath method
  *
- * @access public
  * @return void
  */
 	public function testInCakePath() {
@@ -480,7 +466,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testFind method
  *
- * @access public
  * @return void
  */
 	public function testFind() {
@@ -533,7 +518,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testFindRecursive method
  *
- * @access public
  * @return void
  */
 	public function testFindRecursive() {
@@ -591,7 +575,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testConstructWithNonExistantPath method
  *
- * @access public
  * @return void
  */
 	public function testConstructWithNonExistantPath() {
@@ -604,7 +587,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testDirSize method
  *
- * @access public
  * @return void
  */
 	public function testDirSize() {
@@ -624,7 +606,6 @@ class FolderTest extends CakeTestCase {
 /**
  * testDelete method
  *
- * @access public
  * @return void
  */
 	public function testDelete() {
@@ -658,7 +639,6 @@ class FolderTest extends CakeTestCase {
  * are skipped and not merged or overwritten.
  *
  * @return void
- * @access public
  */
 	public function testCopy() {
 		$path = TMP . 'folder_test';
@@ -716,7 +696,6 @@ class FolderTest extends CakeTestCase {
  * are skipped and not merged or overwritten.
  *
  * @return void
- * @access public
  */
 	public function testMove() {
 		$path = TMP . 'folder_test';

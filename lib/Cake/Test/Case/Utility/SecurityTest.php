@@ -29,14 +29,12 @@ class SecurityTest extends CakeTestCase {
  * sut property
  *
  * @var mixed null
- * @access public
  */
 	public $sut = null;
 
 /**
  * testInactiveMins method
  *
- * @access public
  * @return void
  */
 	public function testInactiveMins() {
@@ -53,7 +51,6 @@ class SecurityTest extends CakeTestCase {
 /**
  * testGenerateAuthkey method
  *
- * @access public
  * @return void
  */
 	public function testGenerateAuthkey() {
@@ -63,7 +60,6 @@ class SecurityTest extends CakeTestCase {
 /**
  * testValidateAuthKey method
  *
- * @access public
  * @return void
  */
 	public function testValidateAuthKey() {
@@ -74,7 +70,6 @@ class SecurityTest extends CakeTestCase {
 /**
  * testHash method
  *
- * @access public
  * @return void
  */
 	public function testHash() {
@@ -123,7 +118,6 @@ class SecurityTest extends CakeTestCase {
 /**
  * testCipher method
  *
- * @access public
  * @return void
  */
 	public function testCipher() {

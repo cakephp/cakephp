@@ -29,7 +29,6 @@ class CacheTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -43,7 +42,6 @@ class CacheTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -54,7 +52,6 @@ class CacheTest extends CakeTestCase {
 /**
  * testConfig method
  *
- * @access public
  * @return void
  */
 	public function testConfig() {
@@ -114,7 +111,6 @@ class CacheTest extends CakeTestCase {
  *
  * Test that the cache class doesn't cause fatal errors with a partial path
  *
- * @access public
  * @return void
  */
 	public function testInvaidConfig() {
@@ -147,7 +143,6 @@ class CacheTest extends CakeTestCase {
 /**
  * testConfigChange method
  *
- * @access public
  * @return void
  */
 	public function testConfigChange() {
@@ -193,7 +188,6 @@ class CacheTest extends CakeTestCase {
 /**
  * testWritingWithConfig method
  *
- * @access public
  * @return void
  */
 	public function testWritingWithConfig() {
@@ -231,7 +225,6 @@ class CacheTest extends CakeTestCase {
 /**
  * testInitSettings method
  *
- * @access public
  * @return void
  */
 	public function testInitSettings() {
@@ -278,7 +271,6 @@ class CacheTest extends CakeTestCase {
 /**
  * testWriteEmptyValues method
  *
- * @access public
  * @return void
  */
 	public function testWriteEmptyValues() {
@@ -326,7 +318,6 @@ class CacheTest extends CakeTestCase {
  * Check that the "Cache.disable" configuration and a change to it
  * (even after a cache config has been setup) is taken into account.
  *
- * @access public
  * @return void
  */
 	public function testCacheDisable() {
@@ -366,7 +357,6 @@ class CacheTest extends CakeTestCase {
 /**
  * testSet method
  *
- * @access public
  * @return void
  */
 	public function testSet() {

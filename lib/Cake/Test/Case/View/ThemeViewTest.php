@@ -32,7 +32,6 @@ class ThemePostsController extends Controller {
  * name property
  *
  * @var string 'ThemePosts'
- * @access public
  */
 	public $name = 'ThemePosts';
 
@@ -41,7 +40,6 @@ class ThemePostsController extends Controller {
 /**
  * index method
  *
- * @access public
  * @return void
  */
 	public function index() {
@@ -64,7 +62,6 @@ class TestThemeView extends ThemeView {
  *
  * @param mixed $name
  * @param array $params
- * @access public
  * @return void
  */
 	public function renderElement($name, $params = array()) {
@@ -75,7 +72,6 @@ class TestThemeView extends ThemeView {
  * getViewFileName method
  *
  * @param mixed $name
- * @access public
  * @return void
  */
 	public function getViewFileName($name = null) {
@@ -86,7 +82,6 @@ class TestThemeView extends ThemeView {
  * getLayoutFileName method
  *
  * @param mixed $name
- * @access public
  * @return void
  */
 	public function getLayoutFileName($name = null) {
@@ -105,7 +100,6 @@ class ThemeViewTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -126,7 +120,6 @@ class ThemeViewTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -141,7 +134,6 @@ class ThemeViewTest extends CakeTestCase {
 /**
  * testPluginGetTemplate method
  *
- * @access public
  * @return void
  */
 	public function testPluginThemedGetTemplate() {
@@ -168,7 +160,6 @@ class ThemeViewTest extends CakeTestCase {
 /**
  * testGetTemplate method
  *
- * @access public
  * @return void
  */
 	public function testGetTemplate() {
@@ -207,7 +198,6 @@ class ThemeViewTest extends CakeTestCase {
  * testMissingView method
  *
  * @expectedException MissingViewException
- * @access public
  * @return void
  */
 	public function testMissingView() {
@@ -231,7 +221,6 @@ class ThemeViewTest extends CakeTestCase {
  * testMissingLayout method
  *
  * @expectedException MissingLayoutException
- * @access public
  * @return void
  */
 	public function testMissingLayout() {

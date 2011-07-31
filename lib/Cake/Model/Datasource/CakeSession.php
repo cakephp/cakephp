@@ -284,7 +284,6 @@ class CakeSession {
  *
  * @param integer $errorNumber Error to set
  * @return string Error as string
- * @access private
  */
 	private static function __error($errorNumber) {
 		if (!is_array(self::$error) || !array_key_exists($errorNumber, self::$error)) {
@@ -680,7 +679,6 @@ class CakeSession {
  * @param integer $errorNumber Number of the error
  * @param string $errorMessage Description of the error
  * @return void
- * @access private
  */
 	private static function __setError($errorNumber, $errorMessage) {
 		if (self::$error === false) {

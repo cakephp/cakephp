@@ -77,7 +77,6 @@ class TimeHelper extends AppHelper {
  *
  * @param array $specifier match from regular expression
  * @return string converted element
- * @access private
  */
 	private function __translateSpecifier($specifier) {
 		switch ($specifier[1]) {
@@ -198,7 +197,6 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Parsed timestamp
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function fromString($dateString, $userOffset = null) {
@@ -229,7 +227,6 @@ class TimeHelper extends AppHelper {
  * @param int $userOffset User's offset from GMT (in hours)
  * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
  * @return string Formatted date string
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function nice($dateString = null, $userOffset = null, $format = null) {
@@ -256,7 +253,6 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Described, relative date string
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function niceShort($dateString = null, $userOffset = null) {
@@ -284,7 +280,6 @@ class TimeHelper extends AppHelper {
  * @param string $fieldName Name of database field to compare with
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Partial SQL string.
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
@@ -304,7 +299,6 @@ class TimeHelper extends AppHelper {
  * @param string $fieldName Name of database field to compare with
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Partial SQL string.
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
@@ -330,7 +324,6 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current week
- * @access public
  * @link http://book.cakephp.org/view/1472/Testing-Time
  */
 	public function isThisWeek($dateString, $userOffset = null) {
@@ -433,7 +426,6 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string to be represented as a Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return integer Unix timestamp
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function toUnix($dateString, $userOffset = null) {
@@ -446,7 +438,6 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function toAtom($dateString, $userOffset = null) {
@@ -460,7 +451,6 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @access public
  * @link http://book.cakephp.org/view/1471/Formatting
  */
 	public function toRSS($dateString, $userOffset = null) {
@@ -657,7 +647,6 @@ class TimeHelper extends AppHelper {
  * @param mixed $dateString the datestring or unix timestamp to compare
  * @param int $userOffset User's offset from GMT (in hours)
  * @return bool
- * @access public
  * @link http://book.cakephp.org/view/1472/Testing-Time
  */
 	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {

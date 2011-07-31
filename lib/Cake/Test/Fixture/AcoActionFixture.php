@@ -28,7 +28,6 @@ class AcoActionFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'AcoAction'
- * @access public
  */
 	public $name = 'AcoAction';
 
@@ -36,7 +35,6 @@ class AcoActionFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -52,7 +50,6 @@ class AcoActionFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array();
 }

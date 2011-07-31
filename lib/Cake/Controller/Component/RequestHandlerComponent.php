@@ -174,7 +174,6 @@ class RequestHandlerComponent extends Component {
  *
  * @param string $xml 
  * @return array Xml array data
- * @access protected
  */
 	public function _convertXml($xml) {
 		try {

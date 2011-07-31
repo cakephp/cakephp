@@ -41,7 +41,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -53,7 +52,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -67,7 +65,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * testDocRef method
  *
- * @access public
  * @return void
  */
 	public function testDocRef() {
@@ -80,7 +77,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * test Excerpt writing
  *
- * @access public
  * @return void
  */
 	public function testExcerpt() {
@@ -104,7 +100,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * testOutput method
  *
- * @access public
  * @return void
  */
 	public function testOutput() {
@@ -199,7 +194,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * testTrimPath method
  *
- * @access public
  * @return void
  */
 	public function testTrimPath() {
@@ -210,7 +204,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * testExportVar method
  *
- * @access public
  * @return void
  */
 	public function testExportVar() {
@@ -250,7 +243,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * testLog method
  *
- * @access public
  * @return void
  */
 	public function testLog() {
@@ -277,7 +269,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * testDump method
  *
- * @access public
  * @return void
  */
 	public function testDump() {
@@ -304,7 +295,6 @@ class DebuggerTest extends CakeTestCase {
 /**
  * test getInstance.
  *
- * @access public
  * @return void
  */
 	public function testGetInstance() {
@@ -327,7 +317,6 @@ class DebuggerTest extends CakeTestCase {
  * If a connection error occurs, the config variable is passed through exportVar
  * *** our database login credentials such that they are never visible
  *
- * @access public
  * @return void
  */
 	function testNoDbCredentials() {

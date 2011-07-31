@@ -33,7 +33,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * The class responsible for managing the creation, loading and removing of fixtures
  *
  * @var CakeFixtureManager
- * @access public
  */
 	public $fixtureManager = null;
 
@@ -42,7 +41,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Set this to false to handle manually
  *
  * @var array
- * @access public
  */
 	public $autoFixtures = true;
 
@@ -50,7 +48,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Set this to false to avoid tables to be dropped if they already exist
  *
  * @var boolean
- * @access public
  */
 	public $dropTables = true;
 
@@ -61,7 +58,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *	- plugin.plugin_name.fixture_name : A fixtures that can be found in the plugin "plugin_name" folder and is named FixtureNameFixture
  *
  * @var array
- * @access public
  */
 	private $fixtures = array();
 
@@ -180,7 +176,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $fixture Each parameter is a model name that corresponds to a
  *                        fixture, i.e. 'Post', 'Author', etc.
  * @return void
- * @access public
  * @see CakeTestCase::$autoFixtures
  */
 	public function loadFixtures() {
@@ -358,7 +353,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *
  * @param array $items An array of items
  * @return array
- * @access private
  */
 	private function __array_permute($items, $perms = array()) {
 		static $permuted;

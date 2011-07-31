@@ -28,7 +28,6 @@ class CallbackFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Callback'
- * @access public
  */
 	public $name = 'Callback';
 
@@ -36,7 +35,6 @@ class CallbackFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -50,7 +48,6 @@ class CallbackFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('user' => 'user1', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),

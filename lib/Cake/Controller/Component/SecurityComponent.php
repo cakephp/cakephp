@@ -33,7 +33,6 @@ class SecurityComponent extends Component {
  * The controller method that will be called if this request is black-hole'd
  *
  * @var string
- * @access public
  */
 	public $blackHoleCallback = null;
 
@@ -41,7 +40,6 @@ class SecurityComponent extends Component {
  * List of controller actions for which a POST request is required
  *
  * @var array
- * @access public
  * @see SecurityComponent::requirePost()
  */
 	public $requirePost = array();
@@ -50,7 +48,6 @@ class SecurityComponent extends Component {
  * List of controller actions for which a GET request is required
  *
  * @var array
- * @access public
  * @see SecurityComponent::requireGet()
  */
 	public $requireGet = array();
@@ -59,7 +56,6 @@ class SecurityComponent extends Component {
  * List of controller actions for which a PUT request is required
  *
  * @var array
- * @access public
  * @see SecurityComponent::requirePut()
  */
 	public $requirePut = array();
@@ -68,7 +64,6 @@ class SecurityComponent extends Component {
  * List of controller actions for which a DELETE request is required
  *
  * @var array
- * @access public
  * @see SecurityComponent::requireDelete()
  */
 	public $requireDelete = array();
@@ -77,7 +72,6 @@ class SecurityComponent extends Component {
  * List of actions that require an SSL-secured connection
  *
  * @var array
- * @access public
  * @see SecurityComponent::requireSecure()
  */
 	public $requireSecure = array();
@@ -86,7 +80,6 @@ class SecurityComponent extends Component {
  * List of actions that require a valid authentication key
  *
  * @var array
- * @access public
  * @see SecurityComponent::requireAuth()
  */
 	public $requireAuth = array();
@@ -96,7 +89,6 @@ class SecurityComponent extends Component {
  * requests.
  *
  * @var array
- * @access public
  * @see SecurityComponent::requireAuth()
  */
 	public $allowedControllers = array();
@@ -106,7 +98,6 @@ class SecurityComponent extends Component {
  * requests.
  *
  * @var array
- * @access public
  * @see SecurityComponent::requireAuth()
  */
 	public $allowedActions = array();
@@ -135,7 +126,6 @@ class SecurityComponent extends Component {
  * services, etc.
  *
  * @var boolean
- * @access public
  */
 	public $validatePost = true;
 
@@ -171,7 +161,6 @@ class SecurityComponent extends Component {
  * Other components used by the Security component
  *
  * @var array
- * @access public
  */
 	public $components = array('Session');
 
@@ -291,7 +280,6 @@ class SecurityComponent extends Component {
  * @param object $controller Instantiating controller
  * @param string $error Error method
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
- * @access public
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/view/1307/blackHole-object-controller-string-error
  */

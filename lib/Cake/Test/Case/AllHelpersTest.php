@@ -29,7 +29,6 @@ class AllHelpersTest extends PHPUnit_Framework_TestSuite {
 /**
  * suite declares tests to run
  *
- * @access public
  * @return void
  */
 	public static function suite() {

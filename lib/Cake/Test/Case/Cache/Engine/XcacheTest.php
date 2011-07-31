@@ -29,7 +29,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -42,7 +41,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -53,7 +51,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testSettings method
  *
- * @access public
  * @return void
  */
 	public function testSettings() {
@@ -74,7 +71,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testReadAndWriteCache method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteCache() {
@@ -98,7 +94,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testExpiry method
  *
- * @access public
  * @return void
  */
 	public function testExpiry() {
@@ -128,7 +123,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testDeleteCache method
  *
- * @access public
  * @return void
  */
 	public function testDeleteCache() {
@@ -143,7 +137,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testClearCache method
  *
- * @access public
  * @return void
  */
 	public function testClearCache() {
@@ -161,7 +154,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testDecrement method
  *
- * @access public
  * @return void
  */
 	public function testDecrement() {
@@ -184,7 +176,6 @@ class XcacheEngineTest extends CakeTestCase {
 /**
  * testIncrement method
  *
- * @access public
  * @return void
  */
 	public function testIncrement() {

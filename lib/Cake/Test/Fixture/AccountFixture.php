@@ -28,7 +28,6 @@ class AccountFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Aco'
- * @access public
  */
 	public $name = 'Account';
 	public $table = 'Accounts';
@@ -37,7 +36,6 @@ class AccountFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'iAccountId'		=> array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class AccountFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('cDescription' => 'gwoo'),

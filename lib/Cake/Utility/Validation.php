@@ -739,7 +739,6 @@ class Validation {
  *
  * @param string $check Value to check
  * @return boolean Success
- * @access public
  */
 	public static function uuid($check) {
 		$regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';

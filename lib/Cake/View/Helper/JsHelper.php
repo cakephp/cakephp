@@ -34,7 +34,6 @@ class JsHelper extends AppHelper {
  * Whether or not you want scripts to be buffered or output.
  *
  * @var boolean
- * @access public
  */
 	public $bufferScripts = true;
 
@@ -42,7 +41,6 @@ class JsHelper extends AppHelper {
  * helpers
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Html', 'Form');
 
@@ -51,7 +49,6 @@ class JsHelper extends AppHelper {
  *
  * @var array
  * @see JsHelper::set()
- * @access private
  */
 	private $__jsVars = array();
 
@@ -60,7 +57,6 @@ class JsHelper extends AppHelper {
  *
  * @var array
  * @see JsHelper::buffer()
- * @access private
  */
 	private $__bufferedScripts = array();
 
@@ -68,7 +64,6 @@ class JsHelper extends AppHelper {
  * Current Javascript Engine that is being used
  *
  * @var string
- * @access private
  */
 	private $__engineName;
 
@@ -76,7 +71,6 @@ class JsHelper extends AppHelper {
  * The javascript variable created by set() variables.
  *
  * @var string
- * @access public
  */
 	public $setVariable = APP_DIR;
 
@@ -163,7 +157,6 @@ class JsHelper extends AppHelper {
  * @param mixed $val A PHP variable to be converted to JSON
  * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
- * @access public
  **/
 	public function value($val, $quoteString = true) {
 		return $this->{$this->__engineName}->value($val, $quoteString);

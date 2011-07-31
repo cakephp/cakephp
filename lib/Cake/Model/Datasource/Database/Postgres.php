@@ -32,7 +32,6 @@ class Postgres extends DboSource {
  * Driver description
  *
  * @var string
- * @access public
  */
 	public $description = "PostgreSQL DBO Driver";
 
@@ -40,7 +39,6 @@ class Postgres extends DboSource {
  * Index of basic SQL commands
  *
  * @var array
- * @access protected
  */
 	protected $_commands = array(
 		'begin'    => 'BEGIN',
@@ -52,7 +50,6 @@ class Postgres extends DboSource {
  * Base driver configuration settings.  Merged with user settings.
  *
  * @var array
- * @access protected
  */
 	protected $_baseConfig = array(
 		'persistent' => true,
@@ -85,7 +82,6 @@ class Postgres extends DboSource {
  * Starting Quote
  *
  * @var string
- * @access public
  */
 	public $startQuote = '"';
 
@@ -93,7 +89,6 @@ class Postgres extends DboSource {
  * Ending Quote
  *
  * @var string
- * @access public
  */
 	public $endQuote = '"';
 
@@ -456,7 +451,6 @@ class Postgres extends DboSource {
  *
  * @param array $compare Results of CakeSchema::compare()
  * @param string $table name of the table
- * @access public
  * @return array
  */
 	public function alterSchema($compare, $table = null) {

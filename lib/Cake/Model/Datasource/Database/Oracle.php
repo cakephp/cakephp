@@ -30,7 +30,6 @@ class DboOracle extends DboSource {
  * Configuration options
  *
  * @var array
- * @access public
  */
 	public $config = array();
 
@@ -57,7 +56,6 @@ class DboOracle extends DboSource {
  * Column definitions
  *
  * @var array
- * @access public
  */
 	public $columns = array(
 		'primary_key' => array('name' => ''),
@@ -78,7 +76,6 @@ class DboOracle extends DboSource {
  * Connection object
  *
  * @var mixed
- * @access protected
  */
 	public $connection;
 
@@ -86,7 +83,6 @@ class DboOracle extends DboSource {
  * Query limit
  *
  * @var int
- * @access protected
  */
 	protected $_limit = -1;
 
@@ -94,7 +90,6 @@ class DboOracle extends DboSource {
  * Query offset
  *
  * @var int
- * @access protected
  */
 	protected $_offset = 0;
 
@@ -102,7 +97,6 @@ class DboOracle extends DboSource {
  * Enter description here...
  *
  * @var unknown_type
- * @access protected
  */
 	protected $_map;
 
@@ -110,7 +104,6 @@ class DboOracle extends DboSource {
  * Current Row
  *
  * @var mixed
- * @access protected
  */
 	protected $_currentRow;
 
@@ -118,7 +111,6 @@ class DboOracle extends DboSource {
  * Number of rows
  *
  * @var int
- * @access protected
  */
 	protected $_numRows;
 
@@ -126,7 +118,6 @@ class DboOracle extends DboSource {
  * Query results
  *
  * @var mixed
- * @access protected
  */
 	protected $_results;
 
@@ -444,7 +435,6 @@ class DboOracle extends DboSource {
  *
  * @param string $table
  * @return mixed
- * @access public
  */
 	public function createTrigger($table) {
 		$sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";
@@ -526,7 +516,6 @@ class DboOracle extends DboSource {
  * @param integer $reset If -1, sequences are dropped, if 0 (default), sequences are reset,
  *						and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
- * @access public
  *
  */
 	public function truncate($table, $reset = 0) {

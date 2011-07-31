@@ -34,7 +34,6 @@ class Aco extends AclNode {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'Aco';
 
@@ -42,7 +41,6 @@ class Aco extends AclNode {
  * Binds to ARO nodes through permissions settings
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('Aro' => array('with' => 'Permission'));
 }

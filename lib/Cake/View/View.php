@@ -695,7 +695,6 @@ class View extends Object {
  * Get the extensions that view files can use.
  *
  * @return array Array of extensions view files use.
- * @access protected
  */
 	protected function _getExtensions() {
 		$exts = array($this->ext);
