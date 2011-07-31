@@ -27,6 +27,7 @@ class CakePlugin {
 /**
  * Holds a list of all loaded plugins and their configuration
  *
+ * @var array
  */
 	private static $_plugins = array();
 

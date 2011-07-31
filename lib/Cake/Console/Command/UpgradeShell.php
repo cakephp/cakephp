@@ -8,10 +8,25 @@ App::uses('Folder', 'Utility');
  */
 class UpgradeShell extends Shell {
 
+/**
+ * Files
+ *
+ * @var array
+ */
 	protected $_files = array();
 
+/**
+ * Paths
+ *
+ * @var array
+ */
 	protected $_paths = array();
 
+/**
+ * Map
+ *
+ * @var array
+ */
 	protected $_map = array(
 		'Controller' => 'Controller',
 		'Component' => 'Controller/Component',

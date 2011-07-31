@@ -42,6 +42,8 @@ class DboOracle extends DboSource {
 
 /**
  * Sequence names as introspected from the database
+ *
+ * @var array
  */
 	protected $_sequences = array();
 

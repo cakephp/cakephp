@@ -7,6 +7,12 @@
  * @package       Cake.Controller
  */
 class CakeErrorController extends AppController {
+
+/**
+ * Controller name
+ *
+ * @var string
+ */
 	public $name = 'CakeError';
 
 /**

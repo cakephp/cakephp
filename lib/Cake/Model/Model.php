@@ -301,10 +301,25 @@ class Model extends Object {
  */
 	public $__backAssociation = array();
 
+/**
+ * Back inner association
+ *
+ * @var array
+ */
 	public $__backInnerAssociation = array();
 
+/**
+ * Back original association
+ *
+ * @var array
+ */
 	public $__backOriginalAssociation = array();
 
+/**
+ * Back containable association
+ *
+ * @var array
+ */
 	public $__backContainableAssociation = array();
 
 /**

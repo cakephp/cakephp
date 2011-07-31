@@ -505,7 +505,26 @@ class TranslateBehavior extends ModelBehavior {
  * @package       Cake.Model.Behavior
  */
 class I18nModel extends AppModel {
+
+/**
+ * Model name
+ *
+ * @var string
+ */
 	public $name = 'I18nModel';
+
+/**
+ * Table name
+ *
+ * @var string
+ */
 	public $useTable = 'i18n';
+
+/**
+ * Display field
+ *
+ * @var string
+ */
 	public $displayField = 'field';
+
 }

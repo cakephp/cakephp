@@ -81,6 +81,11 @@ class Router {
 	const ID = '[0-9]+';
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
+/**
+ * Named expressions
+ *
+ * @var array
+ */
 	private static $__namedExpressions = array(
 		'Action' => Router::ACTION,
 		'Year' => Router::YEAR,

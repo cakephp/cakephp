@@ -42,6 +42,7 @@ class FormHelper extends AppHelper {
  * Holds the fields array('field_name' => array('type'=> 'string', 'length'=> 100),
  * primaryKey and validates array('field_name')
  *
+ * @var array
  */
 	public $fieldset = array();
 

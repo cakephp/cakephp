@@ -148,24 +148,28 @@ class App {
 /**
  * Holds the location of each class
  *
+ * @var array
  */
 	private static $__classMap = array();
 
 /**
  * Holds the possible paths for each package name
  *
+ * @var array
  */
 	private static $__packages = array();
 
 /**
  * Holds the templates for each customizable package path in the application
  *
+ * @var array
  */
 	private static $__packageFormat = array();
 
 /**
  * Maps an old style CakePHP class type to the corresponding package
  *
+ * @var array
  */
 	public static $legacy = array(
 		'models' => 'Model',
@@ -182,12 +186,14 @@ class App {
 /**
  * Indicates whether the class cache should be stored again because of an addition to it
  *
+ * @var boolean
  */
 	private static $_cacheChange = false;
 
 /**
  * Indicates whether the object cache should be stored again because of an addition to it
  *
+ *	@var boolean
  */
 	private static $_objectCacheChange = false;
 
@@ -195,6 +201,7 @@ class App {
  * Indicates the the Application is in the bootstrapping process. Used to better cache
  * loaded classes while the cache libraries have not been yet initialized
  *
+ * @var boolean
  */
 	public static $bootstrapping = false;
 

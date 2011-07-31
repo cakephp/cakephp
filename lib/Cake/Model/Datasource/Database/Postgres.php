@@ -62,6 +62,11 @@ class Postgres extends DboSource {
 		'encoding' => ''
 	);
 
+/**
+ * Columns
+ *
+ * @var array
+ */
 	public $columns = array(
 		'primary_key' => array('name' => 'serial NOT NULL'),
 		'string' => array('name'  => 'varchar', 'limit' => '255'),
