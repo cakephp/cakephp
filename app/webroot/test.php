@@ -50,6 +50,8 @@ ini_set('display_errors', 1);
  *
  * For ease of development CakePHP uses PHP's include_path.  If you
  * need to cannot modify your include_path, you can set this path.
+ *
+ * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
 	//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 
