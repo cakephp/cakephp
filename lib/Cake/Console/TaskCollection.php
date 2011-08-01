@@ -42,7 +42,6 @@ class TaskCollection extends ObjectCollection {
  * Constructor
  *
  * @param Shell $Shell
- * @return void
  */
 	public function __construct(Shell $Shell) {
 		$this->_Shell = $Shell;

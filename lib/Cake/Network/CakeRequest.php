@@ -120,7 +120,6 @@ class CakeRequest implements ArrayAccess {
  *
  * @param string $url Trimmed url string to use.  Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
- * @return void
  */
 	public function __construct($url = null, $parseEnvironment = true) {
 		$this->_base();
@@ -500,7 +499,7 @@ class CakeRequest implements ArrayAccess {
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
- * @return the current object, you can chain this method.
+ * @return CakeRequest the current object, you can chain this method.
  */
 	public function addPaths($paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
@@ -571,7 +570,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the domain name and include $tldLength segments of the tld.
  *
- * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
  *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
@@ -584,7 +583,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the subdomains for a host.
  *
- * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
  *   While `example.co.uk` contains 2.
  * @return array of subdomains.
  */

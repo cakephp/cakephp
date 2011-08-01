@@ -405,7 +405,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param array $url Array of url params to convert
  * @param string $type
- * @return converted url params.
+ * @return array converted url params.
  */
 	protected function _convertUrlKeys($url, $type) {
 		if ($type == 'named') {
@@ -492,7 +492,7 @@ class PaginatorHelper extends AppHelper {
  * Returns true if the given result set has the page number given by $page
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
- * @param int $page The page number - if not set defaults to 1.
+ * @param integer $page The page number - if not set defaults to 1.
  * @return boolean True if the given result set has the specified page number.
  */
 	public function hasPage($model = null, $page = 1) {

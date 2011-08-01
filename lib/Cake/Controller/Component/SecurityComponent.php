@@ -181,7 +181,7 @@ class SecurityComponent extends Component {
 /**
  * Component startup. All security checking happens here.
  *
- * @param object $controller Instantiating controller
+ * @param Controller $controller Instantiating controller
  * @return void
  */
 	public function startup($controller) {
@@ -277,7 +277,7 @@ class SecurityComponent extends Component {
  * Black-hole an invalid request with a 404 error or custom callback. If SecurityComponent::$blackHoleCallback
  * is specified, it will use this callback by executing the method indicated in $error
  *
- * @param object $controller Instantiating controller
+ * @param Controller $controller Instantiating controller
  * @param string $error Error method
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
@@ -313,8 +313,8 @@ class SecurityComponent extends Component {
 /**
  * Check if HTTP methods are required
  *
- * @param object $controller Instantiating controller
- * @return bool true if $method is required
+ * @param Controller $controller Instantiating controller
+ * @return boolean true if $method is required
  */
 	protected function _methodsRequired($controller) {
 		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
@@ -336,8 +336,8 @@ class SecurityComponent extends Component {
 /**
  * Check if access requires secure connection
  *
- * @param object $controller Instantiating controller
- * @return bool true if secure connection required
+ * @param Controller $controller Instantiating controller
+ * @return boolean true if secure connection required
  */
 	protected function _secureRequired($controller) {
 		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
@@ -357,8 +357,8 @@ class SecurityComponent extends Component {
 /**
  * Check if authentication is required
  *
- * @param object $controller Instantiating controller
- * @return bool true if authentication required
+ * @param Controller $controller Instantiating controller
+ * @return boolean true if authentication required
  */
 	protected function _authRequired($controller) {
 		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
@@ -392,8 +392,8 @@ class SecurityComponent extends Component {
 /**
  * Validate submitted form
  *
- * @param object $controller Instantiating controller
- * @return bool true if submitted form is valid
+ * @param Controller $controller Instantiating controller
+ * @return boolean true if submitted form is valid
  */
 	protected function _validatePost($controller) {
 		if (empty($controller->request->data)) {
@@ -472,8 +472,8 @@ class SecurityComponent extends Component {
 /**
  * Add authentication key for new form posts
  *
- * @param object $controller Instantiating controller
- * @return bool Success
+ * @param Controller $controller Instantiating controller
+ * @return boolean Success
  */
 	protected function _generateToken($controller) {
 		if (isset($controller->request->params['requested']) && $controller->request->params['requested'] === 1) {
@@ -539,7 +539,7 @@ class SecurityComponent extends Component {
  * Uses a simple timeout to expire the tokens.
  *
  * @param array $tokens An array of nonce => expires.
- * @return An array of nonce => expires.
+ * @return array An array of nonce => expires.
  */
 	protected function _expireTokens($tokens) {
 		$now = time();
@@ -554,7 +554,7 @@ class SecurityComponent extends Component {
 /**
  * Calls a controller callback method
  *
- * @param object $controller Controller to run callback on
+ * @param Controller $controller Controller to run callback on
  * @param string $method Method to execute
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response

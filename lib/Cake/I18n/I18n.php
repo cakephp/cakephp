@@ -94,7 +94,7 @@ class I18n {
 /**
  * Return a static instance of the I18n class
  *
- * @return object I18n
+ * @return I18n
  */
 	public static function &getInstance() {
 		static $instance = array();
@@ -215,7 +215,7 @@ class I18n {
  * Attempts to find the plural form of a string.
  *
  * @param string $header Type
- * @param integrer $n Number
+ * @param integer $n Number
  * @return integer plural match
  */
 	private function __pluralGuess($header, $n) {

@@ -36,7 +36,7 @@ class AclComponent extends Component {
 /**
  * Instance of an ACL class
  *
- * @var object
+ * @var AclInterface
  */
 	protected $_Instance = null;
 

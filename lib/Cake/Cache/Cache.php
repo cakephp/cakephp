@@ -186,7 +186,7 @@ class Cache {
  * the Engine instance is also unset.
  *
  * @param string $name A currently configured cache config you wish to remove.
- * @return boolen success of the removal, returns false when the config does not exist.
+ * @return boolean success of the removal, returns false when the config does not exist.
  */
 	public static function drop($name) {
 		if (!isset(self::$_config[$name])) {
@@ -456,7 +456,7 @@ class Cache {
  * Check if Cache has initialized a working config for the given name.
  *
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return bool Whether or not the config name has been initialized.
+ * @return boolean Whether or not the config name has been initialized.
  */
 	public static function isInitialized($config = 'default') {
 		if (Configure::read('Cache.disable')) {
@@ -490,7 +490,7 @@ abstract class CacheEngine {
 /**
  * Settings of current engine instance
  *
- * @var int
+ * @var array
  */
 	public $settings = array();
 

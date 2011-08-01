@@ -84,7 +84,7 @@ class ConsoleInputArgument {
 /**
  * Generate the help for this argument.
  *
- * @param int $width The width to make the name of the option.
+ * @param integer $width The width to make the name of the option.
  * @return string 
  */
 	public function help($width = 0) {

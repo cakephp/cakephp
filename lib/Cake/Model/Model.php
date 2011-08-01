@@ -2266,7 +2266,7 @@ class Model extends Object {
  * @param string $state Either "before" or "after"
  * @param array $query
  * @param array $results
- * @return int The number of records found, or false
+ * @return integer The number of records found, or false
  * @see Model::find()
  */
 	protected function _findCount($state, $query, $results = array()) {
@@ -2883,7 +2883,7 @@ class Model extends Object {
 /**
  * Returns the number of rows returned from the last query.
  *
- * @return int Number of rows
+ * @return integer Number of rows
  */
 	public function getNumRows() {
 		return $this->getDataSource()->lastNumRows();
@@ -2892,7 +2892,7 @@ class Model extends Object {
 /**
  * Returns the number of rows affected by the last query.
  *
- * @return int Number of rows
+ * @return integer Number of rows
  */
 	public function getAffectedRows() {
 		return $this->getDataSource()->lastAffected();
@@ -2930,7 +2930,7 @@ class Model extends Object {
 /**
  * Gets the DataSource to which this model is bound.
  *
- * @return object A DataSource object
+ * @return DataSource A DataSource object
  */
 	public function getDataSource() {
 		if (!$this->__sourceConfigured && $this->useTable !== false) {

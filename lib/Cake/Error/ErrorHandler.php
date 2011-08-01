@@ -186,7 +186,7 @@ class ErrorHandler {
 /**
  * Map an error code into an Error word, and log location.
  *
- * @param int $code Error code to map
+ * @param integer $code Error code to map
  * @return array Array of error word, and log location.
  */
 	protected static function _mapErrorCode($code) {

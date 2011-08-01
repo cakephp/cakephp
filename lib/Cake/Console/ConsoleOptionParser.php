@@ -489,7 +489,7 @@ class ConsoleOptionParser {
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
  * @param string $format Define the output format, can be text or xml
- * @param int $width The width to format user content to. Defaults to 72
+ * @param integer $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
 	public function help($subcommand = null, $format = 'text', $width = 72) {
@@ -605,8 +605,7 @@ class ConsoleOptionParser {
 /**
  * Find the next token in the argv set.
  *
- * @param string
- * @return next token or ''
+ * @return string next token or ''
  */
 	protected function _nextToken() {
 		return isset($this->_tokens[0]) ? $this->_tokens[0] : '';

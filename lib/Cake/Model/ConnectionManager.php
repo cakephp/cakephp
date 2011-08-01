@@ -74,7 +74,7 @@ class ConnectionManager {
  * Gets a reference to a DataSource object
  *
  * @param string $name The name of the DataSource, as defined in app/Config/database.php
- * @return object Instance
+ * @return DataSource Instance
  * @throws MissingDatasourceConfigException
  * @throws MissingDatasourceFileException
  */
@@ -119,7 +119,7 @@ class ConnectionManager {
 /**
  * Gets a DataSource name from an object reference.
  *
- * @param object $source DataSource object
+ * @param DataSource $source DataSource object
  * @return string Datasource name, or null if source is not present
  *    in the ConnectionManager.
  */
@@ -192,7 +192,7 @@ class ConnectionManager {
  *
  * @param string $name The DataSource name
  * @param array $config The DataSource configuration settings
- * @return object A reference to the DataSource object, or null if creation failed
+ * @return DataSource A reference to the DataSource object, or null if creation failed
  */
 	public static function create($name = '', $config = array()) {
 		if (empty(self::$_init)) {

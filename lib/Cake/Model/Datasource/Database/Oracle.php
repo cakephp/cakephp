@@ -84,14 +84,14 @@ class DboOracle extends DboSource {
 /**
  * Query limit
  *
- * @var int
+ * @var integer
  */
 	protected $_limit = -1;
 
 /**
  * Query offset
  *
- * @var int
+ * @var integer
  */
 	protected $_offset = 0;
 
@@ -112,7 +112,7 @@ class DboOracle extends DboSource {
 /**
  * Number of rows
  *
- * @var int
+ * @var integer
  */
 	protected $_numRows;
 
@@ -126,7 +126,7 @@ class DboOracle extends DboSource {
 /**
  * Last error issued by oci extension
  *
- * @var unknown_type
+ * @var string
  */
 	protected $_error;
 
@@ -148,7 +148,7 @@ class DboOracle extends DboSource {
 /**
  * Table-sequence map
  *
- * @var unknown_type
+ * @var array
  */
 	protected $_sequenceMap = array();
 
@@ -209,7 +209,7 @@ class DboOracle extends DboSource {
  * Sets the encoding language of the session
  *
  * @param string $lang language constant
- * @return bool
+ * @return boolean
  */
 	public function setEncoding($lang) {
 		if (!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
@@ -252,7 +252,7 @@ class DboOracle extends DboSource {
  * experimental method that creates the association maps since Oracle will not tell us.
  *
  * @param string $sql
- * @return false if sql is nor a SELECT
+ * @return void
  */
 	protected function _scrapeSQL($sql) {
 		$sql = str_replace("\"", '', $sql);
@@ -301,7 +301,7 @@ class DboOracle extends DboSource {
  *
  * @param integer $limit Maximum number of rows to return
  * @param integer $offset Row to begin returning
- * @return modified SQL Query
+ * @return void
  */
 	public function limit($limit = -1, $offset = 0) {
 		$this->_limit = (int) $limit;
@@ -401,7 +401,7 @@ class DboOracle extends DboSource {
 /**
  * Fetches the next row from the current result set
  *
- * @return unknown
+ * @return array
  */
 	public function fetchResult() {
 		return $this->fetchRow();
@@ -411,7 +411,7 @@ class DboOracle extends DboSource {
  * Checks to see if a named sequence exists
  *
  * @param string $sequence
- * @return bool
+ * @return boolean|array
  */
 	public function sequenceExists($sequence) {
 		$sql = "SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '$sequence'";
@@ -425,7 +425,7 @@ class DboOracle extends DboSource {
  * Creates a database sequence
  *
  * @param string $sequence
- * @return bool
+ * @return boolean
  */
 	public function createSequence($sequence) {
 		$sql = "CREATE SEQUENCE $sequence";
@@ -905,7 +905,7 @@ class DboOracle extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
  * @param mixed $source
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	public function lastAffected($source = null) {
 		return $this->_statementId ? ocirowcount($this->_statementId): false;

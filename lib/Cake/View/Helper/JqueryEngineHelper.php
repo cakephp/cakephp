@@ -134,7 +134,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @return object instance of $this. Allows chained methods.
+ * @return JqueryEngineHelper instance of $this. Allows chained methods.
  */
 	public function get($selector) {
 		if ($selector == 'window' || $selector == 'document') {

@@ -37,7 +37,7 @@ class SessionHelper extends AppHelper {
  * Calling the method without a param will return all session vars
  *
  * @param string $name the name of the session key you want to read
- * @return values from the session vars
+ * @return mixed values from the session vars
  * @link http://book.cakephp.org/view/1466/Methods
  */
 	public function read($name = null) {

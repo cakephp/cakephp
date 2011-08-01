@@ -249,7 +249,7 @@ class EmailComponent extends Component {
 /**
  * Controller reference
  *
- * @var object Controller
+ * @var Controller
  */
 	protected $_controller = null;
 
@@ -267,7 +267,7 @@ class EmailComponent extends Component {
 /**
  * Initialize component
  *
- * @param object $controller Instantiating controller
+ * @param Controller $controller Instantiating controller
  * @return void
  */
 	public function initialize($controller) {

@@ -101,7 +101,7 @@ class RequestHandlerComponent extends Component {
  * HTTP_ACCEPT_TYPE is set to a single value that is a supported extension and mapped type.
  * If yes, RequestHandler::$ext is set to that value
  *
- * @param object $controller A reference to the controller
+ * @param Controller $controller A reference to the controller
  * @param array $settings Array of settings to _set().
  * @return void
  * @see Router::parseExtensions()
@@ -142,7 +142,7 @@ class RequestHandlerComponent extends Component {
  * - If the XML data is POSTed, the data is parsed into an XML object, which is assigned
  *   to the $data property of the controller, which can then be saved to a model object.
  *
- * @param object $controller A reference to the controller
+ * @param Controller $controller A reference to the controller
  * @return void
  */
 	public function startup($controller) {
@@ -239,7 +239,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Returns true if the current request is over HTTPS, false otherwise.
  *
- * @return bool True if call is over HTTPS
+ * @return boolean True if call is over HTTPS
  * @deprecated use `$this->request->is('ssl')` instead.
  */
 	public function isSSL() {
@@ -286,7 +286,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Returns true if the client accepts WAP content
  *
- * @return bool
+ * @return boolean
  */
 	public function isWap() {
 		return $this->prefers('wap');
@@ -509,7 +509,7 @@ class RequestHandlerComponent extends Component {
  *
  * `$this->RequestHandler->renderAs($this, 'xml', array('attachment' => 'myfile.xml');`
  *
- * @param object $controller A reference to a controller object
+ * @param Controller $controller A reference to a controller object
  * @param string $type Type of response to send (e.g: 'ajax')
  * @param array $options Array of options to use
  * @return void

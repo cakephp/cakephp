@@ -64,10 +64,10 @@ class ConsoleErrorHandler extends ErrorHandler {
  * Handle errors in the console environment. Writes errors to stderr,
  * and logs messages if Configure::read('debug') is 0.
  *
- * @param int $code Error code
+ * @param integer $code Error code
  * @param string $description Description of the error.
  * @param string $file The file the error occurred in.
- * @param int $line The line the error occurred on.
+ * @param integer $line The line the error occurred on.
  * @param array $context The backtrace of the error.
  * @return void
  */

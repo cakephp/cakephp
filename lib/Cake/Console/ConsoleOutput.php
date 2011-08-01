@@ -266,7 +266,7 @@ class ConsoleOutput {
 /**
  * Get/Set the output type to use.  The output type how formatting tags are treated.
  * 
- * @param int $type The output type to use.  Should be one of the class constants.
+ * @param integer $type The output type to use.  Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {
@@ -279,7 +279,6 @@ class ConsoleOutput {
 /**
  * clean up and close handles
  *
- * @return void
  */
 	public function __destruct() {
 		fclose($this->_output);

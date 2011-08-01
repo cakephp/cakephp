@@ -146,7 +146,7 @@ class ModelTask extends BakeTask {
  * @param array $options Array of options to use for the selections. indexes must start at 0
  * @param string $prompt Prompt to use for options list.
  * @param integer $default The default option for the given prompt.
- * @return result of user choice.
+ * @return integer result of user choice.
  */
 	public function inOptions($options, $prompt = null, $default = null) {
 		$valid = false;
@@ -312,7 +312,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles Generation and user interaction for creating validation.
  *
- * @param object $model Model to have validations generated for.
+ * @param Model $model Model to have validations generated for.
  * @return array $validate Array of user selected validations.
  */
 	public function doValidation($model) {
@@ -448,7 +448,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles associations
  *
- * @param object $model
+ * @param Model $model
  * @return array $assocaitons
  */
 	public function doAssociations($model) {
@@ -497,7 +497,7 @@ class ModelTask extends BakeTask {
 /**
  * Find belongsTo relations and add them to the associations list.
  *
- * @param object $model Model instance of model being generated.
+ * @param Model $model Model instance of model being generated.
  * @param array $associations Array of inprogress associations
  * @return array $associations with belongsTo added in.
  */
@@ -526,7 +526,7 @@ class ModelTask extends BakeTask {
 /**
  * Find the hasOne and HasMany relations and add them to associations list
  *
- * @param object $model Model instance being generated
+ * @param Model $model Model instance being generated
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasOne and hasMany added in.
  */
@@ -569,7 +569,7 @@ class ModelTask extends BakeTask {
 /**
  * Find the hasAndBelongsToMany relations and add them to associations list
  *
- * @param object $model Model instance being generated
+ * @param Model $model Model instance being generated
  * @param array $associations Array of in-progress associations
  * @return array $associations with hasAndBelongsToMany added in.
  */
@@ -635,7 +635,7 @@ class ModelTask extends BakeTask {
 /**
  * Interact with the user and generate additional non-conventional associations
  *
- * @param object $model Temporary model instance
+ * @param Model $model Temporary model instance
  * @param array $associations Array of associations.
  * @return array Array of associations.
  */

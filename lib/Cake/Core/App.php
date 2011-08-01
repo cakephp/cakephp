@@ -193,7 +193,7 @@ class App {
 /**
  * Indicates whether the object cache should be stored again because of an addition to it
  *
- *	@var boolean
+ * @var boolean
  */
 	private static $_objectCacheChange = false;
 
@@ -725,7 +725,7 @@ class App {
  * @param array $search list of paths to search the file into
  * @param string $file filename if known, the $name param will be used otherwise
  * @param boolean $return whether this function should return the contents of the file after being parsed by php or just a success notice
- * @return mixed, if $return contents of the file after php parses it, boolean indicating success otherwise
+ * @return mixed if $return contents of the file after php parses it, boolean indicating success otherwise
  */
 	private function _loadFile($name, $plugin, $search, $file, $return) {
 		$mapped = self::__mapped($name, $plugin);
@@ -827,7 +827,7 @@ class App {
  *
  * @param string $name unique name
  * @param string $plugin camelized if object is from a plugin, the name of the plugin
- * @return mixed, file path if found, false otherwise
+ * @return mixed file path if found, false otherwise
  */
 	private static function __mapped($name, $plugin = null) {
 		if ($plugin) {

@@ -83,7 +83,6 @@ class CakeRoute {
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
  * @param array $options Array of additional options for the Route
- * @return void
  */
 	public function __construct($template, $defaults = array(), $options = array()) {
 		$this->template = $template;

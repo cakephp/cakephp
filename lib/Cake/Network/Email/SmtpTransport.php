@@ -62,7 +62,7 @@ class SmtpTransport extends AbstractTransport {
  * Set the configuration
  *
  * @param array $config
- * @return object $this
+ * @return void
  */
 	public function config($config = array()) {
 		$default = array(

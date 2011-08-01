@@ -71,7 +71,7 @@ class Xml {
  *
  * @param mixed $input XML string, a path to a file, an URL or an array
  * @param array $options The options to use
- * @return object SimpleXMLElement or DOMDocument
+ * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
  * @throws XmlException
  */
 	public static function build($input, $options = array()) {
@@ -139,7 +139,7 @@ class Xml {
  *
  * @param array $input Array with data
  * @param array $options The options to use
- * @return object SimpleXMLElement or DOMDocument
+ * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
  * @throws XmlException
  */
 	public static function fromArray($input, $options = array()) {
@@ -175,8 +175,8 @@ class Xml {
 /**
  * Recursive method to create childs from array
  *
- * @param object $dom Handler to DOMDocument
- * @param object $node Handler to DOMElement (child)
+ * @param DOMDocument $dom Handler to DOMDocument
+ * @param DOMElement $node Handler to DOMElement (child)
  * @param array $data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
  * @return void
@@ -268,7 +268,7 @@ class Xml {
 /**
  * Returns this XML structure as a array.
  *
- * @param object $obj SimpleXMLElement, DOMDocument or DOMNode instance
+ * @param SimpleXMLElement|DOMDocument|DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
  * @throws XmlException
  */
@@ -288,7 +288,7 @@ class Xml {
 /**
  * Recursive method to toArray
  *
- * @param object $xml SimpleXMLElement object
+ * @param SimpleXMLElement $xml SimpleXMLElement object
  * @param array $parentData Parent array with data
  * @param string $ns Namespace of current child
  * @param array $namespaces List of namespaces in XML

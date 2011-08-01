@@ -338,7 +338,7 @@ class CookieComponent extends Component {
  * CookieComponent::write(string, string, boolean, '5 Days');
  *
  * @param mixed $expires Can be either Unix timestamp, or date string
- * @return int Unix timestamp
+ * @return integer Unix timestamp
  */
 	protected function _expire($expires = null) {
 		$now = time();

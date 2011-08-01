@@ -102,7 +102,7 @@ class TemplateTask extends Shell {
 /**
  * Set variable values to the template scope
  *
- * @param mixed $one A string or an array of data.
+ * @param string|array $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
@@ -129,8 +129,8 @@ class TemplateTask extends Shell {
  *
  * @param string $directory directory / type of thing you want
  * @param string $filename template name
- * @param string $vars Additional vars to set to template scope.
- * @return contents of generated code template
+ * @param array $vars Additional vars to set to template scope.
+ * @return string contents of generated code template
  */
 	public function generate($directory, $filename, $vars = null) {
 		if ($vars !== null) {

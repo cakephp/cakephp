@@ -239,7 +239,7 @@ class Folder {
  * Returns true if given $path is an absolute path.
  *
  * @param string $path Path to check
- * @return bool true if path is absolute.
+ * @return boolean true if path is absolute.
  */
 	public static function isAbsolute($path) {
 		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
@@ -293,7 +293,7 @@ class Folder {
  * Returns true if the File is in a given CakePath.
  *
  * @param string $path The path to check.
- * @return bool
+ * @return boolean
  */
 	public function inCakePath($path = '') {
 		$dir = substr(Folder::slashTerm(ROOT), 0, -1);
@@ -307,7 +307,7 @@ class Folder {
  *
  * @param string $path The path to check that the current pwd() resides with in.
  * @param boolean $reverse
- * @return bool
+ * @return boolean
  */
 	public function inPath($path = '', $reverse = false) {
 		$dir = Folder::slashTerm($path);
@@ -471,7 +471,7 @@ class Folder {
 /**
  * Returns the size in bytes of this Folder and its contents.
  *
- * @return int size in bytes of current folder
+ * @return integer size in bytes of current folder
  */
 	public function dirsize() {
 		$size = 0;
@@ -563,7 +563,7 @@ class Folder {
  * - `skip` Files/directories to skip.
  *
  * @param mixed $options Either an array of options (see above) or a string of the destination directory.
- * @return bool Success
+ * @return boolean Success
  */
 	public function copy($options = array()) {
 		if (!$this->pwd()) {

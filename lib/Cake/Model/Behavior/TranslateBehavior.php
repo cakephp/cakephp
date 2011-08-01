@@ -352,7 +352,7 @@ class TranslateBehavior extends ModelBehavior {
  * name to find/use.  If no translateModel property is found 'I18nModel' will be used.
  *
  * @param Model $model Model to get a translatemodel for.
- * @return object
+ * @return Model
  */
 	public function translateModel($model) {
 		if (!isset($this->runtime[$model->alias]['model'])) {
@@ -379,7 +379,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $model instance of model
  * @param string|array $fields string with field or array(field1, field2=>AssocName, field3)
  * @param boolean $reset
- * @return bool
+ * @return boolean
  */
 	public function bindTranslation($model, $fields, $reset = true) {
 		if (is_string($fields)) {
@@ -449,10 +449,10 @@ class TranslateBehavior extends ModelBehavior {
  * Unbind translation for fields, optionally unbinds hasMany association for
  * fake field
  *
- * @param object $model instance of model
+ * @param Model $model instance of model
  * @param mixed $fields string with field, or array(field1, field2=>AssocName, field3), or null for
  *    unbind all original translations
- * @return bool
+ * @return boolean
  */
 	public function unbindTranslation($model, $fields = null) {
 		if (empty($fields) && empty($this->settings[$model->alias])) {

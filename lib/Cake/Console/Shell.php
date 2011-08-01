@@ -214,7 +214,7 @@ class Shell extends Object {
  * makes $this->AppModel available to subclasses
  * If public $uses is an array of models will load those models
  *
- * @return bool
+ * @return boolean
  */
 	protected function _loadModels() {
 		if ($this->uses === null || $this->uses === false) {
@@ -243,7 +243,7 @@ class Shell extends Object {
 /**
  * Loads tasks defined in public $tasks
  *
- * @return bool
+ * @return boolean
  */
 	public function loadTasks() {
 		if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
@@ -670,7 +670,7 @@ class Shell extends Object {
  * Makes absolute file path easier to read
  *
  * @param string $file Absolute file path
- * @return sting short path
+ * @return string short path
  */
 	public function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);

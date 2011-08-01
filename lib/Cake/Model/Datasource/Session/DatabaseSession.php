@@ -27,7 +27,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * Constructor.  Looks at Session configuration information and
  * sets up the session model.
  *
- * @return void
  */
 	public function __construct() {
 		$modelName = Configure::read('Session.handler.model');

@@ -659,7 +659,7 @@ class Postgres extends DboSource {
  * Gets the length of a database-native column description, or null if no length
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return int An integer representing the length of the column
+ * @return integer An integer representing the length of the column
  */
 	public function length($real) {
 		$col = str_replace(array(')', 'unsigned'), '', $real);
@@ -704,7 +704,7 @@ class Postgres extends DboSource {
 /**
  * Fetches the next row from the current result set
  *
- * @return unknown
+ * @return array
  */
 	public function fetchResult() {
 		if ($row = $this->_result->fetch()) {

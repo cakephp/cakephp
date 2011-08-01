@@ -868,10 +868,10 @@ class Router {
 /**
  * Generates a well-formed querystring from $q
  *
- * @param mixed $q Query string Either a string of already compiled query string arguments or
+ * @param string|array $q Query string Either a string of already compiled query string arguments or
  *    an array of arguments to convert into a query string.
  * @param array $extra Extra querystring parameters.
- * @param bool $escape Whether or not to use escaped &
+ * @param boolean $escape Whether or not to use escaped &
  * @return array
  */
 	public static function queryString($q, $extra = array(), $escape = false) {
@@ -987,7 +987,7 @@ class Router {
  *
  * @param string $base Base URL
  * @param string $plugin Plugin name
- * @return base url with plugin name removed if present
+ * @return string base url with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
 		if ($plugin != null) {

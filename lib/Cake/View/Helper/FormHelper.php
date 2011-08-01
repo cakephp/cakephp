@@ -1099,7 +1099,7 @@ class FormHelper extends AppHelper {
  * @param string $name The name of the option to pull out.
  * @param array $options The array of options you want to extract.
  * @param mixed $default The default option value
- * @return the contents of the option or default
+ * @return mixed the contents of the option or default
  */
 	protected function _extractOption($name, $options, $default = null) {
 		if (array_key_exists($name, $options)) {

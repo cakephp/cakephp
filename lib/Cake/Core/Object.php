@@ -35,10 +35,8 @@ class Object {
 /**
  * constructor, no-op
  *
- * @return void
  */
 	public function __construct() {
-
 	}
 
 /**
@@ -173,7 +171,7 @@ class Object {
  * this method as an empty function.
  *
  * @param array $properties The name of the properties to merge.
- * @param sting $class The class to merge the property with.
+ * @param string $class The class to merge the property with.
  * @param boolean $normalize Set to true to run the properties through Set::normalize() before merging.
  * @return void
  */

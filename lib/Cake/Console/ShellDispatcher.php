@@ -44,8 +44,7 @@ class ShellDispatcher {
  * a status code of either 0 or 1 according to the result of the dispatch.
  *
  * @param array $args the argv from PHP
- * @param bool $bootstrap Should the environment be bootstrapped.
- * @return void
+ * @param boolean $bootstrap Should the environment be bootstrapped.
  */
 	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);

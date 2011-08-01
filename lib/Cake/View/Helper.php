@@ -292,7 +292,7 @@ class Helper extends Object {
  * content is the best way to prevent all possible attacks.
  *
  * @param mixed $output Either an array of strings to clean or a single string to clean.
- * @return cleaned content for output
+ * @return string|array cleaned content for output
  */
 	public function clean($output) {
 		$this->__reset();

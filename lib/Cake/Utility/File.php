@@ -325,7 +325,7 @@ class File {
  * makes filename safe for saving
  *
  * @param string $name The name of the file to make safe if different from $this->name
- * @param strin $ext The name of the extension to make safe if different from $this->ext
+ * @param string $ext The name of the extension to make safe if different from $this->ext
  * @return string $ext the extension of the file
  */
 	public function safe($name = null, $ext = null) {

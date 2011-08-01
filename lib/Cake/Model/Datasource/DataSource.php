@@ -78,7 +78,6 @@ class DataSource extends Object {
  * Constructor.
  *
  * @param array $config Array of configuration information for the datasource.
- * @return void.
  */
 	public function __construct($config = array()) {
 		parent::__construct();
@@ -408,7 +407,6 @@ class DataSource extends Object {
 /**
  * Closes the current datasource.
  *
- * @return void
  */
 	public function __destruct() {
 		if ($this->_transactionStarted) {

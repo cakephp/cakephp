@@ -142,7 +142,7 @@ abstract class ObjectCollection {
 /**
  * Provide isset access to _loaded
  *
- * @param sting $name Name of object being checked.
+ * @param string $name Name of object being checked.
  * @return boolean
  */
 	public function __isset($name) {

@@ -365,7 +365,7 @@ class Multibyte {
  *    If set to true, it returns all of $haystack from the beginning to the first occurrence of $needle.
  *    If set to false, it returns all of $haystack from the first occurrence of $needle to the end,
  *    Default value is false.
- * @return int|boolean The portion of $haystack, or false if $needle is not found.
+ * @return integer|boolean The portion of $haystack, or false if $needle is not found.
  */
 	public static function stristr($haystack, $needle, $part = false) {
 		$php = (PHP_VERSION < 5.3);
@@ -1003,7 +1003,7 @@ class Multibyte {
 /**
  * Return the Code points range for Unicode characters
  *
- * @param interger $decimal
+ * @param integer $decimal
  * @return string
  */
 	private static function __codepoint($decimal) {

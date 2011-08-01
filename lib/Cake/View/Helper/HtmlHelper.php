@@ -705,8 +705,8 @@ class HtmlHelper extends AppHelper {
  * @param array $data Array of table data
  * @param array $oddTrOptions HTML options for odd TR elements if true useCount is used
  * @param array $evenTrOptions HTML options for even TR elements
- * @param bool $useCount adds class "column-$i"
- * @param bool $continueOddEven If false, will use a non-static $count variable,
+ * @param boolean $useCount adds class "column-$i"
+ * @param boolean $continueOddEven If false, will use a non-static $count variable,
  *    so that the odd/even count is reset to zero just for that call.
  * @return string Formatted HTML
  * @link http://book.cakephp.org/view/1447/tableCells

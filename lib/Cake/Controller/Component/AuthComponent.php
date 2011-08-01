@@ -240,7 +240,7 @@ class AuthComponent extends Component {
 /**
  * Initializes AuthComponent for use in the controller
  *
- * @param object $controller A reference to the instantiating controller object
+ * @param Controller $controller A reference to the instantiating controller object
  * @return void
  */
 	public function initialize($controller) {
@@ -257,7 +257,7 @@ class AuthComponent extends Component {
  * Main execution method.  Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param object $controller A reference to the instantiating controller object
+ * @param Controller $controller A reference to the instantiating controller object
  * @return boolean
  */
 	public function startup($controller) {

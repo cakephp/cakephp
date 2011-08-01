@@ -43,7 +43,7 @@ abstract class AbstractTransport {
  * Set the config
  *
  * @param array $config
- * @return object $this
+ * @return void
  */
 	public function config($config = array()) {
 		if (!empty($config)) {

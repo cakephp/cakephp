@@ -365,7 +365,7 @@ class ControllerTask extends BakeTask {
  * Common code for property choice handling.
  *
  * @param string $prompt A yes/no question to precede the list
- * @param sting $example A question for a comma separated list, with examples.
+ * @param string $example A question for a comma separated list, with examples.
  * @return array Array of values for property.
  */
 	protected function _doPropertyChoices($prompt, $example) {

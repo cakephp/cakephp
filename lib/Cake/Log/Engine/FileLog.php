@@ -43,7 +43,6 @@ class FileLog implements CakeLogInterface {
  * - `path` the path to save logs on.
  *
  * @param array $options Options for the FileLog, see above.
- * @return void
  */
 	function __construct($options = array()) {
 		$options += array('path' => LOGS);

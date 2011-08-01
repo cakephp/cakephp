@@ -317,7 +317,6 @@ class CakeResponse {
  *	- status: the HTTP status code to respond with
  *	- type: a complete mime-type string or an extension mapepd in this class
  *	- charset: the charset for the response body
- * @return void
  */
 	public function __construct(array $options = array()) {
 		if (isset($options['body'])) {

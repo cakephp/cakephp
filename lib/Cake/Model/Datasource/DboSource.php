@@ -79,7 +79,7 @@ class DboSource extends DataSource {
 /**
  * Error description of last query
  *
- * @var unknown_type
+ * @var string
  */
 	public $error = null;
 
@@ -93,14 +93,14 @@ class DboSource extends DataSource {
 /**
  * Number of rows in current resultset
  *
- * @var int
+ * @var integer
  */
 	public $numRows = null;
 
 /**
  * Time the last query took
  *
- * @var int
+ * @var integer
  */
 	public $took = null;
 
@@ -114,21 +114,21 @@ class DboSource extends DataSource {
 /**
  * Queries count.
  *
- * @var int
+ * @var integer
  */
 	protected $_queriesCnt = 0;
 
 /**
  * Total duration of all queries.
  *
- * @var unknown_type
+ * @var integer
  */
 	protected $_queriesTime = null;
 
 /**
  * Log of queries executed by this DataSource
  *
- * @var unknown_type
+ * @var array
  */
 	protected $_queriesLog = array();
 
@@ -137,7 +137,7 @@ class DboSource extends DataSource {
  *
  * This is to prevent query log taking over too much memory.
  *
- * @var int Maximum number of queries in the queries log.
+ * @var integer Maximum number of queries in the queries log.
  */
 	protected $_queriesLogMax = 200;
 
@@ -352,7 +352,7 @@ class DboSource extends DataSource {
  * are not sanitized or esacped.
  *
  * @param string $identifier A SQL expression to be used as an identifier
- * @return object An object representing a database identifier to be used in a query
+ * @return stdClass An object representing a database identifier to be used in a query
  */
 	public function identifier($identifier) {
 		$obj = new stdClass();
@@ -366,7 +366,7 @@ class DboSource extends DataSource {
  * are not sanitized or esacped.
  *
  * @param string $expression An arbitrary SQL expression to be inserted into a query.
- * @return object An object representing a database expression to be used in a query
+ * @return stdClass An object representing a database expression to be used in a query
  */
 	public function expression($expression) {
 		$obj = new stdClass();
@@ -1298,7 +1298,7 @@ class DboSource extends DataSource {
 /**
  * A more efficient way to fetch associations.	Woohoo!
  *
- * @param model $model Primary model object
+ * @param Model $model Primary model object
  * @param string $query Association query
  * @param array $ids Array of IDs of associated records
  * @return array Association results
@@ -1318,8 +1318,8 @@ class DboSource extends DataSource {
  * @param array $resultSet Data to merge into
  * @param array $merge Data to merge
  * @param string $association Name of Model being Merged
- * @param object $model Model being merged onto
- * @param object $linkModel Model being merged
+ * @param Model $model Model being merged onto
+ * @param Model $linkModel Model being merged
  * @return void
  */
 	private function __mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
@@ -1666,7 +1666,7 @@ class DboSource extends DataSource {
  * Builds and generates an SQL statement from an array.	 Handles final clean-up before conversion.
  *
  * @param array $query An array defining an SQL query
- * @param object $model The model object which initiated the query
+ * @param Model $model The model object which initiated the query
  * @return string An executable SQL statement
  * @see DboSource::renderStatement()
  */
@@ -1930,7 +1930,7 @@ class DboSource extends DataSource {
 /**
  * Returns an array of SQL JOIN fragments from a model's associations
  *
- * @param object $model
+ * @param Model $model
  * @return array
  */
 	protected function _getJoins($model) {
@@ -1957,7 +1957,7 @@ class DboSource extends DataSource {
 /**
  * Returns an SQL calculation, i.e. COUNT() or MAX()
  *
- * @param model $model
+ * @param Model $model
  * @param string $func Lowercase name of SQL function, i.e. 'count' or 'max'
  * @param array $params Function parameters (any values must be quoted manually)
  * @return string An SQL calculation function
@@ -2072,7 +2072,7 @@ class DboSource extends DataSource {
  * If conditions are supplied then they will be returned.  If a model doesn't exist and no conditions
  * were provided either null or false will be returned based on what was input.
  *
- * @param object $model
+ * @param Model $model
  * @param mixed $conditions Array of conditions, conditions string, null or false. If an array of conditions,
  *   or string conditions those conditions will be returned.  With other values the model's existance will be checked.
  *   If the model doesn't exist a null or false will be returned depending on the input value.
@@ -2636,7 +2636,7 @@ class DboSource extends DataSource {
  *
  * @param string $group Group By Condition
  * @param Model $model
- * @return null|string string condition or null
+ * @return string string condition or null
  */
 	public function group($group, $model = null) {
 		if ($group) {
@@ -2796,7 +2796,7 @@ class DboSource extends DataSource {
 /**
  * Generate a database-native schema for the given Schema object
  *
- * @param object $schema An instance of a subclass of CakeSchema
+ * @param Model $schema An instance of a subclass of CakeSchema
  * @param string $tableName Optional.  If specified only the table name given will be generated.
  *   Otherwise, all tables defined in the schema are generated.
  * @return string
@@ -3119,7 +3119,6 @@ class DboSource extends DataSource {
 /**
  * Used for storing in cache the results of the in-memory methodCache
  *
- * @return void
  */
 	public function __destruct() {
 		if ($this->_methodCacheChange) {
