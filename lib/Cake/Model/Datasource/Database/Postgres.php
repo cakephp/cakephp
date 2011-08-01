@@ -678,7 +678,7 @@ class Postgres extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * resultSet method
  *
  * @param array $results
  * @return void

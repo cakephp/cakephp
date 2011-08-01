@@ -96,9 +96,9 @@ class DboOracle extends DboSource {
 	protected $_offset = 0;
 
 /**
- * Enter description here...
+ * Map
  *
- * @var unknown_type
+ * @var array
  */
 	protected $_map;
 
@@ -958,7 +958,7 @@ class DboOracle extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * queryAssociation method
  *
  * @param Model $model
  * @param Model $linkModel
