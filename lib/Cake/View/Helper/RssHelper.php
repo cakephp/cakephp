@@ -24,6 +24,7 @@ App::uses('Xml', 'Utility');
  * RSS Helper class for easy output RSS structures.
  *
  * @package       Cake.View.Helper
+ * @property      TimeHelper $Time
  * @link http://book.cakephp.org/view/1460/RSS
  */
 class RssHelper extends AppHelper {

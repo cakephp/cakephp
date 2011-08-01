@@ -27,6 +27,7 @@ App::uses('AppHelper', 'View/Helper');
  * Automatic generation of HTML FORMs from given data.
  *
  * @package       Cake.View.Helper
+ * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/view/1383/Form
  */
 class FormHelper extends AppHelper {

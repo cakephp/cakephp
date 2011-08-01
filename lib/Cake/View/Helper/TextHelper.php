@@ -33,6 +33,7 @@ App::uses('Multibyte', 'I18n');
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @package       Cake.View.Helper
+ * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/view/1469/Text
  */
 class TextHelper extends AppHelper {

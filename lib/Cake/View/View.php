@@ -34,6 +34,16 @@ App::uses('Router', 'Routing');
  * layout using `$this->set()`
  *
  * @package       Cake.View
+ * @property      CacheHelper $Cache
+ * @property      FormHelper $Form
+ * @property      HtmlHelper $Html
+ * @property      JsHelper $Js
+ * @property      NumberHelper $Number
+ * @property      PaginatorHelper $Paginator
+ * @property      RssHelper $Rss
+ * @property      SessionHelper $Session
+ * @property      TextHelper $Text
+ * @property      TimeHelper $Time
  */
 class View extends Object {
 

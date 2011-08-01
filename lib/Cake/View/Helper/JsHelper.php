@@ -28,6 +28,8 @@ App::uses('Multibyte', 'I18n');
  * given client-side library.
  *
  * @package       Cake.View.Helper
+ * @property      HtmlHelper $Html
+ * @property      FormHelper $Form
  */
 class JsHelper extends AppHelper {
 /**

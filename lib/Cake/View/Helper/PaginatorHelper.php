@@ -25,6 +25,7 @@ App::uses('AppHelper', 'View/Helper');
  * PaginationHelper encloses all methods needed when working with pagination.
  *
  * @package       Cake.View.Helper
+ * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/view/1458/Paginator
  */
 class PaginatorHelper extends AppHelper {

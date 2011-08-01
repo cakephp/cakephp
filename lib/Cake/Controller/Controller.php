@@ -47,7 +47,15 @@ App::uses('View', 'View');
  * using Router::connect().
  *
  * @package       Cake.Controller
- * @link       http://book.cakephp.org/view/956/Introduction
+ * @property      AclComponent $Acl
+ * @property      AuthComponent $Auth
+ * @property      CookieComponent $Cookie
+ * @property      EmailComponent $Email
+ * @property      PaginatorComponent $Paginator
+ * @property      RequestHandlerComponent $RequestHandler
+ * @property      SecurityComponent $Security
+ * @property      SessionComponent $Session
+ * @link          http://book.cakephp.org/view/956/Introduction
  */
 class Controller extends Object {
 
