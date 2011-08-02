@@ -754,7 +754,7 @@ class View extends Object {
 				$cache->layout = $this->layout;
 				$cache->cacheAction = $this->cacheAction;
 				$cache->viewVars = $this->viewVars;
-				$cache->cache($___viewFn, $out, $cached);
+				$out = $cache->cache($___viewFn, $out, $cached);
 			}
 		}
 		return $out;

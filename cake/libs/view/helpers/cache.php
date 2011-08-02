@@ -57,6 +57,13 @@ class CacheHelper extends AppHelper {
 	var $cacheAction;
 
 /**
+ * Counter used for counting nocache section tags.
+ *
+ * @var integer
+ */
+	var $_counter = 0;
+
+/**
  * Main method used to cache a view
  *
  * @param string $file File to cache
@@ -101,10 +108,13 @@ class CacheHelper extends AppHelper {
 		}
 
 		if ($cacheTime != '' && $cacheTime > 0) {
+			$out = preg_replace_callback('/<cake\:nocache>/', array($this, '_replaceSection'), $out);
+
 			$this->__parseFile($file, $out);
 			if ($cache === true) {
 				$cached = $this->__parseOutput($out);
 				$this->__writeFile($cached, $cacheTime, $useCallbacks);
+				$out = $this->_stripTags($out);
 			}
 			return $out;
 		} else {
@@ -125,7 +135,8 @@ class CacheHelper extends AppHelper {
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-		preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
+
+		preg_match_all('/(<cake:nocache:\d{3}>(?<=<cake:nocache:\d{3}>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
 		preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $fileResult, PREG_PATTERN_ORDER);
 		$fileResult = $fileResult[0];
 		$outputResult = $outputResult[0];
@@ -150,6 +161,30 @@ class CacheHelper extends AppHelper {
 				$i++;
 			}
 		}
+	}
+
+/**
+ * Munges the output from a view with cache tags, and numbers the sections.
+ * This helps solve issues with empty/duplicate content.
+ *
+ * @param string $content The content to munge.
+ * @return string The content with cake:nocache tags replaced.
+ */
+	function _replaceSection($matches) {
+		$this->_counter += 1;
+		return sprintf('<cake:nocache:%03d>', $this->_counter);
+	}
+
+/**
+ * Strip cake:nocache tags from a string. Since View::render()
+ * only removes un-numbered nocache tags, remove all the numbered ones.
+ * This is the complement to _replaceSection.
+ *
+ * @param string $content String to remove tags from.
+ * @return string String with tags removed.
+ */
+	function _stripTags($content) {
+		return preg_replace('#<\/?cake\:nocache(\:\d{3})?>#', '', $content);
 	}
 
 /**
