@@ -97,7 +97,8 @@ class Contact extends CakeTestModel {
 		'password' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
+		'age' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -881,6 +882,36 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			array('input' => array(
 				'type' => 'text', 'name' => 'data[Contact][foo]',
+				'id' => 'ContactFoo'
+			)),
+			'/div'
+		);
+	}
+	
+/**
+ * Tests correct generation of text fields for double and float fields
+ *
+ * @access public
+ * @return void
+ */
+	public function testTextFieldTypeNumberGenerationForIntegers() {
+		$model = ClassRegistry::getObject('Contact');
+		$model->setSchema(array('foo' => array(
+			'type' => 'integer',
+			'null' => false,
+			'default' => null,
+			'length' => null
+		)));
+
+		$this->Form->create('Contact');
+		$result = $this->Form->input('foo');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactFoo'),
+			'Foo',
+			'/label',
+			array('input' => array(
+				'type' => 'number', 'name' => 'data[Contact][foo]',
 				'id' => 'ContactFoo'
 			)),
 			'/div'
