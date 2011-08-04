@@ -99,18 +99,23 @@ class ProjectTask extends Shell {
 			}
 
 			$hardCode = false;
-			if (!$this->cakeOnIncludePath()) {
+			if ($this->cakeOnIncludePath()) {
+				$this->out(__d('cake_console', '<info>CakePHP is on your `include_path`. CAKE_CORE_INCLUDE_PATH will be set, but commented out.</info>'));
+			} else {
 				$this->out(__d('cake_console', '<warning>CakePHP is not on your `include_path`, CAKE_CORE_INCLUDE_PATH will be hard coded.</warning>'));
 				$this->out(__d('cake_console', 'You can fix this by adding CakePHP to your `include_path`.'));
 				$hardCode = true;
 			}
-			if ($this->corePath($path, $hardCode) === true) {
+			$success = $this->corePath($path, $hardCode) === true;
+			if ($success) {
 				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
 				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
 			} else {
 				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
 				$success = false;
+			}
+			if ($success && $hardCode) {
+				$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
 			}
 
 			$Folder = new Folder($path);
