@@ -389,7 +389,7 @@ class Shell extends Object {
 		$format = 'text';
 		if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
 			$format = 'xml';
-			$this->output->outputAs(ConsoleOutput::RAW);
+			$this->stdout->outputAs(ConsoleOutput::RAW);
 		} else {
 			$this->_welcome();
 		}
