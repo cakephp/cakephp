@@ -497,6 +497,16 @@ TEXT;
 	}
 
 /**
+ * test that command() inflects the command name.
+ *
+ * @return void
+ */
+	public function testCommandInflection() {
+		$parser = new ConsoleOptionParser('CommandLine');
+		$this->assertEquals('command_line', $parser->command());
+	}
+
+/**
  * test that parse() takes a subcommand argument, and that the subcommand parser
  * is used.
  *

@@ -124,7 +124,7 @@ class ConsoleOptionParser {
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
 	public function __construct($command = null, $defaultOptions = true) {
-		$this->_command = $command;
+		$this->command($command);
 
 		$this->addOption('help', array(
 			'short' => 'h',
@@ -206,7 +206,7 @@ class ConsoleOptionParser {
  */
 	public function command($text = null) {
 		if ($text !== null) {
-			$this->_command = $text;
+			$this->_command = Inflector::underscore($text);
 			return $this;
 		}
 		return $this->_command;
