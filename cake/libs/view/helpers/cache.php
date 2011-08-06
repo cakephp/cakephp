@@ -277,7 +277,8 @@ class CacheHelper extends AppHelper {
 				$controller->constructClasses();
 				$controller->Component->initialize($controller);
 				$controller->beforeFilter();
-				$controller->Component->startup($controller);';
+				$controller->Component->startup($controller);
+				$this->params = $controller->params;';
 		}
 
 		$file .= '
