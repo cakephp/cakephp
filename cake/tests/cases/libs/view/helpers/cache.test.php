@@ -241,6 +241,39 @@ class CacheHelperTest extends CakeTestCase {
 		//$this->assertPattern('/6\. in element with no cache tags/', $contents);
 		$this->assertPattern('/7\. layout after content and after element with no cache tags/', $contents);
 	}
+	
+	function testCacheCallbacks() {
+		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->Controller->cacheAction = array(
+			'cache_parsing' => array(
+				'duration' => 21600,
+				'callbacks' => true
+			)
+		);
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+
+		$contents = file_get_contents($filename);
+
+		$this->assertPattern('/\$controller->beforeFilter\(\);/', $contents);
+		$this->assertPattern('/\$this->params = \$controller->params;/', $contents);
+
+		@unlink($filename);
+	}
+
 /**
  * test cacheAction set to a boolean
  *
