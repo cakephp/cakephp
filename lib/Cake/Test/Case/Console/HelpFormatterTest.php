@@ -211,6 +211,54 @@ TEXT;
 	}
 
 /**
+ * Test that a long set of options doesn't make useless output.
+ *
+ * @return void
+ */
+	public function testHelpWithLotsOfOptions() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser
+			->addOption('test', array('help' => 'A test option.'))
+			->addOption('test2', array('help' => 'A test option.'))
+			->addOption('test3', array('help' => 'A test option.'))
+			->addOption('test4', array('help' => 'A test option.'))
+			->addOption('test5', array('help' => 'A test option.'))
+			->addOption('test6', array('help' => 'A test option.'))
+			->addOption('test7', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
+		$expected = 'cake mycommand [options] <model> [<other_longer>]';
+		$this->assertContains($expected, $result);
+	}
+
+/**
+ * Test that a long set of arguments doesn't make useless output.
+ *
+ * @return void
+ */
+	public function testHelpWithLotsOfArguments() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser
+			->addArgument('test', array('help' => 'A test option.'))
+			->addArgument('test2', array('help' => 'A test option.'))
+			->addArgument('test3', array('help' => 'A test option.'))
+			->addArgument('test4', array('help' => 'A test option.'))
+			->addArgument('test5', array('help' => 'A test option.'))
+			->addArgument('test6', array('help' => 'A test option.'))
+			->addArgument('test7', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
+		$expected = 'cake mycommand [-h] [arguments]';
+		$this->assertContains($expected, $result);
+	}
+
+/**
  * test help() with options and arguments that have choices.
  *
  * @return void
