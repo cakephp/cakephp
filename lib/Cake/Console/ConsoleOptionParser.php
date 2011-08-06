@@ -572,7 +572,7 @@ class ConsoleOptionParser {
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
 		$nextValue = $this->_nextToken();
-		if (!$isBoolean && !empty($nextValue) && $nextValue{0} != '-') {
+		if (!$isBoolean && !empty($nextValue) && !$this->_optionExists($nextValue)) {
 			array_shift($this->_tokens);
 			$value = $nextValue;
 		} elseif ($isBoolean) {
@@ -584,6 +584,23 @@ class ConsoleOptionParser {
 			$params[$name] = $value;
 			return $params;
 		}
+	}
+
+
+/**
+ * Check to see if $name has an option (short/long) defined for it.
+ *
+ * @param string $name The name of the option.
+ * @return boolean
+ */
+	protected function _optionExists($name) {
+		if (substr($name, 0, 2) === '--') {
+			return isset($this->_options[substr($name, 2)]);
+		}
+		if ($name{0} === '-' && $name{1} !== '-') {
+			return isset($this->_shortOptions[$name{1}]);
+		}
+		return false;
 	}
 
 /**

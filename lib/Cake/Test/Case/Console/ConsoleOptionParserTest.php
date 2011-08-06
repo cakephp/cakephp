@@ -268,6 +268,21 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure that option values can start with -
+ *
+ * @return void
+ */
+	public function testOptionWithValueStartingWithMinus() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption('name')
+			->addOption('age');
+
+		$result = $parser->parse(array('--name', '-foo', '--age', 'old'));
+		$expected = array('name' => '-foo', 'age' => 'old', 'help' => false);
+		$this->assertEquals($expected, $result[0], 'Option values starting with "-" are broken.');
+	}
+
+/**
  * test positional argument parsing.
  *
  * @return void
