@@ -140,6 +140,18 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * Test that adding an option using a two letter short value causes an exception.
+ * As they will not parse correctly.
+ *
+ * @expectedException ConsoleException
+ * @return void
+ */
+	public function testAddOptionShortOneLetter() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption('test', array('short' => 'te'));
+	}
+
+/**
  * test adding and using boolean options.
  *
  * @return void

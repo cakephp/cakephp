@@ -41,7 +41,8 @@ App::uses('HelpFormatter', 'Console');
  *
  * Options can be defined with both long and short forms.  By using `$parser->addOption()`
  * you can define new options.  The name of the option is used as its long form, and you
- * can supply an additional short form, with the `short` option.
+ * can supply an additional short form, with the `short` option. Short options should
+ * only be one letter long.  Using more than one letter for a short option will raise an exception.
  *
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
  * cane either include an `=` or leave it out.
@@ -51,6 +52,15 @@ App::uses('HelpFormatter', 'Console');
  * Short options can be defined signally or in groups.
  *
  * `cake myshell command -cn`
+ *
+ * Short options can be combined into groups as seen above.  Each letter in a group
+ * will be treated as a separate option.  The previous example is equivalent to:
+ *
+ * `cake myshell command -c -n`
+ *
+ * Short options can also accept values:
+ *
+ * `cake myshell command -c default`
  *
  * ### Positional arguments
  *
