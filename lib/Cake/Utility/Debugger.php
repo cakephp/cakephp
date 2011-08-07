@@ -191,14 +191,15 @@ class Debugger {
 	}
 
 /**
- * Formats and outputs the contents of the supplied variable.
+ * Recursively formats and outputs the contents of the supplied variable.
+ *
  *
  * @param $var mixed the variable to dump
  * @return void
  * @see Debugger::exportVar()
  * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
-*/
+ */
 	public static function dump($var) {
 		pr(self::exportVar($var));
 	}
@@ -405,12 +406,22 @@ class Debugger {
 	}
 
 /**
- * Grabs an excerpt from a file and highlights a given line of code
+ * Grabs an excerpt from a file and highlights a given line of code.
+ *
+ * Usage:
+ *
+ * `Debugger::excerpt('/path/to/file', 100, 4);`
+ *
+ * The above would return an array of 8 items. The 4th item would be the provided line,
+ * and would be wrapped in `<span class="code-highlight"></span>`.  All of the lines
+ * are processed with highlight_string() as well, so they have basic PHP syntax highlighting
+ * applied.
  *
  * @param string $file Absolute path to a PHP file
  * @param integer $line Line number to highlight
  * @param integer $context Number of lines of context to extract above and below $line
  * @return array Set of lines highlighted
+ * @see http://php.net/highlight_string
  * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
@@ -440,6 +451,20 @@ class Debugger {
 
 /**
  * Converts a variable to a string for debug output.
+ *
+ * *Note:* The following keys will have their contents replaced with 
+ * `*****`:
+ *
+ *  - password
+ *  - login
+ *  - host
+ *  - database
+ *  - port
+ *  - prefix
+ *  - schema
+ *
+ * This is done to protect database credentials, which could be accidentally
+ * shown in an error message if CakePHP is deployed in development mode.
  *
  * @param string $var Variable to convert
  * @return string Variable as a formatted string
