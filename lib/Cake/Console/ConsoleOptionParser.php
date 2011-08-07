@@ -127,6 +127,13 @@ class ConsoleOptionParser {
 	protected $_subcommands = array();
 
 /**
+ * Command name.
+ *
+ * @var string
+ */
+	protected $_command = '';
+
+/**
  * Construct an OptionParser so you can define its behavior
  *
  * @param string $command The command name this parser is for.  The command name is used for generating help.
