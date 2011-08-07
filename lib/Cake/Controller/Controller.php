@@ -491,7 +491,7 @@ class Controller extends Object {
 
 		if (!$privateAction && !empty($prefixes)) {
 			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
-				list($prefix, $action) = explode('_', $request->params['action']);
+				list($prefix) = explode('_', $request->params['action']);
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
@@ -877,7 +877,7 @@ class Controller extends Object {
 			$currentObject = ClassRegistry::getObject($currentModel);
 			if (is_a($currentObject, 'Model')) {
 				$className = get_class($currentObject);
-				list($plugin, $package) = pluginSplit(App::location($className));
+				list($plugin) = pluginSplit(App::location($className));
 				$this->request->params['models'][$currentObject->alias] = compact('plugin', 'className');
 				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}

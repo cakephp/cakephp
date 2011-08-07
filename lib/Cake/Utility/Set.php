@@ -131,27 +131,6 @@ class Set {
 	}
 
 /**
- * Get the array value of $array. If $array is null, it will return
- * the current array Set holds. If it is an object of type Set, it
- * will return its value. If it is another object, its object variables.
- * If it is anything else but an array, it will return an array whose first
- * element is $array.
- *
- * @param mixed $array Data from where to get the array.
- * @return array Array from $array.
- */
-	private function __array($array) {
-		if (empty($array)) {
-			$array = array();
-		} elseif (is_object($array)) {
-			$array = get_object_vars($array);
-		} elseif (!is_array($array)) {
-			$array = array($array);
-		}
-		return $array;
-	}
-
-/**
  * Maps the given value as an object. If $value is an object,
  * it returns $value. Otherwise it maps $value as an object of
  * type $class, and if primary assign _name_ $key on first array.

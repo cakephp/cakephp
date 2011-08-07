@@ -320,7 +320,7 @@ class Configure {
  */
 	public static function version() {
 		if (!isset(self::$_values['Cake']['version'])) {
-			require(CAKE . 'Config' . DS . 'config.php');
+			require CAKE . 'Config' . DS . 'config.php';
 			self::write($config);
 		}
 		return self::$_values['Cake']['version'];

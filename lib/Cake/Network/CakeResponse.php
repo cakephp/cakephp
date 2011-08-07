@@ -572,7 +572,6 @@ class CakeResponse {
 		if (is_array($ctype)) {
 			return array_map(array($this, 'mapType'), $ctype);
 		}
-		$keys = array_keys($this->_mimeTypes);
 
 		foreach ($this->_mimeTypes as $alias => $types) {
 			if (is_array($types) && in_array($ctype, $types)) {

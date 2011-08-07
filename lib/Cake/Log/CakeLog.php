@@ -190,7 +190,7 @@ class CakeLog {
 		if (empty(self::$_streams)) {
 			self::_autoConfig();
 		}
-		foreach (self::$_streams as $key => $logger) {
+		foreach (self::$_streams as $logger) {
 			$logger->write($type, $message);
 		}
 		return true;
