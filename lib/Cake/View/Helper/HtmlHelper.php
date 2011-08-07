@@ -156,7 +156,16 @@ class HtmlHelper extends AppHelper {
 	);
 
 /**
- * Default Constructor
+ * Constructor
+ *
+ * ### Settings
+ *
+ * - `configFile` A file containing an array of tags you wish to redefine.
+ *
+ * ### Customizing tag sets
+ *
+ * Using the `configFile` option you can redefine the tag HtmlHelper will use.
+ * The file named should be compatible with HtmlHelper::loadConfig().
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
@@ -357,6 +366,20 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link element for CSS stylesheets.
  *
+ * ### Usage
+ *
+ * Include one CSS file:
+ *
+ * `echo $this->Html->css('styles.css');`
+ *
+ * Include multiple CSS files:
+ *
+ * `echo $this->Html->css(array('one.css', 'two.css'));`
+ *
+ * Add the stylesheet to the `$scripts_for_layout` layout var:
+ *
+ * `$this->Html->css('styles.css', null, array('inline' => false));`
+ *
  * ### Options
  *
  * - `inline` If set to false, the generated tag appears in the head tag of the layout. Defaults to true
@@ -427,7 +450,20 @@ class HtmlHelper extends AppHelper {
  * If the filename is prefixed with "/", the path will be relative to the base path of your
  * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
  *
- * Can include one or many Javascript files.
+ *
+ * ### Usage
+ *
+ * Include one script file:
+ *
+ * `echo $this->Html->script('styles.js');`
+ *
+ * Include multiple script files:
+ *
+ * `echo $this->Html->script(array('one.js', 'two.js'));`
+ *
+ * Add the script file to the `$scripts_for_layout` layout var:
+ *
+ * `$this->Html->script('styles.js', null, array('inline' => false));`
  *
  * ### Options
  *
@@ -922,7 +958,39 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Load Html configs
+ * Load Html tag configuration.
+ *
+ * Loads a file from APP/Config that contains tag data.  By default the file is expected
+ * to be compatible with PhpReader:
+ *
+ * `$this->Html->loadConfig('tags.php');`
+ *
+ * tags.php could look like:
+ *
+ * {{{
+ * $tags = array(
+ *		'meta' => '<meta %s>'
+ * );
+ * }}}
+ *
+ * If you wish to store tag definitions in another format you can give an array
+ * containing the file name, and reader class name:
+ *
+ * `$this->Html->loadConfig(array('tags.ini', 'ini'));`
+ *
+ * Its expected that the `tags` index will exist from any configuration file that is read.
+ * You can also specify the path to read the configuration file from, if APP/Config is not
+ * where the file is.
+ *
+ * `$this->Html->loadConfig('tags.php', APP . 'Lib' . DS);`
+ *
+ * Configuration files can define the following sections:
+ *
+ * - `tags` The tags to replace.
+ * - `minimizedAttributes` The attributes that are represented like `disabled="disabled"`
+ * - `docTypes` Additional doctypes to use.
+ * - `attributeFormat` Format for long attributes e.g. `'%s="%s"'`
+ * - `minimizedAttributeFormat` Format for minimized attributes e.g. `'%s="%s"'`
  *
  * @param mixed $configFile String with the config file (load using PhpReader) or an array with file and reader name
  * @param string $path Path with config file
