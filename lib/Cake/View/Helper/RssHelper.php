@@ -187,7 +187,7 @@ class RssHelper extends AppHelper {
 /**
  * Converts an array into an `<item />` element and its contents
  *
- * @param array $attrib The attributes of the `<item />` element
+ * @param array $att The attributes of the `<item />` element
  * @param array $elements The list of elements contained in this `<item />`
  * @return string An RSS `<item />` element
  */
