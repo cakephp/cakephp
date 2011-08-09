@@ -1073,9 +1073,7 @@ class FormHelper extends AppHelper {
 				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
 			break;
 			case 'url':
-				$options = $this->_initInputField($fieldName, $options);
-				$options['type'] = 'url';
-				$input = $this->Html->useTag('input', $options['name'], $options);
+				$input = $this->text($fieldName, array('type' => 'url') + $options);
 			break;
 			default:
 				$input = $this->{$type}($fieldName, $options);
