@@ -90,7 +90,9 @@ class CakeSchema extends Object {
 		}
 
 		if (strtolower($this->name) === 'cake') {
-			$this->name = Inflector::camelize(Inflector::slug(Configure::read('App.dir')));
+			$cm = new ConnectionManager;
+			$dbname = $cm->config->default['database'];
+			$this->name = Inflector::camelize(Inflector::slug($dbname));
 		}
 
 		if (empty($options['path'])) {
