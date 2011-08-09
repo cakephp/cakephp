@@ -991,6 +991,32 @@ class SetTest extends CakeTestCase {
 		);
 		$result = Set::extract('/Category[id=1]/..', $data);
 		$this->assertEqual($expected, $result);
+
+		$data = array(
+			array(
+				'ChildNode' => array('id' => 1),
+				array('name' => 'Item 1')
+			),
+			array(
+				'ChildNode' => array('id' => 2),
+				array('name' => 'Item 2')
+			),
+		);
+
+		$expected = array(
+			'Item 1',
+			'Item 2'
+		);
+		$result = Set::extract('/0/name', $data);
+		$this->assertEqual($expected, $result);
+
+		$data = array(
+			array('A1', 'B1'),
+			array('A2', 'B2')
+		);
+		$expected = array('A1', 'A2');
+		$result =  Set::extract('/0', $data);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
