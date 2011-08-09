@@ -368,7 +368,7 @@ class Folder {
 					if (@chmod($fullpath, intval($mode, 8))) {
 						$this->__messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
 					} else {
-						$this->__errors[] = __d('cake_deverloper', '%s NOT changed to %s', $fullpath, $mode);
+						$this->__errors[] = __d('cake_dev', '%s NOT changed to %s', $fullpath, $mode);
 					}
 				}
 			}
