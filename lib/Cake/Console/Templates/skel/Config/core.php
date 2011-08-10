@@ -247,7 +247,6 @@
  * 		'serialize' => true, [optional]
  *	));
  *
- *
  * APC (http://pecl.php.net/package/APC)
  *
  * 	 Cache::config('default', array(
@@ -263,11 +262,10 @@
  *		'engine' => 'Xcache', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
- * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
+ *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
  *		'user' => 'user', //user from xcache.admin.user settings
- *      'password' => 'password', //plaintext password (xcache.admin.pass)
+ *		'password' => 'password', //plaintext password (xcache.admin.pass)
  *	));
- *
  *
  * Memcache (http://www.danga.com/memcached/)
  *
@@ -281,9 +279,16 @@
  * 		), //[optional]
  * 		'persistent' => true, // [optional] set this to false for non-persistent connections
  * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
- * 		'persistent' => true, // [optional] set this to false for non-persistent connections
  *	));
+ * 
+ *  Wincache (http://php.net/wincache)
  *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Wincache', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ *	));
  */
 
 /**
@@ -315,7 +320,7 @@ Cache::config('_cake_core_', array(
 ));
 
 /**
- * Configure the cache for model, and datasource caches.  This cache configuration
+ * Configure the cache for model and datasource caches.  This cache configuration
  * is used to store schema descriptions, and table listings in connections.
  */
 Cache::config('_cake_model_', array(
