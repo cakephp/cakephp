@@ -200,7 +200,7 @@ class FormHelper extends AppHelper {
 			}
 
 			if ($key === 'key') {
-				return $this->fieldset[$model]['key'];
+				return $this->fieldset[$model]['key'] = $object->primaryKey;
 			}
 
 			if ($key === 'fields') {
