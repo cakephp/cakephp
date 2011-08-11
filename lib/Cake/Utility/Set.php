@@ -565,12 +565,13 @@ class Set {
 			return $data;
 		}
 		if (is_object($data)) {
-			$data = get_object_vars($data);
+			if (!($data instanceof ArrayAccess || $data instanceof Traversable)) {
+				$data = get_object_vars($data);
+			}
 		}
-		if (!is_array($data)) {
-			return $data;
+		if (empty($data)) {
+			return null;
 		}
-
 		if (is_string($path) && strpos($path, '{') !== false) {
 			$path = String::tokenize($path, '.', '{', '}');
 		} elseif (is_string($path)) {
@@ -877,7 +878,9 @@ class Set {
 		}
 
 		if (is_object($data)) {
-			$data = get_object_vars($data);
+			if (!($data instanceof ArrayAccess || $data instanceof Traversable)) {
+				$data = get_object_vars($data);
+			}
 		}
 
 		if (is_array($path1)) {

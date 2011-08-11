@@ -299,10 +299,10 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller2/action3'), '{n}.DbAcoTest.id');
-		$this->assertFalse($result);
+		$this->assertNull($result);
 
 		$result = Set::extract($Aco->node('Controller2/action3/record5'), '{n}.DbAcoTest.id');
-		$this->assertFalse($result);
+		$this->assertNull($result);
 
 		$result = $Aco->node('');
 		$this->assertEqual($result, null);
