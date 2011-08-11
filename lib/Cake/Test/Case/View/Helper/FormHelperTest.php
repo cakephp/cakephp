@@ -5702,6 +5702,35 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that postButton adds _Token fields.
+ *
+ * @return void
+ */
+	public function testSecurePostButton() {
+		$this->Form->request->params['_Token'] = array('key' => 'testkey');
+
+		$result = $this->Form->postButton('Delete', '/posts/delete/1');
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1', 'accept-charset' => 'utf-8',
+				'style' => 'display:none;'
+			),
+			array('div' => array('style' => 'display:none;')),
+			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			'/div',
+			'button' => array('type' => 'submit'),
+			'Delete',
+			'/button',
+			array('div' => array('style' => 'display:none;')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			'/div',
+			'/form',
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
  * testPostLink method
  *
  * @return void
