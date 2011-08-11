@@ -23,18 +23,17 @@ if (!defined('E_DEPRECATED')) {
 }
 error_reporting(E_ALL & ~E_DEPRECATED);
 
-/**
- * If the index.php file is used instead of an .htaccess file
- * or if the user can not set the web root to use the public
- * directory we will define ROOT there, otherwise we set it
- * here.
- */
-	if (!defined('ROOT')) {
-		define('ROOT', '../');
-	}
-	if (!defined('WEBROOT_DIR')) {
-		define('WEBROOT_DIR', 'webroot');
-	}
+if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+	define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(__FILE__)));
+}
+
+if (!defined('CORE_PATH')) {
+	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+}
+
+if (!defined('WEBROOT_DIR')) {
+	define('WEBROOT_DIR', 'webroot');
+}
 
 /**
  * Path to the cake directory.

@@ -613,7 +613,7 @@ class CakeRequest implements ArrayAccess {
 		$acceptTypes = explode(',', $this->header('accept'));
 		foreach ($acceptTypes as $i => $accepted) {
 			if (strpos($accepted, ';') !== false) {
-				list($accepted, $prefValue) = explode(';', $accepted);
+				list($accepted) = explode(';', $accepted);
 				$acceptTypes[$i] = $accepted;
 			}
 		}

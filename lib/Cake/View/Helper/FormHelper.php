@@ -439,18 +439,7 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		if (!empty($this->request->params['_Token'])) {
-			$append .= $this->hidden('_Token.key', array(
-				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
-				'secure' => self::SECURE_SKIP
-			));
-
-			if (!empty($this->request['_Token']['unlockedFields'])) {
-				foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
-					$this->_unlockedFields[] = $unlocked;
-				}
-			}
-		}
+		$append .= $this->_csrfField();
 
 		if (!empty($append)) {
 			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
@@ -460,6 +449,27 @@ class FormHelper extends AppHelper {
 			$this->setEntity($model, true);
 		}
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
+	}
+
+/**
+ * Return a CSRF input if the _Token is present.
+ * Used to secure forms in conjunction with SecurityComponent
+ *
+ * @return string
+ */
+	protected function _csrfField() {
+		if (empty($this->request->params['_Token'])) {
+			return '';
+		}
+		if (!empty($this->request['_Token']['unlockedFields'])) {
+			foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
+				$this->_unlockedFields[] = $unlocked;
+			}
+		}
+		return $this->hidden('_Token.key', array(
+			'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
+			'secure' => self::SECURE_SKIP
+		));
 	}
 
 /**
@@ -917,7 +927,8 @@ class FormHelper extends AppHelper {
 					'string'  => 'text',	 'datetime'  => 'datetime',
 					'boolean' => 'checkbox', 'timestamp' => 'datetime',
 					'text'	=> 'textarea', 'time'	  => 'time',
-					'date'	=> 'date',	 'float'	 => 'text'
+					'date'	=> 'date',	 'float'	 => 'number',
+					'integer' => 'number'
 				);
 
 				if (isset($this->map[$type])) {
@@ -1070,6 +1081,9 @@ class FormHelper extends AppHelper {
 			break;
 			case 'textarea':
 				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
+			break;
+			case 'url':
+				$input = $this->text($fieldName, array('type' => 'url') + $options);
 			break;
 			default:
 				$input = $this->{$type}($fieldName, $options);
@@ -1507,13 +1521,18 @@ class FormHelper extends AppHelper {
 		$formName = uniqid('post_');
 		$formUrl = $this->url($url);
 		$out = $this->Html->useTag('form', $formUrl, array('name' => $formName, 'id' => $formName, 'style' => 'display:none;', 'method' => 'post'));
-		$out .= $this->Html->useTag('block', ' style="display:none;"', $this->Html->useTag('hidden', '_method', ' value="POST"'));
+		$out .= $this->Html->useTag('hidden', '_method', ' value="POST"');
+		$out .= $this->_csrfField();
+
+		$fields = array();
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
+				$fields[$key] = $value;
 				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
 			}
 			unset($options['data']);
 		}
+		$out .= $this->secure($fields);
 		$out .= $this->Html->useTag('formend');
 
 		$url = '#';

@@ -73,7 +73,7 @@ class AclBehavior extends ModelBehavior {
 		if (empty($type)) {
 			$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 			if (is_array($type)) {
-				trigger_error(__('AclBehavior is setup with more then one type, please specify type parameter for node()', true), E_USER_WARNING);
+				trigger_error(__d('cake_dev', 'AclBehavior is setup with more then one type, please specify type parameter for node()'), E_USER_WARNING);
 				return null;
 			}
 		}

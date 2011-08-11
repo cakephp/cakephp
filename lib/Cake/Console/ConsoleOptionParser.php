@@ -41,7 +41,8 @@ App::uses('HelpFormatter', 'Console');
  *
  * Options can be defined with both long and short forms.  By using `$parser->addOption()`
  * you can define new options.  The name of the option is used as its long form, and you
- * can supply an additional short form, with the `short` option.
+ * can supply an additional short form, with the `short` option. Short options should
+ * only be one letter long.  Using more than one letter for a short option will raise an exception.
  *
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
  * cane either include an `=` or leave it out.
@@ -51,6 +52,15 @@ App::uses('HelpFormatter', 'Console');
  * Short options can be defined signally or in groups.
  *
  * `cake myshell command -cn`
+ *
+ * Short options can be combined into groups as seen above.  Each letter in a group
+ * will be treated as a separate option.  The previous example is equivalent to:
+ *
+ * `cake myshell command -c -n`
+ *
+ * Short options can also accept values:
+ *
+ * `cake myshell command -c default`
  *
  * ### Positional arguments
  *
@@ -117,6 +127,13 @@ class ConsoleOptionParser {
 	protected $_subcommands = array();
 
 /**
+ * Command name.
+ *
+ * @var string
+ */
+	protected $_command = '';
+
+/**
  * Construct an OptionParser so you can define its behavior
  *
  * @param string $command The command name this parser is for.  The command name is used for generating help.
@@ -124,7 +141,7 @@ class ConsoleOptionParser {
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
 	public function __construct($command = null, $defaultOptions = true) {
-		$this->_command = $command;
+		$this->command($command);
 
 		$this->addOption('help', array(
 			'short' => 'h',
@@ -206,7 +223,7 @@ class ConsoleOptionParser {
  */
 	public function command($text = null) {
 		if ($text !== null) {
-			$this->_command = $text;
+			$this->_command = Inflector::underscore($text);
 			return $this;
 		}
 		return $this->_command;
@@ -562,7 +579,7 @@ class ConsoleOptionParser {
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
 		$nextValue = $this->_nextToken();
-		if (!$isBoolean && !empty($nextValue) && $nextValue{0} != '-') {
+		if (!$isBoolean && !empty($nextValue) && !$this->_optionExists($nextValue)) {
 			array_shift($this->_tokens);
 			$value = $nextValue;
 		} elseif ($isBoolean) {
@@ -574,6 +591,23 @@ class ConsoleOptionParser {
 			$params[$name] = $value;
 			return $params;
 		}
+	}
+
+
+/**
+ * Check to see if $name has an option (short/long) defined for it.
+ *
+ * @param string $name The name of the option.
+ * @return boolean
+ */
+	protected function _optionExists($name) {
+		if (substr($name, 0, 2) === '--') {
+			return isset($this->_options[substr($name, 2)]);
+		}
+		if ($name{0} === '-' && $name{1} !== '-') {
+			return isset($this->_shortOptions[$name{1}]);
+		}
+		return false;
 	}
 
 /**

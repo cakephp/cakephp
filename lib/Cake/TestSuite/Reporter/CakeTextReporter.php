@@ -17,7 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
+App::uses('CakeBaseReporter', 'TestSuite/Reporter');
+App::uses('TextCoverageReport', 'TestSuite/Coverage');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -91,7 +92,7 @@ class CakeTextReporter extends CakeBaseReporter {
         echo 'Peak memory: ' . number_format(memory_get_peak_usage()) . " bytes\n";
 
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
-			$coverage = $result->getCodeCoverageInformation();
+			$coverage = $result->getCodeCoverage()->getSummary();
 			echo $this->paintCoverage($coverage);
 		}
 	}
@@ -184,8 +185,6 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return string
  */
 	public function paintCoverage($coverage) {
-		$file = dirname(dirname(__FILE__)) . '/coverage/text_coverage_report.php';
-		include $file;
 		$reporter = new TextCoverageReport($coverage, $this);
 		echo $reporter->report();
 	}
