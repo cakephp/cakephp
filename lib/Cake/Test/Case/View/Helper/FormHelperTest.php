@@ -1703,7 +1703,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'text', 'maxlength' => 8, 'id'),
+			'input' => array('name', 'type' => 'number', 'maxlength' => 8, 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
@@ -2508,6 +2508,8 @@ class FormHelperTest extends CakeTestCase {
 			'*/div',
 			array('div' => array('class' => 'input datetime')),
 			'*/div',
+			array('div' => array('class' => 'input number')),
+			'*/div',
 			array('div' => array('class' => 'input select')),
 			'*/div',
 		);
@@ -2530,6 +2532,8 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'input date')),
 			'*/div',
 			array('div' => array('class' => 'input datetime')),
+			'*/div',
+			array('div' => array('class' => 'input number')),
 			'*/div',
 			array('div' => array('class' => 'input select')),
 			'*/div',
@@ -2555,6 +2559,8 @@ class FormHelperTest extends CakeTestCase {
 			'*/div',
 			array('div' => array('class' => 'input datetime')),
 			'*/div',
+			array('div' => array('class' => 'input number')),
+			'*/div',
 			array('div' => array('class' => 'input select')),
 			'*/div',
 			'/fieldset'
@@ -2578,6 +2584,8 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'input date')),
 			'*/div',
 			array('div' => array('class' => 'input datetime')),
+			'*/div',
+			array('div' => array('class' => 'input number')),
 			'*/div',
 			array('div' => array('class' => 'input select')),
 			'*/div',
@@ -2606,6 +2614,8 @@ class FormHelperTest extends CakeTestCase {
 			'*/div',
 			array('div' => array('class' => 'input datetime')),
 			'*/div',
+			array('div' => array('class' => 'input number')),
+			'*/div',
 			array('div' => array('class' => 'input select')),
 			'*/div',
 			'/fieldset'
@@ -2633,6 +2643,8 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'input date')),
 			'*/div',
 			array('div' => array('class' => 'input datetime')),
+			'*/div',
+			array('div' => array('class' => 'input number')),
 			'*/div',
 			array('div' => array('class' => 'input select')),
 			'*/div',
