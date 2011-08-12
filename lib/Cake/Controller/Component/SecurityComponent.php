@@ -511,7 +511,7 @@ class SecurityComponent extends Component {
 				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
 			}
 		} 
-		if ($this->csrfCheck && ($this->csrfUseOnce || empty($tokenData['csrfTokens'])) ) {
+		if ($this->csrfCheck && ($this->csrfUseOnce || empty($token['csrfTokens'])) ) {
 			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
 		if ($this->csrfCheck && $this->csrfUseOnce == false) {
