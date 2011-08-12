@@ -152,7 +152,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
+			<li><?php echo $this->Html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore(Inflector::singularize($_alias)))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
 		</ul>
 	</div>
 </div>
