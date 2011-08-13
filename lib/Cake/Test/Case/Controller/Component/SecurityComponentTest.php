@@ -1037,6 +1037,23 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that csrf checks are skipped for request action. 
+ *
+ * @return void
+ */
+	public function testCsrfSkipRequestAction() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Controller->request->params['requested'] = 1;
+		$this->Security->startup($this->Controller);
+
+		$this->assertFalse($this->Controller->failed, 'fail() was called.');
+	}
+
+/**
  * test setting 
  *
  * @return void

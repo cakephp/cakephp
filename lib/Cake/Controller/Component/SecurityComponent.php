@@ -203,17 +203,17 @@ class SecurityComponent extends Component {
 		$this->_authRequired($controller);
 
 		$isPost = ($this->request->is('post') || $this->request->is('put'));
-		$isRequestAction = (
+		$isNotRequestAction = (
 			!isset($controller->request->params['requested']) ||
 			$controller->request->params['requested'] != 1
 		);
 
-		if ($isPost && $isRequestAction && $this->validatePost) {
+		if ($isPost && $isNotRequestAction && $this->validatePost) {
 			if ($this->_validatePost($controller) === false) {
 				return $this->blackHole($controller, 'auth');
 			}
 		}
-		if ($isPost && $this->csrfCheck) {
+		if ($isPost && $isNotRequestAction && $this->csrfCheck) {
 			if ($this->_validateCsrf($controller) === false) {
 				return $this->blackHole($controller, 'csrf');
 			}
