@@ -87,7 +87,9 @@ class Object {
 		}
 
 		$dispatcher = new Dispatcher();
-		return $dispatcher->dispatch($request, new CakeResponse(), $extra);
+		$result = $dispatcher->dispatch($request, new CakeResponse(), $extra);
+		Router::popRequest();
+		return $result;
 	}
 
 /**

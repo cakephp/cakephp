@@ -2299,6 +2299,35 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * Test that Router::url() uses the first request
+ */
+	public function testUrlWithRequestAction() {
+		$firstRequest = new CakeRequest('/posts/index');
+		$firstRequest->addParams(array(
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index'
+		))->addPaths(array('base' => ''));
+
+		$secondRequest = new CakeRequest('/posts/index');
+		$secondRequest->addParams(array(
+			'requested' => 1,
+			'plugin' => null,
+			'controller' => 'comments',
+			'action' => 'listing'
+		))->addPaths(array('base' => ''));
+
+		Router::setRequestInfo($firstRequest);
+		Router::setRequestInfo($secondRequest);
+
+		$result = Router::url(array('base' => false));
+		$this->assertEquals('/comments/listing', $result, 'with second requests, the last should win.');
+
+		Router::popRequest();
+		$result = Router::url(array('base' => false));
+		$this->assertEquals('/posts', $result, 'with second requests, the last should win.');
+	}
+/**
  * test that a route object returning a full url is not modified.
  *
  * @return void

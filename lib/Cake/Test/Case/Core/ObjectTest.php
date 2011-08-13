@@ -463,12 +463,14 @@ class ObjectTest extends CakeTestCase {
 			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
 		), true);
+		$this->assertNull(Router::getRequest(), 'request stack should be empty.');
+
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
 
 		$result = $this->object->requestAction('/request_action/test_request_action');
 		$expected = 'This is a test';
-		$this->assertEqual($expected, $result);;
+		$this->assertEqual($expected, $result);
 
 		$result = $this->object->requestAction('/request_action/another_ra_test/2/5');
 		$expected = 7;
@@ -488,6 +490,8 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction('/request_action/normal_request_action');
 		$expected = 'Hello World';
 		$this->assertEqual($expected, $result);
+
+		$this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 	}
 
 /**
