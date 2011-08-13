@@ -885,16 +885,24 @@ class BehaviorCollectionTest extends CakeTestCase {
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off'));
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $record);
+		$result = $Sample->save($record);
+		$expected = $record;
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertIdentical($result, $expected);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'test'));
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $record);
+		$result = $Sample->save($record);
+		$expected = $record;
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertIdentical($result, $expected);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify'));
 		$expected = Set::insert($record, 'Sample.name', 'sample99 modified before');
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $expected);
+		$result = $Sample->save($record);
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertIdentical($result, $expected);
 
 		$Sample->Behaviors->disable('Test');
 		$this->assertIdentical($Sample->save($record), $record);
@@ -902,20 +910,30 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'on'));
 		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified after on create')));
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $expected);
+		$result = $Sample->save($record);
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertEqual($result, $expected);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify', 'afterSave' => 'modify'));
 		$expected = Set::merge($record, array('Sample' => array('name' => 'sample99 modified before modified after on create')));
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $expected);
+		$result = $Sample->save($record);
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertIdentical($result, $expected);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'test'));
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $record);
+		$expected = $record;
+		$result = $Sample->save($record);
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertIdentical($result, $expected);
 
 		$Sample->Behaviors->attach('Test', array('afterSave' => 'test2'));
 		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $record);
+		$expected = $record;
+		$result = $Sample->save($record);
+		$expected['Sample']['id'] = $Sample->id;
+		$this->assertIdentical($result, $expected);
 
 		$Sample->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'off'));
 		$Sample->recursive = -1;
@@ -1023,7 +1041,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Apple->validate['color'] = 'validateField';
 
 		$result = $Apple->save(array('name' => 'Genetically Modified Apple', 'color' => 'Orange'));
-		$this->assertEqual(array_keys($result['Apple']), array('name', 'color', 'modified', 'created'));
+		$this->assertEqual(array_keys($result['Apple']), array('name', 'color', 'modified', 'created', 'id'));
 
 		$Apple->create();
 		$result = $Apple->save(array('name' => 'Regular Apple', 'color' => 'Red'));

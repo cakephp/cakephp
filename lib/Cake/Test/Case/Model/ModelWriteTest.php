@@ -55,8 +55,9 @@ class ModelWriteTest extends BaseModelTest {
 				'updated' => '2008-01-03 10:56:44'
 			);
 			$result = $TestModel->JoinAsJoinB->save($data);
-			$this->assertEquals($result, array('JoinAsJoinB' => $data));
 			$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
+			$data['id'] = $lastInsertId;
+			$this->assertEquals($result, array('JoinAsJoinB' => $data));
 			$this->assertTrue($lastInsertId != null);
 
 			$result = $TestModel->JoinAsJoinB->findById(1);
@@ -5292,6 +5293,25 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertTrue((bool)$result);
 		setlocale(LC_ALL, $restore);
+	}
+
+/**
+ * Test returned array contains primary key when save creates a new record
+ *
+ * @return void
+ */
+	public function testPkInReturnArrayForCreate() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+
+		$data = array('Article' => array(
+			'user_id' => '1',
+			'title' => 'Fourth Article',
+			'body' => 'Fourth Article Body',
+			'published' => 'Y'
+		));
+		$result = $TestModel->save($data);
+		$this->assertIdentical($result['Article']['id'], $TestModel->id);
 	}
 
 }

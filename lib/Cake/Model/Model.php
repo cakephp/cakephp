@@ -1414,6 +1414,9 @@ class Model extends Object {
 		if ($success && $count > 0) {
 			if (!empty($this->data)) {
 				$success = $this->data;
+				if ($created) {
+					$this->data[$this->alias][$this->primaryKey] = $this->id;
+				}
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
 				$this->Behaviors->trigger('afterSave', array(&$this, $created, $options));

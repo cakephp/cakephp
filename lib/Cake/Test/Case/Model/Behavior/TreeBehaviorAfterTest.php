@@ -69,6 +69,7 @@ class TreeBehaviorAfterTest extends CakeTestCase {
 
 		$expected = array('AfterTree' => array('name' => 'Six and One Half Changed in AfterTree::afterSave() but not in database', 'parent_id' => 6, 'lft' => 11, 'rght' => 12));
 		$result = $this->Tree->save(array('AfterTree' => array('name' => 'Six and One Half', 'parent_id' => 6)));
+		$expected['AfterTree']['id'] = $this->Tree->id;
 		$this->assertEqual($expected, $result);
 
 		$expected = array('AfterTree' => array('name' => 'Six and One Half', 'parent_id' => 6, 'lft' => 11, 'rght' => 12, 'id' => 8));
