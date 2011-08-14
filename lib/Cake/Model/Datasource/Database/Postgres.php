@@ -297,7 +297,7 @@ class Postgres extends DboSource {
  *						and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
-	public function truncate($table, $reset = true) {
+	function truncate($table, $reset = 0) {
 		$table = $this->fullTableName($table, false);
 		if (!isset($this->_sequenceMap[$table])) {
 			$cache = $this->cacheSources;
@@ -305,8 +305,9 @@ class Postgres extends DboSource {
 			$this->describe($table);
 			$this->cacheSources = $cache;
 		}
-		if (parent::truncate($table)) {
-			if (isset($this->_sequenceMap[$table]) && $reset) {
+		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
+			$table = $this->fullTableName($table, false);
+			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
 					$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
 				}

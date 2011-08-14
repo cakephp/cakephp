@@ -122,7 +122,7 @@ class Sanitize {
  */
 	public static function stripWhitespace($str) {
 		$r = preg_replace('/[\n\r\t]+/', '', $str);
-		return preg_replace('/\s{2,}/', ' ', $r);
+		return preg_replace('/\s{2,}/u', ' ', $r);
 	}
 
 /**

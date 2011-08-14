@@ -54,7 +54,7 @@ class CacheHelper extends AppHelper {
 	public function afterRender($viewFile) {
 		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
 		if ($caching) {
-			$this->cache($viewFile, $this->_View->output, false);
+			$this->_View->output = $this->cache($viewFile, $this->_View->output, false);
 		}
 	}
 
@@ -66,10 +66,17 @@ class CacheHelper extends AppHelper {
 	public function afterLayout($layoutFile) {
 		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
 		if ($caching) {
-			$this->cache($layoutFile, $this->_View->output, true);
+			$this->_View->output = $this->cache($layoutFile, $this->_View->output, true);
 		}
 		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
 	}
+
+/**
+ * Counter used for counting nocache section tags.
+ *
+ * @var integer
+ */
+	var $_counter = 0;
 
 /**
  * Main method used to cache a view
@@ -118,10 +125,13 @@ class CacheHelper extends AppHelper {
 		}
 
 		if ($cacheTime != '' && $cacheTime > 0) {
+			$out = preg_replace_callback('/<!--nocache-->/', array($this, '_replaceSection'), $out);
+
 			$this->_parseFile($file, $out);
 			if ($cache === true) {
 				$cached = $this->_parseOutput($out);
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);
+				$out = $this->_stripTags($out);
 			}
 			return $out;
 		} else {
@@ -141,7 +151,7 @@ class CacheHelper extends AppHelper {
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-		preg_match_all('/(<!--nocache-->(?<=<!--nocache-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
+		preg_match_all('/(<!--nocache:\d{3}-->(?<=<!--nocache:\d{3}-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
 		preg_match_all('/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i', $file, $fileResult, PREG_PATTERN_ORDER);
 		$fileResult = $fileResult[0];
 		$outputResult = $outputResult[0];
@@ -166,6 +176,30 @@ class CacheHelper extends AppHelper {
 				$i++;
 			}
 		}
+	}
+
+/**
+ * Munges the output from a view with cache tags, and numbers the sections.
+ * This helps solve issues with empty/duplicate content.
+ *
+ * @param string $content The content to munge.
+ * @return string The content with cake:nocache tags replaced.
+ */
+	function _replaceSection($matches) {
+		$this->_counter += 1;
+		return sprintf('<!--nocache:%03d-->', $this->_counter);
+	}
+
+/**
+ * Strip cake:nocache tags from a string. Since View::render()
+ * only removes un-numbered nocache tags, remove all the numbered ones.
+ * This is the complement to _replaceSection.
+ *
+ * @param string $content String to remove tags from.
+ * @return string String with tags removed.
+ */
+	function _stripTags($content) {
+		return preg_replace('#<!--/?nocache(\:\d{3})?-->#', '', $content);
 	}
 
 /**

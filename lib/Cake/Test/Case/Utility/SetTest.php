@@ -956,7 +956,7 @@ class SetTest extends CakeTestCase {
 		);
 		$result = Set::extract('/ParentNode/name', $hasMany);
 		$expected = array('Second');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			array(
@@ -990,7 +990,7 @@ class SetTest extends CakeTestCase {
 			)
 		);
 		$result = Set::extract('/Category[id=1]/..', $data);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			array(
@@ -1008,7 +1008,7 @@ class SetTest extends CakeTestCase {
 			'Item 2'
 		);
 		$result = Set::extract('/0/name', $data);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			array('A1', 'B1'),
@@ -1016,7 +1016,7 @@ class SetTest extends CakeTestCase {
 		);
 		$expected = array('A1', 'A2');
 		$result =  Set::extract('/0', $data);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

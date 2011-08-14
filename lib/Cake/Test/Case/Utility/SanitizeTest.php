@@ -254,7 +254,12 @@ class SanitizeTest extends CakeTestCase {
 		$string = "This     sentence \t\t\t has lots of \n\n white\nspace \rthat \r\n needs to be    \t    \n trimmed.";
 		$expected = "This sentence has lots of whitespace that needs to be trimmed.";
 		$result = Sanitize::stripWhitespace($string);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
+
+		$text = 'I    love  ßá†ö√    letters.';
+		$result = Sanitize::stripWhitespace($text);
+		$expected = 'I love ßá†ö√ letters.';
+		$this->assertEqual($result, $expected);
 	}
 
 /**
