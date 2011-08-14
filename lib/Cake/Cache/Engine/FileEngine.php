@@ -127,7 +127,7 @@ class FileEngine extends CacheEngine {
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
 
-		if (!$handle = fopen($this->_File->path, 'c')) {
+		if (!$handle = fopen($this->_File->getPathName(), 'c')) {
 		    return false;
 		}
 
