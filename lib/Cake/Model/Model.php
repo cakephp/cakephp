@@ -2321,10 +2321,14 @@ class Model extends Object {
 			$query['order'] = false;
 			return $query;
 		} elseif ($state === 'after') {
-			if (isset($results[0][0]['count'])) {
-				return intval($results[0][0]['count']);
-			} elseif (isset($results[0][$this->alias]['count'])) {
-				return intval($results[0][$this->alias]['count']);
+			foreach (array(0, $this->alias) as $key) {
+				if (isset($results[0][$key]['count'])) {
+					if (count($results) > 1) {
+						return intval(array_sum(Set::extract('/' . $key . '/count', $results)));
+					} else {
+						return intval($results[0][$key]['count']);
+					}
+				}
 			}
 			return false;
 		}

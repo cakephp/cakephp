@@ -389,7 +389,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	public function testRecursiveUnbind() {
 		$this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.');
-		
+
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
 		$TestModel->recursive = 2;
@@ -3645,7 +3645,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	public function testFindCombinedRelations() {
 		$this->skipIf($this->db instanceof Sqlserver, 'The test of testRecursiveUnbind test is not compatible with SQL Server, because it check for time columns.');
-		
+
 		$this->loadFixtures('Apple', 'Sample');
 		$TestModel = new Apple();
 
@@ -6604,7 +6604,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindCount() {
-		$this->loadFixtures('User', 'Project');
+		$this->loadFixtures('User', 'Article');
 
 		$TestModel = new User();
 		$this->db->getLog(false, true);
@@ -6620,6 +6620,10 @@ class ModelReadTest extends BaseModelTest {
 		$log = $this->db->getLog();
 		$this->assertTrue(isset($log['log'][0]['query']));
 		$this->assertNoPattern('/ORDER\s+BY/', $log['log'][0]['query']);
+
+		$Article = new Article();
+		$result = $Article->find('count', array('group' => 'Article.user_id'));
+		$this->assertEqual($result, 3);
 	}
 
 /**
