@@ -65,7 +65,7 @@ class Model extends Object {
 /**
  * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
  *
- * This field is also used in `find('list')` that has no `fields` associated.
+ * This field is also used in `find('list')` when called with no extra parameters in the fields list
  *
  * @var string
  * @link http://book.cakephp.org/view/1057/Model-Attributes#displayField-1062
@@ -112,8 +112,8 @@ class Model extends Object {
 	protected $_schema = null;
 
 /**
- * List of validation rules. It must be an array with the field as key and the
- * value one of possiblity below:
+ * List of validation rules. It must be an array with the field name as key and using
+ * as value one of the following possibilities
  *
  * ### Validating using regular expressions
  *
