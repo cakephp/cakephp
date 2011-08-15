@@ -262,6 +262,45 @@ class Model extends Object {
 /**
  * Detailed list of belongsTo associations.
  *
+ * ### Basic usage
+ *
+ * `public $belongsTo = array('Group', 'Department');`
+ *
+ * ### Detailed configuration
+ *
+ * {{{
+ * public $belongsTo = array(
+ *     'Group',
+ *     'Department' => array(
+ *         'className' => 'Department',
+ *         'foreignKey' => 'department_id'
+ *     )
+ * );
+ * }}}
+ *
+ * ### Possible keys in association
+ *
+ * - `className`: the classname of the model being associated to the current model.
+ *   If you’re defining a ‘Profile belongsTo User’ relationship, the className key should equal ‘User.’
+ * - `foreignKey`: the name of the foreign key found in the current model. This is
+ *   especially handy if you need to define multiple belongsTo relationships. The default
+ *   value for this key is the underscored, singular name of the other model, suffixed with ‘_id’.
+ * - `conditions`: An SQL fragment used to filter related model records. It’s good
+ *   practice to use model names in SQL fragments: “User.active = 1” is always
+ *   better than just “active = 1.”
+ * - `type`: the type of the join to use in the SQL query, default is LEFT which
+ *   may not fit your needs in all situations, INNER may be helpful when you want
+ *   everything from your main and associated models or nothing at all!(effective
+ *   when used with some conditions of course). (NB: type value is in lower case - i.e. left, inner)
+ * - `fields`: A list of fields to be retrieved when the associated model data is
+ *   fetched. Returns all fields by default.
+ * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
+ * - `counterCache`: If set to true the associated Model will automatically increase or
+ *   decrease the “[singular_model_name]_count” field in the foreign table whenever you do
+ *   a save() or delete(). If its a string then its the field name to use. The value in the
+ *   counter field represents the number of related rows.
+ * - `counterScope`: Optional conditions array to use for updating counter cache field.
+ *
  * @var array
  * @link http://book.cakephp.org/view/1042/belongsTo
  */
@@ -269,6 +308,41 @@ class Model extends Object {
 
 /**
  * Detailed list of hasOne associations.
+ *
+ * ### Basic usage
+ *
+ * `public $hasOne = array('Profile', 'Address');`
+ *
+ * ### Detailed configuration
+ *
+ * {{{
+ * public $hasOne = array(
+ *     'Profile',
+ *     'Address' => array(
+ *         'className' => 'Address',
+ *         'foreignKey' => 'user_id'
+ *     )
+ * );
+ * }}}
+ *
+ * ### Possible keys in association
+ *
+ * - `className`: the classname of the model being associated to the current model.
+ *   If you’re defining a ‘User hasOne Profile’ relationship, the className key should equal ‘Profile.’
+ * - `foreignKey`: the name of the foreign key found in the other model. This is
+ *   especially handy if you need to define multiple hasOne relationships.
+ *   The default value for this key is the underscored, singular name of the
+ *   current model, suffixed with ‘_id’. In the example above it would default to 'user_id'.
+ * - `conditions`: An SQL fragment used to filter related model records. It’s good
+ *   practice to use model names in SQL fragments: “Profile.approved = 1” is
+ *   always better than just “approved = 1.”
+ * - `fields`: A list of fields to be retrieved when the associated model data is
+ *   fetched. Returns all fields by default.
+ * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
+ * - `dependent`: When the dependent key is set to true, and the model’s delete()
+ *   method is called with the cascade parameter set to true, associated model
+ *   records are also deleted. In this case we set it true so that deleting a
+ *   User will also delete her associated Profile.
  *
  * @var array
  * @link http://book.cakephp.org/view/1041/hasOne
@@ -278,6 +352,47 @@ class Model extends Object {
 /**
  * Detailed list of hasMany associations.
  *
+ * ### Basic usage
+ *
+ * `public $hasMany = array('Comment', 'Task');`
+ *
+ * ### Detailed configuration
+ *
+ * {{{
+ * public $hasMany = array(
+ *     'Comment',
+ *     'Task' => array(
+ *         'className' => 'Task',
+ *         'foreignKey' => 'user_id'
+ *     )
+ * );
+ * }}}
+ *
+ * ### Possible keys in association
+ *
+ * - `className`: the classname of the model being associated to the current model.
+ *   If you’re defining a ‘User hasMany Comment’ relationship, the className key should equal ‘Comment.’
+ * - `foreignKey`: the name of the foreign key found in the other model. This is
+ *   especially handy if you need to define multiple hasMany relationships. The default
+ *   value for this key is the underscored, singular name of the actual model, suffixed with ‘_id’.
+ * - `conditions`: An SQL fragment used to filter related model records. It’s good
+ *   practice to use model names in SQL fragments: “Comment.status = 1” is always
+ *   better than just “status = 1.”
+ * - `fields`: A list of fields to be retrieved when the associated model data is
+ *   fetched. Returns all fields by default.
+ * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
+ * - `limit`: The maximum number of associated rows you want returned.
+ * - `offset`: The number of associated rows to skip over (given the current
+ *   conditions and order) before fetching and associating.
+ * - `dependent`: When dependent is set to true, recursive model deletion is
+ *   possible. In this example, Comment records will be deleted when their
+ *   associated User record has been deleted.
+ * - `exclusive`: When exclusive is set to true, recursive model deletion does
+ *   the delete with a deleteAll() call, instead of deleting each entity separately.
+ *   This greatly improves performance, but may not be ideal for all circumstances.
+ * - `finderQuery`: A complete SQL query CakePHP can use to fetch associated model
+ *   records. This should be used in situations that require very custom results.
+ *
  * @var array
  * @link http://book.cakephp.org/view/1043/hasMany
  */
@@ -285,6 +400,58 @@ class Model extends Object {
 
 /**
  * Detailed list of hasAndBelongsToMany associations.
+ *
+ * ### Basic usage
+ *
+ * `public $hasAndBelongsToMany = array('Role', 'Address');`
+ *
+ * ### Detailed configuration
+ *
+ * {{{
+ * public $hasAndBelongsToMany = array(
+ *     'Role',
+ *     'Address' => array(
+ *         'className' => 'Address',
+ *         'foreignKey' => 'user_id',
+ *         'associationForeignKey' => 'address_id',
+ *         'joinTable' => 'addresses_users'
+ *     )
+ * );
+ * }}}
+ *
+ * ### Possible keys in association
+ *
+ * - `className`: the classname of the model being associated to the current model.
+ *   If you're defining a ‘Recipe HABTM Tag' relationship, the className key should equal ‘Tag.'
+ * - `joinTable`: The name of the join table used in this association (if the
+ *   current table doesn't adhere to the naming convention for HABTM join tables).
+ * - `with`: Defines the name of the model for the join table. By default CakePHP
+ *   will auto-create a model for you. Using the example above it would be called
+ *   RecipesTag. By using this key you can override this default name. The join
+ *   table model can be used just like any "regular" model to access the join table directly.
+ * - `foreignKey`: the name of the foreign key found in the current model.
+ *   This is especially handy if you need to define multiple HABTM relationships.
+ *   The default value for this key is the underscored, singular name of the
+ *   current model, suffixed with ‘_id'.
+ * - `associationForeignKey`: the name of the foreign key found in the other model.
+ *   This is especially handy if you need to define multiple HABTM relationships.
+ *   The default value for this key is the underscored, singular name of the other
+ *   model, suffixed with ‘_id'.
+ * - `unique`: If true (default value) cake will first delete existing relationship
+ *   records in the foreign keys table before inserting new ones, when updating a
+ *   record. So existing associations need to be passed again when updating.
+ * - `conditions`: An SQL fragment used to filter related model records. It's good
+ *   practice to use model names in SQL fragments: "Comment.status = 1" is always
+ *   better than just "status = 1."
+ * - `fields`: A list of fields to be retrieved when the associated model data is
+ *   fetched. Returns all fields by default.
+ * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
+ * - `limit`: The maximum number of associated rows you want returned.
+ * - `offset`: The number of associated rows to skip over (given the current
+ *   conditions and order) before fetching and associating.
+ * - `finderQuery`, `deleteQuery`, `insertQuery`: A complete SQL query CakePHP
+ *   can use to fetch, delete, or create new associated model records. This should
+ *   be used in situations that require very custom results.
  *
  * @var array
  * @link http://book.cakephp.org/view/1044/hasAndBelongsToMany-HABTM
