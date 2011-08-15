@@ -46,6 +46,9 @@ class Model extends Object {
 /**
  * The name of the DataSource connection that this Model uses
  *
+ * The value must be an attribute name that you defined in `app/Config/database.php`
+ * or created using `ConnectionManager::create()`.
+ *
  * @var string
  * @link http://book.cakephp.org/view/1057/Model-Attributes#useDbConfig-1058
  */
@@ -61,6 +64,8 @@ class Model extends Object {
 
 /**
  * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
+ *
+ * This field is also used in `find('list')` that has no `fields` associated.
  *
  * @var string
  * @link http://book.cakephp.org/view/1057/Model-Attributes#displayField-1062
@@ -107,8 +112,91 @@ class Model extends Object {
 	protected $_schema = null;
 
 /**
- * List of validation rules. Append entries for validation as ('field_name' => '/^perl_compat_regexp$/')
- * that have to match with preg_match(). Use these rules with Model::validate()
+ * List of validation rules. It must be an array with the field as key and the
+ * value one of possiblity below:
+ *
+ * ### Validating using regular expressions
+ *
+ * {{{
+ * public $validate = array(
+ *     'name' => '/^[a-z].+$/i'
+ * );
+ * }}}
+ *
+ * ### Validating using methods (no parameters)
+ *
+ * {{{
+ * public $validate = array(
+ *     'name' => 'notEmpty'
+ * );
+ * }}}
+ *
+ * ### Validating using methods (with parameters)
+ *
+ * {{{
+ * public $validate = array(
+ *     'age' => array(
+ *         'rule' => array('between', 5, 25)
+ *     )
+ * );
+ * }}}
+ *
+ * ### Validating using custom method
+ *
+ * {{{
+ * public $validate = array(
+ *     'password' => array(
+ *         'rule' => array('customValidation')
+ *     )
+ * );
+ * public function customValidation($data) {
+ *     // $data will contain array('password' => 'value')
+ *     if (isset($this->data[$this->alias]['password2'])) {
+ *         return $this->data[$this->alias]['password2'] === current($data);
+ *     }
+ *     return true;
+ * }
+ * }}}
+ *
+ * ### Validations with messages
+ *
+ * The messages will be used in Model::$validationErrors and can be used in the FormHelper
+ *
+ * {{{
+ * public $validate = array(
+ *     'age' => array(
+ *         'rule' => array('between', 5, 25),
+ *         'message' => array('The age must be between %d and %d.')
+ *     )
+ * );
+ * }}}
+ *
+ * ### Multiple validations to the same field
+ *
+ * {{{
+ * public $validate = array(
+ *     'login' => array(
+ *         array(
+ *             'role' => 'alphaNumeric',
+ *             'message' => 'Only alphabets and numbers allowed',
+ *             'last' => true
+ *         ),
+ *         array(
+ *             'role' => array('minLength', 8),
+ *             'message' => array('Minimum length of %d characters')
+ *         )
+ *     )
+ * );
+ * }}}
+ *
+ * ### Valid keys in validations
+ *
+ * - `role`: String with method name, regular expression (started by slash) or array with method and parameters
+ * - `message`: String with the message or array if have multiple parameters. See http://php.net/sprintf
+ * - `last`: Boolean value to indicate if continue validating the others rules if the current fail [Default: true]
+ * - `required`: Boolean value to indicate if the field must be present on save
+ * - `allowEmpty`: Boolean value to indicate if the field can be empty
+ * - `on`: Possible values: `update`, `create`. Indicate to apply this rule only on update or create
  *
  * @var array
  * @link http://book.cakephp.org/view/1057/Model-Attributes#validate-1067
