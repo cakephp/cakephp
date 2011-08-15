@@ -454,6 +454,25 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that validatePost fails if you are missing the session information.
+ *
+ * @return void
+ */
+	function testValidatePostNoSession() {
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Session->delete('_Token');
+
+		$key = $this->Controller->params['_Token']['key'];
+		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
+
+		$this->Controller->data = array(
+			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
+			'_Token' => compact('key', 'fields')
+		);
+		$this->assertFalse($this->Controller->Security->validatePost($this->Controller));
+	}
+
+/**
  * test that validatePost fails if any of its required fields are missing.
  *
  * @return void
@@ -1034,6 +1053,23 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Controller->Security->blackHole($this->Controller, 'auth');
 		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
+	}
+
+/**
+ * test that csrf checks are skipped for request action. 
+ *
+ * @return void
+ */
+	public function testCsrfSkipRequestAction() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Controller->request->params['requested'] = 1;
+		$this->Security->startup($this->Controller);
+
+		$this->assertFalse($this->Controller->failed, 'fail() was called.');
 	}
 
 /**

@@ -1385,6 +1385,9 @@ class Model extends Object {
 		if ($success && $count > 0) {
 			if (!empty($this->data)) {
 				$success = $this->data;
+				if ($created) {
+					$this->data[$this->alias][$this->primaryKey] = $this->id;
+				}
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
 				$this->Behaviors->trigger('afterSave', array(&$this, $created, $options));
@@ -2235,7 +2238,7 @@ class Model extends Object {
 				return null;
 			}
 		}
-		
+
 		return $query;
 	}
 
@@ -2282,10 +2285,14 @@ class Model extends Object {
 			$query['order'] = false;
 			return $query;
 		} elseif ($state === 'after') {
-			if (isset($results[0][0]['count'])) {
-				return intval($results[0][0]['count']);
-			} elseif (isset($results[0][$this->alias]['count'])) {
-				return intval($results[0][$this->alias]['count']);
+			foreach (array(0, $this->alias) as $key) {
+				if (isset($results[0][$key]['count'])) {
+					if (count($results) > 1) {
+						return intval(array_sum(Set::extract('/' . $key . '/count', $results)));
+					} else {
+						return intval($results[0][$key]['count']);
+					}
+				}
 			}
 			return false;
 		}
@@ -2715,6 +2722,13 @@ class Model extends Object {
 								} else {
 									$validator['message'] = __d($validationDomain, $message);
 								}
+							} elseif (is_array($validator['message'])) {
+								if (count($validator['message']) > 1) {
+									$args = array_slice($validator['message'], 1);
+								} else {
+									$args = $validator['rule'];
+								}
+								$validator['message'] = __d($validationDomain, $validator['message'][0], $args);
 							}
 							$this->invalidate($fieldName, $validator['message']);
 

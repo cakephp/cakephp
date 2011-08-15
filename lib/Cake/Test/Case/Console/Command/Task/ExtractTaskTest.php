@@ -293,6 +293,9 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '#msgid "Post title is required"#';
 		$this->assertPattern($pattern, $result);
 
+		$pattern = '#msgid "You may enter up to %s chars \(minimum is %s chars\)"#';
+		$this->assertPattern($pattern, $result);
+
 		$pattern = '#msgid "Post body is required"#';
 		$this->assertPattern($pattern, $result);
 

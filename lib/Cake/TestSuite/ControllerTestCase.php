@@ -98,7 +98,7 @@ class InterceptContentHelper extends Helper {
  *
  * @package       Cake.TestSuite
  */
-class ControllerTestCase extends CakeTestCase {
+abstract class ControllerTestCase extends CakeTestCase {
 
 /**
  * The controller to test in testAction

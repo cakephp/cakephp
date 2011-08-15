@@ -82,7 +82,7 @@ class Cache {
  *
  * `Cache::config('default');`
  *
- * There are 4 built-in caching engines:
+ * There are 5 built-in caching engines:
  *
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
  *    storing large objects, or things that are not IO sensitive.
@@ -90,6 +90,7 @@ class Cache {
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
  *   Fast reads/writes, and benefits from memcache being distributed.
  * - `XcacheEngine` - Uses the Xcache extension, an alternative to APC.
+ * - `WincacheEngine` - Uses Windows Cache Extension for PHP. Supports wincache 1.1.0 and higher.
  *
  * The following keys are used in core cache engines:
  *

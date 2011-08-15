@@ -89,6 +89,11 @@ class ConsoleInputOption {
 			$this->_default = $default;
 			$this->_choices = $choices;
 		}
+		if (strlen($this->_short) > 1) {
+			throw new ConsoleException(
+				__d('cake_console', 'Short options must be one letter.')
+			);
+		}
 	}
 
 /**

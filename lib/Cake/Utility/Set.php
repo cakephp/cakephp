@@ -130,27 +130,6 @@ class Set {
 	}
 
 /**
- * Get the array value of $array. If $array is null, it will return
- * the current array Set holds. If it is an object of type Set, it
- * will return its value. If it is another object, its object variables.
- * If it is anything else but an array, it will return an array whose first
- * element is $array.
- *
- * @param mixed $array Data from where to get the array.
- * @return array Array from $array.
- */
-	private function __array($array) {
-		if (empty($array)) {
-			$array = array();
-		} elseif (is_object($array)) {
-			$array = get_object_vars($array);
-		} elseif (!is_array($array)) {
-			$array = array($array);
-		}
-		return $array;
-	}
-
-/**
  * Maps the given value as an object. If $value is an object,
  * it returns $value. Otherwise it maps $value as an object of
  * type $class, and if primary assign _name_ $key on first array.
@@ -420,14 +399,9 @@ class Set {
 						'key' => $key,
 						'item' => array_keys($context['item']),
 					);
-				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.')) {
-					$context['trace'][] = $key;
-					$matches[] = array(
-						'trace' => $context['trace'],
-						'key' => $key,
-						'item' => $context['item'],
-					);
-				} elseif (is_array($context['item']) && array_key_exists($token, $context['item'])) {
+				} elseif (is_array($context['item'])
+					&& array_key_exists($token, $context['item'])
+					&& !(strval($key) === strval($token) && count($tokens) == 1 && $tokens[0] === '.')) {
 					$items = $context['item'][$token];
 					if (!is_array($items)) {
 						$items = array($items);
@@ -466,6 +440,13 @@ class Set {
 							'item' => $item,
 						);
 					}
+				} elseif ($key === $token || (ctype_digit($token) && $key == $token) || $token === '.') {
+					$context['trace'][] = $key;
+					$matches[] = array(
+						'trace' => $context['trace'],
+						'key' => $key,
+						'item' => $context['item'],
+					);
 				}
 			}
 			if ($conditions) {
@@ -586,12 +567,13 @@ class Set {
 			return $data;
 		}
 		if (is_object($data)) {
-			$data = get_object_vars($data);
+			if (!($data instanceof ArrayAccess || $data instanceof Traversable)) {
+				$data = get_object_vars($data);
+			}
 		}
-		if (!is_array($data)) {
-			return $data;
+		if (empty($data)) {
+			return null;
 		}
-
 		if (is_string($path) && strpos($path, '{') !== false) {
 			$path = String::tokenize($path, '.', '{', '}');
 		} elseif (is_string($path)) {
@@ -898,7 +880,9 @@ class Set {
 		}
 
 		if (is_object($data)) {
-			$data = get_object_vars($data);
+			if (!($data instanceof ArrayAccess || $data instanceof Traversable)) {
+				$data = get_object_vars($data);
+			}
 		}
 
 		if (is_array($path1)) {

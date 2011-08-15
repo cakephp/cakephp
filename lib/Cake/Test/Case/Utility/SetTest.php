@@ -948,7 +948,7 @@ class SetTest extends CakeTestCase {
 		);
 		$result = Set::extract('/ParentNode/name', $hasMany);
 		$expected = array('Second');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			array(
@@ -982,7 +982,33 @@ class SetTest extends CakeTestCase {
 			)
 		);
 		$result = Set::extract('/Category[id=1]/..', $data);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			array(
+				'ChildNode' => array('id' => 1),
+				array('name' => 'Item 1')
+			),
+			array(
+				'ChildNode' => array('id' => 2),
+				array('name' => 'Item 2')
+			),
+		);
+
+		$expected = array(
+			'Item 1',
+			'Item 2'
+		);
+		$result = Set::extract('/0/name', $data);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			array('A1', 'B1'),
+			array('A2', 'B2')
+		);
+		$expected = array('A1', 'A2');
+		$result =  Set::extract('/0', $data);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1581,6 +1607,25 @@ class SetTest extends CakeTestCase {
 
 		$result = Set::extract($a, 'articles.{n}.Article.title');
 		$expected = array('Article 1', 'Article 2', 'Article 3');
+		$this->assertEquals($expected, $result);
+
+		$a = new ArrayObject();
+		$a['articles'] = array(
+			array('Article' => array('id' => 1, 'title' => 'Article 1')),
+			array('Article' => array('id' => 2, 'title' => 'Article 2')),
+			array('Article' => array('id' => 3, 'title' => 'Article 3'))
+		);
+
+		$result = Set::extract($a, 'articles.{n}.Article.id');
+		$expected = array(1, 2, 3);
+		$this->assertEquals($expected, $result);
+
+		$result = Set::extract($a, 'articles.{n}.Article.title');
+		$expected = array('Article 1', 'Article 2', 'Article 3');
+		$this->assertEquals($expected, $result);
+
+		$result = Set::extract($a, 'articles.0.Article.title');
+		$expected = 'Article 1';
 		$this->assertEquals($expected, $result);
 	}
 

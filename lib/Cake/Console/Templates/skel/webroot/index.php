@@ -44,13 +44,19 @@
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
+ * Un-comment this line to specify a fixed path to CakePHP.
+ * This should point at the directory containg `Cake`.
+ *
+ * For ease of development CakePHP uses PHP's include_path.  If you
+ * need to squeeze a bit more performance you can set this path.
+ *
+ * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
-	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
-	}
+	//define('CAKE_CORE_INCLUDE_PATH', __CAKE_PATH__);
 
 /**
  * Editing below this line should NOT be necessary.
@@ -63,11 +69,17 @@
 	if (!defined('WWW_ROOT')) {
 		define('WWW_ROOT', dirname(__FILE__) . DS);
 	}
-	if (!defined('CORE_PATH')) {
-		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+
+	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+		if (!include('Cake' . DS . 'bootstrap.php')) {
+			$failed = true;
+		}
+	} else {
+		if (!include(CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php')) {
+			$failed = true;
+		}
 	}
-	if (!include(CORE_PATH . 'Cake' . DS . 'bootstrap.php')) {
+	if (!empty($failed)) {
 		trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 	}
 
@@ -76,5 +88,6 @@
 	}
 
 	App::uses('Dispatcher', 'Routing');
+
 	$Dispatcher = new Dispatcher();
 	$Dispatcher->dispatch(new CakeRequest(), new CakeResponse(array('charset' => Configure::read('App.encoding'))));

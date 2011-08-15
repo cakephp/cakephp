@@ -204,7 +204,7 @@ class Shell extends Object {
 		$this->out(__d('cake_console', '<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
 		$this->hr();
 		$this->out(__d('cake_console', 'App : %s', APP_DIR));
-		$this->out(__d('cake_console', 'Path: %s', APP_PATH));
+		$this->out(__d('cake_console', 'Path: %s', APP));
 		$this->hr();
 	}
 
@@ -386,7 +386,7 @@ class Shell extends Object {
 		$format = 'text';
 		if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
 			$format = 'xml';
-			$this->output->outputAs(ConsoleOutput::RAW);
+			$this->stdout->outputAs(ConsoleOutput::RAW);
 		} else {
 			$this->_welcome();
 		}

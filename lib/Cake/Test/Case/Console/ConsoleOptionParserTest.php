@@ -140,6 +140,18 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * Test that adding an option using a two letter short value causes an exception.
+ * As they will not parse correctly.
+ *
+ * @expectedException ConsoleException
+ * @return void
+ */
+	public function testAddOptionShortOneLetter() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption('test', array('short' => 'te'));
+	}
+
+/**
  * test adding and using boolean options.
  *
  * @return void
@@ -253,6 +265,21 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$this->assertEquals($expected, $result[0], 'Got the correct value.');
 
 		$result = $parser->parse(array('--name', 'jimmy'));
+	}
+
+/**
+ * Ensure that option values can start with -
+ *
+ * @return void
+ */
+	public function testOptionWithValueStartingWithMinus() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption('name')
+			->addOption('age');
+
+		$result = $parser->parse(array('--name', '-foo', '--age', 'old'));
+		$expected = array('name' => '-foo', 'age' => 'old', 'help' => false);
+		$this->assertEquals($expected, $result[0], 'Option values starting with "-" are broken.');
 	}
 
 /**
@@ -494,6 +521,16 @@ TEXT;
 		$parser = ConsoleOptionParser::create('factory', false);
 		$this->assertInstanceOf('ConsoleOptionParser', $parser);
 		$this->assertEquals('factory', $parser->command());
+	}
+
+/**
+ * test that command() inflects the command name.
+ *
+ * @return void
+ */
+	public function testCommandInflection() {
+		$parser = new ConsoleOptionParser('CommandLine');
+		$this->assertEquals('command_line', $parser->command());
 	}
 
 /**
