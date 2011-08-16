@@ -180,7 +180,7 @@ class HelpFormatter {
 		$xml = new SimpleXmlElement('<shell></shell>');
 		$xml->addChild('command', $parser->command());
 		$xml->addChild('description', $parser->description());
-		
+
 		$xml->addChild('epilog', $parser->epilog());
 		$subcommands = $xml->addChild('subcommands');
 		foreach ($parser->subcommands() as $command) {

@@ -27,8 +27,8 @@ interface CakeLogInterface {
 /**
  * Write method to handle writes being made to the Logger
  *
- * @param string $type 
- * @param string $message 
+ * @param string $type
+ * @param string $message
  * @return void
  */
 	public function write($type, $message);

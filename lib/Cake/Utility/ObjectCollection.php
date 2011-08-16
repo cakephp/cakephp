@@ -53,7 +53,7 @@ abstract class ObjectCollection {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the 
+ * Used to trigger methods on objects in the collection.  Will fire the methods in the
  * order they were attached.
  *
  * ### Options
@@ -75,8 +75,8 @@ abstract class ObjectCollection {
  *    Setting modParams to an integer value will allow you to modify the parameter with that index.
  *    Any non-null value will modify the parameter index indicated.
  *    Defaults to false.
- *   
- * 
+ *
+ *
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
  * @param array $params Array of parameters for the triggered callback.

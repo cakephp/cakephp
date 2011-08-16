@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeRequest 
+ * CakeRequest
  *
  * PHP 5
  *
@@ -21,7 +21,7 @@ App::uses('Set', 'Utility');
 /**
  * A class that helps wrap Request information and particulars about a single request.
  * Provides methods commonly used to introspect on the request headers and request body.
- * 
+ *
  * Has both an Array and Object interface. You can access framework parameters using indexes:
  *
  * `$request['controller']` or `$request->controller`.
@@ -84,7 +84,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
- * There are several ways to specify a detector, see CakeRequest::addDetector() for the 
+ * There are several ways to specify a detector, see CakeRequest::addDetector() for the
  * various formats and ways to define detectors.
  *
  * @var array
@@ -116,7 +116,7 @@ class CakeRequest implements ArrayAccess {
 	private $__input = '';
 
 /**
- * Constructor 
+ * Constructor
  *
  * @param string $url Trimmed url string to use.  Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
@@ -410,7 +410,7 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
- * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called 
+ * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
  * @param string $type The type of request you want to check.
@@ -454,7 +454,7 @@ class CakeRequest implements ArrayAccess {
  * ### Pattern value comparison
  *
  * Pattern value comparison allows you to compare a value fetched from `env()` to a regular expression.
- * 
+ *
  * e.g `addDetector('iphone', array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i'));`
  *
  * ### Option based comparison
@@ -543,10 +543,10 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Get the HTTP method used for this request.
- * There are a few ways to specify a method.  
+ * There are a few ways to specify a method.
  *
  * - If your client supports it you can use native HTTP methods.
- * - You can set the HTTP-X-Method-Override header. 
+ * - You can set the HTTP-X-Method-Override header.
  * - You can submit an input with the name `_method`
  *
  * Any of these 3 approaches can be used to set the HTTP method used
@@ -570,7 +570,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the domain name and include $tldLength segments of the tld.
  *
- * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
@@ -583,7 +583,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the subdomains for a host.
  *
- * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld. 
+ * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
  * @return array of subdomains.
  */
@@ -593,7 +593,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Find out which content types the client accepts or check if they accept a 
+ * Find out which content types the client accepts or check if they accept a
  * particular type of content.
  *
  * #### Get all types:
@@ -683,7 +683,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Read data from `php://stdin`. Useful when interacting with XML or JSON
  * request body content.
- * 
+ *
  * Getting input with a decoding function:
  *
  * `$this->request->input('json_decode');`

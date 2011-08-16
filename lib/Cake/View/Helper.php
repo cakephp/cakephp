@@ -457,7 +457,7 @@ class Helper extends Object {
 
 		// habtm models are special
 		if (
-			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
+			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
 			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
 		) {
 			$entity = $parts[0] . '.' . $parts[0];

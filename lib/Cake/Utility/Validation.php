@@ -318,7 +318,7 @@ class Validation {
 /**
  * Validates a datetime value
  * All values matching the "date" core validation rule, and the "time" one will be valid
- * 
+ *
  * @param array $check Value to check
  * @param mixed $dateFormat Format of the date part
  * Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)

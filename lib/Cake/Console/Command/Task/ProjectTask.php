@@ -52,7 +52,7 @@ class ProjectTask extends Shell {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
 			$project = $this->in($prompt, null, APP . 'myapp');
 		}
-		
+
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
 			$project = $_SERVER['PWD'] . DS . $project;

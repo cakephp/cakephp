@@ -106,7 +106,7 @@ class ContainableBehavior extends ModelBehavior {
 			$contain = array_merge($contain, (array)$query['contain']);
 		}
 		if (
-			$noContain || !$contain || in_array($contain, array(null, false), true) || 
+			$noContain || !$contain || in_array($contain, array(null, false), true) ||
 			(isset($contain[0]) && $contain[0] === null)
 		) {
 			if ($noContain) {

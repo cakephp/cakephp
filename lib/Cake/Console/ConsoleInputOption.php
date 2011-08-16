@@ -118,7 +118,7 @@ class ConsoleInputOption {
  * Generate the help for this this option.
  *
  * @param integer $width The width to make the name of the option.
- * @return string 
+ * @return string
  */
 	public function help($width = 0) {
 		$default = $short = '';

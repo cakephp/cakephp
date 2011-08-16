@@ -69,7 +69,7 @@ class ComponentCollection extends ObjectCollection {
  * );
  * }}}
  * All calls to the `Email` component would use `AliasedEmail` instead.
- * 
+ *
  * @param string $component Component name to load
  * @param array $settings Settings for the component.
  * @return Component A component object, Either the existing loaded component or a new one.

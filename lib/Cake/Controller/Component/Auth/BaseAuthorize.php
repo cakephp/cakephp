@@ -34,7 +34,7 @@ abstract class BaseAuthorize {
  * @var ComponentCollection
  */
 	protected $_Collection;
-	
+
 /**
  * Settings for authorize objects.
  *
@@ -75,7 +75,7 @@ abstract class BaseAuthorize {
  * Checks user authorization.
  *
  * @param array $user Active user data
- * @param CakeRequest $request 
+ * @param CakeRequest $request
  * @return boolean
  */
 	abstract public function authorize($user, CakeRequest $request);

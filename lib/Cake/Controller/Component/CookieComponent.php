@@ -109,7 +109,7 @@ class CookieComponent extends Component {
 /**
  * HTTP only cookie
  *
- * Set to true to make HTTP only cookies.  Cookies that are HTTP only 
+ * Set to true to make HTTP only cookies.  Cookies that are HTTP only
  * are not accessible in Javascript.
  *
  * @var boolean
@@ -205,7 +205,7 @@ class CookieComponent extends Component {
 		}
 		$this->_encrypted = $encrypt;
 		$this->_expire($expires);
-		
+
 		if (!is_array($key)) {
 			$key = array($key => $value);
 		}
@@ -366,7 +366,7 @@ class CookieComponent extends Component {
  */
 	protected function _write($name, $value) {
 		$this->_setcookie(
-			$this->name . $name, $this->_encrypt($value), 
+			$this->name . $name, $this->_encrypt($value),
 			$this->_expires, $this->path, $this->domain, $this->secure, $this->httpOnly
 		);
 
@@ -384,7 +384,7 @@ class CookieComponent extends Component {
  */
 	protected function _delete($name) {
 		$this->_setcookie(
-			$this->name . $name, '', 
+			$this->name . $name, '',
 			time() - 42000, $this->path, $this->domain, $this->secure, $this->httpOnly
 		);
 	}

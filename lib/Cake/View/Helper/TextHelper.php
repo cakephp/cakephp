@@ -120,7 +120,7 @@ class TextHelper extends AppHelper {
 	public function autoLinkUrls($text, $htmlOptions = array()) {
 		$this->_linkOptions = $htmlOptions;
 		$text = preg_replace_callback(
-			'#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i', 
+			'#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i',
 			array(&$this, '_linkBareUrl'),
 			$text
 		);
@@ -179,7 +179,7 @@ class TextHelper extends AppHelper {
 			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
 			array(&$this, '_linkEmails'),
 			$text
-		);	
+		);
 	}
 
 /**

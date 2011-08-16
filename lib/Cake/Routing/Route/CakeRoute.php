@@ -218,7 +218,7 @@ class CakeRoute {
 			}
 			$route[$key] = $value;
 		}
-		
+
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -323,7 +323,7 @@ class CakeRoute {
 		}
 
 		$controllerMatches = (
-			!isset($rule['controller'], $context['controller']) || 
+			!isset($rule['controller'], $context['controller']) ||
 			in_array($context['controller'], (array)$rule['controller'])
 		);
 		if (!$controllerMatches) {
@@ -340,8 +340,8 @@ class CakeRoute {
 	}
 
 /**
- * Apply persistent parameters to a url array. Persistant parameters are a special 
- * key used during route creation to force route parameters to persist when omitted from 
+ * Apply persistent parameters to a url array. Persistant parameters are a special
+ * key used during route creation to force route parameters to persist when omitted from
  * a url array.
  *
  * @param array $url The array to apply persistent parameters to.
@@ -401,7 +401,7 @@ class CakeRoute {
 			} elseif ($defaultExists) {
 				continue;
 			}
-			
+
 			// If the key is a routed key, its not different yet.
 			if (array_key_exists($key, $keyNames)) {
 				continue;

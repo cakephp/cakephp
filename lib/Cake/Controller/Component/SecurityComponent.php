@@ -140,7 +140,7 @@ class SecurityComponent extends Component {
 
 /**
  * The duration from when a CSRF token is created that it will expire on.
- * Each form/page request will generate a new token that can only be submitted once unless 
+ * Each form/page request will generate a new token that can only be submitted once unless
  * it expires.  Can be any value compatible with strtotime()
  *
  * @var string
@@ -498,7 +498,7 @@ class SecurityComponent extends Component {
 			if (!empty($tokenData['csrfTokens']) && is_array($tokenData['csrfTokens'])) {
 				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
 			}
-		} 
+		}
 		if ($this->csrfCheck && ($this->csrfUseOnce || empty($token['csrfTokens'])) ) {
 			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}

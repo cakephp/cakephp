@@ -442,7 +442,7 @@ class Debugger {
 /**
  * Converts a variable to a string for debug output.
  *
- * *Note:* The following keys will have their contents replaced with 
+ * *Note:* The following keys will have their contents replaced with
  * `*****`:
  *
  *  - password

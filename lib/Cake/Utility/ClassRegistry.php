@@ -86,7 +86,7 @@ class ClassRegistry {
  * }}}
  * @param mixed $class as a string or a single key => value array instance will be created,
  *  stored in the registry and returned.
- * @param boolean $strict if set to true it will return false if the class was not found instead 
+ * @param boolean $strict if set to true it will return false if the class was not found instead
  *	of trying to create an AppModel
  * @return object instance of ClassName
  */
@@ -111,7 +111,7 @@ class ClassRegistry {
 				$pluginPath = null;
 				$settings = array_merge($defaults, $settings);
 				$class = $settings['class'];
-				
+
 				list($plugin, $class) = pluginSplit($class);
 				if ($plugin) {
 					$pluginPath = $plugin . '.';

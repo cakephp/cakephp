@@ -19,7 +19,6 @@
 
 App::uses('CakeLogInterface', 'Log');
 
-
 /**
  * File Storage stream for Logging.  Writes logs to different files
  * based on the type of log it is.
@@ -37,7 +36,7 @@ class FileLog implements CakeLogInterface {
 
 /**
  * Constructs a new File Logger.
- * 
+ *
  * Options
  *
  * - `path` the path to save logs on.

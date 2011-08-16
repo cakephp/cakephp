@@ -65,7 +65,7 @@ class FormHelper extends AppHelper {
 	public $fields = array();
 
 /**
- * Constant used internally to skip the securing process, 
+ * Constant used internally to skip the securing process,
  * and neither add the field to the hash or to the unlocked fields.
  *
  * @var string
@@ -240,7 +240,7 @@ class FormHelper extends AppHelper {
 				if (empty($field)) {
 					return $this->fieldset[$model]['validates'];
 				} else {
-					return isset($this->fieldset[$model]['validates'][$field]) ? 
+					return isset($this->fieldset[$model]['validates'][$field]) ?
 						$this->fieldset[$model]['validates'] : null;
 				}
 			}
@@ -1483,7 +1483,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates an HTML link, but access the url using method POST. 
+ * Creates an HTML link, but access the url using method POST.
  * Requires javascript to be enabled in browser.
  *
  * This method creates a `<form>` element. So do not use this method inside an existing form.

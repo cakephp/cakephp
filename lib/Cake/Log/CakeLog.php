@@ -171,7 +171,7 @@ class CakeLog {
  * ### Usage:
  *
  * Write a message to the 'warning' log:
- * 
+ *
  * `CakeLog::write('warning', 'Stuff is broken here');`
  *
  * @param string $type Type of message being written

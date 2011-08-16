@@ -76,7 +76,7 @@ class CommandListShell extends Shell {
 /**
  * Gets the shell command listing.
  *
- * @return array 
+ * @return array
  */
 	protected function _getShellList() {
 		$shellList = array();

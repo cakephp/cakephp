@@ -30,7 +30,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  */
 	public function __construct() {
 		$modelName = Configure::read('Session.handler.model');
-		
+
 		if (empty($modelName)) {
 			$settings = array(
 				'class' =>'Session',

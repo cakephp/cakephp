@@ -353,7 +353,7 @@ class Shell extends Object {
 		} catch (ConsoleException $e) {
 			return $this->out($this->OptionParser->help($command));
 		}
-		
+
 		$this->command = $command;
 		if (!empty($this->params['help'])) {
 			return $this->_displayHelp($command);

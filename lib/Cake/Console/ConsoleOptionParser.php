@@ -232,7 +232,7 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task.
  *
- * @param mixed $text The text to set, or null if you want to read. If an array the 
+ * @param mixed $text The text to set, or null if you want to read. If an array the
  *   text will be imploded with "\n"
  * @return mixed If reading, the value of the description. If setting $this will be returned
  */

@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeResponse 
+ * CakeResponse
  *
  * PHP 5
  *
@@ -18,8 +18,8 @@
  */
 /**
  * CakeResponse is responsible for managing the response text, status and headers of a HTTP response.
- * 
- * By default controllers will use this class to render their response. If you are going to use 
+ *
+ * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
  *
  * @package       Cake.Network

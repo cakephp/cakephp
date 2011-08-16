@@ -32,7 +32,7 @@ App::uses('CakeSession', 'Model/Datasource');
 class SessionComponent extends Component {
 
 /**
- * Get / Set the userAgent 
+ * Get / Set the userAgent
  *
  * @param string $userAgent Set the userAgent
  * @return void

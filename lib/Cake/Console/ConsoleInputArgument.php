@@ -85,7 +85,7 @@ class ConsoleInputArgument {
  * Generate the help for this argument.
  *
  * @param integer $width The width to make the name of the option.
- * @return string 
+ * @return string
  */
 	public function help($width = 0) {
 		$name = $this->_name;
@@ -141,7 +141,7 @@ class ConsoleInputArgument {
 		}
 		if (!in_array($value, $this->_choices)) {
 			throw new ConsoleException(
-				__d('cake_console', '"%s" is not a valid value for %s. Please use one of "%s"', 
+				__d('cake_console', '"%s" is not a valid value for %s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
 		}

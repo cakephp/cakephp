@@ -211,15 +211,15 @@ class Sqlserver extends DboSource {
 		$fields = array();
 		$table = $this->fullTableName($model, false);
 		$cols = $this->_execute(
-			"SELECT 
+			"SELECT
 				COLUMN_NAME as Field,
-				DATA_TYPE as Type, 
-				COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, 
-				IS_NULLABLE As [Null], 
-				COLUMN_DEFAULT as [Default], 
+				DATA_TYPE as Type,
+				COL_LENGTH('" . $table . "', COLUMN_NAME) as Length,
+				IS_NULLABLE As [Null],
+				COLUMN_DEFAULT as [Default],
 				COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key],
-				NUMERIC_SCALE as Size 
-			FROM INFORMATION_SCHEMA.COLUMNS 
+				NUMERIC_SCALE as Size
+			FROM INFORMATION_SCHEMA.COLUMNS
 			WHERE TABLE_NAME = '" . $table . "'"
 		);
 		if (!$cols) {

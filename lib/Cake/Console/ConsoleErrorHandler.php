@@ -20,7 +20,7 @@ App::uses('ConsoleOutput', 'Console');
 App::uses('CakeLog', 'Log');
 
 /**
- * Error Handler for Cake console. Does simple printing of the 
+ * Error Handler for Cake console. Does simple printing of the
  * exception that occurred and the stack trace of the error.
  *
  * @package       Cake.Console
@@ -55,7 +55,7 @@ class ConsoleErrorHandler extends ErrorHandler {
 	public static function handleException(Exception $exception) {
 		$stderr = self::getStderr();
 		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
-			$exception->getMessage(), 
+			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
 	}

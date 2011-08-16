@@ -193,13 +193,13 @@ class RssHelper extends AppHelper {
 
 		foreach ($elements as $key => $val) {
 			$attrib = array();
-			
+
 			$escape = true;
 			if (is_array($val) && isset($val['convertEntities'])) {
 				$escape = $val['convertEntities'];
 				unset($val['convertEntities']);
 			}
-			
+
 			switch ($key) {
 				case 'pubDate' :
 					$val = $this->time($val);

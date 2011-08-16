@@ -173,7 +173,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	}
 
 /**
- * Create a domReady event. For jQuery. This method does not 
+ * Create a domReady event. For jQuery. This method does not
  * bind a 'traditional event' as `$(document).bind('ready', fn)`
  * Works in an entirely different fashion than  `$(document).ready()`
  * The first will not run the function when eval()'d as part of a response

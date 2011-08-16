@@ -186,7 +186,7 @@ class JsHelper extends AppHelper {
 	public function writeBuffer($options = array()) {
 		$domReady = $this->request->is('ajax');
 		$defaults = array(
-			'onDomReady' => $domReady, 'inline' => true, 
+			'onDomReady' => $domReady, 'inline' => true,
 			'cache' => false, 'clear' => true, 'safe' => true
 		);
 		$options = array_merge($defaults, $options);
@@ -221,7 +221,7 @@ class JsHelper extends AppHelper {
  * Write a script to the buffered scripts.
  *
  * @param string $script Script string to add to the buffer.
- * @param boolean $top If true the script will be added to the top of the 
+ * @param boolean $top If true the script will be added to the top of the
  *   buffered scripts array.  If false the bottom.
  * @return void
  */
@@ -342,7 +342,7 @@ class JsHelper extends AppHelper {
  * and require an iframe or flash.
  *
  * ### Options
- * 
+ *
  * - `url` The url you wish the XHR request to submit to.
  * - `confirm` A string to use for a confirm() message prior to submitting the request.
  * - `method` The method you wish the form to send by, defaults to POST
@@ -403,7 +403,7 @@ class JsHelper extends AppHelper {
  */
 	protected function _getHtmlOptions($options, $additional = array()) {
 		$htmlKeys = array_merge(
-			array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title', 'style'), 
+			array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title', 'style'),
 			$additional
 		);
 		$htmlOptions = array();

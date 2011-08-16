@@ -61,7 +61,7 @@ class Xml {
  * 	);
  * $xml = Xml::build($value);
  * }}}
- * 
+ *
  * When building XML from an array ensure that there is only one top level element.
  *
  * ### Options
@@ -116,7 +116,7 @@ class Xml {
  * - `return` If return object of SimpleXMLElement ('simplexml') or DOMDocument ('domdocument'). Default is SimpleXMLElement.
  *
  * Using the following data:
- * 
+ *
  * {{{
  * $value = array(
  *    'root' => array(

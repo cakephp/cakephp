@@ -301,7 +301,7 @@ class Controller extends Object {
  *
  * @param CakeRequest $request Request object for this controller. Can be null for testing,
  *  but expect that features that use the request parameters will not work.
- * @param CakeResponse $response Response object for this controller. 
+ * @param CakeResponse $response Response object for this controller.
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
@@ -455,7 +455,7 @@ class Controller extends Object {
 	}
 
 /**
- * Dispatches the controller action.  Checks that the action 
+ * Dispatches the controller action.  Checks that the action
  * exists and isn't private.
  *
  * @param CakeRequest $request
@@ -487,7 +487,7 @@ class Controller extends Object {
 	}
 
 /**
- * Check if the request's action is marked as private, with an underscore, 
+ * Check if the request's action is marked as private, with an underscore,
  * or if the request is attempting to directly accessing a prefixed action.
  *
  * @param ReflectionMethod $method The method to be invoked.
@@ -496,7 +496,7 @@ class Controller extends Object {
  */
 	protected function _isPrivateAction(ReflectionMethod $method, CakeRequest $request) {
 		$privateAction = (
-			$method->name[0] === '_' || 
+			$method->name[0] === '_' ||
 			!$method->isPublic() ||
 			!in_array($method->name,  $this->methods)
 		);
@@ -882,7 +882,7 @@ class Controller extends Object {
 				$this->request->params['models'][$className] = compact('plugin', 'className');
 			}
 		} if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
-			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass); 
+			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass);
 		}
 
 		$models = ClassRegistry::keys();

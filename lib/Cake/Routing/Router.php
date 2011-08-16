@@ -203,7 +203,7 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
- * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass` 
+ * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
  * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
@@ -216,7 +216,7 @@ class Router {
  * `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  * via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
  *
- * `named` is used to configure named parameters at the route level. This key uses the same options 
+ * `named` is used to configure named parameters at the route level. This key uses the same options
  * as Router::connectNamed()
  *
  * @param string $route A string describing the template of the route
@@ -243,7 +243,7 @@ class Router {
 		}
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
-			$defaults += array('action' => 'index'); 
+			$defaults += array('action' => 'index');
 		}
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
@@ -271,7 +271,7 @@ class Router {
  *
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
  *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the 
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the
  * redirect destination allows you to use other routes to define where a url string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
@@ -337,18 +337,18 @@ class Router {
  * Router::connectNamed(
  *    array('page' => array('action' => 'index', 'controller' => 'pages')),
  *    array('default' => false, 'greedy' => false)
- * ); 
+ * );
  * }}}
  *
  * ### Options
  *
- * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will 
+ * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will
  *    parse only the connected named params.
  * - `default` Set this to true to merge in the default set of named parameters.
  * - `reset` Set to true to clear existing rules and start fresh.
  * - `separator` Change the string used to separate the key & value in a named parameter.  Defaults to `:`
  *
- * @param array $named A list of named parameters. Key value pairs are accepted where values are 
+ * @param array $named A list of named parameters. Key value pairs are accepted where values are
  *    either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @return array
@@ -510,7 +510,7 @@ class Router {
 
 /**
  * Takes parameter and path information back from the Dispatcher, sets these
- * parameters as the current request parameters that are merged with url arrays 
+ * parameters as the current request parameters that are merged with url arrays
  * created later in the request.
  *
  * Nested requests will create a stack of requests.  You can remove requests using
@@ -606,7 +606,7 @@ class Router {
 	}
 
 /**
- * Reloads default Router settings.  Resets all class variables and 
+ * Reloads default Router settings.  Resets all class variables and
  * removes all connected routes.
  *
  * @return void
@@ -656,7 +656,7 @@ class Router {
  * - A combination of controller/action - the method will find url for it.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
- * 
+ *
  * - `base` - Set to false to remove the base path from the generated url. If your application
  *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
  *   cake relative urls are required when using requestAction.
@@ -692,7 +692,7 @@ class Router {
 
 		$base = $path['base'];
 		$extension = $output = $q = $frag = null;
-		
+
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
 			if ($full && defined('FULL_BASE_URL')) {
@@ -762,8 +762,8 @@ class Router {
 			}
 		} else {
 			if (
-				(strpos($url, '://') || 
-				(strpos($url, 'javascript:') === 0) || 
+				(strpos($url, '://') ||
+				(strpos($url, 'javascript:') === 0) ||
 				(strpos($url, 'mailto:') === 0)) ||
 				(!strncmp($url, '#', 1))
 			) {

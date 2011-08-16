@@ -108,7 +108,7 @@ class Dispatcher {
 			$render = false;
 			$response = $result;
 		}
-		
+
 		if ($render && $controller->autoRender) {
 			$response = $controller->render();
 		} elseif ($response->body() === null) {

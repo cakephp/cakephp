@@ -97,7 +97,7 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Initializes the component, gets a reference to Controller::$parameters, and
- * checks to see if a file extension has been parsed by the Router.  Or if the 
+ * checks to see if a file extension has been parsed by the Router.  Or if the
  * HTTP_ACCEPT_TYPE is set to a single value that is a supported extension and mapped type.
  * If yes, RequestHandler::$ext is set to that value
  *
@@ -172,7 +172,7 @@ class RequestHandlerComponent extends Component {
  * Helper method to parse xml input data, due to lack of anonymous functions
  * this lives here.
  *
- * @param string $xml 
+ * @param string $xml
  * @return array Xml array data
  */
 	public function _convertXml($xml) {
@@ -437,7 +437,7 @@ class RequestHandlerComponent extends Component {
 		if (!$this->request->is('post') && !$this->request->is('put')) {
 			return null;
 		}
-	
+
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
 		if ($type == null) {
 			return $this->mapType($contentType);
@@ -498,7 +498,7 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Sets the layout and template paths for the content type defined by $type.
- * 
+ *
  * ### Usage:
  *
  * Render the response as an 'ajax' response.
@@ -652,7 +652,7 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Add a new mapped input type.  Mapped input types are automatically 
+ * Add a new mapped input type.  Mapped input types are automatically
  * converted by RequestHandlerComponent during the startup() callback.
  *
  * @param string $type The type alias being converted, ie. json

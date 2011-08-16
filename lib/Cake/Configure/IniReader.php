@@ -43,8 +43,8 @@
  * You can combine `.` separated values with sections to create more deeply
  * nested structures.
  *
- * IniReader also manipulates how the special ini values of 
- * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be 
+ * IniReader also manipulates how the special ini values of
+ * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be
  * converted to their boolean equivalents.
  *
  * @package       Cake.Configure

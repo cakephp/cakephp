@@ -21,7 +21,7 @@ App::uses('CakeRoute', 'Routing/Route');
 class PluginShortRoute extends CakeRoute {
 
 /**
- * Parses a string url into an array.  If a plugin key is found, it will be copied to the 
+ * Parses a string url into an array.  If a plugin key is found, it will be copied to the
  * controller parameter
  *
  * @param string $url The url to parse
