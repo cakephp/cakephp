@@ -926,4 +926,82 @@ class ViewTest extends CakeTestCase {
 		$View->render('alt_ext');
 		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 	}
+
+/**
+ * Test creating a block with capturing output.
+ *
+ * @return void
+ */
+	public function testBlockCapture() {
+		$this->View->start('test');
+		echo 'Block content';
+		$this->View->end();
+
+		$result = $this->View->get('test');
+		$this->assertEquals('Block content', $result);
+	}
+
+/**
+ * Test appending to a block with capturing output.
+ *
+ * @return void
+ */
+	public function testBlockCaptureAppend() {
+		$this->View->start('test');
+		echo 'Block';
+		$this->View->end();
+
+		$this->View->append('test');
+		echo ' content';
+		$this->View->end();
+
+		$result = $this->View->get('test');
+		$this->assertEquals('Block content', $result);
+	}
+
+/**
+ * Test setting a block's content.
+ *
+ * @return void
+ */
+	public function testBlockSet() {
+		$this->View->set('test', 'Block content');
+		$result = $this->View->get('test');
+		$this->assertEquals('Block content', $result);
+	}
+
+/**
+ * Test appending to a block with append.
+ *
+ * @return void
+ */
+	public function testBlockAppend() {
+		$this->View->set('test', 'Block');
+		$this->View->append('test', ' content');
+
+		$result = $this->View->get('test');
+		$this->assertEquals('Block content', $result);
+	}
+
+/**
+ * You should be able to append to undefined blocks.
+ *
+ * @return void
+ */
+	public function testBlockAppendUndefined() {
+		$this->View->append('test', 'Unknown');
+		$result = $this->View->get('test');
+		$this->assertEquals('Unknown', $result);
+	}
+
+/**
+ * Appending to an array should cause an exception.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testBlockAppendArrayException() {
+		$this->View->set('test', array(1, 2, 3));
+		$this->View->append('test', 'Kaboom');
+	}
 }
