@@ -503,13 +503,22 @@ class View extends Object {
 	}
 
 /**
+ * Get the names of all the existing blocks.
+ *
+ * @return array An array containing the blocks.
+ */
+	public function blocks() {
+		return array_keys($this->_blocks);
+	}
+
+/**
  * Start capturing output for a 'block'
  *
  * Blocks allow you to create slots or blocks of dynamic content in the layout.
  * view files can implement some or all of a layout's slots.
  *
  * You can end capturing blocks using View::end().  Blocks can be output
- * using View::output();
+ * using View::get();
  *
  * @param string $name The name of the block to capture for.
  * @return void
@@ -583,6 +592,8 @@ class View extends Object {
  *   update/replace a script element.
  * @param string $content The content of the script being added, optional.
  * @return void
+ * @deprecated Will be removed in 3.0.  Supersceeded by blocks functionality.
+ * @see View::start()
  */
 	public function addScript($name, $content = null) {
 		if (empty($content)) {

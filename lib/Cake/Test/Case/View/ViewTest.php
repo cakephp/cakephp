@@ -1013,4 +1013,16 @@ class ViewTest extends CakeTestCase {
 	public function testBlockAppendArrayException() {
 		$this->View->append('test', array(1, 2, 3));
 	}
+
+/**
+ * Test getting block names
+ *
+ * @return void
+ */
+	public function testBlocks() {
+		$this->View->append('test', 'one');
+		$this->View->setBlock('test1', 'one');
+
+		$this->assertEquals(array('test', 'test1'), $this->View->blocks());
+	}
 }
