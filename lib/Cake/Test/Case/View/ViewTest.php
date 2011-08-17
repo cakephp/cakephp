@@ -965,7 +965,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockSet() {
-		$this->View->set('test', 'Block content');
+		$this->View->setBlock('test', 'Block content');
 		$result = $this->View->get('test');
 		$this->assertEquals('Block content', $result);
 	}
@@ -976,7 +976,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockAppend() {
-		$this->View->set('test', 'Block');
+		$this->View->setBlock('test', 'Block');
 		$this->View->append('test', ' content');
 
 		$result = $this->View->get('test');
@@ -995,13 +995,22 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
- * Appending to an array should cause an exception.
+ * setting an array should cause an exception.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testBlockSetArrayException() {
+		$this->View->setBlock('test', array(1, 2, 3));
+	}
+
+/**
+ * Appending an array should cause an exception.
  *
  * @expectedException CakeException
  * @return void
  */
 	public function testBlockAppendArrayException() {
-		$this->View->set('test', array(1, 2, 3));
-		$this->View->append('test', 'Kaboom');
+		$this->View->append('test', array(1, 2, 3));
 	}
 }

@@ -219,6 +219,20 @@ class View extends Object {
 	protected $_scripts = array();
 
 /**
+ * Block content.  An array of blocks indexed by name.
+ *
+ * @var array
+ */
+	protected $_blocks = array();
+
+/**
+ * Name of the block being captured.
+ *
+ * @var string
+ */
+	private $__activeBlock = null;
+
+/**
  * Holds an array of paths.
  *
  * @var array
@@ -465,13 +479,100 @@ class View extends Object {
  *
  * @param string $var The view var you want the contents of.
  * @return mixed The content of the named var if its set, otherwise null.
+ * @deprecated Will be removed in 3.0  Use View::get() instead.
  */
 	public function getVar($var) {
-		if (!isset($this->viewVars[$var])) {
+		return $this->get($var);
+	}
+
+/**
+ * Returns the contents of the given View variable or a block.
+ * Blocks are checked before view variables.
+ *
+ * @param string $var The view var you want the contents of.
+ * @return mixed The content of the named var if its set, otherwise null.
+ */
+	public function get($var) {
+		if (!isset($this->viewVars[$var]) && !isset($this->_blocks[$var])) {
 			return null;
-		} else {
-			return $this->viewVars[$var];
 		}
+		if (isset($this->_blocks[$var])) {
+			return $this->_blocks[$var];
+		}
+		return $this->viewVars[$var];
+	}
+
+/**
+ * Start capturing output for a 'block'
+ *
+ * Blocks allow you to create slots or blocks of dynamic content in the layout.
+ * view files can implement some or all of a layout's slots.
+ *
+ * You can end capturing blocks using View::end().  Blocks can be output
+ * using View::output();
+ *
+ * @param string $name The name of the block to capture for.
+ * @return void
+ */
+	public function start($name) {
+		$this->_activeBlock = $name;
+		ob_start();
+	}
+
+/**
+ * Append to an existing or new block.  Appending to a new 
+ * block will create the block.
+ *
+ * Calling append() without a value will create a new capturing
+ * block that needs to be finished with View::end()
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ */
+	public function append($name, $value = null) {
+		if (isset($value)) {
+			if (!is_string($value)) {
+				throw new CakeException(__d('cake_dev', '$value must be a string.'));
+			}
+			if (!isset($this->_blocks[$name])) {
+				$this->_blocks[$name] = '';
+			}
+			$this->_blocks[$name] .= $value;
+		} else {
+			$this->start($name);
+		}
+	}
+
+/**
+ * Set the content for a block.  This will overwrite any
+ * existing content.
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ */
+	public function setBlock($name, $value) {
+		if (!is_string($value)) {
+			throw new CakeException(__d('cake_dev', 'You can only append strings.'));
+		}
+		$this->_blocks[$name] = $value;
+	}
+
+/**
+ * End a capturing block. The compliment to View::start()
+ *
+ * @return void
+ * @see View::start()
+ */
+	public function end() {
+		if (!empty($this->_activeBlock)) {
+			$content = ob_end_clean();
+			$this->_blocks[$this->_activeBlock] = $content;
+		}
+		$this->_activeBlock = null;
 	}
 
 /**
