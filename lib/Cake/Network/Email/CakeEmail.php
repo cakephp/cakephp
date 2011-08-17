@@ -270,12 +270,16 @@ class CakeEmail {
 
 /**
  * Constructor
+ * @param mixed $config Array of configs, or string to load configs from email.php
  *
  */
-	public function __construct() {
+	public function __construct($config = null) {
 		$charset = Configure::read('App.encoding');
 		if ($charset !== null) {
 			$this->charset = $charset;
+		}
+		if ($config) {
+			$this->config($config);
 		}
 	}
 
