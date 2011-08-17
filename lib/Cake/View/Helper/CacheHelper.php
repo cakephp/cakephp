@@ -76,7 +76,7 @@ class CacheHelper extends AppHelper {
  *
  * @var integer
  */
-	var $_counter = 0;
+	protected $_counter = 0;
 
 /**
  * Main method used to cache a view
@@ -185,7 +185,7 @@ class CacheHelper extends AppHelper {
  * @param string $content The content to munge.
  * @return string The content with cake:nocache tags replaced.
  */
-	function _replaceSection($matches) {
+	protected function _replaceSection($matches) {
 		$this->_counter += 1;
 		return sprintf('<!--nocache:%03d-->', $this->_counter);
 	}
@@ -198,7 +198,7 @@ class CacheHelper extends AppHelper {
  * @param string $content String to remove tags from.
  * @return string String with tags removed.
  */
-	function _stripTags($content) {
+	protected function _stripTags($content) {
 		return preg_replace('#<!--/?nocache(\:\d{3})?-->#', '', $content);
 	}
 

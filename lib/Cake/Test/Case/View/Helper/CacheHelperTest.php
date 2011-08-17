@@ -325,8 +325,13 @@ class CacheHelperTest extends CakeTestCase {
 
 		@unlink($filename);
 	}
-	
-	function testCacheCallbacks() {
+
+/**
+ * Test that callback code is generated correctly.
+ *
+ * @return void
+ */
+	public function testCacheCallbacks() {
 		$this->Controller->cache_parsing();
 		$this->Controller->params = array(
 			'controller' => 'cache_test',

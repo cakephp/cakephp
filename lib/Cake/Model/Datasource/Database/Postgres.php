@@ -297,7 +297,7 @@ class Postgres extends DboSource {
  *						and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
-	function truncate($table, $reset = 0) {
+	public function truncate($table, $reset = 0) {
 		$table = $this->fullTableName($table, false);
 		if (!isset($this->_sequenceMap[$table])) {
 			$cache = $this->cacheSources;

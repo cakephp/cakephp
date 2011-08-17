@@ -458,7 +458,7 @@ class SecurityComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValidatePostNoSession() {
+	public function testValidatePostNoSession() {
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Session->delete('_Token');
 
