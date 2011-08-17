@@ -892,14 +892,13 @@ class CakeEmail {
 
 		if (is_array($config)) {
 			$this->_config = $config;
+			if ($this->_transportClass) {
+				$this->_transportClass->config($this->_config);
+			}
 		} else {
 			$this->_config = (string)$config;
+			self::_applyConfig($this, $this->_config);
 		}
-
-		if ($this->_transportClass) {
-			$this->_transportClass->config($this->_config);
-		}
-
 		return $this;
 	}
 
@@ -991,16 +990,6 @@ class CakeEmail {
 		$class = __CLASS__;
 		$instance = new $class();
 
-		if (is_string($transportConfig)) {
-			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
-			}
-			$configs = new EmailConfig();
-			if (!isset($configs->{$transportConfig})) {
-				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $transportConfig));
-			}
-			$transportConfig = $configs->{$transportConfig};
-		}
 		self::_applyConfig($instance, $transportConfig);
 
 		if ($to !== null) {
@@ -1031,6 +1020,16 @@ class CakeEmail {
  * @return void
  */
 	protected static function _applyConfig(CakeEmail $obj, $config) {
+		if (is_string($config)) {
+			if (!config('email')) {
+				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
+			}
+			$configs = new EmailConfig();
+			if (!isset($configs->{$config})) {
+				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $config));
+			}
+			$config = $configs->{$config};
+		}
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
