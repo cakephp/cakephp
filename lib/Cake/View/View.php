@@ -396,7 +396,10 @@ class View extends Object {
  *
  * - `title_for_layout` - A backwards compatible place holder, you should set this value if you want more control.
  * - `content_for_layout` - contains rendered view file
- * - `scripts_for_layout` - contains scripts added to header
+ * - `scripts_for_layout` - Contains content added with addScript() as well as any content in
+ *   the 'meta', 'css', and 'script' blocks.  They are appended in that order.
+ *
+ * `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
@@ -413,9 +416,12 @@ class View extends Object {
 		}
 		$this->Helpers->trigger('beforeLayout', array($layoutFileName));
 
+		$scripts = implode("\n\t", $this->_scripts);
+		$scripts .= $this->get('meta') . $this->get('css') . $this->get('script');
+
 		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
-			'scripts_for_layout' => implode("\n\t", $this->_scripts),
+			'scripts_for_layout' => $scripts,
 		));
 
 		if (!isset($this->viewVars['title_for_layout'])) {
