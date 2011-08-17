@@ -144,7 +144,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
+		$this->View = $this->getMock('View', array('append'), array(new TheHtmlTestController()));
 		$this->Html = new TestHtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
@@ -508,12 +508,13 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[1], $expected);
 		$this->assertEquals(count($result), 2);
 
-		$this->View->expects($this->at(0))->method('addScript')
-			->with($this->matchesRegularExpression('/css_in_head.css/'));
+		$this->View->expects($this->at(0))
+			->method('append')
+			->with('css', $this->matchesRegularExpression('/css_in_head.css/'));
 
 		$this->View->expects($this->at(1))
-			->method('addScript')
-			->with($this->matchesRegularExpression('/more_css_in_head.css/'));
+			->method('append')
+			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
 
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
@@ -654,8 +655,9 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->View->expects($this->any())->method('addScript')
-			->with($this->matchesRegularExpression('/script_in_head.js/'));
+		$this->View->expects($this->any())
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/script_in_head.js/'));
 		$result = $this->Html->script('script_in_head', array('inline' => false));
 		$this->assertNull($result);
 	}
@@ -751,8 +753,9 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 
-		$this->View->expects($this->any())->method('addScript')
-			->with($this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
+		$this->View->expects($this->any())
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
 		$this->assertNull($result);
@@ -799,7 +802,8 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->View->expects($this->once())->method('addScript');
+		$this->View->expects($this->once())
+			->method('append');
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
 		$this->assertNull($result);
 		echo 'this is some javascript';
@@ -1245,8 +1249,9 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 
 
-		$this->View->expects($this->any())->method('addScript')
-			->with($this->matchesRegularExpression('/^<meta/'));
+		$this->View->expects($this->any())
+			->method('append')
+			->with('meta', $this->matchesRegularExpression('/^<meta/'));
 
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false));
 		$this->assertNull($result);

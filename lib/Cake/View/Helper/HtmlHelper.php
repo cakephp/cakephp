@@ -281,7 +281,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$this->_View->addScript($out);
+			$this->_View->append('meta', $out);
 		}
 	}
 
@@ -436,7 +436,7 @@ class HtmlHelper extends AppHelper {
 		if ($options['inline']) {
 			return $out;
 		} else {
-			$this->_View->addScript($out);
+			$this->_View->append(__FUNCTION__, $out);
 		}
 	}
 
@@ -513,7 +513,7 @@ class HtmlHelper extends AppHelper {
 		if ($options['inline']) {
 			return $out;
 		} else {
-			$this->_View->addScript($out);
+			$this->_View->append(__FUNCTION__, $out);
 		}
 	}
 
@@ -541,7 +541,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return sprintf($this->_tags['javascriptblock'], $attributes, $script);
 		} else {
-			$this->_View->addScript(sprintf($this->_tags['javascriptblock'], $attributes, $script));
+			$this->_View->append('script', sprintf($this->_tags['javascriptblock'], $attributes, $script));
 			return null;
 		}
 	}
