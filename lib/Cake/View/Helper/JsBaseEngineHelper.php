@@ -65,7 +65,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @param View $View
  * @param array $settings
  */
-	function __construct($View, $settings = array()) {
+	public function __construct($View, $settings = array()) {
 		parent::__construct($View, $settings);
 	}
 

@@ -98,7 +98,7 @@ class EmailComponent extends Component {
  *
  * @var string
  */
-	var $date = null;
+	public $date = null;
 
 /**
  * The subject of the email

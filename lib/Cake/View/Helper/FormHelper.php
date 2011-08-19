@@ -2203,7 +2203,7 @@ class FormHelper extends AppHelper {
  * @param boolean $setScope Sets the view scope to the model specified in $tagValue
  * @return void
  */
-	function setEntity($entity, $setScope = false) {
+	public function setEntity($entity, $setScope = false) {
 		parent::setEntity($entity, $setScope);
 		$parts = explode('.', $entity);
 		$field = $this->_introspectModel($this->_modelScope, 'fields', $parts[0]);

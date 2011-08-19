@@ -33,28 +33,28 @@ class Sqlite extends DboSource {
  *
  * @var string
  */
-	var $description = "SQLite DBO Driver";
+	public $description = "SQLite DBO Driver";
 
 /**
  * Quote Start
  *
  * @var string
  */
-	var $startQuote = '"';
+	public $startQuote = '"';
 
 /**
  * Quote End
  *
  * @var string
  */
-	var $endQuote = '"';
+	public $endQuote = '"';
 
 /**
  * Base configuration settings for SQLite3 driver
  *
  * @var array
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent' => false,
 		'database' => null
 	);
@@ -64,7 +64,7 @@ class Sqlite extends DboSource {
  *
  * @var array
  */
-	var $columns = array(
+	public $columns = array(
 		'primary_key' => array('name' => 'integer primary key autoincrement'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
@@ -83,7 +83,7 @@ class Sqlite extends DboSource {
  *
  * @var array
  */
-	var $fieldParameters = array(
+	public $fieldParameters = array(
 		'collate' => array(
 			'value' => 'COLLATE',
 			'quote' => false,

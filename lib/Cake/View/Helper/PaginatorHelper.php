@@ -94,7 +94,7 @@ class PaginatorHelper extends AppHelper {
  * @param array $settings Array of settings.
  * @throws CakeException When the AjaxProvider helper does not implement a link method.
  */
-	function __construct(View $View, $settings = array()) {
+	public function __construct(View $View, $settings = array()) {
 		$ajaxProvider = isset($settings['ajax']) ? $settings['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;

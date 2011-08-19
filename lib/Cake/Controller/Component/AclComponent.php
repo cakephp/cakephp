@@ -263,7 +263,7 @@ class DbAcl extends Object implements AclInterface {
  * Constructor
  *
  */
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		App::uses('AclNode', 'Model');
 		$this->Aro = ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));

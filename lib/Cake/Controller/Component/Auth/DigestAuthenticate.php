@@ -30,7 +30,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  *
  * In your controller's components array, add auth + the required settings.
  * {{{
- *	var $components = array(
+ *	public $components = array(
  *		'Auth' => array(
  *			'authenticate' => array('Digest')
  *		)

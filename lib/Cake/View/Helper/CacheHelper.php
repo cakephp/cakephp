@@ -47,6 +47,13 @@ class CacheHelper extends AppHelper {
 	protected $_match = array();
 
 /**
+ * Counter used for counting nocache section tags.
+ *
+ * @var integer
+ */
+	protected $_counter = 0;
+
+/**
  * Parses the view file and stores content for cache file building.
  *
  * @param string $viewFile
@@ -72,13 +79,6 @@ class CacheHelper extends AppHelper {
 		}
 		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
 	}
-
-/**
- * Counter used for counting nocache section tags.
- *
- * @var integer
- */
-	var $_counter = 0;
 
 /**
  * Main method used to cache a view

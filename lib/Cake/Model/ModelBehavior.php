@@ -47,7 +47,7 @@
  * than a normal behavior mixin method.
  *
  * {{{
- * var $mapMethods = array('/do(\w+)/' => 'doSomething');
+ * public $mapMethods = array('/do(\w+)/' => 'doSomething');
  *
  * function doSomething($model, $method, $arg1, $arg2) {
  *		//do something

@@ -142,7 +142,7 @@ class Shell extends Object {
  * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
  * @param ConsoleInput $stdin A ConsoleInput object for stdin.
  */
-	function __construct($stdout = null, $stderr = null, $stdin = null) {
+	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if ($this->name == null) {
 			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
