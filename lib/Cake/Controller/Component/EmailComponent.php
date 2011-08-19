@@ -355,7 +355,7 @@ class EmailComponent extends Component {
 			$lib->attachments($this->_formatAttachFiles());
 		}
 
-		$lib->transport($this->delivery);
+		$lib->transport(ucfirst($this->delivery));
 		if ($this->delivery === 'mail') {
 			$lib->config(array('eol' => $this->lineFeed, 'additionalParameters' => $this->additionalParams));
 		} elseif ($this->delivery === 'smtp') {
