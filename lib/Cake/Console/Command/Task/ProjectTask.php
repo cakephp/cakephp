@@ -136,7 +136,7 @@ class ProjectTask extends Shell {
 /**
  * Checks PHP's include_path for CakePHP.
  *
- * @return bool Indicates whether or not CakePHP exists on include_path
+ * @return boolean Indicates whether or not CakePHP exists on include_path
  */
 	public function cakeOnIncludePath() {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
@@ -304,7 +304,7 @@ class ProjectTask extends Shell {
  * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
  * @param string $path Project path
- * @param bool $hardCode Wether or not define calls should be hardcoded.
+ * @param boolean $hardCode Wether or not define calls should be hardcoded.
  * @return boolean Success
  */
 	public function corePath($path, $hardCode = true) {
@@ -326,7 +326,7 @@ class ProjectTask extends Shell {
  *
  * @param string $filename The filename to operate on.
  * @param boolean $hardCode Whether or not the define should be uncommented.
- * @retun bool Success
+ * @return boolean Success
  */
 	protected function _replaceCorePath($filename, $hardCode) {
 		$contents = file_get_contents($filename);

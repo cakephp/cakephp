@@ -185,10 +185,9 @@ class CacheHelper extends AppHelper {
  * Munges the output from a view with cache tags, and numbers the sections.
  * This helps solve issues with empty/duplicate content.
  *
- * @param string $content The content to munge.
  * @return string The content with cake:nocache tags replaced.
  */
-	function _replaceSection($matches) {
+	function _replaceSection() {
 		$this->_counter += 1;
 		return sprintf('<!--nocache:%03d-->', $this->_counter);
 	}

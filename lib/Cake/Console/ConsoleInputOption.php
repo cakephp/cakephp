@@ -75,6 +75,7 @@ class ConsoleInputOption {
  * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
+ * @throws ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
