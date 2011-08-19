@@ -859,7 +859,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Tests correct generation of text fields for double and float fields
+ * Tests correct generation of number fields for double and float fields
  *
  * @access public
  * @return void
@@ -876,20 +876,39 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->input('foo');
 		$expected = array(
-			'div' => array('class' => 'input text'),
+			'div' => array('class' => 'input number'),
 			'label' => array('for' => 'ContactFoo'),
 			'Foo',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][foo]',
-				'id' => 'ContactFoo'
+				'type' => 'number',
+				'name' => 'data[Contact][foo]',
+				'id' => 'ContactFoo',
+				'step' => 'any'
 			)),
 			'/div'
 		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('foo', array('step' => 0.5));
+		$expected = array(
+			'div' => array('class' => 'input number'),
+			'label' => array('for' => 'ContactFoo'),
+			'Foo',
+			'/label',
+			array('input' => array(
+				'type' => 'number',
+				'name' => 'data[Contact][foo]',
+				'id' => 'ContactFoo',
+				'step' => '0.5'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 	
 /**
- * Tests correct generation of text fields for double and float fields
+ * Tests correct generation of number fields for integer fields
  *
  * @access public
  * @return void
@@ -906,7 +925,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->input('foo');
 		$expected = array(
-			'div' => array('class' => 'input text'),
+			'div' => array('class' => 'input number'),
 			'label' => array('for' => 'ContactFoo'),
 			'Foo',
 			'/label',
@@ -916,6 +935,7 @@ class FormHelperTest extends CakeTestCase {
 			)),
 			'/div'
 		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
