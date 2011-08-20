@@ -108,10 +108,23 @@ class ApcEngine extends CacheEngine {
 /**
  * Delete all keys from the cache.  This will clear every cache config using APC.
  *
+ * @param boolean $check If true, nothing will be cleared, as entries are removed
+ *    from APC as they expired.  This flag is really only used by FileEngine.
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
-		return apc_clear_cache('user');
+		if ($check) {
+			return true;
+		}
+		$info = apc_cache_info('user');
+		$cacheKeys = $info['cache_list'];
+		unset($info);
+		foreach ($cacheKeys as $key) {
+			if (strpos($key['info'], $this->settings['prefix']) === 0) {
+				apc_delete($key['info']);
+			}
+		}
+		return true;
 	}
 
 }

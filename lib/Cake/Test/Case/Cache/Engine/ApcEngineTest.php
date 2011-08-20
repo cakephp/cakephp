@@ -197,10 +197,13 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testClear() {
+		apc_store('not_cake', 'survive');
 		Cache::write('some_value', 'value', 'apc');
 
 		$result = Cache::clear(false, 'apc');
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'apc'));
+		$this->assertEquals('survive', apc_fetch('not_cake'));
+		apc_delete('not_cake');
 	}
 }
