@@ -790,17 +790,18 @@ class Set {
 		if (empty($val2)) {
 			return (array)$val1;
 		}
-		$intersection = array_intersect_key($val1, $val2);
-		while (($key = key($intersection)) !== null) {
-			if ($val1[$key] == $val2[$key]) {
+		$result = array();
+		foreach ($val2 as $key => $value) {
+			$keyExists = array_key_exists($key, $val1);
+			if ($keyExists && $val1[$key] == $value) {
 				unset($val1[$key]);
-				unset($val2[$key]);
+			} elseif (! $keyExists) {
+				$val1[$key] = $value;
 			}
-			next($intersection);
 		}
-
-		return $val1 + $val2;
+		return $val1;
 	}
+
 
 /**
  * Determines if one Set or array contains the exact keys and values of another.
