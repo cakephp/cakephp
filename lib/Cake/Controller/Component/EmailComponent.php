@@ -407,7 +407,7 @@ class EmailComponent extends Component {
  * @param string $attachment Attachment file name to find
  * @return string Path to located file
  */
-	function _findFiles($attachment) {
+	protected function _findFiles($attachment) {
 		if (file_exists($attachment)) {
 			return $attachment;
 		}
@@ -426,7 +426,7 @@ class EmailComponent extends Component {
  * @param string $subject String to encode
  * @return string Encoded string
  */
-	function _encode($subject) {
+	protected function _encode($subject) {
 		$subject = $this->_strip($subject);
 
 		$nl = "\r\n";
@@ -472,7 +472,7 @@ class EmailComponent extends Component {
  * @param boolean $message Set to true to indicate main message content
  * @return string Stripped value
  */
-	function _strip($value, $message = false) {
+	protected function _strip($value, $message = false) {
 		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
 		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
 

@@ -94,7 +94,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $server The server address string.
  * @return array Array containing host, port
  */
-	function _parseServerString($server) {
+	protected function _parseServerString($server) {
 		if (substr($server, 0, 1) == '[') {
 			$position = strpos($server, ']:');
 			if ($position !== false) {

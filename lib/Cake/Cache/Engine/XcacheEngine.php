@@ -127,12 +127,12 @@ class XcacheEngine extends CacheEngine {
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
-		$this->__auth();
+		$this->_auth();
 		$max = xcache_count(XC_TYPE_VAR);
 		for ($i = 0; $i < $max; $i++) {
 			xcache_clear_cache(XC_TYPE_VAR, $i);
 		}
-		$this->__auth(true);
+		$this->_auth(true);
 		return true;
 	}
 
@@ -146,7 +146,7 @@ class XcacheEngine extends CacheEngine {
  * @param boolean $reverse Revert changes
  * @return void
  */
-	function __auth($reverse = false) {
+	protected function _auth($reverse = false) {
 		static $backup = array();
 		$keys = array('PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password');
 		foreach ($keys as $key => $setting) {

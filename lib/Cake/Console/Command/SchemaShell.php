@@ -243,7 +243,7 @@ class SchemaShell extends Shell {
  */
 	public function create() {
 		list($Schema, $table) = $this->_loadSchema();
-		$this->__create($Schema, $table);
+		$this->_create($Schema, $table);
 	}
 
 /**
@@ -253,7 +253,7 @@ class SchemaShell extends Shell {
  */
 	public function update() {
 		list($Schema, $table) = $this->_loadSchema();
-		$this->__update($Schema, $table);
+		$this->_update($Schema, $table);
 	}
 
 /**
@@ -261,7 +261,7 @@ class SchemaShell extends Shell {
  *
  * @return void
  */
-	function _loadSchema() {
+	protected function _loadSchema() {
 		$name = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
@@ -302,7 +302,7 @@ class SchemaShell extends Shell {
  * @param string $table
  * @return void
  */
-	function __create($Schema, $table = null) {
+	protected function _create($Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
@@ -326,7 +326,7 @@ class SchemaShell extends Shell {
 
 		if ('y' == $this->in(__d('cake_console', 'Are you sure you want to drop the table(s)?'), array('y', 'n'), 'n')) {
 			$this->out(__d('cake_console', 'Dropping table(s).'));
-			$this->__run($drop, 'drop', $Schema);
+			$this->_run($drop, 'drop', $Schema);
 		}
 
 		$this->out("\n" . __d('cake_console', 'The following table(s) will be created.'));
@@ -334,7 +334,7 @@ class SchemaShell extends Shell {
 
 		if ('y' == $this->in(__d('cake_console', 'Are you sure you want to create the table(s)?'), array('y', 'n'), 'y')) {
 			$this->out(__d('cake_console', 'Creating table(s).'));
-			$this->__run($create, 'create', $Schema);
+			$this->_run($create, 'create', $Schema);
 		}
 		$this->out(__d('cake_console', 'End create.'));
 	}
@@ -347,7 +347,7 @@ class SchemaShell extends Shell {
  * @param string $table
  * @return void
  */
-	function __update(&$Schema, $table = null) {
+	protected function _update(&$Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$this->out(__d('cake_console', 'Comparing Database to Schema...'));
@@ -378,21 +378,21 @@ class SchemaShell extends Shell {
 		if ('y' == $this->in(__d('cake_console', 'Are you sure you want to alter the tables?'), array('y', 'n'), 'n')) {
 			$this->out();
 			$this->out(__d('cake_console', 'Updating Database...'));
-			$this->__run($contents, 'update', $Schema);
+			$this->_run($contents, 'update', $Schema);
 		}
 
 		$this->out(__d('cake_console', 'End update.'));
 	}
 
 /**
- * Runs sql from __create() or __update()
+ * Runs sql from _create() or _update()
  *
  * @param array $contents
  * @param string $event
  * @param CakeSchema $Schema
  * @return void
  */
-	function __run($contents, $event, &$Schema) {
+	protected function _run($contents, $event, &$Schema) {
 		if (empty($contents)) {
 			$this->err(__d('cake_console', 'Sql could not be run'));
 			return;

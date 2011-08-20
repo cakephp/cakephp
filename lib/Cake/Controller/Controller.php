@@ -526,7 +526,7 @@ class Controller extends Object {
  *
  * @return void
  */
-	protected function __mergeVars() {
+	protected function _mergeControllerVars() {
 		$pluginController = $pluginDot = null;
 
 		if (!empty($this->plugin)) {
@@ -584,7 +584,7 @@ class Controller extends Object {
  * @throws MissingModelException
  */
 	public function constructClasses() {
-		$this->__mergeVars();
+		$this->_mergeControllerVars();
 		$this->Components->init($this);
 		if ($this->uses) {
 			$this->uses = (array) $this->uses;

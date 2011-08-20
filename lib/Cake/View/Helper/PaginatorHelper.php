@@ -251,7 +251,7 @@ class PaginatorHelper extends AppHelper {
 			'rel' => 'prev'
 		);
 		$options = array_merge($defaults, (array)$options);
-		return $this->__pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
+		return $this->_pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
 /**
@@ -274,7 +274,7 @@ class PaginatorHelper extends AppHelper {
 			'rel' => 'next'
 		);
 		$options = array_merge($defaults, (array)$options);
-		return $this->__pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
+		return $this->_pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
 /**
@@ -426,7 +426,7 @@ class PaginatorHelper extends AppHelper {
  * @param array $disabledOptions
  * @return string
  */
-	protected function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+	protected function _pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
 		$_defaults = array(
 			'url' => array(), 'step' => 1, 'escape' => true,
@@ -468,7 +468,7 @@ class PaginatorHelper extends AppHelper {
  * @return boolean True if the result set is not at the first page.
  */
 	public function hasPrev($model = null) {
-		return $this->__hasPage($model, 'prev');
+		return $this->_hasPage($model, 'prev');
 	}
 
 /**
@@ -478,7 +478,7 @@ class PaginatorHelper extends AppHelper {
  * @return boolean True if the result set is not at the last page.
  */
 	public function hasNext($model = null) {
-		return $this->__hasPage($model, 'next');
+		return $this->_hasPage($model, 'next');
 	}
 
 /**
@@ -504,7 +504,7 @@ class PaginatorHelper extends AppHelper {
  * @param integer $page Page number you are checking.
  * @return boolean Whether model has $page
  */
-	protected function __hasPage($model, $page) {
+	protected function _hasPage($model, $page) {
 		$params = $this->params($model);
 		if (!empty($params)) {
 			if ($params["{$page}Page"] == true) {

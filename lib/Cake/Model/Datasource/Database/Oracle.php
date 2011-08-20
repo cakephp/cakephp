@@ -505,7 +505,7 @@ class DboOracle extends DboSource {
 				'length'=> $row[0]['DATA_LENGTH']
 			);
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->_cacheDescription($this->fullTableName($model, false), $fields);
 
 		return $fields;
 	}

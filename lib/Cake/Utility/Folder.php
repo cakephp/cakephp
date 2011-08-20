@@ -398,7 +398,7 @@ class Folder {
 		}
 		while (!empty($this->_directories)) {
 			$dir = array_pop($this->_directories);
-			$this->__tree($dir, $exceptions);
+			$this->_tree($dir, $exceptions);
 			$directories[] = $dir;
 		}
 
@@ -420,7 +420,7 @@ class Folder {
  * @param mixed $exceptions Array of files to exclude from the read that will be performed.
  * @return void
  */
-	public function __tree($path, $exceptions) {
+	protected function _tree($path, $exceptions) {
 		$this->path = $path;
 		list($dirs, $files) = $this->read(false, $exceptions, true);
 		$this->_directories = array_merge($this->_directories, $dirs);

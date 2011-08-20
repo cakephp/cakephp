@@ -126,7 +126,7 @@ class DataSource extends Object {
 		if (isset($this->_descriptions[$table])) {
 			return $this->_descriptions[$table];
 		}
-		$cache = $this->__cacheDescription($table);
+		$cache = $this->_cacheDescription($table);
 
 		if ($cache !== null) {
 			$this->_descriptions[$table] =& $cache;
@@ -287,7 +287,7 @@ class DataSource extends Object {
  * @param mixed $data The description of the model, usually a string or array
  * @return mixed
  */
-	function __cacheDescription($object, $data = null) {
+	protected function _cacheDescription($object, $data = null) {
 		if ($this->cacheSources === false) {
 			return null;
 		}

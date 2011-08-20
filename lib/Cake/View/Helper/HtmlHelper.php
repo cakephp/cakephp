@@ -902,7 +902,7 @@ class HtmlHelper extends AppHelper {
 			$tag = $options;
 			$options = array();
 		}
-		$items = $this->__nestedListItem($list, $options, $itemOptions, $tag);
+		$items = $this->_nestedListItem($list, $options, $itemOptions, $tag);
 		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
 	}
 
@@ -916,7 +916,7 @@ class HtmlHelper extends AppHelper {
  * @return string The nested list element
  * @see HtmlHelper::nestedList()
  */
-	function __nestedListItem($items, $options, $itemOptions, $tag) {
+	protected function _nestedListItem($items, $options, $itemOptions, $tag) {
 		$out = '';
 
 		$index = 1;

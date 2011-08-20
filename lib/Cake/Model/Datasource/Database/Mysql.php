@@ -323,7 +323,7 @@ class Mysql extends DboSource {
 				}
 			}
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->_cacheDescription($this->fullTableName($model, false), $fields);
 		$cols->closeCursor();
 		return $fields;
 	}

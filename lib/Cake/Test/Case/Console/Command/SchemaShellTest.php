@@ -422,7 +422,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testUpdateWithTable() {
 		$this->Shell = $this->getMock(
 			'SchemaShell',
-			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '__run'),
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
 			array(&$this->Dispatcher)
 		);
 
@@ -433,7 +433,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->once())->method('__run')
+		$this->Shell->expects($this->once())->method('_run')
 			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
 
 		$this->Shell->update();

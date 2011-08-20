@@ -98,7 +98,7 @@ class FormHelper extends AppHelper {
  * An array of fieldnames that have been excluded from
  * the Token hash used by SecurityComponent's validatePost method
  *
- * @see FormHelper::__secure()
+ * @see FormHelper::_secure()
  * @see SecurityComponent::validatePost()
  * @var array
  */
@@ -591,7 +591,7 @@ class FormHelper extends AppHelper {
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
  */
-	protected function __secure($lock, $field = null, $value = null) {
+	protected function _secure($lock, $field = null, $value = null) {
 		if (!$field) {
 			$field = $this->entity();
 		} elseif (is_string($field)) {
@@ -1400,7 +1400,7 @@ class FormHelper extends AppHelper {
 		));
 
 		if ($secure && $secure !== self::SECURE_SKIP) {
-			$this->__secure(true, null, '' . $options['value']);
+			$this->_secure(true, null, '' . $options['value']);
 		}
 
 		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '')));
@@ -1423,7 +1423,7 @@ class FormHelper extends AppHelper {
 		$field = $this->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
-			$this->__secure($secure, array_merge($field, array($suffix)));
+			$this->_secure($secure, array_merge($field, array($suffix)));
 		}
 
 		return $this->Html->useTag('file', $options['name'], array_diff_key($options, array('name' => '')));
@@ -1448,7 +1448,7 @@ class FormHelper extends AppHelper {
 			$title = h($title);
 		}
 		if (isset($options['name'])) {
-			$this->__secure($options['secure'], $options['name']);
+			$this->_secure($options['secure'], $options['name']);
 		}
 		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
 	}
@@ -1592,7 +1592,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($options['name'])) {
-			$this->__secure($options['secure'], $options['name']);
+			$this->_secure($options['secure'], $options['name']);
 		}
 		unset($options['secure']);
 
@@ -1698,7 +1698,7 @@ class FormHelper extends AppHelper {
 		));
 
 		if (is_string($options) && isset($this->_options[$options])) {
-			$options = $this->__generateOptions($options);
+			$options = $this->_generateOptions($options);
 		} elseif (!is_array($options)) {
 			$options = array();
 		}
@@ -1729,7 +1729,7 @@ class FormHelper extends AppHelper {
 
 		if (!empty($tag) || isset($template)) {
 			if (!isset($secure) || $secure == true) {
-				$this->__secure(true);
+				$this->_secure(true);
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
 		}
@@ -1751,7 +1751,7 @@ class FormHelper extends AppHelper {
 			$attributes['id'] = Inflector::camelize($attributes['id']);
 		}
 
-		$select = array_merge($select, $this->__selectOptions(
+		$select = array_merge($select, $this->_selectOptions(
 			array_reverse($options, true),
 			array(),
 			$showParents,
@@ -1786,14 +1786,14 @@ class FormHelper extends AppHelper {
  */
 	public function day($fieldName = null, $attributes = array()) {
 		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->__dateTimeSelected('day', $fieldName, $attributes);
+		$attributes = $this->_dateTimeSelected('day', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			$attributes['value'] = date('d', strtotime($attributes['value']));
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
-		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $attributes);
+		return $this->select($fieldName . ".day", $this->_generateOptions('day'), $attributes);
 	}
 
 /**
@@ -1845,7 +1845,7 @@ class FormHelper extends AppHelper {
 			unset($attributes['orderYear']);
 		}
 		return $this->select(
-			$fieldName . '.year', $this->__generateOptions('year', $yearOptions),
+			$fieldName . '.year', $this->_generateOptions('year', $yearOptions),
 			$attributes
 		);
 	}
@@ -1868,7 +1868,7 @@ class FormHelper extends AppHelper {
  */
 	public function month($fieldName, $attributes = array()) {
 		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->__dateTimeSelected('month', $fieldName, $attributes);
+		$attributes = $this->_dateTimeSelected('month', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			$attributes['value'] = date('m', strtotime($attributes['value']));
@@ -1882,7 +1882,7 @@ class FormHelper extends AppHelper {
 
 		return $this->select(
 			$fieldName . ".month",
-			$this->__generateOptions('month', array('monthNames' => $monthNames)),
+			$this->_generateOptions('month', array('monthNames' => $monthNames)),
 			$attributes
 		);
 	}
@@ -1904,7 +1904,7 @@ class FormHelper extends AppHelper {
  */
 	public function hour($fieldName, $format24Hours = false, $attributes = array()) {
 		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->__dateTimeSelected('hour', $fieldName, $attributes);
+		$attributes = $this->_dateTimeSelected('hour', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			if ($format24Hours) {
@@ -1917,7 +1917,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->select(
 			$fieldName . ".hour",
-			$this->__generateOptions($format24Hours ? 'hour24' : 'hour'),
+			$this->_generateOptions($format24Hours ? 'hour24' : 'hour'),
 			$attributes
 		);
 	}
@@ -1938,7 +1938,7 @@ class FormHelper extends AppHelper {
  */
 	public function minute($fieldName, $attributes = array()) {
 		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->__dateTimeSelected('min', $fieldName, $attributes);
+		$attributes = $this->_dateTimeSelected('min', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			$attributes['value'] = date('i', strtotime($attributes['value']));
@@ -1952,7 +1952,7 @@ class FormHelper extends AppHelper {
 			unset($attributes['interval']);
 		}
 		return $this->select(
-			$fieldName . ".min", $this->__generateOptions('minute', $minuteOptions),
+			$fieldName . ".min", $this->_generateOptions('minute', $minuteOptions),
 			$attributes
 		);
 	}
@@ -1965,7 +1965,7 @@ class FormHelper extends AppHelper {
  * @param array $attributes Array of attributes, must contain 'empty' key.
  * @return array Attributes array with currently selected value.
  */
-	function __dateTimeSelected($select, $fieldName, $attributes) {
+	protected function _dateTimeSelected($select, $fieldName, $attributes) {
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value) && isset($value[$select])) {
 				$attributes['value'] = $value[$select];
@@ -2017,7 +2017,7 @@ class FormHelper extends AppHelper {
 			$attributes['value'] = null;
 		}
 		return $this->select(
-			$fieldName . ".meridian", $this->__generateOptions('meridian'),
+			$fieldName . ".meridian", $this->_generateOptions('meridian'),
 			$attributes
 		);
 	}
@@ -2264,7 +2264,7 @@ class FormHelper extends AppHelper {
  * @param array $attributes
  * @return array
  */
-	function __selectOptions($elements = array(), $parents = array(), $showParents = null, $attributes = array()) {
+	protected function _selectOptions($elements = array(), $parents = array(), $showParents = null, $attributes = array()) {
 		$select = array();
 		$attributes = array_merge(
 			array('escape' => true, 'style' => null, 'value' => null, 'class' => null),
@@ -2284,7 +2284,7 @@ class FormHelper extends AppHelper {
 					}
 					$parents[] = $name;
 				}
-				$select = array_merge($select, $this->__selectOptions(
+				$select = array_merge($select, $this->_selectOptions(
 					$title, $parents, $showParents, $attributes
 				));
 
@@ -2357,7 +2357,7 @@ class FormHelper extends AppHelper {
  * @param array $options
  * @return array
  */
-	function __generateOptions($name, $options = array()) {
+	protected function _generateOptions($name, $options = array()) {
 		if (!empty($this->options[$name])) {
 			return $this->options[$name];
 		}
@@ -2487,7 +2487,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$this->__secure($secure, $fieldName);
+		$this->_secure($secure, $fieldName);
 		return $result;
 	}
 }

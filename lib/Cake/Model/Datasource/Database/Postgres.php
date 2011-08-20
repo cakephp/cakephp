@@ -249,7 +249,7 @@ class Postgres extends DboSource {
 					$fields[$c->name]['default'] = constant($fields[$c->name]['default']);
 				}
 			}
-			$this->__cacheDescription($table, $fields);
+			$this->_cacheDescription($table, $fields);
 		}
 		if (isset($model->sequence)) {
 			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;

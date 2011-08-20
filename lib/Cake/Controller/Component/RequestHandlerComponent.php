@@ -175,7 +175,7 @@ class RequestHandlerComponent extends Component {
  * @param string $xml
  * @return array Xml array data
  */
-	public function _convertXml($xml) {
+	protected function _convertXml($xml) {
 		try {
 			$xml = Xml::build($xml);
 			if (isset($xml->data)) {

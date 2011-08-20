@@ -247,7 +247,7 @@ class Sqlserver extends DboSource {
 				$fields[$field]['length'] = $fields[$field]['length'] . ',' . $column->Size;
 			}
 		}
-		$this->__cacheDescription($table, $fields);
+		$this->_cacheDescription($table, $fields);
 		$cols->closeCursor();
 		return $fields;
 	}
