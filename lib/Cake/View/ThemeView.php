@@ -60,9 +60,9 @@ class ThemeView extends View {
 				if (strpos($paths[$i], DS . 'Plugins' . DS) === false
 					&& strpos($paths[$i], DS . 'Cake' . DS . 'View') === false) {
 						if ($plugin) {
-							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugins' . DS . $plugin . DS;
+							$themePaths[] = $paths[$i] . 'Themed'. DS . Inflector::camelize( $this->theme ) . DS . 'Plugins' . DS . $plugin . DS;
 						}
-						$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS;
+						$themePaths[] = $paths[$i] . 'Themed'. DS . Inflector::camelize( $this->theme ) . DS;
 					}
 			}
 			$paths = array_merge($themePaths, $paths);
