@@ -189,10 +189,32 @@ class MemcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
+ * @param boolean $check
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
-		return $this->_Memcache->flush();
+		if ($check) {
+			return true;
+		}
+		foreach ($this->_Memcache->getExtendedStats('slabs') as $slabs) {
+			foreach (array_keys($slabs) as $slabId) {
+				if (!is_numeric($slabId)) {
+					continue;
+				}
+
+				foreach ($this->_Memcache->getExtendedStats('cachedump', $slabId) as $stats) {
+					if (!is_array($stats)) {
+						continue;
+					}
+					foreach (array_keys($stats) as $key) {
+						if (strpos($key, $this->settings['prefix']) === 0) {
+							$this->_Memcache->delete($key);
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 /**
