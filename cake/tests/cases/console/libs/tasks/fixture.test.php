@@ -141,9 +141,9 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	function testImportOptionsAlternateConnection() {
-		$this->Task->connection = 'test';
+		$this->Task->connection = 'test_suite';
 		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
-		$this->assertPattern("/'connection' => 'test'/", $result);
+		$this->assertPattern("/'connection' => 'test_suite'/", $result);
 	}
 
 /**
@@ -351,7 +351,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/Article/')));
 		$result = $this->Task->generateFixtureFile('Article', array());
 
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)\?\>/ms')));
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)$/ms')));
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 
