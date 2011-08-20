@@ -334,11 +334,24 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testClear() {
-		Cache::write('some_value', 'value', 'memcache');
+		Cache::config('memcache2', array(
+			'engine' => 'Memcache',
+			'prefix' => 'cake2_',
+			'duration' => 3600
+		));
 
+		Cache::write('some_value', 'cache1', 'memcache');
+		$result = Cache::clear(true, 'memcache');
+		$this->assertTrue($result);
+		$this->assertEquals('cache1', Cache::read('some_value', 'memcache'));
+
+		Cache::write('some_value', 'cache2', 'memcache2');
 		$result = Cache::clear(false, 'memcache');
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'memcache'));
+		$this->assertEquals('cache2', Cache::read('some_value', 'memcache2'));
+
+		Cache::clear(false, 'memcache2');
 	}
 /**
  * test that a 0 duration can succesfully write.

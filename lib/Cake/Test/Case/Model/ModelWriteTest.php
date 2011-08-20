@@ -458,6 +458,70 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Tests having multiple counter caches for an associated model
+ *
+ * @access public
+ * @return void
+ */
+	public function testCounterCacheMultipleCaches() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User = new CounterCacheUser();
+		$Post = new CounterCachePost();
+		$Post->unbindModel(array('belongsTo' => array('User')), false);
+		$Post->bindModel(array(
+			'belongsTo' => array(
+				'User' => array(
+					'className' => 'CounterCacheUser',
+					'foreignKey' => 'user_id',
+					'counterCache' => array(
+						true,
+						'posts_published' => array('Post.published' => true)
+					)
+				)
+			)
+		), false);
+
+		// Count Increase
+		$user = $User->find('first', array(
+			'conditions' => array('id' => 66),
+			'recursive' => -1
+		));
+		$data = array('Post' => array(
+			'id' => 22,
+			'title' => 'New Post',
+			'user_id' => 66,
+			'published' => true
+		));
+		$Post->save($data);
+		$result = $User->find('first', array(
+			'conditions' => array('id' => 66),
+			'recursive' => -1
+		));
+		$this->assertEquals(3, $result[$User->alias]['post_count']);
+		$this->assertEquals(2, $result[$User->alias]['posts_published']);
+
+		// Count decrease
+		$Post->delete(1);
+		$result = $User->find('first', array(
+			'conditions' => array('id' => 66),
+			'recursive' => -1
+		));
+		$this->assertEquals(2, $result[$User->alias]['post_count']);
+		$this->assertEquals(2, $result[$User->alias]['posts_published']);
+
+		// Count update
+		$data = $Post->find('first', array(
+			'conditions' => array('id' => 1),
+			'recursive' => -1
+		));
+		$data[$Post->alias]['user_id'] = 301;
+		$Post->save($data);
+		$result = $User->find('all',array('order' => 'User.id'));
+		$this->assertEquals(2, $result[0]['User']['post_count']);
+		$this->assertEquals(1, $result[1]['User']['posts_published']);
+	}
+
+/**
  * test that beforeValidate returning false can abort saves.
  *
  * @return void

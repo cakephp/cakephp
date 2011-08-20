@@ -1759,45 +1759,59 @@ class Model extends Object {
 		$keys['old'] = isset($keys['old']) ? $keys['old'] : array();
 
 		foreach ($this->belongsTo as $parent => $assoc) {
-			$foreignKey = $assoc['foreignKey'];
-			$fkQuoted = $this->escapeField($assoc['foreignKey']);
-
 			if (!empty($assoc['counterCache'])) {
-				if ($assoc['counterCache'] === true) {
-					$assoc['counterCache'] = Inflector::underscore($this->alias) . '_count';
-				}
-				if (!$this->{$parent}->hasField($assoc['counterCache'])) {
-					continue;
-				}
-
-				if (!array_key_exists($foreignKey, $keys)) {
-					$keys[$foreignKey] = $this->field($foreignKey);
-				}
-				$recursive = (isset($assoc['counterScope']) ? 1 : -1);
-				$conditions = ($recursive == 1) ? (array)$assoc['counterScope'] : array();
-
-				if (isset($keys['old'][$foreignKey])) {
-					if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
-						$conditions[$fkQuoted] = $keys['old'][$foreignKey];
-						$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-						$this->{$parent}->updateAll(
-							array($assoc['counterCache'] => $count),
-							array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
-						);
+				if (!is_array($assoc['counterCache'])) {
+					if (isset($assoc['counterScope'])) {
+						$assoc['counterCache'] = array($assoc['counterCache'] => $assoc['counterScope']);
+					} else {
+						$assoc['counterCache'] = array($assoc['counterCache'] => array());
 					}
 				}
-				$conditions[$fkQuoted] = $keys[$foreignKey];
 
-				if ($recursive == 1) {
-					$conditions = array_merge($conditions, (array)$assoc['counterScope']);
+				$foreignKey = $assoc['foreignKey'];
+				$fkQuoted = $this->escapeField($assoc['foreignKey']);
+
+				foreach ($assoc['counterCache'] as $field => $conditions) {
+					if (!is_string($field)) {
+						$field = Inflector::underscore($this->alias) . '_count';
+					}
+					if (!$this->{$parent}->hasField($field)) {
+						continue;
+					}
+					if ($conditions === true) {
+						$conditions = array();
+					} else {
+						$conditions = (array)$conditions;
+					}
+
+					if (!array_key_exists($foreignKey, $keys)) {
+						$keys[$foreignKey] = $this->field($foreignKey);
+					}
+					$recursive = (empty($conditions) ? -1 : 0);
+
+					if (isset($keys['old'][$foreignKey])) {
+						if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
+							$conditions[$fkQuoted] = $keys['old'][$foreignKey];
+							$count = intval($this->find('count', compact('conditions', 'recursive')));
+
+							$this->{$parent}->updateAll(
+								array($field => $count),
+								array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
+							);
+						}
+					}
+					$conditions[$fkQuoted] = $keys[$foreignKey];
+
+					if ($recursive === 0) {
+						$conditions = array_merge($conditions, (array)$conditions);
+					}
+					$count = intval($this->find('count', compact('conditions', 'recursive')));
+
+					$this->{$parent}->updateAll(
+						array($field => $count),
+						array($this->{$parent}->escapeField() => $keys[$foreignKey])
+					);
 				}
-				$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-				$this->{$parent}->updateAll(
-					array($assoc['counterCache'] => $count),
-					array($this->{$parent}->escapeField() => $keys[$foreignKey])
-				);
 			}
 		}
 	}
@@ -2180,15 +2194,25 @@ class Model extends Object {
 			$this->_deleteLinks($id);
 			$this->id = $id;
 
+			$updateCounterCache = false;
 			if (!empty($this->belongsTo)) {
+				foreach ($this->belongsTo as $parent => $assoc) {
+					if (!empty($assoc['counterCache'])) {
+						$updateCounterCache = true;
+						break;
+					}
+				}
+
 				$keys = $this->find('first', array(
 					'fields' => $this->_collectForeignKeys(),
-					'conditions' => array($this->alias . '.' . $this->primaryKey => $id)
+					'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
+					'recursive' => -1,
+					'callbacks' => false
 				));
 			}
 
 			if ($db->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {
-				if (!empty($this->belongsTo)) {
+				if ($updateCounterCache) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
 				$this->Behaviors->trigger('afterDelete', array(&$this));
@@ -2255,7 +2279,8 @@ class Model extends Object {
 			$records = $this->{$joinModel}->find('all', array(
 				'conditions' => array_merge(array($this->{$joinModel}->escapeField($data['foreignKey']) => $id)),
 				'fields' => $this->{$joinModel}->primaryKey,
-				'recursive' => -1
+				'recursive' => -1,
+				'callbacks' => false
 			));
 			if (!empty($records)) {
 				foreach ($records as $record) {

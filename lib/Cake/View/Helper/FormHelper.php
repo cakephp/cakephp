@@ -933,6 +933,13 @@ class FormHelper extends AppHelper {
 				if ($fieldKey == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
+				if (
+					$options['type'] === 'number' && 
+					$type === 'float' &&
+					!isset($options['step'])
+				) {
+					$options['step'] = 'any';
+				}
 			}
 			if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
 				$options['type'] = 'select';
