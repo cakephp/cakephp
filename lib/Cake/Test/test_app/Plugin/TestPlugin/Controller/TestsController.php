@@ -23,6 +23,7 @@ class TestsController extends TestPluginAppController {
 	public $components = array('TestPlugin.PluginsComponent');
 
 	public function index() {
+		$this->set('test_value', 'It is a variable');
 	}
 
 	public function some_method() {

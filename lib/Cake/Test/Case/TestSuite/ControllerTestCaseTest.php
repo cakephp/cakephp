@@ -269,7 +269,20 @@ class ControllerTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * Make sure testAction() can hit plugin controllers.
+ *
+ * @return void
+ */
+	public function testTestActionWithPlugin() {
+		$Controller = $this->Case->generate('TestPlugin.Tests');
+		$this->Case->testAction('/test_plugin/tests/index');
+		$this->assertEquals('It is a variable', $this->Case->controller->viewVars['test_value']);
+	}
+
+/**
  * Tests using loaded routes during tests
+ *
+ * @return void
  */
 	public function testUseRoutes() {
 		Router::connect('/:controller/:action/*');

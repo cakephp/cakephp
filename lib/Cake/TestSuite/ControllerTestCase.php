@@ -200,7 +200,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$request = new CakeRequest($url);
 		$Dispatch = new ControllerTestDispatcher();
 		foreach (Router::$routes as $route) {
-			if (is_a($route, 'RedirectRoute')) {
+			if ($route instanceof RedirectRoute) {
 				$route->response = $this->getMock('CakeResponse', array('send'));
 			}
 		}
@@ -213,8 +213,9 @@ abstract class ControllerTestCase extends CakeTestCase {
 		if ($this->controller !== null && Inflector::camelize($request->params['controller']) !== $this->controller->name) {
 			$this->controller = null;
 		}
+		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
-			$this->generate(Inflector::camelize($request->params['controller']));
+			$this->generate(Inflector::camelize($plugin . $request->params['controller']));
 		}
 		$params = array();
 		if ($options['return'] == 'result') {
