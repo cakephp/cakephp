@@ -29,7 +29,7 @@ class CakePlugin {
  *
  * @var array
  */
-	private static $_plugins = array();
+	protected static $_plugins = array();
 
 /**
  * Loads a plugin and optionally loads bootstrapping, routing files or loads a initialization function

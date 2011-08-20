@@ -71,7 +71,7 @@ class CakeRoute {
  *
  * @var array
  */
-	private $__headerMap = array(
+	protected $_headerMap = array(
 		'type' => 'content_type',
 		'method' => 'request_method',
 		'server' => 'server_name'
@@ -180,8 +180,8 @@ class CakeRoute {
 		}
 		foreach ($this->defaults as $key => $val) {
 			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
-				if (isset($this->__headerMap[$header[1]])) {
-					$header = $this->__headerMap[$header[1]];
+				if (isset($this->_headerMap[$header[1]])) {
+					$header = $this->_headerMap[$header[1]];
 				} else {
 					$header = 'http_' . $header[1];
 				}

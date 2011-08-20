@@ -1012,7 +1012,7 @@ class Set {
  * @param string $key
  * @return array
  */
-	private static function __flatten($results, $key = null) {
+	protected static function _flatten($results, $key = null) {
 		$stack = array();
 		foreach ($results as $k => $r) {
 			$id = $k;
@@ -1020,7 +1020,7 @@ class Set {
 				$id = $key;
 			}
 			if (is_array($r) && !empty($r)) {
-				$stack = array_merge($stack, Set::__flatten($r, $id));
+				$stack = array_merge($stack, Set::_flatten($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);
 			}
@@ -1041,7 +1041,7 @@ class Set {
 		if (is_numeric(implode('', $originalKeys))) {
 			$data = array_values($data);
 		}
-		$result = Set::__flatten(Set::extract($data, $path));
+		$result = Set::_flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
 
 		$dir = strtolower($dir);

@@ -88,7 +88,7 @@ class ApiShell extends Shell {
 			$this->error(__d('cake_console', '%s not found', $class));
 		}
 
-		$parsed = $this->__parseClass($path . $class .'.php', $class);
+		$parsed = $this->_parseClass($path . $class .'.php', $class);
 
 		if (!empty($parsed)) {
 			if (isset($this->params['method'])) {
@@ -194,7 +194,7 @@ class ApiShell extends Shell {
  * @param string $class Class name
  * @return array Methods and signatures indexed by method name
  */
-	private function __parseClass($path, $class) {
+	protected function _parseClass($path, $class) {
 		$parsed = array();
 
 		if (!class_exists($class)) {

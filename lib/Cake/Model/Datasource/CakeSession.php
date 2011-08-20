@@ -252,10 +252,10 @@ class CakeSession {
  */
 	public static function delete($name) {
 		if (self::check($name)) {
-			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
+			self::_overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
-		self::__setError(2, __d('cake_dev', "%s doesn't exist", $name));
+		self::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
 	}
 
@@ -266,7 +266,7 @@ class CakeSession {
  * @param array $new New set of variable => value
  * @return void
  */
-	private static function __overwrite(&$old, $new) {
+	protected static function _overwrite(&$old, $new) {
 		if (!empty($old)) {
 			foreach ($old as $key => $var) {
 				if (!isset($new[$key])) {
@@ -285,7 +285,7 @@ class CakeSession {
  * @param integer $errorNumber Error to set
  * @return string Error as string
  */
-	private static function __error($errorNumber) {
+	protected static function _error($errorNumber) {
 		if (!is_array(self::$error) || !array_key_exists($errorNumber, self::$error)) {
 			return false;
 		} else {
@@ -300,7 +300,7 @@ class CakeSession {
  */
 	public static function error() {
 		if (self::$lastError) {
-			return self::__error(self::$lastError);
+			return self::_error(self::$lastError);
 		}
 		return false;
 	}
@@ -316,7 +316,7 @@ class CakeSession {
 				self::$valid = true;
 			} else {
 				self::$valid = false;
-				self::__setError(1, 'Session Highjacking Attempted !!!');
+				self::_setError(1, 'Session Highjacking Attempted !!!');
 			}
 		}
 		return self::$valid;
@@ -363,7 +363,7 @@ class CakeSession {
 			return false;
 		}
 		if (is_null($name)) {
-			return self::__returnSessionVars();
+			return self::_returnSessionVars();
 		}
 		if (empty($name)) {
 			return false;
@@ -373,7 +373,7 @@ class CakeSession {
 		if (!is_null($result)) {
 			return $result;
 		}
-		self::__setError(2, "$name doesn't exist");
+		self::_setError(2, "$name doesn't exist");
 		return null;
 	}
 
@@ -382,11 +382,11 @@ class CakeSession {
  *
  * @return mixed Full $_SESSION array, or false on error.
  */
-	private static function __returnSessionVars() {
+	protected static function _returnSessionVars() {
 		if (!empty($_SESSION)) {
 			return $_SESSION;
 		}
-		self::__setError(2, 'No Session vars set');
+		self::_setError(2, 'No Session vars set');
 		return false;
 	}
 
@@ -409,7 +409,7 @@ class CakeSession {
 			$write = array($name => $value);
 		}
 		foreach ($write as $key => $val) {
-			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
+			self::_overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
 				return false;
 			}
@@ -650,7 +650,7 @@ class CakeSession {
 			} else {
 				self::destroy();
 				self::$valid = false;
-				self::__setError(1, 'Session Highjacking Attempted !!!');
+				self::_setError(1, 'Session Highjacking Attempted !!!');
 			}
 		} else {
 			self::write('Config.userAgent', self::$_userAgent);
@@ -681,7 +681,7 @@ class CakeSession {
  * @param string $errorMessage Description of the error
  * @return void
  */
-	private static function __setError($errorNumber, $errorMessage) {
+	protected static function _setError($errorNumber, $errorMessage) {
 		if (self::$error === false) {
 			self::$error = array();
 		}

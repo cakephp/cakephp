@@ -52,16 +52,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public $dropTables = true;
 
 /**
- * The fixtures to be loaded in this test case. Fixtures are referenced using a dot notation:
- * 	- fixture_name : A fixtures that can be found in the main app folder and is named FixtureNameFixture
- *	- core.fixture_name : A fixtures that can be found in the cake core folder and is named FixtureNameFixture
- *	- plugin.plugin_name.fixture_name : A fixtures that can be found in the plugin "plugin_name" folder and is named FixtureNameFixture
- *
- * @var array
- */
-	private $fixtures = array();
-
-/**
  * Configure values to restore at end of test.
  *
  * @var array
@@ -305,7 +295,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 					$i++;
 				}
 				if ($attrs) {
-					$permutations = $this->__array_permute($attrs);
+					$permutations = $this->_array_permute($attrs);
 
 					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
@@ -354,7 +344,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param array $items An array of items
  * @return array
  */
-	private function __array_permute($items, $perms = array()) {
+	protected function _array_permute($items, $perms = array()) {
 		static $permuted;
 		if (empty($perms)) {
 			$permuted = array();
@@ -369,7 +359,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				$newPerms = $perms;
 				list($tmp) = array_splice($newItems, $i, 1);
 				array_unshift($newPerms, $tmp);
-				$this->__array_permute($newItems, $newPerms);
+				$this->_array_permute($newItems, $newPerms);
 			}
 			return $permuted;
 		}

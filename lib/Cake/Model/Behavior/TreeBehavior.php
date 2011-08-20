@@ -117,7 +117,7 @@ class TreeBehavior extends ModelBehavior {
 			$scope[]["{$Model->alias}.{$left} BETWEEN ? AND ?"] = array($data[$left] + 1, $data[$right] - 1);
 			$Model->deleteAll($scope);
 		}
-		$this->__sync($Model, $diff, '-', '> ' . $data[$right]);
+		$this->_sync($Model, $diff, '-', '> ' . $data[$right]);
 		return true;
 	}
 
@@ -149,7 +149,7 @@ class TreeBehavior extends ModelBehavior {
 				$Model->data[$Model->alias][$left] = 0; //$parentNode[$right];
 				$Model->data[$Model->alias][$right] = 0; //$parentNode[$right] + 1;
 			} else {
-				$edge = $this->__getMax($Model, $scope, $right, $recursive);
+				$edge = $this->_getMax($Model, $scope, $right, $recursive);
 				$Model->data[$Model->alias][$left] = $edge + 1;
 				$Model->data[$Model->alias][$right] = $edge + 2;
 			}
@@ -464,10 +464,10 @@ class TreeBehavior extends ModelBehavior {
 		} else {
 			return false;
 		}
-		$edge = $this->__getMax($Model, $scope, $right, $recursive);
-		$this->__sync($Model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
-		$this->__sync($Model, $nextNode[$left] - $node[$left], '-', 'BETWEEN ' . $nextNode[$left] . ' AND ' . $nextNode[$right]);
-		$this->__sync($Model, $edge - $node[$left] - ($nextNode[$right] - $nextNode[$left]), '-', '> ' . $edge);
+		$edge = $this->_getMax($Model, $scope, $right, $recursive);
+		$this->_sync($Model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
+		$this->_sync($Model, $nextNode[$left] - $node[$left], '-', 'BETWEEN ' . $nextNode[$left] . ' AND ' . $nextNode[$right]);
+		$this->_sync($Model, $edge - $node[$left] - ($nextNode[$right] - $nextNode[$left]), '-', '> ' . $edge);
 
 		if (is_int($number)) {
 			$number--;
@@ -524,10 +524,10 @@ class TreeBehavior extends ModelBehavior {
 		} else {
 			return false;
 		}
-		$edge = $this->__getMax($Model, $scope, $right, $recursive);
-		$this->__sync($Model, $edge - $previousNode[$left] +1, '+', 'BETWEEN ' . $previousNode[$left] . ' AND ' . $previousNode[$right]);
-		$this->__sync($Model, $node[$left] - $previousNode[$left], '-', 'BETWEEN ' .$node[$left] . ' AND ' . $node[$right]);
-		$this->__sync($Model, $edge - $previousNode[$left] - ($node[$right] - $node[$left]), '-', '> ' . $edge);
+		$edge = $this->_getMax($Model, $scope, $right, $recursive);
+		$this->_sync($Model, $edge - $previousNode[$left] +1, '+', 'BETWEEN ' . $previousNode[$left] . ' AND ' . $previousNode[$right]);
+		$this->_sync($Model, $node[$left] - $previousNode[$left], '-', 'BETWEEN ' .$node[$left] . ' AND ' . $node[$right]);
+		$this->_sync($Model, $edge - $previousNode[$left] - ($node[$right] - $node[$left]), '-', '> ' . $edge);
 		if (is_int($number)) {
 			$number--;
 		}
@@ -706,8 +706,8 @@ class TreeBehavior extends ModelBehavior {
 			array($parent => $db->value($node[$parent], $parent)),
 			array($Model->escapeField($parent) => $node[$Model->primaryKey])
 		);
-		$this->__sync($Model, 1, '-', 'BETWEEN ' . ($node[$left] + 1) . ' AND ' . ($node[$right] - 1));
-		$this->__sync($Model, 2, '-', '> ' . ($node[$right]));
+		$this->_sync($Model, 1, '-', 'BETWEEN ' . ($node[$left] + 1) . ' AND ' . ($node[$right] - 1));
+		$this->_sync($Model, 2, '-', '> ' . ($node[$right]));
 		$Model->id = $id;
 
 		if ($delete) {
@@ -721,7 +721,7 @@ class TreeBehavior extends ModelBehavior {
 			);
 			return $Model->delete($id);
 		} else {
-			$edge = $this->__getMax($Model, $scope, $right, $recursive);
+			$edge = $this->_getMax($Model, $scope, $right, $recursive);
 			if ($node[$right] == $edge) {
 				$edge = $edge - 2;
 			}
@@ -748,8 +748,8 @@ class TreeBehavior extends ModelBehavior {
 		if (!$Model->find('count', array('conditions' => $scope))) {
 			return true;
 		}
-		$min = $this->__getMin($Model, $scope, $left, $recursive);
-		$edge = $this->__getMax($Model, $scope, $right, $recursive);
+		$min = $this->_getMin($Model, $scope, $left, $recursive);
+		$edge = $this->_getMax($Model, $scope, $right, $recursive);
 		$errors =  array();
 
 		for ($i = $min; $i <= $edge; $i++) {
@@ -822,11 +822,11 @@ class TreeBehavior extends ModelBehavior {
 			'fields' => array($Model->primaryKey, $parent, $left, $right),
 			'recursive' => $recursive
 		)));
-		$edge = $this->__getMax($Model, $scope, $right, $recursive, $created);
+		$edge = $this->_getMax($Model, $scope, $right, $recursive, $created);
 
 		if (empty ($parentId)) {
-			$this->__sync($Model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
-			$this->__sync($Model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left], $created);
+			$this->_sync($Model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
+			$this->_sync($Model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left], $created);
 		} else {
 			$values = $Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $parentId),
@@ -851,27 +851,27 @@ class TreeBehavior extends ModelBehavior {
 				return false;
 			}
 			if (empty ($node[$left]) && empty ($node[$right])) {
-				$this->__sync($Model, 2, '+', '>= ' . $parentNode[$right], $created);
+				$this->_sync($Model, 2, '+', '>= ' . $parentNode[$right], $created);
 				$result = $Model->save(
 					array($left => $parentNode[$right], $right => $parentNode[$right] + 1, $parent => $parentId),
 					array('validate' => false, 'callbacks' => false)
 				);
 				$Model->data = $result;
 			} else {
-				$this->__sync($Model, $edge - $node[$left] +1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
+				$this->_sync($Model, $edge - $node[$left] +1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
 				$diff = $node[$right] - $node[$left] + 1;
 
 				if ($node[$left] > $parentNode[$left]) {
 					if ($node[$right] < $parentNode[$right]) {
-						$this->__sync($Model, $diff, '-', 'BETWEEN ' . $node[$right] . ' AND ' . ($parentNode[$right] - 1), $created);
-						$this->__sync($Model, $edge - $parentNode[$right] + $diff + 1, '-', '> ' . $edge, $created);
+						$this->_sync($Model, $diff, '-', 'BETWEEN ' . $node[$right] . ' AND ' . ($parentNode[$right] - 1), $created);
+						$this->_sync($Model, $edge - $parentNode[$right] + $diff + 1, '-', '> ' . $edge, $created);
 					} else {
-						$this->__sync($Model, $diff, '+', 'BETWEEN ' . $parentNode[$right] . ' AND ' . $node[$right], $created);
-						$this->__sync($Model, $edge - $parentNode[$right] + 1, '-', '> ' . $edge, $created);
+						$this->_sync($Model, $diff, '+', 'BETWEEN ' . $parentNode[$right] . ' AND ' . $node[$right], $created);
+						$this->_sync($Model, $edge - $parentNode[$right] + 1, '-', '> ' . $edge, $created);
 					}
 				} else {
-					$this->__sync($Model, $diff, '-', 'BETWEEN ' . $node[$right] . ' AND ' . ($parentNode[$right] - 1), $created);
-					$this->__sync($Model, $edge - $parentNode[$right] + $diff + 1, '-', '> ' . $edge, $created);
+					$this->_sync($Model, $diff, '-', 'BETWEEN ' . $node[$right] . ' AND ' . ($parentNode[$right] - 1), $created);
+					$this->_sync($Model, $edge - $parentNode[$right] + $diff + 1, '-', '> ' . $edge, $created);
 				}
 			}
 		}
@@ -888,7 +888,7 @@ class TreeBehavior extends ModelBehavior {
  * @param boolean $created
  * @return integer
  */
-	private function __getMax($Model, $scope, $right, $recursive = -1, $created = false) {
+	protected function _getMax($Model, $scope, $right, $recursive = -1, $created = false) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		if ($created) {
 			if (is_string($scope)) {
@@ -916,7 +916,7 @@ class TreeBehavior extends ModelBehavior {
  * @param integer $recursive
  * @return integer
  */
-	private function __getMin($Model, $scope, $left, $recursive = -1) {
+	protected function _getMin($Model, $scope, $left, $recursive = -1) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$name = $Model->alias . '.' . $left;
 		list($edge) = array_values($Model->find('first', array(
@@ -940,13 +940,13 @@ class TreeBehavior extends ModelBehavior {
  * @param string $field
  * @return void
  */
-	private function __sync($Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
+	protected function _sync($Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
 		$ModelRecursive = $Model->recursive;
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;
 
 		if ($field == 'both') {
-			$this->__sync($Model, $shift, $dir, $conditions, $created, $left);
+			$this->_sync($Model, $shift, $dir, $conditions, $created, $left);
 			$field = $right;
 		}
 		if (is_string($conditions)) {

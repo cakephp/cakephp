@@ -38,13 +38,6 @@ class PaginatorHelper extends AppHelper {
 	public $helpers = array('Html');
 
 /**
- * Holds the default model for paged recordsets
- *
- * @var string
- */
-	private $__defaultModel = null;
-
-/**
  * The class used for 'Ajax' pagination links. Defaults to JsHelper.  You should make sure
  * that JsHelper is defined as a helper before PaginatorHelper, if you want to customize the JsHelper.
  *
@@ -527,14 +520,14 @@ class PaginatorHelper extends AppHelper {
  * @return string Model name or null if the pagination isn't initialized.
  */
 	public function defaultModel() {
-		if ($this->__defaultModel != null) {
-			return $this->__defaultModel;
+		if ($this->_defaultModel != null) {
+			return $this->_defaultModel;
 		}
 		if (empty($this->request->params['paging'])) {
 			return null;
 		}
-		list($this->__defaultModel) = array_keys($this->request->params['paging']);
-		return $this->__defaultModel;
+		list($this->_defaultModel) = array_keys($this->request->params['paging']);
+		return $this->_defaultModel;
 	}
 
 /**

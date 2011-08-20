@@ -54,14 +54,14 @@ class ConnectionManager {
  *
  * @var boolean
  */
-	private static $_init = false;
+	protected static $_init = false;
 
 /**
  * Loads connections configuration.
  *
  * @return void
  */
-	private static function init() {
+	protected static function _init() {
 		include_once APP . 'Config' . DS . 'database.php';
 		if (class_exists('DATABASE_CONFIG')) {
 			self::$config = new DATABASE_CONFIG();
@@ -80,7 +80,7 @@ class ConnectionManager {
  */
 	public static function getDataSource($name) {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 
 		if (!empty(self::$_dataSources[$name])) {
@@ -111,7 +111,7 @@ class ConnectionManager {
  */
 	public static function sourceList() {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 		return array_keys(self::$_dataSources);
 	}
@@ -125,7 +125,7 @@ class ConnectionManager {
  */
 	public static function getSourceName($source) {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 		foreach (self::$_dataSources as $name => $ds) {
 			if ($ds === $source) {
@@ -146,7 +146,7 @@ class ConnectionManager {
  */
 	public static function loadDataSource($connName) {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 
 		if (is_array($connName)) {
@@ -182,7 +182,7 @@ class ConnectionManager {
  */
 	public static function enumConnectionObjects() {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 		return (array) self::$config;
 	}
@@ -196,7 +196,7 @@ class ConnectionManager {
  */
 	public static function create($name = '', $config = array()) {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 
 		if (empty($name) || empty($config) || array_key_exists($name, self::$_connectionsEnum)) {
@@ -216,7 +216,7 @@ class ConnectionManager {
  */
 	public static function drop($name) {
 		if (empty(self::$_init)) {
-			self::init();
+			self::_init();
 		}
 
 		if (!isset(self::$config->{$name})) {
@@ -247,7 +247,7 @@ class ConnectionManager {
  * @param array $config Array with connection configuration. Key 'datasource' is required
  * @return array An indexed array with: filename, classname, plugin and parent
  */
-	private static function _connectionData($config) {
+	protected static function _connectionData($config) {
 		$package = $classname = $plugin = null;
 
 		list($plugin, $classname) = pluginSplit($config['datasource']);

@@ -86,7 +86,7 @@ class Scaffold {
  *
  * @var array
  */
-	private $__passedVars = array(
+	protected $_passedVars = array(
 		'layout', 'name', 'viewPath', 'request'
 	);
 
@@ -107,9 +107,9 @@ class Scaffold {
 	public function __construct(Controller $controller, CakeRequest $request) {
 		$this->controller = $controller;
 
-		$count = count($this->__passedVars);
+		$count = count($this->_passedVars);
 		for ($j = 0; $j < $count; $j++) {
-			$var = $this->__passedVars[$j];
+			$var = $this->_passedVars[$j];
 			$this->{$var} = $controller->{$var};
 		}
 

@@ -43,7 +43,7 @@ class DataSource extends Object {
  *
  * @var array
  */
-	private $__descriptions = array();
+	protected $_descriptions = array();
 
 /**
  * Holds a list of sources (tables) contained in the DataSource
@@ -123,13 +123,13 @@ class DataSource extends Object {
 		}
 		$table = $model->tablePrefix . $model->table;
 
-		if (isset($this->__descriptions[$table])) {
-			return $this->__descriptions[$table];
+		if (isset($this->_descriptions[$table])) {
+			return $this->_descriptions[$table];
 		}
 		$cache = $this->__cacheDescription($table);
 
 		if ($cache !== null) {
-			$this->__descriptions[$table] =& $cache;
+			$this->_descriptions[$table] =& $cache;
 			return $cache;
 		}
 		return null;
@@ -293,7 +293,7 @@ class DataSource extends Object {
 		}
 
 		if ($data !== null) {
-			$this->__descriptions[$object] =& $data;
+			$this->_descriptions[$object] =& $data;
 		}
 
 		$key = ConnectionManager::getSourceName($this) . '_' . $object;

@@ -113,7 +113,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @var string
  */
-	private $__input = '';
+	protected $_input = '';
 
 /**
  * Constructor
@@ -716,13 +716,13 @@ class CakeRequest implements ArrayAccess {
  * @return string contents of stdin
  */
 	protected function _readStdin() {
-		if (empty($this->__input)) {
+		if (empty($this->_input)) {
 			$fh = fopen('php://input', 'r');
 			$content = stream_get_contents($fh);
 			fclose($fh);
-			$this->__input = $content;
+			$this->_input = $content;
 		}
-		return $this->__input;
+		return $this->_input;
 	}
 
 /**

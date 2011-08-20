@@ -535,7 +535,7 @@ class Model extends Object {
  *
  * @var array
  */
-	private $__associationKeys = array(
+	protected $_associationKeys = array(
 		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 		'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
@@ -547,7 +547,7 @@ class Model extends Object {
  *
  * @var array
  */
-	private $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+	protected $_associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 /**
  * Holds model associations temporarily to allow for dynamic (un)binding.
@@ -582,7 +582,7 @@ class Model extends Object {
  *
  * @var integer
  */
-	private $__insertID = null;
+	protected $_insertID = null;
 
 /**
  * Has the datasource been configured.
@@ -590,7 +590,7 @@ class Model extends Object {
  * @var boolean
  * @see Model::getDataSource
  */
-	private $__sourceConfigured = false;
+	protected $_sourceConfigured = false;
 
 /**
  * List of valid finder method options, supplied as the first parameter to find().
@@ -701,7 +701,7 @@ class Model extends Object {
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
-		$this->__createLinks();
+		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
 
@@ -731,7 +731,7 @@ class Model extends Object {
 	public function __isset($name) {
 		$className = false;
 
-		foreach ($this->__associations as $type) {
+		foreach ($this->_associations as $type) {
 			if (isset($name, $this->{$type}[$name])) {
 				$className = empty($this->{$type}[$name]['className']) ? $name : $this->{$type}[$name]['className'];
 				break;
@@ -772,7 +772,7 @@ class Model extends Object {
 				'ds' => $this->useDbConfig
 			));
 		} else {
-			$this->__constructLinkedModel($name, $className, $plugin);
+			$this->_constructLinkedModel($name, $className, $plugin);
 		}
 
 		if (!empty($assocKey)) {
@@ -841,7 +841,7 @@ class Model extends Object {
 				}
 			}
 		}
-		$this->__createLinks();
+		$this->_createLinks();
 		return true;
 	}
 
@@ -883,8 +883,8 @@ class Model extends Object {
  *
  * @return void
  */
-	private function __createLinks() {
-		foreach ($this->__associations as $type) {
+	protected function _createLinks() {
+		foreach ($this->_associations as $type) {
 			if (!is_array($this->{$type})) {
 				$this->{$type} = explode(',', $this->{$type});
 
@@ -910,14 +910,14 @@ class Model extends Object {
 							$this->{$type}[$assoc] = array('className' => $plugin. '.' . $assoc);
 						}
 					}
-					$this->__generateAssociation($type, $assoc);
+					$this->_generateAssociation($type, $assoc);
 				}
 			}
 		}
 	}
 
 /**
- * Private helper method to create associated models of a given class.
+ * Protected helper method to create associated models of a given class.
  *
  * @param string $assoc Association name
  * @param string $className Class name
@@ -929,7 +929,7 @@ class Model extends Object {
  * 					usage: $this->ModelName->modelMethods();
  * @return void
  */
-	private function __constructLinkedModel($assoc, $className = null, $plugin = null) {
+	protected function _constructLinkedModel($assoc, $className = null, $plugin = null) {
 		if (empty($className)) {
 			$className = $assoc;
 		}
@@ -956,11 +956,11 @@ class Model extends Object {
  * @param string $assocKey
  * @return void
  */
-	private function __generateAssociation($type, $assocKey) {
+	protected function _generateAssociation($type, $assocKey) {
 		$class = $assocKey;
 		$dynamicWith = false;
 
-		foreach ($this->__associationKeys[$type] as $key) {
+		foreach ($this->_associationKeys[$type] as $key) {
 
 			if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
 				$data = '';
@@ -1634,7 +1634,7 @@ class Model extends Object {
 		}
 
 		if (!empty($joined) && $success === true) {
-			$this->__saveMulti($joined, $this->id, $db);
+			$this->_saveMulti($joined, $this->id, $db);
 		}
 
 		if ($success && $count > 0) {
@@ -1667,7 +1667,7 @@ class Model extends Object {
  * @param DataSource $db
  * @return void
  */
-	private function __saveMulti($joined, $id, $db) {
+	protected function _saveMulti($joined, $id, $db) {
 		foreach ($joined as $assoc => $data) {
 
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
@@ -2182,7 +2182,7 @@ class Model extends Object {
 
 			if (!empty($this->belongsTo)) {
 				$keys = $this->find('first', array(
-					'fields' => $this->__collectForeignKeys(),
+					'fields' => $this->_collectForeignKeys(),
 					'conditions' => array($this->alias . '.' . $this->primaryKey => $id)
 				));
 			}
@@ -2322,7 +2322,7 @@ class Model extends Object {
  * @param string $type
  * @return array
  */
-	private function __collectForeignKeys($type = 'belongsTo') {
+	protected function _collectForeignKeys($type = 'belongsTo') {
 		$result = array();
 
 		foreach ($this->{$type} as $assoc => $data) {
@@ -2742,7 +2742,7 @@ class Model extends Object {
  */
 	public function resetAssociations() {
 		if (!empty($this->__backAssociation)) {
-			foreach ($this->__associations as $type) {
+			foreach ($this->_associations as $type) {
 				if (isset($this->__backAssociation[$type])) {
 					$this->{$type} = $this->__backAssociation[$type];
 				}
@@ -2750,7 +2750,7 @@ class Model extends Object {
 			$this->__backAssociation = array();
 		}
 
-		foreach ($this->__associations as $type) {
+		foreach ($this->_associations as $type) {
 			foreach ($this->{$type} as $key => $name) {
 				if (property_exists($this, $key) && !empty($this->{$key}->__backAssociation)) {
 					$this->{$key}->resetAssociations();
@@ -2818,7 +2818,7 @@ class Model extends Object {
 
 /**
  * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
- * that use the 'with' key as well. Since __saveMulti is incapable of exiting a save operation.
+ * that use the 'with' key as well. Since _saveMulti is incapable of exiting a save operation.
  *
  * Will validate the currently set data.  Use Model::set() or Model::create() to set the active data.
  *
@@ -2829,7 +2829,7 @@ class Model extends Object {
 	public function validates($options = array()) {
 		$errors = $this->invalidFields($options);
 		if (empty($errors) && $errors !== false) {
-			$errors = $this->__validateWithModels($options);
+			$errors = $this->_validateWithModels($options);
 		}
 		if (is_array($errors)) {
 			return count($errors) === 0;
@@ -3007,7 +3007,7 @@ class Model extends Object {
  * @return boolean Failure of validation on with models.
  * @see Model::validates()
  */
-	private function __validateWithModels($options) {
+	protected function _validateWithModels($options) {
 		$valid = true;
 		foreach ($this->hasAndBelongsToMany as $assoc => $association) {
 			if (empty($association['with']) || !isset($this->data[$assoc])) {
@@ -3136,7 +3136,7 @@ class Model extends Object {
  * @return mixed Last inserted ID
  */
 	public function getInsertID() {
-		return $this->__insertID;
+		return $this->_insertID;
 	}
 
 /**
@@ -3146,7 +3146,7 @@ class Model extends Object {
  * @return void
  */
 	public function setInsertID($id) {
-		$this->__insertID = $id;
+		$this->_insertID = $id;
 	}
 
 /**
@@ -3202,8 +3202,8 @@ class Model extends Object {
  * @return DataSource A DataSource object
  */
 	public function getDataSource() {
-		if (!$this->__sourceConfigured && $this->useTable !== false) {
-			$this->__sourceConfigured = true;
+		if (!$this->_sourceConfigured && $this->useTable !== false) {
+			$this->_sourceConfigured = true;
 			$this->setSource($this->useTable);
 		}
 		return ConnectionManager::getDataSource($this->useDbConfig);
@@ -3215,7 +3215,7 @@ class Model extends Object {
  * @return array
  */
 	public function associations() {
-		return $this->__associations;
+		return $this->_associations;
 	}
 
 /**
@@ -3227,7 +3227,7 @@ class Model extends Object {
 	public function getAssociated($type = null) {
 		if ($type == null) {
 			$associated = array();
-			foreach ($this->__associations as $assoc) {
+			foreach ($this->_associations as $assoc) {
 				if (!empty($this->{$assoc})) {
 					$models = array_keys($this->{$assoc});
 					foreach ($models as $m) {
@@ -3236,7 +3236,7 @@ class Model extends Object {
 				}
 			}
 			return $associated;
-		} elseif (in_array($type, $this->__associations)) {
+		} elseif (in_array($type, $this->_associations)) {
 			if (empty($this->{$type})) {
 				return array();
 			}
@@ -3249,7 +3249,7 @@ class Model extends Object {
 				$this->hasAndBelongsToMany
 			);
 			if (array_key_exists($type, $assoc)) {
-				foreach ($this->__associations as $a) {
+				foreach ($this->_associations as $a) {
 					if (isset($this->{$a}[$type])) {
 						$assoc[$type]['association'] = $a;
 						break;
@@ -3373,7 +3373,7 @@ class Model extends Object {
 	}
 
 /**
- * Private method. Clears cache for this model.
+ * Clears cache for this model.
  *
  * @param string $type If null this deletes cached views if Cache.check is true
  *     Will be used to allow deleting query cache also
@@ -3385,7 +3385,7 @@ class Model extends Object {
 			if (Configure::read('Cache.check') === true) {
 				$assoc[] = strtolower(Inflector::pluralize($this->alias));
 				$assoc[] = strtolower(Inflector::underscore(Inflector::pluralize($this->alias)));
-				foreach ($this->__associations as $key => $association) {
+				foreach ($this->_associations as $key => $association) {
 					foreach ($this->$association as $key => $className) {
 						$check = strtolower(Inflector::pluralize($className['className']));
 						if (!in_array($check, $assoc)) {

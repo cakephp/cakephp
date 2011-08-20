@@ -33,7 +33,7 @@ class AclBehavior extends ModelBehavior {
  *
  * @var array
  */
-	private $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco', 'both' => array('Aro', 'Aco'));
+	protected $_typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco', 'both' => array('Aro', 'Aco'));
 
 /**
  * Sets up the configuation for the model, and loads ACL models if they haven't been already
@@ -49,7 +49,7 @@ class AclBehavior extends ModelBehavior {
 		$this->settings[$model->name] = array_merge(array('type' => 'controlled'), (array)$config);
 		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
 
-		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->_typeMaps[$this->settings[$model->name]['type']];
 
 		if (!is_array($types)) {
 			$types = array($types);
@@ -73,7 +73,7 @@ class AclBehavior extends ModelBehavior {
  */
 	public function node($model, $ref = null, $type = null) {
 		if (empty($type)) {
-			$type = $this->__typeMaps[$this->settings[$model->name]['type']];
+			$type = $this->_typeMaps[$this->settings[$model->name]['type']];
 			if (is_array($type)) {
 				trigger_error(__d('cake_dev', 'AclBehavior is setup with more then one type, please specify type parameter for node()'), E_USER_WARNING);
 				return null;
@@ -93,7 +93,7 @@ class AclBehavior extends ModelBehavior {
  * @return void
  */
 	public function afterSave($model, $created) {
-		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->_typeMaps[$this->settings[$model->name]['type']];
 		if (!is_array($types)) {
 			$types = array($types);
 		}
@@ -123,7 +123,7 @@ class AclBehavior extends ModelBehavior {
  * @return void
  */
 	public function afterDelete($model) {
-		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->_typeMaps[$this->settings[$model->name]['type']];
 		if (!is_array($types)) {
 			$types = array($types);
 		}

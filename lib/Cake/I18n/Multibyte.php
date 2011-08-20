@@ -258,21 +258,21 @@ class Multibyte {
  *
  * @var array
  */
-	private static $__caseFold = array();
+	protected static $_caseFold = array();
 
 /**
  * Holds an array of Unicode code point ranges
  *
  * @var array
  */
-	private static $__codeRange = array();
+	protected static $_codeRange = array();
 
 /**
  * Holds the current code point range
  *
  * @var string
  */
-	private static $__table = null;
+	protected static $_table = null;
 
 /**
  * Converts a multibyte character string
@@ -780,7 +780,7 @@ class Multibyte {
 				$matched = true;
 			} else {
 				$matched = false;
-				$keys = self::__find($char, 'upper');
+				$keys = self::_find($char, 'upper');
 
 				if (!empty($keys)) {
 					foreach ($keys as $key => $value) {
@@ -826,7 +826,7 @@ class Multibyte {
 
 			} else {
 				$matched = false;
-				$keys = self::__find($char);
+				$keys = self::_find($char);
 				$keyCount = count($keys);
 
 				if (!empty($keys)) {
@@ -1006,7 +1006,7 @@ class Multibyte {
  * @param integer $decimal
  * @return string
  */
-	private static function __codepoint($decimal) {
+	protected static function _codepoint($decimal) {
 		if ($decimal > 128 && $decimal < 256)  {
 			$return = '0080_00ff'; // Latin-1 Supplement
 		} elseif ($decimal < 384) {
@@ -1044,7 +1044,7 @@ class Multibyte {
 		} else {
 			$return = false;
 		}
-		self::$__codeRange[$decimal] = $return;
+		self::$_codeRange[$decimal] = $return;
 		return $return;
 	}
 
@@ -1055,10 +1055,10 @@ class Multibyte {
  * @param string $type
  * @return array
  */
-	private static function __find($char, $type = 'lower') {
+	protected static function _find($char, $type = 'lower') {
 		$found = array();
-		if (!isset(self::$__codeRange[$char])) {
-			$range = self::__codepoint($char);
+		if (!isset(self::$_codeRange[$char])) {
+			$range = self::_codepoint($char);
 			if ($range === false) {
 				return null;
 			}
@@ -1067,21 +1067,21 @@ class Multibyte {
 				Configure::config('_cake_core_', new PhpReader(CAKE . 'Config' . DS));
 			}
 			Configure::load('unicode' . DS . 'casefolding' . DS . $range, '_cake_core_');
-			self::$__caseFold[$range] = Configure::read($range);
+			self::$_caseFold[$range] = Configure::read($range);
 			Configure::delete($range);
 		}
 
-		if (!self::$__codeRange[$char]) {
+		if (!self::$_codeRange[$char]) {
 			return null;
 		}
-		self::$__table = self::$__codeRange[$char];
-		$count = count(self::$__caseFold[self::$__table]);
+		self::$_table = self::$_codeRange[$char];
+		$count = count(self::$_caseFold[self::$_table]);
 
 		for ($i = 0; $i < $count; $i++) {
-			if ($type === 'lower' && self::$__caseFold[self::$__table][$i][$type][0] === $char) {
-				$found[] = self::$__caseFold[self::$__table][$i];
-			} elseif ($type === 'upper' && self::$__caseFold[self::$__table][$i][$type] === $char) {
-				$found[] = self::$__caseFold[self::$__table][$i];
+			if ($type === 'lower' && self::$_caseFold[self::$_table][$i][$type][0] === $char) {
+				$found[] = self::$_caseFold[self::$_table][$i];
+			} elseif ($type === 'upper' && self::$_caseFold[self::$_table][$i][$type] === $char) {
+				$found[] = self::$_caseFold[self::$_table][$i];
 			}
 		}
 		return $found;

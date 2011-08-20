@@ -52,7 +52,7 @@ class DboOracle extends DboSource {
  *
  * @var boolean
  */
-	private $__transactionStarted = false;
+	protected $_transactionStarted = false;
 
 /**
  * Column definitions
@@ -334,7 +334,7 @@ class DboOracle extends DboSource {
 			return false;
 		}
 
-		if ($this->__transactionStarted) {
+		if ($this->_transactionStarted) {
 			$mode = OCI_DEFAULT;
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
@@ -753,7 +753,7 @@ class DboOracle extends DboSource {
  * (i.e. if the database/model does not support transactions).
  */
 	public function begin() {
-		$this->__transactionStarted = true;
+		$this->_transactionStarted = true;
 		return true;
 	}
 
@@ -776,7 +776,7 @@ class DboOracle extends DboSource {
  * or a transaction has not started).
  */
 	public function commit() {
-		$this->__transactionStarted = false;
+		$this->_transactionStarted = false;
 		return ocicommit($this->connection);
 	}
 

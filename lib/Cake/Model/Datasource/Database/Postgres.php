@@ -382,7 +382,7 @@ class Postgres extends DboSource {
 						$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
 					}
 				} else {
-					$fields[$i] = preg_replace_callback('/\(([\s\.\w]+)\)/',  array(&$this, '__quoteFunctionField'), $fields[$i]);
+					$fields[$i] = preg_replace_callback('/\(([\s\.\w]+)\)/',  array(&$this, '_quoteFunctionField'), $fields[$i]);
 				}
 				$result[] = $fields[$i];
 			}
@@ -397,7 +397,7 @@ class Postgres extends DboSource {
  * @param string $match matched string
  * @return string quoted strig
  */
-	private function __quoteFunctionField($match) {
+	protected function _quoteFunctionField($match) {
 		$prepend = '';
 		if (strpos($match[1], 'DISTINCT') !== false) {
 			$prepend = 'DISTINCT ';

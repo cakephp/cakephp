@@ -138,7 +138,7 @@ class TextHelper extends AppHelper {
  * @return string
  * @see TextHelper::autoLinkUrls()
  */
-	private function _linkBareUrl($matches) {
+	protected function _linkBareUrl($matches) {
 		return $this->Html->link($matches[0], $matches[0], $this->_linkOptions);
 	}
 
@@ -149,7 +149,7 @@ class TextHelper extends AppHelper {
  * @return string
  * @see TextHelper::autoLinkUrls()
  */
-	private function _linkUrls($matches) {
+	protected function _linkUrls($matches) {
 		return $this->Html->link($matches[0], 'http://' . $matches[0], $this->_linkOptions);
 	}
 
@@ -160,7 +160,7 @@ class TextHelper extends AppHelper {
  * @return string
  * @see TextHelper::autoLinkUrls()
  */
-	private function _linkEmails($matches) {
+	protected function _linkEmails($matches) {
 		return $this->Html->link($matches[0], 'mailto:' . $matches[0], $this->_linkOptions);
 	}
 

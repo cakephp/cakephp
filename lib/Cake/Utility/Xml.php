@@ -218,10 +218,10 @@ class Xml {
 						foreach ($value as $item) {
 							$data = compact('dom', 'node', 'key', 'format');
 							$data['value'] = $item;
-							self::__createChild($data);
+							self::_createChild($data);
 						}
 					} else { // Struct
-						self::__createChild(compact('dom', 'node', 'key', 'value', 'format'));
+						self::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
 					}
 				}
 			} else {
@@ -236,7 +236,7 @@ class Xml {
  * @param array $data Array with informations to create childs
  * @return void
  */
-	private static function __createChild($data) {
+	protected static function _createChild($data) {
 		extract($data);
 		$childNS = $childValue = null;
 		if (is_array($value)) {

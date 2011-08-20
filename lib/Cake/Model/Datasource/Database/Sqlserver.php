@@ -109,13 +109,6 @@ class Sqlserver extends DboSource {
 	);
 
 /**
- * Define if the last query had error
- *
- * @var string
- */
-	private $__lastQueryHadError = false;
-
-/**
  * Magic column name used to provide pagination support for SQLServer 2008
  * which lacks proper limit/offset support.
  */

@@ -86,7 +86,7 @@ class Router {
  *
  * @var array
  */
-	private static $__namedExpressions = array(
+	protected static $_namedExpressions = array(
 		'Action' => Router::ACTION,
 		'Year' => Router::YEAR,
 		'Month' => Router::MONTH,
@@ -168,10 +168,10 @@ class Router {
  * Gets the named route elements for use in app/Config/routes.php
  *
  * @return array Named route elements
- * @see Router::$__namedExpressions
+ * @see Router::$_namedExpressions
  */
 	public static function getNamedExpressions() {
-		return self::$__namedExpressions;
+		return self::$_namedExpressions;
 	}
 
 /**
@@ -458,7 +458,7 @@ class Router {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 
-		extract(self::__parseExtension($url));
+		extract(self::_parseExtension($url));
 
 		for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
 			$route =& self::$routes[$i];
@@ -485,7 +485,7 @@ class Router {
  * @param string $url
  * @return array Returns an array containing the altered URL and the parsed extension.
  */
-	private static function __parseExtension($url) {
+	protected static function _parseExtension($url) {
 		$ext = null;
 
 		if (self::$_parseExtensions) {

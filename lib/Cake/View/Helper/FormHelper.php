@@ -52,7 +52,7 @@ class FormHelper extends AppHelper {
  *
  * @var array
  */
-	private $__options = array(
+	protected $_options = array(
 		'day' => array(), 'minute' => array(), 'hour' => array(),
 		'month' => array(), 'year' => array(), 'meridian' => array()
 	);
@@ -1697,7 +1697,7 @@ class FormHelper extends AppHelper {
 			(array)$attributes, array('secure' => self::SECURE_SKIP)
 		));
 
-		if (is_string($options) && isset($this->__options[$options])) {
+		if (is_string($options) && isset($this->_options[$options])) {
 			$options = $this->__generateOptions($options);
 		} elseif (!is_array($options)) {
 			$options = array();
@@ -2451,8 +2451,8 @@ class FormHelper extends AppHelper {
 				}
 			break;
 		}
-		$this->__options[$name] = $data;
-		return $this->__options[$name];
+		$this->_options[$name] = $data;
+		return $this->_options[$name];
 	}
 
 /**

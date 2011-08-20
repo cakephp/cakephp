@@ -52,7 +52,7 @@ class JsHelper extends AppHelper {
  * @var array
  * @see JsHelper::set()
  */
-	private $__jsVars = array();
+	protected $_jsVars = array();
 
 /**
  * Scripts that are queued for output
@@ -60,14 +60,14 @@ class JsHelper extends AppHelper {
  * @var array
  * @see JsHelper::buffer()
  */
-	private $__bufferedScripts = array();
+	protected $_bufferedScripts = array();
 
 /**
  * Current Javascript Engine that is being used
  *
  * @var string
  */
-	private $__engineName;
+	protected $_engineName;
 
 /**
  * The javascript variable created by set() variables.
@@ -92,7 +92,7 @@ class JsHelper extends AppHelper {
 		$engineName = $className;
 		list($plugin, $className) = pluginSplit($className);
 
-		$this->__engineName = $className . 'Engine';
+		$this->_engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';
 		$this->helpers[] = $engineClass;
 		parent::__construct($View, $settings);
@@ -118,9 +118,9 @@ class JsHelper extends AppHelper {
  * @return mixed Depends on the return of the dispatched method, or it could be an instance of the EngineHelper
  */
 	public function __call($method, $params) {
-		if ($this->{$this->__engineName} && method_exists($this->{$this->__engineName}, $method)) {
+		if ($this->{$this->_engineName} && method_exists($this->{$this->_engineName}, $method)) {
 			$buffer = false;
-			$engineHelper = $this->{$this->__engineName};
+			$engineHelper = $this->{$this->_engineName};
 			if (in_array(strtolower($method), $engineHelper->bufferedMethods)) {
 				$buffer = true;
 			}
@@ -161,7 +161,7 @@ class JsHelper extends AppHelper {
  * @return string a JavaScript-safe/JSON representation of $val
  **/
 	public function value($val, $quoteString = true) {
-		return $this->{$this->__engineName}->value($val, $quoteString);
+		return $this->{$this->_engineName}->value($val, $quoteString);
 	}
 
 /**
@@ -197,7 +197,7 @@ class JsHelper extends AppHelper {
 		}
 
 		if ($options['onDomReady']) {
-			$script = $this->{$this->__engineName}->domReady($script);
+			$script = $this->{$this->_engineName}->domReady($script);
 		}
 		$opts = $options;
 		unset($opts['onDomReady'], $opts['cache'], $opts['clear']);
@@ -227,9 +227,9 @@ class JsHelper extends AppHelper {
  */
 	public function buffer($script, $top = false) {
 		if ($top) {
-			array_unshift($this->__bufferedScripts, $script);
+			array_unshift($this->_bufferedScripts, $script);
 		} else {
-			$this->__bufferedScripts[] = $script;
+			$this->_bufferedScripts[] = $script;
 		}
 	}
 
@@ -241,10 +241,10 @@ class JsHelper extends AppHelper {
  */
 	public function getBuffer($clear = true) {
 		$this->_createVars();
-		$scripts = $this->__bufferedScripts;
+		$scripts = $this->_bufferedScripts;
 		if ($clear) {
-			$this->__bufferedScripts = array();
-			$this->__jsVars = array();
+			$this->_bufferedScripts = array();
+			$this->_jsVars = array();
 		}
 		return $scripts;
 	}
@@ -255,9 +255,9 @@ class JsHelper extends AppHelper {
  * @return string Generated JSON object of all set vars
  */
 	protected function _createVars() {
-		if (!empty($this->__jsVars)) {
+		if (!empty($this->_jsVars)) {
 			$setVar = (strpos($this->setVariable, '.')) ? $this->setVariable : 'window.' . $this->setVariable;
-			$this->buffer($setVar . ' = ' . $this->object($this->__jsVars) . ';', true);
+			$this->buffer($setVar . ' = ' . $this->object($this->_jsVars) . ';', true);
 		}
 	}
 
@@ -330,7 +330,7 @@ class JsHelper extends AppHelper {
 		if ($data == null) {
 			return false;
 		}
-		$this->__jsVars = array_merge($this->__jsVars, $data);
+		$this->_jsVars = array_merge($this->_jsVars, $data);
 	}
 
 /**

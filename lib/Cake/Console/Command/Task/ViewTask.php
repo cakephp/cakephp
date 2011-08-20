@@ -115,7 +115,7 @@ class ViewTask extends BakeTask {
 			return $this->bake($action, true);
 		}
 
-		$vars = $this->__loadController();
+		$vars = $this->_loadController();
 		$methods = $this->_methodsToBake();
 
 		foreach ($methods as $method) {
@@ -177,7 +177,7 @@ class ViewTask extends BakeTask {
 			$this->controllerName = $this->_controllerName($model);
 			App::uses($model, 'Model');
 			if (class_exists($model)) {
-				$vars = $this->__loadController();
+				$vars = $this->_loadController();
 				if (!$actions) {
 					$actions = $this->_methodsToBake();
 				}
@@ -219,7 +219,7 @@ class ViewTask extends BakeTask {
 		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), array('y','n'), 'n');
 
 		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
-			$vars = $this->__loadController();
+			$vars = $this->_loadController();
 			if (strtolower($wannaDoScaffold) == 'y') {
 				$actions = $this->scaffoldActions;
 				$this->bakeActions($actions, $vars);
@@ -250,7 +250,7 @@ class ViewTask extends BakeTask {
  *
  * @return array Returns an variables to be made available to a view template
  */
-	private function __loadController() {
+	protected function _loadController() {
 		if (!$this->controllerName) {
 			$this->err(__d('cake_console', 'Controller not found'));
 		}
@@ -280,7 +280,7 @@ class ViewTask extends BakeTask {
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$schema = $modelObj->schema(true);
 			$fields = array_keys($schema);
-			$associations = $this->__associations($modelObj);
+			$associations = $this->_associations($modelObj);
 		} else {
 			$primaryKey = $displayField = null;
 			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
@@ -367,7 +367,7 @@ class ViewTask extends BakeTask {
  */
 	public function getContent($action, $vars = null) {
 		if (!$vars) {
-			$vars = $this->__loadController();
+			$vars = $this->_loadController();
 		}
 
 		$this->Template->set('action', $action);
@@ -443,7 +443,7 @@ class ViewTask extends BakeTask {
  * @param Model $model
  * @return array $associations
  */
-	private function __associations($model) {
+	protected function _associations($model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 

@@ -72,7 +72,7 @@ class RequestHandlerComponent extends Component {
  *
  * @var string
  */
-	private $__renderType = null;
+	protected $_renderType = null;
 
 /**
  * A mapping between extensions and deserializers for request bodies of that type.
@@ -80,7 +80,7 @@ class RequestHandlerComponent extends Component {
  *
  * @var array
  */
-	private $__inputTypeMap = array(
+	protected $_inputTypeMap = array(
 		'json' => array('json_decode', true)
 	);
 
@@ -160,7 +160,7 @@ class RequestHandlerComponent extends Component {
 			$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
 		}
 
-		foreach ($this->__inputTypeMap as $type => $handler) {
+		foreach ($this->_inputTypeMap as $type => $handler) {
 			if ($this->requestedWith($type)) {
 				$input = call_user_func_array(array($controller->request, 'input'), $handler);
 				$controller->request->data = $input;
@@ -530,13 +530,13 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		if (empty($this->__renderType)) {
+		if (empty($this->_renderType)) {
 			$controller->viewPath .= DS . $type;
 		} else {
-			$remove = preg_replace("/([\/\\\\]{$this->__renderType})$/", DS . $type, $controller->viewPath);
+			$remove = preg_replace("/([\/\\\\]{$this->_renderType})$/", DS . $type, $controller->viewPath);
 			$controller->viewPath = $remove;
 		}
-		$this->__renderType = $type;
+		$this->_renderType = $type;
 		$controller->layoutPath = $type;
 
 		if ($this->response->getMimeType($type)) {
@@ -666,6 +666,6 @@ class RequestHandlerComponent extends Component {
 		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
 			throw new CakeException(__d('cake_dev', 'You must give a handler callback.'));
 		}
-		$this->__inputTypeMap[$type] = $handler;
+		$this->_inputTypeMap[$type] = $handler;
 	}
 }

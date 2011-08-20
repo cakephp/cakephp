@@ -31,13 +31,6 @@ App::uses('CakeSchema', 'Model');
 class SchemaShell extends Shell {
 
 /**
- * is this a dry run?
- *
- * @var boolean
- */
-	private $__dry = null;
-
-/**
  * Schema class being used.
  *
  * @var CakeSchema
@@ -278,7 +271,7 @@ class SchemaShell extends Shell {
 		}
 
 		if (!empty($this->params['dry'])) {
-			$this->__dry = true;
+			$this->_dry = true;
 			$this->out(__d('cake_console', 'Performing a dry run.'));
 		}
 
@@ -411,7 +404,7 @@ class SchemaShell extends Shell {
 			if (empty($sql)) {
 				$this->out(__d('cake_console', '%s is up to date.', $table));
 			} else {
-				if ($this->__dry === true) {
+				if ($this->_dry === true) {
 					$this->out(__d('cake_console', 'Dry run for %s :', $table));
 					$this->out($sql);
 				} else {

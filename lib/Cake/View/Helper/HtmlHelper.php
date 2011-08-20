@@ -128,7 +128,7 @@ class HtmlHelper extends AppHelper {
  *
  * @var array
  */
-	private $__includedScripts = array();
+	protected $_includedScripts = array();
 /**
  * Options for the currently opened script block buffer if any.
  *
@@ -140,7 +140,7 @@ class HtmlHelper extends AppHelper {
  *
  * @var array
  */
-	private $__docTypes = array(
+	protected $_docTypes = array(
 		'html4-strict'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
 		'html4-trans'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
 		'html4-frame'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
@@ -205,8 +205,8 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1439/docType
  */
 	public function docType($type = 'xhtml-strict') {
-		if (isset($this->__docTypes[$type])) {
-			return $this->__docTypes[$type];
+		if (isset($this->_docTypes[$type])) {
+			return $this->_docTypes[$type];
 		}
 		return null;
 	}
@@ -484,10 +484,10 @@ class HtmlHelper extends AppHelper {
 			}
 			return null;
 		}
-		if ($options['once'] && isset($this->__includedScripts[$url])) {
+		if ($options['once'] && isset($this->_includedScripts[$url])) {
 			return null;
 		}
-		$this->__includedScripts[$url] = true;
+		$this->_includedScripts[$url] = true;
 
 		if (strpos($url, '://') === false) {
 			if ($url[0] !== '/') {
@@ -1008,7 +1008,7 @@ class HtmlHelper extends AppHelper {
 			$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
 		}
 		if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
-			$this->__docTypes = array_merge($this->__docTypes, $configs['docTypes']);
+			$this->_docTypes = array_merge($this->_docTypes, $configs['docTypes']);
 		}
 		if (isset($configs['attributeFormat'])) {
 			$this->_attributeFormat = $configs['attributeFormat'];

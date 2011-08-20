@@ -181,7 +181,7 @@ class DboSource extends DataSource {
  *
  * @var array
  */
-	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
+	protected $_sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
  * Indicates the level of nested transactions
@@ -1200,7 +1200,7 @@ class DboSource extends DataSource {
 					}
 				}
 				$this->_filterResults($fetch, $model);
-				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel);
+				return $this->_mergeHasMany($resultSet, $fetch, $association, $model, $linkModel);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
 				foreach ($resultSet as &$result) {
@@ -1322,7 +1322,7 @@ class DboSource extends DataSource {
  * @param Model $linkModel Model being merged
  * @return void
  */
-	private function __mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
+	protected function _mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
 		$modelAlias = $model->alias;
 		$modelPK = $model->primaryKey;
 		$modelFK = $model->hasMany[$association]['foreignKey'];
@@ -1501,7 +1501,7 @@ class DboSource extends DataSource {
 		switch ($type) {
 			case 'hasOne':
 			case 'belongsTo':
-				$conditions = $this->__mergeConditions(
+				$conditions = $this->_mergeConditions(
 					$assocData['conditions'],
 					$this->getConstraint($type, $model, $linkModel, $association, array_merge($assocData, compact('external', 'self')))
 				);
@@ -1547,7 +1547,7 @@ class DboSource extends DataSource {
 					$assocData['fields'] = array_merge($assocData['fields'], $this->fields($linkModel, $association, array("{$association}.{$assocData['foreignKey']}")));
 				}
 				$query = array(
-					'conditions' => $this->__mergeConditions($this->getConstraint('hasMany', $model, $linkModel, $association, $assocData), $assocData['conditions']),
+					'conditions' => $this->_mergeConditions($this->getConstraint('hasMany', $model, $linkModel, $association, $assocData), $assocData['conditions']),
 					'fields' => array_unique($assocData['fields']),
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $association,
@@ -1753,7 +1753,7 @@ class DboSource extends DataSource {
  * @param mixed $assoc
  * @return array
  */
-	private function __mergeConditions($query, $assoc) {
+	protected function _mergeConditions($query, $assoc) {
 		if (empty($assoc)) {
 			return $query;
 		}
@@ -1945,7 +1945,7 @@ class DboSource extends DataSource {
 					'alias' => $assoc,
 					'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 					'conditions' => trim($this->conditions(
-						$this->__mergeConditions($assocData['conditions'], $this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData)),
+						$this->_mergeConditions($assocData['conditions'], $this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData)),
 						true, false, $model
 					))
 				));
@@ -1974,7 +1974,7 @@ class DboSource extends DataSource {
 					$params[1] = 'count';
 				}
 				if (is_object($model) && $model->isVirtualField($params[0])){
-					$arg = $this->__quoteFields($model->getVirtualField($params[0]));
+					$arg = $this->_quoteFields($model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -1985,7 +1985,7 @@ class DboSource extends DataSource {
 					$params[1] = $params[0];
 				}
 				if (is_object($model) && $model->isVirtualField($params[0])) {
-					$arg = $this->__quoteFields($model->getVirtualField($params[0]));
+					$arg = $this->_quoteFields($model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -2143,7 +2143,7 @@ class DboSource extends DataSource {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
-			$expression = $this->__quoteFields($model->getVirtualField($field));
+			$expression = $this->_quoteFields($model->getVirtualField($field));
 			$virtual[] = '(' . $expression . ") {$this->alias} {$virtualField}";
 		}
 		return $virtual;
@@ -2306,7 +2306,7 @@ class DboSource extends DataSource {
 		if (preg_match($clauses, $conditions, $match)) {
 			$clause = '';
 		}
-		$conditions = $this->__quoteFields($conditions);
+		$conditions = $this->_quoteFields($conditions);
 		return $clause . $conditions;
 	}
 
@@ -2337,7 +2337,7 @@ class DboSource extends DataSource {
 			if (is_numeric($key) && empty($value)) {
 				continue;
 			} elseif (is_numeric($key) && is_string($value)) {
-				$out[] = $not . $this->__quoteFields($value);
+				$out[] = $not . $this->_quoteFields($value);
 			} elseif ((is_numeric($key) && is_array($value)) || in_array(strtolower(trim($key)), $bool)) {
 				if (in_array(strtolower(trim($key)), $bool)) {
 					$join = ' ' . strtoupper($key) . ' ';
@@ -2378,9 +2378,9 @@ class DboSource extends DataSource {
 					if ($keys === array_values($keys)) {
 						$count = count($value);
 						if ($count === 1) {
-							$data = $this->__quoteFields($key) . ' = (';
+							$data = $this->_quoteFields($key) . ' = (';
 						} else {
-							$data = $this->__quoteFields($key) . ' IN (';
+							$data = $this->_quoteFields($key) . ' IN (';
 						}
 						if ($quoteValues) {
 							if (is_object($model)) {
@@ -2398,9 +2398,9 @@ class DboSource extends DataSource {
 						}
 					}
 				} elseif (is_numeric($key) && !empty($value)) {
-					$data = $this->__quoteFields($value);
+					$data = $this->_quoteFields($value);
 				} else {
-					$data = $this->__parseKey($model, trim($key), $value);
+					$data = $this->_parseKey($model, trim($key), $value);
 				}
 
 				if ($data != null) {
@@ -2421,8 +2421,8 @@ class DboSource extends DataSource {
  * @param mixed $value The value(s) to be inserted in the string
  * @return string
  */
-	private function __parseKey($model, $key, $value) {
-		$operatorMatch = '/^((' . implode(')|(', $this->__sqlOps);
+	protected function _parseKey($model, $key, $value) {
+		$operatorMatch = '/^((' . implode(')|(', $this->_sqlOps);
 		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
 
@@ -2441,7 +2441,7 @@ class DboSource extends DataSource {
 
 		$virtual = false;
 		if (is_object($model) && $model->isVirtualField($key)) {
-			$key = $this->__quoteFields($model->getVirtualField($key));
+			$key = $this->_quoteFields($model->getVirtualField($key));
 			$virtual = true;
 		}
 
@@ -2459,7 +2459,7 @@ class DboSource extends DataSource {
 
 		if (!$virtual && $key !== '?') {
 			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
-			$key = $isKey ? $this->__quoteFields($key) : $this->name($key);
+			$key = $isKey ? $this->_quoteFields($key) : $this->name($key);
 		}
 
 		if ($bound) {
@@ -2507,7 +2507,7 @@ class DboSource extends DataSource {
  * @param string $conditions
  * @return string or false if no match
  */
-	private function __quoteFields($conditions) {
+	protected function _quoteFields($conditions) {
 		$start = $end = null;
 		$original = $conditions;
 
@@ -2518,7 +2518,7 @@ class DboSource extends DataSource {
 			$end = preg_quote($this->endQuote);
 		}
 		$conditions = str_replace(array($start, $end), '', $conditions);
-		$conditions = preg_replace_callback('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', array(&$this, '__quoteMatchedField'), $conditions);
+		$conditions = preg_replace_callback('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', array(&$this, '_quoteMatchedField'), $conditions);
 
 		if ($conditions !== null) {
 			return $conditions;
@@ -2532,7 +2532,7 @@ class DboSource extends DataSource {
  * @param string $match matched string
  * @return string quoted strig
  */
-	private function __quoteMatchedField($match) {
+	protected function _quoteMatchedField($match) {
 		if (is_numeric($match[0])) {
 			return $match[0];
 		}
@@ -2613,11 +2613,11 @@ class DboSource extends DataSource {
 			$key = trim($key);
 
 			if (is_object($model) && $model->isVirtualField($key)) {
-				$key =  '(' . $this->__quoteFields($model->getVirtualField($key)) . ')';
+				$key =  '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
 			}
 
 			if (strpos($key, '.')) {
-				$key = preg_replace_callback('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', array(&$this, '__quoteMatchedField'), $key);
+				$key = preg_replace_callback('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', array(&$this, '_quoteMatchedField'), $key);
 			}
 			if (!preg_match('/\s/', $key) && strpos($key, '.') === false) {
 				$key = $this->name($key);
@@ -2649,7 +2649,7 @@ class DboSource extends DataSource {
 				}
 			}
 			$group = implode(', ', $group);
-			return ' GROUP BY ' . $this->__quoteFields($group);
+			return ' GROUP BY ' . $this->_quoteFields($group);
 		}
 		return null;
 	}

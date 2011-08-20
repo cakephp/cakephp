@@ -67,7 +67,7 @@ class TimeHelper extends AppHelper {
 			$time = time();
 		}
 		$this->__time = $time;
-		return preg_replace_callback('/\%(\w+)/', array($this, '__translateSpecifier'), $format);
+		return preg_replace_callback('/\%(\w+)/', array($this, '_translateSpecifier'), $format);
 	}
 
 /**
@@ -77,7 +77,7 @@ class TimeHelper extends AppHelper {
  * @param array $specifier match from regular expression
  * @return string converted element
  */
-	private function __translateSpecifier($specifier) {
+	protected function _translateSpecifier($specifier) {
 		switch ($specifier[1]) {
 			case 'a':
 				$abday = __dc('cake', 'abday', 5);
@@ -140,7 +140,7 @@ class TimeHelper extends AppHelper {
 			case 'r':
 				$complete = __dc('cake', 't_fmt_ampm', 5);
 				if ($complete != 't_fmt_ampm') {
-					return str_replace('%p',$this->__translateSpecifier(array('%p', 'p')),$complete);
+					return str_replace('%p',$this->_translateSpecifier(array('%p', 'p')),$complete);
 				}
 				break;
 			case 'R':

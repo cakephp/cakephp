@@ -98,7 +98,7 @@ class ShellDispatcher {
  * @throws CakeException
  */
 	protected function _initEnvironment() {
-		if (!$this->__bootstrap()) {
+		if (!$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
 			throw new CakeException($message);
 		}
@@ -119,7 +119,7 @@ class ShellDispatcher {
  *
  * @return boolean Success.
  */
-	private function __bootstrap() {
+	protected function _bootstrap() {
 		define('ROOT', $this->params['root']);
 		define('APP_DIR', $this->params['app']);
 		define('APP', $this->params['working'] . DS);
