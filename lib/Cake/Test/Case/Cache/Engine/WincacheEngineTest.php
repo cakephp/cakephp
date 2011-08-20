@@ -188,10 +188,12 @@ class WincacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testClear() {
+		wincache_ucache_set('not_cake', 'safe');
 		Cache::write('some_value', 'value', 'wincache');
 
 		$result = Cache::clear(false, 'wincache');
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'wincache'));
+		$this->assertEquals('safe', wincache_ucache_get('not_cake'));
 	}
 }

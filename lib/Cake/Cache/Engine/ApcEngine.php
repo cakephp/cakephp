@@ -110,7 +110,7 @@ class ApcEngine extends CacheEngine {
  *
  * @param boolean $check If true, nothing will be cleared, as entries are removed
  *    from APC as they expired.  This flag is really only used by FileEngine.
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @return boolean True Returns true.
  */
 	public function clear($check) {
 		if ($check) {

@@ -112,13 +112,27 @@ class WincacheEngine extends CacheEngine {
 	}
 
 /**
- * Delete all keys from the cache.  This will clear every cache value stored 
- * in wincache.
+ * Delete all keys from the cache.  This will clear every
+ * item in the cache matching the cache config prefix.
  *
- * @return boolean True if the cache was successfully cleared, false otherwise
+ *
+ * @param boolean $check If true, nothing will be cleared, as entries will
+ *   naturally expire in wincache..
+ * @return boolean True Returns true.
  */
 	public function clear($check) {
-		return wincache_ucache_clear();
+		if ($check) {
+			return true;
+		}
+		$info = wincache_ucache_info();
+		$cacheKeys = $info['ucache_entries'];
+		unset($info);
+		foreach ($cacheKeys as $key) {
+			if (strpos($key['key_name'], $this->settings['prefix']) === 0) {
+				wincache_ucache_delete($key['key_name']);
+			}
+		}
+		return true;
 	}
 
 }
