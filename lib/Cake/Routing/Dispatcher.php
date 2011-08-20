@@ -297,8 +297,10 @@ class Dispatcher {
  * @return void
  */
 	protected function _deliverAsset(CakeResponse $response, $assetFile, $ext) {
-		ob_start();
 		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
+		if ($compressionEnabled) {
+			ob_start();
+		}		
 		if ($response->type($ext) == $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = env('HTTP_USER_AGENT');
