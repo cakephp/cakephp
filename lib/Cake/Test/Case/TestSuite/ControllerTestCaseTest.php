@@ -99,11 +99,6 @@ class ControllerTestCaseTestController extends AppController {
 }
 
 /**
- * Used to get a testable concrete class of the test subject
- */
-class TestingControllerTestCase extends ControllerTestCase {}
-
-/**
  * ControllerTestCaseTest
  *
  * @package       Cake.Test.Case.TestSuite
@@ -132,7 +127,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::loadAll();
-		$this->Case = new TestingControllerTestCase();
+		$this->Case = $this->getMockForAbstractClass('ControllerTestCase');
 		Router::reload();
 	}
 

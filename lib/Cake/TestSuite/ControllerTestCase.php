@@ -194,7 +194,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$_GET = $options['data'];
 			$_POST = array();
 		} else {
-			$_POST = array('data' => $options['data']);
+			$_POST = $options['data'];
 			$_GET = array();
 		}
 		$request = new CakeRequest($url);
