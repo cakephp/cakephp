@@ -398,6 +398,9 @@ class CookieComponent extends Component {
 /**
  * Object wrapper for setcookie() so it can be mocked in unit tests.
  *
+ * @todo Re-factor setting cookies into CakeResponse.  Cookies are part
+ * of the HTTP response, and should be handled there.
+ *
  * @param string $name Name of the cookie
  * @param integer $expire Time the cookie expires in
  * @param string $path Path the cookie applies to
