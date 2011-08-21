@@ -554,14 +554,24 @@ class Debugger {
 	}
 
 /**
- * Switches output format, updates format strings. 
- * Can be used to switch the active output format:
+ * Get/Set the output format for Debugger error rendering.
  *
- * `Debugger::output('js');`
+ * @param string $format The format you want errors to be output as.
+ *   Leave null to get the current format.
+ * @return void
+ */
+	public static function outputAs($format = null) {
+		$self = Debugger::getInstance();
+		if ($format === null) {
+			return $self->_outputFormat;
+		}
+		$self->_outputFormat = $format;
+	}
+
+/**
+ * Add an output format or update a format in Debugger.
  *
- * Can be used to add new output types to debugger.
- *
- * `Debugger::output('custom', $data);`
+ * `Debugger::addFormat('custom', $data);`
  *
  * Where $data is an array of strings that use String::insert() variable 
  * replacement.  The template vars should be in a `{:id}` style.  
@@ -584,29 +594,45 @@ class Debugger {
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
+ * @return The resulting format string set.
+ */
+	public static function addFormat($format, array $strings) {
+		$self = Debugger::getInstance();
+		if (isset($self->_templates[$format])) {
+			if (isset($strings['links'])) {
+				$self->_templates[$format]['links'] = array_merge(
+					$self->_templates[$format]['links'],
+					$strings['links']
+				);
+				unset($strings['links']);
+			}
+			$self->_templates[$format] = array_merge($self->_templates[$format], $strings);
+		} else {
+			$self->_templates[$format] = $strings;
+		}
+		return $self->_templates[$format];
+	}
+
+/**
+ * Switches output format, updates format strings. 
+ * Can be used to switch the active output format:
+ *
+ * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
+ *    straight HTML output, or 'txt' for unformatted text.
+ * @param array $strings Template strings to be used for the output format.
+ * @deprecated Use Debugger::outputFormat() and  Debugger::addFormat(). Will be removed 
+ *   in 3.0
  */
 	public function output($format = null, $strings = array()) {
 		$_this = Debugger::getInstance();
 		$data = null;
 
 		if (is_null($format)) {
-			return $_this->_outputFormat;
+			return Debugger::outputAs();
 		}
 
 		if (!empty($strings)) {
-			if (isset($_this->_templates[$format])) {
-				if (isset($strings['links'])) {
-					$_this->_templates[$format]['links'] = array_merge(
-						$_this->_templates[$format]['links'],
-						$strings['links']
-					);
-					unset($strings['links']);
-				}
-				$_this->_templates[$format] = array_merge($_this->_templates[$format], $strings);
-			} else {
-				$_this->_templates[$format] = $strings;
-			}
-			return $_this->_templates[$format];
+			return Debugger::addFormat($format, $strings);
 		}
 
 		if ($format === true && !empty($_this->_data)) {
@@ -614,7 +640,7 @@ class Debugger {
 			$_this->_data = array();
 			$format = false;
 		}
-		$_this->_outputFormat = $format;
+		Debugger::outputAs($format);
 
 		return $data;
 	}
