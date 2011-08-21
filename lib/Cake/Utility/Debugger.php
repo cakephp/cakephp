@@ -584,7 +584,8 @@ class Debugger {
  *
  * - 'error' - Used for the container for the error message. Gets the following template
  *   variables: `id`, `error`, `code`, `description`, `path`, `line`, `links`, `info`
- * - 'info' - 
+ * - 'info' - A combination of `code`, `context` and `trace`. Will be set with
+ *   the contents of the other template keys.
  * - 'trace' - The container for a stack trace. Gets the following template
  *   variables: `trace`
  * - 'context' - The container element for the context variables. 
@@ -596,9 +597,19 @@ class Debugger {
  * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
  *   template variables: `reference`, `path`, `line`
  *
+ * Alternatively if you want to use a custom callback to do all the formatting, you can use
+ * the callback key, and provide a callable:
+ *
+ * `Debugger::addFormat('custom', array('callback' => array($foo, 'outputError'));`
+ *
+ * The callback can expect two parameters.  The first is an array of all
+ * the error data. The second contains the formatted strings generated using
+ * the other template strings.  Keys like `info`, `links`, `code`, `context` and `trace`
+ * will be present depending on the other templates in the format type.
+ *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
- * @param array $strings Template strings to be used for the output format.
+ * @param array $strings Template strings, or a callback to be used for the output format.
  * @return The resulting format string set.
  */
 	public static function addFormat($format, array $strings) {
@@ -690,10 +701,6 @@ class Debugger {
 				return;
 		}
 
-		if (empty($this->_outputFormat) || !isset($this->_templates[$this->_outputFormat])) {
-			$this->_outputFormat = 'js';
-		}
-
 		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
 		$insert = array('context' => join("\n", $context), 'helpPath' => $this->helpPath) + $data;
@@ -720,7 +727,9 @@ class Debugger {
 		}
 		$links = join(' | ', $links);
 		unset($data['context']);
-
+		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
+			return call_user_func($tpl['callback'], $data, compact('links', 'info'));
+		}
 		echo String::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
 	}
 

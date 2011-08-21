@@ -255,6 +255,26 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertTags($result, $data, true);
 	}
 
+	public function testAddFormatCallback() {
+		set_error_handler('Debugger::showError');
+		$this->_restoreError = true;
+
+		Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
+		Debugger::outputAs('callback');
+
+		ob_start();
+		$foo .= '';
+		$result = ob_get_clean();
+		$this->assertEquals('Notice: I eated an error CORE/Cake/Test/Case/Utility/DebuggerTest.php', $result);
+	}
+
+/**
+ * Test method for testing addFormat with callbacks.
+ */
+	public function customFormat($error, $strings) {
+		return $error['error'] . ': I eated an error ' . $error['path'];
+	}
+
 /**
  * testTrimPath method
  *
