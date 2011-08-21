@@ -116,9 +116,6 @@ class Debugger {
 		if (!defined('E_RECOVERABLE_ERROR')) {
 			define('E_RECOVERABLE_ERROR', 4096);
 		}
-		if (!defined('E_DEPRECATED')) {
-			define('E_DEPRECATED', 8192);
-		}
 
 		$e = '<pre class="cake-debug">';
 		$e .= '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
@@ -557,7 +554,32 @@ class Debugger {
 	}
 
 /**
- * Switches output format, updates format strings
+ * Switches output format, updates format strings. 
+ * Can be used to switch the active output format:
+ *
+ * `Debugger::output('js');`
+ *
+ * Can be used to add new output types to debugger.
+ *
+ * `Debugger::output('custom', $data);`
+ *
+ * Where $data is an array of strings that use String::insert() variable 
+ * replacement.  The template vars should be in a `{:id}` style.  
+ * An error formatter can have the following keys:
+ *
+ * - 'error' - Used for the container for the error message. Gets the following template
+ *   variables: `id`, `error`, `code`, `description`, `path`, `line`, `links`, `info`
+ * - 'info' - 
+ * - 'trace' - The container for a stack trace. Gets the following template
+ *   variables: `trace`
+ * - 'context' - The container element for the context variables. 
+ *   Gets the following templates: `id`, `context`
+ * - 'links' - An array of HTML links that are used for creating links to other resources.
+ *   Typically this is used to create javascript links to open other sections.
+ *   Link keys, are: `code`, `context`, `help`.  See the js output format for an 
+ *   example.
+ * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
+ *   template variables: `reference`, `path`, `line`
  *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
