@@ -93,7 +93,8 @@ class Debugger {
 		),
 		'base' => array(
 			'traceLine' => '{:reference} - {:path}, line {:line}'
-		)
+		),
+		'log' => array(),
 	);
 
 /**
@@ -558,12 +559,16 @@ class Debugger {
  *
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
- * @return void
+ * @return mixed Returns null when setting.  Returns the current format when getting.
+ * @throws CakeException when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
 		$self = Debugger::getInstance();
 		if ($format === null) {
 			return $self->_outputFormat;
+		}
+		if ($format !== false && !isset($self->_templates[$format])) {
+			throw new CakeException(__d('cake_dev', 'Invalid Debugger output format.'));
 		}
 		$self->_outputFormat = $format;
 	}
@@ -641,7 +646,6 @@ class Debugger {
 			$format = false;
 		}
 		Debugger::outputAs($format);
-
 		return $data;
 	}
 

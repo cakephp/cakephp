@@ -197,6 +197,26 @@ class DebuggerTest extends CakeTestCase {
 	}
 
 /**
+ * Test that outputAs works.
+ *
+ * @return void
+ */
+	public function testOutputAs() {
+		Debugger::outputAs('html');
+		$this->assertEquals('html', Debugger::outputAs());
+	}
+
+/**
+ * Test that choosing a non-existant format causes an exception
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testOutputAsException() {
+		Debugger::outputAs('Invalid junk');
+	}
+
+/**
  * testTrimPath method
  *
  * @access public
