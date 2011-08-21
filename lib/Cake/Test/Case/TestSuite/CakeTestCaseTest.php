@@ -99,6 +99,26 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
+
+		$input = "<span><strong>Text</strong></span>";
+		$pattern = array(
+			'<span',
+			'<strong',
+			'Text',
+			'/strong',
+			'/span'
+		);
+		$this->assertTrue($test->assertTags($input, $pattern), 'Tags with no attributes');
+
+		$input = "<span class='active'><strong>Text</strong></span>";
+		$pattern = array(
+			'span' => array('class'),
+			'<strong',
+			'Text',
+			'/strong',
+			'/span'
+		);
+		$this->assertTrue($test->assertTags($input, $pattern), 'Test attribute presence');
 	}
 
 /**
