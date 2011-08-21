@@ -38,6 +38,13 @@ class SchemaShell extends Shell {
 	public $Schema;
 
 /**
+ * is this a dry run?
+ *
+ * @var boolean
+ */
+	protected $_dry = null;
+
+/**
  * Override initialize
  *
  * @return string

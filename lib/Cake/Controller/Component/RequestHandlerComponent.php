@@ -91,7 +91,7 @@ class RequestHandlerComponent extends Component {
  * @param array $settings Array of settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->addInputType('xml', array(array($this, '_convertXml')));
+		$this->addInputType('xml', array(array($this, 'convertXml')));
 		parent::__construct($collection, $settings);
 	}
 
@@ -175,7 +175,7 @@ class RequestHandlerComponent extends Component {
  * @param string $xml
  * @return array Xml array data
  */
-	protected function _convertXml($xml) {
+	public function convertXml($xml) {
 		try {
 			$xml = Xml::build($xml);
 			if (isset($xml->data)) {

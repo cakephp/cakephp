@@ -934,7 +934,7 @@ class FormHelper extends AppHelper {
 					$options['type'] = 'hidden';
 				}
 				if (
-					$options['type'] === 'number' && 
+					$options['type'] === 'number' &&
 					$type === 'float' &&
 					!isset($options['step'])
 				) {
