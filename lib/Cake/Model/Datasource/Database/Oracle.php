@@ -1101,16 +1101,16 @@ class DboOracle extends DboSource {
 						if (empty($merge) && !isset($row[$association])) {
 							$row[$association] = $merge;
 						} else {
-							$this->__mergeAssociation($resultSet[$i], $merge, $association, $type);
+							$this->_mergeAssociation($resultSet[$i], $merge, $association, $type);
 						}
 					} else {
-						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+						$this->_mergeAssociation($resultSet[$i], $fetch, $association, $type);
 					}
 					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
 
 				} else {
 					$tempArray[0][$association] = false;
-					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type);
+					$this->_mergeAssociation($resultSet[$i], $tempArray, $association, $type);
 				}
 			}
 		}

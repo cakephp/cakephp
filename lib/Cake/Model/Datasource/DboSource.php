@@ -1016,7 +1016,7 @@ class DboSource extends DataSource {
  * @return mixed boolean false on error/failure.  An array of results on success.
  */
 	public function read(Model $model, $queryData = array(), $recursive = null) {
-		$queryData = $this->__scrubQueryData($queryData);
+		$queryData = $this->_scrubQueryData($queryData);
 
 		$null = null;
 		$array = array();
@@ -1279,17 +1279,17 @@ class DboSource extends DataSource {
 						if (empty($merge) && !isset($row[$association])) {
 							$row[$association] = $merge;
 						} else {
-							$this->__mergeAssociation($row, $merge, $association, $type);
+							$this->_mergeAssociation($row, $merge, $association, $type);
 						}
 					} else {
-						$this->__mergeAssociation($row, $fetch, $association, $type, $selfJoin);
+						$this->_mergeAssociation($row, $fetch, $association, $type, $selfJoin);
 					}
 					if (isset($row[$association])) {
 						$row[$association] = $linkModel->afterFind($row[$association], false);
 					}
 				} else {
 					$tempArray[0][$association] = false;
-					$this->__mergeAssociation($row, $tempArray, $association, $type, $selfJoin);
+					$this->_mergeAssociation($row, $tempArray, $association, $type, $selfJoin);
 				}
 			}
 		}
@@ -1362,7 +1362,7 @@ class DboSource extends DataSource {
  * @param boolean $selfJoin
  * @return void
  */
-	function __mergeAssociation(&$data, &$merge, $association, $type, $selfJoin = false) {
+	protected function _mergeAssociation(&$data, &$merge, $association, $type, $selfJoin = false) {
 		if (isset($merge[0]) && !isset($merge[0][$association])) {
 			$association = Inflector::pluralize($association);
 		}
@@ -1446,8 +1446,8 @@ class DboSource extends DataSource {
  * @return mixed
  */
 	public function generateAssociationQuery($model, $linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
-		$queryData = $this->__scrubQueryData($queryData);
-		$assocData = $this->__scrubQueryData($assocData);
+		$queryData = $this->_scrubQueryData($queryData);
+		$assocData = $this->_scrubQueryData($assocData);
 		$modelAlias = $model->alias;
 
 		if (empty($queryData['fields'])) {
@@ -2123,7 +2123,7 @@ class DboSource extends DataSource {
  * @param array $data
  * @return array
  */
-	function __scrubQueryData($data) {
+	protected function _scrubQueryData($data) {
 		static $base = null;
 		if ($base === null) {
 			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());

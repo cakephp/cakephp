@@ -92,6 +92,10 @@ class DboSourceTest extends CakeTestCase {
 				public function getLastQuery() {
 					return \$this->simulated[count(\$this->simulated) - 1];
 				}
+
+				public function mergeAssociation(&\$data, &\$merge, \$association, \$type, \$selfJoin = false) {
+					return parent::_mergeAssociation(\$data, \$merge, \$association, \$type, \$selfJoin);
+				}
 			}");
 		}
 
@@ -177,7 +181,7 @@ class DboSourceTest extends CakeTestCase {
 				'updated' => '2007-03-17 01:18:31'
 			)
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
+		$this->testDb->mergeAssociation($data, $merge, 'Topic', 'hasOne');
 		$this->assertEqual($data, $expected);
 
 		$data = array('Article2' => array(
@@ -200,7 +204,7 @@ class DboSourceTest extends CakeTestCase {
 				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 			)
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
+		$this->testDb->mergeAssociation($data, $merge, 'User2', 'belongsTo');
 		$this->assertEqual($data, $expected);
 
 		$data = array(
@@ -215,7 +219,7 @@ class DboSourceTest extends CakeTestCase {
 			),
 			'Comment' => array()
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
 		$this->assertEqual($data, $expected);
 
 		$data = array(
@@ -248,7 +252,7 @@ class DboSourceTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
 		$this->assertEqual($data, $expected);
 
 		$data = array(
@@ -293,7 +297,7 @@ class DboSourceTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
 		$this->assertEqual($data, $expected);
 
 		$data = array(
@@ -348,7 +352,7 @@ class DboSourceTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
 		$this->assertEqual($data, $expected);
 
 		$data = array(
@@ -389,7 +393,7 @@ class DboSourceTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
+		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
 		$this->assertEqual($data, $expected);
 
 		$data = array(
@@ -420,7 +424,7 @@ class DboSourceTest extends CakeTestCase {
 			),
 			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
 		);
-		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasOne');
+		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasOne');
 		$this->assertEqual($data, $expected);
 	}
 

@@ -1010,7 +1010,9 @@ class DboMysqlTest extends CakeTestCase {
 
 		$linkModel = $model->{$className};
 		$external = isset($assocData['external']);
-		$queryData = $this->Dbo->__scrubQueryData($queryData);
+		$reflection = new ReflectionMethod($this->Dbo, '_scrubQueryData');
+		$reflection->setAccessible(true);
+		$queryData = $reflection->invokeArgs($this->Dbo, array($queryData));
 
 		$result = array_merge(array('linkModel' => &$linkModel), compact('type', 'assoc', 'assocData', 'external'));
 		return $result;
