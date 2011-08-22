@@ -1079,8 +1079,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _beforeScaffold($method) {
+	public function beforeScaffold($method) {
 		return true;
+	}
+
+/**
+ * Alias to beforeScaffold()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::beforeScaffold()
+ * @deprecated
+ */
+	protected function _beforeScaffold($method) {
+		return $this->beforeScaffold($method);
 	}
 
 /**
@@ -1090,8 +1102,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _afterScaffoldSave($method) {
+	public function afterScaffoldSave($method) {
 		return true;
+	}
+
+/**
+ * Alias to afterScaffoldSave()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::afterScaffoldSave()
+ * @deprecated
+ */
+	protected function _afterScaffoldSave($method) {
+		return $this->afterScaffoldSave($method);
 	}
 
 /**
@@ -1101,8 +1125,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _afterScaffoldSaveError($method) {
+	public function afterScaffoldSaveError($method) {
 		return true;
+	}
+
+/**
+ * Alias to afterScaffoldSaveError()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::afterScaffoldSaveError()
+ * @deprecated
+ */
+	protected function _afterScaffoldSaveError($method) {
+		return $this->afterScaffoldSaveError($method);
 	}
 
 /**
@@ -1114,7 +1150,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _scaffoldError($method) {
+	public function scaffoldError($method) {
 		return false;
 	}
+
+/**
+ * Alias to scaffoldError()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::scaffoldError()
+ * @deprecated
+ */
+	protected function _scaffoldError($method) {
+		return $this->scaffoldError($method);
+	}
+
 }

@@ -666,10 +666,10 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 
 		$Controller = new Controller($request, $this->getMock('CakeResponse'));
-		$this->assertTrue($Controller->_beforeScaffold(''));
-		$this->assertTrue($Controller->_afterScaffoldSave(''));
-		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
-		$this->assertFalse($Controller->_scaffoldError(''));
+		$this->assertTrue($Controller->beforeScaffold(''));
+		$this->assertTrue($Controller->afterScaffoldSave(''));
+		$this->assertTrue($Controller->afterScaffoldSaveError(''));
+		$this->assertFalse($Controller->scaffoldError(''));
 	}
 
 /**

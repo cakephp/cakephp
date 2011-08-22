@@ -158,7 +158,7 @@ class Scaffold {
  * @throws NotFoundException
  */
 	protected function _scaffoldView(CakeRequest $request) {
-		if ($this->controller->_beforeScaffold('view')) {
+		if ($this->controller->beforeScaffold('view')) {
 			if (isset($request->params['pass'][0])) {
 				$this->ScaffoldModel->id = $request->params['pass'][0];
 			}
@@ -171,7 +171,7 @@ class Scaffold {
 				Inflector::variable($this->controller->modelClass), $this->request->data
 			);
 			$this->controller->render($this->request['action'], $this->layout);
-		} elseif ($this->controller->_scaffoldError('view') === false) {
+		} elseif ($this->controller->scaffoldError('view') === false) {
 			return $this->_scaffoldError();
 		}
 	}
@@ -183,13 +183,13 @@ class Scaffold {
  * @return mixed A rendered view listing rows from Models database table
  */
 	protected function _scaffoldIndex($params) {
-		if ($this->controller->_beforeScaffold('index')) {
+		if ($this->controller->beforeScaffold('index')) {
 			$this->ScaffoldModel->recursive = 0;
 			$this->controller->set(
 				Inflector::variable($this->controller->name), $this->controller->paginate()
 			);
 			$this->controller->render($this->request['action'], $this->layout);
-		} elseif ($this->controller->_scaffoldError('index') === false) {
+		} elseif ($this->controller->scaffoldError('index') === false) {
 			return $this->_scaffoldError();
 		}
 	}
@@ -224,7 +224,7 @@ class Scaffold {
 			$success = __d('cake', 'saved');
 		}
 
-		if ($this->controller->_beforeScaffold($action)) {
+		if ($this->controller->beforeScaffold($action)) {
 			if ($action == 'edit') {
 				if (isset($request->params['pass'][0])) {
 					$this->ScaffoldModel->id = $request['pass'][0];
@@ -240,7 +240,7 @@ class Scaffold {
 				}
 
 				if ($this->ScaffoldModel->save($request->data)) {
-					if ($this->controller->_afterScaffoldSave($action)) {
+					if ($this->controller->afterScaffoldSave($action)) {
 						$message = __d('cake',
 							'The %1$s has been %2$s',
 							Inflector::humanize($this->modelKey),
@@ -248,7 +248,7 @@ class Scaffold {
 						);
 						return $this->_sendMessage($message);
 					} else {
-						return $this->controller->_afterScaffoldSaveError($action);
+						return $this->controller->afterScaffoldSaveError($action);
 					}
 				} else {
 					if ($this->_validSession) {
@@ -277,8 +277,8 @@ class Scaffold {
 			}
 
 			return $this->_scaffoldForm($formAction);
-		} elseif ($this->controller->_scaffoldError($action) === false) {
-			return $this->_scaffoldError();
+		} elseif ($this->controller->scaffoldError($action) === false) {
+			return $this->scaffoldError();
 		}
 	}
 
@@ -290,7 +290,7 @@ class Scaffold {
  * @throws MethodNotAllowedException, NotFoundException
  */
 	protected function _scaffoldDelete(CakeRequest $request) {
-		if ($this->controller->_beforeScaffold('delete')) {
+		if ($this->controller->beforeScaffold('delete')) {
 			if (!$request->is('post')) {
 				throw new MethodNotAllowedException();
 			}
@@ -313,7 +313,7 @@ class Scaffold {
 				);
 				return $this->_sendMessage($message);
 			}
-		} elseif ($this->controller->_scaffoldError('delete') === false) {
+		} elseif ($this->controller->scaffoldError('delete') === false) {
 			return $this->_scaffoldError();
 		}
 	}
