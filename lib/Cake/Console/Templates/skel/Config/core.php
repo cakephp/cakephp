@@ -144,7 +144,7 @@
  *
  * ## Options
  *
- * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
+ * - `Session.cookie` - The name of the cookie to use. Defaults to 'CAKEPHP'
  * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
  * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
  * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the
@@ -160,7 +160,7 @@
  *
  * The built in defaults are:
  *
- * - 'php' -Uses settings defined in your php.ini.
+ * - 'php' - Uses settings defined in your php.ini.
  * - 'cake' - Saves session files in CakePHP's /tmp directory.
  * - 'database' - Uses CakePHP's database sessions.
  * - 'cache' - Use the Cache class to save sessions.
@@ -280,7 +280,7 @@
  * 		'persistent' => true, // [optional] set this to false for non-persistent connections
  * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
  *	));
- * 
+ *
  *  Wincache (http://php.net/wincache)
  *
  * 	 Cache::config('default', array(
