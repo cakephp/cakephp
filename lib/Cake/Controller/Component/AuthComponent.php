@@ -427,13 +427,11 @@ class AuthComponent extends Component {
  *
  * `$this->Auth->allow('*');`
  *
- * @param mixed $action Controller action name or array of actions
- * @param string $action Controller action name
- * @param string ... etc.
+ * @param mixed $action,... Controller action name or array of actions
  * @return void
  * @link http://book.cakephp.org/view/1257/allow
  */
-	public function allow() {
+	public function allow($action) {
 		$args = func_get_args();
 		if (empty($args) || $args == array('*')) {
 			$this->allowedActions = $this->_methods;
@@ -453,14 +451,12 @@ class AuthComponent extends Component {
  * `$this->Auth->deny(array('edit', 'add'));` or
  * `$this->Auth->deny('edit', 'add');`
  *
- * @param mixed $action Controller action name or array of actions
- * @param string $action Controller action name
- * @param string ... etc.
+ * @param mixed $action,... Controller action name or array of actions
  * @return void
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/view/1258/deny
  */
-	public function deny() {
+	public function deny($action) {
 		$args = func_get_args();
 		if (isset($args[0]) && is_array($args[0])) {
 			$args = $args[0];

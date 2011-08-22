@@ -667,8 +667,7 @@ class CakeRequest implements ArrayAccess {
  * You can write to any value, even paths/keys that do not exist, and the arrays
  * will be created for you.
  *
- * @param string $name Dot separated name of the value to read/write
- * @param mixed $value Value to write to the data array.
+ * @param string $name,... Dot separated name of the value to read/write
  * @return mixed Either the value being read, or this so you can chain consecutive writes.
  */
 	public function data($name) {

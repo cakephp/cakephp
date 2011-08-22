@@ -2831,11 +2831,11 @@ class Model extends Object {
 /**
  * Returns a resultset for a given SQL statement. Custom SQL queries should be performed with this method.
  *
- * @param string $sql SQL statement
+ * @param string $sql,... SQL statement
  * @return array Resultset
  * @link http://book.cakephp.org/view/1027/query
  */
-	public function query() {
+	public function query($sql) {
 		$params = func_get_args();
 		$db = $this->getDataSource();
 		return call_user_func_array(array(&$db, 'query'), $params);
