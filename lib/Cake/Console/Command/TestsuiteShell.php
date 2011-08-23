@@ -156,6 +156,8 @@ class TestsuiteShell extends Shell {
 			'default' => false
 		))->addOption('fixture', array(
 			'help' => __d('cake_console', 'Choose a custom fixture manager.'),
+		))->addOption('debug', array(
+			'help' => __d('cake_console', 'More verbose output.'),
 		));
 
 		return $parser;
