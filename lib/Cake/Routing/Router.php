@@ -476,8 +476,8 @@ class Router {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
 		}
 
-		if (!empty($ext) && !isset($out['url']['ext'])) {
-			$out['url']['ext'] = $ext;
+		if (!empty($ext) && !isset($out['ext'])) {
+			$out['ext'] = $ext;
 		}
 		return $out;
 	}

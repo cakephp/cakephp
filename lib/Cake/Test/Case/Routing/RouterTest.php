@@ -577,7 +577,7 @@ class RouterTest extends CakeTestCase {
 		$request->addParams(array(
 			'controller' => 'registrations', 'action' => 'admin_index',
 			'plugin' => null, 'prefix' => 'admin', 'admin' => true,
-			'url' => array('ext' => 'html', 'url' => 'admin/registrations/index')
+			'ext' => 'html'
 		));
 		$request->base = '';
 		$request->here = '/admin/registrations/index';
@@ -1210,18 +1210,18 @@ class RouterTest extends CakeTestCase {
 		require CAKE . 'Config' . DS . 'routes.php';
 
 		$result = Router::parse('/posts.rss');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'rss'), 'pass'=> array(), 'named' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'ext' => 'rss', 'pass'=> array(), 'named' => array());
 		$this->assertEqual($expected, $result);
 
 		$result = Router::parse('/posts/view/1.rss');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'named' => array(), 'url' => array('ext' => 'rss'), 'named' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'named' => array(), 'ext' => 'rss', 'named' => array());
 		$this->assertEqual($expected, $result);
 
 		$result = Router::parse('/posts/view/1.rss?query=test');
 		$this->assertEqual($expected, $result);
 
 		$result = Router::parse('/posts/view/1.atom');
-		$expected['url'] = array('ext' => 'atom');
+		$expected['ext'] = 'atom';
 		$this->assertEqual($expected, $result);
 
 		Router::reload();
@@ -1230,7 +1230,7 @@ class RouterTest extends CakeTestCase {
 		Router::parseExtensions('rss', 'xml');
 
 		$result = Router::parse('/posts.xml');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'xml'), 'pass'=> array(), 'named' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'ext' => 'xml', 'pass'=> array(), 'named' => array());
 		$this->assertEqual($expected, $result);
 
 		$result = Router::parse('/posts.atom?hello=goodbye');
@@ -1238,16 +1238,16 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		Router::reload();
-		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'url' => array('ext' => 'rss')));
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => 'rss'));
 		$result = Router::parse('/controller/action');
-		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'url' => array('ext' => 'rss'), 'named' => array(), 'pass' => array());
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
 		$this->assertEqual($expected, $result);
 
 		Router::reload();
 		Router::parseExtensions('rss');
-		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'url' => array('ext' => 'rss')));
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => 'rss'));
 		$result = Router::parse('/controller/action');
-		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'url' => array('ext' => 'rss'), 'named' => array(), 'pass' => array());
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
 		$this->assertEqual($expected, $result);
 	}
 
@@ -2271,6 +2271,27 @@ class RouterTest extends CakeTestCase {
 		);
 		$result = Router::reverse($params, true);
 		$this->assertPattern('/^http(s)?:\/\//', $result);
+	}
+
+/**
+ * Test that extensions work with Router::reverse()
+ *
+ * @return void
+ */
+	public function testReverseWithExtension() {
+		Router::parseExtensions('json');
+
+		$request = new CakeRequest('/posts/view/1.json');
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'view',
+			'pass' => array(1),
+			'named' => array(),
+			'ext' => 'json',
+		));
+		$result = Router::reverse($request);
+		$expected = '/posts/view/1.json';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
