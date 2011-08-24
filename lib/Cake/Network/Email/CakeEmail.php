@@ -553,7 +553,7 @@ class CakeEmail {
  * Add header for the message
  *
  * @param array $headers
- * @return mixed $this
+ * @return object $this
  * @throws SocketException
  */
 	public function addHeaders($headers) {
@@ -914,27 +914,12 @@ class CakeEmail {
  */
 	public function send($content = null) {
 		if (is_string($this->_config)) {
-			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
-			}
-			$configs = new EmailConfig();
-			if (!isset($configs->{$this->_config})) {
-				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $this->_config));
-			}
-			$config = $configs->{$this->_config};
-			if (isset($config['transport'])) {
-				$this->transport($config['transport']);
-			}
-		} else {
-			$config = $this->_config;
+			$this->config($this->_config);
 		}
+		$config = $this->_config;
 
 		if (empty($this->_from)) {
-			if (!empty($config['from'])) {
-				$this->from($config['from']);
-			} else {
-				throw new SocketException(__d('cake', 'From is not specified.'));
-			}
+			throw new SocketException(__d('cake', 'From is not specified.'));
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
 			throw new SocketException(__d('cake', 'You need specify one destination on to, cc or bcc.'));
