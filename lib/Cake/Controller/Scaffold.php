@@ -278,7 +278,7 @@ class Scaffold {
 
 			return $this->_scaffoldForm($formAction);
 		} elseif ($this->controller->scaffoldError($action) === false) {
-			return $this->scaffoldError();
+			return $this->_scaffoldError();
 		}
 	}
 

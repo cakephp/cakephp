@@ -65,11 +65,11 @@ class ScaffoldMockControllerWithFields extends Controller {
 	public $scaffold;
 
 /**
- * function _beforeScaffold
+ * function beforeScaffold
  *
  * @param string method
  */
-	function _beforeScaffold($method) {
+	public function beforeScaffold($method) {
 		$this->set('scaffoldFields', array('title'));
 		return true;
 	}
