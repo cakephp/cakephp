@@ -897,7 +897,7 @@ class CakeEmail {
 			$config = (string)$config;
 		}
 
-		$this->_applyConfig($this, $config);
+		$this->_applyConfig($config);
 		return $this;
 	}
 
@@ -974,7 +974,7 @@ class CakeEmail {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && in_array('message', $config = $this->config())) {
+		} elseif ($message === null && in_array('message', $config = $instance->config())) {
 			$message = $config['message'];
 		}
 
@@ -992,7 +992,7 @@ class CakeEmail {
  * @param array $config
  * @return void
  */
-	protected function _applyConfig(CakeEmail $obj, $config) {
+	protected function _applyConfig($config) {
 		if (is_string($config)) {
 			if (!config('email')) {
 				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
@@ -1011,12 +1011,12 @@ class CakeEmail {
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
-				$obj->$method($config[$method]);
+				$this->$method($config[$method]);
 				unset($config[$method]);
 			}
 		}
 		if (isset($config['headers'])) {
-			$obj->setHeaders($config['headers']);
+			$this->setHeaders($config['headers']);
 			unset($config['headers']);
 		}
 		if (array_key_exists('template', $config)) {
@@ -1025,10 +1025,10 @@ class CakeEmail {
 				$layout = $config['layout'];
 				unset($config['layout']);
 			}
-			$obj->template($config['template'], $layout);
+			$this->template($config['template'], $layout);
 			unset($config['template']);
 		}
-		$obj->transportClass()->config($config);
+		$this->transportClass()->config($config);
 	}
 
 /**
