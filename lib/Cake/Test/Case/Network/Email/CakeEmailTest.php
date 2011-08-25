@@ -541,8 +541,38 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->config(array());
 		$this->assertIdentical(DebugTransport::$config, array());
+
 	}
 
+/**
+ * testConfigString method
+ *
+ * @return void
+ */
+	public function testConfigString() {
+		$shouldSkip = true;
+		if (config('email')) {
+			$configs = new EmailConfig();
+			$shouldSkip = !isset($configs->test);
+		}
+		$this->skipIf($shouldSkip, 'Create email.php with $test config as defined in email.php.default');
+		$this->CakeEmail->config('test');
+
+		$result = $this->CakeEmail->to();
+		$this->assertEqual($result, $configs->test['to']);
+
+		$result = $this->CakeEmail->from();
+		$this->assertEqual($result, $configs->test['from']);
+
+		$result = $this->CakeEmail->subject();
+		$this->assertEqual($result, $configs->test['subject']);
+
+		$result = $this->CakeEmail->transport();
+		$this->assertEqual($result, $configs->test['transport']);
+
+		$result = $this->CakeEmail->transportClass();
+		$this->assertTrue($result instanceof DebugTransport);
+	}
 /**
  * testSendWithContent method
  *
@@ -886,6 +916,76 @@ class CakeEmailTest extends CakeTestCase {
 			''
 		);
 		$this->assertIdentical($expected, $result);
+	}
+
+/**
+ * testConstructWithConfigArray method
+ *
+ * @return void
+ */
+	public function testConstructWithConfigArray() {
+		$configs = array(
+			'from' => array('some@example.com' => 'My website'),
+			'to' => 'test@example.com',
+			'subject' => 'Test mail subject',
+			'transport' => 'Debug',
+		);
+		$this->CakeEmail = new CakeEmail($configs);
+
+		$result = $this->CakeEmail->to();
+		$this->assertEqual($result, array($configs['to'] => $configs['to']));
+
+		$result = $this->CakeEmail->from();
+		$this->assertEqual($result, $configs['from']);
+
+		$result = $this->CakeEmail->subject();
+		$this->assertEqual($result, $configs['subject']);
+
+		$result = $this->CakeEmail->transport();
+		$this->assertEqual($result, $configs['transport']);
+
+		$result = $this->CakeEmail->transportClass();
+		$this->assertTrue($result instanceof DebugTransport);
+
+		$result = $this->CakeEmail->send('This is the message');
+
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
+	}
+
+/**
+ * testConstructWithConfigString method
+ *
+ * @return void
+ */
+	public function testConstructWithConfigString() {
+		$shouldSkip = true;
+		if (config('email')) {
+			$configs = new EmailConfig();
+			$shouldSkip = !isset($configs->test);
+		}
+		$this->skipIf($shouldSkip, 'Create email.php with $test config as defined in email.php.default');
+		$this->CakeEmail = new CakeEmail('test');
+
+		$result = $this->CakeEmail->to();
+		$this->assertEqual($result, $configs->test['to']);
+
+		$result = $this->CakeEmail->from();
+		$this->assertEqual($result, $configs->test['from']);
+
+		$result = $this->CakeEmail->subject();
+		$this->assertEqual($result, $configs->test['subject']);
+
+		$result = $this->CakeEmail->transport();
+		$this->assertEqual($result, $configs->test['transport']);
+
+		$result = $this->CakeEmail->transportClass();
+		$this->assertTrue($result instanceof DebugTransport);
+
+		$this->CakeEmail->send('This is the message');
+
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
+		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
 	}
 
 }

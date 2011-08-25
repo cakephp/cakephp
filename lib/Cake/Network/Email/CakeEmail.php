@@ -266,7 +266,7 @@ class CakeEmail {
  *
  * @var mixed
  */
-	protected $_config = 'default';
+	protected $_config = array();
 
 /**
  * Constructor
@@ -893,16 +893,11 @@ class CakeEmail {
 		if ($config === null) {
 			return $this->_config;
 		}
-
-		if (is_array($config)) {
-			$this->_config = $config;
-			if ($this->_transportClass) {
-				$this->_transportClass->config($this->_config);
-			}
-		} else {
-			$this->_config = (string)$config;
-			self::_applyConfig($this, $this->_config);
+		if (!is_array($config)) {
+			$config = (string)$config;
 		}
+
+		$this->_applyConfig($this, $config);
 		return $this;
 	}
 
@@ -913,11 +908,6 @@ class CakeEmail {
  * @throws SocketException
  */
 	public function send($content = null) {
-		if (is_string($this->_config)) {
-			$this->config($this->_config);
-		}
-		$config = $this->_config;
-
 		if (empty($this->_from)) {
 			throw new SocketException(__d('cake', 'From is not specified.'));
 		}
@@ -959,10 +949,7 @@ class CakeEmail {
 			$this->_message[] = '';
 		}
 
-		$transport = $this->transportClass();
-		$transport->config($config);
-
-		return $transport->send($this);
+		return $this->transportClass()->send($this);
 	}
 
 /**
@@ -977,10 +964,7 @@ class CakeEmail {
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
-		$instance = new $class();
-
-		self::_applyConfig($instance, $transportConfig);
-
+		$instance = new $class($transportConfig);
 		if ($to !== null) {
 			$instance->to($to);
 		}
@@ -990,7 +974,7 @@ class CakeEmail {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && isset($config['message'])) {
+		} elseif ($message === null && in_array('message', $config = $this->config())) {
 			$message = $config['message'];
 		}
 
@@ -1008,7 +992,7 @@ class CakeEmail {
  * @param array $config
  * @return void
  */
-	protected static function _applyConfig(CakeEmail $obj, $config) {
+	protected function _applyConfig(CakeEmail $obj, $config) {
 		if (is_string($config)) {
 			if (!config('email')) {
 				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
@@ -1019,6 +1003,7 @@ class CakeEmail {
 			}
 			$config = $configs->{$config};
 		}
+		$this->_config += $config;
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
@@ -1043,7 +1028,7 @@ class CakeEmail {
 			$obj->template($config['template'], $layout);
 			unset($config['template']);
 		}
-		$obj->config($config);
+		$obj->transportClass()->config($config);
 	}
 
 /**
@@ -1075,7 +1060,7 @@ class CakeEmail {
 		$this->_transportName = 'Mail';
 		$this->_transportClass = null;
 		$this->_attachments = array();
-		$this->_config = 'default';
+		$this->_config = array();
 		return $this;
 	}
 
