@@ -469,7 +469,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->_init();
 		$this->assertTrue($this->RequestHandler->isWap());
 
-		$_SERVER['HTTP_ACCEPT'] = 'application/rss+xml ,  text/xml,  application/xml,application/xhtml+xml';
+		$_SERVER['HTTP_ACCEPT'] = 'application/rss+xml ;q=0.9 ,  text/xml,  application/xml,application/xhtml+xml';
 		$this->_init();
 		$this->assertFalse($this->RequestHandler->isAtom());
 		$this->assertTrue($this->RequestHandler->isRSS());

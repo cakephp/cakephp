@@ -181,7 +181,7 @@ class RequestHandlerComponent extends Object {
 		foreach ($this->__acceptTypes as $i => $type) {
 			if (strpos($type, ';')) {
 				$type = explode(';', $type);
-				$this->__acceptTypes[$i] = $type[0];
+				$this->__acceptTypes[$i] = trim($type[0]);
 			}
 		}
 		parent::__construct();
