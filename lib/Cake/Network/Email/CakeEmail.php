@@ -582,17 +582,10 @@ class CakeEmail {
  * @return array
  */
 	public function getHeaders($include = array()) {
-		$defaults = array(
-			'from' => false,
-			'sender' => false,
-			'replyTo' => false,
-			'readReceipt' => false,
-			'returnPath' => false,
-			'to' => false,
-			'cc' => false,
-			'bcc' => false,
-			'subject' => false
-		);
+		if ($include == array_values($include)) {
+			$include = array_fill_keys($include, true);
+		}
+		$defaults = array_fill_keys(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'), false);
 		$include += $defaults;
 
 		$headers = array();
@@ -904,7 +897,7 @@ class CakeEmail {
 /**
  * Send an email using the specified content, template and layout
  *
- * @return boolean Success
+ * @return array
  * @throws SocketException
  */
 	public function send($content = null) {
@@ -948,8 +941,11 @@ class CakeEmail {
 			$this->_message[] = '--' . $this->_boundary . '--';
 			$this->_message[] = '';
 		}
-
-		return $this->transportClass()->send($this);
+		$contents = $this->transportClass()->send($this);
+		if (isset($this->_config['log']) && $this->_config['log']) {
+			CakeLog::write(LOG_DEBUG, '\nHeaders:\n' . $contents['headers'] . 'Message:\n' . $contents['message']);
+		}
+		return $contents;
 	}
 
 /**
@@ -961,6 +957,7 @@ class CakeEmail {
  * @param mixed $transportConfig String to use config from EmailConfig or array with configs
  * @param boolean $send Send the email or just return the instance pre-configured
  * @return object Instance of CakeEmail
+ * @throws SocketException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
@@ -1259,12 +1256,12 @@ class CakeEmail {
 		$View->helpers = $this->_helpers;
 		$msg = array();
 
-		list($templatePlugin, $template) = pluginSplit($this->_template, true);
-		list($layoutPlugin, $layout) = pluginSplit($this->_layout, true);
-		if (!empty($templatePlugin)) {
-			$View->plugin = rtrim($templatePlugin, '.');
-		} elseif (!empty($layoutPlugin)) {
-			$View->plugin = rtrim($layoutPlugin, '.');
+		list($templatePlugin, $template) = pluginSplit($this->_template);
+		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
+		if ($templatePlugin) {
+			$View->plugin = $templatePlugin;
+		} elseif ($layoutPlugin) {
+			$View->plugin = $layoutPlugin;
 		}
 
 		$content = implode("\n", $content);

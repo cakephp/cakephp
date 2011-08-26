@@ -559,16 +559,16 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config('test');
 
 		$result = $this->CakeEmail->to();
-		$this->assertEqual($result, $configs->test['to']);
+		$this->assertEquals($configs->test['to'], $result);
 
 		$result = $this->CakeEmail->from();
-		$this->assertEqual($result, $configs->test['from']);
+		$this->assertEquals($configs->test['from'], $result);
 
 		$result = $this->CakeEmail->subject();
-		$this->assertEqual($result, $configs->test['subject']);
+		$this->assertEquals($configs->test['subject'], $result);
 
 		$result = $this->CakeEmail->transport();
-		$this->assertEqual($result, $configs->test['transport']);
+		$this->assertEquals($configs->test['transport'], $result);
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertTrue($result instanceof DebugTransport);
@@ -933,16 +933,16 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail = new CakeEmail($configs);
 
 		$result = $this->CakeEmail->to();
-		$this->assertEqual($result, array($configs['to'] => $configs['to']));
+		$this->assertEquals(array($configs['to'] => $configs['to']), $result);
 
 		$result = $this->CakeEmail->from();
-		$this->assertEqual($result, $configs['from']);
+		$this->assertEquals($configs['from'], $result);
 
 		$result = $this->CakeEmail->subject();
-		$this->assertEqual($result, $configs['subject']);
+		$this->assertEquals($configs['subject'], $result);
 
 		$result = $this->CakeEmail->transport();
-		$this->assertEqual($result, $configs['transport']);
+		$this->assertEquals($configs['transport'], $result);
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertTrue($result instanceof DebugTransport);
@@ -968,16 +968,16 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail = new CakeEmail('test');
 
 		$result = $this->CakeEmail->to();
-		$this->assertEqual($result, $configs->test['to']);
+		$this->assertEquals($configs->test['to'], $result);
 
 		$result = $this->CakeEmail->from();
-		$this->assertEqual($result, $configs->test['from']);
+		$this->assertEquals($configs->test['from'], $result);
 
 		$result = $this->CakeEmail->subject();
-		$this->assertEqual($result, $configs->test['subject']);
+		$this->assertEquals($configs->test['subject'], $result);
 
 		$result = $this->CakeEmail->transport();
-		$this->assertEqual($result, $configs->test['transport']);
+		$this->assertEquals($configs->test['transport'], $result);
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertTrue($result instanceof DebugTransport);

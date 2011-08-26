@@ -61,7 +61,7 @@ class SmtpTestTransport extends SmtpTransport {
  * @param string $method
  * @param string $args
  * @return mixed
- */ 
+ */
 	public function __call($method, $args) {
 		$method = '_' . $method;
 		return $this->$method();
@@ -73,7 +73,7 @@ class SmtpTestTransport extends SmtpTransport {
  * Test case
  *
  */
-class StmpProtocolTest extends CakeTestCase {
+class SmtpTransportTest extends CakeTestCase {
 
 /**
  * Setup
@@ -130,7 +130,7 @@ class StmpProtocolTest extends CakeTestCase {
  * @expectedException Exception
  * @return void
  */
-	public function testConnetFail() {
+	public function testConnectFail() {
 		$this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
 		$this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
