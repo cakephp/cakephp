@@ -788,12 +788,29 @@ class CakeRequestTestCase extends CakeTestCase {
 			'text/xml', 'application/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png'
 		);
 		$this->assertEquals($expected, $result, 'Content types differ.');
-		
+
 		$result = $request->accepts('text/html');
 		$this->assertTrue($result);
-		
+
 		$result = $request->accepts('image/gif');
 		$this->assertFalse($result);
+	}
+
+/**
+ * Test that accept header types are trimmed for comparisons.
+ *
+ * @return void
+ */
+	public function testAcceptWithWhitespace() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/xml  ,  text/html ,  text/plain,image/png';
+		$request = new CakeRequest('/', false);
+		$result = $request->accepts();
+		$expected = array(
+			'text/xml', 'text/html', 'text/plain', 'image/png'
+		);
+		$this->assertEquals($expected, $result, 'Content types differ.');
+
+		$this->assertTrue($request->accepts('text/html'));
 	}
 
 /**
