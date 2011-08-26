@@ -943,7 +943,11 @@ class CakeEmail {
 		}
 		$contents = $this->transportClass()->send($this);
 		if (isset($this->_config['log']) && $this->_config['log']) {
-			CakeLog::write(LOG_DEBUG, '\nHeaders:\n' . $contents['headers'] . 'Message:\n' . $contents['message']);
+			$level = LOG_DEBUG;
+			if ($this->_config['log'] !== true) {
+				$level = $this->_config['log'];
+			}
+			CakeLog::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message']);
 		}
 		return $contents;
 	}
