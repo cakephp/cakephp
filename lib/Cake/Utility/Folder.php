@@ -145,29 +145,33 @@ class Folder {
 		}
 		$skipHidden = isset($exceptions['.']) || $exceptions === true;
 
-		if (false === ($dir = @opendir($this->path))) {
+		try {
+			$iterator = new DirectoryIterator($this->path);
+		} catch (UnexpectedValueException $e) {
 			return array($dirs, $files);
 		}
 
-		while (false !== ($item = readdir($dir))) {
-			if ($item === '.' || $item === '..' || ($skipHidden && $item[0] === '.') || isset($exceptions[$item])) {
+		foreach ($iterator as $item) {
+			if ($item->isDot()) {
 				continue;
 			}
-
-			$path = Folder::addPathElement($this->path, $item);
-			if (is_dir($path)) {
-				$dirs[] = $fullPath ? $path : $item;
+			$name = $item->getFileName();
+			if ($skipHidden && $name[0] === '.' || isset($exceptions[$name])) {
+				continue;
+			}
+			if ($fullPath) {
+				$name = $item->getPathName();
+			}
+			if ($item->isDir()) {
+				$dirs[] = $name;
 			} else {
-				$files[] = $fullPath ? $path : $item;
+				$files[] = $name;
 			}
 		}
-
 		if ($sort || $this->sort) {
 			sort($dirs);
 			sort($files);
 		}
-
-		closedir($dir);
 		return array($dirs, $files);
 	}
 
