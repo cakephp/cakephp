@@ -384,14 +384,9 @@ class Folder {
  * @param string $type either file or dir. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  */
-	public function tree($path, $exceptions = true, $type = null) {
-		$original = $this->path;
-		$path = rtrim($path, DS);
-		if (!$this->cd($path)) {
-			if ($type === null) {
-				return array(array(), array());
-			}
-			return array();
+	public function tree($path = null, $exceptions = true, $type = null) {
+		if ($path == null) {
+			$path = $this->path;
 		}
 		$files = array();
 		$directories = array($path);
@@ -408,6 +403,9 @@ class Folder {
 			$directory = new RecursiveDirectoryIterator($path);
 			$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
 		} catch (UnexpectedValueException $e) {
+			if ($type === null) {
+				return array(array(), array());
+			}
 			return array();
 		}
 		foreach ($iterator as $item) {
