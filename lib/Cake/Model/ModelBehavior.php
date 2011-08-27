@@ -47,7 +47,7 @@
  * than a normal behavior mixin method.
  *
  * {{{
- * var $mapMethods = array('/do(\w+)/' => 'doSomething');
+ * public $mapMethods = array('/do(\w+)/' => 'doSomething');
  *
  * function doSomething($model, $method, $arg1, $arg2) {
  *		//do something
@@ -88,8 +88,9 @@ class ModelBehavior extends Object {
 /**
  * Setup this behavior with the specified configuration settings.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @param array $config Configuration settings for $model
+ * @return void
  */
 	public function setup($model, $config = array()) { }
 
@@ -97,7 +98,8 @@ class ModelBehavior extends Object {
  * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
  * detached from a model using Model::detach().
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
+ * @return void
  * @see BehaviorCollection::detach()
  */
 	public function cleanup($model) {
@@ -111,9 +113,9 @@ class ModelBehavior extends Object {
  * By returning null/false you can abort a find.  By returning an array you can modify/replace the query
  * that is going to be run.
  *
- * @param object $model Model using this behavior
- * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return mixed False or null will abort the operation. You can return an array to replace the
+ * @param Model $model Model using this behavior
+ * @param array $query Data used to execute this query, i.e. conditions, order, etc.
+ * @return boolean|array False or null will abort the operation. You can return an array to replace the
  *   $query that will be eventually run.
  */
 	public function beforeFind($model, $query) {
@@ -123,7 +125,7 @@ class ModelBehavior extends Object {
 /**
  * After find callback. Can be used to modify any results returned by find.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
@@ -135,9 +137,8 @@ class ModelBehavior extends Object {
  * add behavior validation rules into a models validate array.  Returning false
  * will allow you to make the validation fail.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @return mixed False or null will abort the operation. Any other result will continue.
- * @access public
  */
 	public function beforeValidate($model) {
 		return true;
@@ -147,7 +148,7 @@ class ModelBehavior extends Object {
  * beforeSave is called before a model is saved.  Returning false from a beforeSave callback
  * will abort the save operation.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @return mixed False if the operation should abort. Any other result will continue.
  */
 	public function beforeSave($model) {
@@ -157,8 +158,9 @@ class ModelBehavior extends Object {
 /**
  * afterSave is called after a model is saved.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @param boolean $created True if this save created a new record
+ * @return boolean
  */
 	public function afterSave($model, $created) {
 		return true;
@@ -168,10 +170,9 @@ class ModelBehavior extends Object {
  * Before delete is called before any delete occurs on the attached model, but after the model's
  * beforeDelete is called.  Returning false from a beforeDelete will abort the delete.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return mixed False if the operation should abort. Any other result will continue.
- * @access public
  */
 	public function beforeDelete($model, $cascade = true) {
 		return true;
@@ -180,15 +181,17 @@ class ModelBehavior extends Object {
 /**
  * After delete is called after any delete occurs on the attached model.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
+ * @return void
  */
 	public function afterDelete($model) { }
 
 /**
  * DataSource error callback
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @param string $error Error generated in DataSource
+ * @return void
  */
 	public function onError($model, $error) { }
 
@@ -198,7 +201,7 @@ class ModelBehavior extends Object {
  * that it only modifies the whitelist for the current save operation.  Also make sure
  * you explicitly set the value of the field which you are allowing.
  *
- * @param object $model Model using this behavior
+ * @param Model $model Model using this behavior
  * @param string $field Field to be added to $model's whitelist
  * @return void
  */

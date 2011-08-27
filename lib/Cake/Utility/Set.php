@@ -59,8 +59,7 @@ class Set {
 /**
  * Filters empty elements out of a route array, excluding '0'.
  *
- * @param mixed $var Either an array to filter, or value when in callback
- * @param boolean $isArray Force to tell $var is an array when $var is empty
+ * @param array $var Either an array to filter, or value when in callback
  * @return mixed Either filtered array, or true/false when in callback
  */
 	public static function filter(array $var) {
@@ -127,7 +126,7 @@ class Set {
 		if (empty($val)) {
 			return null;
 		}
-		return Set::__map($val, $class);
+		return Set::_map($val, $class);
 	}
 
 /**
@@ -138,12 +137,12 @@ class Set {
  * returned object (recursively). If $key is numeric will maintain array
  * structure
  *
- * @param mixed $value Value to map
+ * @param array $array Array to map
  * @param string $class Class name
  * @param boolean $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
  */
-	public static function __map(&$array, $class, $primary = false) {
+	protected static function _map(&$array, $class, $primary = false) {
 		if ($class === true) {
 			$out = new stdClass;
 		} else {
@@ -159,7 +158,7 @@ class Set {
 					if (is_object($out)) {
 						$out = get_object_vars($out);
 					}
-					$out[$key] = Set::__map($value, $class);
+					$out[$key] = Set::_map($value, $class);
 					if (is_object($out[$key])) {
 						if ($primary !== true && is_array($value) && Set::countDim($value, true) === 2) {
 							if (!isset($out[$key]->_name_)) {
@@ -174,18 +173,18 @@ class Set {
 						}
 						$primary = false;
 						foreach ($value as $key2 => $value2) {
-							$out->{$key2} = Set::__map($value2, true);
+							$out->{$key2} = Set::_map($value2, true);
 						}
 					} else {
 						if (!is_numeric($key)) {
-							$out->{$key} = Set::__map($value, true, $key);
+							$out->{$key} = Set::_map($value, true, $key);
 							if (is_object($out->{$key}) && !is_numeric($key)) {
 								if (!isset($out->{$key}->_name_)) {
 									$out->{$key}->_name_ = $key;
 								}
 							}
 						} else {
-							$out->{$key} = Set::__map($value, true);
+							$out->{$key} = Set::_map($value, true);
 						}
 					}
 				} else {
@@ -487,6 +486,7 @@ class Set {
  * @param mixed $conditions An array of condition strings or an XPath expression
  * @param array $data  An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
+ * @param integer $length
  * @return boolean
  */
 	public static function matches($conditions, $data = array(), $i = null, $length = null) {
@@ -1012,7 +1012,7 @@ class Set {
  * @param string $key
  * @return array
  */
-	private static function __flatten($results, $key = null) {
+	protected static function _flatten($results, $key = null) {
 		$stack = array();
 		foreach ($results as $k => $r) {
 			$id = $k;
@@ -1020,7 +1020,7 @@ class Set {
 				$id = $key;
 			}
 			if (is_array($r) && !empty($r)) {
-				$stack = array_merge($stack, Set::__flatten($r, $id));
+				$stack = array_merge($stack, Set::_flatten($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);
 			}
@@ -1041,7 +1041,7 @@ class Set {
 		if (is_numeric(implode('', $originalKeys))) {
 			$data = array_values($data);
 		}
-		$result = Set::__flatten(Set::extract($data, $path));
+		$result = Set::_flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
 
 		$dir = strtolower($dir);

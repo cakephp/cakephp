@@ -47,7 +47,15 @@ App::uses('View', 'View');
  * using Router::connect().
  *
  * @package       Cake.Controller
- * @link       http://book.cakephp.org/view/956/Introduction
+ * @property      AclComponent $Acl
+ * @property      AuthComponent $Auth
+ * @property      CookieComponent $Cookie
+ * @property      EmailComponent $Email
+ * @property      PaginatorComponent $Paginator
+ * @property      RequestHandlerComponent $RequestHandler
+ * @property      SecurityComponent $Security
+ * @property      SessionComponent $Session
+ * @link          http://book.cakephp.org/view/956/Introduction
  */
 class Controller extends Object {
 
@@ -293,7 +301,7 @@ class Controller extends Object {
  *
  * @param CakeRequest $request Request object for this controller. Can be null for testing,
  *  but expect that features that use the request parameters will not work.
- * @param CakeResponse $response Response object for this controller. 
+ * @param CakeResponse $response Response object for this controller.
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
@@ -326,6 +334,7 @@ class Controller extends Object {
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
  * Lazy loads models using the loadModel() method if declared in $uses
  *
+ * @param string $name
  * @return void
  */
 	public function __isset($name) {
@@ -366,6 +375,7 @@ class Controller extends Object {
  * Provides backwards compatibility access to the request object properties.
  * Also provides the params alias.
  *
+ * @param string $name
  * @return void
  */
 	public function __get($name) {
@@ -393,6 +403,8 @@ class Controller extends Object {
 /**
  * Provides backwards compatibility access for setting values to the request object.
  *
+ * @param string $name
+ * @param mixed $value
  * @return void
  */
 	public function __set($name, $value) {
@@ -443,11 +455,12 @@ class Controller extends Object {
 	}
 
 /**
- * Dispatches the controller action.  Checks that the action 
+ * Dispatches the controller action.  Checks that the action
  * exists and isn't private.
  *
  * @param CakeRequest $request
- * @return The resulting response.
+ * @return mixed The resulting response.
+ * @throws PrivateActionException, MissingActionException
  */
 	public function invokeAction(CakeRequest $request) {
 		$reflection = new ReflectionClass($this);
@@ -474,7 +487,7 @@ class Controller extends Object {
 	}
 
 /**
- * Check if the request's action is marked as private, with an underscore, 
+ * Check if the request's action is marked as private, with an underscore,
  * or if the request is attempting to directly accessing a prefixed action.
  *
  * @param ReflectionMethod $method The method to be invoked.
@@ -483,7 +496,7 @@ class Controller extends Object {
  */
 	protected function _isPrivateAction(ReflectionMethod $method, CakeRequest $request) {
 		$privateAction = (
-			$method->name[0] === '_' || 
+			$method->name[0] === '_' ||
 			!$method->isPublic() ||
 			!in_array($method->name,  $this->methods)
 		);
@@ -513,7 +526,7 @@ class Controller extends Object {
  *
  * @return void
  */
-	protected function __mergeVars() {
+	protected function _mergeControllerVars() {
 		$pluginController = $pluginDot = null;
 
 		if (!empty($this->plugin)) {
@@ -571,7 +584,7 @@ class Controller extends Object {
  * @throws MissingModelException
  */
 	public function constructClasses() {
-		$this->__mergeVars();
+		$this->_mergeControllerVars();
 		$this->Components->init($this);
 		if ($this->uses) {
 			$this->uses = (array) $this->uses;
@@ -869,7 +882,7 @@ class Controller extends Object {
 				$this->request->params['models'][$className] = compact('plugin', 'className');
 			}
 		} if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
-			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass); 
+			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass);
 		}
 
 		$models = ClassRegistry::keys();
@@ -1017,6 +1030,7 @@ class Controller extends Object {
  * Called before the controller action.  You can use this method to configure and customize components
  * or perform logic that needs to happen before each controller action.
  *
+ * @return void
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function beforeFilter() {
@@ -1026,6 +1040,7 @@ class Controller extends Object {
  * Called after the controller action is run, but before the view is rendered. You can use this method
  * to perform logic or set view variables that are required on every request.
  *
+ * @return void
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function beforeRender() {
@@ -1051,6 +1066,7 @@ class Controller extends Object {
 /**
  * Called after the controller action is run and rendered.
  *
+ * @return void
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function afterFilter() {
@@ -1063,8 +1079,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _beforeScaffold($method) {
+	public function beforeScaffold($method) {
 		return true;
+	}
+
+/**
+ * Alias to beforeScaffold()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::beforeScaffold()
+ * @deprecated
+ */
+	protected function _beforeScaffold($method) {
+		return $this->beforeScaffold($method);
 	}
 
 /**
@@ -1074,8 +1102,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _afterScaffoldSave($method) {
+	public function afterScaffoldSave($method) {
 		return true;
+	}
+
+/**
+ * Alias to afterScaffoldSave()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::afterScaffoldSave()
+ * @deprecated
+ */
+	protected function _afterScaffoldSave($method) {
+		return $this->afterScaffoldSave($method);
 	}
 
 /**
@@ -1085,8 +1125,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _afterScaffoldSaveError($method) {
+	public function afterScaffoldSaveError($method) {
 		return true;
+	}
+
+/**
+ * Alias to afterScaffoldSaveError()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::afterScaffoldSaveError()
+ * @deprecated
+ */
+	protected function _afterScaffoldSaveError($method) {
+		return $this->afterScaffoldSaveError($method);
 	}
 
 /**
@@ -1098,7 +1150,20 @@ class Controller extends Object {
  * @return boolean Success
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	public function _scaffoldError($method) {
+	public function scaffoldError($method) {
 		return false;
 	}
+
+/**
+ * Alias to scaffoldError()
+ *
+ * @param string $method
+ * @return boolean
+ * @see Controller::scaffoldError()
+ * @deprecated
+ */
+	protected function _scaffoldError($method) {
+		return $this->scaffoldError($method);
+	}
+
 }

@@ -32,7 +32,6 @@ class ContainableBehavior extends ModelBehavior {
  * Types of relationships available for models
  *
  * @var array
- * @access private
  */
 	public $types = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
@@ -40,7 +39,6 @@ class ContainableBehavior extends ModelBehavior {
  * Runtime configuration for this behavior
  *
  * @var array
- * @access private
  */
 	public $runtime = array();
 
@@ -58,8 +56,9 @@ class ContainableBehavior extends ModelBehavior {
  * - autoFields: (boolean, optional) auto-add needed fields to fetch requested
  *   bindings. DEFAULTS TO: true
  *
- * @param object $Model Model using the behavior
+ * @param Model $Model Model using the behavior
  * @param array $settings Settings to override for model.
+ * @return void
  */
 	public function setup($Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
@@ -88,7 +87,7 @@ class ContainableBehavior extends ModelBehavior {
  * )));
  * }}}
  *
- * @param object $Model	Model using the behavior
+ * @param Model $Model	Model using the behavior
  * @param array $query Query parameters as set by cake
  * @return array
  */
@@ -107,7 +106,7 @@ class ContainableBehavior extends ModelBehavior {
 			$contain = array_merge($contain, (array)$query['contain']);
 		}
 		if (
-			$noContain || !$contain || in_array($contain, array(null, false), true) || 
+			$noContain || !$contain || in_array($contain, array(null, false), true) ||
 			(isset($contain[0]) && $contain[0] === null)
 		) {
 			if ($noContain) {
@@ -226,9 +225,10 @@ class ContainableBehavior extends ModelBehavior {
  * Resets original associations on models that may have receive multiple,
  * subsequent unbindings.
  *
- * @param object $Model Model on which we are resetting
+ * @param Model $Model Model on which we are resetting
  * @param array $results Results of the find operation
- * @param bool $primary true if this is the primary model that issued the find operation, false otherwise
+ * @param boolean $primary true if this is the primary model that issued the find operation, false otherwise
+ * @return void
  */
 	public function afterFind($Model, $results, $primary) {
 		if (!empty($Model->__backContainableAssociation)) {
@@ -243,7 +243,7 @@ class ContainableBehavior extends ModelBehavior {
  * Unbinds all relations from a model except the specified ones. Calling this function without
  * parameters unbinds all related models.
  *
- * @param object $Model Model on which binding restriction is being applied
+ * @param Model $Model Model on which binding restriction is being applied
  * @return void
  * @link http://book.cakephp.org/view/1323/Containable#Using-Containable-1324
  */
@@ -258,7 +258,7 @@ class ContainableBehavior extends ModelBehavior {
  * for restoring the bindings after using 'reset' => false as part of the
  * contain call.
  *
- * @param object $Model Model on which to reset bindings
+ * @param Model $Model Model on which to reset bindings
  * @return void
  */
 	public function resetBindings($Model) {
@@ -279,10 +279,10 @@ class ContainableBehavior extends ModelBehavior {
 /**
  * Process containments for model.
  *
- * @param object $Model Model on which binding restriction is being applied
+ * @param Model $Model Model on which binding restriction is being applied
  * @param array $contain Parameters to use for restricting this model
  * @param array $containments Current set of containments
- * @param bool $throwErrors Wether unexisting bindings show throw errors
+ * @param boolean $throwErrors Wether unexisting bindings show throw errors
  * @return array Containments
  */
 	public function containments($Model, $contain, $containments = array(), $throwErrors = null) {
@@ -383,7 +383,7 @@ class ContainableBehavior extends ModelBehavior {
 /**
  * Calculate needed fields to fetch the required bindings for the given model.
  *
- * @param object $Model Model
+ * @param Model $Model Model
  * @param array $map Map of relations for given model
  * @param mixed $fields If array, fields to initially load, if false use $Model as primary model
  * @return array Fields

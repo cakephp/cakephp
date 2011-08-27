@@ -36,7 +36,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -71,7 +70,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -81,7 +79,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testHasPrevious method
  *
- * @access public
  * @return void
  */
 	public function testHasPrevious() {
@@ -94,7 +91,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testHasNext method
  *
- * @access public
  * @return void
  */
 	public function testHasNext() {
@@ -107,7 +103,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testDisabledLink method
  *
- * @access public
  * @return void
  */
 	public function testDisabledLink() {
@@ -128,7 +123,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testSortLinks method
  *
- * @access public
  * @return void
  */
 	public function testSortLinks() {
@@ -283,7 +277,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testSortLinksUsingDirectionOption method
  *
- * @access public
  * @return void
  */
 	public function testSortLinksUsingDirectionOption(){
@@ -316,7 +309,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testSortLinksUsingDotNotation method
  *
- * @access public
  * @return void
  */
 	public function testSortLinksUsingDotNotation() {
@@ -359,7 +351,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testSortKey method
  *
- * @access public
  * @return void
  */
 	public function testSortKey() {
@@ -378,7 +369,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testSortDir method
  *
- * @access public
  * @return void
  */
 	public function testSortDir() {
@@ -448,7 +438,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testSortAdminLinks method
  *
- * @access public
  * @return void
  */
 	public function testSortAdminLinks() {
@@ -499,7 +488,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testUrlGeneration method
  *
- * @access public
  * @return void
  */
 	public function testUrlGeneration() {
@@ -531,7 +519,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * test URL generation with prefix routes
  *
- * @access public
  * @return void
  */
 	public function testUrlGenerationWithPrefixes() {
@@ -600,7 +587,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testOptions method
  *
- * @access public
  * @return void
  */
 	public function testOptions() {
@@ -648,7 +634,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testPassedArgsMergingWithUrlOptions method
  *
- * @access public
  * @return void
  */
 	public function testPassedArgsMergingWithUrlOptions() {
@@ -715,7 +700,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testPagingLinks method
  *
- * @access public
  * @return void
  */
 	public function testPagingLinks() {
@@ -980,7 +964,6 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * Test the creation of paging links when the non default model is used.
  *
- * @access public
  * @return void
  */
 	public function testPagingLinksNotDefaultModel() {
@@ -1031,7 +1014,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testGenericLinks method
  *
- * @access public
  * @return void
  */
 	public function testGenericLinks() {
@@ -1065,7 +1047,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * Tests generation of generic links with preset options
  *
- * @access public
  * @return void
  */
 	public function testGenericLinksWithPresetOptions() {
@@ -1103,7 +1084,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testNumbers method
  *
- * @access public
  * @return void
  */
 	public function testNumbers() {
@@ -1888,7 +1868,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * test Last method
  *
- * @access public
  * @return void
  */
 	public function testLast() {
@@ -2005,7 +1984,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testCounter method
  *
- * @access public
  * @return void
  */
 	public function testCounter() {
@@ -2061,7 +2039,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testHasPage method
  *
- * @access public
  * @return void
  */
 	public function testHasPage() {
@@ -2081,7 +2058,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testWithPlugin method
  *
- * @access public
  * @return void
  */
 	public function testWithPlugin() {
@@ -2131,7 +2107,6 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * testNextLinkUsingDotNotation method
  *
- * @access public
  * @return void
  */
 	public function testNextLinkUsingDotNotation() {

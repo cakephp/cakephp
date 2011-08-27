@@ -28,7 +28,6 @@ class TestPluginArticleFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Article'
- * @access public
  */
 	public $name = 'TestPluginArticle';
 
@@ -36,7 +35,6 @@ class TestPluginArticleFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -52,7 +50,6 @@ class TestPluginArticleFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('user_id' => 1, 'title' => 'First Plugin Article', 'body' => 'First Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:39:23', 'updated' => '2008-09-24 10:41:31'),

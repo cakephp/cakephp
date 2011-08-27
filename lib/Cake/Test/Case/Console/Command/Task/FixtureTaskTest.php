@@ -36,7 +36,6 @@ class FixtureTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test');
 

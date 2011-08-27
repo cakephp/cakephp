@@ -47,6 +47,7 @@ class BakeShell extends Shell {
 /**
  * Assign $this->connection to the active task if a connection param is set.
  *
+ * @return void
  */
 	public function startup() {
 		parent::startup();
@@ -61,6 +62,7 @@ class BakeShell extends Shell {
 /**
  * Override main() to handle action
  *
+ * @return mixed
  */
 	public function main() {
 		if (!is_dir($this->DbConfig->path)) {
@@ -124,6 +126,7 @@ class BakeShell extends Shell {
 /**
  * Quickly bake the MVC
  *
+ * @return void
  */
 	public function all() {
 		$this->out('Bake All');

@@ -34,7 +34,6 @@ class File {
  * Folder object of the File
  *
  * @var Folder
- * @access public
  */
 	public $Folder = null;
 
@@ -42,7 +41,6 @@ class File {
  * Filename
  *
  * @var string
- * @access public
  */
 	public $name = null;
 
@@ -50,7 +48,6 @@ class File {
  * file info
  *
  * @var string
- * @access public
  */
 	public $info = array();
 
@@ -58,7 +55,6 @@ class File {
  * Holds the file handler resource if the file is opened
  *
  * @var resource
- * @access public
  */
 	public $handle = null;
 
@@ -66,7 +62,6 @@ class File {
  * enable locking for file reading and writing
  *
  * @var boolean
- * @access public
  */
 	public $lock = null;
 
@@ -76,7 +71,6 @@ class File {
  * Current file's absolute path
  *
  * @var mixed null
- * @access public
  */
 	public $path = null;
 
@@ -206,6 +200,7 @@ class File {
  * all other platforms will use "\n"
  *
  * @param string $data Data to prepare for writing.
+ * @param boolean $forceWindows
  * @return string The with converted line endings.
  */
 	public static function prepare($data, $forceWindows = false) {
@@ -330,7 +325,7 @@ class File {
  * makes filename safe for saving
  *
  * @param string $name The name of the file to make safe if different from $this->name
- * @param strin $ext The name of the extension to make safe if different from $this->ext
+ * @param string $ext The name of the extension to make safe if different from $this->ext
  * @return string $ext the extension of the file
  */
 	public function safe($name = null, $ext = null) {

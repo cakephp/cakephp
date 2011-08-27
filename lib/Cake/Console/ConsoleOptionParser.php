@@ -232,7 +232,7 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task.
  *
- * @param mixed $text The text to set, or null if you want to read. If an array the 
+ * @param mixed $text The text to set, or null if you want to read. If an array the
  *   text will be imploded with "\n"
  * @return mixed If reading, the value of the description. If setting $this will be returned
  */
@@ -284,8 +284,8 @@ class ConsoleOptionParser {
  *
  * @param mixed $name The long name you want to the value to be parsed out as when options are parsed.
  *   Will also accept an instance of ConsoleInputOption
- * @param array $params An array of parameters that define the behavior of the option
- * @return returns $this.
+ * @param array $options An array of parameters that define the behavior of the option
+ * @return ConsoleOptionParser $this.
  */
 	public function addOption($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
@@ -325,7 +325,7 @@ class ConsoleOptionParser {
  *
  * @param mixed $name The name of the argument.  Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
- * @return $this.
+ * @return ConsoleOptionParser $this.
  */
 	public function addArgument($name, $params = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputArgument) {
@@ -354,7 +354,7 @@ class ConsoleOptionParser {
  *
  * @param array $args Array of arguments to add.
  * @see ConsoleOptionParser::addArgument()
- * @return $this
+ * @return ConsoleOptionParser $this
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
@@ -369,7 +369,7 @@ class ConsoleOptionParser {
  *
  * @param array $options Array of options to add.
  * @see ConsoleOptionParser::addOption()
- * @return $this
+ * @return ConsoleOptionParser $this
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
@@ -390,8 +390,8 @@ class ConsoleOptionParser {
  *    it will be used.
  *
  * @param mixed $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
- * @param array $params Array of params, see above.
- * @return $this.
+ * @param array $options Array of params, see above.
+ * @return ConsoleOptionParser $this.
  */
 	public function addSubcommand($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
@@ -414,7 +414,7 @@ class ConsoleOptionParser {
  * Add multiple subcommands at once.
  *
  * @param array $commands Array of subcommands.
- * @return $this
+ * @return ConsoleOptionParser $this
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
@@ -459,8 +459,7 @@ class ConsoleOptionParser {
  * @param string $command The subcommand to use.  If this parameter is a subcommand, that has a parser,
  *    That parser will be used to parse $argv instead.
  * @return Array array($params, $args)
- * @throws InvalidArgumentException When an invalid parameter is encountered.
- *   RuntimeException when required arguments are not supplied.
+ * @throws ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv, $command = null) {
 		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
@@ -506,7 +505,8 @@ class ConsoleOptionParser {
  *
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
- * @param int $width The width to format user content to. Defaults to 72
+ * @param string $format Define the output format, can be text or xml
+ * @param integer $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
 	public function help($subcommand = null, $format = 'text', $width = 72) {
@@ -568,9 +568,10 @@ class ConsoleOptionParser {
 /**
  * Parse an option by its name index.
  *
- * @param string $option The option to parse.
+ * @param string $name The name to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
+ * @throws ConsoleException
  */
 	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
@@ -617,6 +618,7 @@ class ConsoleOptionParser {
  * @param string $argument The argument to append
  * @param array $args The array of parsed args to append to.
  * @return array Args
+ * @throws ConsoleException
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
@@ -637,8 +639,7 @@ class ConsoleOptionParser {
 /**
  * Find the next token in the argv set.
  *
- * @param string
- * @return next token or ''
+ * @return string next token or ''
  */
 	protected function _nextToken() {
 		return isset($this->_tokens[0]) ? $this->_tokens[0] : '';

@@ -40,7 +40,6 @@ class TestTaskArticle extends Model {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'TestTaskArticle';
 
@@ -48,7 +47,6 @@ class TestTaskArticle extends Model {
  * Table name to use
  *
  * @var string
- * @access public
  */
 	public $useTable = 'articles';
 
@@ -56,7 +54,6 @@ class TestTaskArticle extends Model {
  * HasMany Associations
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Comment' => array(
@@ -69,7 +66,6 @@ class TestTaskArticle extends Model {
  * Has and Belongs To Many Associations
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array(
 		'Tag' => array(
@@ -117,7 +113,6 @@ class TestTaskTag extends Model {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'TestTaskTag';
 
@@ -125,7 +120,6 @@ class TestTaskTag extends Model {
  * Table name
  *
  * @var string
- * @access public
  */
 	public $useTable = 'tags';
 
@@ -133,7 +127,6 @@ class TestTaskTag extends Model {
  * Has and Belongs To Many Associations
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array(
 		'Article' => array(
@@ -166,7 +159,6 @@ class TestTaskComment extends TestTaskAppModel {
  * Model name
  *
  * @var string
- * @access public
  */
 	public $name = 'TestTaskComment';
 
@@ -174,7 +166,6 @@ class TestTaskComment extends TestTaskAppModel {
  * Table name
  *
  * @var string
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -182,7 +173,6 @@ class TestTaskComment extends TestTaskAppModel {
  * Belongs To Associations
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'Article' => array(
@@ -204,7 +194,6 @@ class TestTaskCommentsController extends Controller {
  * Controller Name
  *
  * @var string
- * @access public
  */
 	public $name = 'TestTaskComments';
 
@@ -212,7 +201,6 @@ class TestTaskCommentsController extends Controller {
  * Models to use
  *
  * @var array
- * @access public
  */
 	public $uses = array('TestTaskComment', 'TestTaskTag');
 }
@@ -228,7 +216,6 @@ class TestTaskTest extends CakeTestCase {
  * Fixtures
  *
  * @var string
- * @access public
  */
 	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 

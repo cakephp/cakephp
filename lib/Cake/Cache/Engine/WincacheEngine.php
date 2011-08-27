@@ -1,6 +1,6 @@
 <?php
 /**
- * Wincache storage engine for cache. 
+ * Wincache storage engine for cache.
  *
  * Supports wincache 1.1.0 and higher.
  *
@@ -67,7 +67,7 @@ class WincacheEngine extends CacheEngine {
  * Read a key from the cache
  *
  * @param string $key Identifier for the data
- * @return mixed The cached data, or false if the data doesn't exist, has expired, or if 
+ * @return mixed The cached data, or false if the data doesn't exist, has expired, or if
  *     there was an error fetching it
  */
 	public function read($key) {
@@ -114,7 +114,6 @@ class WincacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache.  This will clear every
  * item in the cache matching the cache config prefix.
- *
  *
  * @param boolean $check If true, nothing will be cleared, as entries will
  *   naturally expire in wincache..

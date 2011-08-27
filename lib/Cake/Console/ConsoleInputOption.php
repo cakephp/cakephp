@@ -75,6 +75,7 @@ class ConsoleInputOption {
  * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
+ * @throws ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
@@ -117,8 +118,8 @@ class ConsoleInputOption {
 /**
  * Generate the help for this this option.
  *
- * @param int $width The width to make the name of the option.
- * @return string 
+ * @param integer $width The width to make the name of the option.
+ * @return string
  */
 	public function help($width = 0) {
 		$default = $short = '';
@@ -176,7 +177,9 @@ class ConsoleInputOption {
 /**
  * Check that a value is a valid choice for this option.
  *
+ * @param string $value
  * @return boolean
+ * @throws ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
@@ -194,7 +197,7 @@ class ConsoleInputOption {
 /**
  * Append the option's xml into the parent.
  *
- * @param SimpleXmlElement The parent element.
+ * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this option appended.
  */
 	public function xml(SimpleXmlElement $parent) {

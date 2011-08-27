@@ -40,7 +40,7 @@ class ProjectTask extends Shell {
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls bake() with that information.
  *
- * @param string $project Project path
+ * @return mixed
  */
 	public function execute() {
 		$project = null;
@@ -52,7 +52,7 @@ class ProjectTask extends Shell {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
 			$project = $this->in($prompt, null, APP . 'myapp');
 		}
-		
+
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
 			$project = $_SERVER['PWD'] . DS . $project;
@@ -136,7 +136,7 @@ class ProjectTask extends Shell {
 /**
  * Checks PHP's include_path for CakePHP.
  *
- * @return bool Indicates whether or not CakePHP exists on include_path
+ * @return boolean Indicates whether or not CakePHP exists on include_path
  */
 	public function cakeOnIncludePath() {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
@@ -157,6 +157,7 @@ class ProjectTask extends Shell {
  * @param string $path Project path
  * @param string $skel Path to copy from
  * @param string $skip array of directories to skip when copying
+ * @return mixed
  */
 	public function bake($path, $skel = null, $skip = array('empty')) {
 		if (!$skel && !empty($this->params['skel'])) {
@@ -303,7 +304,7 @@ class ProjectTask extends Shell {
  * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
  * @param string $path Project path
- * @param bool $hardCode Wether or not define calls should be hardcoded.
+ * @param boolean $hardCode Wether or not define calls should be hardcoded.
  * @return boolean Success
  */
 	public function corePath($path, $hardCode = true) {
@@ -325,7 +326,7 @@ class ProjectTask extends Shell {
  *
  * @param string $filename The filename to operate on.
  * @param boolean $hardCode Whether or not the define should be uncommented.
- * @retun bool Success
+ * @return boolean Success
  */
 	protected function _replaceCorePath($filename, $hardCode) {
 		$contents = file_get_contents($filename);

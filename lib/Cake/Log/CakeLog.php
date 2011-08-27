@@ -112,6 +112,7 @@ class CakeLog {
  *
  * @param string $loggerName the plugin.className of the logger class you want to build.
  * @return mixed boolean false on any failures, string of classname to use if search was successful.
+ * @throws CakeLogException
  */
 	protected static function _getLogger($loggerName) {
 		list($plugin, $loggerName) = pluginSplit($loggerName, true);
@@ -136,7 +137,7 @@ class CakeLog {
  * Removes a stream from the active streams.  Once a stream has been removed
  * it will no longer have messages sent to it.
  *
- * @param string $keyname Key name of a configured stream to remove.
+ * @param string $streamName Key name of a configured stream to remove.
  * @return void
  */
 	public static function drop($streamName) {
@@ -170,7 +171,7 @@ class CakeLog {
  * ### Usage:
  *
  * Write a message to the 'warning' log:
- * 
+ *
  * `CakeLog::write('warning', 'Stuff is broken here');`
  *
  * @param string $type Type of message being written

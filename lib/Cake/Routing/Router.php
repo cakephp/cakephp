@@ -45,7 +45,6 @@ class Router {
  * Array of routes connected with Router::connect()
  *
  * @var array
- * @access public
  */
 	public static $routes = array();
 
@@ -54,7 +53,6 @@ class Router {
  * Includes admin prefix
  *
  * @var array
- * @access private
  */
 	protected static $_prefixes = array();
 
@@ -62,7 +60,6 @@ class Router {
  * Directive for Router to parse out file extensions for mapping to Content-types.
  *
  * @var boolean
- * @access private
  */
 	protected static $_parseExtensions = false;
 
@@ -70,7 +67,6 @@ class Router {
  * List of valid extensions to parse from a URL.  If null, any extension is allowed.
  *
  * @var array
- * @access private
  */
 	protected static $_validExtensions = array();
 
@@ -85,7 +81,12 @@ class Router {
 	const ID = '[0-9]+';
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
-	private static $__namedExpressions = array(
+/**
+ * Named expressions
+ *
+ * @var array
+ */
+	protected static $_namedExpressions = array(
 		'Action' => Router::ACTION,
 		'Year' => Router::YEAR,
 		'Month' => Router::MONTH,
@@ -98,7 +99,6 @@ class Router {
  * Stores all information necessary to decide what named arguments are parsed under what conditions.
  *
  * @var string
- * @access public
  */
 	protected static $_namedConfig = array(
 		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
@@ -111,7 +111,6 @@ class Router {
  * The route matching the URL of the current request
  *
  * @var array
- * @access private
  */
 	protected static $_currentRoute = array();
 
@@ -119,7 +118,6 @@ class Router {
  * Default HTTP request method => controller action map.
  *
  * @var array
- * @access private
  */
 	protected static $_resourceMap = array(
 		array('action' => 'index',	'method' => 'GET',		'id' => false),
@@ -158,7 +156,6 @@ class Router {
  * Sets the Routing prefixes.
  *
  * @return void
- * @access private
  */
 	protected static function _setPrefixes() {
 		$routing = Configure::read('Routing');
@@ -171,10 +168,10 @@ class Router {
  * Gets the named route elements for use in app/Config/routes.php
  *
  * @return array Named route elements
- * @see Router::$__namedExpressions
+ * @see Router::$_namedExpressions
  */
 	public static function getNamedExpressions() {
-		return self::$__namedExpressions;
+		return self::$_namedExpressions;
 	}
 
 /**
@@ -206,7 +203,7 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
- * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass` 
+ * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
  * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
@@ -219,7 +216,7 @@ class Router {
  * `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  * via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
  *
- * `named` is used to configure named parameters at the route level. This key uses the same options 
+ * `named` is used to configure named parameters at the route level. This key uses the same options
  * as Router::connectNamed()
  *
  * @param string $route A string describing the template of the route
@@ -246,7 +243,7 @@ class Router {
 		}
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
-			$defaults += array('action' => 'index'); 
+			$defaults += array('action' => 'index');
 		}
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
@@ -274,7 +271,7 @@ class Router {
  *
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
  *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the 
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the
  * redirect destination allows you to use other routes to define where a url string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
@@ -340,18 +337,18 @@ class Router {
  * Router::connectNamed(
  *    array('page' => array('action' => 'index', 'controller' => 'pages')),
  *    array('default' => false, 'greedy' => false)
- * ); 
+ * );
  * }}}
  *
  * ### Options
  *
- * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will 
+ * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will
  *    parse only the connected named params.
  * - `default` Set this to true to merge in the default set of named parameters.
  * - `reset` Set to true to clear existing rules and start fresh.
  * - `separator` Change the string used to separate the key & value in a named parameter.  Defaults to `:`
  *
- * @param array $named A list of named parameters. Key value pairs are accepted where values are 
+ * @param array $named A list of named parameters. Key value pairs are accepted where values are
  *    either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @return array
@@ -461,7 +458,7 @@ class Router {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 
-		extract(self::__parseExtension($url));
+		extract(self::_parseExtension($url));
 
 		for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
 			$route =& self::$routes[$i];
@@ -487,9 +484,8 @@ class Router {
  *
  * @param string $url
  * @return array Returns an array containing the altered URL and the parsed extension.
- * @access private
  */
-	private static function __parseExtension($url) {
+	protected static function _parseExtension($url) {
 		$ext = null;
 
 		if (self::$_parseExtensions) {
@@ -514,7 +510,7 @@ class Router {
 
 /**
  * Takes parameter and path information back from the Dispatcher, sets these
- * parameters as the current request parameters that are merged with url arrays 
+ * parameters as the current request parameters that are merged with url arrays
  * created later in the request.
  *
  * Nested requests will create a stack of requests.  You can remove requests using
@@ -523,7 +519,7 @@ class Router {
  * Will accept either a CakeRequest object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
  *
- * @param mixed $params Parameters and path information or a CakeRequest object.
+ * @param CakeRequest|array $request Parameters and path information or a CakeRequest object.
  * @return void
  */
 	public static function setRequestInfo($request) {
@@ -610,7 +606,7 @@ class Router {
 	}
 
 /**
- * Reloads default Router settings.  Resets all class variables and 
+ * Reloads default Router settings.  Resets all class variables and
  * removes all connected routes.
  *
  * @return void
@@ -632,7 +628,7 @@ class Router {
 /**
  * Promote a route (by default, the last one added) to the beginning of the list
  *
- * @param $which A zero-based array index representing the route to move. For example,
+ * @param integer $which A zero-based array index representing the route to move. For example,
  *    if 3 routes have been added, the last route would be 2.
  * @return boolean Returns false if no route exists at the position specified by $which.
  */
@@ -660,7 +656,7 @@ class Router {
  * - A combination of controller/action - the method will find url for it.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
- * 
+ *
  * - `base` - Set to false to remove the base path from the generated url. If your application
  *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
  *   cake relative urls are required when using requestAction.
@@ -696,7 +692,7 @@ class Router {
 
 		$base = $path['base'];
 		$extension = $output = $q = $frag = null;
-		
+
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
 			if ($full && defined('FULL_BASE_URL')) {
@@ -766,8 +762,8 @@ class Router {
 			}
 		} else {
 			if (
-				(strpos($url, '://') || 
-				(strpos($url, 'javascript:') === 0) || 
+				(strpos($url, '://') ||
+				(strpos($url, 'javascript:') === 0) ||
 				(strpos($url, 'mailto:') === 0)) ||
 				(!strncmp($url, '#', 1))
 			) {
@@ -881,10 +877,10 @@ class Router {
 /**
  * Generates a well-formed querystring from $q
  *
- * @param mixed $q Query string Either a string of already compiled query string arguments or
+ * @param string|array $q Query string Either a string of already compiled query string arguments or
  *    an array of arguments to convert into a query string.
  * @param array $extra Extra querystring parameters.
- * @param bool $escape Whether or not to use escaped &
+ * @param boolean $escape Whether or not to use escaped &
  * @return array
  */
 	public static function queryString($q, $extra = array(), $escape = false) {
@@ -918,7 +914,7 @@ class Router {
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output url.
  *
- * @param mixed $param The params array or CakeRequest object that needs to be reversed.
+ * @param CakeRequest|array $params The params array or CakeRequest object that needs to be reversed.
  * @param boolean $full Set to true to include the full url including the protocol when reversing
  *     the url.
  * @return string The string that is the reversed result of the array
@@ -1000,7 +996,7 @@ class Router {
  *
  * @param string $base Base URL
  * @param string $plugin Plugin name
- * @return base url with plugin name removed if present
+ * @return string base url with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
 		if ($plugin != null) {

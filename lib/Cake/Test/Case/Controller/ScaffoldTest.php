@@ -32,7 +32,6 @@ class ScaffoldMockController extends Controller {
  * name property
  *
  * @var string 'ScaffoldMock'
- * @access public
  */
 	public $name = 'ScaffoldMock';
 
@@ -40,7 +39,6 @@ class ScaffoldMockController extends Controller {
  * scaffold property
  *
  * @var mixed
- * @access public
  */
 	public $scaffold;
 }
@@ -56,7 +54,6 @@ class ScaffoldMockControllerWithFields extends Controller {
  * name property
  *
  * @var string 'ScaffoldMock'
- * @access public
  */
 	public $name = 'ScaffoldMock';
 
@@ -64,16 +61,15 @@ class ScaffoldMockControllerWithFields extends Controller {
  * scaffold property
  *
  * @var mixed
- * @access public
  */
 	public $scaffold;
 
 /**
- * function _beforeScaffold
+ * function beforeScaffold
  *
  * @param string method
  */
-	function _beforeScaffold($method) {
+	public function beforeScaffold($method) {
 		$this->set('scaffoldFields', array('title'));
 		return true;
 	}
@@ -116,7 +112,6 @@ class ScaffoldMock extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'articles';
 
@@ -124,7 +119,6 @@ class ScaffoldMock extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'User' => array(
@@ -137,7 +131,6 @@ class ScaffoldMock extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Comment' => array(
@@ -171,7 +164,6 @@ class ScaffoldUser extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'users';
 
@@ -179,7 +171,6 @@ class ScaffoldUser extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Article' => array(
@@ -200,7 +191,6 @@ class ScaffoldComment extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -208,7 +198,6 @@ class ScaffoldComment extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array(
 		'Article' => array(
@@ -228,7 +217,6 @@ class ScaffoldTag extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'tags';
 }
@@ -243,7 +231,6 @@ class TestScaffoldView extends ScaffoldView {
  * testGetFilename method
  *
  * @param mixed $action
- * @access public
  * @return void
  */
 	public function testGetFilename($action) {
@@ -262,14 +249,12 @@ class ScaffoldViewTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -299,7 +284,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * testGetViewFilename method
  *
- * @access public
  * @return void
  */
 	public function testGetViewFilename() {
@@ -402,7 +386,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * test default index scaffold generation
  *
- * @access public
  * @return void
  */
 	public function testIndexScaffold() {
@@ -442,7 +425,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * test default view scaffold generation
  *
- * @access public
  * @return void
  */
 	public function testViewScaffold() {
@@ -485,7 +467,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * test default view scaffold generation
  *
- * @access public
  * @return void
  */
 	public function testEditScaffold() {
@@ -528,7 +509,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * Test Admin Index Scaffolding.
  *
- * @access public
  * @return void
  */
 	public function testAdminIndexScaffold() {
@@ -574,7 +554,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * Test Admin Index Scaffolding.
  *
- * @access public
  * @return void
  */
 	public function testAdminEditScaffold() {
@@ -614,7 +593,6 @@ class ScaffoldViewTest extends CakeTestCase {
 /**
  * Test Admin Index Scaffolding.
  *
- * @access public
  * @return void
  */
 	public function testMultiplePrefixScaffold() {
@@ -670,7 +648,6 @@ class ScaffoldTest extends CakeTestCase {
  * Controller property
  *
  * @var SecurityTestController
- * @access public
  */
 	public $Controller;
 
@@ -678,7 +655,6 @@ class ScaffoldTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 /**
@@ -707,7 +683,6 @@ class ScaffoldTest extends CakeTestCase {
  * Test the correct Generation of Scaffold Params.
  * This ensures that the correct action and view will be generated
  *
- * @access public
  * @return void
  */
 	public function testScaffoldParams() {

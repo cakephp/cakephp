@@ -55,7 +55,6 @@ class ControllerTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag');
 
@@ -271,6 +270,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components);
+		$this->assertContains(' * @property Article $Article', $result);
+		$this->assertContains(' * @property AclComponent $Acl', $result);
+		$this->assertContains(' * @property AuthComponent $Auth', $result);
 		$this->assertContains('class ArticlesController extends AppController', $result);
 		$this->assertContains("\$components = array('Acl', 'Auth')", $result);
 		$this->assertContains("\$helpers = array('Ajax', 'Time')", $result);
@@ -279,11 +281,13 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
 		$this->assertContains("class ArticlesController extends AppController", $result);
 		$this->assertContains("public \$scaffold", $result);
+		$this->assertNotContains('@property', $result);
 		$this->assertNotContains('helpers', $result);
 		$this->assertNotContains('components', $result);
 
 		$result = $this->Task->bake('Articles', '--actions--', array(), array());
 		$this->assertContains('class ArticlesController extends AppController', $result);
+		$this->assertIdentical(substr_count($result, '@property'), 1);
 		$this->assertNotContains('components', $result);
 		$this->assertNotContains('helpers', $result);
 		$this->assertContains('--actions--', $result);

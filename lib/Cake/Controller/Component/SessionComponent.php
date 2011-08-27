@@ -32,7 +32,7 @@ App::uses('CakeSession', 'Model/Datasource');
 class SessionComponent extends Component {
 
 /**
- * Get / Set the userAgent 
+ * Get / Set the userAgent
  *
  * @param string $userAgent Set the userAgent
  * @return void
@@ -121,6 +121,7 @@ class SessionComponent extends Component {
  * @param string $element Element to wrap flash message in.
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
+ * @return void
  * @link http://book.cakephp.org/view/1313/setFlash
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
@@ -167,7 +168,7 @@ class SessionComponent extends Component {
  * If $id is passed in a beforeFilter, the Session will be started
  * with the specified id
  *
- * @param $id string
+ * @param string $id
  * @return string
  */
 	public function id($id = null) {

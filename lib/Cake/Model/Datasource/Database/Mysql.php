@@ -74,7 +74,6 @@ class Mysql extends DboSource {
  * use alias for update and delete. Set to true if version >= 4.1
  *
  * @var boolean
- * @access protected
  */
 	protected $_useAlias = true;
 
@@ -82,7 +81,6 @@ class Mysql extends DboSource {
  * Index of basic SQL commands
  *
  * @var array
- * @access protected
  */
 	protected $_commands = array(
 		'begin'    => 'START TRANSACTION',
@@ -94,7 +92,6 @@ class Mysql extends DboSource {
  * List of engine specific additional field parameters used on table creating
  *
  * @var array
- * @access public
  */
 	public $fieldParameters = array(
 		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
@@ -106,7 +103,6 @@ class Mysql extends DboSource {
  * List of table engine specific parameters used on table creating
  *
  * @var array
- * @access public
  */
 	public $tableParameters = array(
 		'charset' => array('value' => 'DEFAULT CHARSET', 'quote' => false, 'join' => '=', 'column' => 'charset'),
@@ -137,6 +133,7 @@ class Mysql extends DboSource {
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
+ * @throws MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;
@@ -177,6 +174,7 @@ class Mysql extends DboSource {
 /**
  * Returns an array of sources (tables) in the database.
  *
+ * @param mixed $data
  * @return array Array of tablenames in the database
  */
 	public function listSources($data = null) {
@@ -206,6 +204,7 @@ class Mysql extends DboSource {
  * Builds a map of the columns contained in a result
  *
  * @param PDOStatement $results
+ * @return void
  */
 	public function resultSet($results) {
 		$this->map = array();
@@ -287,10 +286,11 @@ class Mysql extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param mixed $tableName Name of database table to inspect or model instance
+ * @param Model $model Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
+ * @throws CakeException
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -323,7 +323,7 @@ class Mysql extends DboSource {
 				}
 			}
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->_cacheDescription($this->fullTableName($model, false), $fields);
 		$cols->closeCursor();
 		return $fields;
 	}
@@ -337,7 +337,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	public function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::update($model, $fields, $values, $conditions);
 		}
@@ -379,7 +379,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function delete($model, $conditions = null) {
+	public function delete(Model $model, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::delete($model, $conditions);
 		}
@@ -416,6 +416,7 @@ class Mysql extends DboSource {
  * Sets the database encoding
  *
  * @param string $enc Database encoding
+ * @return boolean
  */
 	public function setEncoding($enc) {
 		return $this->_execute('SET NAMES ' . $enc) !== false;
@@ -458,6 +459,7 @@ class Mysql extends DboSource {
  * Generate a MySQL Alter Table syntax for the given Schema comparison
  *
  * @param array $compare Result of a CakeSchema::compare()
+ * @param string $table
  * @return array Array of alter statements to make.
  */
 	public function alterSchema($compare, $table = null) {
@@ -551,7 +553,7 @@ class Mysql extends DboSource {
  * Generate MySQL index alteration statements for a table.
  *
  * @param string $table Table to alter indexes for
- * @param array $new Indexes to add and drop
+ * @param array $indexes Indexes to add and drop
  * @return array Index alteration statements
  */
 	protected function _alterIndexes($table, $indexes) {

@@ -72,7 +72,7 @@ class MediaView extends View {
 /**
  * Constructor
  *
- * @param object $controller The controller with viewVars
+ * @param Controller $controller The controller with viewVars
  */
 	public function __construct($controller = null) {
 		parent::__construct($controller);
@@ -86,9 +86,12 @@ class MediaView extends View {
 /**
  * Display or download the given file
  *
+ * @param string $view Not used
+ * @param string $layout Not used
  * @return mixed
+ * @throws NotFoundException
  */
-	public function render() {
+	public function render($view = null, $layout = null) {
 		$name = $download = $extension = $id = $modified = $path = $cache = $mimeType = $compress = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 

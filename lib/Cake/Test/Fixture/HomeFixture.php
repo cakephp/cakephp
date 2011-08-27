@@ -28,7 +28,6 @@ class HomeFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Home'
- * @access public
  */
 	public $name = 'Home';
 
@@ -36,7 +35,6 @@ class HomeFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -51,7 +49,6 @@ class HomeFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('another_article_id' => 1, 'advertisement_id' => 1, 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),

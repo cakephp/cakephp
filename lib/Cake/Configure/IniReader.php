@@ -43,8 +43,8 @@
  * You can combine `.` separated values with sections to create more deeply
  * nested structures.
  *
- * IniReader also manipulates how the special ini values of 
- * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be 
+ * IniReader also manipulates how the special ini values of
+ * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be
  * converted to their boolean equivalents.
  *
  * @package       Cake.Configure
@@ -85,6 +85,7 @@ class IniReader implements ConfigReaderInterface {
  * @param string $file Name of the file to read. The chosen file
  *    must be on the reader's path.
  * @return array
+ * @throws ConfigureException
  */
 	public function read($file) {
 		$filename = $this->_path . $file;

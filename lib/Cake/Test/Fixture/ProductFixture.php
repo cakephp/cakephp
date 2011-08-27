@@ -28,7 +28,6 @@ class ProductFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Product'
- * @access public
  */
 	public $name = 'Product';
 
@@ -36,7 +35,6 @@ class ProductFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class ProductFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('name' => 'Park\'s Great Hits', 'type' => 'Music', 'price' => 19),

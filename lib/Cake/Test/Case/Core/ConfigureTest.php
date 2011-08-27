@@ -30,7 +30,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -45,7 +44,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -75,7 +73,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testRead method
  *
- * @access public
  * @return void
  */
 	public function testRead() {
@@ -103,7 +100,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testWrite method
  *
- * @access public
  * @return void
  */
 	public function testWrite() {
@@ -156,7 +152,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testDelete method
  *
- * @access public
  * @return void
  */
 	public function testDelete() {
@@ -241,7 +236,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testLoad method
  *
- * @access public
  * @return void
  */
 	public function testLoadPlugin() {
@@ -265,7 +259,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testStore method
  *
- * @access public
  * @return void
  */
 	public function testStoreAndRestore() {
@@ -306,7 +299,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * testVersion method
  *
- * @access public
  * @return void
  */
 	public function testVersion() {

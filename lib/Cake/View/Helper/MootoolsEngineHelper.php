@@ -115,7 +115,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @return object instance of $this. Allows chained methods.
+ * @return MootoolsEngineHelper instance of $this. Allows chained methods.
  */
 	public function get($selector) {
 		$this->_multipleSelection = false;
@@ -174,7 +174,6 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an iteration over the current selection result.
  *
- * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */

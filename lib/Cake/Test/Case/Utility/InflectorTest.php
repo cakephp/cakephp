@@ -47,7 +47,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testInflectingSingulars method
  *
- * @access public
  * @return void
  */
 	public function testInflectingSingulars() {
@@ -114,7 +113,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testInflectingPlurals method
  *
- * @access public
  * @return void
  */
 	public function testInflectingPlurals() {
@@ -161,7 +159,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testInflectorSlug method
  *
- * @access public
  * @return void
  */
 	public function testInflectorSlug() {
@@ -225,7 +222,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testInflectorSlugWithMap method
  *
- * @access public
  * @return void
  */
 	public function testInflectorSlugWithMap() {
@@ -242,7 +238,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testInflectorSlugWithMapOverridingDefault method
  *
- * @access public
  * @return void
  */
 	public function testInflectorSlugWithMapOverridingDefault() {
@@ -278,7 +273,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testVariableNaming method
  *
- * @access public
  * @return void
  */
 	public function testVariableNaming() {
@@ -291,7 +285,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testClassNaming method
  *
- * @access public
  * @return void
  */
 	public function testClassNaming() {
@@ -304,7 +297,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testTableNaming method
  *
- * @access public
  * @return void
  */
 	public function testTableNaming() {
@@ -317,7 +309,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testHumanization method
  *
- * @access public
  * @return void
  */
 	public function testHumanization() {
@@ -329,7 +320,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testCustomPluralRule method
  *
- * @access public
  * @return void
  */
 	public function testCustomPluralRule() {
@@ -354,7 +344,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testCustomSingularRule method
  *
- * @access public
  * @return void
  */
 	public function testCustomSingularRule() {
@@ -378,7 +367,6 @@ class InflectorTest extends CakeTestCase {
 /**
  * testCustomTransliterationRule method
  *
- * @access public
  * @return void
  */
 	public function testCustomTransliterationRule() {

@@ -60,7 +60,7 @@ class DbConfigTask extends Shell {
 /**
  * initialization callback
  *
- * @var string
+ * @return void
  */
 	public function initialize() {
 		$this->path = APP . 'Config' . DS;
@@ -69,6 +69,7 @@ class DbConfigTask extends Shell {
 /**
  * Execution method always used for tasks
  *
+ * @return void
  */
 	public function execute() {
 		if (empty($this->args)) {
@@ -197,6 +198,7 @@ class DbConfigTask extends Shell {
 /**
  * Output verification message and bake if it looks good
  *
+ * @param array $config
  * @return boolean True if user says it looks good, false otherwise
  */
 	protected function _verify($config) {

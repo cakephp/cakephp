@@ -12,7 +12,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- 
+
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
 
 /**

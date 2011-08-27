@@ -28,7 +28,6 @@ class DeviceTypeFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'DeviceType'
- * @access public
  */
 	public $name = 'DeviceType';
 
@@ -36,7 +35,6 @@ class DeviceTypeFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -54,7 +52,6 @@ class DeviceTypeFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1, 'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0)

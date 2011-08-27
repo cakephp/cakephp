@@ -29,7 +29,6 @@ abstract class ObjectCollection {
  * List of the currently-enabled objects
  *
  * @var array
- * @access protected
  */
 	protected $_enabled = array();
 
@@ -54,7 +53,7 @@ abstract class ObjectCollection {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the 
+ * Used to trigger methods on objects in the collection.  Will fire the methods in the
  * order they were attached.
  *
  * ### Options
@@ -76,8 +75,8 @@ abstract class ObjectCollection {
  *    Setting modParams to an integer value will allow you to modify the parameter with that index.
  *    Any non-null value will modify the parameter index indicated.
  *    Defaults to false.
- *   
- * 
+ *
+ *
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
  * @param array $params Array of parameters for the triggered callback.
@@ -143,7 +142,7 @@ abstract class ObjectCollection {
 /**
  * Provide isset access to _loaded
  *
- * @param sting $name Name of object being checked.
+ * @param string $name Name of object being checked.
  * @return boolean
  */
 	public function __isset($name) {
@@ -226,6 +225,7 @@ abstract class ObjectCollection {
  *
  * @param string $name Name of the object
  * @param Object $object The object to use
+ * @return array Loaded objects
  */
 	public function set($name = null, $object = null) {
 		if (!empty($name) && !empty($object)) {

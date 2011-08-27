@@ -67,7 +67,6 @@ class Helper extends Object {
 /**
  * Holds tag templates.
  *
- * @access public
  * @var array
  */
 	public $tags = array();
@@ -75,18 +74,16 @@ class Helper extends Object {
 /**
  * Holds the content to be cleaned.
  *
- * @access private
  * @var mixed
  */
-	private $__tainted = null;
+	protected $_tainted = null;
 
 /**
  * Holds the cleaned content.
  *
- * @access private
  * @var mixed
  */
-	private $__cleaned = null;
+	protected $_cleaned = null;
 
 /**
  * The View instance this helper is attached to
@@ -149,6 +146,7 @@ class Helper extends Object {
  *
  * @param string $method Method to invoke
  * @param array $params Array of params for the method.
+ * @return void
  */
 	public function __call($method, $params) {
 		trigger_error(__d('cake_dev', 'Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
@@ -184,7 +182,9 @@ class Helper extends Object {
 /**
  * Provides backwards compatiblity access for setting values to the request object.
  *
- * @return void
+ * @param string $name Name of the property being accessed.
+ * @param mixed $value
+ * @return mixed Return the $value
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -292,10 +292,10 @@ class Helper extends Object {
  * content is the best way to prevent all possible attacks.
  *
  * @param mixed $output Either an array of strings to clean or a single string to clean.
- * @return cleaned content for output
+ * @return string|array cleaned content for output
  */
 	public function clean($output) {
-		$this->__reset();
+		$this->_reset();
 		if (empty($output)) {
 			return null;
 		}
@@ -305,9 +305,9 @@ class Helper extends Object {
 			}
 			return $return;
 		}
-		$this->__tainted = $output;
-		$this->__clean();
-		return $this->__cleaned;
+		$this->_tainted = $output;
+		$this->_clean();
+		return $this->_cleaned;
 	}
 
 /**
@@ -348,6 +348,7 @@ class Helper extends Object {
  * @param string $insertBefore String to be inserted before options.
  * @param string $insertAfter String to be inserted after options.
  * @return string Composed attributes.
+ * @deprecated This method has been moved to HtmlHelper
  */
 	protected function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (!is_string($options)) {
@@ -379,7 +380,9 @@ class Helper extends Object {
  *
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.
+ * @param boolean $escape Define if the value must be escaped
  * @return string The composed attribute.
+ * @deprecated This method has been moved to HtmlHelper
  */
 	protected function _formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
@@ -454,7 +457,7 @@ class Helper extends Object {
 
 		// habtm models are special
 		if (
-			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) && 
+			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
 			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
 		) {
 			$entity = $parts[0] . '.' . $parts[0];
@@ -542,7 +545,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @access protected
  * @todo Refactor this method to not have as many input/output options.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
@@ -587,7 +589,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @access public
  * @todo Refactor this method to not have as many input/output options.
  */
 	public function value($options = array(), $field = null, $key = 'value') {
@@ -619,7 +620,7 @@ class Helper extends Object {
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model = ClassRegistry::getObject($habtmKey);
-				$result = $this->__selectedArray($data[$habtmKey], $model->primaryKey);
+				$result = $this->_selectedArray($data[$habtmKey], $model->primaryKey);
 			}
 		}
 
@@ -743,9 +744,8 @@ class Helper extends Object {
  * @param mixed $data
  * @param string $key
  * @return array
- * @access private
  */
-	private function __selectedArray($data, $key = 'id') {
+	protected function _selectedArray($data, $key = 'id') {
 		if (!is_array($data)) {
 			$model = $data;
 			if (!empty($this->request->data[$model][$model])) {
@@ -770,43 +770,41 @@ class Helper extends Object {
  * Resets the vars used by Helper::clean() to null
  *
  * @return void
- * @access private
  */
-	private function __reset() {
-		$this->__tainted = null;
-		$this->__cleaned = null;
+	protected function _reset() {
+		$this->_tainted = null;
+		$this->_cleaned = null;
 	}
 
 /**
  * Removes harmful content from output
  *
  * @return void
- * @access private
  */
-	private function __clean() {
+	protected function _clean() {
 		if (get_magic_quotes_gpc()) {
-			$this->__cleaned = stripslashes($this->__tainted);
+			$this->_cleaned = stripslashes($this->_tainted);
 		} else {
-			$this->__cleaned = $this->__tainted;
+			$this->_cleaned = $this->_tainted;
 		}
 
-		$this->__cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->__cleaned);
-		$this->__cleaned = preg_replace('#(&\#*\w+)[\x00-\x20]+;#u', "$1;", $this->__cleaned);
-		$this->__cleaned = preg_replace('#(&\#x*)([0-9A-F]+);*#iu', "$1$2;", $this->__cleaned);
-		$this->__cleaned = html_entity_decode($this->__cleaned, ENT_COMPAT, "UTF-8");
-		$this->__cleaned = preg_replace('#(<[^>]+[\x00-\x20\"\'\/])(on|xmlns)[^>]*>#iUu', "$1>", $this->__cleaned);
-		$this->__cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*)[\\x00-\x20]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu', '$1=$2nojavascript...', $this->__cleaned);
-		$this->__cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=([\'\"]*)[\x00-\x20]*v[\x00-\x20]*b[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu', '$1=$2novbscript...', $this->__cleaned);
-		$this->__cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=*([\'\"]*)[\x00-\x20]*-moz-binding[\x00-\x20]*:#iUu','$1=$2nomozbinding...', $this->__cleaned);
-		$this->__cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=([\'\"]*)[\x00-\x20]*data[\x00-\x20]*:#Uu', '$1=$2nodata...', $this->__cleaned);
-		$this->__cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*expression[\x00-\x20]*\([^>]*>#iU', "$1>", $this->__cleaned);
-		$this->__cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*behaviour[\x00-\x20]*\([^>]*>#iU', "$1>", $this->__cleaned);
-		$this->__cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:*[^>]*>#iUu', "$1>", $this->__cleaned);
-		$this->__cleaned = preg_replace('#</*\w+:\w[^>]*>#i', "", $this->__cleaned);
+		$this->_cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->_cleaned);
+		$this->_cleaned = preg_replace('#(&\#*\w+)[\x00-\x20]+;#u', "$1;", $this->_cleaned);
+		$this->_cleaned = preg_replace('#(&\#x*)([0-9A-F]+);*#iu', "$1$2;", $this->_cleaned);
+		$this->_cleaned = html_entity_decode($this->_cleaned, ENT_COMPAT, "UTF-8");
+		$this->_cleaned = preg_replace('#(<[^>]+[\x00-\x20\"\'\/])(on|xmlns)[^>]*>#iUu', "$1>", $this->_cleaned);
+		$this->_cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*)[\\x00-\x20]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu', '$1=$2nojavascript...', $this->_cleaned);
+		$this->_cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=([\'\"]*)[\x00-\x20]*v[\x00-\x20]*b[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu', '$1=$2novbscript...', $this->_cleaned);
+		$this->_cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=*([\'\"]*)[\x00-\x20]*-moz-binding[\x00-\x20]*:#iUu','$1=$2nomozbinding...', $this->_cleaned);
+		$this->_cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=([\'\"]*)[\x00-\x20]*data[\x00-\x20]*:#Uu', '$1=$2nodata...', $this->_cleaned);
+		$this->_cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*expression[\x00-\x20]*\([^>]*>#iU', "$1>", $this->_cleaned);
+		$this->_cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*behaviour[\x00-\x20]*\([^>]*>#iU', "$1>", $this->_cleaned);
+		$this->_cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:*[^>]*>#iUu', "$1>", $this->_cleaned);
+		$this->_cleaned = preg_replace('#</*\w+:\w[^>]*>#i', "", $this->_cleaned);
 		do {
-			$oldstring = $this->__cleaned;
-			$this->__cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i', "", $this->__cleaned);
-		} while ($oldstring != $this->__cleaned);
-		$this->__cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->__cleaned);
+			$oldstring = $this->_cleaned;
+			$this->_cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i', "", $this->_cleaned);
+		} while ($oldstring != $this->_cleaned);
+		$this->_cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->_cleaned);
 	}
 }

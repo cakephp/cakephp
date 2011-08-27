@@ -240,7 +240,7 @@ class AuthComponent extends Component {
 /**
  * Initializes AuthComponent for use in the controller
  *
- * @param object $controller A reference to the instantiating controller object
+ * @param Controller $controller A reference to the instantiating controller object
  * @return void
  */
 	public function initialize($controller) {
@@ -257,7 +257,7 @@ class AuthComponent extends Component {
  * Main execution method.  Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param object $controller A reference to the instantiating controller object
+ * @param Controller $controller A reference to the instantiating controller object
  * @return boolean
  */
 	public function startup($controller) {
@@ -277,7 +277,7 @@ class AuthComponent extends Component {
 			return true;
 		}
 
-		if (!$this->__setDefaults()) {
+		if (!$this->_setDefaults()) {
 			return false;
 		}
 		$request = $controller->request;
@@ -337,11 +337,9 @@ class AuthComponent extends Component {
  * Attempts to introspect the correct values for object properties including
  * $userModel and $sessionKey.
  *
- * @param object $controller A reference to the instantiating controller object
  * @return boolean
- * @access private
  */
-	function __setDefaults() {
+	protected function _setDefaults() {
 		$defaults = array(
 			'logoutRedirect' => $this->loginAction,
 			'authError' => __d('cake', 'You are not authorized to access that location.')
@@ -387,6 +385,7 @@ class AuthComponent extends Component {
  * Loads the authorization objects configured.
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
+ * @throws CakeException
  */
 	public function constructAuthorize() {
 		if (empty($this->authorize)) {
@@ -428,13 +427,11 @@ class AuthComponent extends Component {
  *
  * `$this->Auth->allow('*');`
  *
- * @param mixed $action Controller action name or array of actions
- * @param string $action Controller action name
- * @param string ... etc.
+ * @param mixed $action,... Controller action name or array of actions
  * @return void
  * @link http://book.cakephp.org/view/1257/allow
  */
-	public function allow() {
+	public function allow($action) {
 		$args = func_get_args();
 		if (empty($args) || $args == array('*')) {
 			$this->allowedActions = $this->_methods;
@@ -454,14 +451,12 @@ class AuthComponent extends Component {
  * `$this->Auth->deny(array('edit', 'add'));` or
  * `$this->Auth->deny('edit', 'add');`
  *
- * @param mixed $action Controller action name or array of actions
- * @param string $action Controller action name
- * @param string ... etc.
+ * @param mixed $action,... Controller action name or array of actions
  * @return void
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/view/1258/deny
  */
-	public function deny() {
+	public function deny($action) {
 		$args = func_get_args();
 		if (isset($args[0]) && is_array($args[0])) {
 			$args = $args[0];
@@ -503,7 +498,7 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/view/1261/login
  */
 	public function login($user = null) {
-		$this->__setDefaults();
+		$this->_setDefaults();
 
 		if (empty($user)) {
 			$user = $this->identify($this->request, $this->response);
@@ -520,13 +515,12 @@ class AuthComponent extends Component {
  * custom logout logic.  AuthComponent will remove the session data, so
  * there is no need to do that in an authentication object.
  *
- * @param mixed $url Optional URL to redirect the user to after logout
- * @return string AuthComponent::$loginAction
- * @see AuthComponent::$loginAction
+ * @return string AuthComponent::$logoutRedirect
+ * @see AuthComponent::$logoutRedirect
  * @link http://book.cakephp.org/view/1262/logout
  */
 	public function logout() {
-		$this->__setDefaults();
+		$this->_setDefaults();
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
@@ -615,6 +609,7 @@ class AuthComponent extends Component {
  * by credentials contained in $request.
  *
  * @param CakeRequest $request The request that contains authentication data.
+ * @param CakeResponse $response The response
  * @return array User record data, or false, if the user could not be identified.
  */
 	public function identify(CakeRequest $request, CakeResponse $response) {
@@ -634,6 +629,7 @@ class AuthComponent extends Component {
  * loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
+ * @throws CakeException
  */
 	public function constructAuthenticate() {
 		if (empty($this->authenticate)) {
@@ -676,7 +672,8 @@ class AuthComponent extends Component {
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
  *
- * @param object $controller Instantiating controller
+ * @param Controller $controller Instantiating controller
+ * @return void
  */
 	public function shutdown($controller) {
 		if ($this->loggedIn()) {
@@ -688,7 +685,6 @@ class AuthComponent extends Component {
  * Check whether or not the current user has data in the session, and is considered logged in.
  *
  * @return boolean true if the user is logged in, false otherwise
- * @access public
  */
 	public function loggedIn() {
 		return $this->user() != array();

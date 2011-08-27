@@ -33,7 +33,6 @@ class RequestActionPost extends CakeTestModel {
  * name property
  *
  * @var string 'ControllerPost'
- * @access public
  */
 	public $name = 'RequestActionPost';
 
@@ -41,7 +40,6 @@ class RequestActionPost extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'posts';
 }
@@ -86,7 +84,6 @@ class RequestActionController extends Controller {
 /**
  * normal_request_action method
  *
- * @access public
  * @return void
  */
 	public function normal_request_action() {
@@ -105,7 +102,6 @@ class RequestActionController extends Controller {
 /**
  * paginate_request_action method
  *
- * @access public
  * @return void
  */
 	public function paginate_request_action() {
@@ -144,7 +140,6 @@ class TestObject extends Object {
  * firstName property
  *
  * @var string 'Joel'
- * @access public
  */
 	public $firstName = 'Joel';
 
@@ -152,7 +147,6 @@ class TestObject extends Object {
  * lastName property
  *
  * @var string 'Moss'
- * @access public
  */
 	public $lastName = 'Moss';
 
@@ -160,14 +154,12 @@ class TestObject extends Object {
  * methodCalls property
  *
  * @var array
- * @access public
  */
 	public $methodCalls = array();
 
 /**
  * emptyMethod method
  *
- * @access public
  * @return void
  */
 	public function emptyMethod() {
@@ -178,7 +170,6 @@ class TestObject extends Object {
  * oneParamMethod method
  *
  * @param mixed $param
- * @access public
  * @return void
  */
 	public function oneParamMethod($param) {
@@ -190,7 +181,6 @@ class TestObject extends Object {
  *
  * @param mixed $param
  * @param mixed $param2
- * @access public
  * @return void
  */
 	public function twoParamMethod($param, $param2) {
@@ -203,7 +193,6 @@ class TestObject extends Object {
  * @param mixed $param
  * @param mixed $param2
  * @param mixed $param3
- * @access public
  * @return void
  */
 	public function threeParamMethod($param, $param2, $param3) {
@@ -216,7 +205,6 @@ class TestObject extends Object {
  * @param mixed $param2
  * @param mixed $param3
  * @param mixed $param4
- * @access public
  * @return void
  */
 	public function fourParamMethod($param, $param2, $param3, $param4) {
@@ -230,7 +218,6 @@ class TestObject extends Object {
  * @param mixed $param3
  * @param mixed $param4
  * @param mixed $param5
- * @access public
  * @return void
  */
 	public function fiveParamMethod($param, $param2, $param3, $param4, $param5) {
@@ -247,7 +234,6 @@ class TestObject extends Object {
  * @param mixed $param5
  * @param mixed $param6
  * @param mixed $param7
- * @access public
  * @return void
  */
 	public function crazyMethod($param, $param2, $param3, $param4, $param5, $param6, $param7 = null) {
@@ -258,7 +244,6 @@ class TestObject extends Object {
  * methodWithOptionalParam method
  *
  * @param mixed $param
- * @access public
  * @return void
  */
 	public function methodWithOptionalParam($param = null) {
@@ -302,7 +287,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -312,7 +296,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -324,7 +307,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * testLog method
  *
- * @access public
  * @return void
  */
 	public function testLog() {
@@ -355,7 +337,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * testSet method
  *
- * @access public
  * @return void
  */
 	public function testSet() {
@@ -376,7 +357,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * testToString method
  *
- * @access public
  * @return void
  */
 	public function testToString() {
@@ -387,7 +367,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * testMethodDispatching method
  *
- * @access public
  * @return void
  */
 	public function testMethodDispatching() {
@@ -454,7 +433,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * testRequestAction method
  *
- * @access public
  * @return void
  */
 	public function testRequestAction() {
@@ -589,7 +567,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * Test that requestAction() is populating $this->params properly
  *
- * @access public
  * @return void
  */
 	public function testRequestActionParamParseAndPass() {
@@ -613,7 +590,6 @@ class ObjectTest extends CakeTestCase {
 /**
  * test requestAction and POST parameter passing, and not passing when url is an array.
  *
- * @access public
  * @return void
  */
 	public function testRequestActionPostPassing() {

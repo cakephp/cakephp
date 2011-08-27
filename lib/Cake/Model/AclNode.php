@@ -33,7 +33,6 @@ class AclNode extends AppModel {
  * Explicitly disable in-memory query caching for ACL models
  *
  * @var boolean
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -41,7 +40,6 @@ class AclNode extends AppModel {
  * ACL models use the Tree behavior
  *
  * @var array
- * @access public
  */
 	public $actsAs = array('Tree' => array('nested'));
 

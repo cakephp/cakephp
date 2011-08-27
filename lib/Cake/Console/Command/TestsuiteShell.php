@@ -167,6 +167,7 @@ class TestsuiteShell extends Shell {
  * Initialization method installs PHPUnit and loads all plugins
  *
  * @return void
+ * @throws Exception
  */
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
@@ -181,7 +182,7 @@ class TestsuiteShell extends Shell {
  *
  * @return array Array of params for CakeTestDispatcher
  */
-	protected function parseArgs() {
+	protected function _parseArgs() {
 		if (empty($this->args)) {
 			return;
 		}
@@ -213,7 +214,7 @@ class TestsuiteShell extends Shell {
  *
  * @return array Array of params for CakeTestDispatcher
  */
-	protected function runnerOptions() {
+	protected function _runnerOptions() {
 		$options = array();
 		$params = $this->params;
 		unset($params['help']);
@@ -245,23 +246,23 @@ class TestsuiteShell extends Shell {
 		$this->out(__d('cake_console', 'CakePHP Test Shell'));
 		$this->hr();
 
-		$args = $this->parseArgs();
+		$args = $this->_parseArgs();
 
 		if (empty($args['case'])) {
 			return $this->available();
 		}
 
-		$this->run($args, $this->runnerOptions());
+		$this->_run($args, $this->_runnerOptions());
 	}
 
 /**
  * Runs the test case from $runnerArgs
  *
- * @param array $runnerArgs list of arguments as obtained from parseArgs()
- * @param array $options list of options as constructed by runnerOptions()
+ * @param array $runnerArgs list of arguments as obtained from _parseArgs()
+ * @param array $options list of options as constructed by _runnerOptions()
  * @return void
  */
-	protected function run($runnerArgs, $options = array()) {
+	protected function _run($runnerArgs, $options = array()) {
 		restore_error_handler();
 		restore_error_handler();
 
@@ -275,7 +276,7 @@ class TestsuiteShell extends Shell {
  * @return void
  */
 	public function available() {
-		$params = $this->parseArgs();
+		$params = $this->_parseArgs();
 		$testCases = CakeTestLoader::generateTestList($params);
 		$app = $params['app'];
 		$plugin = $params['plugin'];
@@ -309,14 +310,14 @@ class TestsuiteShell extends Shell {
 			if (is_numeric($choice)  && isset($cases[$choice])) {
 				$this->args[0] = $category;
 				$this->args[1] = $cases[$choice];
-				$this->run($this->parseArgs(), $this->runnerOptions());
+				$this->_run($this->_parseArgs(), $this->_runnerOptions());
 				break;
 			}
 
 			if (is_string($choice) && in_array($choice, $cases)) {
 				$this->args[0] = $category;
 				$this->args[1] = $choice;
-				$this->run($this->parseArgs(), $this->runnerOptions());
+				$this->_run($this->_parseArgs(), $this->_runnerOptions());
 				break;
 			}
 

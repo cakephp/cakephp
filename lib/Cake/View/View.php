@@ -34,6 +34,16 @@ App::uses('Router', 'Routing');
  * layout using `$this->set()`
  *
  * @package       Cake.View
+ * @property      CacheHelper $Cache
+ * @property      FormHelper $Form
+ * @property      HtmlHelper $Html
+ * @property      JsHelper $Js
+ * @property      NumberHelper $Number
+ * @property      PaginatorHelper $Paginator
+ * @property      RssHelper $Rss
+ * @property      SessionHelper $Session
+ * @property      TextHelper $Text
+ * @property      TimeHelper $Time
  */
 class View extends Object {
 
@@ -198,7 +208,7 @@ class View extends Object {
  *
  * @var array
  */
-	private $__passedVars = array(
+	protected $_passedVars = array(
 		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name',
 		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
@@ -215,7 +225,7 @@ class View extends Object {
  *
  * @var array
  */
-	private $__paths = array();
+	protected $_paths = array();
 
 /**
  * boolean to indicate that helpers have been loaded.
@@ -231,9 +241,9 @@ class View extends Object {
  */
 	public function __construct($controller) {
 		if (is_object($controller)) {
-			$count = count($this->__passedVars);
+			$count = count($this->_passedVars);
 			for ($j = 0; $j < $count; $j++) {
-				$var = $this->__passedVars[$j];
+				$var = $this->_passedVars[$j];
 				$this->{$var} = $controller->{$var};
 			}
 		}
@@ -377,6 +387,7 @@ class View extends Object {
  * - `scripts_for_layout` - contains scripts added to header
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
+ * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
  * @throws CakeException if there is an error in the view.
  */
@@ -694,7 +705,6 @@ class View extends Object {
  * Get the extensions that view files can use.
  *
  * @return array Array of extensions view files use.
- * @access protected
  */
 	protected function _getExtensions() {
 		$exts = array($this->ext);
@@ -732,8 +742,8 @@ class View extends Object {
  * @return array paths
  */
 	protected function _paths($plugin = null, $cached = true) {
-		if ($plugin === null && $cached === true && !empty($this->__paths)) {
-			return $this->__paths;
+		if ($plugin === null && $cached === true && !empty($this->_paths)) {
+			return $this->_paths;
 		}
 		$paths = array();
 		$viewPaths = App::path('View');
@@ -748,7 +758,7 @@ class View extends Object {
 			$paths = array_merge($paths, App::path('View', $plugin));
 		}
 
-		$this->__paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
-		return $this->__paths;
+		$this->_paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		return $this->_paths;
 	}
 }

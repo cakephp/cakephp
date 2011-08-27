@@ -37,7 +37,7 @@ class SessionHelper extends AppHelper {
  * Calling the method without a param will return all session vars
  *
  * @param string $name the name of the session key you want to read
- * @return values from the session vars
+ * @return mixed values from the session vars
  * @link http://book.cakephp.org/view/1466/Methods
  */
 	public function read($name = null) {
@@ -82,7 +82,7 @@ class SessionHelper extends AppHelper {
  * echo $this->Session->flash('flash', array('params' => array('class' => 'new-flash')));
  * }}}
  *
- * The above would generate a flash message with a custom class name. Using $attrs['params'] you 
+ * The above would generate a flash message with a custom class name. Using $attrs['params'] you
  * can pass additional data into the element rendering that will be made available as local variables
  * when the element is rendered:
  *
@@ -93,7 +93,7 @@ class SessionHelper extends AppHelper {
  * This would pass the current user's name into the flash message, so you could create peronsonalized
  * messages without the controller needing access to that data.
  *
- * Lastly you can choose the element that is rendered when creating the flash message. Using 
+ * Lastly you can choose the element that is rendered when creating the flash message. Using
  * custom elements allows you to fully customize how flash messages are generated.
  *
  * {{{
@@ -101,15 +101,15 @@ class SessionHelper extends AppHelper {
  * }}}
  *
  * @param string $key The [Message.]key you are rendering in the view.
- * @return array $attrs Additional attributes to use for the creation of this flash message.
+ * @param array $attrs Additional attributes to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
- * @access public
+ * @return string
  * @link http://book.cakephp.org/view/1466/Methods
  * @link http://book.cakephp.org/view/1467/flash
  */
 	public function flash($key = 'flash', $attrs = array()) {
 		$out = false;
-		
+
 		if (CakeSession::check('Message.' . $key)) {
 			$flash = CakeSession::read('Message.' . $key);
 			$message = $flash['message'];

@@ -28,7 +28,6 @@ class SessionFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Session'
- * @access public
  */
 	public $name = 'Session';
 
@@ -43,7 +42,6 @@ class SessionFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'string', 'length' => 128, 'key' => 'primary'),
@@ -55,7 +53,6 @@ class SessionFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array();
 }

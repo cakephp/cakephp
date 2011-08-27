@@ -95,8 +95,8 @@ class Dispatcher {
  *
  * @param Controller $controller Controller to invoke
  * @param CakeRequest $request The request object to invoke the controller for.
- * @return string Output as sent by controller
- * @throws MissingActionException when the action being called is missing.
+ * @param CakeResponse $response The response object to receive the output
+ * @return void
  */
 	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
 		$controller->constructClasses();
@@ -108,7 +108,7 @@ class Dispatcher {
 			$render = false;
 			$response = $result;
 		}
-		
+
 		if ($render && $controller->autoRender) {
 			$response = $controller->render();
 		} elseif ($response->body() === null) {
@@ -165,7 +165,7 @@ class Dispatcher {
 /**
  * Load controller and return controller classname
  *
- * @param array $params Array of parameters
+ * @param CakeRequest $request
  * @return string|bool Name of controller class name
  */
 	protected function _loadController($request) {
@@ -202,6 +202,7 @@ class Dispatcher {
  * Outputs cached dispatch view cache
  *
  * @param string $path Requested URL path
+ * @return string|boolean False if is not cached or output
  */
 	public function cached($path) {
 		if (Configure::read('Cache.check') === true) {

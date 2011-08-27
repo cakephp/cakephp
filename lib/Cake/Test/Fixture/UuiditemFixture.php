@@ -28,7 +28,6 @@ class UuiditemFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Uuiditem'
- * @access public
  */
 	public $name = 'Uuiditem';
 
@@ -36,7 +35,6 @@ class UuiditemFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
@@ -48,7 +46,6 @@ class UuiditemFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'published' => 0, 'name' => 'Item 1'),

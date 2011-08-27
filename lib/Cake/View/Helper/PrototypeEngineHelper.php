@@ -106,7 +106,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @return object instance of $this. Allows chained methods.
+ * @return PrototypeEngineHelper instance of $this. Allows chained methods.
  */
 	public function get($selector) {
 		$this->_multiple = false;
@@ -165,7 +165,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an iteration over the current selection result.
  *
- * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */
@@ -181,7 +180,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param string $name The name of the effect to trigger.
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
- * @access public
  * @see JsBaseEngineHelper::effect()
  */
 	public function effect($name, $options = array()) {
@@ -262,7 +260,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
- * @access public
  * @see JsBaseEngineHelper::sortable() for options list.
  */
 	public function sortable($options = array()) {
@@ -280,7 +277,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the draggable.
  * @return string Completed draggable script.
- * @access public
  * @see JsBaseEngineHelper::draggable() for options list.
  */
 	public function drag($options = array()) {
@@ -301,7 +297,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the droppable.
  * @return string Completed droppable script.
- * @access public
  * @see JsBaseEngineHelper::droppable() for options list.
  */
 	public function drop($options = array()) {
@@ -319,7 +314,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the slider.
  * @return string Completed slider script.
- * @access public
  * @see JsBaseEngineHelper::slider() for options list.
  */
 	public function slider($options = array()) {
@@ -349,7 +343,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options.
  * @return string Completed serializeForm() snippet
- * @access public
  * @see JsBaseEngineHelper::serializeForm()
  */
 	public function serializeForm($options = array()) {

@@ -32,7 +32,6 @@ class MyAppSchema extends CakeSchema {
  * name property
  *
  * @var string 'MyApp'
- * @access public
  */
 	public $name = 'MyApp';
 
@@ -40,7 +39,6 @@ class MyAppSchema extends CakeSchema {
  * connection property
  *
  * @var string 'test'
- * @access public
  */
 	public $connection = 'test';
 
@@ -48,7 +46,6 @@ class MyAppSchema extends CakeSchema {
  * comments property
  *
  * @var array
- * @access public
  */
 	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -66,7 +63,6 @@ class MyAppSchema extends CakeSchema {
  * posts property
  *
  * @var array
- * @access public
  */
 	public $posts = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -84,7 +80,6 @@ class MyAppSchema extends CakeSchema {
  * _foo property
  *
  * @var array
- * @access protected
  */
 	protected $_foo = array('bar');
 
@@ -92,7 +87,6 @@ class MyAppSchema extends CakeSchema {
  * setup method
  *
  * @param mixed $version
- * @access public
  * @return void
  */
 	public function setup($version) {
@@ -102,7 +96,6 @@ class MyAppSchema extends CakeSchema {
  * teardown method
  *
  * @param mixed $version
- * @access public
  * @return void
  */
 	public function teardown($version) {
@@ -133,7 +126,6 @@ class TestAppSchema extends CakeSchema {
  * name property
  *
  * @var string 'MyApp'
- * @access public
  */
 	public $name = 'MyApp';
 
@@ -141,7 +133,6 @@ class TestAppSchema extends CakeSchema {
  * comments property
  *
  * @var array
- * @access public
  */
 	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0,'key' => 'primary'),
@@ -159,7 +150,6 @@ class TestAppSchema extends CakeSchema {
  * posts property
  *
  * @var array
- * @access public
  */
 	public $posts = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -177,7 +167,6 @@ class TestAppSchema extends CakeSchema {
  * posts_tags property
  *
  * @var array
- * @access public
  */
 	public $posts_tags = array(
 		'post_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
@@ -190,7 +179,6 @@ class TestAppSchema extends CakeSchema {
  * tags property
  *
  * @var array
- * @access public
  */
 	public $tags = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -205,7 +193,6 @@ class TestAppSchema extends CakeSchema {
  * datatypes property
  *
  * @var array
- * @access public
  */
 	public $datatypes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -219,7 +206,6 @@ class TestAppSchema extends CakeSchema {
  * setup method
  *
  * @param mixed $version
- * @access public
  * @return void
  */
 	public function setup($version) {
@@ -229,7 +215,6 @@ class TestAppSchema extends CakeSchema {
  * teardown method
  *
  * @param mixed $version
- * @access public
  * @return void
  */
 	public function teardown($version) {
@@ -247,7 +232,6 @@ class SchemaPost extends CakeTestModel {
  * name property
  *
  * @var string 'SchemaPost'
- * @access public
  */
 	public $name = 'SchemaPost';
 
@@ -255,7 +239,6 @@ class SchemaPost extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'posts';
 
@@ -263,7 +246,6 @@ class SchemaPost extends CakeTestModel {
  * hasMany property
  *
  * @var array
- * @access public
  */
 	public $hasMany = array('SchemaComment');
 
@@ -271,7 +253,6 @@ class SchemaPost extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('SchemaTag');
 }
@@ -287,7 +268,6 @@ class SchemaComment extends CakeTestModel {
  * name property
  *
  * @var string 'SchemaComment'
- * @access public
  */
 	public $name = 'SchemaComment';
 
@@ -295,7 +275,6 @@ class SchemaComment extends CakeTestModel {
  * useTable property
  *
  * @var string 'comments'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -303,7 +282,6 @@ class SchemaComment extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('SchemaPost');
 }
@@ -319,7 +297,6 @@ class SchemaTag extends CakeTestModel {
  * name property
  *
  * @var string 'SchemaTag'
- * @access public
  */
 	public $name = 'SchemaTag';
 
@@ -327,7 +304,6 @@ class SchemaTag extends CakeTestModel {
  * useTable property
  *
  * @var string 'tags'
- * @access public
  */
 	public $useTable = 'tags';
 
@@ -335,7 +311,6 @@ class SchemaTag extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('SchemaPost');
 }
@@ -351,7 +326,6 @@ class SchemaDatatype extends CakeTestModel {
  * name property
  *
  * @var string 'SchemaDatatype'
- * @access public
  */
 	public $name = 'SchemaDatatype';
 
@@ -359,7 +333,6 @@ class SchemaDatatype extends CakeTestModel {
  * useTable property
  *
  * @var string 'datatypes'
- * @access public
  */
 	public $useTable = 'datatypes';
 }
@@ -381,7 +354,6 @@ class Testdescribe extends CakeTestModel {
  * name property
  *
  * @var string 'Testdescribe'
- * @access public
  */
 	public $name = 'Testdescribe';
 }
@@ -397,7 +369,6 @@ class SchemaCrossDatabase extends CakeTestModel {
  * name property
  *
  * @var string 'SchemaCrossDatabase'
- * @access public
  */
 	public $name = 'SchemaCrossDatabase';
 
@@ -405,7 +376,6 @@ class SchemaCrossDatabase extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'cross_database';
 
@@ -413,7 +383,6 @@ class SchemaCrossDatabase extends CakeTestModel {
  * useDbConfig property
  *
  * @var string 'test2'
- * @access public
  */
 	public $useDbConfig = 'test2';
 }
@@ -429,14 +398,12 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'CrossDatabase'
- * @access public
  */
 	public $name = 'CrossDatabase';
 
 /**
  * table property
  *
- * @access public
  */
 	public $table = 'cross_database';
 
@@ -444,7 +411,6 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -455,7 +421,6 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'name' => 'First'),
@@ -500,7 +465,6 @@ class CakeSchemaTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment',
@@ -537,7 +501,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaName method
  *
- * @access public
  * @return void
  */
 	public function testSchemaName() {
@@ -554,7 +517,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaRead method
  *
- * @access public
  * @return void
  */
 	public function testSchemaRead() {
@@ -639,7 +601,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaReadWithOddTablePrefix method
  *
- * @access public
  * @return void
  */
 	public function testSchemaReadWithOddTablePrefix() {
@@ -792,7 +753,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaWrite method
  *
- * @access public
  * @return void
  */
 	public function testSchemaWrite() {
@@ -808,7 +768,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaComparison method
  *
- * @access public
  * @return void
  */
 	public function testSchemaComparison() {
@@ -1009,7 +968,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaLoading method
  *
- * @access public
  * @return void
  */
 	public function testSchemaLoading() {
@@ -1038,7 +996,6 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * testSchemaCreateTable method
  *
- * @access public
  * @return void
  */
 	public function testSchemaCreateTable() {

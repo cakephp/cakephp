@@ -28,7 +28,7 @@ class DebugTransport extends AbstractTransport {
 /**
  * Send mail
  *
- * @params object $email CakeEmail
+ * @param CakeEmail $email CakeEmail
  * @return boolean
  */
 	public function send(CakeEmail $email) {

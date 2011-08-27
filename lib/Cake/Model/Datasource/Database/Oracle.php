@@ -30,7 +30,6 @@ class DboOracle extends DboSource {
  * Configuration options
  *
  * @var array
- * @access public
  */
 	public $config = array();
 
@@ -43,6 +42,8 @@ class DboOracle extends DboSource {
 
 /**
  * Sequence names as introspected from the database
+ *
+ * @var array
  */
 	protected $_sequences = array();
 
@@ -51,13 +52,12 @@ class DboOracle extends DboSource {
  *
  * @var boolean
  */
-	private $__transactionStarted = false;
+	protected $_transactionStarted = false;
 
 /**
  * Column definitions
  *
  * @var array
- * @access public
  */
 	public $columns = array(
 		'primary_key' => array('name' => ''),
@@ -78,31 +78,27 @@ class DboOracle extends DboSource {
  * Connection object
  *
  * @var mixed
- * @access protected
  */
 	public $connection;
 
 /**
  * Query limit
  *
- * @var int
- * @access protected
+ * @var integer
  */
 	protected $_limit = -1;
 
 /**
  * Query offset
  *
- * @var int
- * @access protected
+ * @var integer
  */
 	protected $_offset = 0;
 
 /**
- * Enter description here...
+ * Map
  *
- * @var unknown_type
- * @access protected
+ * @var array
  */
 	protected $_map;
 
@@ -110,15 +106,13 @@ class DboOracle extends DboSource {
  * Current Row
  *
  * @var mixed
- * @access protected
  */
 	protected $_currentRow;
 
 /**
  * Number of rows
  *
- * @var int
- * @access protected
+ * @var integer
  */
 	protected $_numRows;
 
@@ -126,14 +120,13 @@ class DboOracle extends DboSource {
  * Query results
  *
  * @var mixed
- * @access protected
  */
 	protected $_results;
 
 /**
  * Last error issued by oci extension
  *
- * @var unknown_type
+ * @var string
  */
 	protected $_error;
 
@@ -155,7 +148,7 @@ class DboOracle extends DboSource {
 /**
  * Table-sequence map
  *
- * @var unknown_type
+ * @var array
  */
 	protected $_sequenceMap = array();
 
@@ -196,6 +189,9 @@ class DboOracle extends DboSource {
 /**
  * Keeps track of the most recent Oracle error
  *
+ * @param mixed $source
+ * @param boolean $clear
+ * @return void
  */
 	protected function _setError($source = null, $clear = false) {
 		if ($source) {
@@ -213,7 +209,7 @@ class DboOracle extends DboSource {
  * Sets the encoding language of the session
  *
  * @param string $lang language constant
- * @return bool
+ * @return boolean
  */
 	public function setEncoding($lang) {
 		if (!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
@@ -256,7 +252,7 @@ class DboOracle extends DboSource {
  * experimental method that creates the association maps since Oracle will not tell us.
  *
  * @param string $sql
- * @return false if sql is nor a SELECT
+ * @return void
  */
 	protected function _scrapeSQL($sql) {
 		$sql = str_replace("\"", '', $sql);
@@ -305,7 +301,7 @@ class DboOracle extends DboSource {
  *
  * @param integer $limit Maximum number of rows to return
  * @param integer $offset Row to begin returning
- * @return modified SQL Query
+ * @return void
  */
 	public function limit($limit = -1, $offset = 0) {
 		$this->_limit = (int) $limit;
@@ -316,9 +312,10 @@ class DboOracle extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
+ * @param mixed $source
  * @return integer Number of rows in resultset
  */
-	public function lastNumRows() {
+	public function lastNumRows($source = null) {
 		return $this->_numRows;
 	}
 
@@ -326,16 +323,18 @@ class DboOracle extends DboSource {
  * Executes given SQL statement. This is an overloaded method.
  *
  * @param string $sql SQL statement
+ * @param array $params list of params to be bound to query
+ * @param array $prepareOptions Options to be used in the prepare statement
  * @return resource Result resource identifier or null
  */
-	protected function _execute($sql) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_statementId = @ociparse($this->connection, $sql);
 		if (!$this->_statementId) {
 			$this->_setError($this->connection);
 			return false;
 		}
 
-		if ($this->__transactionStarted) {
+		if ($this->_transactionStarted) {
 			$mode = OCI_DEFAULT;
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
@@ -372,10 +371,10 @@ class DboOracle extends DboSource {
 /**
  * Fetch result row
  *
+ * @param string $sql
  * @return array
- * @access public
  */
-	public function fetchRow() {
+	public function fetchRow($sql = null) {
 		if ($this->_currentRow >= $this->_numRows) {
 			ocifreestatement($this->_statementId);
 			$this->_map = null;
@@ -402,7 +401,7 @@ class DboOracle extends DboSource {
 /**
  * Fetches the next row from the current result set
  *
- * @return unknown
+ * @return array
  */
 	public function fetchResult() {
 		return $this->fetchRow();
@@ -412,7 +411,7 @@ class DboOracle extends DboSource {
  * Checks to see if a named sequence exists
  *
  * @param string $sequence
- * @return bool
+ * @return boolean|array
  */
 	public function sequenceExists($sequence) {
 		$sql = "SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '$sequence'";
@@ -426,7 +425,7 @@ class DboOracle extends DboSource {
  * Creates a database sequence
  *
  * @param string $sequence
- * @return bool
+ * @return boolean
  */
 	public function createSequence($sequence) {
 		$sql = "CREATE SEQUENCE $sequence";
@@ -438,7 +437,6 @@ class DboOracle extends DboSource {
  *
  * @param string $table
  * @return mixed
- * @access public
  */
 	public function createTrigger($table) {
 		$sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";
@@ -449,9 +447,10 @@ class DboOracle extends DboSource {
  * Returns an array of tables in the database. If there are no tables, an error is
  * raised and the application exits.
  *
+ * @param mixed $source
  * @return array tablenames in the database
  */
-	public function listSources() {
+	public function listSources($source = null) {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
@@ -473,10 +472,10 @@ class DboOracle extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param object instance of a model to inspect
+ * @param Model $model instance of a model to inspect
  * @return array Fields in table. Keys are name and type
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
@@ -506,7 +505,7 @@ class DboOracle extends DboSource {
 				'length'=> $row[0]['DATA_LENGTH']
 			);
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->_cacheDescription($this->fullTableName($model, false), $fields);
 
 		return $fields;
 	}
@@ -519,7 +518,6 @@ class DboOracle extends DboSource {
  * @param integer $reset If -1, sequences are dropped, if 0 (default), sequences are reset,
  *						and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
- * @access public
  *
  */
 	public function truncate($table, $reset = 0) {
@@ -680,8 +678,9 @@ class DboOracle extends DboSource {
 /**
  * Generate a Oracle Alter Table syntax for the given Schema comparison
  *
- * @param unknown_type $schema
- * @return unknown
+ * @param mixed $compare
+ * @param mixed $table
+ * @return boolean|string
  */
 	public function alterSchema($compare, $table = null) {
 		if (!is_array($compare)) {
@@ -730,8 +729,8 @@ class DboOracle extends DboSource {
  * This method should quote Oracle identifiers. Well it doesn't.
  * It would break all scaffolding and all of Cake's default assumptions.
  *
- * @param unknown_type $var
- * @return unknown
+ * @param string $name
+ * @return string
  */
 	public function name($name) {
 		if (strpos($name, '.') !== false && strpos($name, '"') === false) {
@@ -750,19 +749,17 @@ class DboOracle extends DboSource {
 /**
  * Begin a transaction
  *
- * @param unknown_type $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	public function begin() {
-		$this->__transactionStarted = true;
+		$this->_transactionStarted = true;
 		return true;
 	}
 
 /**
  * Rollback a transaction
  *
- * @param unknown_type $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
@@ -774,13 +771,12 @@ class DboOracle extends DboSource {
 /**
  * Commit a transaction
  *
- * @param unknown_type $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
 	public function commit() {
-		$this->__transactionStarted = false;
+		$this->_transactionStarted = false;
 		return ocicommit($this->connection);
 	}
 
@@ -838,6 +834,7 @@ class DboOracle extends DboSource {
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
  * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column
  * @return string Quoted and escaped
  */
 	public function value($data, $column = null) {
@@ -877,10 +874,10 @@ class DboOracle extends DboSource {
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @param string
- * @return integer
+ * @param string $source
+ * @return integer|boolean
  */
-	public function lastInsertId($source) {
+	public function lastInsertId($source = null) {
 		$sequence = $this->_sequenceMap[$source];
 		$sql = "SELECT $sequence.currval FROM dual";
 
@@ -897,18 +894,20 @@ class DboOracle extends DboSource {
 /**
  * Returns a formatted error message from previous database operation.
  *
+ * @param PDOStatement $query the query to extract the error from if any
  * @return string Error message with error number
  */
-	public function lastError() {
+	public function lastError(PDOStatement $query = null) {
 		return $this->_error;
 	}
 
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
- * @return int Number of affected rows
+ * @param mixed $source
+ * @return integer Number of affected rows
  */
-	public function lastAffected() {
+	public function lastAffected($source = null) {
 		return $this->_statementId ? ocirowcount($this->_statementId): false;
 	}
 
@@ -959,18 +958,19 @@ class DboOracle extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * queryAssociation method
  *
  * @param Model $model
- * @param unknown_type $linkModel
+ * @param Model $linkModel
  * @param string $type Association type
- * @param unknown_type $association
- * @param unknown_type $assocData
- * @param unknown_type $queryData
- * @param unknown_type $external
- * @param unknown_type $resultSet
+ * @param string $association
+ * @param array $assocData
+ * @param array $queryData
+ * @param boolean $external
+ * @param array $resultSet
  * @param integer $recursive Number of levels of association
  * @param array $stack
+ * @return void
  */
 	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
@@ -1101,16 +1101,16 @@ class DboOracle extends DboSource {
 						if (empty($merge) && !isset($row[$association])) {
 							$row[$association] = $merge;
 						} else {
-							$this->__mergeAssociation($resultSet[$i], $merge, $association, $type);
+							$this->_mergeAssociation($resultSet[$i], $merge, $association, $type);
 						}
 					} else {
-						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+						$this->_mergeAssociation($resultSet[$i], $fetch, $association, $type);
 					}
 					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
 
 				} else {
 					$tempArray[0][$association] = false;
-					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type);
+					$this->_mergeAssociation($resultSet[$i], $tempArray, $association, $type);
 				}
 			}
 		}

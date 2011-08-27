@@ -28,7 +28,6 @@ class BasketFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Basket'
- * @access public
  */
 	public $name = 'Basket';
 
@@ -36,7 +35,6 @@ class BasketFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -50,7 +48,6 @@ class BasketFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'type' => 'nonfile', 'name' => 'basket1', 'object_id' => 1, 'user_id' => 1),

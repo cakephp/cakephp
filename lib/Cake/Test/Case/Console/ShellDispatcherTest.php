@@ -30,7 +30,6 @@ class TestShellDispatcher extends ShellDispatcher {
  * params property
  *
  * @var array
- * @access public
  */
 	public $params = array();
 
@@ -38,7 +37,6 @@ class TestShellDispatcher extends ShellDispatcher {
  * stopped property
  *
  * @var string
- * @access public
  */
 	public $stopped = null;
 
@@ -46,7 +44,6 @@ class TestShellDispatcher extends ShellDispatcher {
  * TestShell
  *
  * @var mixed
- * @access public
  */
 	public $TestShell;
 

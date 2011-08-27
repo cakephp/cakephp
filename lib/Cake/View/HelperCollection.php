@@ -15,7 +15,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- 
+
 App::uses('ObjectCollection', 'Utility');
 
 class HelperCollection extends ObjectCollection {
@@ -30,7 +30,7 @@ class HelperCollection extends ObjectCollection {
 /**
  * Constructor
  *
- * @return void
+ * @param View $view
  */
 	public function __construct(View $view) {
 		$this->_View = $view;
@@ -38,7 +38,7 @@ class HelperCollection extends ObjectCollection {
 
 /**
  * Loads/constructs a helper.  Will return the instance in the registry if it already exists.
- * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you 
+ * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you
  * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
  *
@@ -51,7 +51,7 @@ class HelperCollection extends ObjectCollection {
  * );
  * }}}
  * All calls to the `Html` helper would use `AliasedHtml` instead.
- * 
+ *
  * @param string $helper Helper name to load
  * @param array $settings Settings for the helper.
  * @return Helper A helper object, Either the existing loaded helper or a new one.
@@ -66,7 +66,7 @@ class HelperCollection extends ObjectCollection {
 		if (!isset($alias)) {
 			$alias = $name;
 		}
-		
+
 		if (isset($this->_loaded[$alias])) {
 			return $this->_loaded[$alias];
 		}

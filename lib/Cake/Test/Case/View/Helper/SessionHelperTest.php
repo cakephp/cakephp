@@ -31,7 +31,6 @@ class SessionHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -76,7 +75,6 @@ class SessionHelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -88,7 +86,6 @@ class SessionHelperTest extends CakeTestCase {
 /**
  * testRead method
  *
- * @access public
  * @return void
  */
 	public function testRead() {
@@ -102,7 +99,6 @@ class SessionHelperTest extends CakeTestCase {
 /**
  * testCheck method
  *
- * @access public
  * @return void
  */
 	public function testCheck() {
@@ -118,7 +114,6 @@ class SessionHelperTest extends CakeTestCase {
 /**
  * testFlash method
  *
- * @access public
  * @return void
  */
 	public function testFlash() {

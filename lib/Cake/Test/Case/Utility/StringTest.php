@@ -28,7 +28,6 @@ class StringTest extends CakeTestCase {
 /**
  * testUuidGeneration method
  *
- * @access public
  * @return void
  */
 	public function testUuidGeneration() {
@@ -41,7 +40,6 @@ class StringTest extends CakeTestCase {
 /**
  * testMultipleUuidGeneration method
  *
- * @access public
  * @return void
  */
 	public function testMultipleUuidGeneration() {
@@ -61,7 +59,6 @@ class StringTest extends CakeTestCase {
 /**
  * testInsert method
  *
- * @access public
  * @return void
  */
 	public function testInsert() {
@@ -274,7 +271,6 @@ class StringTest extends CakeTestCase {
 /**
  * testTokenize method
  *
- * @access public
  * @return void
  */
 	public function testTokenize() {

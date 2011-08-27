@@ -44,8 +44,7 @@ class ShellDispatcher {
  * a status code of either 0 or 1 according to the result of the dispatch.
  *
  * @param array $args the argv from PHP
- * @param bool $bootstrap Should the environment be bootstrapped.
- * @return void
+ * @param boolean $bootstrap Should the environment be bootstrapped.
  */
 	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);
@@ -96,9 +95,10 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
+ * @throws CakeException
  */
 	protected function _initEnvironment() {
-		if (!$this->__bootstrap()) {
+		if (!$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
 			throw new CakeException($message);
 		}
@@ -119,7 +119,7 @@ class ShellDispatcher {
  *
  * @return boolean Success.
  */
-	private function __bootstrap() {
+	protected function _bootstrap() {
 		define('ROOT', $this->params['root']);
 		define('APP_DIR', $this->params['app']);
 		define('APP', $this->params['working'] . DS);
@@ -149,6 +149,7 @@ class ShellDispatcher {
  * Dispatches a CLI request
  *
  * @return boolean
+ * @throws MissingShellMethodException
  */
 	public function dispatch() {
 		$shell = $this->shiftArgs();
@@ -198,8 +199,8 @@ class ShellDispatcher {
  * All paths in the loaded shell paths are searched.
  *
  * @param string $shell Optionally the name of a plugin
- * @return mixed False if no shell could be found or an object on success
- * @throws MissingShellFileException, MissingShellClassException when errors are encountered.
+ * @return mixed An object
+ * @throws MissingShellFileException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
@@ -221,7 +222,8 @@ class ShellDispatcher {
 /**
  * Parses command line options and extracts the directory paths from $params
  *
- * @param array $params Parameters to parse
+ * @param array $args Parameters to parse
+ * @return void
  */
 	public function parseParams($args) {
 		$this->_parsePaths($args);
@@ -276,6 +278,7 @@ class ShellDispatcher {
 /**
  * Parses out the paths from from the argv
  *
+ * @param array $args
  * @return void
  */
 	protected function _parsePaths($args) {
@@ -316,7 +319,7 @@ class ShellDispatcher {
 /**
  * Stop execution of the current script
  *
- * @param $status see http://php.net/exit for values
+ * @param integer|string $status see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($status = 0) {

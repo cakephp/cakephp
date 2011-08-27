@@ -43,6 +43,7 @@ class ControllerTask extends BakeTask {
 /**
  * Override initialize
  *
+ * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('Controller'));
@@ -51,6 +52,7 @@ class ControllerTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @return void
  */
 	public function execute() {
 		parent::execute();
@@ -203,6 +205,10 @@ class ControllerTask extends BakeTask {
 /**
  * Confirm a to be baked controller with the user
  *
+ * @param string $controllerName
+ * @param string $useDynamicScaffold
+ * @param array $helpers
+ * @param array $components
  * @return void
  */
 	public function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
@@ -299,7 +305,6 @@ class ControllerTask extends BakeTask {
  * @param string $actions Actions to add, or set the whole controller to use $scaffold (set $actions to 'scaffold')
  * @param array $helpers Helpers to use in controller
  * @param array $components Components to use in controller
- * @param array $uses Models to use in controller
  * @return string Baked controller
  */
 	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
@@ -360,7 +365,7 @@ class ControllerTask extends BakeTask {
  * Common code for property choice handling.
  *
  * @param string $prompt A yes/no question to precede the list
- * @param sting $example A question for a comma separated list, with examples.
+ * @param string $example A question for a comma separated list, with examples.
  * @return array Array of values for property.
  */
 	protected function _doPropertyChoices($prompt, $example) {
@@ -378,7 +383,6 @@ class ControllerTask extends BakeTask {
  * Outputs and gets the list of possible controllers from database
  *
  * @param string $useDbConfig Database configuration name
- * @param boolean $interactive Whether you are using listAll interactively and want options output.
  * @return array Set of controllers
  */
 	public function listAll($useDbConfig = null) {
@@ -462,6 +466,7 @@ class ControllerTask extends BakeTask {
 /**
  * Displays help contents
  *
+ * @return void
  */
 	public function help() {
 		$this->hr();

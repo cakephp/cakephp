@@ -84,8 +84,8 @@ class ConsoleInputArgument {
 /**
  * Generate the help for this argument.
  *
- * @param int $width The width to make the name of the option.
- * @return string 
+ * @param integer $width The width to make the name of the option.
+ * @return string
  */
 	public function help($width = 0) {
 		$name = $this->_name;
@@ -131,7 +131,9 @@ class ConsoleInputArgument {
 /**
  * Check that $value is a valid choice for this argument.
  *
+ * @param string $value
  * @return boolean
+ * @throws ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
@@ -139,7 +141,7 @@ class ConsoleInputArgument {
 		}
 		if (!in_array($value, $this->_choices)) {
 			throw new ConsoleException(
-				__d('cake_console', '"%s" is not a valid value for %s. Please use one of "%s"', 
+				__d('cake_console', '"%s" is not a valid value for %s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
 		}
@@ -149,7 +151,7 @@ class ConsoleInputArgument {
 /**
  * Append this arguments XML representation to the passed in SimpleXml object.
  *
- * @param SimpleXmlElement The parent element.
+ * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this argument appended.
  */
 	public function xml(SimpleXmlElement $parent) {

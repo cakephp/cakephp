@@ -30,14 +30,12 @@ class FileEngineTest extends CakeTestCase {
  * config property
  *
  * @var array
- * @access public
  */
 	public $config = array();
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -49,7 +47,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * teardown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -61,7 +58,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testCacheDirChange method
  *
- * @access public
  * @return void
  */
 	public function testCacheDirChange() {
@@ -76,7 +72,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testReadAndWriteCache method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteCache() {
@@ -105,7 +100,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testExpiry method
  *
- * @access public
  * @return void
  */
 	public function testExpiry() {
@@ -136,7 +130,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testDeleteCache method
  *
- * @access public
  * @return void
  */
 	public function testDeleteCache() {
@@ -155,7 +148,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testSerialize method
  *
- * @access public
  * @return void
  */
 	public function testSerialize() {
@@ -179,7 +171,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testClear method
  *
- * @access public
  * @return void
  */
 	public function testClear() {
@@ -246,7 +237,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testKeyPath method
  *
- * @access public
  * @return void
  */
 	public function testKeyPath() {
@@ -264,7 +254,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testRemoveWindowsSlashesFromCache method
  *
- * @access public
  * @return void
  */
 	public function testRemoveWindowsSlashesFromCache() {
@@ -310,7 +299,6 @@ class FileEngineTest extends CakeTestCase {
 /**
  * testWriteQuotedString method
  *
- * @access public
  * @return void
  */
 	public function testWriteQuotedString() {

@@ -258,27 +258,27 @@ class Multibyte {
  *
  * @var array
  */
-	private static $__caseFold = array();
+	protected static $_caseFold = array();
 
 /**
  * Holds an array of Unicode code point ranges
  *
  * @var array
  */
-	private static $__codeRange = array();
+	protected static $_codeRange = array();
 
 /**
  * Holds the current code point range
  *
  * @var string
  */
-	private static $__table = null;
+	protected static $_table = null;
 
 /**
  * Converts a multibyte character string
  * to the decimal value of the character
  *
- * @param multibyte string $string
+ * @param string $string
  * @return array
  */
 	public static function utf8($string) {
@@ -341,8 +341,8 @@ class Multibyte {
 /**
  * Find position of first occurrence of a case-insensitive string.
  *
- * @param multi-byte string $haystack The string from which to get the position of the first occurrence of $needle.
- * @param multi-byte string $needle The string to find in $haystack.
+ * @param string $haystack The string from which to get the position of the first occurrence of $needle.
+ * @param string $needle The string to find in $haystack.
  * @param integer $offset The position in $haystack to start searching.
  * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string,
  *    or false if $needle is not found.
@@ -365,7 +365,7 @@ class Multibyte {
  *    If set to true, it returns all of $haystack from the beginning to the first occurrence of $needle.
  *    If set to false, it returns all of $haystack from the first occurrence of $needle to the end,
  *    Default value is false.
- * @return int|boolean The portion of $haystack, or false if $needle is not found.
+ * @return integer|boolean The portion of $haystack, or false if $needle is not found.
  */
 	public static function stristr($haystack, $needle, $part = false) {
 		$php = (PHP_VERSION < 5.3);
@@ -780,7 +780,7 @@ class Multibyte {
 				$matched = true;
 			} else {
 				$matched = false;
-				$keys = self::__find($char, 'upper');
+				$keys = self::_find($char, 'upper');
 
 				if (!empty($keys)) {
 					foreach ($keys as $key => $value) {
@@ -803,10 +803,7 @@ class Multibyte {
  * Make a string uppercase
  *
  * @param string $string The string being uppercased.
- * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string with all alphabetic characters converted to uppercase.
- * @access public
- * @static
  */
 	public static function strtoupper($string) {
 		$utf8Map = Multibyte::utf8($string);
@@ -829,7 +826,7 @@ class Multibyte {
 
 			} else {
 				$matched = false;
-				$keys = self::__find($char);
+				$keys = self::_find($char);
 				$keyCount = count($keys);
 
 				if (!empty($keys)) {
@@ -1006,10 +1003,10 @@ class Multibyte {
 /**
  * Return the Code points range for Unicode characters
  *
- * @param interger $decimal
+ * @param integer $decimal
  * @return string
  */
-	private static function __codepoint($decimal) {
+	protected static function _codepoint($decimal) {
 		if ($decimal > 128 && $decimal < 256)  {
 			$return = '0080_00ff'; // Latin-1 Supplement
 		} elseif ($decimal < 384) {
@@ -1047,7 +1044,7 @@ class Multibyte {
 		} else {
 			$return = false;
 		}
-		self::$__codeRange[$decimal] = $return;
+		self::$_codeRange[$decimal] = $return;
 		return $return;
 	}
 
@@ -1058,10 +1055,10 @@ class Multibyte {
  * @param string $type
  * @return array
  */
-	private static function __find($char, $type = 'lower') {
+	protected static function _find($char, $type = 'lower') {
 		$found = array();
-		if (!isset(self::$__codeRange[$char])) {
-			$range = self::__codepoint($char);
+		if (!isset(self::$_codeRange[$char])) {
+			$range = self::_codepoint($char);
 			if ($range === false) {
 				return null;
 			}
@@ -1070,21 +1067,21 @@ class Multibyte {
 				Configure::config('_cake_core_', new PhpReader(CAKE . 'Config' . DS));
 			}
 			Configure::load('unicode' . DS . 'casefolding' . DS . $range, '_cake_core_');
-			self::$__caseFold[$range] = Configure::read($range);
+			self::$_caseFold[$range] = Configure::read($range);
 			Configure::delete($range);
 		}
 
-		if (!self::$__codeRange[$char]) {
+		if (!self::$_codeRange[$char]) {
 			return null;
 		}
-		self::$__table = self::$__codeRange[$char];
-		$count = count(self::$__caseFold[self::$__table]);
+		self::$_table = self::$_codeRange[$char];
+		$count = count(self::$_caseFold[self::$_table]);
 
 		for ($i = 0; $i < $count; $i++) {
-			if ($type === 'lower' && self::$__caseFold[self::$__table][$i][$type][0] === $char) {
-				$found[] = self::$__caseFold[self::$__table][$i];
-			} elseif ($type === 'upper' && self::$__caseFold[self::$__table][$i][$type] === $char) {
-				$found[] = self::$__caseFold[self::$__table][$i];
+			if ($type === 'lower' && self::$_caseFold[self::$_table][$i][$type][0] === $char) {
+				$found[] = self::$_caseFold[self::$_table][$i];
+			} elseif ($type === 'upper' && self::$_caseFold[self::$_table][$i][$type] === $char) {
+				$found[] = self::$_caseFold[self::$_table][$i];
 			}
 		}
 		return $found;

@@ -28,14 +28,12 @@ class UnderscoreFieldFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'UnderscoreField'
- * @access public
  */
 	public $name = 'UnderscoreField';
 	/**
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class UnderscoreFieldFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('user_id' => 1, 'my_model_has_a_field' => 'First Article', 'body_field' => 'First Article Body', 'published' => 'Y', 'another_field' => 2),

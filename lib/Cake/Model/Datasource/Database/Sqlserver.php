@@ -109,13 +109,6 @@ class Sqlserver extends DboSource {
 	);
 
 /**
- * Define if the last query had error
- *
- * @var string
- */
-	private $__lastQueryHadError = false;
-
-/**
  * Magic column name used to provide pagination support for SQLServer 2008
  * which lacks proper limit/offset support.
  */
@@ -133,6 +126,7 @@ class Sqlserver extends DboSource {
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
+ * @throws MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;
@@ -169,9 +163,10 @@ class Sqlserver extends DboSource {
 /**
  * Returns an array of sources (tables) in the database.
  *
+ * @param mixed $data
  * @return array Array of tablenames in the database
  */
-	public function listSources() {
+	public function listSources($data = null) {
 		$cache = parent::listSources();
 		if ($cache !== null) {
 			return $cache;
@@ -199,8 +194,9 @@ class Sqlserver extends DboSource {
  *
  * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
+ * @throws CakeException
  */
-	public function describe($model) {
+	public function describe(Model $model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -208,15 +204,15 @@ class Sqlserver extends DboSource {
 		$fields = array();
 		$table = $this->fullTableName($model, false);
 		$cols = $this->_execute(
-			"SELECT 
+			"SELECT
 				COLUMN_NAME as Field,
-				DATA_TYPE as Type, 
-				COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, 
-				IS_NULLABLE As [Null], 
-				COLUMN_DEFAULT as [Default], 
+				DATA_TYPE as Type,
+				COL_LENGTH('" . $table . "', COLUMN_NAME) as Length,
+				IS_NULLABLE As [Null],
+				COLUMN_DEFAULT as [Default],
 				COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key],
-				NUMERIC_SCALE as Size 
-			FROM INFORMATION_SCHEMA.COLUMNS 
+				NUMERIC_SCALE as Size
+			FROM INFORMATION_SCHEMA.COLUMNS
 			WHERE TABLE_NAME = '" . $table . "'"
 		);
 		if (!$cols) {
@@ -251,7 +247,7 @@ class Sqlserver extends DboSource {
 				$fields[$field]['length'] = $fields[$field]['length'] . ',' . $column->Size;
 			}
 		}
-		$this->__cacheDescription($table, $fields);
+		$this->_cacheDescription($table, $fields);
 		$cols->closeCursor();
 		return $fields;
 	}
@@ -262,7 +258,8 @@ class Sqlserver extends DboSource {
  *
  * @param Model $model
  * @param string $alias Alias tablename
- * @param mixed $fields
+ * @param array $fields
+ * @param boolean $quote
  * @return array
  */
 	public function fields($model, $alias = null, $fields = array(), $quote = true) {
@@ -327,10 +324,9 @@ class Sqlserver extends DboSource {
  * @param Model $model
  * @param array $fields
  * @param array $values
- * @param mixed $conditions
  * @return array
  */
-	public function create($model, $fields = null, $values = null) {
+	public function create(Model $model, $fields = null, $values = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -360,7 +356,7 @@ class Sqlserver extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	public function update($model, $fields = array(), $values = null, $conditions = null) {
+	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if (!empty($values)) {
 			$fields = array_combine($fields, $values);
 		}
@@ -464,6 +460,7 @@ class Sqlserver extends DboSource {
  * Builds a map of the columns contained in a result
  *
  * @param PDOStatement $results
+ * @return void
  */
 	public function resultSet($results) {
 		$this->map = array();
@@ -589,11 +586,12 @@ class Sqlserver extends DboSource {
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *
- * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
+ * @param Model $model
+ * @param array $queryData
+ * @param integer $recursive
  * @return array Array of resultset rows, or false if no rows matched
  */
-	public function read($model, $queryData = array(), $recursive = null) {
+	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
 		$this->_fieldMappings = array();
 		return $results;
@@ -630,6 +628,7 @@ class Sqlserver extends DboSource {
  * @param string $table
  * @param string $fields
  * @param array $values
+ * @return void
  */
 	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
@@ -730,9 +729,10 @@ class Sqlserver extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
+ * @param mixed $source
  * @return integer Number of affected rows
  */
-	public function lastAffected() {
+	public function lastAffected($source = null) {
 		$affected = parent::lastAffected();
 		if ($affected === null && $this->_lastAffected !== false) {
 			return $this->_lastAffected;

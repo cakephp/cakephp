@@ -36,8 +36,7 @@ class AclComponent extends Component {
 /**
  * Instance of an ACL class
  *
- * @var object
- * @access protected
+ * @var AclInterface
  */
 	protected $_Instance = null;
 
@@ -58,6 +57,8 @@ class AclComponent extends Component {
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
+ * @param ComponentCollection $collection
+ * @param array $settings
  * @throws CakeException when Acl.classname could not be loaded.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
@@ -262,7 +263,7 @@ class DbAcl extends Object implements AclInterface {
  * Constructor
  *
  */
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		App::uses('AclNode', 'Model');
 		$this->Aro = ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));
@@ -424,7 +425,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  * @link http://book.cakephp.org/view/1248/Assigning-Permissions
  */
@@ -437,7 +438,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  */
 	public function inherit($aro, $aco, $action = "*") {
@@ -449,7 +450,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  * @see allow()
  */
@@ -462,7 +463,7 @@ class DbAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $action Action (defaults to *)
  * @return boolean Success
  * @see deny()
  */
@@ -526,7 +527,6 @@ class IniAcl extends Object implements AclInterface {
  * Array with configuration, parsed from ini file
  *
  * @var array
- * @access public
  */
 	public $config = null;
 

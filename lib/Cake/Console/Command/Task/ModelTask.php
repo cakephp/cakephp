@@ -66,6 +66,7 @@ class ModelTask extends BakeTask {
 /**
  * Override initialize
  *
+ * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('Model'));
@@ -74,6 +75,7 @@ class ModelTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @return void
  */
 	public function execute() {
 		parent::execute();
@@ -127,7 +129,8 @@ class ModelTask extends BakeTask {
  * Get a model object for a class name.
  *
  * @param string $className Name of class you want model to be.
- * @return object Model instance
+ * @param string $table Table name
+ * @return Model Model instance
  */
 	protected function &_getModelObject($className, $table = null) {
 		if (!$table) {
@@ -143,7 +146,7 @@ class ModelTask extends BakeTask {
  * @param array $options Array of options to use for the selections. indexes must start at 0
  * @param string $prompt Prompt to use for options list.
  * @param integer $default The default option for the given prompt.
- * @return result of user choice.
+ * @return integer result of user choice.
  */
 	public function inOptions($options, $prompt = null, $default = null) {
 		$valid = false;
@@ -166,6 +169,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles interactive baking
  *
+ * @return boolean
  */
 	protected function _interactive() {
 		$this->hr();
@@ -308,7 +312,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles Generation and user interaction for creating validation.
  *
- * @param object $model Model to have validations generated for.
+ * @param Model $model Model to have validations generated for.
  * @return array $validate Array of user selected validations.
  */
 	public function doValidation($model) {
@@ -359,6 +363,7 @@ class ModelTask extends BakeTask {
  *
  * @param string $fieldName Name of field to be validated.
  * @param array $metaData metadata for field
+ * @param string $primaryKey
  * @return array Array of validation for the field.
  */
 	public function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
@@ -443,7 +448,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles associations
  *
- * @param object $model
+ * @param Model $model
  * @return array $assocaitons
  */
 	public function doAssociations($model) {
@@ -492,7 +497,7 @@ class ModelTask extends BakeTask {
 /**
  * Find belongsTo relations and add them to the associations list.
  *
- * @param object $model Model instance of model being generated.
+ * @param Model $model Model instance of model being generated.
  * @param array $associations Array of inprogress associations
  * @return array $associations with belongsTo added in.
  */
@@ -521,7 +526,7 @@ class ModelTask extends BakeTask {
 /**
  * Find the hasOne and HasMany relations and add them to associations list
  *
- * @param object $model Model instance being generated
+ * @param Model $model Model instance being generated
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasOne and hasMany added in.
  */
@@ -564,7 +569,7 @@ class ModelTask extends BakeTask {
 /**
  * Find the hasAndBelongsToMany relations and add them to associations list
  *
- * @param object $model Model instance being generated
+ * @param Model $model Model instance being generated
  * @param array $associations Array of in-progress associations
  * @return array $associations with hasAndBelongsToMany added in.
  */
@@ -630,7 +635,7 @@ class ModelTask extends BakeTask {
 /**
  * Interact with the user and generate additional non-conventional associations
  *
- * @param object $model Temporary model instance
+ * @param Model $model Temporary model instance
  * @param array $associations Array of associations.
  * @return array Array of associations.
  */
@@ -717,6 +722,7 @@ class ModelTask extends BakeTask {
  *
  * @param mixed $name Model name or object
  * @param mixed $data if array and $name is not an object assume bake data, otherwise boolean.
+ * @return string
  */
 	public function bake($name, $data = array()) {
 		if (is_object($name)) {
@@ -752,6 +758,7 @@ class ModelTask extends BakeTask {
  * Assembles and writes a unit test file
  *
  * @param string $className Model class name
+ * @return string
  */
 	public function bakeTest($className) {
 		$this->Test->interactive = $this->interactive;
@@ -764,6 +771,7 @@ class ModelTask extends BakeTask {
  * outputs the a list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
+ * @return array
  */
 	public function listAll($useDbConfig = null) {
 		$this->_tables = $this->getAllTables($useDbConfig);
@@ -843,6 +851,7 @@ class ModelTask extends BakeTask {
 /**
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
+ * @param string $useDbConfig Database config name
  * @return string the model name
  */
 	public function getName($useDbConfig = null) {

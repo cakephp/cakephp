@@ -59,6 +59,7 @@ class Configure {
  * - Include app/Config/bootstrap.php.
  * - Setup error/exception handlers.
  *
+ * @param boolean $boot
  * @return void
  */
 	public static function bootstrap($boot = true) {
@@ -246,6 +247,7 @@ class Configure {
 /**
  * Gets the names of the configured reader objects.
  *
+ * @param string $name
  * @return array Array of the configured reader objects.
  */
 	public static function configured($name = null) {

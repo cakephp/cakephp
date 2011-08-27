@@ -4,14 +4,15 @@
  *
  * PHP 5
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc.
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
+ * @package       Cake.Console.Command
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -75,7 +76,7 @@ class CommandListShell extends Shell {
 /**
  * Gets the shell command listing.
  *
- * @return array 
+ * @return array
  */
 	protected function _getShellList() {
 		$shellList = array();
@@ -98,6 +99,9 @@ class CommandListShell extends Shell {
 /**
  * Scan the provided paths for shells, and append them into $shellList
  *
+ * @param string $type
+ * @param array $shells
+ * @param array $shellList
  * @return array
  */
 	protected function _appendShells($type, $shells, $shellList) {
@@ -111,6 +115,7 @@ class CommandListShell extends Shell {
 /**
  * Output text.
  *
+ * @param array $shellList
  * @return void
  */
 	protected function _asText($shellList) {
@@ -146,6 +151,7 @@ class CommandListShell extends Shell {
 /**
  * Generates the shell list sorted by where the shells are found.
  *
+ * @param array $shellList
  * @return void
  */
 	protected function _asSorted($shellList) {
@@ -184,6 +190,7 @@ class CommandListShell extends Shell {
 /**
  * Output as XML
  *
+ * @param array $shellList
  * @return void
  */
 	protected function _asXml($shellList) {

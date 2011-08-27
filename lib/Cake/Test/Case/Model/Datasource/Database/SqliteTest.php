@@ -31,7 +31,6 @@ class DboSqliteTestDb extends Sqlite {
  * simulated property
  *
  * @var array
- * @access public
  */
 	public $simulated = array();
 
@@ -39,7 +38,6 @@ class DboSqliteTestDb extends Sqlite {
  * execute method
  *
  * @param mixed $sql
- * @access protected
  * @return void
  */
 	function _execute($sql, $params = array()) {
@@ -50,7 +48,6 @@ class DboSqliteTestDb extends Sqlite {
 /**
  * getLastQuery method
  *
- * @access public
  * @return void
  */
 	public function getLastQuery() {
@@ -69,7 +66,6 @@ class DboSqliteTest extends CakeTestCase {
  * Do not automatically load fixtures for each test, they will be loaded manually using CakeTestCase::loadFixtures
  *
  * @var boolean
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -77,7 +73,6 @@ class DboSqliteTest extends CakeTestCase {
  * Fixtures
  *
  * @var object
- * @access public
  */
 	public $fixtures = array('core.user');
 
@@ -85,7 +80,6 @@ class DboSqliteTest extends CakeTestCase {
  * Actual DB connection used in testing
  *
  * @var DboSource
- * @access public
  */
 	public $Dbo = null;
 
@@ -127,7 +121,6 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * test Index introspection.
  *
- * @access public
  * @return void
  */
 	public function testIndex() {

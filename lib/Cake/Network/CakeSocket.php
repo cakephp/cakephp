@@ -31,7 +31,6 @@ class CakeSocket {
  * Object description
  *
  * @var string
- * @access public
  */
 	public $description = 'Remote DataSource Network Socket Interface';
 
@@ -39,7 +38,6 @@ class CakeSocket {
  * Base configuration settings for the socket connection
  *
  * @var array
- * @access protected
  */
 	protected $_baseConfig = array(
 		'persistent'	=> false,
@@ -53,7 +51,6 @@ class CakeSocket {
  * Configuration settings for the socket connection
  *
  * @var array
- * @access public
  */
 	public $config = array();
 
@@ -61,7 +58,6 @@ class CakeSocket {
  * Reference to socket connection resource
  *
  * @var resource
- * @access public
  */
 	public $connection = null;
 
@@ -69,7 +65,6 @@ class CakeSocket {
  * This boolean contains the current state of the CakeSocket class
  *
  * @var boolean
- * @access public
  */
 	public $connected = false;
 
@@ -77,7 +72,6 @@ class CakeSocket {
  * This variable contains an array with the last error number (num) and string (str)
  *
  * @var array
- * @access public
  */
 	public $lastError = array();
 
@@ -256,7 +250,6 @@ class CakeSocket {
 /**
  * Destructor, used to disconnect from current connection.
  *
- * @access private
  */
 	public function __destruct() {
 		$this->disconnect();

@@ -35,7 +35,6 @@ class DboOracleTest extends CakeTestCase {
 /**
  * setup method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -48,7 +47,6 @@ class DboOracleTest extends CakeTestCase {
 /**
  * testLastErrorStatement method
  *
- * @access public
  * @return void
  */
 	public function testLastErrorStatement() {
@@ -62,7 +60,6 @@ class DboOracleTest extends CakeTestCase {
 /**
  * testLastErrorConnect method
  *
- * @access public
  * @return void
  */
 	public function testLastErrorConnect() {
@@ -80,7 +77,6 @@ class DboOracleTest extends CakeTestCase {
 /**
  * testName method
  *
- * @access public
  * @return void
  */
 	public function testName() {

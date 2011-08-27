@@ -28,7 +28,6 @@ class DataSource extends Object {
  * Are we connected to the DataSource?
  *
  * @var boolean
- * @access public
  */
 	public $connected = false;
 
@@ -36,7 +35,6 @@ class DataSource extends Object {
  * The default configuration of a specific DataSource
  *
  * @var array
- * @access protected
  */
 	protected $_baseConfig = array();
 
@@ -44,15 +42,13 @@ class DataSource extends Object {
  * Holds references to descriptions loaded by the DataSource
  *
  * @var array
- * @access private
  */
-	private $__descriptions = array();
+	protected $_descriptions = array();
 
 /**
  * Holds a list of sources (tables) contained in the DataSource
  *
  * @var array
- * @access protected
  */
 	protected $_sources = null;
 
@@ -60,7 +56,6 @@ class DataSource extends Object {
  * The DataSource configuration
  *
  * @var array
- * @access public
  */
 	public $config = array();
 
@@ -68,7 +63,6 @@ class DataSource extends Object {
  * Whether or not this DataSource is in the middle of a transaction
  *
  * @var boolean
- * @access protected
  */
 	protected $_transactionStarted = false;
 
@@ -77,7 +71,6 @@ class DataSource extends Object {
  * should be cached
  *
  * @var boolean
- * @access public
  */
 	public $cacheSources = true;
 
@@ -85,7 +78,6 @@ class DataSource extends Object {
  * Constructor.
  *
  * @param array $config Array of configuration information for the datasource.
- * @return void.
  */
 	public function __construct($config = array()) {
 		parent::__construct();
@@ -131,13 +123,13 @@ class DataSource extends Object {
 		}
 		$table = $model->tablePrefix . $model->table;
 
-		if (isset($this->__descriptions[$table])) {
-			return $this->__descriptions[$table];
+		if (isset($this->_descriptions[$table])) {
+			return $this->_descriptions[$table];
 		}
-		$cache = $this->__cacheDescription($table);
+		$cache = $this->_cacheDescription($table);
 
 		if ($cache !== null) {
-			$this->__descriptions[$table] =& $cache;
+			$this->_descriptions[$table] =& $cache;
 			return $cache;
 		}
 		return null;
@@ -228,6 +220,7 @@ class DataSource extends Object {
  *
  * @param Model $model The model class having record(s) deleted
  * @param mixed $id Primary key of the model
+ * @return void
  */
 	public function delete(Model $model, $id = null) {
 		if ($id == null) {
@@ -238,7 +231,7 @@ class DataSource extends Object {
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @param unknown_type $source
+ * @param mixed $source
  * @return mixed Last ID key generated in previous INSERT
  */
 	public function lastInsertId($source = null) {
@@ -248,7 +241,7 @@ class DataSource extends Object {
 /**
  * Returns the number of rows returned by last operation.
  *
- * @param unknown_type $source
+ * @param mixed $source
  * @return integer Number of rows returned by last operation
  */
 	public function lastNumRows($source = null) {
@@ -258,7 +251,7 @@ class DataSource extends Object {
 /**
  * Returns the number of rows affected by last query.
  *
- * @param unknown_type $source
+ * @param mixed $source
  * @return integer Number of rows affected by last query.
  */
 	public function lastAffected($source = null) {
@@ -293,15 +286,14 @@ class DataSource extends Object {
  * @param string $object The name of the object (model) to cache
  * @param mixed $data The description of the model, usually a string or array
  * @return mixed
- * @access private
  */
-	function __cacheDescription($object, $data = null) {
+	protected function _cacheDescription($object, $data = null) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
 
 		if ($data !== null) {
-			$this->__descriptions[$object] =& $data;
+			$this->_descriptions[$object] =& $data;
 		}
 
 		$key = ConnectionManager::getSourceName($this) . '_' . $object;
@@ -321,12 +313,11 @@ class DataSource extends Object {
  * @param string $query Query string needing replacements done.
  * @param array $data Array of data with values that will be inserted in placeholders.
  * @param string $association Name of association model being replaced
- * @param unknown_type $assocData
+ * @param array $assocData
  * @param Model $model Instance of the model to replace $__cakeID__$
  * @param Model $linkModel Instance of model to replace $__cakeForeignKey__$
  * @param array $stack
  * @return string String of query data with placeholders replaced.
- * @access public
  * @todo Remove and refactor $assocData, ensure uses of the method have the param removed too.
  */
 	public function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {
@@ -416,7 +407,6 @@ class DataSource extends Object {
 /**
  * Closes the current datasource.
  *
- * @return void
  */
 	public function __destruct() {
 		if ($this->_transactionStarted) {

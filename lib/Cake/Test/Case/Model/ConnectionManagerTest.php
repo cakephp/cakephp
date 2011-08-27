@@ -37,7 +37,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testEnumConnectionObjects method
  *
- * @access public
  * @return void
  */
 	public function testEnumConnectionObjects() {
@@ -51,7 +50,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testGetDataSource method
  *
- * @access public
  * @return void
  */
 	public function testGetDataSource() {
@@ -86,7 +84,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testGetPluginDataSource method
  *
- * @access public
  * @return void
  */
 	public function testGetPluginDataSource() {
@@ -108,7 +105,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testGetPluginDataSourceAndPluginDriver method
  *
- * @access public
  * @return void
  */
 	public function testGetPluginDataSourceAndPluginDriver() {
@@ -132,7 +128,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testGetLocalDataSourceAndPluginDriver method
  *
- * @access public
  * @return void
  */
 	public function testGetLocalDataSourceAndPluginDriver() {
@@ -155,7 +150,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testGetPluginDataSourceAndLocalDriver method
  *
- * @access public
  * @return void
  */
 	public function testGetPluginDataSourceAndLocalDriver() {
@@ -181,7 +175,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testSourceList method
  *
- * @access public
  * @return void
  */
 	public function testSourceList() {
@@ -194,7 +187,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testGetSourceName method
  *
- * @access public
  * @return void
  */
 	public function testGetSourceName() {
@@ -212,7 +204,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testLoadDataSource method
  *
- * @access public
  * @return void
  */
 	public function testLoadDataSource() {
@@ -243,7 +234,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testCreateDataSource method
  *
- * @access public
  * @return void
  */
 	public function testCreateDataSourceWithIntegrationTests() {
@@ -276,7 +266,6 @@ class ConnectionManagerTest extends CakeTestCase {
 /**
  * testConnectionData method
  *
- * @access public
  * @return void
  */
 	public function testConnectionData() {

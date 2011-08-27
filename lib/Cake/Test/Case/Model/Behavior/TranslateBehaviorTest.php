@@ -35,7 +35,6 @@ class TranslateBehaviorTest extends CakeTestCase {
  * autoFixtures property
  *
  * @var bool false
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -43,7 +42,6 @@ class TranslateBehaviorTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.translated_item', 'core.translate', 'core.translate_table',
@@ -54,7 +52,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -64,7 +61,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testTranslateModel method
  *
- * @access public
  * @return void
  */
 	public function testTranslateModel() {
@@ -96,7 +92,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testLocaleFalsePlain method
  *
- * @access public
  * @return void
  */
 	public function testLocaleFalsePlain() {
@@ -121,7 +116,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testLocaleFalseAssociations method
  *
- * @access public
  * @return void
  */
 	public function testLocaleFalseAssociations() {
@@ -176,7 +170,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testLocaleSingle method
  *
- * @access public
  * @return void
  */
 	public function testLocaleSingle() {
@@ -233,7 +226,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testLocaleSingleWithConditions method
  *
- * @access public
  * @return void
  */
 	public function testLocaleSingleWithConditions() {
@@ -273,7 +265,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testLocaleSingleAssociations method
  *
- * @access public
  * @return void
  */
 	public function testLocaleSingleAssociations() {
@@ -334,7 +325,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testLocaleMultiple method
  *
- * @access public
  * @return void
  */
 	public function testLocaleMultiple() {
@@ -390,7 +380,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testMissingTranslation method
  *
- * @access public
  * @return void
  */
 	public function testMissingTranslation() {
@@ -418,7 +407,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testTranslatedFindList method
  *
- * @access public
  * @return void
  */
 	public function testTranslatedFindList() {
@@ -452,7 +440,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testReadSelectedFields method
  *
- * @access public
  * @return void
  */
 	public function testReadSelectedFields() {
@@ -488,7 +475,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testSaveCreate method
  *
- * @access public
  * @return void
  */
 	public function testSaveCreate() {
@@ -507,7 +493,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testSaveUpdate method
  *
- * @access public
  * @return void
  */
 	public function testSaveUpdate() {
@@ -530,7 +515,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testMultipleCreate method
  *
- * @access public
  * @return void
  */
 	public function testMultipleCreate() {
@@ -569,7 +553,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testMultipleUpdate method
  *
- * @access public
  * @return void
  */
 	public function testMultipleUpdate() {
@@ -612,7 +595,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testMixedCreateUpdateWithArrayLocale method
  *
- * @access public
  * @return void
  */
 	public function testMixedCreateUpdateWithArrayLocale() {
@@ -654,7 +636,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testValidation method
  *
- * @access public
  * @return void
  */
 	public function testValidation() {
@@ -687,7 +668,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testAttachDetach method
  *
- * @access public
  * @return void
  */
 	public function testAttachDetach() {
@@ -737,7 +717,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testAnotherTranslateTable method
  *
- * @access public
  * @return void
  */
 	public function testAnotherTranslateTable() {
@@ -761,7 +740,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * testTranslateWithAssociations method
  *
- * @access public
  * @return void
  */
 	public function testTranslateWithAssociations() {
@@ -855,7 +833,6 @@ class TranslateBehaviorTest extends CakeTestCase {
  * testTranslateTableWithPrefix method
  * Tests that is possible to have a translation model with a custom tablePrefix
  *
- * @access public
  * @return void
  */
 	public function testTranslateTableWithPrefix() {

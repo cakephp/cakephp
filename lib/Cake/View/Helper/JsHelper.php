@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
- * @since         CakePHP v 1.2
+ * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -28,13 +28,14 @@ App::uses('Multibyte', 'I18n');
  * given client-side library.
  *
  * @package       Cake.View.Helper
+ * @property      HtmlHelper $Html
+ * @property      FormHelper $Form
  */
 class JsHelper extends AppHelper {
 /**
  * Whether or not you want scripts to be buffered or output.
  *
  * @var boolean
- * @access public
  */
 	public $bufferScripts = true;
 
@@ -42,7 +43,6 @@ class JsHelper extends AppHelper {
  * helpers
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Html', 'Form');
 
@@ -51,32 +51,28 @@ class JsHelper extends AppHelper {
  *
  * @var array
  * @see JsHelper::set()
- * @access private
  */
-	private $__jsVars = array();
+	protected $_jsVars = array();
 
 /**
  * Scripts that are queued for output
  *
  * @var array
  * @see JsHelper::buffer()
- * @access private
  */
-	private $__bufferedScripts = array();
+	protected $_bufferedScripts = array();
 
 /**
  * Current Javascript Engine that is being used
  *
  * @var string
- * @access private
  */
-	private $__engineName;
+	protected $_engineName;
 
 /**
  * The javascript variable created by set() variables.
  *
  * @var string
- * @access public
  */
 	public $setVariable = APP_DIR;
 
@@ -96,7 +92,7 @@ class JsHelper extends AppHelper {
 		$engineName = $className;
 		list($plugin, $className) = pluginSplit($className);
 
-		$this->__engineName = $className . 'Engine';
+		$this->_engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';
 		$this->helpers[] = $engineClass;
 		parent::__construct($View, $settings);
@@ -122,9 +118,9 @@ class JsHelper extends AppHelper {
  * @return mixed Depends on the return of the dispatched method, or it could be an instance of the EngineHelper
  */
 	public function __call($method, $params) {
-		if ($this->{$this->__engineName} && method_exists($this->{$this->__engineName}, $method)) {
+		if ($this->{$this->_engineName} && method_exists($this->{$this->_engineName}, $method)) {
 			$buffer = false;
-			$engineHelper = $this->{$this->__engineName};
+			$engineHelper = $this->{$this->_engineName};
 			if (in_array(strtolower($method), $engineHelper->bufferedMethods)) {
 				$buffer = true;
 			}
@@ -161,12 +157,11 @@ class JsHelper extends AppHelper {
  * See JsBaseEngineHelper::value() for more information on this method.
  *
  * @param mixed $val A PHP variable to be converted to JSON
- * @param boolean $quoteStrings If false, leaves string values unquoted
+ * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
- * @access public
  **/
 	public function value($val, $quoteString = true) {
-		return $this->{$this->__engineName}->value($val, $quoteString);
+		return $this->{$this->_engineName}->value($val, $quoteString);
 	}
 
 /**
@@ -191,7 +186,7 @@ class JsHelper extends AppHelper {
 	public function writeBuffer($options = array()) {
 		$domReady = $this->request->is('ajax');
 		$defaults = array(
-			'onDomReady' => $domReady, 'inline' => true, 
+			'onDomReady' => $domReady, 'inline' => true,
 			'cache' => false, 'clear' => true, 'safe' => true
 		);
 		$options = array_merge($defaults, $options);
@@ -202,7 +197,7 @@ class JsHelper extends AppHelper {
 		}
 
 		if ($options['onDomReady']) {
-			$script = $this->{$this->__engineName}->domReady($script);
+			$script = $this->{$this->_engineName}->domReady($script);
 		}
 		$opts = $options;
 		unset($opts['onDomReady'], $opts['cache'], $opts['clear']);
@@ -226,15 +221,15 @@ class JsHelper extends AppHelper {
  * Write a script to the buffered scripts.
  *
  * @param string $script Script string to add to the buffer.
- * @param boolean $top If true the script will be added to the top of the 
+ * @param boolean $top If true the script will be added to the top of the
  *   buffered scripts array.  If false the bottom.
  * @return void
  */
 	public function buffer($script, $top = false) {
 		if ($top) {
-			array_unshift($this->__bufferedScripts, $script);
+			array_unshift($this->_bufferedScripts, $script);
 		} else {
-			$this->__bufferedScripts[] = $script;
+			$this->_bufferedScripts[] = $script;
 		}
 	}
 
@@ -246,10 +241,10 @@ class JsHelper extends AppHelper {
  */
 	public function getBuffer($clear = true) {
 		$this->_createVars();
-		$scripts = $this->__bufferedScripts;
+		$scripts = $this->_bufferedScripts;
 		if ($clear) {
-			$this->__bufferedScripts = array();
-			$this->__jsVars = array();
+			$this->_bufferedScripts = array();
+			$this->_jsVars = array();
 		}
 		return $scripts;
 	}
@@ -260,9 +255,9 @@ class JsHelper extends AppHelper {
  * @return string Generated JSON object of all set vars
  */
 	protected function _createVars() {
-		if (!empty($this->__jsVars)) {
+		if (!empty($this->_jsVars)) {
 			$setVar = (strpos($this->setVariable, '.')) ? $this->setVariable : 'window.' . $this->setVariable;
-			$this->buffer($setVar . ' = ' . $this->object($this->__jsVars) . ';', true);
+			$this->buffer($setVar . ' = ' . $this->object($this->_jsVars) . ';', true);
 		}
 	}
 
@@ -335,7 +330,7 @@ class JsHelper extends AppHelper {
 		if ($data == null) {
 			return false;
 		}
-		$this->__jsVars = array_merge($this->__jsVars, $data);
+		$this->_jsVars = array_merge($this->_jsVars, $data);
 	}
 
 /**
@@ -347,14 +342,14 @@ class JsHelper extends AppHelper {
  * and require an iframe or flash.
  *
  * ### Options
- * 
+ *
  * - `url` The url you wish the XHR request to submit to.
  * - `confirm` A string to use for a confirm() message prior to submitting the request.
  * - `method` The method you wish the form to send by, defaults to POST
  * - `buffer` Whether or not you wish the script code to be buffered, defaults to true.
  * - Also see options for JsHelper::request() and JsHelper::event()
  *
- * @param string $title The display text of the submit button.
+ * @param string $caption The display text of the submit button.
  * @param array $options Array of options to use. See the options for the above mentioned methods.
  * @return string Completed submit button.
  */
@@ -408,7 +403,7 @@ class JsHelper extends AppHelper {
  */
 	protected function _getHtmlOptions($options, $additional = array()) {
 		$htmlKeys = array_merge(
-			array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title', 'style'), 
+			array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title', 'style'),
 			$additional
 		);
 		$htmlOptions = array();

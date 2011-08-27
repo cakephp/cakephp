@@ -34,7 +34,6 @@ class PaginatorTestController extends Controller {
  * name property
  *
  * @var string 'PaginatorTest'
- * @access public
  */
 	public $name = 'PaginatorTest';
 
@@ -42,7 +41,6 @@ class PaginatorTestController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	//public $uses = null;
 
@@ -50,7 +48,6 @@ class PaginatorTestController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Paginator');
 }
@@ -66,7 +63,6 @@ class PaginatorControllerPost extends CakeTestModel {
  * name property
  *
  * @var string 'PaginatorControllerPost'
- * @access public
  */
 	public $name = 'PaginatorControllerPost';
 
@@ -74,7 +70,6 @@ class PaginatorControllerPost extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'posts';
 
@@ -82,7 +77,6 @@ class PaginatorControllerPost extends CakeTestModel {
  * invalidFields property
  *
  * @var array
- * @access public
  */
 	public $invalidFields = array('name' => 'error_msg');
 
@@ -97,7 +91,6 @@ class PaginatorControllerPost extends CakeTestModel {
  * beforeFind method
  *
  * @param mixed $query
- * @access public
  * @return void
  */
 	public function beforeFind($query) {
@@ -109,7 +102,6 @@ class PaginatorControllerPost extends CakeTestModel {
  *
  * @param mixed $type
  * @param array $options
- * @access public
  * @return void
  */
 	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
@@ -133,7 +125,6 @@ class ControllerPaginateModel extends CakeTestModel {
  * name property
  *
  * @var string 'ControllerPaginateModel'
- * @access public
  */
 	public $name = 'ControllerPaginateModel';
 
@@ -141,7 +132,6 @@ class ControllerPaginateModel extends CakeTestModel {
  * useTable property
  *
  * @var string 'comments'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -157,7 +147,6 @@ class ControllerPaginateModel extends CakeTestModel {
 /**
  * paginateCount
  *
- * @access public
  * @return void
  */
 	public function paginateCount($conditions, $recursive, $extra) {
@@ -176,7 +165,6 @@ class PaginatorControllerComment extends CakeTestModel {
  * name property
  *
  * @var string 'Comment'
- * @access public
  */
 	public $name = 'Comment';
 
@@ -184,7 +172,6 @@ class PaginatorControllerComment extends CakeTestModel {
  * useTable property
  *
  * @var string 'comments'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -192,7 +179,6 @@ class PaginatorControllerComment extends CakeTestModel {
  * alias property
  *
  * @var string 'PaginatorControllerComment'
- * @access public
  */
 	public $alias = 'PaginatorControllerComment';
 }
@@ -203,7 +189,6 @@ class PaginatorTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.post', 'core.comment');
 
@@ -226,7 +211,6 @@ class PaginatorTest extends CakeTestCase {
 /**
  * testPaginate method
  *
- * @access public
  * @return void
  */
 	public function testPaginate() {
@@ -340,7 +324,6 @@ class PaginatorTest extends CakeTestCase {
 /**
  * testPaginateExtraParams method
  *
- * @access public
  * @return void
  */
 	public function testPaginateExtraParams() {
@@ -462,7 +445,6 @@ class PaginatorTest extends CakeTestCase {
 /**
  * testDefaultPaginateParams method
  *
- * @access public
  * @return void
  */
 	public function testDefaultPaginateParams() {
@@ -727,7 +709,6 @@ class PaginatorTest extends CakeTestCase {
  * testPaginateMaxLimit
  *
  * @return void
- * @access public
  */
 	public function testPaginateMaxLimit() {
 		$Controller = new Controller($this->request);

@@ -24,10 +24,10 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * Auth must support cookies.
  *
  * ### Using Basic auth
- * 
+ *
  * In your controller's components array, add auth + the required settings.
  * {{{
- *	var $components = array(
+ *	public $components = array(
  *		'Auth' => array(
  *			'authenticate' => array('Basic')
  *		)
@@ -76,7 +76,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticate a user using basic HTTP auth.  Will use the configured User model and attempt a 
+ * Authenticate a user using basic HTTP auth.  Will use the configured User model and attempt a
  * login using basic HTTP auth.
  *
  * @param CakeRequest $request The request to authenticate with.
@@ -104,7 +104,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 	public function getUser($request) {
 		$username = env('PHP_AUTH_USER');
 		$pass = env('PHP_AUTH_PW');
-		
+
 		if (empty($username) || empty($pass)) {
 			return false;
 		}

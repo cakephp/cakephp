@@ -27,7 +27,7 @@ class TaskCollection extends ObjectCollection {
 /**
  * Shell to use to set params to tasks.
  *
- * @var array
+ * @var Shell
  */
 	protected $_Shell;
 
@@ -41,8 +41,7 @@ class TaskCollection extends ObjectCollection {
 /**
  * Constructor
  *
- * @param array $paths Array of paths to search for tasks on .
- * @return void
+ * @param Shell $Shell
  */
 	public function __construct(Shell $Shell) {
 		$this->_Shell = $Shell;
@@ -51,7 +50,7 @@ class TaskCollection extends ObjectCollection {
 /**
  * Loads/constructs a task.  Will return the instance in the collection
  * if it already exists.
- * 
+ *
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
  * @return Task A task object, Either the existing loaded task or a new one.

@@ -28,7 +28,6 @@ class CdFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Cd'
- * @access public
  */
 	public $name = 'Cd';
 
@@ -36,7 +35,6 @@ class CdFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class CdFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'title' => 'Grace', 'artist' => 'Jeff Buckley', 'genre' => 'awesome')

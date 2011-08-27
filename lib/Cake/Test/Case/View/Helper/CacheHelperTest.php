@@ -33,14 +33,12 @@ class CacheTestController extends Controller {
  * helpers property
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Html', 'Cache');
 
 /**
  * cache_parsing method
  *
- * @access public
  * @return void
  */
 	public function cache_parsing() {
@@ -71,7 +69,6 @@ class CacheHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -91,7 +88,6 @@ class CacheHelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -103,7 +99,6 @@ class CacheHelperTest extends CakeTestCase {
 /**
  * test cache parsing with no cake:nocache tags in view file.
  *
- * @access public
  * @return void
  */
 	public function testLayoutCacheParsingNoTagsInView() {
@@ -138,7 +133,6 @@ class CacheHelperTest extends CakeTestCase {
 /**
  * test cache parsing with non-latin characters in current route
  *
- * @access public
  * @return void
  */
 	public function testCacheNonLatinCharactersInRoute() {
@@ -165,7 +159,6 @@ class CacheHelperTest extends CakeTestCase {
 /**
  * Test cache parsing with cake:nocache tags in view file.
  *
- * @access public
  * @return void
  */
 	public function testLayoutCacheParsingWithTagsInView() {
@@ -294,7 +287,6 @@ class CacheHelperTest extends CakeTestCase {
 /**
  * test cache of view vars
  *
- * @access public
  * @return void
  */
 	public function testCacheViewVars() {

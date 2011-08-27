@@ -158,6 +158,7 @@ class HelpFormatter {
 /**
  * Iterate over a collection and find the longest named thing.
  *
+ * @param array $collection
  * @return integer
  */
 	protected function _getMaxLength($collection) {
@@ -179,7 +180,7 @@ class HelpFormatter {
 		$xml = new SimpleXmlElement('<shell></shell>');
 		$xml->addChild('command', $parser->command());
 		$xml->addChild('description', $parser->description());
-		
+
 		$xml->addChild('epilog', $parser->epilog());
 		$subcommands = $xml->addChild('subcommands');
 		foreach ($parser->subcommands() as $command) {

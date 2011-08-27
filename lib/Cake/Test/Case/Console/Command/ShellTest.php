@@ -34,7 +34,6 @@ class ShellTestShell extends Shell {
  * name property
  *
  * @var name
- * @access public
  */
 	public $name = 'ShellTestShell';
 
@@ -42,7 +41,6 @@ class ShellTestShell extends Shell {
  * stopped property
  *
  * @var integer
- * @access public
  */
 	public $stopped;
 
@@ -110,7 +108,6 @@ class ShellTest extends CakeTestCase {
  * Fixtures used in this test case
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.post', 'core.comment', 'core.article', 'core.user',
@@ -817,7 +814,6 @@ TEXT;
 /**
  * Testing camel cased naming of tasks
  * 
- * @access public
  * @return void
  */
 	public function testShellNaming() {

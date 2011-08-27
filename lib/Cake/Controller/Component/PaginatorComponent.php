@@ -101,9 +101,10 @@ class PaginatorComponent extends Component {
  *
  * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param mixed $scope Additional find conditions to use while paginating
- * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering 
+ * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
+ * @throws MissingModelException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
@@ -307,7 +308,7 @@ class PaginatorComponent extends Component {
 	}
 
 /**
- * Validate that the desired sorting can be performed on the $object.  Only fields or 
+ * Validate that the desired sorting can be performed on the $object.  Only fields or
  * virtualFields can be sorted on.  The direction param will also be sanitized.  Lastly
  * sort + direction keys will be converted into the model friendly order key.
  *
@@ -330,14 +331,14 @@ class PaginatorComponent extends Component {
 			}
 			$options['order'] = array($options['sort'] => $direction);
 		}
-		
+
 		if (!empty($whitelist)) {
 			$field = key($options['order']);
 			if (!in_array($field, $whitelist)) {
 				$options['order'] = null;
 			}
 		}
-	
+
 		if (!empty($options['order']) && is_array($options['order'])) {
 			$alias = $object->alias ;
 			$key = $field = key($options['order']);
@@ -356,7 +357,7 @@ class PaginatorComponent extends Component {
 				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}
-	
+
 		return $options;
 	}
 

@@ -146,7 +146,8 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @return void
+ * @return boolean
+ * @throws CacheException
  */
 	protected static function _buildEngine($name) {
 		$config = self::$_config[$name];
@@ -186,7 +187,7 @@ class Cache {
  * the Engine instance is also unset.
  *
  * @param string $name A currently configured cache config you wish to remove.
- * @return boolen success of the removal, returns false when the config does not exist.
+ * @return boolean success of the removal, returns false when the config does not exist.
  */
 	public static function drop($name) {
 		if (!isset(self::$_config[$name])) {
@@ -456,7 +457,7 @@ class Cache {
  * Check if Cache has initialized a working config for the given name.
  *
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return bool Whether or not the config name has been initialized.
+ * @return boolean Whether or not the config name has been initialized.
  */
 	public static function isInitialized($config = 'default') {
 		if (Configure::read('Cache.disable')) {
@@ -471,8 +472,6 @@ class Cache {
  * @param string $name Name of the configuration to get settings for. Defaults to 'default'
  * @return array list of settings for this engine
  * @see Cache::config()
- * @access public
- * @static
  */
 	public static function settings($name = 'default') {
 		if (!empty(self::$_engines[$name])) {
@@ -492,8 +491,7 @@ abstract class CacheEngine {
 /**
  * Settings of current engine instance
  *
- * @var int
- * @access public
+ * @var array
  */
 	public $settings = array();
 

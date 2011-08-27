@@ -65,6 +65,7 @@ class PluginTask extends Shell {
 /**
  * Interactive interface
  *
+ * @param string $plugin
  * @return void
  */
 	protected function _interactive($plugin = null) {
@@ -80,8 +81,8 @@ class PluginTask extends Shell {
 /**
  * Bake the plugin, create directories and files
  *
- * @params $plugin name of the plugin in CamelCased format
- * @return bool
+ * @param string $plugin Name of the plugin in CamelCased format
+ * @return boolean
  */
 	public function bake($plugin) {
 		$pathOptions = App::path('plugins');
@@ -154,6 +155,7 @@ class PluginTask extends Shell {
 /**
  * find and change $this->path to the user selection
  *
+ * @param array $pathOptions
  * @return string plugin path
  */
 	public function findPath($pathOptions) {

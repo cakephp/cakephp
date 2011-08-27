@@ -28,7 +28,6 @@ class MyCategoriesMyUsersFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'MyCategoriesMyUsers'
- * @access public
  */
 	public $name = 'MyCategoriesMyUsers';
 
@@ -36,7 +35,6 @@ class MyCategoriesMyUsersFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'my_category_id' => array('type' => 'integer'),
@@ -47,7 +45,6 @@ class MyCategoriesMyUsersFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('my_category_id' => 1, 'my_user_id' => 1),

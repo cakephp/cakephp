@@ -24,6 +24,7 @@ App::uses('Xml', 'Utility');
  * RSS Helper class for easy output RSS structures.
  *
  * @package       Cake.View.Helper
+ * @property      TimeHelper $Time
  * @link http://book.cakephp.org/view/1460/RSS
  */
 class RssHelper extends AppHelper {
@@ -32,14 +33,12 @@ class RssHelper extends AppHelper {
  * Helpers used by RSS Helper
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Time');
 
 /**
  * Base URL
  *
- * @access public
  * @var string
  */
 	public $base = null;
@@ -47,7 +46,6 @@ class RssHelper extends AppHelper {
 /**
  * URL to current action.
  *
- * @access public
  * @var string
  */
 	public $here = null;
@@ -55,7 +53,6 @@ class RssHelper extends AppHelper {
 /**
  * Parameter array.
  *
- * @access public
  * @var array
  */
 	public $params = array();
@@ -63,7 +60,6 @@ class RssHelper extends AppHelper {
 /**
  * Current action.
  *
- * @access public
  * @var string
  */
 	public $action = null;
@@ -71,7 +67,6 @@ class RssHelper extends AppHelper {
 /**
  * POSTed model data
  *
- * @access public
  * @var array
  */
 	public $data = null;
@@ -79,7 +74,6 @@ class RssHelper extends AppHelper {
 /**
  * Name of the current model
  *
- * @access public
  * @var string
  */
 	public $model = null;
@@ -87,7 +81,6 @@ class RssHelper extends AppHelper {
 /**
  * Name of the current field
  *
- * @access public
  * @var string
  */
 	public $field = null;
@@ -95,7 +88,6 @@ class RssHelper extends AppHelper {
 /**
  * Default spec version of generated RSS
  *
- * @access public
  * @var string
  */
 	public $version = '2.0';
@@ -104,6 +96,7 @@ class RssHelper extends AppHelper {
  * Returns an RSS document wrapped in `<rss />` tags
  *
  * @param array $attrib `<rss />` tag attributes
+ * @param string $content
  * @return string An RSS document
  */
 	public function document($attrib = array(), $content = null) {
@@ -200,13 +193,13 @@ class RssHelper extends AppHelper {
 
 		foreach ($elements as $key => $val) {
 			$attrib = array();
-			
+
 			$escape = true;
 			if (is_array($val) && isset($val['convertEntities'])) {
 				$escape = $val['convertEntities'];
 				unset($val['convertEntities']);
 			}
-			
+
 			switch ($key) {
 				case 'pubDate' :
 					$val = $this->time($val);

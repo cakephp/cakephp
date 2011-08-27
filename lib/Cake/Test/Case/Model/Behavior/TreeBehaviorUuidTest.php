@@ -34,7 +34,6 @@ class TreeBehaviorUuidTest extends CakeTestCase {
  * Whether backup global state for each test method or not
  *
  * @var bool false
- * @access public
  */
 	public $backupGlobals = false;
 
@@ -42,7 +41,6 @@ class TreeBehaviorUuidTest extends CakeTestCase {
  * settings property
  *
  * @var array
- * @access public
  */
 	public $settings = array(
 		'modelClass' => 'UuidTree',
@@ -55,7 +53,6 @@ class TreeBehaviorUuidTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.uuid_tree');
 

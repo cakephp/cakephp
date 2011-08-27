@@ -1512,7 +1512,6 @@ XML;
  *
  * @param mixed $env
  * @return void
- * @access private
  */
 	function __loadEnvironment($env) {
 		if (isset($env['App'])) {

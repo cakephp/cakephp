@@ -28,7 +28,6 @@ class I18nTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -43,7 +42,6 @@ class I18nTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -99,7 +97,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testDefaultStrings method
  *
- * @access public
  * @return void
  */
 	public function testDefaultStrings() {
@@ -169,7 +166,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesZero method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesZero() {
@@ -241,7 +237,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesZero method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesZero() {
@@ -313,7 +308,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesOne method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesOne() {
@@ -385,7 +379,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesOne method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesOne() {
@@ -457,7 +450,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesTwo method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesTwo() {
@@ -529,7 +521,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesTwo method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesTwo() {
@@ -601,7 +592,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesThree method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesThree() {
@@ -673,7 +663,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesThree method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesThree() {
@@ -745,7 +734,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesFour method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesFour() {
@@ -817,7 +805,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesFour method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesFour() {
@@ -889,7 +876,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesFive method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesFive() {
@@ -963,7 +949,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesFive method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesFive() {
@@ -1037,7 +1022,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesSix method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesSix() {
@@ -1109,7 +1093,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesSix method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesSix() {
@@ -1181,7 +1164,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesSeven method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesSeven() {
@@ -1253,7 +1235,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesSeven method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesSeven() {
@@ -1325,7 +1306,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesEight method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesEight() {
@@ -1397,7 +1377,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesEight method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesEight() {
@@ -1469,7 +1448,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesNine method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesNine() {
@@ -1544,7 +1522,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesNine method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesNine() {
@@ -1619,7 +1596,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesTen method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesTen() {
@@ -1693,7 +1669,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesTen method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesTen() {
@@ -1767,7 +1742,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesEleven method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesEleven() {
@@ -1839,7 +1813,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesEleven method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesEleven() {
@@ -1911,7 +1884,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesTwelve method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesTwelve() {
@@ -1983,7 +1955,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesTwelve method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesTwelve() {
@@ -2055,7 +2026,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesThirteen method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesThirteen() {
@@ -2127,7 +2097,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesThirteen method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesThirteen() {
@@ -2199,7 +2168,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoRulesFourteen method
  *
- * @access public
  * @return void
  */
 	public function testPoRulesFourteen() {
@@ -2271,7 +2239,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testMoRulesFourteen method
  *
- * @access public
  * @return void
  */
 	public function testMoRulesFourteen() {
@@ -2343,7 +2310,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testSetLanguageWithSession method
  *
- * @access public
  * @return void
  */
 	public function testSetLanguageWithSession () {
@@ -2384,7 +2350,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testNoCoreTranslation method
  *
- * @access public
  * @return void
  */
 	public function testNoCoreTranslation () {
@@ -2427,7 +2392,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPluginTranslation method
  *
- * @access public
  * @return void
  */
 	public function testPluginTranslation() {
@@ -2471,7 +2435,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoMultipleLineTranslation method
  *
- * @access public
  * @return void
  */
 	public function testPoMultipleLineTranslation () {
@@ -2545,7 +2508,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoNoTranslationNeeded method
  *
- * @access public
  * @return void
  */
 	public function testPoNoTranslationNeeded () {
@@ -2557,7 +2519,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPoQuotedString method
  *
- * @access public
  * @return void
  */
 	public function testPoQuotedString () {
@@ -2568,7 +2529,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testFloatValue method
  *
- * @access public
  * @return void
  */
 	public function testFloatValue() {
@@ -2590,7 +2550,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testCategory method
  *
- * @access public
  * @return void
  */
 	public function testCategory() {
@@ -2602,7 +2561,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testPluginCategory method
  *
- * @access public
  * @return void
  */
 	public function testPluginCategory() {
@@ -2619,7 +2577,6 @@ class I18nTest extends CakeTestCase {
 /**
  * testCategoryThenSingular method
  *
- * @access public
  * @return void
  */
 	public function testCategoryThenSingular() {
@@ -2666,7 +2623,6 @@ class I18nTest extends CakeTestCase {
 /**
  * Singular method
  *
- * @access private
  * @return void
  */
 	function __domainCategorySingular($domain = 'test_plugin', $category = 3) {
@@ -2677,7 +2633,6 @@ class I18nTest extends CakeTestCase {
 /**
  * Plural method
  *
- * @access private
  * @return void
  */
 	function __domainCategoryPlural($domain = 'test_plugin', $category = 3) {
@@ -2691,7 +2646,6 @@ class I18nTest extends CakeTestCase {
 /**
  * Singular method
  *
- * @access private
  * @return void
  */
 	function __domainSingular($domain = 'test_plugin') {
@@ -2702,7 +2656,6 @@ class I18nTest extends CakeTestCase {
 /**
  * Plural method
  *
- * @access private
  * @return void
  */
 	function __domainPlural($domain = 'test_plugin') {
@@ -2716,7 +2669,6 @@ class I18nTest extends CakeTestCase {
 /**
  * category method
  *
- * @access private
  * @return void
  */
 	function __category($category = 3) {
@@ -2727,7 +2679,6 @@ class I18nTest extends CakeTestCase {
 /**
  * Singular method
  *
- * @access private
  * @return void
  */
 	function __singular() {
@@ -2738,7 +2689,6 @@ class I18nTest extends CakeTestCase {
 /**
  * Plural method
  *
- * @access private
  * @return void
  */
 	function __plural() {
@@ -2752,7 +2702,6 @@ class I18nTest extends CakeTestCase {
 /**
  * singularFromCore method
  *
- * @access private
  * @return void
  */
 	function __singularFromCore() {
@@ -2763,7 +2712,6 @@ class I18nTest extends CakeTestCase {
 /**
  * pluralFromCore method
  *
- * @access private
  * @return void
  */
 	function __pluralFromCore() {

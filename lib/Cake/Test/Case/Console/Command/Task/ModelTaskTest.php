@@ -38,7 +38,6 @@ class ModelTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
@@ -727,6 +726,10 @@ STRINGEND;
 			)
 		);
 		$result = $this->Task->bake('BakeArticle', compact('associations'));
+		$this->assertContains(' * @property BakeUser $BakeUser', $result);
+		$this->assertContains(' * @property OtherModel $OtherModel', $result);
+		$this->assertContains(' * @property BakeComment $BakeComment', $result);
+		$this->assertContains(' * @property BakeTag $BakeTag', $result);
 		$this->assertPattern('/\$hasAndBelongsToMany \= array\(/', $result);
 		$this->assertPattern('/\$hasMany \= array\(/', $result);
 		$this->assertPattern('/\$belongsTo \= array\(/', $result);

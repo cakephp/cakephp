@@ -28,21 +28,21 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Socket to SMTP server
  *
- * @var object CakeScoket
+ * @var CakeSocket
  */
 	protected $_socket;
 
 /**
  * CakeEmail
  *
- * @var object CakeEmail
+ * @var CakeEmail
  */
 	protected $_cakeEmail;
 
 /**
  * Send mail
  *
- * @params object $email CakeEmail
+ * @param CakeEmail $email CakeEmail
  * @return boolean
  * @throws SocketException
  */
@@ -62,7 +62,7 @@ class SmtpTransport extends AbstractTransport {
  * Set the configuration
  *
  * @param array $config
- * @return object $this
+ * @return void
  */
 	public function config($config = array()) {
 		$default = array(

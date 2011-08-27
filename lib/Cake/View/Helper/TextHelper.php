@@ -33,6 +33,7 @@ App::uses('Multibyte', 'I18n');
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @package       Cake.View.Helper
+ * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/view/1469/Text
  */
 class TextHelper extends AppHelper {
@@ -57,7 +58,6 @@ class TextHelper extends AppHelper {
  * @param string $phrase The phrase that will be searched
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#highlight-1622
  */
 	public function highlight($text, $phrase, $options = array()) {
@@ -102,7 +102,6 @@ class TextHelper extends AppHelper {
  *
  * @param string $text Text
  * @return string The text without links
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#stripLinks-1623
  */
 	public function stripLinks($text) {
@@ -114,15 +113,14 @@ class TextHelper extends AppHelper {
  * strings like http:// and ftp://.
  *
  * @param string $text Text to add links to
- * @param array $options Array of HTML options.
+ * @param array $htmlOptions Array of HTML options.
  * @return string The text with links
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#autoLinkUrls-1619
  */
 	public function autoLinkUrls($text, $htmlOptions = array()) {
 		$this->_linkOptions = $htmlOptions;
 		$text = preg_replace_callback(
-			'#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i', 
+			'#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i',
 			array(&$this, '_linkBareUrl'),
 			$text
 		);
@@ -140,7 +138,7 @@ class TextHelper extends AppHelper {
  * @return string
  * @see TextHelper::autoLinkUrls()
  */
-	private function _linkBareUrl($matches) {
+	protected function _linkBareUrl($matches) {
 		return $this->Html->link($matches[0], $matches[0], $this->_linkOptions);
 	}
 
@@ -151,7 +149,7 @@ class TextHelper extends AppHelper {
  * @return string
  * @see TextHelper::autoLinkUrls()
  */
-	private function _linkUrls($matches) {
+	protected function _linkUrls($matches) {
 		return $this->Html->link($matches[0], 'http://' . $matches[0], $this->_linkOptions);
 	}
 
@@ -162,7 +160,7 @@ class TextHelper extends AppHelper {
  * @return string
  * @see TextHelper::autoLinkUrls()
  */
-	private function _linkEmails($matches) {
+	protected function _linkEmails($matches) {
 		return $this->Html->link($matches[0], 'mailto:' . $matches[0], $this->_linkOptions);
 	}
 
@@ -172,7 +170,6 @@ class TextHelper extends AppHelper {
  * @param string $text Text
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#autoLinkEmails-1618
  */
 	public function autoLinkEmails($text, $options = array()) {
@@ -182,7 +179,7 @@ class TextHelper extends AppHelper {
 			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
 			array(&$this, '_linkEmails'),
 			$text
-		);	
+		);
 	}
 
 /**
@@ -191,7 +188,6 @@ class TextHelper extends AppHelper {
  * @param string $text Text
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#autoLink-1620
  */
 	public function autoLink($text, $options = array()) {
@@ -210,11 +206,10 @@ class TextHelper extends AppHelper {
  * - `exact` If false, $text will not be cut mid-word
  * - `html` If true, HTML tags would be handled correctly
  *
- * @param string  $text String to truncate.
+ * @param string $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#truncate-1625
  */
 	public function truncate($text, $length = 100, $options = array()) {
@@ -319,7 +314,6 @@ class TextHelper extends AppHelper {
  * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ending Ending that will be appended
  * @return string Modified string
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#excerpt-1621
  */
 	public function excerpt($text, $phrase, $radius = 100, $ending = '...') {
@@ -365,7 +359,6 @@ class TextHelper extends AppHelper {
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
  * @param string $separator The separator used to join all othe other items together. Defaults to ', '
  * @return string The glued together string.
- * @access public
  * @link http://book.cakephp.org/view/1469/Text#toList-1624
  */
 	public function toList($list, $and = 'and', $separator = ', ') {

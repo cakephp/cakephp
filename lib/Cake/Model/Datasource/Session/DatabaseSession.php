@@ -27,11 +27,10 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * Constructor.  Looks at Session configuration information and
  * sets up the session model.
  *
- * @return void
  */
 	public function __construct() {
 		$modelName = Configure::read('Session.handler.model');
-		
+
 		if (empty($modelName)) {
 			$settings = array(
 				'class' =>'Session',
@@ -51,7 +50,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * Method called on open of a database session.
  *
  * @return boolean Success
- * @access private
  */
 	public function open() {
 		return true;
@@ -61,7 +59,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * Method called on close of a database session.
  *
  * @return boolean Success
- * @access private
  */
 	public function close() {
 		$probability = mt_rand(1, 150);
@@ -76,7 +73,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  *
  * @param mixed $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
- * @access private
  */
 	public function read($id) {
 		$model = ClassRegistry::getObject('Session');
@@ -98,7 +94,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @param integer $id ID that uniquely identifies session in database
  * @param mixed $data The value of the data to be saved.
  * @return boolean True for successful write, false otherwise.
- * @access private
  */
 	public function write($id, $data) {
 		if (!$id) {
@@ -116,7 +111,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  *
  * @param integer $id ID that uniquely identifies session in database
  * @return boolean True for successful delete, false otherwise.
- * @access private
  */
 	public function destroy($id) {
 		return ClassRegistry::getObject('Session')->delete($id);
@@ -127,7 +121,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  *
  * @param integer $expires Timestamp (defaults to current time)
  * @return boolean Success
- * @access private
  */
 	public function gc($expires = null) {
 		if (!$expires) {

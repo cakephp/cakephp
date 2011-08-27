@@ -21,7 +21,6 @@ class WelcomeShell extends Shell {
 /**
  * say_hello method
  *
- * @access public
  * @return void
  */
 	public function say_hello() {

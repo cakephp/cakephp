@@ -34,25 +34,22 @@ class ClassRegistry {
  * Names of classes with their objects.
  *
  * @var array
- * @access private
  */
-	private $__objects = array();
+	protected $_objects = array();
 
 /**
  * Names of class names mapped to the object in the registry.
  *
  * @var array
- * @access private
  */
-	private $__map = array();
+	protected $_map = array();
 
 /**
  * Default constructor parameter settings, indexed by type
  *
  * @var array
- * @access private
  */
-	private $__config = array();
+	protected $_config = array();
 
 /**
  * Return a singleton instance of the ClassRegistry.
@@ -89,7 +86,7 @@ class ClassRegistry {
  * }}}
  * @param mixed $class as a string or a single key => value array instance will be created,
  *  stored in the registry and returned.
- * @param boolean $strict if set to true it will return false if the class was not found instead 
+ * @param boolean $strict if set to true it will return false if the class was not found instead
  *	of trying to create an AppModel
  * @return object instance of ClassName
  */
@@ -106,7 +103,7 @@ class ClassRegistry {
 		} else {
 			$objects = array(array('class' => $class));
 		}
-		$defaults = isset($_this->__config['Model']) ? $_this->__config['Model'] : array();
+		$defaults = isset($_this->_config['Model']) ? $_this->_config['Model'] : array();
 		$count = count($objects);
 
 		foreach ($objects as $key => $settings) {
@@ -114,7 +111,7 @@ class ClassRegistry {
 				$pluginPath = null;
 				$settings = array_merge($defaults, $settings);
 				$class = $settings['class'];
-				
+
 				list($plugin, $class) = pluginSplit($class);
 				if ($plugin) {
 					$pluginPath = $plugin . '.';
@@ -125,7 +122,7 @@ class ClassRegistry {
 				}
 				$alias = $settings['alias'];
 
-				if ($model = $_this->__duplicate($alias, $class)) {
+				if ($model = $_this->_duplicate($alias, $class)) {
 					$_this->map($alias, $class);
 					return $model;
 				}
@@ -182,8 +179,8 @@ class ClassRegistry {
 	public static function addObject($key, $object) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (!isset($_this->__objects[$key])) {
-			$_this->__objects[$key] = $object;
+		if (!isset($_this->_objects[$key])) {
+			$_this->_objects[$key] = $object;
 			return true;
 		}
 		return false;
@@ -198,8 +195,8 @@ class ClassRegistry {
 	public static function removeObject($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (isset($_this->__objects[$key])) {
-			unset($_this->__objects[$key]);
+		if (isset($_this->_objects[$key])) {
+			unset($_this->_objects[$key]);
 		}
 	}
 
@@ -212,9 +209,9 @@ class ClassRegistry {
 	public static function isKeySet($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (isset($_this->__objects[$key])) {
+		if (isset($_this->_objects[$key])) {
 			return true;
-		} elseif (isset($_this->__map[$key])) {
+		} elseif (isset($_this->_map[$key])) {
 			return true;
 		}
 		return false;
@@ -227,7 +224,7 @@ class ClassRegistry {
  */
 	public static function keys() {
 		$_this = ClassRegistry::getInstance();
-		return array_keys($_this->__objects);
+		return array_keys($_this->_objects);
 	}
 
 /**
@@ -240,12 +237,12 @@ class ClassRegistry {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$return = false;
-		if (isset($_this->__objects[$key])) {
-			$return = $_this->__objects[$key];
+		if (isset($_this->_objects[$key])) {
+			$return = $_this->_objects[$key];
 		} else {
-			$key = $_this->__getMap($key);
-			if (isset($_this->__objects[$key])) {
-				$return = $_this->__objects[$key];
+			$key = $_this->_getMap($key);
+			if (isset($_this->_objects[$key])) {
+				$return = $_this->_objects[$key];
 			}
 		}
 		return $return;
@@ -267,11 +264,11 @@ class ClassRegistry {
 			$param = $type;
 			$type = 'Model';
 		} elseif (is_null($param)) {
-			unset($_this->__config[$type]);
+			unset($_this->_config[$type]);
 		} elseif (empty($param) && is_string($type)) {
-			return isset($_this->__config[$type]) ? $_this->__config[$type] : null;
+			return isset($_this->_config[$type]) ? $_this->_config[$type] : null;
 		}
-		$_this->__config[$type] = $param;
+		$_this->_config[$type] = $param;
 	}
 
 /**
@@ -281,7 +278,7 @@ class ClassRegistry {
  * @param string $class
  * @return boolean
  */
-	private function &__duplicate($alias,  $class) {
+	protected function &_duplicate($alias,  $class) {
 		$duplicate = false;
 		if ($this->isKeySet($alias)) {
 			$model = $this->getObject($alias);
@@ -298,13 +295,14 @@ class ClassRegistry {
  *
  * @param string $key Key to include in map
  * @param string $name Key that is being mapped
+ * @return void
  */
 	public static function map($key, $name) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$name = Inflector::underscore($name);
-		if (!isset($_this->__map[$key])) {
-			$_this->__map[$key] = $name;
+		if (!isset($_this->_map[$key])) {
+			$_this->_map[$key] = $name;
 		}
 	}
 
@@ -315,7 +313,7 @@ class ClassRegistry {
  */
 	public static function mapKeys() {
 		$_this = ClassRegistry::getInstance();
-		return array_keys($_this->__map);
+		return array_keys($_this->_map);
 	}
 
 /**
@@ -324,9 +322,9 @@ class ClassRegistry {
  * @param string $key Key to find in map
  * @return string Mapped value
  */
-	private function __getMap($key) {
-		if (isset($this->__map[$key])) {
-			return $this->__map[$key];
+	protected function _getMap($key) {
+		if (isset($this->_map[$key])) {
+			return $this->_map[$key];
 		}
 	}
 
@@ -337,7 +335,7 @@ class ClassRegistry {
  */
 	public static function flush() {
 		$_this = ClassRegistry::getInstance();
-		$_this->__objects = array();
-		$_this->__map = array();
+		$_this->_objects = array();
+		$_this->_map = array();
 	}
 }

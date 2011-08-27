@@ -12,7 +12,7 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
@@ -33,12 +33,13 @@ class AclBehavior extends ModelBehavior {
  *
  * @var array
  */
-	private $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco', 'both' => array('Aro', 'Aco'));
+	protected $_typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco', 'both' => array('Aro', 'Aco'));
 
 /**
  * Sets up the configuation for the model, and loads ACL models if they haven't been already
  *
- * @param mixed $config
+ * @param Model $model
+ * @param array $config
  * @return void
  */
 	public function setup($model, $config = array()) {
@@ -48,7 +49,7 @@ class AclBehavior extends ModelBehavior {
 		$this->settings[$model->name] = array_merge(array('type' => 'controlled'), (array)$config);
 		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
 
-		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->_typeMaps[$this->settings[$model->name]['type']];
 
 		if (!is_array($types)) {
 			$types = array($types);
@@ -64,6 +65,7 @@ class AclBehavior extends ModelBehavior {
 /**
  * Retrieves the Aro/Aco node for this model
  *
+ * @param Model $model
  * @param mixed $ref
  * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
@@ -71,7 +73,7 @@ class AclBehavior extends ModelBehavior {
  */
 	public function node($model, $ref = null, $type = null) {
 		if (empty($type)) {
-			$type = $this->__typeMaps[$this->settings[$model->name]['type']];
+			$type = $this->_typeMaps[$this->settings[$model->name]['type']];
 			if (is_array($type)) {
 				trigger_error(__d('cake_dev', 'AclBehavior is setup with more then one type, please specify type parameter for node()'), E_USER_WARNING);
 				return null;
@@ -86,11 +88,12 @@ class AclBehavior extends ModelBehavior {
 /**
  * Creates a new ARO/ACO node bound to this record
  *
+ * @param Model $model
  * @param boolean $created True if this is a new record
  * @return void
  */
 	public function afterSave($model, $created) {
-		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->_typeMaps[$this->settings[$model->name]['type']];
 		if (!is_array($types)) {
 			$types = array($types);
 		}
@@ -116,10 +119,11 @@ class AclBehavior extends ModelBehavior {
 /**
  * Destroys the ARO/ACO node bound to the deleted record
  *
+ * @param Model $model
  * @return void
  */
 	public function afterDelete($model) {
-		$types = $this->__typeMaps[$this->settings[$model->name]['type']];
+		$types = $this->_typeMaps[$this->settings[$model->name]['type']];
 		if (!is_array($types)) {
 			$types = array($types);
 		}

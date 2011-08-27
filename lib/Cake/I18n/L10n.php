@@ -29,7 +29,6 @@ class L10n {
  * The language for current locale
  *
  * @var string
- * @access public
  */
 	public $language = 'English (United States)';
 
@@ -37,7 +36,6 @@ class L10n {
  * Locale search paths
  *
  * @var array
- * @access public
  */
 	public $languagePath = array('eng');
 
@@ -45,7 +43,6 @@ class L10n {
  * ISO 639-3 for current locale
  *
  * @var string
- * @access public
  */
 	public $lang = 'eng';
 
@@ -53,7 +50,6 @@ class L10n {
  * Locale
  *
  * @var string
- * @access public
  */
 	public $locale = 'en_us';
 
@@ -63,7 +59,6 @@ class L10n {
  * DEFAULT_LANGUAGE is defined in an application this will be set as a fall back
  *
  * @var string
- * @access public
  */
 	public $default = null;
 
@@ -71,7 +66,6 @@ class L10n {
  * Encoding used for current locale
  *
  * @var string
- * @access public
  */
 	public $charset = 'utf-8';
 
@@ -79,7 +73,6 @@ class L10n {
  * Text direction for current locale
  *
  * @var string
- * @access public
  */
 	public $direction = 'ltr';
 
@@ -87,17 +80,15 @@ class L10n {
  * Set to true if a locale is found
  *
  * @var string
- * @access public
  */
 	public $found = false;
 
 /**
- * Maps ISO 639-3 to I10n::__l10nCatalog
+ * Maps ISO 639-3 to I10n::_l10nCatalog
  *
  * @var array
- * @access private
  */
-	private $__l10nMap = array(/* Afrikaans */ 'afr' => 'af',
+	protected $_l10nMap = array(/* Afrikaans */ 'afr' => 'af',
 								/* Albanian */ 'alb' => 'sq',
 								/* Arabic */ 'ara' => 'ar',
 								/* Armenian - Armenia */ 'hye' => 'hy',
@@ -182,9 +173,8 @@ class L10n {
  * holds all information related to a language
  *
  * @var array
- * @access private
  */
-	private $__l10nCatalog = array('af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8', 'direction' => 'ltr'),
+	protected $_l10nCatalog = array('af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'ar' => array('language' => 'Arabic', 'locale' => 'ara', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
 										'ar-ae' => array('language' => 'Arabic (U.A.E.)', 'locale' => 'ar_ae', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
 										'ar-bh' => array('language' => 'Arabic (Bahrain)', 'locale' => 'ar_bh', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
@@ -336,16 +326,17 @@ class L10n {
 
 /**
  * Gets the settings for $language.
- * If $language is null it attempt to get settings from L10n::__autoLanguage(); if this fails
- * the method will get the settings from L10n::__setLanguage();
+ * If $language is null it attempt to get settings from L10n::_autoLanguage(); if this fails
+ * the method will get the settings from L10n::_setLanguage();
  *
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
+ * @return mixed
  */
 	public function get($language = null) {
 		if ($language !== null) {
-			return $this->__setLanguage($language);
-		} elseif ($this->__autoLanguage() === false) {
-			return $this->__setLanguage();
+			return $this->_setLanguage($language);
+		} elseif ($this->_autoLanguage() === false) {
+			return $this->_setLanguage();
 		}
 	}
 
@@ -354,38 +345,38 @@ class L10n {
  * If $language is null it will use the DEFAULT_LANGUAGE if defined
  *
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
- * @access private
+ * @return mixed
  */
-	private function __setLanguage($language = null) {
+	protected function _setLanguage($language = null) {
 		$langKey = null;
-		if ($language !== null && isset($this->__l10nMap[$language]) && isset($this->__l10nCatalog[$this->__l10nMap[$language]])) {
-			$langKey = $this->__l10nMap[$language];
-		} else if ($language !== null && isset($this->__l10nCatalog[$language])) {
+		if ($language !== null && isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
+			$langKey = $this->_l10nMap[$language];
+		} else if ($language !== null && isset($this->_l10nCatalog[$language])) {
 			$langKey = $language;
 		} else if (defined('DEFAULT_LANGUAGE')) {
 			$langKey = $language = DEFAULT_LANGUAGE;
 		}
 
-		if ($langKey !== null && isset($this->__l10nCatalog[$langKey])) {
-			$this->language = $this->__l10nCatalog[$langKey]['language'];
+		if ($langKey !== null && isset($this->_l10nCatalog[$langKey])) {
+			$this->language = $this->_l10nCatalog[$langKey]['language'];
 			$this->languagePath = array(
-				$this->__l10nCatalog[$langKey]['locale'],
-				$this->__l10nCatalog[$langKey]['localeFallback']
+				$this->_l10nCatalog[$langKey]['locale'],
+				$this->_l10nCatalog[$langKey]['localeFallback']
 			);
 			$this->lang = $language;
-			$this->locale = $this->__l10nCatalog[$langKey]['locale'];
-			$this->charset = $this->__l10nCatalog[$langKey]['charset'];
-			$this->direction = $this->__l10nCatalog[$langKey]['direction'];
+			$this->locale = $this->_l10nCatalog[$langKey]['locale'];
+			$this->charset = $this->_l10nCatalog[$langKey]['charset'];
+			$this->direction = $this->_l10nCatalog[$langKey]['direction'];
 		} else {
 			$this->lang = $language;
 			$this->languagePath = array($language);
 		}
 
 		if ($this->default) {
-			if (isset($this->__l10nMap[$this->default]) && isset($this->__l10nCatalog[$this->__l10nMap[$this->default]])) {
-				$this->languagePath[] = $this->__l10nCatalog[$this->__l10nMap[$this->default]]['localeFallback'];
-			} else if (isset($this->__l10nCatalog[$this->default])) {
-				$this->languagePath[] = $this->__l10nCatalog[$this->default]['localeFallback'];
+			if (isset($this->_l10nMap[$this->default]) && isset($this->_l10nCatalog[$this->_l10nMap[$this->default]])) {
+				$this->languagePath[] = $this->_l10nCatalog[$this->_l10nMap[$this->default]]['localeFallback'];
+			} else if (isset($this->_l10nCatalog[$this->default])) {
+				$this->languagePath[] = $this->_l10nCatalog[$this->default]['localeFallback'];
 			}
 		}
 		$this->found = true;
@@ -403,18 +394,17 @@ class L10n {
  * Attempts to find the locale settings based on the HTTP_ACCEPT_LANGUAGE variable
  *
  * @return boolean Success
- * @access private
  */
-	private function __autoLanguage() {
+	protected function _autoLanguage() {
 		$_detectableLanguages = CakeRequest::acceptLanguage();
 		foreach ($_detectableLanguages as $key => $langKey) {
-			if (isset($this->__l10nCatalog[$langKey])) {
-				$this->__setLanguage($langKey);
+			if (isset($this->_l10nCatalog[$langKey])) {
+				$this->_setLanguage($langKey);
 				return true;
 			} else if (strpos($langKey, '-') !== false) {
 				$langKey = substr($langKey, 0, 2);
-				if (isset($this->__l10nCatalog[$langKey])) {
-					$this->__setLanguage($langKey);
+				if (isset($this->_l10nCatalog[$langKey])) {
+					$this->_setLanguage($langKey);
 					return true;
 				}
 			}
@@ -439,14 +429,14 @@ class L10n {
 			}
 			return $result;
 		} else if (is_string($mixed)) {
-			if (strlen($mixed) === 2 && in_array($mixed, $this->__l10nMap)) {
-				return array_search($mixed, $this->__l10nMap);
-			} else if (isset($this->__l10nMap[$mixed])) {
-				return $this->__l10nMap[$mixed];
+			if (strlen($mixed) === 2 && in_array($mixed, $this->_l10nMap)) {
+				return array_search($mixed, $this->_l10nMap);
+			} else if (isset($this->_l10nMap[$mixed])) {
+				return $this->_l10nMap[$mixed];
 			}
 			return false;
 		}
-		return $this->__l10nMap;
+		return $this->_l10nMap;
 	}
 
 /**
@@ -466,13 +456,13 @@ class L10n {
 			}
 			return $result;
 		} else if (is_string($language)) {
-			if (isset($this->__l10nCatalog[$language])) {
-				return $this->__l10nCatalog[$language];
-			} else if (isset($this->__l10nMap[$language]) && isset($this->__l10nCatalog[$this->__l10nMap[$language]])) {
-				return $this->__l10nCatalog[$this->__l10nMap[$language]];
+			if (isset($this->_l10nCatalog[$language])) {
+				return $this->_l10nCatalog[$language];
+			} else if (isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
+				return $this->_l10nCatalog[$this->_l10nMap[$language]];
 			}
 			return false;
 		}
-		return $this->__l10nCatalog;
+		return $this->_l10nCatalog;
 	}
 }

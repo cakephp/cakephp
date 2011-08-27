@@ -35,7 +35,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * name property
  *
  * @var string 'MyApp'
- * @access public
  */
 	public $name = 'SchemaShellTest';
 
@@ -43,7 +42,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * connection property
  *
  * @var string 'test'
- * @access public
  */
 	public $connection = 'test';
 
@@ -51,7 +49,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * comments property
  *
  * @var array
- * @access public
  */
 	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -69,7 +66,6 @@ class SchemaShellTestSchema extends CakeSchema {
  * posts property
  *
  * @var array
- * @access public
  */
 	public $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -95,7 +91,6 @@ class SchemaShellTest extends CakeTestCase {
  * Fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
 		'core.comment', 'core.test_plugin_comment'
@@ -427,7 +422,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testUpdateWithTable() {
 		$this->Shell = $this->getMock(
 			'SchemaShell',
-			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '__run'),
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
 			array(&$this->Dispatcher)
 		);
 
@@ -438,7 +433,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->once())->method('__run')
+		$this->Shell->expects($this->once())->method('_run')
 			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
 
 		$this->Shell->update();

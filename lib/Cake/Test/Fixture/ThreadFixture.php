@@ -28,7 +28,6 @@ class ThreadFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Thread'
- * @access public
  */
 	public $name = 'Thread';
 
@@ -36,7 +35,6 @@ class ThreadFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class ThreadFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('project_id' => 1, 'name' => 'Project 1, Thread 1'),

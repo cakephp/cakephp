@@ -28,7 +28,6 @@ class CacheTestModelFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'CacheTestModel'
- * @access public
  */
 	public $name = 'CacheTestModel';
 
@@ -36,7 +35,6 @@ class CacheTestModelFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id'		=> array('type' => 'string', 'length' => 255, 'key' => 'primary'),

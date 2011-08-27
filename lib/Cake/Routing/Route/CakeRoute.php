@@ -27,7 +27,6 @@ class CakeRoute {
  * `/:controller/:action/:id` has 3 key elements
  *
  * @var array
- * @access public
  */
 	public $keys = array();
 
@@ -35,7 +34,6 @@ class CakeRoute {
  * An array of additional parameters for the Route.
  *
  * @var array
- * @access public
  */
 	public $options = array();
 
@@ -43,7 +41,6 @@ class CakeRoute {
  * Default parameters for a Route
  *
  * @var array
- * @access public
  */
 	public $defaults = array();
 
@@ -51,7 +48,6 @@ class CakeRoute {
  * The routes template string.
  *
  * @var string
- * @access public
  */
 	public $template = null;
 
@@ -60,7 +56,6 @@ class CakeRoute {
  * template
  *
  * @var string
- * @access protected
  */
 	protected $_greedy = false;
 
@@ -68,7 +63,6 @@ class CakeRoute {
  * The compiled route regular expresssion
  *
  * @var string
- * @access protected
  */
 	protected $_compiledRoute = null;
 
@@ -76,9 +70,8 @@ class CakeRoute {
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
  *
  * @var array
- * @access private
  */
-	private $__headerMap = array(
+	protected $_headerMap = array(
 		'type' => 'content_type',
 		'method' => 'request_method',
 		'server' => 'server_name'
@@ -89,8 +82,7 @@ class CakeRoute {
  *
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
- * @param string $params Array of parameters and additional options for the Route
- * @return void
+ * @param array $options Array of additional options for the Route
  */
 	public function __construct($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
@@ -188,8 +180,8 @@ class CakeRoute {
 		}
 		foreach ($this->defaults as $key => $val) {
 			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
-				if (isset($this->__headerMap[$header[1]])) {
-					$header = $this->__headerMap[$header[1]];
+				if (isset($this->_headerMap[$header[1]])) {
+					$header = $this->_headerMap[$header[1]];
 				} else {
 					$header = 'http_' . $header[1];
 				}
@@ -226,7 +218,7 @@ class CakeRoute {
 			}
 			$route[$key] = $value;
 		}
-		
+
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -331,7 +323,7 @@ class CakeRoute {
 		}
 
 		$controllerMatches = (
-			!isset($rule['controller'], $context['controller']) || 
+			!isset($rule['controller'], $context['controller']) ||
 			in_array($context['controller'], (array)$rule['controller'])
 		);
 		if (!$controllerMatches) {
@@ -348,8 +340,8 @@ class CakeRoute {
 	}
 
 /**
- * Apply persistent parameters to a url array. Persistant parameters are a special 
- * key used during route creation to force route parameters to persist when omitted from 
+ * Apply persistent parameters to a url array. Persistant parameters are a special
+ * key used during route creation to force route parameters to persist when omitted from
  * a url array.
  *
  * @param array $url The array to apply persistent parameters to.
@@ -409,7 +401,7 @@ class CakeRoute {
 			} elseif ($defaultExists) {
 				continue;
 			}
-			
+
 			// If the key is a routed key, its not different yet.
 			if (array_key_exists($key, $keyNames)) {
 				continue;

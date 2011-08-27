@@ -47,8 +47,16 @@ class CacheHelper extends AppHelper {
 	protected $_match = array();
 
 /**
+ * Counter used for counting nocache section tags.
+ *
+ * @var integer
+ */
+	protected $_counter = 0;
+
+/**
  * Parses the view file and stores content for cache file building.
  *
+ * @param string $viewFile
  * @return void
  */
 	public function afterRender($viewFile) {
@@ -61,6 +69,7 @@ class CacheHelper extends AppHelper {
 /**
  * Parses the layout file and stores content for cache file building.
  *
+ * @param string $layoutFile
  * @return void
  */
 	public function afterLayout($layoutFile) {
@@ -70,13 +79,6 @@ class CacheHelper extends AppHelper {
 		}
 		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
 	}
-
-/**
- * Counter used for counting nocache section tags.
- *
- * @var integer
- */
-	protected $_counter = 0;
 
 /**
  * Main method used to cache a view
@@ -144,6 +146,7 @@ class CacheHelper extends AppHelper {
  *
  * @param string $file The filename that needs to be parsed.
  * @param string $cache The cached content
+ * @return void
  */
 	protected function _parseFile($file, $cache) {
 		if (is_file($file)) {
@@ -182,10 +185,9 @@ class CacheHelper extends AppHelper {
  * Munges the output from a view with cache tags, and numbers the sections.
  * This helps solve issues with empty/duplicate content.
  *
- * @param string $content The content to munge.
  * @return string The content with cake:nocache tags replaced.
  */
-	protected function _replaceSection($matches) {
+	protected function _replaceSection() {
 		$this->_counter += 1;
 		return sprintf('<!--nocache:%03d-->', $this->_counter);
 	}
@@ -238,7 +240,8 @@ class CacheHelper extends AppHelper {
  * Write a cached version of the file
  *
  * @param string $content view content to write to a cache file.
- * @param sting $timestamp Duration to set for cache file.
+ * @param string $timestamp Duration to set for cache file.
+ * @param boolean $useCallbacks
  * @return boolean success of caching view.
  */
 	protected function _writeFile($content, $timestamp, $useCallbacks = false) {

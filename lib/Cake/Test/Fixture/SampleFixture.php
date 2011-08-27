@@ -28,7 +28,6 @@ class SampleFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Sample'
- * @access public
  */
 	public $name = 'Sample';
 
@@ -36,7 +35,6 @@ class SampleFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class SampleFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('apple_id' => 3, 'name' => 'sample1'),

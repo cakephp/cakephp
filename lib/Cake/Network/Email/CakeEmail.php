@@ -234,7 +234,7 @@ class CakeEmail {
 /**
  * Instance of transport class
  *
- * @var object
+ * @var AbstractTransport
  */
 	protected $_transportClass = null;
 
@@ -373,7 +373,7 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return object $this
+ * @return CakeEmail $this
  */
 	public function addTo($email, $name = null) {
 		return $this->_addEmail('_to', $email, $name);
@@ -398,7 +398,7 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return object $this
+ * @return CakeEmail $this
  */
 	public function addCc($email, $name = null) {
 		return $this->_addEmail('_cc', $email, $name);
@@ -423,7 +423,7 @@ class CakeEmail {
  *
  * @param mixed $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return object $this
+ * @return CakeEmail $this
  */
 	public function addBcc($email, $name = null) {
 		return $this->_addEmail('_bcc', $email, $name);
@@ -435,7 +435,7 @@ class CakeEmail {
  * @param string $varName
  * @param mixed $email
  * @param mixed $name
- * @return object $this
+ * @return CakeEmail $this
  * @throws SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
@@ -470,8 +470,8 @@ class CakeEmail {
  * @param mixed $email
  * @param string $name
  * @param string $throwMessage
- * @return object $this
- * @throws SocketExpceiton
+ * @return CakeEmail $this
+ * @throws SocketException
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
 		$current = $this->{$varName};
@@ -489,7 +489,8 @@ class CakeEmail {
  * @param string $varName
  * @param mixed $email
  * @param mixed $name
- * @return object $this
+ * @return CakeEmail $this
+ * @throws SocketException
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -533,8 +534,8 @@ class CakeEmail {
 /**
  * Sets headers for the message
  *
- * @param array Associative array containing headers to be set.
- * @return object $this
+ * @param array $headers Associative array containing headers to be set.
+ * @return CakeEmail $this
  * @throws SocketException
  */
 	public function setHeaders($headers) {
@@ -773,7 +774,7 @@ class CakeEmail {
 /**
  * Return the transport class
  *
- * @return object
+ * @return CakeEmail
  * @throws SocketException
  */
 	public function transportClass() {
@@ -853,7 +854,7 @@ class CakeEmail {
  * Add attachments
  *
  * @param mixed $attachments String with the filename or array with filenames
- * @return object $this
+ * @return CakeEmail $this
  * @throws SocketException
  */
 	public function addAttachments($attachments) {
@@ -906,6 +907,7 @@ class CakeEmail {
 /**
  * Send an email using the specified content, template and layout
  *
+ * @param string|array $content
  * @return boolean Success
  * @throws SocketException
  */
@@ -985,7 +987,8 @@ class CakeEmail {
  * @param mixed $message String with message or array with variables to be used in render
  * @param mixed $transportConfig String to use config from EmailConfig or array with configs
  * @param boolean $send Send the email or just return the instance pre-configured
- * @return object Instance of CakeEmail
+ * @return CakeEmail Instance of CakeEmail
+ * @throws SocketException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
@@ -1026,7 +1029,7 @@ class CakeEmail {
 /**
  * Apply the config to an instance
  *
- * @param object $obj CakeEmail
+ * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
  */
@@ -1061,7 +1064,7 @@ class CakeEmail {
 /**
  * Reset all EmailComponent internal variables to be able to send out a new email.
  *
- * @return object $this
+ * @return CakeEmail $this
  */
 	public function reset() {
 		$this->_to = array();
@@ -1270,7 +1273,6 @@ class CakeEmail {
  *
  * @param string $content Content to render
  * @return array Email ready to be sent
- * @access private
  */
 	protected function _render($content) {
 		$viewClass = $this->_viewRender;

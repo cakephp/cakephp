@@ -4,7 +4,7 @@ App::uses('CakeRoute', 'Routing/Route');
 
 /**
  * Redirect route will perform an immediate redirect.  Redirect routes
- * are useful when you want to have Routing layer redirects occur in your 
+ * are useful when you want to have Routing layer redirects occur in your
  * application, for when URLs move.
  *
  * PHP5
@@ -42,7 +42,7 @@ class RedirectRoute extends CakeRoute {
  *
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
- * @param string $params Array of parameters and additional options for the Route
+ * @param array $options Array of additional options for the Route
  */
 	public function __construct($template, $defaults = array(), $options = array()) {
 		parent::__construct($template, $defaults, $options);

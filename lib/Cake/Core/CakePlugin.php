@@ -1,12 +1,35 @@
 <?php
+/**
+ * CakePlugin class
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Core
+ * @since         CakePHP(tm) v 2.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
+/**
+ * CakePlugin class
+ *
+ * @package       Cake.Core
+ */
 class CakePlugin {
 
 /**
  * Holds a list of all loaded plugins and their configuration
  *
+ * @var array
  */
-	private static $_plugins = array();
+	protected static $_plugins = array();
 
 /**
  * Loads a plugin and optionally loads bootstrapping, routing files or loads a initialization function
@@ -173,6 +196,7 @@ class CakePlugin {
  * Retruns true if the plugin $plugin is already loaded
  * If plugin is null, it will return a list of all loaded plugins
  *
+ * @param string $plugin
  * @return mixed boolean true if $plugin is already loaded.
  * If $plugin is null, returns a list of plugins that have been loaded
  */

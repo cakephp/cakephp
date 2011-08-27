@@ -33,7 +33,6 @@ class RequestHandlerTestController extends Controller {
  * name property
  *
  * @var string
- * @access public
  */
 	public $name = 'RequestHandlerTest';
 
@@ -41,7 +40,6 @@ class RequestHandlerTestController extends Controller {
  * uses property
  *
  * @var mixed null
- * @access public
  */
 	public $uses = null;
 
@@ -89,7 +87,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * Controller property
  *
  * @var RequestHandlerTestController
- * @access public
  */
 	public $Controller;
 
@@ -97,14 +94,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * RequestHandler property
  *
  * @var RequestHandlerComponent
- * @access public
  */
 	public $RequestHandler;
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -115,7 +110,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * init method
  *
- * @access protected
  * @return void
  */
 	function _init() {
@@ -130,7 +124,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * endTest method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -160,7 +153,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testInitializeCallback method
  *
- * @access public
  * @return void
  */
 	public function testInitializeCallback() {
@@ -212,7 +204,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testDisabling method
  *
- * @access public
  * @return void
  */
 	public function testDisabling() {
@@ -227,7 +218,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testAutoResponseType method
  *
- * @access public
  * @return void
  */
 	public function testAutoResponseType() {
@@ -242,7 +232,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testAutoAjaxLayout method
  *
- * @access public
  * @return void
  */
 	public function testAutoAjaxLayout() {
@@ -262,7 +251,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testStartupCallback method
  *
- * @access public
  * @return void
  */
 	public function testStartupCallback() {
@@ -314,7 +302,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testNonAjaxRedirect method
  *
- * @access public
  * @return void
  */
 	public function testNonAjaxRedirect() {
@@ -326,7 +313,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testRenderAs method
  *
- * @access public
  * @return void
  */
 	public function testRenderAs() {
@@ -433,7 +419,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testRequestClientTypes method
  *
- * @access public
  * @return void
  */
 	public function testRequestClientTypes() {
@@ -447,7 +432,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * Tests the detection of various Flash versions
  *
- * @access public
  * @return void
  */
 	public function testFlashDetection() {
@@ -463,7 +447,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testRequestContentTypes method
  *
- * @access public
  * @return void
  */
 	public function testRequestContentTypes() {
@@ -503,7 +486,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testResponseContentType method
  *
- * @access public
  * @return void
  */
 	public function testResponseContentType() {
@@ -515,7 +497,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testMobileDeviceDetection method
  *
- * @access public
  * @return void
  */
 	public function testMobileDeviceDetection() {
@@ -531,7 +512,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testRequestProperties method
  *
- * @access public
  * @return void
  */
 	public function testRequestProperties() {
@@ -547,7 +527,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testRequestMethod method
  *
- * @access public
  * @return void
  */
 	public function testRequestMethod() {
@@ -612,7 +591,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * test accepts and prefers methods.
  *
- * @access public
  * @return void
  */
 	public function testPrefers() {
@@ -637,7 +615,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testCustomContent method
  *
- * @access public
  * @return void
  */
 	public function testCustomContent() {
@@ -650,7 +627,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * testClientProperties method
  *
- * @access public
  * @return void
  */
 	public function testClientProperties() {

@@ -203,7 +203,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $resource Resource or false to disable the resource use
  * @return void
- * @throw SocketException
+ * @throws SocketException
  */
 	public function setContentResource($resource) {
 		if ($resource === false) {
@@ -222,6 +222,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $request Either an URI string, or an array defining host/uri
  * @return mixed false on error, HttpResponse on success
+ * @throws SocketException
  */
 	public function request($request = array()) {
 		$this->reset(false);

@@ -86,7 +86,7 @@ class Component extends Object {
 /**
  * Magic method for lazy loading $components.
  *
- * @param sting $name Name of component to get.
+ * @param string $name Name of component to get.
  * @return mixed A Component object or null.
  */
 	public function __get($name) {
@@ -102,7 +102,7 @@ class Component extends Object {
 /**
  * Called before the Controller::beforeFilter().
  *
- * @param object $controller Controller with components to initialize
+ * @param Controller $controller Controller with components to initialize
  * @return void
  * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
@@ -111,7 +111,7 @@ class Component extends Object {
 /**
  * Called after the Controller::beforeFilter() and before the controller action
  *
- * @param object $controller Controller with components to startup
+ * @param Controller $controller Controller with components to startup
  * @return void
  * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
@@ -121,7 +121,7 @@ class Component extends Object {
  * Called after the Controller::beforeRender(), after the view class is loaded, and before the
  * Controller::render()
  *
- * @param object $controller Controller with components to beforeRender
+ * @param Controller $controller Controller with components to beforeRender
  * @return void
  */
 	public function beforeRender($controller) { }
@@ -129,7 +129,7 @@ class Component extends Object {
 /**
  * Called after Controller::render() and before the output is printed to the browser.
  *
- * @param object $controller Controller with components to shutdown
+ * @param Controller $controller Controller with components to shutdown
  * @return void
  */
 	public function shutdown($controller) { }
@@ -146,11 +146,11 @@ class Component extends Object {
  * If your response is a string or an array that does not contain a 'url' key it will
  * be used as the new url to redirect to.
  *
- * @param object $controller Controller with components to beforeRedirect
- * @param mixed $url Either the string or url array that is being redirected to.
- * @param int $status The status code of the redirect
- * @param bool $exit Will the script exit.
- * @return mixed Either an array or null.
+ * @param Controller $controller Controller with components to beforeRedirect
+ * @param string|array $url Either the string or url array that is being redirected to.
+ * @param integer $status The status code of the redirect
+ * @param boolean $exit Will the script exit.
+ * @return array|null Either an array or null.
  */
 	public function beforeRedirect($controller, $url, $status = null, $exit = true) {}
 

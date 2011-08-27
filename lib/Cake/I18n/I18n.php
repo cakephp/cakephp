@@ -64,37 +64,37 @@ class I18n {
  *
  * @var string
  */
-	private $__lang = null;
+	protected $_lang = null;
 
 /**
  * Translation strings for a specific domain read from the .mo or .po files
  *
  * @var array
  */
-	private $__domains = array();
+	protected $_domains = array();
 
 /**
- * Set to true when I18N::__bindTextDomain() is called for the first time.
+ * Set to true when I18N::_bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
  *
  * @var boolean
  */
-	private $__noLocale = false;
+	protected $_noLocale = false;
 
 /**
- * Set to true when I18N::__bindTextDomain() is called for the first time.
+ * Set to true when I18N::_bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
  *
  * @var array
  */
-	private $__categories = array(
-		 'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
+	protected $_categories = array(
+		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 
 /**
  * Return a static instance of the I18n class
  *
- * @return object I18n
+ * @return I18n
  */
 	public static function &getInstance() {
 		static $instance = array();
@@ -127,7 +127,7 @@ class I18n {
 		}
 
 		if (is_numeric($category)) {
-			$_this->category = $_this->__categories[$category];
+			$_this->category = $_this->_categories[$category];
 		}
 		$language = Configure::read('Config.language');
 
@@ -135,9 +135,9 @@ class I18n {
 			$language = $_SESSION['Config']['language'];
 		}
 
-		if (($_this->__lang && $_this->__lang !== $language) || !$_this->__lang) {
+		if (($_this->_lang && $_this->_lang !== $language) || !$_this->_lang) {
 			$lang = $_this->l10n->get($language);
-			$_this->__lang = $lang;
+			$_this->_lang = $lang;
 		}
 
 		if (is_null($domain)) {
@@ -146,24 +146,24 @@ class I18n {
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
-		if (!isset($_this->__domains[$domain][$_this->__lang])) {
-			$_this->__domains[$domain][$_this->__lang] = Cache::read($_this->domain, '_cake_core_');
+		if (!isset($_this->_domains[$domain][$_this->_lang])) {
+			$_this->_domains[$domain][$_this->_lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
-		if (!isset($_this->__domains[$domain][$_this->__lang][$_this->category])) {
-			$_this->__bindTextDomain($domain);
-			Cache::write($_this->domain, $_this->__domains[$domain][$_this->__lang], '_cake_core_');
+		if (!isset($_this->_domains[$domain][$_this->_lang][$_this->category])) {
+			$_this->_bindTextDomain($domain);
+			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
 		if ($_this->category == 'LC_TIME') {
-			return $_this->__translateTime($singular,$domain);
+			return $_this->_translateTime($singular,$domain);
 		}
 
 		if (!isset($count)) {
 			$plurals = 0;
-		} elseif (!empty($_this->__domains[$domain][$_this->__lang][$_this->category]["%plural-c"]) && $_this->__noLocale === false) {
-			$header = $_this->__domains[$domain][$_this->__lang][$_this->category]["%plural-c"];
-			$plurals = $_this->__pluralGuess($header, $count);
+		} elseif (!empty($_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"]) && $_this->_noLocale === false) {
+			$header = $_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"];
+			$plurals = $_this->_pluralGuess($header, $count);
 		} else {
 			if ($count != 1) {
 				$plurals = 1;
@@ -172,8 +172,8 @@ class I18n {
 			}
 		}
 
-		if (!empty($_this->__domains[$domain][$_this->__lang][$_this->category][$singular])) {
-			if (($trans = $_this->__domains[$domain][$_this->__lang][$_this->category][$singular]) || ($plurals) && ($trans = $_this->__domains[$domain][$_this->__lang][$_this->category][$plural])) {
+		if (!empty($_this->_domains[$domain][$_this->_lang][$_this->category][$singular])) {
+			if (($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$singular]) || ($plurals) && ($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$plural])) {
 				if (is_array($trans)) {
 					if (isset($trans[$plurals])) {
 						$trans = $trans[$plurals];
@@ -198,7 +198,7 @@ class I18n {
  */
 	public static function clear() {
 		$self = I18n::getInstance();
-		$self->__domains = array();
+		$self->_domains = array();
 	}
 
 /**
@@ -208,17 +208,17 @@ class I18n {
  */
 	public static function domains() {
 		$self = I18n::getInstance();
-		return $self->__domains;
+		return $self->_domains;
 	}
 
 /**
  * Attempts to find the plural form of a string.
  *
  * @param string $header Type
- * @param integrer $n Number
+ * @param integer $n Number
  * @return integer plural match
  */
-	private function __pluralGuess($header, $n) {
+	protected function _pluralGuess($header, $n) {
 		if (!is_string($header) || $header === "nplurals=1;plural=0;" || !isset($header[0])) {
 			return 0;
 		}
@@ -266,8 +266,8 @@ class I18n {
  * @param string $domain Domain to bind
  * @return string Domain binded
  */
-	private function __bindTextDomain($domain) {
-		$this->__noLocale = true;
+	protected function _bindTextDomain($domain) {
+		$this->_noLocale = true;
 		$core = true;
 		$merge = array();
 		$searchPaths = App::path('locales');
@@ -295,69 +295,70 @@ class I18n {
 					$app = $directory . $lang . DS . $this->category . DS . 'core';
 
 					if (file_exists($fn = "$app.mo")) {
-						$this->__loadMo($fn, $domain);
-						$this->__noLocale = false;
-						$merge[$domain][$this->__lang][$this->category] = $this->__domains[$domain][$this->__lang][$this->category];
+						$this->_loadMo($fn, $domain);
+						$this->_noLocale = false;
+						$merge[$domain][$this->_lang][$this->category] = $this->_domains[$domain][$this->_lang][$this->category];
 						$core = null;
 					} elseif (file_exists($fn = "$app.po") && ($f = fopen($fn, "r"))) {
-						$this->__loadPo($f, $domain);
-						$this->__noLocale = false;
-						$merge[$domain][$this->__lang][$this->category] = $this->__domains[$domain][$this->__lang][$this->category];
+						$this->_loadPo($f, $domain);
+						$this->_noLocale = false;
+						$merge[$domain][$this->_lang][$this->category] = $this->_domains[$domain][$this->_lang][$this->category];
 						$core = null;
 					}
 				}
 
 				if (file_exists($fn = "$file.mo")) {
-					$this->__loadMo($fn, $domain);
-					$this->__noLocale = false;
+					$this->_loadMo($fn, $domain);
+					$this->_noLocale = false;
 					break 2;
 				} elseif (file_exists($fn = "$file.po") && ($f = fopen($fn, "r"))) {
-					$this->__loadPo($f, $domain);
-					$this->__noLocale = false;
+					$this->_loadPo($f, $domain);
+					$this->_noLocale = false;
 					break 2;
 				} elseif (is_file($localeDef) && ($f = fopen($localeDef, "r"))) {
-					$this->__loadLocaleDefinition($f, $domain);
-					$this->__noLocale = false;
+					$this->_loadLocaleDefinition($f, $domain);
+					$this->_noLocale = false;
 					return $domain;
 				}
 			}
 		}
 
-		if (empty($this->__domains[$domain][$this->__lang][$this->category])) {
-			$this->__domains[$domain][$this->__lang][$this->category] = array();
+		if (empty($this->_domains[$domain][$this->_lang][$this->category])) {
+			$this->_domains[$domain][$this->_lang][$this->category] = array();
 			return $domain;
 		}
 
-		if (isset($this->__domains[$domain][$this->__lang][$this->category][""])) {
-			$head = $this->__domains[$domain][$this->__lang][$this->category][""];
+		if (isset($this->_domains[$domain][$this->_lang][$this->category][""])) {
+			$head = $this->_domains[$domain][$this->_lang][$this->category][""];
 
 			foreach (explode("\n", $head) as $line) {
 				$header = strtok($line,":");
 				$line = trim(strtok("\n"));
-				$this->__domains[$domain][$this->__lang][$this->category]["%po-header"][strtolower($header)] = $line;
+				$this->_domains[$domain][$this->_lang][$this->category]["%po-header"][strtolower($header)] = $line;
 			}
 
-			if (isset($this->__domains[$domain][$this->__lang][$this->category]["%po-header"]["plural-forms"])) {
-				$switch = preg_replace("/(?:[() {}\\[\\]^\\s*\\]]+)/", "", $this->__domains[$domain][$this->__lang][$this->category]["%po-header"]["plural-forms"]);
-				$this->__domains[$domain][$this->__lang][$this->category]["%plural-c"] = $switch;
-				unset($this->__domains[$domain][$this->__lang][$this->category]["%po-header"]);
+			if (isset($this->_domains[$domain][$this->_lang][$this->category]["%po-header"]["plural-forms"])) {
+				$switch = preg_replace("/(?:[() {}\\[\\]^\\s*\\]]+)/", "", $this->_domains[$domain][$this->_lang][$this->category]["%po-header"]["plural-forms"]);
+				$this->_domains[$domain][$this->_lang][$this->category]["%plural-c"] = $switch;
+				unset($this->_domains[$domain][$this->_lang][$this->category]["%po-header"]);
 			}
-			$this->__domains = Set::pushDiff($this->__domains, $merge);
+			$this->_domains = Set::pushDiff($this->_domains, $merge);
 
-			if (isset($this->__domains[$domain][$this->__lang][$this->category][null])) {
-				unset($this->__domains[$domain][$this->__lang][$this->category][null]);
+			if (isset($this->_domains[$domain][$this->_lang][$this->category][null])) {
+				unset($this->_domains[$domain][$this->_lang][$this->category][null]);
 			}
 		}
 		return $domain;
 	}
 
 /**
- * Loads the binary .mo file for translation and sets the values for this translation in the var I18n::__domains
+ * Loads the binary .mo file for translation and sets the values for this translation in the var I18n::_domains
  *
  * @param resource $file Binary .mo file to load
  * @param string $domain Domain where to load file in
+ * @return void
  */
-	private function __loadMo($file, $domain) {
+	protected function _loadMo($file, $domain) {
 		$data = file_get_contents($file);
 
 		if ($data) {
@@ -380,10 +381,10 @@ class I18n {
 					if (strpos($msgstr, "\000")) {
 						$msgstr = explode("\000", $msgstr);
 					}
-					$this->__domains[$domain][$this->__lang][$this->category][$msgid] = $msgstr;
+					$this->_domains[$domain][$this->_lang][$this->category][$msgid] = $msgstr;
 
 					if (isset($msgid_plural)) {
-						$this->__domains[$domain][$this->__lang][$this->category][$msgid_plural] =& $this->__domains[$domain][$this->__lang][$this->category][$msgid];
+						$this->_domains[$domain][$this->_lang][$this->category][$msgid_plural] =& $this->_domains[$domain][$this->_lang][$this->category][$msgid];
 					}
 				}
 			}
@@ -391,13 +392,13 @@ class I18n {
 	}
 
 /**
- * Loads the text .po file for translation and sets the values for this translation in the var I18n::__domains
+ * Loads the text .po file for translation and sets the values for this translation in the var I18n::_domains
  *
  * @param resource $file Text .po file to load
  * @param string $domain Domain to load file in
  * @return array Binded domain elements
  */
-	private function __loadPo($file, $domain) {
+	protected function _loadPo($file, $domain) {
 		$type = 0;
 		$translations = array();
 		$translationKey = "";
@@ -457,7 +458,7 @@ class I18n {
 		} while (!feof($file));
 		fclose($file);
 		$merge[""] = $header;
-		return $this->__domains[$domain][$this->__lang][$this->category] = array_merge($merge ,$translations);
+		return $this->_domains[$domain][$this->_lang][$this->category] = array_merge($merge ,$translations);
 	}
 
 /**
@@ -467,7 +468,7 @@ class I18n {
  * @param string $domain Domain where locale definitions will be stored
  * @return void
  */
-	private function __loadLocaleDefinition($file, $domain = null) {
+	protected function _loadLocaleDefinition($file, $domain = null) {
 		$comment = '#';
 		$escape = '\\';
 		$currentToken = false;
@@ -509,14 +510,14 @@ class I18n {
 			$this->__escape = $escape;
 			foreach ($value as $i => $val) {
 				$val = trim($val, '"');
-				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$this, '__parseLiteralValue'), $val);
+				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$this, '_parseLiteralValue'), $val);
 				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
 			if (count($value) == 1) {
-				$this->__domains[$domain][$this->__lang][$this->category][$currentToken] = array_pop($value);
+				$this->_domains[$domain][$this->_lang][$this->category][$currentToken] = array_pop($value);
 			} else {
-				$this->__domains[$domain][$this->__lang][$this->category][$currentToken] = $value;
+				$this->_domains[$domain][$this->_lang][$this->category][$currentToken] = $value;
 			}
 		}
 	}
@@ -527,7 +528,7 @@ class I18n {
  * @param string $string Symbol to be parsed
  * @return string parsed symbol
  */
-	private function __parseLiteralValue($string) {
+	protected function _parseLiteralValue($string) {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->__escape . 'x') {
 			$delimiter = $this->__escape . 'x';
@@ -558,9 +559,9 @@ class I18n {
  * @param string $domain Domain where format is stored
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
  */
-	private function __translateTime($format, $domain) {
-		if (!empty($this->__domains[$domain][$this->__lang]['LC_TIME'][$format])) {
-			if (($trans = $this->__domains[$domain][$this->__lang][$this->category][$format])) {
+	protected function _translateTime($format, $domain) {
+		if (!empty($this->_domains[$domain][$this->_lang]['LC_TIME'][$format])) {
+			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format])) {
 				return $trans;
 			}
 		}

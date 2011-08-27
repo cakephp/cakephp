@@ -32,7 +32,6 @@ class AclNodeTwoTestBase extends AclNode {
  * useDbConfig property
  *
  * @var string 'test'
- * @access public
  */
 	public $useDbConfig = 'test';
 
@@ -40,7 +39,6 @@ class AclNodeTwoTestBase extends AclNode {
  * cacheSources property
  *
  * @var bool false
- * @access public
  */
 	public $cacheSources = false;
 }
@@ -56,7 +54,6 @@ class AroTwoTest extends AclNodeTwoTestBase {
  * name property
  *
  * @var string 'AroTwoTest'
- * @access public
  */
 	public $name = 'AroTwoTest';
 
@@ -64,7 +61,6 @@ class AroTwoTest extends AclNodeTwoTestBase {
  * useTable property
  *
  * @var string 'aro_twos'
- * @access public
  */
 	public $useTable = 'aro_twos';
 
@@ -72,7 +68,6 @@ class AroTwoTest extends AclNodeTwoTestBase {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('AcoTwoTest' => array('with' => 'PermissionTwoTest'));
 }
@@ -88,7 +83,6 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  * name property
  *
  * @var string 'AcoTwoTest'
- * @access public
  */
 	public $name = 'AcoTwoTest';
 
@@ -96,7 +90,6 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  * useTable property
  *
  * @var string 'aco_twos'
- * @access public
  */
 	public $useTable = 'aco_twos';
 
@@ -104,7 +97,6 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('AroTwoTest' => array('with' => 'PermissionTwoTest'));
 }
@@ -120,7 +112,6 @@ class PermissionTwoTest extends CakeTestModel {
  * name property
  *
  * @var string 'PermissionTwoTest'
- * @access public
  */
 	public $name = 'PermissionTwoTest';
 
@@ -128,7 +119,6 @@ class PermissionTwoTest extends CakeTestModel {
  * useTable property
  *
  * @var string 'aros_aco_twos'
- * @access public
  */
 	public $useTable = 'aros_aco_twos';
 
@@ -136,7 +126,6 @@ class PermissionTwoTest extends CakeTestModel {
  * cacheQueries property
  *
  * @var bool false
- * @access public
  */
 	public $cacheQueries = false;
 
@@ -144,7 +133,6 @@ class PermissionTwoTest extends CakeTestModel {
  * belongsTo property
  *
  * @var array
- * @access public
  */
 	public $belongsTo = array('AroTwoTest' => array('foreignKey' => 'aro_id'), 'AcoTwoTest' => array('foreignKey' => 'aco_id'));
 
@@ -152,7 +140,6 @@ class PermissionTwoTest extends CakeTestModel {
  * actsAs property
  *
  * @var mixed null
- * @access public
  */
 	public $actsAs = null;
 }
@@ -167,7 +154,6 @@ class DbAclTwoTest extends DbAcl {
 /**
  * construct method
  *
- * @access private
  * @return void
  */
 	function __construct() {
@@ -258,7 +244,6 @@ class IniAclTest extends CakeTestCase {
 /**
  * testIniCheck method
  *
- * @access public
  * @return void
  */
 	public function testCheck() {
@@ -309,7 +294,6 @@ class DbAclTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
 
@@ -329,7 +313,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -340,7 +323,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testAclCreate method
  *
- * @access public
  * @return void
  */
 	public function testCreate() {
@@ -368,7 +350,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testAclCreateWithParent method
  *
- * @access public
  * @return void
  */
 	public function testCreateWithParent() {
@@ -388,7 +369,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testDbAclAllow method
  *
- * @access public
  * @return void
  */
 	public function testAllow() {
@@ -426,7 +406,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testAllowInvalidNode method
  *
- * @access public
  * @return void
  */
 	public function testAllowInvalidNode() {
@@ -437,7 +416,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testDbAclCheck method
  *
- * @access public
  * @return void
  */
 	public function testCheck() {
@@ -458,7 +436,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testCheckInvalidNode method
  *
- * @access public
  * @return void
  */
 	public function testCheckInvalidNode() {
@@ -469,7 +446,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testCheckInvalidPermission method
  *
- * @access public
  * @return void
  */
 	public function testCheckInvalidPermission() {
@@ -480,7 +456,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testCheckMissingPermission method
  *
- * @access public
  * @return void
  */
 	public function testCheckMissingPermission() {
@@ -494,7 +469,6 @@ class DbAclTest extends CakeTestCase {
  * Setup the acl permissions such that Bobs inherits from admin.
  * deny Admin delete access to a specific resource, check the permisssions are inherited.
  *
- * @access public
  * @return void
  */
 	public function testAclCascadingDeny() {
@@ -509,7 +483,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testDbAclDeny method
  *
- * @access public
  * @return void
  */
 	public function testDeny() {
@@ -539,7 +512,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testAclNodeLookup method
  *
- * @access public
  * @return void
  */
 	public function testAclNodeLookup() {
@@ -564,7 +536,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testDbInherit method
  *
- * @access public
  * @return void
  */
 	public function testInherit() {
@@ -582,7 +553,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testDbGrant method
  *
- * @access public
  * @return void
  */
 	public function testGrant() {
@@ -604,7 +574,6 @@ class DbAclTest extends CakeTestCase {
 /**
  * testDbRevoke method
  *
- * @access public
  * @return void
  */
 	public function testRevoke() {
@@ -629,7 +598,6 @@ class DbAclTest extends CakeTestCase {
  * Only designed to work with the db based ACL
  *
  * @param bool $treesToo
- * @access private
  * @return void
  */
 	function __debug ($printTreesToo = false) {
@@ -677,7 +645,6 @@ class DbAclTest extends CakeTestCase {
  *
  * @param string $string
  * @param int $len
- * @access private
  * @return void
  */
 	function __pad($string = '', $len = 14) {

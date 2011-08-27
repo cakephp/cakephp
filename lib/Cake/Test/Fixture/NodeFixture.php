@@ -29,7 +29,6 @@ class NodeFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Node'
- * @access public
  */
 	public $name = 'Node';
 
@@ -37,7 +36,6 @@ class NodeFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class NodeFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('id' => 1, 'name' => 'First', 'state' => 50),

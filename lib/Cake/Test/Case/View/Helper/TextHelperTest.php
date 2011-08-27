@@ -30,7 +30,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -42,7 +41,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -52,7 +50,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testTruncate method
  *
- * @access public
  * @return void
  */
 	public function testTruncate() {
@@ -93,7 +90,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testHighlight method
  *
- * @access public
  * @return void
  */
 	public function testHighlight() {
@@ -118,7 +114,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testHighlightHtml method
  *
- * @access public
  * @return void
  */
 	public function testHighlightHtml() {
@@ -145,7 +140,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testHighlightMulti method
  *
- * @access public
  * @return void
  */
 	public function testHighlightMulti() {
@@ -160,7 +154,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testStripLinks method
  *
- * @access public
  * @return void
  */
 	public function testStripLinks() {
@@ -188,7 +181,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testAutoLink method
  *
- * @access public
  * @return void
  */
 	public function testAutoLink() {
@@ -236,7 +228,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testAutoLinkUrls method
  *
- * @access public
  * @return void
  */
 	public function testAutoLinkUrls() {
@@ -289,7 +280,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testAutoLinkEmails method
  *
- * @access public
  * @return void
  */
 	public function testAutoLinkEmails() {
@@ -328,7 +318,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testHighlightCaseInsensitivity method
  *
- * @access public
  * @return void
  */
 	public function testHighlightCaseInsensitivity() {
@@ -345,7 +334,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testExcerpt method
  *
- * @access public
  * @return void
  */
 	public function testExcerpt() {
@@ -385,7 +373,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testExcerptCaseInsensitivity method
  *
- * @access public
  * @return void
  */
 	public function testExcerptCaseInsensitivity() {
@@ -403,7 +390,6 @@ class TextHelperTest extends CakeTestCase {
 /**
  * testListGeneration method
  *
- * @access public
  * @return void
  */
 	public function testListGeneration() {

@@ -18,8 +18,8 @@
 /**
  * Object wrapper for outputting information from a shell application.
  * Can be connected to any stream resource that can be used with fopen()
- * 
- * Can generate colorized output on consoles that support it. There are a few 
+ *
+ * Can generate colorized output on consoles that support it. There are a few
  * built in styles
  *
  * - `error` Error messages.
@@ -141,7 +141,7 @@ class ConsoleOutput {
  *
  * Checks for a pretty console environment. Ansicon allows pretty consoles
  * on windows, and is supported.
- * 
+ *
  * @param string $stream The identifier of the stream to write output to.
  */
 	public function __construct($stream = 'php://stdout') {
@@ -265,8 +265,8 @@ class ConsoleOutput {
 
 /**
  * Get/Set the output type to use.  The output type how formatting tags are treated.
- * 
- * @param int $type The output type to use.  Should be one of the class constants.
+ *
+ * @param integer $type The output type to use.  Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {
@@ -279,7 +279,6 @@ class ConsoleOutput {
 /**
  * clean up and close handles
  *
- * @return void
  */
 	public function __destruct() {
 		fclose($this->_output);

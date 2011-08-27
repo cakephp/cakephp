@@ -33,21 +33,18 @@ class ControllerTestAppController extends Controller {
  * helpers property
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Html');
 /**
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array('ControllerPost');
 /**
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Cookie');
 }
@@ -64,7 +61,6 @@ class ControllerPost extends CakeTestModel {
  * name property
  *
  * @var string 'ControllerPost'
- * @access public
  */
 	public $name = 'ControllerPost';
 
@@ -72,7 +68,6 @@ class ControllerPost extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'posts';
 
@@ -80,7 +75,6 @@ class ControllerPost extends CakeTestModel {
  * invalidFields property
  *
  * @var array
- * @access public
  */
 	public $invalidFields = array('name' => 'error_msg');
 
@@ -88,7 +82,6 @@ class ControllerPost extends CakeTestModel {
  * lastQuery property
  *
  * @var mixed null
- * @access public
  */
 	public $lastQuery = null;
 
@@ -96,7 +89,6 @@ class ControllerPost extends CakeTestModel {
  * beforeFind method
  *
  * @param mixed $query
- * @access public
  * @return void
  */
 	public function beforeFind($query) {
@@ -108,7 +100,6 @@ class ControllerPost extends CakeTestModel {
  *
  * @param mixed $type
  * @param array $options
- * @access public
  * @return void
  */
 	public function find($type, $options = array()) {
@@ -132,7 +123,6 @@ class ControllerCommentsController extends ControllerTestAppController {
  * name property
  *
  * @var string 'ControllerPost'
- * @access public
  */
 	public $name = 'ControllerComments';
 
@@ -150,7 +140,6 @@ class ControllerComment extends CakeTestModel {
  * name property
  *
  * @var string 'ControllerComment'
- * @access public
  */
 	public $name = 'Comment';
 
@@ -158,7 +147,6 @@ class ControllerComment extends CakeTestModel {
  * useTable property
  *
  * @var string 'comments'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -166,7 +154,6 @@ class ControllerComment extends CakeTestModel {
  * data property
  *
  * @var array
- * @access public
  */
 	public $data = array('name' => 'Some Name');
 
@@ -174,7 +161,6 @@ class ControllerComment extends CakeTestModel {
  * alias property
  *
  * @var string 'ControllerComment'
- * @access public
  */
 	public $alias = 'ControllerComment';
 }
@@ -190,7 +176,6 @@ class ControllerAlias extends CakeTestModel {
  * name property
  *
  * @var string 'ControllerAlias'
- * @access public
  */
 	public $name = 'ControllerAlias';
 
@@ -198,7 +183,6 @@ class ControllerAlias extends CakeTestModel {
  * alias property
  *
  * @var string 'ControllerSomeAlias'
- * @access public
  */
 	public $alias = 'ControllerSomeAlias';
 
@@ -206,7 +190,6 @@ class ControllerAlias extends CakeTestModel {
  * useTable property
  *
  * @var string 'posts'
- * @access public
  */
 	public $useTable = 'posts';
 }
@@ -221,14 +204,12 @@ class NameTest extends CakeTestModel {
 /**
  * name property
  * @var string 'Name'
- * @access public
  */
 	public $name = 'Name';
 
 /**
  * useTable property
  * @var string 'names'
- * @access public
  */
 	public $useTable = 'comments';
 
@@ -236,7 +217,6 @@ class NameTest extends CakeTestModel {
  * alias property
  *
  * @var string 'ControllerComment'
- * @access public
  */
 	public $alias = 'Name';
 }
@@ -251,7 +231,6 @@ class TestController extends ControllerTestAppController {
 /**
  * name property
  * @var string 'Name'
- * @access public
  */
 	public $name = 'Test';
 
@@ -259,7 +238,6 @@ class TestController extends ControllerTestAppController {
  * helpers property
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Session');
 
@@ -267,7 +245,6 @@ class TestController extends ControllerTestAppController {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Security');
 
@@ -275,7 +252,6 @@ class TestController extends ControllerTestAppController {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array('ControllerComment', 'ControllerAlias');
 
@@ -286,7 +262,6 @@ class TestController extends ControllerTestAppController {
  *
  * @param mixed $testId
  * @param mixed $test2Id
- * @access public
  * @return void
  */
 	public function index($testId, $test2Id) {
@@ -326,7 +301,6 @@ class TestComponent extends Object {
 /**
  * beforeRedirect method
  *
- * @access public
  * @return void
  */
 	public function beforeRedirect() {
@@ -334,7 +308,6 @@ class TestComponent extends Object {
 /**
  * initialize method
  *
- * @access public
  * @return void
  */
 	public function initialize(&$controller) {
@@ -343,7 +316,6 @@ class TestComponent extends Object {
 /**
  * startup method
  *
- * @access public
  * @return void
  */
 	public function startup(&$controller) {
@@ -351,7 +323,6 @@ class TestComponent extends Object {
 /**
  * shutdown method
  *
- * @access public
  * @return void
  */
 	public function shutdown(&$controller) {
@@ -378,14 +349,12 @@ class AnotherTestController extends ControllerTestAppController {
 /**
  * name property
  * @var string 'Name'
- * @access public
  */
 	public $name = 'AnotherTest';
 /**
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = null;
 
@@ -403,7 +372,6 @@ class ControllerTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.post', 'core.comment', 'core.name');
 
@@ -421,7 +389,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * teardown
  *
- * @access public
  * @return void
  */
 	public function teardown() {
@@ -432,7 +399,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testLoadModel method
  *
- * @access public
  * @return void
  */
 	public function testLoadModel() {
@@ -454,7 +420,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testLoadModel method from a plugin controller
  *
- * @access public
  * @return void
  */
 	public function testLoadModelInPlugins() {
@@ -485,7 +450,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testConstructClasses method
  *
- * @access public
  * @return void
  */
 	public function testConstructClasses() {
@@ -518,7 +482,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testAliasName method
  *
- * @access public
  * @return void
  */
 	public function testAliasName() {
@@ -536,7 +499,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testFlash method
  *
- * @access public
  * @return void
  */
 	public function testFlash() {
@@ -581,7 +543,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testControllerSet method
  *
- * @access public
  * @return void
  */
 	public function testControllerSet() {
@@ -625,7 +586,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testRender method
  *
- * @access public
  * @return void
  */
 	public function testRender() {
@@ -700,17 +660,16 @@ class ControllerTest extends CakeTestCase {
 /**
  * testToBeInheritedGuardmethods method
  *
- * @access public
  * @return void
  */
 	public function testToBeInheritedGuardmethods() {
 		$request = new CakeRequest('controller_posts/index');
 
 		$Controller = new Controller($request, $this->getMock('CakeResponse'));
-		$this->assertTrue($Controller->_beforeScaffold(''));
-		$this->assertTrue($Controller->_afterScaffoldSave(''));
-		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
-		$this->assertFalse($Controller->_scaffoldError(''));
+		$this->assertTrue($Controller->beforeScaffold(''));
+		$this->assertTrue($Controller->afterScaffoldSave(''));
+		$this->assertTrue($Controller->afterScaffoldSaveError(''));
+		$this->assertFalse($Controller->scaffoldError(''));
 	}
 
 /**
@@ -734,7 +693,6 @@ class ControllerTest extends CakeTestCase {
  * testRedirect method
  *
  * @dataProvider statusCodeProvider
- * @access public
  * @return void
  */
 	public function testRedirectByCode($code, $msg) {
@@ -871,7 +829,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testMergeVars method
  *
- * @access public
  * @return void
  */
 	public function testMergeVars() {
@@ -933,7 +890,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * test that options from child classes replace those in the parent classes.
  *
- * @access public
  * @return void
  */
 	public function testChildComponentOptionsSupercedeParents() {
@@ -948,7 +904,7 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * Ensure that __mergeVars is not being greedy and merging with
+ * Ensure that _mergeControllerVars is not being greedy and merging with
  * ControllerTestAppController when you make an instance of Controller
  *
  * @return void
@@ -967,7 +923,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testReferer method
  *
- * @access public
  * @return void
  */
 	public function testReferer() {
@@ -1004,7 +959,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testSetAction method
  *
- * @access public
  * @return void
  */
 	public function testSetAction() {
@@ -1019,7 +973,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testValidateErrors method
  *
- * @access public
  * @return void
  */
 	public function testValidateErrors() {
@@ -1062,7 +1015,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testPostConditions method
  *
- * @access public
  * @return void
  */
 	public function testPostConditions() {
@@ -1128,7 +1080,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testRequestHandlerPrefers method
  *
- * @access public
  * @return void
  */
 	public function testRequestHandlerPrefers(){
@@ -1153,7 +1104,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * testControllerHttpCodes method
  *
- * @access public
  * @return void
  */
 	public function testControllerHttpCodes() {
@@ -1168,7 +1118,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * Tests that the startup process calls the correct functions
  *
- * @access public
  * @return void
  */
 	public function testStartupProcess() {
@@ -1189,7 +1138,6 @@ class ControllerTest extends CakeTestCase {
 /**
  * Tests that the shutdown process calls the correct functions
  *
- * @access public
  * @return void
  */
 	public function testShutdownProcess() {

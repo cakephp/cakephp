@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
- * @since         CakePHP v 2.0
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -32,7 +32,6 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * The js snippet for the current selection.
  *
  * @var string
- * @access public
  */
 	public $selection;
 
@@ -42,7 +41,6 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * for end user use though.
  *
  * @var array
- * @access protected
  */
 	protected $_optionMap = array();
 
@@ -51,7 +49,6 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * This allows specific 'end point' methods to be automatically buffered by the JsHelper.
  *
  * @var array
- * @access public
  */
 	public $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
 
@@ -59,15 +56,16 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Contains a list of callback names -> default arguments.
  *
  * @var array
- * @access protected
  */
 	protected $_callbackArguments = array();
 
 /**
  * Constructor.
  *
+ * @param View $View
+ * @param array $settings
  */
-	function __construct($View, $settings = array()) {
+	public function __construct($View, $settings = array()) {
 		parent::__construct($View, $settings);
 	}
 
@@ -153,7 +151,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Converts a PHP-native variable of any type to a JSON-equivalent representation
  *
  * @param mixed $val A PHP variable to be converted to JSON
- * @param boolean $quoteStrings If false, leaves string values unquoted
+ * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
  */
 	public function value($val, $quoteString = true) {
@@ -192,7 +190,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * - "\n" => '\n'
  * - '"' => '\"'
  *
- * @param  string $script String that needs to get escaped.
+ * @param string $string String that needs to get escaped.
  * @return string Escaped string.
  */
 	public function escape($string) {
@@ -298,7 +296,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @return object instance of $this. Allows chained methods.
+ * @return JsBaseEngineHelper instance of $this. Allows chained methods.
  */
 	abstract public function get($selector);
 
@@ -421,6 +419,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * - `hover` - Event fired when a drag enters a drop zone.
  * - `leave` - Event fired when a drag is removed from a drop zone without being dropped.
  *
+ * @param array $options Array of options for the drop. See above.
  * @return string Completed drop script
  */
 	abstract public function drop($options = array());
@@ -466,6 +465,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * - `change` - Fired when the slider's value is updated
  * - `complete` - Fired when the user stops sliding the handle
  *
+ * @param array $options Array of options for the slider. See above.
  * @return string Completed slider script
  */
 	abstract public function slider($options = array());

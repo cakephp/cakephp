@@ -28,7 +28,6 @@ class BidFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Bid'
- * @access public
  */
 	public $name = 'Bid';
 
@@ -36,7 +35,6 @@ class BidFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class BidFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('message_id' => 1, 'name' => 'Bid 1.1'),

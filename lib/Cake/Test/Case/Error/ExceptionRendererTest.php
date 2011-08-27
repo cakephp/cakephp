@@ -34,7 +34,6 @@ class AuthBlueberryUser extends CakeTestModel {
  * name property
  *
  * @var string 'AuthBlueberryUser'
- * @access public
  */
 	public $name = 'AuthBlueberryUser';
 
@@ -42,7 +41,6 @@ class AuthBlueberryUser extends CakeTestModel {
  * useTable property
  *
  * @var string
- * @access public
  */
 	public $useTable = false;
 }
@@ -57,7 +55,6 @@ class BlueberryComponent extends Component {
 /**
  * testName property
  *
- * @access public
  * @return void
  */
 	public $testName = null;
@@ -65,7 +62,6 @@ class BlueberryComponent extends Component {
 /**
  * initialize method
  *
- * @access public
  * @return void
  */
 	public function initialize(&$controller) {
@@ -84,14 +80,12 @@ class TestErrorController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array();
 
 /**
  * components property
  *
- * @access public
  * @return void
  */
 	public $components = array('Blueberry');
@@ -99,7 +93,6 @@ class TestErrorController extends Controller {
 /**
  * beforeRender method
  *
- * @access public
  * @return void
  */
 	public function beforeRender() {
@@ -109,7 +102,6 @@ class TestErrorController extends Controller {
 /**
  * index method
  *
- * @access public
  * @return void
  */
 	public function index() {
@@ -340,7 +332,6 @@ class ExceptionRendererTest extends CakeTestCase {
 /**
  * testerror400 method
  *
- * @access public
  * @return void
  */
 	public function testError400() {
@@ -411,7 +402,6 @@ class ExceptionRendererTest extends CakeTestCase {
 /**
  * testError500 method
  *
- * @access public
  * @return void
  */
 	public function testError500Message() {
@@ -430,7 +420,6 @@ class ExceptionRendererTest extends CakeTestCase {
 /**
  * testMissingController method
  *
- * @access public
  * @return void
  */
 	public function testMissingController() {

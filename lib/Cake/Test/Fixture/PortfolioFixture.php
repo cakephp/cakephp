@@ -28,7 +28,6 @@ class PortfolioFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Portfolio'
- * @access public
  */
 	public $name = 'Portfolio';
 
@@ -36,7 +35,6 @@ class PortfolioFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -48,7 +46,6 @@ class PortfolioFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('seller_id' => 1, 'name' => 'Portfolio 1'),

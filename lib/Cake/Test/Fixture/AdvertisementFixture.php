@@ -28,7 +28,6 @@ class AdvertisementFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Advertisement'
- * @access public
  */
 	public $name = 'Advertisement';
 
@@ -36,7 +35,6 @@ class AdvertisementFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -49,7 +47,6 @@ class AdvertisementFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),

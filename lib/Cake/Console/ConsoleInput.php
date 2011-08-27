@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
- * Object wrapper for interacting with stdin 
+ * Object wrapper for interacting with stdin
  *
  * @package       Cake.Console
  */

@@ -28,7 +28,6 @@ class FeaturedFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Featured'
- * @access public
  */
 	public $name = 'Featured';
 
@@ -36,7 +35,6 @@ class FeaturedFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -52,7 +50,6 @@ class FeaturedFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23', 'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),

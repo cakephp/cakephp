@@ -28,7 +28,6 @@ class FeatureSetFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'FeatureSet'
- * @access public
  */
 	public $name = 'FeatureSet';
 
@@ -36,7 +35,6 @@ class FeatureSetFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -47,7 +45,6 @@ class FeatureSetFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('name' => 'FeatureSet 1')

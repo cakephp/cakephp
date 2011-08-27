@@ -20,7 +20,7 @@ App::uses('ConsoleOutput', 'Console');
 App::uses('CakeLog', 'Log');
 
 /**
- * Error Handler for Cake console. Does simple printing of the 
+ * Error Handler for Cake console. Does simple printing of the
  * exception that occurred and the stack trace of the error.
  *
  * @package       Cake.Console
@@ -30,16 +30,14 @@ class ConsoleErrorHandler extends ErrorHandler {
 /**
  * Standard error stream.
  *
- * @var filehandle
- * @access public
+ * @var ConsoleOutput
  */
 	public static $stderr;
 
 /**
  * Get the stderr object for the console error handling.
  *
- * @param Exception $error Exception to handle.
- * @param array $messages Error messages
+ * @return ConsoleOutput
  */
 	public static function getStderr() {
 		if (empty(self::$stderr)) {
@@ -57,7 +55,7 @@ class ConsoleErrorHandler extends ErrorHandler {
 	public static function handleException(Exception $exception) {
 		$stderr = self::getStderr();
 		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
-			$exception->getMessage(), 
+			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
 	}
@@ -66,10 +64,10 @@ class ConsoleErrorHandler extends ErrorHandler {
  * Handle errors in the console environment. Writes errors to stderr,
  * and logs messages if Configure::read('debug') is 0.
  *
- * @param int $code Error code
+ * @param integer $code Error code
  * @param string $description Description of the error.
  * @param string $file The file the error occurred in.
- * @param int $line The line the error occurred on.
+ * @param integer $line The line the error occurred on.
  * @param array $context The backtrace of the error.
  * @return void
  */

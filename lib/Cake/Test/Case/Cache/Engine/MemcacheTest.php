@@ -46,7 +46,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -64,7 +63,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -76,7 +74,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testSettings method
  *
- * @access public
  * @return void
  */
 	public function testSettings() {
@@ -98,7 +95,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testSettings method
  *
- * @access public
  * @return void
  */
 	public function testMultipleServers() {
@@ -127,7 +123,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testConnect method
  *
- * @access public
  * @return void
  */
 	public function testConnect() {
@@ -172,7 +167,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testReadAndWriteCache method
  *
- * @access public
  * @return void
  */
 	public function testReadAndWriteCache() {
@@ -196,7 +190,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testExpiry method
  *
- * @access public
  * @return void
  */
 	public function testExpiry() {
@@ -245,7 +238,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testDeleteCache method
  *
- * @access public
  * @return void
  */
 	public function testDeleteCache() {
@@ -260,7 +252,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testDecrement method
  *
- * @access public
  * @return void
  */
 	public function testDecrement() {
@@ -283,7 +274,6 @@ class MemcacheEngineTest extends CakeTestCase {
 /**
  * testIncrement method
  *
- * @access public
  * @return void
  */
 	public function testIncrement() {

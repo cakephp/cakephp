@@ -236,7 +236,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	}
 
 /**
- * Ensure that __mergeVars is not being greedy and merging with
+ * Ensure that _mergeControllerVars is not being greedy and merging with
  * AppController when you make an instance of Controller
  *
  * @return void

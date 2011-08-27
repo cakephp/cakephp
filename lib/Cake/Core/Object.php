@@ -35,10 +35,8 @@ class Object {
 /**
  * constructor, no-op
  *
- * @return void
  */
 	public function __construct() {
-
 	}
 
 /**
@@ -124,7 +122,7 @@ class Object {
  * Stop execution of the current script.  Wraps exit() making
  * testing easier.
  *
- * @param $status see http://php.net/exit for values
+ * @param integer|string $status see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($status = 0) {
@@ -175,7 +173,7 @@ class Object {
  * this method as an empty function.
  *
  * @param array $properties The name of the properties to merge.
- * @param sting $class The class to merge the property with.
+ * @param string $class The class to merge the property with.
  * @param boolean $normalize Set to true to run the properties through Set::normalize() before merging.
  * @return void
  */

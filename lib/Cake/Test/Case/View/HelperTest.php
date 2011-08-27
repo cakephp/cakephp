@@ -33,14 +33,12 @@ class HelperTestPost extends Model {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -60,7 +58,6 @@ class HelperTestPost extends Model {
  * hasAndBelongsToMany property
  *
  * @var array
- * @access public
  */
 	public $hasAndBelongsToMany = array('HelperTestTag'=> array('with' => 'HelperTestPostsTag'));
 }
@@ -76,14 +73,12 @@ class HelperTestComment extends Model {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -110,14 +105,12 @@ class HelperTestTag extends Model {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -142,14 +135,12 @@ class HelperTestPostsTag extends Model {
  * useTable property
  *
  * @var bool false
- * @access public
  */
 	public $useTable = false;
 
 /**
  * schema method
  *
- * @access public
  * @return void
  */
 	public function schema($field = false) {
@@ -193,7 +184,6 @@ class HelperTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -212,7 +202,6 @@ class HelperTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -247,7 +236,6 @@ class HelperTest extends CakeTestCase {
  * testFormFieldNameParsing method
  *
  * @dataProvider entityProvider
- * @access public
  * @return void
  */
 	public function testSetEntity($entity, $expected) {
@@ -539,7 +527,6 @@ class HelperTest extends CakeTestCase {
 /**
  * testFieldsWithSameName method
  *
- * @access public
  * @return void
  */
 	public function testFieldsWithSameName() {
@@ -561,7 +548,6 @@ class HelperTest extends CakeTestCase {
 /**
  * testFieldSameAsModel method
  *
- * @access public
  * @return void
  */
 	public function testFieldSameAsModel() {
@@ -579,7 +565,6 @@ class HelperTest extends CakeTestCase {
 /**
  * testFieldSuffixForDate method
  *
- * @access public
  * @return void
  */
 	public function testFieldSuffixForDate() {
@@ -597,7 +582,6 @@ class HelperTest extends CakeTestCase {
 /**
  * testMulitDimensionValue method
  *
- * @access public
  * @return void
  */
 	public function testMultiDimensionValue() {
@@ -631,7 +615,6 @@ class HelperTest extends CakeTestCase {
 /**
  * testClean method
  *
- * @access public
  * @return void
  */
 	public function testClean() {
@@ -660,7 +643,6 @@ class HelperTest extends CakeTestCase {
 /**
  * testMultiDimensionalField method
  *
- * @access public
  * @return void
  */
 	public function testMultiDimensionalField() {

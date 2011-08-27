@@ -28,7 +28,6 @@ class DatatypeFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Datatype'
- * @access public
  */
 	public $name = 'Datatype';
 
@@ -36,7 +35,6 @@ class DatatypeFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
@@ -48,7 +46,6 @@ class DatatypeFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	var $records = array(
 		array('id' => 1, 'float_field' => 42.23, 'bool' => false),

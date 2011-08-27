@@ -19,7 +19,6 @@
 
 App::uses('CakeLogInterface', 'Log');
 
-
 /**
  * File Storage stream for Logging.  Writes logs to different files
  * based on the type of log it is.
@@ -37,15 +36,14 @@ class FileLog implements CakeLogInterface {
 
 /**
  * Constructs a new File Logger.
- * 
+ *
  * Options
  *
  * - `path` the path to save logs on.
  *
  * @param array $options Options for the FileLog, see above.
- * @return void
  */
-	function __construct($options = array()) {
+	public function __construct($options = array()) {
 		$options += array('path' => LOGS);
 		$this->_path = $options['path'];
 	}

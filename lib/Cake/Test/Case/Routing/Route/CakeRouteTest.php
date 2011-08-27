@@ -12,7 +12,6 @@ class CakeRouteTestCase extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {

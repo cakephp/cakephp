@@ -29,7 +29,6 @@ class DependencyFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Dependency'
- * @access public
  */
 	public $name = 'Dependency';
 
@@ -37,7 +36,6 @@ class DependencyFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'child_id' => 'integer',
@@ -48,7 +46,6 @@ class DependencyFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('child_id' => 1, 'parent_id' => 2),

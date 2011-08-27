@@ -35,7 +35,6 @@ class ViewPostsController extends Controller {
  * name property
  *
  * @var string 'Posts'
- * @access public
  */
 	public $name = 'Posts';
 
@@ -43,14 +42,12 @@ class ViewPostsController extends Controller {
  * uses property
  *
  * @var mixed null
- * @access public
  */
 	public $uses = null;
 
 /**
  * index method
  *
- * @access public
  * @return void
  */
 	public function index() {
@@ -63,7 +60,6 @@ class ViewPostsController extends Controller {
 /**
  * nocache_tags_with_element method
  *
- * @access public
  * @return void
  */
 	public function nocache_multiple_element() {
@@ -83,7 +79,6 @@ class TestView extends View {
  * getViewFileName method
  *
  * @param mixed $name
- * @access public
  * @return void
  */
 	public function getViewFileName($name = null) {
@@ -94,7 +89,6 @@ class TestView extends View {
  * getLayoutFileName method
  *
  * @param mixed $name
- * @access public
  * @return void
  */
 	public function getLayoutFileName($name = null) {
@@ -106,7 +100,6 @@ class TestView extends View {
  *
  * @param string $plugin
  * @param boolean $cached
- * @access public
  * @return void
  */
 	public function paths($plugin = null, $cached = true) {
@@ -153,7 +146,6 @@ class TestAfterHelper extends Helper {
 /**
  * beforeLayout method
  *
- * @access public
  * @return void
  */
 	public function beforeLayout($viewFile) {
@@ -163,7 +155,6 @@ class TestAfterHelper extends Helper {
 /**
  * afterLayout method
  *
- * @access public
  * @return void
  */
 	public function afterLayout($layoutFile) {
@@ -182,7 +173,6 @@ class ViewTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -207,7 +197,6 @@ class ViewTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -221,7 +210,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testPluginGetTemplate method
  *
- * @access public
  * @return void
  */
 	public function testPluginGetTemplate() {
@@ -300,7 +288,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testGetTemplate method
  *
- * @access public
  * @return void
  */
 	public function testGetTemplate() {
@@ -344,7 +331,6 @@ class ViewTest extends CakeTestCase {
  * testMissingView method
  *
  * @expectedException MissingViewException
- * @access public
  * @return void
  */
 	public function testMissingView() {
@@ -363,7 +349,6 @@ class ViewTest extends CakeTestCase {
  * testMissingLayout method
  *
  * @expectedException MissingLayoutException
- * @access public
  * @return void
  */
 	public function testMissingLayout() {
@@ -381,7 +366,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testViewVars method
  *
- * @access public
  * @return void
  */
 	public function testViewVars() {
@@ -391,7 +375,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testUUIDGeneration method
  *
- * @access public
  * @return void
  */
 	public function testUUIDGeneration() {
@@ -406,7 +389,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testAddInlineScripts method
  *
- * @access public
  * @return void
  */
 	public function testAddInlineScripts() {
@@ -422,7 +404,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testElement method
  *
- * @access public
  * @return void
  */
 	public function testElement() {
@@ -480,7 +461,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testElementCacheHelperNoCache method
  *
- * @access public
  * @return void
  */
 	public function testElementCacheHelperNoCache() {
@@ -494,7 +474,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testElementCache method
  *
- * @access public
  * @return void
  */
 	public function testElementCache() {
@@ -574,7 +553,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testLoadHelpers method
  *
- * @access public
  * @return void
  */
 	public function testLoadHelpers() {
@@ -613,7 +591,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testBeforeLayout method
  *
- * @access public
  * @return void
  */
 	public function testBeforeLayout() {
@@ -626,7 +603,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testAfterLayout method
  *
- * @access public
  * @return void
  */
 	public function testAfterLayout() {
@@ -645,7 +621,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testRenderLoadHelper method
  *
- * @access public
  * @return void
  */
 	public function testRenderLoadHelper() {
@@ -672,7 +647,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testRender method
  *
- * @access public
  * @return void
  */
 	public function testRender() {
@@ -747,7 +721,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testGetViewFileName method
  *
- * @access public
  * @return void
  */
 	public function testViewFileName() {
@@ -774,7 +747,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testRenderCache method
  *
- * @access public
  * @return void
  */
 	public function testRenderCache() {
@@ -842,7 +814,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testRenderNocache method
  *
- * @access public
  * @return void
  */
 
@@ -881,7 +852,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testSet method
  *
- * @access public
  * @return void
  */
 	public function testSet() {
@@ -914,7 +884,6 @@ class ViewTest extends CakeTestCase {
  * testBadExt method
  *
  * @expectedException MissingViewException
- * @access public
  * @return void
  */
 	public function testBadExt() {
@@ -929,7 +898,6 @@ class ViewTest extends CakeTestCase {
 /**
  * testAltExt method
  *
- * @access public
  * @return void
  */
 	public function testAltExt() {
@@ -943,7 +911,6 @@ class ViewTest extends CakeTestCase {
  * testAltBadExt method
  *
  * @expectedException MissingViewException
- * @access public
  * @return void
  */
 	public function testAltBadExt() {

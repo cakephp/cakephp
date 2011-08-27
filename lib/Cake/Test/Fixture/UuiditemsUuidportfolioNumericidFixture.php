@@ -28,7 +28,6 @@ class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'UuiditemsUuidportfolioNumericid'
- * @access public
  */
 	public $name = 'UuiditemsUuidportfolioNumericid';
 
@@ -36,7 +35,6 @@ class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
@@ -48,7 +46,6 @@ class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('uuiditem_id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'uuidportfolio_id' => '4806e091-6940-4d2b-b227-303740cf8569'),

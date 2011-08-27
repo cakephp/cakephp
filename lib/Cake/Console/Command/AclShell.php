@@ -58,6 +58,7 @@ class AclShell extends Shell {
 /**
  * Override startup of the Shell
  *
+ * @return void
  */
 	public function startup() {
 		parent::startup();
@@ -96,6 +97,7 @@ class AclShell extends Shell {
 /**
  * Override main() for help message hook
  *
+ * @return void
  */
 	public function main() {
 		$this->out($this->OptionParser->help());
@@ -104,9 +106,10 @@ class AclShell extends Shell {
 /**
  * Creates an ARO/ACO node
  *
+ * @return void
  */
 	public function create() {
-		extract($this->__dataVars());
+		extract($this->_dataVars());
 
 		$class = ucfirst($this->args[0]);
 		$parent = $this->parseIdentifier($this->args[1]);
@@ -136,9 +139,10 @@ class AclShell extends Shell {
 /**
  * Delete an ARO/ACO node.
  *
+ * @return void
  */
 	public function delete() {
-		extract($this->__dataVars());
+		extract($this->_dataVars());
 
 		$identifier = $this->parseIdentifier($this->args[1]);
 		$nodeId = $this->_getNodeId($class, $identifier);
@@ -152,9 +156,10 @@ class AclShell extends Shell {
 /**
  * Set parent for an ARO/ACO node.
  *
+ * @return void
  */
 	public function setParent() {
-		extract($this->__dataVars());
+		extract($this->_dataVars());
 		$target = $this->parseIdentifier($this->args[1]);
 		$parent = $this->parseIdentifier($this->args[2]);
 
@@ -175,9 +180,10 @@ class AclShell extends Shell {
 /**
  * Get path to specified ARO/ACO node.
  *
+ * @return void
  */
 	public function getPath() {
-		extract($this->__dataVars());
+		extract($this->_dataVars());
 		$identifier = $this->parseIdentifier($this->args[1]);
 
 		$id = $this->_getNodeId($class, $identifier);
@@ -217,9 +223,10 @@ class AclShell extends Shell {
 /**
  * Check permission for a given ARO to a given ACO.
  *
+ * @return void
  */
 	public function check() {
-		extract($this->__getParams());
+		extract($this->_getParams());
 
 		if ($this->Acl->check($aro, $aco, $action)) {
 			$this->out(__d('cake_console', '%s is <success>allowed</success>.', $aroName), true);
@@ -231,9 +238,10 @@ class AclShell extends Shell {
 /**
  * Grant permission for a given ARO to a given ACO.
  *
+ * @return void
  */
 	public function grant() {
-		extract($this->__getParams());
+		extract($this->_getParams());
 
 		if ($this->Acl->allow($aro, $aco, $action)) {
 			$this->out(__d('cake_console', 'Permission <success>granted</success>.'), true);
@@ -245,9 +253,10 @@ class AclShell extends Shell {
 /**
  * Deny access for an ARO to an ACO.
  *
+ * @return void
  */
 	public function deny() {
-		extract($this->__getParams());
+		extract($this->_getParams());
 
 		if ($this->Acl->deny($aro, $aco, $action)) {
 			$this->out(__d('cake_console', 'Permission denied.'), true);
@@ -259,9 +268,10 @@ class AclShell extends Shell {
 /**
  * Set an ARO to inherit permission to an ACO.
  *
+ * @return void
  */
 	public function inherit() {
-		extract($this->__getParams());
+		extract($this->_getParams());
 
 		if ($this->Acl->inherit($aro, $aco, $action)) {
 			$this->out(__d('cake_console', 'Permission inherited.'), true);
@@ -273,9 +283,10 @@ class AclShell extends Shell {
 /**
  * Show a specific ARO/ACO node.
  *
+ * @return void
  */
 	public function view() {
-		extract($this->__dataVars());
+		extract($this->_dataVars());
 
 		if (isset($this->args[1])) {
 			$identity = $this->parseIdentifier($this->args[1]);
@@ -332,6 +343,7 @@ class AclShell extends Shell {
 /**
  * Initialize ACL database.
  *
+ * @return mixed
  */
 	public function initdb() {
 		return $this->dispatchShell('schema create DbAcl');
@@ -493,15 +505,13 @@ class AclShell extends Shell {
 /**
  * Checks that given node exists
  *
- * @param string $type Node type (ARO/ACO)
- * @param integer $id Node id
  * @return boolean Success
  */
 	public function nodeExists() {
 		if (!isset($this->args[0]) || !isset($this->args[1])) {
 			return false;
 		}
-		extract($this->__dataVars($this->args[0]));
+		extract($this->_dataVars($this->args[0]));
 		$key = is_numeric($this->args[1]) ? $secondary_id : 'alias';
 		$conditions = array($class . '.' . $key => $this->args[1]);
 		$possibility = $this->Acl->{$class}->find('all', compact('conditions'));
@@ -534,9 +544,9 @@ class AclShell extends Shell {
  *
  * @param string $class Class type you want (Aro/Aco)
  * @param mixed $identifier A mixed identifier for finding the node.
- * @return int Integer of NodeId. Will trigger an error if nothing is found.
+ * @return integer Integer of NodeId. Will trigger an error if nothing is found.
  */
-	function _getNodeId($class, $identifier) {
+	protected function _getNodeId($class, $identifier) {
 		$node = $this->Acl->{$class}->node($identifier);
 		if (empty($node)) {
 			if (is_array($identifier)) {
@@ -552,7 +562,7 @@ class AclShell extends Shell {
  *
  * @return array aro, aco, action
  */
-	function __getParams() {
+	protected function _getParams() {
 		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
 		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
 		$aroName = $aro;
@@ -580,7 +590,7 @@ class AclShell extends Shell {
  * @param string $type Node type  (ARO/ACO)
  * @return array Variables
  */
-	function __dataVars($type = null) {
+	protected function _dataVars($type = null) {
 		if ($type == null) {
 			$type = $this->args[0];
 		}

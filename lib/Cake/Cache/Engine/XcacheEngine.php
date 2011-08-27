@@ -32,7 +32,6 @@ class XcacheEngine extends CacheEngine {
  *  - PHP_AUTH_PW = xcache.admin.password, default cake
  *
  * @var array
- * @access public
  */
 	public $settings = array();
 
@@ -45,7 +44,7 @@ class XcacheEngine extends CacheEngine {
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings) {
+	public function init($settings = array()) {
 		parent::init(array_merge(array(
 			'engine' => 'Xcache',
 			'prefix' => Inflector::slug(APP_DIR) . '_',
@@ -124,15 +123,16 @@ class XcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
+ * @param boolean $check
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
-		$this->__auth();
+		$this->_auth();
 		$max = xcache_count(XC_TYPE_VAR);
 		for ($i = 0; $i < $max; $i++) {
 			xcache_clear_cache(XC_TYPE_VAR, $i);
 		}
-		$this->__auth(true);
+		$this->_auth(true);
 		return true;
 	}
 
@@ -144,9 +144,9 @@ class XcacheEngine extends CacheEngine {
  * (see xcache.admin configuration settings)
  *
  * @param boolean $reverse Revert changes
- * @access private
+ * @return void
  */
-	function __auth($reverse = false) {
+	protected function _auth($reverse = false) {
 		static $backup = array();
 		$keys = array('PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password');
 		foreach ($keys as $key => $setting) {

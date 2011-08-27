@@ -33,7 +33,6 @@ class AclShellTest extends CakeTestCase {
  * Fixtures
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('core.aco', 'core.aro', 'core.aros_aco');
 

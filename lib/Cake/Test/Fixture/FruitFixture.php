@@ -28,7 +28,6 @@ class FruitFixture extends CakeTestFixture {
  * name property
  *
  * @var string 'Fruit'
- * @access public
  */
 	public $name = 'Fruit';
 
@@ -36,7 +35,6 @@ class FruitFixture extends CakeTestFixture {
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
@@ -50,7 +48,6 @@ class FruitFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array(

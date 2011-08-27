@@ -146,7 +146,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testPkInHAbtmLinkModelArticleB
  *
- * @access public
  * @return void
  */
 	public function testPkInHabtmLinkModelArticleB() {
@@ -158,7 +157,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * Tests that $cacheSources can only be disabled in the db using model settings, not enabled
  *
- * @access public
  * @return void
  */
 	public function testCacheSourcesDisabling() {
@@ -179,7 +177,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testPkInHabtmLinkModel method
  *
- * @access public
 	 * @return void
  */
 	public function testPkInHabtmLinkModel() {
@@ -207,7 +204,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testDynamicBehaviorAttachment method
  *
- * @access public
  * @return void
  */
 	public function testDynamicBehaviorAttachment() {
@@ -592,7 +588,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testDisplayField method
  *
- * @access public
  * @return void
  */
 	public function testDisplayField() {
@@ -609,7 +604,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testSchema method
  *
- * @access public
  * @return void
  */
 	public function testSchema() {
@@ -720,7 +714,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testDeconstructFields with datetime, timestamp, and date fields
  *
- * @access public
  * @return void
  */
 	public function testDeconstructFieldsDateTime() {
@@ -899,7 +892,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testTablePrefixSwitching method
  *
- * @access public
  * @return void
  */
 	public function testTablePrefixSwitching() {
@@ -953,7 +945,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * Tests validation parameter order in custom validation methods
  *
- * @access public
  * @return void
  */
 	public function testInvalidAssociation() {
@@ -964,7 +955,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testLoadModelSecondIteration method
  *
- * @access public
  * @return void
  */
 	public function testLoadModelSecondIteration() {
@@ -1028,7 +1018,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testPluginAssociations method
  *
- * @access public
  * @return void
  */
 	public function testPluginAssociations() {
@@ -1153,7 +1142,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * Tests getAssociated method
  *
- * @access public
  * @return void
  */
 	public function testGetAssociated() {
@@ -1197,7 +1185,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testAutoConstructAssociations method
  *
- * @access public
  * @return void
  */
 	public function testAutoConstructAssociations() {
@@ -1344,7 +1331,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testColumnTypeFetching method
  *
- * @access public
  * @return void
  */
 	public function testColumnTypeFetching() {
@@ -1363,7 +1349,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testHabtmUniqueKey method
  *
- * @access public
  * @return void
  */
 	public function testHabtmUniqueKey() {
@@ -1374,7 +1359,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testIdentity method
  *
- * @access public
  * @return void
  */
 	public function testIdentity() {
@@ -1397,7 +1381,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testWithAssociation method
  *
- * @access public
  * @return void
  */
 	public function testWithAssociation() {
@@ -1649,7 +1632,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testFindSelfAssociations method
  *
- * @access public
  * @return void
  */
 	public function testFindSelfAssociations() {
@@ -1759,7 +1741,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testDynamicAssociations method
  *
- * @access public
  * @return void
  */
 	public function testDynamicAssociations() {
@@ -1867,7 +1848,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testCreation method
  *
- * @access public
  * @return void
  */
 	public function testCreation() {
@@ -1987,7 +1967,6 @@ class ModelIntegrationTest extends BaseModelTest {
  * testEscapeField to prove it escapes the field well even when it has part of the alias on it
  * @see ttp://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/473-escapefield-doesnt-consistently-prepend-modelname
  *
- * @access public
  * @return void
  */
 	public function testEscapeField() {

@@ -33,7 +33,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * The class responsible for managing the creation, loading and removing of fixtures
  *
  * @var CakeFixtureManager
- * @access public
  */
 	public $fixtureManager = null;
 
@@ -42,7 +41,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Set this to false to handle manually
  *
  * @var array
- * @access public
  */
 	public $autoFixtures = true;
 
@@ -50,20 +48,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Set this to false to avoid tables to be dropped if they already exist
  *
  * @var boolean
- * @access public
  */
 	public $dropTables = true;
-
-/**
- * The fixtures to be loaded in this test case. Fixtures are referenced using a dot notation:
- * 	- fixture_name : A fixtures that can be found in the main app folder and is named FixtureNameFixture
- *	- core.fixture_name : A fixtures that can be found in the cake core folder and is named FixtureNameFixture
- *	- plugin.plugin_name.fixture_name : A fixtures that can be found in the plugin "plugin_name" folder and is named FixtureNameFixture
- *
- * @var array
- * @access public
- */
-	private $fixtures = array();
 
 /**
  * Configure values to restore at end of test.
@@ -180,7 +166,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $fixture Each parameter is a model name that corresponds to a
  *                        fixture, i.e. 'Post', 'Author', etc.
  * @return void
- * @access public
  * @see CakeTestCase::$autoFixtures
  */
 	public function loadFixtures() {
@@ -310,7 +295,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 					$i++;
 				}
 				if ($attrs) {
-					$permutations = $this->__array_permute($attrs);
+					$permutations = $this->_array_permute($attrs);
 
 					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
@@ -358,9 +343,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *
  * @param array $items An array of items
  * @return array
- * @access private
  */
-	private function __array_permute($items, $perms = array()) {
+	protected function _array_permute($items, $perms = array()) {
 		static $permuted;
 		if (empty($perms)) {
 			$permuted = array();
@@ -375,7 +359,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				$newPerms = $perms;
 				list($tmp) = array_splice($newItems, $i, 1);
 				array_unshift($newPerms, $tmp);
-				$this->__array_permute($newItems, $newPerms);
+				$this->_array_permute($newItems, $newPerms);
 			}
 			return $permuted;
 		}

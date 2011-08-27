@@ -28,7 +28,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUtf8 method
  *
- * @access public
  * @return void
  */
 	public function testUtf8() {
@@ -352,7 +351,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testAscii method
  *
- * @access public
  * @return void
  */
 	public function testAscii() {
@@ -673,7 +671,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStripos method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStripos() {
@@ -921,7 +918,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStripos method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStripos() {
@@ -1169,7 +1165,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStristr method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStristr() {
@@ -1560,7 +1555,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStristr method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStristr() {
@@ -1951,7 +1945,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrlen method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrlen() {
@@ -2099,7 +2092,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrlen method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrlen() {
@@ -2247,7 +2239,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrpos method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrpos() {
@@ -2495,7 +2486,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrpos method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrpos() {
@@ -2743,7 +2733,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrrchr method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrrchr() {
@@ -3128,7 +3117,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrrchr method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrrchr() {
@@ -3513,7 +3501,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrrichr method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrrichr() {
@@ -3898,7 +3885,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrrichr method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrrichr() {
@@ -4283,7 +4269,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrripos method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrripos() {
@@ -4536,7 +4521,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrripos method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrripos() {
@@ -4790,7 +4774,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrrpos method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrrpos() {
@@ -5046,7 +5029,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrrpos method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrrpos() {
@@ -5300,7 +5282,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrstr method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrstr() {
@@ -5697,7 +5678,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testMultibyteStrstr method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrstr() {
@@ -6094,7 +6074,6 @@ class MultibyteTest extends CakeTestCase {
 /**
  * testUsingMbStrtolower method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrtolower() {
@@ -6650,7 +6629,6 @@ mb_strtolower does not work for these strings.
 /**
  * testMultibyteStrtolower method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrtolower() {
@@ -7208,7 +7186,6 @@ mb_strtolower does not work for these strings.
 /**
  * testUsingMbStrtoupper method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbStrtoupper() {
@@ -7754,7 +7731,6 @@ mb_strtoupper does not work for these strings.
 /**
  * testMultibyteStrtoupper method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteStrtoupper() {
@@ -8307,7 +8283,6 @@ mb_strtoupper does not work for these strings.
 /**
  * testUsingMbSubstrCount method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbSubstrCount() {
@@ -8561,7 +8536,6 @@ mb_strtoupper does not work for these strings.
 /**
  * testMultibyteSubstrCount method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteSubstrCount() {
@@ -8815,7 +8789,6 @@ mb_strtoupper does not work for these strings.
 /**
  * testUsingMbSubstr method
  *
- * @access public
  * @return void
  */
 	public function testUsingMbSubstr() {
@@ -8974,7 +8947,6 @@ mb_strtoupper does not work for these strings.
 /**
  * testMultibyteSubstr method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteSubstr() {
@@ -9133,7 +9105,6 @@ mb_strtoupper does not work for these strings.
 /**
  * testMultibyteSubstr method
  *
- * @access public
  * @return void
  */
 	public function testMultibyteMimeEncode() {

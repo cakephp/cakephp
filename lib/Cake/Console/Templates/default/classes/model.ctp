@@ -23,6 +23,15 @@ echo "<?php\n"; ?>
 /**
  * <?php echo $name ?> Model
  *
+<?php
+foreach (array('hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany') as $assocType) {
+	if (!empty($associations[$assocType])) {
+		foreach ($associations[$assocType] as $relation) {
+			echo " * @property {$relation['className']} \${$relation['alias']}\n";
+		}
+	}
+}
+?>
  */
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 <?php if ($useDbConfig != 'default'): ?>

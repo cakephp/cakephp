@@ -33,14 +33,12 @@ class CookieComponentTestController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Cookie');
 
 /**
  * beforeFilter method
  *
- * @access public
  * @return void
  */
 	public function beforeFilter() {
@@ -64,14 +62,12 @@ class CookieComponentTest extends CakeTestCase {
  * Controller property
  *
  * @var CookieComponentTestController
- * @access public
  */
 	public $Controller;
 
 /**
  * start
  *
- * @access public
  * @return void
  */
 	public function setUp() {
@@ -94,7 +90,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * end
  *
- * @access public
  * @return void
  */
 	public function tearDown() {
@@ -136,7 +131,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testCookieName
  *
- * @access public
  * @return void
  */
 	public function testCookieName() {
@@ -146,7 +140,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testReadEncryptedCookieData
  *
- * @access public
  * @return void
  */
 	public function testReadEncryptedCookieData() {
@@ -163,7 +156,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testReadPlainCookieData
  *
- * @access public
  * @return void
  */
 	public function testReadPlainCookieData() {
@@ -223,7 +215,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testWritePlainCookieArray
  *
- * @access public
  * @return void
  */
 	public function testWritePlainCookieArray() {
@@ -254,7 +245,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testReadingCookieValue
  *
- * @access public
  * @return void
  */
 	public function testReadingCookieValue() {
@@ -283,7 +273,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testDeleteCookieValue
  *
- * @access public
  * @return void
  */
 	public function testDeleteCookieValue() {
@@ -310,7 +299,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testReadingCookieArray
  *
- * @access public
  * @return void
  */
 	public function testReadingCookieArray() {
@@ -368,7 +356,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testReadingCookieDataOnStartup
  *
- * @access public
  * @return void
  */
 	public function testReadingCookieDataOnStartup() {
@@ -420,7 +407,6 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * testReadingCookieDataWithoutStartup
  *
- * @access public
  * @return void
  */
 	public function testReadingCookieDataWithoutStartup() {
@@ -551,7 +537,6 @@ class CookieComponentTest extends CakeTestCase {
  *
  * @param mixed $value
  * @return string
- * @access private
  */
 	function __encrypt($value) {
 		if (is_array($value)) {
