@@ -180,6 +180,7 @@ class CakeRequest implements ArrayAccess {
 			$query = $_GET;
 		}
 
+		unset($query['/' . $this->url]);
 		if (strpos($this->url, '?') !== false) {
 			list(, $querystr) = explode('?', $this->url);
 			parse_str($querystr, $queryArgs);

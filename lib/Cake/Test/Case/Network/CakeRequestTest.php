@@ -1325,6 +1325,34 @@ class CakeRequestTestCase extends CakeTestCase {
 					'webroot' => '/',
 				),
 			),
+			array(
+				'Nginx - w/rewrite, document root set to webroot, request root, no PATH_INFO',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'GET' => array('/posts/add' => ''),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost', 
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/app/webroot', 
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 
+						'SCRIPT_NAME' => '/index.php',
+						'QUERY_STRING' => '/posts/add&',
+						'PHP_SELF' => '/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => '/posts/add',
+					),
+				),
+				array(
+					'url' => 'posts/add',
+					'base' => '',
+					'webroot' => '/',
+					'urlParams' => array()
+				),
+			),
 		);
 	}
 
@@ -1343,7 +1371,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEquals($expected['base'], $request->base, "base error");
 		$this->assertEquals($expected['webroot'], $request->webroot, "webroot error");
 		if (isset($expected['urlParams'])) {
-			$this->assertEqual($_GET, $expected['urlParams'], "GET param mismatch");
+			$this->assertEqual($request->query, $expected['urlParams'], "GET param mismatch");
 		}
 	}
 
