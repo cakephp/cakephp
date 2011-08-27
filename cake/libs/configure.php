@@ -118,6 +118,7 @@ class Configure extends Object {
 				if (function_exists('ini_set')) {
 					ini_set('display_errors', 1);
 				}
+				$callback = array('Debugger', 'getInstance');
 			} elseif (function_exists('ini_set')) {
 				ini_set('display_errors', 0);
 			}
@@ -132,6 +133,12 @@ class Configure extends Object {
 				if (!class_exists('CakeLog')) {
 					require LIBS . 'cake_log.php';
 				}
+				if (empty($callback)) {
+					$callback = array('CakeLog', 'getInstance');
+				}
+			}
+			if (!empty($callback) && class_exists('Debugger')) {
+				Debugger::invoke(call_user_func($callback));
 			}
 			error_reporting($reporting);
 		}
