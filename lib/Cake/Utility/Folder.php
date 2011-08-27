@@ -393,28 +393,41 @@ class Folder {
 			}
 			return array();
 		}
-		$this->_files = array();
-		$this->_directories = array($this->realpath($path));
-		$directories = array();
+		$files = array();
+		$directories = array($path);
+		$skipHidden = false;
 
 		if ($exceptions === false) {
-			$exceptions = true;
+			$skipHidden = true;
 		}
-		while (!empty($this->_directories)) {
-			$dir = array_pop($this->_directories);
-			$this->_tree($dir, $exceptions);
-			$directories[] = $dir;
+		if (is_array($exceptions)) {
+			$exceptions = array_flip($exceptions);
 		}
 
+		try {
+			$directory = new RecursiveDirectoryIterator($path);
+			$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+		} catch (UnexpectedValueException $e) {
+			return array();
+		}
+		foreach ($iterator as $item) {
+			$name = $item->getFileName();
+			if ($skipHidden && $name[0] === '.' || isset($exceptions[$name])) {
+				continue;
+			}
+			if ($item->isFile()) {
+				$files[] = $item->getPathName();
+			} else if ($item->isDir()) {
+				$directories[] = $item->getPathName();
+			}
+		}
 		if ($type === null) {
-			return array($directories, $this->_files);
+			return array($directories, $files);
 		}
 		if ($type === 'dir') {
 			return $directories;
 		}
-		$this->cd($original);
-
-		return $this->_files;
+		return $files;
 	}
 
 /**
