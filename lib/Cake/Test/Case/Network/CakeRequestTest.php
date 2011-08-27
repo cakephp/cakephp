@@ -785,7 +785,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		
 		$result = $request->accepts();
 		$expected = array(
-			'text/xml', 'application/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png'
+			'text/xml', 'application/xhtml+xml', 'text/html', 'image/png', 'text/plain', 'application/xml'
 		);
 		$this->assertEquals($expected, $result, 'Content types differ.');
 
@@ -811,6 +811,19 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEquals($expected, $result, 'Content types differ.');
 
 		$this->assertTrue($request->accepts('text/html'));
+	}
+
+/**
+ * Content types from accepts() should respect the client's q preference values.
+ *
+ * @return void
+ */
+	public function testAcceptWithQvalueSorting() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0';
+		$request = new CakeRequest('/', false);
+		$result = $request->accepts();
+		$expected = array('application/xml', 'text/html', 'application/json');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
