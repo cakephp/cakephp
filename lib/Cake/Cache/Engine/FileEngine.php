@@ -240,7 +240,9 @@ class FileEngine extends CacheEngine {
 			}
 			$path = $this->_File->getRealPath();
 			$this->_File = null;
-			unlink($path);
+			if (file_exists($path)) {
+				unlink($path);
+			}
 		}
 		$dir->close();
 		return true;
