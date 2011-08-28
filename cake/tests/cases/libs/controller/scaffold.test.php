@@ -509,7 +509,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<form id="ScaffoldMockEditForm" method="post" action="\/scaffold_mock\/edit\/1"/', $result);
+		$this->assertPattern('/<form action="\/scaffold_mock\/edit\/1" id="ScaffoldMockEditForm" method="post"/', $result);
 		$this->assertPattern('/<legend>Edit Scaffold Mock<\/legend>/', $result);
 
 		$this->assertPattern('/input type="hidden" name="data\[ScaffoldMock\]\[id\]" value="1" id="ScaffoldMockId"/', $result);
@@ -769,9 +769,6 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEqual($result['singularVar'], 'scaffoldMock');
 		$this->assertEqual($result['pluralVar'], 'scaffoldMock');
 		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
-	}
-	function getTests() {
-		return array('start', 'startCase', 'testScaffoldChangingViewProperty', 'endCase', 'end');
 	}
 
 /**
