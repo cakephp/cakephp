@@ -306,6 +306,21 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
+ * Make sure that .svn and friends are excluded from App::objects('plugin')
+ */
+	public function testListObjectsIgnoreDotDirectories() {
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
+		App::build(array(
+			'plugins' => array($path)
+		), true);
+		mkdir($path . '.svn');
+		$result = App::objects('plugin', null, false);
+		rmdir($path . '.svn');
+
+		$this->assertNotContains('.svn', $result);
+	}
+
+/**
  * Tests listing objects within a plugin
  *
  * @return void
