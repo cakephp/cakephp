@@ -77,6 +77,15 @@ class EmailConfig {
 
 }
 
+/*
+ * ExtendTransport class
+ * test class to ensure the class has send() method
+ *
+ */
+class ExtendTransport {
+
+}
+
 /**
  * CakeEmailTest class
  *
@@ -130,6 +139,9 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP'));
 		$this->assertIdentical($this->CakeEmail->from(), $expected);
 		$this->assertIdentical($this->CakeEmail, $result);
+
+		$this->setExpectedException('SocketException');
+		$result = $this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address'));
 	}
 
 /**
@@ -213,6 +225,7 @@ class CakeEmailTest extends CakeTestCase {
 			array('string'),
 			array('<tag>'),
 			array('some@one.whereis'),
+			array('wrong@key' => 'Name'),
 			array(array('ok@cakephp.org', 1.0, '', 'string'))
 		);
 	}
@@ -226,6 +239,17 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testInvalidEmail($value) {
 		$this->CakeEmail->to($value);
+	}
+
+/**
+ * testBuildInvalidData
+ *
+ * @dataProvider invalidEmails
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testInvalidEmailAdd($value) {
+		$this->CakeEmail->addTo($value);
 	}
 
 /**
@@ -305,6 +329,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertIdentical($this->CakeEmail, $result);
 		$result = $this->CakeEmail->getHeaders();
 		$this->assertIdentical($result['Message-ID'], '<my-email@localhost>');
+
+		$result = $this->CakeEmail->messageId();
+		$this->assertIdentical($result, '<my-email@localhost>');
 	}
 
 /**
@@ -400,6 +427,46 @@ class CakeEmailTest extends CakeTestCase {
 			'Content-Transfer-Encoding' => '7bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
+
+		$result = $this->CakeEmail->setHeaders(array());
+		$this->assertIsA($result, 'CakeEmail');
+	}
+
+/**
+ * Data provider function for testInvalidHeaders
+ *
+ * @return array
+ */
+	public static function invalidHeaders() {
+		return array(
+			array(10),
+			array(''),
+			array('string'),
+			array(false),
+			array(null)
+		);
+	}
+
+/**
+ * testInvalidHeaders
+ *
+ * @dataProvider invalidHeaders
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testInvalidHeaders($value) {
+		$this->CakeEmail->setHeaders($value);
+	}
+
+/**
+ * testInvalidAddHeaders
+ *
+ * @dataProvider invalidHeaders
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testInvalidAddHeaders($value) {
+		$this->CakeEmail->addHeaders($value);
 	}
 
 /**
@@ -467,6 +534,9 @@ class CakeEmailTest extends CakeTestCase {
 			'license' => array('file' => CAKE . 'LICENSE.txt', 'mimetype' => 'application/octet-stream')
 		);
 		$this->assertIdentical($this->CakeEmail->attachments(), $expected);
+
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->attachments(array(array('nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
 	}
 
 /**
@@ -481,6 +551,21 @@ class CakeEmailTest extends CakeTestCase {
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertIsA($result, 'DebugTransport');
+
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->transport('Invalid');
+		$result = $this->CakeEmail->transportClass();
+	}
+
+/**
+ * testExtendTransport method
+ *
+ * @return void
+ */
+	public function testExtendTransport() {
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->transport('Extend');
+		$result = $this->CakeEmail->transportClass();
 	}
 
 /**
@@ -613,10 +698,15 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array('empty'));
 		$this->CakeEmail->template('custom_helper', 'default');
 		$this->CakeEmail->viewVars(array('time' => $timestamp));
-		$this->CakeEmail->helpers(array('Time'));
-		$result = $this->CakeEmail->send();
 
+		$result = $this->CakeEmail->helpers(array('Time'));
+		$this->assertIsA($result, 'CakeEmail');
+
+		$result = $this->CakeEmail->send();
 		$this->assertTrue((bool)strpos($result['message'], 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
+
+		$result = $this->CakeEmail->helpers();
+		$this->assertEquals(array('Time'), $result);
 	}
 
 /**
@@ -654,7 +744,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertTrue((bool)strpos($result['message'], 'Here is your value: 12345'));
 		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
 
-		$this->expectException();
+		$this->setExpectedException('MissingViewException');
 		$this->CakeEmail->template('test_plugin_tpl', 'plug_default')->send();
 	}
 
@@ -924,6 +1014,40 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+	}
+/**
+ * testViewRender method
+ *
+ * @return void
+ */
+	public function testViewRender() {
+		$result = $this->CakeEmail->viewRender();
+		$this->assertEquals('View', $result);
+
+		$result = $this->CakeEmail->viewRender('Theme');
+		$this->assertIsA($result, 'CakeEmail');
+
+		$result = $this->CakeEmail->viewRender();
+		$this->assertEquals('Theme', $result);
+	}
+
+/**
+ * testEmailFormat method
+ *
+ * @return void
+ */
+	public function testEmailFormat() {
+		$result = $this->CakeEmail->emailFormat();
+		$this->assertEquals('text', $result);
+
+		$result = $this->CakeEmail->emailFormat('html');
+		$this->assertIsA($result, 'CakeEmail');
+
+		$result = $this->CakeEmail->emailFormat();
+		$this->assertEquals('html', $result);
+
+		$this->setExpectedException('SocketException');
+		$result = $this->CakeEmail->emailFormat('invalid');
 	}
 
 }
