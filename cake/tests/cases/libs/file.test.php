@@ -380,7 +380,7 @@ class FileTest extends CakeTestCase {
 	function testDelete() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
-		};
+		}
 
 		if (!file_exists($tmpFile)) {
 			touch($tmpFile);
@@ -395,6 +395,25 @@ class FileTest extends CakeTestCase {
 		$result = $TmpFile->delete();
 		$this->assertFalse($result);
 	}
+
+/**
+ * Windows has issues unlinking files if there are
+ * active filehandles open.
+ *
+ * @return void
+ */
+	function testDeleteAfterRead() {
+		if (!$tmpFile = $this->_getTmpFile()) {
+			return false;
+		}
+		if (!file_exists($tmpFile)) {
+			touch($tmpFile);
+		}
+		$file =& new File($tmpFile);
+		$file->read();
+		$this->assertTrue($file->delete());
+	}
+
 /**
  * getTmpFile method
  *
