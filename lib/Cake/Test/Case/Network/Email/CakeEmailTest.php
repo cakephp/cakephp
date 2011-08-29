@@ -542,7 +542,7 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->send("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
 		$expected = array('headers', 'message');
 		$this->assertEquals($expected, array_keys($result));
-		$expected = "Here is my body, with multi lines.\nThis is the second line.\n\nAnd the last.\n\n";
+		$expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
 
 		$this->assertEquals($expected, $result['message']);
 		$this->assertTrue((bool)strpos($result['headers'], 'Date: '));
@@ -550,7 +550,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 
 		$result = $this->CakeEmail->send("Other body");
-		$expected = "Other body\n\n";
+		$expected = "Other body\r\n\r\n";
 		$this->assertIdentical($result['message'], $expected);
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
@@ -710,11 +710,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array());
 		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
 		$result = $this->CakeEmail->send('body');
-
-		$wrap = $this->CakeEmail->wrap($result['message']);
-		$this->assertTrue(in_array("Content-Type: application/octet-stream", $wrap));
-		$this->assertTrue(in_array("Content-Transfer-Encoding: base64", $wrap));
-		$this->assertTrue(in_array("Content-Disposition: attachment; filename=\"basics.php\"", $wrap));
+		$this->assertTrue((bool)strpos($result['message'], "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"basics.php\""));
 
 		$this->CakeEmail->attachments(array('my.file.txt' => CAKE . 'basics.php'));
 		$result = $this->CakeEmail->send('body');
@@ -724,9 +720,9 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->send('body');
 		$this->assertTrue((bool)strpos($result['message'], "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"file.txt\""));
 
-		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1')));
-		$this->CakeEmail->send('body');
-		$this->assertTrue((bool)strpos($result['message'], "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <a1b1c1>\r\nContent-Disposition: inline; filename=\"file.txt\""));
+		$this->CakeEmail->attachments(array('file2.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1')));
+		$result = $this->CakeEmail->send('body');
+		$this->assertTrue((bool)strpos($result['message'], "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <a1b1c1>\r\nContent-Disposition: inline; filename=\"file2.txt\""));
 	}
 
 /**
