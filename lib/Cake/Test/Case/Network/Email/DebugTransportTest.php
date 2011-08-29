@@ -17,13 +17,22 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeEmail', 'Network/Email');
-
+App::uses('AbstractTransport', 'Network/Email');
+App::uses('DebugTransport', 'Network/Email');
 /**
  * Test case
  *
  */
 class DebugTransportTest extends CakeTestCase {
 
+/**
+ * Setup
+ *
+ * @return void
+ */
+	public function setUp() {
+		$this->DebugTransport = new DebugTransport();
+	}
 
 /**
  * testSend method
@@ -32,7 +41,7 @@ class DebugTransportTest extends CakeTestCase {
  */
 	public function testSend() {
 		$this->getMock('CakeEmail', array('message'), array(), 'DebugCakeEmail');
-		$email = new DebugCakeEmail(array('transport' => 'Debug'));
+		$email = new DebugCakeEmail();
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->cc(array('mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso'));
@@ -53,10 +62,10 @@ class DebugTransportTest extends CakeTestCase {
 		$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 		$headers .= "Content-Transfer-Encoding: 7bit";
 
-		$data = "First Line\n";
-		$data .= "Second Line\n";
+		$data = "First Line\r\n";
+		$data .= "Second Line\r\n";
 
-		$result = $email->transportClass()->send($email);
+		$result = $this->DebugTransport->send($email);
 
 		$this->assertEquals($headers, $result['headers']);
 		$this->assertEquals($data, $result['message']);

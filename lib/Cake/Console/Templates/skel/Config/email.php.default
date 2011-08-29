@@ -85,5 +85,4 @@ class EmailConfig {
 		'client' => null
 	);
 
-
 }
