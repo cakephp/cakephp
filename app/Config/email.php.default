@@ -85,11 +85,5 @@ class EmailConfig {
 		'client' => null
 	);
 
-	public $test = array(
-		'from' => array('some@example.com' => 'My website'),
-		'to' => array('test@example.com' => 'Testname'),
-		'subject' => 'Test mail subject',
-		'transport' => 'Debug',
-	);
 
 }

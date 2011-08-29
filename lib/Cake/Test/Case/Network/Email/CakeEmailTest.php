@@ -57,65 +57,23 @@ class TestCakeEmail extends CakeEmail {
 
 }
 
-/**
- * Debug transport email
+/*
+ * EmailConfig class
  *
  */
-class DebugTransport extends AbstractTransport {
+class EmailConfig {
 
 /**
- * Last email body
+ * test config
  *
  * @var string
  */
-	public static $lastEmail = '';
-
-/**
- * Last email header
- *
- * @var string
- */
-	public static $lastHeader = '';
-
-/**
- * Include addresses in header
- *
- * @var boolean
- */
-	public static $includeAddresses = false;
-
-/**
- * Config
- *
- * @var array
- */
-	public static $config = array();
-
-/**
- * Config
- *
- * @param mixed $config
- * @return mixed
- */
-	public function config($config) {
-		self::$config = $config;
-	}
-
-/**
- * Send
- *
- * @param object $email CakeEmail
- * @return boolean
- */
-	public function send(CakeEmail $email) {
-		self::$lastEmail = implode("\r\n", $email->message());
-		$options = array();
-		if (self::$includeAddresses) {
-			$options = array_fill_keys(array('from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'), true);
-		}
-		self::$lastHeader = $this->_headersToString($email->getHeaders($options));
-		return true;
-	}
+	public $test = array(
+		'from' => array('some@example.com' => 'My website'),
+		'to' => array('test@example.com' => 'Testname'),
+		'subject' => 'Test mail subject',
+		'transport' => 'Debug',
+	);
 
 }
 
@@ -517,9 +475,9 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testTransport() {
-		$result = $this->CakeEmail->transport('debug');
+		$result = $this->CakeEmail->transport('Debug');
 		$this->assertIdentical($this->CakeEmail, $result);
-		$this->assertIdentical($this->CakeEmail->transport(), 'debug');
+		$this->assertIdentical($this->CakeEmail->transport(), 'Debug');
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertIsA($result, 'DebugTransport');
@@ -531,16 +489,15 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testConfig() {
-		$this->CakeEmail->transport('debug')->transportClass();
-		DebugTransport::$config = array();
+		$transportClass = $this->CakeEmail->transport('debug')->transportClass();
 
 		$config = array('test' => 'ok', 'test2' => true);
 		$this->CakeEmail->config($config);
-		$this->assertIdentical(DebugTransport::$config, $config);
+		$this->assertIdentical($transportClass->config(), $config);
 		$this->assertIdentical($this->CakeEmail->config(), $config);
 
 		$this->CakeEmail->config(array());
-		$this->assertIdentical(DebugTransport::$config, array());
+		$this->assertIdentical($transportClass->config(), array());
 
 	}
 
@@ -550,12 +507,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testConfigString() {
-		$shouldSkip = true;
-		if (config('email')) {
-			$configs = new EmailConfig();
-			$shouldSkip = !isset($configs->test);
-		}
-		$this->skipIf($shouldSkip, 'Create email.php with $test config as defined in email.php.default');
+		$configs = new EmailConfig();
 		$this->CakeEmail->config('test');
 
 		$result = $this->CakeEmail->to();
@@ -571,7 +523,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertEquals($configs->test['transport'], $result);
 
 		$result = $this->CakeEmail->transportClass();
-		$this->assertTrue($result instanceof DebugTransport);
+		$this->assertIsA($result, 'DebugTransport');
 	}
 /**
  * testSendWithContent method
@@ -580,27 +532,28 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testSendWithContent() {
 		$this->CakeEmail->reset();
-		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = false;
+		$this->CakeEmail->transport('Debug');
 
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array('empty'));
+
 		$result = $this->CakeEmail->send("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
+		$expected = array('headers', 'message');
+		$this->assertEquals($expected, array_keys($result));
+		$expected = "Here is my body, with multi lines.\nThis is the second line.\n\nAnd the last.\n\n";
 
-		$this->assertTrue($result);
-		$expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
-		$this->assertIdentical(DebugTransport::$lastEmail, $expected);
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Date: '));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
-		$this->assertFalse(strpos(DebugTransport::$lastHeader, 'To: '));
+		$this->assertEquals($expected, $result['message']);
+		$this->assertTrue((bool)strpos($result['headers'], 'Date: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 
-		DebugTransport::$includeAddresses = true;
-		$this->CakeEmail->send("Other body");
-		$this->assertIdentical(DebugTransport::$lastEmail, "Other body\r\n\r\n");
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
+		$result = $this->CakeEmail->send("Other body");
+		$expected = "Other body\n\n";
+		$this->assertIdentical($result['message'], $expected);
+		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 	}
 
 /**
@@ -611,7 +564,6 @@ class CakeEmailTest extends CakeTestCase {
 	public function testSendRender() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = true;
 
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
@@ -620,9 +572,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->template('default', 'default');
 		$result = $this->CakeEmail->send();
 
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the CakePHP Framework'));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
+		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the CakePHP Framework'));
+		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 	}
 
 /**
@@ -633,7 +585,6 @@ class CakeEmailTest extends CakeTestCase {
 	public function testSendRenderWithVars() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = true;
 
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
@@ -643,7 +594,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$result = $this->CakeEmail->send();
 
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Here is your value: 12345'));
+		$this->assertTrue((bool)strpos($result['message'], 'Here is your value: 12345'));
 	}
 
 /**
@@ -654,7 +605,6 @@ class CakeEmailTest extends CakeTestCase {
 	public function testSendRenderWithHelpers() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = true;
 
 		$timestamp = time();
 		$this->CakeEmail->from('cake@cakephp.org');
@@ -666,7 +616,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->helpers(array('Time'));
 		$result = $this->CakeEmail->send();
 
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
+		$this->assertTrue((bool)strpos($result['message'], 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
 	}
 
 /**
@@ -682,29 +632,27 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = true;
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array('empty'));
 
-		$this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'default')->send();
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Into TestPlugin.'));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the CakePHP Framework'));
+		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'default')->send();
+		$this->assertTrue((bool)strpos($result['message'], 'Into TestPlugin.'));
+		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the CakePHP Framework'));
 
-		$this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'TestPlugin.plug_default')->send();
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Into TestPlugin.'));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the TestPlugin.'));
+		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'TestPlugin.plug_default')->send();
+		$this->assertTrue((bool)strpos($result['message'], 'Into TestPlugin.'));
+		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
 
-		DebugTransport::$lastEmail = '';
-		$this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Into TestPlugin.'));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the TestPlugin.'));
+		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
+		$this->assertTrue((bool)strpos($result['message'], 'Into TestPlugin.'));
+		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
 
 		$this->CakeEmail->viewVars(array('value' => 12345));
-		$this->CakeEmail->template('custom', 'TestPlugin.plug_default')->send();
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'Here is your value: 12345'));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, 'This email was sent using the TestPlugin.'));
+		$result = $this->CakeEmail->template('custom', 'TestPlugin.plug_default')->send();
+		$this->assertTrue((bool)strpos($result['message'], 'Here is your value: 12345'));
+		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
 
 		$this->expectException();
 		$this->CakeEmail->template('test_plugin_tpl', 'plug_default')->send();
@@ -718,7 +666,6 @@ class CakeEmailTest extends CakeTestCase {
 	public function testSendMultipleMIME() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = true;
 
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
@@ -757,27 +704,29 @@ class CakeEmailTest extends CakeTestCase {
 	public function testSendAttachment() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = false;
-
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array());
 		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
-		$this->CakeEmail->send('body');
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"basics.php\""));
+		$result = $this->CakeEmail->send('body');
+
+		$wrap = $this->CakeEmail->wrap($result['message']);
+		$this->assertTrue(in_array("Content-Type: application/octet-stream", $wrap));
+		$this->assertTrue(in_array("Content-Transfer-Encoding: base64", $wrap));
+		$this->assertTrue(in_array("Content-Disposition: attachment; filename=\"basics.php\"", $wrap));
 
 		$this->CakeEmail->attachments(array('my.file.txt' => CAKE . 'basics.php'));
-		$this->CakeEmail->send('body');
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"my.file.txt\""));
+		$result = $this->CakeEmail->send('body');
+		$this->assertTrue((bool)strpos($result['message'], "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"my.file.txt\""));
 
 		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
-		$this->CakeEmail->send('body');
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"file.txt\""));
+		$result = $this->CakeEmail->send('body');
+		$this->assertTrue((bool)strpos($result['message'], "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"file.txt\""));
 
 		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1')));
 		$this->CakeEmail->send('body');
-		$this->assertTrue((bool)strpos(DebugTransport::$lastEmail, "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <a1b1c1>\r\nContent-Disposition: inline; filename=\"file.txt\""));
+		$this->assertTrue((bool)strpos($result['message'], "Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <a1b1c1>\r\nContent-Disposition: inline; filename=\"file.txt\""));
 	}
 
 /**
@@ -818,8 +767,6 @@ class CakeEmailTest extends CakeTestCase {
 	public function testMessage() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
-		DebugTransport::$includeAddresses = true;
-
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
@@ -949,8 +896,8 @@ class CakeEmailTest extends CakeTestCase {
 
 		$result = $this->CakeEmail->send('This is the message');
 
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 	}
 
 /**
@@ -959,12 +906,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testConstructWithConfigString() {
-		$shouldSkip = true;
-		if (config('email')) {
-			$configs = new EmailConfig();
-			$shouldSkip = !isset($configs->test);
-		}
-		$this->skipIf($shouldSkip, 'Create email.php with $test config as defined in email.php.default');
+		$configs = new EmailConfig();
 		$this->CakeEmail = new CakeEmail('test');
 
 		$result = $this->CakeEmail->to();
@@ -982,10 +924,10 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->transportClass();
 		$this->assertTrue($result instanceof DebugTransport);
 
-		$this->CakeEmail->send('This is the message');
+		$result = $this->CakeEmail->send('This is the message');
 
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'Message-ID: '));
-		$this->assertTrue((bool)strpos(DebugTransport::$lastHeader, 'To: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 	}
 
 }

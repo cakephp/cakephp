@@ -42,13 +42,14 @@ abstract class AbstractTransport {
 /**
  * Set the config
  *
- * @param array $config
- * @return object $this
+ * @param mixed $config
+ * @return array Returns configs
  */
-	public function config($config = array()) {
-		if (!empty($config)) {
+	public function config($config = null) {
+		if (is_array($config)) {
 			$this->_config = $config;
 		}
+		return $this->_config;
 	}
 
 /**

@@ -942,7 +942,7 @@ class CakeEmail {
 			$this->_message[] = '';
 		}
 		$contents = $this->transportClass()->send($this);
-		if (isset($this->_config['log']) && $this->_config['log']) {
+		if (!empty($this->_config['log'])) {
 			$level = LOG_DEBUG;
 			if ($this->_config['log'] !== true) {
 				$level = $this->_config['log'];
@@ -995,7 +995,7 @@ class CakeEmail {
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			if (!config('email')) {
+			if (!class_exists('EmailConfig') && !config('email')) {
 				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
 			$configs = new EmailConfig();
