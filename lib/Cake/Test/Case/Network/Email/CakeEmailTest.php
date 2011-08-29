@@ -618,7 +618,6 @@ class CakeEmailTest extends CakeTestCase {
 	public function testSendWithContent() {
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
-
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
 		$this->CakeEmail->subject('My title');
@@ -639,6 +638,72 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertIdentical($result['message'], $expected);
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$result = $this->CakeEmail->send(array('Sending content', 'As array'));
+		$expected = "Sending content\r\nAs array\r\n\r\n\r\n";
+		$this->assertIdentical($result['message'], $expected);
+	}
+
+/**
+ * testSendWithoutFrom method
+ *
+ * @return void
+ */
+	public function testSendWithoutFrom() {
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->send("Forgot to set From");
+	}
+
+/**
+ * testSendWithoutTo method
+ *
+ * @return void
+ */
+	public function testSendWithoutTo() {
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->send("Forgot to set To");
+	}
+
+/**
+ * testSendWithLog method
+ *
+ * @return void
+ */
+	public function testSendWithLog() {
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS;
+		CakeLog::config('email', array(
+			'engine' => 'FileLog',
+			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS
+		));
+		CakeLog::drop('default');
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->to('me@cakephp.org');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('log' => 'emails'));
+		$result = $this->CakeEmail->send("Logging This");
+
+		App::uses('File', 'Utility');
+		$File = new File(CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS . 'emails.log');
+		$log = $File->read();
+		$this->assertTrue(strpos($log, $result['headers']) !== false);
+		$this->assertTrue(strpos($log, $result['message']) !== false);
+		$File->delete();
+		CakeLog::drop('email');
 	}
 
 /**
@@ -843,6 +908,11 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertIdentical($instance->template(), array('template' => 'custom', 'layout' => 'custom_layout'));
 		$this->assertIdentical($instance->viewVars(), array('value' => 123, 'name' => 'CakePHP'));
 		$this->assertIdentical($instance->cc(), array('cake@cakephp.org' => 'Myself'));
+
+		$configs = array('from' => 'root@cakephp.org', 'message' => 'Message from configs', 'transport' => 'Debug');
+		$instance = CakeEmail::deliver('all@cakephp.org', 'About', null, $configs, true);
+		$message = $instance->message();
+		$this->assertEquals($configs['message'], $message[0]);
 	}
 
 /**

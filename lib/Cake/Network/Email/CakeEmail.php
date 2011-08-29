@@ -975,7 +975,7 @@ class CakeEmail {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && in_array('message', $config = $instance->config())) {
+		} elseif ($message === null && array_key_exists('message', $config = $instance->config())) {
 			$message = $config['message'];
 		}
 
