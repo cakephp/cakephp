@@ -19,6 +19,7 @@
 App::uses('CakeEmail', 'Network/Email');
 App::uses('AbstractTransport', 'Network/Email');
 App::uses('DebugTransport', 'Network/Email');
+
 /**
  * Test case
  *
