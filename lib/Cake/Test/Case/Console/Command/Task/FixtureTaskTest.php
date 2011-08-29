@@ -165,6 +165,31 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure that fixture data doesn't get overly escaped.
+ *
+ * @return void
+ */
+	function testImportRecordsNoEscaping() {
+		$Article = ClassRegistry::init('Article');
+		$Article->updateAll(array('body' => "'Body \"value\"'"));
+
+		$this->Task->interactive = true;
+		$this->Task->expects($this->at(0))
+			->method('in')
+			->will($this->returnValue('WHERE 1=1 LIMIT 10'));
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$result = $this->Task->bake('Article', false, array(
+			'fromTable' => true, 
+			'schema' => 'Article',
+			'records' => false
+		));
+
+		$this->assertRegExp("/'body' => 'Body \"value\"'/", $result, 'Data has bad escaping');
+	}
+
+/**
  * test that execute passes runs bake depending with named model.
  *
  * @return void
