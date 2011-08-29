@@ -390,6 +390,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
 		$this->assertTrue(array_key_exists('posts', $result));
 		$this->assertEqual(count($result['posts']), 4);
+		$this->assertTrue($this->Case->controller->request->is('post'));
 	}
 
 /**

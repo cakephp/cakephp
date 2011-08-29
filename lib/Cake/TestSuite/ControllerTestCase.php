@@ -190,6 +190,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			'return' => 'result'
 		), $options);
 
+		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
 		if (strtoupper($options['method']) == 'GET') {
 			$_GET = $options['data'];
 			$_POST = array();
