@@ -70,6 +70,7 @@ class Inflector {
 			'atlas' => 'atlases',
 			'beef' => 'beefs',
 			'brother' => 'brothers',
+			'cafe' => 'cafes',
 			'child' => 'children',
 			'corpus' => 'corpuses',
 			'cow' => 'cows',
