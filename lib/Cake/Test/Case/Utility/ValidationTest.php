@@ -1366,6 +1366,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::date('Dec 27 2006', array('Mdy')));
 		$this->assertFalse(Validation::date('27 Dec 2006', array('Mdy')));
 		$this->assertFalse(Validation::date('2006 December 27', array('Mdy')));
+		$this->assertTrue(Validation::date('Sep 12, 2011', array('Mdy')));
 	}
 
 /**

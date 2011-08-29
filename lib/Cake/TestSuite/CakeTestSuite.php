@@ -18,6 +18,8 @@
  */
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
+App::uses('Folder', 'Utility');
+
 class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 
 /**
@@ -27,13 +29,10 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public function addTestDirectory($directory = '.') {
-		$files = new DirectoryIterator($directory);
+		$folder = new Folder($directory);
+		list($dirs, $files) = $folder->read(true, false, true);
 
 		foreach ($files as $file) {
-			if (!$file->isFile()) {
-				continue;
-			}
-			$file = $file->getRealPath();
 			$this->addTestFile($file);
 		}
 	}
@@ -45,13 +44,10 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public function addTestDirectoryRecursive($directory = '.') {
-		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+		$folder = new Folder($directory);
+		$files = $folder->tree(null, false, 'files');
 
 		foreach ($files as $file) {
-			if (!$file->isFile()) {
-				continue;
-			}
-			$file = $file->getRealPath();
 			$this->addTestFile($file);
 		}
 	}

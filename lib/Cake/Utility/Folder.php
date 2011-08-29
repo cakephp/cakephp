@@ -145,29 +145,33 @@ class Folder {
 		}
 		$skipHidden = isset($exceptions['.']) || $exceptions === true;
 
-		if (false === ($dir = @opendir($this->path))) {
+		try {
+			$iterator = new DirectoryIterator($this->path);
+		} catch (UnexpectedValueException $e) {
 			return array($dirs, $files);
 		}
 
-		while (false !== ($item = readdir($dir))) {
-			if ($item === '.' || $item === '..' || ($skipHidden && $item[0] === '.') || isset($exceptions[$item])) {
+		foreach ($iterator as $item) {
+			if ($item->isDot()) {
 				continue;
 			}
-
-			$path = Folder::addPathElement($this->path, $item);
-			if (is_dir($path)) {
-				$dirs[] = $fullPath ? $path : $item;
+			$name = $item->getFileName();
+			if ($skipHidden && $name[0] === '.' || isset($exceptions[$name])) {
+				continue;
+			}
+			if ($fullPath) {
+				$name = $item->getPathName();
+			}
+			if ($item->isDir()) {
+				$dirs[] = $name;
 			} else {
-				$files[] = $fullPath ? $path : $item;
+				$files[] = $name;
 			}
 		}
-
 		if ($sort || $this->sort) {
 			sort($dirs);
 			sort($files);
 		}
-
-		closedir($dir);
 		return array($dirs, $files);
 	}
 
@@ -380,37 +384,48 @@ class Folder {
  * @param string $type either file or dir. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  */
-	public function tree($path, $exceptions = true, $type = null) {
-		$original = $this->path;
-		$path = rtrim($path, DS);
-		if (!$this->cd($path)) {
+	public function tree($path = null, $exceptions = true, $type = null) {
+		if ($path == null) {
+			$path = $this->path;
+		}
+		$files = array();
+		$directories = array($path);
+		$skipHidden = false;
+
+		if ($exceptions === false) {
+			$skipHidden = true;
+		}
+		if (is_array($exceptions)) {
+			$exceptions = array_flip($exceptions);
+		}
+
+		try {
+			$directory = new RecursiveDirectoryIterator($path);
+			$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+		} catch (UnexpectedValueException $e) {
 			if ($type === null) {
 				return array(array(), array());
 			}
 			return array();
 		}
-		$this->_files = array();
-		$this->_directories = array($this->realpath($path));
-		$directories = array();
-
-		if ($exceptions === false) {
-			$exceptions = true;
+		foreach ($iterator as $item) {
+			$name = $item->getFileName();
+			if ($skipHidden && $name[0] === '.' || isset($exceptions[$name])) {
+				continue;
+			}
+			if ($item->isFile()) {
+				$files[] = $item->getPathName();
+			} else if ($item->isDir()) {
+				$directories[] = $item->getPathName();
+			}
 		}
-		while (!empty($this->_directories)) {
-			$dir = array_pop($this->_directories);
-			$this->_tree($dir, $exceptions);
-			$directories[] = $dir;
-		}
-
 		if ($type === null) {
-			return array($directories, $this->_files);
+			return array($directories, $files);
 		}
 		if ($type === 'dir') {
 			return $directories;
 		}
-		$this->cd($original);
-
-		return $this->_files;
+		return $files;
 	}
 
 /**

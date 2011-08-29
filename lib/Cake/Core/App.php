@@ -427,6 +427,9 @@ class App {
  *
  * `App::objects('MyPlugin.Model');` returns `array('MyPluginPost', 'MyPluginComment');`
  *
+ * When scanning directories, files and directories beginning with `.` will be excluded as these
+ * are commonly used by version control systems.
+ *
  * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'plugin'
  * @param mixed $path Optional Scan only the path given. If null, paths for the chosen type will be used.
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
@@ -476,12 +479,13 @@ class App {
 				if ($dir != APP && is_dir($dir)) {
 					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
 					foreach ($files as $file) {
-						if (!$file->isDot()) {
+						$fileName = basename($file);
+						if (!$file->isDot() && $fileName[0] !== '.') {
 							$isDir = $file->isDir() ;
 							if ($isDir && $includeDirectories) {
-								$objects[] = basename($file);
+								$objects[] = $fileName;
 							} elseif (!$includeDirectories && !$isDir) {
-								$objects[] = substr(basename($file), 0, -4);
+								$objects[] = substr($fileName, 0, -4);
 							}
 						}
 					}

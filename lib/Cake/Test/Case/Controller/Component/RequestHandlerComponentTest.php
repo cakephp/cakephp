@@ -157,7 +157,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testInitializeCallback() {
 		$this->assertNull($this->RequestHandler->ext);
-		$this->Controller->request->params['url']['ext'] = 'rss';
+		$this->Controller->request->params['ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertEqual($this->RequestHandler->ext, 'rss');
 	}
@@ -222,7 +222,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testAutoResponseType() {
 		$this->Controller->ext = '.thtml';
-		$this->Controller->request->params['url']['ext'] = 'rss';
+		$this->Controller->request->params['ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertEqual($this->Controller->ext, '.ctp');
@@ -240,7 +240,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEquals($this->Controller->layout, $this->RequestHandler->ajaxLayout);
 
 		$this->_init();
-		$this->Controller->request->params['url']['ext'] = 'js';
+		$this->Controller->request->params['ext'] = 'js';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertNotEqual($this->Controller->layout, 'ajax');

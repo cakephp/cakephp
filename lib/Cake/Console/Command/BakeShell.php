@@ -65,6 +65,8 @@ class BakeShell extends Shell {
  * @return mixed
  */
 	public function main() {
+		Configure::write('Cache.disable', 1);
+
 		if (!is_dir($this->DbConfig->path)) {
 			$path = $this->Project->execute();
 			if (!empty($path)) {

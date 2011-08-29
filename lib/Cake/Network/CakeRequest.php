@@ -605,23 +605,35 @@ class CakeRequest implements ArrayAccess {
  *
  * `$this->request->accepts('json');`
  *
+ * This method will order the returned content types by the preference values indicated
+ * by the client.
+ *
  * @param string $type The content type to check for.  Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
  *   provided type.
  */
 	public function accepts($type = null) {
-		$acceptTypes = explode(',', $this->header('accept'));
-		$acceptTypes = array_map('trim', $acceptTypes);
-		foreach ($acceptTypes as $i => $accepted) {
-			if (strpos($accepted, ';') !== false) {
-				list($accepted) = explode(';', $accepted);
-				$acceptTypes[$i] = $accepted;
+		$accept = array();
+		$header = explode(',', $this->header('accept'));
+		foreach (array_filter(array_reverse($header)) as $value) {
+			$prefPos = strpos($value, ';');
+			if ($prefPos !== false) {
+				$prefValue = (float) substr($value, strpos($value, '=') + 1);
+				$value = trim(substr($value, 0, $prefPos));
+			} else {
+				$prefValue = 1.0;
+				$value = trim($value);
+			}
+			if ($prefValue) {
+				$accept[$value] = $prefValue;
 			}
 		}
+		arsort($accept);
+		$accept = array_keys($accept);
 		if ($type === null) {
-			return $acceptTypes;
+			return $accept;
 		}
-		return in_array($type, $acceptTypes);
+		return in_array($type, $accept);
 	}
 
 /**
