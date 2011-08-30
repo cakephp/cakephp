@@ -128,7 +128,7 @@ class SchemaShell extends Shell {
 	public function generate() {
 		$this->out(__d('cake_console', 'Generating Schema...'));
 		$options = array();
-		if (isset($this->params['force'])) {
+		if ($this->params['force']) {
 			$options = array('models' => false);
 		}
 

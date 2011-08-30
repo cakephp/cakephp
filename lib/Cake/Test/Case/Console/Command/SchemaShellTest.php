@@ -266,6 +266,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testGenerateSnapshot() {
 		$this->Shell->path = TMP;
 		$this->Shell->params['file'] = 'schema.php';
+		$this->Shell->params['force'] = false;
 		$this->Shell->args = array('snapshot');
 		$this->Shell->Schema = $this->getMock('CakeSchema');
 		$this->Shell->Schema->expects($this->at(0))->method('read')->will($this->returnValue(array('schema data')));
@@ -285,6 +286,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testGenerateNoOverwrite() {
 		touch(TMP . 'schema.php');
 		$this->Shell->params['file'] = 'schema.php';
+		$this->Shell->params['force'] = false;
 		$this->Shell->args = array();
 
 		$this->Shell->expects($this->once())->method('in')->will($this->returnValue('q'));
@@ -304,6 +306,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testGenerateOverwrite() {
 		touch(TMP . 'schema.php');
 		$this->Shell->params['file'] = 'schema.php';
+		$this->Shell->params['force'] = false;
 		$this->Shell->args = array();
 
 		$this->Shell->expects($this->once())->method('in')->will($this->returnValue('o'));
@@ -339,7 +342,8 @@ class SchemaShellTest extends CakeTestCase {
 		$this->db->cacheSources = false;
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
-			'connection' => 'test'
+			'connection' => 'test',
+			'force' => false
 		);
 		$this->Shell->startup();
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
