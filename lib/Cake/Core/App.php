@@ -228,6 +228,17 @@ class App {
 	}
 
 /**
+ * Get all the currently loaded paths from App. Useful for inspecting
+ * or storing all paths App knows about.  For a paths to a specific package
+ * use App::path()
+ *
+ * @return array An array of packages and their associated paths.
+ */
+	public static function paths() {
+		return self::$_packages;
+	}
+
+/**
  * Sets up each package location on the file system. You can configure multiple search paths
  * for each package, those will be used to look for files one folder at a time in the specified order
  * All paths should be terminated with a Directory separator

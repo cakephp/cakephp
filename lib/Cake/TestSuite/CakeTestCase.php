@@ -58,6 +58,12 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected $_configure = array();
 
+/**
+ * Path settings to restore at the end of the test.
+ *
+ * @var array
+ */
+	protected $_pathRestore = array();
 
 /**
 * Runs the test case and collects the results in a TestResult object.
@@ -112,13 +118,21 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 /**
- * setup the test case, backup the static object values so they can be restored.
+ * Setup the test case, backup the static object values so they can be restored.
+ * Specifically backs up the contents of Configure and paths in App if they have
+ * not already been backed up.
  *
  * @return void
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_configure = Configure::read();
+
+		if (empty($this->_configure)) {
+			$this->_configure = Configure::read();
+		}
+		if (empty($this->_pathRestore)) {
+			$this->_pathRestore = App::paths();
+		}
 		if (class_exists('Router', false)) {
 			Router::reload();
 		}
@@ -131,7 +145,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		App::build();
+		App::build($this->_pathRestore, App::RESET);
 		if (class_exists('ClassRegistry', false)) {
 			ClassRegistry::flush();
 		}

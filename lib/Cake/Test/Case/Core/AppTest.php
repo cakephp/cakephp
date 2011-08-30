@@ -749,4 +749,16 @@ class AppTest extends CakeTestCase {
 		App::uses('MyCustomClass', 'MyPackage/Name');
 		$this->assertEquals('MyPackage/Name', App::location('MyCustomClass'));
 	}
+
+/**
+ * Test that paths() works.
+ *
+ * @return void
+ */
+	public function testPaths() {
+		$result = App::paths();
+		$this->assertArrayHasKey('plugins', $result);
+		$this->assertArrayHasKey('Controller', $result);
+		$this->assertArrayHasKey('Controller/Component', $result);
+	}
 }
