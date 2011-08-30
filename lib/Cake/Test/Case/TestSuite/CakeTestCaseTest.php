@@ -46,7 +46,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->_debug = Configure::read('debug');
+		parent::setUp();
 		$this->Reporter = $this->getMock('CakeHtmlReporter');
 	}
 
@@ -56,7 +56,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('debug', $this->_debug);
+		parent::tearDown();
 		unset($this->Result);
 		unset($this->Reporter);
 	}
@@ -229,5 +229,15 @@ class CakeTestCaseTest extends CakeTestCase {
 		$test = new FixturizedTestCase('testSkipIfFalse');
 		$result = $test->run();
 		$this->assertEquals(0, $result->skippedCount());
+	}
+
+/**
+ * Test that CakeTestCase::setUp() backs up values.
+ *
+ * @return void
+ */
+	public function testSetupBackUpValues() {
+		$this->assertArrayHasKey('debug', $this->_configure);
+		$this->assertArrayHasKey('plugins', $this->_pathRestore);
 	}
 }
