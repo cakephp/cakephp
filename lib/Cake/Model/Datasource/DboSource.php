@@ -623,7 +623,10 @@ class DboSource extends DataSource {
  *
  * ### Options
  *
- * - cache - Returns the cached version of the query, if exists and stores the result in cache
+ * - `cache` - Returns the cached version of the query, if exists and stores the result in cache.
+ *   This is a non-persistent cache, and only lasts for a single request. This option
+ *   defaults to true. If you are directly calling this method, you can disable caching
+ *   by setting $options to `false`
  *
  * @param string $sql SQL statement
  * @param array $params parameters to be bound as values for the SQL statement
