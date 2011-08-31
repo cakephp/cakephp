@@ -1078,30 +1078,6 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * testRequestHandlerPrefers method
- *
- * @return void
- */
-	public function testRequestHandlerPrefers(){
-		Configure::write('debug', 2);
-
-		$request = new CakeRequest('controller_posts/index');
-
-		$Controller = new Controller($request, $this->getMock('CakeResponse'));
-
-		$Controller->components = array("RequestHandler");
-		$Controller->modelClass='ControllerPost';
-		$Controller->params['url'] = array('ext' => 'rss');
-		$Controller->constructClasses();
-		$Controller->Components->trigger('initialize', array(&$Controller));
-		$Controller->beforeFilter();
-		$Controller->Components->trigger('startup', array(&$Controller));
-
-		$this->assertEqual($Controller->RequestHandler->prefers(), 'rss');
-		unset($Controller);
-	}
-
-/**
  * testControllerHttpCodes method
  *
  * @return void
