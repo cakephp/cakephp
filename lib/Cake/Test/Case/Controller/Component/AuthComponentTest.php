@@ -606,7 +606,7 @@ class AuthComponentTest extends CakeTestCase {
 	public function testAllowDenyAll() {
 		$this->Controller->Auth->initialize($this->Controller);
 
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny('add', 'camelCase');
 
 		$this->Controller->request['action'] = 'delete';
@@ -620,6 +620,9 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->Controller->Auth->allow('*');
 		$this->Controller->Auth->deny(array('add', 'camelCase'));
+
+		$this->Controller->request['action'] = 'delete';
+		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
 
 		$this->Controller->request['action'] = 'camelCase';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));

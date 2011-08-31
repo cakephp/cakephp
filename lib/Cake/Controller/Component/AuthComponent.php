@@ -431,7 +431,7 @@ class AuthComponent extends Component {
  * @return void
  * @link http://book.cakephp.org/view/1257/allow
  */
-	public function allow($action) {
+	public function allow($action = null) {
 		$args = func_get_args();
 		if (empty($args) || $args == array('*')) {
 			$this->allowedActions = $this->_methods;
@@ -456,7 +456,7 @@ class AuthComponent extends Component {
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/view/1258/deny
  */
-	public function deny($action) {
+	public function deny($action = null) {
 		$args = func_get_args();
 		if (isset($args[0]) && is_array($args[0])) {
 			$args = $args[0];
