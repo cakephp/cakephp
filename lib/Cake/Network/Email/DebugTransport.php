@@ -29,22 +29,13 @@ class DebugTransport extends AbstractTransport {
  * Send mail
  *
  * @param CakeEmail $email CakeEmail
- * @return boolean
+ * @return array
  */
 	public function send(CakeEmail $email) {
-		$headers = $email->getHeaders(array(
-			'from' => true,
-			'sender' => true,
-			'replyTo' => true,
-			'readReceipt' => true,
-			'returnPath' => true,
-			'to' => true,
-			'cc' => true,
-			'bcc' => true,
-			'subject' => true
-		));
+		$headers = $email->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'));
 		$headers = $this->_headersToString($headers);
-		return $headers . "\n\n" . implode((array)$email->message(), "\n");
+		$message = implode("\r\n", (array)$email->message());
+		return array('headers' => $headers, 'message' => $message);
 	}
 
 }

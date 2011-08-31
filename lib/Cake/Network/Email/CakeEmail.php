@@ -266,16 +266,20 @@ class CakeEmail {
  *
  * @var mixed
  */
-	protected $_config = 'default';
+	protected $_config = array();
 
 /**
  * Constructor
+ * @param mixed $config Array of configs, or string to load configs from email.php
  *
  */
-	public function __construct() {
+	public function __construct($config = null) {
 		$charset = Configure::read('App.encoding');
 		if ($charset !== null) {
 			$this->charset = $charset;
+		}
+		if ($config) {
+			$this->config($config);
 		}
 	}
 
@@ -550,7 +554,7 @@ class CakeEmail {
  * Add header for the message
  *
  * @param array $headers
- * @return mixed $this
+ * @return object $this
  * @throws SocketException
  */
 	public function addHeaders($headers) {
@@ -579,17 +583,10 @@ class CakeEmail {
  * @return array
  */
 	public function getHeaders($include = array()) {
-		$defaults = array(
-			'from' => false,
-			'sender' => false,
-			'replyTo' => false,
-			'readReceipt' => false,
-			'returnPath' => false,
-			'to' => false,
-			'cc' => false,
-			'bcc' => false,
-			'subject' => false
-		);
+		if ($include == array_values($include)) {
+			$include = array_fill_keys($include, true);
+		}
+		$defaults = array_fill_keys(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'), false);
 		$include += $defaults;
 
 		$headers = array();
@@ -890,50 +887,23 @@ class CakeEmail {
 		if ($config === null) {
 			return $this->_config;
 		}
-
-		if (is_array($config)) {
-			$this->_config = $config;
-		} else {
-			$this->_config = (string)$config;
+		if (!is_array($config)) {
+			$config = (string)$config;
 		}
 
-		if ($this->_transportClass) {
-			$this->_transportClass->config($this->_config);
-		}
-
+		$this->_applyConfig($config);
 		return $this;
 	}
 
 /**
  * Send an email using the specified content, template and layout
  *
- * @param string|array $content
- * @return boolean Success
+ * @return array
  * @throws SocketException
  */
 	public function send($content = null) {
-		if (is_string($this->_config)) {
-			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
-			}
-			$configs = new EmailConfig();
-			if (!isset($configs->{$this->_config})) {
-				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $this->_config));
-			}
-			$config = $configs->{$this->_config};
-			if (isset($config['transport'])) {
-				$this->transport($config['transport']);
-			}
-		} else {
-			$config = $this->_config;
-		}
-
 		if (empty($this->_from)) {
-			if (!empty($config['from'])) {
-				$this->from($config['from']);
-			} else {
-				throw new SocketException(__d('cake', 'From is not specified.'));
-			}
+			throw new SocketException(__d('cake', 'From is not specified.'));
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
 			throw new SocketException(__d('cake', 'You need specify one destination on to, cc or bcc.'));
@@ -972,11 +942,15 @@ class CakeEmail {
 			$this->_message[] = '--' . $this->_boundary . '--';
 			$this->_message[] = '';
 		}
-
-		$transport = $this->transportClass();
-		$transport->config($config);
-
-		return $transport->send($this);
+		$contents = $this->transportClass()->send($this);
+		if (!empty($this->_config['log'])) {
+			$level = LOG_DEBUG;
+			if ($this->_config['log'] !== true) {
+				$level = $this->_config['log'];
+			}
+			CakeLog::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message']);
+		}
+		return $contents;
 	}
 
 /**
@@ -992,20 +966,7 @@ class CakeEmail {
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
-		$instance = new $class();
-
-		if (is_string($transportConfig)) {
-			if (!config('email')) {
-				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
-			}
-			$configs = new EmailConfig();
-			if (!isset($configs->{$transportConfig})) {
-				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $transportConfig));
-			}
-			$transportConfig = $configs->{$transportConfig};
-		}
-		self::_applyConfig($instance, $transportConfig);
-
+		$instance = new $class($transportConfig);
 		if ($to !== null) {
 			$instance->to($to);
 		}
@@ -1015,7 +976,7 @@ class CakeEmail {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && isset($config['message'])) {
+		} elseif ($message === null && array_key_exists('message', $config = $instance->config())) {
 			$message = $config['message'];
 		}
 
@@ -1033,7 +994,18 @@ class CakeEmail {
  * @param array $config
  * @return void
  */
-	protected static function _applyConfig(CakeEmail $obj, $config) {
+	protected function _applyConfig($config) {
+		if (is_string($config)) {
+			if (!class_exists('EmailConfig') && !config('email')) {
+				throw new SocketException(__d('cake', '%s not found.', APP . 'Config' . DS . 'email.php'));
+			}
+			$configs = new EmailConfig();
+			if (!isset($configs->{$config})) {
+				throw new SocketException(__d('cake', 'Unknown email configuration "%s".', $config));
+			}
+			$config = $configs->{$config};
+		}
+		$this->_config += $config;
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
@@ -1041,12 +1013,12 @@ class CakeEmail {
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
-				$obj->$method($config[$method]);
+				$this->$method($config[$method]);
 				unset($config[$method]);
 			}
 		}
 		if (isset($config['headers'])) {
-			$obj->setHeaders($config['headers']);
+			$this->setHeaders($config['headers']);
 			unset($config['headers']);
 		}
 		if (array_key_exists('template', $config)) {
@@ -1055,10 +1027,10 @@ class CakeEmail {
 				$layout = $config['layout'];
 				unset($config['layout']);
 			}
-			$obj->template($config['template'], $layout);
+			$this->template($config['template'], $layout);
 			unset($config['template']);
 		}
-		$obj->config($config);
+		$this->transportClass()->config($config);
 	}
 
 /**
@@ -1090,7 +1062,7 @@ class CakeEmail {
 		$this->_transportName = 'Mail';
 		$this->_transportClass = null;
 		$this->_attachments = array();
-		$this->_config = 'default';
+		$this->_config = array();
 		return $this;
 	}
 
@@ -1288,12 +1260,12 @@ class CakeEmail {
 		$View->helpers = $this->_helpers;
 		$msg = array();
 
-		list($templatePlugin, $template) = pluginSplit($this->_template, true);
-		list($layoutPlugin, $layout) = pluginSplit($this->_layout, true);
-		if (!empty($templatePlugin)) {
-			$View->plugin = rtrim($templatePlugin, '.');
-		} elseif (!empty($layoutPlugin)) {
-			$View->plugin = rtrim($layoutPlugin, '.');
+		list($templatePlugin, $template) = pluginSplit($this->_template);
+		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
+		if ($templatePlugin) {
+			$View->plugin = $templatePlugin;
+		} elseif ($layoutPlugin) {
+			$View->plugin = $layoutPlugin;
 		}
 
 		$content = implode("\n", $content);

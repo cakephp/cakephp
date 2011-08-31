@@ -34,8 +34,8 @@ abstract class AbstractTransport {
 /**
  * Send mail
  *
- * @param CakeEmail $email CakeEmail
- * @return boolean
+ * @params CakeEmail $email
+ * @return array
  */
 	abstract public function send(CakeEmail $email);
 
@@ -43,12 +43,13 @@ abstract class AbstractTransport {
  * Set the config
  *
  * @param array $config
- * @return void
+ * @return array Returns configs
  */
-	public function config($config = array()) {
-		if (!empty($config)) {
+	public function config($config = null) {
+		if (is_array($config)) {
 			$this->_config = $config;
 		}
+		return $this->_config;
 	}
 
 /**
