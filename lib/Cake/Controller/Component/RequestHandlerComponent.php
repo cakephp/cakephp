@@ -468,14 +468,17 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  */
 	public function prefers($type = null) {
-		$accepts = $this->accepts();
+		$acceptRaw = $this->request->parseAccept();
+
+		if (empty($acceptRaw)) {
+			return $this->ext;
+		}
+		$accepts = array_shift($acceptRaw);
+		$accepts = $this->mapType($accepts);
 
 		if ($type == null) {
-			if (empty($this->ext)) {
-				if (is_array($accepts)) {
-					return $accepts[0];
-				}
-				return $accepts;
+			if (empty($this->ext) && !empty($accepts)) {
+				return $accepts[0];
 			}
 			return $this->ext;
 		}
@@ -484,9 +487,9 @@ class RequestHandlerComponent extends Component {
 
 		if (count($types) === 1) {
 			if (!empty($this->ext)) {
-				return ($types[0] == $this->ext);
+				return in_array($this->ext, $types);
 			}
-			return ($types[0] == $accepts[0]);
+			return in_array($types[0], $accepts);
 		}
 
 		$intersect = array_values(array_intersect($accepts, $types));

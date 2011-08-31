@@ -333,8 +333,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testRenderAsWithAttachment() {
 		$this->RequestHandler->request = $this->getMock('CakeRequest');
 		$this->RequestHandler->request->expects($this->any())
-			->method('accepts')
-			->will($this->returnValue(array('application/xml')));
+			->method('parseAccept')
+			->will($this->returnValue(array('1.0' => array('application/xml'))));
 
 		$this->RequestHandler->response = $this->getMock('CakeResponse', array('type', 'download', 'charset'));
 		$this->RequestHandler->response->expects($this->at(0))
@@ -387,8 +387,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->request = $this->getMock('CakeRequest');
 
 		$this->RequestHandler->request->expects($this->once())
-			->method('accepts')
-			->will($this->returnValue(array('application/xml')));
+			->method('parseAccept')
+			->will($this->returnValue(array('1.0' => array('application/xml'))));
 
 		$this->RequestHandler->response->expects($this->once())->method('download')
 			->with('myfile.xml');
