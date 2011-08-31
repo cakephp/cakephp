@@ -103,7 +103,7 @@ class ThemeViewTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		Router::reload();
+		parent::setUp();
 		$request = new CakeRequest('posts/index');
 		$this->Controller = new Controller($request);
 		$this->PostsController = new ThemePostsController($request);
@@ -114,6 +114,7 @@ class ThemeViewTest extends CakeTestCase {
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
+		App::objects('plugins', null, false);
 		CakePlugin::loadAll();
 	}
 
@@ -123,11 +124,10 @@ class ThemeViewTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->ThemeView);
 		unset($this->PostsController);
 		unset($this->Controller);
-		ClassRegistry::flush();
-		App::build();
 		CakePlugin::unload();
 	}
 
