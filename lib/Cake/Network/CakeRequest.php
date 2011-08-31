@@ -613,27 +613,47 @@ class CakeRequest implements ArrayAccess {
  *   provided type.
  */
 	public function accepts($type = null) {
+		$raw = $this->parseAccept();
 		$accept = array();
-		$header = explode(',', $this->header('accept'));
-		foreach (array_filter(array_reverse($header)) as $value) {
-			$prefPos = strpos($value, ';');
-			if ($prefPos !== false) {
-				$prefValue = (float) substr($value, strpos($value, '=') + 1);
-				$value = trim(substr($value, 0, $prefPos));
-			} else {
-				$prefValue = 1.0;
-				$value = trim($value);
-			}
-			if ($prefValue) {
-				$accept[$value] = $prefValue;
-			}
+		foreach ($raw as $value => $types) {
+			$accept = array_merge($accept, $types);
 		}
-		arsort($accept);
-		$accept = array_keys($accept);
 		if ($type === null) {
 			return $accept;
 		}
 		return in_array($type, $accept);
+	}
+
+/**
+ * Parse the HTTP_ACCEPT header and return a sorted array with content types
+ * as the keys, and pref values as the values.
+ * 
+ * Generally you want to use CakeRequest::accept() to get a simple list
+ * of the accepted content types.
+ *
+ * @return array An array of prefValue => array(content/types)
+ */
+	public function parseAccept() {
+		$accept = array();
+		$header = explode(',', $this->header('accept'));
+		foreach (array_filter($header) as $value) {
+			$prefPos = strpos($value, ';');
+			if ($prefPos !== false) {
+				$prefValue = substr($value, strpos($value, '=') + 1);
+				$value = trim(substr($value, 0, $prefPos));
+			} else {
+				$prefValue = '1.0';
+				$value = trim($value);
+			}
+			if (!isset($accept[$prefValue])) {
+				$accept[$prefValue] = array();
+			}
+			if ($prefValue) {
+				$accept[$prefValue][] = $value;
+			}
+		}
+		krsort($accept);
+		return $accept;
 	}
 
 /**

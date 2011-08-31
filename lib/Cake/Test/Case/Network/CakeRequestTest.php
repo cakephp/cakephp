@@ -785,7 +785,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		
 		$result = $request->accepts();
 		$expected = array(
-			'text/xml', 'application/xhtml+xml', 'text/html', 'image/png', 'text/plain', 'application/xml'
+			'text/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png', 'application/xml'
 		);
 		$this->assertEquals($expected, $result, 'Content types differ.');
 
@@ -823,6 +823,23 @@ class CakeRequestTestCase extends CakeTestCase {
 		$request = new CakeRequest('/', false);
 		$result = $request->accepts();
 		$expected = array('application/xml', 'text/html', 'application/json');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test the raw parsing of accept headers into the q value formatting.
+ *
+ * @return void
+ */
+	public function testParseAcceptWithQValue() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png';
+		$request = new CakeRequest('/', false);
+		$result = $request->parseAccept();
+		$expected = array(
+			'1.0' => array('application/xml', 'image/png'),
+			'0.8' => array('text/html'),
+			'0.7' => array('application/json'),
+		);
 		$this->assertEquals($expected, $result);
 	}
 
