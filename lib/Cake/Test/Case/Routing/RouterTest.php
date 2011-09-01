@@ -78,11 +78,11 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * testResourceRoutes method
+ * testMapResources method
  *
  * @return void
  */
-	public function testResourceRoutes() {
+	public function testMapResources() {
 		$resources = Router::mapResources('Posts');
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -124,6 +124,73 @@ class RouterTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$result = Router::parse('/posts/name');
 		$this->assertEqual($result, array('pass' => array('name'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => 'name', '[method]' => 'PUT'));
+	}
+
+/**
+ * testMapResources with plugin controllers.
+ *
+ * @return void
+ */
+	public function testPluginMapResources() {
+		App::build(array(
+			'plugins' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+			)
+		));
+		$resources = Router::mapResources('TestPlugin.TestPlugin');
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/test_plugin/test_plugin');
+		$expected = array(
+			'pass' => array(),
+			'named' => array(),
+			'plugin' => 'test_plugin',
+			'controller' => 'test_plugin',
+			'action' => 'index', 
+			'[method]' => 'GET'
+		);
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($resources, array('test_plugin'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/test_plugin/test_plugin/13');
+		$expected = array(
+			'pass' => array('13'),
+			'named' => array(),
+			'plugin' => 'test_plugin',
+			'controller' => 'test_plugin',
+			'action' => 'view',
+			'id' => '13',
+			'[method]' => 'GET'
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * Test mapResources with a plugin and prefix.
+ *
+ * @return void
+ */
+	public function testPluginMapResourcesWithPrefix() {
+		App::build(array(
+			'plugins' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+			)
+		));
+		$resources = Router::mapResources('TestPlugin.TestPlugin', array('prefix' => '/api/'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/api/test_plugin');
+		$expected = array(
+			'pass' => array(),
+			'named' => array(),
+			'plugin' => 'test_plugin',
+			'controller' => 'test_plugin',
+			'action' => 'index', 
+			'[method]' => 'GET'
+		);
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($resources, array('test_plugin'));
 	}
 
 /**

@@ -396,7 +396,9 @@ class Router {
 	}
 
 /**
- * Creates REST resource routes for the given controller(s)
+ * Creates REST resource routes for the given controller(s).  When creating resource routes
+ * for a plugin, by default the prefix will be changed to the lower_underscore version of the plugin
+ * name.  By providing a prefix you can override this behavior.
  *
  * ### Options:
  *
@@ -409,21 +411,32 @@ class Router {
  * @return array Array of mapped resources
  */
 	public static function mapResources($controller, $options = array()) {
+		$hasPrefix = isset($options['prefix']);
 		$options = array_merge(array(
 			'prefix' => '/',
 			'id' => self::ID . '|' . self::UUID
 		), $options);
+
 		$prefix = $options['prefix'];
 
-		foreach ((array)$controller as $ctlName) {
-			$urlName = Inflector::underscore($ctlName);
+		foreach ((array)$controller as $name) {
+			list($plugin, $name) = pluginSplit($name);
+			$urlName = Inflector::underscore($name);
+			$plugin = Inflector::underscore($plugin);
+			if ($plugin && !$hasPrefix) {
+				$prefix = '/' . $plugin . '/';
+			}
 
 			foreach (self::$_resourceMap as $params) {
-				extract($params);
-				$url = $prefix . $urlName . (($id) ? '/:id' : '');
+				$url = $prefix . $urlName . (($params['id']) ? '/:id' : '');
 
 				Router::connect($url,
-					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method']),
+					array(
+						'plugin' => $plugin,
+						'controller' => $urlName, 
+						'action' => $params['action'],
+						'[method]' => $params['method']
+					),
 					array('id' => $options['id'], 'pass' => array('id'))
 				);
 			}
