@@ -592,7 +592,7 @@ class UpgradeShell extends Shell {
 			if (!is_dir($path)) {
 				continue;
 			}
-			$files = array();
+			$this->_files = array();
 			$Iterator = new RegexIterator(
 				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
 				'/^.+\.(' . $extensions . ')$/i',
@@ -600,10 +600,9 @@ class UpgradeShell extends Shell {
 			);
 			foreach ($Iterator as $file) {
 				if ($file->isFile()) {
-					$files[] = $file->getPathname();
+					$this->_files[] = $file->getPathname();
 				}
 			}
-			$this->_files = array_merge($this->_files, $files);
 		}
 	}
 
