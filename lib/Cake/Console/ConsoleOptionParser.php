@@ -561,6 +561,9 @@ class ConsoleOptionParser {
 				array_unshift($this->_tokens, '-' . $flags[$i]);
 			}
 		}
+		if (!isset($this->_shortOptions[$key])) {
+			throw new ConsoleException(__d('cake_console', 'Unknown short option `%s`', $key));
+		}
 		$name = $this->_shortOptions[$key];
 		return $this->_parseOption($name, $params);
 	}

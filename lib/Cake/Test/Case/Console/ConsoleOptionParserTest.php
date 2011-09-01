@@ -249,6 +249,18 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$result = $parser->parse(array('--fail', 'other'));
 	}
+	
+/**
+ * test parsing short options that do not exist.
+ *
+ * @expectedException ConsoleException
+ */
+	public function testShortOptionThatDoesNotExist() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption('no-commit', array('boolean' => true));
+
+		$result = $parser->parse(array('-f'));
+	}
 
 /**
  * test that options with choices enforce them.
