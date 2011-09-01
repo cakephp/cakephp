@@ -84,7 +84,10 @@ HTML;
 			$diff[] = $this->_paintLine($line, $lineno, $class, $coveringTests);
 		}
 
-		$percentCovered = round(100 * $covered / $total, 2);
+		$percentCovered = 100;
+		if ($total > 0) {
+			$percentCovered = round(100 * $covered / $total, 2);
+		}
 		$output .= $this->coverageHeader($filename, $percentCovered);
 		$output .= implode("", $diff);
 		$output .= $this->coverageFooter();
