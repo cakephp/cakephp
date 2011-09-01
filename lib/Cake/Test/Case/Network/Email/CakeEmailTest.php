@@ -687,18 +687,18 @@ class CakeEmailTest extends CakeTestCase {
 		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS;
 		CakeLog::config('email', array(
 			'engine' => 'FileLog',
-			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS
+			'path' => TMP
 		));
 		CakeLog::drop('default');
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
-		$this->CakeEmail->config(array('log' => 'emails'));
+		$this->CakeEmail->config(array('log' => 'cake_test_emails'));
 		$result = $this->CakeEmail->send("Logging This");
 
 		App::uses('File', 'Utility');
-		$File = new File(CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS . 'emails.log');
+		$File = new File(TMP . 'cake_test_emails.log');
 		$log = $File->read();
 		$this->assertTrue(strpos($log, $result['headers']) !== false);
 		$this->assertTrue(strpos($log, $result['message']) !== false);
