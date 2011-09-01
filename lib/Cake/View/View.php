@@ -530,7 +530,7 @@ class View extends Object {
  * @return void
  */
 	public function start($name) {
-		$this->_activeBlock = $name;
+		$this->__activeBlock = $name;
 		ob_start();
 	}
 
@@ -556,6 +556,7 @@ class View extends Object {
 			}
 			$this->_blocks[$name] .= $value;
 		} else {
+			$this->_blockAppend = true;
 			$this->start($name);
 		}
 	}
@@ -583,11 +584,14 @@ class View extends Object {
  * @see View::start()
  */
 	public function end() {
-		if (!empty($this->_activeBlock)) {
-			$content = ob_end_clean();
-			$this->_blocks[$this->_activeBlock] = $content;
+		if (!empty($this->__activeBlock)) {
+			$content = ob_get_clean();
+			if (!isset($this->_blocks[$this->__activeBlock])) {
+				$this->_blocks[$this->__activeBlock] = '';
+			}
+			$this->_blocks[$this->__activeBlock] .= $content;
 		}
-		$this->_activeBlock = null;
+		$this->__activeBlock = null;
 	}
 
 /**
