@@ -128,11 +128,11 @@ class UpgradeShell extends Shell {
 			if (is_dir($old)) {
 				$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
 				if (!$this->params['dry-run']) {
-					$Folder = new Folder($old);
-					$Folder->move($new);
-					
 					if ($this->params['git']) {
 						exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+					} else {
+						$Folder = new Folder($old);
+						$Folder->move($new);
 					}
 				}
 			}
