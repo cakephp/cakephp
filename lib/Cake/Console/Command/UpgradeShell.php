@@ -130,9 +130,10 @@ class UpgradeShell extends Shell {
 				if (!$this->params['dry-run']) {
 					$Folder = new Folder($old);
 					$Folder->move($new);
-				}
-				if ($this->params['git']) {
-					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+					
+					if ($this->params['git']) {
+						exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+					}
 				}
 			}
 		}
