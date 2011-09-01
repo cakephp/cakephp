@@ -30,7 +30,6 @@
 class <?php echo $controller;?> extends AppController {
 
 }
-?&gt;
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>

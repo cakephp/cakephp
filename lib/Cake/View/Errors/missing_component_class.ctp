@@ -30,7 +30,6 @@
 class <?php echo $class;?> extends Component {<br />
 
 }
-?&gt;
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
