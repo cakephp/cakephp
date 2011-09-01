@@ -56,8 +56,8 @@ class UpgradeShell extends Shell {
 		'Helper' => 'View/Helper',
 		'Shell' => 'Console/Command',
 		'Task' => 'Console/Command/Task',
-		'Case' => 'tests/Case',
-		'Fixture' => 'tests/Fixture',
+		'Case' => 'Test/Case',
+		'Fixture' => 'Test/Fixture',
 		'Error' => 'Lib/Error',
 	);
 
@@ -644,9 +644,10 @@ class UpgradeShell extends Shell {
 					'help' => __('The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
 					'default' => 'php|ctp|thtml|inc|tpl'
 				),
-				'git'=> array(
-					'help' => __('use git command for moving files around.'),
-					'default' => 0
+				'git' => array(
+					'short' => 'g',
+					'help' => __('Use git command for moving files around.'),
+					'boolean' => true
 				),
 				'dry-run'=> array(
 					'short' => 'd',
