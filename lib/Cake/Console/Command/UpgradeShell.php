@@ -69,10 +69,10 @@ class UpgradeShell extends Shell {
 	public function startup() {
 		parent::startup();
 		if ($this->params['dry-run']) {
-			$this->out('<warning>Dry-run mode enabled!</warning>', 1, Shell::QUIET);
+			$this->out(__d('cake_console', '<warning>Dry-run mode enabled!</warning>'), 1, Shell::QUIET);
 		}
 		if ($this->params['git'] && !is_dir('.git')) {
-			$this->out('<warning>No git repository detected!</warning>', 1, Shell::QUIET);
+			$this->out(__d('cake_console', '<warning>No git repository detected!</warning>'), 1, Shell::QUIET);
 		}
 	}
 
@@ -87,7 +87,7 @@ class UpgradeShell extends Shell {
 			if ($name === 'all') {
 				continue;
 			}
-			$this->out('Running ' . $name);
+			$this->out(__d('cake_console', 'Running %s', $name));
 			$this->$name();
 		}
 	}
@@ -95,7 +95,7 @@ class UpgradeShell extends Shell {
 /**
  * Move files and folders to their new homes
  *
- * Moves folders containing files which cannot necessarily be autodetected (libs and templates)
+ * Moves folders containing files which cannot necessarily be auto-detected (libs and templates)
  * and then looks for all php files except vendors, and moves them to where Cake 2.0 expects
  * to find them.
  *
@@ -126,7 +126,7 @@ class UpgradeShell extends Shell {
 		);
 		foreach($moves as $old => $new) {
 			if (is_dir($old)) {
-				$this->out("Moving $old to $new");
+				$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
 				if (!$this->params['dry-run']) {
 					$Folder = new Folder($old);
 					$Folder->move($new);
@@ -555,7 +555,7 @@ class UpgradeShell extends Shell {
 				new Folder($dir, true);
 			}
 
-			$this->out('Moving ' . $file . ' to ' . $new, 1, Shell::VERBOSE);
+			$this->out(__d('cake_console', 'Moving %s to %s', $file, $new), 1, Shell::VERBOSE);
 			if (!$this->params['dry-run']) {
 				if ($this->params['git']) {
 					exec('git mv -f ' . escapeshellarg($file) . ' ' . escapeshellarg($new));
@@ -577,7 +577,7 @@ class UpgradeShell extends Shell {
 	protected function _filesRegexpUpdate($patterns) {
 		$this->_findFiles($this->params['ext']);
 		foreach ($this->_files as $file) {
-			$this->out('Updating ' . $file . '...', 1, Shell::VERBOSE);
+			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
 			$this->_updateFile($file, $patterns);
 		}
 	}
@@ -618,11 +618,11 @@ class UpgradeShell extends Shell {
 		$contents = file_get_contents($file);
 
 		foreach ($patterns as $pattern) {
-			$this->out(' * Updating ' . $pattern[0], 1, Shell::VERBOSE);
+			$this->out(__d('cake_console', ' * Updating %s', $pattern[0]), 1, Shell::VERBOSE);
 			$contents = preg_replace($pattern[1], $pattern[2], $contents);
 		}
 
-		$this->out('Done updating ' . $file, 1);
+		$this->out(__d('cake_console', 'Done updating %s', $file), 1);
 		if (!$this->params['dry-run']) {
 			file_put_contents($file, $contents);
 		}
@@ -638,63 +638,63 @@ class UpgradeShell extends Shell {
 			'options' => array(
 				'plugin' => array(
 					'short' => 'p',
-					'help' => __('The plugin to update. Only the specified plugin will be updated.'
-				)),
+					'help' => __d('cake_console', 'The plugin to update. Only the specified plugin will be updated.')
+				),
 				'ext' => array(
 					'short' => 'e',
-					'help' => __('The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
+					'help' => __d('cake_console', 'The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
 					'default' => 'php|ctp|thtml|inc|tpl'
 				),
 				'git' => array(
 					'short' => 'g',
-					'help' => __('Use git command for moving files around.'),
+					'help' => __d('cake_console', 'Use git command for moving files around.'),
 					'boolean' => true
 				),
 				'dry-run'=> array(
 					'short' => 'd',
-					'help' => __('Dry run the update, no files will actually be modified.'),
+					'help' => __d('cake_console', 'Dry run the update, no files will actually be modified.'),
 					'boolean' => true
 				)
 			)
 		);
 
 		return parent::getOptionParser()
-			->description("A shell to help automate upgrading from CakePHP 1.3 to 2.0. \n" .
-				"Be sure to have a backup of your application before running these commands.")
+			->description(__d('cake_console', "A shell to help automate upgrading from CakePHP 1.3 to 2.0. \n" .
+				"Be sure to have a backup of your application before running these commands."))
 			->addSubcommand('all', array(
-				'help' => 'Run all upgrade commands.',
+				'help' => __d('cake_console', 'Run all upgrade commands.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('locations', array(
-				'help' => 'Move files and folders to their new homes.',
+				'help' => __d('cake_console', 'Move files and folders to their new homes.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('i18n', array(
-				'help' => 'Update the i18n translation method calls.',
+				'help' => __d('cake_console', 'Update the i18n translation method calls.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('helpers', array(
-				'help' => 'Update calls to helpers.',
+				'help' => __d('cake_console', 'Update calls to helpers.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('basics', array(
-				'help' => 'Update removed basics functions to PHP native functions.',
+				'help' => __d('cake_console', 'Update removed basics functions to PHP native functions.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('request', array(
-				'help' => 'Update removed request access, and replace with $this->request.',
+				'help' => __d('cake_console', 'Update removed request access, and replace with $this->request.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('configure', array(
-				'help' => "Update Configure::read() to Configure::read('debug')",
+				'help' => __d('cake_console', "Update Configure::read() to Configure::read('debug')"),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('constants', array(
-				'help' => "Replace Obsolete constants",
+				'help' => __d('cake_console', "Replace Obsolete constants"),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('components', array(
-				'help' => 'Update components to extend Component class.',
+				'help' => __d('cake_console', 'Update components to extend Component class.'),
 				'parser' => $subcommandParser
 			));
 	}
