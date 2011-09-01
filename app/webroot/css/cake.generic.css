@@ -183,20 +183,43 @@ table td.actions a {
 }
 
 /** Paging **/
-div.paging {
+.paging {
 	background:#fff;
 	color: #ccc;
 	margin-top: 1em;
 	clear:both;
 }
-div.paging span.disabled {
+.paging .current,
+.paging .disabled,
+.paging a {
+	text-decoration: none;
+	padding: 5px 8px;
+	display: inline-block
+}
+.paging > span {
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-left: 0;
+}
+.paging > span:hover {
+	background: #efefef;
+}
+.paging .prev {
+	border-left: 1px solid #ccc;
+	border-radius: 5px 0 0 5px;
+}
+.paging .next {
+	border-radius: 0 5px 5px 0;
+}
+.paging .disabled {
 	color: #ddd;
-	display: inline;
 }
-div.paging span.current {
+.paging .disabled:hover {
+	background: transparent;
+}
+.paging .current {
+	background: #efefef;
 	color: #c73e14;
-}
-div.paging span a {
 }
 
 /** Scaffold View **/
@@ -328,6 +351,7 @@ form .submit input[type=submit] {
 	border-color: #2d6324;
 	color: #fff;
 	text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0px;
+	padding: 8px 10px;
 }
 form .submit input[type=submit]:hover {
 	background: #4ca83d;
