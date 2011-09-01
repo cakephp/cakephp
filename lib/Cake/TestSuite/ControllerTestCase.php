@@ -229,8 +229,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
 		if ($options['return'] != 'result') {
-			$this->vars = $this->controller->View->viewVars;
-			$this->view = $this->controller->View->_viewNoLayout;
+			if (isset($this->controller->View)) {
+				$this->vars = $this->controller->View->viewVars;
+				$this->view = $this->controller->View->_viewNoLayout;
+			}
 			$this->contents = $this->controller->response->body();
 		}
 		$this->headers = $Dispatch->response->header();
