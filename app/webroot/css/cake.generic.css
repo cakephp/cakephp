@@ -209,10 +209,10 @@ table td.actions a {
 }
 .paging .prev {
 	border-left: 1px solid #ccc;
-	border-radius: 5px 0 0 5px;
+	border-radius: 4px 0 0 4px;
 }
 .paging .next {
-	border-radius: 0 5px 5px 0;
+	border-radius: 0 4px 4px 0;
 }
 .paging .disabled {
 	color: #ddd;
@@ -361,7 +361,7 @@ form .submit input[type=submit]:hover {
 /* Form errors */
 form .error {
 	background: #FFDACC;
-	border-radius: 5px;
+	border-radius: 4px;
 	font-weight: normal;
 }
 form .error-message {
@@ -500,9 +500,9 @@ input[type=submit],
 	background-image: linear-gradient(top, #fefefe, #dcdcdc);
 	color:#333;
 	border:1px solid #bbb;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 	text-decoration: none;
 	text-shadow: #fff 0px 1px 0px;
 	min-width: 0;
@@ -548,12 +548,31 @@ pre {
 	padding: 15px;
 	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+.cake-debug-output {
+	padding: 0;
+	position: relative;
+}
+.cake-debug-output > span {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: rgba(255, 255, 255, 0.3);
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	padding: 5px 6px;
+	color: #000;
+	display: block;
+	float: left;
+	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.5);
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+}
 .cake-debug,
 .cake-error {
-	font-size: 120%;
-	line-height: 140%;
-	margin-top: 1em;
-	position: relative;
+	font-size: 16px;
+	line-height: 20px;
+	margin-top: 24px;
+	clear: both;
 }
 .cake-error > a {
 	text-shadow: none;
@@ -567,7 +586,7 @@ pre {
 	line-height: 140%;
 	overflow: auto;
 	position: relative;
-	border-radius: 5px;
+	border-radius: 4px;
 }
 .cake-stack-trace a {
 	text-shadow: none;

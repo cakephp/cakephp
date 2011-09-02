@@ -82,10 +82,12 @@ function debug($var = false, $showHtml = null, $showFrom = true) {
 			$line = $calledFrom[0]['line'];
 		}
 		$html = <<<HTML
-<strong>%s</strong> (line <strong>%s</strong>)
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%s</strong>)</span>
 <pre class="cake-debug">
 %s
 </pre>
+</div>
 HTML;
 			$text = <<<TEXT
 
@@ -104,7 +106,7 @@ TEXT;
 		}
 		$var = print_r($var, true);
 		if ($showHtml) {
-			$var = str_replace(array('<', '>'), array('&lt;', '&gt;'), $var);
+			$var = htmlentities($var);
 		}
 		printf($template, $file, $line, $var);
 	}
