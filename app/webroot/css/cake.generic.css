@@ -258,7 +258,6 @@ fieldset {
 	padding: 16px 20px;
 }
 fieldset legend {
-	background:#fff;
 	color: #e32;
 	font-size: 160%;
 	font-weight: bold;
@@ -354,9 +353,7 @@ form .submit input[type=submit] {
 	padding: 8px 10px;
 }
 form .submit input[type=submit]:hover {
-	background: #4ca83d;
-	background-image: -webkit-linear-gradient(top, #62af56, #286E1E);
-	background-image: -moz-linear-gradient(top, #62af56, #286E1E);
+	background: #5BA150;
 }
 /* Form errors */
 form .error {
@@ -375,6 +372,12 @@ form .error-message {
 form .error,
 form .error-message {
 	color: #9E2424;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-ms-box-shadow: none;
+	-o-box-shadow: none;
+	box-shadow: none;
+	text-shadow: none;
 }
 
 /** Notices and Errors **/
@@ -463,68 +466,73 @@ p.error em {
 }
 
 /**  Actions  **/
-div.actions ul {
+.actions ul {
 	margin: 0;
 	padding: 0;
 }
-div.actions li {
+.actions li {
 	margin:0 0 0.5em 0;
 	list-style-type: none;
 	white-space: nowrap;
 	padding: 0;
 }
-div.actions ul li a {
+.actions ul li a {
 	font-weight: normal;
 	display: block;
 	clear: both;
 }
-div.actions ul li a:hover {
-	text-decoration: underline;
-}
 
 /* Buttons and button links */
 input[type=submit],
-div.actions ul li a,
-td.actions a {
+.actions ul li a,
+.actions a {
 	font-weight:normal;
 	padding: 4px 8px;
-	background:#e6e49f;
-	background-image: -webkit-linear-gradient(top, #fefefe, #dedede);
-	background-image: -moz-linear-gradient(top, #fefefe, #dedede);
-	background-image: -ms-linear-gradient(top, #fefefe, #dedede);
-	background-image: -o-linear-gradient(top, #fefefe, #dedede);
-	background-image: linear-gradient(top, #fefefe, #dedede);
+	background: #dedede;
+	background-image: -webkit-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -ms-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -o-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: linear-gradient(top, #fefefe, #dcdcdc);
 	color:#333;
 	border:1px solid #bbb;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	text-decoration:none;
+	text-decoration: none;
 	text-shadow: #fff 0px 1px 0px;
 	min-width: 0;
-	-webkit-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
-	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+	-webkit-user-select: none;
+	user-select: none;
 }
-input[type=submit]:hover,
-div.actions ul li a:hover,
-td.actions a:hover {
+.actions ul li a:hover,
+.actions a:hover {
+	background: #ededed;
+	border-color: #acacac;
+	text-decoration: none;
+}
+input[type=submit]:active,
+.actions ul li a:active,
+.actions a:active {
 	background: #fefefe;
 	background-image: -webkit-linear-gradient(top, #dfdfdf, #eee);
-	background-image: -moz-linear-gradient(left top, left bottom, #fafafa, #fefefe);
-	background-image: -ms-linear-gradient(left top, left bottom, #fafafa, #fefefe);
-	background-image: -o-linear-gradient(left top, left bottom, #fafafa, #fefefe);
-	background-image: linear-gradient(left top, left bottom, #fafafa, #fefefe);
+	background-image: -moz-linear-gradient(top, #dfdfdf, #eee);
+	background-image: -ms-linear-gradient(top, #dfdfdf, #eee);
+	background-image: -o-linear-gradient(top, #dfdfdf, #eee);
+	background-image: linear-gradient(top, #dfdfdf, #eee);
 	text-shadow: #eee 0px 1px 0px;
-	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
-	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
 	border-color: #aaa;
 	text-decoration: none;
 }
 
 /** Related **/
-div.related {
+.related {
 	clear: both;
 	display: block;
 }

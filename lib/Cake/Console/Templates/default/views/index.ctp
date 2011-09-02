@@ -65,9 +65,13 @@
 	</p>
 
 	<div class="paging">
-	<?php echo "\t<?php echo \$this->Paginator->prev('<< ' . __('previous'), array(), null, array('class'=>'disabled'));?>\n";?>
-	 | <?php echo "\t<?php echo \$this->Paginator->numbers();?>\n"?> |
-	<?php echo "\t<?php echo \$this->Paginator->next(__('next') . ' >>', array(), null, array('class' => 'disabled'));?>\n";?>
+	<?php
+		echo "<?php\n"; 
+		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));\n";
+		echo "\t\techo \$this->Paginator->numbers(array('separator' => ''));\n";
+		echo "\t\techo \$this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));\n";
+		echo "\t?>\n";
+	?>
 	</div>
 </div>
 <div class="actions">
