@@ -146,8 +146,8 @@ class Debugger {
 		$this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context" ';
 		$this->_templates['js']['context'] .= 'style="display: none;">{:context}</pre>';
 
-		$this->_templates['js']['code'] = '<div id="{:id}-code" class="cake-code-dump" ';
-		$this->_templates['js']['code'] .= 'style="display: none;"><pre>{:code}</pre></div>';
+		$this->_templates['js']['code'] = '<pre id="{:id}-code" class="cake-code-dump" ';
+		$this->_templates['js']['code'] .= 'style="display: none;">{:code}</pre>';
 
 		$e = '<pre class="cake-debug"><b>{:error}</b> ({:code}) : {:description} ';
 		$e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
@@ -716,7 +716,7 @@ class Debugger {
 			}
 			$info .= String::insert($tpl[$key], compact($key) + $insert, $insertOpts);
 		}
-		$links = join(' | ', $links);
+		$links = join(' ', $links);
 		unset($data['context']);
 		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));
