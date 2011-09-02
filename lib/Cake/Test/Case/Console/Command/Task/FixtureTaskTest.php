@@ -187,6 +187,7 @@ class FixtureTaskTest extends CakeTestCase {
 		));
 
 		$this->assertRegExp("/'body' => 'Body \"value\"'/", $result, 'Data has bad escaping');
+		$this->assertRegExp("/'bool' => 1/", $result);
 	}
 
 /**

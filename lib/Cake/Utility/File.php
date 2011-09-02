@@ -268,6 +268,10 @@ class File {
  */
 	public function delete() {
 		clearstatcache();
+		if (is_resource($this->handle)) {
+			fclose($this->handle);
+			$this->handle = null;
+		}
 		if ($this->exists()) {
 			return unlink($this->path);
 		}

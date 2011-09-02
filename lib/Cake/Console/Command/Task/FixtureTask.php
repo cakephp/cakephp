@@ -404,6 +404,9 @@ class FixtureTask extends BakeTask {
 		foreach ($records as $record) {
 			$row = array();
 			foreach ($record[$modelObject->alias] as $field => $value) {
+				if ($schema[$field]['type'] === 'boolean') {
+					$value = (int)(bool)$value;
+				}
 				$row[$field] = $value;
 			}
 			$out[] = $row;
