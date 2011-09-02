@@ -170,8 +170,4 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<ul><li><?php echo __d('cake_dev', 'For the Development of CakePHP Git repository, Downloads'); ?></li></ul></li>
 	<li><a href="http://cakephp.lighthouseapp.com/"><?php echo __d('cake_dev', 'CakePHP Lighthouse'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'CakePHP Tickets, Wiki pages, Roadmap'); ?></li></ul></li>
-	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php echo __d('cake_dev', 'Book Store'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Recommended Software Books'); ?></li></ul></li>
-	<li><a href="http://www.cafepress.com/cakefoundation"><?php echo __d('cake_dev', 'CakePHP gear'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
 </ul>

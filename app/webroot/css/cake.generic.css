@@ -67,6 +67,9 @@ h4 {
 ul, li {
 	margin: 0 12px;
 }
+p {
+	margin: 0 0 1em 0;
+}
 
 /** Layout **/
 #container {
@@ -392,6 +395,7 @@ form .error-message {
 
 .success,
 .message,
+.cake-error,
 .cake-debug,
 .notice,
 p.error,
@@ -418,7 +422,7 @@ p.error,
 }
 .success,
 .message,
-.cake-debug,
+.cake-error,
 p.error,
 .error-message {
 	clear: both;
@@ -544,14 +548,14 @@ pre {
 	padding: 15px;
 	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-.cake-debug {
+.cake-debug,
+.cake-error {
 	font-size: 120%;
 	line-height: 140%;
 	margin-top: 1em;
 	position: relative;
-	white-space: normal;
 }
-.cake-debug > a {
+.cake-error > a {
 	text-shadow: none;
 }
 .cake-stack-trace {
