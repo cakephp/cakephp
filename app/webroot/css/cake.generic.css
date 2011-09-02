@@ -260,9 +260,9 @@ form {
 	width: 95%;
 }
 fieldset {
-	border: 1px solid #ccc;
+	border: none;
 	margin-bottom: 1em;
-	padding: 16px 20px;
+	padding: 16px 10px;
 }
 fieldset legend {
 	color: #e32;
@@ -270,9 +270,8 @@ fieldset legend {
 	font-weight: bold;
 }
 fieldset fieldset {
-	margin-top: 0px;
-	margin-bottom: 20px;
-	padding: 16px 10px;
+	margin-top: 0;
+	padding: 10px 0 0;
 }
 fieldset fieldset legend {
 	font-size: 120%;
@@ -340,10 +339,13 @@ div.checkbox label {
 input[type=radio] {
 	float:left;
 	width:auto;
-	margin: 0 3px 7px 0;
+	margin: 6px 0;
+	padding: 0;
+	line-height: 26px;
 }
-div.radio label {
+.radio label {
 	margin: 0 0 6px 20px;
+	line-height: 26px;
 }
 input[type=submit] {
 	display: inline;
@@ -435,6 +437,7 @@ p.error,
 .error-message {
 	clear: both;
 	color: #fff;
+	background: #c43c35;
 	border: 1px solid rgba(0, 0, 0, 0.5);
 	background-repeat: repeat-x;
 	background-image: -moz-linear-gradient(top, #ee5f5b, #c43c35);
@@ -448,6 +451,7 @@ p.error,
 	clear: both;
 	color: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.5);
+	background: #3B8230;
 	background-repeat: repeat-x;
 	background-image: -webkit-linear-gradient(top, #76BF6B, #3B8230);
 	background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
@@ -500,7 +504,7 @@ input[type=submit],
 .actions a {
 	font-weight:normal;
 	padding: 4px 8px;
-	background: #dedede;
+	background: #dcdcdc;
 	background-image: -webkit-linear-gradient(top, #fefefe, #dcdcdc);
 	background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);
 	background-image: -ms-linear-gradient(top, #fefefe, #dcdcdc);
@@ -529,7 +533,7 @@ input[type=submit],
 input[type=submit]:active,
 .actions ul li a:active,
 .actions a:active {
-	background: #fefefe;
+	background: #eee;
 	background-image: -webkit-linear-gradient(top, #dfdfdf, #eee);
 	background-image: -moz-linear-gradient(top, #dfdfdf, #eee);
 	background-image: -ms-linear-gradient(top, #dfdfdf, #eee);
@@ -583,7 +587,6 @@ pre {
 .cake-error {
 	font-size: 16px;
 	line-height: 20px;
-	margin-top: 24px;
 	clear: both;
 }
 .cake-error > a {
