@@ -335,6 +335,7 @@ class ModelReadTest extends BaseModelTest {
 /**
  * testParameterMismatch method
  *
+ * @expectedException PDOException
  * @return void
  */
 	public function testParameterMismatch() {
@@ -347,7 +348,6 @@ class ModelReadTest extends BaseModelTest {
 		$params = array('Y');
 
 		$result = $Article->query($query, $params);
-		$this->assertEmpty($result);
 	}
 
 /**
