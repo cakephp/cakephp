@@ -114,14 +114,18 @@ class DataSource extends Object {
 /**
  * Returns a Model description (metadata) or null if none found.
  *
- * @param Model $model
+ * @param Model|string $model
  * @return array Array of Metadata for the $model
  */
-	public function describe(Model $model) {
+	public function describe($model) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
-		$table = $model->tablePrefix . $model->table;
+		if (is_string($model)) {
+			$table = $model;
+		} else {
+			$table = $model->tablePrefix . $model->table;
+		}
 
 		if (isset($this->_descriptions[$table])) {
 			return $this->_descriptions[$table];

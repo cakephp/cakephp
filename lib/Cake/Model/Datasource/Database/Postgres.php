@@ -186,7 +186,7 @@ class Postgres extends DboSource {
  * @param Model $model Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-	public function describe(Model $model) {
+	public function describe($model) {
 		$fields = parent::describe($model);
 		$table = $this->fullTableName($model, false);
 		$this->_sequenceMap[$table] = array();
