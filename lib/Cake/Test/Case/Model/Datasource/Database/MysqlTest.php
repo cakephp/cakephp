@@ -2647,7 +2647,6 @@ class DboMysqlTest extends CakeTestCase {
 		$expected = 2;
 		$this->assertIdentical($expected, $result);
 
-		$this->expectError();
 		$result = $this->Dbo->length(false);
 		$this->assertTrue($result === null);
 
