@@ -37,7 +37,7 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test');
+	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test', 'core.user');
 
 /**
  * setUp method
@@ -185,9 +185,7 @@ class FixtureTaskTest extends CakeTestCase {
 			'schema' => 'Article',
 			'records' => false
 		));
-
 		$this->assertRegExp("/'body' => 'Body \"value\"'/", $result, 'Data has bad escaping');
-		$this->assertRegExp("/'bool' => 1/", $result);
 	}
 
 /**
@@ -352,6 +350,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Article', 'datatypes');
 		$this->assertPattern("/'float_field' => 1/", $result);
+		$this->assertRegExp("/'bool' => 1/", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
 		$this->assertPattern("/'data' => 'Lorem ipsum dolor sit amet'/", $result);
