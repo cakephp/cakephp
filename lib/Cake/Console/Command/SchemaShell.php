@@ -419,8 +419,10 @@ class SchemaShell extends Shell {
 						return false;
 					}
 					$error = null;
-					if (!$db->execute($sql)) {
-						$error = $table . ': '  . $db->lastError();
+					try {
+						$db->execute($sql);
+					} catch (PDOException $e) {
+						$error = $table . ': '  . $e->getMessage();
 					}
 
 					$Schema->after(array($event => $table, 'errors' => $error));
