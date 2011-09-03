@@ -437,7 +437,6 @@ class DboPostgresTest extends CakeTestCase {
 	public function testSchemaScoping() {
 		$db1 = ConnectionManager::getDataSource('test');
 		$db1->cacheSources = false;
-		$db1->reconnect(array('persistent' => false));
 		$db1->query('CREATE SCHEMA _scope_test');
 
 		$db2 = ConnectionManager::create(
@@ -541,7 +540,6 @@ class DboPostgresTest extends CakeTestCase {
 	public function testCakeSchema() {
 		$db1 = ConnectionManager::getDataSource('test');
 		$db1->cacheSources = false;
-		$db1->reconnect(array('persistent' => false));
 
 		$db1->rawQuery('CREATE TABLE ' .  $db1->fullTableName('datatype_tests') . ' (
 			id serial NOT NULL,

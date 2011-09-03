@@ -48,6 +48,6 @@ class DatatypeFixture extends CakeTestFixture {
  * @var array
  */
 	var $records = array(
-		array('id' => 1, 'float_field' => 42.23, 'bool' => false),
+		array('id' => 1, 'float_field' => 42.23, 'bool' => 0),
 	);
 }
