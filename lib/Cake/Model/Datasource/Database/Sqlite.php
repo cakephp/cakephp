@@ -104,10 +104,12 @@ class Sqlite extends DboSource {
  */
 	public function connect() {
 		$config = $this->config;
-		$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
+		$flags = array(
+			PDO::ATTR_PERSISTENT => $config['persistent'],
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+		);
 		try {
 			$this->_connection = new PDO('sqlite:' . $config['database'], null, null, $flags);
-			$this->_connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->connected = true;
 		} catch(PDOException $e) {
 			throw new MissingConnectionException(array('class' => $e->getMessage()));

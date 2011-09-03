@@ -625,18 +625,8 @@ class DboSourceTest extends CakeTestCase {
 		$result = Set::extract($log['log'], '/query');
 		$expected = array('Query 1', 'Query 2');
 		$this->assertEqual($expected, $result);
-
-		$oldError = $this->testDb->error;
-		$this->testDb->error = true;
-		$result = $this->testDb->logQuery('Error 1');
-		$this->assertFalse($result);
-		$this->testDb->error = $oldError;
-
-		$log = $this->testDb->getLog(false, false);
-		$result = Set::combine($log['log'], '/query', '/error');
-		$expected = array('Query 1' => false, 'Query 2' => false, 'Error 1' => true);
-		$this->assertEqual($expected, $result);
-
+		
+		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 		ob_start();
 		$this->testDb->showLog();
@@ -644,7 +634,6 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/Query 1/s', $contents);
 		$this->assertPattern('/Query 2/s', $contents);
-		$this->assertPattern('/Error 1/s', $contents);
 
 		ob_start();
 		$this->testDb->showLog(true);
@@ -652,25 +641,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/Query 1/s', $contents);
 		$this->assertPattern('/Query 2/s', $contents);
-		$this->assertPattern('/Error 1/s', $contents);
 
-		$oldError = $this->testDb->error;
-		$oldDebug = Configure::read('debug');
-		Configure::write('debug', 2);
-
-		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
-	}
-
-	public function testShowQueryError() {
-		$this->testDb->error = true;
-		try {
-			$this->testDb->showQuery('Error 2');
-			$this->fail('No exception');
-		} catch (Exception $e) {
-			$this->assertPattern('/SQL Error/', $e->getMessage());
-			$this->assertTrue(true, 'Exception thrown');
-		}
 	}
 
 /**
@@ -682,19 +654,12 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
 
-		$oldError = $this->testDb->error;
-		$this->testDb->error = true;
-		$result = $this->testDb->logQuery('Error 1');
-		$this->assertFalse($result);
-		$this->testDb->error = $oldError;
-
 		$log = $this->testDb->getLog();
-		$expected = array('query' => 'Query 1', 'error' => '', 'affected' => '', 'numRows' => '', 'took' => '');
+		$expected = array('query' => 'Query 1', 'affected' => '', 'numRows' => '', 'took' => '');
 		$this->assertEqual($log['log'][0], $expected);
-		$expected = array('query' => 'Query 2', 'error' => '', 'affected' => '', 'numRows' => '', 'took' => '');
+		$expected = array('query' => 'Query 2', 'affected' => '', 'numRows' => '', 'took' => '');
 		$this->assertEqual($log['log'][1], $expected);
-		$expected = array('query' => 'Error 1', 'error' => true, 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEqual($log['log'][2], $expected);
+		$expected = array('query' => 'Error 1', 'affected' => '', 'numRows' => '', 'took' => '');
 	}
 
 /**
@@ -713,21 +678,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue($result, 'Query did not return a boolean');
 	}
 
-/**
- * test ShowQuery generation of regular and error messages
- *
- * @return void
- */
-	public function testShowQuery() {
-		$this->testDb->error = false;
-		ob_start();
-		$this->testDb->showQuery('Some Query');
-		$contents = ob_get_clean();
-		$this->assertPattern('/Some Query/s', $contents);
-		$this->assertPattern('/Aff:/s', $contents);
-		$this->assertPattern('/Num:/s', $contents);
-		$this->assertPattern('/Took:/s', $contents);
-	}
 
 /**
  * test order to generate query order clause for virtual fields

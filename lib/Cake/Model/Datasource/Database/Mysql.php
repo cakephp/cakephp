@@ -141,7 +141,8 @@ class Mysql extends DboSource {
 		try {
 			$flags = array(
 				PDO::ATTR_PERSISTENT => $config['persistent'],
-				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 			);
 			if (!empty($config['encoding'])) {
 				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];

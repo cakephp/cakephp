@@ -48,6 +48,7 @@ if ($noLogs || isset($_forced_from_dbo_)):
 	<tbody>
 	<?php
 		foreach ($logInfo['log'] as $k => $i) :
+			$i += array('error' => '');
 			echo "<tr><td>" . ($k + 1) . "</td><td>" . h($i['query']) . "</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n";
 		endforeach;
 	?>

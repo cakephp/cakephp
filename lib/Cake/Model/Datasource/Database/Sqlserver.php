@@ -132,7 +132,10 @@ class Sqlserver extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 		try {
-			$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
+			$flags = array(
+				PDO::ATTR_PERSISTENT => $config['persistent'],
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+			);
 			if (!empty($config['encoding'])) {
 				$flags[PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
 			}

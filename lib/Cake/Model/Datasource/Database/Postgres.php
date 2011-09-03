@@ -116,7 +116,8 @@ class Postgres extends DboSource {
 		$this->connected = false;
 		try {
 			$flags = array(
-				PDO::ATTR_PERSISTENT => $config['persistent']
+				PDO::ATTR_PERSISTENT => $config['persistent'],
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 			);
 			$this->_connection = new PDO(
 				"pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}",
