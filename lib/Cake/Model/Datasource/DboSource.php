@@ -243,7 +243,9 @@ class DboSource extends DataSource {
 		parent::__construct($config);
 		$this->fullDebug = Configure::read('debug') > 1;
 		if (!$this->enabled()) {
-			return;
+			throw new MissingConnectionException(array(
+				'class' => get_class($this)
+			));
 		}
 		if ($autoConnect) {
 			$this->connect();

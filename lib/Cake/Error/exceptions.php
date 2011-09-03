@@ -324,7 +324,7 @@ class MissingDatabaseException extends CakeException {
  * @package       Cake.Error
  */
 class MissingConnectionException extends CakeException {
-	protected $_messageTemplate = 'Database connection "%s" is missing.';
+	protected $_messageTemplate = 'Database connection "%s" is missing, or could not be created.';
 }
 
 /**
