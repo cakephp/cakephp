@@ -3007,7 +3007,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllManyRowsTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
-		$this->getMock('DboSource', array(), array(), 'MockTransactionDboSource');
+		$this->getMock('DboSource', array('connect', 'rollback', 'describe'), array(), 'MockTransactionDboSource');
 		$db = ConnectionManager::create('mock_transaction', array(
 			'datasource' => 'MockTransactionDboSource',
 		));
@@ -3038,7 +3038,12 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllAssociatedTransactionNoRollback() {
 		$testDb = ConnectionManager::getDataSource('test');
 
-		$mock = $this->getMock('DboSource', array(), array(), 'MockTransactionAssociatedDboSource', false);
+		$mock = $this->getMock(
+			'DboSource',
+			array('connect', 'rollback', 'describe', 'create', 'update', 'begin'),
+			array(),
+			'MockTransactionAssociatedDboSource'
+		);
 		$db = ConnectionManager::create('mock_transaction_assoc', array(
 			'datasource' => 'MockTransactionAssociatedDboSource',
 		));
@@ -4313,7 +4318,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveManyTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
-		$this->getMock('DboSource', array(), array(), 'MockManyTransactionDboSource');
+		$this->getMock('DboSource', array('connect', 'rollback', 'describe'), array(), 'MockManyTransactionDboSource');
 		$db = ConnectionManager::create('mock_many_transaction', array(
 			'datasource' => 'MockManyTransactionDboSource',
 		));
@@ -4344,7 +4349,13 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAssociatedTransactionNoRollback() {
 		$testDb = ConnectionManager::getDataSource('test');
 
-		$mock = $this->getMock('DboSource', array(), array(), 'MockAssociatedTransactionDboSource', false);
+		$mock = $this->getMock(
+			'DboSource',
+			array('connect', 'rollback', 'describe', 'create', 'begin'), 
+			array(),
+			'MockAssociatedTransactionDboSource',
+			false
+		);
 		$db = ConnectionManager::create('mock_assoc_transaction', array(
 			'datasource' => 'MockAssociatedTransactionDboSource',
 		));

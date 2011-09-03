@@ -28,10 +28,10 @@ class CounterCachePostFixture extends CakeTestFixture {
 
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+		'title' => array('type' => 'string', 'length' => 255),
 		'user_id' => array('type' => 'integer', 'null' => true),
 		'user_id' => array('type' => 'integer', 'null' => true),
-		'published' => array('type' => 'boolean', 'null' => false)
+		'published' => array('type' => 'boolean', 'null' => false, 'default' => 0)
 	);
 
     public $records = array(

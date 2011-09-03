@@ -153,7 +153,7 @@ class DboSource extends DataSource {
  *
  * @var array
  */
-	public $connection = null;
+	protected $_connection = null;
 
 /**
  * The DataSource configuration key name
