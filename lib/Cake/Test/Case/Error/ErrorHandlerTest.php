@@ -77,7 +77,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$wrong .= '';
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<pre class="cake-debug">/', $result);
+		$this->assertPattern('/<pre class="cake-error">/', $result);
 		$this->assertPattern('/<b>Notice<\/b>/', $result);
 		$this->assertPattern('/variable:\s+wrong/', $result);
 	}

@@ -1059,7 +1059,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher = new TestDispatcher();
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		));
+		), APP::RESET);
 		CakePlugin::loadAll();
 		Router::reload();
 		Router::parse('/');
