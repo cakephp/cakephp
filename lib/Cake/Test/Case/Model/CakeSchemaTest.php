@@ -535,10 +535,12 @@ class CakeSchemaTest extends CakeTestCase {
 			$this->assertEqual(array_keys($fields), array_keys($read['tables'][$table]));
 		}
 
-		$this->assertEqual(
-			$read['tables']['datatypes']['float_field']['length'],
-			$this->Schema->tables['datatypes']['float_field']['length']
-		);
+		if (isset($read['tables']['datatypes']['float_field']['length'])) {
+			$this->assertEqual(
+				$read['tables']['datatypes']['float_field']['length'],
+				$this->Schema->tables['datatypes']['float_field']['length']
+			);
+		}
 
 		$this->assertEqual(
 			$read['tables']['datatypes']['float_field']['type'],
