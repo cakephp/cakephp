@@ -32,6 +32,7 @@ class ConnectionManagerTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		CakePlugin::unload();
 	}
 /**
@@ -89,7 +90,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	public function testGetPluginDataSource() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		));
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		$name = 'test_source';
 		$config = array('datasource' => 'TestPlugin.TestSource');
@@ -110,7 +111,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	public function testGetPluginDataSourceAndPluginDriver() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		));
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		$name = 'test_plugin_source_and_driver';
 		$config = array('datasource' => 'TestPlugin.Database/TestDriver');
@@ -274,7 +275,7 @@ class ConnectionManagerTest extends CakeTestCase {
 			'Model/Datasource' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
-		));
+		), App::RESET);
 		CakePlugin::loadAll();
 		$expected = array(
 		    'datasource' => 'Test2Source'
