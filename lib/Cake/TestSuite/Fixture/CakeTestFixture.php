@@ -168,10 +168,12 @@ class CakeTestFixture {
 			}
 		}
 		$this->Schema->build(array($this->table => $this->fields));
-
-		return (
-			$db->execute($db->createSchema($this->Schema), array('log' => false)) !== false
-		);
+		try {
+			$db->execute($db->createSchema($this->Schema), array('log' => false));
+		} catch (Exception $e) {
+			return false;
+		}
+		return true;
 	}
 
 /**
@@ -185,9 +187,13 @@ class CakeTestFixture {
 			return false;
 		}
 		$this->Schema->build(array($this->table => $this->fields));
-		return (
-			$db->execute($db->dropSchema($this->Schema), array('log' => false)) !== false
-		);
+		try {
+			
+			$db->execute($db->dropSchema($this->Schema), array('log' => false));
+		} catch (Exception $e) {
+			return false;
+		}
+		return true;
 	}
 
 /**

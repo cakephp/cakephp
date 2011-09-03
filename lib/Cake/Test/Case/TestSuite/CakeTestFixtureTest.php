@@ -468,7 +468,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertTrue($return);
 
 		$return = $Fixture->drop($this->criticDb);
-		$this->assertFalse($return);
+		$this->assertTrue($return);
 
 		unset($Fixture->fields);
 		$return = $Fixture->drop($this->criticDb);
