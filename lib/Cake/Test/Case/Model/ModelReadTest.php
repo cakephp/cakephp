@@ -345,17 +345,15 @@ class ModelReadTest extends BaseModelTest {
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
-		$this->expectError();
 
-		ob_start();
 		$result = $Article->query($query, $params);
-		ob_end_clean();
-		$this->assertEqual($result, null);
+		$this->assertEmpty($result);
 	}
 
 /**
  * testVeryStrangeUseCase method
  *
+ * @expectedException PDOException
  * @return void
  */
 	public function testVeryStrangeUseCase() {
@@ -368,11 +366,8 @@ class ModelReadTest extends BaseModelTest {
 			$this->db->fullTableName('articles') . '.user_id', '3',
 			$this->db->fullTableName('articles') . '.published', 'Y'
 		);
-		$this->expectError();
 
-		ob_start();
 		$result = $Article->query($query, $param);
-		ob_end_clean();
 	}
 
 /**

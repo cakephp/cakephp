@@ -290,6 +290,10 @@ class Sqlite extends DboSource {
 			$selects = array('seqno', 'cid', 'name');
 		}
 		while ($j < $num_fields) {
+			if (!isset($selects[$j])) {
+				$j++;
+				continue;
+			}
 			if (preg_match('/\bAS\s+(.*)/i', $selects[$j], $matches)) {
 				 $columnName = trim($matches[1],'"');
 			} else {
