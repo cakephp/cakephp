@@ -104,7 +104,7 @@ class DbConfigTask extends Shell {
 				}
 			}
 
-			$driver = $this->in(__d('cake_console', 'Driver:'), array('Mysql', 'Oracle', 'Postgres', 'Sqlite', 'Sqlserver'), 'Mysql');
+			$driver = $this->in(__d('cake_console', 'Driver:'), array('Mysql', 'Postgres', 'Sqlite', 'Sqlserver'), 'Mysql');
 
 			$persistent = $this->in(__d('cake_console', 'Persistent Connection?'), array('y', 'n'), 'n');
 			if (strtolower($persistent) == 'n') {
