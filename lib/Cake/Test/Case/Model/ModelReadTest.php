@@ -6567,13 +6567,14 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindCount() {
-		$this->loadFixtures('User', 'Article');
+		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag');
 
 		$TestModel = new User();
 		$this->db->getLog(false, true);
 		$result = $TestModel->find('count');
 		$this->assertEqual($result, 4);
 
+		$this->db->getLog(false, true);
 		$fullDebug = $this->db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->order = 'User.id';
@@ -6631,7 +6632,7 @@ class ModelReadTest extends BaseModelTest {
 	public function testFindCountWithDbExpressions() {
 		$this->skipIf($this->db instanceof Postgres, 'testFindCountWithDbExpressions is not compatible with Postgres.');
 
-		$this->loadFixtures('Project');
+		$this->loadFixtures('Project', 'Thread');
 		$db = ConnectionManager::getDataSource('test');
 		$TestModel = new Project();
 

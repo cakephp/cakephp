@@ -146,7 +146,7 @@ class DboSource extends DataSource {
  *
  * @var array
  */
-	public $connection = null;
+	protected $_connection = null;
 
 /**
  * The DataSource configuration key name
@@ -236,7 +236,9 @@ class DboSource extends DataSource {
 		parent::__construct($config);
 		$this->fullDebug = Configure::read('debug') > 1;
 		if (!$this->enabled()) {
-			return;
+			throw new MissingConnectionException(array(
+				'class' => get_class($this)
+			));
 		}
 		if ($autoConnect) {
 			$this->connect();
