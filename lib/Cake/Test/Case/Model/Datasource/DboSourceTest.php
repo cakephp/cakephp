@@ -615,6 +615,7 @@ class DboSourceTest extends CakeTestCase {
 /**
  * testLog method
  *
+ * @outputBuffering enabled
  * @return void
  */
 	public function testLog() {

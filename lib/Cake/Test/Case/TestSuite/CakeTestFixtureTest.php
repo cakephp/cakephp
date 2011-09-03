@@ -181,7 +181,10 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->criticDb = $this->getMock('DboSource');
+		$methods = array_diff(get_class_methods('DboSource'), array('enabled'));
+		$methods[] = 'connect';
+
+		$this->criticDb = $this->getMock('DboSource', $methods);
 		$this->criticDb->fullDebug = true;
 		$this->db = ConnectionManager::getDataSource('test');
 		$this->_backupConfig = $this->db->config;
