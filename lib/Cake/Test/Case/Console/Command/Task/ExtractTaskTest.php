@@ -37,6 +37,7 @@ class ExtractTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
@@ -60,7 +61,6 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$Folder = new Folder($this->path);
 		$Folder->delete();
-		App::build();
 		CakePlugin::unload();
 	}
 
