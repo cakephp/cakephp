@@ -44,13 +44,6 @@ class Debugger {
 	public $errors = array();
 
 /**
- * Contains the base URL for error code documentation.
- *
- * @var string
- */
-	public $helpPath = null;
-
-/**
  * The current output format.
  *
  * @var string
@@ -140,7 +133,6 @@ class Debugger {
 		$link .= '\'none\' ? \'\' : \'none\')">Context</a>';
 		$links['context'] = $link;
 
-		$links['help'] = '<a href="{:helpPath}{:code}" target="_blank">Help</a>';
 		$this->_templates['js']['links'] = $links;
 
 		$this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context" ';
@@ -168,17 +160,10 @@ class Debugger {
 		if (!empty($class)) {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
 				$instance[0] = new $class();
-				if (Configure::read('debug') > 0) {
-					$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
-				}
 			}
 		}
-
 		if (!$instance) {
 			$instance[0] = new Debugger();
-			if (Configure::read('debug') > 0) {
-				$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
-			}
 		}
 		return $instance[0];
 	}
@@ -219,6 +204,7 @@ class Debugger {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return boolean true if error was handled
+ * @deprecated This function is supersceeded by Debugger::outputError()
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$_this = Debugger::getInstance();
@@ -264,15 +250,8 @@ class Debugger {
 			break;
 		}
 
-		if (!empty($_this->helpPath) && preg_match('/.*\[([0-9]+)\]$/', $description, $codes)) {
-			if (isset($codes[1])) {
-				$helpID = $codes[1];
-				$description = trim(preg_replace('/\[[0-9]+\]$/', '', $description));
-			}
-		}
-
 		$data = compact(
-			'level', 'error', 'code', 'helpID', 'description', 'file', 'path', 'line', 'context'
+			'level', 'error', 'code', 'description', 'file', 'path', 'line', 'context'
 		);
 		echo $_this->outputError($data);
 
@@ -662,12 +641,11 @@ class Debugger {
 			'level' => 0,
 			'error' => 0,
 			'code' => 0,
-			'helpID' => null,
 			'description' => '',
 			'file' => '',
 			'line' => 0,
 			'context' => array(),
-			'start' => 2
+			'start' => 2,
 		);
 		$data += $defaults;
 
@@ -694,13 +672,13 @@ class Debugger {
 
 		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
-		$insert = array('context' => join("\n", $context), 'helpPath' => $this->helpPath) + $data;
+		$insert = array('context' => join("\n", $context)) + $data;
 
-		$detect = array('help' => 'helpID', 'context' => 'context');
+		$detect = array('context');
 
 		if (isset($tpl['links'])) {
 			foreach ($tpl['links'] as $key => $val) {
-				if (isset($detect[$key]) && empty($insert[$detect[$key]])) {
+				if (in_array($key, $detect) && empty($insert[$key])) {
 					continue;
 				}
 				$links[$key] = String::insert($val, $insert, $insertOpts);
