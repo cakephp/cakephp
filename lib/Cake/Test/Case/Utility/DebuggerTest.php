@@ -128,7 +128,7 @@ class DebuggerTest extends CakeTestCase {
 		Debugger::output('html');
 		$wrong .= '';
 		$result = ob_get_clean();
-		$this->assertPattern('/<pre class="cake-debug">.+<\/pre>/', $result);
+		$this->assertPattern('/<pre class="cake-error">.+<\/pre>/', $result);
 		$this->assertPattern('/<b>Notice<\/b>/', $result);
 		$this->assertPattern('/variable:\s+wrong/', $result);
 
@@ -137,7 +137,7 @@ class DebuggerTest extends CakeTestCase {
 		$buzz .= '';
 		$result = explode('</a>', ob_get_clean());
 		$this->assertTags($result[0], array(
-			'pre' => array('class' => 'cake-debug'),
+			'pre' => array('class' => 'cake-error'),
 			'a' => array(
 				'href' => "javascript:void(0);",
 				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
@@ -250,6 +250,11 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertTags($result, $data, true);
 	}
 
+/**
+ * Test adding a format that is handled by a callback.
+ *
+ * @return void
+ */
 	public function testAddFormatCallback() {
 		set_error_handler('Debugger::showError');
 		$this->_restoreError = true;

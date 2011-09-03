@@ -30,7 +30,7 @@
 function _scaffoldError() {<br />
 
 }
-?&gt;
+
 </pre>
 
 <?php echo $this->element('exception_stack_trace'); ?>

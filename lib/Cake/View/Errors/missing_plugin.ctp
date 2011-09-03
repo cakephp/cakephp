@@ -28,7 +28,7 @@
 <pre>
 &lt;?php
 CakePlugin::load('<?php echo $plugin?>');
-?&gt;
+
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Loading all plugins'); ?>: </strong>
