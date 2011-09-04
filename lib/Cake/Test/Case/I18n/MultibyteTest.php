@@ -7124,7 +7124,7 @@ mb_strtolower does not work for these strings.
 
 		$string = 'ԀԂԄԆԈԊԌԎԐԒ';
 		$result = Multibyte::strtolower($string);
-		$expected = 'ԁԃԅԇԉԋԍԏԐԒ';
+		$expected = 'ԁԃԅԇԉԋԍԏԑԓ';
 		$this->assertEqual($expected, $result);
 
 		$string = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';

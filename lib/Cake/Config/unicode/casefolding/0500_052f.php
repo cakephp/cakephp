@@ -46,3 +46,5 @@ $config['0500_052f'][] = array('upper' => 1288, 'status' => 'C', 'lower' => arra
 $config['0500_052f'][] = array('upper' => 1290, 'status' => 'C', 'lower' => array(1291)); /* CYRILLIC CAPITAL LETTER KOMI NJE */
 $config['0500_052f'][] = array('upper' => 1292, 'status' => 'C', 'lower' => array(1293)); /* CYRILLIC CAPITAL LETTER KOMI SJE */
 $config['0500_052f'][] = array('upper' => 1294, 'status' => 'C', 'lower' => array(1295)); /* CYRILLIC CAPITAL LETTER KOMI TJE */
+$config['0500_052f'][] = array('upper' => 1296, 'status' => 'C', 'lower' => array(1297)); /* CYRILLIC CAPITAL LETTER ZE */
+$config['0500_052f'][] = array('upper' => 1298, 'status' => 'C', 'lower' => array(1299)); /* CYRILLIC CAPITAL LETTER El with hook */
