@@ -107,6 +107,10 @@ class ExceptionRenderer {
 			if ($template == 'internalError') {
 				$template = 'error500';
 			}
+		} elseif ($exception instanceof PDOException) {
+			$method = 'pdoError';
+			$template = 'pdo_error';
+			$code = 500;
 		} elseif (!$methodExists) {
 			$method = 'error500';
 			if ($code >= 400 && $code < 500) {
@@ -220,7 +224,7 @@ class ExceptionRenderer {
  */
 	public function error500($error) {
 		$url = $this->controller->request->here();
-		$code = ($error->getCode() > 500) ? $error->getCode() : 500;
+		$code = ($error->getCode() > 500 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
 			'name' => __d('cake', 'An Internal Error Has Occurred'),
@@ -228,6 +232,29 @@ class ExceptionRenderer {
 			'error' => $error,
 		));
 		$this->_outputMessage('error500');
+	}
+
+/**
+ * Convenience method to display a PDOException.
+ *
+ * @param PDOException $error 
+ * @return void
+ */
+	public function pdoError(PDOException $error) {
+		$url = $this->controller->request->here();
+		$code = 500;
+		$this->controller->response->statusCode($code);
+		$this->controller->set(array(
+			'code' => $code,
+			'url' => h($url),
+			'name' => $error->getMessage(),
+			'error' => $error,
+		));
+		try {
+			$this->_outputMessage($this->template);
+		} catch (Exception $e) {
+			$this->_outputMessageSafe('error500');
+		}
 	}
 
 /**

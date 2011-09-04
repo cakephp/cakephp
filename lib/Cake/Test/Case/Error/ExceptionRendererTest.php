@@ -665,4 +665,27 @@ class ExceptionRendererTest extends CakeTestCase {
 
 		$this->assertContains('Internal Error', $result);
 	}
+
+/**
+ * Tests the output of rendering a PDOException
+ *
+ * @return void
+ */
+	public function testPDOException() {
+		$exception = new PDOException('There was an error in the SQL query');
+		$exception->queryString = 'SELECT * from poo_query < 5 and :seven';
+		$exception->params = array('seven' => 7);
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
+		$ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertPattern('/<h2>Database Error<\/h2>/', $result);
+		$this->assertPattern('/There was an error in the SQL query/', $result);
+		$this->assertPattern('/SELECT \* from poo_query < 5 and :seven/', $result);
+		$this->assertPattern('/"seven" => 7/', $result);
+	}
 }

@@ -59,6 +59,8 @@ class PagesController extends AppController {
  * @return void
  */
 	public function display() {
+		App::uses('ConnectionManager', 'Model');
+		ConnectionManager::getDatasource('default')->execute('dasd kdjskljklda dljsdljadlas dkjadjasldkas dlajdklajdla dajsdlajdlka');
 		$path = func_get_args();
 
 		$count = count($path);
