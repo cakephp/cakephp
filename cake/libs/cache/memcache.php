@@ -100,9 +100,9 @@ class MemcacheEngine extends CacheEngine {
  * @return array Array containing host, port
  */
 	function _parseServerString($server) {
-                if (! strncmp('unix:///', $server, 8)) {
-	                return array($server, 0);
-                }	        
+		if ($server[0] == 'u') { // u for unix://
+			return array($server, 0);
+		}
 		if (substr($server, 0, 1) == '[') {
 			$position = strpos($server, ']:');
 			if ($position !== false) {
