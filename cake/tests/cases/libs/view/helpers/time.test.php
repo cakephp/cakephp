@@ -409,6 +409,16 @@ class TimeHelperTest extends CakeTestCase {
  */
 	function testToRss() {
 		$this->assertEqual(date('r'), $this->Time->toRss(time()));
+
+		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
+			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+			foreach($timezones as $timezone) {
+				$yourTimezone = new DateTimeZone($timezone);
+				$yourTime = new DateTime('now', $yourTimezone);
+				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
+				$this->assertEqual($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));	
+			}	
+		}
 	}
 
 /**
