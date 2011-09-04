@@ -4515,7 +4515,7 @@ class MultibyteTest extends CakeTestCase {
 		$string = 'državni';
 		$find = 'dž';
 		$result = mb_strripos($string, $find);
-		$this->assertFalse($result);
+		$this->assertEquals(0, $result);
 	}
 
 /**
@@ -7124,7 +7124,7 @@ mb_strtolower does not work for these strings.
 
 		$string = 'ԀԂԄԆԈԊԌԎԐԒ';
 		$result = Multibyte::strtolower($string);
-		$expected = 'ԁԃԅԇԉԋԍԏԐԒ';
+		$expected = 'ԁԃԅԇԉԋԍԏԑԓ';
 		$this->assertEqual($expected, $result);
 
 		$string = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
