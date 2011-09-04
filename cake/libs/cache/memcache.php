@@ -94,12 +94,15 @@ class MemcacheEngine extends CacheEngine {
 
 /**
  * Parses the server address into the host/port.  Handles both IPv6 and IPv4
- * addresses
+ * addresses and Unix sockets
  *
  * @param string $server The server address string.
  * @return array Array containing host, port
  */
 	function _parseServerString($server) {
+		if ($server[0] == 'u') {
+			return array($server, 0);
+		}
 		if (substr($server, 0, 1) == '[') {
 			$position = strpos($server, ']:');
 			if ($position !== false) {
