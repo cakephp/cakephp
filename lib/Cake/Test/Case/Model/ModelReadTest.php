@@ -339,6 +339,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testParameterMismatch() {
+		$this->skipIf($this->db instanceof Sqlite, 'Sqlite does not accept real prepared statements, no way to check this');
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 

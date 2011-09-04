@@ -225,6 +225,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testInitDbPrefix() {
+		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
 		$db = ConnectionManager::getDataSource('test');
 		$Source = new CakeTestFixtureTestFixture();
 		$Source->drop($db);
@@ -265,6 +266,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testInitDbPrefixDuplication() {
+		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
 		$db = ConnectionManager::getDataSource('test');
 		$backPrefix = $db->config['prefix'];
 		$db->config['prefix'] = 'cake_fixture_test_';
@@ -294,6 +296,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testInitModelTablePrefix() {
+		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
 		$this->skipIf(!empty($this->db->config['prefix']), 'Cannot run this test, you have a database connection prefix.');
 
 		$Source = new CakeTestFixtureTestFixture();
