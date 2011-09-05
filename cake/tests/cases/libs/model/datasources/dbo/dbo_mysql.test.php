@@ -239,12 +239,31 @@ class DboMysqlTest extends CakeTestCase {
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');
-		$this->assertEqual((string)$result, '3.141593');
-		
+		$this->assertTrue(strpos((string)$result, ',') === false);
+
 		$result = $this->db->value(3.141593);
-		$this->assertEqual((string)$result, '3.141593');
+		$this->assertTrue(strpos((string)$result, ',') === false);
+
+		$result = $this->db->value(2.2E-54, 'float');
+		$this->assertEqual('2.2E-54', (string)$result);
+
+		$result = $this->db->value(2.2E-54);
+		$this->assertEqual('2.2E-54', (string)$result);
 
 		setlocale(LC_ALL, $restore);
+	}
+
+/**
+ * test that scientific notations are working correctly
+ *
+ * @return void
+ */
+	function testScientificNotation() {
+		$result = $this->db->value(2.2E-54, 'float');
+		$this->assertEqual('2.2E-54', (string)$result);
+
+		$result = $this->db->value(2.2E-54);
+		$this->assertEqual('2.2E-54', (string)$result);
 	}
 
 /**

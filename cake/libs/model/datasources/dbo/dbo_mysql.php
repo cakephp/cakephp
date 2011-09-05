@@ -672,7 +672,7 @@ class DboMysql extends DboMysqlBase {
 					return 'NULL';
 				}
 				if (is_float($data)) {
-					return sprintf('%F', $data);
+					return str_replace(',', '.', sprintf('%G', $data));
 				}
 				if ((is_int($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
