@@ -2056,6 +2056,9 @@ class Model extends Overloadable {
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
+ *  Note: find(list) + database views have issues with MySQL 5.0. Try upgrading to MySQL 5.1 if you 
+ *  have issues with database views.
+ *
  * @param array $conditions SQL conditions array, or type of find operation (all / first / count /
  *    neighbors / list / threaded)
  * @param mixed $fields Either a single string of a field name, or an array of field names, or
