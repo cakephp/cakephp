@@ -4718,9 +4718,13 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$result = $TestModel->saveMany($data, array('validate' => true, 'atomic' => false));
 		$this->assertEqual($result, array(true, false));
-		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
+
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'author_id', 'title', 'body', 'published'),
+			'recursive' => -1, 
+			'order' => 'Post.id ASC'
+		));
 		$errors = array(1 => array('title' => array('This field cannot be left blank')));
-		$newTs = date('Y-m-d H:i:s');
 		$expected = array(
 			array(
 				'Post' => array(
@@ -4729,8 +4733,6 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Un-Baleeted First Post',
 					'body' => 'Not Baleeted!',
 					'published' => 'Y',
-					'created' => '2007-03-18 10:39:23',
-					'updated' => $newTs
 			)),
 			array(
 				'Post' => array(
@@ -4739,8 +4741,6 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
 					'published' => 'Y',
-					'created' => '2007-03-18 10:41:23',
-					'updated' => $ts
 			)),
 			array(
 				'Post' => array(
@@ -4749,8 +4749,6 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Third Post',
 					'body' => 'Third Post Body',
 					'published' => 'Y',
-					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
 			)),
 			array(
 				'Post' => array(
@@ -4759,8 +4757,6 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Creating a fourth post',
 					'body' => 'Fourth post body',
 					'published' => 'N',
-					'created' => $ts,
-					'updated' => $ts
 		)));
 		$this->assertEqual($expected, $result);
 		$this->assertEqual($TestModel->validationErrors, $errors);
@@ -4779,7 +4775,11 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertFalse($TestModel->saveMany($data, array('validate' => 'first')));
 
-		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'author_id', 'title', 'body', 'published'),
+			'recursive' => -1, 
+			'order' => 'Post.id ASC'
+		));
 		$this->assertEqual($expected, $result);
 		$this->assertEqual($TestModel->validationErrors, $errors);
 	}
