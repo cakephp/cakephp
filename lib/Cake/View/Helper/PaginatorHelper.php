@@ -285,6 +285,7 @@ class PaginatorHelper extends AppHelper {
  *
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+ * - `direction` The default directon to use when this link isn't active.
  *
  * @param string $key The name of the key that the recordset should be sorted.
  * @param string $title Title for the link. If $title is null $key will be used
@@ -612,7 +613,6 @@ class PaginatorHelper extends AppHelper {
  * `$this->Paginator->numbers(array('first' => 2, 'last' => 2));`
  *
  * Using the first and last options you can create links to the beginning and end of the page set.
- *
  *
  * ### Options
  *
