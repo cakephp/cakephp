@@ -657,7 +657,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Get the lanaguages accepted by the client, or check if a specific language is accepted.
+ * Get the languages accepted by the client, or check if a specific language is accepted.
  *
  * Get the list of accepted languages:
  *
