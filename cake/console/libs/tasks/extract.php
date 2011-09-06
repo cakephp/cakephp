@@ -292,6 +292,20 @@ class ExtractTask extends Shell {
 						$strings[] = $this->__tokens[$position][1];
 					}
 					$position++;
+					if ($this->__tokens[$position][0] == T_COMMENT) {
+						$position++;
+					}
+					while ($this->__tokens[$position] == '.') {
+						$position++;
+						if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
+							$lastString = end($strings);
+							$lastIndex = key($strings);
+							$strings[$lastIndex] = substr($lastString, 0, -1) . substr($this->__tokens[$position][1], 1);
+						} else {
+							break;
+						}
+						$position++;
+					};
 				}
 
 				if ($mapCount == count($strings)) {
