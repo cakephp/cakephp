@@ -607,6 +607,8 @@ class SecurityComponent extends Object {
 			if ($tokenData['expires'] < time() || $tokenData['key'] !== $token) {
 				return false;
 			}
+		} else {
+			return false;
 		}
 
 		$locked = null;

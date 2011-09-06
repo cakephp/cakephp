@@ -141,9 +141,9 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	function testImportOptionsAlternateConnection() {
-		$this->Task->connection = 'test';
+		$this->Task->connection = 'test_suite';
 		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
-		$this->assertPattern("/'connection' => 'test'/", $result);
+		$this->assertPattern("/'connection' => 'test_suite'/", $result);
 	}
 
 /**
@@ -165,6 +165,28 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->assertPattern("/'title' => 'First Article'/", $result, 'Missing import data %s');
 		$this->assertPattern('/Second Article/', $result, 'Missing import data %s');
 		$this->assertPattern('/Third Article/', $result, 'Missing import data %s');
+	}
+
+/**
+ * Ensure that fixture data doesn't get overly escaped.
+ *
+ * @return void
+ */
+	function testImportRecordsNoEscaping() {
+		$Article = ClassRegistry::init('Article');
+		$Article->updateAll(array('body' => "'Body \"value\"'"));
+
+		$this->Task->interactive = true;
+		$this->Task->setReturnValueAt(0, 'in', 'WHERE 1=1 LIMIT 10');
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$result = $this->Task->bake('Article', false, array(
+			'fromTable' => true, 
+			'schema' => 'Article',
+			'records' => false
+		));
+
+		$this->assertPattern("/'body' => 'Body \"value\"'/", $result, 'Data has escaping %s');
 	}
 
 /**
@@ -332,6 +354,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Article', 'datatypes');
 		$this->assertPattern("/'float_field' => 1/", $result);
+		$this->assertPattern("/'bool' => 1/", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
 		$this->assertPattern("/'data' => 'Lorem ipsum dolor sit amet'/", $result);
@@ -351,7 +374,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/Article/')));
 		$result = $this->Task->generateFixtureFile('Article', array());
 
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)\?\>/ms')));
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)$/ms')));
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 

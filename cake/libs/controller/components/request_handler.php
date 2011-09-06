@@ -176,11 +176,12 @@ class RequestHandlerComponent extends Object {
  */
 	function __construct() {
 		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
+		$this->__acceptTypes = array_map('trim', $this->__acceptTypes);
 
 		foreach ($this->__acceptTypes as $i => $type) {
 			if (strpos($type, ';')) {
 				$type = explode(';', $type);
-				$this->__acceptTypes[$i] = $type[0];
+				$this->__acceptTypes[$i] = trim($type[0]);
 			}
 		}
 		parent::__construct();

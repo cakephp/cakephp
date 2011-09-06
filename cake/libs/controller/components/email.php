@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'Multibyte');
+App::import('Core', 'String');
 
 /**
  * EmailComponent
@@ -588,7 +589,7 @@ class EmailComponent extends Object{
 
 		if ($this->messageId !== false) {
 			if ($this->messageId === true) {
-				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
+				$headers['Message-ID'] = '<' . String::uuid() . '@' . env('HTTP_HOST') . '>';
 			} else {
 				$headers['Message-ID'] = $this->messageId;
 			}

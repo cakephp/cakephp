@@ -342,6 +342,38 @@ class CacheHelperTest extends CakeTestCase {
 
 		@unlink($filename);
 	}
+	
+	function testCacheCallbacks() {
+		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->Controller->cacheAction = array(
+			'cache_parsing' => array(
+				'duration' => 21600,
+				'callbacks' => true
+			)
+		);
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+
+		$contents = file_get_contents($filename);
+
+		$this->assertPattern('/\$controller->beforeFilter\(\);/', $contents);
+		$this->assertPattern('/\$this->params = \$controller->params;/', $contents);
+
+		@unlink($filename);
+	}
 
 /**
  * test cacheAction set to a boolean
@@ -529,11 +561,17 @@ class CacheHelperTest extends CakeTestCase {
  * This test must be uncommented/fixed in next release (1.2+)
  *
  * @return void
- * @access public
- *
-	function testCacheEmptySections () {
+ */
+	function testCacheEmptySections() {
 		$this->Controller->cache_parsing();
-		$this->Controller->cacheAction = array('cacheTest' => 21600);
+		$this->Controller->params = array(
+			'controller' => 'cacheTest',
+			'action' => 'cache_empty_sections',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->Controller->cacheAction = array('cache_empty_sections' => 21600);
 		$this->Controller->here = '/cacheTest/cache_empty_sections';
 		$this->Controller->action = 'cache_empty_sections';
 		$this->Controller->layout = 'cache_empty_sections';
@@ -556,16 +594,15 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/cake:nocache/', $contents);
 		$this->assertPattern(
 			'@<head>\s*<title>Posts</title>\s*' .
-			"<\?php \$x = 1; \?>\s*" .
+			'<\?php \$x \= 1; \?>\s*' .
 			'</head>\s*' .
 			'<body>\s*' .
-			"<\?php \$x\+\+; \?>\s*" .
-			"<\?php \$x\+\+; \?>\s*" .
+			'<\?php \$x\+\+; \?>\s*' .
+			'<\?php \$x\+\+; \?>\s*' .
 			'View Content\s*' .
-			"<\?php \$y = 1; \?>\s*" .
-			"<\?php echo 'cached count is:' . \$x; \?>\s*" .
+			'<\?php \$y = 1; \?>\s*' .
+			'<\?php echo \'cached count is: \' . \$x; \?>\s*' .
 			'@', $contents);
 		@unlink($filename);
 	}
-*/
 }
