@@ -126,6 +126,15 @@ class TestView extends View {
  */
 	public function scripts() {
 		return $this->_scripts;
+	}	
+
+/**
+ * Test only function to return instance styles.
+ *
+ * @return array Scripts
+ */
+	function styles() {
+		return $this->_styles;
 	}
 }
 
@@ -400,6 +409,22 @@ class ViewTest extends CakeTestCase {
 		$View->addScript('mainEvent', 'Event.observe(window, "load", function() { doSomething(); }, true);');
 		$this->assertEqual($View->scripts(), array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'));
 	}
+	
+/**
+ * testAddInlineStyles method
+ *
+ * @access public
+ * @return void
+ */
+	function testAddInlineStyles() {
+		$View = new TestView($this->Controller);
+		$View->addStyle('cake.generic.css');
+		$View->addStyle('cake.generic.css');
+		$this->assertEqual($View->styles(), array('cake.generic.css'));
+
+		$View->addScript('layout', 'body { background: blue; }');
+		$this->assertEqual($View->styles(), array('cake.generic.css', 'layout' => 'body { background: blue; }'));
+	}
 
 /**
  * testElement method
@@ -659,6 +684,7 @@ class ViewTest extends CakeTestCase {
 
 		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
 		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
+		$this->assertTrue(isset($View->viewVars['styles_for_layout']), 'styles_for_layout should be a view var');
 
 		$this->PostsController->set('url', 'flash');
 		$this->PostsController->set('message', 'yo what up');

@@ -277,7 +277,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$this->_View->addScript($out);
+			$this->_View->addStyle($out);
 		}
 	}
 
@@ -431,7 +431,7 @@ class HtmlHelper extends AppHelper {
 		if ($options['inline']) {
 			return $out;
 		} else {
-			$this->_View->addScript($out);
+			$this->_View->addStyle($out);
 		}
 	}
 
