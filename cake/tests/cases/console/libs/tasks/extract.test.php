@@ -139,6 +139,18 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertPattern($pattern, $result);
 
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:17\nmsgid "';
+		$pattern .= 'Hot features!';
+		$pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
+		$pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
+		$pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
+		$pattern .= '"\nmsgstr ""/';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:26\n';
+		$pattern .= 'msgid "Found "/';
+		$this->assertNoPattern($pattern, $result);
+
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($path . DS . 'domain.pot');
 
@@ -156,7 +168,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$Folder->delete();
 	}
 	function getTests() {
-		return array('start', 'startCase', 'testExtractMultiplePaths', 'endCase', 'end');
+		return array('start', 'startCase', 'testExecute', 'testExtractMultiplePaths', 'endCase', 'end');
 	}
 
 /**
