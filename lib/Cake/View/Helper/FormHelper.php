@@ -302,7 +302,9 @@ class FormHelper extends AppHelper {
  * - `action`  The controller action the form submits to, (optional).
  * - `url`  The url the form submits to. Can be a string or a url array.  If you use 'url'
  *    you should leave 'action' undefined.
- * - `default`  Allows for the creation of Ajax forms.
+ * - `default`  Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
+ *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
+ *   will be appended.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
  * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
  *	be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
@@ -421,19 +423,18 @@ class FormHelper extends AppHelper {
 		unset($options['type'], $options['action']);
 
 		if ($options['default'] == false) {
-			if (isset($htmlAttributes['onSubmit']) || isset($htmlAttributes['onsubmit'])) {
-				$htmlAttributes['onsubmit'] .= ' event.returnValue = false; return false;';
-			} else {
-				$htmlAttributes['onsubmit'] = 'event.returnValue = false; return false;';
+			if (!isset($options['onsubmit'])) {
+				$options['onsubmit'] = '';
 			}
+			$htmlAttributes['onsubmit'] = $options['onsubmit'] . 'event.returnValue = false; return false;';
 		}
+		unset($options['default']);
 
 		if (!empty($options['encoding'])) {
 			$htmlAttributes['accept-charset'] = $options['encoding'];
 			unset($options['encoding']);
 		}
 
-		unset($options['default']);
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();

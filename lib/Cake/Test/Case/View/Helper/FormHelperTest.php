@@ -6074,6 +6074,14 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+	}
+
+/**
+ * Test the onsubmit option for create()
+ *
+ * @return void
+ */
+	public function testCreateOnSubmit() {
 		$this->Form->request->data = array();
 		$this->Form->request['controller'] = 'contacts';
 		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
@@ -6092,11 +6100,17 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request->data = array();
 		$this->Form->request['controller'] = 'contacts';
 		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
-		$result = $this->Form->create(array('url' => array('action' => 'index', 'param'), 'default' => false, 'onsubmit' => 'someFunction();'));
+		$result = $this->Form->create(array(
+			'url' => array('action' => 'index', 'param'),
+			'default' => false,
+			'onsubmit' => 'someFunction();'
+		));
 
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'onsubmit' => 'someFunction(); event.returnValue = false; return false;', 'action' => '/contacts/index/param',
+				'id' => 'ContactAddForm', 'method' => 'post', 
+				'onsubmit' => 'someFunction();event.returnValue = false; return false;',
+				'action' => '/contacts/index/param',
 				'accept-charset' => 'utf-8'
 			),
 			'div' => array('style' => 'display:none;'),
