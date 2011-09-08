@@ -642,6 +642,8 @@ class Dispatcher extends Object {
 
 		header("Date: " . date("D, j M Y G:i:s ", filemtime($assetFile)) . 'GMT');
 		header('Content-type: ' . $contentType);
+		// Because otherwise flash preloaders DIE in Chrome and IE
+		header('Content-Length: ' . filesize($assetFile));
 		header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
 		header("Cache-Control: cache");
 		header("Pragma: cache");
