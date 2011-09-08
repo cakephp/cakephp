@@ -263,12 +263,13 @@ class MooEngineHelperTest extends CakeTestCase {
 		$expected = '$("drag-me").makeDraggable({onComplete:onStop, onDrag:onDrag, onStart:onStart, snap:[10,10]});';
 		$this->assertEqual($expected, $result);
 	}
+
 /**
- * test drop() method
+ * test drop() method with the required drag option missing
  *
  * @return void
  */
-	public function testDrop() {
+	public function testDropWithMissingOption() {
 		$this->expectError();
 		$this->Moo->get('#drop-me');
 		$this->Moo->drop(array(
@@ -276,7 +277,14 @@ class MooEngineHelperTest extends CakeTestCase {
 			'leave' => 'onLeave',
 			'hover' => 'onHover',
 		));
-
+	}
+/**
+ * test drop() method
+ *
+ * @return void
+ */
+	public function testDrop() {
+		$this->Moo->get('#drop-me');
 		$result = $this->Moo->drop(array(
 			'drop' => 'onDrop',
 			'leave' => 'onLeave',
