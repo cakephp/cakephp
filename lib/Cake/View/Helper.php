@@ -65,6 +65,13 @@ class Helper extends Object {
 	public $plugin = null;
 
 /**
+ * Fields this helper is using.
+ *
+ * @var array
+ */
+	public $fieldset = array();
+
+/**
  * Holds tag templates.
  *
  * @var array
@@ -449,7 +456,7 @@ class Helper extends Object {
 		// check for associated model.
 		$reversed = array_reverse($parts);
 		foreach ($reversed as $part) {
-			if (preg_match('/^[A-Z]/', $part)) {
+			if (empty($this->fieldset[$this->_modelScope]['fields'][$part]) && preg_match('/^[A-Z]/', $part)) {
 				$this->_association = $part;
 				break;
 			}
