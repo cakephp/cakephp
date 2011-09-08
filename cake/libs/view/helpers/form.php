@@ -1074,7 +1074,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($attributes['value'])) {
-			$value = $attributes['value'];
+			if($attributes['value'] != '')
+				$value = $attributes['value'];
 		} else {
 			$value =  $this->value($fieldName);
 		}
