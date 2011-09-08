@@ -211,6 +211,14 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->link('Home', '/home', array('default' => false, 'onclick' => 'someFunction();'));
+		$expected = array(
+			'a' => array('href' => '/home', 'onclick' => 'someFunction(); event.returnValue = false; return false;'),
+			'Home',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->link('Next >', '#');
 		$expected = array(
 			'a' => array('href' => '#'),
@@ -435,6 +443,9 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testStyle() {
+		$result = $this->Html->style('display: none;');
+		$this->assertEqual($result, 'display: none;');
+
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
 		$expected = 'display:none; margin:10px;';
 		$this->assertPattern('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
@@ -786,6 +797,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testBreadcrumb() {
+		$this->assertNull($this->Html->getCrumbs());
+		
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');
 		$this->Html->addCrumb('Third', '#third');
@@ -844,6 +857,28 @@ class HtmlHelperTest extends CakeTestCase {
 			'Third',
 			'/a',
 			'&raquo;',
+			'Fourth'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->getCrumbs('-', 'Start');
+		$expected = array(
+			array('a' => array('href' => '/')),
+			'Start',
+			'/a',
+			'-',
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			'-',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
+			'-',
+			array('a' => array('href' => '#third')),
+			'Third',
+			'/a',
+			'-',
 			'Fourth'
 		);
 		$this->assertTags($result, $expected);
@@ -1156,6 +1191,12 @@ class HtmlHelperTest extends CakeTestCase {
 			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
 		);
 		$this->assertTags($result, $expected);
+		$result = $this->Html->meta('icon');
+		$expected = array(
+			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
+			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
 		$this->assertTags($result, array('meta' => array('name' => 'keywords', 'content' => 'these, are, some, meta, keywords')));
@@ -1285,6 +1326,9 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testUseTag() {
+		$result = $this->Html->useTag('unknowntag');
+		$this->assertEqual($result, '');
+
 		$result = $this->Html->useTag('formend');
 		$this->assertTags($result, '/form');
 
@@ -1334,6 +1378,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testCrumbList() {
+		$this->assertNull($this->Html->getCrumbList());
+
 		$this->Html->addCrumb('Home', '/', array('class' => 'home'));
 		$this->Html->addCrumb('Some page', '/some_page');
 		$this->Html->addCrumb('Another page');
