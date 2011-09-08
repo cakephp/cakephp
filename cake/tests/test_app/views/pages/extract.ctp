@@ -12,3 +12,15 @@ __dn('domain', 'You deleted %d message (domain).', 'You deleted %d messages (dom
 
 // Duplicated Message
 __('Editing this Page');
+
+// Multiline with comments
+__('Hot features!'
+  . "\n - No Configuration:"				// Comments will be stripped
+		. ' Set-up the database and let the magic begin'
+	. "\n - Extremely Simple:"				// Comments will be stripped
+		. ' Just look at the name...It\'s Cake'
+	. "\n - Active, Friendly Community:"	// Comments will be stripped
+		. ' Join us #cakephp on IRC. We\'d love to help you get started');
+
+// This throws an error and is not parsed
+__('Found ' . $count . ' new messages');
