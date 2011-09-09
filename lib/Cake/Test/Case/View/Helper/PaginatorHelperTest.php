@@ -359,6 +359,9 @@ class PaginatorHelperTest extends CakeTestCase {
 		)));
 		$this->assertEqual('Article.title', $result);
 
+		$result = $this->Paginator->sortKey('Article', array('order' => 'Article.title'));
+		$this->assertEqual($result, 'Article.title');
+
 		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article.title'));
 		$this->assertEqual($result, 'Article.title');
 
@@ -1273,25 +1276,25 @@ class PaginatorHelperTest extends CakeTestCase {
 			)
 		);
 
-		$result = $this->Paginator->numbers(array('first' => 1));
+		$result = $this->Paginator->numbers(array('first' => 1, 'class' => 'page-link'));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/index/page:1')), '1', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:1')), '1', '/a', '/span',
 			' | ',
-			array('span' => array('class' => 'current')), '2', '/span',
+			array('span' => array('class' => 'current page-link')), '2', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:3')), '3', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:3')), '3', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:4')), '4', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:4')), '4', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:5')), '5', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:5')), '5', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:6')), '6', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:6')), '6', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:7')), '7', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:7')), '7', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:8')), '8', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:8')), '8', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/index/page:9')), '9', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index/page:9')), '9', '/a', '/span',
 		);
 		$this->assertTags($result, $expected);
 
@@ -2260,7 +2263,6 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * test the current() method
  *
@@ -2274,4 +2276,66 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertEquals(1, $result);
 	}
 
+/**
+ * test the defaultModel() method
+ *
+ * @return void
+ */
+	public function testNoDefaultModel() {
+		$this->Paginator->request = new CakeRequest(null, false);
+		$this->assertNull($this->Paginator->defaultModel());
+	}
+
+/**
+ * test the numbers() method when there is only one page
+ *
+ * @return void
+ */
+	public function testWithOnePage() {
+		$this->Paginator->request['paging'] = array(
+			'Article' => array(
+				'page' => 1,
+				'current' => 2,
+				'count' => 2,
+				'prevPage' => false,
+				'nextPage' => true,
+				'pageCount' => 1,
+				'options' => array(
+					'page' => 1,
+				),
+				'paramType' => 'named',
+			)
+		);
+		$this->assertFalse($this->Paginator->numbers());
+		$this->assertFalse($this->Paginator->first());
+		$this->assertFalse($this->Paginator->last());
+	}
+
+/**
+ * test the numbers() method when there is only one page
+ *
+ * @return void
+ */
+	public function testWithZeroPages() {
+		$this->Paginator->request['paging'] = array(
+			'Article' => array(
+				'page' => 0,
+				'current' => 0,
+				'count' => 0,
+				'prevPage' => false,
+				'nextPage' => false,
+				'pageCount' => 0,
+				'limit' => 10,
+				'options' => array(
+					'page' => 0,
+					'conditions' => array()
+				),
+				'paramType' => 'named',
+			)
+		);
+
+		$result = $this->Paginator->counter(array('format' => 'pages'));
+		$expected = '0 of 1';
+		$this->assertEqual($expected, $result);
+	}
 }
