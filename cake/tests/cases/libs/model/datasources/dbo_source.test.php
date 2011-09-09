@@ -4172,7 +4172,6 @@ class DboSourceTest extends CakeTestCase {
 		Configure::write('debug', 2);
 
 		$this->testDb->error = true;
-		$this->expectError();
 		ob_start();
 		$this->testDb->showQuery('Error 2');
 		$contents = ob_get_clean();
