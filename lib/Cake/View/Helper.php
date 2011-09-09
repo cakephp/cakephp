@@ -65,7 +65,8 @@ class Helper extends Object {
 	public $plugin = null;
 
 /**
- * Fields this helper is using.
+ * Holds the fields array('field_name' => array('type'=> 'string', 'length'=> 100),
+ * primaryKey and validates array('field_name')
  *
  * @var array
  */
