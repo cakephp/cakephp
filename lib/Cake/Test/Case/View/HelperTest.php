@@ -304,7 +304,6 @@ class HelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->assertEquals('HelperTestComment', $this->Helper->model());
-		
 	}
 
 /**
@@ -314,12 +313,35 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	public function testSetEntityAssociatedCamelCaseField() {
-		$this->Helper->fieldset = array('HelperTestComment' => array('fields' => array('BigField' => 'something')));
+		$this->Helper->fieldset = array(
+			'HelperTestComment' => array(
+				'fields' => array('BigField' => array('type' => 'integer'))
+			)
+		);
 		$this->Helper->setEntity('HelperTestComment', true);
 		$this->Helper->setEntity('HelperTestComment.BigField');
 
 		$this->assertEquals('HelperTestComment', $this->Helper->model());
 		$this->assertEquals('BigField', $this->Helper->field());
+	}
+
+/**
+ * Test that multiple fields work when they are camelcase and in fieldset
+ *
+ * @return void
+ */
+	public function testSetEntityAssociatedCamelCaseFieldHabtmMultiple() {
+		$this->Helper->fieldset = array(
+			'HelperTestComment' => array(
+				'fields' => array('Tag' => array('type' => 'multiple'))
+			)
+		);
+		$this->Helper->setEntity('HelperTestComment', true);
+		$this->Helper->setEntity('Tag');
+
+		$this->assertEquals('Tag', $this->Helper->model());
+		$this->assertEquals('Tag', $this->Helper->field());
+		$this->assertEquals(array('Tag', 'Tag'), $this->Helper->entity());
 	}
 
 /**
