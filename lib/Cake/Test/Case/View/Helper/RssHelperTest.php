@@ -682,20 +682,15 @@ class RssHelperTest extends CakeTestCase {
  * @param bool $paintSkip
  * @return void
  */
-	function _getWwwTmpFile($paintSkip = true) {
-		$tmpFile = WWW_ROOT . 'tests' . DS . 'cakephp.file.test.tmp';
+	function _getWwwTmpFile() {
+		$path = WWW_ROOT . 'tests' . DS;
+		$tmpFile = $path. 'cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;
 		};
 
-		if ($paintSkip) {
-			$trace = debug_backtrace();
-			$caller = $trace[0]['function'];
-			$shortPath = dirname($tmpFile);
-
-			$message = __d('cake_dev', '[RssHelperTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
-			$this->markTestSkipped($message);
-		}
+		$message = __d('cake_dev', '%s is not writeable', $path );
+		$this->markTestSkipped($message);
 		return false;
 	}
 }
