@@ -4943,8 +4943,17 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Post');
 		$TestModel = new Post();
 		$this->assertEqual(3, count($TestModel->find('all')));
+	}
 
-		$this->expectError();
+/**
+ * testCallbackSourceChangeUnknownDatasource method
+ *
+ * @expectedException MissingDatasourceConfigException
+ * @return void
+ */
+	public function testCallbackSourceChangeUnknownDatasource() {
+		$this->loadFixtures('Post');
+		$TestModel = new Post();
 		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}
 

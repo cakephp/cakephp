@@ -2479,16 +2479,22 @@ class MysqlTest extends CakeTestCase {
 		$Schema = new CakeSchema();
 		$Schema->tables = array('table' => array(), 'anotherTable' => array());
 
-		$this->expectError();
-		$result = $this->Dbo->dropSchema(null);
-		$this->assertTrue($result === null);
-
 		$result = $this->Dbo->dropSchema($Schema, 'non_existing');
 		$this->assertTrue(empty($result));
 
 		$result = $this->Dbo->dropSchema($Schema, 'table');
 		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->Dbo->fullTableName('table') . ';\s*$/s', $result);
 	}
+
+/**
+ * testDropSchemaNoSchema method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testDropSchemaNoSchema() {
+		$result = $this->Dbo->dropSchema(null);
+	}	
 
 /**
  * testOrderParsing method
@@ -2693,16 +2699,6 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testBuildColumn2() {
-		$this->expectError();
-		$data = array(
-			'name' => 'testName',
-			'type' => 'varchar(255)',
-			'default',
-			'null' => true,
-			'key'
-		);
-		$this->Dbo->buildColumn($data);
-
 		$data = array(
 			'name' => 'testName',
 			'type' => 'string',
@@ -2798,6 +2794,23 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`modified` timestamp NULL';
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * testBuildColumnBadType method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnBadType() {
+		$data = array(
+			'name' => 'testName',
+			'type' => 'varchar(255)',
+			'default',
+			'null' => true,
+			'key'
+		);
+		$this->Dbo->buildColumn($data);
 	}
 
 /**

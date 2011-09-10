@@ -144,10 +144,17 @@ class SecurityTest extends CakeTestCase {
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
 		$this->assertEqual(Security::cipher($result, $key), $txt);
+	}
 
+/**
+ * testCipherEmptyKey method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testCipherEmptyKey() {
 		$txt = 'some_text';
 		$key = '';
-		$this->expectError();
 		$result = Security::cipher($txt, $key);
 	}
 }

@@ -643,6 +643,7 @@ class ModelValidationTest extends BaseModelTest {
  * Test that missing validation methods trigger errors in development mode.
  * Helps to make developement easier.
  *
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testMissingValidationErrorTriggering() {
@@ -656,7 +657,6 @@ class ModelValidationTest extends BaseModelTest {
 				'required' => true
 			)
 		);
-		$this->expectError();
 		$TestModel->invalidFields(array('fieldList' => array('title')));
 	}
 

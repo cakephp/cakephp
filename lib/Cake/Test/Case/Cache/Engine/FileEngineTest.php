@@ -317,12 +317,12 @@ class FileEngineTest extends CakeTestCase {
 /**
  * check that FileEngine generates an error when a configured Path does not exist.
  *
+ * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
 	public function testErrorWhenPathDoesNotExist() {
 		$this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists.');
 
-		$this->expectError();
 		Cache::config('failure', array(
 			'engine' => 'File',
 			'path' => TMP . 'tests' . DS . 'file_failure'
