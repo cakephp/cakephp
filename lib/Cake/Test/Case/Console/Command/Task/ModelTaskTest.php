@@ -754,7 +754,8 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/BakeArticle extends ControllerTestAppModel/'));
 
-		$this->Task->bake('BakeArticle', array(), array());
+		$result = $this->Task->bake('BakeArticle', array(), array());
+		$this->assertContains("App::uses('ControllerTestAppModel', 'ControllerTest.Model');", $result);
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
 		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);

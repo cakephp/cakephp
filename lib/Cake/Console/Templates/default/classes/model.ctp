@@ -19,7 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo "<?php\n"; ?>
+echo "<?php\n";
+echo "App::uses('{$plugin}AppModel', '{$pluginPath}Model');\n";
+?>
 /**
  * <?php echo $name ?> Model
  *
