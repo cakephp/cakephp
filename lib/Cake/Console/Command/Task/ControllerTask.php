@@ -290,7 +290,8 @@ class ControllerTask extends BakeTask {
 		$displayField = $modelObj->displayField;
 		$primaryKey = $modelObj->primaryKey;
 
-		$this->Template->set(compact('plugin', 'admin', 'controllerPath', 'pluralName', 'singularName',
+		$this->Template->set(compact(
+			'plugin', 'admin', 'controllerPath', 'pluralName', 'singularName',
 			'singularHumanName', 'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName',
 			'displayField', 'primaryKey'
 		));
@@ -312,7 +313,10 @@ class ControllerTask extends BakeTask {
 
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
-		$this->Template->set('plugin', $this->plugin);
+		$this->Template->set(array(
+			'plugin' => $this->plugin,
+			'pluginPath' => empty($this->plugin) ? '' : $this->plugin . '.'
+		));
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('classes', 'controller');
 

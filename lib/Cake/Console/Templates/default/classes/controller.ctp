@@ -20,6 +20,7 @@
  */
 
 echo "<?php\n";
+echo "App::uses('{$plugin}AppController', '{$pluginPath}Controller');\n";
 ?>
 /**
  * <?php echo $controllerName; ?> Controller

@@ -315,15 +315,18 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(3))->method('createFile')->with(
 			$path,
 			new PHPUnit_Framework_Constraint_PCREMatch('/ArticlesController extends ControllerTestAppController/')
-		);
+		)->will($this->returnValue(true));
 
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->Task->plugin = 'ControllerTest';
 		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
-		$this->Task->bake('Articles', '--actions--', array(), array(), array());
+		$result = $this->Task->bake('Articles', '--actions--', array(), array(), array());
 
-		$this->assertEqual($this->Task->Template->templateVars['plugin'], 'ControllerTest');
+		$this->assertContains("App::uses('ControllerTestAppController', 'ControllerTest.Controller');", $result);
+		$this->assertEquals('ControllerTest', $this->Task->Template->templateVars['plugin']);
+		$this->assertEquals('ControllerTest.', $this->Task->Template->templateVars['pluginPath']);
+
 		CakePlugin::unload();
 	}
 
