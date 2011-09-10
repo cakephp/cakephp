@@ -29,7 +29,7 @@ App::uses('CakeTestLoader', 'TestSuite');
  *
  * @package       Cake.Console.Command
  */
-class TestsuiteShell extends Shell {
+class TestShell extends Shell {
 
 /**
  * Dispatcher object for the run.
@@ -193,19 +193,25 @@ class TestsuiteShell extends Shell {
 			'output' => 'text',
 		);
 
-		$category = $this->args[0];
 
-		if ($category == 'core') {
+		if (strpos($this->args[0], '.php')) {
+			$category = $this->_mapFileToCategory($this->args[0]);
+			$params['case'] = $this->_mapFileToCase($this->args[0], $category);
+		} else {
+			$category = $this->args[0];
+			if (isset($this->args[1])) {
+				$params['case'] = $this->args[1];
+			}
+		}
+
+		if ($category === 'core') {
 			$params['core'] = true;
-		} elseif ($category == 'app') {
+		} elseif ($category === 'app') {
 			$params['app'] = true;
-		} elseif ($category != 'core') {
+		} else {
 			$params['plugin'] = $category;
 		}
 
-		if (isset($this->args[1])) {
-			$params['case'] = $this->args[1];
-		}
 		return $params;
 	}
 
@@ -325,5 +331,105 @@ class TestsuiteShell extends Shell {
 				break;
 			}
 		}
+	}
+
+/**
+ * Find the test case for the passed file. The file could itself be a test.
+ *
+ * @param mixed $file
+ * @access protected
+ * @return array(type, case)
+ */
+	protected function _mapFileToCase($file, $category) {
+		if (!$category || (substr($file, -4) !== '.php')) {
+			return false;
+		}
+
+		$_file = realpath($file);
+		if ($_file) {
+			$file = $_file;
+		}
+
+		$testFile = $testCase = null;
+
+		if (preg_match('@Test[\\\/]@', $file)) {
+
+			if (substr($file, -8) === 'Test.php') {
+
+				$testCase = substr($file, 0, -8);
+				$testCase = str_replace(DS, '/', $testCase);
+
+				if ($testCase = preg_replace('@.*Test\/Case\/@', '', $testCase)) {
+
+					if ($category === 'core') {
+						$testCase = str_replace('lib/Cake', '', $testCase);
+					}
+
+					return $testCase;
+				}
+
+				throw new Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
+				return false;
+			}
+		}
+
+		$file = substr($file, 0, -4);
+		if ($category === 'core') {
+
+			$testCase = str_replace(DS, '/', $file);
+			$testCase = preg_replace('@.*lib/Cake/@', '', $file);
+			$testCase[0] = strtoupper($testCase[0]);
+			$testFile = CAKE . 'Test/Case/' . $testCase . 'Test.php';
+
+			if (file_exists($testFile)) {
+				return $testCase;
+			}
+
+			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+			return false;
+		}
+
+		if ($category === 'app') {
+			$testFile = str_replace(APP, APP . 'Test/Case/', $file) . 'Test.php';
+		} else {
+			$testFile = preg_replace(
+				"@((?:plugins|Plugin)[\\/]{$category}[\\/])(.*)$@",
+				'\1Test/Case/\2Test.php',
+				$file
+			);
+		}
+
+		if (!file_exists($testFile)) {
+			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+			return false;
+		}
+
+		$testCase = substr($file, 0, -8);
+		$testCase = str_replace(DS, '/', $testCase);
+		$testCase = preg_replace('@.*Test/Case/@', '', $testCase);
+
+		return $testCase;
+	}
+
+/**
+ * For the given file, what category of test is it? returns app, core or the name of the plugin
+ *
+ * @param mixed $file
+ * @access protected
+ * @return string
+ */
+	protected function _mapFileToCategory($file) {
+		$_file = realpath($file);
+		if ($_file) {
+			$file = $_file;
+		}
+
+		$file = str_replace(DS, '/', $file);
+		if (strpos($file, 'lib/Cake/') !== false) {
+			return 'core';
+		} elseif (preg_match('@(?:plugins|Plugin)/([^/]*)@', $file, $match)) {
+			return $match[1];
+		}
+		return 'app';
 	}
 }
