@@ -686,12 +686,12 @@ class ModelValidationTest extends BaseModelTest {
  */
 	public function testValidationMessageAsArray() {
 		$TestModel = new ValidationTest1();
-		$TestModel->create(array('title' => 'foo'));
 		$TestModel->validate = array(
 			'title' => array(
 				'minLength' => array(
 					'rule' => array('minLength', 6),
-					'message' => array('Minimum length allowed is %d chars'),
+					'required' => true,
+					'message' => 'Minimum length allowed is %d chars',
 					'last' => false
 				),
 				'between' => array(
@@ -700,6 +700,17 @@ class ModelValidationTest extends BaseModelTest {
 				)
 			)
 		);
+
+		$TestModel->create();
+		$TestModel->invalidFields();
+		$expected = array(
+			'title' => array(
+				'Minimum length allowed is 6 chars',
+			)
+		);
+		$this->assertEquals($TestModel->validationErrors, $expected);
+
+		$TestModel->create(array('title' => 'foo'));
 		$TestModel->invalidFields();
 		$expected = array(
 			'title' => array(

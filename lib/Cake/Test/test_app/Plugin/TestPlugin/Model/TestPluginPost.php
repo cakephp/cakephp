@@ -53,11 +53,10 @@ class TestPluginPost extends TestPluginAppModel {
 				'required' => false,
 				'message' => 'Post body is required'
 			),
-			'second_rule' => array(
+			'Post body is super required' => array(
 				'rule' => array('custom', '.*'),
 				'allowEmpty' => true,
 				'required' => false,
-				'message' => 'Post body is super required'
 			)
 		),
 	);
