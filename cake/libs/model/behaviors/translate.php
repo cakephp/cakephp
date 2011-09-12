@@ -182,26 +182,18 @@ class TranslateBehavior extends ModelBehavior {
 				} else {
 					$query['fields'][] = 'I18n__'.$field.'.content';
 					$query['joins'][] = array(
-						'type' => 'LEFT',
+						'type' => 'INNER',
 						'alias' => 'I18n__'.$field,
 						'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 						'conditions' => array(
 							$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
 							'I18n__'.$field.'.model' => $model->name,
-							'I18n__'.$field.'.'.$RuntimeModel->displayField => $field
+							'I18n__'.$field.'.'.$RuntimeModel->displayField => $field,
+							'I18n__'.$field.'.locale' => $locale
 						)
 					);
-
-					if (is_string($query['conditions'])) {
-						$query['conditions'] = $db->conditions($query['conditions'], true, false, $model) . ' AND '.$db->name('I18n__'.$field.'.locale').' = \''.$locale.'\'';
-					} else {
-						$query['conditions'][$db->name("I18n__{$field}.locale")] = $locale;
-					}
 				}
 			}
-		}
-		if (is_array($query['fields'])) {
-			$query['fields'] = array_merge($query['fields']);
 		}
 		$this->runtime[$model->alias]['beforeFind'] = $addFields;
 		return $query;
