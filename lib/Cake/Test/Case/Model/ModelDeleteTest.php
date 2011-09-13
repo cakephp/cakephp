@@ -417,11 +417,18 @@ class ModelDeleteTest extends BaseModelTest {
 
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
+	}
 
-		$this->expectError();
-		ob_start();
+/**
+ * testDeleteAllUnknownColumn method
+ *
+ * @expectedException PDOException
+ * @return void
+ */
+	public function testDeleteAllUnknownColumn() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
 		$result = $TestModel->deleteAll(array('Article.non_existent_field' => 999));
-		ob_get_clean();
 		$this->assertFalse($result, 'deleteAll returned true when find query generated sql error. %s');
 	}
 

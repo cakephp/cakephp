@@ -378,11 +378,17 @@ class HttpResponseTest extends CakeTestCase {
 		$r = $this->HttpResponse->decodeChunkedBody($encoded);
 		$this->assertEquals($r['body'], $decoded);
 		$this->assertEquals($r['header'], array('foo-header' => 'bar', 'cake' => 'PHP'));
+	}
 
+/**
+ * testDecodeChunkedBodyError method
+ *
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testDecodeChunkedBodyError() {
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n";
-		$this->expectError();
 		$r = $this->HttpResponse->decodeChunkedBody($encoded);
-		$this->assertEquals($r, false);
 	}
 
 /**
