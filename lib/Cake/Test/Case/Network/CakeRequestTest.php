@@ -21,7 +21,7 @@ App::uses('Dispatcher', 'Routing');
 App::uses('Xml', 'Utility');
 App::uses('CakeRequest', 'Network');
 
-class CakeRequestTestCase extends CakeTestCase {
+class CakeRequestTest extends CakeTestCase {
 /**
  * setup callback
  *

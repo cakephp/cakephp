@@ -183,11 +183,11 @@ class PostgresClientTestModel extends Model {
 }
 
 /**
- * DboPostgresTest class
+ * PostgresTest class
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class DboPostgresTest extends CakeTestCase {
+class PostgresTest extends CakeTestCase {
 
 /**
  * Do not automatically load fixtures for each test, they will be loaded manually

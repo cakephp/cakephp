@@ -8,7 +8,7 @@ App::uses('Router', 'Routing');
  *
  * @package       Cake.Test.Case.Routing.Route
  **/
-class CakeRouteTestCase extends CakeTestCase {
+class CakeRouteTest extends CakeTestCase {
 /**
  * setUp method
  *

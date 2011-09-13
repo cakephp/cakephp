@@ -60,7 +60,7 @@ class DboSqliteTestDb extends Sqlite {
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class DboSqliteTest extends CakeTestCase {
+class SqliteTest extends CakeTestCase {
 
 /**
  * Do not automatically load fixtures for each test, they will be loaded manually using CakeTestCase::loadFixtures

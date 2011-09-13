@@ -31,7 +31,7 @@ class TestStringOutput extends ConsoleOutput {
 	}
 }
 
-class CommandListTest extends CakeTestCase {
+class CommandListShellTest extends CakeTestCase {
 /**
  * setUp method
  *

@@ -28,7 +28,7 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class DboMysqlTest extends CakeTestCase {
+class MysqlTest extends CakeTestCase {
 /**
  * autoFixtures property
  *
