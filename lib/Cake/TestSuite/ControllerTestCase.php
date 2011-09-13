@@ -175,8 +175,14 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * ### Options:
  *
- * - `data` POST or GET data to pass
- * - `method` POST or GET
+ * - `data` POST or GET data to pass. Depends on the method.
+ * - `method` POST or GET. Defaults to POST.
+ * - `return` Specify the return type you want.  Choose from:
+ *     - `vars` Get the set view variables.
+ *     - `view` Get the rendered view, without a layout.
+ *     - `contents` Get the rendered view including the layout.
+ *     - `result` Get the return value of the controller action.  Useful 
+ *       for testing requestAction methods.
  *
  * @param string $url The url to test
  * @param array $options See options
