@@ -238,6 +238,6 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	public function testSetupBackUpValues() {
 		$this->assertArrayHasKey('debug', $this->_configure);
-		$this->assertArrayHasKey('plugins', $this->_pathRestore);
+		$this->assertArrayHasKey('Plugin', $this->_pathRestore);
 	}
 }
