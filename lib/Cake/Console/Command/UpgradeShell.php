@@ -93,6 +93,29 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update tests.
+ *
+ * - Update tests class names to FooTest rather than FooTestCase.
+ *
+ * @return void
+ */
+	public function tests() {
+		$this->_paths = array(APP . 'tests' . DS);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = App::pluginPath($this->params['plugin']) . 'tests' . DS;
+		}
+		$patterns = array(
+			array(
+				'*TestCase extends CakeTestCase to *Test extends CakeTestCase',
+				'/([a-zA-Z]*Test)Case extends CakeTestCase/',
+				'\1 extends CakeTestCase'
+			),
+		);
+
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
  * Move files and folders to their new homes
  *
  * Moves folders containing files which cannot necessarily be auto-detected (libs and templates)
@@ -122,6 +145,9 @@ class UpgradeShell extends Shell {
 
 		$moves = array(
 			'libs' => 'Lib',
+			'tests' => 'Test',
+			'Test' . DS . 'cases' => 'Test' . DS . 'Case',
+			'Test' . DS . 'fixtures' => 'Test' . DS . 'Fixture',
 			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
 		);
 		foreach($moves as $old => $new) {
@@ -145,6 +171,7 @@ class UpgradeShell extends Shell {
 			'Lib' => array('checkFolder' => false),
 			'Model',
 			'models',
+			'Test' => array('regex' => '@class (\S*Test) extends CakeTestCase@'),
 			'tests',
 			'View',
 			'views',
@@ -154,6 +181,7 @@ class UpgradeShell extends Shell {
 		$defaultOptions = array(
 			'recursive' => true,
 			'checkFolder' => true,
+			'regex' => '@class (\S*) .*{@'
 		);
 		foreach($sourceDirs as $dir => $options) {
 			if (is_numeric($dir)) {
@@ -513,7 +541,7 @@ class UpgradeShell extends Shell {
 			$file = $cwd . DS . $file;
 
 			$contents = file_get_contents($file);
-			preg_match('@class (\S*) .*{@', $contents, $match);
+			preg_match($options['regex'], $contents, $match);
 			if (!$match) {
 				continue;
 			}
@@ -663,6 +691,10 @@ class UpgradeShell extends Shell {
 				"Be sure to have a backup of your application before running these commands."))
 			->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Run all upgrade commands.'),
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('tests', array(
+				'help' => __d('cake_console', 'Update tests class names to FooTest rather than FooTestCase.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('locations', array(
