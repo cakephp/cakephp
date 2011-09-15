@@ -499,11 +499,8 @@ class View extends Object {
  * @return mixed The content of the named var if its set, otherwise null.
  */
 	public function get($var) {
-		if (!isset($this->viewVars[$var]) && !isset($this->_blocks[$var])) {
+		if (!isset($this->viewVars[$var])) {
 			return null;
-		}
-		if (isset($this->_blocks[$var])) {
-			return $this->_blocks[$var];
 		}
 		return $this->viewVars[$var];
 	}
@@ -575,6 +572,19 @@ class View extends Object {
 			throw new CakeException(__d('cake_dev', 'You can only append strings.'));
 		}
 		$this->_blocks[$name] = $value;
+	}
+
+/**
+ * Get the content for a block.
+ *
+ * @param string $name Name of the block
+ * @return The block content or '' if the block does not exist.
+ */
+	public function getBlock($name) {
+		if (!isset($this->_blocks[$name])) {
+			return '';
+		}
+		return $this->_blocks[$name];
 	}
 
 /**

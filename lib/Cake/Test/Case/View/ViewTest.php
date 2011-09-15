@@ -937,7 +937,7 @@ class ViewTest extends CakeTestCase {
 		echo 'Block content';
 		$this->View->end();
 
-		$result = $this->View->get('test');
+		$result = $this->View->getBlock('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -955,7 +955,7 @@ class ViewTest extends CakeTestCase {
 		echo ' content';
 		$this->View->end();
 
-		$result = $this->View->get('test');
+		$result = $this->View->getBlock('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -966,7 +966,7 @@ class ViewTest extends CakeTestCase {
  */
 	public function testBlockSet() {
 		$this->View->setBlock('test', 'Block content');
-		$result = $this->View->get('test');
+		$result = $this->View->getBlock('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -979,7 +979,7 @@ class ViewTest extends CakeTestCase {
 		$this->View->setBlock('test', 'Block');
 		$this->View->append('test', ' content');
 
-		$result = $this->View->get('test');
+		$result = $this->View->getBlock('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -990,7 +990,7 @@ class ViewTest extends CakeTestCase {
  */
 	public function testBlockAppendUndefined() {
 		$this->View->append('test', 'Unknown');
-		$result = $this->View->get('test');
+		$result = $this->View->getBlock('test');
 		$this->assertEquals('Unknown', $result);
 	}
 
