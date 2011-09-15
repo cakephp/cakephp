@@ -268,7 +268,7 @@ class UpgradeShell extends Shell {
  *
  * - a(*) -> array(*)
  * - e(*) -> echo *
- * - ife(*, *, *) -> empty(*) ? * : *
+ * - ife(*, *, *) -> !empty(*) ? * : *
  * - a(*) -> array(*)
  * - r(*, *, *) -> str_replace(*, *, *)
  * - up(*) -> strtoupper(*)
