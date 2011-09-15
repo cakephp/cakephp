@@ -296,9 +296,9 @@ class UpgradeShell extends Shell {
 				'echo \1'
 			),
 			array(
-				'ife(*, *, *) -> empty(*) ? * : *',
+				'ife(*, *, *) -> !empty(*) ? * : *',
 				'/ife\((.*), (.*), (.*)\)/',
-				'empty(\1) ? \2 : \3'
+				'!empty(\1) ? \2 : \3'
 			),
 			array(
 				'r(*, *, *) -> str_replace(*, *, *)',
