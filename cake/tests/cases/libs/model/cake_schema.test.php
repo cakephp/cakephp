@@ -741,8 +741,8 @@ class CakeSchemaTest extends CakeTestCase {
 		$expected = array(
 			'comments' => array(
 				'add' => array(
-					'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
-					'title' => array('type' => 'string', 'null' => false, 'length' => 100),
+					'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'after' => 'id'),
+					'title' => array('type' => 'string', 'null' => false, 'length' => 100, 'after' => 'user_id'),
 				),
 				'drop' => array(
 					'article_id' => array('type' => 'integer', 'null' => false),
@@ -754,7 +754,7 @@ class CakeSchemaTest extends CakeTestCase {
 			),
 			'posts' => array(
 				'add' => array(
-					'summary' => array('type' => 'text', 'null' => 1),
+					'summary' => array('type' => 'text', 'null' => 1, 'after' => 'body'),
 				),
 				'drop' => array(
 					'tableParameters' => array(),
@@ -795,11 +795,11 @@ class CakeSchemaTest extends CakeTestCase {
 			'ratings' => array(
 				'add' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-					'foreign_key' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-					'model' => array('type' => 'varchar', 'null' => false, 'default' => NULL),
-					'value' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => NULL),
-					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'foreign_key' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'after' => 'id'),
+					'model' => array('type' => 'varchar', 'null' => false, 'default' => NULL, 'after' => 'foreign_key'),
+					'value' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => NULL, 'after' => 'model'),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL, 'after' => 'value'),
+					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL, 'after' => 'created'),
 					'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
 				)
