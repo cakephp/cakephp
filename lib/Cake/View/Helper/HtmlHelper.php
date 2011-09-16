@@ -218,9 +218,24 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
+ * Create a meta tag that is output inline:
+ *
+ * `$this->Html->meta('icon', 'favicon.ico');
+ *
+ * Append the meta tag to `$scripts_for_layout`:
+ *
+ * `$this->Html->meta('description', 'A great page', array('inline' => false));`
+ *
+ * Append the meta tag to custom view block:
+ *
+ * `$this->Html->meta('description', 'A great page', array('block' => 'metaTags'));`
+ *
  * ### Options
  *
- * - `inline` Whether or not the link element should be output inline, or in scripts_for_layout.
+ * - `inline` Whether or not the link element should be output inline. Set to false to 
+ *   have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
+ * - `block` Choose a custom block to append the meta tag to.  Using this option
+ *   will override the inline option.
  *
  * @param string $type The title of the external resource
  * @param mixed $url The address of the external resource or string for content attribute
@@ -230,7 +245,10 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::meta
  */
 	public function meta($type, $url = null, $options = array()) {
-		$inline = isset($options['inline']) ? $options['inline'] : true;
+		$options += array('inline' => true, 'block' => null);
+		if (!$options['inline'] && empty($options['block'])) {
+			$options['block'] = __FUNCTION__;
+		}
 		unset($options['inline']);
 
 		if (!is_array($type)) {
@@ -268,20 +286,20 @@ class HtmlHelper extends AppHelper {
 
 		if (isset($options['link'])) {
 			if (isset($options['rel']) && $options['rel'] === 'icon') {
-				$out = sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+				$out = sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('block', 'link'), ' ', ' '));
 				$options['rel'] = 'shortcut icon';
 			} else {
 				$options['link'] = $this->url($options['link'], true);
 			}
-			$out .= sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+			$out .= sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('block', 'link'), ' ', ' '));
 		} else {
-			$out = sprintf($this->_tags['meta'], $this->_parseAttributes($options, array('type'), ' ', ' '));
+			$out = sprintf($this->_tags['meta'], $this->_parseAttributes($options, array('block', 'type'), ' ', ' '));
 		}
 
-		if ($inline) {
+		if (empty($options['block'])) {
 			return $out;
 		} else {
-			$this->_View->append('meta', $out);
+			$this->_View->append($options['block'], $out);
 		}
 	}
 
@@ -377,9 +395,16 @@ class HtmlHelper extends AppHelper {
  *
  * `$this->Html->css('styles.css', null, array('inline' => false));`
  *
+ * Add the stylesheet to a custom block:
+ *
+ * `$this->Html->css('styles.css', null, array('block' => 'layoutCss'));`
+ *
  * ### Options
  *
- * - `inline` If set to false, the generated tag appears in the head tag of the layout. Defaults to true
+ * - `inline` If set to false, the generated tag will be appended to the 'css' block, 
+ *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
+ * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
+ *   option.
  *
  * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -390,13 +415,18 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::css
  */
 	public function css($path, $rel = null, $options = array()) {
-		$options += array('inline' => true);
+		$options += array('block' => null, 'inline' => true);
+		if (!$options['inline'] && empty($options['block'])) {
+			$options['block'] = __FUNCTION__;
+		}
+		unset($options['inline']);
+
 		if (is_array($path)) {
 			$out = '';
 			foreach ($path as $i) {
 				$out .= "\n\t" . $this->css($i, $rel, $options);
 			}
-			if ($options['inline'])  {
+			if (empty($options['block']))  {
 				return $out . "\n";
 			}
 			return;
@@ -433,10 +463,10 @@ class HtmlHelper extends AppHelper {
 			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
 		}
 
-		if ($options['inline']) {
+		if (empty($options['block'])) {
 			return $out;
 		} else {
-			$this->_View->append(__FUNCTION__, $out);
+			$this->_View->append($options['block'], $out);
 		}
 	}
 
@@ -461,10 +491,17 @@ class HtmlHelper extends AppHelper {
  *
  * `$this->Html->script('styles.js', null, array('inline' => false));`
  *
+ * Add the script file to a custom block:
+ *
+ * `$this->Html->script('styles.js', null, array('block' => 'bodyScript'));`
+ *
  * ### Options
  *
- * - `inline` - Whether script should be output inline or into scripts_for_layout.
- * - `once` - Whether or not the script should be checked for uniqueness. If true scripts will only be
+ * - `inline` Whether script should be output inline or into `$scripts_for_layout`. When set to false,
+ *   the script tag will be appended to the 'script' view block as well as `$scripts_for_layout`.
+ * - `block` The name of the block you want the script appended to.  Leave undefined to output inline.
+ *   Using this option will override the inline option.
+ * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
  *
  * @param mixed $url String or array of javascript files to include
@@ -478,13 +515,18 @@ class HtmlHelper extends AppHelper {
 			list($inline, $options) = array($options, array());
 			$options['inline'] = $inline;
 		}
-		$options = array_merge(array('inline' => true, 'once' => true), $options);
+		$options = array_merge(array('block' => null, 'inline' => true, 'once' => true), $options);
+		if (!$options['inline'] && empty($options['block'])) {
+			$options['block'] = __FUNCTION__;
+		}
+		unset($options['inline']);
+
 		if (is_array($url)) {
 			$out = '';
 			foreach ($url as $i) {
 				$out .= "\n\t" . $this->script($i, $options);
 			}
-			if ($options['inline'])  {
+			if (empty($options['block']))  {
 				return $out . "\n";
 			}
 			return null;
@@ -507,13 +549,13 @@ class HtmlHelper extends AppHelper {
 				$url = str_replace(JS_URL, 'cjs/', $url);
 			}
 		}
-		$attributes = $this->_parseAttributes($options, array('inline', 'once'), ' ');
+		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
 		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);
 
-		if ($options['inline']) {
+		if (empty($options['block'])) {
 			return $out;
 		} else {
-			$this->_View->append(__FUNCTION__, $out);
+			$this->_View->append($options['block'], $out);
 		}
 	}
 

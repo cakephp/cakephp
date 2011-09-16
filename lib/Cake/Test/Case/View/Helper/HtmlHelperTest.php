@@ -655,10 +655,33 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->View->expects($this->any())
+	}
+
+/**
+ * test that script() works with blocks.
+ *
+ * @return void
+ */
+	public function testScriptWithBlocks() {
+		$this->View->expects($this->at(0))
 			->method('append')
 			->with('script', $this->matchesRegularExpression('/script_in_head.js/'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/bool_false.js/'));
+	
+		$this->View->expects($this->at(2))
+			->method('append')
+			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
+
 		$result = $this->Html->script('script_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->script('bool_false', false);
+		$this->assertNull($result);
+
+		$result = $this->Html->script('second_script', array('block' => 'headScripts'));
 		$this->assertNull($result);
 	}
 
@@ -1249,11 +1272,24 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 
 
-		$this->View->expects($this->any())
+	}
+
+/**
+ * Test the inline and block options for meta()
+ */
+	public function testMetaWithBlocks() {
+		$this->View->expects($this->at(0))
 			->method('append')
-			->with('meta', $this->matchesRegularExpression('/^<meta/'));
+			->with('meta', $this->stringContains('ROBOTS'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('metaTags', $this->stringContains('favicon.ico'));
 
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->meta('icon', 'favicon.ico', array('block' => 'metaTags'));
 		$this->assertNull($result);
 	}
 

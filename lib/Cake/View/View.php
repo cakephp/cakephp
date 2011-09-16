@@ -536,7 +536,8 @@ class View extends Object {
  * block will create the block.
  *
  * Calling append() without a value will create a new capturing
- * block that needs to be finished with View::end()
+ * block that needs to be finished with View::end(). The content
+ * of the new capturing context will be added to the existing block context.
  *
  * @param string $name Name of the block
  * @param string $value The content for the block.
