@@ -2573,6 +2573,10 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE MAX(`Post`.`rating`) > '50'";
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->conditions(array('lower(Article.title)' =>  'secrets'));
+		$expected = " WHERE lower(`Article`.`title`) = 'secrets'";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";
 		$this->assertEqual($result, $expected);
