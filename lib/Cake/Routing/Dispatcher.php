@@ -218,8 +218,10 @@ class Dispatcher {
 			}
 
 			if (file_exists($filename)) {
+				App::uses('ThemeView', 'View');
+
 				$controller = null;
-				$view = new View($controller);
+				$view = new ThemeView($controller);
 				return $view->renderCache($filename, microtime(true));
 			}
 		}

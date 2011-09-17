@@ -38,7 +38,9 @@ class ThemeView extends View {
  */
 	public function __construct($controller) {
 		parent::__construct($controller);
-		$this->theme = $controller->theme;
+		if ($controller) {
+			$this->theme = $controller->theme;
+		}
 	}
 
 /**

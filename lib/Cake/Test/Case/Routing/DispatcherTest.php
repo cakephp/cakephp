@@ -442,6 +442,15 @@ class TestCachedPagesController extends Controller {
 		$this->cacheAction = 10;
 		$this->helpers[] = 'Form';
 	}
+
+/**
+ * Test cached views with themes.
+ */
+	public function themed() {
+		$this->cacheAction = 10;
+		$this->viewClass = 'Theme';
+		$this->theme = 'TestTheme';
+	}
 }
 
 /**
@@ -1421,6 +1430,45 @@ class DispatcherTest extends CakeTestCase {
 		$filename = $this->__cachePath($request->here);
 		$this->assertTrue(file_exists($filename));
 
+		unlink($filename);
+	}
+
+/**
+ * Test full page caching with themes.
+ *
+ * @return void
+ */
+	public function testFullPageCachingWithThemes() {
+		Configure::write('Cache.disable', false);
+		Configure::write('Cache.check', true);
+		Configure::write('debug', 2);
+
+		Router::reload();
+		Router::connect('/:controller/:action/*');
+
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+		), true);
+
+		$dispatcher = new TestDispatcher();
+		$request = new CakeRequest('/test_cached_pages/themed');
+		$response = new CakeResponse();
+
+		ob_start();
+		$dispatcher->dispatch($request, $response);
+		$out = ob_get_clean();
+
+		ob_start();
+		$dispatcher->cached($request->here);
+		$cached = ob_get_clean();
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+
+		$this->assertEqual($expected, $result);
+
+		$filename = $this->__cachePath($request->here);
 		unlink($filename);
 	}
 
