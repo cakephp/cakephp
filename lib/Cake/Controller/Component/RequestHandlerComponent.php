@@ -556,7 +556,12 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		if (empty($this->_renderType)) {
+		$viewClass = ucfirst($type);
+		App::uses($viewClass . 'View', 'View');
+
+		if (class_exists($viewClass . 'View')) {
+			$controller->viewClass = $viewClass;
+		} elseif (empty($this->_renderType)) {
 			$controller->viewPath .= DS . $type;
 		} else {
 			$remove = preg_replace("/([\/\\\\]{$this->_renderType})$/", DS . $type, $controller->viewPath);
