@@ -287,6 +287,9 @@ class Configure {
  *
  * `Configure::load('setup', 'default');`
  *
+ * If using `default` config and no reader has been configured for it yet,
+ * one will be automatically created using PhpReader
+ *
  * @link http://book.cakephp.org/view/929/load
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
@@ -296,7 +299,12 @@ class Configure {
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		if (!isset(self::$_readers[$config])) {
-			return false;
+			if ($config === 'default') {
+				App::uses('PhpReader', 'Configure');
+				self::$_readers[$config] = new PhpReader();
+			} else {
+				return false;
+			}
 		}
 		$values = self::$_readers[$config]->read($key);
 
