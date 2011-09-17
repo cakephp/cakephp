@@ -4401,3 +4401,122 @@ class PrefixTestUseTableModel extends CakeTestModel {
        var $useTable = 'prefix_tests';
 }
 
+/**
+ * ScaffoldMock class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldMock extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'articles';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array(
+		'User' => array(
+			'className' => 'ScaffoldUser',
+			'foreignKey' => 'user_id',
+		)
+	);
+
+/**
+ * hasMany property
+ *
+ * @var array
+ */
+	public $hasMany = array(
+		'Comment' => array(
+			'className' => 'ScaffoldComment',
+			'foreignKey' => 'article_id',
+		)
+	);
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var string
+ */
+	public $hasAndBelongsToMany = array(
+		'ScaffoldTag' => array(
+			'className' => 'ScaffoldTag',
+			'foreignKey' => 'something_id',
+			'associationForeignKey' => 'something_else_id',
+			'joinTable' => 'join_things'
+		)
+	);
+}
+
+/**
+ * ScaffoldUser class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldUser extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'users';
+
+/**
+ * hasMany property
+ *
+ * @var array
+ */
+	public $hasMany = array(
+		'Article' => array(
+			'className' => 'ScaffoldMock',
+			'foreignKey' => 'article_id',
+		)
+	);
+}
+
+/**
+ * ScaffoldComment class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldComment extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'comments';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array(
+		'Article' => array(
+			'className' => 'ScaffoldMock',
+			'foreignKey' => 'article_id',
+		)
+	);
+}
+
+/**
+ * ScaffoldTag class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldTag extends CakeTestModel {
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'tags';
+}
