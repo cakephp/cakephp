@@ -903,11 +903,12 @@ class Model extends Object {
 						unset ($this->{$type}[$assoc]);
 						$assoc = $value;
 						$value = array();
-						$this->{$type}[$assoc] = $value;
 
 						if (strpos($assoc, '.') !== false) {
 							list($plugin, $assoc) = pluginSplit($assoc);
 							$this->{$type}[$assoc] = array('className' => $plugin. '.' . $assoc);
+						} else {
+							$this->{$type}[$assoc] = $value;
 						}
 					}
 					$this->_generateAssociation($type, $assoc);

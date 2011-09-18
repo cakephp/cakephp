@@ -2709,7 +2709,7 @@ class TestPluginComment extends CakeTestModel {
 			'className' => 'TestPlugin.TestPluginArticle',
 			'foreignKey' => 'article_id',
 		),
-		'User'
+		'TestPlugin.User'
 	);
 }
 

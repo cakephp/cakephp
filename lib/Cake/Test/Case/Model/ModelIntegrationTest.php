@@ -1290,6 +1290,20 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * test creating associations with plugins. Ensure a double alias isn't created
+ *
+ * @return void
+ */
+	public function testAutoConstructPluginAssociations() {
+		$Comment = ClassRegistry::init('TestPluginComment');
+
+		$this->assertEquals(2, count($Comment->belongsTo), 'Too many associations');
+		$this->assertFalse(isset($Comment->belongsTo['TestPlugin.User']));
+		$this->assertTrue(isset($Comment->belongsTo['User']), 'Missing association');
+		$this->assertTrue(isset($Comment->belongsTo['TestPluginArticle']), 'Missing association');
+	}
+
+/**
  * test Model::__construct
  *
  * ensure that $actsAS and $findMethods are merged.
