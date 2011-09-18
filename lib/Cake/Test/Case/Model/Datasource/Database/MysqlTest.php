@@ -150,12 +150,31 @@ class MysqlTest extends CakeTestCase {
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->Dbo->value(3.141593, 'float');
-		$this->assertEqual((string)$result, '3.141593');
+		$this->assertTrue(strpos((string)$result, ',') === false);
 
 		$result = $this->Dbo->value(3.141593);
-		$this->assertEqual((string)$result, '3.141593');
+		$this->assertTrue(strpos((string)$result, ',') === false);
+
+		$result = $this->db->value(2.2E-54, 'float');
+		$this->assertEqual('2.2E-54', (string)$result);
+
+		$result = $this->db->value(2.2E-54);
+		$this->assertEqual('2.2E-54', (string)$result);
 
 		setlocale(LC_ALL, $restore);
+	}
+
+/**
+ * test that scientific notations are working correctly
+ *
+ * @return void
+ */
+	function testScientificNotation() {
+		$result = $this->db->value(2.2E-54, 'float');
+		$this->assertEqual('2.2E-54', (string)$result);
+
+		$result = $this->db->value(2.2E-54);
+		$this->assertEqual('2.2E-54', (string)$result);
 	}
 
 /**
@@ -1856,6 +1875,11 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Artist`.`name` = 'JUDY AND MARY'";
 		$this->assertEqual($expected, $result);
+
+		$conditions = array('Company.name similar to ' => 'a word');
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE `Company`.`name` similar to 'a word'";
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -2006,11 +2030,11 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score BETWEEN ? AND ?' => array(90.1, 95.7)));
-		$expected = " WHERE `score` BETWEEN 90.100000 AND 95.700000";
+		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.title' => 1.1));
-		$expected = " WHERE `Post`.`title` = 1.100000";
+		$expected = " WHERE `Post`.`title` = 1.1";
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.title' => 1.1), true, true, new Post());
@@ -2024,6 +2048,10 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->conditions(array('MAX(Post.rating) >' => '50'));
 		$expected = " WHERE MAX(`Post`.`rating`) > '50'";
 		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->conditions(array('lower(Article.title)' =>  'secrets'));
+		$expected = " WHERE lower(`Article`.`title`) = 'secrets'";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Dbo->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";

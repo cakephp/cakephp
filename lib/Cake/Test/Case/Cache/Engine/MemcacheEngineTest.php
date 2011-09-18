@@ -165,6 +165,17 @@ class MemcacheEngineTest extends CakeTestCase {
 	}
 
 /**
+ * test unix sockets.
+ *
+ * @return void
+ */
+    function testParseServerStringUnix() {
+        $Memcache =& new TestMemcacheEngine();
+        $result = $Memcache->parseServerString('unix:///path/to/memcached.sock');
+        $this->assertEqual($result, array('unix:///path/to/memcached.sock', 0));
+    }
+
+/**
  * testReadAndWriteCache method
  *
  * @return void

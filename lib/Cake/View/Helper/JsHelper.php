@@ -74,7 +74,7 @@ class JsHelper extends AppHelper {
  *
  * @var string
  */
-	public $setVariable = APP_DIR;
+	public $setVariable = 'app';
 
 /**
  * Constructor - determines engine helper
