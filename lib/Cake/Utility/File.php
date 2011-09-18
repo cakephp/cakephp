@@ -290,6 +290,9 @@ class File {
 		if (!isset($this->info['filename'])) {
 			$this->info['filename'] = $this->name();
 		}
+		if (!isset($this->info['filesize'])) {
+			$this->info['filesize'] = $this->size();
+		}
 		return $this->info;
 	}
 
