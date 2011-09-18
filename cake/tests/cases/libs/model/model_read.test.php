@@ -4776,7 +4776,7 @@ class ModelReadTest extends BaseModelTest {
  *
  * @return void
  */
-	function bindWithCustomPrimaryKey() {
+	function testBindWithCustomPrimaryKey() {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Model =& ClassRegistry::init('StoriesTag');
 		$Model->bindModel(array(
