@@ -54,6 +54,8 @@
  * For MySQL, Postgres specifies the character encoding to use when connecting to the
  * database. Uses database default not specified.
  *
+ * unix_socket =>
+ * For MySQL to connect via socket specify the `unix_socket` parameter instead of `host` and `port`
  */
 class DATABASE_CONFIG {
 

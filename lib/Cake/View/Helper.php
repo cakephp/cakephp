@@ -433,21 +433,20 @@ class Helper extends Object {
 
 		// Either 'body' or 'date.month' type inputs.
 		if (
-			($count === 1 &&
-			$this->_modelScope &&
-			$setScope == false) ||
-			(in_array($lastPart, $this->_fieldSuffixes) &&
-			$this->_modelScope &&
-			$parts[0] !== $this->_modelScope)
+			($count === 1 && $this->_modelScope && $setScope == false) ||
+			(
+				$count === 2 &&
+				in_array($lastPart, $this->_fieldSuffixes) &&
+				$this->_modelScope &&
+				$parts[0] !== $this->_modelScope
+			)
 		) {
 			$entity = $this->_modelScope . '.' . $entity;
 		}
 
-		// 0.name style inputs.
+		// 0.name, 0.created.month style inputs.
 		if (
-			$count === 2 &&
-			is_numeric($parts[0]) &&
-			!is_numeric($parts[1])
+			$count >= 2 && is_numeric($parts[0]) && !is_numeric($parts[1]) && $this->_modelScope
 		) {
 			$entity = $this->_modelScope . '.' . $entity;
 		}

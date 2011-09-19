@@ -47,7 +47,7 @@ App::uses('CakeResponse', 'Network');
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
  * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
- * You should place any custom exception renderers in `app/libs`.
+ * You should place any custom exception renderers in `app/Lib/Error`.
  *
  * @package       Cake.Error
  */
@@ -237,7 +237,7 @@ class ExceptionRenderer {
 /**
  * Convenience method to display a PDOException.
  *
- * @param PDOException $error 
+ * @param PDOException $error
  * @return void
  */
 	public function pdoError(PDOException $error) {

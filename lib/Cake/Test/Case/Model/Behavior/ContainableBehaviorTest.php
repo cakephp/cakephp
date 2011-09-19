@@ -36,7 +36,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.article', 'core.article_featured', 'core.article_featureds_tags',
 		'core.articles_tag', 'core.attachment', 'core.category',
-		'core.comment', 'core.featured', 'core.tag', 'core.user'
+		'core.comment', 'core.featured', 'core.tag', 'core.user',
+		'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_c', 'core.join_a_b'
 	);
 
 /**
@@ -3303,6 +3304,21 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertEqual($expected, array_keys($result));
 
 		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
+		
+		$this->JoinA =& ClassRegistry::init('JoinA');
+		$this->JoinB =& ClassRegistry::init('JoinB');
+		$this->JoinC =& ClassRegistry::init('JoinC');
+		
+		$this->JoinA->Behaviors->attach('Containable');
+		$this->JoinB->Behaviors->attach('Containable');
+		$this->JoinC->Behaviors->attach('Containable');
+		
+		$this->JoinA->JoinB->find('all', array('contain' => array('JoinA')));
+		$this->JoinA->bindModel(array('hasOne' => array('JoinAsJoinC' => array('joinTable' => 'as_cs'))), false);
+		$result = $this->JoinA->hasOne;
+		$this->JoinA->find('all');
+		$resultAfter = $this->JoinA->hasOne;
+		$this->assertEqual($result, $resultAfter);
 	}
 
 /**

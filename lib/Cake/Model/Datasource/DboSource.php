@@ -328,7 +328,7 @@ class DboSource extends DataSource {
 					return 'NULL';
 				}
 				if (is_float($data)) {
-					return sprintf('%F', $data);
+					return str_replace(',', '.', sprintf('%G', $data));
 				}
 				if ((is_int($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
@@ -2381,8 +2381,8 @@ class DboSource extends DataSource {
  * @return string
  */
 	protected function _parseKey($model, $key, $value) {
-		$operatorMatch = '/^((' . implode(')|(', $this->_sqlOps);
-		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
+		$operatorMatch = '/^(((' . implode(')|(', $this->_sqlOps);
+		$operatorMatch .= ')\\x20?)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
 
 		if (strpos($key, ' ') === false) {

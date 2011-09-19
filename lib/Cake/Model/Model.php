@@ -903,11 +903,12 @@ class Model extends Object {
 						unset ($this->{$type}[$assoc]);
 						$assoc = $value;
 						$value = array();
-						$this->{$type}[$assoc] = $value;
 
 						if (strpos($assoc, '.') !== false) {
 							list($plugin, $assoc) = pluginSplit($assoc);
 							$this->{$type}[$assoc] = array('className' => $plugin. '.' . $assoc);
+						} else {
+							$this->{$type}[$assoc] = $value;
 						}
 					}
 					$this->_generateAssociation($type, $assoc);
@@ -2432,6 +2433,8 @@ class Model extends Object {
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
+ *  Note: find(list) + database views have issues with MySQL 5.0. Try upgrading to MySQL 5.1 if you 
+ *  have issues with database views.
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array Array of records
