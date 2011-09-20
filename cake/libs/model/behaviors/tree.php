@@ -47,7 +47,8 @@ class TreeBehavior extends ModelBehavior {
  */
 	var $_defaults = array(
 		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
-		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1
+		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1,
+		'callBacks' => true
 	);
 
 /**
@@ -971,7 +972,8 @@ class TreeBehavior extends ModelBehavior {
 		if ($created) {
 			$conditions['NOT'][$Model->alias . '.' . $Model->primaryKey] = $Model->id;
 		}
-		$Model->updateAll(array($Model->alias . '.' . $field => $Model->escapeField($field) . ' ' . $dir . ' ' . $shift), $conditions);
+		$callBacks = $this->settings[$Model->alias]['callBacks'];
+		$Model->updateAll(array($Model->alias . '.' . $field => $Model->escapeField($field) . ' ' . $dir . ' ' . $shift), $conditions, $callBacks);
 		$Model->recursive = $ModelRecursive;
 	}
 }

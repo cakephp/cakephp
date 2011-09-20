@@ -1570,7 +1570,7 @@ class DboSource extends DataSource {
  * @return boolean Success
  * @access public
  */
-	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	function update(&$model, $fields = array(), $values = null, $conditions = null, $callBacks = true) {
 		if ($values == null) {
 			$combined = $fields;
 		} else {
@@ -1581,7 +1581,13 @@ class DboSource extends DataSource {
 
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
-		$conditions = $this->_matchRecords($model, $conditions);
+		if ($callBacks) {
+			$conditions = $this->_matchRecords($model, $conditions);
+		} else {
+			$conditions = $this->conditions($conditions);
+			//necessary for correct UPDATE syntax
+			$conditions = str_replace('"'.$model->alias.'".', '', $conditions);
+		}
 
 		if ($conditions === false) {
 			return false;
