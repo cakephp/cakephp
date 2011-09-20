@@ -1791,9 +1791,9 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
-	function updateAll($fields, $conditions = true) {
+	function updateAll($fields, $conditions = true, $callBacks = true) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->update($this, $fields, null, $conditions);
+		return $db->update($this, $fields, null, $conditions, $callBacks);
 	}
 
 /**
