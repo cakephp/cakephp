@@ -405,6 +405,8 @@ class ModelTask extends BakeTask {
 					$guess = $methods['date'];
 				} elseif ($metaData['type'] == 'time') {
 					$guess = $methods['time'];
+				} elseif ($metaData['type'] == 'inet') {
+					$guess = $methods['ip'];
 				}
 			}
 
