@@ -73,7 +73,7 @@ abstract class BaseAuthenticate {
 
 		$conditions = array(
 			$model . '.' . $fields['username'] => $username,
-			$model . '.' . $fields['password'] => AuthComponent::password($password),
+			$model . '.' . $fields['password'] => $this->_password($password),
 		);
 		if (!empty($this->settings['scope'])) {
 			$conditions = array_merge($conditions, $this->settings['scope']);
@@ -87,6 +87,17 @@ abstract class BaseAuthenticate {
 		}
 		unset($result[$model][$fields['password']]);
 		return $result[$model];
+	}
+
+/**
+ * Hash the plain text password so that it matches the hashed/encrytped password
+ * in the datasource.
+ *
+ * @param string $password The plain text password.
+ * @return string The hashed form of the password.
+ */
+	protected function _password($password) {
+		return Security::hash($password, null, true);
 	}
 
 /**

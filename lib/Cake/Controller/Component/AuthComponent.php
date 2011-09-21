@@ -661,6 +661,9 @@ class AuthComponent extends Component {
 /**
  * Hash a password with the application's salt value (as defined with Configure::write('Security.salt');
  *
+ * This method is intended as a convenience wrapper for Security::hash().  If you want to use
+ * a hashing/encryption system not supported by that method, do not use this method.
+ *
  * @param string $password Password to hash
  * @return string Hashed password
  * @link http://book.cakephp.org/view/1263/password
