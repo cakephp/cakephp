@@ -117,7 +117,7 @@ class CakePlugin {
  * @param array $options
  * @return void
  */
-	public function loadAll($options = array()) {
+	public static function loadAll($options = array()) {
 		$plugins = App::objects('plugins');
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;
