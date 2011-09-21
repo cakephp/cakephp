@@ -120,7 +120,7 @@ class TextHelper extends AppHelper {
 	public function autoLinkUrls($text, $htmlOptions = array()) {
 		$this->_linkOptions = $htmlOptions;
 		$text = preg_replace_callback(
-			'#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i',
+			'#(?<!href="|src="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i',
 			array(&$this, '_linkBareUrl'),
 			$text
 		);
