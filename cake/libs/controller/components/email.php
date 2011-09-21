@@ -613,9 +613,6 @@ class EmailComponent extends Object{
 			$this->_createBoundary();
 			$headers['MIME-Version'] = '1.0';
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->__boundary . '"';
-			$headers[] = 'This part of the E-mail should never be seen. If';
-			$headers[] = 'you are reading this, consider upgrading your e-mail';
-			$headers[] = 'client to a MIME-compatible client.';
 		} elseif ($this->sendAs === 'text') {
 			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
 		} elseif ($this->sendAs === 'html') {
@@ -781,7 +778,7 @@ class EmailComponent extends Object{
 		}
 
 		if ($hasAlias && !empty($matches[2])) {
-			return $this->_encode($matches[2]) . $this->_strip(' <' . $matches[3] . '>');
+			return $this->_encode(trim($matches[2])) . $this->_strip(' <' . $matches[3] . '>');
 		}
 		return $this->_strip($string);
 	}
