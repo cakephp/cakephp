@@ -937,7 +937,7 @@ class ViewTest extends CakeTestCase {
 		echo 'Block content';
 		$this->View->end();
 
-		$result = $this->View->getBlock('test');
+		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -955,7 +955,7 @@ class ViewTest extends CakeTestCase {
 		echo ' content';
 		$this->View->end();
 
-		$result = $this->View->getBlock('test');
+		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -965,8 +965,8 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockSet() {
-		$this->View->setBlock('test', 'Block content');
-		$result = $this->View->getBlock('test');
+		$this->View->assign('test', 'Block content');
+		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -976,10 +976,10 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockAppend() {
-		$this->View->setBlock('test', 'Block');
+		$this->View->assign('test', 'Block');
 		$this->View->append('test', ' content');
 
-		$result = $this->View->getBlock('test');
+		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);
 	}
 
@@ -990,7 +990,7 @@ class ViewTest extends CakeTestCase {
  */
 	public function testBlockAppendUndefined() {
 		$this->View->append('test', 'Unknown');
-		$result = $this->View->getBlock('test');
+		$result = $this->View->fetch('test');
 		$this->assertEquals('Unknown', $result);
 	}
 
@@ -1001,7 +1001,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockSetArrayException() {
-		$this->View->setBlock('test', array(1, 2, 3));
+		$this->View->assign('test', array(1, 2, 3));
 	}
 
 /**
@@ -1021,7 +1021,7 @@ class ViewTest extends CakeTestCase {
  */
 	public function testBlocks() {
 		$this->View->append('test', 'one');
-		$this->View->setBlock('test1', 'one');
+		$this->View->assign('test1', 'one');
 
 		$this->assertEquals(array('test', 'test1'), $this->View->blocks());
 	}

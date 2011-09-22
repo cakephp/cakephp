@@ -568,20 +568,20 @@ class View extends Object {
  * @return void
  * @throws CakeException when you use non-string values.
  */
-	public function setBlock($name, $value) {
+	public function assign($name, $value) {
 		if (!is_string($value)) {
-			throw new CakeException(__d('cake_dev', 'You can only append strings.'));
+			throw new CakeException(__d('cake_dev', 'Blocks can only contain strings.'));
 		}
 		$this->_blocks[$name] = $value;
 	}
 
 /**
- * Get the content for a block.
+ * Fetch the content for a block.
  *
  * @param string $name Name of the block
  * @return The block content or '' if the block does not exist.
  */
-	public function getBlock($name) {
+	public function fetch($name) {
 		if (!isset($this->_blocks[$name])) {
 			return '';
 		}
