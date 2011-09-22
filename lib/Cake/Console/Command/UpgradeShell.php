@@ -132,7 +132,6 @@ class UpgradeShell extends Shell {
 		}
 
 		if (is_dir('plugins')) {
-
 			$Folder = new Folder('plugins');
 			list($plugins) = $Folder->read();
 			foreach($plugins as $plugin) {
@@ -142,6 +141,8 @@ class UpgradeShell extends Shell {
 			$this->_files = array();
 			chdir($cwd);
 		}
+
+		$this->_moveViewFiles();
 
 		$moves = array(
 			'libs' => 'Lib',
@@ -181,7 +182,7 @@ class UpgradeShell extends Shell {
 		$defaultOptions = array(
 			'recursive' => true,
 			'checkFolder' => true,
-			'regex' => '@class (\S*) .*{@'
+			'regex' => '@class (\S*) .*{@i'
 		);
 		foreach($sourceDirs as $dir => $options) {
 			if (is_numeric($dir)) {
@@ -504,6 +505,39 @@ class UpgradeShell extends Shell {
 		);
 
 		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
+ * Move application views files to where they now should be
+ *
+ * Find all view files in the folder and determine where cake expects the file to be
+ *
+ * @return void
+ */
+	protected function _moveViewFiles() {
+		if (!is_dir('views')) {
+			return;
+		}
+
+		$dirs = scandir('views');
+		foreach ($dirs as $old) {
+			if (!is_dir('views' . DS . $old) || $old === '.' || $old === '..') {
+				continue;
+			}
+
+			$new = 'View' . DS . Inflector::camelize($old);
+			$old = 'views' . DS . $old;
+
+			$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
+			if (!$this->params['dry-run']) {
+				if ($this->params['git']) {
+					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+				} else {
+					$Folder = new Folder($old);
+					$Folder->move($new);
+				}
+			}
+		}
 	}
 
 /**
