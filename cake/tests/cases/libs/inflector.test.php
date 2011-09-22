@@ -434,9 +434,11 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('Bananas'), 'Banazzz', 'Was inflected with old rules. %s');
 
 		Inflector::rules('plural', array(
-			'rules' => array('/(.*)na$/i' => '\1zzz')
+			'rules' => array('/(.*)na$/i' => '\1zzz'),
+			'irregular' => array('corpus' => 'corpora')
 		));
-		$this->assertEqual(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules. %s');
+		$this->assertEqual(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules: %s');
+		$this->assertEqual(Inflector::pluralize('corpus'), 'corpora', 'Was inflected with old irregular form: %s');
 	}
 
 /**
