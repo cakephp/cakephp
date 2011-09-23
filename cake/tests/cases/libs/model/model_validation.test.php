@@ -644,6 +644,48 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
+ * test that saveAll and with models at initial insert (no id has set yet)
+ * with validation interact well
+ *
+ * @return void
+ */
+	function testValidatesWithModelsAndSaveAllWithoutId() {
+		$data = array(
+			'Article' => array(
+				'title' => 'Extra Fields',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			),
+			'Comment' => array(
+				array('word' => 'Hello'), 
+				array('word' => 'World'), 
+			)
+		);
+		$Article =& new Article();
+		$Comment =& $Article->Comment;
+
+		$Comment->validate = array('article_id' => array('rule' => 'numeric'));
+
+		$Article->create();
+		$result = $Article->saveAll($data, array('validate' => 'only'));
+		$this->assertTrue($result);
+
+		$Article->create();
+		$result = $Article->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+		$this->assertFalse(is_null($Article->id));
+		
+		$id = $Article->id;
+		$count = $Article->find('count', array('conditions' => array('Article.id' => $id)));
+		$this->assertIdentical($count, 1);
+
+		$count = $Comment->find('count', array(
+			'conditions' => array('Comment.article_id' => $id)
+		));
+		$this->assertEqual($count, count($data['Comment']));
+	}
+
+/**
  * Test that missing validation methods trigger errors in development mode.
  * Helps to make developement easier.
  *
