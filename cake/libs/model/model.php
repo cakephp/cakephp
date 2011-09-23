@@ -1687,7 +1687,10 @@ class Model extends Overloadable {
 					$type = $associations[$association];
 					switch ($type) {
 						case 'hasOne':
-							$values[$this->{$type}[$association]['foreignKey']] = $this->id;
+							if (!$validating) {
+								$values[$this->{$type}[$association]['foreignKey']] = $this->id;
+							}
+
 							if (!$this->{$association}->__save($values, $options)) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
@@ -1697,9 +1700,12 @@ class Model extends Overloadable {
 							}
 						break;
 						case 'hasMany':
-							foreach ($values as $i => $value) {
-								$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
+							if (!$validating) {
+								foreach ($values as $i => $value) {
+									$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
+								}
 							}
+
 							$_options = array_merge($options, array('atomic' => false));
 
 							if ($_options['validate'] === 'first') {
