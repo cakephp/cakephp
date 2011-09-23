@@ -247,6 +247,27 @@ class View extends Object {
 	protected $_helpersLoaded = false;
 
 /**
+ * The names of views and their parents used with View::extend();
+ *
+ * @var array
+ */
+	protected $_parents = array();
+
+/**
+ * The currently rendering view file.
+ *
+ * @var string
+ */
+	protected $_current = null;
+
+/**
+ * Content stack, used for nested templates that all use View::extend();
+ *
+ * @var array
+ */
+	protected $_stack = array();
+
+/**
  * Constructor
  *
  * @param Controller $controller A controller object to pull View::_passedVars from.
@@ -399,7 +420,14 @@ class View extends Object {
  * - `scripts_for_layout` - Contains content added with addScript() as well as any content in
  *   the 'meta', 'css', and 'script' blocks.  They are appended in that order.
  *
- * `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0
+ * Deprecated features:
+ * 
+ * - `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0.
+ *   Use the block features instead.  `meta`, `css` and `script` will be populated
+ *   by the matching methods on HtmlHelper.
+ * - `$title_for_layout` is deprecated and will be removed in CakePHP 3.0
+ * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.  
+ *   Use the `content` block instead.
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
@@ -606,6 +634,16 @@ class View extends Object {
 	}
 
 /**
+ * Provides view or element extension/inheritance.  Views can extends a 
+ * parent view and populate blocks in the parent template.
+ *
+ * @param string $name The view or element to 'extend' the current one with.
+ */
+	public function extend($name) {
+		$this->_parents[$this->_current] = $this->_getViewFileName($name);
+	}
+
+/**
  * Adds a script block or other element to be inserted in $scripts_for_layout in
  * the `<head />` of a document layout
  *
@@ -711,17 +749,40 @@ class View extends Object {
 
 /**
  * Renders and returns output for given view filename with its
- * array of data.
+ * array of data. Handles parent/extended views.
  *
- * @param string $___viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view. If empty the current View::$viewVars will be used.
+ * @param string $viewFile Filename of the view
+ * @param array $data Data to include in rendered view. If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
-	protected function _render($___viewFn, $___dataForView = array()) {
-		if (empty($___dataForView)) {
-			$___dataForView = $this->viewVars;
+	protected function _render($viewFile, $data = array()) {
+		if (empty($data)) {
+			$data = $this->viewVars;
+		}
+		$this->_current = $viewFile;
+		$content = $this->_evaluate($viewFile, $data);
+
+		if (isset($this->_parents[$viewFile])) {
+			$this->_stack[] = $this->fetch('content');
+			$this->assign('content', $content);
+
+			$content = $this->_render($this->_parents[$viewFile], $data);
+
+			$this->assign('content', array_pop($this->_stack));
 		}
 
+		return $content;
+	}
+
+/**
+ * Sandbox method to evaluate a template / view script in.
+ *
+ * @param string $___viewFn Filename of the view
+ * @param array $___dataForView Data to include in rendered view. 
+ *    If empty the current View::$viewVars will be used.
+ * @return string Rendered output
+ */
+	protected function _evaluate($___viewFn, $___dataForView) {
 		extract($___dataForView, EXTR_SKIP);
 		ob_start();
 

@@ -1025,4 +1025,22 @@ class ViewTest extends CakeTestCase {
 
 		$this->assertEquals(array('test', 'test1'), $this->View->blocks());
 	}
+
+/**
+ * Test nested extended views.
+ *
+ * @return void
+ */
+	public function testExtendNested() {
+		$this->View->layout = false;
+		$content = $this->View->render('nested_extends');
+		$expected = <<<TEXT
+This is the second parent.
+This is the first parent.
+This is the first template.
+Sidebar Content.
+
+TEXT;
+		$this->assertEquals($expected, $content);
+	}
 }
