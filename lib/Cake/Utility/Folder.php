@@ -413,9 +413,6 @@ class Folder {
 			if ($skipHidden && $name[0] === '.' || isset($exceptions[$name])) {
 				continue;
 			}
-			if ($name === '.' || $name === '..') {
-				continue;
-			}
 			if ($item->isFile()) {
 				$files[] = $item->getPathName();
 			} else if ($item->isDir()) {
