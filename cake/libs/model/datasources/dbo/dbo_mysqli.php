@@ -269,7 +269,7 @@ class DboMysqli extends DboMysqlBase {
 		$j = 0;
 		while ($j < $numFields) {
 			$column = mysqli_fetch_field_direct($results, $j);
-			if (!empty($column->table)) {
+			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
 				$this->map[$index++] = array($column->table, $column->name);
 			} else {
 				$this->map[$index++] = array(0, $column->name);
