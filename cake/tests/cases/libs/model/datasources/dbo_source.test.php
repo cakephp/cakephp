@@ -1461,6 +1461,7 @@ class DboSourceTest extends CakeTestCase {
 			'order' => array(),
 			'group' => null
 		);
+		$queryData['joins'][0]['table'] = $this->testDb->fullTableName($queryData['joins'][0]['table']);
 		$this->assertEqual($queryData, $expected);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);

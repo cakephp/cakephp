@@ -2132,11 +2132,6 @@ class Model extends Overloadable {
 		if (!$db =& ConnectionManager::getDataSource($this->useDbConfig)) {
 			return false;
 		}
-		if (!empty($query['joins']) && is_array($query['joins'])) {
-			foreach($query['joins'] as $i => $join) {
-				$query['joins'][$i]['table'] = $db->fullTableName($join['table']);
-			}
-		}
 		$results = $db->read($this, $query);
 		$this->resetAssociations();
 
