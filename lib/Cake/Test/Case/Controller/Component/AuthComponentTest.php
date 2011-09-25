@@ -385,6 +385,8 @@ class AuthComponentTest extends CakeTestCase {
 				'userModel' => 'AuthUser'
 			)
 		);
+		$this->Auth->Session = $this->getMock('SessionComponent', array('renew'), array(), '', false);
+
 		$mocks = $this->Auth->constructAuthenticate();
 		$this->mockObjects[] = $mocks[0];
 
@@ -404,6 +406,9 @@ class AuthComponentTest extends CakeTestCase {
 			->method('authenticate')
 			->with($this->Auth->request)
 			->will($this->returnValue($user));
+
+		$this->Auth->Session->expects($this->once())
+			->method('renew');
 
 		$result = $this->Auth->login();
 		$this->assertTrue($result);

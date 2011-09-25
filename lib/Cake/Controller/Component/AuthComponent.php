@@ -491,7 +491,8 @@ class AuthComponent extends Component {
 /**
  * Log a user in. If a $user is provided that data will be stored as the logged in user.  If `$user` is empty or not
  * specified, the request will be used to identify a user. If the identification was successful,
- * the user record is written to the session key specified in AuthComponent::$sessionKey.
+ * the user record is written to the session key specified in AuthComponent::$sessionKey. Logging in
+ * will also change the session id in order to help mitigate session replays.
  *
  * @param mixed $user Either an array of user data, or null to identify a user using the current request.
  * @return boolean True on login success, false on failure
@@ -504,6 +505,7 @@ class AuthComponent extends Component {
 			$user = $this->identify($this->request, $this->response);
 		}
 		if ($user) {
+			$this->Session->renew();
 			$this->Session->write(self::$sessionKey, $user);
 		}
 		return $this->loggedIn();
@@ -513,7 +515,8 @@ class AuthComponent extends Component {
  * Logs a user out, and returns the login action to redirect to.
  * Triggers the logout() method of all the authenticate objects, so they can perform
  * custom logout logic.  AuthComponent will remove the session data, so
- * there is no need to do that in an authentication object.
+ * there is no need to do that in an authentication object.  Logging out 
+ * will also renew the session id.  This helps mitigate issues with session replays.
  *
  * @return string AuthComponent::$logoutRedirect
  * @see AuthComponent::$logoutRedirect
@@ -530,6 +533,7 @@ class AuthComponent extends Component {
 		}
 		$this->Session->delete(self::$sessionKey);
 		$this->Session->delete('Auth.redirect');
+		$this->Session->renew();
 		return Router::normalize($this->logoutRedirect);
 	}
 
