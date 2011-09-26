@@ -261,6 +261,14 @@ class View extends Object {
 	protected $_current = null;
 
 /**
+ * Currently rendering an element.  Used for finding parent fragments
+ * for elements.
+ *
+ * @var boolean
+ */
+	protected $_inElement = false;
+
+/**
  * Content stack, used for nested templates that all use View::extend();
  *
  * @var array
@@ -349,7 +357,11 @@ class View extends Object {
 			if ($callbacks) {
 				$this->Helpers->trigger('beforeRender', array($file));
 			}
+
+			$this->_inElement = true;
 			$element = $this->_render($file, array_merge($this->viewVars, $data));
+			$this->_inElement = false;
+
 			if ($callbacks) {
 				$this->Helpers->trigger('afterRender', array($file, $element));
 			}
@@ -640,7 +652,12 @@ class View extends Object {
  * @param string $name The view or element to 'extend' the current one with.
  */
 	public function extend($name) {
-		$this->_parents[$this->_current] = $this->_getViewFileName($name);
+		if ($this->_inElement) {
+			$parent = $this->_getElementFileName($name);
+		} else {
+			$parent = $this->_getViewFileName($name);
+		}
+		$this->_parents[$this->_current] = $parent;
 	}
 
 /**

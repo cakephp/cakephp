@@ -1039,6 +1039,23 @@ This is the second parent.
 This is the first parent.
 This is the first template.
 Sidebar Content.
+TEXT;
+		$this->assertEquals($expected, $content);
+	}
+
+/**
+ * Test extend() in an element and a view.
+ *
+ * @return void
+ */
+	public function testExtendElement() {
+		$this->View->layout = false;
+		$content = $this->View->render('extend_element');
+		$expected = <<<TEXT
+Parent View.
+View content.
+Parent Element.
+Element content.
 
 TEXT;
 		$this->assertEquals($expected, $content);
