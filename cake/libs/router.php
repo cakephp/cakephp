@@ -948,7 +948,7 @@ class Router {
 
 		if (!empty($named)) {
 			foreach ($named as $name => $value) {
-				$output .= '/' . $name . $this->named['separator'] . $value;
+				$output .= '/' . $name . $this->named['separator'] . rawurlencode($value);
 			}
 		}
 		return $output;
@@ -1218,6 +1218,7 @@ class Router {
 			$separatorIsPresent = strpos($param, $self->named['separator']) !== false;
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($self->named['separator'], $param, 2);
+				$val = urldecode($val);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$self->matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
