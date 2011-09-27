@@ -586,7 +586,7 @@ class Helper extends Overloadable {
 		$errors = $this->validationErrors;
 		$entity = $view->entity();
 		if (!empty($entity)) {
-			return Set::extract($errors, join('.', $entity));
+			return Set::extract(join('.', $entity), $errors);
 		}
 	}
 
@@ -704,7 +704,7 @@ class Helper extends Overloadable {
 
 		$entity = $view->entity();
 		if (!empty($this->data) && !empty($entity)) {
-			$result = Set::extract($this->data, join('.', $entity));
+			$result = Set::extract(join('.', $entity), $this->data);
 		}
 
 		$habtmKey = $this->field();
