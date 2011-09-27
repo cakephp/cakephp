@@ -2329,6 +2329,7 @@ class RouterTest extends CakeTestCase {
 			'named' => array(),
 			'ext' => 'json',
 		));
+		$request->query = array();
 		$result = Router::reverse($request);
 		$expected = '/posts/view/1.json';
 		$this->assertEquals($expected, $result);
