@@ -179,7 +179,7 @@ class ExceptionRenderer {
  */
 	protected function _cakeError(CakeException $error) {
 		$url = $this->controller->request->here();
-		$code = $error->getCode();
+		$code = ($error->getCode() >= 400 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
 			'code' => $code,
