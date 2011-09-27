@@ -6591,8 +6591,10 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertNoPattern('/ORDER\s+BY/', $log['log'][0]['query']);
 
 		$Article = new Article();
+		$Article->recursive = -1;
+		$expected = count($Article->find('all', array('group' => 'Article.user_id')));
 		$result = $Article->find('count', array('group' => 'Article.user_id'));
-		$this->assertEqual($result, 3);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
