@@ -573,13 +573,13 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Returns false if given FORM field has no errors. Otherwise it returns the constant set in
+ * Returns null if given FORM field has no errors. Otherwise it returns the constant set in
  * the array Model->validationErrors.
  *
  * @param string $model Model name as a string
  * @param string $field Fieldname as a string
  * @param integer $modelID Unique index identifying this record within the form
- * @return boolean True on errors.
+ * @return mixed Null if no errors, string with error otherwhise.
  */
 	function tagIsInvalid($model = null, $field = null, $modelID = null) {
 		$view =& ClassRegistry::getObject('view');
