@@ -292,6 +292,32 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that pagination count respects group by conditions
+ *
+ * @return void
+ */
+  public function testPaginateGroupBy() {
+    $Controller = new PaginatorTestController($this->request);
+    $Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
+    $Controller->request->params['pass'] = array('1');
+    $Controller->request->query = array();
+    $Controller->constructClasses();
+    
+    $Controller->Paginator->settings = array(
+      'PaginatorControllerPost' => array(
+        'limit' => 1,
+        'group' => array('author_id')
+      ),
+    );
+    
+    $result = $Controller->Paginator->paginate('PaginatorControllerPost');
+    
+    // since there are two records returned with the group by condition and limit = 1, I expect two pages only
+    $this->assertEqual($this->request->params['paging']['PaginatorControllerPost']['count'], 2);
+    $this->assertEqual($this->request->params['paging']['PaginatorControllerPost']['pageCount'], 2);
+  }
+
+/**
  * Test that non-numeric values are rejected for page, and limit
  *
  * @return void
