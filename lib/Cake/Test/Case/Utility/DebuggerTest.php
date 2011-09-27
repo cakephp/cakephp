@@ -264,7 +264,7 @@ class DebuggerTest extends CakeTestCase {
 		ob_start();
 		$foo .= '';
 		$result = ob_get_clean();
-		$this->assertEquals('Notice: I eated an error CORE/Cake/Test/Case/Utility/DebuggerTest.php', $result);
+		$this->assertEquals('Notice: I eated an error ' . 'CORE' . DS . ltrim(__FILE__, CAKE_CORE_INCLUDE_PATH), $result);
 	}
 
 /**
