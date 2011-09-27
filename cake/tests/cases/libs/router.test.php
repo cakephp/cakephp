@@ -1343,6 +1343,12 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('type'=> 'new'));
 		$expected = "/admin/controller/index/type:new";
 		$this->assertEqual($result, $expected);
+		
+		// named argument's values should be urlencode.
+		Router::reload();
+		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'param1' => 'hello world', 'param2' => '#cakephp'));
+		$expected = '/posts/index/param1:hello%20world/param2:%23cakephp';
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -1409,6 +1415,12 @@ class RouterTest extends CakeTestCase {
 		Router::connectNamed(array(), array('greedy' => false));
 		$result = Router::parse('/foo/param1:value1:1/param2:value2:3/param3:value');
 		$expected = array('pass' => array('param2:value2:3', 'param3:value'), 'named' => array('param1' => 'value1:1'), 'controller' => 'bar', 'action' => 'fubar', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+		
+		// named argument's values should be urlencode.
+		Router::reload();
+		$result = Router::parse('/controller/action/param1:hello+world/param2:%23cakephp');
+		$expected = array('pass' => array(), 'named' => array('param1' => 'hello world', 'param2' => '#cakephp'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 	}
 
