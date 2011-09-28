@@ -998,6 +998,20 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test form security with Model.field.0 style inputs
+ *
+ * @return void
+ */
+	function testFormSecurityArrayFields() {
+		$key = 'testKey';
+
+		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->create('Address');
+		$this->Form->input('Address.primary.1');
+		$this->assertEqual('Address.primary', $this->Form->fields[0]);
+	}
+
+/**
  * testFormSecurityMultipleInputDisabledFields method
  *
  * test secure form generation with multiple records and disabled fields.

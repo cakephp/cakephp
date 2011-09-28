@@ -369,7 +369,11 @@ class Inflector {
 						if ($reset) {
 							$_this->{$var}[$rule] = $pattern;
 						} else {
-							$_this->{$var}[$rule] = array_merge($pattern, $_this->{$var}[$rule]);
+							if ($rule === 'uninflected') {
+								$_this->{$var}[$rule] = array_merge($pattern, $_this->{$var}[$rule]);
+							} else {
+								$_this->{$var}[$rule] = $pattern + $_this->{$var}[$rule];
+							}
 						}
 						unset($rules[$rule], $_this->{$var}['cache' . ucfirst($rule)]);
 						if (isset($_this->{$var}['merged'][$rule])) {
@@ -382,7 +386,7 @@ class Inflector {
 						}
 					}
 				}
-				$_this->{$var}['rules'] = array_merge($rules, $_this->{$var}['rules']);
+				$_this->{$var}['rules'] = $rules + $_this->{$var}['rules'];
 			break;
 		}
 	}

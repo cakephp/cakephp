@@ -1509,6 +1509,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::time('12:01am'));
 		$this->assertTrue(Validation::time('12:01pm'));
 		$this->assertTrue(Validation::time('1pm'));
+		$this->assertTrue(Validation::time('1 pm'));
+		$this->assertTrue(Validation::time('1 PM'));
 		$this->assertTrue(Validation::time('01:00'));
 		$this->assertFalse(Validation::time('1:00'));
 		$this->assertTrue(Validation::time('1:00pm'));

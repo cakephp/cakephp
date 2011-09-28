@@ -1211,7 +1211,7 @@ HTMLBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$result = $this->Controller->Session->read('Message.email.message');
 
-		$this->assertPattern('/Message-ID: \<[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}@' . env('HTTP_HOST') . '\>\n/', $result);
+		$this->assertPattern('/Message-ID: \<[a-f0-9]{32}@' . env('HTTP_HOST') . '\>\n/', $result);
 
 		$this->Controller->EmailTest->messageId = '<22091985.998877@localhost>';
 
@@ -1299,7 +1299,7 @@ HTMLBLOC;
 	function testFormatAddressMultibyte() {
 		$this->Controller->EmailTest->charset = 'UTF-8';
 		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>');
-		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdCA=?= <email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdA==?= <email@domain.de>');
 		
 		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest<email@domain.de>');
 		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdA==?= <email@domain.de>');
