@@ -43,7 +43,7 @@
  * You can inspect the currently loaded paths using `App::path('Controller')` for example to see loaded
  * controller paths.
  *
- * 	It is also possible to inspect paths for plugin classes, for instance, to see a plugin's helpers you would call
+ * It is also possible to inspect paths for plugin classes, for instance, to see a plugin's helpers you would call
  * `App::path('View/Helper', 'MyPlugin')`
  *
  * ### Locating plugins and themes
@@ -251,7 +251,7 @@ class App {
  *
  * `App::build(array('Model' => array('/path/to/models/')), App::RESET); will setup the path as the only valid path for searching models`
  *
- * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/))); will setup multiple search paths for helpers`
+ * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/'))); will setup multiple search paths for helpers`
  *
  * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
  *
