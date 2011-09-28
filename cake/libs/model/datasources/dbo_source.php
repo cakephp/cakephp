@@ -682,6 +682,14 @@ class DboSource extends DataSource {
 			$out = null;
 			if ($error) {
 				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:', true) . "</b> {$this->error}</span>", E_USER_WARNING);
+                $caseSensitivityTestFile = new File(TMP.DS.'caseSensitivityTestFile.tmp');
+                if($caseSensitivityTestFile->create()) {
+                    if(file_exists(TMP.DS.'caseSensitivityTestFile.tmp') && !file_exists(TMP.DS.'casesensitivitytestfile.tmp')) {
+                        trigger_error('<span style="color:orange; class="dev_heads_up">Underlying file system is case-sensitive, make sure query arguments are case-sensitive too</span>', E_USER_NOTICE);
+                    }
+                    $caseSensitivityTestFile->delete();
+                }
+
 			} else {
 				$out = ('<small>[' . sprintf(__('Aff:%s Num:%s Took:%sms', true), $this->affected, $this->numRows, $this->took) . ']</small>');
 			}
