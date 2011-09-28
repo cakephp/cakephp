@@ -490,7 +490,8 @@ class FormHelper extends AppHelper {
 		$options = array_merge($defaults, $options);
 		$this->setEntity($field);
 
-		if ($error = $this->tagIsInvalid()) {
+		$error = $this->tagIsInvalid();
+		if ($error !== null) {
 			if (is_array($error)) {
 				list(,,$field) = explode('.', $field);
 				if (isset($error[$field])) {

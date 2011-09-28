@@ -756,7 +756,7 @@ class Helper extends Overloadable {
 		$options = $this->_name($options);
 		$options = $this->value($options);
 		$options = $this->domId($options);
-		if ($this->tagIsInvalid()) {
+		if ($this->tagIsInvalid() !== null) {
 			$options = $this->addClass($options, 'form-error');
 		}
 		return $options;
