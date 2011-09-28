@@ -343,11 +343,11 @@ class ViewTask extends BakeTask {
 		$this->hr();
 		$this->out(sprintf(__('Controller Name: %s', true), $this->controllerName));
 		$this->out(sprintf(__('Action Name:     %s', true), $action));
-		$this->out(sprintf(__('Path:            %s', true), $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
+		$this->out(sprintf(__('Path:            %s', true), $this->params['app'] . DS . 'views' . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
 		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 		if (strtolower($looksGood) == 'y') {
-			$this->bake($action);
+			$this->bake($action, true);
 			$this->_stop();
 		} else {
 			$this->out(__('Bake Aborted.', true));
