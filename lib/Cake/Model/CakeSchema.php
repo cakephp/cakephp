@@ -412,7 +412,6 @@ class CakeSchema extends Object {
 					}
 					$col .= join(', ', $props);
 				} elseif ($field == 'tableParameters') {
-					//@todo add charset, collate and engine here
 					$col = "\t\t'tableParameters' => array(";
 					$props = array();
 					foreach ((array)$value as $key => $param) {

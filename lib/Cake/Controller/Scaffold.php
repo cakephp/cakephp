@@ -75,7 +75,7 @@ class Scaffold {
 	public $request;
 
 /**
- * valid session.
+ * Valid session.
  *
  * @var boolean
  */
