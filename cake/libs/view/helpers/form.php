@@ -512,7 +512,7 @@ class FormHelper extends AppHelper {
 				unset($options[$error]);
 			}
 
-			if ($text != null) {
+			if ($text !== null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
 				$error = sprintf(__('Error in field %s', true), Inflector::humanize($this->field()));
