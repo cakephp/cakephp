@@ -670,6 +670,7 @@ class Debugger {
 				return;
 		}
 
+		$data['trace'] = $trace;
 		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
 		$insert = array('context' => join("\n", $context)) + $data;
