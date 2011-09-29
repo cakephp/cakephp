@@ -600,7 +600,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
 				new PHPUnit_Framework_Constraint_IsAnything(),
-				new PHPUnit_Framework_Constraint_PCREMatch('/class TestTaskTagTestCase extends CakeTestCase/')
+				$this->stringContains('class TestTaskTagTestCase extends CakeTestCase')
 			);
 		$this->Task->execute();
 	}
@@ -616,7 +616,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
 				new PHPUnit_Framework_Constraint_IsAnything(),
-				new PHPUnit_Framework_Constraint_PCREMatch('/class TestTaskTagTestCase extends CakeTestCase/')
+				$this->stringContains('class TestTaskTagTestCase extends CakeTestCase')
 			);
 		$this->Task->expects($this->any())->method('isLoadableClass')->will($this->returnValue(true));
 		$this->Task->execute();

@@ -1055,10 +1055,10 @@ class MysqlTest extends CakeTestCase {
 			->will($this->returnValue($test));
 
 		$test->expects($this->at(0))->method('execute')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/`TestModel9` LEFT JOIN `test_model8`/'));
+			->with($this->stringContains('`TestModel9` LEFT JOIN `test_model8`'));
 
 		$test->expects($this->at(1))->method('execute')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/`TestModel9` INNER JOIN `test_model8`/'));
+			->with($this->stringContains('TestModel9` INNER JOIN `test_model8`'));
 
 		$test->read($this->Model, array('recursive' => 1));
 		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';

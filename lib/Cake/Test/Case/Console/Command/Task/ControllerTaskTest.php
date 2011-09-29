@@ -314,7 +314,7 @@ class ControllerTaskTest extends CakeTestCase {
 		);
 		$this->Task->expects($this->at(3))->method('createFile')->with(
 			$path,
-			new PHPUnit_Framework_Constraint_PCREMatch('/ArticlesController extends ControllerTestAppController/')
+			$this->stringContains('ArticlesController extends ControllerTestAppController')
 		)->will($this->returnValue(true));
 
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
@@ -450,7 +450,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename,
-			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
+			$this->stringContains('class BakeArticlesController')
 		);
 		$this->Task->execute();
 	}
@@ -490,7 +490,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename,
-			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
+			$this->stringContains('class BakeArticlesController')
 		)->will($this->returnValue(true));
 
 		$result = $this->Task->execute();
@@ -520,7 +520,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename,
-			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
+			$this->stringContains('class BakeArticlesController')
 		)->will($this->returnValue(true));
 
 		$this->Task->execute();
@@ -542,7 +542,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename,
-			new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
+			$this->stringContains('$scaffold')
 		);
 
 		$this->Task->execute();
@@ -575,7 +575,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
+			$filename, $this->stringContains('$scaffold')
 		);
 		$this->Task->execute();
 	}
@@ -595,7 +595,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->params = array('public' => true);
 
 		$filename = '/my/path/BakeArticlesController.php';
-		$expected = new PHPUnit_Framework_Constraint_Not(new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/'));
+		$expected = new PHPUnit_Framework_Constraint_Not($this->stringContains('$scaffold'));
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, $expected
 		);
@@ -619,7 +619,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/admin_index/')
+			$filename, $this->stringContains('admin_index')
 		);
 		$this->Task->execute();
 	}
@@ -641,7 +641,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/BakeArticlesController.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/admin_index/')
+			$filename, $this->stringContains('admin_index')
 		);
 		$this->Task->execute();
 	}
