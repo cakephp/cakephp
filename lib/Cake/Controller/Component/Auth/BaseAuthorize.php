@@ -116,10 +116,28 @@ abstract class BaseAuthorize {
 	}
 
 /**
- * Maps crud actions to actual controller names.  Used to modify or get the current mapped actions.
+ * Maps crud actions to actual action names.  Used to modify or get the current mapped actions.
+ *
+ * Create additional mappings for a standard CRUD operation:
+ *
+ * {{{
+ * $this->Auth->mapActions(array('create' => array('add', 'register'));
+ * }}}
+ *
+ * Create mappings for custom CRUD operations:
+ *
+ * {{{
+ * $this->Auth->mapActions(array('my_action' => 'admin'));
+ * }}}
+ *
+ * You can use the custom CRUD operations to create additional generic permissions
+ * that behave like CRUD operations.  Doing this will require additional columns on the 
+ * permissions lookup.  When using with DbAcl, you'll have to add additional _admin type columns
+ * to the `aros_acos` table.
  *
  * @param mixed $map Either an array of mappings, or undefined to get current values.
  * @return mixed Either the current mappings or null when setting.
+ * @see AuthComponent::mapActions()
  */
 	public function mapActions($map = array()) {
 		if (empty($map)) {

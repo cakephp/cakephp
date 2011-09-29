@@ -477,7 +477,7 @@ class AuthComponent extends Component {
  *
  * @param array $map Actions to map
  * @return void
- * @link http://book.cakephp.org/view/1260/mapActions
+ * @see BaseAuthorize::mapActions()
  */
 	public function mapActions($map = array()) {
 		if (empty($this->_authorizeObjects)) {
