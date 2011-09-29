@@ -152,12 +152,12 @@ class FixtureTaskTest extends CakeTestCase {
 			'fromTable' => true, 'schema' => 'Article', 'records' => false
 		));
 
-		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/public \$records/', $result);
-		$this->assertPattern('/public \$import/', $result);
-		$this->assertPattern("/'title' => 'First Article'/", $result, 'Missing import data %s');
-		$this->assertPattern('/Second Article/', $result, 'Missing import data %s');
-		$this->assertPattern('/Third Article/', $result, 'Missing import data %s');
+		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('public $records', $result);
+		$this->assertContains('public $import', $result);
+		$this->assertContains("'title' => 'First Article'", $result, 'Missing import data %s');
+		$this->assertContains('Second Article', $result, 'Missing import data %s');
+		$this->assertContains('Third Article', $result, 'Missing import data %s');
 	}
 
 /**
@@ -168,7 +168,7 @@ class FixtureTaskTest extends CakeTestCase {
 	public function testImportOptionsAlternateConnection() {
 		$this->Task->connection = 'test';
 		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
-		$this->assertPattern("/'connection' => 'test'/", $result);
+		$this->assertContains("'connection' => 'test'", $result);
 	}
 
 /**
@@ -192,7 +192,7 @@ class FixtureTaskTest extends CakeTestCase {
 			'schema' => 'Article',
 			'records' => false
 		));
-		$this->assertRegExp("/'body' => 'Body \"value\"'/", $result, 'Data has bad escaping');
+		$this->assertContains("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
 	}
 
 /**
@@ -297,28 +297,28 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article');
-		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/public \$fields/', $result);
-		$this->assertPattern('/public \$records/', $result);
-		$this->assertNoPattern('/public \$import/', $result);
+		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('public $fields', $result);
+		$this->assertContains('public $records', $result);
+		$this->assertNotContains('public $import', $result);
 
 		$result = $this->Task->bake('Article', 'comments');
-		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/public \$table \= \'comments\';/', $result);
-		$this->assertPattern('/public \$fields = array\(/', $result);
+		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('public $table = \'comments\';', $result);
+		$this->assertContains('public $fields = array(', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertPattern("/public \\\$import \= array\('records' \=\> true, 'connection' => 'test'\);/", $result);
-		$this->assertNoPattern('/public \$records/', $result);
+		$this->assertContains("public \$import = array('records' => true, 'connection' => 'test');", $result);
+		$this->assertNotContains('public $records', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\, 'connection' => 'test'\);/", $result);
-		$this->assertNoPattern('/public \$fields/', $result);
+		$this->assertContains("public \$import = array('model' => 'Article', 'connection' => 'test');", $result);
+		$this->assertNotContains('public $fields', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\, 'connection' => 'test'\);/", $result);
-		$this->assertNoPattern('/public \$fields/', $result);
-		$this->assertNoPattern('/public \$records/', $result);
+		$this->assertContains("public \$import = array('model' => 'Article', 'records' => true, 'connection' => 'test');", $result);
+		$this->assertNotContains('public $fields', $result);
+		$this->assertNotContains('public $records', $result);
 	}
 
 /**
@@ -331,11 +331,11 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', 'datatypes');
-		$this->assertPattern("/'float_field' => 1/", $result);
-		$this->assertRegExp("/'bool' => 1/", $result);
+		$this->assertContains("'float_field' => 1", $result);
+		$this->assertContains("'bool' => 1", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
-		$this->assertPattern("/'data' => 'Lorem ipsum dolor sit amet'/", $result);
+		$this->assertContains("'data' => 'Lorem ipsum dolor sit amet'", $result);
 	}
 
 /**
