@@ -75,13 +75,13 @@ class Debugger {
 		),
 		'txt' => array(
 			'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
-			'context' => "Context:\n{:context}\n",
-			'trace' => "Trace:\n{:trace}\n",
 			'code' => '',
 			'info' => ''
 		),
 		'base' => array(
-			'traceLine' => '{:reference} - {:path}, line {:line}'
+			'traceLine' => '{:reference} - {:path}, line {:line}',
+			'trace' => "Trace:\n{:trace}\n",
+			'context' => "Context:\n{:context}\n",
 		),
 		'log' => array(),
 	);
