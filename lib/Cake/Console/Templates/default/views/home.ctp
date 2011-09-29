@@ -12,6 +12,19 @@ if (Configure::read() > 0):
 endif;
 ?>
 <p>
+<?php 
+	if (version_compare(PHP_VERSION, '5.2.6', '>=')):
+		echo '<span class=\"notice success\">';
+			echo __d('cake_dev', 'Your version of PHP is 5.2.6 or higher.');
+		echo '</span>';
+	else:
+		echo '<span class=\"notice\">';
+			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.6 or higher to use CakePHP.');
+		echo '</span>';
+	endif;
+?>
+</p>
+<p>
 <?php
 	if (is_writable(TMP)):
 		echo '<span class=\"notice success\">';

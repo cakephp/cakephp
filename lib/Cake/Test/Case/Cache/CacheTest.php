@@ -197,7 +197,7 @@ class CacheTest extends CakeTestCase {
 		$expected = array(
 			'path' => TMP . 'sessions' . DS,
 			'prefix' => 'cake_',
-			'lock' => false,
+			'lock' => true,
 			'serialize' => true,
 			'duration' => 3600,
 			'probability' => 100,

@@ -86,7 +86,7 @@ class CrudAuthorizeTest extends CakeTestCase {
 			->with($user, 'Posts', 'read')
 			->will($this->returnValue(true));
 
-		$this->assertTrue($this->auth->authorize($user, $request));
+		$this->assertTrue($this->auth->authorize($user['User'], $request));
 	}
 
 /**
@@ -108,7 +108,7 @@ class CrudAuthorizeTest extends CakeTestCase {
 			->with($user, 'Posts', 'read')
 			->will($this->returnValue(false));
 
-		$this->assertFalse($this->auth->authorize($user, $request));
+		$this->assertFalse($this->auth->authorize($user['User'], $request));
 	}
 
 

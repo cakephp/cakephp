@@ -960,6 +960,45 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the correct fields are unlocked for image submits with no names.
+ *
+ * @return void
+ */
+	public function testSecuritySubmitImageNoName() {
+		$key = 'testKey';
+		$this->Form->request['_Token'] = array('key' => $key);
+
+		$this->Form->create('User');
+		$result = $this->Form->submit('save.png');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'img/save.png'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertEquals(array('x', 'y'), $this->Form->unlockField());
+	}
+
+/**
+ * Test that the correct fields are unlocked for image submits with names.
+ *
+ * @return void
+ */
+	public function testSecuritySubmitImageName() {
+		$key = 'testKey';
+		$this->Form->request['_Token'] = array('key' => $key);
+
+		$this->Form->create('User');
+		$result = $this->Form->submit('save.png', array('name' => 'test'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'name' => 'test', 'src' => 'img/save.png'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertEquals(array('test', 'test_x', 'test_y'), $this->Form->unlockField());
+	}
+/**
  * testFormSecurityMultipleInputFields method
  *
  * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types

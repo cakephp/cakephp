@@ -769,7 +769,7 @@ class Postgres extends DboSource {
  * @return boolean True on success, false on failure
  */
 	public function setEncoding($enc) {
-		if ($this->_execute('SET NAMES ?', array($enc))) {
+		if ($this->_execute("SET NAMES '?'", array($enc))) {
 			return true;
 		}
 		return false;

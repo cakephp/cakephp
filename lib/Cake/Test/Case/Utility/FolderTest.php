@@ -26,6 +26,45 @@ App::uses('File', 'Utility');
  */
 class FolderTest extends CakeTestCase {
 
+	protected static $_tmp = array();
+
+/**
+ * Save the directory names in TMP
+ *
+ * @return void
+ */
+	public static function setUpBeforeClass() {
+		foreach (scandir(TMP) as $file) {
+			if (is_dir(TMP . $file) && !in_array($file, array('.', '..'))) {
+				self::$_tmp[] = $file;
+			}
+		}
+	}
+
+/**
+ * setUp clearstatcache() to flush file descriptors.
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		clearstatcache();
+	}
+
+/**
+ * Restore the TMP directory to its original state.
+ *
+ * @return void
+ */
+	public function tearDown() {
+		$exclude = array_merge(self::$_tmp, array('.', '..'));
+		foreach (scandir(TMP) as $file) {
+			if (is_dir(TMP . $file) && !in_array($file, $exclude)) {
+				unlink(TMP . $file);
+			}
+		}
+	}
+
 /**
  * testBasic method
  *
@@ -261,7 +300,7 @@ class FolderTest extends CakeTestCase {
 		$expected = array('0', 'cache', 'logs', 'sessions', 'tests');
 		$this->assertEqual($expected, $result[0]);
 
-		$result = $Folder->read(true, array('.', '..', 'logs', '.svn'));
+		$result = $Folder->read(true, array('logs'));
 		$expected = array('0', 'cache', 'sessions', 'tests');
 		$this->assertEqual($expected, $result[0]);
 

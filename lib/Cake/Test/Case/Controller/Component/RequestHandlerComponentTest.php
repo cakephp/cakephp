@@ -256,7 +256,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testStartupCallback() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml';
-		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
@@ -270,7 +270,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testStartupCallbackCharset() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
-		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
@@ -287,9 +287,9 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		}
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_SERVER['CONTENT_TYPE'] = 'text/csv';
-		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
 		$this->Controller->request->expects($this->once())
-			->method('_readStdin')
+			->method('_readInput')
 			->will($this->returnValue('"A","csv","string"'));
 		$this->RequestHandler->addInputType('csv', array('str_getcsv'));
 		$this->RequestHandler->startup($this->Controller);

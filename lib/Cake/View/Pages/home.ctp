@@ -36,6 +36,19 @@ endif;
 	2) <a target="_blank" href="http://book.cakephp.org/view/931/CakePHP-Core-Configuration-Variables" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <p>
+<?php 
+	if (version_compare(PHP_VERSION, '5.2.6', '>=')):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'Your version of PHP is 5.2.6 or higher.');
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.6 or higher to use CakePHP.');
+		echo '</span>';
+	endif;
+?>
+</p>
+<p>
 	<?php
 		if (is_writable(TMP)):
 			echo '<span class="notice success">';

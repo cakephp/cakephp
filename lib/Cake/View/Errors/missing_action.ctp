@@ -29,7 +29,7 @@
 class <?php echo $controller;?> extends AppController {
 
 <strong>
-	function <?php echo $action;?> {
+	public function <?php echo $action;?>() {
 
 	}
 </strong>

@@ -66,7 +66,7 @@ class FileEngine extends CacheEngine {
 	public function init($settings = array()) {
 		parent::init(array_merge(
 			array(
-				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false,
+				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> true,
 				'serialize'=> true, 'isWindows' => false
 			),
 			$settings
@@ -162,6 +162,9 @@ class FileEngine extends CacheEngine {
 		$cachetime = intval($this->_File->current());
 
 		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
+			if ($this->settings['lock']) {
+				$this->_File->flock(LOCK_UN);
+			}
 			return false;
 		}
 

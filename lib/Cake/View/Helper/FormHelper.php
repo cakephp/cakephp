@@ -1600,22 +1600,37 @@ class FormHelper extends AppHelper {
 		$after = $options['after'];
 		unset($options['before'], $options['after']);
 
-		if (strpos($caption, '://') !== false) {
+		$isUrl = strpos($caption, '://') !== false;
+		$isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
+
+		if ($isUrl || $isImage) {
+			$unlockFields = array('x', 'y');
+			if (isset($options['name'])) {
+				$unlockFields = array(
+					$options['name'] . '_x', $options['name'] . '_y'
+				);
+			}
+			foreach ($unlockFields as $ignore) {
+				$this->unlockField($ignore);
+			}
+		}
+
+		if ($isUrl) {
 			unset($options['type']);
-			$out .= $before . $this->Html->useTag('submitimage', $caption, $options) . $after;
-		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption)) {
+			$tag = $this->Html->useTag('submitimage', $caption, $options);
+		} elseif ($isImage) {
 			unset($options['type']);
 			if ($caption{0} !== '/') {
 				$url = $this->webroot(IMAGES_URL . $caption);
 			} else {
-				$caption = trim($caption, '/');
-				$url = $this->webroot($caption);
+				$url = $this->webroot(trim($caption, '/'));
 			}
-			$out .= $before . $this->Html->useTag('submitimage', $url, $options) . $after;
+			$tag = $this->Html->useTag('submitimage', $url, $options);
 		} else {
 			$options['value'] = $caption;
-			$out .= $before . $this->Html->useTag('submit', $options) . $after;
+			$tag = $this->Html->useTag('submit', $options);
 		}
+		$out = $before . $tag . $after;
 
 		if (isset($divOptions)) {
 			$tag = $divOptions['tag'];
