@@ -575,10 +575,7 @@ class CakeSchemaTest extends CakeTestCase {
 */
 	public function testSchemaReadWithAppModel() {
 		$connections = ConnectionManager::enumConnectionObjects();
-		if (!empty($connections['default'])) { 
-			$backup = $connections['default']; 
-			ConnectionManager::drop('default'); 
-		}
+		ConnectionManager::drop('default'); 
 		ConnectionManager::create('default', $connections['test']);
 		try {
 			$read = $this->Schema->read(array(
@@ -586,18 +583,11 @@ class CakeSchemaTest extends CakeTestCase {
 					'name' => 'TestApp',
 					'models' => array('AppModel')
 			));
-			if (!empty($backup)) {
-				ConnectionManager::drop('default');
-				ConnectionManager::create('default', $backup);
-			}
 		} catch(MissingTableException $mte) {
-			if (!empty($backup)) {
-				ConnectionManager::drop('default');
-				ConnectionManager::create('default', $backup);
-			}
+			ConnectionManager::drop('default');
 			$this->fail($mte->getMessage());
 		}
-		
+		ConnectionManager::drop('default');
 	}
 
 /**

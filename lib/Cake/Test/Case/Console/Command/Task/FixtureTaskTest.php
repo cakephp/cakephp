@@ -40,6 +40,13 @@ class FixtureTaskTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test', 'core.user');
 
 /**
+ * Whether backup global state for each test method or not
+ *
+ * @var bool false
+ */
+	public $backupGlobals = false;
+
+/**
  * setUp method
  *
  * @return void
@@ -53,8 +60,8 @@ class FixtureTaskTest extends CakeTestCase {
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
-		$this->Task->Model = $this->getMock('Shell',
-			array('in', 'out', 'error', 'createFile', 'getName', 'getTable', 'listAll'),
+		$this->Task->Model = $this->getMock('ModelTask',
+			array('in', 'out', 'err', 'createFile', 'getName', 'getTable', 'listAll'),
 			array($out, $out, $in)
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
@@ -191,6 +198,7 @@ class FixtureTaskTest extends CakeTestCase {
 /**
  * test that execute passes runs bake depending with named model.
  *
+ *
  * @return void
  */
 	public function testExecuteWithNamedModel() {
@@ -201,36 +209,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
-
-		$this->Task->execute();
-	}
-
-/**
- * data provider for model name variations.
- *
- * @return array
- */
-	public static function modelNameProvider() {
-		return array(
-			array('article'), array('articles'), array('Articles'), array('Article')
-		);
-	}
-
-/**
- * test that execute passes runs bake depending with named model.
- *
- * @dataProvider modelNameProvider
- * @return void
- */
-	public function testExecuteWithNamedModelVariations($modelName) {
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-
-		$this->Task->args = array($modelName);
-		$filename = '/my/path/ArticleFixture.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
-
+			
 		$this->Task->execute();
 	}
 
@@ -245,7 +224,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->args = array('all');
 		$this->Task->Model->expects($this->any())
 			->method('listAll')
-			->will($this->returnValue(array('articles', 'comments')));
+			->will($this->returnValue(array('Article', 'comments')));
 
 		$filename = '/my/path/ArticleFixture.php';
 		$this->Task->expects($this->at(0))
