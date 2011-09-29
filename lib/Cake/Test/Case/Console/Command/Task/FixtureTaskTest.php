@@ -208,7 +208,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$filename = '/my/path/ArticleFixture.php';
 
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
+			->with($filename, $this->stringContains('class ArticleFixture'));
 			
 		$this->Task->execute();
 	}
@@ -224,7 +224,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->args = array('all');
 		$this->Task->Model->expects($this->any())
 			->method('listAll')
-			->will($this->returnValue(array('Article', 'comments')));
+			->will($this->returnValue(array('articles', 'comments')));
 
 		$filename = '/my/path/ArticleFixture.php';
 		$this->Task->expects($this->at(0))
@@ -251,15 +251,15 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->params = array('count' => 10, 'records' => true);
 
 		$this->Task->Model->expects($this->any())->method('listAll')
-			->will($this->returnValue(array('articles', 'comments')));
+			->will($this->returnValue(array('Articles', 'comments')));
 
 		$filename = '/my/path/ArticleFixture.php';
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/title\' => \'Third Article\'/'));
+			->with($filename, $this->stringContains("'title' => 'Third Article'"));
 
 		$filename = '/my/path/CommentFixture.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/comment\' => \'First Comment for First Article/'));
+			->with($filename, $this->stringContains("'comment' => 'First Comment for First Article'"));
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
 		$this->Task->all();
@@ -282,7 +282,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/ArticleFixture.php';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
+			->with($filename, $this->stringContains('class ArticleFixture'));
 
 		$this->Task->execute();
 	}
@@ -349,10 +349,10 @@ class FixtureTaskTest extends CakeTestCase {
 		$filename = '/my/path/ArticleFixture.php';
 
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/ArticleFixture/'));
+			->with($filename, $this->stringContains('ArticleFixture'));
 
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/\<\?php/ms'));
+			->with($filename, $this->stringContains('<?php'));
 
 		$result = $this->Task->generateFixtureFile('Article', array());
 
@@ -373,7 +373,7 @@ class FixtureTaskTest extends CakeTestCase {
 		//fake plugin path
 		CakePlugin::load('TestFixture', array('path' =>  APP . 'Plugin' . DS . 'TestFixture' . DS));
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/Article/'));
+			->with($filename, $this->stringContains('class Article'));
 
 		$result = $this->Task->generateFixtureFile('Article', array());
 		CakePlugin::unload();
