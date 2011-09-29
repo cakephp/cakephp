@@ -3589,6 +3589,29 @@ class ContainableBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * testLazyLoad method
+ *
+ * @return void
+ */
+	public function testLazyLoad() {
+        // Local set up
+        $this->User = ClassRegistry::init('User');
+		$this->User->bindModel(array(
+			'hasMany' => array('Article', 'ArticleFeatured', 'Comment')
+		), false);
+
+		try {
+			$this->User->find('first', array(
+				'contain' => 'Comment',
+				'lazyLoad' => true
+			));
+		} catch (Exception $e) {
+			$exceptions = true;
+		}
+        $this->assertTrue(empty($exceptions));
+	}
+
+/**
  * containments method
  *
  * @param mixed $Model

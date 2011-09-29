@@ -179,6 +179,20 @@ class User extends CakeTestModel {
  * @var array
  */
 	public $validate = array('user' => 'notEmpty', 'password' => 'notEmpty');
+
+/**
+ * beforeFind() callback used to run ContainableBehaviorTest::testLazyLoad()
+ *
+ * @return bool
+*/
+	public function beforeFind ($queryData) {
+		if (!empty($queryData['lazyLoad'])) {
+			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
+				throw new Exception('Unavailable associations');
+			}
+		}
+		return true;
+	}
 }
 
 /**

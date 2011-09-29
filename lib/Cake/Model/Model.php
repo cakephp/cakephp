@@ -735,6 +735,11 @@ class Model extends Object {
 			if (isset($name, $this->{$type}[$name])) {
 				$className = empty($this->{$type}[$name]['className']) ? $name : $this->{$type}[$name]['className'];
 				break;
+			}
+			elseif (isset($name, $this->__backAssociation[$type][$name])) {
+				$className = empty($this->__backAssociation[$type][$name]['className']) ?
+					$name : $this->__backAssociation[$type][$name]['className'];
+				break;
 			} else if ($type == 'hasAndBelongsToMany') {
 				foreach ($this->{$type} as $k => $relation) {
 					if (empty($relation['with'])) {
