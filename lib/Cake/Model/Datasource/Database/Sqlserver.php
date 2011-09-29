@@ -767,9 +767,12 @@ class Sqlserver extends DboSource {
 			}
 			return true;
 		} catch (PDOException $e) {
-			$this->_results = null;
-			$this->error = $e->getMessage();
-			return false;
+			if (isset($query->queryString)) {
+				$e->queryString = $query->queryString;
+			} else {
+				$e->queryString = $sql;
+			}
+			throw $e;
 		}
 	}
 
