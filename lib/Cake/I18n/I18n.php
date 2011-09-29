@@ -304,41 +304,51 @@ class I18n {
 			}
 		}
 
-
 		foreach ($searchPaths as $directory) {
-
 			foreach ($this->l10n->languagePath as $lang) {
-				$file = $directory . $lang . DS . $this->category . DS . $domain;
 				$localeDef = $directory . $lang . DS . $this->category;
+				if (is_file($localeDef)) {
+					$definitions = self::loadLocaleDefinition($localeDef);
+					if ($definitions !== false) {
+						$this->_domains[$domain][$this->_lang][$this->category] = self::loadLocaleDefinition($localeDef);
+						$this->_noLocale = false;
+						return $domain;
+					}
+				}
 
 				if ($core) {
 					$app = $directory . $lang . DS . $this->category . DS . 'core';
+					$translations = false;
 
-					if (file_exists($fn = "$app.mo")) {
-						$this->_loadMo($fn, $domain);
-						$this->_noLocale = false;
+					if (is_file($app . '.mo')) {
+						$translations = self::loadMo($app . '.mo');
+					}
+					if ($translations === false && is_file($app . '.po')) {
+						$translations = self::loadPo($app . '.po');
+					}
+
+					if ($translations !== false) {
+						$this->_domains[$domain][$this->_lang][$this->category] = $translations;
 						$merge[$domain][$this->_lang][$this->category] = $this->_domains[$domain][$this->_lang][$this->category];
-						$core = null;
-					} elseif (file_exists($fn = "$app.po") && ($f = fopen($fn, "r"))) {
-						$this->_loadPo($f, $domain);
 						$this->_noLocale = false;
-						$merge[$domain][$this->_lang][$this->category] = $this->_domains[$domain][$this->_lang][$this->category];
 						$core = null;
 					}
 				}
 
-				if (file_exists($fn = "$file.mo")) {
-					$this->_loadMo($fn, $domain);
+				$file = $directory . $lang . DS . $this->category . DS . $domain;
+				$translations = false;
+
+				if (is_file($file . '.mo')) {
+					$translations = self::loadMo($file . '.mo');
+				}
+				if ($translations === false && is_file($file . '.po')) {
+					$translations = self::loadPo($file . '.po');
+				}
+
+				if ($translations !== false) {
+					$this->_domains[$domain][$this->_lang][$this->category] = $translations;
 					$this->_noLocale = false;
 					break 2;
-				} elseif (file_exists($fn = "$file.po") && ($f = fopen($fn, "r"))) {
-					$this->_loadPo($f, $domain);
-					$this->_noLocale = false;
-					break 2;
-				} elseif (is_file($localeDef) && ($f = fopen($localeDef, "r"))) {
-					$this->_loadLocaleDefinition($f, $domain);
-					$this->_noLocale = false;
-					return $domain;
 				}
 			}
 		}
@@ -368,20 +378,21 @@ class I18n {
 				unset($this->_domains[$domain][$this->_lang][$this->category][null]);
 			}
 		}
+
 		return $domain;
 	}
 
 /**
- * Loads the binary .mo file for translation and sets the values for this translation in the var I18n::_domains
+ * Loads the binary .mo file and returns array of translations
  *
- * @param string $file Binary .mo file to load
- * @param string $domain Domain where to load file in
- * @return void
+ * @param string $filename Binary .mo file to load
+ * @return mixed Array of translations on success or false on failure
  */
-	protected function _loadMo($file, $domain) {
-		$data = file_get_contents($file);
+	public static function loadMo($filename) {
+		$translations = false;
 
-		if ($data) {
+		if ($data = file_get_contents($filename)) {
+			$translations = array();
 			$header = substr($data, 0, 20);
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
@@ -401,24 +412,29 @@ class I18n {
 					if (strpos($msgstr, "\000")) {
 						$msgstr = explode("\000", $msgstr);
 					}
-					$this->_domains[$domain][$this->_lang][$this->category][$msgid] = $msgstr;
+					$translations[$msgid] = $msgstr;
 
 					if (isset($msgid_plural)) {
-						$this->_domains[$domain][$this->_lang][$this->category][$msgid_plural] =& $this->_domains[$domain][$this->_lang][$this->category][$msgid];
+						$translations[$msgid_plural] =& $translations[$msgid];
 					}
 				}
 			}
 		}
+
+		return $translations;
 	}
 
 /**
- * Loads the text .po file for translation and sets the values for this translation in the var I18n::_domains
+ * Loads the text .po file and returns array of translations
  *
- * @param resource $file Text .po file to load
- * @param string $domain Domain to load file in
- * @return array Binded domain elements
+ * @param string $filename Text .po file to load
+ * @return mixed Array of translations on success or false on failure
  */
-	protected function _loadPo($file, $domain) {
+	public static function loadPo($filename) {
+		if (!$file = fopen($filename, "r")) {
+			return false;
+		}
+
 		$type = 0;
 		$translations = array();
 		$translationKey = "";
@@ -477,22 +493,28 @@ class I18n {
 			}
 		} while (!feof($file));
 		fclose($file);
+
 		$merge[""] = $header;
-		return $this->_domains[$domain][$this->_lang][$this->category] = array_merge($merge, $translations);
+		return array_merge($merge, $translations);
 	}
 
 /**
  * Parses a locale definition file following the POSIX standard
  *
- * @param resource $file file handler
- * @param string $domain Domain where locale definitions will be stored
- * @return void
+ * @param string $filename Locale definition filename
+ * @return mixed Array of definitions on success or false on failure
  */
-	protected function _loadLocaleDefinition($file, $domain = null) {
+	public static function loadLocaleDefinition($filename) {
+		if (!$file = fopen($filename, "r")) {
+			return false;
+		}
+
+		$definitions = array();
 		$comment = '#';
 		$escape = '\\';
 		$currentToken = false;
 		$value = '';
+		$_this = I18n::getInstance();
 		while ($line = fgets($file)) {
 			$line = trim($line);
 			if (empty($line) || $line[0] === $comment) {
@@ -527,19 +549,21 @@ class I18n {
 			$replacements = array_map('crc32', $mustEscape);
 			$value = str_replace($mustEscape, $replacements, $value);
 			$value = explode(';', $value);
-			$this->__escape = $escape;
+			$_this->__escape = $escape;
 			foreach ($value as $i => $val) {
 				$val = trim($val, '"');
-				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$this, '_parseLiteralValue'), $val);
+				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$_this, '_parseLiteralValue'), $val);
 				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
 			if (count($value) == 1) {
-				$this->_domains[$domain][$this->_lang][$this->category][$currentToken] = array_pop($value);
+				$definitions[$currentToken] = array_pop($value);
 			} else {
-				$this->_domains[$domain][$this->_lang][$this->category][$currentToken] = $value;
+				$definitions[$currentToken] = $value;
 			}
 		}
+
+		return $definitions;
 	}
 
 /**
