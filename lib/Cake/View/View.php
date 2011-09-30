@@ -20,6 +20,7 @@
 App::uses('HelperCollection', 'View');
 App::uses('AppHelper', 'View/Helper');
 App::uses('Router', 'Routing');
+App::uses('ViewBlock', 'View');
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -51,6 +52,13 @@ class View extends Object {
  * @var HelperCollection
  */
 	public $Helpers;
+
+/**
+ * ViewBlock instance.
+ *
+ * @var ViewBlock
+ */
+	public $Blocks;
 
 /**
  * Name of the plugin.
@@ -219,20 +227,6 @@ class View extends Object {
 	protected $_scripts = array();
 
 /**
- * Block content.  An array of blocks indexed by name.
- *
- * @var array
- */
-	protected $_blocks = array();
-
-/**
- * Name of the block being captured.
- *
- * @var string
- */
-	private $__activeBlock = null;
-
-/**
  * Holds an array of paths.
  *
  * @var array
@@ -289,6 +283,7 @@ class View extends Object {
 			}
 		}
 		$this->Helpers = new HelperCollection($this);
+		$this->Blocks = new ViewBlock();
 		parent::__construct();
 	}
 
@@ -549,54 +544,35 @@ class View extends Object {
  * Get the names of all the existing blocks.
  *
  * @return array An array containing the blocks.
+ * @see ViewBlock::keys()
  */
 	public function blocks() {
-		return array_keys($this->_blocks);
+		return $this->Blocks->keys();
 	}
 
 /**
  * Start capturing output for a 'block'
  *
- * Blocks allow you to create slots or blocks of dynamic content in the layout.
- * view files can implement some or all of a layout's slots.
- *
- * You can end capturing blocks using View::end().  Blocks can be output
- * using View::get();
- *
  * @param string $name The name of the block to capture for.
  * @return void
+ * @see ViewBlock::start()
  */
 	public function start($name) {
-		$this->__activeBlock = $name;
-		ob_start();
+		return $this->Blocks->start($name);
 	}
 
 /**
  * Append to an existing or new block.  Appending to a new 
  * block will create the block.
  *
- * Calling append() without a value will create a new capturing
- * block that needs to be finished with View::end(). The content
- * of the new capturing context will be added to the existing block context.
- *
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
+ * @see ViewBlock::append()
  */
 	public function append($name, $value = null) {
-		if (isset($value)) {
-			if (!is_string($value)) {
-				throw new CakeException(__d('cake_dev', '$value must be a string.'));
-			}
-			if (!isset($this->_blocks[$name])) {
-				$this->_blocks[$name] = '';
-			}
-			$this->_blocks[$name] .= $value;
-		} else {
-			$this->_blockAppend = true;
-			$this->start($name);
-		}
+		return $this->Blocks->append($name, $value);
 	}
 
 /**
@@ -607,12 +583,10 @@ class View extends Object {
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
+ * @see ViewBlock::assign()
  */
 	public function assign($name, $value) {
-		if (!is_string($value)) {
-			throw new CakeException(__d('cake_dev', 'Blocks can only contain strings.'));
-		}
-		$this->_blocks[$name] = $value;
+		return $this->Blocks->set($name, $value);
 	}
 
 /**
@@ -620,29 +594,20 @@ class View extends Object {
  *
  * @param string $name Name of the block
  * @return The block content or '' if the block does not exist.
+ * @see ViewBlock::fetch()
  */
 	public function fetch($name) {
-		if (!isset($this->_blocks[$name])) {
-			return '';
-		}
-		return $this->_blocks[$name];
+		return $this->Blocks->get($name);
 	}
 
 /**
  * End a capturing block. The compliment to View::start()
  *
  * @return void
- * @see View::start()
+ * @see ViewBlock::start()
  */
 	public function end() {
-		if (!empty($this->__activeBlock)) {
-			$content = ob_get_clean();
-			if (!isset($this->_blocks[$this->__activeBlock])) {
-				$this->_blocks[$this->__activeBlock] = '';
-			}
-			$this->_blocks[$this->__activeBlock] .= $content;
-		}
-		$this->__activeBlock = null;
+		return $this->Blocks->end();
 	}
 
 /**
@@ -650,6 +615,7 @@ class View extends Object {
  * parent view and populate blocks in the parent template.
  *
  * @param string $name The view or element to 'extend' the current one with.
+ * @return void
  */
 	public function extend($name) {
 		if ($this->_inElement) {
