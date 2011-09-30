@@ -44,8 +44,7 @@ class MailTransport extends AbstractTransport {
 			if (!@mail($to, $email->subject(), $message, $headers)) {
 				throw new SocketException(__d('cake', 'Could not send email.'));
 			}
-		}
-		if(!@mail($to, $email->subject(), $message, $headers, $this->_config['additionalParameters'])) {
+		} elseif (!@mail($to, $email->subject(), $message, $headers, $this->_config['additionalParameters'])) {
 			throw new SocketException(__d('cake', 'Could not send email.'));
 		}
 		return array('headers' => $headers, 'message' => $message);

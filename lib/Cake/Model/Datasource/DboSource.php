@@ -2443,7 +2443,7 @@ class DboSource extends DataSource {
 				break;
 			}
 			$value = "({$value})";
-		} elseif ($null) {
+		} elseif ($null || $value === 'NULL') {
 			switch ($operator) {
 				case '=':
 					$operator = 'IS';
