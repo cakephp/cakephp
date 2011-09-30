@@ -2219,9 +2219,14 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE `Book`.`id` = 0";
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Dbo->conditions(array("Book.id" => NULL));
+		$result = $this->Dbo->conditions(array("Book.id" => null));
 		$expected = " WHERE `Book`.`id` IS NULL";
 		$this->assertEqual($expected, $result);
+
+		$conditions = array('MysqlModel.id' => '');
+		$result = $this->Dbo->conditions($conditions, true, true, $this->model);
+		$expected = " WHERE `MysqlModel`.`id` IS NULL";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";
