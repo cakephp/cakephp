@@ -248,7 +248,7 @@ class View extends Object {
 	protected $_parents = array();
 
 /**
- * The currently rendering view file.
+ * The currently rendering view file. Used for resolving parent files.
  *
  * @var string
  */
@@ -258,9 +258,9 @@ class View extends Object {
  * Currently rendering an element.  Used for finding parent fragments
  * for elements.
  *
- * @var boolean
+ * @var string
  */
-	protected $_inElement = false;
+	protected $_currentType = '';
 
 /**
  * Content stack, used for nested templates that all use View::extend();
@@ -268,6 +268,10 @@ class View extends Object {
  * @var array
  */
 	protected $_stack = array();
+
+	const TYPE_VIEW = 'view';
+	const TYPE_ELEMENT = 'element';
+	const TYPE_LAYOUT = 'layout';
 
 /**
  * Constructor
@@ -353,9 +357,8 @@ class View extends Object {
 				$this->Helpers->trigger('beforeRender', array($file));
 			}
 
-			$this->_inElement = true;
+			$this->_currentType = self::TYPE_ELEMENT;
 			$element = $this->_render($file, array_merge($this->viewVars, $data));
-			$this->_inElement = false;
 
 			if ($callbacks) {
 				$this->Helpers->trigger('afterRender', array($file, $element));
@@ -400,6 +403,7 @@ class View extends Object {
 		$this->output = null;
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+			$this->_currentType = self::TYPE_VIEW;
 			$this->Helpers->trigger('beforeRender', array($viewFileName));
 			$this->output = $this->_render($viewFileName);
 			$this->Helpers->trigger('afterRender', array($viewFileName));
@@ -462,7 +466,7 @@ class View extends Object {
 		if (!isset($this->viewVars['title_for_layout'])) {
 			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
-
+		$this->_currentType = self::TYPE_LAYOUT;
 		$this->output = $this->_render($layoutFileName);
 
 		if ($this->output === false) {
@@ -618,10 +622,17 @@ class View extends Object {
  * @return void
  */
 	public function extend($name) {
-		if ($this->_inElement) {
-			$parent = $this->_getElementFileName($name);
-		} else {
-			$parent = $this->_getViewFileName($name);
+		switch ($this->_currentType) {
+			case self::TYPE_VIEW:
+				$parent = $this->_getViewFileName($name);
+			break;
+			case self::TYPE_ELEMENT:
+				$parent = $this->_getElementFileName($name);
+			break;
+			case self::TYPE_LAYOUT:
+				$parent = $this->_getLayoutFileName($name);
+			break;
+		
 		}
 		$this->_parents[$this->_current] = $parent;
 	}
