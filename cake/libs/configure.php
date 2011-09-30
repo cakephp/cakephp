@@ -137,7 +137,7 @@ class Configure extends Object {
 					$callback = array('CakeLog', 'getInstance');
 				}
 			}
-			if (!empty($callback) && class_exists('Debugger')) {
+			if (!empty($callback) && !defined('DISABLE_DEFAULT_ERROR_HANDLING') && class_exists('Debugger')) {
 				Debugger::invoke(call_user_func($callback));
 			}
 			error_reporting($reporting);
