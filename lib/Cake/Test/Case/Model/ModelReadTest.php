@@ -6592,8 +6592,11 @@ class ModelReadTest extends BaseModelTest {
 
 		$Article = new Article();
 		$Article->recursive = -1;
-		$expected = count($Article->find('all', array('group' => 'Article.user_id')));
-		$result = $Article->find('count', array('group' => 'Article.user_id'));
+		$expected = count($Article->find('all', array(
+			'fields' => array('Article.user_id'),
+			'group' => 'Article.user_id')
+		));
+		$result = $Article->find('count', array('group' => array('Article.user_id')));
 		$this->assertEquals($expected, $result);
 	}
 

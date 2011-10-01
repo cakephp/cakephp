@@ -428,7 +428,7 @@ class SchemaShell extends Shell {
 					$Schema->after(array($event => $table, 'errors' => $error));
 
 					if (!empty($error)) {
-						$this->out($error);
+						$this->err($error);
 					} else {
 						$this->out(__d('cake_console', '%s updated.', $table));
 					}

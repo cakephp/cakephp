@@ -460,7 +460,11 @@ class DboSource extends DataSource {
  * @return string Error message with error number
  */
 	public function lastError(PDOStatement $query = null) {
-		$error = $query->errorInfo();
+		if ($query) {
+			$error = $query->errorInfo();
+		} else {
+			$error = $this->_connection->errorInfo();
+		}
 		if (empty($error[2])) {
 			return null;
 		}
