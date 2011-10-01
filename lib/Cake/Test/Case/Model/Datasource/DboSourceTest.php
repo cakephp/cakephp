@@ -794,9 +794,6 @@ class DboSourceTest extends CakeTestCase {
  * Test getting the last error.
  */
 	function testLastError() {
-		$result = $this->db->lastError();
-		$this->assertNull($result);
-
 		$stmt = $this->getMock('PDOStatement');
 		$stmt->expects($this->any())
 			->method('errorInfo')
