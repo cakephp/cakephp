@@ -39,6 +39,10 @@ class DboTestSource extends DboSource {
 	public function setConfig($config) {
 		$this->config = $config;
 	}
+
+	public function setConnection($conn) {
+		$this->_connection = $conn;
+	}
 }
 
 /**
@@ -786,4 +790,20 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual(' GROUP BY created', $result);
 	}
 
+/**
+ * Test getting the last error.
+ */
+	function testLastError() {
+		$result = $this->db->lastError();
+		$this->assertNull($result);
+
+		$stmt = $this->getMock('PDOStatement');
+		$stmt->expects($this->any())
+			->method('errorInfo')
+			->will($this->returnValue(array('', 'something', 'bad')));
+
+		$result = $this->db->lastError($stmt);
+		$expected = 'something: bad';
+		$this->assertEquals($expected, $result);
+	}
 }
