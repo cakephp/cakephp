@@ -607,33 +607,34 @@ class Mysql extends DboSource {
 		$condition = '';
 		$params = array();
 		if (is_string($name)) {
-			$condition = ' WHERE name = ?' ;
-			$params = array($name);
+				$condition = ' WHERE name = ' . $this->value($name);
+				$params = array($name);
 		}
-		$result = $this->_execute('SHOW TABLE STATUS ' . $condition, $params);
+		$result = $this->_connection->query('SHOW TABLE STATUS ' . $condition, PDO::FETCH_ASSOC);
 
 		if (!$result) {
-			$result->closeCursor();
-			return array();
+				$result->closeCursor();
+				return array();
 		} else {
-			$tables = array();
-			while ($row = $result->fetch()) {
-				$tables[$row->Name] = (array) $row;
-				unset($tables[$row->Name]['queryString']);
-				if (!empty($row->Collation)) {
-					$charset = $this->getCharsetName($row->Collation);
-					if ($charset) {
-						$tables[$row->Name]['charset'] = $charset;
-					}
+				$tables = array();
+				foreach ($result as $row) {
+						$tables[$row['Name']] = (array) $row;
+						unset($tables[$row['Name']]['queryString']);
+						if (!empty($row['Collation'])) {
+								$charset = $this->getCharsetName($row['Collation']);
+								if ($charset) {
+										$tables[$row['Name']]['charset'] = $charset;
+								}
+						}
 				}
-			}
-			$result->closeCursor();
-			if (is_string($name) && isset($tables[$name])) {
-				return $tables[$name];
-			}
-			return $tables;
+				$result->closeCursor();
+				if (is_string($name) && isset($tables[$name])) {
+						return $tables[$name];
+				}
+				return $tables;
 		}
 	}
+
 
 /**
  * Converts database-layer column types to basic types

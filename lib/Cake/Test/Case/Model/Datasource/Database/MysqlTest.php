@@ -65,7 +65,7 @@ class MysqlTest extends CakeTestCase {
 		}
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
-		$this->model = new MysqlTestModel();
+		$this->model = ClassRegistry::init('MysqlTestModel');
 	}
 
 /**
