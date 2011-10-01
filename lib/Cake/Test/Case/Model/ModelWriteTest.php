@@ -2897,6 +2897,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllHasMany() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
+		$TestModel->order = array('Article.created' => 'ASC');
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
 
 		$result = $TestModel->saveAll(array(

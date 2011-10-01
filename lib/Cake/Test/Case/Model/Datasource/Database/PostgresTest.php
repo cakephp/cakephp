@@ -430,25 +430,6 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
- * Tests that table lists and descriptions are scoped to the proper Postgres schema
- *
- * @return void
- */
-	public function testSchemaScoping() {
-		$db1 = ConnectionManager::getDataSource('test');
-		$db1->cacheSources = false;
-		$db1->query('CREATE SCHEMA _scope_test');
-
-		$db2 = ConnectionManager::create(
-			'test_2',
-			array_merge($db1->config, array('driver' => 'postgres', 'schema' => '_scope_test'))
-		);
-		$db2->cacheSources = false;
-
-		$db2->query('DROP SCHEMA _scope_test');
-	}
-
-/**
  * Tests that column types without default lengths in $columns do not have length values
  * applied when generating schemas.
  *
