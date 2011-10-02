@@ -187,7 +187,7 @@ class CakeEmail {
  *
  * @var array
  */
-	protected $_helpers = array();
+	protected $_helpers = array('Html');
 
 /**
  * Text message
@@ -1051,7 +1051,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_viewRender = 'View';
 		$this->_viewVars = array();
-		$this->_helpers = array();
+		$this->_helpers = array('Html');
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
 		$this->_message = '';
