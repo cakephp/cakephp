@@ -3,7 +3,7 @@ $output = "
 <iframe src=\"http://cakephp.org/bake-banner\" width=\"830\" height=\"160\" style=\"overflow:hidden; border:none;\">
 	<p>For updates and important announcements, visit http://cakefest.org</p>
 </iframe>\n";
-$output = "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
+$output .= "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
 $output .="
 <?php
 App::uses('Debugger', 'Utility');
