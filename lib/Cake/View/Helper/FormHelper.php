@@ -271,18 +271,24 @@ class FormHelper extends AppHelper {
  * Returns false if given form field described by the current entity has no errors.
  * Otherwise it returns the validation message
  *
- * @return boolean True on errors.
+ * @return mixed Either false when there or no errors, or the error 
+ *    string. The error string could be ''.
  */
 	public function tagIsInvalid() {
 		$entity = $this->entity();
 		$model = array_shift($entity);
+		$errors = array();
 		if (!empty($entity) && isset($this->validationErrors[$model])) {
-			return Set::classicExtract($this->validationErrors[$model], join('.', $entity));
+			$errors = $this->validationErrors[$model];
 		}
-		if (!empty($entity)) {
+		if (!empty($entity) && empty($errors)) {
 			$errors = $this->_introspectModel($model, 'errors');
-			return ($errors) ? Set::classicExtract($errors, join('.', $entity)) : false;
 		}
+		if (empty($errors)) {
+			return false;
+		}
+		$error = Set::classicExtract($errors, join('.', $entity));
+		return $error === null ? false : $error;
 	}
 
 /**
@@ -598,6 +604,11 @@ class FormHelper extends AppHelper {
 			}
 		}
 
+		$last = end($field);
+		if (is_numeric($last) || empty($last)) {
+			array_pop($field);
+		}
+
 		$field = implode('.', $field);
 
 		if ($lock) {
@@ -645,7 +656,9 @@ class FormHelper extends AppHelper {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
 		$options = array_merge($defaults, $options);
 		$this->setEntity($field);
-		if (!$error = $this->tagIsInvalid()) {
+
+		$error = $this->tagIsInvalid();
+		if ($error === false) {
 			return null;
 		}
 		if (is_array($text)) {
@@ -664,7 +677,7 @@ class FormHelper extends AppHelper {
 			$text = $tmp;
 		}
 
-		if ($text != null) {
+		if ($text !== null) {
 			$error = $text;
 		}
 		if (is_array($error)) {

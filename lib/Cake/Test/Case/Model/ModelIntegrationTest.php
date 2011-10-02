@@ -238,6 +238,44 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * testFindWithJoinsOption method
+ *
+ * @access public
+ * @return void
+ */
+	function testFindWithJoinsOption() {
+		$this->loadFixtures('Article', 'User');
+		$TestUser =& new User();
+
+		$options = array (
+			'fields' => array(
+				'user',
+				'Article.published',
+			),
+			'joins' => array (
+				array (
+					'table' => 'articles',
+					'alias' => 'Article',
+					'type'  => 'LEFT',
+					'conditions' => array(
+						'User.id = Article.user_id',
+					),
+				),
+			),
+			'group' => array('User.user'),
+			'recursive' => -1,
+		);
+		$result = $TestUser->find('all', $options);
+		$expected = array(
+			array('User' => array('user' => 'garrett'), 'Article' => array('published' => '')),
+			array('User' => array('user' => 'larry'), 'Article' => array('published' => 'Y')),
+			array('User' => array('user' => 'mariano'), 'Article' => array('published' => 'Y')),
+			array('User' => array('user' => 'nate'), 'Article' => array('published' => ''))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * Tests cross database joins.  Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
  * or one connection will step on the other.
