@@ -754,6 +754,28 @@ class Helper extends Object {
 	}
 
 /**
+ * Before render file callback. Called before any view fragment is rendered.
+ *
+ * Overridden in subclasses.
+ *
+ * @param string $viewFile The file about to be rendered.
+ * @return void
+ */
+	public function beforeRenderFile($viewfile) {
+	}
+
+/**
+ * After render file callback. Called before any view fragment is rendered.
+ *
+ * Overridden in subclasses.
+ *
+ * @param string $viewFile The file about to be rendered.
+ * @return void
+ */
+	public function afterRenderFile($viewfile) {
+	}
+
+/**
  * Transforms a recordset from a hasAndBelongsToMany association to a list of selected
  * options for a multiple select element
  *
