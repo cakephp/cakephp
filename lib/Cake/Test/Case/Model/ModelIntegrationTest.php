@@ -262,8 +262,9 @@ class ModelIntegrationTest extends BaseModelTest {
 					),
 				),
 			),
-			'group' => array('User.user'),
+			'group' => array('User.user', 'Article.published'),
 			'recursive' => -1,
+			'order' => array('User.user')
 		);
 		$result = $TestUser->find('all', $options);
 		$expected = array(
