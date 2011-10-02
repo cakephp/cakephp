@@ -463,9 +463,8 @@ class Controller extends Object {
  * @throws PrivateActionException, MissingActionException
  */
 	public function invokeAction(CakeRequest $request) {
-		$reflection = new ReflectionClass($this);
 		try {
-			$method = $reflection->getMethod($request->params['action']);
+			$method = new ReflectionMethod($this, $request->params['action']);
 
 			if ($this->_isPrivateAction($method, $request)) {
 				throw new PrivateActionException(array(
