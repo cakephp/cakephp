@@ -621,7 +621,7 @@ class Helper extends Object {
 
 		$entity = $this->entity();
 		if (!empty($data) && !empty($entity)) {
-			$result = Set::extract($data, implode('.', $entity));
+			$result = Set::extract(implode('.', $entity), $data);
 		}
 
 		$habtmKey = $this->field();
@@ -666,7 +666,7 @@ class Helper extends Object {
 		$options = $this->_name($options);
 		$options = $this->value($options);
 		$options = $this->domId($options);
-		if ($this->tagIsInvalid()) {
+		if ($this->tagIsInvalid() !== false) {
 			$options = $this->addClass($options, 'form-error');
 		}
 		return $options;
