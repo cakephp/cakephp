@@ -64,7 +64,7 @@ class DbConfigTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetConfig() {
-		$this->Task->expects($this->at(0))
+		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->returnValue('test'));
 
