@@ -543,7 +543,7 @@ class TestTaskTest extends CakeTestCase {
 		CakePlugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'TestPlugin' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperHelperTest.php';
+		$path = $testApp . 'TestPlugin' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperTest.php';
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls(

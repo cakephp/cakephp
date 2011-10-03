@@ -190,15 +190,10 @@ class TestTask extends BakeTask {
  * @return string Class name the user chose.
  */
 	public function getClassName($objectType) {
-		$type = strtolower($objectType);
+		$type = ucfirst(strtolower($objectType));
+		$typeLength = strlen($type);
+		$type = $this->classTypes[$type];
 		if ($this->plugin) {
-			if ($type === 'helper') {
-				$type = 'View/Helper';
-			} elseif ($type === 'component') {
-				$type = 'Controller/Component';
-			} elseif ($type === 'behavior') {
-				$type = 'Model/Behavior';
-			}
 			$plugin = $this->plugin . '.';
 			$options = App::objects($plugin . $type);
 		} else {
@@ -212,7 +207,10 @@ class TestTask extends BakeTask {
 		}
 		$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
 		if (isset($options[$selection - 1])) {
-			return $options[$selection - 1];
+			$selection = $options[$selection - 1];
+		}
+		if ($type !== 'Model') {
+			$selection = substr($selection, 0, $typeLength * - 1);
 		}
 		return $selection;
 	}
