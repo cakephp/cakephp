@@ -355,7 +355,7 @@ class DbConfigTask extends Shell {
 		App::uses('ConnectionManager', 'Model');
 		$configs = ConnectionManager::enumConnectionObjects();
 
-		$useDbConfig = current($configs);
+		$useDbConfig = key($configs);
 		if (!is_array($configs) || empty($configs)) {
 			return $this->execute();
 		}
