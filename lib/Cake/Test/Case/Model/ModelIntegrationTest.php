@@ -1639,46 +1639,51 @@ class ModelIntegrationTest extends BaseModelTest {
 				'title' => 'First Post',
 				'body' => 'First Post Body',
 				'published' => 'Y',
-				'created' => '2007-03-18 10:39:23',
-				'updated' => $ts),
-				'SomethingElse' => array(
-					array(
-						'id' => '1',
-						'title' => 'First Post',
-						'body' => 'First Post Body',
-						'published' => 'Y',
-						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31',
-						'JoinThing' => array(
-							'doomed' => true,
-							'something_id' => '1',
-							'something_else_id' => '1'
-					)),
-					array(
-						'id' => '2',
-						'title' => 'Second Post',
-						'body' => 'Second Post Body',
-						'published' => 'Y',
-						'created' => '2007-03-18 10:41:23',
-						'updated' => '2007-03-18 10:43:31',
-						'JoinThing' => array(
-							'doomed' => true,
-							'something_id' => '1',
-							'something_else_id' => '2'
-					)),
-					array(
-						'id' => '3',
-						'title' => 'Third Post',
-						'body' => 'Third Post Body',
-						'published' => 'Y',
-						'created' => '2007-03-18 10:43:23',
-						'updated' => '2007-03-18 10:45:31',
-						'JoinThing' => array(
-							'doomed' => false,
-							'something_id' => '1',
-							'something_else_id' => '3'
-		))));
-
+				'created' => '2007-03-18 10:39:23'
+			),
+			'SomethingElse' => array(
+				array(
+					'id' => '1',
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'JoinThing' => array(
+						'doomed' => true,
+						'something_id' => '1',
+						'something_else_id' => '1'
+				)
+			),
+				array(
+					'id' => '2',
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'JoinThing' => array(
+						'doomed' => true,
+						'something_id' => '1',
+						'something_else_id' => '2'
+				)
+			),
+				array(
+					'id' => '3',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'JoinThing' => array(
+						'doomed' => false,
+						'something_id' => '1',
+						'something_else_id' => '3')
+					)
+				)
+			);
+		$this->assertTrue($result['Something']['updated'] >= $ts);
+		unset($result['Something']['updated']);
 		$this->assertEqual($expected, $result);
 	}
 
