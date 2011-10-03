@@ -20,7 +20,7 @@
 echo "<?php\n";
 echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
-App::uses('<?php echo $fullClassName; ?>', '<?php echo $plugin . $type;?>');
+App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
 /**
