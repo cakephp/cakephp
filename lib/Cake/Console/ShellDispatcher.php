@@ -135,8 +135,9 @@ class ShellDispatcher {
 			App::build();
 		}
 		require_once CAKE . 'Console' . DS . 'ConsoleErrorHandler.php';
-		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
-		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
+		$ErrorHandler = new ConsoleErrorHandler();
+		set_exception_handler(array($ErrorHandler, 'handleException'));
+		set_error_handler(array($ErrorHandler, 'handleError'), Configure::read('Error.level'));
 
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', 'http://localhost');
