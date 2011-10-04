@@ -7435,6 +7435,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertTrue($Post->isVirtualField('other_field'));
 		$this->assertTrue($Post->isVirtualField('Post.other_field'));
+		$this->assertFalse($Post->isVirtualField('Comment.other_field'), 'Other models should not match.');
 		$this->assertFalse($Post->isVirtualField('id'));
 		$this->assertFalse($Post->isVirtualField('Post.id'));
 		$this->assertFalse($Post->isVirtualField(array()));
