@@ -236,7 +236,7 @@ class CakeRequest implements ArrayAccess {
 		$config = Configure::read('App');
 		extract($config);
 
-		if (empty($base)) {
+		if (!isset($base)) {
 			$base = $this->base;
 		}
 		if ($base !== false) {
@@ -627,7 +627,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Parse the HTTP_ACCEPT header and return a sorted array with content types
  * as the keys, and pref values as the values.
- * 
+ *
  * Generally you want to use CakeRequest::accept() to get a simple list
  * of the accepted content types.
  *
