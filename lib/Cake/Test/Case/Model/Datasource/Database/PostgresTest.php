@@ -832,4 +832,23 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEqual(2, substr_count($result, 'field_two'), 'Too many fields');
 		$this->assertFalse(strpos(';ALTER', $result), 'Too many semi colons');
 	}
+	
+/**
+ * test encoding setting.
+ *
+ * @return void
+ */
+	public function testEncoding() {
+		$result = $this->Dbo->setEncoding('utf8');
+		$this->assertTrue($result) ;
+		
+		$result = $this->Dbo->getEncoding();
+		$this->assertEqual('utf8', $result) ;
+		
+		$result = $this->Dbo->setEncoding('EUC-JP');
+		$this->assertTrue($result) ;
+		
+		$result = $this->Dbo->getEncoding();
+		$this->assertEqual('EUC-JP', $result) ;
+	}
 }
