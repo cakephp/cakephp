@@ -3361,13 +3361,14 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '2',
 					'title' => 'Creating a fourth post',
 					'body' => 'Fourth post body',
-					'published' => 'N',
-					'created' => $ts,
-					'updated' => $ts
+					'published' => 'N'
 		)));
 		$this->assertTrue($result[0]['Post']['updated'] >= $ts);
 		$this->assertTrue($result[1]['Post']['updated'] >= $ts);
+		$this->assertTrue($result[3]['Post']['created'] >= $ts);
+		$this->assertTrue($result[3]['Post']['updated'] >= $ts);
 		unset($result[0]['Post']['updated'], $result[1]['Post']['updated']);
+		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
 		$this->assertEqual($expected, $result);
 
 		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
