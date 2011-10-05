@@ -302,7 +302,7 @@ class ControllerTask extends BakeTask {
 /**
  * Assembles and writes a Controller file
  *
- * @param string $controllerName Controller name
+ * @param string $controllerName Controller name already pluralized and correctly cased.
  * @param string $actions Actions to add, or set the whole controller to use $scaffold (set $actions to 'scaffold')
  * @param array $helpers Helpers to use in controller
  * @param array $components Components to use in controller
@@ -321,7 +321,7 @@ class ControllerTask extends BakeTask {
 		$contents = $this->Template->generate('classes', 'controller');
 
 		$path = $this->getPath();
-		$filename = $path . $this->_controllerName($controllerName) . 'Controller.php';
+		$filename = $path . $controllerName . 'Controller.php';
 		if ($this->createFile($filename, $contents)) {
 			return $contents;
 		}
