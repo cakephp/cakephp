@@ -3322,10 +3322,10 @@ class ModelWriteTest extends BaseModelTest {
 				'author_id' => 2
 		));
 
+		$ts = date('Y-m-d H:i:s');
 		$this->assertTrue($TestModel->saveAll($data));
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
-		$ts = date('Y-m-d H:i:s');
 		$expected = array(
 			array(
 				'Post' => array(
@@ -3334,8 +3334,7 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Baleeted First Post',
 					'body' => 'Baleeted!',
 					'published' => 'N',
-					'created' => '2007-03-18 10:39:23',
-					'updated' => $ts
+					'created' => '2007-03-18 10:39:23'
 			)),
 			array(
 				'Post' => array(
@@ -3344,7 +3343,7 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
 					'published' => 'Y',
-					'created' => '2007-03-18 10:41:23', 'updated' => $ts
+					'created' => '2007-03-18 10:41:23'
 			)),
 			array(
 				'Post' => array(
@@ -3366,6 +3365,9 @@ class ModelWriteTest extends BaseModelTest {
 					'created' => $ts,
 					'updated' => $ts
 		)));
+		$this->assertTrue($result[0]['Post']['updated'] >= $ts);
+		$this->assertTrue($result[1]['Post']['updated'] >= $ts);
+		unset($result[0]['Post']['updated'], $result[1]['Post']['updated']);
 		$this->assertEqual($expected, $result);
 
 		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
@@ -3407,11 +3409,11 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => '',
 				'body' => 'Trying to get away with an empty title'
 		));
+		$newTs = date('Y-m-d H:i:s');
 		$result = $TestModel->saveAll($data, array('validate' => true, 'atomic' => false));
 		$this->assertEqual($result, array(true, false));
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => array('This field cannot be left blank')));
-		$newTs = date('Y-m-d H:i:s');
 		$expected = array(
 			array(
 				'Post' => array(
