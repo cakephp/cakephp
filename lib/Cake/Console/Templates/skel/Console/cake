@@ -17,7 +17,16 @@
 # @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 ################################################################################
-LIB=${0/%cake/}
+LIB=${0}
+SYM=$(readlink ${0})
+
+if [ "$SYM" != "" ]
+	then
+		LIB=${SYM%/*}"/"
+	else
+		LIB=${LIB%/*}"/"
+fi
+
 APP=`pwd`
 
 exec php -q ${LIB}cake.php -working "${APP}" "$@"
