@@ -18,12 +18,14 @@
 # @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 ################################################################################
-LIB=${0/%cake/}
-SYM=$(readlink $LIB)
+LIB=${0}
+SYM=$(readlink ${0})
 
 if [ "$SYM" != "" ]
 	then
-		LIB=${SYM%/*}"/"
+		LIB=${SYM%/cake}"/"
+	else
+		LIB=${LIB%/cake}"/"
 fi
 
 APP=`pwd`
