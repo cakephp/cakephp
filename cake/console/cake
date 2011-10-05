@@ -23,9 +23,9 @@ SYM=$(readlink ${0})
 
 if [ "$SYM" != "" ]
 	then
-		LIB=${SYM%/cake}"/"
+		LIB=${SYM%/*}"/"
 	else
-		LIB=${LIB%/cake}"/"
+		LIB=${LIB%/*}"/"
 fi
 
 APP=`pwd`
