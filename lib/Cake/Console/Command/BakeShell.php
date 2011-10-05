@@ -51,6 +51,9 @@ class BakeShell extends Shell {
  */
 	public function startup() {
 		parent::startup();
+		Configure::write('debug', 2);
+		Configure::write('Cache.disable', 1);
+
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
 			if (isset($this->params['connection'])) {
@@ -65,9 +68,6 @@ class BakeShell extends Shell {
  * @return mixed
  */
 	public function main() {
-		Configure::write('debug', 2);
-		Configure::write('Cache.disable', 1);
-
 		if (!is_dir($this->DbConfig->path)) {
 			$path = $this->Project->execute();
 			if (!empty($path)) {
