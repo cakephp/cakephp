@@ -19,6 +19,13 @@
 #
 ################################################################################
 LIB=${0/%cake/}
+SYM=$(readlink $LIB)
+
+if [ "$SYM" != "" ]
+	then
+		LIB=${SYM%/*}"/"
+fi
+
 APP=`pwd`
 
 exec php -q ${LIB}cake.php -working "${APP}" "$@"
