@@ -65,6 +65,7 @@ class BakeShell extends Shell {
  * @return mixed
  */
 	public function main() {
+		Configure::write('debug', 2);
 		Configure::write('Cache.disable', 1);
 
 		if (!is_dir($this->DbConfig->path)) {

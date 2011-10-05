@@ -46,12 +46,13 @@ class BakeTask extends Shell {
 	public $interactive = false;
 
 /**
- * Disable caching for baking.
+ * Disable caching and enable debug for baking.
  * This forces the most current database schema to be used.
  *
  * @return void
  */
 	function startup() {
+		Configure::write('debug', 2);
 		Configure::write('Cache.disable', 1);
 		parent::startup();
 	}
