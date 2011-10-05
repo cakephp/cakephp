@@ -359,8 +359,13 @@ class App {
 			}
 		}
 
+		if (empty($paths)) {
+			self::$_packages = $defaults;
+			return;
+		}
+
 		foreach ($defaults as $type => $default) {
-			if (empty(self::$_packages[$type]) || empty($paths)) {
+			if (empty(self::$_packages[$type])) {
 				self::$_packages[$type] = $default;
 			}
 
