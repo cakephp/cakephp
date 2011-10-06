@@ -275,7 +275,7 @@ class App {
 				self::$_packages[$type] = (array)$new;
 				self::objects($type, null, false);
 			}
-			return $paths;
+			return;
 		}
 
 		if (empty(self::$_packageFormat)) {
