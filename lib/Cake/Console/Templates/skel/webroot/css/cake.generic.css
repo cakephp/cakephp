@@ -354,6 +354,7 @@ input[type=submit] {
 }
 form .submit input[type=submit] {
 	background:#62af56;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#76BF6B), to(#3B8230));
 	background-image: -webkit-linear-gradient(top, #76BF6B, #3B8230);
 	background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
 	border-color: #2d6324;
@@ -414,6 +415,7 @@ p.error,
 	background-repeat: repeat-x;
 	background-image: -moz-linear-gradient(top, #ffcc00, #E6B800);
 	background-image: -ms-linear-gradient(top, #ffcc00, #E6B800);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ffcc00), to(#E6B800));
 	background-image: -webkit-linear-gradient(top, #ffcc00, #E6B800);
 	background-image: -o-linear-gradient(top, #ffcc00, #E6B800);
 	background-image: linear-gradient(top, #ffcc00, #E6B800);
@@ -442,6 +444,7 @@ p.error,
 	background-repeat: repeat-x;
 	background-image: -moz-linear-gradient(top, #ee5f5b, #c43c35);
 	background-image: -ms-linear-gradient(top, #ee5f5b, #c43c35);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ee5f5b), to(#c43c35));
 	background-image: -webkit-linear-gradient(top, #ee5f5b, #c43c35);
 	background-image: -o-linear-gradient(top, #ee5f5b, #c43c35);
 	background-image: linear-gradient(top, #ee5f5b, #c43c35);
@@ -453,6 +456,7 @@ p.error,
 	border: 1px solid rgba(0, 0, 0, 0.5);
 	background: #3B8230;
 	background-repeat: repeat-x;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#76BF6B), to(#3B8230));
 	background-image: -webkit-linear-gradient(top, #76BF6B, #3B8230);
 	background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
 	background-image: -ms-linear-gradient(top, #76BF6B, #3B8230);
@@ -505,6 +509,7 @@ input[type=submit],
 	font-weight:normal;
 	padding: 4px 8px;
 	background: #dcdcdc;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#dcdcdc));
 	background-image: -webkit-linear-gradient(top, #fefefe, #dcdcdc);
 	background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);
 	background-image: -ms-linear-gradient(top, #fefefe, #dcdcdc);
@@ -534,6 +539,7 @@ input[type=submit]:active,
 .actions ul li a:active,
 .actions a:active {
 	background: #eee;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#dfdfdf), to(#eee));
 	background-image: -webkit-linear-gradient(top, #dfdfdf, #eee);
 	background-image: -moz-linear-gradient(top, #dfdfdf, #eee);
 	background-image: -ms-linear-gradient(top, #dfdfdf, #eee);

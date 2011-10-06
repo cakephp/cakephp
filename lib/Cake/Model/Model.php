@@ -177,12 +177,12 @@ class Model extends Object {
  * public $validate = array(
  *     'login' => array(
  *         array(
- *             'role' => 'alphaNumeric',
+ *             'rule' => 'alphaNumeric',
  *             'message' => 'Only alphabets and numbers allowed',
  *             'last' => true
  *         ),
  *         array(
- *             'role' => array('minLength', 8),
+ *             'rule' => array('minLength', 8),
  *             'message' => array('Minimum length of %d characters')
  *         )
  *     )
@@ -191,7 +191,7 @@ class Model extends Object {
  *
  * ### Valid keys in validations
  *
- * - `role`: String with method name, regular expression (started by slash) or array with method and parameters
+ * - `rule`: String with method name, regular expression (started by slash) or array with method and parameters
  * - `message`: String with the message or array if have multiple parameters. See http://php.net/sprintf
  * - `last`: Boolean value to indicate if continue validating the others rules if the current fail [Default: true]
  * - `required`: Boolean value to indicate if the field must be present on save
