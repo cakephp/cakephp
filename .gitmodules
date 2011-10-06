@@ -1,3 +1,0 @@
-[submodule "plugins/Migration"]
-	path = plugins/Migration
-	url = git@github.com:tPl0ch/migrations.git
