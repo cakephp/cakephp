@@ -159,7 +159,11 @@ class Dispatcher {
 		if (!$ctrlClass) {
 			return false;
 		}
-		return new $ctrlClass($request, $response);
+		$reflection = new ReflectionClass($ctrlClass);
+		if ($reflection->isAbstract() || $reflection->isInterface()) {
+			return false;
+		}
+		return $reflection->newInstance($request, $response);
 	}
 
 /**

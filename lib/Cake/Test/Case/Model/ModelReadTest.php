@@ -4750,7 +4750,7 @@ class ModelReadTest extends BaseModelTest {
  *
  * @return void
  */
-	public function bindWithCustomPrimaryKey() {
+	public function testBindWithCustomPrimaryKey() {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Model = ClassRegistry::init('StoriesTag');
 		$Model->bindModel(array(
@@ -5234,7 +5234,7 @@ class ModelReadTest extends BaseModelTest {
 				'group' => null,
 				'joins' => array(array(
 					'alias' => 'ArticlesTag',
-					'table' => $this->db->fullTableName('articles_tags'),
+					'table' => 'articles_tags',
 					'conditions' => array(
 						array("ArticlesTag.article_id" => '{$__cakeID__$}'),
 						array("ArticlesTag.tag_id" => $this->db->identifier('Tag.id'))
@@ -6592,8 +6592,11 @@ class ModelReadTest extends BaseModelTest {
 
 		$Article = new Article();
 		$Article->recursive = -1;
-		$expected = count($Article->find('all', array('group' => 'Article.user_id')));
-		$result = $Article->find('count', array('group' => 'Article.user_id'));
+		$expected = count($Article->find('all', array(
+			'fields' => array('Article.user_id'),
+			'group' => 'Article.user_id')
+		));
+		$result = $Article->find('count', array('group' => array('Article.user_id')));
 		$this->assertEquals($expected, $result);
 	}
 

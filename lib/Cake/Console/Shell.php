@@ -351,7 +351,8 @@ class Shell extends Object {
 			$this->OptionParser = $this->getOptionParser();
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 		} catch (ConsoleException $e) {
-			return $this->out($this->OptionParser->help($command));
+			$this->out($this->OptionParser->help($command));
+			return false;
 		}
 
 		$this->command = $command;
@@ -373,7 +374,8 @@ class Shell extends Object {
 		if ($isMain) {
 			return $this->main();
 		}
-		return $this->out($this->OptionParser->help($command));
+		$this->out($this->OptionParser->help($command));
+		return false;
 	}
 
 /**

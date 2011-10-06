@@ -238,6 +238,45 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * testFindWithJoinsOption method
+ *
+ * @access public
+ * @return void
+ */
+	function testFindWithJoinsOption() {
+		$this->loadFixtures('Article', 'User');
+		$TestUser =& new User();
+
+		$options = array (
+			'fields' => array(
+				'user',
+				'Article.published',
+			),
+			'joins' => array (
+				array (
+					'table' => 'articles',
+					'alias' => 'Article',
+					'type'  => 'LEFT',
+					'conditions' => array(
+						'User.id = Article.user_id',
+					),
+				),
+			),
+			'group' => array('User.user', 'Article.published'),
+			'recursive' => -1,
+			'order' => array('User.user')
+		);
+		$result = $TestUser->find('all', $options);
+		$expected = array(
+			array('User' => array('user' => 'garrett'), 'Article' => array('published' => '')),
+			array('User' => array('user' => 'larry'), 'Article' => array('published' => 'Y')),
+			array('User' => array('user' => 'mariano'), 'Article' => array('published' => 'Y')),
+			array('User' => array('user' => 'nate'), 'Article' => array('published' => ''))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * Tests cross database joins.  Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
  * or one connection will step on the other.
@@ -1600,46 +1639,51 @@ class ModelIntegrationTest extends BaseModelTest {
 				'title' => 'First Post',
 				'body' => 'First Post Body',
 				'published' => 'Y',
-				'created' => '2007-03-18 10:39:23',
-				'updated' => $ts),
-				'SomethingElse' => array(
-					array(
-						'id' => '1',
-						'title' => 'First Post',
-						'body' => 'First Post Body',
-						'published' => 'Y',
-						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31',
-						'JoinThing' => array(
-							'doomed' => true,
-							'something_id' => '1',
-							'something_else_id' => '1'
-					)),
-					array(
-						'id' => '2',
-						'title' => 'Second Post',
-						'body' => 'Second Post Body',
-						'published' => 'Y',
-						'created' => '2007-03-18 10:41:23',
-						'updated' => '2007-03-18 10:43:31',
-						'JoinThing' => array(
-							'doomed' => true,
-							'something_id' => '1',
-							'something_else_id' => '2'
-					)),
-					array(
-						'id' => '3',
-						'title' => 'Third Post',
-						'body' => 'Third Post Body',
-						'published' => 'Y',
-						'created' => '2007-03-18 10:43:23',
-						'updated' => '2007-03-18 10:45:31',
-						'JoinThing' => array(
-							'doomed' => false,
-							'something_id' => '1',
-							'something_else_id' => '3'
-		))));
-
+				'created' => '2007-03-18 10:39:23'
+			),
+			'SomethingElse' => array(
+				array(
+					'id' => '1',
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'JoinThing' => array(
+						'doomed' => true,
+						'something_id' => '1',
+						'something_else_id' => '1'
+				)
+			),
+				array(
+					'id' => '2',
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'JoinThing' => array(
+						'doomed' => true,
+						'something_id' => '1',
+						'something_else_id' => '2'
+				)
+			),
+				array(
+					'id' => '3',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'JoinThing' => array(
+						'doomed' => false,
+						'something_id' => '1',
+						'something_else_id' => '3')
+					)
+				)
+			);
+		$this->assertTrue($result['Something']['updated'] >= $ts);
+		unset($result['Something']['updated']);
 		$this->assertEqual($expected, $result);
 	}
 

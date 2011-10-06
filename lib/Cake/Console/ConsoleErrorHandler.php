@@ -25,7 +25,7 @@ App::uses('CakeLog', 'Log');
  *
  * @package       Cake.Console
  */
-class ConsoleErrorHandler extends ErrorHandler {
+class ConsoleErrorHandler {
 
 /**
  * Standard error stream.
@@ -52,12 +52,13 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @param Exception $exception The exception to handle
  * @return void
  */
-	public static function handleException(Exception $exception) {
+	public function handleException(Exception $exception) {
 		$stderr = self::getStderr();
 		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
 			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
+		$this->_stop($exception->getCode() ? $exception->getCode() : 1);
 	}
 
 /**
@@ -71,18 +72,27 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @param array $context The backtrace of the error.
  * @return void
  */
-	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+	public function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() === 0) {
 			return;
 		}
 		$stderr = self::getStderr();
-		list($name, $log) = self::_mapErrorCode($code);
+		list($name, $log) = ErrorHandler::mapErrorCode($code);
 		$message = __d('cake_console', '%s in [%s, line %s]', $description, $file, $line);
 		$stderr->write(__d('cake_console', "<error>%s Error:</error> %s\n", $name, $message));
 
 		if (Configure::read('debug') == 0) {
 			CakeLog::write($log, $message);
 		}
+	}
+
+/**
+ * Wrapper for exit(), used for testing.
+ *
+ * @param $code int The exit code.
+ */
+	protected function _stop($code = 0) {
+		exit($code);
 	}
 
 }

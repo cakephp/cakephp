@@ -460,7 +460,11 @@ class DboSource extends DataSource {
  * @return string Error message with error number
  */
 	public function lastError(PDOStatement $query = null) {
-		$error = $query->errorInfo();
+		if ($query) {
+			$error = $query->errorInfo();
+		} else {
+			$error = $this->_connection->errorInfo();
+		}
 		if (empty($error[2])) {
 			return null;
 		}
@@ -1484,7 +1488,7 @@ class DboSource extends DataSource {
 					$query += array('order' => $assocData['order'], 'limit' => $assocData['limit']);
 				} else {
 					$join = array(
-						'table' => $this->fullTableName($linkModel),
+						'table' => $linkModel,
 						'alias' => $association,
 						'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 						'conditions' => trim($this->conditions($conditions, true, false, $model))
@@ -1523,7 +1527,7 @@ class DboSource extends DataSource {
 					$joinKeys = array($assocData['foreignKey'], $assocData['associationForeignKey']);
 					list($with, $joinFields) = $model->joinModel($assocData['with'], $joinKeys);
 
-					$joinTbl = $this->fullTableName($model->{$with});
+					$joinTbl = $model->{$with};
 					$joinAlias = $joinTbl;
 
 					if (is_array($joinFields) && !empty($joinFields)) {
@@ -1533,8 +1537,8 @@ class DboSource extends DataSource {
 						$joinFields = array();
 					}
 				} else {
-					$joinTbl = $this->fullTableName($assocData['joinTable']);
-					$joinAlias = $joinTbl;
+					$joinTbl = $assocData['joinTable'];
+					$joinAlias = $this->fullTableName($assocData['joinTable']);
 				}
 				$query = array(
 					'conditions' => $assocData['conditions'],
@@ -1617,6 +1621,9 @@ class DboSource extends DataSource {
 		}
 		if (!empty($data['conditions'])) {
 			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
+		}
+		if (!empty($data['table'])) {
+			$data['table'] = $this->fullTableName($data['table']);
 		}
 		return $this->renderJoinStatement($data);
 	}
@@ -1900,7 +1907,7 @@ class DboSource extends DataSource {
 			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig && $model->{$assoc}->getDataSource()) {
 				$assocData = $model->getAssociated($assoc);
 				$join[] = $this->buildJoinStatement(array(
-					'table' => $this->fullTableName($model->{$assoc}),
+					'table' => $model->{$assoc},
 					'alias' => $assoc,
 					'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 					'conditions' => trim($this->conditions(
@@ -2443,7 +2450,7 @@ class DboSource extends DataSource {
 				break;
 			}
 			$value = "({$value})";
-		} elseif ($null) {
+		} elseif ($null || $value === 'NULL') {
 			switch ($operator) {
 				case '=':
 					$operator = 'IS';

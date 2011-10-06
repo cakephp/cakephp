@@ -3,16 +3,16 @@ $output = "
 <iframe src=\"http://cakephp.org/bake-banner\" width=\"830\" height=\"160\" style=\"overflow:hidden; border:none;\">
 	<p>For updates and important announcements, visit http://cakefest.org</p>
 </iframe>\n";
-$output = "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
+$output .= "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
 $output .="
 <?php
 App::uses('Debugger', 'Utility');
-if (Configure::read() > 0):
+if (Configure::read('debug') > 0):
 	Debugger::checkSecurityKeys();
 endif;
 ?>
 <p>
-<?php 
+<?php
 	if (version_compare(PHP_VERSION, '5.2.6', '>=')):
 		echo '<span class=\"notice success\">';
 			echo __d('cake_dev', 'Your version of PHP is 5.2.6 or higher.');

@@ -15,7 +15,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require 'PHPUnit/TextUI/TestRunner.php';
+require_once 'PHPUnit/TextUI/TestRunner.php';
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 

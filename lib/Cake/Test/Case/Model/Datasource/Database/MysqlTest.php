@@ -65,7 +65,7 @@ class MysqlTest extends CakeTestCase {
 		}
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
-		$this->model = new MysqlTestModel();
+		$this->model = ClassRegistry::init('MysqlTestModel');
 	}
 
 /**
@@ -978,6 +978,7 @@ class MysqlTest extends CakeTestCase {
 			'offset' => array(),
 			'group' => array()
 		);
+		$queryData['joins'][0]['table'] = $this->Dbo->fullTableName($queryData['joins'][0]['table']);
 		$this->assertEqual($queryData, $expected);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -2219,9 +2220,14 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE `Book`.`id` = 0";
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Dbo->conditions(array("Book.id" => NULL));
+		$result = $this->Dbo->conditions(array("Book.id" => null));
 		$expected = " WHERE `Book`.`id` IS NULL";
 		$this->assertEqual($expected, $result);
+
+		$conditions = array('MysqlModel.id' => '');
+		$result = $this->Dbo->conditions($conditions, true, true, $this->model);
+		$expected = " WHERE `MysqlModel`.`id` IS NULL";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";

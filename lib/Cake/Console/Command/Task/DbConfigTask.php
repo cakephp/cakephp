@@ -353,16 +353,16 @@ class DbConfigTask extends Shell {
  */
 	public function getConfig() {
 		App::uses('ConnectionManager', 'Model');
+		$configs = ConnectionManager::enumConnectionObjects();
 
-		$useDbConfig = 'default';
-		$configs = get_class_vars($this->databaseClassName);
-		if (!is_array($configs)) {
+		$useDbConfig = key($configs);
+		if (!is_array($configs) || empty($configs)) {
 			return $this->execute();
 		}
-
 		$connections = array_keys($configs);
+
 		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') .':', $connections, 'default');
+			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') .':', $connections, $useDbConfig);
 		}
 		return $useDbConfig;
 	}

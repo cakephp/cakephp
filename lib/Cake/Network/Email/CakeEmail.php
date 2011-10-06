@@ -187,7 +187,7 @@ class CakeEmail {
  *
  * @var array
  */
-	protected $_helpers = array();
+	protected $_helpers = array('Html');
 
 /**
  * Text message
@@ -626,7 +626,7 @@ class CakeEmail {
 		}
 		if ($this->_messageId !== false) {
 			if ($this->_messageId === true) {
-				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
+				$headers['Message-ID'] = '<' . str_replace('-', '', String::UUID()) . '@' . env('HTTP_HOST') . '>';
 			} else {
 				$headers['Message-ID'] = $this->_messageId;
 			}
@@ -639,9 +639,6 @@ class CakeEmail {
 		$headers['MIME-Version'] = '1.0';
 		if (!empty($this->_attachments)) {
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
-			$headers[] = 'This part of the E-mail should never be seen. If';
-			$headers[] = 'you are reading this, consider upgrading your e-mail';
-			$headers[] = 'client to a MIME-compatible client.';
 		} elseif ($this->_emailFormat === 'text') {
 			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
 		} elseif ($this->_emailFormat === 'html') {
@@ -1054,7 +1051,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_viewRender = 'View';
 		$this->_viewVars = array();
-		$this->_helpers = array();
+		$this->_helpers = array('Html');
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
 		$this->_message = '';

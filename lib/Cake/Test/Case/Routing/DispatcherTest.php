@@ -64,6 +64,14 @@ class TestDispatcher extends Dispatcher {
 class MyPluginAppController extends AppController {
 }
 
+abstract class DispatcherTestAbstractController extends Controller {
+	abstract public function index();
+}
+
+interface DispatcherTestInterfaceController {
+	public function index();
+}
+
 /**
  * MyPluginController class
  *
@@ -680,6 +688,41 @@ class DispatcherTest extends CakeTestCase {
 		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
 
+/**
+ * testMissingControllerInterface method
+ *
+ * @expectedException MissingControllerException
+ * @expectedExceptionMessage Controller class DispatcherTestInterfaceController could not be found.
+ * @return void
+ */
+	public function testMissingControllerInterface() {
+		Router::connect('/:controller/:action/*');
+
+		$Dispatcher = new TestDispatcher();
+		Configure::write('App.baseUrl', '/index.php');
+		$url = new CakeRequest('dispatcher_test_interface/index');
+		$response = $this->getMock('CakeResponse');
+
+		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
+	}
+
+/**
+ * testMissingControllerInterface method
+ *
+ * @expectedException MissingControllerException
+ * @expectedExceptionMessage Controller class DispatcherTestAbstractController could not be found.
+ * @return void
+ */
+	public function testMissingControllerAbstract() {
+		Router::connect('/:controller/:action/*');
+
+		$Dispatcher = new TestDispatcher();
+		Configure::write('App.baseUrl', '/index.php');
+		$url = new CakeRequest('dispatcher_test_abstract/index');
+		$response = $this->getMock('CakeResponse');
+
+		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
+	}
 /**
  * testDispatch method
  *

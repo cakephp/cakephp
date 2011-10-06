@@ -3504,6 +3504,41 @@ class ContainableBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * test that bindModel and unbindModel work with find() calls in between.
+ */
+	function testBindMultipleTimesWithFind() {
+		$binding = array(
+			'hasOne' => array(
+				'ArticlesTag' => array(
+					'foreignKey' => false,
+					'type' => 'INNER',
+					'conditions' => array(
+						'ArticlesTag.article_id = Article.id'
+					)
+				),
+				'Tag' => array(
+					'type' => 'INNER',
+					'foreignKey' => false,
+					'conditions' => array(
+						'ArticlesTag.tag_id = Tag.id'
+					)
+				)
+			)
+		);
+		$this->Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')));
+		$this->Article->bindModel($binding);
+		$result = $this->Article->find('all', array('limit' => 1, 'contain' => array('ArticlesTag', 'Tag')));
+
+		$this->Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')));
+		$this->Article->bindModel($binding);
+		$result = $this->Article->find('all', array('limit' => 1, 'contain' => array('ArticlesTag', 'Tag')));
+
+		$associated = $this->Article->getAssociated();
+		$this->assertEqual('hasAndBelongsToMany', $associated['Tag']);
+		$this->assertFalse(isset($associated['ArticleTag']));
+	}
+
+/**
  * test that autoFields doesn't splice in fields from other databases.
  *
  * @return void
