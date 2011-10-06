@@ -177,12 +177,12 @@ class Model extends Object {
  * public $validate = array(
  *     'login' => array(
  *         array(
- *             'role' => 'alphaNumeric',
+ *             'rule' => 'alphaNumeric',
  *             'message' => 'Only alphabets and numbers allowed',
  *             'last' => true
  *         ),
  *         array(
- *             'role' => array('minLength', 8),
+ *             'rule' => array('minLength', 8),
  *             'message' => array('Minimum length of %d characters')
  *         )
  *     )
