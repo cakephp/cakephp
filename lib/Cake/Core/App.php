@@ -260,6 +260,27 @@ class App {
  * @return void
  */
 	public static function build($paths = array(), $mode = App::PREPEND) {
+		if ($mode === App::RESET) {
+			foreach ($paths as $type => $new) {
+				if (!empty(self::$legacy[$type])) {
+					$type = self::$legacy[$type];
+				}
+				self::$_packages[$type] = (array)$new;
+				self::objects($type, null, false);
+			}
+			return $paths;
+		}
+
+		//Provides Backwards compatibility for old-style package names
+		$legacyPaths = array();
+		foreach ($paths as $type => $path) {
+			if (!empty(self::$legacy[$type])) {
+				$type = self::$legacy[$type];
+			}
+			$legacyPaths[$type] = $path;
+		}
+		$paths = $legacyPaths;
+
 		if (empty(self::$_packageFormat)) {
 			self::$_packageFormat = array(
 				'Model' => array(
@@ -333,27 +354,6 @@ class App {
 			);
 		}
 
-		if ($mode === App::RESET) {
-			foreach ($paths as $type => $new) {
-				if (!empty(self::$legacy[$type])) {
-					$type = self::$legacy[$type];
-				}
-				self::$_packages[$type] = (array)$new;
-				self::objects($type, null, false);
-			}
-			return $paths;
-		}
-
-		//Provides Backwards compatibility for old-style package names
-		$legacyPaths = array();
-		foreach ($paths as $type => $path) {
-			if (!empty(self::$legacy[$type])) {
-				$type = self::$legacy[$type];
-			}
-			$legacyPaths[$type] = $path;
-		}
-
-		$paths = $legacyPaths;
 		$defaults = array();
 		foreach (self::$_packageFormat as $package => $format) {
 			foreach ($format as $f) {
