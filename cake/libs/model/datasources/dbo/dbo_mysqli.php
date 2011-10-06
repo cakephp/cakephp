@@ -188,6 +188,9 @@ class DboMysqli extends DboMysqlBase {
 				if ($data === '') {
 					return 'NULL';
 				}
+				if (is_float($data)) {
+					return str_replace(',', '.', strval($data));
+				}
 				if ((is_int($data) || is_float($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
 					$data[0] != '0' && strpos($data, 'e') === false)) {
