@@ -258,6 +258,6 @@ class ThemeViewTest extends CakeTestCase {
 			$View->element('test_element');
 		}
 		$end = memory_get_usage();
-		$this->assertLessThanOrEqual($start + 4500, $end);
+		$this->assertLessThanOrEqual($start + 5000, $end);
 	}
 }
