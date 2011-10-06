@@ -214,8 +214,9 @@ class App {
 		if (!empty($plugin)) {
 			$path = array();
 			$pluginPath = self::pluginPath($plugin);
-			if (!empty(self::$_packageFormat[$type])) {
-				foreach (self::$_packageFormat[$type] as $f) {
+			$packageFormat= self::_packageFormat();
+			if (!empty($packageFormat[$type])) {
+				foreach ($packageFormat[$type] as $f) {
 					$path[] = sprintf($f, $pluginPath);
 				}
 			}
@@ -260,88 +261,6 @@ class App {
  * @return void
  */
 	public static function build($paths = array(), $mode = App::PREPEND) {
-		if (empty(self::$_packageFormat)) {
-			self::$_packageFormat = array(
-				'Model' => array(
-					'%s' . 'Model' . DS,
-					'%s' . 'models' . DS
-				),
-				'Model/Behavior' => array(
-					'%s' . 'Model' . DS . 'Behavior' . DS,
-					'%s' . 'models' . DS . 'behaviors' . DS
-				),
-				'Model/Datasource' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS,
-					'%s' . 'models' . DS . 'datasources' . DS
-				),
-				'Model/Datasource/Database' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS,
-					'%s' . 'models' . DS . 'datasources' . DS . 'database' . DS
-				),
-				'Model/Datasource/Session' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS,
-					'%s' . 'models' . DS . 'datasources' . DS . 'session' . DS
-				),
-				'Controller' => array(
-					'%s' . 'Controller' . DS,
-					'%s' . 'controllers' . DS
-				),
-				'Controller/Component' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS,
-					'%s' . 'controllers' . DS . 'components' . DS
-				),
-				'Controller/Component/Auth' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS,
-					'%s' . 'controllers' . DS . 'components' . DS . 'auth' . DS
-				),
-				'View' => array(
-					'%s' . 'View' . DS,
-					'%s' . 'views' . DS
-				),
-				'View/Helper' => array(
-					'%s' . 'View' . DS . 'Helper' . DS,
-					'%s' . 'views' . DS . 'helpers' . DS
-				),
-				'Console' => array(
-					'%s' . 'Console' . DS,
-					'%s' . 'console' . DS
-				),
-				'Console/Command' => array(
-					'%s' . 'Console' . DS . 'Command' . DS,
-					'%s' . 'console' . DS . 'shells' . DS,
-				),
-				'Console/Command/Task' => array(
-					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS,
-					'%s' . 'console' . DS . 'shells' . DS . 'tasks' . DS
-				),
-				'Lib' => array(
-					'%s' . 'Lib' . DS,
-					'%s' . 'libs' . DS
-				),
-				'locales' => array(
-					'%s' . 'Locale' . DS,
-					'%s' . 'locale' . DS
-				),
-				'Vendor' => array('%s' . 'Vendor' . DS, VENDORS),
-				'Plugin' => array(
-					APP . 'Plugin' . DS,
-					APP . 'plugins' . DS,
-					dirname(dirname(CAKE)) . DS . 'plugins' . DS,
-				)
-			);
-		}
-
-		if ($mode === App::RESET) {
-			foreach ($paths as $type => $new) {
-				if (!empty(self::$legacy[$type])) {
-					$type = self::$legacy[$type];
-				}
-				self::$_packages[$type] = (array)$new;
-				self::objects($type, null, false);
-			}
-			return $paths;
-		}
-
 		//Provides Backwards compatibility for old-style package names
 		$legacyPaths = array();
 		foreach ($paths as $type => $path) {
@@ -350,10 +269,20 @@ class App {
 			}
 			$legacyPaths[$type] = $path;
 		}
-
 		$paths = $legacyPaths;
+
+		if ($mode === App::RESET) {
+			foreach ($paths as $type => $new) {
+				self::$_packages[$type] = (array)$new;
+				self::objects($type, null, false);
+			}
+			return;
+		}
+
+		$packageFormat = self::_packageFormat();
+
 		$defaults = array();
-		foreach (self::$_packageFormat as $package => $format) {
+		foreach ($packageFormat as $package => $format) {
 			foreach ($format as $f) {
 				$defaults[$package][] = sprintf($f, APP);
 			}
@@ -851,6 +780,83 @@ class App {
 			return self::$_map[$name];
 		}
 		return false;
+	}
+
+	protected static function _packageFormat() {
+		if (empty(self::$_packageFormat)) {
+			self::$_packageFormat = array(
+				'Model' => array(
+					'%s' . 'Model' . DS,
+					'%s' . 'models' . DS
+				),
+				'Model/Behavior' => array(
+					'%s' . 'Model' . DS . 'Behavior' . DS,
+					'%s' . 'models' . DS . 'behaviors' . DS
+				),
+				'Model/Datasource' => array(
+					'%s' . 'Model' . DS . 'Datasource' . DS,
+					'%s' . 'models' . DS . 'datasources' . DS
+				),
+				'Model/Datasource/Database' => array(
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS,
+					'%s' . 'models' . DS . 'datasources' . DS . 'database' . DS
+				),
+				'Model/Datasource/Session' => array(
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS,
+					'%s' . 'models' . DS . 'datasources' . DS . 'session' . DS
+				),
+				'Controller' => array(
+					'%s' . 'Controller' . DS,
+					'%s' . 'controllers' . DS
+				),
+				'Controller/Component' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS,
+					'%s' . 'controllers' . DS . 'components' . DS
+				),
+				'Controller/Component/Auth' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS,
+					'%s' . 'controllers' . DS . 'components' . DS . 'auth' . DS
+				),
+				'View' => array(
+					'%s' . 'View' . DS,
+					'%s' . 'views' . DS
+				),
+				'View/Helper' => array(
+					'%s' . 'View' . DS . 'Helper' . DS,
+					'%s' . 'views' . DS . 'helpers' . DS
+				),
+				'Console' => array(
+					'%s' . 'Console' . DS,
+					'%s' . 'console' . DS
+				),
+				'Console/Command' => array(
+					'%s' . 'Console' . DS . 'Command' . DS,
+					'%s' . 'console' . DS . 'shells' . DS,
+				),
+				'Console/Command/Task' => array(
+					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS,
+					'%s' . 'console' . DS . 'shells' . DS . 'tasks' . DS
+				),
+				'Lib' => array(
+					'%s' . 'Lib' . DS,
+					'%s' . 'libs' . DS
+				),
+				'locales' => array(
+					'%s' . 'Locale' . DS,
+					'%s' . 'locale' . DS
+				),
+				'Vendor' => array(
+					'%s' . 'Vendor' . DS, VENDORS
+				),
+				'Plugin' => array(
+					APP . 'Plugin' . DS,
+					APP . 'plugins' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+				)
+			);
+		}
+
+		return self::$_packageFormat;
 	}
 
 /**

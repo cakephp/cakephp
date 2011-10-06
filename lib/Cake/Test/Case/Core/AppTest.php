@@ -345,7 +345,7 @@ class AppTest extends CakeTestCase {
 		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array(
 			'plugins' => array($path)
-		), true);
+		), App::RESET);
 		mkdir($path . '.svn');
 		$result = App::objects('plugin', null, false);
 		rmdir($path . '.svn');
@@ -362,7 +362,7 @@ class AppTest extends CakeTestCase {
 		App::build(array(
 			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		CakePlugin::loadAll();
 
 		$result = App::objects('TestPlugin.model');
