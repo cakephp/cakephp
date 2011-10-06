@@ -125,7 +125,7 @@ class ShellDispatcher {
 		define('APP', $this->params['working'] . DS);
 		define('WWW_ROOT', APP . $this->params['webroot'] . DS);
 		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
-			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'tmp' . DS);
+			define('TMP', sys_get_temp_dir());
 		}
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
