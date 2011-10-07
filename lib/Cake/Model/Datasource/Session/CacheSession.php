@@ -88,4 +88,13 @@ class CacheSession implements CakeSessionHandlerInterface {
 	public function gc($expires = null) {
 		return Cache::gc();
 	}
+
+/**
+ * Closes the session before the objects handling it become unavailable
+ *
+ * @return void
+ */
+	public function __destruct() {
+		session_write_close();
+	}
 }
