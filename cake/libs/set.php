@@ -327,7 +327,7 @@ class Set {
 			for ($j = 0; $j < $count; $j++) {
 				$args = array();
 				for ($i = 0; $i < $count2; $i++) {
-					if (isset($data[$i][$j])) {
+					if (isset($data[$i][$j]) || $data[$i][$j] === null) {
 						$args[] = $data[$i][$j];
 					}
 				}
