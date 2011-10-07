@@ -2278,7 +2278,7 @@ class Model extends Object {
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			list($plugin, $joinModel) = pluginSplit($data['with']);
 			$records = $this->{$joinModel}->find('all', array(
-				'conditions' => array_merge(array($this->{$joinModel}->escapeField($data['foreignKey']) => $id)),
+				'conditions' => array($this->{$joinModel}->escapeField($data['foreignKey']) => $id),
 				'fields' => $this->{$joinModel}->primaryKey,
 				'recursive' => -1,
 				'callbacks' => false
