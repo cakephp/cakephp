@@ -10,15 +10,24 @@
 # Licensed under The MIT License
 # Redistributions of files must retain the above copyright notice.
 #
-# @copyright		Copyright 2005-2011, Cake Software Foundation, Inc.
-# @link				http://cakephp.org CakePHP(tm) Project
-# @package			cake
-# @subpackage		cake.cake.console
-# @since				CakePHP(tm) v 1.2.0.5012
-# @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
+# @copyright            Copyright 2005-2011, Cake Software Foundation, Inc.
+# @link                 http://cakephp.org CakePHP(tm) Project
+# @package              Cake
+# @subpackage           Cake.Console
+# @since                CakePHP(tm) v 1.2.0.5012
+# @license              MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 ################################################################################
-LIB=${0/%cake/}
+LIB=${0}
+SYM=$(readlink "$0")
+
+if [ ! -n "$SYM" ]
+        then
+                LIB=${LIB%/*}"/"
+        else
+                LIB=${SYM%/*}"/"
+fi
+
 APP=`pwd`
 
 exec php -q ${LIB}cake.php -working "${APP}" "$@"
