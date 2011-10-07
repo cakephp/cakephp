@@ -715,7 +715,6 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->request->params['named'] = array(
@@ -750,28 +749,27 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	function testPaginateOrderVirtualFieldSharedWithRealField() {
-		$Controller =& new Controller();
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->request->params['url'] = array();
+		$Controller =& new Controller($this->request);
+		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->constructClasses();
-		$Controller->ControllerComment->virtualFields = array(
-			'title' => 'ControllerComment.comment'
+		$Controller->PaginatorControllerComment->virtualFields = array(
+			'title' => 'PaginatorControllerComment.comment'
 		);
-		$Controller->ControllerComment->bindModel(array(
+		$Controller->PaginatorControllerComment->bindModel(array(
 			'belongsTo' => array(
-				'ControllerPost' => array(
-					'className' => 'ControllerPost',
+				'PaginatorControllerPost' => array(
+					'className' => 'PaginatorControllerPost',
 					'foreignKey' => 'article_id'
 				)
 			)
 		), false);
 
 		$Controller->paginate = array(
-			'fields' => array('ControllerComment.id', 'title', 'ControllerPost.title'),
+			'fields' => array('PaginatorControllerComment.id', 'title', 'PaginatorControllerPost.title'),
 		);
-		$Controller->passedArgs = array('sort' => 'ControllerPost.title', 'dir' => 'asc');
-		$result = $Controller->paginate('ControllerComment');
-		$this->assertEqual(Set::extract($result, '{n}.ControllerComment.id'), array(1, 2, 3, 4, 5, 6));
+		$Controller->passedArgs = array('sort' => 'PaginatorControllerPost.title', 'dir' => 'asc');
+		$result = $Controller->paginate('PaginatorControllerComment');
+		$this->assertEqual(Set::extract($result, '{n}.PaginatorControllerComment.id'), array(1, 2, 3, 4, 5, 6));
 	}
 
 }

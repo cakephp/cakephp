@@ -347,10 +347,10 @@ class PostgresTest extends CakeTestCase {
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');
-		$this->assertEqual((string)$result, "3.14159");
+		$this->assertEquals($result, "3.141593");
 
 		$result = $this->db->value(3.14);
-		$this->assertEqual((string)$result, "3.140000");
+		$this->assertEquals($result, "3.140000");
 
 		setlocale(LC_ALL, $restore);
 	}
