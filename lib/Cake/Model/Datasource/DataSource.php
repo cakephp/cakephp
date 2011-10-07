@@ -223,13 +223,11 @@ class DataSource extends Object {
  * To-be-overridden in subclasses.
  *
  * @param Model $model The model class having record(s) deleted
- * @param mixed $id Primary key of the model
+ * @param mixed $conditions The conditions to use for deleting.
  * @return void
  */
 	public function delete(Model $model, $id = null) {
-		if ($id == null) {
-			$id = $model->id;
-		}
+		return false;
 	}
 
 /**

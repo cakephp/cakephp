@@ -340,7 +340,7 @@ class PaginatorComponent extends Component {
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
-			$alias = $object->alias ;
+			$alias = $object->alias;
 			$key = $field = key($options['order']);
 
 			if (strpos($key, '.') !== false) {
@@ -351,7 +351,7 @@ class PaginatorComponent extends Component {
 
 			if ($object->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field, true)) {
+			} elseif ($object->hasField($key, true)) {
 				$options['order'][$field] = $value;
 			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;

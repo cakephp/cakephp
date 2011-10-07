@@ -742,5 +742,36 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '5000');
 		$result = $Controller->paginate('PaginatorControllerPost');
 		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 2000);
+	 }
+
+/**
+ * test paginate() and virtualField overlapping with real fields.
+ *
+ * @return void
+ */
+	function testPaginateOrderVirtualFieldSharedWithRealField() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->request->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->ControllerComment->virtualFields = array(
+			'title' => 'ControllerComment.comment'
+		);
+		$Controller->ControllerComment->bindModel(array(
+			'belongsTo' => array(
+				'ControllerPost' => array(
+					'className' => 'ControllerPost',
+					'foreignKey' => 'article_id'
+				)
+			)
+		), false);
+
+		$Controller->paginate = array(
+			'fields' => array('ControllerComment.id', 'title', 'ControllerPost.title'),
+		);
+		$Controller->passedArgs = array('sort' => 'ControllerPost.title', 'dir' => 'asc');
+		$result = $Controller->paginate('ControllerComment');
+		$this->assertEqual(Set::extract($result, '{n}.ControllerComment.id'), array(1, 2, 3, 4, 5, 6));
 	}
+
 }
