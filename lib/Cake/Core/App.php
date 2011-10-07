@@ -359,22 +359,29 @@ class App {
 			}
 		}
 
-		foreach ($defaults as $type => $default) {
-			if (empty(self::$_packages[$type]) || empty($paths)) {
-				self::$_packages[$type] = $default;
-			}
+		if (empty($paths)) {
+			self::$_packages = $defaults;
+			return;
+		}
 
-			if (!empty($paths[$type])) {
-				if ($mode === App::PREPEND) {
-					$path = array_merge((array)$paths[$type], self::$_packages[$type]);
-				} else {
-					$path = array_merge(self::$_packages[$type], (array)$paths[$type]);
-				}
-			} else {
+		foreach ($defaults as $type => $default) {
+			if (!empty(self::$_packages[$type])) {
 				$path = self::$_packages[$type];
 			}
 
-			self::$_packages[$type] = array_values(array_unique($path));
+			if (!empty($paths[$type])) {
+				$newPath = (array)$paths[$type];
+
+				if ($mode === App::PREPEND) {
+					$path = array_merge($newPath, $path);
+				} else {
+					$path = array_merge($path, $newPath);
+				}
+
+				$path = array_values(array_unique($path));
+			}
+
+			self::$_packages[$type] = $path;
 		}
 	}
 

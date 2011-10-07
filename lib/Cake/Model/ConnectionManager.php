@@ -66,7 +66,6 @@ class ConnectionManager {
 		if (class_exists('DATABASE_CONFIG')) {
 			self::$config = new DATABASE_CONFIG();
 		}
-		register_shutdown_function('ConnectionManager::shutdown');
 		self::$_init = true;
 	}
 
@@ -256,16 +255,5 @@ class ConnectionManager {
 			$classname = basename($classname);
 		}
 		return compact('package', 'classname', 'plugin');
-	}
-
-/**
- * Destructor.
- *
- * @return void
- */
-	public static function shutdown() {
-		if (Configure::read('Session.defaults') == 'database' && function_exists('session_write_close')) {
-			session_write_close();
-		}
 	}
 }

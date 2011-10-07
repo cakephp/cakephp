@@ -124,7 +124,16 @@ class RequestActionController extends Controller {
  * @return array
  */
 	public function params_pass() {
-		return $this->params;
+		return $this->request;
+	}
+
+	public function param_check() {
+		$this->autoRender = false;
+		$content = '';
+		if (isset($this->request->params[0])) {
+			$content = 'return found';
+		}
+		$this->response->body($content);
 	}
 }
 
@@ -565,6 +574,18 @@ class ObjectTest extends CakeTestCase {
 	}
 
 /**
+ * Test that requestAction() does not forward the 0 => return value.
+ *
+ * @return void
+ */
+	public function testRequestActionRemoveReturnParam() {
+		$result = $this->object->requestAction(
+			'/request_action/param_check', array('return')
+		);
+		$this->assertEquals('', $result, 'Return key was found');
+	}
+
+/**
  * Test that requestAction() is populating $this->params properly
  *
  * @return void
@@ -614,14 +635,5 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$_POST = $_tmp;
-	}
-
-/**
- * testCakeError
- *
- * @return void
- */
-	public function testCakeError() {
-
 	}
 }
