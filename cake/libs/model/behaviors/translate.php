@@ -101,13 +101,16 @@ class TranslateBehavior extends ModelBehavior {
 		} else {
 			$tablePrefix = $db->config['prefix'];
 		}
+		$joinTable = new StdClass();
+		$joinTable->tablePrefix = $tablePrefix;
+		$joinTable->table = $RuntimeModel->table;
 
 		if (is_string($query['fields']) && 'COUNT(*) AS '.$db->name('count') == $query['fields']) {
 			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
 			$query['joins'][] = array(
 				'type' => 'INNER',
 				'alias' => $RuntimeModel->alias,
-				'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
+				'table' => $joinTable,
 				'conditions' => array(
 					$model->alias . '.' . $model->primaryKey => $db->identifier($RuntimeModel->alias.'.foreign_key'),
 					$RuntimeModel->alias.'.model' => $model->name,
@@ -170,7 +173,7 @@ class TranslateBehavior extends ModelBehavior {
 						$query['joins'][] = array(
 							'type' => 'LEFT',
 							'alias' => 'I18n__'.$field.'__'.$_locale,
-							'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
+							'table' => $joinTable,
 							'conditions' => array(
 								$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}__{$_locale}.foreign_key"),
 								'I18n__'.$field.'__'.$_locale.'.model' => $model->name,
@@ -184,7 +187,7 @@ class TranslateBehavior extends ModelBehavior {
 					$query['joins'][] = array(
 						'type' => 'LEFT',
 						'alias' => 'I18n__'.$field,
-						'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
+						'table' => $joinTable,
 						'conditions' => array(
 							$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
 							'I18n__'.$field.'.model' => $model->name,
