@@ -260,17 +260,6 @@ class App {
  * @return void
  */
 	public static function build($paths = array(), $mode = App::PREPEND) {
-		if ($mode === App::RESET) {
-			foreach ($paths as $type => $new) {
-				if (!empty(self::$legacy[$type])) {
-					$type = self::$legacy[$type];
-				}
-				self::$_packages[$type] = (array)$new;
-				self::objects($type, null, false);
-			}
-			return $paths;
-		}
-
 		//Provides Backwards compatibility for old-style package names
 		$legacyPaths = array();
 		foreach ($paths as $type => $path) {
@@ -280,6 +269,14 @@ class App {
 			$legacyPaths[$type] = $path;
 		}
 		$paths = $legacyPaths;
+
+		if ($mode === App::RESET) {
+			foreach ($paths as $type => $new) {
+				self::$_packages[$type] = (array)$new;
+				self::objects($type, null, false);
+			}
+			return $paths;
+		}
 
 		if (empty(self::$_packageFormat)) {
 			self::$_packageFormat = array(
