@@ -586,11 +586,19 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(0))->method('trigger')
 			->with('beforeRender', $this->anything());
 		$View->Helpers->expects($this->at(1))->method('trigger')
+			->with('beforeRenderFile', $this->anything());
+		$View->Helpers->expects($this->at(2))->method('trigger')
+			->with('afterRenderFile', $this->anything());
+		$View->Helpers->expects($this->at(3))->method('trigger')
 			->with('afterRender', $this->anything());
 
-		$View->Helpers->expects($this->at(2))->method('trigger')
+		$View->Helpers->expects($this->at(4))->method('trigger')
 			->with('beforeLayout', $this->anything());
-		$View->Helpers->expects($this->at(3))->method('trigger')
+		$View->Helpers->expects($this->at(5))->method('trigger')
+			->with('beforeRenderFile', $this->anything());
+		$View->Helpers->expects($this->at(6))->method('trigger')
+			->with('afterRenderFile', $this->anything());
+		$View->Helpers->expects($this->at(7))->method('trigger')
 			->with('afterLayout', $this->anything());
 
 		$View->render('index');

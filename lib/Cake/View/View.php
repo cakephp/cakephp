@@ -754,7 +754,10 @@ class View extends Object {
 			$data = $this->viewVars;
 		}
 		$this->_current = $viewFile;
+
+		$this->Helpers->trigger('beforeRenderFile', array($viewFile));
 		$content = $this->_evaluate($viewFile, $data);
+		$this->Helpers->trigger('afterRenderFile', array($viewFile));
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');
