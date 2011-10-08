@@ -184,13 +184,6 @@ class View extends Object {
 	public $uuids = array();
 
 /**
- * Holds View output.
- *
- * @var string
- */
-	public $output = false;
-
-/**
  * An instance of a CakeRequest object that contains information about the current request.
  * This object contains all the information about a request and several methods for reading
  * additional information about the request.
@@ -400,7 +393,7 @@ class View extends Object {
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
-		$this->output = null;
+		$this->output = '';
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = self::TYPE_VIEW;
@@ -412,11 +405,8 @@ class View extends Object {
 		if ($layout === null) {
 			$layout = $this->layout;
 		}
-		if ($this->output === false) {
-			throw new CakeException(__d('cake_dev', "Error in view %s, got no content.", $viewFileName));
-		}
 		if ($layout && $this->autoLayout) {
-			$this->output = $this->renderLayout($this->output, $layout);
+			$this->output = $this->renderLayout('', $layout);
 		}
 		$this->hasRendered = true;
 		return $this->output;
@@ -440,18 +430,22 @@ class View extends Object {
  * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.  
  *   Use the `content` block instead.
  *
- * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
+ * @param string $content Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
  * @throws CakeException if there is an error in the view.
  */
-	public function renderLayout($content_for_layout, $layout = null) {
+	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
 		if (empty($layoutFileName)) {
-			return $this->output;
+			return $this->Blocks->get('content');
 		}
+
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
+		}
+		if (empty($content)) {
+			$content = $this->Blocks->get('content');
 		}
 		$this->Helpers->trigger('beforeLayout', array($layoutFileName));
 
@@ -459,19 +453,16 @@ class View extends Object {
 		$scripts .= $this->get('meta') . $this->get('css') . $this->get('script');
 
 		$this->viewVars = array_merge($this->viewVars, array(
-			'content_for_layout' => $content_for_layout,
+			'content_for_layout' => $content,
 			'scripts_for_layout' => $scripts,
 		));
 
 		if (!isset($this->viewVars['title_for_layout'])) {
 			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
+
 		$this->_currentType = self::TYPE_LAYOUT;
 		$this->output = $this->_render($layoutFileName);
-
-		if ($this->output === false) {
-			throw new CakeException(__d('cake_dev', "Error in layout %s, got no content.", $layoutFileName));
-		}
 
 		$this->Helpers->trigger('afterLayout', array($layoutFileName));
 		return $this->output;
@@ -723,8 +714,24 @@ class View extends Object {
 				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
 			case 'params':
 				return $this->request;
+			case 'output':
+				return $this->Blocks->get('content');
 		}
 		return null;
+	}
+
+/**
+ * Magic accessor for deprecated attributes.
+ * 
+ * @param string $name Name of the attribute to set.
+ * @param string $value Value of the attribute to set.
+ * @return mixed
+ */
+	public function __set($name, $value) {
+		switch ($name) {
+			case 'output':
+				return $this->Blocks->set('content', $value);
+		}
 	}
 
 /**
