@@ -70,7 +70,7 @@ class CacheHelper extends AppHelper {
  */
 	public function afterRender($viewFile) {
 		if ($this->_enabled()) {
-			$this->_View->output = $this->cache($viewFile, $this->_View->output, false);
+			$this->_View->output = $this->_parseContent($viewFile, $this->_View->output);
 		}
 	}
 
@@ -82,9 +82,25 @@ class CacheHelper extends AppHelper {
  */
 	public function afterLayout($layoutFile) {
 		if ($this->_enabled()) {
-			$this->_View->output = $this->cache($layoutFile, $this->_View->output, true);
+			$output = $this->_parseContent($layoutFile, $this->_View->output);
+			$this->_View->output = $this->cache($layoutFile, $output);
 		}
 		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
+	}
+
+/**
+ * Parse a file + output.  Matches nocache tags between the current output and the current file
+ * stores a reference of the file, so the generated can be swapped back with the file contents when
+ * writing the cache file.
+ *
+ * @param string $file The filename to process.
+ * @param string $out The output for the file.
+ * @return string Updated content.
+ */
+	protected function _parseContent($file, $out) {
+		$out = preg_replace_callback('/<!--nocache-->/', array($this, '_replaceSection'), $out);
+		$this->_parseFile($file, $out);
+		return $out;
 	}
 
 /**
@@ -92,11 +108,10 @@ class CacheHelper extends AppHelper {
  *
  * @param string $file File to cache
  * @param string $out output to cache
- * @param boolean $cache Whether or not a cache file should be written.
- * @return string view output
+ * @return string view ouput
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
-	public function cache($file, $out, $cache = false) {
+	public function cache($file, $out) {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		$cacheAction = $this->_View->cacheAction;
@@ -135,18 +150,11 @@ class CacheHelper extends AppHelper {
 		}
 
 		if ($cacheTime != '' && $cacheTime > 0) {
-			$out = preg_replace_callback('/<!--nocache-->/', array($this, '_replaceSection'), $out);
-
-			$this->_parseFile($file, $out);
-			if ($cache === true) {
-				$cached = $this->_parseOutput($out);
-				$this->_writeFile($cached, $cacheTime, $useCallbacks);
-				$out = $this->_stripTags($out);
-			}
-			return $out;
-		} else {
-			return $out;
+			$cached = $this->_parseOutput($out);
+			$this->_writeFile($cached, $cacheTime, $useCallbacks);
+			$out = $this->_stripTags($out);
 		}
+		return $out;
 	}
 
 /**

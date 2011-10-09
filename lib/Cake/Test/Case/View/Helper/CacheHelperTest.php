@@ -548,9 +548,10 @@ class CacheHelperTest extends CakeTestCase {
 		$View->cacheAction = '+1 day';
 		$View->output = 'test';
 
-		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
-		$Cache->expects($this->once())->method('cache')
-			->with('posts/index', $View->output, false)
+		$Cache = $this->getMock('CacheHelper', array('_parseContent'), array($View));
+		$Cache->expects($this->once())
+			->method('_parseContent')
+			->with('posts/index', $View->output)
 			->will($this->returnValue(''));
 
 		$Cache->afterRender('posts/index');
@@ -575,8 +576,9 @@ class CacheHelperTest extends CakeTestCase {
 		$View->output = 'test';
 
 		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
-		$Cache->expects($this->once())->method('cache')
-			->with('posts/index', $View->output, true)
+		$Cache->expects($this->once())
+			->method('cache')
+			->with('posts/index', $View->output)
 			->will($this->returnValue(''));
 
 		$Cache->afterLayout('posts/index');
