@@ -704,6 +704,41 @@ class Debugger {
 	}
 
 /**
+ * Get the type of the given variable. Will return the classname
+ * for objects.
+ *
+ * @param mixed $var The variable to get the type of
+ * @return string The type of variable.
+ */
+	public static function getType($var) {
+		if (is_object($var)) {
+			return get_class($var); 
+		}
+		if (is_null($var)) {
+			return 'null';
+		}
+		if (is_string($var)) {
+			return 'string'; 
+		}
+		if (is_array($var)) {
+			return 'array';
+		}
+		if (is_int($var)) {
+			return 'integer'; 
+		}
+		if (is_bool($var)) {
+			return 'boolean'; 
+		}
+		if (is_float($var)) {
+			return 'float'; 
+		}
+		if (is_resource($var)) {
+			return 'resource'; 
+		}
+		return 'unknown'; 
+	}
+
+/**
  * Verifies that the application's salt and cipher seed value has been changed from the default value.
  *
  * @return void
