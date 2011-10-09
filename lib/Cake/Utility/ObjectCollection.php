@@ -117,7 +117,7 @@ abstract class ObjectCollection {
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
 				return $result;
-			} elseif ($options['modParams'] !== false && is_array($result)) {
+			} elseif ($options['modParams'] !== false && !in_array($result, array(true, false, null), true)) {
 				$params[$options['modParams']] = $result;
 			}
 		}
@@ -303,5 +303,4 @@ abstract class ObjectCollection {
 		}
 		return $normal;
 	}
-
 }
