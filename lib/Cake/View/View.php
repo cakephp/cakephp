@@ -764,7 +764,11 @@ class View extends Object {
 
 		$this->Helpers->trigger('beforeRenderFile', array($viewFile));
 		$content = $this->_evaluate($viewFile, $data);
-		$this->Helpers->trigger('afterRenderFile', array($viewFile));
+		$content = $this->Helpers->trigger(
+			'afterRenderFile',
+			array($viewFile, $content),
+			array('modParams' => 1)
+		);
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');
