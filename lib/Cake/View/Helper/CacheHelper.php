@@ -54,14 +54,22 @@ class CacheHelper extends AppHelper {
 	protected $_counter = 0;
 
 /**
+ * Is CacheHelper enabled? should files + output be parsed.
+ *
+ * @return boolean
+ */
+	protected function _enabled() {
+		return (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+	}
+
+/**
  * Parses the view file and stores content for cache file building.
  *
  * @param string $viewFile
  * @return void
  */
 	public function afterRender($viewFile) {
-		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
-		if ($caching) {
+		if ($this->_enabled()) {
 			$this->_View->output = $this->cache($viewFile, $this->_View->output, false);
 		}
 	}
@@ -73,8 +81,7 @@ class CacheHelper extends AppHelper {
  * @return void
  */
 	public function afterLayout($layoutFile) {
-		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
-		if ($caching) {
+		if ($this->_enabled()) {
 			$this->_View->output = $this->cache($layoutFile, $this->_View->output, true);
 		}
 		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
