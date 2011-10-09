@@ -68,9 +68,9 @@ class CacheHelper extends AppHelper {
  * @param string $viewFile
  * @return void
  */
-	public function afterRender($viewFile) {
+	public function afterRenderFile($viewFile, $output) {
 		if ($this->_enabled()) {
-			$this->_View->output = $this->_parseContent($viewFile, $this->_View->output);
+			return $this->_parseContent($viewFile, $output);
 		}
 	}
 
@@ -82,8 +82,7 @@ class CacheHelper extends AppHelper {
  */
 	public function afterLayout($layoutFile) {
 		if ($this->_enabled()) {
-			$output = $this->_parseContent($layoutFile, $this->_View->output);
-			$this->_View->output = $this->cache($layoutFile, $output);
+			$this->_View->output = $this->cache($layoutFile, $this->_View->output);
 		}
 		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
 	}
