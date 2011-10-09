@@ -550,7 +550,9 @@ class CacheHelperTest extends CakeTestCase {
 
 		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
 		$Cache->expects($this->once())->method('cache')
-			->with('posts/index', $View->output, false);
+			->with('posts/index', $View->output, false)
+			->will($this->returnValue(''));
+
 		$Cache->afterRender('posts/index');
 
 		Configure::write('Cache.check', false);
@@ -574,7 +576,9 @@ class CacheHelperTest extends CakeTestCase {
 
 		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
 		$Cache->expects($this->once())->method('cache')
-			->with('posts/index', $View->output, true);
+			->with('posts/index', $View->output, true)
+			->will($this->returnValue(''));
+
 		$Cache->afterLayout('posts/index');
 
 		Configure::write('Cache.check', false);
