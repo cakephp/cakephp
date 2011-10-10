@@ -1,6 +1,6 @@
 <?php
 /**
- * BasicMethodTest file
+ * BasicAuthenticationTest file
  *
  * PHP 5
  *

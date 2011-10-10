@@ -155,11 +155,11 @@ class HelperTestPostsTag extends Model {
 
 class TestHelper extends Helper {
 /**
- * helpers for this helper.
+ * Helpers for this helper.
  *
  * @var string
  */
-	var $helpers = array('Html', 'TestPlugin.OtherHelper');
+	public $helpers = array('Html', 'TestPlugin.OtherHelper');
 
 /**
  * expose a method as public

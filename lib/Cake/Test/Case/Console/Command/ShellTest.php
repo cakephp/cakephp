@@ -77,8 +77,8 @@ class ShellTestShell extends Shell {
  * @package       Cake.Test.Case.Console.Command
  */
 class TestMergeShell extends Shell {
-	var $tasks = array('DbConfig', 'Fixture');
-	var $uses = array('Comment');
+	public $tasks = array('DbConfig', 'Fixture');
+	public $uses = array('Comment');
 }
 
 /**

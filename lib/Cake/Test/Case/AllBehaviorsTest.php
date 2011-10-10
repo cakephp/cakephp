@@ -19,7 +19,7 @@
 /**
  * AllBehaviorsTest class
  *
- * This test group will run all test in the cases/libs/models/behaviors directory
+ * This test group will run all test in the Case/Model/Behavior directory
  *
  * @package       Cake.Test.Case
  */
