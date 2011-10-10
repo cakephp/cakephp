@@ -40,7 +40,7 @@ class JsHelper extends AppHelper {
 	public $bufferScripts = true;
 
 /**
- * helpers
+ * Helper dependencies
  *
  * @var array
  */
