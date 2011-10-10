@@ -450,7 +450,7 @@ class ShellDispatcher {
 		}
 		$result = trim($result);
 
-		if ($default != null && empty($result)) {
+		if ($default !== null && ($result === '' || $result === null)) {
 			return $default;
 		}
 		return $result;
@@ -471,7 +471,6 @@ class ShellDispatcher {
 			return fwrite($this->stdout, $string);
 		}
 	}
-
 /**
  * Outputs to the stderr filehandle.
  *

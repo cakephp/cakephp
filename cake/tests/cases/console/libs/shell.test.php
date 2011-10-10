@@ -208,6 +208,18 @@ class ShellTest extends CakeTestCase {
 		$result = $this->Shell->in('Just a test?', 'y', 'y');
 		$this->assertEqual($result, 'y');
 
+		$this->Shell->Dispatch->setReturnValueAt(5, 'getInput', 'y');
+		$this->Shell->Dispatch->expectAt(5, 'getInput', array('Just a test?', array(0, 1, 2), 0));
+		$result = $this->Shell->in('Just a test?', array(0, 1, 2), 0);
+		$this->assertEqual($result, 0);
+	}
+
+/**
+ * Test in() when not interactive
+ *
+ * @return void
+ */
+	function testInNonInteractive() {
 		$this->Shell->interactive = false;
 
 		$result = $this->Shell->in('Just a test?', 'y/n', 'n');

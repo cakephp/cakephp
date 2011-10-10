@@ -347,13 +347,11 @@ class Shell extends Object {
 			}
 		}
 		if (is_array($options)) {
-			while ($in == '' || ($in && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
+			while ($in === '' || ($in !== '' && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
 				$in = $this->Dispatch->getInput($prompt, $options, $default);
 			}
 		}
-		if ($in) {
-			return $in;
-		}
+		return $in;
 	}
 
 /**
