@@ -606,7 +606,7 @@ class Debugger {
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
  * @return string
- * @deprecated Use Debugger::outputFormat() and  Debugger::addFormat(). Will be removed 
+ * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed 
  *   in 3.0
  */
 	public function output($format = null, $strings = array()) {

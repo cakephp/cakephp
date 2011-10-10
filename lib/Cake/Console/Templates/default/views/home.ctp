@@ -101,7 +101,7 @@ if (isset(\$filePresent)):
 		echo '</span></p>';
 	}
 ?>\n";
-$output .= "<h3><?php echo __d('cake_dev', 'Editing this Page') ?></h3>\n";
+$output .= "<h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>\n";
 $output .= "<p>\n";
 $output .= "<?php\n";
 $output .= "\techo __d('cake_dev', 'To change the content of this page, edit: %s\n";

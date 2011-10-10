@@ -45,7 +45,7 @@ class File {
 	public $name = null;
 
 /**
- * file info
+ * File info
  *
  * @var string
  */
@@ -59,14 +59,14 @@ class File {
 	public $handle = null;
 
 /**
- * enable locking for file reading and writing
+ * Enable locking for file reading and writing
  *
  * @var boolean
  */
 	public $lock = null;
 
 /**
- * path property
+ * Path property
  *
  * Current file's absolute path
  *
