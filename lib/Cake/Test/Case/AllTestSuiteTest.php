@@ -20,7 +20,7 @@
 /**
  * AllTestSuiteTest class
  *
- * This test group will run socket class tests
+ * This test group will run all test suite tests.
  *
  * @package       Cake.Test.Case
  */

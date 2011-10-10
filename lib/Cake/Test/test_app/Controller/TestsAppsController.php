@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * TestsAppsController file
  *
  * PHP 5
  *

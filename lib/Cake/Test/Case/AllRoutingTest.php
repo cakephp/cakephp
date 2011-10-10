@@ -20,7 +20,7 @@
 /**
  * AllRoutingTest class
  *
- * This test group will run view class tests (view, theme)
+ * This test group will routing related tests.
  *
  * @package       Cake.Test.Case
  */

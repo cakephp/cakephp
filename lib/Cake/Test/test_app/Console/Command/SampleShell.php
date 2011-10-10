@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * SampleShell file
  *
  * PHP 5
  *

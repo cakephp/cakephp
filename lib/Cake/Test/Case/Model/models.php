@@ -260,9 +260,9 @@ class Article extends CakeTestModel {
  * @package       Cake.Test.Case.Model
  */
 class BeforeDeleteComment extends CakeTestModel {
-	var $name = 'BeforeDeleteComment';
+	public $name = 'BeforeDeleteComment';
 
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 	public function beforeDelete($cascade = true) {
 		$db = $this->getDataSource();
@@ -3180,8 +3180,8 @@ class GroupUpdateAll extends CakeTestModel {
 }
 
 class TransactionTestModel extends CakeTestModel {
-	var $name = 'TransactionTestModel';
-	var $useTable = 'samples';
+	public $name = 'TransactionTestModel';
+	public $useTable = 'samples';
 
 	public function afterSave($created) {
 		$data = array(
@@ -3192,8 +3192,8 @@ class TransactionTestModel extends CakeTestModel {
 }
 
 class TransactionManyTestModel extends CakeTestModel {
-	var $name = 'TransactionManyTestModel';
-	var $useTable = 'samples';
+	public $name = 'TransactionManyTestModel';
+	public $useTable = 'samples';
 
 	public function afterSave($created) {
 		$data = array(
@@ -4397,8 +4397,8 @@ class MysqlTestModel extends Model {
 class PrefixTestModel extends CakeTestModel {
 }
 class PrefixTestUseTableModel extends CakeTestModel {
-       var $name = 'PrefixTest';
-       var $useTable = 'prefix_tests';
+       public $name = 'PrefixTest';
+       public $useTable = 'prefix_tests';
 }
 
 /**
