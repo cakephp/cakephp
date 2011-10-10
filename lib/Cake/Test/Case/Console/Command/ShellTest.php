@@ -214,6 +214,10 @@ class ShellTest extends CakeTestCase {
 			->method('read')
 			->will($this->returnValue('y'));
 
+		$this->Shell->stdin->expects($this->at(5))
+			->method('read')
+			->will($this->returnValue('0'));
+
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
 		$this->assertEqual($result, 'n');
 
@@ -229,6 +233,16 @@ class ShellTest extends CakeTestCase {
 		$result = $this->Shell->in('Just a test?', 'y', 'y');
 		$this->assertEqual($result, 'y');
 
+		$result = $this->Shell->in('Just a test?', array(0, 1, 2), '0');
+		$this->assertEqual($result, '0');
+	}
+
+/**
+ * Test in() when not interactive.
+ *
+ * @return void
+ */
+	public function testInNonInteractive() {
 		$this->Shell->interactive = false;
 
 		$result = $this->Shell->in('Just a test?', 'y/n', 'n');
@@ -517,13 +531,13 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\necho 'test';\n\$te = 'st';\n?>";
+		$contents = "<?php\necho 'test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$contents = "<?php\necho 'another test';\n\$te = 'st';\n?>";
+		$contents = "<?php\necho 'another test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -555,7 +569,7 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue('y'));
 
 
-		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n?>";
+		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -593,13 +607,13 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -631,7 +645,7 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue('y'));
 
 
-		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
