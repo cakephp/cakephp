@@ -1,6 +1,6 @@
 <?php
 /**
- * CommandListTest file
+ * Command list Shell
  *
  * PHP 5
  *

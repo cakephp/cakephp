@@ -196,7 +196,7 @@
  * Will append a querystring parameter containing the time the file was modified. This is
  * useful for invalidating browser caches.
  *
- * Set to `true` to apply timestamps, when debug = 0, or set to 'force' to always enable
+ * Set to `true` to apply timestamps, when debug > 0, or set to 'force' to always enable
  * timestamping.
  */
 	//Configure::write('Asset.timestamp', true);
