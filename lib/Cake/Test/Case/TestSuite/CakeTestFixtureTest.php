@@ -28,14 +28,14 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 class CakeTestFixtureTestFixture extends CakeTestFixture {
 
 /**
- * name Property
+ * Name property
  *
  * @var string
  */
 	public $name = 'FixtureTest';
 
 /**
- * table property
+ * Table property
  *
  * @var string
  */
@@ -73,29 +73,29 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
 class StringsTestFixture extends CakeTestFixture {
 
 /**
- * name Property
+ * Name property
  *
  * @var string
  */
-	var $name = 'Strings';
+	public $name = 'Strings';
 
 /**
- * table property
+ * Table property
  *
  * @var string
  */
-	var $table = 'strings';
+	public $table = 'strings';
 
 /**
  * Fields array
  *
  * @var array
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer',  'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'email' => array('type' => 'string', 'length' => '255'),
-        'age' => array('type' => 'integer', 'default' => 10)
+		'age' => array('type' => 'integer', 'default' => 10)
 	);
 
 /**
@@ -103,10 +103,10 @@ class StringsTestFixture extends CakeTestFixture {
  *
  * @var array
  */
-	var $records = array(
+	public $records = array(
 		array('name' => 'Mark Doe', 'email' => 'mark.doe@email.com'),
-        array('name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20),
-        array('email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30)
+		array('name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20),
+		array('email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30)
 	);
 }
 

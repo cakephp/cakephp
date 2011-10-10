@@ -25,14 +25,14 @@
 class DataTestFixture extends CakeTestFixture {
 
 /**
- * name property
+ * Name property
  *
  * @var string 'DataTest'
  */
-	var $name = 'DataTest';
+	public $name = 'DataTest';
 
 /**
- * fields property
+ * Fields property
  *
  * @var array
  */
@@ -46,11 +46,11 @@ class DataTestFixture extends CakeTestFixture {
 	);
 
 /**
- * records property
+ * Records property
  *
  * @var array
  */
-	var $records = array(
+	public $records = array(
 		array(
 			'count' => 2,
 			'float' => 2.4,

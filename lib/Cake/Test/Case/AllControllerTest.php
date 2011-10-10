@@ -20,7 +20,7 @@
 /**
  * AllControllersTest class
  *
- * This test group will run cache engine tests.
+ * This test group will run Controller related tests.
  *
  * @package       Cake.Test.Case
  */
