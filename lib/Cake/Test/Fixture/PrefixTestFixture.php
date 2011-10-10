@@ -26,10 +26,10 @@
  */
 class PrefixTestFixture extends CakeTestFixture {
 
-	var $name = 'PrefixTest';
-	var $table = 'prefix_prefix_tests';
+	public $name = 'PrefixTest';
+	public $table = 'prefix_prefix_tests';
 
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 	);
 }

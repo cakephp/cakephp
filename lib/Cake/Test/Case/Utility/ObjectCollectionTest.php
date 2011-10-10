@@ -1,6 +1,6 @@
 <?php
 /**
- * ComponentCollectionTest file
+ * ObjectCollectionTest file
  *
  * PHP 5
  *
