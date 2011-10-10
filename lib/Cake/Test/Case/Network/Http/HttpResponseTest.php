@@ -1,6 +1,6 @@
 <?php
 /**
- * HttpSocketTest file
+ * HttpResponseTest file
  *
  * PHP 5
  *
