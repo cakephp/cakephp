@@ -312,6 +312,8 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertIdentical(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
 		$this->assertIdentical(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
+		Cache::delete('App.singleQuoteTest', 'file_test');
+		Cache::delete('App.doubleQuoteTest', 'file_test');
 	}
 
 /**
@@ -329,5 +331,45 @@ class FileEngineTest extends CakeTestCase {
 		));
 
 		Cache::drop('failure');
+	}
+
+/**
+ * Testing the mask setting in FileEngine
+ * 
+ * @return void
+ */
+	public function testMaskSetting() {
+		Cache::config('mask_test', array('engine' => 'File', 'path' => TMP . 'tests'));
+		$data = 'This is some test content';
+		$write = Cache::write('masking_test', $data, 'mask_test');
+		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
+		$expected = '0664';
+		$this->assertEqual($result, $expected);
+		Cache::delete('masking_test', 'mask_test');
+		Cache::drop('mask_test');
+
+		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests'));
+		$write = Cache::write('masking_test', $data, 'mask_test');
+		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
+		$expected = '0666';
+		$this->assertEqual($result, $expected);
+		Cache::delete('masking_test', 'mask_test');
+		Cache::drop('mask_test');
+
+		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0644, 'path' => TMP . 'tests'));
+		$write = Cache::write('masking_test', $data, 'mask_test');
+		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
+		$expected = '0644';
+		$this->assertEqual($result, $expected);
+		Cache::delete('masking_test', 'mask_test');
+		Cache::drop('mask_test');
+
+		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0640, 'path' => TMP . 'tests'));
+		$write = Cache::write('masking_test', $data, 'mask_test');
+		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
+		$expected = '0640';
+		$this->assertEqual($result, $expected);
+		Cache::delete('masking_test', 'mask_test');
+		Cache::drop('mask_test');
 	}
 }
