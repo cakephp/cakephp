@@ -380,6 +380,9 @@ class View extends Object {
 					break;
 				}
 			}
+			if ($file) {
+				break;
+			}
 		}
 
 		if (is_file($file)) {

@@ -488,6 +488,17 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test that alternate extensions work with duplicated elements.
+ *
+ * @return void
+ */
+	function testElementExtensions() {
+		$this->View->ext = '.xml';
+		$result = $this->View->element('test_element');
+		$this->assertEqual(trim($result), '<p>test element</p>');
+	}
+
+/**
  * test that additional element viewVars don't get overwritten with helpers.
  *
  * @return void
