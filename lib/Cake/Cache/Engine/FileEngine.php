@@ -67,7 +67,7 @@ class FileEngine extends CacheEngine {
 		parent::init(array_merge(
 			array(
 				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> true,
-				'serialize'=> true, 'isWindows' => false, 'mask' => 0666
+				'serialize'=> true, 'isWindows' => false, 'mask' => 0664
 			),
 			$settings
 		));
@@ -132,9 +132,6 @@ class FileEngine extends CacheEngine {
 
 		if ($this->settings['lock']) {
 		    $this->_File->flock(LOCK_UN);
-		}
-		if (!chmod($this->_File->getPathname(), $this->settings['mask'])) {
-			trigger_error(__d('cake_dev', 'Could not apply permission mask "%s" on cache file "%s"', array($this->_File->getPathname(), $this->settings['mask'])), E_USER_WARNING);
 		}
 
 		return $success;
@@ -288,6 +285,9 @@ class FileEngine extends CacheEngine {
 		}
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
 			$this->_File = $path->openFile('c+');
+			if (!chmod($this->_File->getPathname(), $this->settings['mask'])) {
+				trigger_error(__d('cake_dev', 'Could not apply permission mask "%s" on cache file "%s"', array($this->_File->getPathname(), $this->settings['mask'])), E_USER_WARNING);
+			}
 		}
 		return $this->_File->isFile();
 	}
