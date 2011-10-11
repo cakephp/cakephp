@@ -138,10 +138,10 @@ class FileEngine extends CacheEngine {
 
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
-
-		if (!$handle = fopen($this->_File->path, 'a')) {
-		    return false;
-		}
+		$old = umask(0);
+		$handle = fopen($this->_File->path, 'a');
+		umask($old);
+		if (!$handle) return false;
 
 		if ($this->settings['lock']) {
 		    flock($handle, LOCK_EX);
