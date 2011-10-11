@@ -286,7 +286,7 @@ class FileEngine extends CacheEngine {
 
 		$old = umask(0666 & ~$this->settings['mask']);
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
-			$this->_File = $path->openFile('a+');
+			$this->_File = $path->openFile('c+');
 		}
 		umask($old);
 
