@@ -145,7 +145,9 @@ class FileEngine extends CacheEngine {
 		$handle = fopen($this->__File->path, 'a');
 		umask($old);
 
-		if (!$handle) return false;
+		if (!$handle) {
+			return false;
+		}
 
 		if ($this->settings['lock']) {
 			flock($handle, LOCK_EX);
