@@ -67,7 +67,7 @@ class FileEngine extends CacheEngine {
 		parent::init(array_merge(
 			array(
 				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> true,
-				'serialize'=> true, 'isWindows' => false, 'mask' => 666
+				'serialize'=> true, 'isWindows' => false, 'mask' => 0666
 			),
 			$settings
 		));
@@ -284,7 +284,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		$old = umask(decoct(666 - $this->settings['mask']));
+		$old = umask(0666 & ~$this->settings['mask']);
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
 			$this->_File = $path->openFile('a+');
 		}
