@@ -203,7 +203,7 @@ class CacheTest extends CakeTestCase {
 			'probability' => 100,
 			'engine' => 'File',
 			'isWindows' => DIRECTORY_SEPARATOR == '\\',
-			'mask' => 0666
+			'mask' => 0664
 		);
 		$this->assertEqual($expected, Cache::settings('sessions'));
 
