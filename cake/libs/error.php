@@ -50,6 +50,7 @@ class CakeErrorController extends AppController {
 		$this->_set(Router::getPaths());
 		$this->params = Router::getParams();
 		$this->constructClasses();
+		$this->startupProcess();
 		$this->Component->initialize($this);
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 	}
