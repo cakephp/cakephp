@@ -684,6 +684,29 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that multiple sort works.
+ *
+ * @return void
+ */
+	public function testValidateSortMultiple() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('order' => array(
+			'author_id' => 'asc',
+			'title' => 'asc'
+		));
+		$result = $this->Paginator->validateSort($model, $options);
+		$expected = array(
+			'model.author_id' => 'asc',
+			'model.title' => 'asc'
+		);
+
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
  * test that maxLimit is respected
  *
  * @return void
