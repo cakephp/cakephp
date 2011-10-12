@@ -285,16 +285,25 @@ class FileEngine extends CacheEngine {
 		}
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
 			$exists = file_exists($path->getPathname());
-			$this->_File = $path->openFile('c+');
+			try {
+				$this->_File = $path->openFile('c+');
+			} catch (Exception $e) {
+				trigger_error(__d(
+					'cake_dev',
+					'Could not open cache file "%s" for writing',
+					array($path->getPathname())), E_USER_WARNING);
+				return false;
+			}
 			unset($path);
-			if (!$exists && !chmod($this->_File->getPathname(), $this->settings['mask'])) {
+
+			if (!$exists && !chmod($this->_File->getPathname(), (int) $this->settings['mask'])) {
 				trigger_error(__d(
 					'cake_dev',
 					'Could not apply permission mask "%s" on cache file "%s"',
 					array($this->_File->getPathname(), $this->settings['mask'])), E_USER_WARNING);
 			}
 		}
-		return $this->_File->isFile();
+		return true;
 	}
 
 /**
