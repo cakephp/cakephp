@@ -271,7 +271,8 @@ class FileEngine extends CacheEngine {
 	}
 
 /**
- * Sets the current cache key this class is managing
+ * Sets the current cache key this class is managing, and creates a writable SplFileObject
+ * for the cache file the key is refering to.
  *
  * @param string $key The key
  * @param boolean $createKey Whether the key should be created if it doesn't exists, or not
