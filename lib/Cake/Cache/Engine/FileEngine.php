@@ -67,7 +67,7 @@ class FileEngine extends CacheEngine {
 		parent::init(array_merge(
 			array(
 				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> true,
-				'serialize'=> true, 'isWindows' => false, 'mask' => 0666
+				'serialize'=> true, 'isWindows' => false, 'mask' => 0664
 			),
 			$settings
 		));
@@ -271,7 +271,8 @@ class FileEngine extends CacheEngine {
 	}
 
 /**
- * Sets the current cache key this class is managing
+ * Sets the current cache key this class is managing, and creates a writable SplFileObject
+ * for the cache file the key is refering to.
  *
  * @param string $key The key
  * @param boolean $createKey Whether the key should be created if it doesn't exists, or not
@@ -283,13 +284,26 @@ class FileEngine extends CacheEngine {
 		if (!$createKey && !$path->isFile()) {
 			return false;
 		}
-
-		$old = umask(0666 & ~$this->settings['mask']);
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
-			$this->_File = $path->openFile('a+');
-		}
-		umask($old);
+			$exists = file_exists($path->getPathname());
+			try {
+				$this->_File = $path->openFile('c+');
+			} catch (Exception $e) {
+				trigger_error(__d(
+					'cake_dev',
+					'Could not open cache file "%s" for writing',
+					array($path->getPathname())), E_USER_WARNING);
+				return false;
+			}
+			unset($path);
 
+			if (!$exists && !chmod($this->_File->getPathname(), (int) $this->settings['mask'])) {
+				trigger_error(__d(
+					'cake_dev',
+					'Could not apply permission mask "%s" on cache file "%s"',
+					array($this->_File->getPathname(), $this->settings['mask'])), E_USER_WARNING);
+			}
+		}
 		return true;
 	}
 

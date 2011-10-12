@@ -339,19 +339,19 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testMaskSetting() {
-		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests'));
+		Cache::config('mask_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		$data = 'This is some test content';
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
-		$expected = '0666';
+		$expected = '0664';
 		$this->assertEqual($result, $expected);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
-		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0664, 'path' => TMP . 'tests'));
+		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests'));
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
-		$expected = '0664';
+		$expected = '0666';
 		$this->assertEqual($result, $expected);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
