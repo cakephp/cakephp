@@ -308,6 +308,7 @@ class HtmlHelper extends AppHelper {
  * ### Options
  *
  * - `escape` Set to false to disable escaping of title and attributes.
+ * - `confirm` JavaScript confirmation message.
  *
  * @param string $title The content to be wrapped by <a> tags.
  * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)

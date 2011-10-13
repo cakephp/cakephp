@@ -1,6 +1,6 @@
 <?php
 /**
- * ThemeViewTest file
+ * MediaViewTest file
  *
  * PHP 5
  *

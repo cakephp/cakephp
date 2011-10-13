@@ -25,7 +25,7 @@ class IniReaderTest extends CakeTestCase {
  *
  * @var string
  */
-	var $file;
+	public $file;
 
 /**
  * setup

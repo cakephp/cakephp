@@ -138,7 +138,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		if (!$expires) {
 			$expires = time();
 		}
-		return $this->_model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
+		return $this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
 	}
 
 /**

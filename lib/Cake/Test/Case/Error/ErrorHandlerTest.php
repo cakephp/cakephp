@@ -28,7 +28,7 @@ App::uses('Router', 'Routing');
  */
 class ErrorHandlerTest extends CakeTestCase {
 
-	var $_restoreError = false;
+	public $_restoreError = false;
 /**
  * setup create a request object to get out of router later.
  *

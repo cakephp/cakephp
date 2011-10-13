@@ -84,6 +84,7 @@ class CakeFixtureManager {
 			return;
 		}
 		$db = ConnectionManager::getDataSource('test');
+		$db->cacheSources = false;
 		$this->_db = $db;
 		ClassRegistry::config(array('ds' => 'test'));
 		$this->_initialized = true;
@@ -141,7 +142,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Runs the drop and create commands on the fixtures if necessary
+ * Runs the drop and create commands on the fixtures if necessary.
  *
  * @param CakeTestFixture $fixture the fixture object to create
  * @param DataSource $db the datasource instance to use
@@ -156,10 +157,7 @@ class CakeFixtureManager {
 			return;
 		}
 
-		$cacheSources = $db->cacheSources;
-		$db->cacheSources = false;
 		$sources = $db->listSources();
-		$db->cacheSources = $cacheSources;
 		$table = $db->config['prefix'] . $fixture->table;
 
 		if ($drop && in_array($table, $sources)) {

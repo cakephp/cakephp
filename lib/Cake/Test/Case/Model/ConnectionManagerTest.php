@@ -2,7 +2,6 @@
 /**
  * Connection Manager tests
  *
- *
  * PHP 5
  *
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)

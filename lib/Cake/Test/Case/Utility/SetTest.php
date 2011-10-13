@@ -2264,6 +2264,26 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * testFormattingNullValues method
+ *
+ * @return void
+ */
+	public function testFormattingNullValues() {
+		$data = array(
+			array('Person' => array('first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42')),
+			array('Person' => array('first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => null)),
+			array('Person' => array('first_name' => 'Garrett', 'last_name' => 'Woodworth', 'city' => 'Venice Beach', 'state' => 'CA', 'something' => null)));
+
+		$result = Set::format($data, '%s', array('{n}.Person.something'));
+		$expected = array('42', '', '');
+		$this->assertEqual($expected, $result);
+
+		$result = Set::format($data, '{0}, {1}', array('{n}.Person.city', '{n}.Person.something'));
+		$expected = array('Boston, 42', 'Boondock, ', 'Venice Beach, ');
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testCountDim method
  *
  * @return void

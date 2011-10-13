@@ -340,22 +340,23 @@ class PaginatorComponent extends Component {
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
-			$alias = $object->alias;
-			$key = $field = key($options['order']);
+			$order = array();
+			foreach ($options['order'] as $key => $value) {
+				$field = $key;
+				$alias = $object->alias;
+				if (strpos($key, '.') !== false) {
+					list($alias, $field) = explode('.', $key);
+				}
 
-			if (strpos($key, '.') !== false) {
-				list($alias, $field) = explode('.', $key);
+				if ($object->hasField($field)) {
+					$order[$alias . '.' . $field] = $value;
+				} elseif ($object->hasField($key, true)) {
+					$order[$field] = $value;
+				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+					$order[$alias . '.' . $field] = $value;
+				}
 			}
-			$value = $options['order'][$key];
-			unset($options['order'][$key]);
-
-			if ($object->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($key, true)) {
-				$options['order'][$field] = $value;
-			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			}
+			$options['order'] = $order;
 		}
 
 		return $options;
