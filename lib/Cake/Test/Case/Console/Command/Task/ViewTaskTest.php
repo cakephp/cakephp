@@ -60,7 +60,7 @@ class ViewTaskComment extends Model {
  */
 	public $belongsTo = array(
 		'Article' => array(
-			'className' => 'ViewTaskArticle',
+			'className' => 'TestTest.ViewTaskArticle',
 			'foreignKey' => 'article_id'
 		)
 	);
@@ -385,7 +385,12 @@ class ViewTaskTest extends CakeTestCase {
 		//fake plugin path
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS));
 		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'View' . DS . 'ViewTaskComments' . DS  . 'view.ctp';
-		$this->Task->expects($this->once())->method('createFile')
+
+		$result = $this->Task->getContent('index');
+		$this->assertNotContains('List Test Test.view Task Articles', $result);
+
+		$this->Task->expects($this->once())
+			->method('createFile')
 			->with($path, $this->anything());
 
 		$this->Task->bake('view', true);

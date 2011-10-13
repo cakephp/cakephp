@@ -449,10 +449,11 @@ class ViewTask extends BakeTask {
 
 		foreach ($keys as $key => $type) {
 			foreach ($model->{$type} as $assocKey => $assocData) {
+				list($plugin, $modelClass) = pluginSplit($assocData['className']);
 				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
 				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
 				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
-				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
+				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($modelClass));
 				$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema(true));
 			}
 		}
