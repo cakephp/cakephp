@@ -386,7 +386,7 @@ class ViewTaskTest extends CakeTestCase {
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS));
 		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'View' . DS . 'ViewTaskComments' . DS  . 'view.ctp';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($path, $this->anything());
 
 		$this->Task->bake('view', true);
 		CakePlugin::unload();
@@ -434,7 +434,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'my_action.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 
 		$this->Task->customAction();
@@ -454,12 +454,12 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'index.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'add.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
@@ -480,7 +480,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'index.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 
 		$this->Task->execute();
@@ -498,7 +498,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'view.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->execute();
 	}
@@ -515,12 +515,12 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'index.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'add.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
@@ -548,12 +548,12 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'index.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'add.ctp',
-				new PHPUnit_Framework_Constraint_IsAnything()
+				$this->anything()
 			);
 		$this->Task->execute();
 	}
@@ -579,7 +579,7 @@ class ViewTaskTest extends CakeTestCase {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
 					TMP . 'ViewTaskArticles' . DS . $view,
-					new PHPUnit_Framework_Constraint_IsAnything()
+					$this->anything()
 				);
 		}
 		$this->Task->execute();
