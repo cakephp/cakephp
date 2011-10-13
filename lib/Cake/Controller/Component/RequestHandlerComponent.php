@@ -96,10 +96,10 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Initializes the component, gets a reference to Controller::$parameters, and
- * checks to see if a file extension has been parsed by the Router.  Or if the
- * HTTP_ACCEPT_TYPE is set to a single value that is a supported extension and mapped type.
- * If yes, RequestHandler::$ext is set to that value
+ * Checks to see if a file extension has been parsed by the Router, or if the
+ * HTTP_ACCEPT_TYPE has matches only one content type with the supported extensions.
+ * If there is only one matching type between the supported content types & extensions, 
+ * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
  * @param Controller $controller A reference to the controller
  * @param array $settings Array of settings to _set().
@@ -113,17 +113,35 @@ class RequestHandlerComponent extends Component {
 			$this->ext = $this->request->params['ext'];
 		}
 		if (empty($this->ext) || $this->ext == 'html') {
-			$accepts = $this->request->accepts();
-			$extensions = Router::extensions();
-			if (count($accepts) == 1) {
-				$mapped = $this->mapType($accepts[0]);
-				if (in_array($mapped, $extensions)) {
-					$this->ext = $mapped;
-				}
-			}
+			$this->_setExtension();
 		}
 		$this->params = $controller->params;
 		$this->_set($settings);
+	}
+
+/**
+ * Set the extension based on the accept headers.
+ * Compares the accepted types and configured extensions.
+ * If there is one common type, that is assigned as the ext/content type
+ * for the response.
+ *
+ * If html is one of the preferred types, no content type will be set, this
+ * is to avoid issues with browsers that prefer html and several other content types.
+ *
+ * @return void
+ */
+	protected function _setExtension() {
+		$accept = $this->request->parseAccept();
+		if (empty($accept)) {
+			return;
+		}
+		$extensions = Router::extensions();
+		$preferred = array_shift($accept);
+		$preferredTypes = $this->mapType($preferred);
+		$similarTypes = array_intersect($extensions, $preferredTypes);
+		if (count($similarTypes) === 1 && !in_array('html', $preferredTypes)) {
+			$this->ext = $similarTypes[0];
+		}
 	}
 
 /**
@@ -455,7 +473,7 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Determines which content-types the client prefers.  If no parameters are given,
- * the content-type that the client most likely prefers is returned.  If $type is
+ * the single content-type that the client most likely prefers is returned.  If $type is
  * an array, the first item in the array that the client accepts is returned.
  * Preference is determined primarily by the file extension parsed by the Router
  * if provided, and secondarily by the list of content-types provided in
@@ -464,7 +482,10 @@ class RequestHandlerComponent extends Component {
  * @param mixed $type An optional array of 'friendly' content-type names, i.e.
  *   'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
- *    list, based on preference, is returned.
+ *    list, based on preference, is returned.  If a single type is provided
+ *    a boolean will be returnend if that type is preferred.
+ *    If an array of types are provided then the first preferred type is returned.
+ *    If no type is provided the first preferred type is returned.
  * @see RequestHandlerComponent::setContent()
  */
 	public function prefers($type = null) {
