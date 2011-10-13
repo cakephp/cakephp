@@ -46,12 +46,16 @@ class CakeErrorController extends AppController {
  * @return void
  */
 	function __construct() {
+		static $__previousRun = null;
 		parent::__construct();
 		$this->_set(Router::getPaths());
 		$this->params = Router::getParams();
 		$this->constructClasses();
 		$this->Component->initialize($this);
-		$this->beforeFilter();
+		if(!$__previousRun) {
+			$__previousRun = true;
+			$this->beforeFilter();
+		}
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 	}
 }
