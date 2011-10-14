@@ -120,6 +120,7 @@ class RequestHandlerComponent extends Object {
 		'NetFront',
 		'Nokia',
 		'Opera Mini',
+		'Opera Mobi',
 		'PalmOS',
 		'PalmSource',
 		'portalmmm',
