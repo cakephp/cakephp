@@ -1,5 +1,6 @@
 <?php
 /*Sessions schema generated on: 2007-11-25 07:11:54 : 1196004714*/
+
 /**
  * This is Sessions Schema file
  *
@@ -15,10 +16,11 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.config.sql
+ * @package       app.Config.Schema
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /*
  *
  * Using the Schema command line utility
@@ -26,6 +28,15 @@
  *
  */
 class SessionsSchema extends CakeSchema {
+
+	public $name = 'Sessions';
+
+	public function before($event = array()) {
+		return true;
+	}
+
+	public function after($event = array()) {
+	}
 
 	public $cake_sessions = array(
 			'id' => array('type'=>'string', 'null' => false, 'key' => 'primary'),
