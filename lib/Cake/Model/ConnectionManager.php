@@ -75,7 +75,7 @@ class ConnectionManager {
  * @param string $name The name of the DataSource, as defined in app/Config/database.php
  * @return DataSource Instance
  * @throws MissingDatasourceConfigException
- * @throws MissingDatasourceFileException
+ * @throws MissingDatasourceException
  */
 	public static function getDataSource($name) {
 		if (empty(self::$_init)) {
@@ -141,7 +141,7 @@ class ConnectionManager {
  *                        or an array containing the filename (without extension) and class name of the object,
  *                        to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
  * @return boolean True on success, null on failure or false if the class is already loaded
- * @throws MissingDatasourceFileException
+ * @throws MissingDatasourceException
  */
 	public static function loadDataSource($connName) {
 		if (empty(self::$_init)) {
@@ -168,7 +168,10 @@ class ConnectionManager {
 
 		App::uses($conn['classname'], $plugin . 'Model/Datasource' . $package);
 		if (!class_exists($conn['classname'])) {
-			throw new MissingDatasourceFileException(array('class' => $conn['classname'], 'plugin' => $plugin));
+			throw new MissingDatasourceException(array(
+				'class' => $conn['classname'],
+				'plugin' => $plugin
+			));
 		}
 		return true;
 	}

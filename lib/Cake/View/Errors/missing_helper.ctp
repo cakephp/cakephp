@@ -16,24 +16,24 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo __d('cake_dev', 'Missing Helper Class'); ?></h2>
+<h2><?php echo __d('cake_dev', 'Missing Helper'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The helper class <em>%s</em> can not be found or does not exist.', $class); ?>
+	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . $class . '</em>'); ?>
 </p>
-<p  class="error">
+<p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class below in file: %s', APP_DIR . DS . 'View' . DS . 'Helper' . DS . Inflector::camelize($file)); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . '</em>', APP_DIR . DS . 'View' . DS . 'Helper' . DS . $class . '.php'); ?>
 </p>
 <pre>
 &lt;?php
-class <?php echo $class;?> extends AppHelper {
+class <?php echo $class; ?> extends AppHelper {
 
 }
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_helper_class.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_helper.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

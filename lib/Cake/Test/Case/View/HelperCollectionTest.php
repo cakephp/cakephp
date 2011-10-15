@@ -109,10 +109,10 @@ class HelperCollectionTest extends CakeTestCase {
 /**
  * test missinghelper exception
  *
- * @expectedException MissingHelperClassException
+ * @expectedException MissingHelperException
  * @return void
  */
-	public function testLoadMissingHelperFile() {
+	public function testLoadMissingHelper() {
 		$result = $this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
 	}
 

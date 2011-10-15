@@ -27,7 +27,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $controller;?> extends AppController {
+class <?php echo $controller; ?> extends AppController {
 
 }
 </pre>

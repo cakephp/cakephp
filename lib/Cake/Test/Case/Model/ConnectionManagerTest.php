@@ -224,7 +224,7 @@ class ConnectionManagerTest extends CakeTestCase {
  * testLoadDataSourceException() method
  *
  * @return void
- * @expectedException MissingDatasourceFileException
+ * @expectedException MissingDatasourceException
  */
 	public function testLoadDataSourceException() {
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');
