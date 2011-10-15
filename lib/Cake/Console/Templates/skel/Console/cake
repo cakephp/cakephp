@@ -19,15 +19,15 @@
 ################################################################################
 LIB=$(cd -P -- "$(dirname -- "$0")" && pwd -P) && LIB=$LIB/$(basename -- "$0")
 
-while [ -h $LIB ]; do
+while [ -h "$LIB" ]; do
     DIR=$(dirname -- "$LIB")
-    SYM=$(readlink $LIB)
-    LIB=$(cd $DIR && cd $(dirname -- "$SYM") && pwd)/$(basename -- "$SYM")
+    SYM=$(readlink "$LIB")
+    LIB=$(cd "$DIR" && cd $(dirname -- "$SYM") && pwd)/$(basename -- "$SYM")
 done
 
 LIB=$(dirname -- "$LIB")/
 APP=`pwd`
 
-exec php -q ${LIB}cake.php -working "${APP}" "$@"
+exec php -q "$LIB"cake.php -working "$APP" "$@"
 
 exit;
