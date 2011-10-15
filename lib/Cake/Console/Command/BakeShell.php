@@ -26,7 +26,7 @@ App::uses('Model', 'Model');
  * Bake is a command-line code generation utility for automating programmer chores.
  *
  * @package       Cake.Console.Command
- * @link          http://book.cakephp.org/view/1522/Code-Generation-with-Bake
+ * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
 class BakeShell extends Shell {
 
