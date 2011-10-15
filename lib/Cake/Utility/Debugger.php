@@ -419,8 +419,8 @@ class Debugger {
 /**
  * Converts a variable to a string for debug output.
  *
- * *Note:* The following keys will have their contents replaced with
- * `*****`:
+ * *Note:* The following keys will have their contents 
+ * replaced with `*****`:
  *
  *  - password
  *  - login
@@ -434,93 +434,108 @@ class Debugger {
  * shown in an error message if CakePHP is deployed in development mode.
  *
  * @param string $var Variable to convert
- * @param integer $recursion
+ * @param integer $depth The depth to output to. Defaults to 2.
  * @return string Variable as a formatted string
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
-	public static function exportVar($var, $recursion = 0) {
-		switch (strtolower(gettype($var))) {
+	public static function exportVar($var, $depth = 3) {
+		return self::_export($var, $depth, 0);
+	}
+
+	protected static function _export($var, $depth, $indent) {
+		switch (self::getType($var)) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
 			break;
 			case 'integer':
-			case 'double':
-				return $var;
+				return '(int) ' . $var;
+			case 'float':
+				return '(float) ' . $var;
 			break;
 			case 'string':
-				if (trim($var) == "") {
-					return '""';
+				if (trim($var) == '') {
+					return "''";
 				}
-				return '"' . h($var) . '"';
+				return "'" . h($var) . "'";
 			break;
-			case 'object':
-				return get_class($var) . "\n" . self::_object($var);
 			case 'array':
-				$var = array_merge($var,  array_intersect_key(array(
-					'password' => '*****',
-					'login'  => '*****',
-					'host' => '*****',
-					'database' => '*****',
-					'port' => '*****',
-					'prefix' => '*****',
-					'schema' => '*****'
-				), $var));
-
-				$out = "array(";
-				$vars = array();
-				foreach ($var as $key => $val) {
-					if ($recursion >= 0) {
-						if (is_numeric($key)) {
-							$vars[] = "\n\t" . self::exportVar($val, $recursion - 1);
-						} else {
-							$vars[] = "\n\t" . self::exportVar($key, $recursion - 1)
-										. ' => ' . self::exportVar($val, $recursion - 1);
-						}
-					}
-				}
-				$n = null;
-				if (!empty($vars)) {
-					$n = "\n";
-				}
-				return $out . implode(",", $vars) . "{$n})";
+				return self::_array($var, $depth - 1, $indent + 1);
 			break;
 			case 'resource':
 				return strtolower(gettype($var));
 			break;
 			case 'null':
 				return 'null';
+			default:
+				return self::_object($var, $depth - 1, $indent + 1);
 			break;
 		}
+	}
+
+/**
+ * Export an array type object.  Filters out keys used in datasource configuration.
+ *
+ * @param array $var The array to export.
+ * @param integer $depth The current depth, used for recursion tracking.
+ * @return string Exported array.
+ */
+	protected static function _array(array $var, $depth, $indent) {
+		$var = array_merge($var,  array_intersect_key(array(
+			'password' => '*****',
+			'login'  => '*****',
+			'host' => '*****',
+			'database' => '*****',
+			'port' => '*****',
+			'prefix' => '*****',
+			'schema' => '*****'
+		), $var));
+
+		$out = "array(";
+		$n = $break = $end = null;
+		if (!empty($var)) {
+			$n = "\n";
+			$break = "\n" . str_repeat("\t", $indent);
+			$end = "\n" . str_repeat("\t", $indent - 1);
+		}
+		$vars = array();
+
+		if ($depth >= 0) {
+			foreach ($var as $key => $val) {
+				$vars[] = $break . self::exportVar($key) .
+					' => ' .
+					self::_export($val, $depth - 1, $indent);
+			}
+		}
+		return $out . implode(',', $vars) . $end . ')';
 	}
 
 /**
  * Handles object to string conversion.
  *
  * @param string $var Object to convert
+ * @param integer $depth The current depth, used for tracking recursion.
  * @return string
  * @see Debugger::exportVar()
  */
-	protected static function _object($var) {
-		$out = array();
+	protected static function _object($var, $depth, $indent) {
+		$out = '';
+		$props = array();
 
-		if (is_object($var)) {
-			$className = get_class($var);
+		$className = get_class($var);
+		$out .= 'object(' . $className . ') {';
+	
+		if ($depth > 0) {
+			$end = "\n" . str_repeat("\t", $indent - 1);
+			$break = "\n" . str_repeat("\t", $indent);
 			$objectVars = get_object_vars($var);
-
 			foreach ($objectVars as $key => $value) {
-				if (is_object($value)) {
-					$value = get_class($value) . ' object';
-				} elseif (is_array($value)) {
-					$value = 'array';
-				} elseif ($value === null) {
-					$value = 'NULL';
-				} elseif (in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource'))) {
-					$value = Debugger::exportVar($value);
-				}
-				$out[] = "$className::$$key = " . $value;
+				$value = self::_export($value, $depth - 1, $indent);
+				$props[] = "$key => " . $value;
 			}
+			$out .= $break . implode($break, $props) . $end;
 		}
-		return implode("\n", $out);
+		$out .= '}';
+		return $out;
 	}
 
 /**
