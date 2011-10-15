@@ -32,8 +32,8 @@ endif;
 ?>
 <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
 	<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
-	1) <a target="_blank" href="http://book.cakephp.org/view/917/Apache-and-mod_rewrite-and-htaccess" style="color:#fff;">Help me configure it</a>
-	2) <a target="_blank" href="http://book.cakephp.org/view/931/CakePHP-Core-Configuration-Variables" style="color:#fff;">I don't / can't use URL rewriting</a>
+	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/advanced-installation.html#apache-and-mod-rewrite-and-htaccess" style="color:#fff;">Help me configure it</a>
+	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <p>
 <?php 
@@ -139,7 +139,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<?php
 		echo $this->Html->link(
 			sprintf('<strong>%s</strong> %s', __d('cake_dev', 'New'), __d('cake_dev', 'CakePHP 1.3 Docs')),
-			'http://book.cakephp.org/view/875/x1-3-Collection',
+			'http://book.cakephp.org/2.0/en/',
 			array('target' => '_blank', 'escape' => false)
 		);
 	?>
@@ -148,7 +148,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<?php
 		echo $this->Html->link(
 			__d('cake_dev', 'The 15 min Blog Tutorial'),
-			'http://book.cakephp.org/view/1528/Blog',
+			'http://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
 			array('target' => '_blank', 'escape' => false)
 		);
 	?>

@@ -34,7 +34,7 @@ App::uses('Multibyte', 'I18n');
  *
  * @package       Cake.View.Helper
  * @property      HtmlHelper $Html
- * @link http://book.cakephp.org/view/1469/Text
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html
  */
 class TextHelper extends AppHelper {
 
@@ -58,7 +58,7 @@ class TextHelper extends AppHelper {
  * @param string $phrase The phrase that will be searched
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
- * @link http://book.cakephp.org/view/1469/Text#highlight-1622
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
 	public function highlight($text, $phrase, $options = array()) {
 		if (empty($phrase)) {
@@ -102,7 +102,7 @@ class TextHelper extends AppHelper {
  *
  * @param string $text Text
  * @return string The text without links
- * @link http://book.cakephp.org/view/1469/Text#stripLinks-1623
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
  */
 	public function stripLinks($text) {
 		return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
@@ -115,7 +115,7 @@ class TextHelper extends AppHelper {
  * @param string $text Text to add links to
  * @param array $htmlOptions Array of HTML options.
  * @return string The text with links
- * @link http://book.cakephp.org/view/1469/Text#autoLinkUrls-1619
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkUrls
  */
 	public function autoLinkUrls($text, $htmlOptions = array()) {
 		$this->_linkOptions = $htmlOptions;
@@ -170,7 +170,7 @@ class TextHelper extends AppHelper {
  * @param string $text Text
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @link http://book.cakephp.org/view/1469/Text#autoLinkEmails-1618
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkEmails
  */
 	public function autoLinkEmails($text, $options = array()) {
 		$this->_linkOptions = $options;
@@ -188,7 +188,7 @@ class TextHelper extends AppHelper {
  * @param string $text Text
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @link http://book.cakephp.org/view/1469/Text#autoLink-1620
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLink
  */
 	public function autoLink($text, $options = array()) {
 		return $this->autoLinkEmails($this->autoLinkUrls($text, $options), $options);
@@ -210,7 +210,7 @@ class TextHelper extends AppHelper {
  * @param integer $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @link http://book.cakephp.org/view/1469/Text#truncate-1625
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
 	public function truncate($text, $length = 100, $options = array()) {
 		$default = array(
@@ -314,7 +314,7 @@ class TextHelper extends AppHelper {
  * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ending Ending that will be appended
  * @return string Modified string
- * @link http://book.cakephp.org/view/1469/Text#excerpt-1621
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
 	public function excerpt($text, $phrase, $radius = 100, $ending = '...') {
 		if (empty($text) or empty($phrase)) {
@@ -359,7 +359,7 @@ class TextHelper extends AppHelper {
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
  * @param string $separator The separator used to join all othe other items together. Defaults to ', '
  * @return string The glued together string.
- * @link http://book.cakephp.org/view/1469/Text#toList-1624
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
 	public function toList($list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
