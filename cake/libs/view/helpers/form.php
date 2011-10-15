@@ -737,8 +737,13 @@ class FormHelper extends AppHelper {
 				$options['type'] = 'password';
 			} elseif (isset($this->fieldset[$modelKey]['fields'][$fieldKey])) {
 				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
-				$type = $fieldDef['type'];
-				$primaryKey = $this->fieldset[$modelKey]['key'];
+ 				if(isset($fieldDef['options'])){
+					$options['type'] = 'select';
+ 				 	$options['options'] = $fieldDef['options'];
+ 				} else {
+					$type = $fieldDef['type'];
+					$primaryKey = $this->fieldset[$modelKey]['key'];
+				}
 			}
 
 			if (isset($type)) {
