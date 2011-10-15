@@ -55,7 +55,7 @@ App::uses('View', 'View');
  * @property      RequestHandlerComponent $RequestHandler
  * @property      SecurityComponent $Security
  * @property      SessionComponent $Session
- * @link          http://book.cakephp.org/view/956/Introduction
+ * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
 class Controller extends Object {
 
@@ -63,7 +63,7 @@ class Controller extends Object {
  * The name of this controller. Controller names are plural, named after the model they manipulate.
  *
  * @var string
- * @link http://book.cakephp.org/view/959/Controller-Attributes
+ * @link http://book.cakephp.org/2.0/en/controllers.html#controller-attributes
  */
 	public $name = null;
 
@@ -76,7 +76,7 @@ class Controller extends Object {
  * use no models and prevent the merging of $uses with AppController
  *
  * @var mixed A single name as a string or a list of names as an array.
- * @link http://book.cakephp.org/view/961/components-helpers-and-uses
+ * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
 	public $uses = false;
 
@@ -87,7 +87,7 @@ class Controller extends Object {
  * Example: `public $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
  *
  * @var mixed A single name as a string or a list of names as an array.
- * @link http://book.cakephp.org/view/961/components-helpers-and-uses
+ * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
 	public $helpers = array('Session', 'Html', 'Form');
 
@@ -141,7 +141,6 @@ class Controller extends Object {
  * is the filename in /app/View/<SubFolder> without the .ctp extension.
  *
  * @var string
- * @link http://book.cakephp.org/view/962/Page-related-Attributes-layout-and-pageTitle
  */
 	public $view = null;
 
@@ -151,7 +150,6 @@ class Controller extends Object {
  * extension.
  *
  * @var string
- * @link http://book.cakephp.org/view/962/Page-related-Attributes-layout-and-pageTitle
  */
 	public $layout = 'default';
 
@@ -579,7 +577,7 @@ class Controller extends Object {
  *
  * @return mixed true if models found and instance created.
  * @see Controller::loadModel()
- * @link http://book.cakephp.org/view/977/Controller-Methods#constructClasses-986
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::constructClasses
  * @throws MissingModelException
  */
 	public function constructClasses() {
@@ -685,7 +683,7 @@ class Controller extends Object {
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @return mixed void if $exit = false. Terminates script if $exit = true
- * @link http://book.cakephp.org/view/982/redirect
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
  */
 	public function redirect($url, $status = null, $exit = true) {
 		$this->autoRender = false;
@@ -775,7 +773,7 @@ class Controller extends Object {
  * @param mixed $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
- * @link http://book.cakephp.org/view/979/set
+ * @link http://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
  */
 	public function set($one, $two = null) {
 		if (is_array($one)) {
@@ -860,7 +858,7 @@ class Controller extends Object {
  * @param string $view View to use for rendering
  * @param string $layout Layout to use
  * @return CakeResponse A response object containing the rendered view.
- * @link http://book.cakephp.org/view/980/render
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
 		$this->beforeRender();
@@ -907,7 +905,7 @@ class Controller extends Object {
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
  * @param boolean $local If true, restrict referring URLs to local server
  * @return string Referring URL
- * @link http://book.cakephp.org/view/987/referer
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
 		if ($this->request) {
@@ -924,7 +922,7 @@ class Controller extends Object {
  * Forces the user's browser not to cache the results of the current request.
  *
  * @return void
- * @link http://book.cakephp.org/view/988/disableCache
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::disableCache
  * @deprecated Use CakeResponse::disableCache()
  */
 	public function disableCache() {
@@ -941,7 +939,7 @@ class Controller extends Object {
  * @param integer $pause Time to show the message
  * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void Renders flash layout
- * @link http://book.cakephp.org/view/983/flash
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::flash
  */
 	public function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
@@ -962,7 +960,7 @@ class Controller extends Object {
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be
  *        included in the returned conditions
  * @return array An array of model conditions
- * @link http://book.cakephp.org/view/989/postConditions
+ * @deprecated
  */
 	public function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
@@ -1018,7 +1016,7 @@ class Controller extends Object {
  * @param mixed $scope Conditions to use while paginating
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
- * @link http://book.cakephp.org/view/1232/Controller-Setup
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::paginate
  * @deprecated Use PaginatorComponent instead
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
@@ -1030,7 +1028,7 @@ class Controller extends Object {
  * or perform logic that needs to happen before each controller action.
  *
  * @return void
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeFilter() {
 	}
@@ -1040,7 +1038,7 @@ class Controller extends Object {
  * to perform logic or set view variables that are required on every request.
  *
  * @return void
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRender() {
 	}
@@ -1057,6 +1055,7 @@ class Controller extends Object {
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @return boolean
+ * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect($url, $status = null, $exit = true) {
 		return true;
@@ -1066,7 +1065,7 @@ class Controller extends Object {
  * Called after the controller action is run and rendered.
  *
  * @return void
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function afterFilter() {
 	}
@@ -1076,7 +1075,7 @@ class Controller extends Object {
  *
  * @param string $method name of method called example index, edit, etc.
  * @return boolean Success
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
  */
 	public function beforeScaffold($method) {
 		return true;
@@ -1099,7 +1098,7 @@ class Controller extends Object {
  *
  * @param string $method name of method called either edit or update.
  * @return boolean Success
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
  */
 	public function afterScaffoldSave($method) {
 		return true;
@@ -1122,7 +1121,7 @@ class Controller extends Object {
  *
  * @param string $method name of method called either edit or update.
  * @return boolean Success
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
  */
 	public function afterScaffoldSaveError($method) {
 		return true;
@@ -1147,7 +1146,7 @@ class Controller extends Object {
  *
  * @param string $method name of method called example index, edit, etc.
  * @return boolean Success
- * @link http://book.cakephp.org/view/984/Callbacks
+ * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
  */
 	public function scaffoldError($method) {
 		return false;

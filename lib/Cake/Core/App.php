@@ -57,7 +57,7 @@
  * You can find out which objects App knows about using App::objects('Controller') for example to find
  * which application controllers App knows about.
  *
- * @link          http://book.cakephp.org/view/933/The-App-Class
+ * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
  * @package       Cake.Core
  */
 class App {
@@ -552,7 +552,7 @@ class App {
  * Finds classes based on $name or specific file(s) to search.  Calling App::import() will
  * not construct any classes contained in the files. It will only find and require() the file.
  *
- * @link          http://book.cakephp.org/view/934/Using-App-import
+ * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#including-files-with-app-import
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as
  *                    an single array to $type,
  * @param string $name Name of the Class or a unique name for the file

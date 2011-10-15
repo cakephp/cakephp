@@ -28,7 +28,8 @@ App::uses('CakeEmail', 'Network/Email');
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/view/1283/Email
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/email.html
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/email.html
  * @deprecated Use Network/CakeEmail
  */
 class EmailComponent extends Component {
@@ -215,7 +216,6 @@ class EmailComponent extends Component {
  * - client
  *
  * @var array
- * @link http://book.cakephp.org/view/1290/Sending-A-Message-Using-SMTP
  */
 	public $smtpOptions = array();
 
@@ -363,7 +363,6 @@ class EmailComponent extends Component {
  * Reset all EmailComponent internal variables to be able to send out a new email.
  *
  * @return void
- * @link http://book.cakephp.org/view/1285/Sending-Multiple-Emails-in-a-loop
  */
 	public function reset() {
 		$this->template = null;

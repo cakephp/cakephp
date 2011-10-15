@@ -50,6 +50,7 @@
  * This would allow you to have different pagination settings for `Comment` and `Post` models.
  *
  * @package       Cake.Controller.Component
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/pagination.html
  */
 class PaginatorComponent extends Component {
 

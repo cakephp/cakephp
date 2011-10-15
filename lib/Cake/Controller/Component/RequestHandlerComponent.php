@@ -25,7 +25,7 @@ App::uses('Xml', 'Utility');
  * Request object for handling HTTP requests
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/view/1291/Request-Handling
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
  *
  */
 class RequestHandlerComponent extends Component {

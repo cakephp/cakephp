@@ -27,7 +27,7 @@ App::uses('Set', 'Utility');
  * for future use.
  *
  * @package       Cake.Core
- * @link          http://book.cakephp.org/view/924/The-Configuration-Class
+ * @link          http://book.cakephp.org/2.0/en/development/configuration.html#configure-class
  */
 class Configure {
 
@@ -113,7 +113,7 @@ class Configure {
  * ));
  * }}}
  *
- * @link http://book.cakephp.org/view/926/write
+ * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
@@ -166,7 +166,7 @@ class Configure {
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  * }}}
  *
- * @link http://book.cakephp.org/view/927/read
+ * @linkhttp://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
  * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return mixed value stored in configure, or null.
  */
@@ -212,7 +212,7 @@ class Configure {
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
  * }}}
  *
- * @link http://book.cakephp.org/view/928/delete
+ * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::delete
  * @param string $var the var to be deleted
  * @return void
  */
@@ -290,7 +290,7 @@ class Configure {
  * If using `default` config and no reader has been configured for it yet,
  * one will be automatically created using PhpReader
  *
- * @link http://book.cakephp.org/view/929/load
+ * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
@@ -325,7 +325,6 @@ class Configure {
  *
  * Usage `Configure::version();`
  *
- * @link http://book.cakephp.org/view/930/version
  * @return string Current version of CakePHP
  */
 	public static function version() {

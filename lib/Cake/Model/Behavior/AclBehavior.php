@@ -24,7 +24,7 @@ App::uses('AclNode', 'Model');
  * ACL behavior
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/view/1320/ACL
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html
  */
 class AclBehavior extends ModelBehavior {
 
@@ -69,7 +69,7 @@ class AclBehavior extends ModelBehavior {
  * @param mixed $ref
  * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
- * @link http://book.cakephp.org/view/1322/node
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html#node
  */
 	public function node($model, $ref = null, $type = null) {
 		if (empty($type)) {

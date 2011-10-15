@@ -25,7 +25,7 @@ App::uses('Security', 'Utility');
  * SecurityComponent
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/view/1296/Security-Component
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html
  */
 class SecurityComponent extends Component {
 
@@ -214,7 +214,7 @@ class SecurityComponent extends Component {
  * Sets the actions that require a POST request, or empty for all actions
  *
  * @return void
- * @link http://book.cakephp.org/view/1299/requirePost
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
  */
 	public function requirePost() {
 		$args = func_get_args();
@@ -255,7 +255,7 @@ class SecurityComponent extends Component {
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
  * @return void
- * @link http://book.cakephp.org/view/1300/requireSecure
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
 	public function requireSecure() {
 		$args = func_get_args();
@@ -266,7 +266,7 @@ class SecurityComponent extends Component {
  * Sets the actions that require an authenticated request, or empty for all actions
  *
  * @return void
- * @link http://book.cakephp.org/view/1301/requireAuth
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */
 	public function requireAuth() {
 		$args = func_get_args();
@@ -281,7 +281,7 @@ class SecurityComponent extends Component {
  * @param string $error Error method
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
- * @link http://book.cakephp.org/view/1307/blackHole-object-controller-string-error
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
  */
 	public function blackHole($controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
