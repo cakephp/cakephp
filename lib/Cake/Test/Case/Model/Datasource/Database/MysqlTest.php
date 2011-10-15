@@ -586,10 +586,7 @@ class MysqlTest extends CakeTestCase {
 	public function testBlobSaving() {
 		$this->loadFixtures('BinaryTest');
 		$this->Dbo->cacheSources = false;
-		$data = "GIF87ab 
-		 Ò   4A¿¿¿ˇˇˇ   ,    b 
-		  ¢îè©ÀÌ#¥⁄ã≥ﬁ:¯Ü‚Héá¶jV∂ÓúÎL≥çÀóËıÎ…>ï ≈ vFE%ÒâLFI<†µw˝±≈£7˘ç^H“≤«>ÉÃ¢*∑Ç nÖA•Ù|ﬂêèj£:=ÿ6óUàµ5'∂®àA¬ñ∆ˆGE(gt’≈àÚyÁó«7	‚VìöÇ√˙Ç™
-		k”:;kÀAõ{*¡€Î˚˚[  ;;";
+		$data = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
 
 		$model = new CakeTestModel(array('name' => 'BinaryTest', 'ds' => 'test'));
 		$model->save(compact('data'));
