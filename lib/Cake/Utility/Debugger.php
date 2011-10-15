@@ -434,7 +434,7 @@ class Debugger {
  * shown in an error message if CakePHP is deployed in development mode.
  *
  * @param string $var Variable to convert
- * @param integer $depth The depth to output to. Defaults to 2.
+ * @param integer $depth The depth to output to. Defaults to 3.
  * @return string Variable as a formatted string
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
@@ -442,6 +442,14 @@ class Debugger {
 		return self::_export($var, $depth, 0);
 	}
 
+/**
+ * Protected export function used to keep track of indentation and recursion.
+ *
+ * @param mixed $var The variable to dump.
+ * @param integer $depth The remaining depth.
+ * @param integer $indent The current indentation level.
+ * @return string The dumped variable.
+ */
 	protected static function _export($var, $depth, $indent) {
 		switch (self::getType($var)) {
 			case 'boolean':
@@ -477,6 +485,7 @@ class Debugger {
  *
  * @param array $var The array to export.
  * @param integer $depth The current depth, used for recursion tracking.
+ * @param integer $indent The current indentation level.
  * @return string Exported array.
  */
 	protected static function _array(array $var, $depth, $indent) {
@@ -514,6 +523,7 @@ class Debugger {
  *
  * @param string $var Object to convert
  * @param integer $depth The current depth, used for tracking recursion.
+ * @param integer $indent The current indentation level.
  * @return string
  * @see Debugger::exportVar()
  */
@@ -523,7 +533,7 @@ class Debugger {
 
 		$className = get_class($var);
 		$out .= 'object(' . $className . ') {';
-	
+
 		if ($depth > 0) {
 			$end = "\n" . str_repeat("\t", $indent - 1);
 			$break = "\n" . str_repeat("\t", $indent);
@@ -733,24 +743,24 @@ class Debugger {
 			return 'null';
 		}
 		if (is_string($var)) {
-			return 'string'; 
+			return 'string';
 		}
 		if (is_array($var)) {
 			return 'array';
 		}
 		if (is_int($var)) {
-			return 'integer'; 
+			return 'integer';
 		}
 		if (is_bool($var)) {
-			return 'boolean'; 
+			return 'boolean';
 		}
 		if (is_float($var)) {
-			return 'float'; 
+			return 'float';
 		}
 		if (is_resource($var)) {
-			return 'resource'; 
+			return 'resource';
 		}
-		return 'unknown'; 
+		return 'unknown';
 	}
 
 /**

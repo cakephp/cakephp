@@ -74,12 +74,13 @@ function config() {
  */
 function debug($var = false, $showHtml = null, $showFrom = true) {
 	if (Configure::read('debug') > 0) {
+		App::uses('Debugger', 'Utility');
 		$file = '';
 		$line = '';
 		if ($showFrom) {
-			$calledFrom = debug_backtrace();
-			$file = substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1);
-			$line = $calledFrom[0]['line'];
+			$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
+			$file = $trace[0]['file'];
+			$line = $trace[0]['line'];
 		}
 		$html = <<<HTML
 <div class="cake-debug-output">
@@ -104,7 +105,7 @@ TEXT;
 		if ($showHtml === null && $template !== $text) {
 			$showHtml = true;
 		}
-		$var = print_r($var, true);
+		$var = Debugger::exportVar($var, 25);
 		if ($showHtml) {
 			$var = htmlentities($var);
 		}
