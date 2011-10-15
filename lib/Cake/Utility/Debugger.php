@@ -32,7 +32,7 @@ App::uses('String', 'Utility');
  * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
  *
  * @package       Cake.Utility
- * @link          http://book.cakephp.org/view/1191/Using-the-Debugger-Class
+ * @link          http://book.cakephp.org/2.0/en/development/debugging.html#debugger-class
  */
 class Debugger {
 
@@ -175,7 +175,7 @@ class Debugger {
  * @param mixed $var the variable to dump
  * @return void
  * @see Debugger::exportVar()
- * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::dump
  */
 	public static function dump($var) {
 		pr(self::exportVar($var));
@@ -188,7 +188,7 @@ class Debugger {
  * @param mixed $var Variable or content to log
  * @param integer $level type of log to use. Defaults to LOG_DEBUG
  * @return void
- * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
 	public static function log($var, $level = LOG_DEBUG) {
 		$source = self::trace(array('start' => 1)) . "\n";
@@ -275,7 +275,7 @@ class Debugger {
  *
  * @param array $options Format for outputting stack trace
  * @return mixed Formatted stack trace
- * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::trace
  */
 	public static function trace($options = array()) {
 		$_this = Debugger::getInstance();
@@ -390,7 +390,7 @@ class Debugger {
  * @param integer $context Number of lines of context to extract above and below $line
  * @return array Set of lines highlighted
  * @see http://php.net/highlight_string
- * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::excerpt
  */
 	public static function excerpt($file, $line, $context = 2) {
 		$lines = array();
@@ -436,7 +436,7 @@ class Debugger {
  * @param string $var Variable to convert
  * @param integer $recursion
  * @return string Variable as a formatted string
- * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
 	public static function exportVar($var, $recursion = 0) {
 		switch (strtolower(gettype($var))) {
