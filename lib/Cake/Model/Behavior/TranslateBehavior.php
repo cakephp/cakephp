@@ -23,7 +23,7 @@ App::uses('I18n', 'I18n');
  * Translate behavior
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/view/1328/Translate
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/translate.html
  */
 class TranslateBehavior extends ModelBehavior {
 
