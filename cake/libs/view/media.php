@@ -283,3 +283,4 @@ class MediaView extends View {
 		@ob_flush();
 	}
 }
+
