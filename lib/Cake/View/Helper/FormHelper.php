@@ -683,7 +683,7 @@ class FormHelper extends AppHelper {
 		if (is_array($error)) {
 			foreach ($error as &$e) {
 				if (is_numeric($e)) {
-					$e = __d('cake', 'Error in field %s', Inflector::humanize($this->field()));
+					$e = __('Error in field %s', Inflector::humanize($this->field()));
 				}
 			}
 		}
@@ -752,7 +752,7 @@ class FormHelper extends AppHelper {
 			if (substr($text, -3) == '_id') {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
-			$text = __d('cake', Inflector::humanize(Inflector::underscore($text)));
+			$text = __(Inflector::humanize(Inflector::underscore($text)));
 		}
 
 		if (is_string($options)) {
@@ -821,13 +821,13 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($legend === true) {
-			$actionName = __d('cake', 'New %s');
+			$actionName = __('New %s');
 			$isEdit = (
 				strpos($this->request->params['action'], 'update') !== false ||
 				strpos($this->request->params['action'], 'edit') !== false
 			);
 			if ($isEdit) {
-				$actionName = __d('cake', 'Edit %s');
+				$actionName = __('Edit %s');
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($model));
 			$legend = sprintf($actionName, __($modelName));
@@ -1582,7 +1582,7 @@ class FormHelper extends AppHelper {
  */
 	public function submit($caption = null, $options = array()) {
 		if (!is_string($caption) && empty($caption)) {
-			$caption = __d('cake', 'Submit');
+			$caption = __('Submit');
 		}
 		$out = null;
 		$div = true;
@@ -2434,18 +2434,18 @@ class FormHelper extends AppHelper {
 			break;
 			case 'month':
 				if ($options['monthNames'] === true) {
-					$data['01'] = __d('cake', 'January');
-					$data['02'] = __d('cake', 'February');
-					$data['03'] = __d('cake', 'March');
-					$data['04'] = __d('cake', 'April');
-					$data['05'] = __d('cake', 'May');
-					$data['06'] = __d('cake', 'June');
-					$data['07'] = __d('cake', 'July');
-					$data['08'] = __d('cake', 'August');
-					$data['09'] = __d('cake', 'September');
-					$data['10'] = __d('cake', 'October');
-					$data['11'] = __d('cake', 'November');
-					$data['12'] = __d('cake', 'December');
+					$data['01'] = __('January');
+					$data['02'] = __('February');
+					$data['03'] = __('March');
+					$data['04'] = __('April');
+					$data['05'] = __('May');
+					$data['06'] = __('June');
+					$data['07'] = __('July');
+					$data['08'] = __('August');
+					$data['09'] = __('September');
+					$data['10'] = __('October');
+					$data['11'] = __('November');
+					$data['12'] = __('December');
 				} else if (is_array($options['monthNames'])) {
 					$data = $options['monthNames'];
 				} else {

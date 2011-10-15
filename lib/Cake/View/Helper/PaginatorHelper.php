@@ -557,7 +557,7 @@ class PaginatorHelper extends AppHelper {
 			array(
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
-				'separator' => __d('cake', ' of ')
+				'separator' => __(' of ')
 			),
 		$options);
 
