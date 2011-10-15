@@ -36,16 +36,13 @@ class AclBehavior extends ModelBehavior {
 	protected $_typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco', 'both' => array('Aro', 'Aco'));
 
 /**
- * Sets up the configuation for the model, and loads ACL models if they haven't been already
+ * Sets up the configuration for the model, and loads ACL models if they haven't been already
  *
  * @param Model $model
  * @param array $config
  * @return void
  */
 	public function setup($model, $config = array()) {
-		if (is_string($config)) {
-			$config = array('type' => $config);
-		}
 		$this->settings[$model->name] = array_merge(array('type' => 'controlled'), (array)$config);
 		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
 
