@@ -233,6 +233,24 @@ class ContainableBehavior extends ModelBehavior {
 	}
 
 /**
+ * Add the specified relations to the next find call.
+ * Unbinds all relations from a model except the specified ones. Calling this function without
+ * parameters unbinds all related models.
+ *
+ * @param object $Model Model on which binding restriction is being applied
+ * @return void
+ * @access public
+ */
+	function containAdd(&$Model) {
+		$args = func_get_args();
+		$contain = call_user_func_array('am', array_slice($args, 1));
+		if(!isset($this->runtime[$Model->alias]['contain']) || !is_array($this->runtime[$Model->alias]['contain'])){
+			$this->runtime[$Model->alias]['contain'] = array();
+		}
+		$this->runtime[$Model->alias]['contain'] += $contain;
+	}
+
+/**
  * Permanently restore the original binding settings of given model, useful
  * for restoring the bindings after using 'reset' => false as part of the
  * contain call.
