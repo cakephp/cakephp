@@ -762,13 +762,12 @@ class ViewTest extends CakeTestCase {
 		Configure::write('Cache.check', true);
 
 		$Controller =& new ViewPostsController();
-		$Controller->cacheAction = '1 day';
+		$Controller->cacheAction = '+1 day';
 		$View =& new View($Controller);
 		$View->loaded['cache'] = new ViewTestMockCacheHelper();
 		$View->loaded['cache']->expectCallCount('cache', 2);
 
-		$result = $View->render('index');
-		$this->assertPattern('/posts index/', $result);
+		$View->render('index');
 
 		Configure::write('Cache.check', $_check);
 	}
