@@ -184,7 +184,7 @@ class Postgres extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param Model $model Name of database table to inspect
+ * @param Model|string $model Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {

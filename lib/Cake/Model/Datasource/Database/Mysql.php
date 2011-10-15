@@ -292,19 +292,21 @@ class Mysql extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param Model $model Name of database table to inspect or model instance
+ * @param Model|string $model Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
  * @throws CakeException
  */
-	public function describe(Model $model) {
+	public function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
 		}
+		$table = $this->fullTableName($model);
+
 		$fields = false;
-		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
+		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $table);
 		if (!$cols) {
-			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $model->name));
+			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
 		foreach ($cols as $column) {

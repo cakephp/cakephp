@@ -762,6 +762,26 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * Test describe() on a fixture.
+ *
+ * @return void
+ */
+	public function testDescribe() {
+		$this->loadFixtures('Apple');
+
+		$model = new Apple();
+		$result = $this->Dbo->describe($model);
+
+		$this->assertTrue(isset($result['id']));
+		$this->assertTrue(isset($result['color']));
+
+		$result = $this->Dbo->describe($model->useTable);
+
+		$this->assertTrue(isset($result['id']));
+		$this->assertTrue(isset($result['color']));
+	}
+
+/**
  * test that a describe() gets additional fieldParameters
  *
  * @return void

@@ -156,16 +156,17 @@ class Sqlite extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param Model $model
+ * @param Model|string $model Either the model or table name you want described.
  * @return array Fields in table. Keys are name and type
  */
-	public function describe(Model $model) {
+	public function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
 		}
+		$table = $this->fullTableName($model);
 		$fields = array();
-		$result = $this->_execute('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
+		$result = $this->_execute('PRAGMA table_info(' . $table . ')');
 
 		foreach ($result as $column) {
 			$column = (array) $column;
@@ -187,7 +188,7 @@ class Sqlite extends DboSource {
 		}
 
 		$result->closeCursor();
-		$this->_cacheDescription($model->tablePrefix . $model->table, $fields);
+		$this->_cacheDescription($table, $fields);
 		return $fields;
 	}
 
