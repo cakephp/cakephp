@@ -24,7 +24,7 @@
  * the amount of associations and data returned.
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/view/1323/Containable
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html
  */
 class ContainableBehavior extends ModelBehavior {
 
@@ -225,7 +225,7 @@ class ContainableBehavior extends ModelBehavior {
  *
  * @param Model $Model Model on which binding restriction is being applied
  * @return void
- * @link http://book.cakephp.org/view/1323/Containable#Using-Containable-1324
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html#using-containable
  */
 	public function contain($Model) {
 		$args = func_get_args();
