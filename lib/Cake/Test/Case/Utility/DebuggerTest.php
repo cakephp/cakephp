@@ -347,7 +347,7 @@ TEXT;
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertPattern('/"cool"/', $result);
+		$this->assertPattern("/'cool'/", $result);
 
 		unlink(TMP . 'logs' . DS . 'debug.log');
 
@@ -356,8 +356,8 @@ TEXT;
 		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertPattern('/\[main\]/', $result);
 		$this->assertPattern('/array/', $result);
-		$this->assertPattern('/"whatever",/', $result);
-		$this->assertPattern('/"here"/', $result);
+		$this->assertPattern("/'whatever',/", $result);
+		$this->assertPattern("/'here'/", $result);
 	}
 
 /**
@@ -381,7 +381,18 @@ TEXT;
 		ob_start();
 		Debugger::dump($var);
 		$result = ob_get_clean();
-		$expected = "<pre>array(\n\t'People' => array()\n)</pre>";
+		$expected = <<<TEXT
+<pre>array(
+	'People' => array(
+		(int) 0 => array(
+		),
+		(int) 1 => array(
+		)
+	)
+)</pre>
+TEXT;
+		$result = str_replace(array("\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
 		$this->assertEquals($expected, $result);
 	}
 
