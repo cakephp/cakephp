@@ -270,6 +270,7 @@ class DboOracle extends DboSource {
 		$find = array('SELECT');
 		$replace = array('');
 		$fieldList = trim(str_replace($find, $replace, $preFrom));
+        $fieldList = preg_replace('/\([^)]*\)/', '', $fieldList); // this line fixes problems with functions like SUBSTR(string, start, width)
 		$fields = preg_split('/,\s+/', $fieldList);//explode(', ', $fieldList);
 		$lastTableName	= '';
 
