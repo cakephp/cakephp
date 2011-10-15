@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml" />
+		<title>The Bakery: </title>
+		<link>http://bakery.cakephp.org/</link>
+		<description>Recent  Articles at The Bakery.</description>
+		<language>en-us</language>
+		<pubDate>Wed, 01 Sep 2010 12:09:25 -0500</pubDate>
+		<docs>http://validator.w3.org/feed/docs/rss2.html</docs>
+		<generator>CakePHP Bakery</generator>
+		<managingEditor>mariano@cricava.com (Mariano Iglesias)</managingEditor>
+		<webMaster>gwoo@cakephp.org (Garrett Woodworth)</webMaster>
+		<item>
+			<title>EpisodeCMS</title>
+			<link>http://bakery.cakephp.org/articles/view/episodecms</link>
+			<description>EpisodeCMS is CakePHP based content management system.
+Features: control panel, events API, module management, multilanguage and translations, themes
+http://episodecms.com/
+
+Please help me to improve it. Thanks.</description>
+			<pubDate>Tue, 31 Aug 2010 02:07:02 -0500</pubDate>
+			<guid>http://bakery.cakephp.org/articles/view/episodecms</guid>
+		</item>
+		<item>
+			<title>Alertpay automated sales via IPN</title>
+			<link>http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn</link>
+			<description>I&#039;m going to show you how I implemented a payment module via the Alertpay payment processor.</description>
+			<pubDate>Tue, 31 Aug 2010 01:42:00 -0500</pubDate>
+			<guid>http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn</guid>
+		</item>
+	</channel>
+</rss>
