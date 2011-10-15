@@ -594,7 +594,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->script('http://example.com/test.json');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'http://example.com/test.json.js')
+			'script' => array('type' => 'text/javascript', 'src' => 'http://example.com/test.json')
 		);
 		$this->assertTags($result, $expected);
 
