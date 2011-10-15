@@ -493,6 +493,23 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * testReadTranslatedField method
+ *
+ * @access public
+ * @return void
+ */
+	function testReadTranslatedField() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel =& new TranslatedItem();
+		$TestModel->locale = 'eng';
+		$TestModel->id = 1;
+		$result = $TestModel->field('title');
+		$expected = 'Title #1';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * testSaveCreate method
  *
  * @access public
