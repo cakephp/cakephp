@@ -116,7 +116,8 @@ class BehaviorCollection extends ObjectCollection {
 		App::uses($class, $plugin . 'Model/Behavior');
 		if (!class_exists($class)) {
 			throw new MissingBehaviorException(array(
-				'class' => $class
+				'class' => $class,
+				'plugin' => substr($plugin, 0, -1)
 			));
 		}
 

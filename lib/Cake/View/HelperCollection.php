@@ -74,7 +74,8 @@ class HelperCollection extends ObjectCollection {
 		App::uses($helperClass, $plugin . 'View/Helper');
 		if (!class_exists($helperClass)) {
 			throw new MissingHelperException(array(
-				'class' => $helperClass
+				'class' => $helperClass,
+				'plugin' => substr($plugin, 0, -1)
 			));
 		}
 		$this->_loaded[$alias] = new $helperClass($this->_View, $settings);

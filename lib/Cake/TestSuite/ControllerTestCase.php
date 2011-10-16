@@ -272,7 +272,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		}
 		App::uses($controller . 'Controller', $plugin . 'Controller');
 		if (!class_exists($controller.'Controller')) {
-			throw new MissingControllerException(array('controller' => $controller.'Controller'));
+			throw new MissingControllerException(array(
+				'class' => $controller . 'Controller',
+				'plugin' => substr($plugin, 0, -1)
+			));
 		}
 		ClassRegistry::flush();
 		

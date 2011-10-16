@@ -423,7 +423,7 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function testMissingController() {
-		$exception = new MissingControllerException(array('controller' => 'PostsController'));
+		$exception = new MissingControllerException(array('class' => 'PostsController'));
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		ob_start();
@@ -508,7 +508,7 @@ class ExceptionRendererTest extends CakeTestCase {
 				new MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
 				array(
 					'/<h2>Missing Datasource<\/h2>/',
-					'/Datasource class <em>MyDatasource<\/em> could not be found/'
+					'/Datasource class <em>MyPlugin.MyDatasource<\/em> could not be found/'
 				),
 				500
 			),
@@ -516,6 +516,7 @@ class ExceptionRendererTest extends CakeTestCase {
 				new MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper<\/h2>/',
+					'/<em>MyCustomHelper<\/em> could not be found./',
 					'/Create the class <em>MyCustomHelper<\/em> below in file:/',
 					'/(\/|\\\)MyCustomHelper.php/'
 				),
