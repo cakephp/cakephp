@@ -53,7 +53,7 @@ class AclPerson extends CakeTestModel {
  *
  * @var array
  */
-	public $actsAs = array('Acl' => array('type' => 'both'));
+	public $actsAs = array('Acl' => 'both');
 
 /**
  * belongsTo property

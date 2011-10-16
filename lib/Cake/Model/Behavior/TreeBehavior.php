@@ -55,6 +55,10 @@ class TreeBehavior extends ModelBehavior {
  * @return void
  */
 	public function setup($Model, $config = array()) {
+		if (isset($config[0])) {
+			$config['type'] = $config[0];
+			unset($config[0]);
+		}
 		$settings = array_merge($this->_defaults, $config);
 
 		if (in_array($settings['scope'], $Model->getAssociated('belongsTo'))) {
