@@ -239,11 +239,25 @@ class CakeEmail {
 	protected $_transportClass = null;
 
 /**
- * charset the email is sent in
+ * Charset the email body is sent in
+ *
  *
  * @var string
  */
 	public $charset = 'utf-8';
+
+/**
+ * Charset the email header is sent in
+ * If null, the $charset property will be used as default
+ * @var string
+ */
+	public $headerCharset = null;
+
+/**
+ * The application wide charset, used to encode headers and body
+ * @var string
+ */
+	public $_appCharset = null;
 
 /**
  * List of files that should be attached to the email.
@@ -274,12 +288,15 @@ class CakeEmail {
  *
  */
 	public function __construct($config = null) {
-		$charset = Configure::read('App.encoding');
-		if ($charset !== null) {
-			$this->charset = $charset;
+		$this->_appCharset = Configure::read('App.encoding');
+		if ($this->_appCharset !== null) {
+			$this->charset = $this->_appCharset;
 		}
 		if ($config) {
 			$this->config($config);
+		}
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $this->charset;
 		}
 	}
 
@@ -994,15 +1011,24 @@ class CakeEmail {
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
 			if (!class_exists('EmailConfig') && !config('email')) {
-				throw new SocketException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
+				throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$config})) {
-				throw new SocketException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
+				throw new ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
 			}
 			$config = $configs->{$config};
 		}
 		$this->_config += $config;
+		if (!empty($config['charset'])) {
+			$this->charset = $config['charset'];
+		}
+		if (!empty($config['headerCharset'])) {
+			$this->headerCharset = $config['headerCharset'];
+		}
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $this->charset;
+		}
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
@@ -1073,13 +1099,29 @@ class CakeEmail {
 		$internalEncoding = function_exists('mb_internal_encoding');
 		if ($internalEncoding) {
 			$restore = mb_internal_encoding();
-			mb_internal_encoding($this->charset);
+			mb_internal_encoding($this->_appCharset);
 		}
-		$return = mb_encode_mimeheader($text, $this->charset, 'B');
+		$text = $this->_encodeString($text, $this->headerCharset);
+		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
 			mb_internal_encoding($restore);
 		}
 		return $return;
+	}
+
+/**
+ * Translates a string for one charset to another if the App.encoding value
+ * differs and the mb_convert_encoding function exists
+ *
+ * @param string $text The text to be converted
+ * @param string $charset the target encoding
+ * @return string
+ */
+	protected function _encodeString($text, $charset) {
+		if ($this->_appCharset === $charset || !function_exists('mb_convert_encoding')) {
+			return $text;
+		}
+		return mb_convert_encoding($text, $charset, $this->_appCharset);
 	}
 
 /**
@@ -1322,7 +1364,7 @@ class CakeEmail {
 
 		$View->viewPath = $View->layoutPath = 'Emails' . DS . $this->_emailFormat;
 		$View->viewVars['content'] = $content;
-		$rendered = $View->render($template, $layout);
+		$rendered = $this->_encodeString($View->render($template, $layout), $this->charset);
 		$content = explode("\n", $rendered);
 
 		if ($this->_emailFormat === 'html') {
