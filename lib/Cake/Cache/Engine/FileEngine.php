@@ -289,7 +289,7 @@ class FileEngine extends CacheEngine {
 			try {
 				$this->_File = $path->openFile('c+');
 			} catch (Exception $e) {
-				trigger_error(__d('cake_dev', $e->getMessage()), E_USER_WARNING);
+				trigger_error($e->getMessage(), E_USER_WARNING);
 				return false;
 			}
 			unset($path);
