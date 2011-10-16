@@ -175,7 +175,7 @@ class TranslateBehavior extends ModelBehavior {
 						'conditions' => array(
 							$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
 							'I18n__'.$field.'.model' => $model->name,
-							'I18n__'.$field.'.'.$RuntimeModel->displayField => $field,
+							'I18n__'.$field.'.'.$RuntimeModel->displayField => $aliasField,
 							'I18n__'.$field.'.locale' => $locale
 						)
 					);
