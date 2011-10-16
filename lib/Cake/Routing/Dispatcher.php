@@ -81,7 +81,8 @@ class Dispatcher {
 
 		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
+				'class' => Inflector::camelize($request->params['controller']) . 'Controller',
+				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin'])
 			));
 		}
 

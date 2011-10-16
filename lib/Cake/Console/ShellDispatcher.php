@@ -201,11 +201,10 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return mixed An object
- * @throws MissingShellFileException when errors are encountered.
+ * @throws MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
-
 
 		$class = Inflector::camelize($shell) . 'Shell';
 
@@ -214,7 +213,9 @@ class ShellDispatcher {
 		App::uses($class, $plugin . 'Console/Command');
 
 		if (!class_exists($class)) {
-			throw new MissingShellFileException(array('shell' => $shell));
+			throw new MissingShellException(array(
+				'class' => $class
+			));
 		}
 		$Shell = new $class();
 		return $Shell;

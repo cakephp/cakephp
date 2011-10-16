@@ -11,29 +11,30 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.view.templates.errors
+ * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$pluginDot = empty($plugin) ? null : $plugin . '.';
 ?>
-<h2><?php echo __d('cake_dev', 'Missing Component Class'); ?></h2>
+<h2><?php echo __d('cake_dev', 'Missing Helper'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Component class %1$s was not found.', '<em>' . $class . '</em>'); ?>
+	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . $pluginDot . $class . '</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s in file: %s', '<em>' . $class . '</em>', APP_DIR . DS . 'Controller' . DS . 'Component' . DS . Inflector::camelize($file)); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . '</em>', (empty($plugin) ? APP_DIR . DS : CakePlugin::path($plugin)) . 'View' . DS . 'Helper' . DS . $class . '.php'); ?>
 </p>
 <pre>
 &lt;?php
-class <?php echo $class;?> extends Component {<br />
+class <?php echo $class; ?> extends AppHelper {
 
 }
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_component_class.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_helper.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

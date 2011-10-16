@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.console.libs.templates.views
+ * @package       Cake.Console.Templates.default.views
  * @since         CakePHP(tm) v 1.2.0.5234
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

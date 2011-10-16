@@ -272,7 +272,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		}
 		App::uses($controller . 'Controller', $plugin . 'Controller');
 		if (!class_exists($controller.'Controller')) {
-			throw new MissingControllerException(array('controller' => $controller.'Controller'));
+			throw new MissingControllerException(array(
+				'class' => $controller . 'Controller',
+				'plugin' => substr($plugin, 0, -1)
+			));
 		}
 		ClassRegistry::flush();
 		
@@ -315,14 +318,14 @@ abstract class ControllerTestCase extends CakeTestCase {
 				$methods = array();
 			}
 			list($plugin, $name) = pluginSplit($component, true);
-			App::uses($name . 'Component', $plugin . 'Controller/Component');
-			if (!class_exists($name . 'Component')) {
-				throw new MissingComponentFileException(array(
-					'file' => $name . 'Component.php',
-					'class' => $name.'Component'
+			$componentClass = $name . 'Component';
+			App::uses($componentClass, $plugin . 'Controller/Component');
+			if (!class_exists($componentClass)) {
+				throw new MissingComponentException(array(
+					'class' => $componentClass
 				));
 			}			
-			$_component = $this->getMock($name.'Component', $methods, array(), '', false);
+			$_component = $this->getMock($componentClass, $methods, array(), '', false);
 			$_controller->Components->set($name, $_component);
 		}
 

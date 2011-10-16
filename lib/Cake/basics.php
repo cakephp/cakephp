@@ -152,7 +152,7 @@ if (!function_exists('sortByKey')) {
  * @param boolean $double Encode existing html entities
  * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#h
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
 function h($text, $double = true, $charset = null) {
 	if (is_array($text)) {
@@ -204,7 +204,7 @@ function pluginSplit($name, $dotAppend = false, $plugin = null) {
  *
  * @see	debug()
  * @param array $var Variable to print out
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#pr
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
  */
 function pr($var) {
 	if (Configure::read('debug') > 0) {
@@ -244,7 +244,7 @@ function am() {
  *
  * @param  string $key Environment variable name.
  * @return string Environment variable setting.
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#env
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
  */
 function env($key) {
 	if ($key === 'HTTPS') {
@@ -464,7 +464,7 @@ function clearCache($params = null, $type = 'views', $ext = '.php') {
  *
  * @param array $values Array of values to strip slashes
  * @return mixed What is returned from calling stripslashes
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#stripslashes_deep
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#stripslashes_deep
  */
 function stripslashes_deep($values) {
 	if (is_array($values)) {
@@ -483,7 +483,7 @@ function stripslashes_deep($values) {
  * @param string $singular Text to translate
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return mixed translated string
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#__
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
  */
 function __($singular, $args = null) {
 	if (!$singular) {
@@ -701,7 +701,7 @@ function LogError($message) {
  *
  * @param string $file File to look for
  * @return Full path to file if exists, otherwise false
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#fileExistsInPath
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
  */
 function fileExistsInPath($file) {
 	$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
@@ -722,7 +722,7 @@ function fileExistsInPath($file) {
  *
  * @param string String to convert
  * @return string with underscore remove from start and end of string
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#convertSlash
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#convertSlash
  */
 function convertSlash($string) {
 	$string = trim($string, '/');

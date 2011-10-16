@@ -55,8 +55,9 @@ class TreeBehavior extends ModelBehavior {
  * @return void
  */
 	public function setup($Model, $config = array()) {
-		if (!is_array($config)) {
-			$config = array('type' => $config);
+		if (isset($config[0])) {
+			$config['type'] = $config[0];
+			unset($config[0]);
 		}
 		$settings = array_merge($this->_defaults, $config);
 
