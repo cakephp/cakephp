@@ -1360,7 +1360,7 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $before . sprintf(
 				$this->Html->tags['submitimage'],
-				$url,
+				$this->assetTimestamp($url),
 				$this->_parseAttributes($options, null, '', ' ')
 			) . $after;
 		} else {
