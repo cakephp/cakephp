@@ -304,9 +304,9 @@ class TestShellTest extends CakeTestCase {
 		$this->Shell->args = array('core');
 		$this->Shell->expects($this->at(0))->method('out')->with('Core Test Cases:');
 		$this->Shell->expects($this->at(1))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/\[1\].*/'));
+			->with($this->stringContains('[1]'));
 		$this->Shell->expects($this->at(2))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/\[2\].*/'));
+			->with($this->stringContains('[2]'));
 
 		$this->Shell->expects($this->once())->method('in')
 			->with(__d('cake_console', 'What test case would you like to run?'), null, 'q')
