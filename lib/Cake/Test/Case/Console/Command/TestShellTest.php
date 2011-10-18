@@ -108,6 +108,10 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCategory('Controller/ExampleController.php');
 		$this->assertSame('app', $return);
+
+		$return = $this->Shell->mapFileToCategory('My/File/Is/Here.php');
+		$this->assertSame('app', $return);
+
 	}
 
 /**
@@ -120,6 +124,9 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCase('Controller/ExampleController.php', 'app', false);
 		$this->assertSame('Controller/ExampleController', $return);
+
+		$return = $this->Shell->mapFileToCase('My/File/Is/Here.php', 'app', false);
+		$this->assertSame('My/File/Is/Here', $return);
 	}
 
 /**
