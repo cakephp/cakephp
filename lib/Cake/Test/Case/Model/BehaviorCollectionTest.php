@@ -538,7 +538,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 /**
  * test that attaching a non existant Behavior triggers a cake error.
  *
- * @expectedException MissingBehaviorClassException
+ * @expectedException MissingBehaviorException
  * @return void
  */
 	public function testInvalidBehaviorCausingCakeError() {

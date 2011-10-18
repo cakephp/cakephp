@@ -26,7 +26,7 @@ App::uses('AppHelper', 'View/Helper');
  * called by View, and use the $cacheAction settings set in the controller.
  *
  * @package       Cake.View.Helper
- * @link http://book.cakephp.org/view/1376/Cache
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
 class CacheHelper extends AppHelper {
 

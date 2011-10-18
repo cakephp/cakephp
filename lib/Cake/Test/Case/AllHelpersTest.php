@@ -20,7 +20,7 @@
 /**
  * HelpersGroupTest class
  *
- * This test group will run all test in the cases/libs/view/helpers directory.
+ * This test group will run all Helper related tests.
  *
  * @package       Cake.Test.Case
  */

@@ -270,7 +270,7 @@ class ModelTaskTest extends CakeTestCase {
 			->will($this->onConsecutiveCalls('999999', '21', 'n'));
 
 		$this->Task->expects($this->at(7))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/make a valid/'));
+			->with($this->stringContains('make a valid'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty');
@@ -752,7 +752,7 @@ STRINGEND;
 		CakePlugin::load('ControllerTest', array('path' =>  APP . 'Plugin' . DS . 'ControllerTest' . DS));
 		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Model' . DS . 'BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/BakeArticle extends ControllerTestAppModel/'));
+			->with($path, $this->stringContains('BakeArticle extends ControllerTestAppModel'));
 
 		$result = $this->Task->bake('BakeArticle', array(), array());
 		$this->assertContains("App::uses('ControllerTestAppModel', 'ControllerTest.Model');", $result);
@@ -774,7 +774,7 @@ STRINGEND;
 
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle extends AppModel/'));
+			->with($filename, $this->stringContains('class BakeArticle extends AppModel'));
 
 		$this->Task->execute();
 
@@ -808,7 +808,7 @@ STRINGEND;
 		$filename = '/my/path/BakeArticle.php';
 
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle extends AppModel/'));
+			->with($filename, $this->stringContains('class BakeArticle extends AppModel'));
 		$this->Task->execute();
 	}
 
@@ -825,7 +825,7 @@ STRINGEND;
 
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch("/'BakeComment' \=\> array\(/"));
+			->with($filename, $this->stringContains("'BakeComment' => array("));
 
 		$this->Task->execute();
 	}
@@ -851,23 +851,23 @@ STRINGEND;
 
 		$filename = '/my/path/BakeArticle.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle/'));
+			->with($filename, $this->stringContains('class BakeArticle'));
 
 		$filename = '/my/path/BakeArticlesBakeTag.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesBakeTag/'));
+			->with($filename, $this->stringContains('class BakeArticlesBakeTag'));
 
 		$filename = '/my/path/BakeComment.php';
 		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeComment/'));
+			->with($filename, $this->stringContains('class BakeComment'));
 
 		$filename = '/my/path/BakeTag.php';
 		$this->Task->expects($this->at(4))
-			->method('createFile')->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeTag/'));
+			->method('createFile')->with($filename, $this->stringContains('class BakeTag'));
 
 		$filename = '/my/path/CategoryThread.php';
 		$this->Task->expects($this->at(5))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
+			->with($filename, $this->stringContains('class CategoryThread'));
 
 		$this->Task->execute();
 
@@ -897,19 +897,19 @@ STRINGEND;
 
 		$filename = '/my/path/BakeArticle.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle/'));
+			->with($filename, $this->stringContains('class BakeArticle'));
 
 		$filename = '/my/path/BakeArticlesBakeTag.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesBakeTag/'));
+			->with($filename, $this->stringContains('class BakeArticlesBakeTag'));
 
 		$filename = '/my/path/BakeComment.php';
 		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeComment/'));
+			->with($filename, $this->stringContains('class BakeComment'));
 
 		$filename = '/my/path/CategoryThread.php';
 		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
+			->with($filename, $this->stringContains('class CategoryThread'));
 
 		$this->Task->execute();
 	}
@@ -948,7 +948,7 @@ STRINGEND;
 		$filename = '/my/path/BakeArticle.php';
 
 		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle/'));
+			->with($filename, $this->stringContains('class BakeArticle'));
 
 		$this->Task->execute();
 

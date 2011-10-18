@@ -1,6 +1,6 @@
 <?php
 /**
- * ComponentCollectionTest file
+ * ObjectCollectionTest file
  *
  * PHP 5
  *
@@ -401,6 +401,16 @@ class ObjectCollectionTest extends CakeTestCase {
 			'Something' => array('class' => 'Something', 'settings' => array()),
 			'Apple' => array('class' => 'Banana.Apple', 'settings' => array('foo' => 'bar')),
 		);
+		$this->assertEquals($expected, $result);
+		
+		// This is the result after Controller::_mergeVars
+		$components = array(
+			'Html' => null,
+			'Foo.Bar' => array('one', 'two'),
+			'Something' => null,
+			'Banana.Apple' => array('foo' => 'bar')
+		);
+		$result = ObjectCollection::normalizeObjectArray($components);
 		$this->assertEquals($expected, $result);
 	}
 

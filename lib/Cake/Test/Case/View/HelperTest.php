@@ -155,11 +155,11 @@ class HelperTestPostsTag extends Model {
 
 class TestHelper extends Helper {
 /**
- * helpers for this helper.
+ * Helpers for this helper.
  *
  * @var string
  */
-	var $helpers = array('Html', 'TestPlugin.OtherHelper');
+	public $helpers = array('Html', 'TestPlugin.OtherHelper');
 
 /**
  * expose a method as public
@@ -283,6 +283,10 @@ class HelperTest extends CakeTestCase {
 
 		$this->Helper->setEntity('HelperTestComment.id.time');
 		$expected = array('HelperTestComment', 'id', 'time');
+		$this->assertEquals($expected, $this->Helper->entity());
+
+		$this->Helper->setEntity('HelperTestComment.created.year');
+		$expected = array('HelperTestComment', 'created', 'year');
 		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->Helper->setEntity(null);

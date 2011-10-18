@@ -275,6 +275,16 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEqual($expected, $result);
+
+		$text = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
+		$expected = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertEqual($expected, $result);
+
+		$text = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
+		$expected = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertEqual($expected, $result);
 	}
 
 /**

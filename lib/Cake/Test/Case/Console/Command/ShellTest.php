@@ -77,8 +77,8 @@ class ShellTestShell extends Shell {
  * @package       Cake.Test.Case.Console.Command
  */
 class TestMergeShell extends Shell {
-	var $tasks = array('DbConfig', 'Fixture');
-	var $uses = array('Comment');
+	public $tasks = array('DbConfig', 'Fixture');
+	public $uses = array('Comment');
 }
 
 /**
@@ -214,6 +214,10 @@ class ShellTest extends CakeTestCase {
 			->method('read')
 			->will($this->returnValue('y'));
 
+		$this->Shell->stdin->expects($this->at(5))
+			->method('read')
+			->will($this->returnValue('0'));
+
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
 		$this->assertEqual($result, 'n');
 
@@ -229,6 +233,16 @@ class ShellTest extends CakeTestCase {
 		$result = $this->Shell->in('Just a test?', 'y', 'y');
 		$this->assertEqual($result, 'y');
 
+		$result = $this->Shell->in('Just a test?', array(0, 1, 2), '0');
+		$this->assertEqual($result, '0');
+	}
+
+/**
+ * Test in() when not interactive.
+ *
+ * @return void
+ */
+	public function testInNonInteractive() {
 		$this->Shell->interactive = false;
 
 		$result = $this->Shell->in('Just a test?', 'y/n', 'n');
@@ -517,13 +531,13 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\necho 'test';\n\$te = 'st';\n?>";
+		$contents = "<?php\necho 'test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$contents = "<?php\necho 'another test';\n\$te = 'st';\n?>";
+		$contents = "<?php\necho 'another test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -555,7 +569,7 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue('y'));
 
 
-		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n?>";
+		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -593,13 +607,13 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -631,7 +645,7 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue('y'));
 
 
-		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -747,6 +761,7 @@ class ShellTest extends CakeTestCase {
 
 
 		$result = $Mock->runCommand('idontexist', array());
+		$this->assertFalse($result);
 	}
 
 /**
@@ -777,14 +792,18 @@ class ShellTest extends CakeTestCase {
 	public function testRunCommandHittingTask() {
 		$Shell = $this->getMock('Shell', array('hasTask', 'startup'), array(), '', false);
 		$task = $this->getMock('Shell', array('execute', 'runCommand'), array(), '', false);
-		$task->expects($this->any())->method('runCommand')
+		$task->expects($this->any())
+			->method('runCommand')
 			->with('execute', array('one', 'value'));
 
 		$Shell->expects($this->once())->method('startup');
-		$Shell->expects($this->any())->method('hasTask')->will($this->returnValue(true));
+		$Shell->expects($this->any())
+			->method('hasTask')
+			->will($this->returnValue(true));
+
 		$Shell->RunCommand = $task;
 
-		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+		$result = $Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
 
 /**

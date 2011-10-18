@@ -25,7 +25,7 @@ App::uses('AppHelper', 'View/Helper');
  * Manipulation of time data.
  *
  * @package       Cake.View.Helper
- * @link http://book.cakephp.org/view/1470/Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html
  */
 class TimeHelper extends AppHelper {
 
@@ -196,7 +196,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return string Parsed timestamp
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function fromString($dateString, $userOffset = null) {
 		if (empty($dateString)) {
@@ -226,7 +226,7 @@ class TimeHelper extends AppHelper {
  * @param integer $userOffset User's offset from GMT (in hours)
  * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
  * @return string Formatted date string
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function nice($dateString = null, $userOffset = null, $format = null) {
 		if ($dateString != null) {
@@ -252,7 +252,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return string Described, relative date string
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function niceShort($dateString = null, $userOffset = null) {
 		$date = $dateString ? $this->fromString($dateString, $userOffset) : time();
@@ -260,9 +260,9 @@ class TimeHelper extends AppHelper {
 		$y = $this->isThisYear($date) ? '' : ' %Y';
 
 		if ($this->isToday($dateString, $userOffset)) {
-			$ret = __d('cake', 'Today, %s', strftime("%H:%M", $date));
+			$ret = __('Today, %s', strftime("%H:%M", $date));
 		} elseif ($this->wasYesterday($dateString, $userOffset)) {
-			$ret = __d('cake', 'Yesterday, %s', strftime("%H:%M", $date));
+			$ret = __('Yesterday, %s', strftime("%H:%M", $date));
 		} else {
 			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = strftime($format, $date);
@@ -279,7 +279,7 @@ class TimeHelper extends AppHelper {
  * @param string $fieldName Name of database field to compare with
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return string Partial SQL string.
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
 		$begin = $this->fromString($begin, $userOffset);
@@ -298,7 +298,7 @@ class TimeHelper extends AppHelper {
  * @param string $fieldName Name of database field to compare with
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return string Partial SQL string.
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
@@ -323,7 +323,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current week
- * @link http://book.cakephp.org/view/1472/Testing-Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isThisWeek($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
@@ -335,7 +335,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current month
- * @link http://book.cakephp.org/view/1472/Testing-Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isThisMonth($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString);
@@ -348,7 +348,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current year
- * @link http://book.cakephp.org/view/1472/Testing-Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isThisYear($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
@@ -361,7 +361,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string was yesterday
- * @link http://book.cakephp.org/view/1472/Testing-Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  *
  */
 	public function wasYesterday($dateString, $userOffset = null) {
@@ -375,7 +375,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string was yesterday
- * @link http://book.cakephp.org/view/1472/Testing-Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isTomorrow($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
@@ -388,7 +388,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param boolean $range if true returns a range in Y-m-d format
  * @return boolean True if datetime string is within current week
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toQuarter($dateString, $range = false) {
 		$time = $this->fromString($dateString);
@@ -425,7 +425,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string to be represented as a Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return integer Unix timestamp
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toUnix($dateString, $userOffset = null) {
 		return $this->fromString($dateString, $userOffset);
@@ -437,7 +437,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toAtom($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
@@ -450,10 +450,21 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
+
+		if(!is_null($userOffset)) {
+			if($userOffset == 0) {
+				$timezone = '+0000';
+			} else {
+				$hours = (int) floor(abs($userOffset));
+				$minutes = (int) (fmod(abs($userOffset), $hours) * 60);
+				$timezone = ($userOffset < 0 ? '-' : '+') . str_pad($hours, 2, '0', STR_PAD_LEFT) . str_pad($minutes, 2, '0', STR_PAD_LEFT);
+			}
+			return date('D, d M Y H:i:s', $date) . ' ' . $timezone;
+		}
 		return date("r", $date);
 	}
 
@@ -480,7 +491,7 @@ class TimeHelper extends AppHelper {
  * @param string $dateTime Datetime string or Unix timestamp
  * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function timeAgoInWords($dateTime, $options = array()) {
 		$userOffset = null;
@@ -598,7 +609,7 @@ class TimeHelper extends AppHelper {
 		$diff = $futureTime - $pastTime;
 
 		if ($diff > abs($now - $this->fromString($end))) {
-			$relativeDate = __d('cake', 'on %s', date($format, $inSeconds));
+			$relativeDate = __('on %s', date($format, $inSeconds));
 		} else {
 			if ($years > 0) {
 				// years and months and days
@@ -632,7 +643,7 @@ class TimeHelper extends AppHelper {
 			}
 
 			if (!$backwards) {
-				$relativeDate = __d('cake', '%s ago', $relativeDate);
+				$relativeDate = __('%s ago', $relativeDate);
 			}
 		}
 		return $relativeDate;
@@ -646,12 +657,12 @@ class TimeHelper extends AppHelper {
  * @param mixed $dateString the datestring or unix timestamp to compare
  * @param integer $userOffset User's offset from GMT (in hours)
  * @return boolean
- * @link http://book.cakephp.org/view/1472/Testing-Time
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
 		$tmp = str_replace(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
-			$timeInterval = $tmp . ' ' . __d('cake', 'days');
+			$timeInterval = $tmp . ' ' . __('days');
 		}
 
 		$date = $this->fromString($dateString, $userOffset);
@@ -669,7 +680,7 @@ class TimeHelper extends AppHelper {
  *
  * @param string $string Datetime string
  * @return string Formatted date string
- * @link http://book.cakephp.org/view/1471/Formatting
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function gmt($string = null) {
 		if ($string != null) {

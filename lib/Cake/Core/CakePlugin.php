@@ -21,6 +21,7 @@
  * CakePlugin class
  *
  * @package       Cake.Core
+ * @link http://book.cakephp.org/2.0/en/plugins.html
  */
 class CakePlugin {
 
@@ -117,7 +118,7 @@ class CakePlugin {
  * @param array $options
  * @return void
  */
-	public function loadAll($options = array()) {
+	public static function loadAll($options = array()) {
 		$plugins = App::objects('plugins');
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;

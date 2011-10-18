@@ -2329,6 +2329,7 @@ class RouterTest extends CakeTestCase {
 			'named' => array(),
 			'ext' => 'json',
 		));
+		$request->query = array();
 		$result = Router::reverse($request);
 		$expected = '/posts/view/1.json';
 		$this->assertEquals($expected, $result);
@@ -2418,6 +2419,9 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($url, Router::url($url));
 
 		$url = 'svn+ssh://example.com';
+		$this->assertEqual($url, Router::url($url));
+
+		$url = '://example.com';
 		$this->assertEqual($url, Router::url($url));
 	}
 

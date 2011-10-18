@@ -33,6 +33,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->Error = $this->getMock('ConsoleErrorHandler', array('_stop'));
 		ConsoleErrorHandler::$stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
 	}
 
@@ -42,6 +43,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		unset($this->Error);
 		parent::tearDown();
 	}
 
@@ -55,7 +57,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($content);
 
-		ConsoleErrorHandler::handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
+		$this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
 	}
 
 /**
@@ -68,7 +70,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
 
-		ConsoleErrorHandler::handleException($exception);
+		$this->Error->expects($this->once())
+			->method('_stop')
+			->with(404);
+
+		$this->Error->handleException($exception);
 	}
 
 /**
@@ -82,7 +88,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
 		
-		ConsoleErrorHandler::handleException($exception);
+		$this->Error->expects($this->once())
+			->method('_stop')
+			->with(1);
+
+		$this->Error->handleException($exception);
 	}
 
 /**
@@ -96,7 +106,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		ConsoleErrorHandler::handleException($exception);
+		$this->Error->expects($this->once())
+			->method('_stop')
+			->with(404);
+
+		$this->Error->handleException($exception);
 	}
 
 /**
@@ -110,7 +124,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		ConsoleErrorHandler::handleException($exception);
+		$this->Error->expects($this->once())
+			->method('_stop')
+			->with(500);
+
+		$this->Error->handleException($exception);
 	}
 
 }

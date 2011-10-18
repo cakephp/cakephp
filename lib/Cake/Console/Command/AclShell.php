@@ -427,7 +427,7 @@ class AclShell extends Shell {
 				'help' => __d('cake_console', 'Check the permissions between an ACO and ARO.'),
 				'parser' => array(
 					'description' => array(
-						__d('cake_console', 'Use this command to grant ACL permissions. Once executed, the ARO specified (and its children, if any) will have ALLOW access to the specified ACO action (and the ACO\'s children, if any).')
+						__d('cake_console', 'Use this command to check ACL permissions.')
 					),
 					'arguments' => array(
 						'aro' => array('help' => __d('cake_console', 'ARO to check.'), 'required' => true),

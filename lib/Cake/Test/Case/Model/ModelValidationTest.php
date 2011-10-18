@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
-
 /**
  * ModelValidationTest file
  *
@@ -637,6 +635,48 @@ class ModelValidationTest extends BaseModelTest {
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
 		));
 		$this->assertEqual($joinRecords, 0, 'Records were saved on the join table. %s');
+	}
+
+/**
+ * test that saveAll and with models at initial insert (no id has set yet)
+ * with validation interact well
+ *
+ * @return void
+ */
+	public function testValidatesWithModelsAndSaveAllWithoutId() {
+		$this->loadFixtures('Post', 'Author');
+
+		$data = array(
+			'Author' => array(
+				'name' => 'Foo Bar',
+			),
+			'Post' => array(
+				array('title' => 'Hello'),
+				array('title' => 'World'),
+			)
+		);
+		$Author = new Author();
+		$Post = $Author->Post;
+
+		$Post->validate = array('author_id' => array('rule' => 'numeric'));
+
+		$Author->create();
+		$result = $Author->saveAll($data, array('validate' => 'only'));
+		$this->assertTrue($result);
+
+		$Author->create();
+		$result = $Author->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+		$this->assertFalse(is_null($Author->id));
+
+		$id = $Author->id;
+		$count = $Author->find('count', array('conditions' => array('Author.id' => $id)));
+		$this->assertIdentical($count, 1);
+
+		$count = $Post->find('count', array(
+			'conditions' => array('Post.author_id' => $id)
+		));
+		$this->assertEqual($count, count($data['Post']));
 	}
 
 /**

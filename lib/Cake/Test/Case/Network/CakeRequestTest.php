@@ -1518,8 +1518,8 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function testInput() {
-		$request = $this->getMock('CakeRequest', array('_readStdin'));
-		$request->expects($this->once())->method('_readStdin')
+		$request = $this->getMock('CakeRequest', array('_readInput'));
+		$request->expects($this->once())->method('_readInput')
 			->will($this->returnValue('I came from stdin'));
 		
 		$result = $request->input();
@@ -1532,8 +1532,8 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function testInputDecode() {
-		$request = $this->getMock('CakeRequest', array('_readStdin'));
-		$request->expects($this->once())->method('_readStdin')
+		$request = $this->getMock('CakeRequest', array('_readInput'));
+		$request->expects($this->once())->method('_readInput')
 			->will($this->returnValue('{"name":"value"}'));
 
 		$result = $request->input('json_decode');
@@ -1553,8 +1553,8 @@ class CakeRequestTest extends CakeTestCase {
 </post>
 XML;
 
-		$request = $this->getMock('CakeRequest', array('_readStdin'));
-		$request->expects($this->once())->method('_readStdin')
+		$request = $this->getMock('CakeRequest', array('_readInput'));
+		$request->expects($this->once())->method('_readInput')
 			->will($this->returnValue($xml));
 
 		$result = $request->input('Xml::build', array('return' => 'domdocument'));

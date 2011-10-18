@@ -104,7 +104,7 @@ class Component extends Object {
  *
  * @param Controller $controller Controller with components to initialize
  * @return void
- * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::initialize
  */
 	public function initialize($controller) { }
 
@@ -113,7 +113,7 @@ class Component extends Object {
  *
  * @param Controller $controller Controller with components to startup
  * @return void
- * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::startup
  */
 	public function startup($controller) { }
 
@@ -123,6 +123,7 @@ class Component extends Object {
  *
  * @param Controller $controller Controller with components to beforeRender
  * @return void
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRender
  */
 	public function beforeRender($controller) { }
 
@@ -131,6 +132,7 @@ class Component extends Object {
  *
  * @param Controller $controller Controller with components to shutdown
  * @return void
+ * @link @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::shutdown
  */
 	public function shutdown($controller) { }
 
@@ -151,6 +153,7 @@ class Component extends Object {
  * @param integer $status The status code of the redirect
  * @param boolean $exit Will the script exit.
  * @return array|null Either an array or null.
+ * @link @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRedirect
  */
 	public function beforeRedirect($controller, $url, $status = null, $exit = true) {}
 

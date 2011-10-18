@@ -197,12 +197,13 @@ class CacheTest extends CakeTestCase {
 		$expected = array(
 			'path' => TMP . 'sessions' . DS,
 			'prefix' => 'cake_',
-			'lock' => false,
+			'lock' => true,
 			'serialize' => true,
 			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'File',
-			'isWindows' => DIRECTORY_SEPARATOR == '\\'
+			'isWindows' => DIRECTORY_SEPARATOR == '\\',
+			'mask' => 0664
 		);
 		$this->assertEqual($expected, Cache::settings('sessions'));
 

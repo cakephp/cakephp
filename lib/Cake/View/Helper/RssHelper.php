@@ -25,7 +25,7 @@ App::uses('Xml', 'Utility');
  *
  * @package       Cake.View.Helper
  * @property      TimeHelper $Time
- * @link http://book.cakephp.org/view/1460/RSS
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html
  */
 class RssHelper extends AppHelper {
 

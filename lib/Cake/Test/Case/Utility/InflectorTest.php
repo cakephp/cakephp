@@ -15,7 +15,6 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing
  * @package       Cake.Test.Case.Utility
- * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       Open Group Test Suite License (http://www.opensource.org/licenses/opengroup.php)
  */
@@ -399,9 +398,11 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals('Banazzz', Inflector::singularize('Bananas'), 'Was inflected with old rules.');
 
 		Inflector::rules('plural', array(
-			'rules' => array('/(.*)na$/i' => '\1zzz')
+			'rules' => array('/(.*)na$/i' => '\1zzz'),
+			'irregular' => array('corpus' => 'corpora')
 		));
-		$this->assertEqual('Banazzz', Inflector::pluralize('Banana'), 'Was inflected with old rules.');
+		$this->assertEqual(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules.');
+		$this->assertEqual(Inflector::pluralize('corpus'), 'corpora', 'Was inflected with old irregular form.');
 	}
 
 /**

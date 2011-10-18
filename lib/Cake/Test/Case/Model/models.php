@@ -179,6 +179,20 @@ class User extends CakeTestModel {
  * @var array
  */
 	public $validate = array('user' => 'notEmpty', 'password' => 'notEmpty');
+
+/**
+ * beforeFind() callback used to run ContainableBehaviorTest::testLazyLoad()
+ *
+ * @return bool
+*/
+	public function beforeFind ($queryData) {
+		if (!empty($queryData['lazyLoad'])) {
+			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
+				throw new Exception('Unavailable associations');
+			}
+		}
+		return true;
+	}
 }
 
 /**
@@ -260,9 +274,9 @@ class Article extends CakeTestModel {
  * @package       Cake.Test.Case.Model
  */
 class BeforeDeleteComment extends CakeTestModel {
-	var $name = 'BeforeDeleteComment';
+	public $name = 'BeforeDeleteComment';
 
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 	public function beforeDelete($cascade = true) {
 		$db = $this->getDataSource();
@@ -2709,7 +2723,7 @@ class TestPluginComment extends CakeTestModel {
 			'className' => 'TestPlugin.TestPluginArticle',
 			'foreignKey' => 'article_id',
 		),
-		'User'
+		'TestPlugin.User'
 	);
 }
 
@@ -3180,8 +3194,8 @@ class GroupUpdateAll extends CakeTestModel {
 }
 
 class TransactionTestModel extends CakeTestModel {
-	var $name = 'TransactionTestModel';
-	var $useTable = 'samples';
+	public $name = 'TransactionTestModel';
+	public $useTable = 'samples';
 
 	public function afterSave($created) {
 		$data = array(
@@ -3192,8 +3206,8 @@ class TransactionTestModel extends CakeTestModel {
 }
 
 class TransactionManyTestModel extends CakeTestModel {
-	var $name = 'TransactionManyTestModel';
-	var $useTable = 'samples';
+	public $name = 'TransactionManyTestModel';
+	public $useTable = 'samples';
 
 	public function afterSave($created) {
 		$data = array(
@@ -4397,7 +4411,126 @@ class MysqlTestModel extends Model {
 class PrefixTestModel extends CakeTestModel {
 }
 class PrefixTestUseTableModel extends CakeTestModel {
-       var $name = 'PrefixTest';
-       var $useTable = 'prefix_tests';
+       public $name = 'PrefixTest';
+       public $useTable = 'prefix_tests';
 }
 
+/**
+ * ScaffoldMock class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldMock extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'articles';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array(
+		'User' => array(
+			'className' => 'ScaffoldUser',
+			'foreignKey' => 'user_id',
+		)
+	);
+
+/**
+ * hasMany property
+ *
+ * @var array
+ */
+	public $hasMany = array(
+		'Comment' => array(
+			'className' => 'ScaffoldComment',
+			'foreignKey' => 'article_id',
+		)
+	);
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var string
+ */
+	public $hasAndBelongsToMany = array(
+		'ScaffoldTag' => array(
+			'className' => 'ScaffoldTag',
+			'foreignKey' => 'something_id',
+			'associationForeignKey' => 'something_else_id',
+			'joinTable' => 'join_things'
+		)
+	);
+}
+
+/**
+ * ScaffoldUser class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldUser extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'users';
+
+/**
+ * hasMany property
+ *
+ * @var array
+ */
+	public $hasMany = array(
+		'Article' => array(
+			'className' => 'ScaffoldMock',
+			'foreignKey' => 'article_id',
+		)
+	);
+}
+
+/**
+ * ScaffoldComment class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldComment extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'comments';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array(
+		'Article' => array(
+			'className' => 'ScaffoldMock',
+			'foreignKey' => 'article_id',
+		)
+	);
+}
+
+/**
+ * ScaffoldTag class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class ScaffoldTag extends CakeTestModel {
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ */
+	public $useTable = 'tags';
+}

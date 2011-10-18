@@ -128,7 +128,7 @@ class AclUser extends CakeTestModel {
  *
  * @var array
  */
-	public $actsAs = array('Acl' => 'requester');
+	public $actsAs = array('Acl' => array('type' => 'requester'));
 
 /**
  * parentNode
@@ -166,7 +166,7 @@ class AclPost extends CakeTestModel {
  *
  * @var array
  */
-	var $actsAs = array('Acl' => 'Controlled');
+	public $actsAs = array('Acl' => array('type' => 'Controlled'));
 
 /**
  * parentNode

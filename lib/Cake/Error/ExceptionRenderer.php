@@ -47,7 +47,7 @@ App::uses('CakeResponse', 'Network');
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
  * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
- * You should place any custom exception renderers in `app/libs`.
+ * You should place any custom exception renderers in `app/Lib/Error`.
  *
  * @package       Cake.Error
  */
@@ -179,7 +179,7 @@ class ExceptionRenderer {
  */
 	protected function _cakeError(CakeException $error) {
 		$url = $this->controller->request->here();
-		$code = $error->getCode();
+		$code = ($error->getCode() >= 400 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
 			'code' => $code,
@@ -204,7 +204,7 @@ class ExceptionRenderer {
 	public function error400($error) {
 		$message = $error->getMessage();
 		if (Configure::read('debug') == 0 && $error instanceof CakeException) {
-			$message = __d('cake', 'Not Found');
+			$message = __('Not Found');
 		}
 		$url = $this->controller->request->here();
 		$this->controller->response->statusCode($error->getCode());
@@ -227,7 +227,7 @@ class ExceptionRenderer {
 		$code = ($error->getCode() > 500 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
-			'name' => __d('cake', 'An Internal Error Has Occurred'),
+			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),
 			'error' => $error,
 		));
@@ -237,7 +237,7 @@ class ExceptionRenderer {
 /**
  * Convenience method to display a PDOException.
  *
- * @param PDOException $error 
+ * @param PDOException $error
  * @return void
  */
 	public function pdoError(PDOException $error) {

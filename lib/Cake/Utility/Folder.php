@@ -415,7 +415,7 @@ class Folder {
 			}
 			if ($item->isFile()) {
 				$files[] = $item->getPathName();
-			} else if ($item->isDir()) {
+			} else if ($item->isDir() && !in_array($name, array('.', '..'))) {
 				$directories[] = $item->getPathName();
 			}
 		}

@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.view.templates.layouts
+ * @package       Cake.View.Layouts
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -22,7 +22,7 @@
 <?php echo $this->Html->charset(); ?>
 <title><?php echo $page_title; ?></title>
 
-<?php if (Configure::read() == 0) { ?>
+<?php if (Configure::read('debug') == 0) { ?>
 <meta http-equiv="Refresh" content="<?php echo $pause; ?>;url=<?php echo $url; ?>"/>
 <?php } ?>
 <style><!--

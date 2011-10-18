@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Console.Templates.skel.Controller
+ * @package       app.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -24,7 +24,7 @@
  *
  * Override this controller by placing a copy in controllers directory of an application
  *
- * @package       Cake.Console.Templates.skel.Controller
+ * @package       app.Controller
  */
 class PagesController extends AppController {
 

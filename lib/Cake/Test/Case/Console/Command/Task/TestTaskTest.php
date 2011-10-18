@@ -260,14 +260,14 @@ class TestTaskTest extends CakeTestCase {
 		$file = TESTS . 'Case' . DS . 'Model' . DS . 'MyClassTest.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, $this->anything());
 
 		$this->Task->expects($this->at(3))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, $this->anything());
 
 		$file = TESTS . 'Case' . DS . 'Controller' . DS . 'CommentsControllerTest.php';
 		$this->Task->expects($this->at(5))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, $this->anything());
 
 		$this->Task->bake('Model', 'MyClass');
 		$this->Task->bake('Model', 'MyClass');
@@ -401,10 +401,19 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->getRealClassname('Controller', 'Posts');
 		$this->assertEqual($result, 'PostsController');
 
+		$result = $this->Task->getRealClassname('Controller', 'PostsController');
+		$this->assertEqual($result, 'PostsController');
+
 		$result = $this->Task->getRealClassname('Helper', 'Form');
 		$this->assertEqual($result, 'FormHelper');
 
+		$result = $this->Task->getRealClassname('Helper', 'FormHelper');
+		$this->assertEqual($result, 'FormHelper');
+
 		$result = $this->Task->getRealClassname('Behavior', 'Containable');
+		$this->assertEqual($result, 'ContainableBehavior');
+
+		$result = $this->Task->getRealClassname('Behavior', 'ContainableBehavior');
 		$this->assertEqual($result, 'ContainableBehavior');
 
 		$result = $this->Task->getRealClassname('Component', 'Auth');
@@ -515,7 +524,7 @@ class TestTaskTest extends CakeTestCase {
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS));
 		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS  .'FormHelperTest.php';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($path, $this->anything());
 
 		$this->Task->bake('Helper', 'Form');
 		CakePlugin::unload();
@@ -534,7 +543,7 @@ class TestTaskTest extends CakeTestCase {
 		CakePlugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'TestPlugin' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperHelperTest.php';
+		$path = $testApp . 'TestPlugin' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperTest.php';
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls(
@@ -599,8 +608,8 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				new PHPUnit_Framework_Constraint_IsAnything(),
-				new PHPUnit_Framework_Constraint_PCREMatch('/class TestTaskTagTestCase extends CakeTestCase/')
+				$this->anything(),
+				$this->stringContains('class TestTaskTagTestCase extends CakeTestCase')
 			);
 		$this->Task->execute();
 	}
@@ -615,10 +624,41 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				new PHPUnit_Framework_Constraint_IsAnything(),
-				new PHPUnit_Framework_Constraint_PCREMatch('/class TestTaskTagTestCase extends CakeTestCase/')
+				$this->anything(),
+				$this->stringContains('class TestTaskTagTestCase extends CakeTestCase')
 			);
 		$this->Task->expects($this->any())->method('isLoadableClass')->will($this->returnValue(true));
 		$this->Task->execute();
+	}
+
+/**
+ * Data provider for mapType() tests.
+ *
+ * @return array
+ */
+	public static function mapTypeProvider() {
+		return array(
+			array('controller', null, 'Controller'),
+			array('Controller', null, 'Controller'),
+			array('component', null, 'Controller/Component'),
+			array('Component', null, 'Controller/Component'),
+			array('model', null, 'Model'),
+			array('Model', null, 'Model'),
+			array('behavior', null, 'Model/Behavior'),
+			array('Behavior', null, 'Model/Behavior'),
+			array('helper', null, 'View/Helper'),
+			array('Helper', null, 'View/Helper'),
+			array('Helper', 'DebugKit', 'DebugKit.View/Helper'),
+		);
+	}
+
+/**
+ * Test that mapType returns the correct package names.
+ *
+ * @dataProvider mapTypeProvider
+ * @return void
+ */
+	public function testMapType($original, $plugin, $expected) {
+		$this->assertEquals($expected, $this->Task->mapType($original, $plugin));
 	}
 }

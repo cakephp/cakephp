@@ -157,7 +157,7 @@ class ErrorHandler {
 			return false;
 		}
 		$errorConfig = Configure::read('Error');
-		list($error, $log) = self::_mapErrorCode($code);
+		list($error, $log) = self::mapErrorCode($code);
 
 		$debug = Configure::read('debug');
 		if ($debug) {
@@ -189,7 +189,7 @@ class ErrorHandler {
  * @param integer $code Error code to map
  * @return array Array of error word, and log location.
  */
-	protected static function _mapErrorCode($code) {
+	public static function mapErrorCode($code) {
 		$error = $log = null;
 		switch ($code) {
 			case E_PARSE:

@@ -2,7 +2,6 @@
 /**
  * Connection Manager tests
  *
- *
  * PHP 5
  *
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -225,7 +224,7 @@ class ConnectionManagerTest extends CakeTestCase {
  * testLoadDataSourceException() method
  *
  * @return void
- * @expectedException MissingDatasourceFileException
+ * @expectedException MissingDatasourceException
  */
 	public function testLoadDataSourceException() {
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');

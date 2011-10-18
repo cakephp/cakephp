@@ -24,7 +24,7 @@
  * the amount of associations and data returned.
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/view/1323/Containable
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html
  */
 class ContainableBehavior extends ModelBehavior {
 
@@ -63,9 +63,6 @@ class ContainableBehavior extends ModelBehavior {
 	public function setup($Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
 			$this->settings[$Model->alias] = array('recursive' => true, 'notices' => true, 'autoFields' => true);
-		}
-		if (!is_array($settings)) {
-			$settings = array();
 		}
 		$this->settings[$Model->alias] = array_merge($this->settings[$Model->alias], $settings);
 	}
@@ -148,8 +145,6 @@ class ContainableBehavior extends ModelBehavior {
 					if (!empty($unbind)) {
 						if (!$reset && empty($instance->__backOriginalAssociation)) {
 							$instance->__backOriginalAssociation = $backupBindings;
-						} else if ($reset && empty($instance->__backContainableAssociation)) {
-							$instance->__backContainableAssociation = $backupBindings;
 						}
 						$instance->unbindModel(array($type => $unbind), $reset);
 					}
@@ -222,30 +217,12 @@ class ContainableBehavior extends ModelBehavior {
 	}
 
 /**
- * Resets original associations on models that may have receive multiple,
- * subsequent unbindings.
- *
- * @param Model $Model Model on which we are resetting
- * @param array $results Results of the find operation
- * @param boolean $primary true if this is the primary model that issued the find operation, false otherwise
- * @return void
- */
-	public function afterFind($Model, $results, $primary) {
-		if (!empty($Model->__backContainableAssociation)) {
-			foreach ($Model->__backContainableAssociation as $relation => $bindings) {
-				$Model->{$relation} = $bindings;
-				unset($Model->__backContainableAssociation);
-			}
-		}
-	}
-
-/**
  * Unbinds all relations from a model except the specified ones. Calling this function without
  * parameters unbinds all related models.
  *
  * @param Model $Model Model on which binding restriction is being applied
  * @return void
- * @link http://book.cakephp.org/view/1323/Containable#Using-Containable-1324
+ * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html#using-containable
  */
 	public function contain($Model) {
 		$args = func_get_args();

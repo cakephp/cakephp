@@ -1,5 +1,6 @@
 <?php
 /*DbAcl schema generated on: 2007-11-24 15:11:13 : 1195945453*/
+
 /**
  * This is Acl Schema file
  *
@@ -15,10 +16,11 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.config.sql
+ * @package       app.Config.Schema
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /*
  *
  * Using the Schema command line utility
@@ -26,6 +28,15 @@
  *
  */
 class DbAclSchema extends CakeSchema {
+
+	public $name = 'DbAcl';
+
+	public function before($event = array()) {
+		return true;
+	}
+
+	public function after($event = array()) {
+	}
 
 	public $acos = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),

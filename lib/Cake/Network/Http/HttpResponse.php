@@ -17,6 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+/**
+ * HTTP Response
+ *
+ * @package       Cake.Network.Http
+ */
 class HttpResponse implements ArrayAccess {
 
 /**

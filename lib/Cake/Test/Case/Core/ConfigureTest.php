@@ -192,6 +192,20 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
+ * test load method for default config creation
+ *
+ * @return void
+ */
+	public function testLoadDefaultConfig() {
+		try {
+			Configure::load('non_existing_configuration_file');
+		} catch (Exception $e) {
+			$result = Configure::configured('default');
+			$this->assertTrue($result);
+		}
+	}
+
+/**
  * test load with merging
  *
  * @return void

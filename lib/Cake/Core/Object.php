@@ -65,8 +65,10 @@ class Object {
 			return false;
 		}
 		App::uses('Dispatcher', 'Routing');
-		if (in_array('return', $extra, true)) {
-			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
+		if (($index = array_search('return', $extra)) !== false) {
+			$extra['return'] = 0;
+			$extra['autoRender'] = 1;
+			unset($extra[$index]);
 		}
 		if (is_array($url) && !isset($extra['url'])) {
 			$extra['url'] = array();
