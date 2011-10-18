@@ -27,7 +27,7 @@ App::uses('AppController', 'Controller');
  * Override this controller by placing a copy in controllers directory of an application
  *
  * @package       Cake.Controller
- * @link http://book.cakephp.org/view/958/The-Pages-Controller
+ * @link http://book.cakephp.org/2.0/en/controllers/pages-controller.html
  */
 class PagesController extends AppController {
 

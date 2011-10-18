@@ -753,7 +753,7 @@ class View extends Object {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!isset($corePaths[$viewPaths[$i]])) {
-					$paths[] = $viewPaths[$i] . 'Plugins' . DS . $plugin . DS;
+					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
 			$paths = array_merge($paths, App::path('View', $plugin));

@@ -354,7 +354,7 @@ class I18n {
 /**
  * Loads the binary .mo file for translation and sets the values for this translation in the var I18n::_domains
  *
- * @param resource $file Binary .mo file to load
+ * @param string $file Binary .mo file to load
  * @param string $domain Domain where to load file in
  * @return void
  */

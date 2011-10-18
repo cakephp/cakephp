@@ -141,7 +141,7 @@ class MissingWidgetThingException extends NotFoundException { }
  */
 class ExceptionRendererTest extends CakeTestCase {
 
-	var $_restoreError = false;
+	public $_restoreError = false;
 /**
  * setup create a request object to get out of router later.
  *
@@ -423,7 +423,7 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function testMissingController() {
-		$exception = new MissingControllerException(array('controller' => 'PostsController'));
+		$exception = new MissingControllerException(array('class' => 'PostsController'));
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		ob_start();
@@ -505,62 +505,37 @@ class ExceptionRendererTest extends CakeTestCase {
 				500
 			),
 			array(
-				new MissingDatasourceFileException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
+				new MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
 				array(
-					'/<h2>Missing Datasource Class<\/h2>/',
-					'/Datasource class <em>MyDatasource<\/em> was not found/'
+					'/<h2>Missing Datasource<\/h2>/',
+					'/Datasource class <em>MyPlugin.MyDatasource<\/em> could not be found/'
 				),
 				500
 			),
 			array(
-				new MissingHelperFileException(array('file' => 'MyCustomHelper.php', 'class' => 'MyCustomHelper')),
+				new MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
-					'/<h2>Missing Helper File<\/h2>/',
-					'/Create the class below in file:/',
+					'/<h2>Missing Helper<\/h2>/',
+					'/<em>MyCustomHelper<\/em> could not be found./',
+					'/Create the class <em>MyCustomHelper<\/em> below in file:/',
 					'/(\/|\\\)MyCustomHelper.php/'
 				),
 				500
 			),
 			array(
-				new MissingHelperClassException(array('file' => 'MyCustomHelper.php', 'class' => 'MyCustomHelper')),
+				new MissingBehaviorException(array('class' => 'MyCustomBehavior')),
 				array(
-					'/<h2>Missing Helper Class<\/h2>/',
-					'/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./',
-					'/(\/|\\\)MyCustomHelper.php/',
-				),
-				500
-			),
-			array(
-				new MissingBehaviorFileException(array('file' => 'MyCustomBehavior.php', 'class' => 'MyCustomBehavior')),
-				array(
-					'/<h2>Missing Behavior File<\/h2>/',
-					'/Create the class below in file:/',
-					'/(\/|\\\)MyCustomBehavior.php/',
-				),
-				500
-			),
-			array(
-				new MissingBehaviorClassException(array('file' => 'MyCustomBehavior.php', 'class' => 'MyCustomBehavior')),
-				array(
-					'/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./',
+					'/<h2>Missing Behavior<\/h2>/',
+					'/Create the class <em>MyCustomBehavior<\/em> below in file:/',
 					'/(\/|\\\)MyCustomBehavior.php/'
 				),
 				500
 			),
 			array(
-				new MissingComponentFileException(array('file' => 'SideboxComponent.php', 'class' => 'SideboxComponent')),
+				new MissingComponentException(array('class' => 'SideboxComponent')),
 				array(
-					'/<h2>Missing Component File<\/h2>/',
-					'/Create the class <em>SideboxComponent<\/em> in file:/',
-					'/(\/|\\\)SideboxComponent.php/'
-				),
-				500
-			),
-			array(
-				new MissingComponentClassException(array('file' => 'SideboxComponent.php', 'class' => 'SideboxComponent')),
-				array(
-					'/<h2>Missing Component Class<\/h2>/',
-					'/Create the class <em>SideboxComponent<\/em> in file:/',
+					'/<h2>Missing Component<\/h2>/',
+					'/Create the class <em>SideboxComponent<\/em> below in file:/',
 					'/(\/|\\\)SideboxComponent.php/'
 				),
 				500
@@ -620,7 +595,7 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function testMissingRenderSafe() {
-		$exception = new MissingHelperFileException(array('class' => 'Fail'));
+		$exception = new MissingHelperException(array('class' => 'Fail'));
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Controller');
@@ -628,7 +603,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->controller->request = $this->getMock('CakeRequest');
 		$ExceptionRenderer->controller->expects($this->at(2))
 			->method('render')
-			->with('missingHelperFile')
+			->with('missingHelper')
 			->will($this->throwException($exception));
 
 		$ExceptionRenderer->controller->expects($this->at(3))

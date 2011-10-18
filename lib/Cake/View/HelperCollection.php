@@ -55,7 +55,7 @@ class HelperCollection extends ObjectCollection {
  * @param string $helper Helper name to load
  * @param array $settings Settings for the helper.
  * @return Helper A helper object, Either the existing loaded helper or a new one.
- * @throws MissingHelperFileException, MissingHelperClassException when the helper could not be found
+ * @throws MissingHelperException when the helper could not be found
  */
 	public function load($helper, $settings = array()) {
 		if (is_array($settings) && isset($settings['className'])) {
@@ -73,9 +73,9 @@ class HelperCollection extends ObjectCollection {
 		$helperClass = $name . 'Helper';
 		App::uses($helperClass, $plugin . 'View/Helper');
 		if (!class_exists($helperClass)) {
-			throw new MissingHelperClassException(array(
+			throw new MissingHelperException(array(
 				'class' => $helperClass,
-				'file' => $helperClass . '.php'
+				'plugin' => substr($plugin, 0, -1)
 			));
 		}
 		$this->_loaded[$alias] = new $helperClass($this->_View, $settings);

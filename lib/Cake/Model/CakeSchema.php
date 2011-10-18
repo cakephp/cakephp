@@ -412,7 +412,6 @@ class CakeSchema extends Object {
 					}
 					$col .= join(', ', $props);
 				} elseif ($field == 'tableParameters') {
-					//@todo add charset, collate and engine here
 					$col = "\t\t'tableParameters' => array(";
 					$props = array();
 					foreach ((array)$value as $key => $param) {
@@ -481,7 +480,7 @@ class CakeSchema extends Object {
 					}
 				}
 
-				if (isset($add[$table][$field])) {
+				if (isset($tables[$table]['add'][$field]) && $field !== 'indexes' && $field !== 'tableParameters') {
 					$wrapper = array_keys($fields);
 					if ($column = array_search($field, $wrapper)) {
 						if (isset($wrapper[$column - 1])) {

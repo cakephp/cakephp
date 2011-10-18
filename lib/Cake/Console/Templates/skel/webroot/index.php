@@ -52,7 +52,7 @@
  * This should point at the directory containg `Cake`.
  *
  * For ease of development CakePHP uses PHP's include_path.  If you
- * need to squeeze a bit more performance you can set this path.
+ * cannot modify your include_path set this value.
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
@@ -71,6 +71,9 @@
 	}
 
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+		if (function_exists('ini_set')) {
+			ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+		}
 		if (!include('Cake' . DS . 'bootstrap.php')) {
 			$failed = true;
 		}

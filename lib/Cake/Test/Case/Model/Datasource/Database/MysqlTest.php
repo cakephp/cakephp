@@ -65,7 +65,7 @@ class MysqlTest extends CakeTestCase {
 		}
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
-		$this->model = new MysqlTestModel();
+		$this->model = ClassRegistry::init('MysqlTestModel');
 	}
 
 /**
@@ -149,13 +149,41 @@ class MysqlTest extends CakeTestCase {
 		$restore = setlocale(LC_ALL, null);
 		setlocale(LC_ALL, 'de_DE');
 
-		$result = $this->Dbo->value(3.141593, 'float');
-		$this->assertEqual((string)$result, '3.141593');
-
 		$result = $this->Dbo->value(3.141593);
-		$this->assertEqual((string)$result, '3.141593');
+		$this->assertEquals('3.141593', $result);
+
+		$result = $this->db->value(3.141593, 'float');
+		$this->assertEquals('3.141593', $result);
+
+		$result = $this->db->value(1234567.11, 'float');
+		$this->assertEquals('1234567.11', $result);
+
+		$result = $this->db->value(123456.45464748, 'float');
+		$this->assertContains('123456.454647', $result);
+
+		$result = $this->db->value(0.987654321, 'float');
+		$this->assertEquals('0.987654321', (string)$result);
+
+		$result = $this->db->value(2.2E-54, 'float');
+		$this->assertEquals('2.2E-54', (string)$result);
+
+		$result = $this->db->value(2.2E-54);
+		$this->assertEquals('2.2E-54', (string)$result);
 
 		setlocale(LC_ALL, $restore);
+	}
+
+/**
+ * test that scientific notations are working correctly
+ *
+ * @return void
+ */
+	function testScientificNotation() {
+		$result = $this->db->value(2.2E-54, 'float');
+		$this->assertEqual('2.2E-54', (string)$result);
+
+		$result = $this->db->value(2.2E-54);
+		$this->assertEqual('2.2E-54', (string)$result);
 	}
 
 /**
@@ -558,10 +586,7 @@ class MysqlTest extends CakeTestCase {
 	public function testBlobSaving() {
 		$this->loadFixtures('BinaryTest');
 		$this->Dbo->cacheSources = false;
-		$data = "GIF87ab 
-		 Ò   4A¿¿¿ˇˇˇ   ,    b 
-		  ¢îè©ÀÌ#¥⁄ã≥ﬁ:¯Ü‚Héá¶jV∂ÓúÎL≥çÀóËıÎ…>ï ≈ vFE%ÒâLFI<†µw˝±≈£7˘ç^H“≤«>ÉÃ¢*∑Ç nÖA•Ù|ﬂêèj£:=ÿ6óUàµ5'∂®àA¬ñ∆ˆGE(gt’≈àÚyÁó«7	‚VìöÇ√˙Ç™
-		k”:;kÀAõ{*¡€Î˚˚[  ;;";
+		$data = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
 
 		$model = new CakeTestModel(array('name' => 'BinaryTest', 'ds' => 'test'));
 		$model->save(compact('data'));
@@ -731,6 +756,26 @@ class MysqlTest extends CakeTestCase {
 
 		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  `BinaryTest_$_other__field`');
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * Test describe() on a fixture.
+ *
+ * @return void
+ */
+	public function testDescribe() {
+		$this->loadFixtures('Apple');
+
+		$model = new Apple();
+		$result = $this->Dbo->describe($model);
+
+		$this->assertTrue(isset($result['id']));
+		$this->assertTrue(isset($result['color']));
+
+		$result = $this->Dbo->describe($model->useTable);
+
+		$this->assertTrue(isset($result['id']));
+		$this->assertTrue(isset($result['color']));
 	}
 
 /**
@@ -959,6 +1004,7 @@ class MysqlTest extends CakeTestCase {
 			'offset' => array(),
 			'group' => array()
 		);
+		$queryData['joins'][0]['table'] = $this->Dbo->fullTableName($queryData['joins'][0]['table']);
 		$this->assertEqual($queryData, $expected);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1036,10 +1082,10 @@ class MysqlTest extends CakeTestCase {
 			->will($this->returnValue($test));
 
 		$test->expects($this->at(0))->method('execute')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/`TestModel9` LEFT JOIN `test_model8`/'));
+			->with($this->stringContains('`TestModel9` LEFT JOIN `test_model8`'));
 
 		$test->expects($this->at(1))->method('execute')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/`TestModel9` INNER JOIN `test_model8`/'));
+			->with($this->stringContains('TestModel9` INNER JOIN `test_model8`'));
 
 		$test->read($this->Model, array('recursive' => 1));
 		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';
@@ -1856,6 +1902,11 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Artist`.`name` = 'JUDY AND MARY'";
 		$this->assertEqual($expected, $result);
+
+		$conditions = array('Company.name similar to ' => 'a word');
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE `Company`.`name` similar to 'a word'";
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -2006,11 +2057,11 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score BETWEEN ? AND ?' => array(90.1, 95.7)));
-		$expected = " WHERE `score` BETWEEN 90.100000 AND 95.700000";
+		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.title' => 1.1));
-		$expected = " WHERE `Post`.`title` = 1.100000";
+		$expected = " WHERE `Post`.`title` = 1.1";
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Post.title' => 1.1), true, true, new Post());
@@ -2024,6 +2075,10 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->conditions(array('MAX(Post.rating) >' => '50'));
 		$expected = " WHERE MAX(`Post`.`rating`) > '50'";
 		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->conditions(array('lower(Article.title)' =>  'secrets'));
+		$expected = " WHERE lower(`Article`.`title`) = 'secrets'";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Dbo->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";
@@ -2191,9 +2246,14 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE `Book`.`id` = 0";
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Dbo->conditions(array("Book.id" => NULL));
+		$result = $this->Dbo->conditions(array("Book.id" => null));
 		$expected = " WHERE `Book`.`id` IS NULL";
 		$this->assertEqual($expected, $result);
+
+		$conditions = array('MysqlModel.id' => '');
+		$result = $this->Dbo->conditions($conditions, true, true, $this->model);
+		$expected = " WHERE `MysqlModel`.`id` IS NULL";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";

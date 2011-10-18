@@ -960,6 +960,45 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the correct fields are unlocked for image submits with no names.
+ *
+ * @return void
+ */
+	public function testSecuritySubmitImageNoName() {
+		$key = 'testKey';
+		$this->Form->request['_Token'] = array('key' => $key);
+
+		$this->Form->create('User');
+		$result = $this->Form->submit('save.png');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'img/save.png'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertEquals(array('x', 'y'), $this->Form->unlockField());
+	}
+
+/**
+ * Test that the correct fields are unlocked for image submits with names.
+ *
+ * @return void
+ */
+	public function testSecuritySubmitImageName() {
+		$key = 'testKey';
+		$this->Form->request['_Token'] = array('key' => $key);
+
+		$this->Form->create('User');
+		$result = $this->Form->submit('save.png', array('name' => 'test'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'name' => 'test', 'src' => 'img/save.png'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertEquals(array('test', 'test_x', 'test_y'), $this->Form->unlockField());
+	}
+/**
  * testFormSecurityMultipleInputFields method
  *
  * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types
@@ -1007,6 +1046,20 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test form security with Model.field.0 style inputs
+ *
+ * @return void
+ */
+	function testFormSecurityArrayFields() {
+		$key = 'testKey';
+
+		$this->Form->request->params['_Token']['key'] = $key;
+		$this->Form->create('Address');
+		$this->Form->input('Address.primary.1');
+		$this->assertEqual('Address.primary', $this->Form->fields[0]);
 	}
 
 /**
@@ -1371,6 +1424,62 @@ class FormHelperTest extends CakeTestCase {
 			),
 			array('div' => array('class' => 'error-message')),
 			'Please provide a password',
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * testEmptyErrorValidation method
+ *
+ * test validation error div when validation message is an empty string
+ *
+ * @access public
+ * @return void
+ */
+	function testEmptyErrorValidation() {
+		$this->Form->validationErrors['Contact']['password'] = '';
+		$result = $this->Form->input('Contact.password');
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error-message')),
+			array(),
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * testEmptyInputErrorValidation method
+ *
+ * test validation error div when validation message is overriden by an empty string when calling input()
+ *
+ * @access public
+ * @return void
+ */
+	function testEmptyInputErrorValidation() {
+		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
+		$result = $this->Form->input('Contact.password', array('error' => ''));
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error-message')),
+			array(),
 			'/div',
 			'/div'
 		);
@@ -6108,7 +6217,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 
+				'id' => 'ContactAddForm', 'method' => 'post',
 				'onsubmit' => 'someFunction();event.returnValue = false; return false;',
 				'action' => '/contacts/index/param',
 				'accept-charset' => 'utf-8'

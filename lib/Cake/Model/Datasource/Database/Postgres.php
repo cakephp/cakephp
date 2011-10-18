@@ -184,7 +184,7 @@ class Postgres extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param Model $model Name of database table to inspect
+ * @param Model|string $model Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
@@ -480,11 +480,7 @@ class Postgres extends DboSource {
 						case 'add':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$alter = 'ADD COLUMN '.$this->buildColumn($col);
-								if (isset($col['after'])) {
-									$alter .= ' AFTER '. $this->name($col['after']);
-								}
-								$colList[] = $alter;
+								$colList[] = 'ADD COLUMN '.$this->buildColumn($col);
 							}
 						break;
 						case 'drop':
@@ -503,8 +499,7 @@ class Postgres extends DboSource {
 								$default = isset($col['default']) ? $col['default'] : null;
 								$nullable = isset($col['null']) ? $col['null'] : null;
 								unset($col['default'], $col['null']);
-								$colList[] = 'ALTER COLUMN '. $fieldName .' TYPE ' . str_replace($fieldName, '', $this->buildColumn($col));
-
+								$colList[] = 'ALTER COLUMN '. $fieldName .' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
 								if (isset($nullable)) {
 									$nullable = ($nullable) ? 'DROP NOT NULL' : 'SET NOT NULL';
 									$colList[] = 'ALTER COLUMN '. $fieldName .'  ' . $nullable;
@@ -774,10 +769,7 @@ class Postgres extends DboSource {
  * @return boolean True on success, false on failure
  */
 	public function setEncoding($enc) {
-		if ($this->_execute('SET NAMES ?', array($enc))) {
-			return true;
-		}
-		return false;
+		return $this->_execute('SET NAMES ' . $this->value($enc)) !== false;
 	}
 
 /**
@@ -786,7 +778,11 @@ class Postgres extends DboSource {
  * @return string The database encoding
  */
 	public function getEncoding() {
-		$cosa = $this->_execute('SHOW client_encoding')->fetch();
+		$result = $this->_execute('SHOW client_encoding')->fetch();
+		if ($result === false) {
+			return false;
+		}
+		return (isset($result['client_encoding'])) ? $result['client_encoding'] : false;
 	}
 
 /**

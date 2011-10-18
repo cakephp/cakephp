@@ -1,4 +1,21 @@
 <?php
+/**
+ * AppTest file.
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Test.Case.Core
+ * @since         CakePHP(tm) v 2.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 /**
  * AppTest class
@@ -328,7 +345,7 @@ class AppTest extends CakeTestCase {
 		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array(
 			'plugins' => array($path)
-		), true);
+		), App::RESET);
 		mkdir($path . '.svn');
 		$result = App::objects('plugin', null, false);
 		rmdir($path . '.svn');
@@ -345,7 +362,7 @@ class AppTest extends CakeTestCase {
 		App::build(array(
 			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		CakePlugin::loadAll();
 
 		$result = App::objects('TestPlugin.model');

@@ -241,36 +241,22 @@ class PrivateActionException extends CakeException {
 }
 
 /**
- * Used when a Component file cannot be found.
+ * Used when a component cannot be found.
  *
  * @package       Cake.Error
  */
-class MissingComponentFileException extends CakeException {
-	protected $_messageTemplate = 'Component file  "%s" is missing.';
+class MissingComponentException extends CakeException {
+	protected $_messageTemplate = 'Component class %s could not be found.';
 }
 
 /**
- * Used when a Component class cannot be found.
+ * Used when a behavior cannot be found.
  *
  * @package       Cake.Error
  */
-class MissingComponentClassException extends CakeException {
-	protected $_messageTemplate = 'Component class "%s" is missing.';
+class MissingBehaviorException extends CakeException {
+	protected $_messageTemplate = 'Behavior class %s could not be found.';
 }
-
-/**
- * Used when a Behavior file cannot be found.
- *
- * @package       Cake.Error
- */
-class MissingBehaviorFileException extends CakeException { }
-
-/**
- * Used when a Behavior class cannot be found.
- *
- * @package       Cake.Error
- */
-class MissingBehaviorClassException extends CakeException { }
 
 /**
  * Used when a view file cannot be found.
@@ -291,23 +277,13 @@ class MissingLayoutException extends CakeException {
 }
 
 /**
- * Used when a helper file cannot be found.
+ * Used when a helper cannot be found.
  *
  * @package       Cake.Error
  */
-class MissingHelperFileException extends CakeException {
-	protected $_messageTemplate = 'Helper file "%s" is missing.';
+class MissingHelperException extends CakeException {
+	protected $_messageTemplate = 'Helper class %s could not be found.';
 }
-
-/**
- * Used when a helper class cannot be found.
- *
- * @package       Cake.Error
- */
-class MissingHelperClassException extends CakeException {
-	protected $_messageTemplate = 'Helper class "%s" is missing.';
-}
-
 
 /**
  * Runtime Exceptions for ConnectionManager
@@ -328,21 +304,12 @@ class MissingConnectionException extends CakeException {
 }
 
 /**
- * Used when a Task file cannot be found.
+ * Used when a Task cannot be found.
  *
  * @package       Cake.Error
  */
-class MissingTaskFileException extends CakeException {
-	protected $_messageTemplate = 'Task file "%s" is missing.';
-}
-
-/**
- * Used when a Task class cannot be found.
- *
- * @package       Cake.Error
- */
-class MissingTaskClassException extends CakeException {
-	protected $_messageTemplate = 'Task class "%s" is missing.';
+class MissingTaskException extends CakeException {
+	protected $_messageTemplate = 'Task class %s could not be found.';
 }
 
 /**
@@ -355,21 +322,12 @@ class MissingShellMethodException extends CakeException {
 }
 
 /**
- * Used when a shell class cannot be found.
+ * Used when a shell cannot be found.
  *
  * @package       Cake.Error
  */
-class MissingShellClassException extends CakeException {
-	protected $_messageTemplate = "Shell class %s could not be loaded.";
-}
-
-/**
- * Used when a shell file cannot be found.
- *
- * @package       Cake.Error
- */
-class MissingShellFileException extends CakeException {
-	protected $_messageTemplate = "Shell file %s could not be loaded.";
+class MissingShellException extends CakeException {
+	protected $_messageTemplate = 'Shell class %s could not be found.';
 }
 
 /**
@@ -382,12 +340,12 @@ class MissingDatasourceConfigException extends CakeException {
 }
 
 /**
- * Exception class to be thrown when a datasource is not found
+ * Used when a datasource cannot be found.
  *
  * @package       Cake.Error
  */
-class MissingDatasourceFileException extends CakeException {
-	protected $_messageTemplate = 'Datasource "%s" was not found.';
+class MissingDatasourceException extends CakeException {
+	protected $_messageTemplate = 'Datasource class %s could not be found.';
 }
 
 /**

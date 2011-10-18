@@ -81,7 +81,8 @@ class Dispatcher {
 
 		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
+				'class' => Inflector::camelize($request->params['controller']) . 'Controller',
+				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin'])
 			));
 		}
 
@@ -159,7 +160,11 @@ class Dispatcher {
 		if (!$ctrlClass) {
 			return false;
 		}
-		return new $ctrlClass($request, $response);
+		$reflection = new ReflectionClass($ctrlClass);
+		if ($reflection->isAbstract() || $reflection->isInterface()) {
+			return false;
+		}
+		return $reflection->newInstance($request, $response);
 	}
 
 /**
@@ -218,8 +223,10 @@ class Dispatcher {
 			}
 
 			if (file_exists($filename)) {
+				App::uses('ThemeView', 'View');
+
 				$controller = null;
-				$view = new View($controller);
+				$view = new ThemeView($controller);
 				return $view->renderCache($filename, microtime(true));
 			}
 		}

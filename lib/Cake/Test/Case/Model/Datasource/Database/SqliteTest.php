@@ -292,7 +292,10 @@ class SqliteTest extends CakeTestCase {
 				'length' => null,
 			)
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->describe($Model->useTable);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

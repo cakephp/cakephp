@@ -77,13 +77,13 @@ class AclShellTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('out')->with('Aro tree:');
 		$this->Task->expects($this->at(2))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/\[1\] ROOT/'));
+			->with($this->stringContains('[1] ROOT'));
 
 		$this->Task->expects($this->at(4))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/\[3\] Gandalf/'));
+			->with($this->stringContains('[3] Gandalf'));
 	
 		$this->Task->expects($this->at(6))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/\[5\] MyModel\.2/'));
+			->with($this->stringContains('[5] MyModel.2'));
 
 		$this->Task->view();
 	}
@@ -216,7 +216,7 @@ class AclShellTest extends CakeTestCase {
 	public function testDeny() {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->expects($this->at(0))->method('out')
-			->with(new PHPUnit_Framework_Constraint_PCREMatch('/Permission denied/'), true);
+			->with($this->stringContains('Permission denied'), true);
 	
 		$this->Task->deny();
 

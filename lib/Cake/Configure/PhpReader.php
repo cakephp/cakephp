@@ -11,7 +11,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/configuration.html#loading-configuration-files CakePHP(tm) Configuration
  * @package       Cake.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -72,10 +72,10 @@ class PhpReader implements ConfigReaderInterface {
 		} else {
 			$file = $this->_path . $key;
 		}
-		if (!file_exists($file)) {
-			$file .= '.php';
-			if (!file_exists($file)) {
-				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', substr($file, 0, -4), $file));
+		$file .= '.php';
+		if (!is_file($file)) {
+			if (!is_file(substr($file, 0, -4))) {
+				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', $file, substr($file, 0, -4)));
 			}
 		}
 		include $file;

@@ -28,7 +28,7 @@ App::uses('Controller', 'Controller');
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
- * @package       Cake.Console.Templates.skel.Controller
+ * @package       app.Controller
  */
 class AppController extends Controller {
 }

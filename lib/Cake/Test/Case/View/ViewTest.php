@@ -248,7 +248,7 @@ class ViewTest extends CakeTestCase {
 		$paths = $View->paths('TestPlugin');
 		$pluginPath = CakePlugin::path('TestPlugin');
 		$expected = array(
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Plugins' . DS . 'TestPlugin' . DS,
+			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
 			$pluginPath . 'View' . DS,
 			$pluginPath . 'views' . DS,
 			$pluginPath . 'Lib' . DS . 'View' . DS,
@@ -412,7 +412,7 @@ class ViewTest extends CakeTestCase {
 
 		$result = $this->View->element('plugin_element', array(), array('plugin' => 'TestPlugin'));
 		$this->assertEqual($result, 'this is the plugin element using params[plugin]');
-		
+
 		$result = $this->View->element('plugin_element', array(), array('plugin' => 'test_plugin'));
 		$this->assertEqual($result, 'this is the plugin element using params[plugin]');
 

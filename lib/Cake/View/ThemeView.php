@@ -38,7 +38,9 @@ class ThemeView extends View {
  */
 	public function __construct($controller) {
 		parent::__construct($controller);
-		$this->theme = $controller->theme;
+		if ($controller) {
+			$this->theme = $controller->theme;
+		}
 	}
 
 /**
@@ -56,10 +58,10 @@ class ThemeView extends View {
 		if (!empty($this->theme)) {
 			$count = count($paths);
 			for ($i = 0; $i < $count; $i++) {
-				if (strpos($paths[$i], DS . 'Plugins' . DS) === false
+				if (strpos($paths[$i], DS . 'Plugin' . DS) === false
 					&& strpos($paths[$i], DS . 'Cake' . DS . 'View') === false) {
 						if ($plugin) {
-							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugins' . DS . $plugin . DS;
+							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
 						}
 						$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS;
 					}

@@ -26,7 +26,7 @@ App::uses('AppHelper', 'View/Helper');
  *
  * @package       Cake.View.Helper
  * @property      HtmlHelper $Html
- * @link http://book.cakephp.org/view/1458/Paginator
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
 class PaginatorHelper extends AppHelper {
 
@@ -64,7 +64,7 @@ class PaginatorHelper extends AppHelper {
  * - `update` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
  * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are
- *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
+ *     'querystring' and 'named'.  See PaginatorComponent::$settings for more information.
  * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
  *    if paramType == 'querystring'.
  *
@@ -557,7 +557,7 @@ class PaginatorHelper extends AppHelper {
 			array(
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
-				'separator' => __d('cake', ' of ')
+				'separator' => __(' of ')
 			),
 		$options);
 

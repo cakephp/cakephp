@@ -65,46 +65,46 @@ class FileTest extends CakeTestCase {
 
 		$result = $this->File->pwd();
 		$expecting = $file;
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->name;
 		$expecting = basename(__FILE__);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->info();
 		$expecting = array(
 			'dirname' => dirname(__FILE__), 'basename' => basename(__FILE__),
 			'extension' => 'php', 'filename' =>'FileTest'
 		);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->ext();
 		$expecting = 'php';
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->name();
 		$expecting = 'FileTest';
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->md5();
 		$expecting = md5_file($file);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->md5(true);
 		$expecting = md5_file($file);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->size();
 		$expecting = filesize($file);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->owner();
 		$expecting = fileowner($file);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->group();
 		$expecting = filegroup($file);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->Folder();
 		$this->assertIsA($result, 'Folder');
@@ -112,8 +112,8 @@ class FileTest extends CakeTestCase {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
 		$result = $this->File->perms();
-		$expecting = '0644';
-		$this->assertEqual($result, $expecting);
+		$expecting = decoct(0644 & ~umask());
+		$this->assertEquals($expecting, $result);
 	}
 
 /**
@@ -127,7 +127,7 @@ class FileTest extends CakeTestCase {
 
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 		$this->assertTrue(!is_resource($this->File->handle));
 
 		$this->File->lock = true;
@@ -139,12 +139,12 @@ class FileTest extends CakeTestCase {
 		$data = $expecting;
 		$expecting = substr($data, 0, 3);
 		$result = $this->File->read(3);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 		$this->assertTrue(is_resource($this->File->handle));
 
 		$expecting = substr($data, 3, 3);
 		$result = $this->File->read(3);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 	}
 
 /**
@@ -172,7 +172,7 @@ class FileTest extends CakeTestCase {
 		$expecting = substr($data, 5, 3);
 		$result = $this->File->read(3);
 		$this->assertTrue($success);
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->offset();
 		$expecting = 5+3;
@@ -239,7 +239,7 @@ class FileTest extends CakeTestCase {
 	public function testOpeningNonExistantFileCreatesIt() {
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
-		$this->assertEqual($someFile->read(), '');
+		$this->assertEquals('', $someFile->read());
 		$someFile->close();
 		$someFile->delete();
 	}

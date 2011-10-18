@@ -236,7 +236,7 @@ class CakeRequest implements ArrayAccess {
 		$config = Configure::read('App');
 		extract($config);
 
-		if (empty($base)) {
+		if (!isset($base)) {
 			$base = $this->base;
 		}
 		if ($base !== false) {
@@ -627,7 +627,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Parse the HTTP_ACCEPT header and return a sorted array with content types
  * as the keys, and pref values as the values.
- * 
+ *
  * Generally you want to use CakeRequest::accept() to get a simple list
  * of the accepted content types.
  *
@@ -714,7 +714,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Read data from `php://stdin`. Useful when interacting with XML or JSON
+ * Read data from `php://input`. Useful when interacting with XML or JSON
  * request body content.
  *
  * Getting input with a decoding function:
@@ -733,7 +733,7 @@ class CakeRequest implements ArrayAccess {
  * @return The decoded/processed request data.
  */
 	public function input($callback = null) {
-		$input = $this->_readStdin();
+		$input = $this->_readInput();
 		$args = func_get_args();
 		if (!empty($args)) {
 			$callback = array_shift($args);
@@ -744,11 +744,11 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Read data from php://stdin, mocked in tests.
+ * Read data from php://input, mocked in tests.
  *
- * @return string contents of stdin
+ * @return string contents of php://input
  */
-	protected function _readStdin() {
+	protected function _readInput() {
 		if (empty($this->_input)) {
 			$fh = fopen('php://input', 'r');
 			$content = stream_get_contents($fh);

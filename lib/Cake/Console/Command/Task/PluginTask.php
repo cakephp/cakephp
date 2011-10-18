@@ -134,7 +134,6 @@ class PluginTask extends Shell {
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n\n";
-			$out .= "?>";
 			$this->createFile($this->path . $plugin. DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$modelFileName = $plugin . 'AppModel.php';
@@ -142,7 +141,6 @@ class PluginTask extends Shell {
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n\n";
-			$out .= "?>";
 			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
 
 			$this->hr();

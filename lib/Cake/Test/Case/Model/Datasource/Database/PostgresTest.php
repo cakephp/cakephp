@@ -347,10 +347,10 @@ class PostgresTest extends CakeTestCase {
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');
-		$this->assertEqual((string)$result, "3.141593");
+		$this->assertEquals($result, "3.141593");
 
 		$result = $this->db->value(3.14);
-		$this->assertEqual((string)$result, "3.140000");
+		$this->assertEquals($result, "3.140000");
 
 		setlocale(LC_ALL, $restore);
 	}
@@ -427,25 +427,6 @@ class PostgresTest extends CakeTestCase {
 
 		$db1->execute("INSERT INTO {$table} (\"user\", password) VALUES ('hoge', '{$password}')");
 		$this->assertEqual($db1->lastInsertId($table), 6);
-	}
-
-/**
- * Tests that table lists and descriptions are scoped to the proper Postgres schema
- *
- * @return void
- */
-	public function testSchemaScoping() {
-		$db1 = ConnectionManager::getDataSource('test');
-		$db1->cacheSources = false;
-		$db1->query('CREATE SCHEMA _scope_test');
-
-		$db2 = ConnectionManager::create(
-			'test_2',
-			array_merge($db1->config, array('driver' => 'postgres', 'schema' => '_scope_test'))
-		);
-		$db2->cacheSources = false;
-
-		$db2->query('DROP SCHEMA _scope_test');
 	}
 
 /**
@@ -656,6 +637,22 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEqual($result['title']['null'], false);
 
 		$this->Dbo->query($this->Dbo->dropSchema($New));
+
+		$New = new CakeSchema(array(
+			'connection' => 'test_suite',
+			'name' => 'AlterPosts',
+			'alter_posts' => array(
+				'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'null' => true),
+				'body' => array('type' => 'text'),
+				'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
+				'created' => array('type' => 'datetime'),
+				'updated' => array('type' => 'datetime'),
+			)
+		));
+		$result = $this->Dbo->alterSchema($New->compare($Old), 'alter_posts');
+		$this->assertNoPattern('/varchar\(36\) NOT NULL/i', $result);
 	}
 
 /**
@@ -834,5 +831,24 @@ class PostgresTest extends CakeTestCase {
 		$result = $this->db->alterSchema($schema2->compare($schema1));
 		$this->assertEqual(2, substr_count($result, 'field_two'), 'Too many fields');
 		$this->assertFalse(strpos(';ALTER', $result), 'Too many semi colons');
+	}
+	
+/**
+ * test encoding setting.
+ *
+ * @return void
+ */
+	public function testEncoding() {
+		$result = $this->Dbo->setEncoding('utf8');
+		$this->assertTrue($result) ;
+		
+		$result = $this->Dbo->getEncoding();
+		$this->assertEqual('utf8', $result) ;
+		
+		$result = $this->Dbo->setEncoding('EUC-JP');
+		$this->assertTrue($result) ;
+		
+		$result = $this->Dbo->getEncoding();
+		$this->assertEqual('EUC-JP', $result) ;
 	}
 }

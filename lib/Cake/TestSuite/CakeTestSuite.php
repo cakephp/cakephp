@@ -30,7 +30,7 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  */
 	public function addTestDirectory($directory = '.') {
 		$folder = new Folder($directory);
-		list($dirs, $files) = $folder->read(true, false, true);
+		list($dirs, $files) = $folder->read(true, true, true);
 
 		foreach ($files as $file) {
 			$this->addTestFile($file);

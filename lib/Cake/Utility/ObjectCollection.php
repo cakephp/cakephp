@@ -247,7 +247,8 @@ abstract class ObjectCollection {
 		foreach ($objects as $i => $objectName) {
 			$options = array();
 			if (!is_int($i)) {
-				list($options, $objectName) = array($objectName, $i);
+				$options = (array)$objectName;
+				$objectName = $i;
 			}
 			list($plugin, $name) = pluginSplit($objectName);
 			$normal[$name] = array('class' => $objectName, 'settings' => $options);

@@ -18,7 +18,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.config
+ * @package       app.Config
  * @since         CakePHP(tm) v 0.10.8.2117
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -30,16 +30,16 @@ Cache::config('default', array('engine' => 'File'));
  * The settings below can be used to set additional paths to models, views and controllers.
  *
  * App::build(array(
- *     'plugins' => array('/full/path/to/plugins/', '/next/full/path/to/plugins/'),
- *     'models' =>  array('/full/path/to/models/', '/next/full/path/to/models/'),
- *     'views' => array('/full/path/to/views/', '/next/full/path/to/views/'),
- *     'controllers' => array('/full/path/to/controllers/', '/next/full/path/to/controllers/'),
- *     'datasources' => array('/full/path/to/datasources/', '/next/full/path/to/datasources/'),
- *     'behaviors' => array('/full/path/to/behaviors/', '/next/full/path/to/behaviors/'),
- *     'components' => array('/full/path/to/components/', '/next/full/path/to/components/'),
- *     'helpers' => array('/full/path/to/helpers/', '/next/full/path/to/helpers/'),
- *     'vendors' => array('/full/path/to/vendors/', '/next/full/path/to/vendors/'),
- *     'shells' => array('/full/path/to/shells/', '/next/full/path/to/shells/'),
+ *     'Plugin' => array('/full/path/to/plugins/', '/next/full/path/to/plugins/'),
+ *     'Model' =>  array('/full/path/to/models/', '/next/full/path/to/models/'),
+ *     'View' => array('/full/path/to/views/', '/next/full/path/to/views/'),
+ *     'Controller' => array('/full/path/to/controllers/', '/next/full/path/to/controllers/'),
+ *     'Model/Datasource' => array('/full/path/to/datasources/', '/next/full/path/to/datasources/'),
+ *     'Model/Behavior' => array('/full/path/to/behaviors/', '/next/full/path/to/behaviors/'),
+ *     'Controller/Component' => array('/full/path/to/components/', '/next/full/path/to/components/'),
+ *     'View/Helper' => array('/full/path/to/helpers/', '/next/full/path/to/helpers/'),
+ *     'Vendor' => array('/full/path/to/vendors/', '/next/full/path/to/vendors/'),
+ *     'Console/Command' => array('/full/path/to/shells/', '/next/full/path/to/shells/'),
  *     'locales' => array('/full/path/to/locale/', '/next/full/path/to/locale/')
  * ));
  *

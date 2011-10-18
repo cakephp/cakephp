@@ -24,6 +24,20 @@
 class DatabaseSession implements CakeSessionHandlerInterface {
 
 /**
+ * Reference to the model handling the session data
+ *
+ * @var Model
+ */
+	protected $_model;
+
+/**
+ * Number of seconds to mark the session as expired
+ *
+ * @var int
+ */
+	protected $_timeout;
+
+/**
  * Constructor.  Looks at Session configuration information and
  * sets up the session model.
  *
@@ -43,7 +57,8 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 				'alias' => 'Session',
 			);
 		}
-		ClassRegistry::init($settings);
+		$this->_model = ClassRegistry::init($settings);
+		$this->_timeout = Configure::read('Session.timeout') * 60;
 	}
 
 /**
@@ -75,17 +90,15 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return mixed The value of the key or false if it does not exist
  */
 	public function read($id) {
-		$model = ClassRegistry::getObject('Session');
-
-		$row = $model->find('first', array(
-			'conditions' => array($model->primaryKey => $id)
+		$row = $this->_model->find('first', array(
+			'conditions' => array($this->_model->primaryKey => $id)
 		));
 
-		if (empty($row[$model->alias]['data'])) {
+		if (empty($row[$this->_model->alias]['data'])) {
 			return false;
 		}
 
-		return $row[$model->alias]['data'];
+		return $row[$this->_model->alias]['data'];
 	}
 
 /**
@@ -99,11 +112,10 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		if (!$id) {
 			return false;
 		}
-		$expires = time() + (Configure::read('Session.timeout') * 60);
-		$Session = ClassRegistry::getObject('Session');
+		$expires = time() + $this->_timeout;
 		$record = compact('id', 'data', 'expires');
-		$record[$Session->primaryKey] = $id;
-		return $Session->save($record);
+		$record[$this->_model->primaryKey] = $id;
+		return $this->_model->save($record);
 	}
 
 /**
@@ -113,7 +125,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful delete, false otherwise.
  */
 	public function destroy($id) {
-		return ClassRegistry::getObject('Session')->delete($id);
+		return $this->_model->delete($id);
 	}
 
 /**
@@ -126,7 +138,15 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		if (!$expires) {
 			$expires = time();
 		}
-		$model = ClassRegistry::getObject('Session');
-		return $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
+		return $this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
+	}
+
+/**
+ * Closes the session before the objects handling it become unavailable
+ *
+ * @return void
+ */
+	public function __destruct() {
+		session_write_close();
 	}
 }

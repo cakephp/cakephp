@@ -26,7 +26,7 @@ App::uses('Security', 'Utility');
  * Cookie handling for the controller.
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/view/1280/Cookies
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
  *
  */
 class CookieComponent extends Component {

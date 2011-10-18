@@ -28,7 +28,7 @@ App::uses('Model', 'Model');
  * Add your application-wide methods in the class below, your models
  * will inherit them.
  *
- * @package       Cake.Console.Templates.skel.Model
+ * @package       app.Model
  */
 class AppModel extends Model {
 }

@@ -54,7 +54,7 @@ class TaskCollection extends ObjectCollection {
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
  * @return Task A task object, Either the existing loaded task or a new one.
- * @throws MissingTaskFileException, MissingTaskClassException when the task could not be found
+ * @throws MissingTaskException when the task could not be found
  */
 	public function load($task, $settings = array()) {
 		list($plugin, $name) = pluginSplit($task, true);
@@ -66,7 +66,9 @@ class TaskCollection extends ObjectCollection {
 		App::uses($taskClass, $plugin . 'Console/Command/Task');
 		if (!class_exists($taskClass)) {
 			if (!class_exists($taskClass)) {
-				throw new MissingTaskClassException($taskClass);
+				throw new MissingTaskException(array(
+					'class' => $taskClass
+				));
 			}
 		}
 

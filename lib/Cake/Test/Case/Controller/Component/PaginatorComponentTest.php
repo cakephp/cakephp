@@ -684,6 +684,29 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that multiple sort works.
+ *
+ * @return void
+ */
+	public function testValidateSortMultiple() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('order' => array(
+			'author_id' => 'asc',
+			'title' => 'asc'
+		));
+		$result = $this->Paginator->validateSort($model, $options);
+		$expected = array(
+			'model.author_id' => 'asc',
+			'model.title' => 'asc'
+		);
+
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
  * test that maxLimit is respected
  *
  * @return void
@@ -715,7 +738,6 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->request->params['named'] = array(
@@ -742,5 +764,35 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '5000');
 		$result = $Controller->paginate('PaginatorControllerPost');
 		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 2000);
+	 }
+
+/**
+ * test paginate() and virtualField overlapping with real fields.
+ *
+ * @return void
+ */
+	function testPaginateOrderVirtualFieldSharedWithRealField() {
+		$Controller =& new Controller($this->request);
+		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerComment->virtualFields = array(
+			'title' => 'PaginatorControllerComment.comment'
+		);
+		$Controller->PaginatorControllerComment->bindModel(array(
+			'belongsTo' => array(
+				'PaginatorControllerPost' => array(
+					'className' => 'PaginatorControllerPost',
+					'foreignKey' => 'article_id'
+				)
+			)
+		), false);
+
+		$Controller->paginate = array(
+			'fields' => array('PaginatorControllerComment.id', 'title', 'PaginatorControllerPost.title'),
+		);
+		$Controller->passedArgs = array('sort' => 'PaginatorControllerPost.title', 'dir' => 'asc');
+		$result = $Controller->paginate('PaginatorControllerComment');
+		$this->assertEqual(Set::extract($result, '{n}.PaginatorControllerComment.id'), array(1, 2, 3, 4, 5, 6));
 	}
+
 }

@@ -103,6 +103,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->_server = $_SERVER;
 		$this->_init();
 	}
@@ -119,6 +120,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->Components);
 		$this->RequestHandler->request = $request;
 		$this->RequestHandler->response = $response;
+		$this->_extensions = Router::extensions();
 	}
 
 /**
@@ -127,13 +129,13 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->RequestHandler);
-		unset($this->Controller);
+		parent::tearDown();
+		unset($this->RequestHandler, $this->Controller);
 		if (!headers_sent()) {
 			header('Content-type: text/html'); //reset content type.
 		}
 		$_SERVER = $this->_server;
-		App::build();
+		call_user_func_array('Router::parseExtensions', $this->_extensions);
 	}
 
 /**
@@ -169,16 +171,53 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testInitializeContentTypeSettingExt() {
 		$this->assertNull($this->RequestHandler->ext);
-		$extensions = Router::extensions();
+
+		$_SERVER['HTTP_ACCEPT'] = 'application/json';
 		Router::parseExtensions('json');
-		$this->Controller->request = $this->getMock('CakeRequest');
-		$this->Controller->request->expects($this->any())->method('accepts')
-			->will($this->returnValue(array('application/json')));
 
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertEquals('json', $this->RequestHandler->ext);
+	}
 
-		call_user_func_array(array('Router', 'parseExtensions'), $extensions);
+/**
+ * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers.
+ *
+ * @return void
+ */
+	public function testInitializeContentTypeWithjQueryAccept() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, */*; q=0.01';
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertEquals('json', $this->RequestHandler->ext);
+	}
+
+/**
+ * Test that RequestHandler does not set $this->ext when multple accepts are sent.
+ *
+ * @return void
+ */
+	public function testInitializeNoContentTypeWithSingleAccept() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/html, */*; q=0.01';
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
+	}
+/**
+ * Test that ext is not set with multiple accepted content types.
+ *
+ * @return void
+ */
+	public function testInitializeNoContentTypeWithMultipleAcceptedTypes() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, application/xml, */*; q=0.01';
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('xml', 'json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
 	}
 
 /**
@@ -192,7 +231,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		Router::parseExtensions('xml');
 
 		$this->Controller->request = $this->getMock('CakeRequest');
-		$this->Controller->request->expects($this->any())->method('accepts')
+		$this->Controller->request->expects($this->any())
+			->method('accepts')
 			->will($this->returnValue(array('application/json')));
 
 		$this->RequestHandler->initialize($this->Controller);
@@ -256,7 +296,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testStartupCallback() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml';
-		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
@@ -270,7 +310,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testStartupCallbackCharset() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
-		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_array($this->Controller->data));
 		$this->assertFalse(is_object($this->Controller->data));
@@ -287,9 +327,9 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		}
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_SERVER['CONTENT_TYPE'] = 'text/csv';
-		$this->Controller->request = $this->getMock('CakeRequest', array('_readStdin'));
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
 		$this->Controller->request->expects($this->once())
-			->method('_readStdin')
+			->method('_readInput')
 			->will($this->returnValue('"A","csv","string"'));
 		$this->RequestHandler->addInputType('csv', array('str_getcsv'));
 		$this->RequestHandler->startup($this->Controller);
@@ -602,6 +642,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual($this->RequestHandler->prefers(array('js', 'xml', 'xhtml')), 'xml');
 		$this->assertFalse($this->RequestHandler->prefers(array('red', 'blue')));
 		$this->assertEqual($this->RequestHandler->prefers(array('js', 'json', 'xhtml')), 'xhtml');
+		$this->assertTrue($this->RequestHandler->prefers(array('rss')), 'Should return true if input matches ext.');
+		$this->assertFalse($this->RequestHandler->prefers(array('html')), 'No match with ext, return false.');
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$this->_init();

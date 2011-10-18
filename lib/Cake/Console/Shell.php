@@ -351,7 +351,8 @@ class Shell extends Object {
 			$this->OptionParser = $this->getOptionParser();
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 		} catch (ConsoleException $e) {
-			return $this->out($this->OptionParser->help($command));
+			$this->out($this->OptionParser->help($command));
+			return false;
 		}
 
 		$this->command = $command;
@@ -373,7 +374,8 @@ class Shell extends Object {
 		if ($isMain) {
 			return $this->main();
 		}
-		return $this->out($this->OptionParser->help($command));
+		$this->out($this->OptionParser->help($command));
+		return false;
 	}
 
 /**
@@ -446,13 +448,11 @@ class Shell extends Object {
 			}
 		}
 		if (is_array($options)) {
-			while ($in == '' || ($in && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
+			while ($in === '' || ($in !== '' && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
 				$in = $this->_getInput($prompt, $options, $default);
 			}
 		}
-		if ($in) {
-			return $in;
-		}
+		return $in;
 	}
 
 /**
@@ -482,7 +482,7 @@ class Shell extends Object {
 		}
 		$result = trim($result);
 
-		if ($default != null && empty($result)) {
+		if ($default !== null && ($result === '' || $result === null)) {
 			return $default;
 		}
 		return $result;

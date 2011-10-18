@@ -93,6 +93,29 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update tests.
+ *
+ * - Update tests class names to FooTest rather than FooTestCase.
+ *
+ * @return void
+ */
+	public function tests() {
+		$this->_paths = array(APP . 'tests' . DS);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = App::pluginPath($this->params['plugin']) . 'tests' . DS;
+		}
+		$patterns = array(
+			array(
+				'*TestCase extends CakeTestCase to *Test extends CakeTestCase',
+				'/([a-zA-Z]*Test)Case extends CakeTestCase/',
+				'\1 extends CakeTestCase'
+			),
+		);
+
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
  * Move files and folders to their new homes
  *
  * Moves folders containing files which cannot necessarily be auto-detected (libs and templates)
@@ -109,7 +132,6 @@ class UpgradeShell extends Shell {
 		}
 
 		if (is_dir('plugins')) {
-
 			$Folder = new Folder('plugins');
 			list($plugins) = $Folder->read();
 			foreach($plugins as $plugin) {
@@ -120,8 +142,13 @@ class UpgradeShell extends Shell {
 			chdir($cwd);
 		}
 
+		$this->_moveViewFiles();
+
 		$moves = array(
 			'libs' => 'Lib',
+			'tests' => 'Test',
+			'Test' . DS . 'cases' => 'Test' . DS . 'Case',
+			'Test' . DS . 'fixtures' => 'Test' . DS . 'Fixture',
 			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
 		);
 		foreach($moves as $old => $new) {
@@ -145,6 +172,7 @@ class UpgradeShell extends Shell {
 			'Lib' => array('checkFolder' => false),
 			'Model',
 			'models',
+			'Test' => array('regex' => '@class (\S*Test) extends CakeTestCase@'),
 			'tests',
 			'View',
 			'views',
@@ -154,6 +182,7 @@ class UpgradeShell extends Shell {
 		$defaultOptions = array(
 			'recursive' => true,
 			'checkFolder' => true,
+			'regex' => '@class (\S*) .*{@i'
 		);
 		foreach($sourceDirs as $dir => $options) {
 			if (is_numeric($dir)) {
@@ -240,7 +269,7 @@ class UpgradeShell extends Shell {
  *
  * - a(*) -> array(*)
  * - e(*) -> echo *
- * - ife(*, *, *) -> empty(*) ? * : *
+ * - ife(*, *, *) -> !empty(*) ? * : *
  * - a(*) -> array(*)
  * - r(*, *, *) -> str_replace(*, *, *)
  * - up(*) -> strtoupper(*)
@@ -268,9 +297,9 @@ class UpgradeShell extends Shell {
 				'echo \1'
 			),
 			array(
-				'ife(*, *, *) -> empty(*) ? * : *',
+				'ife(*, *, *) -> !empty(*) ? * : *',
 				'/ife\((.*), (.*), (.*)\)/',
-				'empty(\1) ? \2 : \3'
+				'!empty(\1) ? \2 : \3'
 			),
 			array(
 				'r(*, *, *) -> str_replace(*, *, *)',
@@ -479,6 +508,39 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Move application views files to where they now should be
+ *
+ * Find all view files in the folder and determine where cake expects the file to be
+ *
+ * @return void
+ */
+	protected function _moveViewFiles() {
+		if (!is_dir('views')) {
+			return;
+		}
+
+		$dirs = scandir('views');
+		foreach ($dirs as $old) {
+			if (!is_dir('views' . DS . $old) || $old === '.' || $old === '..') {
+				continue;
+			}
+
+			$new = 'View' . DS . Inflector::camelize($old);
+			$old = 'views' . DS . $old;
+
+			$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
+			if (!$this->params['dry-run']) {
+				if ($this->params['git']) {
+					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+				} else {
+					$Folder = new Folder($old);
+					$Folder->move($new);
+				}
+			}
+		}
+	}
+
+/**
  * Move application php files to where they now should be
  *
  * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
@@ -513,7 +575,7 @@ class UpgradeShell extends Shell {
 			$file = $cwd . DS . $file;
 
 			$contents = file_get_contents($file);
-			preg_match('@class (\S*) .*{@', $contents, $match);
+			preg_match($options['regex'], $contents, $match);
 			if (!$match) {
 				continue;
 			}
@@ -663,6 +725,10 @@ class UpgradeShell extends Shell {
 				"Be sure to have a backup of your application before running these commands."))
 			->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Run all upgrade commands.'),
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('tests', array(
+				'help' => __d('cake_console', 'Update tests class names to FooTest rather than FooTestCase.'),
 				'parser' => $subcommandParser
 			))
 			->addSubcommand('locations', array(

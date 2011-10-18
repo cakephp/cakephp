@@ -70,12 +70,12 @@ class TaskCollectionTest extends CakeTestCase {
 		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
 /**
- * test missinghelper exception
+ * test missingtask exception
  *
- * @expectedException MissingTaskClassException
+ * @expectedException MissingTaskException
  * @return void
  */
-	public function testLoadMissingTaskFile() {
+	public function testLoadMissingTask() {
 		$result = $this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
 	}
 

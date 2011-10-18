@@ -1120,4 +1120,67 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->emailFormat('invalid');
 	}
 
+/**
+ * Tests that it is possible to add charset configuration to a CakeEmail object
+ *
+ * @return void
+ */
+	public function testConfigCharset() {
+		$email = new CakeEmail();
+		$this->assertEquals($email->charset, Configure::read('App.encoding'));
+		$this->assertEquals($email->headerCharset, Configure::read('App.encoding'));
+
+		$email = new CakeEmail(array('charset' => 'iso-2022-jp', 'headerCharset' => 'iso-2022-jp-ms'));
+		$this->assertEquals($email->charset, 'iso-2022-jp');
+		$this->assertEquals($email->headerCharset, 'iso-2022-jp-ms');
+
+		$email = new CakeEmail(array('charset' => 'iso-2022-jp'));
+		$this->assertEquals($email->charset, 'iso-2022-jp');
+		$this->assertEquals($email->headerCharset, 'iso-2022-jp');
+
+		$email = new CakeEmail(array('headerCharset' => 'iso-2022-jp-ms'));
+		$this->assertEquals($email->charset, Configure::read('App.encoding'));
+		$this->assertEquals($email->headerCharset, 'iso-2022-jp-ms');
+	}
+
+/**
+ * Tests that the header is encoded using the configured headerCharset
+ *
+ * @return void
+ */
+	public function testHeaderEncoding() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+		$email = new CakeEmail(array('headerCharset' => 'iso-2022-jp-ms', 'transport' => 'Debug'));
+		$email->subject('あれ？もしかしての前と');
+		$headers = $email->getHeaders(array('subject'));
+		$expected = "?ISO-2022-JP?B?GyRCJCIkbCEpJGIkNyQrJDckRiROQTAkSBsoQg==?=";
+		$this->assertContains($expected, $headers['Subject']);
+
+		$email->to('someone@example.com')->from('someone@example.com');
+		$result = $email->send('ってテーブルを作ってやってたらう');
+		$this->assertContains('ってテーブルを作ってやってたらう', $result['message']);
+	}
+
+/**
+ * Tests that the body is encoded using the configured charset
+ *
+ * @return void
+ */
+	public function testBodyEncoding() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+		$email = new CakeEmail(array(
+			'charset' => 'iso-2022-jp',
+			'headerCharset' => 'iso-2022-jp-ms',
+			'transport' => 'Debug'
+		));
+		$email->subject('あれ？もしかしての前と');
+		$headers = $email->getHeaders(array('subject'));
+		$expected = "?ISO-2022-JP?B?GyRCJCIkbCEpJGIkNyQrJDckRiROQTAkSBsoQg==?=";
+		$this->assertContains($expected, $headers['Subject']);
+
+		$email->to('someone@example.com')->from('someone@example.com');
+		$result = $email->send('ってテーブルを作ってやってたらう');
+		$this->assertContains('Content-Type: text/plain; charset=iso-2022-jp', $result['headers']);
+		$this->assertContains('ってテーブルを作ってやってたらう', $result['message']);
+	}
 }

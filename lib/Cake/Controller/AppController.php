@@ -24,7 +24,7 @@ App::uses('Controller', 'Controller');
 
 /**
  * This is a placeholder class.
- * Create the same file in app/app_controller.php
+ * Create the same file in app/Controller/AppController.php
  *
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.

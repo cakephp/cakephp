@@ -26,7 +26,7 @@ App::uses('CakeSchema', 'Model');
  * Schema is a command-line database management utility for automating programmer chores.
  *
  * @package       Cake.Console.Command
- * @link          http://book.cakephp.org/view/1523/Schema-management-and-migrations
+ * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
 class SchemaShell extends Shell {
 
@@ -428,7 +428,7 @@ class SchemaShell extends Shell {
 					$Schema->after(array($event => $table, 'errors' => $error));
 
 					if (!empty($error)) {
-						$this->out($error);
+						$this->err($error);
 					} else {
 						$this->out(__d('cake_console', '%s updated.', $table));
 					}
