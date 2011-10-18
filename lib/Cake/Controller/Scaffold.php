@@ -212,7 +212,7 @@ class Scaffold {
  * Saves or updates the scaffolded model.
  *
  * @param CakeRequest $request Request Object for scaffolding
- * @param string $action add or edt
+ * @param string $action add or edit
  * @return mixed Success on save/update, add/edit form if data is empty or error if save or update fails
  * @throws NotFoundException
  */

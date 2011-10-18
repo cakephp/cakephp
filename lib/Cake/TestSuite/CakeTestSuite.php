@@ -1,6 +1,6 @@
 <?php
 /**
- * A class to contain test cases and run them with shered fixtures
+ * A class to contain test cases and run them with shared fixtures
  *
  * PHP 5
  *
