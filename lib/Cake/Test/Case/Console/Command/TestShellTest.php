@@ -269,13 +269,13 @@ class TestShellTest extends CakeTestCase {
 		$this->Shell->startup();
 
 		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/NotATestFile.php');
-		$this->assertFalse($return);
+		$this->assertSame('app', $return);
 
 		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/NotATestFile.php', false, false);
 		$this->assertFalse($return);
 
 		$return = $this->Shell->mapFileToCategory(APP . 'Test/Fixture/SomeTest.php');
-		$this->assertFalse($return);
+		$this->assertSame('app', $return);
 
 		$return = $this->Shell->mapFileToCase(APP . 'Test/Fixture/SomeTest.php', false, false);
 		$this->assertFalse($return);
