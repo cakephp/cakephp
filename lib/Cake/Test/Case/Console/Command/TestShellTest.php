@@ -261,6 +261,21 @@ class TestShellTest extends CakeTestCase {
 	}
 
 /**
+ * testMapNotTestToNothing
+ *
+ * @return void
+ */
+	public function testMapNotTestToNothing() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/NotATestFile.php', false);
+		$this->assertFalse($return);
+
+		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/NotATestFile.php', false, false);
+		$this->assertFalse($return);
+	}
+
+/**
  * test available list of test cases for an empty category
  *
  * @return void
