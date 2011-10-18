@@ -161,6 +161,106 @@ class TestShellTest extends CakeTestCase {
 	}
 
 /**
+ * testMapCoreTestToCategory
+ * 
+ * @return void
+ */
+	public function testMapCoreTestToCategory() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/Case/BasicsTest.php');
+		$this->assertSame('core', $return);
+
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/Case/BasicsTest.php');
+		$this->assertSame('core', $return);
+
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/Case/Some/Deeply/Nested/StructureTest.php');
+		$this->assertSame('core', $return);
+	}
+
+/**
+ * testMapCoreTestToCase
+ *
+ * basics.php is a slightly special case - it's the only file in the core with a test that isn't Capitalized
+ * 
+ * @return void
+ */
+	public function testMapCoreTestToCase() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCase('lib/Cake/Test/Case/BasicsTest.php', 'core');
+		$this->assertSame('Basics', $return);
+
+		$return = $this->Shell->mapFileToCase('lib/Cake/Test/Case/Core/AppTest.php', 'core');
+		$this->assertSame('Core/App', $return);
+
+		$return = $this->Shell->mapFileToCase('lib/Cake/Test/Case/Some/Deeply/Nested/StructureTest.php', 'core', false);
+		$this->assertSame('Some/Deeply/Nested/Structure', $return);
+	}
+
+/**
+ * testMapAppTestToCategory
+ * 
+ * @return void
+ */
+	public function testMapAppTestToCategory() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/Controller/ExampleControllerTest.php');
+		$this->assertSame('app', $return);
+
+		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/My/File/Is/HereTest.php');
+		$this->assertSame('app', $return);
+
+	}
+
+/**
+ * testMapAppTestToCase
+ *
+ * @return void
+ */
+	public function testMapAppTestToCase() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/Controller/ExampleControllerTest.php', 'app', false);
+		$this->assertSame('Controller/ExampleController', $return);
+
+		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/My/File/Is/HereTest.php', 'app', false);
+		$this->assertSame('My/File/Is/Here', $return);
+	}
+
+/**
+ * testMapPluginTestToCategory
+ * 
+ * @return void
+ */
+	public function testMapPluginTestToCategory() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory(APP . 'Plugin/awesome/Test/Case/Controller/ExampleControllerTest.php');
+		$this->assertSame('awesome', $return);
+
+		$return = $this->Shell->mapFileToCategory(dirname(CAKE) . 'plugins/awesome/Test/Case/Controller/ExampleControllerTest.php');
+		$this->assertSame('awesome', $return);
+
+	}
+
+/**
+ * testMapPluginTestToCase
+ *
+ * @return void
+ */
+	public function testMapPluginTestToCase() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCase(APP . 'Plugin/awesome/Test/Case/Controller/ExampleControllerTest.php', 'awesome', false);
+		$this->assertSame('Controller/ExampleController', $return);
+
+		$return = $this->Shell->mapFileToCase(dirname(CAKE) . 'plugins/awesome/Test/Case/Controller/ExampleControllerTest.php', 'awesome', false);
+		$this->assertSame('Controller/ExampleController', $return);
+	}
+
+/**
  * test available list of test cases for an empty category
  *
  * @return void
