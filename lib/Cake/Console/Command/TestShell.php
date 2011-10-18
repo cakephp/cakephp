@@ -405,7 +405,7 @@ class TestShell extends Shell {
 			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
 		}
 
-		$testCase = substr($file, 0, -8);
+		$testCase = substr($testFile, 0, -8);
 		$testCase = str_replace(DS, '/', $testCase);
 		$testCase = preg_replace('@.*Test/Case/@', '', $testCase);
 

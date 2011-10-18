@@ -62,7 +62,6 @@ class TestShellTest extends CakeTestCase {
 
 /**
  * testMapCoreFileToCategory
- *
  * 
  * @return void
  */
@@ -97,6 +96,30 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCase('lib/Cake/Some/Deeply/Nested/Structure.php', 'core', false);
 		$this->assertSame('Some/Deeply/Nested/Structure', $return);
+	}
+
+/**
+ * testMapAppFileToCategory
+ * 
+ * @return void
+ */
+	public function testMapAppFileToCategory() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory('Controller/ExampleController.php');
+		$this->assertSame('app', $return);
+	}
+
+/**
+ * testMapAppFileToCase
+ *
+ * @return void
+ */
+	public function testMapAppFileToCase() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCase('Controller/ExampleController.php', 'app', false);
+		$this->assertSame('Controller/ExampleController', $return);
 	}
 
 /**
