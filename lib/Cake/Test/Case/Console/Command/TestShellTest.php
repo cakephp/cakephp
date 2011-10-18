@@ -130,6 +130,49 @@ class TestShellTest extends CakeTestCase {
 	}
 
 /**
+ * testMapPluginFileToCategory
+ * 
+ * @return void
+ */
+	public function testMapPluginFileToCategory() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory('Plugins/Awesome/Controller/ExampleController.php');
+		$this->assertSame('awesome', $return);
+
+		$return = $this->Shell->mapFileToCategory('plugins/Awesome/Controller/ExampleController.php');
+		$this->assertSame('awesome', $return);
+
+		$return = $this->Shell->mapFileToCategory('app/Plugins/Awesome/Controller/ExampleController.php');
+		$this->assertSame('awesome', $return);
+
+		$return = $this->Shell->mapFileToCategory('app/plugins/Awesome/Controller/ExampleController.php');
+		$this->assertSame('awesome', $return);
+
+	}
+
+/**
+ * testMapPluginFileToCase
+ *
+ * @return void
+ */
+	public function testMapPluginFileToCase() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCase('Plugins/Awesome/Controller/ExampleController.php', 'awesome', false);
+		$this->assertSame('Controller/ExampleController', $return);
+
+		$return = $this->Shell->mapFileToCase('plugins/Awesome/Controller/ExampleController.php', 'awesome', false);
+		$this->assertSame('Controller/ExampleController', $return);
+
+		$return = $this->Shell->mapFileToCase('app/Plugins/Awesome/Controller/ExampleController.php', 'awesome', false);
+		$this->assertSame('Controller/ExampleController', $return);
+
+		$return = $this->Shell->mapFileToCase('app/plugins/Awesome/Controller/ExampleController.php', 'awesome', false);
+		$this->assertSame('Controller/ExampleController', $return);
+	}
+
+/**
  * test available list of test cases for an empty category
  *
  * @return void
