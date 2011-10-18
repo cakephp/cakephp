@@ -65,21 +65,19 @@ class TextHelper extends AppHelper {
 			foreach ($phrase as $key => $value) {
 				$key = $value;
 				$value = $highlighter;
-				$key = '(' . $key . ')';
+				$key = '(' . preg_quote($key, '|') . ')';
 				if ($considerHtml) {
 					$key = '(?![^<]+>)' . $key . '(?![^<]+>)';
 				}
 				$replace[] = '|' . $key . '|iu';
 				$with[] = empty($value) ? $highlighter : $value;
 			}
-
 			return preg_replace($replace, $with, $text);
 		} else {
-			$phrase = '(' . $phrase . ')';
+			$phrase = '(' . preg_quote($phrase, '|') . ')';
 			if ($considerHtml) {
 				$phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
 			}
-
 			return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
 		}
 	}
