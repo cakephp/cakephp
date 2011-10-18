@@ -111,10 +111,10 @@ class CacheTest extends CakeTestCase {
  *
  * Test that the cache class doesn't cause fatal errors with a partial path
  *
+ * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
-	public function testInvaidConfig() {
-		$this->expectError();
+	public function testInvalidConfig() {
 		Cache::config('invalid', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
@@ -124,7 +124,6 @@ class CacheTest extends CakeTestCase {
 			'random' => 'wii'
 		));
 		$read = Cache::read('Test', 'invalid');
-		$this->assertEqual($read, null);
 	}
 
 /**

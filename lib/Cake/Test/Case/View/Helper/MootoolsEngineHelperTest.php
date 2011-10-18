@@ -26,7 +26,7 @@ App::uses('HtmlHelper', 'View/Helper');
 App::uses('JsHelper', 'View/Helper');
 App::uses('MootoolsEngineHelper', 'View/Helper');
 
-class MooEngineHelperTest extends CakeTestCase {
+class MootoolsEngineHelperTest extends CakeTestCase {
 /**
  * setUp
  *

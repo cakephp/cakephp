@@ -183,7 +183,7 @@ class PaginatorControllerComment extends CakeTestModel {
 	public $alias = 'PaginatorControllerComment';
 }
 
-class PaginatorTest extends CakeTestCase {
+class PaginatorComponentTest extends CakeTestCase {
 
 /**
  * fixtures property

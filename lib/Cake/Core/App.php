@@ -166,7 +166,9 @@ class App {
 		'views' => 'View',
 		'helpers' => 'View/Helper',
 		'shells' => 'Console/Command',
-		'libs' => 'Lib'
+		'libs' => 'Lib',
+		'vendors' => 'Vendor',
+		'plugins' => 'Plugin',
 	);
 
 /**
@@ -320,8 +322,8 @@ class App {
 					'%s' . 'Locale' . DS,
 					'%s' . 'locale' . DS
 				),
-				'vendors' => array('%s' . 'Vendor' . DS, VENDORS),
-				'plugins' => array(
+				'Vendor' => array('%s' . 'Vendor' . DS, VENDORS),
+				'Plugin' => array(
 					APP . 'Plugin' . DS,
 					APP . 'plugins' . DS,
 					dirname(dirname(CAKE)) . DS . 'plugins' . DS,

@@ -25,7 +25,7 @@ App::uses('BasicAuthentication', 'Network/Http');
  *
  * @package       Cake.Test.Case.Network.Http
  */
-class BasicMethodTest extends CakeTestCase {
+class BasicAuthenticationTest extends CakeTestCase {
 
 /**
  * testAuthentication method

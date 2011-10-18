@@ -546,12 +546,18 @@ class HttpSocketTest extends CakeTestCase {
 		$request = array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'));
 		$response = $this->Socket->request($request);
 		$this->assertEquals($this->Socket->request['body'], "name=HttpSocket-is-released&date=today");
+	}
 
+/**
+ * The "*" asterisk character is only allowed for the following methods: OPTIONS.
+ *
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testRequestNotAllowedUri() {
+		$this->Socket->reset();
 		$request = array('uri' => '*', 'method' => 'GET');
-		$this->expectError();
 		$response = $this->Socket->request($request);
-		$this->assertFalse($response);
-		$this->assertFalse($this->Socket->response);
 	}
 
 /**
@@ -1036,20 +1042,20 @@ class HttpSocketTest extends CakeTestCase {
 /**
  * testBadBuildRequestLine method
  *
+ * @expectedException SocketException
  * @return void
  */
 	public function testBadBuildRequestLine() {
-		$this->expectError();
 		$r = $this->Socket->buildRequestLine('Foo');
 	}
 
 /**
  * testBadBuildRequestLine2 method
  *
+ * @expectedException SocketException
  * @return void
  */
 	public function testBadBuildRequestLine2() {
-		$this->expectError();
 		$r = $this->Socket->buildRequestLine("GET * HTTP/1.1\r\n");
 	}
 

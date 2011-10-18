@@ -184,6 +184,22 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
+ * test path() with a plugin.
+ *
+ * @return void
+ */
+	public function testPathWithPlugins() {
+		$basepath = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
+		App::build(array(
+			'Plugin' => array($basepath),
+		));
+		CakePlugin::load('TestPlugin');
+
+		$result = App::path('Vendor', 'TestPlugin');
+		$this->assertEquals($basepath . 'TestPlugin' . DS . 'Vendor' . DS, $result[0]);
+	}
+
+/**
  * testBuildWithReset method
  *
  * @return void
@@ -757,7 +773,7 @@ class AppTest extends CakeTestCase {
  */
 	public function testPaths() {
 		$result = App::paths();
-		$this->assertArrayHasKey('plugins', $result);
+		$this->assertArrayHasKey('Plugin', $result);
 		$this->assertArrayHasKey('Controller', $result);
 		$this->assertArrayHasKey('Controller/Component', $result);
 	}

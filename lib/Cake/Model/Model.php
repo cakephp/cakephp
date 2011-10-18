@@ -2915,6 +2915,11 @@ class Model extends Object {
 			$this->validate = $validate;
 		}
 
+		$validationDomain = $this->validationDomain;
+		if (empty($validationDomain)) {
+			$validationDomain = 'default';
+		}
+
 		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
 				$ruleSet = array($ruleSet);
@@ -2933,21 +2938,12 @@ class Model extends Object {
 				}
 				$validator = array_merge($default, $validator);
 
-				$validationDomain = $this->validationDomain;
-				if (empty($validationDomain)) {
-					$validationDomain = 'default';
-				}
-				if (isset($validator['message'])) {
-					$message = $validator['message'];
-				} else {
-					$message = __d('cake_dev', 'This field cannot be left blank');
-				}
-
 				if (
 					empty($validator['on']) || ($validator['on'] == 'create' &&
 					!$exists) || ($validator['on'] == 'update' && $exists
 				)) {
-					$required = (
+					$valid = true;
+					$requiredFail = (
 						(!isset($data[$fieldName]) && $validator['required'] === true) ||
 						(
 							isset($data[$fieldName]) && (empty($data[$fieldName]) &&
@@ -2955,12 +2951,7 @@ class Model extends Object {
 						)
 					);
 
-					if ($required) {
-						$this->invalidate($fieldName, __d($validationDomain, $message));
-						if ($validator['last']) {
-							break;
-						}
-					} elseif (array_key_exists($fieldName, $data)) {
+					if (!$requiredFail && array_key_exists($fieldName, $data)) {
 						if (empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
 							break;
 						}
@@ -2972,8 +2963,6 @@ class Model extends Object {
 							$rule = $validator['rule'];
 							$ruleParams = array($data[$fieldName]);
 						}
-
-						$valid = true;
 
 						if (in_array(strtolower($rule), $methods)) {
 							$ruleParams[] = $validator;
@@ -2990,31 +2979,39 @@ class Model extends Object {
 						} elseif (Configure::read('debug') > 0) {
 							trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $rule, $fieldName), E_USER_WARNING);
 						}
+					}
 
-						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
-							if (is_string($valid) && strlen($valid) > 0) {
-								$validator['message'] = $valid;
-							} elseif (!isset($validator['message'])) {
-								if (is_string($index)) {
-									$validator['message'] = $index;
-								} elseif (is_numeric($index) && count($ruleSet) > 1) {
-									$validator['message'] = $index + 1;
-								} else {
-									$validator['message'] = __d($validationDomain, $message);
-								}
-							} elseif (is_array($validator['message'])) {
-								if (count($validator['message']) > 1) {
-									$args = array_slice($validator['message'], 1);
-								} else {
-									$args = $validator['rule'];
-								}
-								$validator['message'] = __d($validationDomain, $validator['message'][0], $args);
+					if ($requiredFail || !$valid || (is_string($valid) && strlen($valid) > 0)) {
+						if (is_string($valid)) {
+							$message = $valid;
+						} elseif (isset($validator['message'])) {
+							$args = null;
+							if (is_array($validator['message'])) {
+								$message = $validator['message'][0];
+								$args = array_slice($validator['message'], 1);
+							} else {
+								$message = $validator['message'];
 							}
-							$this->invalidate($fieldName, $validator['message']);
+							if (is_array($validator['rule']) && $args === null) {
+								$args = array_slice($ruleSet[$index]['rule'], 1);
+							}
+							$message = __d($validationDomain, $message, $args);
+						} elseif (is_string($index)) {
+							if (is_array($validator['rule'])) {
+								$args = array_slice($ruleSet[$index]['rule'], 1);
+								$message = __d($validationDomain, $index, $args);
+							} else {
+								$message = __d($validationDomain, $index);
+							}
+						} elseif (!$requiredFail && is_numeric($index) && count($ruleSet) > 1) {
+							$message = $index + 1;
+						} else {
+							$message = __d('cake_dev', 'This field cannot be left blank');
+						}
 
-							if ($validator['last']) {
-								break;
-							}
+						$this->invalidate($fieldName, $message);
+						if ($validator['last']) {
+							break;
 						}
 					}
 				}
