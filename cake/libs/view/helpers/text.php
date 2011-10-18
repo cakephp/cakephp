@@ -75,7 +75,7 @@ class TextHelper extends AppHelper {
 			$with = array();
 
 			foreach ($phrase as $key => $segment) {
-				$segment = "($segment)";
+				$segment = '(' . preg_quote($segment, '|') . ')';
 				if ($html) {
 					$segment = "(?![^<]+>)$segment(?![^<]+>)";
 				}
@@ -86,7 +86,7 @@ class TextHelper extends AppHelper {
 
 			return preg_replace($replace, $with, $text);
 		} else {
-			$phrase = "($phrase)";
+			$phrase = '(' . preg_quote($phrase, '|') . ')';
 			if ($html) {
 				$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
 			}
