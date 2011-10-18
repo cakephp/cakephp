@@ -47,7 +47,6 @@ class TestShell extends Shell {
 		$parser = new ConsoleOptionParser($this->name);
 		$parser->description(array(
 			__d('cake_console', 'The CakePHP Testsuite allows you to run test cases from the command line'),
-			__d('cake_console', 'If run with no command line arguments, a list of available core test cases will be shown')
 		))->addArgument('category', array(
 			'help' => __d('cake_console', 'app, core or name of a plugin.'),
 			'required' => true
