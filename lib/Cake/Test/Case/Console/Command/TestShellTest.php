@@ -20,6 +20,17 @@
 App::uses('ShellDispatcher', 'Console');
 App::uses('TestShell', 'Console/Command');
 
+class TestTestShell extends TestShell {
+
+	public function mapFileToCase($file, $category, $throwOnMissingFile = true) {
+		return $this->_mapFileToCase($file, $category, $throwOnMissingFile);
+	}
+
+	public function mapFileToCategory($file) {
+		return $this->_mapFileToCategory($file);
+	}
+}
+
 class TestShellTest extends CakeTestCase {
 
 
@@ -33,7 +44,7 @@ class TestShellTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'TestShell',
+			'TestTestShell',
 			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', '_run', 'clear'),
 			array($out, $out, $in)
 		);
@@ -47,6 +58,45 @@ class TestShellTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Dispatch, $this->Shell);
+	}
+
+/**
+ * testMapCoreFileToCategory
+ *
+ * 
+ * @return void
+ */
+	public function testMapCoreFileToCategory() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCategory('lib/Cake/basics.php');
+		$this->assertSame('core', $return);
+
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Core/App.php');
+		$this->assertSame('core', $return);
+
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Some/Deeply/Nested/Structure.php');
+		$this->assertSame('core', $return);
+	}
+
+/**
+ * testMapCoreFileToCase
+ *
+ * basics.php is a slightly special case - it's the only file in the core with a test that isn't Capitalized
+ * 
+ * @return void
+ */
+	public function testMapCoreFileToCase() {
+		$this->Shell->startup();
+
+		$return = $this->Shell->mapFileToCase('lib/Cake/basics.php', 'core');
+		$this->assertSame('Basics', $return);
+
+		$return = $this->Shell->mapFileToCase('lib/Cake/Core/App.php', 'core');
+		$this->assertSame('Core/App', $return);
+
+		$return = $this->Shell->mapFileToCase('lib/Cake/Some/Deeply/Nested/Structure.php', 'core', false);
+		$this->assertSame('Some/Deeply/Nested/Structure', $return);
 	}
 
 /**

@@ -337,10 +337,13 @@ class TestShell extends Shell {
  * Find the test case for the passed file. The file could itself be a test.
  *
  * @param mixed $file
+ * @param mixed $category 
+ * @param mixed $throwOnMissingFile 
  * @access protected
  * @return array(type, case)
+ * @throws Exception
  */
-	protected function _mapFileToCase($file, $category) {
+	protected function _mapFileToCase($file, $category, $throwOnMissingFile = true) {
 		if (!$category || (substr($file, -4) !== '.php')) {
 			return false;
 		}
@@ -381,12 +384,11 @@ class TestShell extends Shell {
 			$testCase[0] = strtoupper($testCase[0]);
 			$testFile = CAKE . 'Test/Case/' . $testCase . 'Test.php';
 
-			if (file_exists($testFile)) {
-				return $testCase;
+			if (!file_exists($testFile) && $throwOnMissingFile) {
+				throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
 			}
-
-			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
-			return false;
+				
+			return $testCase;
 		}
 
 		if ($category === 'app') {
@@ -399,9 +401,8 @@ class TestShell extends Shell {
 			);
 		}
 
-		if (!file_exists($testFile)) {
+		if (!file_exists($testFile) && $throwOnMissingFile) {
 			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
-			return false;
 		}
 
 		$testCase = substr($file, 0, -8);
