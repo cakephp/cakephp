@@ -2535,6 +2535,19 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test protocol relative urls.
+ *
+ * @return void
+ */
+	function testProtocolUrls() {
+		$url = 'svn+ssh://example.com';
+		$this->assertEqual($url, Router::url($url));
+
+		$url = '://example.com';
+		$this->assertEqual($url, Router::url($url));
+	}
+
+/**
  * test that patterns work for :action
  *
  * @return void
