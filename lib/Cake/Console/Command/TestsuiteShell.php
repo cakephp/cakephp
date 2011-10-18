@@ -18,10 +18,31 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('TestShell', 'Console/Command');
+App::uses('Shell', 'Console');
+App::uses('CakeTestSuiteDispatcher', 'TestSuite');
+App::uses('CakeTestSuiteCommand', 'TestSuite');
+App::uses('CakeTestLoader', 'TestSuite');
 
-class TestsuiteShell extends TestShell {
+/**
+ * Provides a CakePHP wrapper around PHPUnit.
+ * Adds in CakePHP's fixtures and gives access to plugin, app and core test cases
+ *
+ * @package       Cake.Console.Command
+ */
+class TestsuiteShell extends Shell {
 
+/**
+ * Dispatcher object for the run.
+ *
+ * @var CakeTestDispatcher
+ */
+	protected $_dispatcher = null;
+
+/**
+ * get the option parser for the test suite.
+ *
+ * @return void
+ */
 	public function getOptionParser() {
 		$parser = new ConsoleOptionParser($this->name);
 		$parser->description(array(
@@ -30,6 +51,7 @@ class TestsuiteShell extends TestShell {
 			__d('cake_console', 'use the test shell instead')
 		))->addArgument('category', array(
 			'help' => __d('cake_console', 'app, core or name of a plugin.'),
+			'required' => true
 		))->addArgument('file', array(
 			'help' => __d('cake_console', 'file name with folder prefix and without the test.php suffix.'),
 			'required' => false,
@@ -143,6 +165,20 @@ class TestsuiteShell extends TestShell {
 	}
 
 /**
+ * Initialization method installs PHPUnit and loads all plugins
+ *
+ * @return void
+ * @throws Exception
+ */
+	public function initialize() {
+		$this->_dispatcher = new CakeTestSuiteDispatcher();
+		$sucess = $this->_dispatcher->loadTestFramework();
+		if (!$sucess) {
+			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
+		}
+	}
+
+/**
  * Parse the CLI options into an array CakeTestDispatcher can use.
  *
  * @return array Array of params for CakeTestDispatcher
@@ -172,5 +208,123 @@ class TestsuiteShell extends TestShell {
 			$params['case'] = $this->args[1];
 		}
 		return $params;
+	}
+
+/**
+ * Converts the options passed to the shell as options for the PHPUnit cli runner
+ *
+ * @return array Array of params for CakeTestDispatcher
+ */
+	protected function _runnerOptions() {
+		$options = array();
+		$params = $this->params;
+		unset($params['help']);
+
+		if (!empty($params['no-colors'])) {
+			unset($params['no-colors'], $params['colors']);
+		} else {
+			$params['colors'] = true;
+		}
+
+		foreach ($params as $param => $value) {
+			if ($value === false) {
+				continue;
+			}
+			$options[] = '--' . $param;
+			if (is_string($value)) {
+				$options[] = $value;
+			}
+		}
+		return $options;
+	}
+
+/**
+ * Main entry point to this shell
+ *
+ * @return void
+ */
+	public function main() {
+		$this->out(__d('cake_console', 'CakePHP Test Shell'));
+		$this->hr();
+
+		$args = $this->_parseArgs();
+
+		if (empty($args['case'])) {
+			return $this->available();
+		}
+
+		$this->_run($args, $this->_runnerOptions());
+	}
+
+/**
+ * Runs the test case from $runnerArgs
+ *
+ * @param array $runnerArgs list of arguments as obtained from _parseArgs()
+ * @param array $options list of options as constructed by _runnerOptions()
+ * @return void
+ */
+	protected function _run($runnerArgs, $options = array()) {
+		restore_error_handler();
+		restore_error_handler();
+
+		$testCli = new CakeTestSuiteCommand('CakeTestLoader', $runnerArgs);
+		$testCli->run($options);
+	}
+
+/**
+ * Shows a list of available test cases and gives the option to run one of them
+ *
+ * @return void
+ */
+	public function available() {
+		$params = $this->_parseArgs();
+		$testCases = CakeTestLoader::generateTestList($params);
+		$app = $params['app'];
+		$plugin = $params['plugin'];
+
+		$title = "Core Test Cases:";
+		$category = 'core';
+		if ($app) {
+			$title = "App Test Cases:";
+			$category = 'app';
+		} elseif ($plugin) {
+			$title = Inflector::humanize($plugin) . " Test Cases:";
+			$category = $plugin;
+		}
+
+		if (empty($testCases)) {
+			$this->out(__d('cake_console', "No test cases available \n\n"));
+			return $this->out($this->OptionParser->help());
+		}
+
+		$this->out($title);
+		$i = 1;
+		$cases = array();
+		foreach ($testCases as $testCaseFile => $testCase) {
+			$case = str_replace('Test.php', '', $testCase);
+			$this->out("[$i] $case");
+			$cases[$i] = $case;
+			$i++;
+		}
+
+		while ($choice = $this->in(__d('cake_console', 'What test case would you like to run?'), null, 'q')) {
+			if (is_numeric($choice)  && isset($cases[$choice])) {
+				$this->args[0] = $category;
+				$this->args[1] = $cases[$choice];
+				$this->_run($this->_parseArgs(), $this->_runnerOptions());
+				break;
+			}
+
+			if (is_string($choice) && in_array($choice, $cases)) {
+				$this->args[0] = $category;
+				$this->args[1] = $choice;
+				$this->_run($this->_parseArgs(), $this->_runnerOptions());
+				break;
+			}
+
+			if ($choice == 'q') {
+				break;
+			}
+		}
 	}
 }
