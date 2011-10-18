@@ -18,9 +18,9 @@
  */
 
 App::uses('ShellDispatcher', 'Console');
-App::uses('TestsuiteShell', 'Console/Command');
+App::uses('TestShell', 'Console/Command');
 
-class TestsuiteShellTest extends CakeTestCase {
+class TestShellTest extends CakeTestCase {
 
 
 /**
@@ -33,7 +33,7 @@ class TestsuiteShellTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'TestsuiteShell',
+			'TestShell',
 			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', '_run', 'clear'),
 			array($out, $out, $in)
 		);
