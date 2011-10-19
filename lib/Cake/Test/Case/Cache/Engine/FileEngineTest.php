@@ -98,6 +98,23 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
+ * Test read/write on the same cache key. Ensures file handles are re-wound.
+ * 
+ * @return void
+ */
+	public function testConsecutiveReadWrite() {
+		Cache::write('rw', 'first write', 'file_test');
+		$result = Cache::read('rw', 'file_test');
+
+		Cache::write('rw', 'second write', 'file_test');
+		$result2 = Cache::read('rw', 'file_test');
+
+		Cache::delete('rw', 'file_test');
+		$this->assertEquals('first write', $result);
+		$this->assertEquals('second write', $result2);
+	}
+
+/**
  * testExpiry method
  *
  * @return void
