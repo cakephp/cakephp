@@ -141,12 +141,15 @@ class UpgradeShell extends Shell {
 			$this->_files = array();
 			chdir($cwd);
 		}
-
-		$this->_moveViewFiles();
-
 		$moves = array(
+			'config' => 'Config',
+			'Config' . DS . 'schema' => 'Config' . DS . 'Schema',
 			'libs' => 'Lib',
 			'tests' => 'Test',
+			'views' => 'View',
+			'models' => 'Model',
+			'Model' . DS . 'behaviors' => 'Model' . DS . 'Behavior',
+			'Model' . DS . 'datasources' => 'Model' . DS . 'Datasource',
 			'Test' . DS . 'cases' => 'Test' . DS . 'Case',
 			'Test' . DS . 'fixtures' => 'Test' . DS . 'Fixture',
 			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
@@ -156,7 +159,8 @@ class UpgradeShell extends Shell {
 				$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
 				if (!$this->params['dry-run']) {
 					if ($this->params['git']) {
-						exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+						exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($old . '__'));
+						exec('git mv -f ' . escapeshellarg($old . '__') . ' ' . escapeshellarg($new));
 					} else {
 						$Folder = new Folder($old);
 						$Folder->move($new);
@@ -164,18 +168,19 @@ class UpgradeShell extends Shell {
 				}
 			}
 		}
+		$this->_moveViewFiles();
 		$sourceDirs = array(
 			'.' => array('recursive' => false),
 			'Console',
-			'Controller',
 			'controllers',
+			'Controller',
 			'Lib' => array('checkFolder' => false),
-			'Model',
 			'models',
-			'Test' => array('regex' => '@class (\S*Test) extends CakeTestCase@'),
+			'Model',
 			'tests',
-			'View',
+			'Test' => array('regex' => '@class (\S*Test) extends CakeTestCase@'),
 			'views',
+			'View',
 			'vendors/shells',
 		);
 
@@ -515,23 +520,27 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	protected function _moveViewFiles() {
-		if (!is_dir('views')) {
+		if (!is_dir('View')) {
 			return;
 		}
 
-		$dirs = scandir('views');
+		$dirs = scandir('View');
 		foreach ($dirs as $old) {
-			if (!is_dir('views' . DS . $old) || $old === '.' || $old === '..') {
+			if (!is_dir('View' . DS . $old) || $old === '.' || $old === '..') {
 				continue;
 			}
 
 			$new = 'View' . DS . Inflector::camelize($old);
-			$old = 'views' . DS . $old;
+			$old = 'View' . DS . $old;
+			if ($new == $old) {
+				continue;
+			}
 
 			$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
 			if (!$this->params['dry-run']) {
 				if ($this->params['git']) {
-					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($new));
+					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($old . '__'));
+					exec('git mv -f ' . escapeshellarg($old . '__') . ' ' . escapeshellarg($new));
 				} else {
 					$Folder = new Folder($old);
 					$Folder->move($new);
@@ -620,7 +629,8 @@ class UpgradeShell extends Shell {
 			$this->out(__d('cake_console', 'Moving %s to %s', $file, $new), 1, Shell::VERBOSE);
 			if (!$this->params['dry-run']) {
 				if ($this->params['git']) {
-					exec('git mv -f ' . escapeshellarg($file) . ' ' . escapeshellarg($new));
+					exec('git mv -f ' . escapeshellarg($file) . ' ' . escapeshellarg($file . '__'));
+					exec('git mv -f ' . escapeshellarg($file. '__') . ' ' . escapeshellarg($new));
 				} else {
 					rename($file, $new);
 				}
