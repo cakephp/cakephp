@@ -274,6 +274,7 @@ class View extends Object {
 		$file = $plugin = $key = null;
 		$callbacks = false;
 
+		list($plugin, $name) = pluginSplit($name);
 		if (isset($options['plugin'])) {
 			$plugin = Inflector::camelize($options['plugin']);
 		}
