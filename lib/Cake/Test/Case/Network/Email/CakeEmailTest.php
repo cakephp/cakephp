@@ -273,6 +273,24 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'ÄÖÜTest'));
 		$expected = array('=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>');
 		$this->assertIdentical($expected, $result);
+		
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '日本語Test'));
+		$expected = array('=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>');
+		$this->assertIdentical($expected, $result);
+	}
+
+/**
+ * testFormatAddressJapanese
+ *
+ * @return void
+ */
+	public function testFormatAddressJapanese() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+		
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '日本語Test'));
+		$expected = array('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>');
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
