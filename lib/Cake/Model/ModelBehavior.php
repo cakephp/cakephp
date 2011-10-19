@@ -23,7 +23,7 @@
  * Model behavior base class.
  *
  * Defines the Behavior interface, and contains common model interaction functionality.  Behaviors
- * allow you to simulate mixins, and create resuable blocks of application logic, that can be reused across
+ * allow you to simulate mixins, and create reusable blocks of application logic, that can be reused across
  * several models.  Behaviors also provide a way to hook into model callbacks and augment their behavior.
  *
  * ### Mixin methods

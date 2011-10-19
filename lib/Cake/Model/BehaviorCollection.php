@@ -2,7 +2,7 @@
 /**
  * BehaviorCollection
  *
- * Provides managment and interface for interacting with collections of behaviors.
+ * Provides management and interface for interacting with collections of behaviors.
  *
  * PHP 5
  *

@@ -144,7 +144,7 @@ class Router {
 	protected static $_requests = array();
 
 /**
- * Initial state is popualated the first time reload() is called which is at the bottom
+ * Initial state is populated the first time reload() is called which is at the bottom
  * of this file.  This is a cheat as get_class_vars() returns the value of static vars even if they
  * have changed.
  *
