@@ -167,21 +167,21 @@ class ProjectTaskTest extends CakeTestCase {
 		$path = $this->Task->path . 'bake_test_app';
 
 		$empty = array(
-			'Console' . DS . 'Command' . DS . 'Task',
-			'Controller' . DS . 'Component',
-			'Model' . DS . 'Behavior',
-			'View' . DS . 'Helper',
-			'View' . DS . 'Errors',
-			'View' . DS . 'Scaffolds',
-			'Test' . DS . 'Case' . DS . 'Model',
-			'Test' . DS . 'Case' . DS . 'Controller',
-			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-			'Test' . DS . 'Fixture',
-			'webroot' . DS . 'js'
+			'Console' . DS . 'Command' . DS . 'Task' => 'empty',
+			'Controller' . DS . 'Component' => 'empty',
+			'Model' . DS . 'Behavior' => 'empty',
+			'View' . DS . 'Helper' => 'AppHelper.php',
+			'View' . DS . 'Errors' => 'empty',
+			'View' . DS . 'Scaffolds' => 'empty',
+			'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior' => 'empty',
+			'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component' => 'empty',
+			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' => 'empty',
+			'Test' . DS . 'Fixture' => 'empty',
+			'webroot' . DS . 'js' => 'empty'
 		);
 
-		foreach ($empty as $dir) {
-			$this->assertTrue(is_dir($path . DS . $dir), 'Missing directory ' . $dir);
+		foreach ($empty as $dir => $file) {
+			$this->assertTrue(is_file($path . DS . $dir . DS . $file), sprintf('Missing %s file in %s', $file, $dir));
 		}
 	}
 
