@@ -140,7 +140,7 @@ class RequestHandlerComponent extends Component {
 		$preferredTypes = $this->mapType($preferred);
 		$similarTypes = array_intersect($extensions, $preferredTypes);
 		if (count($similarTypes) === 1 && !in_array('html', $preferredTypes)) {
-			$this->ext = $similarTypes[0];
+			$this->ext = array_shift($similarTypes);
 		}
 	}
 
