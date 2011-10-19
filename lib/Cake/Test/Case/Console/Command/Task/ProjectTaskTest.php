@@ -181,7 +181,7 @@ class ProjectTaskTest extends CakeTestCase {
 		);
 
 		foreach ($empty as $dir) {
-			$this->assertTrue(is_file($path . DS . $dir . DS . 'empty'), 'Missing empty file in ' . $dir);
+			$this->assertTrue(is_dir($path . DS . $dir), 'Missing directory ' . $dir);
 		}
 	}
 
