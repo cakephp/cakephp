@@ -379,7 +379,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
@@ -391,7 +391,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
@@ -406,7 +406,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
@@ -424,7 +424,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
 
