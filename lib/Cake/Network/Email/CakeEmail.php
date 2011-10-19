@@ -1108,7 +1108,6 @@ class CakeEmail {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
 		}
-		$text = $this->_encodeString($text, $this->headerCharset);
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
 			mb_internal_encoding($restore);
@@ -1283,6 +1282,13 @@ class CakeEmail {
 			$prefix[] = '';
 			$message = array_merge($prefix, $message);
 		}
+
+		$tmp = array();
+		foreach ($message as $msg) {
+			$tmp[] = $this->_encodeString($msg, $this->charset);
+		}
+		$message = $tmp;
+
 		return $message;
 	}
 
