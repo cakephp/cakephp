@@ -2741,8 +2741,8 @@ class DboSource extends DataSource {
 		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();
-		for ($x = 0; $x < $count; $x++) {
-			$statement->execute($values[$x]);
+		foreach ($values as $value) {
+			$statement->execute($value);
 			$statement->closeCursor();
 		}
 		return $this->commit();
