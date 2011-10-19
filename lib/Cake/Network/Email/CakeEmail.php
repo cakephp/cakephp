@@ -663,7 +663,7 @@ class CakeEmail {
 		} elseif ($this->_emailFormat === 'both') {
 			$headers['Content-Type'] = 'multipart/alternative; boundary="alt-' . $this->_boundary . '"';
 		}
-		$headers['Content-Transfer-Encoding'] = '7bit';
+		$headers['Content-Transfer-Encoding'] = '8bit';
 
 		return $headers;
 	}
