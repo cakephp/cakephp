@@ -100,7 +100,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
 		$this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-		$this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+		$this->socket->expects($this->at(2))->method('write')->with("EHLO " . env('HTTP_HOST') . "\r\n");
 		$this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250 Accepted\r\n"));
 		$this->SmtpTransport->connect();
@@ -115,10 +115,10 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
 		$this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-		$this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+		$this->socket->expects($this->at(2))->method('write')->with("EHLO " . env('HTTP_HOST') . "\r\n");
 		$this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
-		$this->socket->expects($this->at(5))->method('write')->with("HELO localhost\r\n");
+		$this->socket->expects($this->at(5))->method('write')->with("HELO " . env('HTTP_HOST') . "\r\n");
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 Accepted\r\n"));
 		$this->SmtpTransport->connect();
@@ -134,10 +134,10 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
 		$this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-		$this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+		$this->socket->expects($this->at(2))->method('write')->with("EHLO " . env('HTTP_HOST') . "\r\n");
 		$this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
-		$this->socket->expects($this->at(5))->method('write')->with("HELO localhost\r\n");
+		$this->socket->expects($this->at(5))->method('write')->with("HELO " . env('HTTP_HOST') . "\r\n");
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
 		$this->SmtpTransport->connect();
