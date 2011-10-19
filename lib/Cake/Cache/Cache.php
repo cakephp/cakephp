@@ -96,7 +96,7 @@ class Cache {
  *
  * - `duration` Specify how long items in this cache configuration last.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
- *    with either another cache config or annother application.
+ *    with either another cache config or another application.
  * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
  *    cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.

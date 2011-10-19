@@ -536,7 +536,7 @@ class AuthComponent extends Component {
 /**
  * Get the current user from the session.
  *
- * @param string $key field to retrive.  Leave null to get entire User record
+ * @param string $key field to retrieve.  Leave null to get entire User record
  * @return mixed User record. or null if no user is logged in.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */

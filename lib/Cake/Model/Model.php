@@ -722,7 +722,7 @@ class Model extends Object {
 	}
 
 /**
- * Handles the lazy loading of model associations by lookin in the association arrays for the requested variable
+ * Handles the lazy loading of model associations by looking in the association arrays for the requested variable
  *
  * @param string $name variable tested for existance in class
  * @return boolean true if the variable exists (if is a not loaded model association it will be created), false otherwise
@@ -3032,7 +3032,7 @@ class Model extends Object {
  * Runs validation for hasAndBelongsToMany associations that have 'with' keys
  * set. And data in the set() data set.
  *
- * @param array $options Array of options to use on Valdation of with models
+ * @param array $options Array of options to use on Validation of with models
  * @return boolean Failure of validation on with models.
  * @see Model::validates()
  */

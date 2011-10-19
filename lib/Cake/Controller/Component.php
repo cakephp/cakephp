@@ -18,7 +18,7 @@
 App::uses('ComponentCollection', 'Controller');
 
 /**
- * Base class for an individual Component.  Components provide resuable bits of
+ * Base class for an individual Component.  Components provide reusable bits of
  * controller logic that can be composed into a controller.  Components also
  * provide request life-cycle callbacks for injecting logic at specific points.
  *

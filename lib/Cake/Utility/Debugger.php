@@ -204,7 +204,7 @@ class Debugger {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return boolean true if error was handled
- * @deprecated This function is supersceeded by Debugger::outputError()
+ * @deprecated This function is superseded by Debugger::outputError()
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$_this = Debugger::getInstance();
