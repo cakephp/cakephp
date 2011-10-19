@@ -287,7 +287,7 @@ class CakeEmailTest extends CakeTestCase {
 	public function testFormatAddressJapanese() {
 		$this->skipIf(!function_exists('mb_convert_encoding'));
 		
-		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$this->CakeEmail->headerCharset = 'ISO-2022-JP';
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '日本語Test'));
 		$expected = array('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>');
 		$this->assertIdentical($expected, $result);
