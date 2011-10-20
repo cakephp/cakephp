@@ -129,6 +129,7 @@ class ShellDispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		CakePlugin::unload();
 	}
 
@@ -398,6 +399,10 @@ class ShellDispatcherTest extends CakeTestCase {
 
 		$result = $Dispatcher->getShell('sample');
 		$this->assertInstanceOf('SampleShell', $result);
+
+		$Dispatcher = new TestShellDispatcher();
+		$result = $Dispatcher->getShell('test_plugin.example');
+		$this->assertInstanceOf('ExampleShell', $result);
 
 		$Dispatcher = new TestShellDispatcher();
 		$result = $Dispatcher->getShell('TestPlugin.example');

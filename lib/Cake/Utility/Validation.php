@@ -336,7 +336,7 @@ class Validation {
  * @see Validation::date
  * @see Validation::time
  */
-	public function datetime($check, $dateFormat = 'ymd', $regex = null) {
+	public static function datetime($check, $dateFormat = 'ymd', $regex = null) {
 		$valid = false;
 		$parts = explode(' ', $check);
 		if (!empty($parts) && count($parts) > 1) {
@@ -522,7 +522,7 @@ class Validation {
  * Valid Options
  *
  * - in => provide a list of choices that selections must be made from
- * - max => maximun number of non-zero choices that can be made
+ * - max => maximum number of non-zero choices that can be made
  * - min => minimum number of non-zero choices that can be made
  *
  * @param mixed $check Value to check
@@ -556,7 +556,7 @@ class Validation {
  * Checks if a value is numeric.
  *
  * @param string $check Value to check
- * @return boolean Succcess
+ * @return boolean Success
  */
 	public static function numeric($check) {
 		return is_numeric($check);
@@ -715,7 +715,7 @@ class Validation {
  *
  * @param string $check Value to check
  * @param array $list List to check against
- * @return boolean Succcess
+ * @return boolean Success
  */
 	public static function inList($check, $list) {
 		return in_array($check, $list);

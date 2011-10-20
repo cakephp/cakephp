@@ -274,7 +274,7 @@ class SecurityComponent extends Component {
 	}
 
 /**
- * Black-hole an invalid request with a 404 error or custom callback. If SecurityComponent::$blackHoleCallback
+ * Black-hole an invalid request with a 400 error or custom callback. If SecurityComponent::$blackHoleCallback
  * is specified, it will use this callback by executing the method indicated in $error
  *
  * @param Controller $controller Instantiating controller
@@ -282,15 +282,11 @@ class SecurityComponent extends Component {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
+ * @throws BadRequestException
  */
 	public function blackHole($controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
-			$code = 404;
-			if ($error == 'login') {
-				$code = 401;
-				$controller->header($this->loginRequest());
-			}
-			return $controller->redirect(null, $code, true);
+			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		} else {
 			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}

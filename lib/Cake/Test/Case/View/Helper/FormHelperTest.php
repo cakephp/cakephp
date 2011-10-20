@@ -6010,6 +6010,23 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test submit image with timestamps.
+ *
+ * @return void
+ */
+	function testSubmitImageTimestamp() {
+		Configure::write('Asset.timestamp', 'force');
+
+		$result = $this->Form->submit('cake.power.gif');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'preg:/img\/cake\.power\.gif\?\d*/'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test the create() method
  *
  * @return void

@@ -206,6 +206,7 @@ class ShellDispatcher {
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
 
+		$plugin = Inflector::camelize($plugin);
 		$class = Inflector::camelize($shell) . 'Shell';
 
 		App::uses('Shell', 'Console');

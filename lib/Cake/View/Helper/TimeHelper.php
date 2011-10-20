@@ -80,19 +80,19 @@ class TimeHelper extends AppHelper {
 	protected function _translateSpecifier($specifier) {
 		switch ($specifier[1]) {
 			case 'a':
-				$abday = __dc('cake', 'abday', 5);
+				$abday = __c('abday', 5);
 				if (is_array($abday)) {
 					return $abday[date('w', $this->__time)];
 				}
 				break;
 			case 'A':
-				$day = __dc('cake', 'day', 5);
+				$day = __c('day', 5);
 				if (is_array($day)) {
 					return $day[date('w', $this->__time)];
 				}
 				break;
 			case 'c':
-				$format = __dc('cake', 'd_t_fmt', 5);
+				$format = __c('d_t_fmt', 5);
 				if ($format != 'd_t_fmt') {
 					return $this->convertSpecifiers($format, $this->__time);
 				}
@@ -114,13 +114,13 @@ class TimeHelper extends AppHelper {
 				return date('jS', $this->__time);
 			case 'b':
 			case 'h':
-				$months = __dc('cake', 'abmon', 5);
+				$months = __c('abmon', 5);
 				if (is_array($months)) {
 					return $months[date('n', $this->__time) -1];
 				}
 				return '%b';
 			case 'B':
-				$months = __dc('cake', 'mon', 5);
+				$months = __c('mon', 5);
 				if (is_array($months)) {
 					return $months[date('n', $this->__time) -1];
 				}
@@ -131,14 +131,14 @@ class TimeHelper extends AppHelper {
 			case 'P':
 				$default = array('am' => 0, 'pm' => 1);
 				$meridiem = $default[date('a',$this->__time)];
-				$format = __dc('cake', 'am_pm', 5);
+				$format = __c('am_pm', 5);
 				if (is_array($format)) {
 					$meridiem = $format[$meridiem];
 					return ($specifier[1] == 'P') ? strtolower($meridiem) : strtoupper($meridiem);
 				}
 				break;
 			case 'r':
-				$complete = __dc('cake', 't_fmt_ampm', 5);
+				$complete = __c('t_fmt_ampm', 5);
 				if ($complete != 't_fmt_ampm') {
 					return str_replace('%p',$this->_translateSpecifier(array('%p', 'p')),$complete);
 				}
@@ -152,13 +152,13 @@ class TimeHelper extends AppHelper {
 			case 'u':
 				return ($weekDay = date('w', $this->__time)) ? $weekDay : 7;
 			case 'x':
-				$format = __dc('cake', 'd_fmt', 5);
+				$format = __c('d_fmt', 5);
 				if ($format != 'd_fmt') {
 					return $this->convertSpecifiers($format, $this->__time);
 				}
 				break;
 			case 'X':
-				$format = __dc('cake', 't_fmt', 5);
+				$format = __c('t_fmt', 5);
 				if ($format != 't_fmt') {
 					return $this->convertSpecifiers($format, $this->__time);
 				}
@@ -613,33 +613,33 @@ class TimeHelper extends AppHelper {
 		} else {
 			if ($years > 0) {
 				// years and months and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d year', '%d years', $years, $years);
-				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months) : '';
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d year', '%d years', $years, $years);
+				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . __n('%d month', '%d months', $months, $months) : '';
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . __n('%d week', '%d weeks', $weeks, $weeks) : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __n('%d day', '%d days', $days, $days) : '';
 			} elseif (abs($months) > 0) {
 				// months, weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months);
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d month', '%d months', $months, $months);
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . __n('%d week', '%d weeks', $weeks, $weeks) : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __n('%d day', '%d days', $days, $days) : '';
 			} elseif (abs($weeks) > 0) {
 				// weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d week', '%d weeks', $weeks, $weeks);
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __n('%d day', '%d days', $days, $days) : '';
 			} elseif (abs($days) > 0) {
 				// days and hours
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days);
-				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d day', '%d days', $days, $days);
+				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . __n('%d hour', '%d hours', $hours, $hours) : '';
 			} elseif (abs($hours) > 0) {
 				// hours and minutes
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours);
-				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d hour', '%d hours', $hours, $hours);
+				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . __n('%d minute', '%d minutes', $minutes, $minutes) : '';
 			} elseif (abs($minutes) > 0) {
 				// minutes only
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d minute', '%d minutes', $minutes, $minutes);
 			} else {
 				// seconds only
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
+				$relativeDate .= ($relativeDate ? ', ' : '') . __n('%d second', '%d seconds', $seconds, $seconds);
 			}
 
 			if (!$backwards) {
