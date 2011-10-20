@@ -336,7 +336,7 @@ class Validation {
  * @see Validation::date
  * @see Validation::time
  */
-	public function datetime($check, $dateFormat = 'ymd', $regex = null) {
+	public static function datetime($check, $dateFormat = 'ymd', $regex = null) {
 		$valid = false;
 		$parts = explode(' ', $check);
 		if (!empty($parts) && count($parts) > 1) {
