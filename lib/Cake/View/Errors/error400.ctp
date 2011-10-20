@@ -20,7 +20,7 @@
 <p class="error">
 	<strong><?php echo __d('Error'); ?>: </strong>
 	<?php printf(
-		__d('The requested address %s was not found on this server.'),
+		__('The requested address %s was not found on this server.'),
 		"<strong>'{$url}'</strong>"
 	); ?>
 </p>
