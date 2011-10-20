@@ -39,10 +39,22 @@ class CakeTestFixture {
 	public $db = null;
 
 /**
+ * Fixture Datasource
+ *
+ */
+	public $useDbConfig = 'test';
+
+/**
  * Full Table Name
  *
  */
 	public $table = null;
+
+/**
+ * List of datasources where this fixture has been created
+ *
+ */
+	public $created = array();
 
 /**
  * Instantiate the fixture.
@@ -56,7 +68,14 @@ class CakeTestFixture {
 				$this->name = get_class($this);
 			}
 		}
-		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test'));
+		$connection = 'test';
+		if (!empty($this->useDbConfig)) {
+			$connection = $this->useDbConfig;
+			if (strpos($connection, 'test') !== 0) {
+				throw new CakeException(__d('cake_dev', 'Invalid datasource %s for object %s', $connection, $this->name));
+			}
+		}
+		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => $connection));
 		$this->init();
 	}
 
@@ -71,6 +90,7 @@ class CakeTestFixture {
 				is_array($this->import) ? $this->import : array('model' => $this->import)
 			);
 
+			$this->Schema->connection = $import['connection'];
 			if (isset($import['model'])) {
 				list($plugin, $modelClass) = pluginSplit($import['model'], true);
 				App::uses($modelClass, $plugin . 'Model');
@@ -167,6 +187,7 @@ class CakeTestFixture {
 		$this->Schema->build(array($this->table => $this->fields));
 		try {
 			$db->execute($db->createSchema($this->Schema), array('log' => false));
+			$this->created[] = $db->configKeyName;
 		} catch (Exception $e) {
 			return false;
 		}
@@ -187,6 +208,7 @@ class CakeTestFixture {
 		try {
 
 			$db->execute($db->dropSchema($this->Schema), array('log' => false));
+			$this->created = array_diff($this->created, array($db->configKeyName));;
 		} catch (Exception $e) {
 			return false;
 		}
