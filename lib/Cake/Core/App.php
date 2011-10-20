@@ -77,6 +77,13 @@ class App {
 	const PREPEND = 'prepend';
 
 /**
+ * Register package
+ *
+ * @constant REGISTER
+ */
+	const REGISTER = 'register';
+
+/**
  * Reset paths instead of merging
  *
  * @constant RESET
@@ -280,6 +287,24 @@ class App {
 		}
 
 		$packageFormat = self::_packageFormat();
+
+		if ($mode === App::REGISTER) {
+			if (empty($paths)) {
+				self::$_packageFormat = null;
+				$packageFormat = self::_packageFormat();
+			} else {
+				foreach ($paths as $package => $formats) {
+					if (!empty($packageFormat[$package])) {
+						$formats = array_merge($packageFormat[$package], $formats);
+					}
+
+					$packageFormat[$package] = array_values(array_unique($formats));
+				}
+
+				self::$_packageFormat = $packageFormat;
+				$paths = array();
+			}
+		}
 
 		$defaults = array();
 		foreach ($packageFormat as $package => $format) {

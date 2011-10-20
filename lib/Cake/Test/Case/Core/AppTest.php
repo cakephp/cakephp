@@ -201,6 +201,31 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
+ * test package build() with App::REGISTER.
+ *
+ * @return void
+ */
+	public function testBuildPackage() {
+		$paths = App::path('Service');
+		$this->assertEqual(array(), $paths);
+
+		App::build(array(
+			'Service' => array(
+				'%s' . 'Service' . DS,
+			),
+		), App::REGISTER);
+
+		$expected = array(
+			APP . 'Service' . DS,
+		);
+
+		$result = App::path('Service');
+		$this->assertEquals($expected, $result);
+
+		App::build(array(), App::REGISTER);
+	}
+
+/**
  * test path() with a plugin.
  *
  * @return void
