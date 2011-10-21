@@ -464,7 +464,7 @@ class Debugger {
 				if (trim($var) == '') {
 					return "''";
 				}
-				return "'" . h($var) . "'";
+				return "'" . $var . "'";
 			break;
 			case 'array':
 				return self::_array($var, $depth - 1, $indent + 1);
