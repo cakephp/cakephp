@@ -365,6 +365,25 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
+		$params = array(
+			'/cake/1.2.x.x/cake/console/cake.php',
+			'bake',
+			'-app',
+			'new',
+			'-app',
+			'old',
+			'-working',
+			'/var/www/htdocs'
+		);
+		$expected = array(
+			'app' => 'old',
+			'webroot' => 'webroot',
+			'working' => str_replace('/', DS, '/var/www/htdocs/old'),
+			'root' => str_replace('/', DS,'/var/www/htdocs')
+		);
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
+
 		if (DS === '\\') {
 			$params = array(
 				'cake.php',
