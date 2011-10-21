@@ -7408,6 +7408,22 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(isset($result['Author']['full_name']));
 	}
 
+	function getTests() {
+		return array('start', 'testVirtualFieldAsAConstant', 'end');
+	}
+/**
+ * Test that virtual fields work with SQL constants
+ *
+ * @return void
+ */
+	function testVirtualFieldAsAConstant() {
+		$this->loadFixtures('Post', 'Author');
+		$Post =& ClassRegistry::init('Post');
+		$Post->virtualFields = array('empty' => "NULL");
+		$result = $Post->find('first');
+		$this->assertNull($result['Post']['empty']);
+	}
+
 /**
  * test that virtual fields work when they don't contain functions.
  *
