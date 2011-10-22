@@ -194,6 +194,21 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
+ * and the application is configured to handle multiplate extensions
+ *
+ * @return void
+ */
+	public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, */*; q=0.01';
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('rss', 'json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertEquals('json', $this->RequestHandler->ext);
+	}
+
+/**
  * Test that RequestHandler does not set $this->ext when multple accepts are sent.
  *
  * @return void

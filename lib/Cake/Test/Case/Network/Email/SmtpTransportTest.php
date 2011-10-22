@@ -88,7 +88,7 @@ class SmtpTransportTest extends CakeTestCase {
 
 		$this->SmtpTransport = new SmtpTestTransport();
 		$this->SmtpTransport->setSocket($this->socket);
-		$this->SmtpTransport->config();
+		$this->SmtpTransport->config(array('client' => 'localhost'));
 	}
 
 /**

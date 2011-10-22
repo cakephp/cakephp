@@ -255,7 +255,7 @@ class String {
 /**
  * Cleans up a String::insert() formated string with given $options depending on the 'clean' key in
  * $options. The default method used is text but html is also available. The goal of this function
- * is to replace all whitespace and uneeded markup around placeholders that did not get replaced
+ * is to replace all whitespace and unneeded markup around placeholders that did not get replaced
  * by String::insert().
  *
  * @param string $str

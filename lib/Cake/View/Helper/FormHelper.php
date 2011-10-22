@@ -1638,6 +1638,7 @@ class FormHelper extends AppHelper {
 			} else {
 				$url = $this->webroot(trim($caption, '/'));
 			}
+			$url = $this->assetTimestamp($url);
 			$tag = $this->Html->useTag('submitimage', $url, $options);
 		} else {
 			$options['value'] = $caption;
