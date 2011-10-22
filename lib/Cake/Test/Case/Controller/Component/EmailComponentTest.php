@@ -202,7 +202,7 @@ X-Mailer: CakePHP Email Component
 Date: $date
 MIME-Version: 1.0
 Content-Type: {CONTENTTYPE}
-Content-Transfer-Encoding: 7bitMessage:
+Content-Transfer-Encoding: 8bitMessage:
 
 This is the body of the message
 
@@ -255,7 +255,7 @@ X-Mailer: CakePHP Email Component
 Date: $date
 MIME-Version: 1.0
 Content-Type: {CONTENTTYPE}
-Content-Transfer-Encoding: 7bitMessage:
+Content-Transfer-Encoding: 8bitMessage:
 
 
 HEADBLOC;
@@ -298,8 +298,8 @@ HTMLBLOC;
 
 		$this->Controller->EmailTest->sendAs = 'both';
 		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $header);
-		$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $text . "\n\n";
-		$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $html . "\n\n";
+		$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 8bit' . "\n\n" . $text . "\n\n";
+		$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 8bit' . "\n\n" . $html . "\n\n";
 		$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
 
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
@@ -378,7 +378,7 @@ HTMLBLOC;
 		$this->assertPattern('/Date: ' . preg_quote(date(DATE_RFC2822)) . '\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
-		$this->assertPattern('/Content-Transfer-Encoding: 7bitMessage:\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 8bitMessage:\n/', $result);
 		$this->assertPattern('/This is the body of the message/', $result);
 	}
 
@@ -407,7 +407,7 @@ HTMLBLOC;
 		$this->assertPattern('/Date: ' . preg_quote(date(DATE_RFC2822)) . '\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
-		$this->assertPattern('/Content-Transfer-Encoding: 7bitMessage:\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 8bitMessage:\n/', $result);
 		$this->assertPattern('/This is the body of the message/', $result);
 		$this->Controller->Session = $session;
 	}
@@ -560,7 +560,7 @@ HTMLBLOC;
 		$this->assertPattern('/From: noreply@example.com\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
-		$this->assertPattern('/Content-Transfer-Encoding: 7bitMessage:\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 8bitMessage:\n/', $result);
 		$this->assertPattern('/First line\n/', $result);
 		$this->assertPattern('/Second line\n/', $result);
 		$this->assertPattern('/Third line\n/', $result);
@@ -590,11 +590,11 @@ HTMLBLOC;
  * @return void
  */
 	public function testContentStripping() {
-		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 7bit";
+		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 8bit";
 		$content .= "\n\n<p>My own html content</p>";
 
 		$result = $this->Controller->EmailTest->strip($content, true);
-		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
+		$expected = "Previous content\n--alt-\n text/html; utf-8\n 8bit\n\n<p>My own html content</p>";
 		$this->assertEqual($expected, $result);
 
 		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
