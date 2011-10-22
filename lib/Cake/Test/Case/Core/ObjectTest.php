@@ -464,7 +464,7 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->object->requestAction('/tests_apps/index', array('return'));
-		$expected = 'This is the TestsAppsController index view';
+		$expected = 'This is the TestsAppsController index view ';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->object->requestAction('/tests_apps/some_method');
@@ -548,7 +548,7 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction(
 			array('controller' => 'tests_apps', 'action' => 'index'), array('return')
 		);
-		$expected = 'This is the TestsAppsController index view';
+		$expected = 'This is the TestsAppsController index view ';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->object->requestAction(array('controller' => 'tests_apps', 'action' => 'some_method'));
