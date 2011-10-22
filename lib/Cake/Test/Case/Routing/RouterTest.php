@@ -2458,7 +2458,7 @@ class RouterTest extends CakeTestCase {
 	public function testRouteRedirection() {
 		Router::redirect('/blog', array('controller' => 'posts'), array('status' => 302));
 		$this->assertEqual(count(Router::$routes), 1);
-		Router::$routes[0]->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		Router::$routes[0]->response = $this->getMock('CakeResponse', array('_sendHeader', '_stop'));
 		$this->assertEqual(Router::$routes[0]->options['status'], 302);
 
 		Router::parse('/blog');

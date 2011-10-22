@@ -209,7 +209,7 @@ class CakeResponseTest extends CakeTestCase {
 *
 */
 	public function testSendWithLocation() {
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_stop'));
 		$response->header('Location', 'http://www.example.com');
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 302 Found');
