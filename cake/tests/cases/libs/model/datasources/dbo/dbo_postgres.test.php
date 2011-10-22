@@ -815,6 +815,25 @@ class DboPostgresTest extends CakeTestCase {
 	}
 
 /**
+ * Test that virtual fields work with SQL constants
+ *
+ * @return void
+ */
+	function testVirtualFieldAsAConstant() {
+		$this->loadFixtures('Article', 'Comment');
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'empty' => "NULL",
+			'number' => 43,
+			'truth' => 'TRUE'
+		);
+		$result = $Article->find('first');
+		$this->assertNull($result['Article']['empty']);
+		$this->assertTrue($result['Article']['truth']);
+		$this->assertEqual(42, $result['Article']['number']);
+	}
+
+/**
  * Tests additional order options for postgres
  *
  * @access public
