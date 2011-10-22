@@ -830,7 +830,7 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $Article->find('first');
 		$this->assertNull($result['Article']['empty']);
 		$this->assertTrue($result['Article']['truth']);
-		$this->assertEqual(42, $result['Article']['number']);
+		$this->assertIdentical('43', $result['Article']['number']);
 	}
 
 /**
