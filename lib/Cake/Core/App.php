@@ -703,7 +703,7 @@ class App {
  * @param string $ext file extension if known
  * @return boolean true if the file was loaded successfully, false otherwise
  */
-	protected function _loadVendor($name, $plugin, $file, $ext) {
+	protected static function _loadVendor($name, $plugin, $file, $ext) {
 		if ($mapped = self::_mapped($name, $plugin)) {
 			return (bool) include_once($mapped);
 		}
