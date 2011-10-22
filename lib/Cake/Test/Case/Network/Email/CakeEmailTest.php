@@ -848,6 +848,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testSendRenderWithVarsJapanese() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
 
