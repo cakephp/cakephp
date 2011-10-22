@@ -224,7 +224,6 @@ class SmtpTransportTest extends CakeTestCase {
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
 		$data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
-		//$data .= "Bcc: phpnut@cakephp.org\r\n";
 		$data .= "X-Mailer: CakePHP Email\r\n";
 		$data .= "Date: " . date(DATE_RFC2822) . "\r\n";
 		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
