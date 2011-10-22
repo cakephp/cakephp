@@ -7408,9 +7408,6 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(isset($result['Author']['full_name']));
 	}
 
-	function getTests() {
-		return array('start', 'testVirtualFieldAsAConstant', 'end');
-	}
 /**
  * Test that virtual fields work with SQL constants
  *
