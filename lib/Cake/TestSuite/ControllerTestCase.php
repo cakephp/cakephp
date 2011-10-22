@@ -157,6 +157,15 @@ abstract class ControllerTestCase extends CakeTestCase {
 	public $headers = null;
 
 /**
+ * Flag for checking if the controller instance is dirty.
+ * Once a test has been run on a controller it should be rebuilt
+ * to clean up properties.
+ *
+ * @var boolean
+ */
+	private $__dirtyController = false;
+
+/**
  * Used to enable calling ControllerTestCase::testAction() without the testing
  * framework thinking that it's a test case
  *
@@ -217,9 +226,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$this->headers = Router::currentRoute()->response->header();
 			return;
 		}
-		if ($this->controller !== null && Inflector::camelize($request->params['controller']) !== $this->controller->name) {
+		if ($this->__dirtyController) {
 			$this->controller = null;
 		}
+
 		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
 			$this->generate(Inflector::camelize($plugin . $request->params['controller']));
@@ -241,6 +251,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			}
 			$this->contents = $this->controller->response->body();
 		}
+		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
 		return $this->{$options['return']};
 	}
@@ -324,12 +335,13 @@ abstract class ControllerTestCase extends CakeTestCase {
 				throw new MissingComponentException(array(
 					'class' => $componentClass
 				));
-			}			
+			}
 			$_component = $this->getMock($componentClass, $methods, array(), '', false);
 			$_controller->Components->set($name, $_component);
 		}
 
 		$_controller->constructClasses();
+		$this->__dirtyController = false;
 
 		$this->controller = $_controller;
 		return $this->controller;
