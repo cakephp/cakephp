@@ -451,8 +451,8 @@ class TestTask extends BakeTask {
  */
 	public function testCaseFileName($type, $className) {
 		$path = $this->getPath() . 'Case' . DS;
-		if (isset($this->classTypes[$type])) {
-			$path .= $this->classTypes[$type] . DS;
+		if (isset($this->classTypes[Inflector::camelize($type)])) {
+			$path .= $this->classTypes[Inflector::camelize($type)] . DS;
 		}
 		$className = $this->getRealClassName($type, $className);
 		return str_replace('/', DS, $path) . Inflector::camelize($className) . 'Test.php';
