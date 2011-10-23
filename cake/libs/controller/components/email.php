@@ -335,7 +335,7 @@ class EmailComponent extends Object{
 			$this->__attachFiles();
 		}
 
-		if (!is_null($this->__boundary)) {
+		if (!empty($this->attachments)) {
 			$this->__message[] = '';
 			$this->__message[] = '--' . $this->__boundary . '--';
 			$this->__message[] = '';
@@ -424,6 +424,7 @@ class EmailComponent extends Object{
 			$View->layoutPath = 'email' . DS . 'html';
 			$htmlContent = explode("\n", str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
 			$msg = array_merge($msg, $htmlContent);
+
 			$msg[] = '';
 			$msg[] = '--alt-' . $this->__boundary . '--';
 			$msg[] = '';
@@ -510,8 +511,11 @@ class EmailComponent extends Object{
 			}
 		}
 
-		if (!empty($this->attachments)) {
+		if (!empty($this->attachments) || $this->sendAs === 'both') {
 			$this->__createBoundary();
+		}
+
+		if (!empty($this->attachments)) {
 			$this->__header[] = 'MIME-Version: 1.0';
 			$this->__header[] = 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"';
 			$this->__header[] = 'This part of the E-mail should never be seen. If';
