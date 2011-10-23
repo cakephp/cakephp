@@ -60,7 +60,7 @@ App::uses('AppController', 'Controller');
  *
  * If you don't want to take control of the exception handling, but want to change how exceptions are
  * rendered you can use `Exception.renderer` to choose a class to render exception pages.  By default
- * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Error.
+ * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Lib/Error.
  *
  * Your custom renderer should expect an exception in its constructor, and implement a render method.
  * Failing to do so will cause additional errors.
@@ -100,7 +100,7 @@ class ErrorHandler {
 /**
  * Set as the default exception handler by the CakePHP bootstrap process.
  *
- * This will either use an AppError class if your application has one,
+ * This will either use custom exception renderer class if configured,
  * or use the default ExceptionRenderer.
  *
  * @param Exception $exception
