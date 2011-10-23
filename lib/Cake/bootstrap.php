@@ -130,6 +130,7 @@ spl_autoload_register(array('App', 'load'));
 
 App::uses('ErrorHandler', 'Error');
 App::uses('Configure', 'Core');
+App::uses('CakePlugin', 'Core');
 App::uses('Cache', 'Cache');
 App::uses('Object', 'Core');
 App::$bootstrapping = true;
