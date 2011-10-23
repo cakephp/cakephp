@@ -562,33 +562,42 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->execute();
 	}
 
+	public static function caseFileNameProvider() {
+		return array(
+			array('Model', 'Post', 'Case' . DS . 'Model' . DS . 'PostTest.php'),
+			array('Helper', 'Form', 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php'),
+			array('Controller', 'Posts', 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php'),
+			array('Behavior', 'Containable', 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php'),
+			array('Component', 'Auth', 'Case' . DS . 'Controller' . DS . 'Component' . DS . 'AuthComponentTest.php'),
+			array('model', 'Post', 'Case' . DS . 'Model' . DS . 'PostTest.php'),
+			array('helper', 'Form', 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php'),
+			array('controller', 'Posts', 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php'),
+			array('behavior', 'Containable', 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php'),
+			array('component', 'Auth', 'Case' . DS . 'Controller' . DS . 'Component' . DS . 'AuthComponentTest.php'),
+		);
+	}
+
 /**
  * Test filename generation for each type + plugins
  *
+ * @dataProvider caseFileNameProvider
  * @return void
  */
-	public function testTestCaseFileName() {
+	public function testTestCaseFileName($type, $class, $expected) {
 		$this->Task->path = DS . 'my' . DS . 'path' . DS . 'tests' . DS;
 
-		$result = $this->Task->testCaseFileName('Model', 'Post');
-		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'PostTest.php';
+		$result = $this->Task->testCaseFileName($type, $class);
+		$expected = $this->Task->path . $expected;
 		$this->assertEquals($expected, $result);
+	}
 
-		$result = $this->Task->testCaseFileName('Helper', 'Form');
-		$expected = $this->Task->path . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->testCaseFileName('Controller', 'Posts');
-		$expected = $this->Task->path . 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->testCaseFileName('Behavior', 'Containable');
-		$expected = $this->Task->path . 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->testCaseFileName('Component', 'Auth');
-		$expected = $this->Task->path . 'Case' . DS . 'Controller' . DS  . 'Component' . DS . 'AuthComponentTest.php';
-		$this->assertEquals($expected, $result);
+/**
+ * Test filename generation for plugins.
+ *
+ * @return void
+ */
+	public function testTestCaseFileNamePlugin() {
+		$this->Task->path = DS . 'my' . DS . 'path' . DS . 'tests' . DS;
 
 		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS ));
 		$this->Task->plugin = 'TestTest';
@@ -621,6 +630,23 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testExecuteWithTwoArgs() {
 		$this->Task->args = array('Model', 'TestTaskTag');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
+		$this->Task->expects($this->once())->method('createFile')
+			->with(
+				$this->anything(),
+				$this->stringContains('class TestTaskTagTestCase extends CakeTestCase')
+			);
+		$this->Task->expects($this->any())->method('isLoadableClass')->will($this->returnValue(true));
+		$this->Task->execute();
+	}
+
+/**
+ * test execute with type and class name defined and lower case.
+ *
+ * @return void
+ */
+	public function testExecuteWithTwoArgsLowerCase() {
+		$this->Task->args = array('model', 'TestTaskTag');
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
