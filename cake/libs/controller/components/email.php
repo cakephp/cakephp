@@ -400,12 +400,11 @@ class EmailComponent extends Object{
 			$this->_attachFiles();
 		}
 
-		if (!is_null($this->__boundary)) {
+		if (!empty($this->attachments)) {
 			$this->__message[] = '';
 			$this->__message[] = '--' . $this->__boundary . '--';
 			$this->__message[] = '';
 		}
-
 
 		$_method = '_' . $this->delivery;
 		$sent = $this->$_method();
@@ -492,7 +491,9 @@ class EmailComponent extends Object{
 			$htmlContent = $View->element('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
 			$htmlContent = explode("\n", $this->htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
+
 			$msg = array_merge($msg, $htmlContent);
+
 			$msg[] = '';
 			$msg[] = '--alt-' . $this->__boundary . '--';
 			$msg[] = '';
@@ -609,8 +610,11 @@ class EmailComponent extends Object{
 			}
 		}
 
-		if (!empty($this->attachments)) {
+		if (!empty($this->attachments) || $this->sendAs === 'both') {
 			$this->_createBoundary();
+		}
+
+		if (!empty($this->attachments)) {
 			$headers['MIME-Version'] = '1.0';
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->__boundary . '"';
 		} elseif ($this->sendAs === 'text') {
