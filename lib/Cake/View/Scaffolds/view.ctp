@@ -17,7 +17,7 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> view">
-<h2><?php echo __('View %s', $singularHumanName); ?></h2>
+<h2><?php echo __d('cake', 'View %s', $singularHumanName); ?></h2>
 	<dl>
 <?php
 $i = 0;
@@ -42,20 +42,20 @@ foreach ($scaffoldFields as $_field) {
 	</dl>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+	<h3><?php echo __d('cake', 'Actions'); ?></h3>
 	<ul>
 <?php
-	echo "\t\t<li>" .$this->Html->link(__('Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(__('Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(__('List %s', $pluralHumanName), array('action' => 'index')). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(__('New %s', $singularHumanName), array('action' => 'add')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__d('cake', 'List %s', $pluralHumanName), array('action' => 'index')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add')). " </li>\n";
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-				echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-				echo "\t\t<li>" . $this->Html->link(__('New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(__d('cake', 'List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
 				$done[] = $_details['controller'];
 			}
 		}
@@ -67,7 +67,7 @@ foreach ($scaffoldFields as $_field) {
 if (!empty($associations['hasOne'])) :
 foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
-	<h3><?php echo __("Related %s", Inflector::humanize($_details['controller'])); ?></h3>
+	<h3><?php echo __d('cake', "Related %s", Inflector::humanize($_details['controller'])); ?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<dl>
 <?php
@@ -82,7 +82,7 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__('Edit %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
+			<li><?php echo $this->Html->link(__d('cake', 'Edit %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
 		</ul>
 	</div>
 </div>
@@ -102,7 +102,7 @@ foreach ($relations as $_alias => $_details):
 $otherSingularVar = Inflector::variable($_alias);
 ?>
 <div class="related">
-	<h3><?php echo __("Related %s", Inflector::humanize($_details['controller'])); ?></h3>
+	<h3><?php echo __d('cake', "Related %s", Inflector::humanize($_details['controller'])); ?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
@@ -128,9 +128,9 @@ $otherSingularVar = Inflector::variable($_alias);
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";
-			echo "\t\t\t\t" . $this->Html->link(__('View'), array('controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $this->Html->link(__('Edit'), array('controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $this->Html->link(__('Delete'), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
+			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'View'), array('controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'Edit'), array('controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'Delete'), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __d('cake', 'Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;
@@ -139,7 +139,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__("New %s", Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
+			<li><?php echo $this->Html->link(__d('cake', "New %s", Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
 		</ul>
 	</div>
 </div>
