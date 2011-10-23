@@ -351,10 +351,6 @@ class CakeResponse {
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
 		}
-
-		if (isset($this->_headers['Location'])) {
-			$this->_stop();
-		}
 		$this->_sendContent($this->_body);
 	}
 
@@ -665,16 +661,5 @@ class CakeResponse {
  */
 	public function __toString() {
 		return (string)$this->_body;
-	}
-
-/**
- * Stop execution of the current script.  Wraps exit() making
- * testing easier.
- *
- * @param integer|string $status see http://php.net/exit for values
- * @return void
- */
-	protected function _stop($status = 0) {
-		exit($status);
 	}
 }
