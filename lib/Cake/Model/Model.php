@@ -1639,7 +1639,18 @@ class Model extends Object {
 		}
 
 		if (!empty($joined) && $success === true) {
-			$this->_saveMulti($joined, $this->id, $db);
+			$joinModel = is_array($joined) ? key($joined) : false;
+			if ($joinModel && !empty($this->hasAndBelongsToMany[$joinModel]['with'])) {
+				if (is_array($this->hasAndBelongsToMany[$joinModel]['with'])) {
+					$habtmModel = key($this->hasAndBelongsToMany[$joinModel]['with']);
+				} else {
+					$habtmModel = $this->hasAndBelongsToMany[$joinModel]['with'];
+				}
+				$dbHabtm = $this->{$habtmModel}->getDataSource();
+				$this->_saveMulti($joined, $this->id, $dbHabtm);
+			} else {
+				$this->_saveMulti($joined, $this->id, $db);
+			}
 		}
 
 		if ($success && $count > 0) {

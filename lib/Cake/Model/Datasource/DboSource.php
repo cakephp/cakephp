@@ -1623,7 +1623,16 @@ class DboSource extends DataSource {
 			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
 		}
 		if (!empty($data['table'])) {
-			$data['table'] = $this->fullTableName($data['table']);
+			if ($data['table'] instanceof Model) {
+				$databaseName = $data['table']->getDataSource()->config['database'];
+				if ($this->config['database'] == $databaseName) {
+					$data['table'] = $this->fullTableName($data['table']);
+				} else {
+					$data['table'] = $databaseName .'.'. $this->fullTableName($data['table']);
+				}
+			} else {
+				$data['table'] = $this->fullTableName($data['table']);
+			}
 		}
 		return $this->renderJoinStatement($data);
 	}

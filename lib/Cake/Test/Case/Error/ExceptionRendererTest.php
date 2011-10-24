@@ -658,9 +658,9 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Database Error<\/h2>/', $result);
-		$this->assertPattern('/There was an error in the SQL query/', $result);
-		$this->assertPattern('/SELECT \* from poo_query < 5 and :seven/', $result);
-		$this->assertPattern('/"seven" => 7/', $result);
+		$this->assertContains('<h2>Database Error</h2>', $result);
+		$this->assertContains('There was an error in the SQL query', $result);
+		$this->assertContains('SELECT * from poo_query < 5 and :seven', $result);
+		$this->assertContains("'seven' => (int) 7", $result);
 	}
 }
