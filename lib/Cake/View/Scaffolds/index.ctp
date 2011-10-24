@@ -23,7 +23,7 @@
 <?php foreach ($scaffoldFields as $_field):?>
 	<th><?php echo $this->Paginator->sort($_field);?></th>
 <?php endforeach;?>
-	<th><?php echo __('Actions');?></th>
+	<th><?php echo __d('cake', 'Actions');?></th>
 </tr>
 <?php
 $i = 0;
@@ -46,13 +46,13 @@ foreach (${$pluralVar} as ${$singularVar}):
 		}
 
 		echo '<td class="actions">';
-		echo $this->Html->link(__('View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey]));
-		echo $this->Html->link(__('Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
+		echo $this->Html->link(__d('cake', 'View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey]));
+		echo $this->Html->link(__d('cake', 'Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
 		echo $this->Form->postLink(
-			__('Delete'), 
+			__d('cake', 'Delete'), 
 			array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), 
 			null,
-			__('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey]
+			__d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey]
 		);
 		echo '</td>';
 	echo '</tr>';
@@ -63,28 +63,28 @@ endforeach;
 </table>
 	<p><?php
 	echo $this->Paginator->counter(array(
-		'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+		'format' => __d('cake', 'Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
 	));
 	?></p>
 	<div class="paging">
 	<?php
-		echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
+		echo $this->Paginator->prev('< ' . __d('cake', 'previous'), array(), null, array('class' => 'prev disabled'));
 		echo $this->Paginator->numbers(array('separator' => ''));
-		echo $this->Paginator->next(__('next') .' >', array(), null, array('class' => 'next disabled'));
+		echo $this->Paginator->next(__d('cake', 'next') .' >', array(), null, array('class' => 'next disabled'));
 	?>
 	</div>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+	<h3><?php echo __d('cake', 'Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('New %s', $singularHumanName), array('action' => 'add')); ?></li>
+		<li><?php echo $this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add')); ?></li>
 <?php
 		$done = array();
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {
 				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-					echo "<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>";
-					echo "<li>" . $this->Html->link(__('New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>";
+					echo "<li>" . $this->Html->link(__d('cake', 'List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>";
+					echo "<li>" . $this->Html->link(__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>";
 					$done[] = $_details['controller'];
 				}
 			}

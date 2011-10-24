@@ -34,7 +34,11 @@ class CakeRequest implements ArrayAccess {
  *
  * @var array
  */
-	public $params = array();
+	public $params = array(
+		'plugin' => null,
+		'controller' => null,
+		'action' => null,
+	);
 
 /**
  * Array of POST data.  Will contain form data as well as uploaded files.

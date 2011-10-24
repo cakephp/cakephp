@@ -298,16 +298,6 @@ class ControllerTestCaseTest extends CakeTestCase {
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$result = $this->Case->testAction('/some_alias');
 		$this->assertEquals($result, 5);
-
-		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
-		$this->Case->testAction('/redirect_me_now');
-		$result = $this->Case->headers['Location'];
-		$this->assertEquals($result, 'http://cakephp.org');
-
-		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
-		$this->Case->testAction('/redirect_me');
-		$result = $this->Case->headers['Location'];
-		$this->assertEquals($result, Router::url(array('controller' => 'tests_apps', 'action' => 'some_method'), true));
 	}
 
 /**
