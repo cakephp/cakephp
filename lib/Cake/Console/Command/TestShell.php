@@ -1,8 +1,8 @@
 <?php
 /**
- * Test Suite Shell
+ * Test Shell
  *
- * This is a bc wrapper for the newer Test shell
+ * This Shell allows the running of test suites via the cake command line
  *
  * PHP 5
  *
@@ -18,7 +18,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('TestShell', 'Console/Command');
+App::uses('Shell', 'Console');
+App::uses('CakeTestSuiteDispatcher', 'TestSuite');
+App::uses('CakeTestSuiteCommand', 'TestSuite');
+App::uses('CakeTestLoader', 'TestSuite');
 
 /**
  * Provides a CakePHP wrapper around PHPUnit.
@@ -26,7 +29,14 @@ App::uses('TestShell', 'Console/Command');
  *
  * @package       Cake.Console.Command
  */
-class TestsuiteShell extends TestShell {
+class TestShell extends Shell {
+
+/**
+ * Dispatcher object for the run.
+ *
+ * @var CakeTestDispatcher
+ */
+	protected $_dispatcher = null;
 
 /**
  * get the option parser for the test suite.
@@ -37,13 +47,11 @@ class TestsuiteShell extends TestShell {
 		$parser = new ConsoleOptionParser($this->name);
 		$parser->description(array(
 			__d('cake_console', 'The CakePHP Testsuite allows you to run test cases from the command line'),
-			__d('cake_console', '<warning>This shell is for backwards-compatibility only</warning>'),
-			__d('cake_console', 'use the test shell instead')
 		))->addArgument('category', array(
-			'help' => __d('cake_console', 'app, core or name of a plugin.'),
-			'required' => true
+			'help' => __d('cake_console', 'The category for the test, or test file, to test.'),
+			'required' => false,
 		))->addArgument('file', array(
-			'help' => __d('cake_console', 'file name with folder prefix and without the test.php suffix.'),
+			'help' => __d('cake_console', 'The path to the file, or test file, to test.'),
 			'required' => false,
 		))->addOption('log-junit', array(
 			'help' => __d('cake_console', '<file> Log test execution in JUnit XML format to file.'),
@@ -155,6 +163,20 @@ class TestsuiteShell extends TestShell {
 	}
 
 /**
+ * Initialization method installs PHPUnit and loads all plugins
+ *
+ * @return void
+ * @throws Exception
+ */
+	public function initialize() {
+		$this->_dispatcher = new CakeTestSuiteDispatcher();
+		$sucess = $this->_dispatcher->loadTestFramework();
+		if (!$sucess) {
+			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
+		}
+	}
+
+/**
  * Parse the CLI options into an array CakeTestDispatcher can use.
  *
  * @return array Array of params for CakeTestDispatcher
@@ -170,20 +192,54 @@ class TestsuiteShell extends TestShell {
 			'output' => 'text',
 		);
 
-		$category = $this->args[0];
 
-		if ($category == 'core') {
+		if (strpos($this->args[0], '.php')) {
+			$category = $this->_mapFileToCategory($this->args[0]);
+			$params['case'] = $this->_mapFileToCase($this->args[0], $category);
+		} else {
+			$category = $this->args[0];
+			if (isset($this->args[1])) {
+				$params['case'] = $this->args[1];
+			}
+		}
+
+		if ($category === 'core') {
 			$params['core'] = true;
-		} elseif ($category == 'app') {
+		} elseif ($category === 'app') {
 			$params['app'] = true;
-		} elseif ($category != 'core') {
+		} else {
 			$params['plugin'] = $category;
 		}
 
-		if (isset($this->args[1])) {
-			$params['case'] = $this->args[1];
-		}
 		return $params;
+	}
+
+/**
+ * Converts the options passed to the shell as options for the PHPUnit cli runner
+ *
+ * @return array Array of params for CakeTestDispatcher
+ */
+	protected function _runnerOptions() {
+		$options = array();
+		$params = $this->params;
+		unset($params['help']);
+
+		if (!empty($params['no-colors'])) {
+			unset($params['no-colors'], $params['colors']);
+		} else {
+			$params['colors'] = true;
+		}
+
+		foreach ($params as $param => $value) {
+			if ($value === false) {
+				continue;
+			}
+			$options[] = '--' . $param;
+			if (is_string($value)) {
+				$options[] = $value;
+			}
+		}
+		return $options;
 	}
 
 /**
@@ -202,5 +258,178 @@ class TestsuiteShell extends TestShell {
 		}
 
 		$this->_run($args, $this->_runnerOptions());
+	}
+
+/**
+ * Runs the test case from $runnerArgs
+ *
+ * @param array $runnerArgs list of arguments as obtained from _parseArgs()
+ * @param array $options list of options as constructed by _runnerOptions()
+ * @return void
+ */
+	protected function _run($runnerArgs, $options = array()) {
+		restore_error_handler();
+		restore_error_handler();
+
+		$testCli = new CakeTestSuiteCommand('CakeTestLoader', $runnerArgs);
+		$testCli->run($options);
+	}
+
+/**
+ * Shows a list of available test cases and gives the option to run one of them
+ *
+ * @return void
+ */
+	public function available() {
+		$params = $this->_parseArgs();
+		$testCases = CakeTestLoader::generateTestList($params);
+		$app = $params['app'];
+		$plugin = $params['plugin'];
+
+		$title = "Core Test Cases:";
+		$category = 'core';
+		if ($app) {
+			$title = "App Test Cases:";
+			$category = 'app';
+		} elseif ($plugin) {
+			$title = Inflector::humanize($plugin) . " Test Cases:";
+			$category = $plugin;
+		}
+
+		if (empty($testCases)) {
+			$this->out(__d('cake_console', "No test cases available \n\n"));
+			return $this->out($this->OptionParser->help());
+		}
+
+		$this->out($title);
+		$i = 1;
+		$cases = array();
+		foreach ($testCases as $testCaseFile => $testCase) {
+			$case = str_replace('Test.php', '', $testCase);
+			$this->out("[$i] $case");
+			$cases[$i] = $case;
+			$i++;
+		}
+
+		while ($choice = $this->in(__d('cake_console', 'What test case would you like to run?'), null, 'q')) {
+			if (is_numeric($choice)  && isset($cases[$choice])) {
+				$this->args[0] = $category;
+				$this->args[1] = $cases[$choice];
+				$this->_run($this->_parseArgs(), $this->_runnerOptions());
+				break;
+			}
+
+			if (is_string($choice) && in_array($choice, $cases)) {
+				$this->args[0] = $category;
+				$this->args[1] = $choice;
+				$this->_run($this->_parseArgs(), $this->_runnerOptions());
+				break;
+			}
+
+			if ($choice == 'q') {
+				break;
+			}
+		}
+	}
+
+/**
+ * Find the test case for the passed file. The file could itself be a test.
+ *
+ * @param mixed $file
+ * @param mixed $category 
+ * @param mixed $throwOnMissingFile 
+ * @access protected
+ * @return array(type, case)
+ * @throws Exception
+ */
+	protected function _mapFileToCase($file, $category, $throwOnMissingFile = true) {
+		if (!$category || (substr($file, -4) !== '.php')) {
+			return false;
+		}
+
+		$_file = realpath($file);
+		if ($_file) {
+			$file = $_file;
+		}
+
+		$testFile = $testCase = null;
+
+		if (preg_match('@Test[\\\/]@', $file)) {
+
+			if (substr($file, -8) === 'Test.php') {
+
+				$testCase = substr($file, 0, -8);
+				$testCase = str_replace(DS, '/', $testCase);
+
+				if ($testCase = preg_replace('@.*Test\/Case\/@', '', $testCase)) {
+
+					if ($category === 'core') {
+						$testCase = str_replace('lib/Cake', '', $testCase);
+					}
+
+					return $testCase;
+				}
+
+				throw new Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
+				return false;
+			}
+		}
+
+		$file = substr($file, 0, -4);
+		if ($category === 'core') {
+
+			$testCase = str_replace(DS, '/', $file);
+			$testCase = preg_replace('@.*lib/Cake/@', '', $file);
+			$testCase[0] = strtoupper($testCase[0]);
+			$testFile = CAKE . 'Test/Case/' . $testCase . 'Test.php';
+
+			if (!file_exists($testFile) && $throwOnMissingFile) {
+				throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+			}
+				
+			return $testCase;
+		}
+
+		if ($category === 'app') {
+			$testFile = str_replace(APP, APP . 'Test/Case/', $file) . 'Test.php';
+		} else {
+			$testFile = preg_replace(
+				"@((?:plugins|Plugin)[\\/]{$category}[\\/])(.*)$@",
+				'\1Test/Case/\2Test.php',
+				$file
+			);
+		}
+
+		if (!file_exists($testFile) && $throwOnMissingFile) {
+			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+		}
+
+		$testCase = substr($testFile, 0, -8);
+		$testCase = str_replace(DS, '/', $testCase);
+		$testCase = preg_replace('@.*Test/Case/@', '', $testCase);
+
+		return $testCase;
+	}
+
+/**
+ * For the given file, what category of test is it? returns app, core or the name of the plugin
+ *
+ * @param mixed $file
+ * @access protected
+ * @return string
+ */
+	protected function _mapFileToCategory($file) {
+		$_file = realpath($file);
+		if ($_file) {
+			$file = $_file;
+		}
+
+		$file = str_replace(DS, '/', $file);
+		if (strpos($file, 'lib/Cake/') !== false) {
+			return 'core';
+		} elseif (preg_match('@(?:plugins|Plugin)/([^/]*)@', $file, $match)) {
+			return $match[1];
+		}
+		return 'app';
 	}
 }

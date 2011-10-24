@@ -295,33 +295,43 @@ class DebuggerTest extends CakeTestCase {
 		$Controller = new Controller();
 		$Controller->helpers = array('Html', 'Form');
 		$View = new View($Controller);
-		$result = Debugger::exportVar($View);
-		$expected = 'View
-		View::$Helpers = HelperCollection object
-		View::$plugin = NULL
-		View::$name = ""
-		View::$passedArgs = array
-		View::$helpers = array
-		View::$viewPath = ""
-		View::$viewVars = array
-		View::$view = NULL
-		View::$layout = "default"
-		View::$layoutPath = NULL
-		View::$autoLayout = true
-		View::$ext = ".ctp"
-		View::$subDir = NULL
-		View::$theme = NULL
-		View::$cacheAction = false
-		View::$validationErrors = array
-		View::$hasRendered = false
-		View::$uuids = array
-		View::$output = false
-		View::$request = NULL
-		View::$elementCache = "default"';
+		$View->int = 2;
+		$View->float = 1.333;
 
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($expected, $result);
+		$result = Debugger::exportVar($View);
+		$expected = <<<TEXT
+object(View) {
+	Helpers => object(HelperCollection) {}
+	plugin => null
+	name => ''
+	passedArgs => array()
+	helpers => array(
+		(int) 0 => 'Html',
+		(int) 1 => 'Form'
+	)
+	viewPath => ''
+	viewVars => array()
+	view => null
+	layout => 'default'
+	layoutPath => null
+	autoLayout => true
+	ext => '.ctp'
+	subDir => null
+	theme => null
+	cacheAction => false
+	validationErrors => array()
+	hasRendered => false
+	uuids => array()
+	output => false
+	request => null
+	elementCache => 'default'
+	int => (int) 2
+	float => (float) 1.333
+}
+TEXT;
+		$result = str_replace(array("\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -337,7 +347,7 @@ class DebuggerTest extends CakeTestCase {
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertPattern('/"cool"/', $result);
+		$this->assertPattern("/'cool'/", $result);
 
 		unlink(TMP . 'logs' . DS . 'debug.log');
 
@@ -346,8 +356,8 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertPattern('/\[main\]/', $result);
 		$this->assertPattern('/array/', $result);
-		$this->assertPattern('/"whatever",/', $result);
-		$this->assertPattern('/"here"/', $result);
+		$this->assertPattern("/'whatever',/", $result);
+		$this->assertPattern("/'here'/", $result);
 	}
 
 /**
@@ -357,23 +367,33 @@ class DebuggerTest extends CakeTestCase {
  */
 	public function testDump() {
 		$var = array('People' => array(
-					array(
-					'name' => 'joeseph',
-					'coat' => 'technicolor',
-					'hair_color' => 'brown'
-					),
-					array(
-					'name' => 'Shaft',
-					'coat' => 'black',
-					'hair' => 'black'
-					)
-				)
-			);
+			array(
+				'name' => 'joeseph',
+				'coat' => 'technicolor',
+				'hair_color' => 'brown'
+			),
+			array(
+				'name' => 'Shaft',
+				'coat' => 'black',
+				'hair' => 'black'
+			)
+		));
 		ob_start();
 		Debugger::dump($var);
 		$result = ob_get_clean();
-		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
-		$this->assertEqual($expected, $result);
+		$expected = <<<TEXT
+<pre>array(
+	'People' => array(
+		(int) 0 => array(
+		),
+		(int) 1 => array(
+		)
+	)
+)</pre>
+TEXT;
+		$result = str_replace(array("\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -383,16 +403,16 @@ class DebuggerTest extends CakeTestCase {
  */
 	public function testGetInstance() {
 		$result = Debugger::getInstance();
-		$this->assertIsA($result, 'Debugger');
+		$this->assertInstanceOf('Debugger', $result);
 
 		$result = Debugger::getInstance('DebuggerTestCaseDebugger');
-		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
+		$this->assertInstanceOf('DebuggerTestCaseDebugger', $result);
 
 		$result = Debugger::getInstance();
-		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
+		$this->assertInstanceOf('DebuggerTestCaseDebugger', $result);
 
 		$result = Debugger::getInstance('Debugger');
-		$this->assertIsA($result, 'Debugger');
+		$this->assertInstanceOf('Debugger', $result);
 	}
 
 /**
