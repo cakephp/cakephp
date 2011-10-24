@@ -718,4 +718,30 @@ class CakeRouteTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result, 'Slug should have moved');
 	}
+
+/**
+ * Test the /** special type on parsing.
+ *
+ * @return void
+ */
+	public function testParseTrailing() {
+		$route = new CakeRoute('/:controller/:action/**');
+		$result = $route->parse('/posts/index/1/2/3/foo:bar');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('1/2/3/foo:bar'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $route->parse('/posts/index/http://example.com');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('http://example.com'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
+	}
 }

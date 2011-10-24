@@ -148,7 +148,10 @@ class CakeRoute {
 			}
 			$names[] = $name;
 		}
-		if (preg_match('#\/\*$#', $route)) {
+		if (preg_match('#\/\*\*$#', $route)) {
+			$parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
+			$this->_greedy = true;
+		} elseif (preg_match('#\/\*$#', $route)) {
 			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
 			$this->_greedy = true;
 		}
@@ -224,6 +227,11 @@ class CakeRoute {
 			$route['pass'] = array_merge($route['pass'], $pass);
 			$route['named'] = $named;
 			unset($route['_args_']);
+		}
+
+		if (isset($route['_trailing_'])) {
+			$route['pass'][] = $route['_trailing_'];
+			unset($route['_trailing_']);
 		}
 
 		// restructure 'pass' key route params
