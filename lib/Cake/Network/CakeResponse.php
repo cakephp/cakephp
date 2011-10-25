@@ -313,9 +313,9 @@ class CakeResponse {
  * Class constructor
  *
  * @param array $options list of parameters to setup the response. Possible values are:
- *	- body: the rensonse text that should be sent to the client
+ *	- body: the response text that should be sent to the client
  *	- status: the HTTP status code to respond with
- *	- type: a complete mime-type string or an extension mapepd in this class
+ *	- type: a complete mime-type string or an extension mapped in this class
  *	- charset: the charset for the response body
  */
 	public function __construct(array $options = array()) {
