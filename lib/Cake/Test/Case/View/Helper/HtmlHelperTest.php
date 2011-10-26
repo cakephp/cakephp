@@ -378,7 +378,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
-		$file = new File($testfile, true);
+		$File = new File($testfile, true);
 
 		App::build(array(
 			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
@@ -662,7 +662,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
-		$file = new File($testfile, true);
+		$File = new File($testfile, true);
 
 		App::build(array(
 			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
@@ -676,8 +676,8 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
-		$folder->delete();
+		$Folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$Folder->delete();
 		App::build();
 	}
 

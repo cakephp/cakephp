@@ -3441,6 +3441,27 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$options = array(
+			array('value' => 'first', 'name' => 'First'),
+			array('value' => 'first', 'name' => 'Another First'),
+		);
+		$result = $this->Form->select(
+			'Model.field',
+			$options,
+			array('escape' => false, 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => 'first')),
+			'First',
+			'/option',
+			array('option' => array('value' => 'first')),
+			'Another First',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
 		$this->Form->request->data = array('Model' => array('contact_id' => 228));
 		$result = $this->Form->select(
 			'Model.contact_id',

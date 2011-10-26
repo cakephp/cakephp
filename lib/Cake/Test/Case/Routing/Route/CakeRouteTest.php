@@ -382,6 +382,22 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure that named parameters are urldecoded
+ *
+ * @return void
+ */
+	public function testParseNamedParametersUrlDecode() {
+		Router::connectNamed(true);
+		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
+
+		$result = $route->parse('/posts/index/page:%CE%98');
+		$this->assertEquals('Θ', $result['named']['page']);
+
+		$result = $route->parse('/posts/index/page[]:%CE%98');
+		$this->assertEquals('Θ', $result['named']['page'][0]);
+	}
+
+/**
  * test that named params with null/false are excluded
  *
  * @return void

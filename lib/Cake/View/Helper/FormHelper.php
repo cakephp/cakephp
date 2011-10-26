@@ -196,11 +196,11 @@ class FormHelper extends AppHelper {
 			if ($key === 'fields') {
 				if (!isset($this->fieldset[$model]['fields'])) {
 					$fields = $this->fieldset[$model]['fields'] = $object->schema();
-				}
-				if (empty($field)) {
 					foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 						$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
 					}
+				}
+				if (empty($field)) {
 					return $this->fieldset[$model]['fields'];
 				} elseif (isset($this->fieldset[$model]['fields'][$field])) {
 					return $this->fieldset[$model]['fields'][$field];
@@ -305,11 +305,12 @@ class FormHelper extends AppHelper {
  *   will be appended.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
  * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
- *	be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
- *	can be overridden when calling input()
+ *   be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
+ *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
- * @param string $model The model object which the form is being defined for
+ * @param string $model The model object which the form is being defined for.  Should
+ *   include the plugin name for plugin forms.  e.g. `ContactManager.Contact`.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
@@ -444,6 +445,7 @@ class FormHelper extends AppHelper {
 
 		if ($model !== false) {
 			$this->setEntity($model, true);
+			$this->_introspectModel($model, 'fields');
 		}
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
@@ -1245,7 +1247,7 @@ class FormHelper extends AppHelper {
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
- *	a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
+ *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1693,6 +1695,16 @@ class FormHelper extends AppHelper {
  *
  * In the above `2 => 'fred'` will not generate an option element.  You should enable the `showParents`
  * attribute to show the fred option.
+ *
+ * If you have multiple options that need to have the same value attribute, you can
+ * use an array of arrays to express this:
+ *
+ * {{{
+ * $options = array(
+ *		array('name' => 'United states', 'value' => 'USA'),
+ *		array('name' => 'USA', 'value' => 'USA'),
+ * );
+ * }}}
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
@@ -2221,24 +2233,6 @@ class FormHelper extends AppHelper {
 			break;
 		}
 		return $opt;
-	}
-
-/**
- * Add support for special HABTM syntax.
- *
- * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
- *
- * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
- * @param boolean $setScope Sets the view scope to the model specified in $tagValue
- * @return void
- */
-	public function setEntity($entity, $setScope = false) {
-		parent::setEntity($entity, $setScope);
-		$parts = explode('.', $entity);
-		$field = $this->_introspectModel($this->_modelScope, 'fields', $parts[0]);
-		if (!empty($field) && $field['type'] === 'multiple') {
-			$this->_entityPath = $parts[0] . '.' . $parts[0];
-		}
 	}
 
 /**
