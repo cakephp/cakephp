@@ -453,21 +453,21 @@ class Helper extends Object {
 
 		$this->_association = null;
 
-		// habtm models are special
-		if (
+		$isHabtm = (
 			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
-		) {
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple' &&
+			$count == 1
+		);
+
+		// habtm models are special
+		if ($count == 1 && $isHabtm) {
 			$this->_association = $parts[0];
 			$entity = $parts[0] . '.' . $parts[0];
 		} else {
 			// check for associated model.
 			$reversed = array_reverse($parts);
-			foreach ($reversed as $part) {
-				if (
-					!isset($this->fieldset[$this->_modelScope]['fields'][$part]) &&
-					preg_match('/^[A-Z]/', $part)
-				) {
+			foreach ($reversed as $i => $part) {
+				if ($i > 0 && preg_match('/^[A-Z]/', $part)) {
 					$this->_association = $part;
 					break;
 				}

@@ -196,11 +196,11 @@ class FormHelper extends AppHelper {
 			if ($key === 'fields') {
 				if (!isset($this->fieldset[$model]['fields'])) {
 					$fields = $this->fieldset[$model]['fields'] = $object->schema();
-				}
-				if (empty($field)) {
 					foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 						$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
 					}
+				}
+				if (empty($field)) {
 					return $this->fieldset[$model]['fields'];
 				} elseif (isset($this->fieldset[$model]['fields'][$field])) {
 					return $this->fieldset[$model]['fields'][$field];
@@ -445,6 +445,7 @@ class FormHelper extends AppHelper {
 
 		if ($model !== false) {
 			$this->setEntity($model, true);
+			$this->_introspectModel($model, 'fields');
 		}
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
@@ -2232,24 +2233,6 @@ class FormHelper extends AppHelper {
 			break;
 		}
 		return $opt;
-	}
-
-/**
- * Add support for special HABTM syntax.
- *
- * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
- *
- * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
- * @param boolean $setScope Sets the view scope to the model specified in $tagValue
- * @return void
- */
-	public function setEntity($entity, $setScope = false) {
-		parent::setEntity($entity, $setScope);
-		$parts = explode('.', $entity);
-		$field = $this->_introspectModel($this->_modelScope, 'fields', $parts[0]);
-		if (!empty($field) && $field['type'] === 'multiple') {
-			$this->_entityPath = $parts[0] . '.' . $parts[0];
-		}
 	}
 
 /**
