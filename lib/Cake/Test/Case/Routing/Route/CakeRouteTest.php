@@ -381,6 +381,11 @@ class CakeRouteTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
+/**
+ * Ensure that named parameters are urldecoded
+ *
+ * @return void
+ */
 	public function testParseNamedParametersUrlDecode() {
 		Router::connectNamed(true);
 		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
