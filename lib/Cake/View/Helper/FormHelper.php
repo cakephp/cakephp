@@ -305,11 +305,12 @@ class FormHelper extends AppHelper {
  *   will be appended.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
  * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
- *	be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
- *	can be overridden when calling input()
+ *   be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
+ *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
- * @param string $model The model object which the form is being defined for
+ * @param string $model The model object which the form is being defined for.  Should
+ *   include the plugin name for plugin forms.  e.g. `ContactManager.Contact`.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
