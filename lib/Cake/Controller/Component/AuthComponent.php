@@ -461,16 +461,20 @@ class AuthComponent extends Component {
  */
 	public function deny($action = null) {
 		$args = func_get_args();
-		if (isset($args[0]) && is_array($args[0])) {
-			$args = $args[0];
-		}
-		foreach ($args as $arg) {
-			$i = array_search($arg, $this->allowedActions);
-			if (is_int($i)) {
-				unset($this->allowedActions[$i]);
+		if(empty($args) || $args == array('*')){
+			$this->allowedActions = array();
+		}else{
+			if (isset($args[0]) && is_array($args[0])) {
+				$args = $args[0];
 			}
+			foreach ($args as $arg) {
+				$i = array_search($arg, $this->allowedActions);
+				if (is_int($i)) {
+					unset($this->allowedActions[$i]);
+				}
+			}
+			$this->allowedActions = array_values($this->allowedActions);
 		}
-		$this->allowedActions = array_values($this->allowedActions);
 	}
 
 /**
