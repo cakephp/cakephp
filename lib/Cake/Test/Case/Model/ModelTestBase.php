@@ -67,7 +67,8 @@ abstract class BaseModelTest extends CakeTestCase {
 		'core.counter_cache_user_nonstandard_primary_key',
 		'core.counter_cache_post_nonstandard_primary_key', 'core.uuidportfolio',
 		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid', 'core.fruit',
-		'core.fruits_uuid_tag', 'core.uuid_tag', 'core.product_update_all', 'core.group_update_all'
+		'core.fruits_uuid_tag', 'core.uuid_tag', 'core.product_update_all', 'core.group_update_all',
+		'core.player', 'core.guild', 'core.guilds_player', 'core.armor', 'core.armors_player',
 	);
 
 /**
