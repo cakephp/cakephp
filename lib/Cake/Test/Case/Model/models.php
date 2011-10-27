@@ -4532,3 +4532,71 @@ class ScaffoldTag extends CakeTestModel {
  */
 	public $useTable = 'tags';
 }
+
+/**
+ * Player class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Player extends CakeTestModel {
+	public $hasAndBelongsToMany = array(
+		'Guild' => array(
+			'with' => 'GuildsPlayer',
+			'unique' => true,
+			),
+		);
+}
+
+/**
+ * Guild class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Guild extends CakeTestModel {
+	public $hasAndBelongsToMany = array(
+		'Player' => array(
+			'with' => 'GuildsPlayer',
+			'unique' => true,
+			),
+		);
+}
+
+/**
+ * GuildsPlayer class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class GuildsPlayer extends CakeTestModel {
+
+	public $useDbConfig = 'test2';
+
+	public $belongsTo = array(
+		'Player',
+		'Guild',
+		);
+}
+
+/**
+ * Armor class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Armor extends CakeTestModel {
+
+	public $useDbConfig = 'test2';
+
+	public $hasAndBelongsToMany = array(
+		'Player' => array('with' => 'ArmorsPlayer'),
+		);
+}
+
+/**
+ * ArmorsPlayer class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ArmorsPlayer extends CakeTestModel {
+
+	public $useDbConfig = 'test_database_three';
+
+}
