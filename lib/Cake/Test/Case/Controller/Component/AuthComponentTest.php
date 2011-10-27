@@ -46,6 +46,10 @@ class TestAuthComponent extends AuthComponent {
 		$this->testStop = true;
 	}
 
+	public static function clearUser() {
+		self::$_user = array();
+	}
+
 }
 
 /**
@@ -339,6 +343,7 @@ class AuthComponentTest extends CakeTestCase {
 		$_SERVER = $this->_server;
 		$_ENV = $this->_env;
 
+		TestAuthComponent::clearUser();
 		$this->Auth->Session->delete('Auth');
 		$this->Auth->Session->delete('Message.auth');
 		unset($this->Controller, $this->Auth);
@@ -976,6 +981,30 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Stateless auth methods like Basic should populate data that can be
+ * accessed by $this->user().
+ *
+ * @return void
+ */
+	public function testStatelessAuthWorksWithUser() {
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'cake';
+		$url = '/auth_test/add';
+		$this->Auth->request->addParams(Router::parse($url));
+
+		$this->Auth->authenticate = array(
+			'Basic' => array('userModel' => 'AuthUser')
+		);
+		$this->Auth->startup($this->Controller);
+
+		$result = $this->Auth->user();
+		$this->assertEquals('mariano', $result['username']);
+
+		$result = $this->Auth->user('username');
+		$this->assertEquals('mariano', $result);
+	}
+
+/**
  * Tests that shutdown destroys the redirect session var
  *
  * @return void
@@ -1033,6 +1062,11 @@ class AuthComponentTest extends CakeTestCase {
 		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
 	}
 
+/**
+ * Logout should trigger a logout method on authentication objects.
+ *
+ * @return void
+ */
 	public function testLogoutTrigger() {
 		$this->getMock('BaseAuthenticate', array('authenticate', 'logout'), array(), 'LogoutTriggerMockAuthenticate', false);
 

@@ -349,6 +349,25 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that habtm associations can have property fields created.
+ *
+ * @return void
+ */
+	public function testSetEntityHabtmPropertyFieldNames() {
+		$this->Helper->fieldset = array(
+			'HelperTestComment' => array(
+				'fields' => array('Tag' => array('type' => 'multiple'))
+			)
+		);
+		$this->Helper->setEntity('HelperTestComment', true);
+
+		$this->Helper->setEntity('Tag.name');
+		$this->assertEquals('Tag', $this->Helper->model());
+		$this->assertEquals('name', $this->Helper->field());
+		$this->assertEquals(array('Tag', 'name'), $this->Helper->entity());
+	}
+
+/**
  * test that 'view' doesn't break things.
  *
  * @return void

@@ -122,16 +122,16 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testCreation() {
-		$folder = new Folder(TMP . 'tests');
-		$result = $folder->create(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
+		$Folder = new Folder(TMP . 'tests');
+		$result = $Folder->create(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
 		$this->assertTrue($result);
 
 		rmdir(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
 		rmdir(TMP . 'tests' . DS . 'first' . DS . 'second');
 		rmdir(TMP . 'tests' . DS . 'first');
 
-		$folder = new Folder(TMP . 'tests');
-		$result = $folder->create(TMP . 'tests' . DS . 'first');
+		$Folder = new Folder(TMP . 'tests');
+		$result = $Folder->create(TMP . 'tests' . DS . 'first');
 		$this->assertTrue($result);
 		rmdir(TMP . 'tests' . DS . 'first');
 	}
@@ -142,15 +142,15 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateWithTrailingDs() {
-		$folder = new Folder(TMP);
+		$Folder = new Folder(TMP);
 		$path = TMP . 'tests' . DS . 'trailing' . DS . 'dir' . DS;
-		$result = $folder->create($path);
+		$result = $Folder->create($path);
 		$this->assertTrue($result);
 
 		$this->assertTrue(is_dir($path), 'Folder was not made');
 
-		$folder = new Folder(TMP . 'tests' . DS . 'trailing');
-		$this->assertTrue($folder->delete());
+		$Folder = new Folder(TMP . 'tests' . DS . 'trailing');
+		$this->assertTrue($Folder->delete());
 	}
 
 /**
@@ -166,8 +166,8 @@ class FolderTest extends CakeTestCase {
 		chmod($path, '0444');
 
 		try {
-			$folder = new Folder($path);
-			$result = $folder->create($path . DS . 'two' . DS . 'three');
+			$Folder = new Folder($path);
+			$result = $Folder->create($path . DS . 'two' . DS . 'three');
 			$this->assertFalse($result);
 		} catch (PHPUnit_Framework_Error $e) {
 			$this->assertTrue(true);
@@ -537,7 +537,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 
 		$Folder->cd(TMP);
-		$file = new File($Folder->pwd() . DS . 'paths.php', true);
+		$File = new File($Folder->pwd() . DS . 'paths.php', true);
 		$Folder->create($Folder->pwd() . DS . 'testme');
 		$Folder->cd('testme');
 		$result = $Folder->find('paths\.php');
@@ -551,7 +551,7 @@ class FolderTest extends CakeTestCase {
 
 		$Folder->cd(TMP);
 		$Folder->delete($Folder->pwd() . DS . 'testme');
-		$file->delete();
+		$File->delete();
 	}
 
 /**

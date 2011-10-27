@@ -394,6 +394,7 @@ class Postgres extends DboSource {
 
 /**
  * Auxiliary function to quote matched `(Model.fields)` from a preg_replace_callback call
+ * Quotes the fields in a function call.
  *
  * @param string $match matched string
  * @return string quoted strig
@@ -404,9 +405,11 @@ class Postgres extends DboSource {
 			$prepend = 'DISTINCT ';
 			$match[1] = trim(str_replace('DISTINCT', '', $match[1]));
 		}
-		if (strpos($match[1], '.') === false) {
+		$constant = preg_match('/^\d+|NULL|FALSE|TRUE$/i', $match[1]);
+
+		if (!$constant && strpos($match[1], '.') === false) {
 			$match[1] = $this->name($match[1]);
-		} else {
+		} elseif (!$constant){
 			$parts = explode('.', $match[1]);
 			if (!Set::numeric($parts)) {
 				$match[1] = $this->name($match[1]);

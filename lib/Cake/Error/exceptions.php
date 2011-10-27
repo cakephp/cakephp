@@ -426,7 +426,7 @@ class ConfigureException extends CakeException { }
 
 /**
  * Exception class for Socket. This exception will be thrown from CakeSocket, CakeEmail, HttpSocket
- * SmtpTransport and HttpResponse when it encounters an error.
+ * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  *
  * @package       Cake.Error
  */

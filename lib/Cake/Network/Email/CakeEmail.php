@@ -283,6 +283,13 @@ class CakeEmail {
 	protected $_config = array();
 
 /**
+ * 8Bit character sets
+ *
+ * @var array
+ */
+	protected $_charset8bit = array('UTF-8', 'SHIFT_JIS');
+
+/**
  * Constructor
  * @param mixed $config Array of configs, or string to load configs from email.php
  *
@@ -663,7 +670,7 @@ class CakeEmail {
 		} elseif ($this->_emailFormat === 'both') {
 			$headers['Content-Type'] = 'multipart/alternative; boundary="alt-' . $this->_boundary . '"';
 		}
-		$headers['Content-Transfer-Encoding'] = '7bit';
+		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding();
 
 		return $headers;
 	}
@@ -1101,7 +1108,6 @@ class CakeEmail {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
 		}
-		$text = $this->_encodeString($text, $this->headerCharset);
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
 			mb_internal_encoding($restore);
@@ -1272,10 +1278,17 @@ class CakeEmail {
 			} elseif ($this->_emailFormat === 'both') {
 				$prefix[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
 			}
-			$prefix[] = 'Content-Transfer-Encoding: 7bit';
+			$prefix[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 			$prefix[] = '';
 			$message = array_merge($prefix, $message);
 		}
+
+		$tmp = array();
+		foreach ($message as $msg) {
+			$tmp[] = $this->_encodeString($msg, $this->charset);
+		}
+		$message = $tmp;
+
 		return $message;
 	}
 
@@ -1318,7 +1331,7 @@ class CakeEmail {
 			}
 			$msg[] = '--alt-' . $this->_boundary;
 			$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
-			$msg[] = 'Content-Transfer-Encoding: 7bit';
+			$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 			$msg[] = '';
 
 			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'text';
@@ -1330,7 +1343,7 @@ class CakeEmail {
 			$msg[] = '';
 			$msg[] = '--alt-' . $this->_boundary;
 			$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
-			$msg[] = 'Content-Transfer-Encoding: 7bit';
+			$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 			$msg[] = '';
 
 			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'html';
@@ -1352,12 +1365,12 @@ class CakeEmail {
 				$msg[] = '';
 				$msg[] = '--' . $this->_boundary;
 				$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
-				$msg[] = 'Content-Transfer-Encoding: 7bit';
+				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 				$msg[] = '';
 			} else {
 				$msg[] = '--' . $this->_boundary;
 				$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
-				$msg[] = 'Content-Transfer-Encoding: 7bit';
+				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 				$msg[] = '';
 			}
 		}
@@ -1376,4 +1389,16 @@ class CakeEmail {
 		return array_merge($msg, $content);
 	}
 
+/**
+ * Return the Content-Transfer Encoding value based on the set charset
+ *
+ * @return void
+ */
+	protected function _getContentTransferEncoding() {
+		$charset = strtoupper($this->charset);
+		if (in_array($charset, $this->_charset8bit)) {
+			return '8bit';
+		}
+		return '7bit';
+	}
 }

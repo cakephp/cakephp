@@ -75,8 +75,8 @@ class Dispatcher {
 			return;
 		}
 
-		$request = $this->parseParams($request, $additionalParams);
 		Router::setRequestInfo($request);
+		$request = $this->parseParams($request, $additionalParams);
 		$controller = $this->_getController($request, $response);
 
 		if (!($controller instanceof Controller)) {
