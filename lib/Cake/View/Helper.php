@@ -444,9 +444,9 @@ class Helper extends Object {
 			$entity = $this->_modelScope . '.' . $entity;
 		}
 
-		// 0.name, 0.created.month style inputs.
+		// 0.name, 0.created.month style inputs.  Excludes inputs with the modelScope in them.
 		if (
-			$count >= 2 && is_numeric($parts[0]) && !is_numeric($parts[1]) && $this->_modelScope
+			$count >= 2 && is_numeric($parts[0]) && !is_numeric($parts[1]) && $this->_modelScope && strpos($entity, $this->_modelScope) === false
 		) {
 			$entity = $this->_modelScope . '.' . $entity;
 		}
