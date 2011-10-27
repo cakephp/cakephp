@@ -238,7 +238,7 @@ class View extends Object {
 /**
  * Constructor
  *
- * @param Controller $controller A controller object to pull View::_passedArgs from.
+ * @param Controller $controller A controller object to pull View::_passedVars from.
  */
 	public function __construct($controller) {
 		if (is_object($controller)) {
