@@ -255,7 +255,7 @@ class HelperTest extends CakeTestCase {
  */
 	public function testSetEntityScoped() {
 		$this->Helper->setEntity('HelperTestPost', true);
-		$this->assertEquals(array('HelperTestPost'), $this->Helper->entity());
+	$this->assertEquals(array('HelperTestPost'), $this->Helper->entity());
 
 		$this->Helper->setEntity('id');
 		$expected = array('HelperTestPost', 'id');
@@ -308,6 +308,19 @@ class HelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $this->Helper->entity());
 
 		$this->assertEquals('HelperTestComment', $this->Helper->model());
+	}
+
+/**
+ * Test creating saveMany() compatible entities
+ *
+ * @return void
+ */
+	public function testSetEntitySaveMany() {
+		$this->Helper->setEntity('HelperTestPost', true);
+
+		$this->Helper->setEntity('0.HelperTestPost.id');
+		$expected = array('0', 'HelperTestPost', 'id');
+		$this->assertEquals($expected, $this->Helper->entity());
 	}
 
 /**
