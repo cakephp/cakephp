@@ -136,7 +136,7 @@ class View extends Object {
 
 /**
  * Sub-directory for this view file.  This is often used for extension based routing.
- * for example with an `xml` extension, $subDir would be `xml/`
+ * Eg. With an `xml` extension, $subDir would be `xml/`
  *
  * @var string
  */
@@ -158,7 +158,7 @@ class View extends Object {
 	public $cacheAction = false;
 
 /**
- * holds current errors for the model validation
+ * Holds current errors for the model validation.
  *
  * @var array
  */
@@ -172,7 +172,7 @@ class View extends Object {
 	public $hasRendered = false;
 
 /**
- * List of generated DOM UUIDs
+ * List of generated DOM UUIDs.
  *
  * @var array
  */
@@ -205,7 +205,7 @@ class View extends Object {
 	public $elementCache = 'default';
 
 /**
- * List of variables to collect from the associated controller
+ * List of variables to collect from the associated controller.
  *
  * @var array
  */
@@ -215,7 +215,7 @@ class View extends Object {
 	);
 
 /**
- * Scripts (and/or other <head /> tags) for the layout
+ * Scripts (and/or other <head /> tags) for the layout.
  *
  * @var array
  */
@@ -229,7 +229,7 @@ class View extends Object {
 	protected $_paths = array();
 
 /**
- * boolean to indicate that helpers have been loaded.
+ * Indicate that helpers have been loaded.
  *
  * @var boolean
  */
@@ -238,7 +238,7 @@ class View extends Object {
 /**
  * Constructor
  *
- * @param Controller $controller A controller object to pull View::__passedArgs from.
+ * @param Controller $controller A controller object to pull View::_passedVars from.
  */
 	public function __construct($controller) {
 		if (is_object($controller)) {
@@ -337,7 +337,7 @@ class View extends Object {
  * Renders view for given view file and layout.
  *
  * Render triggers helper callbacks, which are fired before and after the view are rendered,
- * as well as before and after the layout.  The helper callbacks are called
+ * as well as before and after the layout.  The helper callbacks are called:
  *
  * - `beforeRender`
  * - `afterRender`
