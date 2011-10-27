@@ -794,4 +794,20 @@ class AppTest extends CakeTestCase {
 		$this->assertArrayHasKey('Controller', $result);
 		$this->assertArrayHasKey('Controller/Component', $result);
 	}
+
+/**
+ * Proves that it is possible to load plugin libraries in top
+ * level Lib dir for plugins
+ *
+ * @return void
+ */
+    public function testPluginLibClasses() {
+        App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+		CakePlugin::loadAll();
+		$this->assertFalse(class_exists('TestPluginOtherLibrary', false));
+		App::uses('TestPluginOtherLibrary', 'TestPlugin.Lib');
+		$this->assertTrue(class_exists('TestPluginOtherLibrary'));
+    }
 }
