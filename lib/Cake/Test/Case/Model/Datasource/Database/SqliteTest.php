@@ -20,6 +20,8 @@ App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('Sqlite', 'Model/Datasource/Database');
 
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
+
 /**
  * DboSqliteTestDb class
  *
@@ -88,6 +90,7 @@ class SqliteTest extends CakeTestCase {
  *
  */
 	public function setUp() {
+		parent::setUp();
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
 		if (!$this->Dbo instanceof Sqlite) {
@@ -100,6 +103,7 @@ class SqliteTest extends CakeTestCase {
  *
  */
 	public function tearDown() {
+		parent::tearDown();
 		Configure::write('Cache.disable', false);
 	}
 
@@ -317,5 +321,21 @@ class SqliteTest extends CakeTestCase {
 		);
 		$this->assertEqual($result['id'], $expected);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
+	}
+
+/**
+ * Test virtualFields with functions.
+ *
+ * @return void
+ */
+	public function testVirtualFieldWithFunction() {
+		$this->loadFixtures('User');
+		$User = ClassRegistry::init('User');
+		$User->virtualFields = array('name' => 'SUBSTR(User.user, 5)');
+
+		$result = $User->find('first', array(
+			'conditions' => array('User.user' => 'garrett')
+		));
+		$this->assertEquals('ett', $result['User']['name']);
 	}
 }
