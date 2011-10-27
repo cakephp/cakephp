@@ -1,6 +1,6 @@
 <?php
 /**
- * A class to contain test cases and run them with shered fixtures
+ * A class to contain test cases and run them with shared fixtures
  *
  * PHP 5
  *
@@ -29,8 +29,8 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public function addTestDirectory($directory = '.') {
-		$folder = new Folder($directory);
-		list($dirs, $files) = $folder->read(true, true, true);
+		$Folder = new Folder($directory);
+		list($dirs, $files) = $Folder->read(true, true, true);
 
 		foreach ($files as $file) {
 			$this->addTestFile($file);
@@ -44,8 +44,8 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public function addTestDirectoryRecursive($directory = '.') {
-		$folder = new Folder($directory);
-		$files = $folder->tree(null, false, 'files');
+		$Folder = new Folder($directory);
+		$files = $Folder->tree(null, false, 'files');
 
 		foreach ($files as $file) {
 			$this->addTestFile($file);

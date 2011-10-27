@@ -49,7 +49,7 @@
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
  * Un-comment this line to specify a fixed path to CakePHP.
- * This should point at the directory containg `Cake`.
+ * This should point at the directory containing `Cake`.
  *
  * For ease of development CakePHP uses PHP's include_path.  If you
  * cannot modify your include_path set this value.

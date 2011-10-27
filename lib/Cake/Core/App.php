@@ -703,7 +703,7 @@ class App {
  * @param string $ext file extension if known
  * @return boolean true if the file was loaded successfully, false otherwise
  */
-	protected function _loadVendor($name, $plugin, $file, $ext) {
+	protected static function _loadVendor($name, $plugin, $file, $ext) {
 		if ($mapped = self::_mapped($name, $plugin)) {
 			return (bool) include_once($mapped);
 		}
@@ -739,7 +739,6 @@ class App {
 		self::$_map += (array)Cache::read('file_map', '_cake_core_');
 		self::$_objects += (array)Cache::read('object_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
-		self::uses('CakePlugin', 'Core');
 	}
 
 /**

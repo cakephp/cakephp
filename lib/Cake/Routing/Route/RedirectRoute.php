@@ -38,6 +38,13 @@ class RedirectRoute extends CakeRoute {
 	public $redirect;
 
 /**
+ * Flag for disabling exit() when this route parses a url.
+ *
+ * @var boolean
+ */
+	public $stop = true;
+
+/**
  * Constructor
  *
  * @param string $template Template string with parameter placeholders
@@ -79,6 +86,7 @@ class RedirectRoute extends CakeRoute {
 		$this->response->header(array('Location' => Router::url($redirect, true)));
 		$this->response->statusCode($status);
 		$this->response->send();
+		$this->_stop();
 	}
 
 /**
@@ -89,5 +97,18 @@ class RedirectRoute extends CakeRoute {
  */
 	public function match($url) {
 		return false;
+	}
+
+/**
+ * Stop execution of the current script.  Wraps exit() making
+ * testing easier.
+ *
+ * @param integer|string $status see http://php.net/exit for values
+ * @return void
+ */
+	protected function _stop($code = 0) {
+		if ($this->stop) {
+			exit($code);
+		}
 	}
 }

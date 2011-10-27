@@ -206,6 +206,7 @@ class ShellDispatcher {
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
 
+		$plugin = Inflector::camelize($plugin);
 		$class = Inflector::camelize($shell) . 'Shell';
 
 		App::uses('Shell', 'Console');
@@ -287,8 +288,7 @@ class ShellDispatcher {
 		$parsed = array();
 		$keys = array('-working', '--working', '-app', '--app', '-root', '--root');
 		foreach ($keys as $key) {
-			$index = array_search($key, $args);
-			if ($index !== false) {
+			while (($index = array_search($key, $args)) !== false) {
 				$keyname = str_replace('-', '', $key);
 				$valueIndex = $index + 1;
 				$parsed[$keyname] = $args[$valueIndex];

@@ -3441,6 +3441,27 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$options = array(
+			array('value' => 'first', 'name' => 'First'),
+			array('value' => 'first', 'name' => 'Another First'),
+		);
+		$result = $this->Form->select(
+			'Model.field',
+			$options,
+			array('escape' => false, 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => 'first')),
+			'First',
+			'/option',
+			array('option' => array('value' => 'first')),
+			'Another First',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
 		$this->Form->request->data = array('Model' => array('contact_id' => 228));
 		$result = $this->Form->select(
 			'Model.contact_id',
@@ -6007,6 +6028,23 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->unlockField();
 		$this->assertEquals(array('save'), $result, 'Only submits with name attributes should be unlocked.');
+	}
+
+/**
+ * Test submit image with timestamps.
+ *
+ * @return void
+ */
+	function testSubmitImageTimestamp() {
+		Configure::write('Asset.timestamp', 'force');
+
+		$result = $this->Form->submit('cake.power.gif');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'preg:/img\/cake\.power\.gif\?\d*/'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

@@ -55,6 +55,13 @@ class TestCakeEmail extends CakeEmail {
 		return $this->_boundary;
 	}
 
+/**
+ * Encode to protected method
+ *
+ */
+	public function encode($text) {
+		return $this->_encode($text);
+	}
 }
 
 /*
@@ -273,6 +280,33 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'ÄÖÜTest'));
 		$expected = array('=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>');
 		$this->assertIdentical($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '日本語Test'));
+		$expected = array('=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>');
+		$this->assertIdentical($expected, $result);
+	}
+
+/**
+ * testFormatAddressJapanese
+ *
+ * @return void
+ */
+	public function testFormatAddressJapanese() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+
+		$this->CakeEmail->headerCharset = 'ISO-2022-JP';
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '日本語Test'));
+		$expected = array('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>');
+		$this->assertIdentical($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助'));
+		$expected = array("=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n"
+						  ." =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n"
+						  ." =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n"
+						  ." =?ISO-2022-JP?B?GyRCJV0kTiU3JWUhPCVqJXMlLCVzJTclZSE8JWolcyUsJXMkTiUwGyhC?=\r\n"
+						  ." =?ISO-2022-JP?B?GyRCITwlaiVzJUAlJCUwITwlaiVzJUAlJCROJV0lcyVdJTMlVCE8GyhC?=\r\n"
+						  ." =?ISO-2022-JP?B?GyRCJE4lXSVzJV0lMyVKITwkTkQ5NVdMPyRORDk9dRsoQg==?= <cake@cakephp.org>");
+		$this->assertIdentical($expected, $result);
 	}
 
 /**
@@ -366,6 +400,28 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSubjectJapanese
+ *
+ * @return void
+ */
+	public function testSubjectJapanese() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+        mb_internal_encoding('UTF-8');
+
+        $this->CakeEmail->headerCharset = 'ISO-2022-JP';
+		$this->CakeEmail->subject('日本語のSubjectにも対応するよ');
+        $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsJE4bKEJTdWJqZWN0GyRCJEskYkJQMX4kOSRrJGgbKEI=?=';
+		$this->assertIdentical($this->CakeEmail->subject(), $expected);
+
+		$this->CakeEmail->subject('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
+        $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n"
+                   ." =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n"
+                   ." =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
+		$this->assertIdentical($this->CakeEmail->subject(), $expected);
+    }
+
+
+/**
  * testHeaders method
  *
  * @return void
@@ -379,7 +435,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
@@ -391,7 +447,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(), $expected);
 
@@ -406,7 +462,7 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '7bit'
+			'Content-Transfer-Encoding' => '8bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true)), $expected);
 
@@ -424,6 +480,20 @@ class CakeEmailTest extends CakeTestCase {
 			'Date' => date(DATE_RFC2822),
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/plain; charset=UTF-8',
+			'Content-Transfer-Encoding' => '8bit'
+		);
+		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
+
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$expected = array(
+			'From' => 'CakePHP <cake@cakephp.org>',
+			'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
+			'X-Something' => 'very nice',
+			'X-Other' => 'cool',
+			'X-Mailer' => 'CakePHP Email',
+			'Date' => date(DATE_RFC2822),
+			'MIME-Version' => '1.0',
+			'Content-Type' => 'text/plain; charset=ISO-2022-JP',
 			'Content-Transfer-Encoding' => '7bit'
 		);
 		$this->assertIdentical($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
@@ -728,6 +798,31 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRender method for ISO-2022-JP
+ *
+ * @return void
+ */
+	public function testSendRenderJapanese() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('default', 'japanese');
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$result = $this->CakeEmail->send();
+
+		$expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 http://cakephp.org.','ISO-2022-JP');
+		$this->assertTrue((bool)strpos($result['message'], $expected));
+		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
+		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+	}
+
+/**
  * testSendRenderWithVars method
  *
  * @return void
@@ -745,6 +840,29 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->send();
 
 		$this->assertTrue((bool)strpos($result['message'], 'Here is your value: 12345'));
+	}
+
+/**
+ * testSendRenderWithVars method for ISO-2022-JP
+ *
+ * @return void
+ */
+	public function testSendRenderWithVarsJapanese() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('japanese', 'default');
+		$this->CakeEmail->viewVars(array('value' => '日本語の差し込み123'));
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$result = $this->CakeEmail->send();
+
+		$expected = mb_convert_encoding('ここにあなたの設定した値が入ります: 日本語の差し込み123', 'ISO-2022-JP');
+		$this->assertTrue((bool)strpos($result['message'], $expected));
 	}
 
 /**
@@ -940,7 +1058,21 @@ class CakeEmailTest extends CakeTestCase {
 		$message = $this->CakeEmail->message();
 		$this->assertTrue(in_array('Content-Type: text/plain; charset=UTF-8', $message));
 		$this->assertTrue(in_array('Content-Type: text/html; charset=UTF-8', $message));
+
+		// UTF-8 is 8bit
+		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
+
+
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$this->CakeEmail->send();
+		$message = $this->CakeEmail->message();
+		$this->assertTrue(in_array('Content-Type: text/plain; charset=ISO-2022-JP', $message));
+		$this->assertTrue(in_array('Content-Type: text/html; charset=ISO-2022-JP',  $message));
+
+		// ISO-2022-JP is 7bit
+		$this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
 	}
+
 
 /**
  * testReset method
@@ -1181,6 +1313,52 @@ class CakeEmailTest extends CakeTestCase {
 		$email->to('someone@example.com')->from('someone@example.com');
 		$result = $email->send('ってテーブルを作ってやってたらう');
 		$this->assertContains('Content-Type: text/plain; charset=iso-2022-jp', $result['headers']);
-		$this->assertContains('ってテーブルを作ってやってたらう', $result['message']);
+		$this->assertContains(mb_convert_encoding('ってテーブルを作ってやってたらう','ISO-2022-JP'), $result['message']);
+	}
+
+	private function checkContentTransferEncoding($message, $charset) {
+		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
+		$result['text'] = false;
+		$result['html'] = false;
+		for ($i = 0; $i < count($message); ++$i) {
+			if ($message[$i] == $boundary) {
+				$flag = false;
+				$type = '';
+				while (!preg_match('/^$/', $message[$i])) {
+					if (preg_match('/^Content-Type: text\/plain/', $message[$i])) {
+						$type = 'text';
+					}
+					if (preg_match('/^Content-Type: text\/html/', $message[$i])) {
+						$type = 'html';
+					}
+					if ($message[$i] === 'Content-Transfer-Encoding: ' . $charset) {
+						$flag = true;
+					}
+					++$i;
+				}
+				$result[$type] = $flag;
+			}
+		}
+		return $result['text'] && $result['html'];
+	}
+
+/**
+ * Test CakeEmail::_encode function
+ *
+ */
+	public function testEncode() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+
+		$this->CakeEmail->headerCharset = 'ISO-2022-JP';
+		$result = $this->CakeEmail->encode('日本語');
+		$expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=';
+		$this->assertIdentical($expected, $result);
+
+		$this->CakeEmail->headerCharset = 'ISO-2022-JP';
+		$result = $this->CakeEmail->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
+		$expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n"
+                  . " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n"
+			      . " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
+		$this->assertIdentical($expected, $result);
 	}
 }

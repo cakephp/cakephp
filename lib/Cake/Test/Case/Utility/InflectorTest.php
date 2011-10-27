@@ -67,6 +67,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('Aliases'), 'Alias');
 		$this->assertEqual(Inflector::singularize('Alias'), 'Alias');
 		$this->assertEqual(Inflector::singularize('Media'), 'Media');
+		$this->assertEqual(Inflector::singularize('NodeMedia'), 'NodeMedia');
 		$this->assertEqual(Inflector::singularize('alumni'), 'alumnus');
 		$this->assertEqual(Inflector::singularize('bacilli'), 'bacillus');
 		$this->assertEqual(Inflector::singularize('cacti'), 'cactus');
@@ -135,6 +136,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::pluralize('Alias'), 'Aliases');
 		$this->assertEqual(Inflector::pluralize('Aliases'), 'Aliases');
 		$this->assertEqual(Inflector::pluralize('Media'), 'Media');
+		$this->assertEqual(Inflector::pluralize('NodeMedia'), 'NodeMedia');
 		$this->assertEqual(Inflector::pluralize('alumnus'), 'alumni');
 		$this->assertEqual(Inflector::pluralize('bacillus'), 'bacilli');
 		$this->assertEqual(Inflector::pluralize('cactus'), 'cacti');

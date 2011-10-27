@@ -306,18 +306,21 @@ class CakeSchema extends Object {
 				$systemTables = array(
 					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
 				);
+
+				$fulltable = $db->fullTableName($Object, false);
+
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->_columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
-					$tables[$Object->table]['tableParameters'] = $db->readTableParameters($table);
+					$tables[$Object->table]['tableParameters'] = $db->readTableParameters($fulltable);
 				} elseif ($models === false) {
 					$tables[$table] = $this->_columns($Object);
 					$tables[$table]['indexes'] = $db->index($Object);
-					$tables[$table]['tableParameters'] = $db->readTableParameters($table);
+					$tables[$table]['tableParameters'] = $db->readTableParameters($fulltable);
 				} else {
 					$tables['missing'][$table] = $this->_columns($Object);
 					$tables['missing'][$table]['indexes'] = $db->index($Object);
-					$tables['missing'][$table]['tableParameters'] = $db->readTableParameters($table);
+					$tables['missing'][$table]['tableParameters'] = $db->readTableParameters($fulltable);
 				}
 			}
 		}
@@ -590,7 +593,7 @@ class CakeSchema extends Object {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
-				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s does not exist in DBO', $value['type']), E_USER_NOTICE);
+				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s for %s.%s does not exist in DBO', $value['type'], $Obj->name, $name), E_USER_NOTICE);
 				continue;
 			} else {
 				$defaultCol = $db->columns[$value['type']];

@@ -1683,7 +1683,7 @@ class SetTest extends CakeTestCase {
 			'files'		=> array('name' => 'files')
 		);
 
-		$result = Set::remove($a, 'files', array('name' => 'files'));
+		$result = Set::remove($a, 'files');
 		$expected = array(
 			'pages'     => array('name' => 'page')
 		);
@@ -1696,7 +1696,7 @@ class SetTest extends CakeTestCase {
 			)
 		);
 
-		$result = Set::remove($a, 'pages.1.vars', array('title' => 'page title'));
+		$result = Set::remove($a, 'pages.1.vars');
 		$expected = array(
 			'pages' => array(
 				0 => array('name' => 'main'),
@@ -1705,7 +1705,7 @@ class SetTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Set::remove($a, 'pages.2.vars', array('title' => 'page title'));
+		$result = Set::remove($a, 'pages.2.vars');
 		$expected = $a;
 		$this->assertEquals($expected, $result);
 	}

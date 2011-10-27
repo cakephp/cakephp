@@ -128,6 +128,7 @@ class FileEngine extends CacheEngine {
 		    $this->_File->flock(LOCK_EX);
 		}
 
+		$this->_File->rewind();
 		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents) && $this->_File->fflush();
 
 		if ($this->settings['lock']) {

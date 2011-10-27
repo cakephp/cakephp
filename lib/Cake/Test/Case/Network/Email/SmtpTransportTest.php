@@ -88,7 +88,7 @@ class SmtpTransportTest extends CakeTestCase {
 
 		$this->SmtpTransport = new SmtpTestTransport();
 		$this->SmtpTransport->setSocket($this->socket);
-		$this->SmtpTransport->config();
+		$this->SmtpTransport->config(array('client' => 'localhost'));
 	}
 
 /**
@@ -224,14 +224,13 @@ class SmtpTransportTest extends CakeTestCase {
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
 		$data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
-		$data .= "Bcc: phpnut@cakephp.org\r\n";
 		$data .= "X-Mailer: CakePHP Email\r\n";
 		$data .= "Date: " . date(DATE_RFC2822) . "\r\n";
 		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
 		$data .= "Subject: Testing SMTP\r\n";
 		$data .= "MIME-Version: 1.0\r\n";
 		$data .= "Content-Type: text/plain; charset=UTF-8\r\n";
-		$data .= "Content-Transfer-Encoding: 7bit\r\n";
+		$data .= "Content-Transfer-Encoding: 8bit\r\n";
 		$data .= "\r\n";
 		$data .= "First Line\r\n";
 		$data .= "Second Line\r\n";

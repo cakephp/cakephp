@@ -144,7 +144,8 @@ class CommandListShell extends Shell {
 			$this->out(" " . $row);
 		}
 		$this->out();
-		$this->out(__d('cake_console', "To run a command, type <info>cake shell_name [args]</info>"));
+		$this->out(__d('cake_console', "To run an app or core command, type <info>cake shell_name [args]</info>"));
+		$this->out(__d('cake_console', "To run a plugin command, type <info>cake Plugin.shell_name [args]</info>"));
 		$this->out(__d('cake_console', "To get help on a specific command, type <info>cake shell_name --help</info>"), 2);
 	}
 

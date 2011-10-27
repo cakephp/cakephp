@@ -1,6 +1,6 @@
 <?php
 /**
- * Dispatcher takes the URL information, parses it for paramters and
+ * Dispatcher takes the URL information, parses it for parameters and
  * tells the involved controllers what to do.
  *
  * This is the heart of Cake's operation.
@@ -75,8 +75,8 @@ class Dispatcher {
 			return;
 		}
 
-		$request = $this->parseParams($request, $additionalParams);
 		Router::setRequestInfo($request);
+		$request = $this->parseParams($request, $additionalParams);
 		$controller = $this->_getController($request, $response);
 
 		if (!($controller instanceof Controller)) {

@@ -259,6 +259,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->controller->response->body();
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
 
+		$Controller = $this->Case->generate('TestsApps');
 		$this->Case->testAction('/tests_apps/redirect_to');
 		$results = $this->Case->headers;
 		$expected = array(
@@ -297,16 +298,6 @@ class ControllerTestCaseTest extends CakeTestCase {
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$result = $this->Case->testAction('/some_alias');
 		$this->assertEquals($result, 5);
-
-		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
-		$this->Case->testAction('/redirect_me_now');
-		$result = $this->Case->headers['Location'];
-		$this->assertEquals($result, 'http://cakephp.org');
-
-		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
-		$this->Case->testAction('/redirect_me');
-		$result = $this->Case->headers['Location'];
-		$this->assertEquals($result, Router::url(array('controller' => 'tests_apps', 'action' => 'some_method'), true));
 	}
 
 /**
@@ -341,7 +332,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'view'
 		));
-		$this->assertEquals($result, 'This is the TestsAppsController index view');
+		$this->assertEquals($result, 'This is the TestsAppsController index view string');
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
@@ -464,7 +455,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'view'
 		));
-		$this->assertEquals($result, 'This is the TestsAppsController index view');
+		$this->assertEquals($result, 'This is the TestsAppsController index view string');
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
@@ -472,6 +463,37 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->assertPattern('/<html/', $result);
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
 		$this->assertPattern('/<\/html>/', $result);
+	}
+
+/**
+ * Test that controllers don't get reused.
+ *
+ * @return void
+ */
+	public function testNoControllerReuse() {
+		$result = $this->Case->testAction('/tests_apps/index', array(
+			'data' => array('var' => 'first call'),
+			'method' => 'get',
+			'return' => 'contents',
+		));
+		$this->assertContains('<html', $result);
+		$this->assertContains('This is the TestsAppsController index view', $result);
+		$this->assertContains('first call', $result);
+		$this->assertContains('</html>', $result);
+	
+		$result = $this->Case->testAction('/tests_apps/index', array(
+			'data' => array('var' => 'second call'),
+			'method' => 'get',
+			'return' => 'contents'
+		));
+		$this->assertContains('second call', $result);
+
+		$result = $this->Case->testAction('/tests_apps/index', array(
+			'data' => array('var' => 'third call'),
+			'method' => 'get',
+			'return' => 'contents'
+		));
+		$this->assertContains('third call', $result);
 	}
 
 }

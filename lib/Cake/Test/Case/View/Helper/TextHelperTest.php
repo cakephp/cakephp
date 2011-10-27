@@ -104,6 +104,11 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
 		$this->assertEqual($result, $text);
 
+		$text = 'This is a (test) text';
+		$phrases = '(test';
+		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
+		$this->assertEqual('This is a <b>(test</b>) text', $result);
+
 		$text = 'Ich saß in einem Café am Übergang';
 		$expected = 'Ich <b>saß</b> in einem <b>Café</b> am <b>Übergang</b>';
 		$phrases = array('saß', 'café', 'übergang');

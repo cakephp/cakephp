@@ -1002,7 +1002,8 @@ class MysqlTest extends CakeTestCase {
 			'order' => array(),
 			'limit' => array(),
 			'offset' => array(),
-			'group' => array()
+			'group' => array(),
+			'callbacks' => null
 		);
 		$queryData['joins'][0]['table'] = $this->Dbo->fullTableName($queryData['joins'][0]['table']);
 		$this->assertEqual($queryData, $expected);
@@ -2554,7 +2555,7 @@ class MysqlTest extends CakeTestCase {
  */
 	public function testDropSchemaNoSchema() {
 		$result = $this->Dbo->dropSchema(null);
-	}	
+	}
 
 /**
  * testOrderParsing method

@@ -194,7 +194,7 @@ class CakePlugin {
 	}
 
 /**
- * Retruns true if the plugin $plugin is already loaded
+ * Returns true if the plugin $plugin is already loaded
  * If plugin is null, it will return a list of all loaded plugins
  *
  * @param string $plugin

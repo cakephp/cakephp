@@ -86,13 +86,13 @@ class NumberHelper extends AppHelper {
 			case $size < 1024:
 				return __dn('cake', '%d Byte', '%d Bytes', $size, $size);
 			case round($size / 1024) < 1024:
-				return __('%d KB', $this->precision($size / 1024, 0));
+				return __d('cake', '%d KB', $this->precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
-				return __('%.2f MB', $this->precision($size / 1024 / 1024, 2));
+				return __d('cake', '%.2f MB', $this->precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return __('%.2f GB', $this->precision($size / 1024 / 1024 / 1024, 2));
+				return __d('cake', '%.2f GB', $this->precision($size / 1024 / 1024 / 1024, 2));
 			default:
-				return __('%.2f TB', $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
+				return __d('cake', '%.2f TB', $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
 
