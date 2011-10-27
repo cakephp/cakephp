@@ -403,7 +403,7 @@ class DebuggerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testNoDbCredentials() {
+	public function testNoDbCredentials() {
 		$config = array(
 			'driver' => 'mysql',
 			'persistent' => false,
@@ -428,5 +428,20 @@ class DebuggerTest extends CakeTestCase {
 		$expected = Debugger::exportVar($expectedArray);
 
 		$this->assertEqual($expected, $output);
+	}
+
+/**
+ * test trace exclude
+ *
+ * @return void
+ */
+	public function testTraceExclude() {
+		$result = Debugger::trace();
+		$this->assertPattern('/^DebuggerTest::testTraceExclude/', $result);
+
+		$result = Debugger::trace(array(
+			'exclude' => array('DebuggerTest::testTraceExclude')
+		));
+		$this->assertNoPattern('/^DebuggerTest::testTraceExclude/', $result);
 	}
 }

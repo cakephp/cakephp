@@ -285,9 +285,9 @@ class Debugger {
 			'args'    => false,
 			'start'   => 0,
 			'scope'   => null,
-			'exclude' => null
+			'exclude' => array('call_user_func_array', 'trigger_error')
 		);
-		$options += $defaults;
+		$options = Set::merge($defaults, $options);
 
 		$backtrace = debug_backtrace();
 		$count = count($backtrace);
@@ -302,13 +302,15 @@ class Debugger {
 
 		for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
 			$trace = array_merge(array('file' => '[internal]', 'line' => '??'), $backtrace[$i]);
+			$signature = $reference = '[main]';
 
 			if (isset($backtrace[$i + 1])) {
 				$next = array_merge($_trace, $backtrace[$i + 1]);
-				$reference = $next['function'];
+				$signature = $reference = $next['function'];
 
 				if (!empty($next['class'])) {
-					$reference = $next['class'] . '::' . $reference . '(';
+					$signature = $next['class'] . '::' . $next['function'];
+					$reference = $signature . '(';
 					if ($options['args'] && isset($next['args'])) {
 						$args = array();
 						foreach ($next['args'] as $arg) {
@@ -318,10 +320,8 @@ class Debugger {
 					}
 					$reference .= ')';
 				}
-			} else {
-				$reference = '[main]';
 			}
-			if (in_array($reference, array('call_user_func_array', 'trigger_error'))) {
+			if (in_array($signature, $options['exclude'])) {
 				continue;
 			}
 			if ($options['format'] == 'points' && $trace['file'] != '[internal]') {
