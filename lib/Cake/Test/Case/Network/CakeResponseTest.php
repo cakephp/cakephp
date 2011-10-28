@@ -416,5 +416,13 @@ class CakeResponseTest extends CakeTestCase {
 			$response->expects($this->at(2))
 				->method('_sendHeader')->with('Content-Length', 1);
 		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = 'content';
+		$response->statusCode(301);
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->exactly(2))->method('_sendHeader');
+		$response->send();
 	}
 }
