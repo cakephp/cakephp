@@ -135,7 +135,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-	
+
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$this->Controller = new SecurityTestController($request);
@@ -492,7 +492,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI 
+ * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI
  * attacks. Thanks to Felix Wilhelm
  *
  * @return void
@@ -641,7 +641,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$fields = '19464422eafe977ee729c59222af07f983010c5f%3A';
 		$this->Controller->request->data = array(
 			'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
-			'Tag' => array('Tag' => array(1)), 
+			'Tag' => array('Tag' => array(1)),
 			'_Token' => compact('key', 'fields', 'unlocked'),
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
@@ -1056,7 +1056,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that csrf checks are skipped for request action. 
+ * test that csrf checks are skipped for request action.
  *
  * @return void
  */
@@ -1073,7 +1073,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * test setting 
+ * test setting
  *
  * @return void
  */
@@ -1117,9 +1117,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
-		
+
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
-		
+
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
 			->with('post')
@@ -1148,7 +1148,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
-		
+
 		$this->Security->Session->write('_Token.csrfTokens', array(
 			'valid' => strtotime('+30 minutes'),
 			'poof' => strtotime('-11 minutes'),
@@ -1158,7 +1158,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$tokens = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(2, count($tokens), 'Too many tokens left behind');
 		$this->assertNotEmpty('valid', $tokens, 'Valid token was removed.');
-		
+
 	}
 
 /**
@@ -1170,9 +1170,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
-		
+
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
-		
+
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
 			->with('post')

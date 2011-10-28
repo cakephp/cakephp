@@ -419,9 +419,9 @@ class CakeTestFixtureTest extends CakeTestCase {
 /**
  * Helper function to be used as callback and store the parameters of an insertMulti call
  *
- * @param string $table 
- * @param string $fields 
- * @param string $values 
+ * @param string $table
+ * @param string $fields
+ * @param string $values
  * @return boolean true
  */
 	function _insertCallback($table, $fields, $values) {

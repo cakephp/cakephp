@@ -576,7 +576,7 @@ class RssHelperTest extends CakeTestCase {
 		$File = new File($tmpFile, true, '0777');
 		$this->assertTrue($File->write('123'), 'Could not write to ' . $tmpFile);
 		clearstatcache(true, $tmpFile);
-		
+
 		$item = array(
 			'title' => array(
 				'value' => 'My Title',

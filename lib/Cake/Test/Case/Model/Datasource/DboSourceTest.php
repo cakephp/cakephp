@@ -612,7 +612,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = Set::extract($log['log'], '/query');
 		$expected = array('Query 1', 'Query 2');
 		$this->assertEqual($expected, $result);
-		
+
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 		ob_start();

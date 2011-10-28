@@ -845,7 +845,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-	
+
 /**
  * Tests correct generation of number fields for integer fields
  *
@@ -1610,7 +1610,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->error(
 			'ValidateUser.email', 'Invalid email', array('wrap' => false)
 		);
@@ -7479,7 +7479,7 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'text', 'name' => 'data[User][query]', 'id' => 'UserQuery', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->input('User.website', array('type' => 'url', 'value' => 'http://domain.tld', 'div' => false, 'label' => false));
 		$expected = array(
 			'input' => array('type' => 'url', 'name' => 'data[User][website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')

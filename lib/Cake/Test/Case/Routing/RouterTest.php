@@ -146,7 +146,7 @@ class RouterTest extends CakeTestCase {
 			'named' => array(),
 			'plugin' => 'test_plugin',
 			'controller' => 'test_plugin',
-			'action' => 'index', 
+			'action' => 'index',
 			'[method]' => 'GET'
 		);
 		$this->assertEqual($result, $expected);
@@ -186,7 +186,7 @@ class RouterTest extends CakeTestCase {
 			'named' => array(),
 			'plugin' => 'test_plugin',
 			'controller' => 'test_plugin',
-			'action' => 'index', 
+			'action' => 'index',
 			'[method]' => 'GET'
 		);
 		$this->assertEqual($result, $expected);

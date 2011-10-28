@@ -76,7 +76,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->Cookie = $this->getMock('CookieComponent', array('_setcookie'), array($Collection));
 		$this->Controller = new CookieComponentTestController();
 		$this->Cookie->initialize($this->Controller);
-		
+
 		$this->Cookie->name = 'CakeTestCookie';
 		$this->Cookie->time = 10;
 		$this->Cookie->path = '/';

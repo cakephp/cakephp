@@ -3,7 +3,7 @@
  * ControllerAuthorizeTest file
  *
  * PHP 5
- * 
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -36,12 +36,12 @@ class ControllerAuthorizeTest extends CakeTestCase {
 		$this->components->expects($this->any())
 			->method('getController')
 			->will($this->returnValue($this->controller));
-		
+
 		$this->auth = new ControllerAuthorize($this->components);
 	}
 
 /**
- * 
+ *
  * @expectedException CakeException
  */
 	public function testControllerTypeError() {
@@ -74,7 +74,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
 	public function testAuthorizeSuccess() {
 		$user = array('User' => array('username' => 'mark'));
 		$request = new CakeRequest('/posts/index', false);
-		
+
 		$this->controller->expects($this->once())
 			->method('isAuthorized')
 			->with($user)

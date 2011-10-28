@@ -146,7 +146,7 @@ class DatabaseSessionTest extends CakeTestCase {
 		$result = $this->storage->read('foo');
 		$expected = 'Some value';
 		$this->assertEquals($expected, $result);
-		
+
 		$result = $this->storage->read('made up value');
 		$this->assertFalse($result);
 	}
@@ -158,7 +158,7 @@ class DatabaseSessionTest extends CakeTestCase {
  */
 	public function testDestroy() {
 		$this->storage->write('foo', 'Some value');
-		
+
 		$this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
 		$this->assertFalse($this->storage->read('foo'), 'Value still present.');
 	}

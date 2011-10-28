@@ -24,7 +24,7 @@ App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
 /**
- * Test<?php echo $fullClassName; ?> 
+ * Test<?php echo $fullClassName; ?>
  *
  */
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
