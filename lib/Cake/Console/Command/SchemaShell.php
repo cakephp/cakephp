@@ -498,7 +498,7 @@ class SchemaShell extends Shell {
 		))->addSubcommand('dump', array(
 			'help' => __d('cake_console', 'Dump database SQL based on a schema file to stdout.'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'write'),
 				'arguments' => compact('name')
 			)
 		))->addSubcommand('create', array(
