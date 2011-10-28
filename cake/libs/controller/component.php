@@ -257,10 +257,10 @@ class Component extends Object {
 				if (!empty($config)) {
 					$this->__settings[$component] = $config;
 				}
-			}
 
-			if (isset($object->{$component}->components) && is_array($object->{$component}->components) && (!isset($object->{$component}->{$parent}))) {
-				$this->_loadComponents($object->{$component}, $component);
+				if (isset($object->{$component}->components) && is_array($object->{$component}->components) && (!isset($object->{$component}->{$parent}))) {
+					$this->_loadComponents($object->{$component}, $component);
+				}
 			}
 		}
 	}

@@ -228,6 +228,14 @@ class BananaComponent extends Object {
 	var $testField = 'BananaField';
 
 /**
+ * components property
+ *
+ * @var array
+ * @access public
+ */
+	var $components = array('Apple');
+
+/**
  * startup method
  *
  * @param Controller $controller
