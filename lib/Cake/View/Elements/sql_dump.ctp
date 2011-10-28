@@ -1,6 +1,6 @@
 <?php
 /**
- * SQL Dump element.  Dumps out SQL log information 
+ * SQL Dump element.  Dumps out SQL log information
  *
  * PHP 5
  *
@@ -53,7 +53,7 @@ if ($noLogs || isset($_forced_from_dbo_)):
 		endforeach;
 	?>
 	</tbody></table>
-	<?php 
+	<?php
 	endforeach;
 else:
 	echo '<p>Encountered unexpected $logs cannot generate SQL log</p>';

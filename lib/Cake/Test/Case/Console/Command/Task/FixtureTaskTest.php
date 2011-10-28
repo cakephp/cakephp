@@ -188,7 +188,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$result = $this->Task->bake('Article', false, array(
-			'fromTable' => true, 
+			'fromTable' => true,
 			'schema' => 'Article',
 			'records' => false
 		));
@@ -209,7 +209,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, $this->stringContains('class ArticleFixture'));
-			
+
 		$this->Task->execute();
 	}
 

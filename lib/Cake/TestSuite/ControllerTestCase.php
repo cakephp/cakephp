@@ -64,7 +64,7 @@ class ControllerTestDispatcher extends Dispatcher {
 
 /**
  * Loads routes and resets if the test case dictates it should
- * 
+ *
  * @return void
  */
 	protected function _loadRoutes() {
@@ -181,7 +181,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *     - `vars` Get the set view variables.
  *     - `view` Get the rendered view, without a layout.
  *     - `contents` Get the rendered view including the layout.
- *     - `result` Get the return value of the controller action.  Useful 
+ *     - `result` Get the return value of the controller action.  Useful
  *       for testing requestAction methods.
  *
  * @param string $url The url to test
@@ -249,7 +249,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  * Generates a mocked controller and mocks any classes passed to `$mocks`. By
  * default, `_stop()` is stubbed as is sending the response headers, so to not
  * interfere with testing.
- * 
+ *
  * ### Mocks:
  *
  * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
@@ -278,10 +278,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 			));
 		}
 		ClassRegistry::flush();
-		
+
 		$mocks = array_merge_recursive(array(
 			'methods' => array('_stop'),
-			'models' => array(), 
+			'models' => array(),
 			'components' => array()
 		), (array)$mocks);
 
@@ -324,7 +324,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 				throw new MissingComponentException(array(
 					'class' => $componentClass
 				));
-			}			
+			}
 			$_component = $this->getMock($componentClass, $methods, array(), '', false);
 			$_controller->Components->set($name, $_component);
 		}

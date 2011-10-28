@@ -36,7 +36,7 @@ endif;
 	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <p>
-<?php 
+<?php
 	if (version_compare(PHP_VERSION, '5.2.6', '>=')):
 		echo '<span class="notice success">';
 			echo __d('cake_dev', 'Your version of PHP is 5.2.6 or higher.');

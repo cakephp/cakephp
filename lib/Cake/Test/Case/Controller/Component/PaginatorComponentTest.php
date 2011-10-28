@@ -453,7 +453,7 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$Controller->Paginator->settings = array(
-			'order' => 'PaginatorControllerPost.id DESC', 
+			'order' => 'PaginatorControllerPost.id DESC',
 			'maxLimit' => 10,
 			'paramType' => 'named'
 		);
@@ -502,7 +502,7 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that option merging prefers specific models 
+ * test that option merging prefers specific models
  *
  * @return void
  */
@@ -671,7 +671,7 @@ class PaginatorComponentTest extends CakeTestCase {
 			->method('hasField')
 			->with('something')
 			->will($this->returnValue(false));
-			
+
 		$model->expects($this->at(1))
 			->method('hasField')
 			->with('something', true)

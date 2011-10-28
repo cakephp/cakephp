@@ -87,7 +87,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
-		
+
 		$this->Error->expects($this->once())
 			->method('_stop')
 			->with(1);
@@ -102,7 +102,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	public function testError404Exception() {
 		$exception = new NotFoundException('dont use me in cli.');
-		
+
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 

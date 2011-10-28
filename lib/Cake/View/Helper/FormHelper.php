@@ -271,7 +271,7 @@ class FormHelper extends AppHelper {
  * Returns false if given form field described by the current entity has no errors.
  * Otherwise it returns the validation message
  *
- * @return mixed Either false when there or no errors, or the error 
+ * @return mixed Either false when there or no errors, or the error
  *    string. The error string could be ''.
  */
 	public function tagIsInvalid() {

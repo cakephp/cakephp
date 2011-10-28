@@ -257,7 +257,7 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->TriggerMockSecond->expects($this->once())
 			->method('callback')
 			->will($this->returnValue(array('three', 'four')));
-	
+
 		$result = $this->Objects->trigger('callback', array(), array('collectReturn' => true));
 		$expected = array(
 			array('one', 'two'),
@@ -402,7 +402,7 @@ class ObjectCollectionTest extends CakeTestCase {
 			'Apple' => array('class' => 'Banana.Apple', 'settings' => array('foo' => 'bar')),
 		);
 		$this->assertEquals($expected, $result);
-		
+
 		// This is the result after Controller::_mergeVars
 		$components = array(
 			'Html' => null,

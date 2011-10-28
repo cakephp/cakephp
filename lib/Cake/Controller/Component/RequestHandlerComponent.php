@@ -98,7 +98,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Checks to see if a file extension has been parsed by the Router, or if the
  * HTTP_ACCEPT_TYPE has matches only one content type with the supported extensions.
- * If there is only one matching type between the supported content types & extensions, 
+ * If there is only one matching type between the supported content types & extensions,
  * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
  * @param Controller $controller A reference to the controller

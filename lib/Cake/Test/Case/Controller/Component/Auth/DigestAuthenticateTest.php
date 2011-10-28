@@ -3,7 +3,7 @@
  * DigestAuthenticateTest file
  *
  * PHP 5
- * 
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

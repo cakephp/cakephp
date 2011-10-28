@@ -566,7 +566,7 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts_tags']), 'Join table marked as missing');
 	}
-	
+
 /**
 * testSchemaReadWithAppModel method
 *
@@ -575,7 +575,7 @@ class CakeSchemaTest extends CakeTestCase {
 */
 	public function testSchemaReadWithAppModel() {
 		$connections = ConnectionManager::enumConnectionObjects();
-		ConnectionManager::drop('default'); 
+		ConnectionManager::drop('default');
 		ConnectionManager::create('default', $connections['test']);
 		try {
 			$read = $this->Schema->read(array(
