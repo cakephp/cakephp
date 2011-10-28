@@ -184,7 +184,7 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Shell->Comment));
 		$this->assertInstanceOf('Comment', $this->Shell->Comment);
 		$this->assertEqual($this->Shell->modelClass, 'Comment');
-		
+
 		App::build();
 	}
 
@@ -832,7 +832,7 @@ TEXT;
 
 /**
  * Testing camel cased naming of tasks
- * 
+ *
  * @return void
  */
 	public function testShellNaming() {

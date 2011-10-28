@@ -2554,7 +2554,7 @@ class MysqlTest extends CakeTestCase {
  */
 	public function testDropSchemaNoSchema() {
 		$result = $this->Dbo->dropSchema(null);
-	}	
+	}
 
 /**
  * testOrderParsing method

@@ -131,7 +131,7 @@ abstract class BaseAuthorize {
  * }}}
  *
  * You can use the custom CRUD operations to create additional generic permissions
- * that behave like CRUD operations.  Doing this will require additional columns on the 
+ * that behave like CRUD operations.  Doing this will require additional columns on the
  * permissions lookup.  When using with DbAcl, you'll have to add additional _admin type columns
  * to the `aros_acos` table.
  *

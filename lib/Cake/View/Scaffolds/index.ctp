@@ -49,8 +49,8 @@ foreach (${$pluralVar} as ${$singularVar}):
 		echo $this->Html->link(__d('cake', 'View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey]));
 		echo $this->Html->link(__d('cake', 'Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
 		echo $this->Form->postLink(
-			__d('cake', 'Delete'), 
-			array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), 
+			__d('cake', 'Delete'),
+			array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]),
 			null,
 			__d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey]
 		);

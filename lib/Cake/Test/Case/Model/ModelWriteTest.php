@@ -3457,7 +3457,7 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			)
 		);
-		
+
 		$this->assertTrue($result[0]['Post']['updated'] >= $newTs);
 		$this->assertTrue($result[1]['Post']['updated'] >= $newTs);
 		$this->assertTrue($result[3]['Post']['updated'] >= $newTs);
@@ -4372,7 +4372,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$mock = $this->getMock(
 			'DboSource',
-			array('connect', 'rollback', 'describe', 'create', 'begin'), 
+			array('connect', 'rollback', 'describe', 'create', 'begin'),
 			array(),
 			'MockAssociatedTransactionDboSource',
 			false
@@ -4754,7 +4754,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'fields' => array('id', 'author_id', 'title', 'body', 'published'),
-			'recursive' => -1, 
+			'recursive' => -1,
 			'order' => 'Post.id ASC'
 		));
 		$errors = array(1 => array('title' => array('This field cannot be left blank')));
@@ -4810,7 +4810,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'fields' => array('id', 'author_id', 'title', 'body', 'published'),
-			'recursive' => -1, 
+			'recursive' => -1,
 			'order' => 'Post.id ASC'
 		));
 		$this->assertEqual($expected, $result);

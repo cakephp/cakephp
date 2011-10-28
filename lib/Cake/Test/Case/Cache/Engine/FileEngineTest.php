@@ -335,7 +335,7 @@ class FileEngineTest extends CakeTestCase {
 
 /**
  * Testing the mask setting in FileEngine
- * 
+ *
  * @return void
  */
 	public function testMaskSetting() {

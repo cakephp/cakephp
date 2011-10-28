@@ -547,8 +547,8 @@ class Debugger {
  *
  * `Debugger::addFormat('custom', $data);`
  *
- * Where $data is an array of strings that use String::insert() variable 
- * replacement.  The template vars should be in a `{:id}` style.  
+ * Where $data is an array of strings that use String::insert() variable
+ * replacement.  The template vars should be in a `{:id}` style.
  * An error formatter can have the following keys:
  *
  * - 'error' - Used for the container for the error message. Gets the following template
@@ -557,11 +557,11 @@ class Debugger {
  *   the contents of the other template keys.
  * - 'trace' - The container for a stack trace. Gets the following template
  *   variables: `trace`
- * - 'context' - The container element for the context variables. 
+ * - 'context' - The container element for the context variables.
  *   Gets the following templates: `id`, `context`
  * - 'links' - An array of HTML links that are used for creating links to other resources.
  *   Typically this is used to create javascript links to open other sections.
- *   Link keys, are: `code`, `context`, `help`.  See the js output format for an 
+ *   Link keys, are: `code`, `context`, `help`.  See the js output format for an
  *   example.
  * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
  *   template variables: `reference`, `path`, `line`
@@ -599,14 +599,14 @@ class Debugger {
 	}
 
 /**
- * Switches output format, updates format strings. 
+ * Switches output format, updates format strings.
  * Can be used to switch the active output format:
  *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
  * @return string
- * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed 
+ * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed
  *   in 3.0
  */
 	public function output($format = null, $strings = array()) {
