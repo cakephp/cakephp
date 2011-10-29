@@ -92,7 +92,7 @@ class SqlserverTestDb extends Sqlserver {
 	public function clearFieldMappings() {
 		$this->_fieldMappings = array();
 	}
-	
+
 /**
  * describe method
  *
@@ -568,11 +568,11 @@ class SqlserverTest extends CakeTestCase {
  */
 	public function testGetPrimaryKey() {
 		$schema = $this->model->schema();
-		
+
 		$this->db->describe = $schema;
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertEqual($result, 'id');
-		
+
 		unset($schema['id']['key']);
 		$this->db->describe = $schema;
 		$result = $this->db->getPrimaryKey($this->model);
@@ -586,7 +586,7 @@ class SqlserverTest extends CakeTestCase {
  */
 	public function testInsertMulti() {
 		$this->db->describe = $this->model->schema();
-		
+
 		$fields = array('id', 'name', 'login');
 		$values = array(
 			array(1, 'Larry', 'PhpNut'),

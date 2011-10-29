@@ -48,7 +48,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$this->assertEquals($parser, $result, 'Setting epilog is not chainable');
 		$this->assertEquals('A test', $parser->epilog(), 'getting value is wrong.');
-		
+
 		$result = $parser->epilog(array('A test', 'something'));
 		$this->assertEquals("A test\nsomething", $parser->epilog(), 'getting value is wrong.');
 	}
@@ -116,7 +116,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		));
 		$result = $parser->parse(array('--test'));
 		$this->assertEquals(array('test' => 'default value', 'help' => false), $result[0], 'Default value did not parse out');
-		
+
 		$parser = new ConsoleOptionParser('test', false);
 		$parser->addOption('test', array(
 			'default' => 'default value',
@@ -165,7 +165,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$result = $parser->parse(array('--test', 'value'));
 		$expected = array(array('test' => true, 'help' => false), array('value'));
 		$this->assertEquals($expected, $result);
-		
+
 		$result = $parser->parse(array('value'));
 		$expected = array(array('test' => false, 'help' => false), array('value'));
 		$this->assertEquals($expected, $result);
@@ -249,7 +249,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$result = $parser->parse(array('--fail', 'other'));
 	}
-	
+
 /**
  * test parsing short options that do not exist.
  *
@@ -271,7 +271,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	public function testOptionWithChoices() {
 		$parser = new ConsoleOptionParser('test', false);
 		$parser->addOption('name', array('choices' => array('mark', 'jose')));
-		
+
 		$result = $parser->parse(array('--name', 'mark'));
 		$expected = array('name' => 'mark', 'help' => false);
 		$this->assertEquals($expected, $result[0], 'Got the correct value.');
@@ -519,7 +519,7 @@ TEXT;
 
 		$args = $parser->arguments();
 		$this->assertEquals(2, count($args));
-		
+
 		$commands = $parser->subcommands();
 		$this->assertEquals(1, count($commands));
 	}
@@ -567,7 +567,7 @@ TEXT;
 					)
 				)
 			));
-		
+
 		$result = $parser->parse(array('--secondary', '--fourth', '4', 'c'), 'sub');
 		$expected = array(array(
 			'secondary' => true,

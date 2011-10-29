@@ -81,7 +81,7 @@ class AclShellTest extends CakeTestCase {
 
 		$this->Task->expects($this->at(4))->method('out')
 			->with($this->stringContains('[3] Gandalf'));
-	
+
 		$this->Task->expects($this->at(6))->method('out')
 			->with($this->stringContains('[5] MyModel.2'));
 
@@ -217,7 +217,7 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->expects($this->at(0))->method('out')
 			->with($this->stringContains('Permission denied'), true);
-	
+
 		$this->Task->deny();
 
 		$node = $this->Task->Acl->Aro->node(array('model' => 'AuthUser', 'foreign_key' => 2));
@@ -264,7 +264,7 @@ class AclShellTest extends CakeTestCase {
 			->with($this->matchesRegularExpression('/Permission .*granted/'), true);
 		$this->Task->expects($this->at(1))->method('out')
 			->with($this->matchesRegularExpression('/Permission .*inherited/'), true);
-		
+
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->grant();
 
@@ -302,7 +302,7 @@ class AclShellTest extends CakeTestCase {
 	public function testInitDb() {
 		$this->Task->expects($this->once())->method('dispatchShell')
 			->with('schema create DbAcl');
-	
+
 		$this->Task->initdb();
 	}
 }

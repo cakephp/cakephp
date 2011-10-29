@@ -157,7 +157,7 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test_decrement', 'apc');
 		$this->assertEqual(2, $result);
-		
+
 	}
 
 /**

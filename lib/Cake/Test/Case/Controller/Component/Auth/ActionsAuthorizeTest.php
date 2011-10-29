@@ -3,7 +3,7 @@
  * ActionsAuthorizeTest file
  *
  * PHP 5
- * 
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -77,7 +77,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 			->method('check')
 			->with($user, '/controllers/Posts/index')
 			->will($this->returnValue(false));
-	
+
 		$this->assertFalse($this->auth->authorize($user['User'], $request));
 	}
 
@@ -106,7 +106,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 			->method('check')
 			->with($user, '/controllers/Posts/index')
 			->will($this->returnValue(true));
-	
+
 		$this->assertTrue($this->auth->authorize($user['User'], $request));
 	}
 

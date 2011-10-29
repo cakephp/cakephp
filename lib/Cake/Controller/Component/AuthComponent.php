@@ -519,7 +519,7 @@ class AuthComponent extends Component {
  * Logs a user out, and returns the login action to redirect to.
  * Triggers the logout() method of all the authenticate objects, so they can perform
  * custom logout logic.  AuthComponent will remove the session data, so
- * there is no need to do that in an authentication object.  Logging out 
+ * there is no need to do that in an authentication object.  Logging out
  * will also renew the session id.  This helps mitigate issues with session replays.
  *
  * @return string AuthComponent::$logoutRedirect

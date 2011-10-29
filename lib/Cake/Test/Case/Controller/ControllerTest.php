@@ -274,21 +274,21 @@ class TestController extends ControllerTestAppController {
 	public function returner() {
 		return 'I am from the controller.';
 	}
-	
+
 	protected function protected_m() {
-	
+
 	}
 
 	private function private_m() {
-	
+
 	}
 
 	public function _hidden() {
-	
+
 	}
 
 	public function admin_add() {
-	
+
 	}
 }
 
@@ -1319,5 +1319,5 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEquals('I am from the controller.', $result);
 	}
 
-	
+
 }

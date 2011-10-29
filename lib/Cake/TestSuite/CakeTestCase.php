@@ -494,9 +494,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Compatibility wrapper for assertIsA
  *
- * @param string $object 
- * @param string $type 
- * @param string $message 
+ * @param string $object
+ * @param string $type
+ * @param string $message
  * @return void
  */
 	protected static function assertIsA($object, $type, $message = '') {
