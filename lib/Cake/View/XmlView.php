@@ -1,0 +1,62 @@
+<?php
+/**
+ * A custom view class that is used for XML responses
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.View
+ * @since         CakePHP(tm) v 2.1.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+App::uses('View', 'View');
+App::uses('Xml', 'Utility');
+
+/**
+ * XmlView
+ *
+ * @package       Cake.View
+ */
+class XmlView extends View {
+
+/**
+ * Constructor
+ *
+ * @param Controller $controller
+ */
+	public function __construct($controller) {
+		parent::__construct($controller);
+
+		if (is_object($controller)) {
+			$controller->response->type('xml');
+		}
+	}
+
+/**
+ * Render a XML view.
+ *
+ * Uses the special 'serialize' parameter to convert a set of
+ * view variables into a XML response.  Makes generating simple 
+ * XML responses very easy.  You can omit the 'serialize' parameter, 
+ * and use a normal view + layout as well.
+ *
+ * @param string $view The view being rendered.
+ * @param string $layout The layout being rendered.
+ * @return string The rendered view.
+ */
+	public function render($view = null, $layout = null) {
+		if (isset($this->viewVars['serialize']) && is_array($this->viewVars['serialize'])) {
+			return $this->output = Xml::fromArray($this->viewVars['serialize'])->asXML();
+		}
+		return parent::render($view, $layout);
+	}
+
+}
