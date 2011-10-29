@@ -239,14 +239,16 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Returns if a field is required to be filled based on validation properties from the validating object
+ * Returns if a field is required to be filled based on validation properties from the validating object.
  *
  * @param array $validateProperties
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validateProperties) {
 		$required = false;
-		if (is_array($validateProperties)) {
+		if (is_string($validateProperties)) {
+			return true;
+		} elseif (is_array($validateProperties)) {
 
 			$dims = Set::countDim($validateProperties);
 			if ($dims == 1 || ($dims == 2 && isset($validateProperties['rule']))) {
