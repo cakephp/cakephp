@@ -231,6 +231,23 @@ class TextHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test escaping for autoLink
+ *
+ * @return void
+ */
+	public function testAutoLinkEscape() {
+		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
+		$expected = 'This is a &lt;b&gt;test&lt;/b&gt; text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
+		$expected = 'This is a <b>test</b> text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text, array('escape' => false));
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testAutoLinkUrls method
  *
  * @return void
@@ -280,7 +297,14 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEqual($expected, $result);
+	}
 
+/**
+ * Test autoLinkUrls with the escape option.
+ *
+ * @return void
+ */
+	public function testAutoLinkUrlsEscape() {
 		$text = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
@@ -289,6 +313,11 @@ class TextHelperTest extends CakeTestCase {
 		$text = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
 		$expected = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertEqual($expected, $result);
+
+		$text = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
+		$expected = 'Text with a partial &lt;iframe src=&quot;http://www.cakephp.org&quot; /&gt; link';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => true));
 		$this->assertEqual($expected, $result);
 	}
 
