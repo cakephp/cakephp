@@ -654,16 +654,6 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->Controller->request['action'] = 'login';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
-
-		$this->Controller->Auth->allow();
-		$this->Controller->Auth->deny('*');
-
-		$this->Controller->request['action'] = 'camelCase';
-		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
-
-		$this->Controller->request['action'] = 'login';
-		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
-
 	}
 
 /**
