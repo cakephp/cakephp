@@ -38,7 +38,6 @@ class JsonView extends View {
 			}
 			$this->response->type('json');
 		}
-		Object::__construct();
 	}
 
 /**
