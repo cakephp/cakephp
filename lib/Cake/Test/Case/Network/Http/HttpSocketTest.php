@@ -1284,9 +1284,6 @@ class HttpSocketTest extends CakeTestCase {
 		$query = $this->Socket->parseQuery('a[]=foo&a[]=bar&a[]=cake');
 		$this->assertEquals($query, array('a' => array(0 => 'foo', 1 => 'bar', 2 => 'cake')));
 
-		$query = $this->Socket->parseQuery('a]][[=foo&[]=bar&]]][]=cake');
-		$this->assertEquals($query, array('a]][[' => 'foo', 0 => 'bar', ']]]' => array('cake')));
-
 		$query = $this->Socket->parseQuery('a[][]=foo&a[][]=bar&a[][]=cake');
 		$expectedQuery = array(
 			'a' => array(
