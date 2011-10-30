@@ -452,7 +452,8 @@ class AuthComponent extends Component {
  * You can use deny with either an array, or var args.
  *
  * `$this->Auth->deny(array('edit', 'add'));` or
- * `$this->Auth->deny('edit', 'add');`
+ * `$this->Auth->deny('edit', 'add');` or
+ * `$this->Auth->deny();` to remove all items from the allowed list
  *
  * @param mixed $action,... Controller action name or array of actions
  * @return void
@@ -461,16 +462,20 @@ class AuthComponent extends Component {
  */
 	public function deny($action = null) {
 		$args = func_get_args();
-		if (isset($args[0]) && is_array($args[0])) {
-			$args = $args[0];
-		}
-		foreach ($args as $arg) {
-			$i = array_search($arg, $this->allowedActions);
-			if (is_int($i)) {
-				unset($this->allowedActions[$i]);
+		if(empty($args)){
+			$this->allowedActions = array();
+		}else{
+			if (isset($args[0]) && is_array($args[0])) {
+				$args = $args[0];
 			}
+			foreach ($args as $arg) {
+				$i = array_search($arg, $this->allowedActions);
+				if (is_int($i)) {
+					unset($this->allowedActions[$i]);
+				}
+			}
+			$this->allowedActions = array_values($this->allowedActions);
 		}
-		$this->allowedActions = array_values($this->allowedActions);
 	}
 
 /**
