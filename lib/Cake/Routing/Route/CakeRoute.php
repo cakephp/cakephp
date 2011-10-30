@@ -272,11 +272,11 @@ class CakeRoute {
 			$separatorIsPresent = strpos($param, $namedConfig['separator']) !== false;
 			if ((!isset($this->options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($namedConfig['separator'], $param, 2);
-				$val = urldecode($val);
+				$val = rawurldecode($val);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$this->_matchNamed($val, $rules[$key], $context));
 				if ($passIt) {
-					$pass[] = $param;
+					$pass[] = rawurldecode($param);
 				} else {
 					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
 						$matches = array_reverse($matches);
@@ -297,7 +297,7 @@ class CakeRoute {
 					$named = array_merge_recursive($named, array($key => $val));
 				}
 			} else {
-				$pass[] = $param;
+				$pass[] = rawurldecode($param);
 			}
 		}
 		return array($pass, $named);
@@ -463,7 +463,7 @@ class CakeRoute {
 		}
 
 		if (is_array($params['pass'])) {
-			$params['pass'] = implode('/', $params['pass']);
+			$params['pass'] = implode('/', array_map('rawurlencode', $params['pass']));
 		}
 
 		$namedConfig = Router::namedConfig();
@@ -474,10 +474,10 @@ class CakeRoute {
 			foreach ($params['named'] as $key => $value) {
 				if (is_array($value)) {
 					foreach ($value as $namedKey => $namedValue) {
-						$named[] = $key . "[$namedKey]" . $separator . $namedValue;
+						$named[] = $key . "[$namedKey]" . $separator . rawurlencode($namedValue);
 					}
 				} else {
-					$named[] = $key . $separator . $value;
+					$named[] = $key . $separator . rawurlencode($value);
 				}
 			}
 			$params['pass'] = $params['pass'] . '/' . implode('/', $named);

@@ -369,6 +369,8 @@ class CakeRouteTest extends CakeTestCase {
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, 'page' => 1, 'limit' => 20, 'order' => 'title'));
 		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
 
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 'word space', 'order' => 'Θ'));
+		$this->assertEqual($result, '/posts/view/word%20space/order:%CE%98');
 
 		$route = new CakeRoute('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 1));
@@ -395,6 +397,10 @@ class CakeRouteTest extends CakeTestCase {
 
 		$result = $route->parse('/posts/index/page[]:%CE%98');
 		$this->assertEquals('Θ', $result['named']['page'][0]);
+
+		$result = $route->parse('/posts/index/something%20else/page[]:%CE%98');
+		$this->assertEquals('Θ', $result['named']['page'][0]);
+		$this->assertEquals('something else', $result['pass'][0]);
 	}
 
 /**
