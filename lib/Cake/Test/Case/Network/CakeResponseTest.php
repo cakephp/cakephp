@@ -396,7 +396,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->expects($this->at(2))
-			->method('_sendHeader')->with('Content-Length', mb_strlen($body));
+			->method('_sendHeader')->with('Content-Length', 116);
 		$response->send();
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', 'outputCompressed'));
