@@ -17,8 +17,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Multibyte', 'I18n');
-
 /**
  * CakeResponse is responsible for managing the response text, status and headers of a HTTP response.
  *
