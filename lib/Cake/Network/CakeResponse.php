@@ -352,7 +352,11 @@ class CakeResponse {
 		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
 		$shouldSetLength = empty($this->_headers['Content-Length']) && !in_array($this->_status, range(301, 307));
 		if ($shouldSetLength && !$this->outputCompressed()) {
-			$this->_headers['Content-Length'] = strlen($this->_body);
+			if (ini_get('mbstring.func_overload') & 2 && function_exists('mb_strlen')) {
+				$this->_headers['Content-Length'] = mb_strlen($this->_body, '8bit');
+			} else {
+				$this->_headers['Content-Length'] = strlen($this->_body);
+			}
 		}
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
