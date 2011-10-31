@@ -350,10 +350,9 @@ class CakeResponse {
 		$codeMessage = $this->_statusCodes[$this->_status];
 		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
-		$shouldSetLength = empty($this->_headers['Content-Length']) && class_exists('Multibyte');
-		$shouldSetLength = $shouldSetLength && !in_array($this->_status, range(301, 307));
+		$shouldSetLength = empty($this->_headers['Content-Length']) && !in_array($this->_status, range(301, 307));
 		if ($shouldSetLength && !$this->outputCompressed()) {
-			$this->_headers['Content-Length'] = mb_strlen($this->_body);
+			$this->_headers['Content-Length'] = strlen($this->_body);
 		}
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
