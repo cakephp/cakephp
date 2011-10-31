@@ -734,6 +734,11 @@ class ModelValidationTest extends BaseModelTest {
 					'rule' => 'notEmpty',
 					'on' => 'create'
 				)
+			),
+			'published' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+				)
 			)
 		);
 
@@ -745,12 +750,21 @@ class ModelValidationTest extends BaseModelTest {
 		$Article->set($data);
 		$this->assertTrue($Article->validates());
 
+		$Article->data['Article']['published'] = null;
+		$this->assertFalse($Article->validates());
+
 		unset($data['Article']['id']);
+		$Article->data['Article']['published'] = '1';
 		$Article->validate = array(
 			'title' => array(
 				'notempty' => array(
 					'rule' => 'notEmpty',
 					'on' => 'update'
+				)
+			),
+			'published' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
 				)
 			)
 		);
