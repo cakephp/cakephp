@@ -425,6 +425,7 @@ class AuthComponent extends Component {
  *
  * `$this->Auth->allow(array('edit', 'add'));` or
  * `$this->Auth->allow('edit', 'add');`
+ * `$this->Auth->allow();` to allow all actions.
  *
  * allow() also supports '*' as a wildcard to mean all actions.
  *
@@ -462,9 +463,9 @@ class AuthComponent extends Component {
  */
 	public function deny($action = null) {
 		$args = func_get_args();
-		if(empty($args)){
+		if (empty($args)) {
 			$this->allowedActions = array();
-		}else{
+		} else {
 			if (isset($args[0]) && is_array($args[0])) {
 				$args = $args[0];
 			}
