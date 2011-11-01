@@ -20,7 +20,7 @@
 $ds = DIRECTORY_SEPARATOR;
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 $found = false;
-$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
+$paths = explode($ds, ini_get('include_path'));
 
 foreach ($paths as $path) {
 	if (file_exists($path . $ds . $dispatcher)) {
@@ -30,7 +30,7 @@ foreach ($paths as $path) {
 
 if (!$found && function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
-	ini_set('include_path', $root . $ds. 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+	ini_set('include_path', $root . $ds. 'lib' . $ds . ini_get('include_path'));
 }
 
 if (!include($dispatcher)) {
