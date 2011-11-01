@@ -424,11 +424,8 @@ class AuthComponent extends Component {
  * You can use allow with either an array, or var args.
  *
  * `$this->Auth->allow(array('edit', 'add'));` or
- * `$this->Auth->allow('edit', 'add');`
- *
- * allow() also supports '*' as a wildcard to mean all actions.
- *
- * `$this->Auth->allow('*');`
+ * `$this->Auth->allow('edit', 'add');` or
+ * `$this->Auth->allow();` to allow all actions
  *
  * @param mixed $action,... Controller action name or array of actions
  * @return void
@@ -436,7 +433,7 @@ class AuthComponent extends Component {
  */
 	public function allow($action = null) {
 		$args = func_get_args();
-		if (empty($args) || $args == array('*')) {
+		if (empty($args)) {
 			$this->allowedActions = $this->_methods;
 		} else {
 			if (isset($args[0]) && is_array($args[0])) {
