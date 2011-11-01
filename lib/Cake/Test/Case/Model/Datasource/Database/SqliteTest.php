@@ -76,7 +76,7 @@ class SqliteTest extends CakeTestCase {
  *
  * @var object
  */
-	public $fixtures = array('core.user');
+	public $fixtures = array('core.user', 'core.uuid');
 
 /**
  * Actual DB connection used in testing
@@ -321,6 +321,20 @@ class SqliteTest extends CakeTestCase {
 		);
 		$this->assertEqual($result['id'], $expected);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
+
+		$tableName = 'uuid_tests';
+		$this->Dbo->query("CREATE TABLE {$tableName} (id CHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");
+		$Model = new Model(array('name' => 'UuidTest', 'ds' => 'test', 'table' => 'uuid_tests'));
+		$result = $this->Dbo->describe($Model);
+		$expected = array(
+			'type' => 'string',
+			'length' => 36,
+			'null' => false,
+			'default' => null,
+			'key' => 'primary',
+		);
+		$this->assertEqual($result['id'], $expected);
+		$this->Dbo->query('DROP TABLE ' . $tableName);
 	}
 
 /**
@@ -338,4 +352,27 @@ class SqliteTest extends CakeTestCase {
 		));
 		$this->assertEquals('ett', $result['User']['name']);
 	}
+
+/**
+ * Test that records can be inserted with uuid primary keys, and
+ * that the primary key is not blank
+ *
+ * @return void
+ */
+	public function testUuidPrimaryKeyInsertion() {
+		$this->loadFixtures('Uuid');
+		$Model = ClassRegistry::init('Uuid');
+
+		$data = array(
+			'title' => 'A uuid should work',
+			'count' => 10
+		);
+		$Model->create($data);
+		$this->assertTrue((bool)$Model->save());
+		$result = $Model->read();
+
+		$this->assertEquals($data['title'], $result['Uuid']['title']);
+		$this->assertTrue(Validation::uuid($result['Uuid']['id']), 'Not a uuid');
+	}
+
 }
