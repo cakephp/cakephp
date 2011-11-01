@@ -368,7 +368,7 @@ form .submit input[type=submit]:hover {
 /* Form errors */
 form .error {
 	background: #FFDACC;
-	-moz-order-radius: 4px;
+	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
 	font-weight: normal;
