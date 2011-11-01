@@ -91,8 +91,12 @@ class RequestHandlerComponent extends Component {
  * @param array $settings Array of settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->addInputType('xml', array(array($this, 'convertXml')));
 		parent::__construct($collection, $settings);
+		$this->addInputType('xml', array(array($this, 'convertXml')));
+
+		$Controller = $collection->getController();
+		$this->request = $Controller->request;
+		$this->response = $Controller->response;
 	}
 
 /**
@@ -107,8 +111,6 @@ class RequestHandlerComponent extends Component {
  * @see Router::parseExtensions()
  */
 	public function initialize($controller, $settings = array()) {
-		$this->request = $controller->request;
-		$this->response = $controller->response;
 		if (isset($this->request->params['ext'])) {
 			$this->ext = $this->request->params['ext'];
 		}
