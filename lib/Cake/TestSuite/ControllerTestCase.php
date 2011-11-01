@@ -59,6 +59,15 @@ class ControllerTestDispatcher extends Dispatcher {
 		$this->testController->helpers = array_merge(array('InterceptContent'), $this->testController->helpers);
 		$this->testController->setRequest($request);
 		$this->testController->response = $this->response;
+		foreach ($this->testController->Components->attached() as $component) {
+			$object = $this->testController->Components->{$component};
+			if (isset($object->response)) {
+				$object->response = $response;
+			}
+		}
+		if (isset($object->request)) {
+			$object->request = $request;
+		}
 		return $this->testController;
 	}
 
