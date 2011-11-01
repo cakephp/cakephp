@@ -186,6 +186,7 @@ class CakeResponse {
 		'mp2' => 'audio/mpeg',
 		'mp3' => 'audio/mpeg',
 		'mpga' => 'audio/mpeg',
+		'ogg' => 'audio/ogg',
 		'ra' => 'audio/x-realaudio',
 		'ram' => 'audio/x-pn-realaudio',
 		'rm' => 'audio/x-pn-realaudio',
