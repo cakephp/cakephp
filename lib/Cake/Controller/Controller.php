@@ -23,7 +23,7 @@
 App::uses('CakeResponse', 'Network');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ComponentCollection', 'Controller');
-App::uses('View', 'View');
+App::uses('AppView', 'View');
 
 /**
  * Application controller class for organization of business logic.
@@ -191,7 +191,7 @@ class Controller extends Object {
  *
  * @var string
  */
-	public $viewClass = 'View';
+	public $viewClass = 'AppView';
 
 /**
  * Instance of the View created during rendering. Won't be set until after Controller::render() is called.
@@ -865,7 +865,7 @@ class Controller extends Object {
 		$this->Components->trigger('beforeRender', array(&$this));
 
 		$viewClass = $this->viewClass;
-		if ($this->viewClass != 'View') {
+		if ($this->viewClass != 'AppView') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass = $viewClass . 'View';
 			App::uses($viewClass, $plugin . 'View');
