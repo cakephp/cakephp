@@ -106,7 +106,7 @@ TEXT;
 		}
 		$var = print_r($var, true);
 		if ($showHtml) {
-			$var = htmlentities($var);
+			$var = h($var);
 		}
 		printf($template, $file, $line, $var);
 	}
