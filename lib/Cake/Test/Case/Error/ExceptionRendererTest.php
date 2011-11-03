@@ -287,10 +287,11 @@ class ExceptionRendererTest extends CakeTestCase {
 
 		ob_start();
 		$ExceptionRenderer->render();
-		$results = ob_get_clean();
+		$result = ob_get_clean();
 
 		$this->assertFalse(method_exists($ExceptionRenderer, 'missingWidgetThing'), 'no method should exist.');
 		$this->assertEquals('error400', $ExceptionRenderer->method, 'incorrect method coercion.');
+		$this->assertContains('coding fail', $result, 'Text should show up.');
 	}
 
 /**
@@ -302,13 +303,40 @@ class ExceptionRendererTest extends CakeTestCase {
 		$exception = new OutOfBoundsException('foul ball.');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
-		$ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
+		$ExceptionRenderer->controller->response->expects($this->once())
+			->method('statusCode')
+			->with(500);
 
 		ob_start();
 		$ExceptionRenderer->render();
-		$results = ob_get_clean();
+		$result = ob_get_clean();
 
 		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
+		$this->assertContains('foul ball.', $result, 'Text should show up as its debug mode.');
+	}
+
+/**
+ * test that unknown exceptions have messages ignored.
+ *
+ * @return void
+ */
+	public function testUnknownExceptionInProduction() {
+		Configure::write('debug', 0);
+
+		$exception = new OutOfBoundsException('foul ball.');
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
+		$ExceptionRenderer->controller->response->expects($this->once())
+			->method('statusCode')
+			->with(500);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
+		$this->assertNotContains('foul ball.', $result, 'Text should no show up.');
+		$this->assertContains('Internal Error', $result, 'Generic message only.');
 	}
 
 /**
@@ -324,9 +352,10 @@ class ExceptionRendererTest extends CakeTestCase {
 
 		ob_start();
 		$ExceptionRenderer->render();
-		$results = ob_get_clean();
+		$result = ob_get_clean();
 
 		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
+		$this->assertContains('foul ball.', $result, 'Text should show up as its debug mode.');
 	}
 
 /**
