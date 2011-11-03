@@ -24,7 +24,7 @@ App::uses('Debugger', 'Utility');
 	<p>For updates and important announcements, visit http://cakefest.org</p>
 </iframe>
 <h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
-<a href="http://cakephp.org/changelogs/2.0.1"><?php __d('cake_dev', 'Read the changelog'); ?> </a>
+<a href="http://cakephp.org/changelogs/2.0.2"><?php __d('cake_dev', 'Read the changelog'); ?> </a>
 <?php
 if (Configure::read('debug') > 0):
 	Debugger::checkSecurityKeys();
