@@ -241,6 +241,7 @@ class AclNodeTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		Configure::write('Acl.classname', 'TestDbAcl');
 		Configure::write('Acl.database', 'test');
 	}
