@@ -606,7 +606,7 @@ class ExtractTask extends Shell {
 		if (!empty($this->_exclude)) {
 			$exclude = array();
 			foreach ($this->_exclude as $e) {
-				if ($e[0] !== DS) {
+				if (DS !== '\\' && $e[0] !== DS) {
 					$e = DS . $e;
 				}
 				$exclude[] = preg_quote($e, '/');
