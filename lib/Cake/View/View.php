@@ -203,7 +203,15 @@ class View extends Object {
  * @see View::element()
  */
 	public $elementCache = 'default';
-
+	
+/**
+ * The name of the folder where elements are stored.
+ * 
+ * @var string
+ * @see View::element() 
+ */
+	public $elementFolder = 'Elements';
+	
 /**
  * List of variables to collect from the associated controller
  *
@@ -725,10 +733,11 @@ class View extends Object {
 	protected function _getElementFileName($name, $plugin = null) {
 		$paths = $this->_paths($plugin);
 		$exts = $this->_getExtensions();
+		$elementFolder = $this->elementFolder;
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'Elements' . DS . $name . $ext)) {
-					return $path . 'Elements' . DS . $name . $ext;
+				if (file_exists($path . $elementFolder . DS . $name . $ext)) {
+					return $path . $elementFolder . DS . $name . $ext;
 				}
 			}
 		}
