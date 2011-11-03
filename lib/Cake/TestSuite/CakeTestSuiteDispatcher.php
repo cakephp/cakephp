@@ -151,9 +151,6 @@ class CakeTestSuiteDispatcher {
 				$found = include 'PHPUnit' . DS . 'Autoload.php';
 			}
 		}
-		if ($found) {
-			PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-		}
 		return $found;
 	}
 

@@ -17,8 +17,6 @@
  */
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 /**
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.

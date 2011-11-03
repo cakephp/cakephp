@@ -15,11 +15,8 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 App::uses('TextCoverageReport', 'TestSuite/Coverage');
-
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 /**
  * CakeTextReporter contains reporting features used for plain text based output

@@ -17,8 +17,6 @@
  */
 require_once 'PHPUnit/TextUI/ResultPrinter.php';
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 /**
  * CakeBaseReporter contains common reporting features used in the CakePHP Test suite
  *

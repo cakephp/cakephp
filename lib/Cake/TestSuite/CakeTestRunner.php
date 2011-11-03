@@ -17,8 +17,6 @@
  */
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 /**
  * A custom test runner for Cake's use of PHPUnit.
  *
