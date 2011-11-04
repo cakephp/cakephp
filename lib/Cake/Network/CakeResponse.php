@@ -349,19 +349,30 @@ class CakeResponse {
 		$codeMessage = $this->_statusCodes[$this->_status];
 		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
-		$shouldSetLength = empty($this->_headers['Content-Length']) && !in_array($this->_status, range(301, 307));
-		if ($shouldSetLength && !$this->outputCompressed()) {
-			if (ini_get('mbstring.func_overload') & 2 && function_exists('mb_strlen')) {
-				$this->_headers['Content-Length'] = mb_strlen($this->_body, '8bit');
-			} else {
-				$this->_headers['Content-Length'] = strlen($this->_body);
-			}
-		}
+		$this->_setContentLength();
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
 		}
 		$this->_sendContent($this->_body);
 	}
+
+/**
+ * Calculates the correct Content-Length and sets it as a header in the response
+ * Will not set the value if already set or if the output is compressed.
+ *
+ * @return void
+ */
+	protected function _setContentLength() {
+		$shouldSetLength = empty($this->_headers['Content-Length']) && !in_array($this->_status, range(301, 307));
+		if ($shouldSetLength && !$this->outputCompressed()) {
+			$offset = ob_get_level() ? ob_get_length() : 0;
+			if (ini_get('mbstring.func_overload') & 2 && function_exists('mb_strlen')) {
+				$this->_headers['Content-Length'] = $offset + mb_strlen($this->_body, '8bit');
+			} else {
+				$this->_headers['Content-Length'] = $offset + strlen($this->_body);
+			}
+		}
+    }
 
 /**
  * Sends a header to the client.
