@@ -2175,6 +2175,7 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * test that mock classes injected into paginatorHelper are called when using link()
  *
+ * @expectedException CakeException
  * @return void
  */
 	public function testMockAjaxProviderClassInjection() {
@@ -2196,7 +2197,6 @@ class PaginatorHelperTest extends CakeTestCase {
 		$Paginator->PaginatorMockJs->expects($this->once())->method('link');
 		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 
-		$this->expectException();
 		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'Form'));
 	}
 
