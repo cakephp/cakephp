@@ -514,4 +514,25 @@ class CakeResponseTest extends CakeTestCase {
 			->method('_sendHeader')->with('HTTP/1.0 200 OK');
 		$response->send();
 	}
+
+/**
+ * Tests getting/setting the Content-Length
+ *
+ * @return void
+ */
+	public function testLength() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->length(100);
+		$this->assertEquals(100, $response->length());
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 100);
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->length(false);
+		$this->assertFalse($response->length());
+		$response->expects($this->exactly(2))
+			->method('_sendHeader');
+		$response->send();
+	}
 }

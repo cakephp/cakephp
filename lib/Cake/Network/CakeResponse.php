@@ -363,13 +363,17 @@ class CakeResponse {
  * @return void
  */
 	protected function _setContentLength() {
-		$shouldSetLength = empty($this->_headers['Content-Length']) && !in_array($this->_status, range(301, 307));
+		$shouldSetLength = !isset($this->_headers['Content-Length']) && !in_array($this->_status, range(301, 307));
+		if (isset($this->_headers['Content-Length']) && $this->_headers['Content-Length'] === false) {
+			unset($this->_headers['Content-Length']);
+			return;
+		}
 		if ($shouldSetLength && !$this->outputCompressed()) {
 			$offset = ob_get_level() ? ob_get_length() : 0;
 			if (ini_get('mbstring.func_overload') & 2 && function_exists('mb_strlen')) {
-				$this->_headers['Content-Length'] = $offset + mb_strlen($this->_body, '8bit');
+				$this->length($offset + mb_strlen($this->_body, '8bit'));
 			} else {
-				$this->_headers['Content-Length'] = $offset + strlen($this->_body);
+				$this->length($this->_headers['Content-Length'] = $offset + strlen($this->_body));
 			}
 		}
 	}
@@ -694,6 +698,22 @@ class CakeResponse {
 			$this->_protocol = $protocol;
 		}
 		return $this->_protocol;
+	}
+
+/**
+ * Sets the Content-Length header for the response
+ * If called with no arguments returns the last Content-Length set
+ *
+ * @return int
+ */
+	public function length($bytes = null) {
+		if ($bytes !== null ) {
+			$this->_headers['Content-Length'] = $bytes;
+		}
+		if (isset($this->_headers['Content-Length'])) {
+			return $this->_headers['Content-Length'];
+		}
+		return null;
 	}
 
 /**
