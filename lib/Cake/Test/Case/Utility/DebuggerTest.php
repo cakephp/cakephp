@@ -405,7 +405,7 @@ class DebuggerTest extends CakeTestCase {
  */
 	public function testNoDbCredentials() {
 		$config = array(
-			'driver' => 'mysql',
+			'datasource' => 'mysql',
 			'persistent' => false,
 			'host' => 'void.cakephp.org',
 			'login' => 'cakephp-user',
@@ -417,7 +417,7 @@ class DebuggerTest extends CakeTestCase {
 		$output = Debugger::exportVar($config);
 
 		$expectedArray = array(
-			'driver' => 'mysql',
+			'datasource' => 'mysql',
 			'persistent' => false,
 			'host' => '*****',
 			'login' => '*****',
