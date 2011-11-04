@@ -424,5 +424,22 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->once())->method('_sendContent')->with($body);
 		$response->expects($this->exactly(2))->method('_sendHeader');
 		$response->send();
+
+		ob_start();
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$goofyOutput = 'I am goofily sending output in the controller';
+		echo $goofyOutput;
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', strlen($goofyOutput) + 116);
+		$response->send();
+		ob_end_clean();
 	}
 }
