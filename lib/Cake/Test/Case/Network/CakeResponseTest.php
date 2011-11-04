@@ -500,4 +500,18 @@ class CakeResponseTest extends CakeTestCase {
 		$response->send();
 		ob_end_clean();
 	}
+
+/**
+ * Tests getting/setting the protocol
+ *
+ * @return void
+ */
+	public function testProtocol() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->protocol('HTTP/1.0');
+		$this->assertEquals('HTTP/1.0', $response->protocol());
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.0 200 OK');
+		$response->send();
+	}
 }

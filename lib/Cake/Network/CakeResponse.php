@@ -684,6 +684,19 @@ class CakeResponse {
 	}
 
 /**
+ * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
+ * If called with no arguments, it will return the current configured protocol
+ *
+ * @return string protocol to be used for sending response
+ */
+	public function protocol($protocol = null) {
+		if ($protocol !== null) {
+			$this->_protocol = $protocol;
+		}
+		return $this->_protocol;
+	}
+
+/**
  * String conversion.  Fetches the response body as a string.
  * Does *not* send headers.
  *
