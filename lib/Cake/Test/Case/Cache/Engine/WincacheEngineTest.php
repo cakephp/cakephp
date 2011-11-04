@@ -145,7 +145,7 @@ class WincacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test_decrement', 'wincache');
 		$this->assertEqual(2, $result);
-		
+
 	}
 
 /**

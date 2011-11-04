@@ -107,7 +107,7 @@ TEXT;
 		}
 		$var = Debugger::exportVar($var, 25);
 		if ($showHtml) {
-			$var = htmlentities($var);
+			$var = h($var);
 		}
 		printf($template, $file, $line, $var);
 	}
@@ -149,7 +149,9 @@ if (!function_exists('sortByKey')) {
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param string $text Text to wrap through htmlspecialchars
+ * @param mixed $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
+ *    Arrays will be mapped and have all their elements escaped.  Objects will be string cast if they
+ *    implement a `__toString` method.  Otherwise the class name will be used.
  * @param boolean $double Encode existing html entities
  * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
@@ -162,6 +164,12 @@ function h($text, $double = true, $charset = null) {
 			$texts[$k] = h($t, $double, $charset);
 		}
 		return $texts;
+	} elseif (is_object($text)) {
+		if (method_exists($text, '__toString')) {
+			$text = (string) $text;
+		} else {
+			$text = '(object)' . get_class($text);
+		}
 	}
 
 	static $defaultCharset = false;

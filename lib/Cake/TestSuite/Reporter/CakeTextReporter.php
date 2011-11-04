@@ -61,7 +61,7 @@ class CakeTextReporter extends CakeBaseReporter {
 		$context = $context[2];
 
 		printf(
-			"FAIL on line %s\n%s in\n%s %s()\n\n", 
+			"FAIL on line %s\n%s in\n%s %s()\n\n",
 			$context['line'], $message->toString(), $context['file'], $realContext['function']
 		);
 	}
@@ -80,7 +80,7 @@ class CakeTextReporter extends CakeBaseReporter {
 			echo "FAILURES!!!\n";
 		}
 
-		echo "Test cases run: " . $result->count() . 
+		echo "Test cases run: " . $result->count() .
 			"/" . ($result->count() - $result->skippedCount()) .
 			', Passes: ' . $this->numAssertions .
 			', Failures: ' . $result->failureCount() .

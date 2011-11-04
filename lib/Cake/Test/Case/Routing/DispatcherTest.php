@@ -1291,6 +1291,14 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual('htc file', $result);
 
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		ob_start();
+		$Dispatcher->asset('test_plugin/css/unknown.extension', $response);
+		ob_end_clean();
+		$expected = filesize(CakePlugin::path('TestPlugin') . 'webroot' . DS . 'css' . DS . 'unknown.extension');
+		$headers = $response->header();
+		$this->assertEqual($expected, $headers['Content-Length']);
+
 		if (php_sapi_name() == 'cli') {
 			while (ob_get_level()) {
 				ob_get_clean();

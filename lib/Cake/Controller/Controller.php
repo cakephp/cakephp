@@ -805,6 +805,7 @@ class Controller extends Object {
  */
 	public function setAction($action) {
 		$this->request->action = $action;
+		$this->view = $action;
 		$args = func_get_args();
 		unset($args[0]);
 		return call_user_func_array(array(&$this, $action), $args);
@@ -878,7 +879,8 @@ class Controller extends Object {
 				list($plugin, $className) = pluginSplit($model);
 				$this->request->params['models'][$className] = compact('plugin', 'className');
 			}
-		} if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
+		}
+		if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
 			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass);
 		}
 

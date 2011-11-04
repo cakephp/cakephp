@@ -40,7 +40,7 @@ class DbConfigTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('DbConfigTask', 
+		$this->Task = $this->getMock('DbConfigTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest', '_verify'),
 			array($out, $out, $in)
 		);

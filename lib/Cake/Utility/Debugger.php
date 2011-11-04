@@ -285,9 +285,9 @@ class Debugger {
 			'args'    => false,
 			'start'   => 0,
 			'scope'   => null,
-			'exclude' => null
+			'exclude' => array('call_user_func_array', 'trigger_error')
 		);
-		$options += $defaults;
+		$options = Set::merge($defaults, $options);
 
 		$backtrace = debug_backtrace();
 		$count = count($backtrace);
@@ -302,13 +302,15 @@ class Debugger {
 
 		for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
 			$trace = array_merge(array('file' => '[internal]', 'line' => '??'), $backtrace[$i]);
+			$signature = $reference = '[main]';
 
 			if (isset($backtrace[$i + 1])) {
 				$next = array_merge($_trace, $backtrace[$i + 1]);
-				$reference = $next['function'];
+				$signature = $reference = $next['function'];
 
 				if (!empty($next['class'])) {
-					$reference = $next['class'] . '::' . $reference . '(';
+					$signature = $next['class'] . '::' . $next['function'];
+					$reference = $signature . '(';
 					if ($options['args'] && isset($next['args'])) {
 						$args = array();
 						foreach ($next['args'] as $arg) {
@@ -318,10 +320,8 @@ class Debugger {
 					}
 					$reference .= ')';
 				}
-			} else {
-				$reference = '[main]';
 			}
-			if (in_array($reference, array('call_user_func_array', 'trigger_error'))) {
+			if (in_array($signature, $options['exclude'])) {
 				continue;
 			}
 			if ($options['format'] == 'points' && $trace['file'] != '[internal]') {
@@ -572,8 +572,8 @@ class Debugger {
  *
  * `Debugger::addFormat('custom', $data);`
  *
- * Where $data is an array of strings that use String::insert() variable 
- * replacement.  The template vars should be in a `{:id}` style.  
+ * Where $data is an array of strings that use String::insert() variable
+ * replacement.  The template vars should be in a `{:id}` style.
  * An error formatter can have the following keys:
  *
  * - 'error' - Used for the container for the error message. Gets the following template
@@ -582,11 +582,11 @@ class Debugger {
  *   the contents of the other template keys.
  * - 'trace' - The container for a stack trace. Gets the following template
  *   variables: `trace`
- * - 'context' - The container element for the context variables. 
+ * - 'context' - The container element for the context variables.
  *   Gets the following templates: `id`, `context`
  * - 'links' - An array of HTML links that are used for creating links to other resources.
  *   Typically this is used to create javascript links to open other sections.
- *   Link keys, are: `code`, `context`, `help`.  See the js output format for an 
+ *   Link keys, are: `code`, `context`, `help`.  See the js output format for an
  *   example.
  * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
  *   template variables: `reference`, `path`, `line`
@@ -624,14 +624,14 @@ class Debugger {
 	}
 
 /**
- * Switches output format, updates format strings. 
+ * Switches output format, updates format strings.
  * Can be used to switch the active output format:
  *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
  * @return string
- * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed 
+ * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed
  *   in 3.0
  */
 	public function output($format = null, $strings = array()) {

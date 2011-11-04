@@ -146,7 +146,7 @@ class CommandListShellTest extends CakeTestCase {
 
 		$output = $this->Shell->stdout->output;
 
-		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';	
+		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
 		$this->assertContains($find, $output);
 
 		$find = '<shell name="bake" call_as="bake" provider="CORE" help="bake -h"/>';

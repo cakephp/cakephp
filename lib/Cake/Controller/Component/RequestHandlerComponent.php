@@ -91,14 +91,18 @@ class RequestHandlerComponent extends Component {
  * @param array $settings Array of settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->addInputType('xml', array(array($this, 'convertXml')));
 		parent::__construct($collection, $settings);
+		$this->addInputType('xml', array(array($this, 'convertXml')));
+
+		$Controller = $collection->getController();
+		$this->request = $Controller->request;
+		$this->response = $Controller->response;
 	}
 
 /**
  * Checks to see if a file extension has been parsed by the Router, or if the
  * HTTP_ACCEPT_TYPE has matches only one content type with the supported extensions.
- * If there is only one matching type between the supported content types & extensions, 
+ * If there is only one matching type between the supported content types & extensions,
  * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
  * @param Controller $controller A reference to the controller
@@ -107,8 +111,6 @@ class RequestHandlerComponent extends Component {
  * @see Router::parseExtensions()
  */
 	public function initialize($controller, $settings = array()) {
-		$this->request = $controller->request;
-		$this->response = $controller->response;
 		if (isset($this->request->params['ext'])) {
 			$this->ext = $this->request->params['ext'];
 		}

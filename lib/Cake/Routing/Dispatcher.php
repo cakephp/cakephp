@@ -315,6 +315,9 @@ class Dispatcher {
 			}
 			$response->type($contentType);
 		}
+		if (!$compressionEnabled) {
+		    $response->header('Content-Length', filesize($assetFile));
+		}
 		$response->cache(filemtime($assetFile));
 		$response->send();
 		ob_clean();

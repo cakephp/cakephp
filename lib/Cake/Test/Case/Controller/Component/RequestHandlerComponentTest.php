@@ -30,13 +30,6 @@ App::uses('Router', 'Routing');
 class RequestHandlerTestController extends Controller {
 
 /**
- * name property
- *
- * @var string
- */
-	public $name = 'RequestHandlerTest';
-
-/**
  * uses property
  *
  * @var mixed null
@@ -117,9 +110,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 		$response = new CakeResponse();
 		$this->Controller = new RequestHandlerTestController($request, $response);
+		$this->Controller->constructClasses();
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->Components);
-		$this->RequestHandler->request = $request;
-		$this->RequestHandler->response = $response;
 		$this->_extensions = Router::extensions();
 	}
 
@@ -148,6 +140,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 			'ajaxLayout' => 'test_ajax'
 		);
 		$Collection = new ComponentCollection();
+		$Collection->init($this->Controller);
 		$RequestHandler = new RequestHandlerComponent($Collection, $settings);
 		$this->assertEqual($RequestHandler->ajaxLayout, 'test_ajax');
 	}

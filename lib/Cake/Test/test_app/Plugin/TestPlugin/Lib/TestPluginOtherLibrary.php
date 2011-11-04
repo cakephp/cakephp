@@ -1,6 +1,6 @@
 <?php
 /**
- * Test Suite Test Plugin Logging stream class.
+ * Test Suite TestPlugin Other Library
  *
  * PHP 5
  *
@@ -12,13 +12,8 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       Cake.Test.test_app.Plugin.TestPlugin.Lib.Log.Engine
- * @since         CakePHP(tm) v 1.3
+ * @package       Cake.Test.test_app.Plugin.TestPlugin.Lib
+ * @since         CakePHP(tm) v 2.0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class TestPluginLog implements CakeLogInterface {
-
-	public function write($type, $message) {
-
-	}
-}
+class TestPluginOtherLibrary {}

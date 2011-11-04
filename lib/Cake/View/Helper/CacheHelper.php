@@ -265,24 +265,26 @@ class CacheHelper extends AppHelper {
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
 
 		if (empty($this->_View->plugin)) {
-			$file .= '
-			App::import(\'Controller\', \'' . $this->_View->name. '\');
-			';
+			$file .= "
+			App::uses('{$this->_View->name}Controller', 'Controller');
+			";
 		} else {
-			$file .= '
-			App::import(\'Controller\', \'' . $this->_View->plugin . '.' . $this->_View->name. '\');
-			';
+			$file .= "
+			App::uses('{$this->_View->name}Controller', '{$this->_View->plugin}.Controller');
+			";
 		}
 
-		$file .= '$controller = new ' . $this->_View->name . 'Controller();
+		$file .= '
+				$request = unserialize(\'' . str_replace("'", "\\'", serialize($this->request)) . '\');
+				$response = new CakeResponse(array("charset" => Configure::read("App.encoding")));
+				$controller = new ' . $this->_View->name . 'Controller($request, $response);
 				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
 				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->_View->helpers) . '\');
 				$controller->layout = $this->layout = \'' . $this->_View->layout. '\';
-				$controller->request = $this->request = unserialize(\'' . str_replace("'", "\\'", serialize($this->request)) . '\');
 				$controller->theme = $this->theme = \'' . $this->_View->theme . '\';
 				$controller->viewVars = $this->viewVars = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->viewVars)) . '\'));
-				Router::setRequestInfo($controller->request);';
-
+				Router::setRequestInfo($controller->request);
+				$this->request = $request;';
 
 		if ($useCallbacks == true) {
 			$file .= '

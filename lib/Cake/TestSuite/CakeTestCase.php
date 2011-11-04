@@ -387,8 +387,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertEqual($result, $expected, $message = '') {
-		return $this->assertEquals($expected, $result, $message);
+	protected static function assertEqual($result, $expected, $message = '') {
+		return self::assertEquals($expected, $result, $message);
 	}
 
 /**
@@ -399,8 +399,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertNotEqual($result, $expected, $message = '') {
-		return $this->assertNotEquals($expected, $result, $message);
+	protected static function assertNotEqual($result, $expected, $message = '') {
+		return self::assertNotEquals($expected, $result, $message);
 	}
 
 /**
@@ -411,8 +411,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertPattern($pattern, $string, $message = '') {
-		return $this->assertRegExp($pattern, $string, $message);
+	protected static function assertPattern($pattern, $string, $message = '') {
+		return self::assertRegExp($pattern, $string, $message);
 	}
 
 /**
@@ -423,8 +423,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertIdentical($actual, $expected, $message = '') {
-		return $this->assertSame($expected, $actual, $message);
+	protected static function assertIdentical($actual, $expected, $message = '') {
+		return self::assertSame($expected, $actual, $message);
 	}
 
 /**
@@ -435,8 +435,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertNotIdentical($actual, $expected, $message = '') {
-		return $this->assertNotSame($expected, $actual, $message);
+	protected static function assertNotIdentical($actual, $expected, $message = '') {
+		return self::assertNotSame($expected, $actual, $message);
 	}
 
 /**
@@ -447,8 +447,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertNoPattern($pattern, $string, $message = '') {
-		return $this->assertNotRegExp($pattern, $string, $message);
+	protected static function assertNoPattern($pattern, $string, $message = '') {
+		return self::assertNotRegExp($pattern, $string, $message);
 	}
 
 	protected function assertNoErrors() {
@@ -487,20 +487,20 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertReference(&$first, &$second, $message = '') {
-		return $this->assertSame($first, $second, $message);
+	protected static function assertReference(&$first, &$second, $message = '') {
+		return self::assertSame($first, $second, $message);
 	}
 
 /**
  * Compatibility wrapper for assertIsA
  *
- * @param string $object 
- * @param string $type 
- * @param string $message 
+ * @param string $object
+ * @param string $type
+ * @param string $message
  * @return void
  */
-	protected function assertIsA($object, $type, $message = '') {
-		return $this->assertInstanceOf($type, $object, $message);
+	protected static function assertIsA($object, $type, $message = '') {
+		return self::assertInstanceOf($type, $object, $message);
 	}
 
 /**
@@ -512,10 +512,10 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected function assertWithinMargin($result, $expected, $margin, $message = '') {
+	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
 		$upper = $result + $margin;
 		$lower = $result - $margin;
-		$this->assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+		return self::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
 	}
 
 /**

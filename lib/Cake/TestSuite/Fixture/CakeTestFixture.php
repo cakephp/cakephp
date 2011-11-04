@@ -188,7 +188,7 @@ class CakeTestFixture {
 		}
 		$this->Schema->build(array($this->table => $this->fields));
 		try {
-			
+
 			$db->execute($db->dropSchema($this->Schema), array('log' => false));
 		} catch (Exception $e) {
 			return false;

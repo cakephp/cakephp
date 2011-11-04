@@ -238,7 +238,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 /**
  * testBeforeFindWithNonExistingBinding method
- * 
+ *
  * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
@@ -3304,15 +3304,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertEqual($expected, array_keys($result));
 
 		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
-		
+
 		$this->JoinA =& ClassRegistry::init('JoinA');
 		$this->JoinB =& ClassRegistry::init('JoinB');
 		$this->JoinC =& ClassRegistry::init('JoinC');
-		
+
 		$this->JoinA->Behaviors->attach('Containable');
 		$this->JoinB->Behaviors->attach('Containable');
 		$this->JoinC->Behaviors->attach('Containable');
-		
+
 		$this->JoinA->JoinB->find('all', array('contain' => array('JoinA')));
 		$this->JoinA->bindModel(array('hasOne' => array('JoinAsJoinC' => array('joinTable' => 'as_cs'))), false);
 		$result = $this->JoinA->hasOne;

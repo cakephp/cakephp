@@ -19,6 +19,7 @@
 
 require_once CAKE . 'basics.php';
 App::uses('Folder', 'Utility');
+App::uses('CakeResponse', 'Network');
 
 /**
  * BasicsTest class
@@ -234,6 +235,14 @@ class BasicsTest extends CakeTestCase {
 			'n' => '&nbsp;'
 		);
 		$this->assertEqual($expected, $result);
+
+		$obj = new stdClass();
+		$result = h($obj);
+		$this->assertEquals('(object)stdClass', $result);
+
+		$obj = new CakeResponse(array('body' => 'Body content'));
+		$result = h($obj);
+		$this->assertEquals('Body content', $result);
 	}
 
 /**

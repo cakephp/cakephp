@@ -283,7 +283,7 @@ class DbConfigTask extends Shell {
 
 				$oldConfigs[] = array(
 					'name' => $configName,
-					'driver' => $info['driver'],
+					'datasource' => $info['datasource'],
 					'persistent' => $info['persistent'],
 					'host' => $info['host'],
 					'port' => $info['port'],

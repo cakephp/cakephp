@@ -433,7 +433,7 @@ class Router {
 				Router::connect($url,
 					array(
 						'plugin' => $plugin,
-						'controller' => $urlName, 
+						'controller' => $urlName,
 						'action' => $params['action'],
 						'[method]' => $params['method']
 					),

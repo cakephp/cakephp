@@ -990,7 +990,7 @@ class DboSource extends DataSource {
 		$queryData = $this->_scrubQueryData($queryData);
 
 		$null = null;
-		$array = array();
+		$array = array('callbacks' => $queryData['callbacks']);
 		$linkedModels = array();
 		$bypass = false;
 
@@ -1043,7 +1043,11 @@ class DboSource extends DataSource {
 			return false;
 		}
 
-		$filtered = $this->_filterResults($resultSet, $model);
+		$filtered = array();
+
+		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+			$filtered = $this->_filterResults($resultSet, $model);
+		}
 
 		if ($model->recursive > -1) {
 			foreach ($_associations as $type) {
@@ -1071,7 +1075,9 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-			$this->_filterResults($resultSet, $model, $filtered);
+			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+				$this->_filterResults($resultSet, $model, $filtered);
+			}
 		}
 
 		if (!is_null($recursive)) {
@@ -1162,7 +1168,9 @@ class DboSource extends DataSource {
 						}
 					}
 				}
-				$this->_filterResults($fetch, $model);
+				if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+					$this->_filterResults($fetch, $model);
+				}
 				return $this->_mergeHasMany($resultSet, $fetch, $association, $model, $linkModel);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
@@ -2093,6 +2101,7 @@ class DboSource extends DataSource {
 		static $base = null;
 		if ($base === null) {
 			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());
+			$base['callbacks'] = null;
 		}
 		return (array)$data + $base;
 	}

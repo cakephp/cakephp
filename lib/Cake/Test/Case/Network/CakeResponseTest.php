@@ -370,4 +370,59 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->mapType(array('application/json', 'application/xhtml+xml', 'text/css'));
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+* Tests the send and setting of Content-Length
+*
+*/
+	public function testSendContentLength() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->body('the response body');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', strlen('the response body'));
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 116);
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', 'outputCompressed'));
+		$body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
+		$response->body($body);
+		$response->expects($this->once())->method('outputCompressed')->will($this->returnValue(true));
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->exactly(2))->method('_sendHeader');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', 'outputCompressed'));
+		$body = 'hwy';
+		$response->body($body);
+		$response->header('Content-Length', 1);
+		$response->expects($this->never())->method('outputCompressed');
+		$response->expects($this->once())->method('_sendContent')->with($body);
+			$response->expects($this->at(2))
+				->method('_sendHeader')->with('Content-Length', 1);
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = 'content';
+		$response->statusCode(301);
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->exactly(2))->method('_sendHeader');
+		$response->send();
+	}
 }
