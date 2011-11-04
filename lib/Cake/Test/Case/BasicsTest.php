@@ -683,26 +683,156 @@ class BasicsTest extends CakeTestCase {
 		ob_start();
 			debug('this-is-a-test');
 		$result = ob_get_clean();
-		$pattern = '/(.+?Test(\/|\\\)Case(\/|\\\)BasicsTest\.php|';
-		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
-		$pattern .= '.*line.*' . (__LINE__ - 4) . '.*this-is-a-test.*/s';
-		$this->assertRegExp($pattern, $result);
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+this-is-a-test
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>');
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
-		$pattern = '/(.+?Test(\/|\\\)Case(\/|\\\)BasicsTest\.php|';
-		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
-		$pattern .= '.*line.*' . (__LINE__ -4) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
-		$this->assertRegExp($pattern, $result);
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', true, true);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', true, false);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', null);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', null, true);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', null, false);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+<div class="cake-debug-output">
+
+<pre class="cake-debug">
+&lt;div&gt;this-is-a-test&lt;/div&gt;
+</pre>
+</div>
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', false);
 		$result = ob_get_clean();
-		$pattern = '/(.+?Test(\/|\\\)Case(\/|\\\)BasicsTest\.php|';
-		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
-		$pattern .=	'.*line.*' . (__LINE__ - 4) . '.*\<div\>this-is-a-test\<\/div\>.*/s';
-		$this->assertRegExp($pattern, $result);
+$expected = <<<EXPECTED
+
+%s (line %d)
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', false, true);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+
+%s (line %d)
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', false, false);
+		$result = ob_get_clean();
+$expected = <<<EXPECTED
+
+
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
