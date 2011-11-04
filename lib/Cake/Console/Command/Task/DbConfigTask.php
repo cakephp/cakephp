@@ -314,7 +314,7 @@ class DbConfigTask extends Shell {
 			extract($config);
 
 			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'datasource' => 'Database/{$driver}',\n";
+			$out .= "\t\t'datasource' => 'Database/{$datasource}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
 
