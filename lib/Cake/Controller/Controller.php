@@ -805,6 +805,7 @@ class Controller extends Object {
  */
 	public function setAction($action) {
 		$this->request->action = $action;
+		$this->view = $action;
 		$args = func_get_args();
 		unset($args[0]);
 		return call_user_func_array(array(&$this, $action), $args);
