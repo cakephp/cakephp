@@ -348,13 +348,30 @@ class CakeResponse {
 
 		$codeMessage = $this->_statusCodes[$this->_status];
 		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
-		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
 		$this->_setContent();
 		$this->_setContentLength();
+		$this->_setContentType();
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
 		}
 		$this->_sendContent($this->_body);
+	}
+
+/**
+ * Formats the Content-Type header based on the configured contentType and charset
+ * the charset will only be set in the header if the response is of type text/*
+ *
+ * @return void
+ */
+	protected function _setContentType() {
+		if (in_array($this->_status, array(304, 204))) {
+			return;
+		}
+		if (strpos($this->_contentType, 'text/') === 0) {
+			$this->header('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
+		} else {
+			$this->header('Content-Type', "{$this->_contentType}");
+		}
 	}
 
 /**

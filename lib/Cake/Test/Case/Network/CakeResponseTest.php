@@ -182,11 +182,13 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-		$response->expects($this->at(2))
 			->method('_sendHeader')->with('Content-Language', 'es');
-		$response->expects($this->at(3))
+		$response->expects($this->at(2))
 			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
+		$response->expects($this->at(3))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(4))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 	}
 
@@ -202,7 +204,9 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'audio/mpeg; charset=UTF-8');
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
 		$response->send();
 	}
 
@@ -218,7 +222,9 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'audio/mpeg; charset=UTF-8');
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
 		$response->send();
 	}
 
@@ -232,9 +238,9 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 302 Found');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-		$response->expects($this->at(2))
 			->method('_sendHeader')->with('Location', 'http://www.example.com');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');		
 		$response->send();
 	}
 
@@ -439,9 +445,9 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 200 OK');
-		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Content-Length', strlen('the response body'));
 		$response->send();
 
@@ -451,9 +457,9 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->once())->method('_sendContent')->with($body);
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 200 OK');
-		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Content-Length', 116);
 		$response->send();
 
@@ -471,7 +477,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->header('Content-Length', 1);
 		$response->expects($this->never())->method('outputCompressed');
 		$response->expects($this->once())->method('_sendContent')->with($body);
-			$response->expects($this->at(2))
+			$response->expects($this->at(1))
 				->method('_sendHeader')->with('Content-Length', 1);
 		$response->send();
 
@@ -494,9 +500,9 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(0))
 			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-		$response->expects($this->at(2))
 			->method('_sendHeader')->with('Content-Length', strlen($goofyOutput) + 116);
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 		ob_end_clean();
 	}
@@ -524,7 +530,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$response->length(100);
 		$this->assertEquals(100, $response->length());
-		$response->expects($this->at(2))
+		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Content-Length', 100);
 		$response->send();
 
@@ -548,6 +554,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->once())
 			->method('_sendContent')->with('');
 		$response->send();
+		$this->assertFalse(array_key_exists('Content-Type', $response->header()));
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$response->body('This is a body');
