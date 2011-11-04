@@ -349,11 +349,23 @@ class CakeResponse {
 		$codeMessage = $this->_statusCodes[$this->_status];
 		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
+		$this->_setContent();
 		$this->_setContentLength();
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
 		}
 		$this->_sendContent($this->_body);
+	}
+
+/**
+ * Sets the response body to an empty text if the status code is 204 or 304
+ *
+ * @return void
+ */
+	protected function _setContent() {
+		if (in_array($this->_status, array(304, 204))) {
+			$this->body('');
+		}
 	}
 
 /**

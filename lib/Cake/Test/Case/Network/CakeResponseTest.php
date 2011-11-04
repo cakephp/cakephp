@@ -535,4 +535,32 @@ class CakeResponseTest extends CakeTestCase {
 			->method('_sendHeader');
 		$response->send();
 	}
+
+/**
+ * Tests that the response body is unset if the status code is 304 or 204
+ *
+ * @return void
+ */
+	public function testUnmodifiedContent() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->body('This is a body');
+		$response->statusCode(204);
+		$response->expects($this->once())
+			->method('_sendContent')->with('');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->body('This is a body');
+		$response->statusCode(304);
+		$response->expects($this->once())
+			->method('_sendContent')->with('');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->body('This is a body');
+		$response->statusCode(200);
+		$response->expects($this->once())
+			->method('_sendContent')->with('This is a body');
+		$response->send();
+	}
 }
