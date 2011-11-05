@@ -479,6 +479,20 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that 1.3 can read 2.0 format codes if json_encode exists.
+ *
+ * @return void
+ */
+	function testForwardsCompatibility() {
+		if ($this->skipIf(!function_exists('json_decode'), 'no json_decode, skipping.')) {
+			return;
+		}
+		$_COOKIE['CakeTestCookie'] = array('Test' => '{"name":"value"}');
+		$this->Controller->Cookie->startup($this->Controller);
+		$this->assertEqual('value', $this->Controller->Cookie->read('Test.name'));
+	}
+
+/**
  * encrypt method
  *
  * @param mixed $value
