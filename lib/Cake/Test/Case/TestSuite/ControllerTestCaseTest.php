@@ -471,6 +471,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function testNoControllerReuse() {
+		$this->Case->autoMock = true;
 		$result = $this->Case->testAction('/tests_apps/index', array(
 			'data' => array('var' => 'first call'),
 			'method' => 'get',
@@ -494,6 +495,20 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'return' => 'contents'
 		));
 		$this->assertContains('third call', $result);
+	}
+
+/**
+ * Test that multiple calls to redirect in the same test method don't cause issues.
+ *
+ * @return void
+ */
+	public function testTestActionWithMultipleRedirect() {
+		$this->Case->autoMock = true;
+		$Controller = $this->Case->generate('TestsApps');
+
+		$options = array('method' => 'get');
+		$this->Case->testAction('/tests_apps/redirect_to', $options);
+		$this->Case->testAction('/tests_apps/redirect_to', $options);
 	}
 
 }
