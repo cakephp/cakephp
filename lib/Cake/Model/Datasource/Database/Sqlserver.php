@@ -795,4 +795,13 @@ class Sqlserver extends DboSource {
 		return $out;
 	}
 
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return $this->config['database'];
+	}
+
 }

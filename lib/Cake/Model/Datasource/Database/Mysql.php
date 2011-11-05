@@ -685,4 +685,14 @@ class Mysql extends DboSource {
 		}
 		return 'text';
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return $this->config['database'];
+	}
+
 }

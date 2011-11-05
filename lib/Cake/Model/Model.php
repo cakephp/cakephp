@@ -89,6 +89,14 @@ class Model extends Object {
 	public $data = array();
 
 /**
+ * Holds physical schema/database name for this model.  Automatically set during Model creation.
+ *
+ * @var string
+ * @access public
+ */
+	public $schemaName = null;
+
+/**
  * Table name for this Model.
  *
  * @var string
@@ -3222,6 +3230,8 @@ class Model extends Object {
 		} elseif (isset($db->config['prefix'])) {
 			$this->tablePrefix = $db->config['prefix'];
 		}
+
+		$this->schemaName = $db->getSchemaName();
 
 		if (empty($db) || !is_object($db)) {
 			throw new MissingConnectionException(array('class' => $this->name));

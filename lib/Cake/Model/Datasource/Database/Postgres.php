@@ -189,7 +189,7 @@ class Postgres extends DboSource {
  */
 	public function describe($model) {
 		$fields = parent::describe($model);
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
 
@@ -283,7 +283,7 @@ class Postgres extends DboSource {
  */
 	public function getSequence($table, $field = 'id') {
 		if (is_object($table)) {
-			$table = $this->fullTableName($table, false);
+			$table = $this->fullTableName($table, false, false);
 		}
 		if (isset($this->_sequenceMap[$table]) && isset($this->_sequenceMap[$table][$field])) {
 			return $this->_sequenceMap[$table][$field];
@@ -301,7 +301,7 @@ class Postgres extends DboSource {
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table, $reset = 0) {
-		$table = $this->fullTableName($table, false);
+		$table = $this->fullTableName($table, false, false);
 		if (!isset($this->_sequenceMap[$table])) {
 			$cache = $this->cacheSources;
 			$this->cacheSources = false;
@@ -309,10 +309,11 @@ class Postgres extends DboSource {
 			$this->cacheSources = $cache;
 		}
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
-			$table = $this->fullTableName($table, false);
+			$schema = $this->config['schema'];
+			$table = $this->fullTableName($table, false, false);
 			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
-					$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
+					$this->_execute("ALTER SEQUENCE \"{$schema}\".\"{$sequence}\" RESTART WITH 1");
 				}
 			}
 			return true;
@@ -426,7 +427,7 @@ class Postgres extends DboSource {
  */
 	public function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		if ($table) {
 			$indexes = $this->query("SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) as statement, c2.reltablespace
 			FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
@@ -887,4 +888,14 @@ class Postgres extends DboSource {
 			break;
 		}
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	function getSchemaName() {
+		return $this->config['schema'];
+	}
+
 }
