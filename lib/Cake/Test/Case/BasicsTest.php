@@ -683,7 +683,7 @@ class BasicsTest extends CakeTestCase {
 		ob_start();
 			debug('this-is-a-test');
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -691,13 +691,25 @@ this-is-a-test
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+$expectedText = <<<EXPECTED
+
+%s (line %d)
+########## DEBUG ##########
+this-is-a-test
+###########################
+
+EXPECTED;
+		if (php_sapi_name() == 'cli') {
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+		} else {
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+		}
 		$this->assertEqual($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>');
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -705,7 +717,19 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+$expectedText = <<<EXPECTED
+
+%s (line %d)
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		if (php_sapi_name() == 'cli') {
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+		} else {
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+		}
 		$this->assertEqual($expected, $result);
 
 		ob_start();
@@ -753,7 +777,7 @@ EXPECTED;
 		ob_start();
 			debug('<div>this-is-a-test</div>', null);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -761,13 +785,25 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+$expectedText = <<<EXPECTED
+
+%s (line %d)
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		if (php_sapi_name() == 'cli') {
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+		} else {
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+		}
 		$this->assertEqual($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', null, true);
+			debug('<div>this-is-a-test</div>', null);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -775,13 +811,25 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+$expectedText = <<<EXPECTED
+
+%s (line %d)
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		if (php_sapi_name() == 'cli') {
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+		} else {
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+		}
 		$this->assertEqual($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', null, false);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 
 <pre class="cake-debug">
@@ -789,7 +837,19 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+$expectedText = <<<EXPECTED
+
+
+########## DEBUG ##########
+<div>this-is-a-test</div>
+###########################
+
+EXPECTED;
+		if (php_sapi_name() == 'cli') {
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+		} else {
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+		}
 		$this->assertEqual($expected, $result);
 
 		ob_start();
