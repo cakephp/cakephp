@@ -1864,26 +1864,28 @@ class Model extends Overloadable {
 			$savedAssociatons = $this->__backAssociation;
 			$this->__backAssociation = array();
 		}
-		foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
-			if ($data['dependent'] === true && $cascade === true) {
+		if ($cascade === true) {
+			foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
+				if ($data['dependent'] === true) {
 
-				$model =& $this->{$assoc};
-				$conditions = array($model->escapeField($data['foreignKey']) => $id);
-				if ($data['conditions']) {
-					$conditions = array_merge((array)$data['conditions'], $conditions);
-				}
-				$model->recursive = -1;
+					$model =& $this->{$assoc};
+					$conditions = array($model->escapeField($data['foreignKey']) => $id);
+					if ($data['conditions']) {
+						$conditions = array_merge((array)$data['conditions'], $conditions);
+					}
+					$model->recursive = -1;
 
-				if (isset($data['exclusive']) && $data['exclusive']) {
-					$model->deleteAll($conditions);
-				} else {
-					$records = $model->find('all', array(
-						'conditions' => $conditions, 'fields' => $model->primaryKey
-					));
+					if (isset($data['exclusive']) && $data['exclusive']) {
+						$model->deleteAll($conditions);
+					} else {
+						$records = $model->find('all', array(
+							'conditions' => $conditions, 'fields' => $model->primaryKey
+						));
 
-					if (!empty($records)) {
-						foreach ($records as $record) {
-							$model->delete($record[$model->alias][$model->primaryKey]);
+						if (!empty($records)) {
+							foreach ($records as $record) {
+								$model->delete($record[$model->alias][$model->primaryKey]);
+							}
 						}
 					}
 				}
@@ -2062,7 +2064,7 @@ class Model extends Overloadable {
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
- *  Note: find(list) + database views have issues with MySQL 5.0. Try upgrading to MySQL 5.1 if you 
+ *  Note: find(list) + database views have issues with MySQL 5.0. Try upgrading to MySQL 5.1 if you
  *  have issues with database views.
  *
  * @param array $conditions SQL conditions array, or type of find operation (all / first / count /
