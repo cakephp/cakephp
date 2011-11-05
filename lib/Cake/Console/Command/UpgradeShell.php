@@ -102,7 +102,7 @@ class UpgradeShell extends Shell {
 	public function tests() {
 		$this->_paths = array(APP . 'tests' . DS);
 		if (!empty($this->params['plugin'])) {
-			$this->_paths = App::pluginPath($this->params['plugin']) . 'tests' . DS;
+			$this->_paths = array(App::pluginPath($this->params['plugin']) . 'tests' . DS);
 		}
 		$patterns = array(
 			array(
