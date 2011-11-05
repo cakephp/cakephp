@@ -267,12 +267,13 @@ class CakeResponseTest extends CakeTestCase {
 	public function testCache() {
 		$response = new CakeResponse();
 		$since = time();
-		$time = '+1 day';
+		$time = new DateTime('+1 day', new DateTimeZone('UTC'));
+		$response->expires('+1 day');
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
-			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
+			'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
+			'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
 			'Pragma' => 'cache'
 		);
 		$response->cache($since);
@@ -568,6 +569,38 @@ class CakeResponseTest extends CakeTestCase {
 		$response->statusCode(200);
 		$response->expects($this->once())
 			->method('_sendContent')->with('This is a body');
+		$response->send();
+	}
+
+/**
+ * Tests setting the expiration date
+ *
+ * @return void
+ */
+	public function testExpires() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$now = new DateTime('now', new DateTimeZone('America/Los_Angeles'));
+		$response->expires($now);
+		$now->setTimeZone(new DateTimeZone('UTC'));
+		$this->assertEquals($now->format('D, j M Y H:i:s') . ' GMT', $response->expires());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Expires', $now->format('D, j M Y H:i:s') . ' GMT');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$now = time();
+		$response->expires($now);
+		$this->assertEquals(gmdate('D, j M Y H:i:s', $now) . ' GMT', $response->expires());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Expires', gmdate('D, j M Y H:i:s', $now) . ' GMT');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$time = new DateTime('+1 day', new DateTimeZone('UTC'));
+		$response->expires('+1 day');
+		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->expires());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Expires', $time->format('D, j M Y H:i:s') . ' GMT');
 		$response->send();
 	}
 }

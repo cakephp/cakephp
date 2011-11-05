@@ -677,10 +677,54 @@ class CakeResponse {
 		$this->header(array(
 			'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
 			'Cache-Control' => 'public, max-age=' . ($time - time()),
 			'Pragma' => 'cache'
 		));
+		$this->expires($time);
+	}
+
+
+/**
+ * Sets the Expires header for the response by taking an expiration time
+ * If called with no parameters it will return the current Expires value
+ *
+ * ## Examples:
+ *
+ * `$response->expires('now')` Will Expire the response cache now
+ * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
+ * `$response->expires)` Will return the current expiration header value
+ *
+ * @param string|DateTime $time
+ * @return string
+ */
+	public function expires($time = null) {
+		if ($time !== null) {
+			$date = $this->_getUTCDate($time);
+			$this->_headers['Expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
+		}
+		if (isset($this->_headers['Expires'])) {
+			return $this->_headers['Expires'];
+		}
+		return null;
+	}
+
+/**
+ * Returns a DateTime object initialized at the $time param and using UTC
+ * as timezone
+ *
+ * @param string|int|DateTime $time 
+ * @return DateTime
+ */
+	protected function _getUTCDate($time = null) {
+		if ($time instanceof DateTime) {
+			$result = clone $time;
+		} else if (is_integer($time)) {
+			$result = new DateTime(date('Y-m-d H:i:s', $time));
+		} else {
+			$result = new DateTime($time);
+		}
+		$result->setTimeZone(new DateTimeZone('UTC'));
+		return $result;
 	}
 
 /**
