@@ -431,7 +431,6 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testCustomAction() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->params['app'] = APP;
 
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls('', 'my_action', 'y'));
