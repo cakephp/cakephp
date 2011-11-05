@@ -487,10 +487,10 @@ class ExceptionRendererTest extends CakeTestCase {
 				404
 			),
 			array(
-				new MissingTableException(array('table' => 'articles', 'class' => 'Article')),
+				new MissingTableException(array('table' => 'articles', 'class' => 'Article', 'ds' => 'test')),
 				array(
 					'/<h2>Missing Database Table<\/h2>/',
-					'/table <em>articles<\/em> for model <em>Article<\/em>/'
+					'/Table <em>articles<\/em> for model <em>Article<\/em> was not found in datasource <em>test<\/em>/'
 				),
 				500
 			),

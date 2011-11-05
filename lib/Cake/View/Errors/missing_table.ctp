@@ -19,7 +19,7 @@
 <h2><?php echo __d('cake_dev', 'Missing Database Table'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Database table %1$s for model %2$s was not found.', '<em>' . $table . '</em>',  '<em>' . $class . '</em>'); ?>
+	<?php echo __d('cake_dev', 'Table %1$s for model %2$s was not found in datasource %3$s.', '<em>' . $table . '</em>',  '<em>' . $class . '</em>', '<em>' . $ds . '</em>'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
