@@ -141,8 +141,15 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo $this->_paintLinks();
 		echo '</div>';
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
-			$coverage = $result->getCodeCoverage()->getSummary();
-			echo $this->paintCoverage($coverage);
+			$coverage = $result->getCodeCoverage();
+			if (method_exists($coverage, 'getSummary')) {
+				$report = $coverage->getSummary();
+				echo $this->paintCoverage($report);
+			}
+			if (method_exists($coverage, 'getData')) {
+				$report = $coverage->getData();
+				echo '<div class="cake-error">' . __('Coverage generation is not supported with PHPUnit 3.6 at this time.') . '</div>';
+			}
 		}
 		$this->paintDocumentEnd();
 	}
