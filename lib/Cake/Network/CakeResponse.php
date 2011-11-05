@@ -676,10 +676,10 @@ class CakeResponse {
 		}
 		$this->header(array(
 			'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT',
-			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Cache-Control' => 'public, max-age=' . ($time - time()),
 			'Pragma' => 'cache'
 		));
+		$this->modified($since);
 		$this->expires($time);
 	}
 
@@ -692,7 +692,7 @@ class CakeResponse {
  *
  * `$response->expires('now')` Will Expire the response cache now
  * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
- * `$response->expires)` Will return the current expiration header value
+ * `$response->expires()` Will return the current expiration header value
  *
  * @param string|DateTime $time
  * @return string
@@ -704,6 +704,30 @@ class CakeResponse {
 		}
 		if (isset($this->_headers['Expires'])) {
 			return $this->_headers['Expires'];
+		}
+		return null;
+	}
+
+/**
+ * Sets the Last-Modified header for the response by taking an modification time
+ * If called with no parameters it will return the current Last-Modified value
+ *
+ * ## Examples:
+ *
+ * `$response->modified('now')` Will set the Last-Modified to the current time
+ * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
+ * `$response->modified()` Will return the current Last-Modified header value
+ *
+ * @param string|DateTime $time
+ * @return string
+ */
+	public function modified($time = null) {
+		if ($time !== null) {
+			$date = $this->_getUTCDate($time);
+			$this->_headers['Last-Modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
+		}
+		if (isset($this->_headers['Last-Modified'])) {
+			return $this->_headers['Last-Modified'];
 		}
 		return null;
 	}

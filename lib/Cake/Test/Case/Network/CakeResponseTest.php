@@ -271,7 +271,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expires('+1 day');
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
+			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
 			'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
 			'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
 			'Pragma' => 'cache'
@@ -284,7 +284,7 @@ class CakeResponseTest extends CakeTestCase {
 		$time = '+5 day';
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
+			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
 			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
 			'Pragma' => 'cache'
@@ -297,7 +297,7 @@ class CakeResponseTest extends CakeTestCase {
 		$time = time();
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
+			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
 			'Cache-Control' => 'public, max-age=0',
 			'Pragma' => 'cache'
@@ -601,6 +601,38 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->expires());
 		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Expires', $time->format('D, j M Y H:i:s') . ' GMT');
+		$response->send();
+	}
+
+/**
+ * Tests setting the modification date
+ *
+ * @return void
+ */
+	public function testModified() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$now = new DateTime('now', new DateTimeZone('America/Los_Angeles'));
+		$response->modified($now);
+		$now->setTimeZone(new DateTimeZone('UTC'));
+		$this->assertEquals($now->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Last-Modified', $now->format('D, j M Y H:i:s') . ' GMT');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$now = time();
+		$response->modified($now);
+		$this->assertEquals(gmdate('D, j M Y H:i:s', $now) . ' GMT', $response->modified());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Last-Modified', gmdate('D, j M Y H:i:s', $now) . ' GMT');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$time = new DateTime('+1 day', new DateTimeZone('UTC'));
+		$response->modified('+1 day');
+		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Last-Modified', $time->format('D, j M Y H:i:s') . ' GMT');
 		$response->send();
 	}
 }
