@@ -84,7 +84,7 @@ class CakeFixtureManager {
 		$db = ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 		$this->_db = $db;
-		ClassRegistry::config(array('ds' => 'test'));
+		ClassRegistry::config(array('ds' => 'test', 'testing' => true));
 		$this->_initialized = true;
 	}
 
@@ -131,7 +131,7 @@ class CakeFixtureManager {
 					$fixtureFile = $path . DS . $className . 'Fixture.php';
 					require_once($fixtureFile);
 					$fixtureClass = $className . 'Fixture';
-					$this->_loaded[$fixtureIndex] = new $fixtureClass($this->_db);
+					$this->_loaded[$fixtureIndex] = new $fixtureClass();
 					$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
 					break;
 				}
