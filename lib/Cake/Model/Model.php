@@ -1688,6 +1688,14 @@ class Model extends Object {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
 				$keyInfo = $this->{$join}->schema($this->{$join}->primaryKey);
+				if ($with = $this->hasAndBelongsToMany[$assoc]['with']) {
+					$withModel = is_array($with) ? key($with) : $with;
+					list($pluginName, $withModel) = pluginSplit($withModel);
+					$dbMulti = $this->{$withModel}->getDataSource();
+				} else {
+					$dbMulti = $db;
+				}
+
 				$isUUID = !empty($this->{$join}->primaryKey) && (
 						$keyInfo['length'] == 36 && (
 						$keyInfo['type'] === 'string' ||
@@ -1699,8 +1707,8 @@ class Model extends Object {
 				$primaryAdded = false;
 
 				$fields =  array(
-					$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
-					$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
+					$dbMulti->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
+					$dbMulti->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
 				);
 
 				$idField = $db->name($this->{$join}->primaryKey);
@@ -1741,7 +1749,7 @@ class Model extends Object {
 					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
  						$conditions[$associationForeignKey] = $oldLinks;
-						$db->delete($this->{$join}, $conditions);
+						$dbMulti->delete($this->{$join}, $conditions);
 					}
 				}
 
@@ -1754,7 +1762,7 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$db->insertMulti($this->{$join}, $fields, $newValues);
+					$dbMulti->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
 		}
