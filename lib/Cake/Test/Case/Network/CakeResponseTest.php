@@ -21,6 +21,24 @@ App::uses('CakeResponse', 'Network');
 class CakeResponseTest extends CakeTestCase {
 
 /**
+ * Setup for tests
+ *
+ * @return void
+ */
+	public function setUp() {
+		ob_start();
+	}
+
+/**
+ * Cleanup after tests
+ *
+ * @return void
+ */
+	public function tearDown() {
+		ob_end_clean();
+	}
+
+/**
 * Tests the request object constructor
 *
 */

@@ -169,6 +169,7 @@ class JsHelperTest extends CakeTestCase {
 /**
  * test that methods dispatch internally and to the engine class
  *
+ * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
 	public function testMethodDispatching() {
@@ -182,7 +183,6 @@ class JsHelperTest extends CakeTestCase {
 		$this->Js->event('click', 'callback');
 
 		$this->Js->TestJsEngine = new StdClass();
-		$this->expectError();
 		$this->Js->someMethodThatSurelyDoesntExist();
 	}
 

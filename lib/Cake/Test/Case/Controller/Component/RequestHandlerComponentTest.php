@@ -629,7 +629,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testAccepts() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
-		$this->assertEqual($this->RequestHandler->accepts(array('js', 'xml', 'html')), 'xml');
+		$this->assertTrue($this->RequestHandler->accepts(array('js', 'xml', 'html')));
 		$this->assertFalse($this->RequestHandler->accepts(array('gif', 'jpeg', 'foo')));
 
 		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';

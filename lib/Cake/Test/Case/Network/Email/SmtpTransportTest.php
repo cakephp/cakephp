@@ -127,7 +127,7 @@ class SmtpTransportTest extends CakeTestCase {
 /**
  * testConnectFail method
  *
- * @expectedException Exception
+ * @expectedException SocketException
  * @return void
  */
 	public function testConnectFail() {

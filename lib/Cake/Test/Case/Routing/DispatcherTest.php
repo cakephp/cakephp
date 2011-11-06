@@ -1298,12 +1298,6 @@ class DispatcherTest extends CakeTestCase {
 		$expected = filesize(CakePlugin::path('TestPlugin') . 'webroot' . DS . 'css' . DS . 'unknown.extension');
 		$headers = $response->header();
 		$this->assertEqual($expected, $headers['Content-Length']);
-
-		if (php_sapi_name() == 'cli') {
-			while (ob_get_level()) {
-				ob_get_clean();
-			}
-		}
 	}
 
 /**

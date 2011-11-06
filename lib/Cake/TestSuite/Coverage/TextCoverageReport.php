@@ -18,8 +18,6 @@
  */
 App::uses('BaseCoverageReport', 'TestSuite/Coverage');
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 class TextCoverageReport extends BaseCoverageReport {
 
 /**

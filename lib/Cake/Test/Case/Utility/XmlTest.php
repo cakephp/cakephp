@@ -167,7 +167,6 @@ class XmlTest extends CakeTestCase {
 			array(null),
 			array(false),
 			array(''),
-			array('<tag>')
 		);
 	}
 
@@ -175,11 +174,25 @@ class XmlTest extends CakeTestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException Exception
+ * @expectedException XmlException
  * return void
  */
 	public function testBuildInvalidData($value) {
 		Xml::build($value);
+	}
+
+/**
+ * test build with a single empty tag
+ *
+ * return void
+ */
+	public function testBuildEmptyTag() {
+		try {
+			Xml::build('<tag>');
+			$this->fail('No exception');
+		} catch (Exception $e) {
+			$this->assertTrue(true, 'An exception was raised');
+		}
 	}
 
 /**
@@ -356,10 +369,14 @@ class XmlTest extends CakeTestCase {
  * testFromArrayFail method
  *
  * @dataProvider invalidArrayDataProvider
- * @expectedException Exception
  */
 	public function testFromArrayFail($value) {
-		Xml::fromArray($value);
+		try {
+			Xml::fromArray($value);
+			$this->fail('No exception.');
+		} catch (Exception $e) {
+			$this->assertTrue(true, 'Caught exception.');
+		}
 	}
 
 /**
@@ -821,7 +838,7 @@ class XmlTest extends CakeTestCase {
  * testToArrayFail method
  *
  * @dataProvider invalidToArrayDataProvider
- * @expectedException Exception
+ * @expectedException XmlException
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);

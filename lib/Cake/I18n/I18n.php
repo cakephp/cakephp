@@ -39,9 +39,9 @@ if (function_exists('mb_internal_encoding')) {
 class I18n {
 
 /**
- * Instance of the I10n class for localization
+ * Instance of the L10n class for localization
  *
- * @var I10n
+ * @var L10n
  */
 	public $l10n = null;
 
@@ -92,6 +92,15 @@ class I18n {
 	);
 
 /**
+ * Constructor, use I18n::getInstance() to get the i18n translation object.
+ *
+ * @return void
+ */
+	protected function __construct() {
+		$this->l10n = new L10n();
+	}
+
+/**
  * Return a static instance of the I18n class
  *
  * @return I18n
@@ -100,7 +109,6 @@ class I18n {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new I18n();
-			$instance[0]->l10n = new L10n();
 		}
 		return $instance[0];
 	}

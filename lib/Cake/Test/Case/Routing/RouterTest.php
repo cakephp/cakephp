@@ -2225,10 +2225,10 @@ class RouterTest extends CakeTestCase {
 /**
  * test that route classes must extend CakeRoute
  *
+ * @expectedException RouterException
  * @return void
  */
 	public function testCustomRouteException() {
-		$this->expectException();
 		Router::connect('/:controller', array(), array('routeClass' => 'Object'));
 	}
 

@@ -102,7 +102,7 @@ class UpgradeShell extends Shell {
 	public function tests() {
 		$this->_paths = array(APP . 'tests' . DS);
 		if (!empty($this->params['plugin'])) {
-			$this->_paths = App::pluginPath($this->params['plugin']) . 'tests' . DS;
+			$this->_paths = array(App::pluginPath($this->params['plugin']) . 'tests' . DS);
 		}
 		$patterns = array(
 			array(
@@ -225,6 +225,7 @@ class UpgradeShell extends Shell {
 		}
 		$helpers = array_merge($pluginHelpers, $helpers);
 		foreach ($helpers as $helper) {
+			$helper = preg_replace('/Helper$/', '', $helper);
 			$oldHelper = strtolower(substr($helper, 0, 1)).substr($helper, 1);
 			$patterns[] = array(
 				"\${$oldHelper} to \$this->{$helper}",

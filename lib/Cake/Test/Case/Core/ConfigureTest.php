@@ -342,7 +342,7 @@ class ConfigureTest extends CakeTestCase {
 /**
  * test reader() throwing exceptions on missing interface.
  *
- * @expectedException Exception
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testReaderExceptionOnIncorrectClass() {

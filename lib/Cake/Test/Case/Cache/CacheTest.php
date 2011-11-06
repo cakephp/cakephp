@@ -129,11 +129,11 @@ class CacheTest extends CakeTestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
+ * @expectedException CacheException
  * @return void
  */
 	public function testAttemptingToConfigureANonCacheEngineClass() {
 		$this->getMock('StdClass', array(), array(), 'RubbishEngine');
-		$this->expectException();
 		Cache::config('Garbage', array(
 			'engine' => 'Rubbish'
 		));

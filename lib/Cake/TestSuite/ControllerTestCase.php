@@ -17,8 +17,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 App::uses('Dispatcher', 'Routing');
 App::uses('CakeTestCase', 'TestSuite');
 App::uses('Router', 'Routing');
@@ -121,7 +119,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * @var boolean
  */
-	public $autoMock = false;
+	public $autoMock = true;
 
 /**
  * Use custom routes during tests
