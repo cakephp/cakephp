@@ -225,6 +225,7 @@ class UpgradeShell extends Shell {
 		}
 		$helpers = array_merge($pluginHelpers, $helpers);
 		foreach ($helpers as $helper) {
+			$helper = preg_replace('/Helper$/', '', $helper);
 			$oldHelper = strtolower(substr($helper, 0, 1)).substr($helper, 1);
 			$patterns[] = array(
 				"\${$oldHelper} to \$this->{$helper}",
