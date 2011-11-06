@@ -303,6 +303,14 @@ class AppTest extends CakeTestCase {
 		$this->assertTrue(in_array('Dispatcher', $result));
 		$this->assertTrue(in_array('Router', $result));
 
+		App::build(array(
+			'Model/Behavior' => App::core('Model/Behavior'),
+			'Controller' => App::core('Controller'),
+			'Controller/Component' => App::core('Controller/Component'),
+			'View' => App::core('View'),
+			'Model' => App::core('Model'),
+			'View/Helper' => App::core('View/Helper'),
+		), App::RESET);
 		$result = App::objects('behavior', null, false);
 		$this->assertTrue(in_array('TreeBehavior', $result));
 		$result = App::objects('Model/Behavior', null, false);
