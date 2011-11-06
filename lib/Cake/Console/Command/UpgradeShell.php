@@ -702,11 +702,11 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	protected function _findFiles($extensions = '') {
+		$this->_files = array();
 		foreach ($this->_paths as $path) {
 			if (!is_dir($path)) {
 				continue;
 			}
-			$this->_files = array();
 			$Iterator = new RegexIterator(
 				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
 				'/^.+\.(' . $extensions . ')$/i',
