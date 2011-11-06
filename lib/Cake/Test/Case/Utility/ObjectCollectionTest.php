@@ -190,30 +190,6 @@ class ObjectCollectionTest extends CakeTestCase {
 	}
 
 /**
- * test that the initalize callback is triggered on all components even those that are disabled.
- *
- * @return void
- */
-	public function testTriggerWithTriggerDisabledObjects() {
-		$this->_makeMockClasses();
-		$this->Objects->load('TriggerMockFirst', array(), false);
-		$this->Objects->load('TriggerMockSecond');
-
-		$this->mockObjects[] = $this->Objects->TriggerMockFirst;
-		$this->mockObjects[] = $this->Objects->TriggerMockSecond;
-
-		$this->Objects->TriggerMockFirst->expects($this->once())
-			->method('callback')
-			->will($this->returnValue(true));
-		$this->Objects->TriggerMockSecond->expects($this->once())
-			->method('callback')
-			->will($this->returnValue(true));
-
-		$result = $this->Objects->trigger('callback', array(), array('triggerDisabled' => true));
-		$this->assertTrue($result);
-	}
-
-/**
  * test trigger and disabled objects
  *
  * @return void
