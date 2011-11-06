@@ -225,8 +225,8 @@
 	Configure::write('Acl.database', 'default');
 
 /**
- * If you are on PHP 5.3 uncomment this line and correct your server timezone
- * to fix the date & time related errors.
+ * Uncomment this line and correct your server timezone to fix 
+ * any date & time related errors.
  */
 	//date_default_timezone_set('UTC');
 
