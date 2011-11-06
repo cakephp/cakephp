@@ -390,6 +390,43 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
+* Tests the outputCompressed method
+*
+*/
+	public function testOutputCompressed() {
+		$response = new CakeResponse();
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
+		$result = $response->outputCompressed();
+		$this->assertFalse($result);
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = '';
+		$result = $response->outputCompressed();
+		$this->assertFalse($result);
+
+		if (!extension_loaded("zlib")) {
+			$this->markTestSkipped('Skipping further tests for outputCompressed as zlib extension is not loaded');
+		}
+		if (php_sapi_name() !== 'cli') {
+			$this->markTestSkipped('Testing outputCompressed method with compression enabled done only in cli');
+		}
+
+		if (ini_get("zlib.output_compression") !== '1') {
+			ob_start('ob_gzhandler');
+		}
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
+		$result = $response->outputCompressed();
+		$this->assertTrue($result);
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = '';
+		$result = $response->outputCompressed();
+		$this->assertFalse($result);
+		if (ini_get("zlib.output_compression") !== '1') {
+			ob_get_clean();
+		}
+	}
+
+/**
 * Tests the send and setting of Content-Length
 *
 */
