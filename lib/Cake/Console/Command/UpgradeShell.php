@@ -547,7 +547,7 @@ class UpgradeShell extends Shell {
 			),
 			array(
 				'$this->cakeError("error500") -> throw new InternalErrorException()',
-				'/(\$this->cakeError\(["\']error404["\']\));/',
+				'/(\$this->cakeError\(["\']error500["\']\));/',
 				'throw new InternalErrorException();'
 			),
 		);
