@@ -353,6 +353,9 @@ class ExtractTask extends Shell {
 		foreach ($models as $model) {
 			App::uses($model, $plugin . 'Model');
 			$reflection = new ReflectionClass($model);
+			if (!$reflection->isSubClassOf('Model')) {
+				continue;
+			}
 			$properties = $reflection->getDefaultProperties();
 			$validate = $properties['validate'];
 			if (empty($validate)) {

@@ -85,6 +85,7 @@ class CommandListShell extends Shell {
 		$shellList = $this->_appendShells('CORE', $shells, $shellList);
 
 		$appShells = App::objects('Console/Command', null, false);
+		$appShells = array_diff($appShells, $shells);
 		$shellList = $this->_appendShells('app', $appShells, $shellList);
 
 		$plugins = CakePlugin::loaded();
