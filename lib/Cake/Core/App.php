@@ -422,6 +422,9 @@ class App {
 
 			if (empty($path)) {
 				$path = self::path($type, $plugin);
+				if (empty($plugin)) {
+					$path = array_merge($path, App::core($type));
+				}
 			}
 
 			foreach ((array)$path as $dir) {
