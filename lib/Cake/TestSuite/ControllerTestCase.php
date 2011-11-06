@@ -119,7 +119,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * @var boolean
  */
-	public $autoMock = false;
+	public $autoMock = true;
 
 /**
  * Use custom routes during tests

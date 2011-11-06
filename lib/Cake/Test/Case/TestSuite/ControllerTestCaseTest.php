@@ -503,7 +503,6 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function testTestActionWithMultipleRedirect() {
-		$this->Case->autoMock = true;
 		$Controller = $this->Case->generate('TestsApps');
 
 		$options = array('method' => 'get');
