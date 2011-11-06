@@ -143,7 +143,7 @@ class ViewTask extends BakeTask {
 		}
 		$adminRoute = $this->Project->getPrefix();
 		foreach ($methods as $i => $method) {
-			if ($adminRoute && isset($this->params['admin'])) {
+			if ($adminRoute && !empty($this->params['admin'])) {
 				if ($scaffoldActions) {
 					$methods[$i] = $adminRoute . $method;
 					continue;
