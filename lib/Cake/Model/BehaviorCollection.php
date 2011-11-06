@@ -165,10 +165,10 @@ class BehaviorCollection extends ObjectCollection {
 			}
 		}
 
-		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
-		if (!in_array($alias, $this->_enabled) && !$configDisabled) {
+		$enable = isset($config['enabled']) ? $config['enabled'] : true;
+		if ($enable) {
 			$this->enable($alias);
-		} elseif ($configDisabled) {
+		} else {
 			$this->disable($alias);
 		}
 		return true;
@@ -184,14 +184,13 @@ class BehaviorCollection extends ObjectCollection {
 		list($plugin, $name) = pluginSplit($name);
 		if (isset($this->_loaded[$name])) {
 			$this->_loaded[$name]->cleanup(ClassRegistry::getObject($this->modelName));
-			unset($this->_loaded[$name]);
+			parent::unload($name);
 		}
 		foreach ($this->_methods as $m => $callback) {
 			if (is_array($callback) && $callback[0] == $name) {
 				unset($this->_methods[$m]);
 			}
 		}
-		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
 	}
 
 /**
