@@ -214,6 +214,9 @@ class UpgradeShell extends Shell {
 		}
 
 		$patterns = array();
+		App::build(array(
+			'View/Helper' => App::core('View/Helper'),
+		), App::APPEND);
 		$helpers = App::objects('helper');
 		$plugins = App::objects('plugin');
 		$pluginHelpers = array();
