@@ -35,16 +35,16 @@ class JsonViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutView() {
-		$request = new CakeRequest();
-		$response = new CakeResponse();
-		$controller = new Controller($request, $response);
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
 		$data = array('user' => 'fake', 'list' => array('item1', 'item2'));
-		$controller->set('serialize', $data);
-		$view = new JsonView($controller);
-		$output = $view->render(false);
+		$Controller->set(array('data' => $data, 'serialize' => 'data'));
+		$View = new JsonView($Controller);
+		$output = $View->render(false);
 
 		$this->assertIdentical(json_encode($data), $output);
-		$this->assertIdentical('application/json', $response->type());
+		$this->assertIdentical('application/json', $Response->type());
 	}
 
 /**
@@ -54,9 +54,9 @@ class JsonViewTest extends CakeTestCase {
  */
 	public function testRenderWithView() {
 		App::build(array('View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Json')));
-		$request = new CakeRequest();
-		$response = new CakeResponse();
-		$controller = new Controller($request, $response);
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
 		$data = array(
 			'User' => array(
 				'username' => 'fake'
@@ -66,13 +66,13 @@ class JsonViewTest extends CakeTestCase {
 				array('name' => 'item2')
 			)
 		);
-		$controller->set('user', $data);
-		$view = new JsonView($controller);
-		$output = $view->render('index');
+		$Controller->set('user', $data);
+		$View = new JsonView($Controller);
+		$output = $View->render('index');
 
 		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2')));
 		$this->assertIdentical($expected, $output);
-		$this->assertIdentical('application/json', $response->type());
+		$this->assertIdentical('application/json', $Response->type());
 	}
 
 }
