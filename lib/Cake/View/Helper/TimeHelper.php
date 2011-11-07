@@ -676,10 +676,10 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Returns gmt, given either a UNIX timestamp or a valid strtotime() date string.
+ * Returns gmt as a UNIX timestamp.
  *
- * @param string $string Datetime string
- * @return string Formatted date string
+ * @param string $string UNIX timestamp or a valid strtotime() date string
+ * @return integer UNIX timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function gmt($string = null) {
@@ -688,7 +688,6 @@ class TimeHelper extends AppHelper {
 		} else {
 			$string = time();
 		}
-		$string = $this->fromString($string);
 		$hour = intval(date("G", $string));
 		$minute = intval(date("i", $string));
 		$second = intval(date("s", $string));
