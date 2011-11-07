@@ -1,9 +1,5 @@
 <?php
 /**
- * A custom view class that is used for XML responses
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,8 +8,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 2.1.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -21,9 +15,27 @@ App::uses('View', 'View');
 App::uses('Xml', 'Utility');
 
 /**
- * XmlView
+ * A view class that is used for creating XML responses.
+ *
+ * By setting the 'serialize' key in your controller, you can specify a view variable
+ * that should be serialized to XML and used as the response for the request.
+ * This allows you to omit views + layouts, if your just need to emit a single view
+ * variable as the XML response.
+ *
+ * In your controller, you could do the following:
+ *
+ * `$this->set(array('posts' => $posts, 'serialize' => 'posts'));`
+ *
+ * When the view is rendered, the `$posts` view variable will be serialized 
+ * into XML.
+ *
+ * **Note** The view variable you specify must be compatible with Xml::fromArray().
+ *
+ * If you don't use the `serialize` key, you will need a view + layout just like a
+ * normal view.
  *
  * @package       Cake.View
+ * @since         CakePHP(tm) v 2.1.0
  */
 class XmlView extends View {
 
