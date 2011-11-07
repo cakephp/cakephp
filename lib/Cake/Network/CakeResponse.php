@@ -666,8 +666,7 @@ class CakeResponse {
 		$this->header(array(
 			'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
 			'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
-			'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-			'Pragma' => 'no-cache'
+			'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
 		));
 	}
 
@@ -699,9 +698,10 @@ class CakeResponse {
  * @param boolean $public  if set to true, the Cache-Control header will be set as public
  * if set to false, the response will be set to private
  * if no value is provided, it will return whether the response is sharable or not
+ * @param int $time time in seconds after which the response should no longer be considered fresh
  * @return boolean
  */
-	public function sharable($public = null) {
+	public function sharable($public = null, $time = null) {
 		if ($public === null) {
 			$public = array_key_exists('public', $this->_cacheDirectives);
 			$private = array_key_exists('private', $this->_cacheDirectives);
@@ -715,12 +715,36 @@ class CakeResponse {
 		if ($public) {
 			$this->_cacheDirectives['public'] = null;
 			unset($this->_cacheDirectives['private']);
+			$this->sharedMaxAge($time);
 		} else {
 			$this->_cacheDirectives['private'] = null;
 			unset($this->_cacheDirectives['public']);
+			$this->maxAge($time);
 		}
-		$this->_setCacheControl();
+		if ($time == null) {
+			$this->_setCacheControl();
+		}
 		return (bool) $public;
+	}
+
+/**
+ * Sets the Cache-Control s-maxage directive.
+ * The max-age is the number of seconds after which the response should no longer be considered
+ * a good candidate to be fetched from a shared cache (like in a proxy server).
+ * If called with no parameters, this function will return the current max-age value if any
+ *
+ * @param int $seconds if null, the method will return the current s-maxage value
+ * @return int
+ */
+	public function sharedMaxAge($seconds = null) {
+		if ($seconds !== null) {
+			$this->_cacheDirectives['s-maxage'] = $seconds;
+			$this->_setCacheControl();
+		}
+		if (isset($this->_cacheDirectives['s-maxage'])) {
+			return $this->_cacheDirectives['s-maxage'];
+		}
+		return null;
 	}
 
 /**
@@ -729,7 +753,7 @@ class CakeResponse {
  * a good candidate to be fetched from the local (client) cache.
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param int $seconds
+ * @param int $seconds if null, the method will return the current max-age value
  * @return int
  */
 	public function maxAge($seconds = null) {

@@ -253,8 +253,7 @@ class CakeResponseTest extends CakeTestCase {
 		$expected = array(
 			'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
 			'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
-			'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-			'Pragma' => 'no-cache'
+			'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
 		);
 		$response->disableCache();
 		$this->assertEquals($response->header(), $expected);
@@ -273,8 +272,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
 			'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
-			'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
-			'Pragma' => 'cache'
+			'Cache-Control' => 'public, max-age=' . ($time->format('U') - time())
 		);
 		$response->cache($since);
 		$this->assertEquals($response->header(), $expected);
@@ -286,8 +284,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
-			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
-			'Pragma' => 'cache'
+			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time())
 		);
 		$response->cache($since, $time);
 		$this->assertEquals($response->header(), $expected);
@@ -299,8 +296,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
-			'Cache-Control' => 'public, max-age=0',
-			'Pragma' => 'cache'
+			'Cache-Control' => 'public, max-age=0'
 		);
 		$response->cache($since, $time);
 		$this->assertEquals($response->header(), $expected);
@@ -673,6 +669,17 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertFalse($response->sharable());
 		$response->sharable(true);
 		$this->assertTrue($response->sharable());
+
+		$response = new CakeResponse;
+		$response->sharable(true, 3600);
+		$headers = $response->header();
+		$this->assertEquals('public, s-maxage=3600', $headers['Cache-Control']);
+
+		$response = new CakeResponse;
+		$response->sharable(false, 3600);
+		$headers = $response->header();
+		$this->assertEquals('private, max-age=3600', $headers['Cache-Control']);
+		$response->send();
 	}
 
 /**
@@ -693,11 +700,37 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$response->maxAge(3600);
+		$response->sharable(false);
+		$headers = $response->header();
+		$this->assertEquals('max-age=3600, private', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'max-age=3600, private');
+		$response->send();
+	}
+
+/**
+ * Tests setting of s-maxage Cache-Control directive
+ *
+ * @return void
+ */
+	public function testSharedMaxAge() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$this->assertNull($response->maxAge());
+		$response->sharedMaxAge(3600);
+		$this->assertEquals(3600, $response->sharedMaxAge());
+		$headers = $response->header();
+		$this->assertEquals('s-maxage=3600', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 's-maxage=3600');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->sharedMaxAge(3600);
 		$response->sharable(true);
 		$headers = $response->header();
-		$this->assertEquals('max-age=3600, public', $headers['Cache-Control']);
+		$this->assertEquals('s-maxage=3600, public', $headers['Cache-Control']);
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Cache-Control', 'max-age=3600, public');
+			->method('_sendHeader')->with('Cache-Control', 's-maxage=3600, public');
 		$response->send();
 	}
 }
