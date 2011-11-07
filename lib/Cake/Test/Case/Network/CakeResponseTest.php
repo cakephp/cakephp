@@ -636,6 +636,11 @@ class CakeResponseTest extends CakeTestCase {
 		$response->send();
 	}
 
+/**
+ * Tests setting of public/private Cache-Control directives
+ *
+ * @return void
+ */
 	public function testSharable() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$this->assertNull($response->sharable());
@@ -668,5 +673,31 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertFalse($response->sharable());
 		$response->sharable(true);
 		$this->assertTrue($response->sharable());
+	}
+
+/**
+ * Tests setting of max-age Cache-Control directive
+ *
+ * @return void
+ */
+	public function testMaxAge() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$this->assertNull($response->maxAge());
+		$response->maxAge(3600);
+		$this->assertEquals(3600, $response->maxAge());
+		$headers = $response->header();
+		$this->assertEquals('max-age=3600', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'max-age=3600');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->maxAge(3600);
+		$response->sharable(true);
+		$headers = $response->header();
+		$this->assertEquals('max-age=3600, public', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'max-age=3600, public');
+		$response->send();
 	}
 }
