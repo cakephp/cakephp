@@ -387,7 +387,7 @@ class TimeHelper extends AppHelper {
  *
  * @param string $dateString
  * @param boolean $range if true returns a range in Y-m-d format
- * @return boolean True if datetime string is within current week
+ * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toQuarter($dateString, $range = false) {
