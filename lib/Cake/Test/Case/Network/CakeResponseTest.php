@@ -635,4 +635,38 @@ class CakeResponseTest extends CakeTestCase {
 			->method('_sendHeader')->with('Last-Modified', $time->format('D, j M Y H:i:s') . ' GMT');
 		$response->send();
 	}
+
+	public function testSharable() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$this->assertNull($response->sharable());
+		$response->sharable(true);
+		$headers = $response->header();
+		$this->assertEquals('public', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'public');
+		$response->send();
+
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->sharable(false);
+		$headers = $response->header();
+		$this->assertEquals('private', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'private');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->sharable(true);
+		$headers = $response->header();
+		$this->assertEquals('public', $headers['Cache-Control']);
+		$response->sharable(false);
+		$headers = $response->header();
+		$this->assertEquals('private', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'private');
+		$response->send();
+		$this->assertFalse($response->sharable());
+		$response->sharable(true);
+		$this->assertTrue($response->sharable());
+	}
 }

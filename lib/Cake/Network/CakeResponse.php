@@ -312,6 +312,14 @@ class CakeResponse {
 	protected $_charset = 'UTF-8';
 
 /**
+ * Holds all the cache directives that will be converted
+ * into headers when sending the request
+ *
+ * @var string
+ */
+	protected $_cacheDirectives = array();
+
+/**
  * Class constructor
  *
  * @param array $options list of parameters to setup the response. Possible values are:
@@ -675,14 +683,81 @@ class CakeResponse {
 			$time = strtotime($time);
 		}
 		$this->header(array(
-			'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT',
-			'Cache-Control' => 'public, max-age=' . ($time - time()),
-			'Pragma' => 'cache'
+			'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
 		));
 		$this->modified($since);
 		$this->expires($time);
+		$this->sharable(true);
+		$this->maxAge($time - time());
 	}
 
+/**
+ * Sets whether a response is eligible to be cached by intermediate proxies
+ * This method controls the `public` or `private` directive in the Cache-Control
+ * header
+ *
+ * @param boolean $public  if set to true, the Cache-Control header will be set as public
+ * if set to false, the response will be set to private
+ * if no value is provided, it will return whether the response is sharable or not
+ * @return boolean
+ */
+	public function sharable($public = null) {
+		if ($public === null) {
+			$public = array_key_exists('public', $this->_cacheDirectives);
+			$private = array_key_exists('private', $this->_cacheDirectives);
+			$noCache = array_key_exists('no-cache', $this->_cacheDirectives);
+			if (!$public && !$private && !$noCache) {
+				return null;
+			}
+			$sharable = $public || ! ($private || $noCache);
+			return $sharable;
+		}
+		if ($public) {
+			$this->_cacheDirectives['public'] = null;
+			unset($this->_cacheDirectives['private']);
+		} else {
+			$this->_cacheDirectives['private'] = null;
+			unset($this->_cacheDirectives['public']);
+		}
+		$this->_setCacheControl();
+		return (bool) $public;
+	}
+
+/**
+ * Sets the Cache-Control max-age directive.
+ * The max-age is the number of seconds after which the response should no longer be considered
+ * a good candidate to be fetched from the local (client) cache.
+ * If called with no parameters, this function will return the current max-age value if any
+ *
+ * @param int $seconds
+ * @return int
+ */
+	public function maxAge($seconds = null) {
+		if ($seconds !== null) {
+			$this->_cacheDirectives['max-age'] = $seconds;
+			$this->_setCacheControl();
+		}
+		if (isset($this->_cacheDirectives['max-age'])) {
+			return $this->_cacheDirectives['max-age'];
+		}
+		return null;
+	}
+
+/**
+ * Helper method to generate a valid Cache-Control header from the options set
+ * in other methods
+ *
+ * @return void
+ */
+	protected function _setCacheControl() {
+		$control = '';
+		foreach ($this->_cacheDirectives as $key => $val) {
+			$control .= is_null($val) ? $key : sprintf('%s=%s', $key, $val);
+			$control .= ', ';
+		}
+		$control = rtrim($control, ', ');
+		$this->header('Cache-Control', $control);
+	}
 
 /**
  * Sets the Expires header for the response by taking an expiration time
