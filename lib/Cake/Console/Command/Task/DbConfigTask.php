@@ -104,7 +104,7 @@ class DbConfigTask extends Shell {
 				}
 			}
 
-			$driver = $this->in(__d('cake_console', 'Driver:'), array('Mysql', 'Postgres', 'Sqlite', 'Sqlserver'), 'Mysql');
+			$datasource = $this->in(__d('cake_console', 'Datasource:'), array('Mysql', 'Postgres', 'Sqlite', 'Sqlserver'), 'Mysql');
 
 			$persistent = $this->in(__d('cake_console', 'Persistent Connection?'), array('y', 'n'), 'n');
 			if (strtolower($persistent) == 'n') {
@@ -167,7 +167,7 @@ class DbConfigTask extends Shell {
 			}
 
 			$schema = '';
-			if ($driver == 'postgres') {
+			if ($datasource == 'postgres') {
 				while ($schema == '') {
 					$schema = $this->in(__d('cake_console', 'Table schema?'), null, 'n');
 				}
@@ -176,7 +176,7 @@ class DbConfigTask extends Shell {
 				$schema = null;
 			}
 
-			$config = compact('name', 'driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix', 'encoding', 'port', 'schema');
+			$config = compact('name', 'datasource', 'persistent', 'host', 'login', 'password', 'database', 'prefix', 'encoding', 'port', 'schema');
 
 			while ($this->_verify($config) == false) {
 				$this->_interactive();
@@ -209,7 +209,7 @@ class DbConfigTask extends Shell {
 		$this->out(__d('cake_console', 'The following database configuration will be created:'));
 		$this->hr();
 		$this->out(__d('cake_console', "Name:         %s", $name));
-		$this->out(__d('cake_console', "Driver:       %s", $driver));
+		$this->out(__d('cake_console', "Datasource:       %s", $datasource));
 		$this->out(__d('cake_console', "Persistent:   %s", $persistent));
 		$this->out(__d('cake_console', "Host:         %s", $host));
 
@@ -314,7 +314,7 @@ class DbConfigTask extends Shell {
 			extract($config);
 
 			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'datasource' => 'Database/{$driver}',\n";
+			$out .= "\t\t'datasource' => 'Database/{$datasource}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
 
