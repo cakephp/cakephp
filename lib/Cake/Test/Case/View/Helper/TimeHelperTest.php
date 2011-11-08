@@ -515,7 +515,8 @@ class TimeHelperTest extends CakeTestCase {
 		$result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
 		$this->assertTrue($result);
 	}
-	/**
+
+/**
  * testWasYesterday method
  *
  * @return void
@@ -534,7 +535,8 @@ class TimeHelperTest extends CakeTestCase {
 		$result = $this->Time->wasYesterday('-2 days');
 		$this->assertFalse($result);
 	}
-	/**
+
+/**
  * testIsTomorrow method
  *
  * @return void
@@ -594,7 +596,8 @@ class TimeHelperTest extends CakeTestCase {
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
 	}
-	/**
+
+/**
  * testUserOffset method
  *
  * @return void
