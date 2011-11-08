@@ -134,7 +134,7 @@ class Sqlite extends DboSource {
  * @return array Array of tablenames in the database
  */
 	public function listSources($data = null) {
-		$cache = parent::listSources();
+		$cache = $this->cachedListSources();
 		if ($cache != null) {
 			return $cache;
 		}
@@ -148,7 +148,7 @@ class Sqlite extends DboSource {
 			foreach ($result as $table) {
 				$tables[] = $table[0]['name'];
 			}
-			parent::listSources($tables);
+			$this->cachedListSources($tables);
 			return $tables;
 		}
 		return array();

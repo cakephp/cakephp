@@ -90,7 +90,7 @@ class DataSource extends Object {
  * @param mixed $data
  * @return array Array of sources available in this datasource.
  */
-	public function listSources($data = null) {
+	public function cachedListSources($data = null) {
 		if ($this->cacheSources === false) {
 			return null;
 		}

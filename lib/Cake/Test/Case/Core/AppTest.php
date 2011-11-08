@@ -346,6 +346,7 @@ class AppTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array($path)
 		), App::RESET);
+		var_dump($path . '.svn');
 		mkdir($path . '.svn');
 		$result = App::objects('plugin', null, false);
 		rmdir($path . '.svn');
