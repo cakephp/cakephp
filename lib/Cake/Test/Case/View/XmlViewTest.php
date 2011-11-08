@@ -35,17 +35,17 @@ class XmlViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutView() {
-		$request = new CakeRequest();
-		$response = new CakeResponse();
-		$controller = new Controller($request, $response);
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
 		$data = array('users' => array('user' => array('user1', 'user2')));
-		$controller->set('serialize', $data);
-		$view = new XmlView($controller);
-		$output = $view->render(false);
+		$Controller->set(array('users' => $data, 'serialize' => 'users'));
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
 
 		$expected = '<?xml version="1.0" encoding="UTF-8"?><users><user>user1</user><user>user2</user></users>';
 		$this->assertIdentical($expected, str_replace(array("\r", "\n"), '', $output));
-		$this->assertIdentical('application/xml', $response->type());
+		$this->assertIdentical('application/xml', $Response->type());
 	}
 
 /**
@@ -55,12 +55,13 @@ class XmlViewTest extends CakeTestCase {
  */
 	public function testRenderWithView() {
 		App::build(array('View' => array(
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Xml' . DS,
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
 		)));
-		$request = new CakeRequest();
-		$response = new CakeResponse();
-		$controller = new Controller($request, $response);
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$Controller->name = $Controller->viewPath = 'Posts';
+
 		$data = array(
 			array(
 				'User' => array(
@@ -73,14 +74,14 @@ class XmlViewTest extends CakeTestCase {
 				)
 			)
 		);
-		$controller->set('users', $data);
-		$view = new XmlView($controller);
-		$output = $view->render('index', 'xml/xml_view');
+		$Controller->set('users', $data);
+		$View = new XmlView($Controller);
+		$output = $View->render('index', 'xml/xml_view');
 
 		$expected = '<?xml version="1.0" encoding="UTF-8"?><users><user>user1</user><user>user2</user></users>';
 		$this->assertIdentical($expected, str_replace(array("\r", "\n"), '', $output));
-		$this->assertIdentical('application/xml', $response->type());
-		$this->assertInstanceOf('HelperCollection', $view->Helpers);
+		$this->assertIdentical('application/xml', $Response->type());
+		$this->assertInstanceOf('HelperCollection', $View->Helpers);
 	}
 
 }

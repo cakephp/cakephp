@@ -40,6 +40,13 @@ App::uses('Xml', 'Utility');
 class XmlView extends View {
 
 /**
+ * The subdirectory.  XML views are always in xml.
+ *
+ * @var string
+ */
+	public $subDir = 'xml';
+
+/**
  * Constructor
  *
  * @param Controller $controller
@@ -65,10 +72,14 @@ class XmlView extends View {
  * @return string The rendered view.
  */
 	public function render($view = null, $layout = null) {
-		if (isset($this->viewVars['serialize']) && is_array($this->viewVars['serialize'])) {
-			return $this->output = Xml::fromArray($this->viewVars['serialize'])->asXML();
+		if (isset($this->viewVars['serialize'])) {
+			$serialize = $this->viewVars['serialize'];
+			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+			return $this->output = Xml::fromArray($data)->asXML();
 		}
-		return parent::render($view, $layout);
+		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+			return $this->output = $this->_render($viewFileName);
+		}
 	}
 
 }
