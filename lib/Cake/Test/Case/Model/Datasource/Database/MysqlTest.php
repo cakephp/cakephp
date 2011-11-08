@@ -660,7 +660,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('COLLATE=utf8_general_ci', $result);
 
 		$this->Dbo->rawQuery($result);
-		$result = $this->Dbo->listDetailedSources($this->Dbo->fullTableName('altertest', false));
+		$result = $this->Dbo->listDetailedSources($this->Dbo->fullTableName('altertest', false, false));
 		$this->assertEquals($result['Collation'], 'utf8_general_ci');
 		$this->assertEquals($result['Engine'], 'InnoDB');
 		$this->assertEquals($result['charset'], 'utf8');
@@ -712,7 +712,7 @@ class MysqlTest extends CakeTestCase {
 		$tableName = 'tinyint_' . uniqid();
 		$table = $this->Dbo->fullTableName($tableName);
 		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
-		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false));
+		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false, false));
 		$this->Dbo->rawQuery('DROP TABLE ' . $table);
 		$expected = array(
 			'charset' => 'utf8',
@@ -722,7 +722,7 @@ class MysqlTest extends CakeTestCase {
 
 		$table = $this->Dbo->fullTableName($tableName);
 		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
-		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false));
+		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false, false));
 		$this->Dbo->rawQuery('DROP TABLE ' . $table);
 		$expected = array(
 			'charset' => 'cp1250',
@@ -875,7 +875,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals(array(), $result, 'Should be empty when table does not exist.');
 
 		$result = $this->Dbo->listDetailedSources();
-		$tableName = $this->Dbo->fullTableName('apples', false);
+		$tableName = $this->Dbo->fullTableName('apples', false, false);
 		$this->assertTrue(isset($result[$tableName]), 'Key should exist');
 	}
 
@@ -928,7 +928,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($result, array('`Article`.`id`'));
 
 		$test->expects($this->at(0))->method('execute')
-			->with('SELECT `Article`.`id` FROM `articles` AS `Article`   WHERE 1 = 1');
+			->with('SELECT `Article`.`id` FROM ' . $test->fullTableName('articles'). ' AS `Article`   WHERE 1 = 1');
 
 		$result = $test->read($this->Model, array(
 			'fields' => $this->Model->escapeField(),
@@ -944,7 +944,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($result, array('[Article].[id]'));
 
 		$test->expects($this->at(0))->method('execute')
-			->with('SELECT [Article].[id] FROM [' . $test->fullTableName('articles', false) . '] AS [Article]   WHERE 1 = 1');
+			->with('SELECT [Article].[id] FROM ' . $test->fullTableName('articles') . ' AS [Article]   WHERE 1 = 1');
 		$result = $test->read($this->Model, array(
 			'fields' => $this->Model->escapeField(),
 			'conditions' => null,
@@ -1017,7 +1017,7 @@ class MysqlTest extends CakeTestCase {
 			),
 			'joins' => array(
 				array(
-					'table' => '`test_model4`',
+					'table' => $this->Dbo->fullTableName($this->Model),
 					'alias' => 'TestModel4Parent',
 					'type' => 'LEFT',
 					'conditions' => '`TestModel4`.`parent_id` = `TestModel4Parent`.`id`'
@@ -1106,11 +1106,13 @@ class MysqlTest extends CakeTestCase {
 			->method('getDataSource')
 			->will($this->returnValue($test));
 
+		$testModel8Table = $this->Model->TestModel8->getDataSource()->fullTableName($this->Model->TestModel8);
+
 		$test->expects($this->at(0))->method('execute')
-			->with($this->stringContains('`TestModel9` LEFT JOIN `test_model8`'));
+			->with($this->stringContains('`TestModel9` LEFT JOIN ' . $testModel8Table));
 
 		$test->expects($this->at(1))->method('execute')
-			->with($this->stringContains('TestModel9` INNER JOIN `test_model8`'));
+			->with($this->stringContains('TestModel9` INNER JOIN ' . $testModel8Table));
 
 		$test->read($this->Model, array('recursive' => 1));
 		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';
@@ -2914,10 +2916,11 @@ class MysqlTest extends CakeTestCase {
 			->with('harry')
 			->will($this->returnValue("'harry'"));
 
+		$modelTable = $this->Dbo->fullTableName($this->Model);
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with('SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE `TestModel`.`name` = \'harry\'');
+			->with('SELECT COUNT(`TestModel`.`id`) AS count FROM ' .$modelTable. ' AS `TestModel` WHERE `TestModel`.`name` = \'harry\'');
 		$this->Dbo->expects($this->at(2))->method('execute')
-			->with('SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1');
+			->with('SELECT COUNT(`TestModel`.`id`) AS count FROM ' .$modelTable. ' AS `TestModel` WHERE 1 = 1');
 
 		$this->Dbo->hasAny($this->Model, array('TestModel.name' => 'harry'));
 		$this->Dbo->hasAny($this->Model, array());
@@ -2933,7 +2936,7 @@ class MysqlTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Comment', 'Tag');
 		$this->Dbo->virtualFieldSeparator = '__';
 		$Article = ClassRegistry::init('Article');
-		$commentsTable = $this->Dbo->fullTableName('comments', false);
+		$commentsTable = $this->Dbo->fullTableName('comments', false, false);
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -3003,7 +3006,7 @@ class MysqlTest extends CakeTestCase {
  */
 	public function testVirtualFieldsInConditions() {
 		$Article = ClassRegistry::init('Article');
-		$commentsTable = $this->Dbo->fullTableName('comments', false);
+		$commentsTable = $this->Dbo->fullTableName('comments', false, false);
 
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
@@ -3062,7 +3065,7 @@ class MysqlTest extends CakeTestCase {
  */
 	public function testVirtualFieldsInCalculate() {
 		$Article = ClassRegistry::init('Article');
-		$commentsTable = $this->Dbo->fullTableName('comments', false);
+		$commentsTable = $this->Dbo->fullTableName('comments', false, false);
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -3393,7 +3396,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertTrue(!empty($result));
 
 		$result = $this->Dbo->fetchRow($result);
-		$expected = array($this->Dbo->fullTableName('apples', false) => array(
+		$expected = array($this->Dbo->fullTableName('apples', false, false) => array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
 		));
@@ -3401,17 +3404,17 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->fetchAll('SELECT name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Red Apple 1')),
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Bright Red Apple')),
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'green blue')),
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Test Name')),
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Blue Green')),
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'My new apple')),
-			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Some odd color'))
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'Red Apple 1')),
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'Bright Red Apple')),
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'green blue')),
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'Test Name')),
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'Blue Green')),
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'My new apple')),
+			array($this->Dbo->fullTableName('apples', false, false) => array('name' => 'Some odd color'))
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->field($this->Dbo->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
+		$result = $this->Dbo->field($this->Dbo->fullTableName('apples', false, false), 'SELECT color, name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'

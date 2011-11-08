@@ -944,39 +944,39 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel = new Apple();
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertContains('aaa_apples', $this->db->fullTableName($TestModel));
+		$this->assertContains('aaa_apples', $db1->fullTableName($TestModel));
+		$this->assertContains('aaa_apples', $db2->fullTableName($TestModel));
 
 		$TestModel->setDataSource('database2');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'bbb_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'bbb_apples');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'bbb_apples');
+		$this->assertContains('bbb_apples', $this->db->fullTableName($TestModel));
+		$this->assertContains('bbb_apples', $db1->fullTableName($TestModel));
+		$this->assertContains('bbb_apples', $db2->fullTableName($TestModel));
 
 		$TestModel = new Apple();
 		$TestModel->tablePrefix = 'custom_';
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'custom_apples');
+		$this->assertContains('custom_apples', $this->db->fullTableName($TestModel));
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'custom_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'custom_apples');
+		$this->assertContains('custom_apples', $this->db->fullTableName($TestModel));
+		$this->assertContains('custom_apples', $db1->fullTableName($TestModel));
 
 		$TestModel = new Apple();
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertContains('aaa_apples', $this->db->fullTableName($TestModel));
 		$TestModel->tablePrefix = '';
 		$TestModel->setDataSource('database2');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'apples');
+		$this->assertContains('apples', $db2->fullTableName($TestModel));
+		$this->assertContains('apples', $db1->fullTableName($TestModel));
 
 		$TestModel->tablePrefix = null;
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertContains('aaa_apples', $db2->fullTableName($TestModel));
+		$this->assertContains('aaa_apples', $db1->fullTableName($TestModel));
 
 		$TestModel->tablePrefix = false;
 		$TestModel->setDataSource('database2');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'apples');
+		$this->assertContains('apples', $db2->fullTableName($TestModel));
+		$this->assertContains('apples', $db1->fullTableName($TestModel));
 	}
 
 /**
