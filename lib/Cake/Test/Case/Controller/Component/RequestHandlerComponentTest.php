@@ -412,8 +412,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$this->RequestHandler->renderAs($this->Controller, 'xml', array('attachment' => 'myfile.xml'));
 
-		$expected = 'RequestHandlerTest' . DS . 'xml';
-		$this->assertEquals($expected, $this->Controller->viewPath);
+		$this->assertEquals('Xml', $this->Controller->viewClass);
 	}
 
 /**
