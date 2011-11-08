@@ -24,4 +24,4 @@ foreach ($user['Item'] as $item) {
 	$formatted['list'][] = $item['name'];
 }
 
-$this->set('serialize', $formatted);
+echo json_encode($formatted);

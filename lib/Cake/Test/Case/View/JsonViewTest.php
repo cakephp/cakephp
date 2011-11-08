@@ -53,10 +53,14 @@ class JsonViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithView() {
-		App::build(array('View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Json')));
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		));
 		$Request = new CakeRequest();
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
+		$Controller->name = $Controller->viewPath = 'Posts';
+
 		$data = array(
 			'User' => array(
 				'username' => 'fake'
