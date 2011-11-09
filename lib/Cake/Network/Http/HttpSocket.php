@@ -91,6 +91,7 @@ class HttpSocket extends CakeSocket {
 		'protocol' => 'tcp',
 		'port' => 80,
 		'timeout' => 30,
+		'redirect' => false,
 		'request' => array(
 			'uri' => array(
 				'scheme' => 'http',
@@ -376,6 +377,10 @@ class HttpSocket extends CakeSocket {
 				$this->config['request']['cookies'][$Host] = array();
 			}
 			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response->cookies);
+		}
+		if($this->config['redirect'] && $this->response->isRedirect()) {
+			$request['uri'] = $this->response->getHeader('Location');
+			$this->response = $this->request($request);
 		}
 
 		return $this->response;
