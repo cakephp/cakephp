@@ -485,7 +485,7 @@ class AclShell extends Shell {
 					)
 				)
 			))->addSubcommand('initdb', array(
-				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema run create DbAcl')
+				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')
 			))->epilog(
 				array(
 					'Node and parent arguments can be in one of the following formats:',
