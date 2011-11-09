@@ -204,7 +204,7 @@ class HttpResponse implements ArrayAccess {
 		$chunkLength = null;
 
 		while ($chunkLength !== 0) {
-			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
+			if (!preg_match('/^([0-9a-f]+) *(?:;(.+)=(.+))?(?:\r\n|\n)/iU', $body, $match)) {
 				throw new SocketException(__d('cake_dev', 'HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
 			}
 

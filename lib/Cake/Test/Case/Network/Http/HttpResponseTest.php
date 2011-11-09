@@ -320,6 +320,15 @@ class HttpResponseTest extends CakeTestCase {
 
 		$r = $this->HttpResponse->decodeBody($sample['encoded'], $encoding);
 		$this->assertEquals($r, $sample['decoded']);
+
+		$encoding = 'chunked';
+		$sample = array(
+			'encoded' => "19\nThis is a chunked message\r\n0\n",
+			'decoded' => array('body' => "This is a chunked message", 'header' => false)
+		);
+
+		$r = $this->HttpResponse->decodeBody($sample['encoded'], $encoding);
+		$this->assertEquals($r, $sample['decoded'], 'Inconsistent line terminators should be tolerated.');
 	}
 
 /**
