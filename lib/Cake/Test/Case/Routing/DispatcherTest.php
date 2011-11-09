@@ -1346,16 +1346,40 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertFalse($Dispatcher->asset('js/cjs/debug_kit.js', $response));
 	}
+
+/**
+ * Data provider for cached actions.
+ *
+ * - Test simple views
+ * - Test views with nocache tags
+ * - Test requests with named + passed params.
+ * - Test themed views.
+ *
+ * @return array
+ */
+	public static function cacheActionProvider() {
+		return array(
+			array('/'),
+			array('test_cached_pages/index'),
+			array('TestCachedPages/index'),
+			array('test_cached_pages/test_nocache_tags'),
+			array('TestCachedPages/test_nocache_tags'),
+			array('test_cached_pages/view/param/param'),
+			array('test_cached_pages/view/foo:bar/value:goo'),
+			array('test_cached_pages/themed'),
+		);
+	}
+	
 /**
  * testFullPageCachingDispatch method
  *
+ * @dataProvider cacheActionProvider
  * @return void
  */
-	public function testFullPageCachingDispatch() {
+	public function testFullPageCachingDispatch($url) {
 		Configure::write('Cache.disable', false);
 		Configure::write('Cache.check', true);
 		Configure::write('debug', 2);
-
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
@@ -1366,141 +1390,7 @@ class DispatcherTest extends CakeTestCase {
 		), true);
 
 		$dispatcher = new TestDispatcher();
-		$request = new CakeRequest('/');
-		$response = new CakeResponse();
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('test_cached_pages/index');
-		$_POST = array(
-			'slasher' => "Up in your's grill \ '"
-		);
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('TestCachedPages/index');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('TestCachedPages/test_nocache_tags');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('test_cached_pages/view/param/param');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('test_cached_pages/view/foo:bar/value:goo');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		$this->assertTrue(file_exists($filename));
-
-		unlink($filename);
-	}
-
-/**
- * Test full page caching with themes.
- *
- * @return void
- */
-	public function testFullPageCachingWithThemes() {
-		Configure::write('Cache.disable', false);
-		Configure::write('Cache.check', true);
-		Configure::write('debug', 2);
-
-		Router::reload();
-		Router::connect('/:controller/:action/*');
-
-		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-		), true);
-
-		$dispatcher = new TestDispatcher();
-		$request = new CakeRequest('/test_cached_pages/themed');
+		$request = new CakeRequest($url);
 		$response = new CakeResponse();
 
 		ob_start();
