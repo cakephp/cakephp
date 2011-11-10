@@ -46,6 +46,13 @@ class I18n {
 	public $l10n = null;
 
 /**
+ * Default domain of translation
+ *
+ * @var string
+ */
+	public static $defaultDomain = 'default';
+
+/**
  * Current domain of translation
  *
  * @var string
@@ -149,7 +156,7 @@ class I18n {
 		}
 
 		if (is_null($domain)) {
-			$domain = 'default';
+			$domain = self::$defaultDomain;
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
