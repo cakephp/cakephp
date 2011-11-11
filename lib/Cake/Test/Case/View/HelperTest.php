@@ -220,32 +220,48 @@ class HelperTest extends CakeTestCase {
 		return array(
 			array(
 				'HelperTestPost.id',
-				array('HelperTestPost', 'id')
+				array('HelperTestPost', 'id'),
+				'HelperTestPost',
+				'id'
 			),
 			array(
 				'HelperTestComment.body',
-				array('HelperTestComment', 'body')
+				array('HelperTestComment', 'body'),
+				'HelperTestComment',
+				'body'
 			),
 			array(
 				'HelperTest.1.Comment.body',
-				array('HelperTest', '1', 'Comment', 'body')
+				array('HelperTest', '1', 'Comment', 'body'),
+				'Comment',
+				'body'
 			),
 			array(
 				'HelperTestComment.BigField',
-				array('HelperTestComment', 'BigField')
+				array('HelperTestComment', 'BigField'),
+				'HelperTestComment',
+				'BigField'
+			),
+			array(
+				'HelperTestComment.min',
+				array('HelperTestComment', 'min'),
+				'HelperTestComment',
+				'min'
 			)
 		);
 	}
 
 /**
- * testFormFieldNameParsing method
+ * Test setting an entity and retriving the entity, model and field.
  *
  * @dataProvider entityProvider
  * @return void
  */
-	public function testSetEntity($entity, $expected) {
+	public function testSetEntity($entity, $expected, $modelKey, $fieldKey) {
 		$this->Helper->setEntity($entity);
 		$this->assertEquals($expected, $this->Helper->entity());
+		$this->assertEquals($modelKey, $this->Helper->model());
+		$this->assertEquals($fieldKey, $this->Helper->field());
 	}
 
 /**
@@ -255,7 +271,7 @@ class HelperTest extends CakeTestCase {
  */
 	public function testSetEntityScoped() {
 		$this->Helper->setEntity('HelperTestPost', true);
-	$this->assertEquals(array('HelperTestPost'), $this->Helper->entity());
+		$this->assertEquals(array('HelperTestPost'), $this->Helper->entity());
 
 		$this->Helper->setEntity('id');
 		$expected = array('HelperTestPost', 'id');

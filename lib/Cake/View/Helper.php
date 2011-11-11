@@ -446,7 +446,11 @@ class Helper extends Object {
 
 		// 0.name, 0.created.month style inputs.  Excludes inputs with the modelScope in them.
 		if (
-			$count >= 2 && is_numeric($parts[0]) && !is_numeric($parts[1]) && $this->_modelScope && strpos($entity, $this->_modelScope) === false
+			$count >= 2 && 
+			is_numeric($parts[0]) && 
+			!is_numeric($parts[1]) && 
+			$this->_modelScope && 
+			strpos($entity, $this->_modelScope) === false
 		) {
 			$entity = $this->_modelScope . '.' . $entity;
 		}
@@ -500,6 +504,8 @@ class Helper extends Object {
 
 /**
  * Gets the currently-used model field of the rendering context.
+ * Strips off fieldsuffixes such as year, month, day, hour, min, meridian
+ * when the current entity is longer than 2 elements.
  *
  * @return string
  */
@@ -507,7 +513,7 @@ class Helper extends Object {
 		$entity = $this->entity();
 		$count = count($entity);
 		$last = $entity[$count - 1];
-		if (in_array($last, $this->_fieldSuffixes)) {
+		if ($count > 2 && in_array($last, $this->_fieldSuffixes)) {
 			$last = isset($entity[$count - 2]) ? $entity[$count - 2] : null;
 		}
 		return $last;
