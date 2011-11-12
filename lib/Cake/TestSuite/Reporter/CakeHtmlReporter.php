@@ -148,7 +148,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			}
 			if (method_exists($coverage, 'getData')) {
 				$report = $coverage->getData();
-				echo '<div class="cake-error">' . __('Coverage generation is not supported with PHPUnit 3.6 at this time.') . '</div>';
+				echo $this->paintCoverage($report);
 			}
 		}
 		$this->paintDocumentEnd();
@@ -161,6 +161,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintCoverage(array $coverage) {
 		App::uses('HtmlCoverageReport', 'TestSuite/Coverage');
+
 		$reporter = new HtmlCoverageReport($coverage, $this);
 		echo $reporter->report();
 	}
