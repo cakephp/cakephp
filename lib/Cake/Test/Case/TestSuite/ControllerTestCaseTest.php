@@ -426,6 +426,21 @@ class ControllerTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * Test that REST actions with XML/JSON input work.
+ *
+ * @return void
+ */
+	public function testTestActionJsonData() {
+		$result = $this->Case->testAction('/tests_apps_posts/input_data', array(
+			'return' => 'vars',
+			'method' => 'post',
+			'data' => '{"key":"value","json":true}'
+		));
+		$this->assertEquals('value', $result['data']['key']);
+		$this->assertTrue($result['data']['json']);
+	}
+
+/**
  * Tests autoMock ability
  */
 	public function testAutoMock() {
