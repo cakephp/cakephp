@@ -97,7 +97,7 @@ if (isset($filePresent)):
 	App::uses('ConnectionManager', 'Model');
 	try {
 		$connected = ConnectionManager::getDataSource('default');
-	} catch (Exception $e) {
+	} catch (Exception $connectionError) {
 		$connected = false;
 	}
 ?>
@@ -110,6 +110,8 @@ if (isset($filePresent)):
 		else:
 			echo '<span class="notice">';
 				echo __d('cake_dev', 'Cake is NOT able to connect to the database.');
+				echo '<br /><br />';
+				echo $connectionError->getMessage();
 			echo '</span>';
 		endif;
 	?>
