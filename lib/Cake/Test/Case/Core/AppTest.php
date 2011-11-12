@@ -316,11 +316,6 @@ class AppTest extends CakeTestCase {
 		$result = App::objects('Model/Behavior', null, false);
 		$this->assertTrue(in_array('TreeBehavior', $result));
 
-		$result = App::objects('controller', null, false);
-		$this->assertTrue(in_array('PagesController', $result));
-		$result = App::objects('Controller', null, false);
-		$this->assertTrue(in_array('PagesController', $result));
-
 		$result = App::objects('component', null, false);
 		$this->assertTrue(in_array('AuthComponent', $result));
 		$result = App::objects('Controller/Component', null, false);
