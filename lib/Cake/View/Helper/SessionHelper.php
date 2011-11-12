@@ -128,9 +128,13 @@ class SessionHelper extends AppHelper {
 			} elseif ($flash['element'] == '' || $flash['element'] == null) {
 				$out = $message;
 			} else {
+				$options = array();
+				if (isset($flash['plugin'])) {
+					$options['plugin'] = $flash['plugin'];
+				}
 				$tmpVars = $flash['params'];
 				$tmpVars['message'] = $message;
-				$out = $this->_View->element($flash['element'], $tmpVars);
+				$out = $this->_View->element($flash['element'], $tmpVars, $options);
 			}
 			CakeSession::delete('Message.' . $key);
 		}
