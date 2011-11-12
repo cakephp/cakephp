@@ -100,6 +100,16 @@ class SessionHelper extends AppHelper {
  * echo $this->Session->flash('flash', array('element' => 'my_custom_element'));
  * }}}
  *
+ * If you want to use an element from a plugin for rendering your flash message you can do that using the 
+ * plugin param:
+ *
+ * {{{
+ * echo $this->Session->flash('flash', array(
+ *		'element' => 'my_custom_element',
+ *		'params' => array('plugin' => 'my_plugin')
+ * ));
+ * }}}
+ *
  * @param string $key The [Message.]key you are rendering in the view.
  * @param array $attrs Additional attributes to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
@@ -129,8 +139,8 @@ class SessionHelper extends AppHelper {
 				$out = $message;
 			} else {
 				$options = array();
-				if (isset($flash['plugin'])) {
-					$options['plugin'] = $flash['plugin'];
+				if (isset($flash['params']['plugin'])) {
+					$options['plugin'] = $flash['params']['plugin'];
 				}
 				$tmpVars = $flash['params'];
 				$tmpVars['message'] = $message;

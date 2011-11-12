@@ -183,7 +183,7 @@ class SessionHelperTest extends CakeTestCase {
 
 		$result = $this->Session->flash('flash', array(
 			'element' => 'plugin_element',
-			'plugin' => 'TestPlugin'
+			'params' => array('plugin' => 'TestPlugin')
 		));
 		$expected = 'this is the plugin element using params[plugin]';
 		$this->assertEquals($expected, $result);
