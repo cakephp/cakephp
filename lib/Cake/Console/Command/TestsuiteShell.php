@@ -148,7 +148,7 @@ class TestsuiteShell extends TestShell {
 		))->addOption('fixture', array(
 			'help' => __d('cake_console', 'Choose a custom fixture manager.'),
 		))->addOption('debug', array(
-			'help' => __d('cake_console', 'More verbose output.'),
+			'help' => __d('cake_console', 'Enable full output of testsuite. (supported in PHPUnit 3.6.0 and greater)'),
 		));
 
 		return $parser;

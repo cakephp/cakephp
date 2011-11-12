@@ -1191,113 +1191,117 @@ class DispatcherTest extends CakeTestCase {
 		} catch (MissingControllerException $e) {
 			$this->assertEquals('Controller class ThemeController could not be found.', $e->getMessage());
 		}
+	}
 
-		ob_start();
-		$Dispatcher->dispatch(new CakeRequest('theme/test_theme/flash/theme_test.swf'), $response);
-		$result = ob_get_clean();
+/**
+ * Data provider for asset()
+ *
+ * - theme assets.
+ * - plugin assets.
+ * - plugin assets in sub directories.
+ * - unknown plugin assets.
+ *
+ * @return array
+ */
+	public static function assetProvider() {
+		return array(
+			array(
+				'theme/test_theme/flash/theme_test.swf', 
+				'View/Themed/TestTheme/webroot/flash/theme_test.swf'
+			),
+			array(
+				'theme/test_theme/pdfs/theme_test.pdf',
+				'View/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
+			),
+			array(
+				'theme/test_theme/img/test.jpg',
+				'View/Themed/TestTheme/webroot/img/test.jpg'
+			),
+			array(
+				'theme/test_theme/css/test_asset.css',
+				'View/Themed/TestTheme/webroot/css/test_asset.css'
+			),
+			array(
+				'theme/test_theme/js/theme.js',
+				'View/Themed/TestTheme/webroot/js/theme.js'
+			),
+			array(
+				'theme/test_theme/js/one/theme_one.js',
+				'View/Themed/TestTheme/webroot/js/one/theme_one.js'
+			),
+			array(
+				'test_plugin/root.js',
+				'Plugin/TestPlugin/webroot/root.js'
+			),
+			array(
+				'test_plugin/flash/plugin_test.swf',
+				'Plugin/TestPlugin/webroot/flash/plugin_test.swf'
+			),
+			array(
+				'test_plugin/pdfs/plugin_test.pdf',
+				'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf'
+			),
+			array(
+				'test_plugin/js/test_plugin/test.js',
+				'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+			),
+			array(
+				'test_plugin/css/test_plugin_asset.css',
+				'Plugin/TestPlugin/webroot/css/test_plugin_asset.css'
+			),
+			array(
+				'test_plugin/img/cake.icon.gif',
+				'Plugin/TestPlugin/webroot/img/cake.icon.gif'
+			),
+			array(
+				'plugin_js/js/plugin_js.js',
+				'Plugin/PluginJs/webroot/js/plugin_js.js'
+			),
+			array(
+				'plugin_js/js/one/plugin_one.js',
+				'Plugin/PluginJs/webroot/js/one/plugin_one.js'
+			),
+			array(
+				'test_plugin/css/unknown.extension',
+				'Plugin/TestPlugin/webroot/css/unknown.extension'
+			),
+			array(
+				'test_plugin/css/theme_one.htc',
+				'Plugin/TestPlugin/webroot/css/theme_one.htc'
+			),
+		);
+	}
 
-		$file = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'webroot' . DS . 'flash' . DS . 'theme_test.swf');
-		$this->assertEqual($file, $result);
-		$this->assertEqual('this is just a test to load swf file from the theme.', $result);
+/**
+ * Test assets
+ *
+ * @dataProvider assetProvider
+ * @outputBuffering enabled
+ * @return void
+ */
+	public function testAsset($url, $file) {
+		Router::reload();
 
-		ob_start();
-		$Dispatcher->dispatch(new CakeRequest('theme/test_theme/pdfs/theme_test.pdf'), $response);
-		$result = ob_get_clean();
-		$file = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'webroot' . DS . 'pdfs' . DS . 'theme_test.pdf');
-		$this->assertEqual($file, $result);
-		$this->assertEqual('this is just a test to load pdf file from the theme.', $result);
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+		));
+		CakePlugin::loadAll();
 
-		ob_start();
-		$Dispatcher->dispatch(new CakeRequest('theme/test_theme/img/test.jpg'), $response);
-		$result = ob_get_clean();
-		$file = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
-		$this->assertEqual($file, $result);
-
-		ob_start();
-		$Dispatcher->asset('theme/test_theme/css/test_asset.css', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('this is the test asset css file', $result);
-
-		ob_start();
-		$Dispatcher->asset('theme/test_theme/js/theme.js', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('root theme js file', $result);
-
-		ob_start();
-		$Dispatcher->asset('theme/test_theme/js/one/theme_one.js', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('nested theme js file', $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/root.js', $response);
-		$result = ob_get_clean();
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'root.js');
-		$this->assertEqual($expected, $result);
-
-		ob_start();
-		$Dispatcher->dispatch(new CakeRequest('test_plugin/flash/plugin_test.swf'), $response);
-		$result = ob_get_clean();
-		$file = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'flash' . DS . 'plugin_test.swf');
-		$this->assertEqual($file, $result);
-		$this->assertEqual('this is just a test to load swf file from the plugin.', $result);
-
-		ob_start();
-		$Dispatcher->dispatch(new CakeRequest('test_plugin/pdfs/plugin_test.pdf'), $response);
-		$result = ob_get_clean();
-		$file = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot' . DS . 'pdfs' . DS . 'plugin_test.pdf');
-		$this->assertEqual($file, $result);
-		 $this->assertEqual('this is just a test to load pdf file from the plugin.', $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/js/test_plugin/test.js', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('alert("Test App");', $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/js/test_plugin/test.js', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('alert("Test App");', $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/css/test_plugin_asset.css', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('this is the test plugin asset css file', $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/img/cake.icon.gif', $response);
-		$result = ob_get_clean();
-		$file = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
-		$this->assertEqual($file, $result);
-
-		ob_start();
-		$Dispatcher->asset('plugin_js/js/plugin_js.js', $response);
-		$result = ob_get_clean();
-		$expected = "alert('win sauce');";
-		$this->assertEqual($expected, $result);
-
-		ob_start();
-		$Dispatcher->asset('plugin_js/js/one/plugin_one.js', $response);
-		$result = ob_get_clean();
-		$expected = "alert('plugin one nested js file');";
-		$this->assertEqual($expected, $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/css/unknown.extension', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('Testing a file with unknown extension to mime mapping.', $result);
-
-		ob_start();
-		$Dispatcher->asset('test_plugin/css/theme_one.htc', $response);
-		$result = ob_get_clean();
-		$this->assertEqual('htc file', $result);
-
+		$Dispatcher = new TestDispatcher();
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
-		ob_start();
-		$Dispatcher->asset('test_plugin/css/unknown.extension', $response);
-		ob_end_clean();
-		$expected = filesize(CakePlugin::path('TestPlugin') . 'webroot' . DS . 'css' . DS . 'unknown.extension');
+
+		$Dispatcher->dispatch(new CakeRequest($url), $response);
+		$result = ob_get_clean();
+
+		$path = CAKE. 'Test' . DS . 'test_app' . DS . str_replace('/', DS, $file);
+		$file = file_get_contents($path);
+		$this->assertEquals($file, $result);
+
+		$expected = filesize($path);
 		$headers = $response->header();
-		$this->assertEqual($expected, $headers['Content-Length']);
+		$this->assertEquals($expected, $headers['Content-Length']);
 	}
 
 /**
@@ -1342,16 +1346,40 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertFalse($Dispatcher->asset('js/cjs/debug_kit.js', $response));
 	}
+
+/**
+ * Data provider for cached actions.
+ *
+ * - Test simple views
+ * - Test views with nocache tags
+ * - Test requests with named + passed params.
+ * - Test themed views.
+ *
+ * @return array
+ */
+	public static function cacheActionProvider() {
+		return array(
+			array('/'),
+			array('test_cached_pages/index'),
+			array('TestCachedPages/index'),
+			array('test_cached_pages/test_nocache_tags'),
+			array('TestCachedPages/test_nocache_tags'),
+			array('test_cached_pages/view/param/param'),
+			array('test_cached_pages/view/foo:bar/value:goo'),
+			array('test_cached_pages/themed'),
+		);
+	}
+	
 /**
  * testFullPageCachingDispatch method
  *
+ * @dataProvider cacheActionProvider
  * @return void
  */
-	public function testFullPageCachingDispatch() {
+	public function testFullPageCachingDispatch($url) {
 		Configure::write('Cache.disable', false);
 		Configure::write('Cache.check', true);
 		Configure::write('debug', 2);
-
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
@@ -1362,141 +1390,7 @@ class DispatcherTest extends CakeTestCase {
 		), true);
 
 		$dispatcher = new TestDispatcher();
-		$request = new CakeRequest('/');
-		$response = new CakeResponse();
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('test_cached_pages/index');
-		$_POST = array(
-			'slasher' => "Up in your's grill \ '"
-		);
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('TestCachedPages/index');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('TestCachedPages/test_nocache_tags');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('test_cached_pages/view/param/param');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		unlink($filename);
-
-		$request = new CakeRequest('test_cached_pages/view/foo:bar/value:goo');
-
-		ob_start();
-		$dispatcher->dispatch($request, $response);
-		$out = ob_get_clean();
-
-		ob_start();
-		$dispatcher->cached($request->here);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($expected, $result);
-		$filename = $this->__cachePath($request->here);
-		$this->assertTrue(file_exists($filename));
-
-		unlink($filename);
-	}
-
-/**
- * Test full page caching with themes.
- *
- * @return void
- */
-	public function testFullPageCachingWithThemes() {
-		Configure::write('Cache.disable', false);
-		Configure::write('Cache.check', true);
-		Configure::write('debug', 2);
-
-		Router::reload();
-		Router::connect('/:controller/:action/*');
-
-		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-		), true);
-
-		$dispatcher = new TestDispatcher();
-		$request = new CakeRequest('/test_cached_pages/themed');
+		$request = new CakeRequest($url);
 		$response = new CakeResponse();
 
 		ob_start();

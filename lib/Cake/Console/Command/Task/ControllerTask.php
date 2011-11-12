@@ -219,7 +219,7 @@ class ControllerTask extends BakeTask {
 		$this->out(__d('cake_console', "Controller Name:\n\t%s", $controllerName));
 
 		if (strtolower($useDynamicScaffold) == 'y') {
-			$this->out("var \$scaffold;");
+			$this->out("public \$scaffold;");
 		}
 
 		$properties = array(

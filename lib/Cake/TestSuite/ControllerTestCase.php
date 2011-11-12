@@ -187,11 +187,14 @@ abstract class ControllerTestCase extends CakeTestCase {
 	}
 
 /**
- * Tests a controller action.
+ * Lets you do functional tests of a controller action.
  *
  * ### Options:
  *
- * - `data` POST or GET data to pass. Depends on the method.
+ * - `data` Will be used as the request data.  If the `method` is GET,
+ *   data will be used a GET params.  If the `method` is POST, it will be used
+ *   as POST data. By setting `$options['data']` to a string, you can simulate XML or JSON
+ *   payloads to your controllers allowing you to test REST webservices.
  * - `method` POST or GET. Defaults to POST.
  * - `return` Specify the return type you want.  Choose from:
  *     - `vars` Get the set view variables.
@@ -213,14 +216,23 @@ abstract class ControllerTestCase extends CakeTestCase {
 		), $options);
 
 		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
-		if (strtoupper($options['method']) == 'GET') {
-			$_GET = $options['data'];
-			$_POST = array();
-		} else {
-			$_POST = $options['data'];
-			$_GET = array();
+		if (is_array($options['data'])) {
+			if (strtoupper($options['method']) == 'GET') {
+				$_GET = $options['data'];
+				$_POST = array();
+			} else {
+				$_POST = $options['data'];
+				$_GET = array();
+			}
 		}
-		$request = new CakeRequest($url);
+		$request = $this->getMock('CakeRequest', array('_readInput'), array($url));
+
+		if (is_string($options['data'])) {
+			$request->expects($this->any())
+				->method('_readInput')
+				->will($this->returnValue($options['data']));
+		}
+
 		$Dispatch = new ControllerTestDispatcher();
 		foreach (Router::$routes as $route) {
 			if ($route instanceof RedirectRoute) {

@@ -230,6 +230,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
+		$this->Task->Template->templatePaths = array('default' => CAKE . 'Console' . DS . 'Templates' . DS . 'default' .DS);
 	}
 
 /**
@@ -563,7 +564,7 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
- * test `cake bake view $controller -admin`
+ * test `cake bake view $controller --admin`
  * Which only bakes admin methods, not non-admin methods.
  *
  * @return void
@@ -701,7 +702,7 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
- * test getting templates, make sure noTemplateActions works
+ * test getting templates, make sure noTemplateActions works and prefixed template is used before generic one.
  *
  * @return void
  */
@@ -716,6 +717,14 @@ class ViewTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getTemplate('admin_add');
 		$this->assertEqual($result, 'form');
+
+		$this->Task->Template->templatePaths = array(
+			'test' => CAKE . 'Test' . DS .  'test_app' . DS . 'Console' . DS . 'Templates' . DS . 'test' .DS
+		);
+		$this->Task->Template->params['theme'] = 'test';
+
+		$result = $this->Task->getTemplate('admin_edit');
+		$this->assertEqual($result, 'admin_edit');
 	}
 
 }

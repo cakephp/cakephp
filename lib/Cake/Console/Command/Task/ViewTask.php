@@ -143,7 +143,7 @@ class ViewTask extends BakeTask {
 		}
 		$adminRoute = $this->Project->getPrefix();
 		foreach ($methods as $i => $method) {
-			if ($adminRoute && isset($this->params['admin'])) {
+			if ($adminRoute && !empty($this->params['admin'])) {
 				if ($scaffoldActions) {
 					$methods[$i] = $adminRoute . $method;
 					continue;
@@ -392,6 +392,10 @@ class ViewTask extends BakeTask {
 		}
 		if (!empty($this->template) && $action != $this->template) {
 			return $this->template;
+		}
+		$themePath = $this->Template->getThemePath();
+		if (file_exists($themePath . 'views' . DS . $action . '.ctp')) {
+			return $action;
 		}
 		$template = $action;
 		$prefixes = Configure::read('Routing.prefixes');

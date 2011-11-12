@@ -2734,9 +2734,11 @@ class DboSource extends DataSource {
 /**
  * Inserts multiple values into a table
  *
- * @param string $table
- * @param string $fields
- * @param array $values
+ * @param string $table The table being inserted into.
+ * @param array $fields The array of field/column names being inserted.
+ * @param array $values The array of values to insert.  The values should
+ *   be an array of rows.  Each row should have values keyed by the column name.
+ *   Each row must have the values in the same order as $fields.
  * @return boolean
  */
 	public function insertMulti($table, $fields, $values) {
@@ -2744,12 +2746,32 @@ class DboSource extends DataSource {
 		$holder = implode(',', array_fill(0, count($fields), '?'));
 		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
 
+		$pdoMap = array(
+			'integer' => PDO::PARAM_INT,
+			'float' => PDO::PARAM_STR,
+			'boolean' => PDO::PARAM_BOOL,
+			'string' => PDO::PARAM_STR,
+			'text' => PDO::PARAM_STR
+		);
+		$columnMap = array();
+
 		$count = count($values);
 		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();
+
+		foreach ($values[0] as $key => $val) {
+			$type = $this->introspectType($val);
+			$columnMap[$key] = $pdoMap[$type];
+		}
+
 		for ($x = 0; $x < $count; $x++) {
-			$statement->execute($values[$x]);
+			$i = 1;
+			foreach ($values[$x] as $key => $val) {
+				$statement->bindValue($i, $val, $columnMap[$key]);
+				$i += 1;
+			}
+			$statement->execute();
 			$statement->closeCursor();
 		}
 		return $this->commit();

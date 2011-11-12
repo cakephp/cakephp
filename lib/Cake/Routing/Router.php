@@ -820,7 +820,7 @@ class Router {
  * @see Router::url()
  */
 	protected static function _handleNoRoute($url) {
-		$named = $args = $query = array();
+		$named = $args = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
 			self::$_prefixes
@@ -847,7 +847,7 @@ class Router {
 			}
 		}
 
-		if (empty($named) && empty($args) && empty($query) && (!isset($url['action']) || $url['action'] === 'index')) {
+		if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
 			$url['action'] = null;
 		}
 
@@ -880,9 +880,6 @@ class Router {
 					$output .= '/' . $name . self::$_namedConfig['separator'] . $value;
 				}
 			}
-		}
-		if (!empty($query)) {
-			$output .= Router::queryString($query);
 		}
 		return $output;
 	}

@@ -425,7 +425,7 @@ TEXT;
  */
 	public function testNoDbCredentials() {
 		$config = array(
-			'driver' => 'mysql',
+			'datasource' => 'mysql',
 			'persistent' => false,
 			'host' => 'void.cakephp.org',
 			'login' => 'cakephp-user',
@@ -437,7 +437,7 @@ TEXT;
 		$output = Debugger::exportVar($config);
 
 		$expectedArray = array(
-			'driver' => 'mysql',
+			'datasource' => 'mysql',
 			'persistent' => false,
 			'host' => '*****',
 			'login' => '*****',

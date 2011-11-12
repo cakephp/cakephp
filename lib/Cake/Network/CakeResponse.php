@@ -669,7 +669,8 @@ class CakeResponse {
  * @return boolean
  */
 	public function outputCompressed() {
-		return ini_get("zlib.output_compression") === '1' || in_array('ob_gzhandler', ob_list_handlers());
+		return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
+			&& (ini_get("zlib.output_compression") === '1' || in_array('ob_gzhandler', ob_list_handlers()));
 	}
 
 /**
