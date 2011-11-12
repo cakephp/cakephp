@@ -53,6 +53,11 @@ class TestsAppsPostsController extends AppController {
 		$this->render('index');
 	}
 
+	public function input_data() {
+		$this->set('data', $this->request->input('json_decode', true));
+		$this->render('index');
+	}
+
 /**
  * Fixturized action for testAction()
  *
