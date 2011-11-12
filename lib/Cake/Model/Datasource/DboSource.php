@@ -440,7 +440,9 @@ class DboSource extends DataSource {
 			}
 			if (!$query->columnCount()) {
 				$query->closeCursor();
-				return true;
+				if (!$query->rowCount()) {
+					return true;
+				}
 			}
 			return $query;
 		} catch (PDOException $e) {
