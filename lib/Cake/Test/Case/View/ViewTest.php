@@ -297,7 +297,7 @@ class ViewTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGetTemplate() {
+	public function testGetViewFileNames() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
@@ -318,27 +318,37 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS .'default.ctp';
-		$result = $View->getLayoutFileName();
-		$this->assertEquals($expected, $result);
-
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS .'Pages' . DS .'home.ctp';
-		$result = $View->getViewFileName('TestPlugin.home');
-		$this->assertEqual($expected, $result);
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS .'Pages' . DS .'page.home.ctp';
+		$result = $View->getViewFileName('page.home');
+		$this->assertEquals($expected, $result, 'Should not ruin files with dots.');
 
 		CakePlugin::load('TestPlugin');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS .'Pages' . DS .'home.ctp';
 		$result = $View->getViewFileName('TestPlugin.home');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
 
 		$View->viewPath = 'Tests';
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS .'Tests' . DS .'index.ctp';
 		$result = $View->getViewFileName('TestPlugin.index');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
+	}
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS .'default.ctp';
-		$result = $View->getLayoutFileName('TestPlugin.default');
-		$this->assertEqual($expected, $result);
+/**
+ * Test getting layout filenames
+ *
+ * @return void
+ */
+	public function testGetLayoutFileName() {
+		$this->Controller->plugin = null;
+		$this->Controller->name = 'Pages';
+		$this->Controller->viewPath = 'Pages';
+		$this->Controller->action = 'display';
+
+		$View = new TestView($this->Controller);
+
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS .'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertEquals($expected, $result);
 
 		$View->layoutPath = 'rss';
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'rss' . DS . 'default.ctp';
@@ -348,7 +358,30 @@ class ViewTest extends CakeTestCase {
 		$View->layoutPath = 'Emails' . DS . 'html';
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'Emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
+		$this->assertEquals($expected, $result);
+	}
 
+/**
+ * Test getting layout filenames for plugins.
+ *
+ * @return void
+ */
+	public function testGetLayoutFileNamePlugin() {
+		$this->Controller->plugin = null;
+		$this->Controller->name = 'Pages';
+		$this->Controller->viewPath = 'Pages';
+		$this->Controller->action = 'display';
+
+		$View = new TestView($this->Controller);
+		CakePlugin::load('TestPlugin');
+
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS .'default.ctp';
+		$result = $View->getLayoutFileName('TestPlugin.default');
+		$this->assertEquals($expected, $result);
+
+		$View->plugin = 'TestPlugin';
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS .'default.ctp';
+		$result = $View->getLayoutFileName('default');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -442,7 +475,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertEquals($result, 'this is the plugin element using params[plugin]');
 
 		$result = $this->View->element('TestPlugin.plugin_element');
-		$this->assertEqual($result, 'this is the plugin element using params[plugin]');
+		$this->assertEquals($result, 'this is the plugin element using params[plugin]');
 
 		$result = $this->View->element('test_plugin.plugin_element');
 		$this->assertPattern('/Not Found:/', $result);

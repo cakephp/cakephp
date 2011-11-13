@@ -885,20 +885,15 @@ class View extends Object {
 		throw new MissingViewException(array('file' => $defaultPath . $name . $this->ext));
 	}
 
-	function _path($name, $plugin) {
-		$paths = $this->_paths($plugin);
-		$exts = $this->_getExtensions();
-		foreach ($exts as $ext) {
-			foreach ($paths as $path) {
-				if (file_exists($path . $name . $ext)) {
-					return $path . $name . $ext;
-				}
-			}
-		}
-		return null;
-	}
-
-	function _pluginSplit($name) {
+/**
+ * Splits a dot syntax plugin name into its plugin and filename.
+ * If $name does not have a dot, then index 0 will be null.
+ * It checks if the plugin is loaded, else filename will stay unchanged for filenames containing dot
+ *
+ * @param string $name The name you want to plugin split.
+ * @return array Array with 2 indexes.  0 => plugin name, 1 => filename
+ */
+	protected function _pluginSplit($name) {
 		$plugin = null;
 		list($first, $second) = pluginSplit($name);
 		if (CakePlugin::loaded($first) === true) {
@@ -910,6 +905,7 @@ class View extends Object {
 		}
 		return array($plugin, $name);
 	}
+
 /**
  * Returns layout filename for this template as a string.
  *
