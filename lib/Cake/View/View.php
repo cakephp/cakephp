@@ -290,7 +290,8 @@ class View extends Object {
  * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
- * @param string $name Name of template file in the/app/View/Elements/ folder
+ * @param string $name Name of template file in the/app/View/Elements/ folder,
+ * or `MyPlugin.template` to use the template element from MyPlugin , will be overriden by $options['plugin']
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
  * @param array $options Array of options. Possible keys are:
  * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
@@ -308,6 +309,8 @@ class View extends Object {
 
 		if (isset($options['plugin'])) {
 			$plugin = Inflector::camelize($options['plugin']);
+		} else {
+			list($plugin, $name) = $this->_pluginSplit($name);
 		}
 		if (isset($this->plugin) && !$plugin) {
 			$plugin = $this->plugin;
@@ -843,6 +846,7 @@ class View extends Object {
 			$name = $this->view;
 		}
 		$name = str_replace('/', DS, $name);
+		list($plugin, $name) = $this->_pluginSplit($name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
@@ -858,8 +862,7 @@ class View extends Object {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-		$paths = $this->_paths($this->plugin);
-
+		$paths = $this->_paths($plugin);
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
@@ -882,6 +885,31 @@ class View extends Object {
 		throw new MissingViewException(array('file' => $defaultPath . $name . $this->ext));
 	}
 
+	function _path($name, $plugin) {
+		$paths = $this->_paths($plugin);
+		$exts = $this->_getExtensions();
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
+				if (file_exists($path . $name . $ext)) {
+					return $path . $name . $ext;
+				}
+			}
+		}
+		return null;
+	}
+
+	function _pluginSplit($name) {
+		$plugin = null;
+		list($first, $second) = pluginSplit($name);
+		if (CakePlugin::loaded($first) === true) {
+			$name = $second;
+			$plugin = $first;
+		}
+		if (isset($this->plugin) && !$plugin) {
+			$plugin = $this->plugin;
+		}
+		return array($plugin, $name);
+	}
 /**
  * Returns layout filename for this template as a string.
  *
@@ -898,7 +926,8 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths($this->plugin);
+		list($plugin, $name) = $this->_pluginSplit($name);
+		$paths = $this->_paths($plugin);
 		$file = 'Layouts' . DS . $subDir . $name;
 
 		$exts = $this->_getExtensions();
