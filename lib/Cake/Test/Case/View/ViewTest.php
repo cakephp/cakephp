@@ -190,7 +190,7 @@ class ViewTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
 		Configure::write('debug', 2);
 	}
 
