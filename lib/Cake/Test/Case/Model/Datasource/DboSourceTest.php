@@ -33,10 +33,10 @@ class DboTestSource extends DboSource {
 	}
 
 	public function mergeAssociation(&$data, &$merge, $association, $type, $selfJoin = false) {
-		return parent::_mergeAssociation(&$data, &$merge, $association, $type, $selfJoin);
+		return parent::_mergeAssociation($data, $merge, $association, $type, $selfJoin);
 	}
 
-	public function setConfig($config) {
+	public function setConfig($config = array()) {
 		$this->config = $config;
 	}
 
