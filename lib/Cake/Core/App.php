@@ -523,12 +523,14 @@ class App {
 			}
 		}
 
-		//To help apps migrate to 2.0 old style file names are allowed
+		// To help apps migrate to 2.0 old style file names are allowed
+		// if the trailing segment is one of the types that changed, alternates will be tried.
 		foreach ($paths as $path) {
 			$underscored = Inflector::underscore($className);
 			$tries = array($path . $underscored . '.php');
 			$parts = explode('_', $underscored);
-			if (count($parts) > 1) {
+			$numParts = count($parts);
+			if ($numParts > 1 && in_array($parts[$numParts - 1], array('behavior', 'helper', 'component'))) {
 				array_pop($parts);
 				$tries[] = $path . implode('_', $parts) . '.php';
 			}
