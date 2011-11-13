@@ -63,6 +63,7 @@ class HttpSocket extends CakeSocket {
 			'User-Agent' => 'CakePHP'
 		),
 		'raw' => null,
+		'redirect' => false,
 		'cookies' => array()
 	);
 
@@ -91,13 +92,13 @@ class HttpSocket extends CakeSocket {
 		'protocol' => 'tcp',
 		'port' => 80,
 		'timeout' => 30,
-		'redirect' => false,
 		'request' => array(
 			'uri' => array(
 				'scheme' => 'http',
 				'host' => 'localhost',
 				'port' => 80
 			),
+			'redirect' => false,
 			'cookies' => array()
 		)
 	);
@@ -378,8 +379,10 @@ class HttpSocket extends CakeSocket {
 			}
 			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response->cookies);
 		}
-		if($this->config['redirect'] && $this->response->isRedirect()) {
+		
+		if($this->request['redirect'] && $this->response->isRedirect()) {
 			$request['uri'] = $this->response->getHeader('Location');
+			$request['redirect'] = is_int($this->request['redirect']) ? $this->request['redirect'] - 1 : $this->request['redirect'];
 			$this->response = $this->request($request);
 		}
 
