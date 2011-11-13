@@ -666,7 +666,7 @@ class App {
  * @param boolean $return whether this function should return the contents of the file after being parsed by php or just a success notice
  * @return mixed if $return contents of the file after php parses it, boolean indicating success otherwise
  */
-	protected function _loadFile($name, $plugin, $search, $file, $return) {
+	protected static function _loadFile($name, $plugin, $search, $file, $return) {
 		$mapped = self::_mapped($name, $plugin);
 		if ($mapped) {
 			$file = $mapped;

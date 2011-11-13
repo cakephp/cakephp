@@ -490,7 +490,7 @@ class ObjectTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load('TestPlugin');
 		Router::reload();
 
 		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
