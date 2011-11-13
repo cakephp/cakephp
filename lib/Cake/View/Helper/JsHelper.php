@@ -160,7 +160,10 @@ class JsHelper extends AppHelper {
  * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
  **/
-	public function value($val, $quoteString = true) {
+	public function value($val = array(), $quoteString = null, $key = 'value') {
+		if ($quoteString === null) {
+			$quoteString = true;
+		}
 		return $this->{$this->_engineName}->value($val, $quoteString);
 	}
 
