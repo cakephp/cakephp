@@ -7544,6 +7544,50 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * testVirtualFieldsOrder()
+ *
+ * Test correct order on virtual fields
+ *
+ * @return void
+ */
+	public function testVirtualFieldsOrder() {
+		$this->loadFixtures('Post', 'Author');
+		$Post = ClassRegistry::init('Post');
+		$Post->virtualFields = array('other_field' => '10 - Post.id');
+		$result = $Post->find('list', array('order' => array('Post.other_field' => 'ASC')));
+		$expected = array(
+			'3' => 'Third Post',
+			'2' => 'Second Post',
+			'1' => 'First Post'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $Post->find('list', array('order' => array('Post.other_field' => 'DESC')));
+		$expected = array(
+			'1' => 'First Post',
+			'2' => 'Second Post',
+			'3' => 'Third Post'
+		);
+		$this->assertEqual($result, $expected);
+
+		$Post->Author->virtualFields = array('joined' => 'Post.id * Author.id');
+		$result = $Post->find('all');
+		$result = Set::extract('{n}.Author.joined', $result);
+		$expected = array(1, 6, 3);
+		$this->assertEqual($result, $expected);
+
+		$result = $Post->find('all', array('order' => array('Author.joined' => 'ASC')));
+		$result = Set::extract('{n}.Author.joined', $result);
+		$expected = array(1, 3, 6);
+		$this->assertEqual($result, $expected);
+
+		$result = $Post->find('all', array('order' => array('Author.joined' => 'DESC')));
+		$result = Set::extract('{n}.Author.joined', $result);
+		$expected = array(6, 3, 1);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * testVirtualFieldsMysql()
  *
  * Test correct fetching of virtual fields

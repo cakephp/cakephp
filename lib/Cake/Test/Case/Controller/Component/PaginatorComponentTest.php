@@ -88,6 +88,13 @@ class PaginatorControllerPost extends CakeTestModel {
 	public $lastQueries = array();
 
 /**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('PaginatorAuthor' => array('foreignKey' => 'author_id'));
+
+/**
  * beforeFind method
  *
  * @param mixed $query
@@ -183,6 +190,45 @@ class PaginatorControllerComment extends CakeTestModel {
 	public $alias = 'PaginatorControllerComment';
 }
 
+/**
+ * PaginatorAuthorclass
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
+class PaginatorAuthor extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'PaginatorAuthor'
+ */
+	public $name = 'PaginatorAuthor';
+
+/**
+ * useTable property
+ *
+ * @var string 'authors'
+ */
+	public $useTable = 'authors';
+
+/**
+ * alias property
+ *
+ * @var string 'PaginatorAuthor'
+ */
+	public $alias = 'PaginatorAuthor';
+
+/**
+ * alias property
+ *
+ * @var string 'PaginatorAuthor'
+ */
+	public $virtualFields = array(
+			'joined_offset' => 'PaginatorAuthor.id + 1'
+		);
+
+}
+
 class PaginatorComponentTest extends CakeTestCase {
 
 /**
@@ -190,7 +236,7 @@ class PaginatorComponentTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.comment');
+	public $fixtures = array('core.post', 'core.comment', 'core.author');
 
 /**
  * setup
@@ -488,6 +534,30 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->request->params['named'] = array('sort' => 'offset_test', 'direction' => 'asc');
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertEqual(Set::extract($result, '{n}.PaginatorControllerPost.offset_test'), array(2, 3, 4));
+	}
+
+/**
+ * test paginate() and virtualField on joined model
+ *
+ * @return void
+ */
+	public function testPaginateOrderVirtualFieldJoinedModel() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerPost->recursive = 0;
+		$Controller->Paginator->settings = array(
+			'order' => array('PaginatorAuthor.joined_offset' => 'DESC'),
+			'maxLimit' => 10,
+			'paramType' => 'named'
+		);
+		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.PaginatorAuthor.joined_offset'), array(4, 2, 2));
+
+		$Controller->request->params['named'] = array('sort' => 'PaginatorAuthor.joined_offset', 'direction' => 'asc');
+		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.PaginatorAuthor.joined_offset'), array(2, 2, 4));
 	}
 
 /**
