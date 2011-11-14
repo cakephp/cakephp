@@ -42,7 +42,6 @@ class SessionHelperTest extends CakeTestCase {
 
 		if (!CakeSession::started()) {
 			CakeSession::start();
-			var_dump('session was not started');
 		}
 
 		$_SESSION = array(
@@ -71,7 +70,6 @@ class SessionHelperTest extends CakeTestCase {
 			),
 			'Deeply' => array('nested' => array('key' => 'value')),
 		);
-		var_dump($_SESSION);
 	}
 
 /**
