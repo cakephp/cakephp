@@ -733,11 +733,11 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testFieldsUsingMethodCache() {
 		$this->testDb->cacheMethods = false;
-		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
+		DboTestSource::$methodCache = array();
 
 		$Article = ClassRegistry::init('Article');
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
-		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
+		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
 	}
 
 /**
