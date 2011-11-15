@@ -75,15 +75,15 @@ class FolderTest extends CakeTestCase {
 		$Folder = new Folder($path);
 
 		$result = $Folder->pwd();
-		$this->assertEqual($result, $path);
+		$this->assertEquals($result, $path);
 
 		$result = Folder::addPathElement($path, 'test');
 		$expected = $path . DS . 'test';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $Folder->cd(ROOT);
 		$expected = ROOT;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $Folder->cd(ROOT . DS . 'non-existent');
 		$this->assertFalse($result);
@@ -101,13 +101,13 @@ class FolderTest extends CakeTestCase {
 		$Folder = new Folder($path);
 
 		$result = $Folder->pwd();
-		$this->assertEqual($result, $path);
+		$this->assertEquals($result, $path);
 
 		$result = Folder::isSlashTerm($inside);
 		$this->assertTrue($result);
 
 		$result = $Folder->realpath('Test/');
-		$this->assertEqual($result, $path . DS .'Test' . DS);
+		$this->assertEquals($result, $path . DS .'Test' . DS);
 
 		$result = $Folder->inPath('Test' . DS);
 		$this->assertTrue($result);
@@ -230,7 +230,7 @@ class FolderTest extends CakeTestCase {
 
 		$expected = $new . ' is a file';
 		$result = $Folder->errors();
-		$this->assertEqual($result[0], $expected);
+		$this->assertEquals($result[0], $expected);
 
 		$new = TMP . 'test_folder_new';
 		$result = $Folder->create($new);
@@ -268,11 +268,26 @@ class FolderTest extends CakeTestCase {
 		$filePath = $new . DS . 'test1.php';
 		$File = new File($filePath);
 		$this->assertTrue($File->create());
-		$copy = TMP . 'test_folder_copy';
+		
+		$filePath = $new . DS . 'skip_me.php';
+		$File = new File($filePath);
+		$this->assertTrue($File->create());
 
-		$this->assertTrue($Folder->chmod($new, 0777, true));
-		$this->assertEqual($File->perms(), '0777');
-
+		$this->assertTrue($Folder->chmod($new, 0755, true));
+		$this->assertTrue($Folder->chmod($new, 0777, true, array('skip_me.php', 'test2')));
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'test1')), -4);
+		$this->assertEquals($perms, '0777');
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
+		$this->assertEquals($perms, '0755');
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'test1.php')), -4);
+		$this->assertEquals($perms, '0777');
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'skip_me.php')), -4);
+		$this->assertEquals($perms, '0755');
+		
 		$Folder->delete($new);
 	}
 
@@ -283,7 +298,7 @@ class FolderTest extends CakeTestCase {
  */
 	public function testRealPathForWebroot() {
 		$Folder = new Folder('files/');
-		$this->assertEqual(realpath('files/'), $Folder->path);
+		$this->assertEquals(realpath('files/'), $Folder->path);
 	}
 
 /**
@@ -298,11 +313,11 @@ class FolderTest extends CakeTestCase {
 
 		$result = $Folder->read(true, true);
 		$expected = array('0', 'cache', 'logs', 'sessions', 'tests');
-		$this->assertEqual($expected, $result[0]);
+		$this->assertEquals($expected, $result[0]);
 
 		$result = $Folder->read(true, array('logs'));
 		$expected = array('0', 'cache', 'sessions', 'tests');
-		$this->assertEqual($expected, $result[0]);
+		$this->assertEquals($expected, $result[0]);
 
 		$result = $Folder->delete($new);
 		$this->assertTrue($result);
@@ -315,10 +330,10 @@ class FolderTest extends CakeTestCase {
  */
 	public function testAddPathElement() {
 		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', 'another_path');
-		$this->assertEqual($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
+		$this->assertEquals($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
 
 		$result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, 'another_path');
-		$this->assertEqual($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
+		$this->assertEquals($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
 	}
 /**
  * testFolderRead method
@@ -330,12 +345,12 @@ class FolderTest extends CakeTestCase {
 
 		$expected = array('cache', 'logs', 'sessions', 'tests');
 		$result = $Folder->read(true, true);
-		$this->assertEqual($result[0], $expected);
+		$this->assertEquals($result[0], $expected);
 
 		$Folder->path = TMP . 'non-existent';
 		$expected = array(array(), array());
 		$result = $Folder->read(true, true);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -438,7 +453,7 @@ class FolderTest extends CakeTestCase {
  */
 	public function testSlashTerm() {
 		$result = Folder::slashTerm('/path/to/file');
-		$this->assertEqual($result, '/path/to/file/');
+		$this->assertEquals($result, '/path/to/file/');
 	}
 
 /**
@@ -449,15 +464,15 @@ class FolderTest extends CakeTestCase {
 	public function testNormalizePath() {
 		$path = '/path/to/file';
 		$result = Folder::normalizePath($path);
-		$this->assertEqual($result, '/');
+		$this->assertEquals($result, '/');
 
 		$path = '\\path\\\to\\\file';
 		$result = Folder::normalizePath($path);
-		$this->assertEqual($result, '/');
+		$this->assertEquals($result, '/');
 
 		$path = 'C:\\path\\to\\file';
 		$result = Folder::normalizePath($path);
-		$this->assertEqual($result, '\\');
+		$this->assertEquals($result, '\\');
 	}
 
 /**
@@ -468,15 +483,15 @@ class FolderTest extends CakeTestCase {
 	public function testCorrectSlashFor() {
 		$path = '/path/to/file';
 		$result = Folder::correctSlashFor($path);
-		$this->assertEqual($result, '/');
+		$this->assertEquals($result, '/');
 
 		$path = '\\path\\to\\file';
 		$result = Folder::correctSlashFor($path);
-		$this->assertEqual($result, '/');
+		$this->assertEquals($result, '/');
 
 		$path = 'C:\\path\to\\file';
 		$result = Folder::correctSlashFor($path);
-		$this->assertEqual($result, '\\');
+		$this->assertEquals($result, '\\');
 	}
 
 /**
@@ -630,13 +645,13 @@ class FolderTest extends CakeTestCase {
  */
 	public function testDirSize() {
 		$Folder = new Folder(TMP . 'config_non_existant', true);
-		$this->assertEqual($Folder->dirSize(), 0);
+		$this->assertEquals($Folder->dirSize(), 0);
 
 		$File = new File($Folder->pwd() . DS . 'my.php', true, 0777);
 		$File->create();
 		$File->write('something here');
 		$File->close();
-		$this->assertEqual($Folder->dirSize(), 14);
+		$this->assertEquals($Folder->dirSize(), 14);
 
 		$Folder->cd(TMP);
 		$Folder->delete($Folder->pwd() . 'config_non_existant');
@@ -666,7 +681,7 @@ class FolderTest extends CakeTestCase {
 			$path . DS . 'file2 removed',
 			$path . ' removed'
 		);
-		$this->assertEqual($expected, $messages);
+		$this->assertEquals($expected, $messages);
 	}
 
 /**
@@ -720,7 +735,7 @@ class FolderTest extends CakeTestCase {
 		$result = $Folder->copy($folder3);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertEqual(file_get_contents($folder3 . DS . 'folder2' . DS . 'file2.php'), 'untouched');
+		$this->assertEquals(file_get_contents($folder3 . DS . 'folder2' . DS . 'file2.php'), 'untouched');
 
 		$Folder = new Folder($path);
 		$Folder->delete();
@@ -794,7 +809,7 @@ class FolderTest extends CakeTestCase {
 		$result = $Folder->move($folder3);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertEqual(file_get_contents($folder3 . DS . 'folder2' . DS . 'file2.php'), 'untouched');
+		$this->assertEquals(file_get_contents($folder3 . DS . 'folder2' . DS . 'file2.php'), 'untouched');
 		$this->assertFalse(file_exists($file1));
 		$this->assertFalse(file_exists($folder2));
 		$this->assertFalse(file_exists($file2));
