@@ -268,11 +268,26 @@ class FolderTest extends CakeTestCase {
 		$filePath = $new . DS . 'test1.php';
 		$File = new File($filePath);
 		$this->assertTrue($File->create());
-		$copy = TMP . 'test_folder_copy';
+		
+		$filePath = $new . DS . 'skip_me.php';
+		$File = new File($filePath);
+		$this->assertTrue($File->create());
 
-		$this->assertTrue($Folder->chmod($new, 0777, true));
-		$this->assertEqual($File->perms(), '0777');
-
+		$this->assertTrue($Folder->chmod($new, 0755, true));
+		$this->assertTrue($Folder->chmod($new, 0777, true, array('skip_me.php', 'test2')));
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'test1')), -4);
+		$this->assertEqual($perms, '0777');
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
+		$this->assertEqual($perms, '0755');
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'test1.php')), -4);
+		$this->assertEqual($perms, '0777');
+		
+		$perms = substr(sprintf('%o', fileperms($new . DS . 'skip_me.php')), -4);
+		$this->assertEqual($perms, '0755');
+		
 		$Folder->delete($new);
 	}
 
