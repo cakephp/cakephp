@@ -80,7 +80,7 @@ class RequestHandlerComponent extends Object {
 		'html'			=> array('text/html', '*/*'),
 		'text'			=> 'text/plain',
 		'txt'			=> 'text/plain',
-		'csv'			=> array('application/vnd.ms-excel', 'text/plain'),
+		'csv'			=> array('text/csv', 'application/vnd.ms-excel', 'text/plain'),
 		'form'			=> 'application/x-www-form-urlencoded',
 		'file'			=> 'multipart/form-data',
 		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
