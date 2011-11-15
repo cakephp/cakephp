@@ -1662,6 +1662,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->id = 2;
 		$TestModel->save($data);
 		$result = $TestModel->findById(2);
+		$result['Item'] = Set::sort($result['Item'], '{n}.id', 'asc');
 		$expected = array(
 			'Portfolio' => array(
 				'id' => 2,
@@ -1670,17 +1671,6 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			'Item' => array(
 				array(
-					'id' => 2,
-					'syfile_id' => 2,
-					'published' => '',
-					'name' => 'Item 2',
-					'ItemsPortfolio' => array(
-						'id' => 8,
-						'item_id' => 2,
-						'portfolio_id' => 2
-					)
-				),
-				array(
 					'id' => 1,
 					'syfile_id' => 1,
 					'published' => '',
@@ -1688,6 +1678,17 @@ class ModelWriteTest extends BaseModelTest {
 					'ItemsPortfolio' => array(
 						'id' => 7,
 						'item_id' => 1,
+						'portfolio_id' => 2
+					)
+				),
+				array(
+					'id' => 2,
+					'syfile_id' => 2,
+					'published' => '',
+					'name' => 'Item 2',
+					'ItemsPortfolio' => array(
+						'id' => 8,
+						'item_id' => 2,
 						'portfolio_id' => 2
 					)
 				)
