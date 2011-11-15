@@ -15,7 +15,7 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
+ * @package       app.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,14 +23,13 @@
 App::uses('Controller', 'Controller');
 
 /**
- * This is a placeholder class.
- * Create the same file in app/Controller/AppController.php
+ * Application Controller
  *
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
- * @package       Cake.Controller
- * @link http://book.cakephp.org/view/957/The-App-Controller
+ * @package       app.Controller
+ * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
 }

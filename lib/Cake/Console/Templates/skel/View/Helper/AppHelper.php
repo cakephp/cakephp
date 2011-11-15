@@ -22,8 +22,7 @@
 App::uses('Helper', 'View');
 
 /**
- * This is a placeholder class.
- * Create the same file in app/View/Helper/AppHelper.php
+ * Application helper
  *
  * Add your application-wide methods in the class below, your helpers
  * will inherit them.
