@@ -495,7 +495,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($this->CakeEmail->getHeaders(array('from' => true, 'to' => true)), $expected);
 
 		$result = $this->CakeEmail->setHeaders(array());
-		$this->assertIsA($result, 'CakeEmail');
+		$this->assertInstanceOf('CakeEmail', $result);
 	}
 
 /**
@@ -616,7 +616,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($this->CakeEmail->transport(), 'Debug');
 
 		$result = $this->CakeEmail->transportClass();
-		$this->assertIsA($result, 'DebugTransport');
+		$this->assertInstanceOf('DebugTransport', $result);
 
 		$this->setExpectedException('SocketException');
 		$this->CakeEmail->transport('Invalid');
@@ -674,7 +674,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertEquals($configs->test['transport'], $result);
 
 		$result = $this->CakeEmail->transportClass();
-		$this->assertIsA($result, 'DebugTransport');
+		$this->assertInstanceOf('DebugTransport', $result);
 	}
 /**
  * testSendWithContent method
@@ -879,7 +879,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->viewVars(array('time' => $timestamp));
 
 		$result = $this->CakeEmail->helpers(array('Time'));
-		$this->assertIsA($result, 'CakeEmail');
+		$this->assertInstanceOf('CakeEmail', $result);
 
 		$result = $this->CakeEmail->send();
 		$this->assertTrue((bool)strpos($result['message'], 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
@@ -1001,7 +1001,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testDeliver() {
 		$instance = CakeEmail::deliver('all@cakephp.org', 'About', 'Everything ok', array('from' => 'root@cakephp.org'), false);
-		$this->assertIsA($instance, 'CakeEmail');
+		$this->assertInstanceOf('CakeEmail', $instance);
 		$this->assertSame($instance->to(), array('all@cakephp.org' => 'all@cakephp.org'));
 		$this->assertSame($instance->subject(), 'About');
 		$this->assertSame($instance->from(), array('root@cakephp.org' => 'root@cakephp.org'));
@@ -1223,7 +1223,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertEquals('View', $result);
 
 		$result = $this->CakeEmail->viewRender('Theme');
-		$this->assertIsA($result, 'CakeEmail');
+		$this->assertInstanceOf('CakeEmail', $result);
 
 		$result = $this->CakeEmail->viewRender();
 		$this->assertEquals('Theme', $result);
@@ -1239,7 +1239,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertEquals('text', $result);
 
 		$result = $this->CakeEmail->emailFormat('html');
-		$this->assertIsA($result, 'CakeEmail');
+		$this->assertInstanceOf('CakeEmail', $result);
 
 		$result = $this->CakeEmail->emailFormat();
 		$this->assertEquals('html', $result);

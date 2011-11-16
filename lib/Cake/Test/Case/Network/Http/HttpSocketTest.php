@@ -709,7 +709,7 @@ class HttpSocketTest extends CakeTestCase {
 
 		$this->Socket->responseClass = 'CustomResponse';
 		$response = $this->Socket->request('http://www.cakephp.org/');
-		$this->assertIsA($response, 'CustomResponse');
+		$this->assertInstanceOf('CustomResponse', $response);
 		$this->assertEquals($response->first10, 'HTTP/1.x 2');
 	}
 
