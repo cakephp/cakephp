@@ -293,7 +293,7 @@ class RssHelperTest extends CakeTestCase {
 
 		$result = $this->Rss->items(array());
 		$expected = '';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

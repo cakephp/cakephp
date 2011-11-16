@@ -51,28 +51,28 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  */
 	public function testSelector() {
 		$result = $this->Proto->get('#content');
-		$this->assertEqual($result, $this->Proto);
-		$this->assertEqual($this->Proto->selection, '$("content")');
+		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto->selection, '$("content")');
 
 		$result = $this->Proto->get('a .remove');
-		$this->assertEqual($result, $this->Proto);
-		$this->assertEqual($this->Proto->selection, '$$("a .remove")');
+		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto->selection, '$$("a .remove")');
 
 		$result = $this->Proto->get('document');
-		$this->assertEqual($result, $this->Proto);
-		$this->assertEqual($this->Proto->selection, "$(document)");
+		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto->selection, "$(document)");
 
 		$result = $this->Proto->get('window');
-		$this->assertEqual($result, $this->Proto);
-		$this->assertEqual($this->Proto->selection, "$(window)");
+		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto->selection, "$(window)");
 
 		$result = $this->Proto->get('ul');
-		$this->assertEqual($result, $this->Proto);
-		$this->assertEqual($this->Proto->selection, '$$("ul")');
+		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto->selection, '$$("ul")');
 
 		$result = $this->Proto->get('#some_long-id.class');
-		$this->assertEqual($result, $this->Proto);
-		$this->assertEqual($this->Proto->selection, '$$("#some_long-id.class")');
+		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto->selection, '$$("#some_long-id.class")');
 	}
 
 /**
@@ -84,15 +84,15 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 		$this->Proto->get('#myLink');
 		$result = $this->Proto->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("myLink").observe("click", doClick);';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->event('click', 'Element.hide(this);', array('stop' => false));
 		$expected = '$("myLink").observe("click", function (event) {Element.hide(this);});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->event('click', 'Element.hide(this);');
 		$expected = "\$(\"myLink\").observe(\"click\", function (event) {event.stop();\nElement.hide(this);});";
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -103,7 +103,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 	public function testDomReady() {
 		$result = $this->Proto->domReady('foo.name = "bar";');
 		$expected = 'document.observe("dom:loaded", function (event) {foo.name = "bar";});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -115,7 +115,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 		$this->Proto->get('#foo li');
 		$result = $this->Proto->each('item.hide();');
 		$expected = '$$("#foo li").each(function (item, index) {item.hide();});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -127,51 +127,51 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 		$this->Proto->get('#foo');
 		$result = $this->Proto->effect('show');
 		$expected = '$("foo").show();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('hide');
 		$expected = '$("foo").hide();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('fadeIn');
 		$expected = '$("foo").appear();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('fadeIn', array('speed' => 'fast'));
 		$expected = '$("foo").appear({duration:0.50000000000});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('fadeIn', array('speed' => 'slow'));
 		$expected = '$("foo").appear({duration:2});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('fadeOut');
 		$expected = '$("foo").fade();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('fadeOut', array('speed' => 'fast'));
 		$expected = '$("foo").fade({duration:0.50000000000});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('fadeOut', array('speed' => 'slow'));
 		$expected = '$("foo").fade({duration:2});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('slideIn');
 		$expected = 'Effect.slideDown($("foo"));';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('slideOut');
 		$expected = 'Effect.slideUp($("foo"));';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('slideOut', array('speed' => 'fast'));
 		$expected = 'Effect.slideUp($("foo"), {duration:0.50000000000});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->effect('slideOut', array('speed' => 'slow'));
 		$expected = 'Effect.slideUp($("foo"), {duration:2});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -182,7 +182,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 	public function testRequest() {
 		$result = $this->Proto->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/posts/view/1', array(
 			'method' => 'post',
@@ -194,11 +194,11 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1", {method:"post", onComplete:doComplete, onCreate:doBefore, onFailure:doError, onSuccess:doSuccess, parameters:{"name":"jim","height":"185cm"}});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/posts/view/1', array('update' => 'content'));
 		$expected = 'var jsRequest = new Ajax.Updater("content", "/posts/view/1");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
@@ -207,7 +207,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Updater("update-zone", "/people/edit/1", {method:"post", onComplete:doSuccess});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
@@ -218,7 +218,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:{"name":"jim","height":"185cm"}});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
@@ -230,7 +230,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:$("element").serialize()});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
@@ -240,7 +240,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'error' => 'handleError();',
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->request('/people/edit/1', array(
 			'async' => false,
@@ -251,7 +251,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'error' => 'handleError();',
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {asynchronous:false, method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->Proto->get('#submit');
 		$result = $this->Proto->request('/users/login', array(
@@ -278,7 +278,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSortable = Sortable.create($("myList"), {onChange:onSort, onUpdate:onComplete});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -297,7 +297,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsDrag = new Draggable($("element"), {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->Proto->get('div.dragger');
 		$result = $this->Proto->drag(array(
@@ -308,7 +308,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$$("div.dragger").each(function (item, index) {new Draggable(item, {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -325,7 +325,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'Droppables.add($("element"), {accept:".drag-me", onDrop:onDrop, onHover:onHover});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -344,7 +344,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {axis:"horizontal", onChange:onComplete, onSlide:onChange, sliderValue:4});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->Proto->get('#element');
 		$result = $this->Proto->slider(array(
@@ -356,7 +356,7 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 			'max' => 100
 		));
 		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {onChange:function (value) {complete();}, onSlide:function (value) {change();}, range:$R(10,100), sliderValue:4});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -368,18 +368,18 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 		$this->Proto->get('#element');
 		$result = $this->Proto->serializeForm(array('isForm' => true));
 		$expected = '$("element").serialize();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->serializeForm(array('isForm' => true, 'inline' => true));
 		$expected = '$("element").serialize()';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->serializeForm(array('isForm' => false));
 		$expected = '$($("element").form).serialize();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Proto->serializeForm(array('isForm' => false, 'inline' => true));
 		$expected = '$($("element").form).serialize()';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 }

@@ -242,8 +242,8 @@ class DbAclTest extends CakeTestCase {
 			'parent_id' => $parent['AroTwoTest']['id']
 		));
 		$result = $this->Acl->Aro->findByAlias('Subordinate', null, null, -1);
-		$this->assertEqual($result['AroTwoTest']['lft'], 16);
-		$this->assertEqual($result['AroTwoTest']['rght'], 17);
+		$this->assertEquals($result['AroTwoTest']['lft'], 16);
+		$this->assertEquals($result['AroTwoTest']['rght'], 17);
 	}
 
 /**
@@ -384,7 +384,7 @@ class DbAclTest extends CakeTestCase {
 
 		$result = $this->Acl->Aro->Permission->find('all', array('conditions' => array('AroTwoTest.alias' => 'Samir')));
 		$expected = '-1';
-		$this->assertEqual($result[0]['PermissionTwoTest']['_delete'], $expected);
+		$this->assertEquals($result[0]['PermissionTwoTest']['_delete'], $expected);
 
 		$this->assertFalse($this->Acl->deny('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
@@ -401,7 +401,7 @@ class DbAclTest extends CakeTestCase {
 			array('AroTwoTest' => array('id' => '4', 'parent_id' => '1', 'model' => 'Group', 'foreign_key' => 3, 'alias' => 'users')),
 			array('AroTwoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'root'))
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Acl->Aco->node('ROOT/tpsReports/view/current');
 		$expected = array(
@@ -410,7 +410,7 @@ class DbAclTest extends CakeTestCase {
 			array('AcoTwoTest' => array('id' => '2', 'parent_id' => '1', 'model' => null, 'foreign_key' => null, 'alias' => 'tpsReports')),
 			array('AcoTwoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'ROOT')),
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -334,11 +334,11 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHttpCodes() {
 		$response = new CakeResponse();
 		$result = $response->httpCodes();
-		$this->assertEqual(count($result), 39);
+		$this->assertEquals(count($result), 39);
 
 		$result =  $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$codes = array(
 			1337 => 'Undefined Unicorn',
@@ -347,20 +347,20 @@ class CakeResponseTest extends CakeTestCase {
 
 		$result =  $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEqual(count($response->httpCodes()), 41);
+		$this->assertEquals(count($response->httpCodes()), 41);
 
 		$result = $response->httpCodes(1337);
 		$expected = array(1337 => 'Undefined Unicorn');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEqual(count($response->httpCodes()), 41);
+		$this->assertEquals(count($response->httpCodes()), 41);
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -60,7 +60,7 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'apc');
 		$expecting = '';
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($result, $expecting);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 'apc');
@@ -68,7 +68,7 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'apc');
 		$expecting = $data;
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($result, $expecting);
 
 		Cache::delete('test', 'apc');
 	}
@@ -84,7 +84,7 @@ class ApcEngineTest extends CakeTestCase {
 		sleep(1);
 
 		$result = Cache::read('zero', 'apc');
-		$this->assertEqual('Should save', $result);
+		$this->assertEquals('Should save', $result);
 	}
 
 /**
@@ -147,16 +147,16 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = Cache::decrement('test_decrement', 1, 'apc');
-		$this->assertEqual(4, $result);
+		$this->assertEquals(4, $result);
 
 		$result = Cache::read('test_decrement', 'apc');
-		$this->assertEqual(4, $result);
+		$this->assertEquals(4, $result);
 
 		$result = Cache::decrement('test_decrement', 2, 'apc');
-		$this->assertEqual(2, $result);
+		$this->assertEquals(2, $result);
 
 		$result = Cache::read('test_decrement', 'apc');
-		$this->assertEqual(2, $result);
+		$this->assertEquals(2, $result);
 
 	}
 
@@ -172,16 +172,16 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = Cache::increment('test_increment', 1, 'apc');
-		$this->assertEqual(6, $result);
+		$this->assertEquals(6, $result);
 
 		$result = Cache::read('test_increment', 'apc');
-		$this->assertEqual(6, $result);
+		$this->assertEquals(6, $result);
 
 		$result = Cache::increment('test_increment', 2, 'apc');
-		$this->assertEqual(8, $result);
+		$this->assertEquals(8, $result);
 
 		$result = Cache::read('test_increment', 'apc');
-		$this->assertEqual(8, $result);
+		$this->assertEquals(8, $result);
 	}
 
 /**

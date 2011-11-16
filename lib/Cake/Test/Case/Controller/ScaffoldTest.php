@@ -177,7 +177,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 		$Scaffold = new TestScaffoldMock($this->Controller, $this->Controller->request);
 		$result = $Scaffold->getParams();
-		$this->assertEqual($result['action'], 'admin_edit');
+		$this->assertEquals($result['action'], 'admin_edit');
 	}
 
 /**
@@ -208,15 +208,15 @@ class ScaffoldTest extends CakeTestCase {
 		$Scaffold = new TestScaffoldMock($this->Controller, $this->Controller->request);
 		$result = $Scaffold->controller->viewVars;
 
-		$this->assertEqual($result['title_for_layout'], 'Scaffold :: Admin Edit :: Scaffold Mock');
-		$this->assertEqual($result['singularHumanName'], 'Scaffold Mock');
-		$this->assertEqual($result['pluralHumanName'], 'Scaffold Mock');
-		$this->assertEqual($result['modelClass'], 'ScaffoldMock');
-		$this->assertEqual($result['primaryKey'], 'id');
-		$this->assertEqual($result['displayField'], 'title');
-		$this->assertEqual($result['singularVar'], 'scaffoldMock');
-		$this->assertEqual($result['pluralVar'], 'scaffoldMock');
-		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
+		$this->assertEquals($result['title_for_layout'], 'Scaffold :: Admin Edit :: Scaffold Mock');
+		$this->assertEquals($result['singularHumanName'], 'Scaffold Mock');
+		$this->assertEquals($result['pluralHumanName'], 'Scaffold Mock');
+		$this->assertEquals($result['modelClass'], 'ScaffoldMock');
+		$this->assertEquals($result['primaryKey'], 'id');
+		$this->assertEquals($result['displayField'], 'title');
+		$this->assertEquals($result['singularVar'], 'scaffoldMock');
+		$this->assertEquals($result['pluralVar'], 'scaffoldMock');
+		$this->assertEquals($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
 	}
 
 /**
@@ -231,7 +231,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 		$Scaffold = new TestScaffoldMock($this->Controller, $this->Controller->request);
 
-		$this->assertEqual($this->Controller->viewClass, 'Scaffold');
+		$this->assertEquals($this->Controller->viewClass, 'Scaffold');
 	}
 
 /**
@@ -271,7 +271,7 @@ class ScaffoldTest extends CakeTestCase {
 		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
-		$this->assertPattern('/Scaffold Mock has been updated/', $result);
+		$this->assertRegExp('/Scaffold Mock has been updated/', $result);
 	}
 /**
  * test that habtm relationship keys get added to scaffoldFields.
@@ -303,10 +303,10 @@ class ScaffoldTest extends CakeTestCase {
 		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
-		$this->assertPattern('/name="data\[ScaffoldTag\]\[ScaffoldTag\]"/', $result);
+		$this->assertRegExp('/name="data\[ScaffoldTag\]\[ScaffoldTag\]"/', $result);
 
 		$result = $Scaffold->controller->viewVars;
-		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'ScaffoldTag'));
+		$this->assertEquals($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'ScaffoldTag'));
 	}
 /**
  * test that the proper names and variable values are set by Scaffold
@@ -342,6 +342,6 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertNoPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
+		$this->assertNotRegExp('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 	}
 }

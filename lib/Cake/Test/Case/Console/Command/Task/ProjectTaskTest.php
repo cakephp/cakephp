@@ -199,7 +199,7 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
-		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
+		$this->assertNotRegExp('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
 
 /**
@@ -216,7 +216,7 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
-		$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
+		$this->assertNotRegExp('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
 	}
 
 /**
@@ -232,10 +232,10 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$File = new File($path . 'webroot' . DS . 'index.php');
 		$contents = $File->read();
-		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
+		$this->assertNotRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 		$File = new File($path . 'webroot' . DS . 'test.php');
 		$contents = $File->read();
-		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
+		$this->assertNotRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 	}
 
 /**
@@ -246,7 +246,7 @@ class ProjectTaskTest extends CakeTestCase {
 	public function testGetPrefix() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$result = $this->Task->getPrefix();
-		$this->assertEqual($result, 'admin_');
+		$this->assertEquals($result, 'admin_');
 
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
@@ -254,7 +254,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
-		$this->assertEqual($result, 'super_duper_admin_');
+		$this->assertEquals($result, 'super_duper_admin_');
 
 		$File = new File($this->Task->configPath . 'core.php');
 		$File->delete();
@@ -276,7 +276,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->cakeAdmin('my_prefix');
 		$this->assertTrue($result);
 
-		$this->assertEqual(Configure::read('Routing.prefixes'), array('my_prefix'));
+		$this->assertEquals(Configure::read('Routing.prefixes'), array('my_prefix'));
 		$File->delete();
 	}
 
@@ -292,7 +292,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();
-		$this->assertEqual($result, 'ninja_');
+		$this->assertEquals($result, 'ninja_');
 	}
 
 /**
@@ -334,6 +334,6 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$File = new File($path . 'Console' . DS . 'cake.php');
 		$contents = $File->read();
-		$this->assertNoPattern('/__CAKE_PATH__/', $contents, 'Console path placeholder left behind.');
+		$this->assertNotRegExp('/__CAKE_PATH__/', $contents, 'Console path placeholder left behind.');
 	}
 }

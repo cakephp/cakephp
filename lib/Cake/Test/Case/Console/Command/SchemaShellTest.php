@@ -135,18 +135,18 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
 		$this->assertTrue(is_a($this->Shell->Schema, 'CakeSchema'));
-		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
-		$this->assertEqual($this->Shell->Schema->file, 'schema.php');
+		$this->assertEquals(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
+		$this->assertEquals($this->Shell->Schema->file, 'schema.php');
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(
 			'name' => 'TestSchema'
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->Schema->name, 'TestSchema');
-		$this->assertEqual($this->Shell->Schema->file, 'test_schema.php');
-		$this->assertEqual($this->Shell->Schema->connection, 'default');
-		$this->assertEqual($this->Shell->Schema->path, APP . 'Config' . DS . 'Schema');
+		$this->assertEquals($this->Shell->Schema->name, 'TestSchema');
+		$this->assertEquals($this->Shell->Schema->file, 'test_schema.php');
+		$this->assertEquals($this->Shell->Schema->connection, 'default');
+		$this->assertEquals($this->Shell->Schema->path, APP . 'Config' . DS . 'Schema');
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(
@@ -155,10 +155,10 @@ class SchemaShellTest extends CakeTestCase {
 			'path' => '/test/path'
 		);
 		$this->Shell->startup();
-		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
-		$this->assertEqual($this->Shell->Schema->file, 'other_file.php');
-		$this->assertEqual($this->Shell->Schema->connection, 'test');
-		$this->assertEqual($this->Shell->Schema->path, '/test/path');
+		$this->assertEquals(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
+		$this->assertEquals($this->Shell->Schema->file, 'other_file.php');
+		$this->assertEquals($this->Shell->Schema->connection, 'test');
+		$this->assertEquals($this->Shell->Schema->path, '/test/path');
 	}
 
 /**
@@ -217,14 +217,14 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->file = new File(TMP . 'tests' . DS . 'i18n.sql');
 		$contents = $this->file->read();
-		$this->assertPattern('/DROP TABLE/', $contents);
-		$this->assertPattern('/CREATE TABLE.*?i18n/', $contents);
-		$this->assertPattern('/id/', $contents);
-		$this->assertPattern('/model/', $contents);
-		$this->assertPattern('/field/', $contents);
-		$this->assertPattern('/locale/', $contents);
-		$this->assertPattern('/foreign_key/', $contents);
-		$this->assertPattern('/content/', $contents);
+		$this->assertRegExp('/DROP TABLE/', $contents);
+		$this->assertRegExp('/CREATE TABLE.*?i18n/', $contents);
+		$this->assertRegExp('/id/', $contents);
+		$this->assertRegExp('/model/', $contents);
+		$this->assertRegExp('/field/', $contents);
+		$this->assertRegExp('/locale/', $contents);
+		$this->assertRegExp('/foreign_key/', $contents);
+		$this->assertRegExp('/content/', $contents);
 	}
 
 /**
@@ -249,9 +249,9 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'dump_test.sql');
 		$contents = $this->file->read();
 
-		$this->assertPattern('/CREATE TABLE.*?test_plugin_acos/', $contents);
-		$this->assertPattern('/id/', $contents);
-		$this->assertPattern('/model/', $contents);
+		$this->assertRegExp('/CREATE TABLE.*?test_plugin_acos/', $contents);
+		$this->assertRegExp('/id/', $contents);
+		$this->assertRegExp('/model/', $contents);
 
 		$this->file->delete();
 		App::build();
@@ -352,13 +352,13 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
 		$contents = $this->file->read();
 
-		$this->assertPattern('/class TestPluginSchema/', $contents);
-		$this->assertPattern('/var \$posts/', $contents);
-		$this->assertPattern('/var \$auth_users/', $contents);
-		$this->assertPattern('/var \$authors/', $contents);
-		$this->assertPattern('/var \$test_plugin_comments/', $contents);
-		$this->assertNoPattern('/var \$users/', $contents);
-		$this->assertNoPattern('/var \$articles/', $contents);
+		$this->assertRegExp('/class TestPluginSchema/', $contents);
+		$this->assertRegExp('/var \$posts/', $contents);
+		$this->assertRegExp('/var \$auth_users/', $contents);
+		$this->assertRegExp('/var \$authors/', $contents);
+		$this->assertRegExp('/var \$test_plugin_comments/', $contents);
+		$this->assertNotRegExp('/var \$users/', $contents);
+		$this->assertNotRegExp('/var \$articles/', $contents);
 		CakePlugin::unload();
 	}
 
@@ -459,7 +459,7 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->startup();
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Config' . DS . 'Schema';
-		$this->assertEqual($this->Shell->Schema->path, $expected);
+		$this->assertEquals($this->Shell->Schema->path, $expected);
 		CakePlugin::unload();
 	}
 

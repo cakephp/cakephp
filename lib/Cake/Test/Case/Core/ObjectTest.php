@@ -325,21 +325,21 @@ class ObjectTest extends CakeTestCase {
 		$this->assertTrue($this->object->log('Test warning 1'));
 		$this->assertTrue($this->object->log(array('Test' => 'warning 2')));
 		$result = file(LOGS . 'error.log');
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Test warning 1$/', $result[0]);
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Array$/', $result[1]);
-		$this->assertPattern('/^\($/', $result[2]);
-		$this->assertPattern('/\[Test\] => warning 2$/', $result[3]);
-		$this->assertPattern('/^\)$/', $result[4]);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Test warning 1$/', $result[0]);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Array$/', $result[1]);
+		$this->assertRegExp('/^\($/', $result[2]);
+		$this->assertRegExp('/\[Test\] => warning 2$/', $result[3]);
+		$this->assertRegExp('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
 
 		$this->assertTrue($this->object->log('Test warning 1', LOG_WARNING));
 		$this->assertTrue($this->object->log(array('Test' => 'warning 2'), LOG_WARNING));
 		$result = file(LOGS . 'error.log');
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1$/', $result[0]);
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Array$/', $result[1]);
-		$this->assertPattern('/^\($/', $result[2]);
-		$this->assertPattern('/\[Test\] => warning 2$/', $result[3]);
-		$this->assertPattern('/^\)$/', $result[4]);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1$/', $result[0]);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Array$/', $result[1]);
+		$this->assertRegExp('/^\($/', $result[2]);
+		$this->assertRegExp('/\[Test\] => warning 2$/', $result[3]);
+		$this->assertRegExp('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
 	}
 
@@ -350,17 +350,17 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testSet() {
 		$this->object->set('a string');
-		$this->assertEqual($this->object->firstName, 'Joel');
+		$this->assertEquals($this->object->firstName, 'Joel');
 
 		$this->object->set(array('firstName'));
-		$this->assertEqual($this->object->firstName, 'Joel');
+		$this->assertEquals($this->object->firstName, 'Joel');
 
 		$this->object->set(array('firstName' => 'Ashley'));
-		$this->assertEqual($this->object->firstName, 'Ashley');
+		$this->assertEquals($this->object->firstName, 'Ashley');
 
 		$this->object->set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
-		$this->assertEqual($this->object->firstName, 'Joel');
-		$this->assertEqual($this->object->lastName, 'Moose');
+		$this->assertEquals($this->object->firstName, 'Joel');
+		$this->assertEquals($this->object->lastName, 'Moose');
 	}
 
 /**
@@ -370,7 +370,7 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testToString() {
 		$result = strtolower($this->object->toString());
-		$this->assertEqual($result, 'testobject');
+		$this->assertEquals($result, 'testobject');
 	}
 
 /**
@@ -381,62 +381,62 @@ class ObjectTest extends CakeTestCase {
 	public function testMethodDispatching() {
 		$this->object->emptyMethod();
 		$expected = array('emptyMethod');
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->oneParamMethod('Hello');
 		$expected[] = array('oneParamMethod' => array('Hello'));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->twoParamMethod(true, false);
 		$expected[] = array('twoParamMethod' => array(true, false));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->threeParamMethod(true, false, null);
 		$expected[] = array('threeParamMethod' => array(true, false, null));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->crazyMethod(1, 2, 3, 4, 5, 6, 7);
 		$expected[] = array('crazyMethod' => array(1, 2, 3, 4, 5, 6, 7));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object = new TestObject();
-		$this->assertIdentical($this->object->methodCalls, array());
+		$this->assertSame($this->object->methodCalls, array());
 
 		$this->object->dispatchMethod('emptyMethod');
 		$expected = array('emptyMethod');
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('oneParamMethod', array('Hello'));
 		$expected[] = array('oneParamMethod' => array('Hello'));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('twoParamMethod', array(true, false));
 		$expected[] = array('twoParamMethod' => array(true, false));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('threeParamMethod', array(true, false, null));
 		$expected[] = array('threeParamMethod' => array(true, false, null));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('fourParamMethod', array(1, 2, 3, 4));
 		$expected[] = array('fourParamMethod' => array(1, 2, 3, 4));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('fiveParamMethod', array(1, 2, 3, 4, 5));
 		$expected[] = array('fiveParamMethod' => array(1, 2, 3, 4, 5));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('crazyMethod', array(1, 2, 3, 4, 5, 6, 7));
 		$expected[] = array('crazyMethod' => array(1, 2, 3, 4, 5, 6, 7));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('methodWithOptionalParam', array('Hello'));
 		$expected[] = array('methodWithOptionalParam' => array("Hello"));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('methodWithOptionalParam');
 		$expected[] = array('methodWithOptionalParam' => array(null));
-		$this->assertIdentical($this->object->methodCalls, $expected);
+		$this->assertSame($this->object->methodCalls, $expected);
 	}
 
 /**
@@ -457,26 +457,26 @@ class ObjectTest extends CakeTestCase {
 
 		$result = $this->object->requestAction('/request_action/test_request_action');
 		$expected = 'This is a test';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/request_action/another_ra_test/2/5');
 		$expected = 7;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/tests_apps/index', array('return'));
 		$expected = 'This is the TestsAppsController index view ';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/tests_apps/some_method');
 		$expected = 5;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/request_action/paginate_request_action');
 		$this->assertTrue($result);
 
 		$result = $this->object->requestAction('/request_action/normal_request_action');
 		$expected = 'Hello World';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 	}
@@ -495,27 +495,27 @@ class ObjectTest extends CakeTestCase {
 
 		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
 		$expected = 'test plugin index';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/test_plugin/tests/index/some_param', array('return'));
 		$expected = 'test plugin index';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return')
 		);
 		$expected = 'test plugin index';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/test_plugin/tests/some_method');
 		$expected = 25;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'tests', 'action' => 'some_method', 'plugin' => 'test_plugin')
 		);
 		$expected = 25;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -536,30 +536,30 @@ class ObjectTest extends CakeTestCase {
 			array('controller' => 'request_action', 'action' => 'test_request_action')
 		);
 		$expected = 'This is a test';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'another_ra_test'),
 			array('pass' => array('5', '7'))
 		);
 		$expected = 12;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'tests_apps', 'action' => 'index'), array('return')
 		);
 		$expected = 'This is the TestsAppsController index view ';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(array('controller' => 'tests_apps', 'action' => 'some_method'));
 		$expected = 5;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'normal_request_action')
 		);
 		$expected = 'Hello World';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'paginate_request_action')
@@ -592,20 +592,20 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionParamParseAndPass() {
 		$result = $this->object->requestAction('/request_action/params_pass');
-		$this->assertEqual($result->url, 'request_action/params_pass');
-		$this->assertEqual($result['controller'], 'request_action');
-		$this->assertEqual($result['action'], 'params_pass');
-		$this->assertEqual($result['plugin'], null);
+		$this->assertEquals($result->url, 'request_action/params_pass');
+		$this->assertEquals($result['controller'], 'request_action');
+		$this->assertEquals($result['action'], 'params_pass');
+		$this->assertEquals($result['plugin'], null);
 
 		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');
 		$expected = array('sort' => 'desc', 'limit' => 5,);
-		$this->assertEqual($result['named'], $expected);
+		$this->assertEquals($result['named'], $expected);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'params_pass'),
 			array('named' => array('sort' => 'desc', 'limit' => 5))
 		);
-		$this->assertEqual($result['named'], $expected);
+		$this->assertEquals($result['named'], $expected);
 	}
 
 /**
@@ -629,11 +629,11 @@ class ObjectTest extends CakeTestCase {
 			array('data' => $_POST['data'])
 		);
 		$expected = $_POST['data'];
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction('/request_action/post_pass');
 		$expected = $_POST['data'];
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$_POST = $_tmp;
 	}

@@ -139,7 +139,7 @@ class SqliteTest extends CakeTestCase {
 
 		);
 		$result = $this->Dbo->index($name);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 		$this->Dbo->query('DROP TABLE ' . $name);
 
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
@@ -149,7 +149,7 @@ class SqliteTest extends CakeTestCase {
 			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
 		);
 		$result = $this->Dbo->index($name);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 		$this->Dbo->query('DROP TABLE ' . $name);
 	}
 
@@ -170,13 +170,13 @@ class SqliteTest extends CakeTestCase {
 		$db->execute("CREATE TABLE test_list (id VARCHAR(255));");
 
 		$db->cacheSources = true;
-		$this->assertEqual($db->listSources(), array('test_list'));
+		$this->assertEquals($db->listSources(), array('test_list'));
 		$db->cacheSources = false;
 
 		$fileName = '_' . preg_replace('/[^A-Za-z0-9_\-+]/', '_', TMP . $dbName) . '_list';
 
 		$result = Cache::read($fileName, '_cake_model_');
-		$this->assertEqual($result, array('test_list'));
+		$this->assertEquals($result, array('test_list'));
 
 		Cache::delete($fileName, '_cake_model_');
 		Configure::write('Cache.disable', true);
@@ -195,7 +195,7 @@ class SqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"int_field" integer NOT NULL';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'name' => 'name',
@@ -205,7 +205,7 @@ class SqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"name" varchar(20) NOT NULL';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -217,7 +217,7 @@ class SqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" varchar(20) DEFAULT NULL COLLATE NOCASE';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -228,7 +228,7 @@ class SqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" varchar(20) DEFAULT \'test-value\' NOT NULL';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -239,7 +239,7 @@ class SqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'name' => 'testName',
@@ -251,7 +251,7 @@ class SqliteTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -319,7 +319,7 @@ class SqliteTest extends CakeTestCase {
 			'default' => null,
 			'key' => 'primary',
 		);
-		$this->assertEqual($result['id'], $expected);
+		$this->assertEquals($result['id'], $expected);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
 
 		$tableName = 'uuid_tests';
@@ -333,7 +333,7 @@ class SqliteTest extends CakeTestCase {
 			'default' => null,
 			'key' => 'primary',
 		);
-		$this->assertEqual($result['id'], $expected);
+		$this->assertEquals($result['id'], $expected);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
 	}
 
