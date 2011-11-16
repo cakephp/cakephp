@@ -148,7 +148,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testInvalidContainments method
  *
- * @expectedException PHPUnit_Framework_Error_Warning
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testInvalidContainments() {
@@ -239,7 +239,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testBeforeFindWithNonExistingBinding method
  *
- * @expectedException PHPUnit_Framework_Error_Warning
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testBeforeFindWithNonExistingBinding() {
@@ -2891,7 +2891,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 	public function testEmbeddedFindFields() {
 		$result = $this->Article->find('all', array(
 			'contain' => array('User(user)'),
-			'fields' => array('title')
+			'fields' => array('title'),
+			'order' => array('Article.id' => 'ASC')
 		));
 		$expected = array(
 			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
@@ -2902,7 +2903,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$result = $this->Article->find('all', array(
 			'contain' => array('User(id, user)'),
-			'fields' => array('title')
+			'fields' => array('title'),
+			'order' => array('Article.id' => 'ASC')
 		));
 		$expected = array(
 			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
@@ -2915,7 +2917,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'contain' => array(
 				'Comment(comment, published)' => 'Attachment(attachment)', 'User(user)'
 			),
-			'fields' => array('title')
+			'fields' => array('title'),
+			'order' => array('Article.id' => 'ASC')
 		));
 		if (!empty($result)) {
 			foreach($result as $i=>$article) {
@@ -2999,7 +3002,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'conditions' => array('created >=' => '2007-03-18 12:24')
 			)
 		));
-		$result = $this->Article->find('all', array('fields' => array('title')));
+		$result = $this->Article->find('all', array('fields' => array('title'), 'order' => array('Article.id' => 'ASC')));
 		$expected = array(
 			array(
 				'Article' => array('id' => 1, 'title' => 'First Article'),
@@ -3020,7 +3023,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$this->Article->contain(array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created'))));
-		$result = $this->Article->find('all', array('fields' => array('title')));
+		$result = $this->Article->find('all', array('fields' => array('title'), 'order' => array('Article.id' => 'ASC')));
 		$expected = array(
 			array(
 				'Article' => array('id' => 1, 'title' => 'First Article'),
@@ -3048,7 +3051,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$result = $this->Article->find('all', array(
 			'fields' => array('title'),
-			'contain' => array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created')))
+			'contain' => array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created'))),
+			'order' => array('Article.id' => 'ASC')
 		));
 		$expected = array(
 			array(
@@ -3082,7 +3086,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'conditions' => array('created >=' => '2007-03-18 12:24')
 			)
 		));
-		$result = $this->Article->find('all', array('fields' => array('title')));
+		$result = $this->Article->find('all', array('fields' => array('title'), 'order' => array('Article.id' => 'ASC')));
 		$expected = array(
 			array(
 				'Article' => array('id' => 1, 'title' => 'First Article'),
