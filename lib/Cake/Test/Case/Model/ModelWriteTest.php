@@ -4779,6 +4779,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$TestModel = new Post();
 
+		$ts = date('Y-m-d H:i:s');
 		$data = array(
 			array(
 				'id' => '1',
@@ -4799,7 +4800,6 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue($TestModel->saveMany($data));
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
-		$ts = date('Y-m-d H:i:s');
 		$expected = array(
 			array(
 				'Post' => array(
