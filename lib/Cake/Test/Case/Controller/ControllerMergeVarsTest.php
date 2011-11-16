@@ -150,7 +150,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$expected = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => false));
-		$this->assertEqual($Controller->components, $expected, 'Duplication of settings occured. %s');
+		$this->assertEquals($Controller->components, $expected, 'Duplication of settings occured. %s');
 	}
 
 /**
@@ -164,7 +164,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$expected = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => true, 'remote'));
-		$this->assertEqual($Controller->components, $expected, 'Merging of settings is wrong. %s');
+		$this->assertEquals($Controller->components, $expected, 'Merging of settings is wrong. %s');
 	}
 
 /**
@@ -177,7 +177,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$expected = array('MergeVar' => array('format' => 'html', 'terse'));
-		$this->assertEqual($Controller->helpers, $expected, 'Duplication of settings occured. %s');
+		$this->assertEquals($Controller->helpers, $expected, 'Duplication of settings occured. %s');
 	}
 
 /**

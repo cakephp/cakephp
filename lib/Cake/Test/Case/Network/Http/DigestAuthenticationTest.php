@@ -93,8 +93,8 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$auth = array('user' => 'admin', 'pass' => '1234');
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(isset($this->HttpSocket->request['header']['Authorization']));
-		$this->assertEqual($auth['realm'], 'The batcave');
-		$this->assertEqual($auth['nonce'], '4cded326c6c51');
+		$this->assertEquals($auth['realm'], 'The batcave');
+		$this->assertEquals($auth['nonce'], '4cded326c6c51');
 	}
 
 /**
@@ -107,7 +107,7 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$auth = array('user' => 'admin', 'pass' => '1234');
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$expected = 'Digest username="admin", realm="The batcave", nonce="4cded326c6c51", uri="/", response="da7e2a46b471d77f70a9bb3698c8902b"';
-		$this->assertEqual($expected, $this->HttpSocket->request['header']['Authorization']);
+		$this->assertEquals($expected, $this->HttpSocket->request['header']['Authorization']);
 		$this->assertFalse(isset($auth['qop']));
 		$this->assertFalse(isset($auth['nc']));
 
@@ -115,9 +115,9 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$auth = array('user' => 'admin', 'pass' => '1234');
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$expected = '@Digest username="admin", realm="The batcave", nonce="4cded326c6c51", uri="/", response="[a-z0-9]{32}", qop="auth", nc=00000001, cnonce="[a-z0-9]+"@';
-		$this->assertPattern($expected, $this->HttpSocket->request['header']['Authorization']);
-		$this->assertEqual($auth['qop'], 'auth');
-		$this->assertEqual($auth['nc'], 2);
+		$this->assertRegExp($expected, $this->HttpSocket->request['header']['Authorization']);
+		$this->assertEquals($auth['qop'], 'auth');
+		$this->assertEquals($auth['nc'], 2);
 	}
 
 /**
@@ -147,21 +147,21 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$auth = array('user' => 'admin', 'pass' => '1234');
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'nc=00000001') > 0);
-		$this->assertEqual($auth['nc'], 2);
+		$this->assertEquals($auth['nc'], 2);
 
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'nc=00000002') > 0);
-		$this->assertEqual($auth['nc'], 3);
+		$this->assertEquals($auth['nc'], 3);
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
 
 		$this->HttpSocket->nextHeader = '';
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'nc=00000003') > 0);
-		$this->assertEqual($auth['nc'], 4);
+		$this->assertEquals($auth['nc'], 4);
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response2 = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
-		$this->assertNotEqual($response, $response2);
+		$this->assertNotEquals($response, $response2);
 	}
 
 /**
@@ -176,7 +176,7 @@ class DigestAuthenticationTest extends CakeTestCase {
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
-		$this->assertNotEqual($response, 'da7e2a46b471d77f70a9bb3698c8902b');
+		$this->assertNotEquals($response, 'da7e2a46b471d77f70a9bb3698c8902b');
 	}
 
 /**

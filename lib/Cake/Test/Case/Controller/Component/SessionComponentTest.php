@@ -142,10 +142,10 @@ class SessionComponentTest extends CakeTestCase {
 		$expected = $Session->id();
 
 		$result = $Object->requestAction('/session_test/session_id');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $Object->requestAction('/orange_session_test/session_id');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -188,25 +188,25 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Test'));
 
 		$this->assertTrue($Session->write('Test', 'some value'));
-		$this->assertEqual($Session->read('Test'), 'some value');
+		$this->assertEquals($Session->read('Test'), 'some value');
 		$this->assertFalse($Session->write('Test.key', 'some value'));
 		$Session->delete('Test');
 
 		$this->assertTrue($Session->write('Test.key.path', 'some value'));
-		$this->assertEqual($Session->read('Test.key.path'), 'some value');
-		$this->assertEqual($Session->read('Test.key'), array('path' => 'some value'));
+		$this->assertEquals($Session->read('Test.key.path'), 'some value');
+		$this->assertEquals($Session->read('Test.key'), array('path' => 'some value'));
 		$this->assertTrue($Session->write('Test.key.path2', 'another value'));
-		$this->assertEqual($Session->read('Test.key'), array('path' => 'some value', 'path2' => 'another value'));
+		$this->assertEquals($Session->read('Test.key'), array('path' => 'some value', 'path2' => 'another value'));
 		$Session->delete('Test');
 
 		$array = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
 		$this->assertTrue($Session->write('Test', $array));
-		$this->assertEqual($Session->read('Test'), $array);
+		$this->assertEquals($Session->read('Test'), $array);
 		$Session->delete('Test');
 
 		$this->assertFalse($Session->write(array('Test'), 'some value'));
 		$this->assertTrue($Session->write(array('Test' => 'some value')));
-		$this->assertEqual($Session->read('Test'), 'some value');
+		$this->assertEquals($Session->read('Test'), 'some value');
 		$Session->delete('Test');
 	}
 
@@ -250,16 +250,16 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message');
-		$this->assertEqual($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
+		$this->assertEquals($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
 
 		$Session->setFlash('This is a test message', 'test', array('name' => 'Joel Moss'));
-		$this->assertEqual($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')));
+		$this->assertEquals($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')));
 
 		$Session->setFlash('This is a test message', 'default', array(), 'myFlash');
-		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
+		$this->assertEquals($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
 
 		$Session->setFlash('This is a test message', 'non_existing_layout');
-		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
+		$this->assertEquals($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
 
 		$Session->delete('Message');
 	}
@@ -285,7 +285,7 @@ class SessionComponentTest extends CakeTestCase {
 		$Session = new SessionComponent($this->ComponentCollection);
 
 		$Session->write('Test', 'some value');
-		$this->assertEqual($Session->read('Test'), 'some value');
+		$this->assertEquals($Session->read('Test'), 'some value');
 		$Session->destroy('Test');
 		$this->assertNull($Session->read('Test'));
 	}

@@ -39,13 +39,13 @@ class SecurityTest extends CakeTestCase {
  */
 	public function testInactiveMins() {
 		Configure::write('Security.level', 'high');
-		$this->assertEqual(10, Security::inactiveMins());
+		$this->assertEquals(10, Security::inactiveMins());
 
 		Configure::write('Security.level', 'medium');
-		$this->assertEqual(100, Security::inactiveMins());
+		$this->assertEquals(100, Security::inactiveMins());
 
 		Configure::write('Security.level', 'low');
-		$this->assertEqual(300, Security::inactiveMins());
+		$this->assertEquals(300, Security::inactiveMins());
 	}
 
 /**
@@ -54,7 +54,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	public function testGenerateAuthkey() {
-		$this->assertEqual(strlen(Security::generateAuthKey()), 40);
+		$this->assertEquals(strlen(Security::generateAuthKey()), 40);
 	}
 
 /**
@@ -78,38 +78,38 @@ class SecurityTest extends CakeTestCase {
 		$key = 'someKey';
 		$hash = 'someHash';
 
-		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
-		$this->assertIdentical(strlen(Security::hash($key, 'sha1', false)), 40);
-		$this->assertIdentical(strlen(Security::hash($key, null, true)), 40);
-		$this->assertIdentical(strlen(Security::hash($key, 'sha1', true)), 40);
+		$this->assertSame(strlen(Security::hash($key, null, false)), 40);
+		$this->assertSame(strlen(Security::hash($key, 'sha1', false)), 40);
+		$this->assertSame(strlen(Security::hash($key, null, true)), 40);
+		$this->assertSame(strlen(Security::hash($key, 'sha1', true)), 40);
 
 		$result = Security::hash($key, null, $hash);
-		$this->assertIdentical($result, 'e38fcb877dccb6a94729a81523851c931a46efb1');
+		$this->assertSame($result, 'e38fcb877dccb6a94729a81523851c931a46efb1');
 
 		$result = Security::hash($key, 'sha1', $hash);
-		$this->assertIdentical($result, 'e38fcb877dccb6a94729a81523851c931a46efb1');
+		$this->assertSame($result, 'e38fcb877dccb6a94729a81523851c931a46efb1');
 
 		$hashType = 'sha1';
 		Security::setHash($hashType);
-		$this->assertIdentical(Security::$hashType, $hashType);
-		$this->assertIdentical(strlen(Security::hash($key, null, true)), 40);
-		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
+		$this->assertSame(Security::$hashType, $hashType);
+		$this->assertSame(strlen(Security::hash($key, null, true)), 40);
+		$this->assertSame(strlen(Security::hash($key, null, false)), 40);
 
-		$this->assertIdentical(strlen(Security::hash($key, 'md5', false)), 32);
-		$this->assertIdentical(strlen(Security::hash($key, 'md5', true)), 32);
+		$this->assertSame(strlen(Security::hash($key, 'md5', false)), 32);
+		$this->assertSame(strlen(Security::hash($key, 'md5', true)), 32);
 
 		$hashType = 'md5';
 		Security::setHash($hashType);
-		$this->assertIdentical(Security::$hashType, $hashType);
-		$this->assertIdentical(strlen(Security::hash($key, null, false)), 32);
-		$this->assertIdentical(strlen(Security::hash($key, null, true)), 32);
+		$this->assertSame(Security::$hashType, $hashType);
+		$this->assertSame(strlen(Security::hash($key, null, false)), 32);
+		$this->assertSame(strlen(Security::hash($key, null, true)), 32);
 
 		if (!function_exists('hash') && !function_exists('mhash')) {
-			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 32);
-			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 32);
+			$this->assertSame(strlen(Security::hash($key, 'sha256', false)), 32);
+			$this->assertSame(strlen(Security::hash($key, 'sha256', true)), 32);
 		} else {
-			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 64);
-			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 64);
+			$this->assertSame(strlen(Security::hash($key, 'sha256', false)), 64);
+			$this->assertSame(strlen(Security::hash($key, 'sha256', true)), 64);
 		}
 
 		Security::setHash($_hashType);
@@ -128,22 +128,22 @@ class SecurityTest extends CakeTestCase {
 		}
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
-		$this->assertEqual(Security::cipher($result, $key), $txt);
+		$this->assertEquals(Security::cipher($result, $key), $txt);
 
 		$txt = '';
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
-		$this->assertEqual(Security::cipher($result, $key), $txt);
+		$this->assertEquals(Security::cipher($result, $key), $txt);
 
 		$txt = 123456;
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
-		$this->assertEqual(Security::cipher($result, $key), $txt);
+		$this->assertEquals(Security::cipher($result, $key), $txt);
 
 		$txt = '123456';
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
-		$this->assertEqual(Security::cipher($result, $key), $txt);
+		$this->assertEquals(Security::cipher($result, $key), $txt);
 	}
 
 /**
