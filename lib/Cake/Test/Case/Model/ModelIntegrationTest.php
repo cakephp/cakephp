@@ -997,13 +997,13 @@ class ModelIntegrationTest extends BaseModelTest {
 	public function testLoadModelSecondIteration() {
 		$this->loadFixtures('Apple', 'Message', 'Thread', 'Bid');
 		$model = new ModelA();
-		$this->assertIsA($model,'ModelA');
+		$this->assertInstanceOf('ModelA', $model);
 
-		$this->assertIsA($model->ModelB, 'ModelB');
-		$this->assertIsA($model->ModelB->ModelD, 'ModelD');
+		$this->assertInstanceOf('ModelB', $model->ModelB);
+		$this->assertInstanceOf('ModelD', $model->ModelB->ModelD);
 
-		$this->assertIsA($model->ModelC, 'ModelC');
-		$this->assertIsA($model->ModelC->ModelD, 'ModelD');
+		$this->assertInstanceOf('ModelC', $model->ModelC);
+		$this->assertInstanceOf('ModelD', $model->ModelC->ModelD);
 	}
 
 /**

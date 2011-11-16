@@ -107,7 +107,7 @@ class FileTest extends CakeTestCase {
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->Folder();
-		$this->assertIsA($result, 'Folder');
+		$this->assertInstanceOf('Folder', $result);
 
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
