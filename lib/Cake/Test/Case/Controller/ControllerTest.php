@@ -102,7 +102,7 @@ class ControllerPost extends CakeTestModel {
  * @param array $options
  * @return void
  */
-	public function find($type, $options = array()) {
+	public function find($type = 'first', $options = array()) {
 		if ($type == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
 			$options = Set::merge($options, compact('conditions'));

@@ -133,12 +133,12 @@ class ClassRegistry {
 				App::uses($class, $pluginPath . 'Model');
 
 				if (class_exists($class)) {
-					${$class} = new $class($settings);
+					$instance = new $class($settings);
 					if ($strict) {
-						${$class} = (${$class} instanceof Model) ? ${$class} : null;
+						$instance = ($instance instanceof Model) ? $instance : null;
 					}
 				}
-				if (!isset(${$class})) {
+				if (!isset($instance)) {
 					if ($strict) {
 						return false;
 					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
@@ -148,10 +148,10 @@ class ClassRegistry {
 					}
 					if (!empty($appModel)) {
 						$settings['name'] = $class;
-						${$class} = new $appModel($settings);
+						$instance = new $appModel($settings);
 					}
 
-					if (!isset(${$class})) {
+					if (!isset($instance)) {
 						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
 						return $false;
 					}
@@ -166,7 +166,7 @@ class ClassRegistry {
 		if ($count > 1) {
 			return $true;
 		}
-		return ${$class};
+		return $instance;
 	}
 
 /**

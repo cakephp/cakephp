@@ -87,12 +87,12 @@ class ScaffoldMockControllerWithFields extends Controller {
 class TestScaffoldMock extends Scaffold {
 
 /**
- * Overload __scaffold
+ * Overload _scaffold
  *
  * @param unknown_type $params
  */
-    function _scaffold($params) {
-        $this->_params = $params;
+    function _scaffold(CakeRequest $request) {
+        $this->_params = $request;
     }
 
 /**

@@ -955,7 +955,7 @@ class CakeSchemaTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual($compare, $expected);
+		$this->assertEquals($expected, $compare);
 	}
 
 /**

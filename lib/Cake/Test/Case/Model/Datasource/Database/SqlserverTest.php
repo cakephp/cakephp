@@ -48,9 +48,11 @@ class SqlserverTestDb extends Sqlserver {
  * execute method
  *
  * @param mixed $sql
+ * @param mixed $params
+ * @param mixed $prepareOptions
  * @return mixed
  */
-	protected function _execute($sql) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->simulated[] = $sql;
 		return empty($this->executeResultsStack) ? null : array_pop($this->executeResultsStack);
 	}

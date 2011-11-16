@@ -27,15 +27,6 @@ App::uses('PagesController', 'Controller');
 class PagesControllerTest extends CakeTestCase {
 
 /**
- * endTest method
- *
- * @return void
- */
-	public function endTest() {
-		App::build();
-	}
-
-/**
  * testDisplay method
  *
  * @return void

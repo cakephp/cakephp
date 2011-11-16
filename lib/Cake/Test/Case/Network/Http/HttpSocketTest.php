@@ -252,13 +252,13 @@ class HttpSocketTest extends CakeTestCase {
 			'protocol' => 'tcp',
 			'port' => 23,
 			'timeout' => 30,
-			'redirect' => false,
 			'request' => array(
 				'uri' => array(
 					'scheme' => 'https',
 					'host' => 'www.cakephp.org',
 					'port' => 23
 				),
+				'redirect' => false,
 				'cookies' => array()
 			)
 		);
@@ -277,13 +277,13 @@ class HttpSocketTest extends CakeTestCase {
 			'protocol' => 'tcp',
 			'port' => 80,
 			'timeout' => 30,
-			'redirect' => false,
 			'request' => array(
 				'uri' => array(
 					'scheme' => 'http',
 					'host' => 'www.foo.com',
 					'port' => 80
 				),
+				'redirect' => false,
 				'cookies' => array()
 			)
 		);
@@ -318,13 +318,13 @@ class HttpSocketTest extends CakeTestCase {
 						'protocol' => 'tcp',
 						'port' => 80,
 						'timeout' => 30,
-						'redirect' => false,
 						'request' => array(
 							'uri' => array (
 								'scheme' => 'http',
 								'host' => 'www.cakephp.org',
 								'port' => 80
 							),
+							'redirect' => false,
 							'cookies' => array()
 						)
 					),
@@ -345,6 +345,7 @@ class HttpSocketTest extends CakeTestCase {
 						'line' => "GET /?foo=bar HTTP/1.1\r\n",
 						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n",
 						'raw' => "",
+						'redirect' => false,
 						'cookies' => array(),
 						'proxy' => array(),
 						'auth' => array()
@@ -722,19 +723,50 @@ class HttpSocketTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testRequestWithRedirect() {
+	public function testRequestWithRedirectAsTrue() {
 		$request = array(
-			'uri' => 'http://localhost/oneuri'
+			'uri' => 'http://localhost/oneuri',
+			'redirect' => true
 		);
 		$serverResponse1 = "HTTP/1.x 302 Found\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\nLocation: http://localhost/anotheruri\r\n\r\n";
 		$serverResponse2 = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>You have been redirected</h1>";
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
 		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
-		$this->Socket->config['redirect'] = true;
 	
 		$response = $this->Socket->request($request);
 		$this->assertEquals('<h1>You have been redirected</h1>', $response->body());
 	}
+	
+	public function testRequestWithRedirectAsInt() {
+		$request = array(
+			'uri' => 'http://localhost/oneuri',
+			'redirect' => 2
+		);
+		$serverResponse1 = "HTTP/1.x 302 Found\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\nLocation: http://localhost/anotheruri\r\n\r\n";
+		$serverResponse2 = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>You have been redirected</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
+		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
+	
+		$response = $this->Socket->request($request);
+		$this->assertEquals(1, $this->Socket->request['redirect']);
+	}
+	
+	public function testRequestWithRedirectAsIntReachingZero() {
+		$request = array(
+			'uri' => 'http://localhost/oneuri',
+			'redirect' => 1
+		);
+		$serverResponse1 = "HTTP/1.x 302 Found\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\nLocation: http://localhost/oneruri\r\n\r\n";
+		$serverResponse2 = "HTTP/1.x 302 Found\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\nLocation: http://localhost/anotheruri\r\n\r\n";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
+		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
+	
+		$response = $this->Socket->request($request);
+		$this->assertEquals(0, $this->Socket->request['redirect']);
+		$this->assertEquals(302, $response->code);
+		$this->assertEquals('http://localhost/anotheruri', $response->getHeader('Location'));
+	}
+	
 
 /**
  * testProxy method

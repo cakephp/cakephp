@@ -5,23 +5,23 @@ class Test2Source extends DataSource {
 		return compact('model');
 	}
 
-	public function listSources() {
+	public function listSources($data = null) {
 		return array('test_source');
 	}
 
-	public function create($model, $fields = array(), $values = array()) {
+	public function create(Model $model, $fields = null, $values = null) {
 		return compact('model', 'fields', 'values');
 	}
 
-	public function read($model, $queryData = array()) {
+	public function read(Model $model, $queryData = array()) {
 		return compact('model', 'queryData');
 	}
 
-	public function update($model, $fields = array(), $values = array()) {
+	public function update(Model $model, $fields = array(), $values = array()) {
 		return compact('model', 'fields', 'values');
 	}
 
-	public function delete($model, $id) {
+	public function delete(Model $model, $id = null) {
 		return compact('model', 'id');
 	}
 }

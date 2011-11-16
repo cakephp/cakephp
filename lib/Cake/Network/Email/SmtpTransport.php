@@ -214,7 +214,8 @@ class SmtpTransport extends AbstractTransport {
 			if (substr($response, -2) !== "\r\n") {
 				throw new SocketException(__d('cake_dev', 'SMTP timeout.'));
 			}
-			$response = end(explode("\r\n", rtrim($response, "\r\n")));
+			$responseLines = explode("\r\n", rtrim($response, "\r\n"));
+			$response = end($responseLines);
 
 			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
 				if ($code[2] === '-') {
