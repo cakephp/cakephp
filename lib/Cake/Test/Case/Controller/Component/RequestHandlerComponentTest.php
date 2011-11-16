@@ -214,6 +214,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
 	}
+
 /**
  * Test that ext is not set with multiple accepted content types.
  *
@@ -223,6 +224,20 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, application/xml, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('xml', 'json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
+	}
+	
+/**
+ * Test that ext is not set with confusing android accepts headers.
+ *
+ * @return void
+ */
+	public function testInitializeAmbiguousAndroidAccepts() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('html', 'xml');
 
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertNull($this->RequestHandler->ext);

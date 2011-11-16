@@ -1558,6 +1558,146 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testSaveHabtmNoPrimaryData method
+ *
+ * @return void
+ */
+	public function testSaveHabtmNoPrimaryData() {
+		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'ArticlesTag');
+		$TestModel = new Article();
+
+		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')), false);
+		$result = $TestModel->findById(2);
+		$expected = array(
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
+			),
+			'Tag' => array(
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+				)
+			)
+		);
+		$this->assertEqual($expected, $result);
+
+		$ts = date('Y-m-d H:i:s');
+		$TestModel->id = 2;
+		$data = array('Tag' => array('Tag' => array(2)));
+		$TestModel->save($data);
+
+		$result = $TestModel->findById(2);
+		$expected = array(
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => $ts
+			),
+			'Tag' => array(
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				)
+			)
+		);
+		$this->assertEqual($expected, $result);
+
+		$this->loadFixtures('Portfolio', 'Item', 'ItemsPortfolio');
+		$TestModel = new Portfolio();
+		$result = $TestModel->findById(2);
+		$expected = array(
+			'Portfolio' => array(
+				'id' => 2,
+				'seller_id' => 1,
+				'name' => 'Portfolio 2'
+			),
+			'Item' => array(
+				array(
+					'id' => 2,
+					'syfile_id' => 2,
+					'published' => '',
+					'name' => 'Item 2',
+					'ItemsPortfolio' => array(
+						'id' => 2,
+						'item_id' => 2,
+						'portfolio_id' => 2
+					)
+				),
+				array(
+					'id' => 6,
+					'syfile_id' => 6,
+					'published' => '',
+					'name' => 'Item 6',
+					'ItemsPortfolio' => array(
+						'id' => 6,
+						'item_id' => 6,
+						'portfolio_id' => 2
+					)
+				)
+			)
+		);
+		$this->assertEqual($expected, $result);
+
+		$data = array('Item' => array('Item' => array(1, 2)));
+		$TestModel->id = 2;
+		$TestModel->save($data);
+		$result = $TestModel->findById(2);
+		$result['Item'] = Set::sort($result['Item'], '{n}.id', 'asc');
+		$expected = array(
+			'Portfolio' => array(
+				'id' => 2,
+				'seller_id' => 1,
+				'name' => 'Portfolio 2'
+			),
+			'Item' => array(
+				array(
+					'id' => 1,
+					'syfile_id' => 1,
+					'published' => '',
+					'name' => 'Item 1',
+					'ItemsPortfolio' => array(
+						'id' => 7,
+						'item_id' => 1,
+						'portfolio_id' => 2
+					)
+				),
+				array(
+					'id' => 2,
+					'syfile_id' => 2,
+					'published' => '',
+					'name' => 'Item 2',
+					'ItemsPortfolio' => array(
+						'id' => 8,
+						'item_id' => 2,
+						'portfolio_id' => 2
+					)
+				)
+			)
+		);
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testSaveHabtmCustomKeys method
  *
  * @return void

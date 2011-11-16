@@ -247,6 +247,7 @@ class NumberHelper extends AppHelper {
  * @param array $options The array of options for this format.
  * @return void
  * @see NumberHelper::currency()
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, $options) {
 		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;

@@ -171,6 +171,13 @@ class TestAfterHelper extends Helper {
 class ViewTest extends CakeTestCase {
 
 /**
+ * Fixtures used in this test.
+ *
+ * @var array
+ */
+	public $fixtures = array('core.user', 'core.post');
+
+/**
  * setUp method
  *
  * @return void
@@ -190,7 +197,7 @@ class ViewTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
 		Configure::write('debug', 2);
 	}
 
@@ -576,14 +583,14 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers = $this->getMock('HelperCollection', array('trigger'), array($View));
 
 		$View->Helpers->expects($this->at(0))->method('trigger')
-			->with('beforeRender', new PHPUnit_Framework_Constraint_IsAnything());
+			->with('beforeRender', $this->anything());
 		$View->Helpers->expects($this->at(1))->method('trigger')
-			->with('afterRender', new PHPUnit_Framework_Constraint_IsAnything());
+			->with('afterRender', $this->anything());
 
 		$View->Helpers->expects($this->at(2))->method('trigger')
-			->with('beforeLayout', new PHPUnit_Framework_Constraint_IsAnything());
+			->with('beforeLayout', $this->anything());
 		$View->Helpers->expects($this->at(3))->method('trigger')
-			->with('afterLayout', new PHPUnit_Framework_Constraint_IsAnything());
+			->with('afterLayout', $this->anything());
 
 		$View->render('index');
 	}

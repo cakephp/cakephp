@@ -225,6 +225,30 @@ class MysqlTest extends CakeTestCase {
 
 		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 	}
+/**
+ * testLastAffected method
+ *
+ *
+ * @return void
+ */
+	public function testLastAffected() {
+		$this->Dbo->cacheSources = false;
+		$tableName = 'tinyint_' . uniqid();
+		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+
+		$this->model = new CakeTestModel(array(
+			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test'
+		));
+
+		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'small_int' => 5)));
+		$this->assertEqual(1, $this->model->find('count'));
+		$this->model->deleteAll(true);
+		$result = $this->Dbo->lastAffected();
+		$this->assertEqual(1, $result);
+		$this->assertEqual(0, $this->model->find('count'));
+
+		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
+	}
 
 /**
  * testIndexDetection method

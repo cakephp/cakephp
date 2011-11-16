@@ -35,7 +35,7 @@ class DigestHttpSocket extends HttpSocket {
  * @param mixed $request
  * @return void
  */
-	public function request($request) {
+	public function request($request = array()) {
 		if ($request === false) {
 			if (isset($this->response['header']['WWW-Authenticate'])) {
 				unset($this->response['header']['WWW-Authenticate']);

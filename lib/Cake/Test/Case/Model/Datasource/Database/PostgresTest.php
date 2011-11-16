@@ -43,7 +43,7 @@ class DboPostgresTestDb extends Postgres {
  * @param mixed $sql
  * @return void
  */
-	function _execute($sql, $params = array()) {
+	function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}

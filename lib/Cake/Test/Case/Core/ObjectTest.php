@@ -115,7 +115,7 @@ class RequestActionController extends Controller {
  * @return array
  */
 	public function post_pass() {
-		return $this->data;
+		return $this->request->data;
 	}
 
 /**
@@ -490,7 +490,7 @@ class ObjectTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load('TestPlugin');
 		Router::reload();
 
 		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
@@ -609,11 +609,12 @@ class ObjectTest extends CakeTestCase {
 	}
 
 /**
- * test requestAction and POST parameter passing, and not passing when url is an array.
+ * test that requestAction does not fish data out of the POST
+ * superglobal.
  *
  * @return void
  */
-	public function testRequestActionPostPassing() {
+	public function testRequestActionNoPostPassing() {
 		$_tmp = $_POST;
 
 		$_POST = array('data' => array(
@@ -635,5 +636,27 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$_POST = $_tmp;
+	}
+
+/**
+ * Test requestAction with post data.
+ *
+ * @return void
+ */
+	public function testRequestActionPostWithData() {
+		$data = array(
+			'Post' => array('id' => 2)
+		);
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'post_pass'),
+			array('data' => $data)
+		);
+		$this->assertEquals($data, $result);
+
+		$result = $this->object->requestAction(
+			'/request_action/post_pass',
+			array('data' => $data)
+		);
+		$this->assertEquals($data, $result);
 	}
 }

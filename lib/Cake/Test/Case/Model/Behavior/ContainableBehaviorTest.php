@@ -3305,9 +3305,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
 
-		$this->JoinA =& ClassRegistry::init('JoinA');
-		$this->JoinB =& ClassRegistry::init('JoinB');
-		$this->JoinC =& ClassRegistry::init('JoinC');
+		$this->JoinA = ClassRegistry::init('JoinA');
+		$this->JoinB = ClassRegistry::init('JoinB');
+		$this->JoinC = ClassRegistry::init('JoinC');
 
 		$this->JoinA->Behaviors->attach('Containable');
 		$this->JoinB->Behaviors->attach('Containable');

@@ -390,10 +390,6 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject(1);
 		$this->assertIdentical($this->CakeEmail->subject(), '1');
 
-		$result = $this->CakeEmail->subject(array('something'));
-		$this->assertIdentical($this->CakeEmail->subject(), 'Array');
-		$this->assertIdentical($this->CakeEmail, $result);
-
 		$this->CakeEmail->subject('هذه رسالة بعنوان طويل مرسل للمستلم');
 		$expected = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
 		$this->assertIdentical($this->CakeEmail->subject(), $expected);

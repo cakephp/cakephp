@@ -181,6 +181,7 @@ class HtmlHelper extends AppHelper {
  * @param mixed $options Link attributes e.g. array('id'=>'selected')
  * @return void
  * @see HtmlHelper::link() for details on $options that can be used.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function addCrumb($name, $link = null, $options = null) {
 		$this->_crumbs[] = array($name, $link, $options);
@@ -615,6 +616,7 @@ class HtmlHelper extends AppHelper {
  * @param string $separator Text to separate crumbs.
  * @param string $startText This will be the first crumb, if false it defaults to first crumb in array
  * @return string Composed bread crumbs
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbs($separator = '&raquo;', $startText = false) {
 		if (!empty($this->_crumbs)) {
@@ -645,6 +647,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param array $options Array of html attributes to apply to the generated list elements.
  * @return string breadcrumbs html list
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbList($options = array()) {
 		if (!empty($this->_crumbs)) {
@@ -975,6 +978,7 @@ class HtmlHelper extends AppHelper {
  * @param string $path Path with config file
  * @return mixed False to error or loaded configs
  * @throws ConfigureException
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#changing-the-tags-output-by-htmlhelper
  */
 	public function loadConfig($configFile, $path = null) {
 		if (!$path) {
