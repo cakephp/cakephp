@@ -536,10 +536,11 @@ class Inflector {
  *
  * @param string $string the string you want to slug
  * @param string $replacement will replace keys in map
+ * @param bool $lowercase will convert slug to lowercase if true
  * @return string
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug
  */
-	public static function slug($string, $replacement = '_') {
+	public static function slug($string, $replacement = '_', $lowercase = false) {
 		$quotedReplacement = preg_quote($replacement, '/');
 
 		$merge = array(
@@ -549,7 +550,12 @@ class Inflector {
 		);
 
 		$map = self::$_transliteration + $merge;
-		return preg_replace(array_keys($map), array_values($map), $string);
+
+        	if ($lowercase) {
+            		return strtolower(preg_replace(array_keys($map), array_values($map), $string));
+        	} else {
+            		return preg_replace(array_keys($map), array_values($map), $string);
+        	}
 	}
 }
 
