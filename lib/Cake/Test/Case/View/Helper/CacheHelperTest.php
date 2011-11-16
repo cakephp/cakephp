@@ -64,7 +64,9 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	public function skip() {
-		$this->skipUnless(is_writable(TMP . 'cache' . DS . 'views' . DS), 'TMP/views is not writable %s');
+		if (!is_writable(TMP . 'cache' . DS . 'views' . DS)) {
+			$this->markTestSkipped('TMP/views is not writable %s');
+		}
 	}
 /**
  * setUp method
