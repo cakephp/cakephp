@@ -19,6 +19,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppController', 'Controller');
+
 /**
  * Static content controller
  *
@@ -41,7 +43,7 @@ class PagesController extends AppController {
  *
  * @var array
  */
-	public $helpers = array('Html');
+	public $helpers = array('Html', 'Session');
 
 /**
  * This controller does not use a model
@@ -54,6 +56,7 @@ class PagesController extends AppController {
  * Displays a view
  *
  * @param mixed What page to display
+ * @return void
  */
 	public function display() {
 		$path = func_get_args();
