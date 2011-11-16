@@ -32,7 +32,9 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->skipUnless(function_exists('xcache_set'), 'Xcache is not installed or configured properly');
+		if (!function_exists('xcache_set')) {
+			$this->markTestSkipped('Xcache is not installed or configured properly');
+		}
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('xcache', array('engine' => 'Xcache', 'prefix' => 'cake_'));

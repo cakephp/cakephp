@@ -642,7 +642,9 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->connected = true;
 
 		$f = fopen(TMP . 'download.txt', 'w');
-		$this->skipUnless($f, 'Can not write in TMP directory.');
+		if (!$f) {
+			$this->markTestSkipped('Can not write in TMP directory.');
+		}
 
 		$this->Socket->setContentResource($f);
 		$result = (string)$this->Socket->request('http://www.cakephp.org/');

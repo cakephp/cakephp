@@ -621,7 +621,9 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function testFileExistsInPath() {
-		$this->skipUnless(function_exists('ini_set'), '%s ini_set function not available');
+		if (!function_exists('ini_set')) {
+			$this->markTestSkipped('%s ini_set function not available');
+		}
 
 		$_includePath = ini_get('include_path');
 
@@ -957,7 +959,9 @@ EXPECTED;
  * @return void
  */
 	public function testStripslashesDeepSybase() {
-		$this->skipUnless(ini_get('magic_quotes_sybase') === '1', 'magic_quotes_sybase is off');
+		if (!(ini_get('magic_quotes_sybase') === '1')) {
+			$this->markTestSkipped('magic_quotes_sybase is off');
+		}
 
 		$this->assertEquals(stripslashes_deep("tes\'t"), "tes\'t");
 
