@@ -683,6 +683,26 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test isset()/empty() with overloaded properties.
+ *
+ * @return void
+ */
+	public function test__isset() {
+		$request = new CakeRequest('some/path');
+		$request->params = array(
+			'controller' => 'posts',
+			'action' => 'view',
+			'plugin' => 'blogs',
+			'named' => array()
+		);
+
+		$this->assertTrue(isset($request->controller));
+		$this->assertFalse(isset($request->notthere));
+		$this->assertFalse(empty($request->controller));
+		$this->assertTrue(empty($request->named));
+	}
+
+/**
  * test the array access implementation
  *
  * @return void
