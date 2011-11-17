@@ -51,28 +51,28 @@ class MootoolsEngineHelperTest extends CakeTestCase {
  */
 	public function testSelector() {
 		$result = $this->Moo->get('#content');
-		$this->assertEqual($result, $this->Moo);
-		$this->assertEqual($this->Moo->selection, '$("content")');
+		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo->selection, '$("content")');
 
 		$result = $this->Moo->get('a .remove');
-		$this->assertEqual($result, $this->Moo);
-		$this->assertEqual($this->Moo->selection, '$$("a .remove")');
+		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo->selection, '$$("a .remove")');
 
 		$result = $this->Moo->get('document');
-		$this->assertEqual($result, $this->Moo);
-		$this->assertEqual($this->Moo->selection, "$(document)");
+		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo->selection, "$(document)");
 
 		$result = $this->Moo->get('window');
-		$this->assertEqual($result, $this->Moo);
-		$this->assertEqual($this->Moo->selection, "$(window)");
+		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo->selection, "$(window)");
 
 		$result = $this->Moo->get('ul');
-		$this->assertEqual($result, $this->Moo);
-		$this->assertEqual($this->Moo->selection, '$$("ul")');
+		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo->selection, '$$("ul")');
 
 		$result = $this->Moo->get('#some_long-id.class');
-		$this->assertEqual($result, $this->Moo);
-		$this->assertEqual($this->Moo->selection, '$$("#some_long-id.class")');
+		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo->selection, '$$("#some_long-id.class")');
 	}
 /**
  * test event binding
@@ -83,15 +83,15 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$this->Moo->get('#myLink');
 		$result = $this->Moo->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("myLink").addEvent("click", doClick);';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->event('click', 'this.setStyle("display", "");', array('stop' => false));
 		$expected = '$("myLink").addEvent("click", function (event) {this.setStyle("display", "");});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->event('click', 'this.setStyle("display", "none");');
 		$expected = "\$(\"myLink\").addEvent(\"click\", function (event) {event.stop();\nthis.setStyle(\"display\", \"none\");});";
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test dom ready event creation
@@ -101,7 +101,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 	public function testDomReady() {
 		$result = $this->Moo->domReady('foo.name = "bar";');
 		$expected = 'window.addEvent("domready", function (event) {foo.name = "bar";});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test Each method
@@ -112,7 +112,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$this->Moo->get('#foo');
 		$result = $this->Moo->each('item.setStyle("display", "none");');
 		$expected = '$("foo").each(function (item, index) {item.setStyle("display", "none");});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test Effect generation
@@ -123,35 +123,35 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$this->Moo->get('#foo');
 		$result = $this->Moo->effect('show');
 		$expected = '$("foo").setStyle("display", "");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('hide');
 		$expected = '$("foo").setStyle("display", "none");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('fadeIn');
 		$expected = '$("foo").fade("in");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('fadeOut');
 		$expected = '$("foo").fade("out");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('slideIn');
 		$expected = '$("foo").slide("in");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('slideOut');
 		$expected = '$("foo").slide("out");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('slideOut', array('speed' => 'fast'));
 		$expected = '$("foo").set("slide", {duration:"short"}).slide("out");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->effect('slideOut', array('speed' => 'slow'));
 		$expected = '$("foo").set("slide", {duration:"long"}).slide("out");';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * Test Request Generation
@@ -161,11 +161,11 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 	public function testRequest() {
 		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Request({url:"\\/posts\\/view\\/1"}).send();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->request('/posts/view/1', array('update' => 'content'));
 		$expected = 'var jsRequest = new Request.HTML({update:"content", url:"\\/posts\\/view\\/1"}).send();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->request('/people/edit/1', array(
 			'method' => 'post',
@@ -176,7 +176,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"\\/people\\/edit\\/1"}).send({"name":"jim","height":"185cm"});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->request('/people/edit/1', array(
 			'method' => 'post',
@@ -185,7 +185,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->request('/people/edit/1', array(
 			'method' => 'post',
@@ -197,7 +197,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->request('/people/edit/1', array(
 			'method' => 'post',
@@ -211,7 +211,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send($("foo").toQueryString());';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->request('/people/edit/1', array(
 			'method' => 'post',
@@ -221,7 +221,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'update' => '#update-zone',
 		));
 		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:function () {doComplete}, onRequest:function () {doBefore}, onSuccess:function (responseText, responseXML) {doSuccess}, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test sortable list generation
@@ -239,7 +239,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSortable = new Sortables($("myList"), {constrain:"parent", onComplete:onStop, onSort:onSort, onStart:onStart, snap:5});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test drag() method
@@ -256,7 +256,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$("drag-me").makeDraggable({onComplete:onStop, onDrag:onDrag, onStart:onStart, snap:[10,10]});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -288,8 +288,8 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = '$("my-drag").makeDraggable({droppables:$("drop-me"), onDrop:onDrop, onEnter:onHover, onLeave:onLeave});';
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($this->Moo->selection, '$("drop-me")');
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($this->Moo->selection, '$("drop-me")');
 
 		$result = $this->Moo->drop(array(
 			'drop' => 'onDrop',
@@ -298,7 +298,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'drag' => '#my-drag',
 		));
 		$expected = '$("my-drag").makeDraggable({droppables:$("drop-me"), onDrop:function (element, droppable, event) {onDrop}, onEnter:function (element, droppable) {onHover}, onLeave:function (element, droppable) {onLeave}});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test slider generation
@@ -315,8 +315,8 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:onChange, onComplete:onComplete});';
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($this->Moo->selection, '$("slider")');
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($this->Moo->selection, '$("slider")');
 
 		$this->Moo->get('#slider');
 		$result = $this->Moo->slider(array(
@@ -329,7 +329,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:onChange, onComplete:onComplete, range:[10,40]});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->Moo->get('#slider');
 		$result = $this->Moo->slider(array(
@@ -339,7 +339,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'direction' => 'horizontal',
 		));
 		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:function (step) {change;}, onComplete:function (event) {complete;}});';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 /**
  * test the serializeForm implementation.
@@ -350,18 +350,18 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$this->Moo->get('#element');
 		$result = $this->Moo->serializeForm(array('isForm' => true));
 		$expected = '$("element").toQueryString();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->serializeForm(array('isForm' => true, 'inline' => true));
 		$expected = '$("element").toQueryString()';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->serializeForm(array('isForm' => false));
 		$expected = '$($("element").form).toQueryString();';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Moo->serializeForm(array('isForm' => false, 'inline' => true));
 		$expected = '$($("element").form).toQueryString()';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 }

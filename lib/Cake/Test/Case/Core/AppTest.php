@@ -44,7 +44,7 @@ class AppTest extends CakeTestCase {
 			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
-		$this->assertEqual($expected, $old);
+		$this->assertEquals($expected, $old);
 
 		App::build(array('Model' => array('/path/to/models/')));
 		$new = App::path('Model');
@@ -53,7 +53,7 @@ class AppTest extends CakeTestCase {
 			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
-		$this->assertEqual($expected, $new);
+		$this->assertEquals($expected, $new);
 
 		App::build();
 		App::build(array('Model' => array('/path/to/models/')), App::PREPEND);
@@ -63,7 +63,7 @@ class AppTest extends CakeTestCase {
 			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
-		$this->assertEqual($expected, $new);
+		$this->assertEquals($expected, $new);
 
 		App::build();
 		App::build(array('Model' => array('/path/to/models/')), App::APPEND);
@@ -73,7 +73,7 @@ class AppTest extends CakeTestCase {
 			APP . 'models' . DS,
 			'/path/to/models/'
 		);
-		$this->assertEqual($expected, $new);
+		$this->assertEquals($expected, $new);
 
 		App::build();
 		App::build(array(
@@ -86,18 +86,18 @@ class AppTest extends CakeTestCase {
 			APP . 'models' . DS,
 			'/path/to/models/'
 		);
-		$this->assertEqual($expected, $new);
+		$this->assertEquals($expected, $new);
 		$new = App::path('Controller');
 		$expected = array(
 			APP . 'Controller' . DS,
 			APP . 'controllers' . DS,
 			'/path/to/controllers/'
 		);
-		$this->assertEqual($expected, $new);
+		$this->assertEquals($expected, $new);
 
 		App::build(); //reset defaults
 		$defaults = App::path('Model');
-		$this->assertEqual($old, $defaults);
+		$this->assertEquals($old, $defaults);
 	}
 
 /**
@@ -111,7 +111,7 @@ class AppTest extends CakeTestCase {
 			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
-		$this->assertEqual($expected, $old);
+		$this->assertEquals($expected, $old);
 
 		App::build(array('models' => array('/path/to/models/')));
 
@@ -122,8 +122,8 @@ class AppTest extends CakeTestCase {
 			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
-		$this->assertEqual($expected, $new);
-		$this->assertEqual($expected, App::path('Model'));
+		$this->assertEquals($expected, $new);
+		$this->assertEquals($expected, App::path('Model'));
 
 		App::build(array('datasources' => array('/path/to/datasources/')));
 		$expected = array(
@@ -132,8 +132,8 @@ class AppTest extends CakeTestCase {
 			APP . 'models' . DS . 'datasources' . DS
 		);
 		$result = App::path('datasources');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('Model/Datasource'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('Model/Datasource'));
 
 		App::build(array('behaviors' => array('/path/to/behaviors/')));
 		$expected = array(
@@ -142,8 +142,8 @@ class AppTest extends CakeTestCase {
 			APP . 'models' . DS . 'behaviors' . DS
 		);
 		$result = App::path('behaviors');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('Model/Behavior'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('Model/Behavior'));
 
 		App::build(array('controllers' => array('/path/to/controllers/')));
 		$expected = array(
@@ -152,8 +152,8 @@ class AppTest extends CakeTestCase {
 			APP . 'controllers' . DS
 		);
 		$result = App::path('controllers');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('Controller'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('Controller'));
 
 		App::build(array('components' => array('/path/to/components/')));
 		$expected = array(
@@ -162,8 +162,8 @@ class AppTest extends CakeTestCase {
 			APP . 'controllers' . DS . 'components' . DS
 		);
 		$result = App::path('components');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('Controller/Component'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('Controller/Component'));
 
 		App::build(array('views' => array('/path/to/views/')));
 		$expected = array(
@@ -172,8 +172,8 @@ class AppTest extends CakeTestCase {
 			APP . 'views' . DS
 		);
 		$result = App::path('views');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('View'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('View'));
 
 		App::build(array('helpers' => array('/path/to/helpers/')));
 		$expected = array(
@@ -182,8 +182,8 @@ class AppTest extends CakeTestCase {
 			APP . 'views' . DS . 'helpers' . DS
 		);
 		$result = App::path('helpers');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('View/Helper'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('View/Helper'));
 
 		App::build(array('shells' => array('/path/to/shells/')));
 		$expected = array(
@@ -192,12 +192,12 @@ class AppTest extends CakeTestCase {
 			APP . 'console' . DS . 'shells' . DS,
 		);
 		$result = App::path('shells');
-		$this->assertEqual($expected, $result);
-		$this->assertEqual($expected, App::path('Console/Command'));
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, App::path('Console/Command'));
 
 		App::build(); //reset defaults
 		$defaults = App::path('Model');
-		$this->assertEqual($old, $defaults);
+		$this->assertEquals($old, $defaults);
 	}
 
 /**
@@ -227,7 +227,7 @@ class AppTest extends CakeTestCase {
 			APP . 'Model' . DS,
 			APP . 'models' . DS
 		);
-		$this->assertEqual($expected, $old);
+		$this->assertEquals($expected, $old);
 
 		App::build(array('Model' => array('/path/to/models/')), App::RESET);
 
@@ -236,11 +236,11 @@ class AppTest extends CakeTestCase {
 		$expected = array(
 			'/path/to/models/'
 		);
-		$this->assertEqual($expected, $new);
+		$this->assertEquals($expected, $new);
 
 		App::build(); //reset defaults
 		$defaults = App::path('Model');
-		$this->assertEqual($old, $defaults);
+		$this->assertEquals($old, $defaults);
 	}
 
 /**
@@ -250,22 +250,22 @@ class AppTest extends CakeTestCase {
  */
 	public function testCore() {
 		$model = App::core('Model');
-		$this->assertEqual(array(CAKE . 'Model' . DS), $model);
+		$this->assertEquals(array(CAKE . 'Model' . DS), $model);
 
 		$view = App::core('View');
-		$this->assertEqual(array(CAKE . 'View' . DS), $view);
+		$this->assertEquals(array(CAKE . 'View' . DS), $view);
 
 		$controller = App::core('Controller');
-		$this->assertEqual(array(CAKE . 'Controller' . DS), $controller);
+		$this->assertEquals(array(CAKE . 'Controller' . DS), $controller);
 
 		$component = App::core('Controller/Component');
-		$this->assertEqual(array(CAKE . 'Controller' . DS . 'Component' . DS), str_replace('/', DS, $component));
+		$this->assertEquals(array(CAKE . 'Controller' . DS . 'Component' . DS), str_replace('/', DS, $component));
 
 		$auth = App::core('Controller/Component/Auth');
-		$this->assertEqual(array(CAKE . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), str_replace('/', DS, $auth));
+		$this->assertEquals(array(CAKE . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), str_replace('/', DS, $auth));
 
 		$datasource = App::core('Model/Datasource');
-		$this->assertEqual(array(CAKE . 'Model' . DS . 'Datasource' . DS), str_replace('/', DS, $datasource));
+		$this->assertEquals(array(CAKE . 'Model' . DS . 'Datasource' . DS), str_replace('/', DS, $datasource));
 	}
 
 /**
@@ -321,10 +321,10 @@ class AppTest extends CakeTestCase {
 
 		$result = App::objects('file', 'non_existing_configure');
 		$expected = array();
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = App::objects('NonExistingType');
-		$this->assertEqual($result, array());
+		$this->assertEquals($result, array());
 
 		App::build(array(
 			'plugins' => array(
@@ -416,11 +416,11 @@ class AppTest extends CakeTestCase {
 
 		$path = App::pluginPath('TestPlugin');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEqual($path, $expected);
+		$this->assertEquals($path, $expected);
 
 		$path = App::pluginPath('TestPluginTwo');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEqual($path, $expected);
+		$this->assertEquals($path, $expected);
 		App::build();
 	}
 
@@ -435,11 +435,11 @@ class AppTest extends CakeTestCase {
 		));
 		$path = App::themePath('test_theme');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEqual($path, $expected);
+		$this->assertEquals($path, $expected);
 
 		$path = App::themePath('TestTheme');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEqual($path, $expected);
+		$this->assertEquals($path, $expected);
 
 		App::build();
 	}
@@ -711,7 +711,7 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'this is the test asset css file');
+		$this->assertEquals($text, 'this is the test asset css file');
 
 		$result = App::import('Vendor', 'TestPlugin.sample/SamplePlugin');
 		$this->assertTrue($result);
@@ -725,31 +725,31 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'SomeNameInSubfolder', array('file' => 'somename/some.name.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is a file with dot in file name');
+		$this->assertEquals($text, 'This is a file with dot in file name');
 
 		ob_start();
 		$result = App::import('Vendor', 'TestHello', array('file' => 'Test'.DS.'hello.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the hello.php file in Test directory');
+		$this->assertEquals($text, 'This is the hello.php file in Test directory');
 
 		ob_start();
 		$result = App::import('Vendor', 'MyTest', array('file' => 'Test'.DS.'MyTest.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the MyTest.php file');
+		$this->assertEquals($text, 'This is the MyTest.php file');
 
 		ob_start();
 		$result = App::import('Vendor', 'Welcome');
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the welcome.php file in vendors directory');
+		$this->assertEquals($text, 'This is the welcome.php file in vendors directory');
 
 		ob_start();
 		$result = App::import('Vendor', 'TestPlugin.Welcome');
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directory');
+		$this->assertEquals($text, 'This is the welcome.php file in test_plugin/vendors directory');
 	}
 
 /**

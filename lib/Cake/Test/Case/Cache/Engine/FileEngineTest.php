@@ -62,11 +62,11 @@ class FileEngineTest extends CakeTestCase {
  */
 	public function testCacheDirChange() {
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
-		$this->assertEqual($result['settings'], Cache::settings('sessions'));
+		$this->assertEquals($result['settings'], Cache::settings('sessions'));
 
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'tests'));
-		$this->assertEqual($result['settings'], Cache::settings('sessions'));
-		$this->assertNotEqual($result['settings'], Cache::settings('default'));
+		$this->assertEquals($result['settings'], Cache::settings('sessions'));
+		$this->assertNotEquals($result['settings'], Cache::settings('default'));
 	}
 
 /**
@@ -84,7 +84,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'file_test');
 		$expecting = '';
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($result, $expecting);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 'file_test');
@@ -92,7 +92,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'file_test');
 		$expecting = $data;
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($result, $expecting);
 
 		Cache::delete('test', 'file_test');
 	}
@@ -180,9 +180,9 @@ class FileEngineTest extends CakeTestCase {
 
 		$delete = Cache::delete('serialize_test', 'file_test');
 
-		$this->assertIdentical($read, serialize($data));
+		$this->assertSame($read, serialize($data));
 
-		$this->assertIdentical(unserialize($newread), $data);
+		$this->assertSame(unserialize($newread), $data);
 	}
 
 /**
@@ -243,11 +243,11 @@ class FileEngineTest extends CakeTestCase {
 		$FileOne->write('prefix_one_key_one', $data1, DAY);
 		$FileTwo->write('prefix_two_key_two', $data2, DAY);
 
-		$this->assertEqual($FileOne->read('prefix_one_key_one'), $expected);
-		$this->assertEqual($FileTwo->read('prefix_two_key_two'), $expected);
+		$this->assertEquals($FileOne->read('prefix_one_key_one'), $expected);
+		$this->assertEquals($FileTwo->read('prefix_two_key_two'), $expected);
 
 		$FileOne->clear(false);
-		$this->assertEqual($FileTwo->read('prefix_two_key_two'), $expected, 'secondary config was cleared by accident.');
+		$this->assertEquals($FileTwo->read('prefix_two_key_two'), $expected, 'secondary config was cleared by accident.');
 		$FileTwo->clear(false);
 	}
 
@@ -262,7 +262,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'cake_views_countries_something'));
 
 		$result = Cache::read('views.countries.something', 'file_test');
-		$this->assertEqual($result, 'here');
+		$this->assertEquals($result, 'here');
 
 		$result = Cache::clear(false, 'file_test');
 		$this->assertTrue($result);
@@ -308,7 +308,7 @@ class FileEngineTest extends CakeTestCase {
 		Cache::write('test_dir_map', $expected, 'windows_test');
 		$data = Cache::read('test_dir_map', 'windows_test');
 		Cache::delete('test_dir_map', 'windows_test');
-		$this->assertEqual($expected, $data);
+		$this->assertEquals($expected, $data);
 
 		Cache::drop('windows_test');
 	}
@@ -321,14 +321,14 @@ class FileEngineTest extends CakeTestCase {
 	public function testWriteQuotedString() {
 		Cache::config('file_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"', 'file_test');
-		$this->assertIdentical(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
+		$this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
-		$this->assertIdentical(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
+		$this->assertSame(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
 
 		Cache::config('file_test', array('isWindows' => true, 'path' => TMP . 'tests'));
-		$this->assertIdentical(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
+		$this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
-		$this->assertIdentical(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
+		$this->assertSame(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
 		Cache::delete('App.singleQuoteTest', 'file_test');
 		Cache::delete('App.doubleQuoteTest', 'file_test');
 	}
@@ -361,7 +361,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0664';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
@@ -369,7 +369,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0666';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
@@ -377,7 +377,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0644';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
@@ -385,7 +385,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0640';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 	}
