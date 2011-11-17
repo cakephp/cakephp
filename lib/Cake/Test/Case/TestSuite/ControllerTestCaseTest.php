@@ -257,7 +257,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->assertEquals($expected, $results);
 
 		$result = $this->Case->controller->response->body();
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertRegExp('/This is the TestsAppsController index view/', $result);
 
 		$Controller = $this->Case->generate('TestsApps');
 		$this->Case->testAction('/tests_apps/redirect_to');
@@ -337,9 +337,9 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
 		));
-		$this->assertPattern('/<html/', $result);
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
-		$this->assertPattern('/<\/html>/', $result);
+		$this->assertRegExp('/<html/', $result);
+		$this->assertRegExp('/This is the TestsAppsController index view/', $result);
+		$this->assertRegExp('/<\/html>/', $result);
 	}
 
 /**
@@ -365,7 +365,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$expected = array(
 			'named' => 'param'
 		);
-		$this->assertEqual($this->Case->controller->request->named, $expected);
+		$this->assertEquals($this->Case->controller->request->named, $expected);
 		$this->assertEquals($this->Case->controller->data, $data);
 
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
@@ -376,11 +376,11 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'pork' => 'and beans',
 			)
 		));
-		$this->assertEqual(array_keys($result['data']), array('name', 'pork'));
+		$this->assertEquals(array_keys($result['data']), array('name', 'pork'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
 		$this->assertTrue(array_key_exists('posts', $result));
-		$this->assertEqual(count($result['posts']), 4);
+		$this->assertEquals(count($result['posts']), 4);
 		$this->assertTrue($this->Case->controller->request->is('post'));
 	}
 
@@ -404,13 +404,13 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'return' => 'vars',
 			'method' => 'get',
 		));
-		$this->assertEqual(array_keys($result['params']['named']), array('var1', 'var2'));
+		$this->assertEquals(array_keys($result['params']['named']), array('var1', 'var2'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var/gogo/val2', array(
 			'return' => 'vars',
 			'method' => 'get',
 		));
-		$this->assertEqual($result['params']['pass'], array('gogo', 'val2'));
+		$this->assertEquals($result['params']['pass'], array('gogo', 'val2'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var', array(
 			'return' => 'vars',
@@ -475,9 +475,9 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
 		));
-		$this->assertPattern('/<html/', $result);
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
-		$this->assertPattern('/<\/html>/', $result);
+		$this->assertRegExp('/<html/', $result);
+		$this->assertRegExp('/This is the TestsAppsController index view/', $result);
+		$this->assertRegExp('/<\/html>/', $result);
 	}
 
 /**

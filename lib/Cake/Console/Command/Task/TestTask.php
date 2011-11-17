@@ -205,12 +205,14 @@ class TestTask extends BakeTask {
 			$this->out(++$key . '. ' . $option);
 			$keys[] = $key;
 		}
-		$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
-		if (isset($options[$selection - 1])) {
-			$selection = $options[$selection - 1];
-		}
-		if ($type !== 'Model') {
-			$selection = substr($selection, 0, $typeLength * - 1);
+		while (empty($selection)) {
+			$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
+			if (is_numeric($selection) && isset($options[$selection - 1])) {
+				$selection = $options[$selection - 1];
+			}
+			if ($type !== 'Model') {
+				$selection = substr($selection, 0, $typeLength * - 1);
+			}
 		}
 		return $selection;
 	}

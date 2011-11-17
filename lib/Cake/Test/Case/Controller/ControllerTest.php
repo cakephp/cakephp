@@ -462,7 +462,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
 
-		$this->assertEqual($Controller->ControllerComment->name, 'Comment');
+		$this->assertEquals($Controller->ControllerComment->name, 'Comment');
 
 		unset($Controller);
 
@@ -490,8 +490,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses = array('NameTest');
 		$Controller->constructClasses();
 
-		$this->assertEqual($Controller->NameTest->name, 'Name');
-		$this->assertEqual($Controller->NameTest->alias, 'Name');
+		$this->assertEquals($Controller->NameTest->name, 'Name');
+		$this->assertEquals($Controller->NameTest->alias, 'Name');
 
 		unset($Controller);
 	}
@@ -527,7 +527,7 @@ class ControllerTest extends CakeTestCase {
 		</html>';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
@@ -536,7 +536,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$Controller->flash('this should work', '/flash', 1, 'ajax2');
 		$result = $Controller->response->body();
-		$this->assertPattern('/Ajax!/', $result);
+		$this->assertRegExp('/Ajax!/', $result);
 		App::build();
 	}
 
@@ -567,19 +567,19 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
 
 		$Controller->set('title', 'someTitle');
-		$this->assertIdentical($Controller->viewVars['title'], 'someTitle');
+		$this->assertSame($Controller->viewVars['title'], 'someTitle');
 		$this->assertTrue(empty($Controller->pageTitle));
 
 		$Controller->viewVars = array();
 		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');
 		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
-		$this->assertIdentical($Controller->viewVars, $expected);
+		$this->assertSame($Controller->viewVars, $expected);
 
 		$Controller->viewVars = array();
 		$Controller->set(array(3 => 'three', 4 => 'four'));
 		$Controller->set(array(1 => 'one', 2 => 'two'));
 		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
-		$this->assertEqual($Controller->viewVars, $expected);
+		$this->assertEquals($Controller->viewVars, $expected);
 
 	}
 
@@ -600,14 +600,14 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'Posts';
 
 		$result = $Controller->render('index');
-		$this->assertPattern('/posts index/', (string)$result);
+		$this->assertRegExp('/posts index/', (string)$result);
 
 		$Controller->view = 'index';
 		$result = $Controller->render();
-		$this->assertPattern('/posts index/', (string)$result);
+		$this->assertRegExp('/posts index/', (string)$result);
 
 		$result = $Controller->render('/Elements/test_element');
-		$this->assertPattern('/this is the test element/', (string)$result);
+		$this->assertRegExp('/this is the test element/', (string)$result);
 		$Controller->view = null;
 
 		$Controller = new TestController($request, new CakeResponse());
@@ -621,14 +621,14 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->render('index');
 		$View = $Controller->View;
 		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
-		$this->assertEqual($expected, $View->validationErrors['ControllerComment']);
+		$this->assertEquals($expected, $View->validationErrors['ControllerComment']);
 
 		$expectedModels = array(
 			'ControllerAlias' => array('plugin' => null, 'className' => 'ControllerAlias'),
 			'ControllerComment' => array('plugin' => 'TestPlugin', 'className' => 'ControllerComment'),
 			'ControllerPost' => array('plugin' => null, 'className' => 'ControllerPost')
 		);
-		$this->assertEqual($expectedModels, $Controller->request->params['models']);
+		$this->assertEquals($expectedModels, $Controller->request->params['models']);
 
 		ClassRegistry::flush();
 		App::build();
@@ -653,7 +653,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'Posts';
 		$Controller->theme = 'TestTheme';
 		$result = $Controller->render('index');
-		$this->assertPattern('/default test_theme layout/', (string)$result);
+		$this->assertRegExp('/default test_theme layout/', (string)$result);
 		App::build();
 	}
 
@@ -853,9 +853,9 @@ class ControllerTest extends CakeTestCase {
 					? array_merge($appVars['uses'], $testVars['uses'])
 					: $testVars['uses'];
 
-		$this->assertEqual(count(array_diff_key($TestController->helpers, array_flip($helpers))), 0);
-		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
-		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
+		$this->assertEquals(count(array_diff_key($TestController->helpers, array_flip($helpers))), 0);
+		$this->assertEquals(count(array_diff($TestController->uses, $uses)), 0);
+		$this->assertEquals(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 
 		$expected = array('ControllerComment', 'ControllerAlias', 'ControllerPost');
 		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
@@ -881,7 +881,7 @@ class ControllerTest extends CakeTestCase {
 
 
 		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
-		$this->assertEqual(array('ControllerPost'), $testVars['uses']);
+		$this->assertEquals(array('ControllerPost'), $testVars['uses']);
 
 		$this->assertTrue(isset($TestController->ControllerPost));
 		$this->assertTrue(isset($TestController->ControllerComment));
@@ -900,7 +900,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('foo');
 		$TestController->components = array('Cookie' => $expected);
 		$TestController->constructClasses();
-		$this->assertEqual($TestController->components['Cookie'], $expected);
+		$this->assertEquals($TestController->components['Cookie'], $expected);
 	}
 
 /**
@@ -934,12 +934,12 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new Controller($request);
 		$result = $Controller->referer(null, true);
-		$this->assertEqual($result, '/posts/index');
+		$this->assertEquals($result, '/posts/index');
 
 		$Controller = new Controller($request);
 		$request->setReturnValue('referer', '/', array(true));
 		$result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
-		$this->assertEqual($result, '/posts/index');
+		$this->assertEquals($result, '/posts/index');
 
 		$request = $this->getMock('CakeRequest');
 
@@ -949,11 +949,11 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new Controller($request);
 		$result = $Controller->referer();
-		$this->assertEqual($result, 'http://localhost/posts/index');
+		$this->assertEquals($result, 'http://localhost/posts/index');
 
 		$Controller = new Controller(null);
 		$result = $Controller->referer();
-		$this->assertEqual($result, '/');
+		$this->assertEquals($result, '/');
 	}
 
 /**
@@ -983,7 +983,7 @@ class ControllerTest extends CakeTestCase {
 		$TestController = new TestController($request);
 		$TestController->constructClasses();
 		$this->assertFalse($TestController->validateErrors());
-		$this->assertEqual($TestController->validate(), 0);
+		$this->assertEquals($TestController->validate(), 0);
 
 		$TestController->ControllerComment->invalidate('some_field', 'error_message');
 		$TestController->ControllerComment->invalidate('some_field2', 'error_message2');
@@ -992,8 +992,8 @@ class ControllerTest extends CakeTestCase {
 		$comment->set('someVar', 'data');
 		$result = $TestController->validateErrors($comment);
 		$expected = array('some_field' => array('error_message'), 'some_field2' => array('error_message2'));
-		$this->assertIdentical($expected, $result);
-		$this->assertEqual($TestController->validate($comment), 2);
+		$this->assertSame($expected, $result);
+		$this->assertEquals($TestController->validate($comment), 2);
 	}
 
 /**
@@ -1010,7 +1010,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $TestController->validateErrors($Post);
 
 		$expected = array('title' => array('This field cannot be left blank'));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1034,7 +1034,7 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3' => '23',
 		);
 		$result = $Controller->postConditions($data);
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 
 		$data = array();
@@ -1049,7 +1049,7 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3' => '23',
 		);
 		$result = $Controller->postConditions($data);
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 
 		$data = array();
@@ -1075,7 +1075,7 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3 <=' => '23',
 		);
 		$result = $Controller->postConditions($data, $ops);
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 	}
 
 /**
@@ -1187,19 +1187,19 @@ class ControllerTest extends CakeTestCase {
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
-		$this->assertEqual($Controller->paginate, $expected);
+		$this->assertEquals($Controller->paginate, $expected);
 
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($results, array(1, 2, 3));
+		$this->assertEquals($results, array(1, 2, 3));
 
 		$Controller->passedArgs = array();
 		$Controller->paginate = array('limit' => '-1');
-		$this->assertEqual($Controller->paginate, array('limit' => '-1'));
+		$this->assertEquals($Controller->paginate, array('limit' => '-1'));
 		$Controller->paginate('ControllerPost');
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
+		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);
+		$this->assertSame($Controller->params['paging']['ControllerPost']['prevPage'], false);
+		$this->assertSame($Controller->params['paging']['ControllerPost']['nextPage'], true);
 	}
 
 /**

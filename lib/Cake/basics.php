@@ -76,6 +76,7 @@ function debug($var = false, $showHtml = null, $showFrom = true) {
 	if (Configure::read('debug') > 0) {
 		$file = '';
 		$line = '';
+		$lineInfo = '';
 		if ($showFrom) {
 			$calledFrom = debug_backtrace();
 			$file = substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1);
@@ -83,32 +84,37 @@ function debug($var = false, $showHtml = null, $showFrom = true) {
 		}
 		$html = <<<HTML
 <div class="cake-debug-output">
-<span><strong>%s</strong> (line <strong>%s</strong>)</span>
+%s
 <pre class="cake-debug">
 %s
 </pre>
 </div>
 HTML;
-			$text = <<<TEXT
-
-%s (line %s)
+		$text = <<<TEXT
+%s
 ########## DEBUG ##########
 %s
 ###########################
-
 TEXT;
 		$template = $html;
-		if (php_sapi_name() == 'cli') {
+		if (php_sapi_name() == 'cli' || $showHtml === false) {
 			$template = $text;
+			if ($showFrom) {
+				$lineInfo = sprintf('%s (line %s)', $file, $line);
+			}
 		}
 		if ($showHtml === null && $template !== $text) {
 			$showHtml = true;
 		}
 		$var = print_r($var, true);
 		if ($showHtml) {
+			$template = $html;
 			$var = h($var);
+			if ($showFrom) {
+				$lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
+			}
 		}
-		printf($template, $file, $line, $var);
+		printf($template, $lineInfo, $var);
 	}
 }
 

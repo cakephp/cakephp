@@ -569,6 +569,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $name The dot separated name for the field.
  * @return mixed Either null, or the list of fields.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::unlockField
  */
 	public function unlockField($name = null) {
 		if ($name === null) {
@@ -1302,7 +1303,7 @@ class FormHelper extends AppHelper {
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
-			if (!empty($disabled) && in_array($optValue, $disabled)) {
+			if (!empty($disabled) && (is_bool($disabled) || in_array($optValue, $disabled))) {
 				$optionsHere['disabled'] = true;
 			}
 			$tagName = Inflector::camelize(

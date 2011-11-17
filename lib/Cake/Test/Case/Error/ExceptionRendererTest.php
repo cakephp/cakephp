@@ -203,7 +203,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEqual($result, 'widget thing is missing');
+		$this->assertEquals($result, 'widget thing is missing');
 	}
 
 /**
@@ -216,13 +216,13 @@ class ExceptionRendererTest extends CakeTestCase {
 		$exception = new MissingWidgetThingException('Widget not found');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
-		$this->assertEqual('missingWidgetThing', $ExceptionRenderer->method);
+		$this->assertEquals('missingWidgetThing', $ExceptionRenderer->method);
 
 		ob_start();
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error400');
+		$this->assertEquals($result, 'widget thing is missing', 'Method declared in subclass converted to error400');
 	}
 
 /**
@@ -236,13 +236,13 @@ class ExceptionRendererTest extends CakeTestCase {
 		$exception = new MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
-		$this->assertEqual('error400', $ExceptionRenderer->method);
+		$this->assertEquals('error400', $ExceptionRenderer->method);
 
 		ob_start();
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error400. %s');
+		$this->assertRegExp('/Not Found/', $result, 'Method declared in error handler not converted to error400. %s');
 	}
 
 /**
@@ -378,8 +378,8 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Custom message<\/h2>/', $result);
-		$this->assertPattern("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
+		$this->assertRegExp('/<h2>Custom message<\/h2>/', $result);
+		$this->assertRegExp("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
 	}
 
 /**
@@ -424,8 +424,8 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertNoPattern('#<script>document#', $result);
-		$this->assertNoPattern('#alert\(t\);</script>#', $result);
+		$this->assertNotRegExp('#<script>document#', $result);
+		$this->assertNotRegExp('#alert\(t\);</script>#', $result);
 	}
 
 /**
@@ -443,7 +443,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>An Internal Error Has Occurred<\/h2>/', $result);
+		$this->assertRegExp('/<h2>An Internal Error Has Occurred<\/h2>/', $result);
 	}
 
 /**
@@ -459,8 +459,8 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Missing Controller<\/h2>/', $result);
-		$this->assertPattern('/<em>PostsController<\/em>/', $result);
+		$this->assertRegExp('/<h2>Missing Controller<\/h2>/', $result);
+		$this->assertRegExp('/<em>PostsController<\/em>/', $result);
 	}
 
 /**
@@ -614,7 +614,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$result = ob_get_clean();
 
 		foreach ($patterns as $pattern) {
-			$this->assertPattern($pattern, $result);
+			$this->assertRegExp($pattern, $result);
 		}
 	}
 
@@ -687,9 +687,9 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Database Error<\/h2>/', $result);
-		$this->assertPattern('/There was an error in the SQL query/', $result);
-		$this->assertPattern('/SELECT \* from poo_query < 5 and :seven/', $result);
-		$this->assertPattern('/"seven" => 7/', $result);
+		$this->assertRegExp('/<h2>Database Error<\/h2>/', $result);
+		$this->assertRegExp('/There was an error in the SQL query/', $result);
+		$this->assertRegExp('/SELECT \* from poo_query < 5 and :seven/', $result);
+		$this->assertRegExp('/"seven" => 7/', $result);
 	}
 }

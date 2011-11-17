@@ -139,9 +139,9 @@ class RequestHandlerComponent extends Component {
 		}
 		$extensions = Router::extensions();
 		$preferred = array_shift($accept);
-		$preferredTypes = $this->mapType($preferred);
+		$preferredTypes = $this->response->mapType($preferred);
 		$similarTypes = array_intersect($extensions, $preferredTypes);
-		if (count($similarTypes) === 1 && !in_array('html', $preferredTypes)) {
+		if (count($similarTypes) === 1 && !in_array('xhtml', $preferredTypes) && !in_array('html', $preferredTypes)) {
 			$this->ext = array_shift($similarTypes);
 		}
 	}

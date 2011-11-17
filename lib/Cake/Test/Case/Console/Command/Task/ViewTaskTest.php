@@ -263,14 +263,14 @@ class ViewTaskTest extends CakeTestCase {
 		);
 		$result = $this->Task->getContent('view', $vars);
 
-		$this->assertPattern('/Delete Test View Model/', $result);
-		$this->assertPattern('/Edit Test View Model/', $result);
-		$this->assertPattern('/List Test View Models/', $result);
-		$this->assertPattern('/New Test View Model/', $result);
+		$this->assertRegExp('/Delete Test View Model/', $result);
+		$this->assertRegExp('/Edit Test View Model/', $result);
+		$this->assertRegExp('/List Test View Models/', $result);
+		$this->assertRegExp('/New Test View Model/', $result);
 
-		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
-		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
-		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
+		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
+		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
+		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
 	}
 
 /**
@@ -295,19 +295,19 @@ class ViewTaskTest extends CakeTestCase {
 		);
 		$result = $this->Task->getContent('admin_view', $vars);
 
-		$this->assertPattern('/Delete Test View Model/', $result);
-		$this->assertPattern('/Edit Test View Model/', $result);
-		$this->assertPattern('/List Test View Models/', $result);
-		$this->assertPattern('/New Test View Model/', $result);
+		$this->assertRegExp('/Delete Test View Model/', $result);
+		$this->assertRegExp('/Edit Test View Model/', $result);
+		$this->assertRegExp('/List Test View Models/', $result);
+		$this->assertRegExp('/New Test View Model/', $result);
 
-		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
-		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
-		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
+		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
+		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
+		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
 
 		$result = $this->Task->getContent('admin_add', $vars);
-		$this->assertPattern("/input\('name'\)/", $result);
-		$this->assertPattern("/input\('body'\)/", $result);
-		$this->assertPattern('/List Test View Models/', $result);
+		$this->assertRegExp("/input\('name'\)/", $result);
+		$this->assertRegExp("/input\('body'\)/", $result);
+		$this->assertRegExp('/List Test View Models/', $result);
 
 		Configure::write('Routing', $_back);
 	}
@@ -711,12 +711,12 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$result = $this->Task->getTemplate('add');
-		$this->assertEqual($result, 'form');
+		$this->assertEquals($result, 'form');
 
 		Configure::write('Routing.prefixes', array('admin'));
 
 		$result = $this->Task->getTemplate('admin_add');
-		$this->assertEqual($result, 'form');
+		$this->assertEquals($result, 'form');
 
 		$this->Task->Template->templatePaths = array(
 			'test' => CAKE . 'Test' . DS .  'test_app' . DS . 'Console' . DS . 'Templates' . DS . 'test' .DS
@@ -724,7 +724,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Template->params['theme'] = 'test';
 
 		$result = $this->Task->getTemplate('admin_edit');
-		$this->assertEqual($result, 'admin_edit');
+		$this->assertEquals($result, 'admin_edit');
 	}
 
 }

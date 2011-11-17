@@ -255,27 +255,27 @@ class AclNodeTest extends CakeTestCase {
 		$Aco = new DbAcoTest();
 		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
 		$expected = array(2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller1/action1'), '{n}.DbAcoTest.id');
 		$expected = array(3, 2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller2/action1'), '{n}.DbAcoTest.id');
 		$expected = array(7, 6, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller1/action2'), '{n}.DbAcoTest.id');
 		$expected = array(5, 2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller1/action1/record1'), '{n}.DbAcoTest.id');
 		$expected = array(4, 3, 2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller2/action1/record1'), '{n}.DbAcoTest.id');
 		$expected = array(8, 7, 6, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($Aco->node('Controller2/action3'), '{n}.DbAcoTest.id');
 		$this->assertNull($result);
@@ -284,7 +284,7 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertNull($result);
 
 		$result = $Aco->node('');
-		$this->assertEqual($result, null);
+		$this->assertEquals($result, null);
 	}
 
 /**
@@ -295,7 +295,7 @@ class AclNodeTest extends CakeTestCase {
 	public function testNodeWithDuplicatePathSegments() {
 		$Aco = new DbAcoTest();
 		$nodes = $Aco->node('ROOT/Users');
-		$this->assertEqual($nodes[0]['DbAcoTest']['parent_id'], 1, 'Parent id does not point at ROOT. %s');
+		$this->assertEquals($nodes[0]['DbAcoTest']['parent_id'], 1, 'Parent id does not point at ROOT. %s');
 	}
 
 /**
@@ -308,12 +308,12 @@ class AclNodeTest extends CakeTestCase {
 		Configure::write('DbAclbindMode', 'string');
 		$result = Set::extract($Aro->node(array('DbAroUserTest' => array('id' => '1', 'foreign_key' => '1'))), '{n}.DbAroTest.id');
 		$expected = array(3, 2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		Configure::write('DbAclbindMode', 'array');
 		$result = Set::extract($Aro->node(array('DbAroUserTest' => array('id' => 4, 'foreign_key' => 2))), '{n}.DbAroTest.id');
 		$expected = array(4);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 	/**
  * testNodeObjectFind method
@@ -326,12 +326,12 @@ class AclNodeTest extends CakeTestCase {
 		$Model->id = 1;
 		$result = Set::extract($Aro->node($Model), '{n}.DbAroTest.id');
 		$expected = array(3, 2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$Model->id = 2;
 		$result = Set::extract($Aro->node($Model), '{n}.DbAroTest.id');
 		$expected = array(4, 2, 1);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 	}
 
@@ -356,6 +356,6 @@ class AclNodeTest extends CakeTestCase {
 			array('DbAcoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'Application', 'lft' => '1', 'rght' => '4'), 'DbAroTest' => array()),
 			array('DbAcoTest' => array('id' => '2', 'parent_id' => '1', 'model' => null, 'foreign_key' => null, 'alias' => 'Pages', 'lft' => '2', 'rght' => '3', ), 'DbAroTest' => array())
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 }
