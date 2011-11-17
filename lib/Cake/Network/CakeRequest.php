@@ -415,6 +415,17 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Magic isset method allows isset/empty checks
+ * on routing parameters.
+ *
+ * @param string $name The property being accessed.
+ * @return bool Existence
+ */
+	public function __isset($name) {
+		return isset($this->params[$name]);
+	}
+
+/**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
  * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called
  * as `is($type)` or `is$Type()`.

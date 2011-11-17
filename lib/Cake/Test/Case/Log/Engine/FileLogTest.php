@@ -39,7 +39,7 @@ class FileLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = file_get_contents(LOGS . 'error.log');
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
 		unlink(LOGS . 'error.log');
 
 		if (file_exists(LOGS . 'debug.log')) {
@@ -49,7 +49,7 @@ class FileLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'debug.log'));
 
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test warning/', $result);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test warning/', $result);
 		unlink(LOGS . 'debug.log');
 
 		if (file_exists(LOGS . 'random.log')) {
@@ -59,7 +59,7 @@ class FileLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'random.log'));
 
 		$result = file_get_contents(LOGS . 'random.log');
-		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
 		unlink(LOGS . 'random.log');
 	}
 
