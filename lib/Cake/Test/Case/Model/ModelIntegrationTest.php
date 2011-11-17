@@ -2072,4 +2072,82 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertTrue($Article->hasMethod('pass'));
 		$this->assertFalse($Article->hasMethod('fail'));
 	}
+
+/**
+ * testMultischemaFixture
+ *
+ * @return void
+ */
+	public function testMultischemaFixture() {
+
+		$config = new DATABASE_CONFIG();
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
+		$this->skipIf(!isset($config->test) || !isset($config->test2),
+			'Primary and secondary test databases not configured, skipping cross-database join tests.  To run these tests define $test and $test2 in your database configuration.'
+			);
+
+		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer');
+
+		$Player = ClassRegistry::init('Player');
+		$this->assertEqual($Player->useDbConfig, 'test');
+		$this->assertEqual($Player->Guild->useDbConfig, 'test');
+		$this->assertEqual($Player->Guild->GuildsPlayer->useDbConfig, 'test2');
+		$this->assertEqual($Player->GuildsPlayer->useDbConfig, 'test2');
+
+		$players = $Player->find('all', array('recursive' => -1));
+		$guilds = $Player->Guild->find('all', array('recursive' => -1));
+		$guildsPlayers = $Player->GuildsPlayer->find('all', array('recursive' => -1));
+
+		$this->assertEqual(true, count($players) > 1);
+		$this->assertEqual(true, count($guilds) > 1);
+		$this->assertEqual(true, count($guildsPlayers) > 1);
+	}
+
+/**
+ * testMultischemaFixtureWithThreeDatabases, three databases
+ *
+ * @return void
+ */
+	public function testMultischemaFixtureWithThreeDatabases() {
+
+		$config = new DATABASE_CONFIG();
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
+		$this->skipIf(
+			!isset($config->test) || !isset($config->test2) || !isset($config->test_database_three),
+			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
+			);
+
+		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
+
+		$Player = ClassRegistry::init('Player');
+		$Player->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'Armor' => array(
+					'with' => 'ArmorsPlayer',
+					),
+				),
+			), false);
+		$this->assertEqual('test', $Player->useDbConfig);
+		$this->assertEqual('test', $Player->Guild->useDbConfig);
+		$this->assertEqual('test2', $Player->Guild->GuildsPlayer->useDbConfig);
+		$this->assertEqual('test2', $Player->GuildsPlayer->useDbConfig);
+		$this->assertEqual('test2', $Player->Armor->useDbConfig);
+		$this->assertEqual('test_database_three', $Player->Armor->ArmorsPlayer->useDbConfig);
+		$this->assertEqual('test', $Player->getDataSource()->configKeyName);
+		$this->assertEqual('test', $Player->Guild->getDataSource()->configKeyName);
+		$this->assertEqual('test2', $Player->GuildsPlayer->getDataSource()->configKeyName);
+		$this->assertEqual('test2', $Player->Armor->getDataSource()->configKeyName);
+		$this->assertEqual('test_database_three', $Player->Armor->ArmorsPlayer->getDataSource()->configKeyName);
+
+		$players = $Player->find('all', array('recursive' => -1));
+		$guilds = $Player->Guild->find('all', array('recursive' => -1));
+		$guildsPlayers = $Player->GuildsPlayer->find('all', array('recursive' => -1));
+		$armorsPlayers = $Player->ArmorsPlayer->find('all', array('recursive' => -1));
+
+		$this->assertEqual(true, count($players) > 1);
+		$this->assertEqual(true, count($guilds) > 1);
+		$this->assertEqual(true, count($guildsPlayers) > 1);
+		$this->assertEqual(true, count($armorsPlayers) > 1);
+	}
+
 }
