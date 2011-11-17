@@ -337,8 +337,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Attempts to introspect the correct values for object properties including
- * $userModel and $sessionKey.
+ * Attempts to introspect the correct values for object properties.
  *
  * @return boolean
  */
