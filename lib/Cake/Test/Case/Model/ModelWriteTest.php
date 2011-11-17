@@ -3550,7 +3550,6 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => '',
 				'body' => 'Trying to get away with an empty title'
 		));
-		$newTs = date('Y-m-d H:i:s');
 		$result = $TestModel->saveAll($data, array('validate' => true, 'atomic' => false));
 		$this->assertEquals($result, array(true, false));
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
@@ -3598,10 +3597,10 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 
-		$this->assertTrue($result[0]['Post']['updated'] >= $newTs);
-		$this->assertTrue($result[1]['Post']['updated'] >= $newTs);
-		$this->assertTrue($result[3]['Post']['updated'] >= $newTs);
-		$this->assertTrue($result[3]['Post']['created'] >= $newTs);
+		$this->assertTrue($result[0]['Post']['updated'] >= $ts);
+		$this->assertTrue($result[1]['Post']['updated'] >= $ts);
+		$this->assertTrue($result[3]['Post']['updated'] >= $ts);
+		$this->assertTrue($result[3]['Post']['created'] >= $ts);
 		unset(
 			$result[0]['Post']['updated'], $result[1]['Post']['updated'],
 			$result[3]['Post']['updated'], $result[3]['Post']['created']
