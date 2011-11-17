@@ -691,9 +691,9 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	public function testSchemaReadWithCrossDatabase() {
-		$config = new DATABASE_CONFIG();
+		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf(
-			!isset($config->test) || !isset($config->test2),
+			!isset($config['test']) || !isset($config['test2']),
 			'Primary and secondary test databases not configured, skipping cross-database join tests.'
 			. ' To run these tests, you must define $test and $test2 in your database configuration.'
 		);
