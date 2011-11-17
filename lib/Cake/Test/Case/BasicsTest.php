@@ -683,61 +683,21 @@ class BasicsTest extends CakeTestCase {
  */
 	public function testDebug() {
 		ob_start();
-			debug('this-is-a-test');
+			debug('this-is-a-test', false);
 		$result = ob_get_clean();
-$expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-this-is-a-test
-</pre>
-</div>
-EXPECTED;
 $expectedText = <<<EXPECTED
-
 %s (line %d)
 ########## DEBUG ##########
 this-is-a-test
 ###########################
-
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
-		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
-		}
-		$this->assertEqual($expected, $result);
-
-		ob_start();
-			debug('<div>this-is-a-test</div>');
-		$result = ob_get_clean();
-$expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
-</pre>
-</div>
-EXPECTED;
-$expectedText = <<<EXPECTED
-
-%s (line %d)
-########## DEBUG ##########
-<div>this-is-a-test</div>
-###########################
-
-EXPECTED;
-		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
-		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
-		}
-		$this->assertEqual($expected, $result);
+		$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -745,8 +705,8 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
-		$this->assertEqual($expected, $result);
+		$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', true, true);
@@ -774,7 +734,7 @@ $expected = <<<EXPECTED
 </div>
 EXPECTED;
 		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', null);
@@ -788,45 +748,17 @@ $expectedHtml = <<<EXPECTED
 </div>
 EXPECTED;
 $expectedText = <<<EXPECTED
-
 %s (line %d)
 ########## DEBUG ##########
 <div>this-is-a-test</div>
 ###########################
-
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 17);
 		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
 		}
-		$this->assertEqual($expected, $result);
-
-		ob_start();
-			debug('<div>this-is-a-test</div>', null);
-		$result = ob_get_clean();
-$expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
-</pre>
-</div>
-EXPECTED;
-$expectedText = <<<EXPECTED
-
-%s (line %d)
-########## DEBUG ##########
-<div>this-is-a-test</div>
-###########################
-
-EXPECTED;
-		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
-		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
-		}
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', null, false);
@@ -841,60 +773,52 @@ $expectedHtml = <<<EXPECTED
 EXPECTED;
 $expectedText = <<<EXPECTED
 
-
 ########## DEBUG ##########
 <div>this-is-a-test</div>
 ###########################
-
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 17);
 		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 21);
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
 		}
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', false);
 		$result = ob_get_clean();
 $expected = <<<EXPECTED
-
 %s (line %d)
 ########## DEBUG ##########
 <div>this-is-a-test</div>
 ###########################
-
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
-		$this->assertEqual($expected, $result);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', false, true);
 		$result = ob_get_clean();
 $expected = <<<EXPECTED
-
 %s (line %d)
 ########## DEBUG ##########
 <div>this-is-a-test</div>
 ###########################
-
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
-		$this->assertEqual($expected, $result);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', false, false);
 		$result = ob_get_clean();
 $expected = <<<EXPECTED
 
-
 ########## DEBUG ##########
 <div>this-is-a-test</div>
 ###########################
-
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
-		$this->assertEqual($expected, $result);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

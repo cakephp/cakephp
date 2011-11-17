@@ -91,12 +91,10 @@ function debug($var = false, $showHtml = null, $showFrom = true) {
 </div>
 HTML;
 		$text = <<<TEXT
-
 %s
 ########## DEBUG ##########
 %s
 ###########################
-
 TEXT;
 		$template = $html;
 		if (php_sapi_name() == 'cli' || $showHtml === false) {
