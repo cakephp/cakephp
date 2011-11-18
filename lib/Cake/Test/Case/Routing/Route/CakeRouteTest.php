@@ -606,7 +606,7 @@ class CakeRouteTest extends CakeTestCase {
 				'fish' => 'trout'
 			)
 		);
-		$this->assertEquals($expected, $result, 'Fish should be parsed, as action == index');
+		$this->assertEquals($expected, $result, 'Fizz should be parsed, as controller == comments|other');
 
 		$result = $route->parse('/comments/index/wibble:spin/fish:trout/fizz:buzz');
 		$expected = array(
@@ -663,6 +663,19 @@ class CakeRouteTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expected, $result, 'Greedy named grabs everything, rules are followed');
+	}
+
+/**
+ * Having greedNamed enabled should not capture routing.prefixes.
+ *
+ * @return void
+ */
+	public function testMatchGreedyNamedExcludesPrefixes() {
+		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+
+		$route = new CakeRoute('/sales/*', array('controller' => 'sales', 'action' => 'index'));
+		$this->assertFalse($route->match(array('controller' => 'sales', 'action' => 'index', 'admin' => 1)), 'Greedy named consume routing prefixes.');
 	}
 
 /**

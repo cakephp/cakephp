@@ -388,6 +388,7 @@ class CakeRoute {
 		}
 
 		$namedConfig = Router::namedConfig();
+		$prefixes = Router::prefixes();
 		$greedyNamed = $namedConfig['greedyNamed'];
 		$allowedNamedParams = $namedConfig['rules'];
 
@@ -421,7 +422,8 @@ class CakeRoute {
 			// pull out named params if named params are greedy or a rule exists.
 			if (
 				($greedyNamed || isset($allowedNamedParams[$key])) &&
-				($value !== false && $value !== null)
+				($value !== false && $value !== null) &&
+				(!in_array($key, $prefixes))
 			) {
 				$named[$key] = $value;
 				continue;
