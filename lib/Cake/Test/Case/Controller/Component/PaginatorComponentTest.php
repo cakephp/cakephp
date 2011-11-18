@@ -553,11 +553,11 @@ class PaginatorComponentTest extends CakeTestCase {
 			'paramType' => 'named'
 		);
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.PaginatorAuthor.joined_offset'), array(4, 2, 2));
+		$this->assertEquals(Set::extract($result, '{n}.PaginatorAuthor.joined_offset'), array(4, 2, 2));
 
 		$Controller->request->params['named'] = array('sort' => 'PaginatorAuthor.joined_offset', 'direction' => 'asc');
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.PaginatorAuthor.joined_offset'), array(2, 2, 4));
+		$this->assertEquals(Set::extract($result, '{n}.PaginatorAuthor.joined_offset'), array(2, 2, 4));
 	}
 
 /**

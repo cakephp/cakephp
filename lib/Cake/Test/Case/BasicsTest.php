@@ -720,7 +720,7 @@ $expected = <<<EXPECTED
 </div>
 EXPECTED;
 		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', true, false);
