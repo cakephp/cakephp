@@ -28,8 +28,20 @@ App::uses('View', 'View');
  * When the view is rendered, the `$posts` view variable will be serialized 
  * into JSON.
  *
- * If you don't use the `serialize` key, you will need a view + layout just like a
- * normal view.
+ * You can also define `'serialize'` as an array.  This will create a top level object containing
+ * all the named view variables:
+ *
+ * {{{
+ * $this->set(compact('posts', 'users', 'stuff'));
+ * $this->set('serialize', array('posts', 'users'));
+ * }}}
+ * 
+ * The above would generate a JSON object that looks like:
+ *
+ * `{"posts": [...], "users": [...]}`
+ *
+ * If you don't use the `serialize` key, you will need a view.  You can use extended
+ * views to provide layout like functionality.
  *
  * @package       Cake.View
  * @since         CakePHP(tm) v 2.1.0
@@ -73,7 +85,14 @@ class JsonView extends View {
 	public function render($view = null, $layout = null) {
 		if (isset($this->viewVars['serialize'])) {
 			$serialize = $this->viewVars['serialize'];
-			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+			if (is_array($serialize)) {
+				$data = array();
+				foreach ($serialize as $key) {
+					$data[$key] = $this->viewVars[$key];
+				}
+			} else {
+				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+			}
 			return $this->output = json_encode($data);
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {

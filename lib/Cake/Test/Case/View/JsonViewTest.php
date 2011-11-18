@@ -48,6 +48,25 @@ class JsonViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test render with an array in serialize
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewMultiple() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$data = array('no' => 'nope', 'user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set($data);
+		$Controller->set('serialize', array('no', 'user'));
+		$View = new JsonView($Controller);
+		$output = $View->render(false);
+
+		$this->assertIdentical(json_encode(array('no' =>$data['no'], 'user' => $data['user'])), $output);
+		$this->assertIdentical('application/json', $Response->type());
+	}
+
+/**
  * testRenderWithView method
  *
  * @return void

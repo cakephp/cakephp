@@ -31,8 +31,20 @@ App::uses('Xml', 'Utility');
  *
  * **Note** The view variable you specify must be compatible with Xml::fromArray().
  *
- * If you don't use the `serialize` key, you will need a view + layout just like a
- * normal view.
+ * You can also define `'serialize'` as an array.  This will create an additional
+ * top level element named `<response>` containing all the named view variables:
+ *
+ * {{{
+ * $this->set(compact('posts', 'users', 'stuff'));
+ * $this->set('serialize', array('posts', 'users'));
+ * }}}
+ * 
+ * The above would generate a XML object that looks like:
+ *
+ * `<response><posts>...</posts><users>...</users></response>`
+ *
+ * If you don't use the `serialize` key, you will need a view.  You can use extended
+ * views to provide layout like functionality.
  *
  * @package       Cake.View
  * @since         CakePHP(tm) v 2.1.0
@@ -74,7 +86,14 @@ class XmlView extends View {
 	public function render($view = null, $layout = null) {
 		if (isset($this->viewVars['serialize'])) {
 			$serialize = $this->viewVars['serialize'];
-			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+			if (is_array($serialize)) {
+				$data = array('response' => array());
+				foreach ($serialize as $key) {
+					$data['response'][$key] = $this->viewVars[$key];
+				}
+			} else {
+				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+			}
 			return $this->output = Xml::fromArray($data)->asXML();
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {

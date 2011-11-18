@@ -49,6 +49,28 @@ class XmlViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test render with an array in serialize
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewMultiple() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$data = array('no' => 'nope', 'user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set($data);
+		$Controller->set('serialize', array('no', 'user'));
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
+
+		$expected = array(
+			'response' => array('no' =>$data['no'], 'user' => $data['user'])
+		);
+		$this->assertIdentical(Xml::build($expected)->asXML(), $output);
+		$this->assertIdentical('application/xml', $Response->type());
+	}
+
+/**
  * testRenderWithView method
  *
  * @return void
