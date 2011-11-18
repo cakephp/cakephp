@@ -34,6 +34,7 @@ class File {
  * Folder object of the File
  *
  * @var Folder
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$Folder
  */
 	public $Folder = null;
 
@@ -41,13 +42,15 @@ class File {
  * Filename
  *
  * @var string
+ * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$name
  */
 	public $name = null;
 
 /**
  * File info
  *
- * @var string
+ * @var array
+ * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$info
  */
 	public $info = array();
 
@@ -55,6 +58,7 @@ class File {
  * Holds the file handler resource if the file is opened
  *
  * @var resource
+ * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$handle
  */
 	public $handle = null;
 
@@ -62,6 +66,7 @@ class File {
  * Enable locking for file reading and writing
  *
  * @var boolean
+ * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$lock
  */
 	public $lock = null;
 
@@ -71,6 +76,7 @@ class File {
  * Current file's absolute path
  *
  * @var mixed null
+ * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$path
  */
 	public $path = null;
 
