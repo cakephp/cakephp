@@ -29,6 +29,7 @@ class Folder {
  * Path to Folder.
  *
  * @var string
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$path
  */
 	public $path = null;
 
@@ -37,6 +38,7 @@ class Folder {
  * should be sorted by name.
  *
  * @var boolean
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$sort
  */
 	public $sort = false;
 
@@ -44,6 +46,7 @@ class Folder {
  * Mode to be used on create. Does nothing on windows platforms.
  *
  * @var integer
+ * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$mode
  */
 	public $mode = 0755;
 
