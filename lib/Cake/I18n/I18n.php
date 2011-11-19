@@ -89,8 +89,7 @@ class I18n {
 	protected $_noLocale = false;
 
 /**
- * Set to true when I18N::_bindTextDomain() is called for the first time.
- * If a translation file is found it is set to false again
+ * Translation categories
  *
  * @var array
  */
@@ -129,9 +128,11 @@ class I18n {
  * @param string $domain Domain The domain of the translation.  Domains are often used by plugin translations
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
+ * @param string $language Language to translate string to.
+ * 	If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
  */
-	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
+	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null, $language = null) {
 		$_this = I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {
@@ -144,10 +145,13 @@ class I18n {
 		if (is_numeric($category)) {
 			$_this->category = $_this->_categories[$category];
 		}
-		$language = Configure::read('Config.language');
 
-		if (!empty($_SESSION['Config']['language'])) {
-			$language = $_SESSION['Config']['language'];
+		if (empty($language)) {
+			if (!empty($_SESSION['Config']['language'])) {
+				$language = $_SESSION['Config']['language'];
+			} else {
+				$language = Configure::read('Config.language');
+			}
 		}
 
 		if (($_this->_lang && $_this->_lang !== $language) || !$_this->_lang) {
