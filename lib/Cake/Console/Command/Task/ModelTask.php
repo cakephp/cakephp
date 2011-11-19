@@ -24,7 +24,7 @@ App::uses('Validation', 'Utility');
 /**
  * Task class for creating and updating model files.
  *
- * @package       Cake.Console.Command.Task
+ * @package	   Cake.Console.Command.Task
  */
 class ModelTask extends BakeTask {
 
@@ -187,18 +187,20 @@ class ModelTask extends BakeTask {
 		$useTable = $this->getTable($currentModelName);
 		$db = ConnectionManager::getDataSource($this->connection);
 		$fullTableName = $db->fullTableName($useTable);
-
-		if (in_array($useTable, $this->_tables)) {
-			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
-			$fields = $tempModel->schema(true);
-			if (!array_key_exists('id', $fields)) {
-				$primaryKey = $this->findPrimaryKey($fields);
+		if (!in_array($useTable, $this->_tables)) {
+			$prompt = __d('cake_console', "The table $useTable doesn't exist or could not be automatically detected\ncontinue anyway?");
+			$continue = $this->in($prompt, array('y', 'n'));
+			if (strtolower($continue) == 'n') {
+				return false;
 			}
-		} else {
-			$this->err(__d('cake_console', 'Table %s does not exist, cannot bake a model without a table.', $useTable));
-			$this->_stop();
-			return false;
 		}
+
+		$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
+		$fields = $tempModel->schema(true);
+		if (!array_key_exists('id', $fields)) {
+			$primaryKey = $this->findPrimaryKey($fields);
+		}
+
 		$displayField = $tempModel->hasField(array('name', 'title'));
 		if (!$displayField) {
 			$displayField = $this->findDisplayField($tempModel->schema());
@@ -467,7 +469,7 @@ class ModelTask extends BakeTask {
 		}
 
 		if (empty($this->_tables)) {
-			$this->_tables = $this->getAllTables();
+			$this->_tables = (array) $this->getAllTables();
 		}
 
 		$associations = array(
@@ -779,7 +781,7 @@ class ModelTask extends BakeTask {
  * @return array
  */
 	public function listAll($useDbConfig = null) {
-		$this->_tables = $this->getAllTables($useDbConfig);
+		$this->_tables = (array) $this->getAllTables($useDbConfig);
 
 		if ($this->interactive === true) {
 			$this->out(__d('cake_console', 'Possible Models based on your current database:'));
