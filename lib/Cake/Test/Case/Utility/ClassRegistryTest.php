@@ -124,6 +124,21 @@ class RegisterCategory extends ClassRegisterModel {
 }
 
 /**
+ * RegisterPrefixedDs class
+ *
+ * @package       Cake.Test.Case.Utility
+ */
+class RegisterPrefixedDs extends ClassRegisterModel {
+
+/**
+ * useDbConfig property
+ *
+ * @var string 'doesnotexist'
+ */
+	public $useDbConfig = 'doesnotexist';
+}
+
+/**
  * ClassRegistryTest class
  *
  * @package       Cake.Test.Case.Utility
@@ -182,9 +197,9 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue(is_a($ParentCategory, 'RegisterCategory'));
 		$this->assertNotSame($Category, $ParentCategory);
 
-		$this->assertNotEqual($Category->alias, $ParentCategory->alias);
-		$this->assertEqual('RegisterCategory', $Category->alias);
-		$this->assertEqual('ParentCategory', $ParentCategory->alias);
+		$this->assertNotEquals($Category->alias, $ParentCategory->alias);
+		$this->assertEquals('RegisterCategory', $Category->alias);
+		$this->assertEquals('ParentCategory', $ParentCategory->alias);
 	}
 
 /**
@@ -259,7 +274,7 @@ class ClassRegistryTest extends CakeTestCase {
 		$TestRegistryPluginModel = ClassRegistry::init('RegistryPlugin.TestRegistryPluginModel');
 		$this->assertTrue(is_a($TestRegistryPluginModel, 'TestRegistryPluginModel'));
 
-		$this->assertEqual($TestRegistryPluginModel->tablePrefix, 'something_');
+		$this->assertEquals($TestRegistryPluginModel->tablePrefix, 'something_');
 
 		$PluginUser = ClassRegistry::init(array('class' => 'RegistryPlugin.RegisterUser', 'alias' => 'RegistryPluginUser', 'table' => false));
 		$this->assertTrue(is_a($PluginUser, 'RegistryPluginAppModel'));
@@ -268,6 +283,24 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue(is_a($PluginUserCopy, 'RegistryPluginAppModel'));
 		$this->assertSame($PluginUser, $PluginUserCopy);
 		CakePlugin::unload();
+	}
+
+/**
+ * Tests prefixed datasource names for test purposes
+ *
+ */
+	public function testPrefixedTestDatasource() {
+		$Model = ClassRegistry::init('RegisterPrefixedDs');
+		$this->assertEqual($Model->useDbConfig, 'test');
+		ClassRegistry::removeObject('RegisterPrefixedDs');
+
+		$testConfig = ConnectionManager::getDataSource('test')->config;
+		ConnectionManager::create('test_doesnotexist', $testConfig);
+
+		$Model = ClassRegistry::init('RegisterArticle');
+		$this->assertEqual($Model->useDbConfig, 'test');
+		$Model = ClassRegistry::init('RegisterPrefixedDs');
+		$this->assertEqual($Model->useDbConfig, 'test_doesnotexist');
 	}
 
 /**

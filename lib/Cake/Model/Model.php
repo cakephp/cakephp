@@ -1029,7 +1029,8 @@ class Model extends Object {
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
 				throw new MissingTableException(array(
 					'table' => $this->tablePrefix . $tableName,
-					'class' => $this->alias
+					'class' => $this->alias,
+					'ds' => $this->useDbConfig,
 				));
 			}
 			$this->_schema = null;

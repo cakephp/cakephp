@@ -53,22 +53,8 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
-
-		$this->assertTrue($this->Tasks->enabled('DbConfig'));
 	}
 
-/**
- * test load and enable = false
- *
- * @return void
- */
-	public function testLoadWithEnableFalse() {
-		$result = $this->Tasks->load('DbConfig', array('enabled' => false));
-		$this->assertInstanceOf('DbConfigTask', $result);
-		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
-
-		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
-	}
 /**
  * test missingtask exception
  *

@@ -505,11 +505,11 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaName() {
 		$Schema = new CakeSchema();
-		$this->assertEqual(strtolower($Schema->name), strtolower(APP_DIR));
+		$this->assertEquals(strtolower($Schema->name), strtolower(APP_DIR));
 
 		Configure::write('App.dir', 'Some.name.with.dots');
 		$Schema = new CakeSchema();
-		$this->assertEqual($Schema->name, 'SomeNameWithDots');
+		$this->assertEquals($Schema->name, 'SomeNameWithDots');
 
 		Configure::write('App.dir', 'app');
 	}
@@ -532,22 +532,22 @@ class CakeSchemaTest extends CakeTestCase {
 			$this->assertTrue(isset($read['tables'][$table]), 'Missing table ' . $table);
 		}
 		foreach ($this->Schema->tables as $table => $fields) {
-			$this->assertEqual(array_keys($fields), array_keys($read['tables'][$table]));
+			$this->assertEquals(array_keys($fields), array_keys($read['tables'][$table]));
 		}
 
 		if (isset($read['tables']['datatypes']['float_field']['length'])) {
-			$this->assertEqual(
+			$this->assertEquals(
 				$read['tables']['datatypes']['float_field']['length'],
 				$this->Schema->tables['datatypes']['float_field']['length']
 			);
 		}
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$read['tables']['datatypes']['float_field']['type'],
 			$this->Schema->tables['datatypes']['float_field']['type']
 		);
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$read['tables']['datatypes']['float_field']['null'],
 			$this->Schema->tables['datatypes']['float_field']['null']
 		);
@@ -691,9 +691,9 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	public function testSchemaReadWithCrossDatabase() {
-		$config = new DATABASE_CONFIG();
+		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf(
-			!isset($config->test) || !isset($config->test2),
+			!isset($config['test']) || !isset($config['test2']),
 			'Primary and secondary test databases not configured, skipping cross-database join tests.'
 			. ' To run these tests, you must define $test and $test2 in your database configuration.'
 		);
@@ -741,7 +741,7 @@ class CakeSchemaTest extends CakeTestCase {
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		);
 		$result = $this->Schema->generateTable('posts', $posts);
-		$this->assertPattern('/var \$posts/', $result);
+		$this->assertRegExp('/var \$posts/', $result);
 	}
 /**
  * testSchemaWrite method
@@ -751,11 +751,11 @@ class CakeSchemaTest extends CakeTestCase {
 	public function testSchemaWrite() {
 		$write = $this->Schema->write(array('name' => 'MyOtherApp', 'tables' => $this->Schema->tables, 'path' => TMP . 'tests'));
 		$file = file_get_contents(TMP . 'tests' . DS .'schema.php');
-		$this->assertEqual($write, $file);
+		$this->assertEquals($write, $file);
 
 		require_once( TMP . 'tests' . DS .'schema.php');
 		$OtherSchema = new MyOtherAppSchema();
-		$this->assertEqual($this->Schema->tables, $OtherSchema->tables);
+		$this->assertEquals($this->Schema->tables, $OtherSchema->tables);
 	}
 
 /**
@@ -794,9 +794,9 @@ class CakeSchemaTest extends CakeTestCase {
 				)
 			),
 		);
-		$this->assertEqual($expected, $compare);
+		$this->assertEquals($expected, $compare);
 		$this->assertNull($New->getVar('comments'));
-		$this->assertEqual($New->getVar('_foo'), array('bar'));
+		$this->assertEquals($New->getVar('_foo'), array('bar'));
 
 		$tables = array(
 			'missing' => array(
@@ -835,7 +835,7 @@ class CakeSchemaTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual($expected, $compare);
+		$this->assertEquals($expected, $compare);
 	}
 
 /**
@@ -864,7 +864,7 @@ class CakeSchemaTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual($expected, $compare);
+		$this->assertEquals($expected, $compare);
 	}
 
 /**
@@ -965,8 +965,8 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaLoading() {
 		$Other = $this->Schema->load(array('name' => 'MyOtherApp', 'path' => TMP . 'tests'));
-		$this->assertEqual($Other->name, 'MyOtherApp');
-		$this->assertEqual($Other->tables, $this->Schema->tables);
+		$this->assertEquals($Other->name, 'MyOtherApp');
+		$this->assertEquals($Other->tables, $this->Schema->tables);
 	}
 
 /**
@@ -980,8 +980,8 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		CakePlugin::load('TestPlugin');
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
-		$this->assertEqual($Other->name, 'TestPluginApp');
-		$this->assertEqual(array_keys($Other->tables), array('test_plugin_acos'));
+		$this->assertEquals($Other->name, 'TestPluginApp');
+		$this->assertEquals(array_keys($Other->tables), array('test_plugin_acos'));
 
 		App::build();
 	}
@@ -1008,11 +1008,11 @@ class CakeSchemaTest extends CakeTestCase {
 		$col = $Schema->tables['testdescribes']['int_null'];
 		$col['name'] = 'int_null';
 		$column = $this->db->buildColumn($col);
-		$this->assertPattern('/' . preg_quote($column, '/') . '/', $sql);
+		$this->assertRegExp('/' . preg_quote($column, '/') . '/', $sql);
 
 		$col = $Schema->tables['testdescribes']['int_not_null'];
 		$col['name'] = 'int_not_null';
 		$column = $this->db->buildColumn($col);
-		$this->assertPattern('/' . preg_quote($column, '/') . '/', $sql);
+		$this->assertRegExp('/' . preg_quote($column, '/') . '/', $sql);
 	}
 }

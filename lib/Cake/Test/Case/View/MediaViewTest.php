@@ -105,7 +105,7 @@ class MediaViewTest extends CakeTestCase {
 		ob_start();
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
-		$this->assertEqual('this is the test asset css file', $output);
+		$this->assertEquals('this is the test asset css file', $output);
 		$this->assertTrue($result !== false);
 	}
 
@@ -161,7 +161,7 @@ class MediaViewTest extends CakeTestCase {
 		ob_start();
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
-		$this->assertEqual("some_key = some_value\nbool_key = 1\n", $output);
+		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
 		$this->assertTrue($result !== false);
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
@@ -225,7 +225,7 @@ class MediaViewTest extends CakeTestCase {
 		ob_start();
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
-		$this->assertEqual("some_key = some_value\nbool_key = 1\n", $output);
+		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
 		$this->assertTrue($result !== false);
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
@@ -289,7 +289,7 @@ class MediaViewTest extends CakeTestCase {
 		ob_start();
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
-		$this->assertEqual("some_key = some_value\nbool_key = 1\n", $output);
+		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
 		$this->assertTrue($result !== false);
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;

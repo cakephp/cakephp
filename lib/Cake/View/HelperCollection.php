@@ -85,8 +85,8 @@ class HelperCollection extends ObjectCollection {
 			$this->_loaded[$alias]->{$var} = $this->_View->{$var};
 		}
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable === true) {
-			$this->_enabled[] = $alias;
+		if ($enable) {
+			$this->enable($alias);
 		}
 		return $this->_loaded[$alias];
 	}

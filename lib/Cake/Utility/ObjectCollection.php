@@ -40,6 +40,13 @@ abstract class ObjectCollection {
 	protected $_loaded = array();
 
 /**
+ * Default object priority. A non zero integer.
+ *
+ * @var int
+ */
+	public $defaultPriority = 10;
+
+/**
  * Loads a new object onto the collection. Can throw a variety of exceptions
  *
  * Implementations of this class support a `$options['enabled']` flag which enables/disables
@@ -95,7 +102,7 @@ abstract class ObjectCollection {
 			$options
 		);
 		$collected = array();
-		$list = $this->_enabled;
+		$list = array_keys($this->_enabled);
 		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
 			throw new CakeException(__d('cake_dev', 'Cannot use modParams with indexes that do not exist.'));
 		}
@@ -145,30 +152,77 @@ abstract class ObjectCollection {
 /**
  * Enables callbacks on an object or array of objects
  *
- * @param mixed $name CamelCased name of the object(s) to enable (string or array)
+ * @param string|array $name CamelCased name of the object(s) to enable (string or array)
+ * @param boolean Prioritize enabled list after enabling object(s)
  * @return void
  */
-	public function enable($name) {
+	public function enable($name, $prioritize = true) {
+		$enabled = false;
 		foreach ((array)$name as $object) {
-			if (isset($this->_loaded[$object]) && array_search($object, $this->_enabled) === false) {
-				$this->_enabled[] = $object;
+			if (isset($this->_loaded[$object]) && !isset($this->_enabled[$object])) {
+				$priority = isset($this->_loaded[$object]->settings['priority']) ? $this->_loaded[$object]->settings['priority'] : $this->defaultPriority;
+				$this->_enabled[$object] = array($priority);
+				$enabled = true;
 			}
 		}
+		if ($prioritize && $enabled) {
+			$this->prioritize();
+		}
+	}
+
+/**
+ * Prioritize list of enabled object
+ *
+ * @return array Prioritized list of object
+ */
+	public function prioritize() {
+		$i = 1;
+		foreach ($this->_enabled as $name => $priority) {
+			$priority[1] = $i++;
+			$this->_enabled[$name] = $priority;
+		}
+		asort($this->_enabled);
+		return $this->_enabled;
+	}
+
+/**
+ * Set priority for an object or array of objects
+ *
+ * @param string|array $name CamelCased name of the object(s) to enable (string or array)
+ * 	If string the second param $priority is used else it should be an associative array
+ * 	with keys as object names and values as priorities to set.
+ * @param int|null Integer priority to set or null for default
+ * @return void
+ */
+	public function setPriority($name, $priority = null) {
+		if (is_string($name)) {
+			$name = array($name => $priority);
+		}
+		foreach ($name as $obj => $prio) {
+			if (isset($this->_loaded[$obj])) {
+				if (is_null($prio)) {
+					$prio = $this->defaultPriority;
+				}
+				$this->_loaded[$obj]->settings['priority'] = $prio;
+				if (isset($this->_enabled[$obj])) {
+					$this->_enabled[$obj] = array($prio);
+				}
+			}
+		}
+		$this->prioritize();
 	}
 
 /**
  * Disables callbacks on a object or array of objects.  Public object methods are still
  * callable as normal.
  *
- * @param mixed $name CamelCased name of the objects(s) to disable (string or array)
+ * @param string|array $name CamelCased name of the objects(s) to disable (string or array)
  * @return void
  */
 	public function disable($name) {
 		foreach ((array)$name as $object) {
-			$index = array_search($object, $this->_enabled);
-			unset($this->_enabled[$index]);
+			unset($this->_enabled[$object]);
 		}
-		$this->_enabled = array_values($this->_enabled);
 	}
 
 /**
@@ -181,9 +235,9 @@ abstract class ObjectCollection {
  */
 	public function enabled($name = null) {
 		if (!empty($name)) {
-			return in_array($name, $this->_enabled);
+			return isset($this->_enabled[$name]);
 		}
-		return $this->_enabled;
+		return array_keys($this->_enabled);
 	}
 
 /**
@@ -210,7 +264,7 @@ abstract class ObjectCollection {
 	public function unload($name) {
 		list($plugin, $name) = pluginSplit($name);
 		unset($this->_loaded[$name]);
-		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
+		unset($this->_enabled[$name]);
 	}
 
 /**
@@ -248,4 +302,5 @@ abstract class ObjectCollection {
 		}
 		return $normal;
 	}
+
 }

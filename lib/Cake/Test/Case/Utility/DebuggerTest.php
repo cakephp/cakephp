@@ -69,9 +69,9 @@ class DebuggerTest extends CakeTestCase {
  */
 	public function testDocRef() {
 		ini_set('docref_root', '');
-		$this->assertEqual(ini_get('docref_root'), '');
+		$this->assertEquals(ini_get('docref_root'), '');
 		$debugger = new Debugger();
-		$this->assertEqual(ini_get('docref_root'), 'http://php.net/');
+		$this->assertEquals(ini_get('docref_root'), 'http://php.net/');
 	}
 
 /**
@@ -82,12 +82,12 @@ class DebuggerTest extends CakeTestCase {
 	public function testExcerpt() {
 		$result = Debugger::excerpt(__FILE__, __LINE__, 2);
 		$this->assertTrue(is_array($result));
-		$this->assertEqual(count($result), 5);
-		$this->assertPattern('/function(.+)testExcerpt/', $result[1]);
+		$this->assertEquals(count($result), 5);
+		$this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
 		$result = Debugger::excerpt(__FILE__, 2, 2);
 		$this->assertTrue(is_array($result));
-		$this->assertEqual(count($result), 4);
+		$this->assertEquals(count($result), 4);
 
 		$pattern = '/<code><span style\="color\: \#\d+">.*?&lt;\?php/';
 		$this->assertRegExp($pattern, $result[0]);
@@ -106,30 +106,30 @@ class DebuggerTest extends CakeTestCase {
 		$this->_restoreError = true;
 
 		$result = Debugger::output(false);
-		$this->assertEqual($result, '');
+		$this->assertEquals($result, '');
 		$out .= '';
 		$result = Debugger::output(true);
 
-		$this->assertEqual($result[0]['error'], 'Notice');
-		$this->assertPattern('/Undefined variable\:\s+out/', $result[0]['description']);
-		$this->assertPattern('/DebuggerTest::testOutput/i', $result[0]['trace']);
+		$this->assertEquals($result[0]['error'], 'Notice');
+		$this->assertRegExp('/Undefined variable\:\s+out/', $result[0]['description']);
+		$this->assertRegExp('/DebuggerTest::testOutput/i', $result[0]['trace']);
 
 		ob_start();
 		Debugger::output('txt');
 		$other .= '';
 		$result = ob_get_clean();
 
-		$this->assertPattern('/Undefined variable:\s+other/', $result);
-		$this->assertPattern('/Context:/', $result);
-		$this->assertPattern('/DebuggerTest::testOutput/i', $result);
+		$this->assertRegExp('/Undefined variable:\s+other/', $result);
+		$this->assertRegExp('/Context:/', $result);
+		$this->assertRegExp('/DebuggerTest::testOutput/i', $result);
 
 		ob_start();
 		Debugger::output('html');
 		$wrong .= '';
 		$result = ob_get_clean();
-		$this->assertPattern('/<pre class="cake-error">.+<\/pre>/', $result);
-		$this->assertPattern('/<b>Notice<\/b>/', $result);
-		$this->assertPattern('/variable:\s+wrong/', $result);
+		$this->assertRegExp('/<pre class="cake-error">.+<\/pre>/', $result);
+		$this->assertRegExp('/<b>Notice<\/b>/', $result);
+		$this->assertRegExp('/variable:\s+wrong/', $result);
 
 		ob_start();
 		Debugger::output('js');
@@ -146,9 +146,9 @@ class DebuggerTest extends CakeTestCase {
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
 
-		$this->assertPattern('/Undefined variable:\s+buzz/', $result[1]);
-		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
-		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
+		$this->assertRegExp('/Undefined variable:\s+buzz/', $result[1]);
+		$this->assertRegExp('/<a[^>]+>Code/', $result[1]);
+		$this->assertRegExp('/<a[^>]+>Context/', $result[2]);
 	}
 
 /**
@@ -165,7 +165,7 @@ class DebuggerTest extends CakeTestCase {
 			               '&line={:line}">{:path}</a>, line {:line}'
 		));
 		$result = Debugger::trace();
-		$this->assertPattern('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+		$this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
@@ -226,7 +226,7 @@ class DebuggerTest extends CakeTestCase {
 		Debugger::outputAs('js');
 
 		$result = Debugger::trace();
-		$this->assertPattern('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+		$this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::addFormat('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
@@ -281,8 +281,8 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testTrimPath() {
-		$this->assertEqual(Debugger::trimPath(APP), 'APP' . DS);
-		$this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
+		$this->assertEquals(Debugger::trimPath(APP), 'APP' . DS);
+		$this->assertEquals(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
 	}
 
 /**
@@ -346,18 +346,18 @@ TEXT;
 
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertPattern("/'cool'/", $result);
+		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
+		$this->assertRegExp("/'cool'/", $result);
 
 		unlink(TMP . 'logs' . DS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
 		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
-		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertPattern('/\[main\]/', $result);
-		$this->assertPattern('/array/', $result);
-		$this->assertPattern("/'whatever',/", $result);
-		$this->assertPattern("/'here'/", $result);
+		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
+		$this->assertRegExp('/\[main\]/', $result);
+		$this->assertRegExp('/array/', $result);
+		$this->assertRegExp("/'whatever',/", $result);
+		$this->assertRegExp("/'here'/", $result);
 	}
 
 /**
@@ -447,7 +447,7 @@ TEXT;
 		);
 		$expected = Debugger::exportVar($expectedArray);
 
-		$this->assertEqual($expected, $output);
+		$this->assertEquals($expected, $output);
 	}
 
 /**
@@ -457,11 +457,11 @@ TEXT;
  */
 	public function testTraceExclude() {
 		$result = Debugger::trace();
-		$this->assertPattern('/^DebuggerTest::testTraceExclude/', $result);
+		$this->assertRegExp('/^DebuggerTest::testTraceExclude/', $result);
 
 		$result = Debugger::trace(array(
 			'exclude' => array('DebuggerTest::testTraceExclude')
 		));
-		$this->assertNoPattern('/^DebuggerTest::testTraceExclude/', $result);
+		$this->assertNotRegExp('/^DebuggerTest::testTraceExclude/', $result);
 	}
 }

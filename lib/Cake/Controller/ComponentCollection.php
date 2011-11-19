@@ -96,8 +96,8 @@ class ComponentCollection extends ObjectCollection {
 		}
 		$this->_loaded[$alias] = new $componentClass($this, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable === true) {
-			$this->_enabled[] = $alias;
+		if ($enable) {
+			$this->enable($alias);
 		}
 		return $this->_loaded[$alias];
 	}

@@ -58,9 +58,17 @@ class FolderTest extends CakeTestCase {
  */
 	public function tearDown() {
 		$exclude = array_merge(self::$_tmp, array('.', '..'));
-		foreach (scandir(TMP) as $file) {
-			if (is_dir(TMP . $file) && !in_array($file, $exclude)) {
-				unlink(TMP . $file);
+		foreach (scandir(TMP) as $dir) {
+			if (is_dir(TMP . $dir) && !in_array($dir, $exclude)) {
+				$iterator = new RecursiveDirectoryIterator(TMP . $dir);
+				foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+					if ($file->isFile() || $file->isLink()) {
+						unlink($file->getPathname());
+					} elseif ($file->isDir() && !in_array($file->getFilename(), array('.', '..'))) {
+						rmdir($file->getPathname());
+					}
+				}
+				rmdir(TMP . $dir);
 			}
 		}
 	}
@@ -268,26 +276,26 @@ class FolderTest extends CakeTestCase {
 		$filePath = $new . DS . 'test1.php';
 		$File = new File($filePath);
 		$this->assertTrue($File->create());
-		
+
 		$filePath = $new . DS . 'skip_me.php';
 		$File = new File($filePath);
 		$this->assertTrue($File->create());
 
 		$this->assertTrue($Folder->chmod($new, 0755, true));
 		$this->assertTrue($Folder->chmod($new, 0777, true, array('skip_me.php', 'test2')));
-		
+
 		$perms = substr(sprintf('%o', fileperms($new . DS . 'test1')), -4);
 		$this->assertEquals($perms, '0777');
-		
+
 		$perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
 		$this->assertEquals($perms, '0755');
-		
+
 		$perms = substr(sprintf('%o', fileperms($new . DS . 'test1.php')), -4);
 		$this->assertEquals($perms, '0777');
-		
+
 		$perms = substr(sprintf('%o', fileperms($new . DS . 'skip_me.php')), -4);
 		$this->assertEquals($perms, '0755');
-		
+
 		$Folder->delete($new);
 	}
 

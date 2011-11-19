@@ -2358,7 +2358,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertEqual('Po (translated)', $singular);
 
 		$coreSingular = $this->__singularFromCore();
-		$this->assertNotEqual('Po (from core translated)', $coreSingular);
+		$this->assertNotEquals('Po (from core translated)', $coreSingular);
 
 		$corePlurals = $this->__pluralFromCore();
 		$this->assertFalse(in_array('0 everything else (from core translated)', $corePlurals));
