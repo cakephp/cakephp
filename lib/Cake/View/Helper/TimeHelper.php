@@ -763,7 +763,7 @@ class TimeHelper extends AppHelper {
  * @param int $date Timestamp to format.
  * @return string formatted string with correct encoding.
  */
-	function _strftime($format, $date) {
+	protected function _strftime($format, $date) {
 		$format = strftime($format, $date);
 		$encoding = Configure::read('App.encoding');
 
