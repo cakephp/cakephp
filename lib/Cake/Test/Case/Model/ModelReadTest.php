@@ -7560,7 +7560,7 @@ class ModelReadTest extends BaseModelTest {
 			'2' => 'Second Post',
 			'1' => 'First Post'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$result = $Post->find('list', array('order' => array('Post.other_field' => 'DESC')));
 		$expected = array(
@@ -7568,23 +7568,23 @@ class ModelReadTest extends BaseModelTest {
 			'2' => 'Second Post',
 			'3' => 'Third Post'
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$Post->Author->virtualFields = array('joined' => 'Post.id * Author.id');
 		$result = $Post->find('all');
 		$result = Set::extract('{n}.Author.joined', $result);
 		$expected = array(1, 6, 3);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'ASC')));
 		$result = Set::extract('{n}.Author.joined', $result);
 		$expected = array(1, 3, 6);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'DESC')));
 		$result = Set::extract('{n}.Author.joined', $result);
 		$expected = array(6, 3, 1);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**

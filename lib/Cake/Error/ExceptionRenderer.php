@@ -185,6 +185,8 @@ class ExceptionRenderer {
 		try {
 			$this->controller->set($error->getAttributes());
 			$this->_outputMessage($this->template);
+		} catch (MissingViewException $e) {
+			$this->_outputMessage('error500');
 		} catch (Exception $e) {
 			$this->_outputMessageSafe('error500');
 		}
