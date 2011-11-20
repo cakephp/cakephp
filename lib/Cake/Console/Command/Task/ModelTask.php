@@ -550,7 +550,7 @@ class ModelTask extends BakeTask {
 			$modelFieldsTemp = $tempOtherModel->schema(true);
 
 			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
-			$possibleJoinTable = preg_match($pattern , $otherTable);
+			$possibleJoinTable = preg_match($pattern, $otherTable);
 			if ($possibleJoinTable == true) {
 				continue;
 			}
@@ -661,7 +661,8 @@ class ModelTask extends BakeTask {
 			$this->out(__d('cake_console', 'What is the association type?'));
 			$assocType = intval($this->inOptions($assocs, __d('cake_console', 'Enter a number')));
 
-			$this->out(__d('cake_console', "For the following options be very careful to match your setup exactly.\nAny spelling mistakes will cause errors."));
+			$this->out(__d('cake_console', "For the following options be very careful to match your setup exactly.\n" .
+				"Any spelling mistakes will cause errors."));
 			$this->hr();
 
 			$alias = $this->in(__d('cake_console', 'What is the alias for this association?'));
@@ -755,10 +756,15 @@ class ModelTask extends BakeTask {
 			'useTable' => null, 'useDbConfig' => 'default', 'displayField' => null);
 		$data = array_merge($defaults, $data);
 
+		$pluginPath = '';
+		if ($this->plugin) {
+			$pluginPath =  $this->plugin . '.';
+		}
+
 		$this->Template->set($data);
 		$this->Template->set(array(
 			'plugin' => $this->plugin,
-			'pluginPath' => empty($this->plugin) ? '' : $this->plugin . '.'
+			'pluginPath' => $pluginPath
 		));
 		$out = $this->Template->generate('classes', 'model');
 
@@ -876,7 +882,8 @@ class ModelTask extends BakeTask {
 		$enteredModel = '';
 
 		while ($enteredModel == '') {
-			$enteredModel = $this->in(__d('cake_console', "Enter a number from the list above,\ntype in the name of another model, or 'q' to exit"), null, 'q');
+			$enteredModel = $this->in(__d('cake_console', "Enter a number from the list above,\n" .
+				"type in the name of another model, or 'q' to exit"), null, 'q');
 
 			if ($enteredModel === 'q') {
 				$this->out(__d('cake_console', 'Exit'));
@@ -884,7 +891,8 @@ class ModelTask extends BakeTask {
 			}
 
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
-				$this->err(__d('cake_console', "The model name you supplied was empty,\nor the number you selected was not an option. Please try again."));
+				$this->err(__d('cake_console', "The model name you supplied was empty,\n" . 
+					"or the number you selected was not an option. Please try again."));
 				$enteredModel = '';
 			}
 		}
