@@ -669,7 +669,11 @@ class ModelTask extends BakeTask {
 			$className = $this->in(__d('cake_console', 'What className will %s use?', $alias), null, $alias );
 
 			if ($assocType == 0) {
-				$showKeys = $possibleKeys[$model->table];
+				if (!empty($possibleKeys[$model->table])) {
+					$showKeys = $possibleKeys[$model->table];
+				} else {
+					$showKeys = null;
+				}
 				$suggestedForeignKey = $this->_modelKey($alias);
 			} else {
 				$otherTable = Inflector::tableize($className);
