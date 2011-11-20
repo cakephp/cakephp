@@ -30,7 +30,7 @@ App::uses('ModelTask', 'Console/Command/Task');
 /**
  * ModelTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package	   Cake.Test.Case.Console.Command.Task
  */
 class ModelTaskTest extends CakeTestCase {
 
@@ -965,12 +965,35 @@ STRINGEND;
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
-		$this->Task->expects($this->once())->method('_stop');
-		$this->Task->expects($this->once())->method('err');
-
 		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('Foobar', 'y'));
+			->will($this->onConsecutiveCalls(
+				'Foobar', // Or type in the name of the model
+				'y', // Do you want to use this table
+				'n' // Doesn't exist, continue anyway?
+			));
 
 		$this->Task->execute();
 	}
+
+/**
+ * test using bake interactively with a table that does not exist.
+ *
+ * @return void
+ */
+	public function testForcedExecuteWithNonExistantTableName() {
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(
+				'Foobar', // Or type in the name of the model
+				'y', // Do you want to use this table
+				'y', // Doesn't exist, continue anyway?
+				'id', // Primary key
+				'y' // Looks good?
+			));
+
+		$this->Task->execute();
+	}
+
 }

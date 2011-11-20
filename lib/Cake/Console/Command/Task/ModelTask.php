@@ -188,7 +188,7 @@ class ModelTask extends BakeTask {
 		$db = ConnectionManager::getDataSource($this->connection);
 		$fullTableName = $db->fullTableName($useTable);
 		if (!in_array($useTable, $this->_tables)) {
-			$prompt = __d('cake_console', "The table $useTable doesn't exist or could not be automatically detected\ncontinue anyway?");
+			$prompt = __d('cake_console', "The table %s doesn't exist or could not be automatically detected\ncontinue anyway?", $useTable);
 			$continue = $this->in($prompt, array('y', 'n'));
 			if (strtolower($continue) == 'n') {
 				return false;
@@ -196,26 +196,35 @@ class ModelTask extends BakeTask {
 		}
 
 		$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
-		$fields = $tempModel->schema(true);
+
+		$knownToExist = false;
+		try {
+			$fields = $tempModel->schema(true);
+			$knownToExist = true;
+		} catch (Exception $e) {
+			$fields = array($tempModel->primaryKey);
+		}
 		if (!array_key_exists('id', $fields)) {
 			$primaryKey = $this->findPrimaryKey($fields);
 		}
 
-		$displayField = $tempModel->hasField(array('name', 'title'));
-		if (!$displayField) {
-			$displayField = $this->findDisplayField($tempModel->schema());
-		}
+		if ($knownToExist) {
+			$displayField = $tempModel->hasField(array('name', 'title'));
+			if (!$displayField) {
+				$displayField = $this->findDisplayField($tempModel->schema());
+			}
 
-		$prompt = __d('cake_console', "Would you like to supply validation criteria \nfor the fields in your model?");
-		$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
-		if (array_search($useTable, $this->_tables) !== false && strtolower($wannaDoValidation) == 'y') {
-			$validate = $this->doValidation($tempModel);
-		}
+			$prompt = __d('cake_console', "Would you like to supply validation criteria \nfor the fields in your model?");
+			$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
+			if (array_search($useTable, $this->_tables) !== false && strtolower($wannaDoValidation) == 'y') {
+				$validate = $this->doValidation($tempModel);
+			}
 
-		$prompt = __d('cake_console', "Would you like to define model associations\n(hasMany, hasOne, belongsTo, etc.)?");
-		$wannaDoAssoc = $this->in($prompt, array('y','n'), 'y');
-		if (strtolower($wannaDoAssoc) == 'y') {
-			$associations = $this->doAssociations($tempModel);
+			$prompt = __d('cake_console', "Would you like to define model associations\n(hasMany, hasOne, belongsTo, etc.)?");
+			$wannaDoAssoc = $this->in($prompt, array('y','n'), 'y');
+			if (strtolower($wannaDoAssoc) == 'y') {
+				$associations = $this->doAssociations($tempModel);
+			}
 		}
 
 		$this->out();
