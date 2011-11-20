@@ -675,7 +675,11 @@ class ModelTask extends BakeTask {
 				$otherTable = Inflector::tableize($className);
 				if (in_array($otherTable, $this->_tables)) {
 					if ($assocType < 3) {
-						$showKeys = $possibleKeys[$otherTable];
+						if (!empty($possibleKeys[$otherTable])) {
+							$showKeys = $possibleKeys[$otherTable];
+						} else {
+							$showKeys = null;
+						}
 					} else {
 						$showKeys = null;
 					}
