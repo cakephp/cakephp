@@ -170,7 +170,7 @@ class SchemaShell extends Shell {
 			$count = 0;
 			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
-					if (preg_match('/'.$fileName.'(?:[_\d]*)?\.php$/', $file)) {
+					if (preg_match('/'.preg_quote($fileName).'(?:[_\d]*)?\.php$/', $file)) {
 						$count++;
 					}
 				}
