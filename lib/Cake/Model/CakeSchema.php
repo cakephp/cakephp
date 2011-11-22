@@ -206,7 +206,7 @@ class CakeSchema extends Object {
 		}
 
 		$tables = array();
-		$currentTables = $db->listSources();
+		$currentTables = (array) $db->listSources();
 
 		$prefix = null;
 		if (isset($db->config['prefix'])) {
