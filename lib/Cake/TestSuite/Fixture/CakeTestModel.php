@@ -27,4 +27,21 @@ App::uses('Model', 'Model');
 class CakeTestModel extends Model {
 	public $useDbConfig = 'test';
 	public $cacheSources = false;
+
+/**
+ * Constructor, sets default order for the model to avoid failing tests caused by
+ * incorrect order when no order has been defined in the finds.
+ * Postgres can return the results in any order it considers appropriate if none is specified
+ *
+ * @param mixed $id Set this ID for this model on startup, can also be an array of options, see Model::__construct().
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ */
+	function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		if ($this->useTable && $this->primaryKey && $this->schema($this->primaryKey)) {
+			$this->order = array($this->alias . '.' . $this->primaryKey => 'ASC');
+		}
+	}
+
 }
