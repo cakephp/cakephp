@@ -62,10 +62,8 @@ class JsonView extends View {
  * @param Controller $controller
  */
 	public function __construct($controller) {
+		parent::__construct($controller);
 		if (is_object($controller)) {
-			foreach (array('viewVars', 'viewPath', 'view', 'response') as $var) {
-				$this->{$var} = $controller->{$var};
-			}
 			$this->response->type('json');
 		}
 	}
