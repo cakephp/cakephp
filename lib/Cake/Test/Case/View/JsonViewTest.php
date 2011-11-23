@@ -39,7 +39,7 @@ class JsonViewTest extends CakeTestCase {
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
 		$data = array('user' => 'fake', 'list' => array('item1', 'item2'));
-		$Controller->set(array('data' => $data, 'serialize' => 'data'));
+		$Controller->set(array('data' => $data, '_serialize' => 'data'));
 		$View = new JsonView($Controller);
 		$output = $View->render(false);
 
@@ -48,7 +48,7 @@ class JsonViewTest extends CakeTestCase {
 	}
 
 /**
- * Test render with an array in serialize
+ * Test render with an array in _serialize
  *
  * @return void
  */
@@ -58,7 +58,7 @@ class JsonViewTest extends CakeTestCase {
 		$Controller = new Controller($Request, $Response);
 		$data = array('no' => 'nope', 'user' => 'fake', 'list' => array('item1', 'item2'));
 		$Controller->set($data);
-		$Controller->set('serialize', array('no', 'user'));
+		$Controller->set('_serialize', array('no', 'user'));
 		$View = new JsonView($Controller);
 		$output = $View->render(false);
 

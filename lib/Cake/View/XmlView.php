@@ -17,33 +17,33 @@ App::uses('Xml', 'Utility');
 /**
  * A view class that is used for creating XML responses.
  *
- * By setting the 'serialize' key in your controller, you can specify a view variable
+ * By setting the '_serialize' key in your controller, you can specify a view variable
  * that should be serialized to XML and used as the response for the request.
  * This allows you to omit views + layouts, if your just need to emit a single view
  * variable as the XML response.
  *
  * In your controller, you could do the following:
  *
- * `$this->set(array('posts' => $posts, 'serialize' => 'posts'));`
+ * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
  *
  * When the view is rendered, the `$posts` view variable will be serialized 
  * into XML.
  *
  * **Note** The view variable you specify must be compatible with Xml::fromArray().
  *
- * You can also define `'serialize'` as an array.  This will create an additional
+ * You can also define `'_serialize'` as an array.  This will create an additional
  * top level element named `<response>` containing all the named view variables:
  *
  * {{{
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('serialize', array('posts', 'users'));
+ * $this->set('_serialize', array('posts', 'users'));
  * }}}
  * 
  * The above would generate a XML object that looks like:
  *
  * `<response><posts>...</posts><users>...</users></response>`
  *
- * If you don't use the `serialize` key, you will need a view.  You can use extended
+ * If you don't use the `_serialize` key, you will need a view.  You can use extended
  * views to provide layout like functionality.
  *
  * @package       Cake.View
@@ -74,9 +74,9 @@ class XmlView extends View {
 /**
  * Render a XML view.
  *
- * Uses the special 'serialize' parameter to convert a set of
+ * Uses the special '_serialize' parameter to convert a set of
  * view variables into a XML response.  Makes generating simple 
- * XML responses very easy.  You can omit the 'serialize' parameter, 
+ * XML responses very easy.  You can omit the '_serialize' parameter, 
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.
@@ -84,8 +84,8 @@ class XmlView extends View {
  * @return string The rendered view.
  */
 	public function render($view = null, $layout = null) {
-		if (isset($this->viewVars['serialize'])) {
-			$serialize = $this->viewVars['serialize'];
+		if (isset($this->viewVars['_serialize'])) {
+			$serialize = $this->viewVars['_serialize'];
 			if (is_array($serialize)) {
 				$data = array('response' => array());
 				foreach ($serialize as $key) {

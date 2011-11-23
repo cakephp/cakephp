@@ -39,7 +39,7 @@ class XmlViewTest extends CakeTestCase {
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
 		$data = array('users' => array('user' => array('user1', 'user2')));
-		$Controller->set(array('users' => $data, 'serialize' => 'users'));
+		$Controller->set(array('users' => $data, '_serialize' => 'users'));
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 
@@ -49,7 +49,7 @@ class XmlViewTest extends CakeTestCase {
 	}
 
 /**
- * Test render with an array in serialize
+ * Test render with an array in _serialize
  *
  * @return void
  */
@@ -59,7 +59,7 @@ class XmlViewTest extends CakeTestCase {
 		$Controller = new Controller($Request, $Response);
 		$data = array('no' => 'nope', 'user' => 'fake', 'list' => array('item1', 'item2'));
 		$Controller->set($data);
-		$Controller->set('serialize', array('no', 'user'));
+		$Controller->set('_serialize', array('no', 'user'));
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 
