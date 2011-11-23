@@ -41,7 +41,9 @@ class CakeTestModel extends Model {
 		parent::__construct($id, $table, $ds);
 		if ($this->useTable && $this->primaryKey && $this->schema($this->primaryKey)) {
 			$this->order = array($this->alias . '.' . $this->primaryKey => 'ASC');
+			$this->_schema = null;
 		}
+		$this->_sourceConfigured = false;
 	}
 
 }
