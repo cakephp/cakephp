@@ -98,7 +98,7 @@ class XmlViewTest extends CakeTestCase {
 		);
 		$Controller->set('users', $data);
 		$View = new XmlView($Controller);
-		$output = $View->render('index', 'xml/xml_view');
+		$output = $View->render('index');
 
 		$expected = '<?xml version="1.0" encoding="UTF-8"?><users><user>user1</user><user>user2</user></users>';
 		$this->assertIdentical($expected, str_replace(array("\r", "\n"), '', $output));

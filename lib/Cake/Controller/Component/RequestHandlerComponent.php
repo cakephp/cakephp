@@ -556,7 +556,7 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		$viewClass = ucfirst($type);
+		$viewClass = Inflector::classify($type);
 		App::uses($viewClass . 'View', 'View');
 
 		if (class_exists($viewClass . 'View')) {
