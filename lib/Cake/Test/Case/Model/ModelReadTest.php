@@ -6082,7 +6082,6 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('User');
 		$TestModel = new User();
 		$TestModel->cacheQueries = false;
-		$TestModel->order = null;
 
 		$expected = array(
 			'conditions' => array(
