@@ -104,12 +104,17 @@ class CakeSocket {
 			$scheme = 'ssl://';
 		}
 
-		if ($this->config['persistent'] == true) {
-			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+		if (!empty($this->config['request']['context'])){
+			$mycontext = stream_context_create($this->config['request']['context']);
 		} else {
-			$this->connection = @fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$mycontext = stream_context_create();
 		}
 
+		if ($this->config['persistent'] == true) {
+			$this->connection = @stream_socket_client($scheme.$this->config['host'].':'. $this->config['port'], &$errNum, &$errStr, $this->config['timeout'], STREAM_CLIENT_PERSISTENT, $mycontext);
+		} else {
+			$this->connection = @stream_socket_client($scheme.$this->config['host'].':'. $this->config['port'], &$errNum, &$errStr, $this->config['timeout'], STREAM_CLIENT_CONNECT, $mycontext);
+		}
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
 			throw new SocketException($errStr, $errNum);
@@ -228,6 +233,16 @@ class CakeSocket {
 		}
 		return false;
 	}
+/**
+ * get Connection Context.
+ *
+ * @return context Array
+ */
+	public function getContext(){
+		return stream_context_get_options($this->connection);
+	}
+
+
 
 /**
  * Disconnect the socket from the current connection.

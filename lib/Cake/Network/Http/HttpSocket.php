@@ -64,7 +64,8 @@ class HttpSocket extends CakeSocket {
 		),
 		'raw' => null,
 		'redirect' => false,
-		'cookies' => array()
+		'cookies' => array(),
+		'context' => array()
 	);
 
 /**
@@ -99,7 +100,8 @@ class HttpSocket extends CakeSocket {
 				'port' => 80
 			),
 			'redirect' => false,
-			'cookies' => array()
+			'cookies' => array(),
+			'context' => array()
 		)
 	);
 
@@ -325,6 +327,8 @@ class HttpSocket extends CakeSocket {
 			return false;
 		}
 
+		$this->_configContext($this->request['context']);
+
 		$this->request['raw'] = '';
 		if ($this->request['line'] !== false) {
 			$this->request['raw'] = $this->request['line'];
@@ -362,9 +366,15 @@ class HttpSocket extends CakeSocket {
 			}
 		}
 
+		if (isset($this->request['context'])){
+			$context = $this->getContext();
+		}
+
+
 		if ($connectionType === 'close') {
 			$this->disconnect();
 		}
+
 
 		list($plugin, $responseClass) = pluginSplit($this->responseClass, true);
 		App::uses($this->responseClass, $plugin . 'Network/Http');
@@ -373,6 +383,10 @@ class HttpSocket extends CakeSocket {
 		}
 		$responseClass = $this->responseClass;
 		$this->response = new $responseClass($response);
+
+		if (!empty($context) && isset($context['ssl']['peer_certificate']))
+			$this->response->setContext($context['ssl']['peer_certificate']);
+
 		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();
@@ -717,6 +731,45 @@ class HttpSocket extends CakeSocket {
 		}
 		return $uri;
 	}
+
+/**
+ * Sets context-parameter
+ *
+ * @param array $context Context, See http://www.php.net/manual/de/context.php
+ * @access protected
+ */
+	private function _configContext($context = null){
+		if ($this->config['request']['uri']['scheme'] == 'https'){
+			$this->config['request']['context']['ssl'] = array(
+				'capture_peer_cert' => true,
+			);
+		}
+		if ($context !== null && is_array($context) &&!empty($context)){
+			$this->config['request']['context'] = set::merge($this->config['request']['context'], $context);
+		}
+	}
+
+/**
+ * checking Fingerprint and setting Fingerprint to contextarray.
+ *
+ * @param string fingerprint fingerprint the certificate should have
+ * return bool
+ * @access protected
+ */
+
+	
+	public function checkFingerprint($fingerprint){
+		if (!isset($this->request['context']['ssl']['peer_certificate']))
+			return false;
+		openssl_x509_export($this->request['context']['ssl']['peer_certificate'], &$certstring);
+		$certstring = str_replace('-----BEGIN CERTIFICATE-----', '', $certstring);
+		$certstring = str_replace('-----END CERTIFICATE-----', '', $certstring);
+		$certstring = base64_decode($certstring);
+		$this->request['context']['ssl']['fingerprint']['sha1'] = strtoupper(sha1($certstring));
+		return trim($fingerprint) == $request['context']['ssl']['fingerprint']['sha1'];
+	}
+
+
 
 /**
  * This function can be thought of as a reverse to PHP5's http_build_query(). It takes a given query string and turns it into an array and

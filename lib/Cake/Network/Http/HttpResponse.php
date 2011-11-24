@@ -53,6 +53,13 @@ class HttpResponse implements ArrayAccess {
 	public $httpVersion = 'HTTP/1.1';
 
 /**
+ * context
+ *
+ * @var array
+ */
+	public $context = array();
+
+/**
  * Response code
  *
  * @var integer
@@ -417,6 +424,21 @@ class HttpResponse implements ArrayAccess {
 				return $this->cookies;
 		}
 		return null;
+	}
+
+	public function setContext($context){
+		if (get_resource_type($context) === "OpenSSL X.509"){
+			if (!isset($context))
+				return false;
+			openssl_x509_export($context, &$certstring);
+			$certstring = str_replace('-----BEGIN CERTIFICATE-----', '', $certstring);
+			$certstring = str_replace('-----END CERTIFICATE-----', '', $certstring);
+			$this->context = openssl_x509_parse($context);
+			$this->context['fingerprint']['sha1'] = strtoupper(sha1($certstring));
+			$this->context['fingerprint']['md5'] = strtoupper(md5($certstring));
+		} else {
+			return false;
+		}
 	}
 
 /**
