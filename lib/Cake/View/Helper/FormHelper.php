@@ -1611,7 +1611,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($options['name'])) {
-			$this->_secure($options['secure'], $options['name']);
+			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
+			$this->_secure($options['secure'], $name);
 		}
 		unset($options['secure']);
 
