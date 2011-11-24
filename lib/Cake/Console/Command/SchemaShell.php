@@ -444,9 +444,11 @@ class SchemaShell extends Shell {
  */
 	public function getOptionParser() {
 		$plugin = array(
+			'short' => 'p',
 			'help' => __d('cake_console', 'The plugin to use.'),
 		);
 		$connection = array(
+			'short' => 'c',
 			'help' => __d('cake_console', 'Set the db config to use.'),
 			'default' => 'default'
 		);
