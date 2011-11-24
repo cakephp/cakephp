@@ -351,7 +351,11 @@ class TestTask extends BakeTask {
 				$this->_processModel($subject->{$alias});
 			}
 			if ($type == 'hasAndBelongsToMany') {
-				$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
+				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
+					list($plugin, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
+				} else {
+					$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
+				}
 				if (!isset($this->_fixtures[$joinModel])) {
 					$this->_processModel($subject->{$joinModel});
 				}
