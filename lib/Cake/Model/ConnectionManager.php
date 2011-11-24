@@ -184,7 +184,9 @@ class ConnectionManager {
  */
 	public static function enumConnectionObjects() {
 		if (empty(self::$_init)) {
-			self::_init();
+			if (file_exists(APP . 'Config' . DS . 'database.php')) {
+				self::_init();
+			}
 		}
 		return (array) self::$config;
 	}
