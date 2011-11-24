@@ -109,33 +109,32 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testListAll() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
+	public function testListAllArgument() {
 		$this->_useMockedOut();
 
-		$this->Task->expects($this->at(1))->method('out')->with('1. BakeArticle');
-		$this->Task->expects($this->at(2))->method('out')->with('2. BakeArticlesBakeTag');
-		$this->Task->expects($this->at(3))->method('out')->with('3. BakeComment');
-		$this->Task->expects($this->at(4))->method('out')->with('4. BakeTag');
-		$this->Task->expects($this->at(5))->method('out')->with('5. CategoryThread');
-
-		$this->Task->expects($this->at(7))->method('out')->with('1. BakeArticle');
-		$this->Task->expects($this->at(8))->method('out')->with('2. BakeArticlesBakeTag');
-		$this->Task->expects($this->at(9))->method('out')->with('3. BakeComment');
-		$this->Task->expects($this->at(10))->method('out')->with('4. BakeTag');
-		$this->Task->expects($this->at(11))->method('out')->with('5. CategoryThread');
-
 		$result = $this->Task->listAll('test');
-		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags', 'category_threads');
-		$this->assertEquals($expected, $result);
+		$this->assertContains('bake_articles', $result);
+		$this->assertContains('bake_articles_bake_tags', $result);
+		$this->assertContains('bake_tags', $result);
+		$this->assertContains('bake_comments', $result);
+		$this->assertContains('category_threads', $result);
+	}
+
+/**
+ * Test that listAll uses the connection property
+ *
+ * @return void
+ */
+	public function testListAllConnection() {
+		$this->_useMockedOut();
 
 		$this->Task->connection = 'test';
 		$result = $this->Task->listAll();
-		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags', 'category_threads');
-		$this->assertEquals($expected, $result);
+		$this->assertContains('bake_articles', $result);
+		$this->assertContains('bake_articles_bake_tags', $result);
+		$this->assertContains('bake_tags', $result);
+		$this->assertContains('bake_comments', $result);
+		$this->assertContains('category_threads', $result);
 	}
 
 /**
@@ -920,10 +919,8 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteIntoInteractive() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
+		$tables = $this->Task->listAll('test');
+		$article = array_search('bake_articles', $tables) + 1;
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -931,7 +928,7 @@ STRINGEND;
 
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls(
-				'1', // article
+				$article, // article
 				'n', // no validation
 				'y', // associations
 				'y', // comment relation
