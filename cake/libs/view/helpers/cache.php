@@ -264,7 +264,7 @@ class CacheHelper extends AppHelper {
 				$controller->base = $this->base = \'' . $this->base . '\';
 				$controller->layout = $this->layout = \'' . $this->layout. '\';
 				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
-				$controller->here = $this->here = \'' . $this->here . '\';
+				$controller->here = $this->here = \'' . addslashes($this->here) . '\';
 				$controller->params = $this->params = unserialize(stripslashes(\'' . addslashes(serialize($this->params)) . '\'));
 				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
 				$controller->data = $this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
