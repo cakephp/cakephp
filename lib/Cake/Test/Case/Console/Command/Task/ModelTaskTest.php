@@ -201,6 +201,39 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test getTable with non-conventional tablenames
+ *
+ * @return void
+ */
+	public function testGetTableOddTable() {
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
+			array($out, $out, $in)
+		);
+		$this->_setupOtherMocks();
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->interactive = true;
+
+		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(
+				2 // bake_odd
+			));
+
+		$result = $this->Task->getName();
+		$expected = 'BakeOdd';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->getTable($result);
+		$expected = 'bake_odd';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test that initializing the validations works.
  *
  * @return void
@@ -548,7 +581,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * Ensure that the fixutre object is correctly called.
+ * Ensure that the fixture object is correctly called.
  *
  * @return void
  */
@@ -860,9 +893,17 @@ STRINGEND;
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($filename, $this->stringContains('class BakeComment'));
 
+		$filename = '/my/path/BakeComment.php';
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($filename, $this->stringContains('public $primaryKey = \'otherid\';'));
+
 		$filename = '/my/path/BakeTag.php';
-		$this->Task->expects($this->at(4))
-			->method('createFile')->with($filename, $this->stringContains('class BakeTag'));
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($filename, $this->stringContains('class BakeTag'));
+
+		$filename = '/my/path/BakeTag.php';
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($filename, $this->logicalNot($this->stringContains('public $primaryKey')));
 
 		$filename = '/my/path/CategoryThread.php';
 		$this->Task->expects($this->at(5))->method('createFile')
@@ -872,6 +913,61 @@ STRINGEND;
 
 		$this->assertEquals(count(ClassRegistry::keys()), 0);
 		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
+	}
+
+/**
+ * test that odd tablenames arent inflected back from modelname
+ *
+ * @return void
+ */
+    public function testExecuteIntoAllOddTables() {
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
+			array($out, $out, $in)
+		);
+		$this->_setupOtherMocks();
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
+		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('bake_odd')));
+		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
+		$this->Task->expects($this->once())->method('_getModelObject')->with('BakeOdd', 'bake_odd')->will($this->returnValue($object));
+		$this->Task->expects($this->at(3))->method('bake')->with($object, false)->will($this->returnValue(true));
+		$this->Task->expects($this->once())->method('bakeFixture')->with('BakeOdd', 'bake_odd');
+
+		$this->Task->execute();
+
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
+			array($out, $out, $in)
+		);
+		$this->_setupOtherMocks();
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
+		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('bake_odd')));
+		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
+		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
+		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
+		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
+
+		$filename = '/my/path/BakeOdd.php';
+		$this->Task->expects($this->once())->method('createFile')
+			->with($filename, $this->stringContains('class BakeOdd'));
+
+		$filename = '/my/path/BakeOdd.php';
+		$this->Task->expects($this->once())->method('createFile')
+			->with($filename, $this->stringContains('public $useTable = \'bake_odd\''));
+
+		$this->Task->execute();
 	}
 
 /**

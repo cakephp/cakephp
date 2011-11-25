@@ -58,6 +58,13 @@ class ModelTask extends BakeTask {
 	protected $_tables = array();
 
 /**
+ * Holds the model names
+ *
+ * @var array
+ */
+	protected $_modelNames = array();
+
+/**
  * Holds validation method map.
  *
  * @var array
@@ -118,9 +125,9 @@ class ModelTask extends BakeTask {
 			}
 			$modelClass = Inflector::classify($table);
 			$this->out(__d('cake_console', 'Baking %s', $modelClass));
-			$object = $this->_getModelObject($modelClass);
+			$object = $this->_getModelObject($modelClass, $table);
 			if ($this->bake($object, false) && $unitTestExists) {
-				$this->bakeFixture($modelClass);
+				$this->bakeFixture($modelClass, $table);
 				$this->bakeTest($modelClass);
 			}
 		}
@@ -133,11 +140,18 @@ class ModelTask extends BakeTask {
  * @param string $table Table name
  * @return Model Model instance
  */
-	protected function &_getModelObject($className, $table = null) {
+	protected function _getModelObject($className, $table = null) {
 		if (!$table) {
 			$table = Inflector::tableize($className);
 		}
 		$object = new Model(array('name' => $className, 'table' => $table, 'ds' => $this->connection));
+		$fields = $object->schema(true);
+		foreach ($fields as $name => $field) {
+			if (isset($field['key']) && $field['key'] == 'primary') {
+				$object->primaryKey = $name;
+				break;
+			}
+		}
 		return $object;
 	}
 
@@ -452,7 +466,7 @@ class ModelTask extends BakeTask {
  * Handles associations
  *
  * @param Model $model
- * @return array $assocaitons
+ * @return array $associations
  */
 	public function doAssociations($model) {
 		if (!is_object($model)) {
@@ -464,7 +478,7 @@ class ModelTask extends BakeTask {
 
 		$fields = $model->schema(true);
 		if (empty($fields)) {
-			return false;
+			return array();
 		}
 
 		if (empty($this->_tables)) {
@@ -730,8 +744,8 @@ class ModelTask extends BakeTask {
 	public function bake($name, $data = array()) {
 		if (is_object($name)) {
 			if ($data == false) {
-				$data = $associations = array();
-				$data['associations'] = $this->doAssociations($name, $associations);
+				$data = array();
+				$data['associations'] = $this->doAssociations($name);
 				$data['validate'] = $this->doValidation($name);
 			}
 			$data['primaryKey'] = $name->primaryKey;
@@ -808,6 +822,10 @@ class ModelTask extends BakeTask {
 
 		$db = ConnectionManager::getDataSource($useDbConfig);
 		$useTable = Inflector::tableize($modelName);
+		if (in_array($modelName, $this->_modelNames)) {
+			$modelNames = array_flip($this->_modelNames);
+			$useTable = $this->_tables[$modelNames[$modelName]];
+		}
 		$fullTableName = $db->fullTableName($useTable, false);
 		$tableIsGood = false;
 
