@@ -18,6 +18,8 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('CakeSchema', 'Model');
@@ -28,7 +30,7 @@ App::uses('CakeSchema', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
-class SchemaShell extends Shell {
+class SchemaShell extends AppShell {
 
 /**
  * Schema class being used.
@@ -166,7 +168,7 @@ class SchemaShell extends Shell {
 			if (isset($this->params['snapshot'])) {
 				$numToUse = $this->params['snapshot'];
 			}
-			
+
 			$count = 0;
 			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
@@ -181,7 +183,7 @@ class SchemaShell extends Shell {
 					$count = $numToUse;
 				}
 			}
-			
+
 			$content['file'] = $fileName . '_' . $count . '.php';
 		}
 

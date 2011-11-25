@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('String', 'Utility');
@@ -27,7 +28,7 @@ App::uses('Security', 'Utility');
  *
  * @package       Cake.Console.Command.Task
  */
-class ProjectTask extends Shell {
+class ProjectTask extends AppShell {
 
 /**
  * configs path (used in testing).
