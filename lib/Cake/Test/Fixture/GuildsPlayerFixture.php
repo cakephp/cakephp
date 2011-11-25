@@ -13,7 +13,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         CakePHP(tm) v 2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -50,8 +50,8 @@ class GuildsPlayerFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		array('id' => 1, 'player_id' => 1, 'guild_id' => 1),
-		array('id' => 2, 'player_id' => 1, 'guild_id' => 2),
-		array('id' => 3, 'player_id' => 4, 'guild_id' => 3),
+		array('player_id' => 1, 'guild_id' => 1),
+		array('player_id' => 1, 'guild_id' => 2),
+		array('player_id' => 4, 'guild_id' => 3),
 	);
 }
