@@ -867,4 +867,19 @@ class XmlTest extends CakeTestCase {
 		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
 	}
 
+/**
+ * Test ampersand in text elements.
+ *
+ * @return void
+ */
+	public function testAmpInText() {
+		$data = array(
+			'outer' => array(
+				'inner' => array('name' => 'mark & mark')
+			)
+		);
+		$obj = Xml::build($data);
+		$result = $obj->asXml();
+		$this->assertContains('mark &amp; mark', $result);
+	}
 }
