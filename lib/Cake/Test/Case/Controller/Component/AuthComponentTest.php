@@ -671,6 +671,11 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$url = '/auth_test/CamelCase';
+		$this->Controller->request->addParams(Router::parse($url));
+		$this->Controller->request->query['url'] = Router::normalize($url);
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 
 /**
