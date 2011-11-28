@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('BakeTask', 'Console/Command/Task');
 App::uses('ClassRegistry', 'Utility');
 
@@ -472,7 +473,7 @@ class TestTask extends BakeTask {
 			->addArgument('type', array(
 				'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
 				'choices' => array(
-					'Controller', 'controller', 
+					'Controller', 'controller',
 					'Model', 'model',
 					'Helper', 'helper',
 					'Component', 'component',

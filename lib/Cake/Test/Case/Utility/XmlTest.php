@@ -865,6 +865,40 @@ class XmlTest extends CakeTestCase {
 		$expected .= '<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>';
 		$expected .= '</data>';
 		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
+		
+		//multiple model results - without a records key it would fatal error
+		$data = $user->find('all', array('limit'=>2));
+		$data = array('records'=>$data);
+		$obj = Xml::build(compact('data'));
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><data>';
+		$expected .= '<records>';
+		$expected .= '<User><id>1</id><user>mariano</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>';
+		$expected .= '<created>2007-03-17 01:16:23</created><updated>2007-03-17 01:18:31</updated></User>';
+		$expected .= '<Article><id>1</id><user_id>1</user_id><title>First Article</title><body>First Article Body</body>';
+		$expected .= '<published>Y</published><created>2007-03-18 10:39:23</created><updated>2007-03-18 10:41:31</updated></Article>';
+		$expected .= '<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>';
+		$expected .= '<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>';
+		$expected .= '</records><records><User><id>2</id><user>nate</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>';
+		$expected .= '<created>2007-03-17 01:18:23</created><updated>2007-03-17 01:20:31</updated></User><Article/>';
+		$expected .= '</records>';
+		$expected .= '</data>';
+		$result = $obj->asXML();
+		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
 	}
 
+/**
+ * Test ampersand in text elements.
+ *
+ * @return void
+ */
+	public function testAmpInText() {
+		$data = array(
+			'outer' => array(
+				'inner' => array('name' => 'mark & mark')
+			)
+		);
+		$obj = Xml::build($data);
+		$result = $obj->asXml();
+		$this->assertContains('mark &amp; mark', $result);
+	}
 }

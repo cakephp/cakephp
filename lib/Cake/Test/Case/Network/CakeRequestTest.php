@@ -1057,6 +1057,21 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test that a request with a . in the main GET parameter is filtered out.
+ * PHP changes GET parameter keys containing dots to _.
+ *
+ * @return void
+ */
+	public function testGetParamsWithDot() {
+		$_GET['/posts/index/add_add'] = '';
+		$_SERVER['SCRIPT_NAME'] = '/cake_dev/app/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
+
+		$request = new CakeRequest();
+		$this->assertEquals(array(), $request->query);
+	}
+
+/**
  * generator for environment configurations
  *
  * @return void

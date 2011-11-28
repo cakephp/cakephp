@@ -15,6 +15,8 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 
@@ -23,7 +25,7 @@ App::uses('Folder', 'Utility');
  *
  * @package       Cake.Console.Command.Task
  */
-class ExtractTask extends Shell {
+class ExtractTask extends AppShell {
 
 /**
  * Paths to use when looking for strings

@@ -99,7 +99,7 @@ class App {
 		'view' => array('suffix' => 'View', 'extends' => null, 'core' => true),
 		'helper' => array('suffix' => 'Helper', 'extends' => 'AppHelper', 'core' => true),
 		'vendor' => array('extends' => null, 'core' => true),
-		'shell' => array('suffix' => 'Shell', 'extends' => 'Shell', 'core' => true),
+		'shell' => array('suffix' => 'Shell', 'extends' => 'AppShell', 'core' => true),
 		'plugin' => array('extends' => null, 'core' => true)
 	);
 
@@ -794,7 +794,7 @@ class App {
 
 /**
  * Sets then returns the templates for each customizable package path
- * 
+ *
  * @return array templates for each customizable package path
  */
 	protected static function _packageFormat() {
