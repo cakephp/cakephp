@@ -1437,7 +1437,7 @@ class DboSource extends DataSource {
 			}
 			unset($assocFields, $passedFields);
 		}
-
+		
 		if ($linkModel === null) {
 			return $this->buildStatement(
 				array(
@@ -1491,7 +1491,7 @@ class DboSource extends DataSource {
 						'table' => $this->fullTableName($linkModel),
 						'fields' => $fields,
 						'alias' => $association,
-						'group' => null
+						'group' =>  $assocData['group']
 					));
 					$query += array('order' => $assocData['order'], 'limit' => $assocData['limit']);
 				} else {
@@ -1524,7 +1524,7 @@ class DboSource extends DataSource {
 					'alias' => $association,
 					'order' => $assocData['order'],
 					'limit' => $assocData['limit'],
-					'group' => null
+					'group' => $assocData['group']
 				);
 			break;
 			case 'hasAndBelongsToMany':
@@ -1653,6 +1653,9 @@ class DboSource extends DataSource {
 					$query['joins'][$i] = $this->buildJoinStatement($query['joins'][$i]);
 				}
 			}
+		}		
+		if (!empty($query['group'])) {
+			$this->group($query['group'], $model);
 		}
 		return $this->renderStatement('select', array(
 			'conditions' => $this->conditions($query['conditions'], true, true, $model),
