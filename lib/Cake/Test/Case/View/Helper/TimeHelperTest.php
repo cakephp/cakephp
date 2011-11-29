@@ -126,6 +126,18 @@ class TimeHelperTest extends CakeTestCase {
 			$seconds = 0;
 			$relative_date = '';
 
+			// Trying to take into account the number of days in a month
+			$month = date('m') - $months;
+			if ($month <= 0) {
+				$month = $months % 12;
+			}
+			$time = mktime(0, 0, 0, $month, 1, date('y') - $years);
+			$diffDays = date('t') - date('t', $time);
+
+			if ($diffDays > 0 && date('j') - date('t', $time) - $days > 0 && $months > 0 && $weeks === 0) {
+				continue;
+			}
+
 			if ($years > 0) {
 				// years and months and days
 				$relative_date .= ($relative_date ? ', -' : '-') . $years . ' year' . ($years > 1 ? 's' : '');
