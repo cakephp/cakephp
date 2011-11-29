@@ -18,7 +18,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
-echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 

@@ -20,8 +20,6 @@
  */
 ?>
 <?php echo '<?php' . "\n"; ?>
-/* <?php echo $model; ?> Fixture generated on: <?php echo  date('Y-m-d H:i:s') . " : ". time(); ?> */
-
 /**
  * <?php echo $model; ?>Fixture
  *
