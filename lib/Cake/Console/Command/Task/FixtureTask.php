@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('BakeTask', 'Console/Command/Task');
 App::uses('Model', 'Model');
 
@@ -279,7 +280,7 @@ class FixtureTask extends BakeTask {
  */
 	protected function _generateSchema($tableInfo) {
 		$schema = $this->_Schema->generateTable('f', $tableInfo);
-		return substr($schema, 10, -2);
+		return substr($schema, 13, -2);
 	}
 
 /**

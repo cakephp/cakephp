@@ -2590,6 +2590,10 @@ class DboSource extends DataSource {
 			if (is_object($model) && $model->isVirtualField($key)) {
 				$key =  '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
 			}
+			list($alias, $field) = pluginSplit($key);
+			if (is_object($model) && $alias !== $model->alias && is_object($model->{$alias}) && $model->{$alias}->isVirtualField($key)) {
+				$key =  '(' . $this->_quoteFields($model->{$alias}->getVirtualField($key)) . ')';
+			}
 
 			if (strpos($key, '.')) {
 				$key = preg_replace_callback('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', array(&$this, '_quoteMatchedField'), $key);

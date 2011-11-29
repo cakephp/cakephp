@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('Folder', 'Utility');
 
 /**
@@ -24,7 +25,7 @@ App::uses('Folder', 'Utility');
  *
  * @package       Cake.Console.Command
  */
-class UpgradeShell extends Shell {
+class UpgradeShell extends AppShell {
 
 /**
  * Files

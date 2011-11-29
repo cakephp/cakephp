@@ -144,10 +144,10 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->assertEquals(array('First'), $result, 'loaded objects are wrong');
 
 		$result = $this->Objects->set('First', new SecondGenericObject());
-		$this->assertIsA($result['First'], 'SecondGenericObject', 'set failed');
+		$this->assertInstanceOf('SecondGenericObject', $result['First'], 'set failed');
 
 		$result = $this->Objects->set('Second', new SecondGenericObject());
-		$this->assertIsA($result['Second'], 'SecondGenericObject', 'set failed');
+		$this->assertInstanceOf('SecondGenericObject', $result['Second'], 'set failed');
 
 		$this->assertEquals(count($result), 2);
 	}

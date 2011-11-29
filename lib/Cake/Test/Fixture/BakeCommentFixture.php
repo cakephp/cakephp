@@ -37,7 +37,7 @@ class BakeCommentFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'otherid' => array('type' => 'integer', 'key' => 'primary'),
 		'bake_article_id' => array('type' => 'integer', 'null'=>false),
 		'bake_user_id' => array('type' => 'integer', 'null'=>false),
 		'comment' => 'text',

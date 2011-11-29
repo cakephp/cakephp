@@ -175,10 +175,10 @@ class SecurityComponentTest extends CakeTestCase {
 		);
 		$Security = new SecurityComponent($this->Controller->Components, $settings);
 		$this->Controller->Security->initialize($this->Controller, $settings);
-		$this->assertEqual($Security->requirePost, $settings['requirePost']);
-		$this->assertEqual($Security->requireSecure, $settings['requireSecure']);
-		$this->assertEqual($Security->requireGet, $settings['requireGet']);
-		$this->assertEqual($Security->validatePost, $settings['validatePost']);
+		$this->assertEquals($Security->requirePost, $settings['requirePost']);
+		$this->assertEquals($Security->requireSecure, $settings['requireSecure']);
+		$this->assertEquals($Security->requireGet, $settings['requireGet']);
+		$this->assertEquals($Security->validatePost, $settings['validatePost']);
 	}
 
 /**
@@ -1038,7 +1038,7 @@ class SecurityComponentTest extends CakeTestCase {
 		unset($this->Controller->request->params['_Token']);
 
 		$this->Controller->Security->startup($this->Controller);
-		$this->assertEqual($this->Controller->request->params['_Token']['key'], $key);
+		$this->assertEquals($this->Controller->request->params['_Token']['key'], $key);
 	}
 
 /**

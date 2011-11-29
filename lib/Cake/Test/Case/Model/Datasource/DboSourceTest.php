@@ -111,22 +111,22 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testBooleanNullConditionsParsing() {
 		$result = $this->testDb->conditions(true);
-		$this->assertEqual($result, ' WHERE 1 = 1', 'true conditions failed %s');
+		$this->assertEquals($result, ' WHERE 1 = 1', 'true conditions failed %s');
 
 		$result = $this->testDb->conditions(false);
-		$this->assertEqual($result, ' WHERE 0 = 1', 'false conditions failed %s');
+		$this->assertEquals($result, ' WHERE 0 = 1', 'false conditions failed %s');
 
 		$result = $this->testDb->conditions(null);
-		$this->assertEqual($result, ' WHERE 1 = 1', 'null conditions failed %s');
+		$this->assertEquals($result, ' WHERE 1 = 1', 'null conditions failed %s');
 
 		$result = $this->testDb->conditions(array());
-		$this->assertEqual($result, ' WHERE 1 = 1', 'array() conditions failed %s');
+		$this->assertEquals($result, ' WHERE 1 = 1', 'array() conditions failed %s');
 
 		$result = $this->testDb->conditions('');
-		$this->assertEqual($result, ' WHERE 1 = 1', '"" conditions failed %s');
+		$this->assertEquals($result, ' WHERE 1 = 1', '"" conditions failed %s');
 
 		$result = $this->testDb->conditions(' ', '"  " conditions failed %s');
-		$this->assertEqual($result, ' WHERE 1 = 1');
+		$this->assertEquals($result, ' WHERE 1 = 1');
 	}
 
 /**
@@ -138,7 +138,7 @@ class DboSourceTest extends CakeTestCase {
 		$expression = $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
 		$result = $this->testDb->order($expression);
 		$expected = " ORDER BY CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col";
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -168,7 +168,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Topic', 'hasOne');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array('Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
@@ -191,7 +191,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'User2', 'belongsTo');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array(
 			'Article2' => array(
@@ -206,7 +206,7 @@ class DboSourceTest extends CakeTestCase {
 			'Comment' => array()
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array(
 			'Article' => array(
@@ -239,7 +239,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array(
 			'Article' => array(
@@ -284,7 +284,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array(
 			'Article' => array(
@@ -339,7 +339,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array(
 			'Article' => array(
@@ -380,7 +380,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 
 		$data = array(
 			'Article' => array(
@@ -411,7 +411,7 @@ class DboSourceTest extends CakeTestCase {
 			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasOne');
-		$this->assertEqual($data, $expected);
+		$this->assertEquals($data, $expected);
 	}
 
 
@@ -426,14 +426,14 @@ class DboSourceTest extends CakeTestCase {
 			'conditions' => array('TestModel.field_name' => 'value'),
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findByFindBy', array('value'), $this->Model);
 		$expected = array('first', array(
 			'conditions' => array('TestModel.find_by' => 'value'),
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findAllByFieldName', array('value'), $this->Model);
 		$expected = array('all', array(
@@ -441,7 +441,7 @@ class DboSourceTest extends CakeTestCase {
 			'fields' => null, 'order' => null, 'limit' => null,
 			'page' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findAllById', array('a'), $this->Model);
 		$expected = array('all', array(
@@ -449,32 +449,32 @@ class DboSourceTest extends CakeTestCase {
 			'fields' => null, 'order' => null, 'limit' => null,
 			'page' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->Model);
 		$expected = array('first', array(
 			'conditions' => array('TestModel.field_name' => array('value1', 'value2', 'value3')),
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findByFieldName', array(null), $this->Model);
 		$expected = array('first', array(
 			'conditions' => array('TestModel.field_name' => null),
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findByFieldName', array('= a'), $this->Model);
 		$expected = array('first', array(
 			'conditions' => array('TestModel.field_name' => '= a'),
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->db->query('findByFieldName', array(), $this->Model);
 		$expected = false;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -494,11 +494,11 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testValue() {
 		$result = $this->db->value('{$__cakeForeignKey__$}');
-		$this->assertEqual($result, '{$__cakeForeignKey__$}');
+		$this->assertEquals($result, '{$__cakeForeignKey__$}');
 
 		$result = $this->db->value(array('first', 2, 'third'));
 		$expected = array('\'first\'', 2, '\'third\'');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -509,7 +509,7 @@ class DboSourceTest extends CakeTestCase {
 	public function testReconnect() {
 		$this->testDb->reconnect(array('prefix' => 'foo'));
 		$this->assertTrue($this->testDb->connected);
-		$this->assertEqual($this->testDb->config['prefix'], 'foo');
+		$this->assertEquals($this->testDb->config['prefix'], 'foo');
 	}
 
 /**
@@ -520,55 +520,55 @@ class DboSourceTest extends CakeTestCase {
 	public function testName() {
 		$result = $this->testDb->name('name');
 		$expected = '`name`';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name(array('name', 'Model.*'));
 		$expected = array('`name`', '`Model`.*');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('MTD()');
 		$expected = 'MTD()';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('(sm)');
 		$expected = '(sm)';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('name AS x');
 		$expected = '`name` AS `x`';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('Model.name AS x');
 		$expected = '`Model`.`name` AS `x`';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('Function(Something.foo)');
 		$expected = 'Function(`Something`.`foo`)';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('Function(SubFunction(Something.foo))');
 		$expected = 'Function(SubFunction(`Something`.`foo`))';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('Function(Something.foo) AS x');
 		$expected = 'Function(`Something`.`foo`) AS `x`';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('name-with-minus');
 		$expected = '`name-with-minus`';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name(array('my-name', 'Foo-Model.*'));
 		$expected = array('`my-name`', '`Foo-Model`.*');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name(array('Team.P%', 'Team.G/G'));
 		$expected = array('`Team`.`P%`', '`Team`.`G/G`');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->testDb->name('Model.name as y');
 		$expected = '`Model`.`name` AS `y`';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -579,10 +579,10 @@ class DboSourceTest extends CakeTestCase {
 	public function testCacheMethod() {
 		$this->testDb->cacheMethods = true;
 		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
-		$this->assertEqual($result, 'stuff');
+		$this->assertEquals($result, 'stuff');
 
 		$result = $this->testDb->cacheMethod('name', 'some-key');
-		$this->assertEqual($result, 'stuff');
+		$this->assertEquals($result, 'stuff');
 
 		$result = $this->testDb->cacheMethod('conditions', 'some-key');
 		$this->assertNull($result);
@@ -592,7 +592,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->testDb->cacheMethods = false;
 		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
-		$this->assertEqual($result, 'stuff');
+		$this->assertEquals($result, 'stuff');
 
 		$result = $this->testDb->cacheMethod('name', 'some-key');
 		$this->assertNull($result);
@@ -611,7 +611,7 @@ class DboSourceTest extends CakeTestCase {
 		$log = $this->testDb->getLog(false, false);
 		$result = Set::extract($log['log'], '/query');
 		$expected = array('Query 1', 'Query 2');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
@@ -619,15 +619,15 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->showLog();
 		$contents = ob_get_clean();
 
-		$this->assertPattern('/Query 1/s', $contents);
-		$this->assertPattern('/Query 2/s', $contents);
+		$this->assertRegExp('/Query 1/s', $contents);
+		$this->assertRegExp('/Query 2/s', $contents);
 
 		ob_start();
 		$this->testDb->showLog(true);
 		$contents = ob_get_clean();
 
-		$this->assertPattern('/Query 1/s', $contents);
-		$this->assertPattern('/Query 2/s', $contents);
+		$this->assertRegExp('/Query 1/s', $contents);
+		$this->assertRegExp('/Query 2/s', $contents);
 
 		Configure::write('debug', $oldDebug);
 	}
@@ -643,9 +643,9 @@ class DboSourceTest extends CakeTestCase {
 
 		$log = $this->testDb->getLog();
 		$expected = array('query' => 'Query 1', 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEqual($log['log'][0], $expected);
+		$this->assertEquals($log['log'][0], $expected);
 		$expected = array('query' => 'Query 2', 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEqual($log['log'][1], $expected);
+		$this->assertEquals($log['log'][1], $expected);
 		$expected = array('query' => 'Error 1', 'affected' => '', 'numRows' => '', 'took' => '');
 	}
 
@@ -680,12 +680,12 @@ class DboSourceTest extends CakeTestCase {
 		$order = array('two', 'this_moment');
 		$result = $this->db->order($order, 'ASC', $Article);
 		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$order = array('Article.two', 'Article.this_moment');
 		$result = $this->db->order($order, 'ASC', $Article);
 		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 
@@ -698,16 +698,16 @@ class DboSourceTest extends CakeTestCase {
 	public function testFullTablePermutations() {
 		$Article = ClassRegistry::init('Article');
 		$result = $this->testDb->fullTableName($Article, false);
-		$this->assertEqual($result, 'articles');
+		$this->assertEquals($result, 'articles');
 
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false);
-		$this->assertEqual($result, 'tbl_articles');
+		$this->assertEquals($result, 'tbl_articles');
 
 		$Article->useTable = $Article->table = 'with spaces';
 		$Article->tablePrefix = '';
 		$result = $this->testDb->fullTableName($Article);
-		$this->assertEqual($result, '`with spaces`');
+		$this->assertEquals($result, '`with spaces`');
 	}
 
 /**
@@ -754,27 +754,27 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->update($Article, array('field1'), array('value1'));
 		$this->assertFalse($result);
 		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
+		$this->assertRegExp('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
 
 		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
 		$this->assertFalse($result);
 		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$this->assertRegExp('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
 		$result = $this->testDb->delete($Article);
 		$this->assertTrue($result);
 		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
+		$this->assertRegExp('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
 
 		$result = $this->testDb->delete($Article, true);
 		$this->assertTrue($result);
 		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
+		$this->assertRegExp('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
 
 		$result = $this->testDb->delete($Article, '2=2');
 		$this->assertTrue($result);
 		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$this->assertRegExp('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
 		$result = $this->testDb->hasAny($Article, '1=2');
 		$this->assertFalse($result);
@@ -787,7 +787,7 @@ class DboSourceTest extends CakeTestCase {
  */
 	function testGroupNoModel() {
 		$result = $this->db->group('created');
-		$this->assertEqual(' GROUP BY created', $result);
+		$this->assertEquals(' GROUP BY created', $result);
 	}
 
 /**

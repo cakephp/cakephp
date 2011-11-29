@@ -21,6 +21,7 @@ App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
+App::uses('ModelTask', 'Console/Command/Task');
 App::uses('FixtureTask', 'Console/Command/Task');
 App::uses('TemplateTask', 'Console/Command/Task');
 App::uses('DbConfigTask', 'Console/Command/Task');
@@ -89,7 +90,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEqual($Task->path, APP . 'Test' . DS . 'Fixture' . DS);
+		$this->assertEquals($Task->path, APP . 'Test' . DS . 'Fixture' . DS);
 	}
 
 /**
@@ -103,7 +104,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array('schema' => 'Article', 'records' => true);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -118,7 +119,7 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array();
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -132,7 +133,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 		$result = $this->Task->importOptions('Article');
 		$expected = array('fromTable' => true);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

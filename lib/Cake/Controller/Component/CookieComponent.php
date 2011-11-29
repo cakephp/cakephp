@@ -198,6 +198,7 @@ class CookieComponent extends Component {
  * @param boolean $encrypt Set to true to encrypt value, false otherwise
  * @param string $expires Can be either Unix timestamp, or date string
  * @return void
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
 	public function write($key, $value = null, $encrypt = true, $expires = null) {
 		if (is_null($encrypt)) {
@@ -234,6 +235,7 @@ class CookieComponent extends Component {
  *
  * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
  * @return string or null, value for specified key
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
 		if (empty($this->_values) && isset($_COOKIE[$this->name])) {
@@ -269,6 +271,7 @@ class CookieComponent extends Component {
  *
  * @param string $key Key of the value to be deleted
  * @return void
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
 		if (empty($this->_values)) {
@@ -298,6 +301,7 @@ class CookieComponent extends Component {
  * Failure to do so will result in header already sent errors.
  *
  * @return void
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::destroy
  */
 	public function destroy() {
 		if (isset($_COOKIE[$this->name])) {
@@ -407,6 +411,7 @@ class CookieComponent extends Component {
 	protected function _setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly = false) {
 		setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
 	}
+
 /**
  * Encrypts $value using public $type method in Security class
  *

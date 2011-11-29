@@ -66,19 +66,19 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testSet() {
 		$this->Task->set('one', 'two');
 		$this->assertTrue(isset($this->Task->templateVars['one']));
-		$this->assertEqual($this->Task->templateVars['one'], 'two');
+		$this->assertEquals($this->Task->templateVars['one'], 'two');
 
 		$this->Task->set(array('one' => 'three', 'four' => 'five'));
 		$this->assertTrue(isset($this->Task->templateVars['one']));
-		$this->assertEqual($this->Task->templateVars['one'], 'three');
+		$this->assertEquals($this->Task->templateVars['one'], 'three');
 		$this->assertTrue(isset($this->Task->templateVars['four']));
-		$this->assertEqual($this->Task->templateVars['four'], 'five');
+		$this->assertEquals($this->Task->templateVars['four'], 'five');
 
 		$this->Task->templateVars = array();
 		$this->Task->set(array(3 => 'three', 4 => 'four'));
 		$this->Task->set(array(1 => 'one', 2 => 'two'));
 		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
-		$this->assertEqual($this->Task->templateVars, $expected);
+		$this->assertEquals($this->Task->templateVars, $expected);
 	}
 
 /**
@@ -89,7 +89,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testFindingInstalledThemesForBake() {
 		$consoleLibs = CAKE . 'Console' . DS;
 		$this->Task->initialize();
-		$this->assertEqual($this->Task->templatePaths['default'], $consoleLibs . 'Templates' . DS . 'default' . DS);
+		$this->assertEquals($this->Task->templatePaths['default'], $consoleLibs . 'Templates' . DS . 'default' . DS);
 	}
 
 /**
@@ -105,17 +105,17 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->expects($this->exactly(1))->method('in')->will($this->returnValue('1'));
 
 		$result = $this->Task->getThemePath();
-		$this->assertEqual($result, $defaultTheme);
+		$this->assertEquals($result, $defaultTheme);
 
 		$this->Task->templatePaths = array('default' => $defaultTheme, 'other' => '/some/path');
 		$this->Task->params['theme'] = 'other';
 		$result = $this->Task->getThemePath();
-		$this->assertEqual($result, '/some/path');
+		$this->assertEquals($result, '/some/path');
 
 		$this->Task->params = array();
 		$result = $this->Task->getThemePath();
-		$this->assertEqual($result, $defaultTheme);
-		$this->assertEqual($this->Task->params['theme'], 'default');
+		$this->assertEquals($result, $defaultTheme);
+		$this->assertEquals($this->Task->params['theme'], 'default');
 	}
 
 /**
@@ -134,7 +134,7 @@ class TemplateTaskTest extends CakeTestCase {
 
 		$result = $this->Task->generate('classes', 'test_object', array('test' => 'foo'));
 		$expected = "I got rendered\nfoo";
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -160,6 +160,6 @@ class TemplateTaskTest extends CakeTestCase {
 			'schema' => ''
 		));
 		$result = $this->Task->generate('classes', 'fixture');
-		$this->assertPattern('/ArticleFixture extends CakeTestFixture/', $result);
+		$this->assertRegExp('/ArticleFixture extends CakeTestFixture/', $result);
 	}
 }

@@ -32,7 +32,9 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->skipUnless(function_exists('xcache_set'), 'Xcache is not installed or configured properly');
+		if (!function_exists('xcache_set')) {
+			$this->markTestSkipped('Xcache is not installed or configured properly');
+		}
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('xcache', array('engine' => 'Xcache', 'prefix' => 'cake_'));
@@ -65,7 +67,7 @@ class XcacheEngineTest extends CakeTestCase {
 		$this->assertTrue(isset($settings['PHP_AUTH_PW']));
 
 		unset($settings['PHP_AUTH_USER'], $settings['PHP_AUTH_PW']);
-		$this->assertEqual($settings, $expecting);
+		$this->assertEquals($settings, $expecting);
 	}
 
 /**
@@ -78,7 +80,7 @@ class XcacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test');
 		$expecting = '';
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($result, $expecting);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data);
@@ -86,7 +88,7 @@ class XcacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test');
 		$expecting = $data;
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($result, $expecting);
 
 		Cache::delete('test');
 	}
@@ -161,16 +163,16 @@ class XcacheEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = Cache::decrement('test_decrement');
-		$this->assertEqual(4, $result);
+		$this->assertEquals(4, $result);
 
 		$result = Cache::read('test_decrement');
-		$this->assertEqual(4, $result);
+		$this->assertEquals(4, $result);
 
 		$result = Cache::decrement('test_decrement', 2);
-		$this->assertEqual(2, $result);
+		$this->assertEquals(2, $result);
 
 		$result = Cache::read('test_decrement');
-		$this->assertEqual(2, $result);
+		$this->assertEquals(2, $result);
 	}
 
 /**
@@ -183,15 +185,15 @@ class XcacheEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = Cache::increment('test_increment');
-		$this->assertEqual(6, $result);
+		$this->assertEquals(6, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(6, $result);
+		$this->assertEquals(6, $result);
 
 		$result = Cache::increment('test_increment', 2);
-		$this->assertEqual(8, $result);
+		$this->assertEquals(8, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(8, $result);
+		$this->assertEquals(8, $result);
 	}
 }
