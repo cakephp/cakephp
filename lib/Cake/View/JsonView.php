@@ -63,8 +63,8 @@ class JsonView extends View {
  */
 	public function __construct($controller) {
 		parent::__construct($controller);
-		if (is_object($controller)) {
-			$this->response->type('json');
+		if (isset($controller->response) && $controller->response instanceof CakeResponse) {
+			$controller->response->type('json');
 		}
 	}
 

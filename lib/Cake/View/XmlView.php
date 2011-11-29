@@ -66,7 +66,7 @@ class XmlView extends View {
 	public function __construct($controller) {
 		parent::__construct($controller);
 
-		if (is_object($controller)) {
+		if (isset($controller->response) && $controller->response instanceof CakeResponse) {
 			$controller->response->type('xml');
 		}
 	}
