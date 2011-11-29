@@ -913,18 +913,34 @@ class DboSource extends DataSource {
  *
  * @param mixed $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
+ * @param boolean $schema Whether you want the schema name included.
  * @return string Full quoted table name
  */
-	public function fullTableName($model, $quote = true) {
+	public function fullTableName($model, $quote = true, $schema = true) {
 		if (is_object($model)) {
+			$schemaName = $model->schemaName;
 			$table = $model->tablePrefix . $model->table;
 		} elseif (isset($this->config['prefix'])) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
 			$table = strval($model);
 		}
+		if ($schema && !isset($schemaName)) {
+			$schemaName = $this->getSchemaName();
+		}
+
 		if ($quote) {
+			if ($schema && isset($schemaName)) {
+				if (false == strstr($table, '.')) {
+					return $this->name($schemaName) . '.' . $this->name($table);
+				}
+			}
 			return $this->name($table);
+		}
+		if ($schema && isset($schemaName)) {
+			if (false == strstr($table, '.')) {
+				return $schemaName . '.' . $table;
+			}
 		}
 		return $table;
 	}
@@ -966,7 +982,7 @@ class DboSource extends DataSource {
 
 		if ($this->execute($this->renderStatement('create', $query))) {
 			if (empty($id)) {
-				$id = $this->lastInsertId($this->fullTableName($model, false), $model->primaryKey);
+				$id = $this->lastInsertId($this->fullTableName($model, false, false), $model->primaryKey);
 			}
 			$model->setInsertID($id);
 			$model->id = $id;

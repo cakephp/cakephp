@@ -566,7 +566,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testIndexGeneration() {
-		$name = $this->Dbo->fullTableName('index_test', false);
+		$name = $this->Dbo->fullTableName('index_test', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -579,7 +579,7 @@ class PostgresTest extends CakeTestCase {
 		$this->Dbo->query('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 
-		$name = $this->Dbo->fullTableName('index_test_2', false);
+		$name = $this->Dbo->fullTableName('index_test_2', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(

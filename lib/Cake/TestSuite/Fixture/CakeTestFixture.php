@@ -104,7 +104,7 @@ class CakeTestFixture {
 				}
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
-				$this->table = $db->fullTableName($model, false);
+				$this->table = $db->fullTableName($model, false, false);
 				ClassRegistry::config(array('ds' => 'test'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {

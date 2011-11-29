@@ -250,7 +250,7 @@ class CakeSchema extends Object {
 				$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 				$db = $Object->getDataSource();
 				if (is_object($Object) && $Object->useTable !== false) {
-					$fulltable = $table = $db->fullTableName($Object, false);
+					$fulltable = $table = $db->fullTableName($Object, false, false);
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
@@ -270,7 +270,7 @@ class CakeSchema extends Object {
 									$class = $assocData['with'];
 								}
 								if (is_object($Object->$class)) {
-									$withTable = $db->fullTableName($Object->$class, false);
+									$withTable = $db->fullTableName($Object->$class, false, false);
 									if ($prefix && strpos($withTable, $prefix) !== 0) {
 										continue;
 									}
@@ -307,7 +307,7 @@ class CakeSchema extends Object {
 					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
 				);
 
-				$fulltable = $db->fullTableName($Object, false);
+				$fulltable = $db->fullTableName($Object, false, false);
 
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->_columns($Object);

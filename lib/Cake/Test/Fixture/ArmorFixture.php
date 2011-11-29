@@ -13,7 +13,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         CakePHP(tm) v 2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -58,9 +58,9 @@ class ArmorFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		array('id' => 1, 'name' => 'Leather', 'created' => '2007-03-17 01:16:23'),
-		array('id' => 2, 'name' => 'Chainmail', 'created' => '2007-03-17 01:18:23'),
-		array('id' => 3, 'name' => 'Cloak', 'created' => '2007-03-17 01:20:23'),
-		array('id' => 4, 'name' => 'Bikini', 'created' => '2007-03-17 01:22:23'),
+		array('name' => 'Leather', 'created' => '2007-03-17 01:16:23'),
+		array('name' => 'Chainmail', 'created' => '2007-03-17 01:18:23'),
+		array('name' => 'Cloak', 'created' => '2007-03-17 01:20:23'),
+		array('name' => 'Bikini', 'created' => '2007-03-17 01:22:23'),
 	);
 }

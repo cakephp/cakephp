@@ -282,13 +282,13 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$expected = array(
 			'0' => array(
-				$this->db->fullTableName('articles', false) => array(
+				$this->db->fullTableName('articles', false, false) => array(
 					'title' => 'First Article', 'published' => 'Y')
 		));
 
 		if (isset($result[0][0])) {
-			$expected[0][0] = $expected[0][$this->db->fullTableName('articles', false)];
-			unset($expected[0][$this->db->fullTableName('articles', false)]);
+			$expected[0][0] = $expected[0][$this->db->fullTableName('articles', false, false)];
+			unset($expected[0][$this->db->fullTableName('articles', false, false)]);
 		}
 
 		$this->assertEquals($expected, $result);
@@ -303,7 +303,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false)])
+			   isset($result[0][$this->db->fullTableName('articles', false, false)])
 			|| isset($result[0][0])
 		);
 		$result = $this->db->getQueryCache($query, $params);
@@ -317,7 +317,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false)]['title'])
+			   isset($result[0][$this->db->fullTableName('articles', false, false)]['title'])
 			|| isset($result[0][0]['title'])
 		);
 

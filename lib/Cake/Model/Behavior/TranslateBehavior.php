@@ -102,6 +102,7 @@ class TranslateBehavior extends ModelBehavior {
 		$joinTable = new StdClass();
 		$joinTable->tablePrefix = $tablePrefix;
 		$joinTable->table = $RuntimeModel->table;
+		$joinTable->schemaName = $RuntimeModel->getDataSource()->getSchemaName();
 
 		if (is_string($query['fields']) && 'COUNT(*) AS '.$db->name('count') == $query['fields']) {
 			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
