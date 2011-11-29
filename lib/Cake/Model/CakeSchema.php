@@ -379,7 +379,7 @@ class CakeSchema extends Object {
 		$out .= "}\n";
 
 		$file = new SplFileObject($path . DS . $file, 'w+');
-		$content = "<?php \n/* {$name} schema generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php\n{$out}";
 		if ($file->fwrite($content)) {
 			return $content;
 		}
