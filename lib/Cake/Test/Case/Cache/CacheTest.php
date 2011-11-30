@@ -126,6 +126,19 @@ class CacheTest extends CakeTestCase {
 		$read = Cache::read('Test', 'invalid');
 	}
 
+
+/**
+ * Test reading from a config that is undefined.
+ *
+ * @return void
+ */
+	public function testReadNonExistingConfig() {
+		$this->assertFalse(Cache::read('key', 'totally fake'));
+		$this->assertFalse(Cache::write('key', 'value', 'totally fake'));
+		$this->assertFalse(Cache::increment('key', 'value', 'totally fake'));
+		$this->assertFalse(Cache::decrement('key', 'value', 'totally fake'));
+	}
+
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *

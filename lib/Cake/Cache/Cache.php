@@ -285,7 +285,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -335,7 +335,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -360,7 +360,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -422,7 +422,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
