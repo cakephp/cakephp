@@ -535,6 +535,86 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * testDeleteDependent method
+ *
+ * @access public
+ * @return void
+ */
+	function testDeleteDependent() {
+		$this->loadFixtures('Bidding', 'BiddingMessage');
+		$Bidding = new Bidding();
+		$result = $Bidding->find('all');
+		$expected = array(
+			array(
+				'Bidding' => array('id' => 1, 'bid' => 'One', 'name' => 'Bid 1'),
+				'BiddingMessage' => array('bidding' => 'One', 'name' => 'Message 1'),
+			),
+			array(
+				'Bidding' => array('id' => 2, 'bid' => 'Two', 'name' => 'Bid 2'),
+				'BiddingMessage' => array('bidding' => 'Two', 'name' => 'Message 2'),
+			),
+			array(
+				'Bidding' => array('id' => 3, 'bid' => 'Three', 'name' => 'Bid 3'),
+				'BiddingMessage' => array('bidding' => 'Three', 'name' => 'Message 3'),
+			),
+			array(
+				'Bidding' => array('id' => 4, 'bid' => 'Five', 'name' => 'Bid 5'),
+				'BiddingMessage' => array('bidding' => '', 'name' => ''),
+			),
+		);
+		$this->assertEqual($result, $expected);
+
+		$Bidding->delete(4, true);
+		$result = $Bidding->find('all');
+		$expected = array(
+			array(
+				'Bidding' => array('id' => 1, 'bid' => 'One', 'name' => 'Bid 1'),
+				'BiddingMessage' => array('bidding' => 'One', 'name' => 'Message 1'),
+			),
+			array(
+				'Bidding' => array('id' => 2, 'bid' => 'Two', 'name' => 'Bid 2'),
+				'BiddingMessage' => array('bidding' => 'Two', 'name' => 'Message 2'),
+			),
+			array(
+				'Bidding' => array('id' => 3, 'bid' => 'Three', 'name' => 'Bid 3'),
+				'BiddingMessage' => array('bidding' => 'Three', 'name' => 'Message 3'),
+			),
+		);
+		$this->assertEqual($result, $expected);
+
+		$Bidding->delete(2, true);
+		$result = $Bidding->find('all');
+		$expected = array(
+			array(
+				'Bidding' => array('id' => 1, 'bid' => 'One', 'name' => 'Bid 1'),
+				'BiddingMessage' => array('bidding' => 'One', 'name' => 'Message 1'),
+			),
+			array(
+				'Bidding' => array('id' => 3, 'bid' => 'Three', 'name' => 'Bid 3'),
+				'BiddingMessage' => array('bidding' => 'Three', 'name' => 'Message 3'),
+			),
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $Bidding->BiddingMessage->find('all', array('order' => array('BiddingMessage.name' => 'ASC')));
+		$expected = array(
+			array(
+				'BiddingMessage' => array('bidding' => 'One', 'name' => 'Message 1'),
+				'Bidding' => array('id' => 1, 'bid' => 'One', 'name' => 'Bid 1'),
+			),
+			array(
+				'BiddingMessage' => array('bidding' => 'Three', 'name' => 'Message 3'),
+				'Bidding' => array('id' => 3, 'bid' => 'Three', 'name' => 'Bid 3'),
+			),
+			array(
+				'BiddingMessage' => array('bidding' => 'Four', 'name' => 'Message 4'),
+				'Bidding' => array('id' => '', 'bid' => '', 'name' => ''),
+			),
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test deleteLinks with Multiple habtm associations
  *
  * @return void

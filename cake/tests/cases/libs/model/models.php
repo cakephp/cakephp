@@ -1105,6 +1105,76 @@ class Bid extends CakeTestModel {
 }
 
 /**
+ * BiddingMessage class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class BiddingMessage extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'BiddingMessage'
+ * @access public
+ */
+	var $name = 'BiddingMessage';
+
+/**
+ * primaryKey property
+ *
+ * @var string 'bidding'
+ * @access public
+ */
+	var $primaryKey = 'bidding';
+
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array(
+		'Bidding' => array(
+			'foreignKey' => false,
+			'conditions' => array('BiddingMessage.bidding = Bidding.bid')
+		)
+	);
+}
+
+/**
+ * Bidding class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class Bidding extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Bidding'
+ * @access public
+ */
+	var $name = 'Bidding';
+
+/**
+ * hasOne property
+ *
+ * @var array
+ * @access public
+ */
+	var $hasOne = array(
+		'BiddingMessage' => array(
+			'foreignKey' => false,
+			'conditions' => array('BiddingMessage.bidding = Bidding.bid'),
+			'dependent' => true
+		)
+	);
+}
+
+/**
  * NodeAfterFind class
  *
  * @package       cake
