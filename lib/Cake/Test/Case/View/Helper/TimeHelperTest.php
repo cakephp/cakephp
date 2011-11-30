@@ -116,7 +116,7 @@ class TimeHelperTest extends CakeTestCase {
 		$result = $this->Time->timeAgoInWords(strtotime('+1 month +1 week +6 days'), array('end' => '8 years'), true);
 		$this->assertEquals($result, '1 month, 1 week, 6 days');
 
-		for($i = 0; $i < 200; $i ++) {
+		for ($i = 0; $i < 200; $i ++) {
 			$years = mt_rand(0, 3);
 			$months = mt_rand(0, 11);
 			$weeks = mt_rand(0, 3);
@@ -411,7 +411,7 @@ class TimeHelperTest extends CakeTestCase {
 
 		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
 			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-			foreach($timezones as $timezone) {
+			foreach ($timezones as $timezone) {
 				$yourTimezone = new DateTimeZone($timezone);
 				$yourTime = new DateTime('now', $yourTimezone);
 				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;

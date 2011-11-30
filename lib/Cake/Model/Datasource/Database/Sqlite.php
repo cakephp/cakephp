@@ -286,9 +286,9 @@ class Sqlite extends DboSource {
 			}
 		} elseif (strpos($querystring, 'PRAGMA table_info') === 0) {
 			$selects = array('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk');
-		} elseif(strpos($querystring, 'PRAGMA index_list') === 0) {
+		} elseif (strpos($querystring, 'PRAGMA index_list') === 0) {
 			$selects = array('seq', 'name', 'unique');
-		} elseif(strpos($querystring, 'PRAGMA index_info') === 0) {
+		} elseif (strpos($querystring, 'PRAGMA index_info') === 0) {
 			$selects = array('seqno', 'cid', 'name');
 		}
 		while ($j < $num_fields) {
