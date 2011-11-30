@@ -159,8 +159,8 @@ class PluginTask extends AppShell {
  */
 	public function findPath($pathOptions) {
 		$valid = false;
-		foreach ($pathOptions as $i =>$path) {
-			if(!is_dir($path)) {
+		foreach ($pathOptions as $i => $path) {
+			if (!is_dir($path)) {
 				array_splice($pathOptions, $i, 1);
 			}
 		}

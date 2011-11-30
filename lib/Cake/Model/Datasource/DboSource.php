@@ -1947,7 +1947,7 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				if (is_object($model) && $model->isVirtualField($params[0])){
+				if (is_object($model) && $model->isVirtualField($params[0])) {
 					$arg = $this->_quoteFields($model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
@@ -2191,7 +2191,7 @@ class DboSource extends DataSource {
 				}
 				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
 					$fields[$i] = $fields[$i]->value;
-				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
+				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])) {
 					continue;
 				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';
@@ -2622,7 +2622,7 @@ class DboSource extends DataSource {
 			if (!is_array($group)) {
 				$group = array($group);
 			}
-			foreach($group as $index => $key) {
+			foreach ($group as $index => $key) {
 				if (is_object($model) && $model->isVirtualField($key)) {
 					$group[$index] = '(' . $model->getVirtualField($key) . ')';
 				}

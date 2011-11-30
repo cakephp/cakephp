@@ -229,7 +229,7 @@ class CakeRoute {
 		// restructure 'pass' key route params
 		if (isset($this->options['pass'])) {
 			$j = count($this->options['pass']);
-			while($j--) {
+			while ($j--) {
 				if (isset($route[$this->options['pass'][$j]])) {
 					array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
 				}

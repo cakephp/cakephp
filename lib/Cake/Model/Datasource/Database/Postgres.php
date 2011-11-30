@@ -409,7 +409,7 @@ class Postgres extends DboSource {
 
 		if (!$constant && strpos($match[1], '.') === false) {
 			$match[1] = $this->name($match[1]);
-		} elseif (!$constant){
+		} elseif (!$constant) {
 			$parts = explode('.', $match[1]);
 			if (!Set::numeric($parts)) {
 				$match[1] = $this->name($match[1]);
@@ -550,7 +550,7 @@ class Postgres extends DboSource {
 	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
-			foreach($indexes['drop'] as $name => $value) {
+			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
 				if ($name == 'PRIMARY') {
 					continue;

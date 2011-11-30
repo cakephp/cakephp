@@ -102,7 +102,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$available = true;
 		$Memcache = new Memcache();
 
-		foreach($servers as $server) {
+		foreach ($servers as $server) {
 			list($host, $port) = explode(':', $server);
 			if (!@$Memcache->connect($host, $port)) {
 				$available = false;

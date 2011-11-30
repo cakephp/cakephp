@@ -279,7 +279,7 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testSortLinksUsingDirectionOption(){
+	public function testSortLinksUsingDirectionOption() {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(

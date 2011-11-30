@@ -1208,7 +1208,7 @@ class FormHelper extends AppHelper {
  */
 	public function checkbox($fieldName, $options = array()) {
 		$valueOptions = array();
-		if(isset($options['default'])){
+		if (isset($options['default'])) {
 			$valueOptions['default'] = $options['default'];
 			unset($options['default']);
 		}

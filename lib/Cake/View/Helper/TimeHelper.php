@@ -459,8 +459,8 @@ class TimeHelper extends AppHelper {
 	public function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 
-		if(!is_null($userOffset)) {
-			if($userOffset == 0) {
+		if (!is_null($userOffset)) {
+			if ($userOffset == 0) {
 				$timezone = '+0000';
 			} else {
 				$hours = (int) floor(abs($userOffset));

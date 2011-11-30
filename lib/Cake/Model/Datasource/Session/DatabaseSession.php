@@ -47,13 +47,13 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 
 		if (empty($modelName)) {
 			$settings = array(
-				'class' =>'Session',
+				'class' => 'Session',
 				'alias' => 'Session',
 				'table' => 'cake_sessions',
 			);
 		} else {
 			$settings = array(
-				'class' =>$modelName,
+				'class' => $modelName,
 				'alias' => 'Session',
 			);
 		}

@@ -567,7 +567,7 @@ class Mysql extends DboSource {
 	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
-			foreach($indexes['drop'] as $name => $value) {
+			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
 				if ($name == 'PRIMARY') {
 					$out .= 'PRIMARY KEY';
