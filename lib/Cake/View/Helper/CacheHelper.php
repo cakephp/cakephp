@@ -87,6 +87,7 @@ class CacheHelper extends AppHelper {
  * @param string $out output to cache
  * @param boolean $cache Whether or not a cache file should be written.
  * @return string view ouput
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
 	public function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
