@@ -154,6 +154,7 @@ class SessionHelper extends AppHelper {
  * Used to check is a session is valid in a view
  *
  * @return boolean
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::valid
  */
 	public function valid() {
 		return CakeSession::valid();
