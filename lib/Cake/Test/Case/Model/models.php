@@ -899,7 +899,7 @@ class ModifiedAuthor extends Author {
  * @return void
  */
 	public function afterFind($results, $primary = false) {
-		foreach($results as $index => $result) {
+		foreach ($results as $index => $result) {
 			$results[$index]['Author']['user'] .= ' (CakePHP)';
 		}
 		return $results;

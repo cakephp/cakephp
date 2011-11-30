@@ -131,7 +131,7 @@ class ModelReadTest extends BaseModelTest {
 			'fields' => array('Thread.project_id', 'COUNT(*) AS total')
 		));
 		$result = array();
-		foreach($rows as $row) {
+		foreach ($rows as $row) {
 			$result[$row['Thread']['project_id']] = $row[0]['total'];
 		}
 		$expected = array(
@@ -146,7 +146,7 @@ class ModelReadTest extends BaseModelTest {
 			'order'=> 'Thread.project_id'
 		));
 		$result = array();
-		foreach($rows as $row) {
+		foreach ($rows as $row) {
 			$result[$row['Thread']['project_id']] = $row[0]['total'];
 		}
 		$expected = array(

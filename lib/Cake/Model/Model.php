@@ -2136,7 +2136,7 @@ class Model extends Object {
 				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
 					$validates = $this->{$association}->create($values) && $this->{$association}->validates($options);
 					$return[$association][] = $validates;
-				} elseif($associations[$association] === 'hasMany') {
+				} elseif ($associations[$association] === 'hasMany') {
 					$validates = $this->{$association}->validateMany($values, $options);
 					$return[$association] = $validates;
 				}

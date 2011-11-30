@@ -2403,7 +2403,7 @@ class SetTest extends CakeTestCase {
 		$mapped = Set::map($expected);
 		$ids = array();
 
-		foreach($mapped as $object)	 {
+		foreach ($mapped as $object) {
 			$ids[] = $object->id;
 		}
 		$this->assertEquals($ids, array(1, 2));
@@ -2451,7 +2451,7 @@ class SetTest extends CakeTestCase {
 
 		$ids = array();
 
-		foreach($mapped as $object)	 {
+		foreach ($mapped as $object) {
 			$ids[] = $object->id;
 		}
 		$this->assertEquals($ids, array(1, 2));

@@ -47,7 +47,7 @@ class StringTest extends CakeTestCase {
 		$count = mt_rand(10, 1000);
 		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			$result = String::uuid();
 			$match = (bool) preg_match($pattern, $result);
 			$this->assertTrue($match);

@@ -868,7 +868,7 @@ class XmlTest extends CakeTestCase {
 		
 		//multiple model results - without a records key it would fatal error
 		$data = $user->find('all', array('limit'=>2));
-		$data = array('records'=>$data);
+		$data = array('records' => $data);
 		$obj = Xml::build(compact('data'));
 		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><data>';
 		$expected .= '<records>';
