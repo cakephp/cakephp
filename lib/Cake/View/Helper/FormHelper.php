@@ -78,7 +78,6 @@ class FormHelper extends AppHelper {
  */
 	public $defaultModel = null;
 
-
 /**
  * Persistent default options used by input(). Set by FormHelper::create().
  *
@@ -275,6 +274,7 @@ class FormHelper extends AppHelper {
  *
  * @return mixed Either false when there or no errors, or the error
  *    string. The error string could be ''.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::tagIsInvalid
  */
 	public function tagIsInvalid() {
 		$entity = $this->entity();
@@ -526,6 +526,7 @@ class FormHelper extends AppHelper {
  *
  * @param array $fields The list of fields to use when generating the hash
  * @return string A hidden input field with a security hash
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::secure
  */
 	public function secure($fields = array()) {
 		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
@@ -799,6 +800,7 @@ class FormHelper extends AppHelper {
  * @param mixed $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
  * @return string Completed form inputs.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
  */
 	public function inputs($fields = null, $blacklist = null) {
 		$fieldset = $legend = true;
@@ -1487,6 +1489,7 @@ class FormHelper extends AppHelper {
  * @param mixed $url URL as string or array
  * @param array $options Array of options and HTML attributes.
  * @return string A HTML button tag.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
 		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
@@ -1520,6 +1523,7 @@ class FormHelper extends AppHelper {
  * @param array $options Array of HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
 		if (!empty($options['confirm'])) {
@@ -1770,7 +1774,7 @@ class FormHelper extends AppHelper {
 				$select[] = $this->hidden(null, $hiddenAttributes);
 			}
 		} else {
- 			$tag = 'selectstart';
+			$tag = 'selectstart';
 		}
 
 		if (!empty($tag) || isset($template)) {

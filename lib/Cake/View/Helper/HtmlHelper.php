@@ -28,6 +28,7 @@ App::uses('AppHelper', 'View/Helper');
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
 class HtmlHelper extends AppHelper {
+
 /**
  * html tags used by this helper.
  *
@@ -129,12 +130,14 @@ class HtmlHelper extends AppHelper {
  * @var array
  */
 	protected $_includedScripts = array();
+
 /**
  * Options for the currently opened script block buffer if any.
  *
  * @var array
  */
 	protected $_scriptBlockOptions = array();
+
 /**
  * Document type definitions
  *
@@ -828,6 +831,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $tag Tag name
  * @return string Formatted block
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::useTag
  */
 	public function useTag($tag) {
 		if (!isset($this->_tags[$tag])) {
@@ -900,6 +904,7 @@ class HtmlHelper extends AppHelper {
  * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::nestedList
  */
 	public function nestedList($list, $options = array(), $itemOptions = array(), $tag = 'ul') {
 		if (is_string($options)) {

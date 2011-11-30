@@ -117,6 +117,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
  * @return array The array of paging parameters for the paginated resultset.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::params
  */
 	public function params($model = null) {
 		if (empty($model)) {
@@ -170,6 +171,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
  * @return string The current page number of the recordset.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::current
  */
 	public function current($model = null) {
 		$params = $this->params($model);
@@ -187,6 +189,7 @@ class PaginatorHelper extends AppHelper {
  * @param mixed $options Options for pagination links. See #options for list of keys.
  * @return string The name of the key by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
  */
 	public function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
@@ -211,6 +214,7 @@ class PaginatorHelper extends AppHelper {
  * @param mixed $options Options for pagination links. See #options for list of keys.
  * @return string The direction by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortDir
  */
 	public function sortDir($model = null, $options = array()) {
 		$dir = null;
@@ -473,6 +477,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string $model Optional model name. Uses the default if none is specified.
  * @return boolean True if the result set is not at the first page.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::hasPrev
  */
 	public function hasPrev($model = null) {
 		return $this->_hasPage($model, 'prev');
@@ -483,6 +488,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
  * @return boolean True if the result set is not at the last page.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::hasNext
  */
 	public function hasNext($model = null) {
 		return $this->_hasPage($model, 'next');
@@ -494,6 +500,7 @@ class PaginatorHelper extends AppHelper {
  * @param string $model Optional model name.  Uses the default if none is specified.
  * @param integer $page The page number - if not set defaults to 1.
  * @return boolean True if the given result set has the specified page number.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::hasPage
  */
 	public function hasPage($model = null, $page = 1) {
 		if (is_numeric($model)) {
@@ -525,6 +532,7 @@ class PaginatorHelper extends AppHelper {
  * Gets the default model of the paged sets
  *
  * @return string Model name or null if the pagination isn't initialized.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::defaultModel
  */
 	public function defaultModel() {
 		if ($this->_defaultModel != null) {
