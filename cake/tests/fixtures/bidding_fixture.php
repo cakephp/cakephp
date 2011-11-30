@@ -14,7 +14,7 @@
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.fixtures
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         CakePHP(tm) v 1.3.14
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
