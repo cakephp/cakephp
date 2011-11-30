@@ -50,7 +50,7 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 <?php
 if (count($helpers)):
 	echo "/**\n * Helpers\n *\n * @var array\n */\n";
-	echo "\tvar \$helpers = array(";
+	echo "\tpublic \$helpers = array(";
 	for ($i = 0, $len = count($helpers); $i < $len; $i++):
 		if ($i != $len - 1):
 			echo "'" . Inflector::camelize($helpers[$i]) . "', ";
