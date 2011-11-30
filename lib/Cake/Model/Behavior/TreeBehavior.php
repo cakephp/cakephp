@@ -562,7 +562,7 @@ class TreeBehavior extends ModelBehavior {
 		$Model->recursive = $recursive;
 		if ($mode == 'parent') {
 			$Model->bindModel(array('belongsTo' => array('VerifyParent' => array(
-				'className' => $Model->alias,
+				'className' => $Model->name,
 				'foreignKey' => $parent,
 				'fields' => array($Model->primaryKey, $left, $right, $parent),
 			))));
@@ -770,7 +770,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 
 		$Model->bindModel(array('belongsTo' => array('VerifyParent' => array(
-			'className' => $Model->alias,
+			'className' => $Model->name,
 			'foreignKey' => $parent,
 			'fields' => array($Model->primaryKey, $left, $right, $parent)
 		))));
