@@ -1868,7 +1868,7 @@ class Model extends Overloadable {
 			foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
 				if ($data['dependent'] === true) {
 
-					$model = $this->{$assoc};
+					$model =& $this->{$assoc};
 					if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $model->getAssociated('belongsTo'))) {
 						$model->recursive = 0;
 						$conditions = array($this->escapeField(null, $this->name) => $id);
