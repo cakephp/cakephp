@@ -2249,11 +2249,17 @@ class Model extends Object {
 				if ($data['dependent'] === true) {
 
 					$model = $this->{$assoc};
-					$conditions = array($model->escapeField($data['foreignKey']) => $id);
-					if ($data['conditions']) {
-						$conditions = array_merge((array)$data['conditions'], $conditions);
+
+					if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $model->getAssociated('belongsTo'))) {
+						$model->recursive = 0;
+						$conditions = array($this->escapeField(null, $this->name) => $id);
+					} else {
+						$model->recursive = -1;
+						$conditions = array($model->escapeField($data['foreignKey']) => $id);
+						if ($data['conditions']) {
+							$conditions = array_merge((array)$data['conditions'], $conditions);
+						}
 					}
-					$model->recursive = -1;
 
 					if (isset($data['exclusive']) && $data['exclusive']) {
 						$model->deleteAll($conditions);
