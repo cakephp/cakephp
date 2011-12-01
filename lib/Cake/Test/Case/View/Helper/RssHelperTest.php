@@ -155,7 +155,7 @@ class RssHelperTest extends CakeTestCase {
 			'cloud' => array(
 				'domain' => "rpc.sys.com",
 				'port' => "80",
-				'path' =>"/RPC2",
+				'path' => "/RPC2",
 				'registerProcedure' => "myCloud.rssPleaseNotify",
 				'protocol' => "xml-rpc"
 			)
@@ -175,7 +175,7 @@ class RssHelperTest extends CakeTestCase {
 				'cloud' => array(
 					'domain' => "rpc.sys.com",
 					'port' => "80",
-					'path' =>"/RPC2",
+					'path' => "/RPC2",
 					'registerProcedure' => "myCloud.rssPleaseNotify",
 					'protocol' => "xml-rpc"
 				),
@@ -219,7 +219,7 @@ class RssHelperTest extends CakeTestCase {
 					'xmlns:atom' => 'http://www.w3.org/2005/Atom',
 					'href' => "http://www.example.com/rss.xml",
 					'rel' => "self",
-					'type' =>"application/rss+xml"
+					'type' => "application/rss+xml"
 				),
 			'content-here',
 			'/channel',

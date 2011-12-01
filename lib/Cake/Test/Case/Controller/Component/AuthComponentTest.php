@@ -782,7 +782,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->Session->delete('Auth');
 		$_SERVER['HTTP_REFERER'] = $_ENV['HTTP_REFERER'] = Router::url('/admin', true);
 		$this->Auth->Session->write('Auth', array(
-			'AuthUser' => array('id'=>'1', 'username' => 'nate')
+			'AuthUser' => array('id' => '1', 'username' => 'nate')
 		));
 		$this->Auth->request->params['action'] = 'login';
 		$this->Auth->request->url = 'auth_test/login';

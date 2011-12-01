@@ -764,7 +764,7 @@ class UpgradeShell extends AppShell {
 					'help' => __d('cake_console', 'Use git command for moving files around.'),
 					'boolean' => true
 				),
-				'dry-run'=> array(
+				'dry-run' => array(
 					'short' => 'd',
 					'help' => __d('cake_console', 'Dry run the update, no files will actually be modified.'),
 					'boolean' => true

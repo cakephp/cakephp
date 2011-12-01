@@ -626,7 +626,7 @@ class Set {
 					}
 				}
 				return $tmp;
-			} elseif (false !== strpos($key,'{') && false !== strpos($key,'}')) {
+			} elseif (false !== strpos($key, '{') && false !== strpos($key, '}')) {
 				$pattern = substr($key, 1, -1);
 
 				foreach ($data as $j => $val) {

@@ -117,7 +117,7 @@ class ConsoleShell extends AppShell {
 		$out .= "\n";
 		$out .= "will return something like the following:";
 		$out .= "\n";
-		$out .= "\tarray (";
+		$out .= "\tarray(";
 		$out .= "\t  [...]";
 		$out .= "\t  'controller' => 'posts',";
 		$out .= "\t  'action' => 'view',";
