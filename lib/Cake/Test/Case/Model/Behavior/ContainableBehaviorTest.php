@@ -2923,7 +2923,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		if (!empty($result)) {
 			foreach ($result as $i => $article) {
 				foreach ($article['Comment'] as $j => $comment) {
-					$result[$i]['Comment'][$j] = array_diff_key($comment, array('id'=>true));
+					$result[$i]['Comment'][$j] = array_diff_key($comment, array('id' => true));
 				}
 			}
 		}

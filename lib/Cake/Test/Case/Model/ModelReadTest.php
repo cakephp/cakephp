@@ -143,7 +143,7 @@ class ModelReadTest extends BaseModelTest {
 		$rows = $Thread->find('all', array(
 			'group' => 'Thread.project_id',
 			'fields' => array('Thread.project_id', 'COUNT(*) AS total'),
-			'order'=> 'Thread.project_id'
+			'order' => 'Thread.project_id'
 		));
 		$result = array();
 		foreach ($rows as $row) {
@@ -211,19 +211,19 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array(
 			array('Product' => array('type' => 'Clothing'), array('price' => 32)),
 			array('Product' => array('type' => 'Food'), array('price' => 9)),
-			array('Product' => array('type' => 'Music'), array( 'price' => 4)),
+			array('Product' => array('type' => 'Music'), array('price' => 4)),
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
 		$result = $Product->find('all',array(
-			'fields'=>array('Product.type', 'MIN(Product.price) as price'),
-			'group'=> 'Product.type',
+			'fields' => array('Product.type', 'MIN(Product.price) as price'),
+			'group' => 'Product.type',
 			'order' => 'Product.type ASC'
 			));
 		$this->assertEquals($expected, $result);
 
 		$result = $Product->find('all', array(
-			'fields'=>array('Product.type', 'MIN(Product.price) as price'),
-			'group'=> array('Product.type'),
+			'fields' => array('Product.type', 'MIN(Product.price) as price'),
+			'group' => array('Product.type'),
 			'order' => 'Product.type ASC'));
 		$this->assertEquals($expected, $result);
 	}
@@ -386,7 +386,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all');
 		$expected = array(
 			array(
-				'Apple' => array (
+				'Apple' => array(
 					'id' => 1,
 					'apple_id' => 2,
 					'color' => 'Red 1',
@@ -452,7 +452,7 @@ class ModelReadTest extends BaseModelTest {
 							'mytime' => '22:57:17'
 					))),
 					'Sample' => array(
-						'id' =>'',
+						'id' => '',
 						'apple_id' => '',
 						'name' => ''
 					),
@@ -1133,7 +1133,7 @@ class ModelReadTest extends BaseModelTest {
 								'mytime' => '22:57:17'
 					))),
 					'Sample' => array(
-						'id' =>'',
+						'id' => '',
 						'apple_id' => '',
 						'name' => ''
 					),
@@ -1742,7 +1742,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all');
 		$expected = array(
 			array(
-				'Apple' => array (
+				'Apple' => array(
 					'id' => 1,
 					'apple_id' => 2,
 					'color' => 'Red 1',
@@ -1803,7 +1803,7 @@ class ModelReadTest extends BaseModelTest {
 							'mytime' => '22:57:17'
 				))),
 				'Sample' => array(
-					'id' =>'',
+					'id' => '',
 					'apple_id' => '',
 					'name' => ''
 			)),
@@ -2237,7 +2237,7 @@ class ModelReadTest extends BaseModelTest {
 							'mytime' => '22:57:17'
 				))),
 				'Sample' => array(
-					'id' =>'',
+					'id' => '',
 					'apple_id' => '',
 					'name' => ''
 			)),
@@ -2646,7 +2646,7 @@ class ModelReadTest extends BaseModelTest {
 							'mytime' => '22:57:17'
 				))),
 				'Sample' => array(
-					'id' =>'',
+					'id' => '',
 					'apple_id' => '',
 					'name' => ''
 			)),
@@ -3397,38 +3397,38 @@ class ModelReadTest extends BaseModelTest {
 			'fields' => 'id, name, parent_id',
 			'conditions' => array('Category.id !=' => 1)
 		));
-		$expected = array (
-			array ('Category' => array(
+		$expected = array(
+			array('Category' => array(
 				'id' => '2',
 				'name' => 'Category 1.1',
 				'parent_id' => '1'
 			)),
-			array ('Category' => array(
+			array('Category' => array(
 				'id' => '3',
 				'name' => 'Category 1.2',
 				'parent_id' => '1'
 			)),
-			array ('Category' => array(
+			array('Category' => array(
 				'id' => '4',
 				'name' => 'Category 2',
 				'parent_id' => '0'
 			)),
-			array ('Category' => array(
+			array('Category' => array(
 				'id' => '5',
 				'name' => 'Category 3',
 				'parent_id' => '0'
 			)),
-			array ('Category' => array(
+			array('Category' => array(
 				'id' => '6',
 				'name' => 'Category 3.1',
 				'parent_id' => '5'
 			)),
-			array ('Category' => array(
+			array('Category' => array(
 				'id' => '7',
 				'name' => 'Category 1.1.1',
 				'parent_id' => '2'
 			)),
-			array ('Category' => array(
+			array('Category' => array(
 				'id' => '8',
 				'name' => 'Category 1.1.2',
 				'parent_id' => '2'
@@ -6087,7 +6087,7 @@ class ModelReadTest extends BaseModelTest {
 			'conditions' => array(
 				'user' => 'larry'),
 			'fields' => NULL,
-			'joins' => array (),
+			'joins' => array(),
 			'limit' => NULL,
 			'offset' => NULL,
 			'order' => array(

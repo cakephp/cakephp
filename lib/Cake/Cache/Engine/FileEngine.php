@@ -66,8 +66,8 @@ class FileEngine extends CacheEngine {
 	public function init($settings = array()) {
 		parent::init(array_merge(
 			array(
-				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> true,
-				'serialize'=> true, 'isWindows' => false, 'mask' => 0664
+				'engine' => 'File', 'path' => CACHE, 'prefix' => 'cake_', 'lock' => true,
+				'serialize' => true, 'isWindows' => false, 'mask' => 0664
 			),
 			$settings
 		));

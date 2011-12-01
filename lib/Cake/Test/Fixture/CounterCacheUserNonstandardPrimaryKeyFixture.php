@@ -33,7 +33,7 @@ class CounterCacheUserNonstandardPrimaryKeyFixture extends CakeTestFixture {
 	);
 
 	public $records = array(
-		array('uid' => 66, 'name' => 'Alexander','post_count' => 2),
-		array('uid' => 301, 'name' => 'Steven','post_count' => 1),
+		array('uid' => 66, 'name' => 'Alexander', 'post_count' => 2),
+		array('uid' => 301, 'name' => 'Steven', 'post_count' => 1),
 	);
 }

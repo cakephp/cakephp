@@ -27,9 +27,9 @@ class GroupUpdateAllFixture extends CakeTestFixture {
     public $table = 'group_update_all';
 
     public $fields = array(
-            'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-            'name' => array('type'=>'string', 'null' => false, 'length' => 29),
-            'code' => array('type'=>'integer', 'null' => false, 'length' => 4),
+            'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+            'name' => array('type' => 'string', 'null' => false, 'length' => 29),
+            'code' => array('type' => 'integer', 'null' => false, 'length' => 4),
             'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
             );
     public $records = array(

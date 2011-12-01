@@ -43,11 +43,11 @@ class NumberHelper extends AppHelper {
 			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
 		),
 		'GBP' => array(
-			'wholeSymbol'=>'&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
+			'wholeSymbol' => '&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => false
 		),
 		'EUR' => array(
-			'wholeSymbol'=>'&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
+			'wholeSymbol' => '&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => false
 		)
 	);
@@ -58,7 +58,7 @@ class NumberHelper extends AppHelper {
  * @var array
  */
 	protected $_currencyDefaults = array(
-		'wholeSymbol'=>'', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
+		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
 		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true
 	);
 
@@ -140,7 +140,7 @@ class NumberHelper extends AppHelper {
 
 		$escape = true;
 		if (is_array($options)) {
-			$options = array_merge(array('before'=>'$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
+			$options = array_merge(array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
 			extract($options);
 		}
 
