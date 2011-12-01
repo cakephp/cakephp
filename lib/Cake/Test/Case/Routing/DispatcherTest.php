@@ -1230,6 +1230,10 @@ class DispatcherTest extends CakeTestCase {
 				'View/Themed/TestTheme/webroot/js/one/theme_one.js'
 			),
 			array(
+				'theme/test_theme/space%20image.text',
+				'View/Themed/TestTheme/webroot/space image.text'
+			),
+			array(
 				'test_plugin/root.js',
 				'Plugin/TestPlugin/webroot/root.js'
 			),
