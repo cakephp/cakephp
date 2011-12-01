@@ -665,7 +665,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 			array(
 				'Apple' => array('id' => 1),
 				'Child' => array(
-					array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
+					array('id' => 2, 'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
 			array(
 				'Apple' => array('id' => 2),
 				'Child' => array(
@@ -737,7 +737,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 			array(
 				'Apple' => array('id' => 1),
 				'Child' => array(
-					array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
+					array('id' => 2, 'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
 			array(
 				'Apple' => array('id' => 2),
 				'Child' => array(
@@ -807,13 +807,13 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$expected2 = array(
 			array(
 				'Apple' => array('id' => 1),
-				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17')),
+				'Parent' => array('id' => 2, 'name' => 'Bright Red Apple', 'mytime' => '22:57:17')),
 			array(
 				'Apple' => array('id' => 2),
 				'Parent' => array('id' => 1, 'name' => 'Red Apple 1', 'mytime' => '22:57:17')),
 			array(
 				'Apple' => array('id' => 3),
-				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))
+				'Parent' => array('id' => 2, 'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))
 		);
 		$result2 = $Apple->find('all', array(
 			'fields' => array('Apple.id', 'Parent.id', 'Parent.name', 'Parent.mytime'),

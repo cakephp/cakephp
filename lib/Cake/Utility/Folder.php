@@ -656,7 +656,7 @@ class Folder {
 							chmod($to, $mode);
 							umask($old);
 							$this->_messages[] = __d('cake_dev', '%s created', $to);
-							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
+							$options = array_merge($options, array('to' => $to, 'from' => $from));
 							$this->copy($options);
 						} else {
 							$this->_errors[] = __d('cake_dev', '%s not created', $to);

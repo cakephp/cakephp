@@ -2123,10 +2123,10 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
 		$this->Paginator->request->params['paging']['Article']['page'] = 1;
 
-		$test = array('url'=> array(
-			'page'=> '1',
-			'sort'=>'Article.title',
-			'direction'=>'asc',
+		$test = array('url' => array(
+			'page' => '1',
+			'sort' => 'Article.title',
+			'direction' => 'asc',
 		));
 		$this->Paginator->options($test);
 
@@ -2152,8 +2152,8 @@ class PaginatorHelperTest extends CakeTestCase {
 	public function testAjaxLinkGenerationNumbers() {
 		$this->Paginator->Js->expectCallCount('link', 2);
 		$result = $this->Paginator->numbers(array(
-			'modulus'=> '2',
-			'url'=> array('controller' => 'projects', 'action' => 'sort'),
+			'modulus' => '2',
+			'url' => array('controller' => 'projects', 'action' => 'sort'),
 			'update' => 'list'
 		));
 	}

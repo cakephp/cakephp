@@ -16,16 +16,16 @@
  */
 
 * {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 }
 
 /** General Style Info **/
 body {
 	background: #003d4c;
 	color: #fff;
-	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
-	font-size:90%;
+	font-family: 'lucida grande', verdana, helvetica, arial, sans-serif;
+	font-size: 90%;
 	margin: 0;
 }
 a {
@@ -35,29 +35,29 @@ a {
 }
 a:hover {
 	color: #367889;
-	text-decoration:none;
+	text-decoration: none;
 }
 a img {
-	border:none;
+	border: none;
 }
 h1, h2, h3, h4 {
 	font-weight: normal;
-	margin-bottom:0.5em;
+	margin-bottom: 0.5em;
 }
 h1 {
-	background:#fff;
+	background: #fff;
 	color: #003d4c;
 	font-size: 100%;
 }
 h2 {
-	background:#fff;
+	background: #fff;
 	color: #e32;
-	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
+	font-family: 'Gill Sans', 'lucida grande', helvetica, arial, sans-serif;
 	font-size: 190%;
 }
 h3 {
 	color: #2c6877;
-	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
+	font-family: 'Gill Sans', 'lucida grande', helvetica, arial, sans-serif;
 	font-size: 165%;
 }
 h4 {
@@ -80,7 +80,7 @@ p {
 	padding: 10px 20px;
 }
 #header h1 {
-	line-height:20px;
+	line-height: 20px;
 	background: #003d4c url('../img/cake.icon.png') no-repeat left;
 	color: #fff;
 	padding: 0px 30px;
@@ -113,35 +113,35 @@ p {
 div.form,
 div.index,
 div.view {
-	float:right;
-	width:76%;
-	border-left:1px solid #666;
-	padding:10px 2%;
+	float: right;
+	width: 76%;
+	border-left: 1px solid #666;
+	padding: 10px 2%;
 }
 div.actions {
-	float:left;
-	width:16%;
-	padding:10px 1.5%;
+	float: left;
+	width: 16%;
+	padding: 10px 1.5%;
 }
 div.actions h3 {
-	padding-top:0;
-	color:#777;
+	padding-top: 0;
+	color: #777;
 }
 
 
 /** Tables **/
 table {
-	border-right:0;
+	border-right: 0;
 	clear: both;
 	color: #333;
 	margin-bottom: 10px;
 	width: 100%;
 }
 th {
-	border:0;
-	border-bottom:2px solid #555;
+	border: 0;
+	border-bottom: 2px solid #555;
 	text-align: left;
-	padding:4px;
+	padding: 4px;
 }
 th a {
 	display: block;
@@ -158,7 +158,7 @@ table tr td {
 	padding: 6px;
 	text-align: left;
 	vertical-align: top;
-	border-bottom:1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 }
 table tr:nth-child(even) {
 	background: #f9f9f9;
@@ -169,7 +169,7 @@ td.actions {
 }
 table td.actions a {
 	margin: 0px 6px;
-	padding:2px 5px;
+	padding: 2px 5px;
 }
 
 /* SQL log */
@@ -182,15 +182,15 @@ table td.actions a {
 	font-family: Monaco, Consolas, "Courier New", monospaced;
 }
 .cake-sql-log caption {
-	color:#fff;
+	color: #fff;
 }
 
 /** Paging **/
 .paging {
-	background:#fff;
+	background: #fff;
 	color: #ccc;
 	margin-top: 1em;
-	clear:both;
+	clear: both;
 }
 .paging .current,
 .paging .disabled,
@@ -296,7 +296,7 @@ form .required {
 form .required label:after {
 	color: #e32;
 	content: '*';
-	display:inline;
+	display: inline;
 }
 form div.submit {
 	border: 0;
@@ -306,14 +306,14 @@ form div.submit {
 label {
 	display: block;
 	font-size: 110%;
-	margin-bottom:3px;
+	margin-bottom: 3px;
 }
 input, textarea {
 	clear: both;
 	font-size: 140%;
 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
 	padding: 1%;
-	width:98%;
+	width: 98%;
 }
 select {
 	clear: both;
@@ -337,8 +337,8 @@ div.checkbox label {
 	display: inline;
 }
 input[type=radio] {
-	float:left;
-	width:auto;
+	float: left;
+	width: auto;
 	margin: 6px 0;
 	padding: 0;
 	line-height: 26px;
@@ -353,7 +353,7 @@ input[type=submit] {
 	width: auto;
 }
 form .submit input[type=submit] {
-	background:#62af56;
+	background: #62af56;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#76BF6B), to(#3B8230));
 	background-image: -webkit-linear-gradient(top, #76BF6B, #3B8230);
 	background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
@@ -491,7 +491,7 @@ p.error em {
 	padding: 0;
 }
 .actions li {
-	margin:0 0 0.5em 0;
+	margin: 0 0 0.5em 0;
 	list-style-type: none;
 	white-space: nowrap;
 	padding: 0;
@@ -506,7 +506,7 @@ p.error em {
 input[type=submit],
 .actions ul li a,
 .actions a {
-	font-weight:normal;
+	font-weight: normal;
 	padding: 4px 8px;
 	background: #dcdcdc;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#dcdcdc));
@@ -515,8 +515,8 @@ input[type=submit],
 	background-image: -ms-linear-gradient(top, #fefefe, #dcdcdc);
 	background-image: -o-linear-gradient(top, #fefefe, #dcdcdc);
 	background-image: linear-gradient(top, #fefefe, #dcdcdc);
-	color:#333;
-	border:1px solid #bbb;
+	color: #333;
+	border: 1px solid #bbb;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
@@ -661,50 +661,50 @@ pre {
 	background-color: rgba(255, 255, 0, 0.5);
 }
 .code-coverage-results div.code-line {
-	padding-left:5px;
-	display:block;
-	margin-left:10px;
+	padding-left: 5px;
+	display: block;
+	margin-left: 10px;
 }
 .code-coverage-results div.uncovered span.content {
-	background:#ecc;
+	background: #ecc;
 }
 .code-coverage-results div.covered span.content {
-	background:#cec;
+	background: #cec;
 }
 .code-coverage-results div.ignored span.content {
-	color:#aaa;
+	color: #aaa;
 }
 .code-coverage-results span.line-num {
-	color:#666;
-	display:block;
-	float:left;
-	width:20px;
-	text-align:right;
-	margin-right:5px;
+	color: #666;
+	display: block;
+	float: left;
+	width: 20px;
+	text-align: right;
+	margin-right: 5px;
 }
 .code-coverage-results span.line-num strong {
-	color:#666;
+	color: #666;
 }
 .code-coverage-results div.start {
-	border:1px solid #aaa;
-	border-width:1px 1px 0px 1px;
-	margin-top:30px;
-	padding-top:5px;
+	border: 1px solid #aaa;
+	border-width: 1px 1px 0px 1px;
+	margin-top: 30px;
+	padding-top: 5px;
 }
 .code-coverage-results div.end {
-	border:1px solid #aaa;
-	border-width:0px 1px 1px 1px;
-	margin-bottom:30px;
-	padding-bottom:5px;
+	border: 1px solid #aaa;
+	border-width: 0px 1px 1px 1px;
+	margin-bottom: 30px;
+	padding-bottom: 5px;
 }
 .code-coverage-results div.realstart {
-	margin-top:0px;
+	margin-top: 0px;
 }
 .code-coverage-results p.note {
-	color:#bbb;
-	padding:5px;
-	margin:5px 0 10px;
-	font-size:10px;
+	color: #bbb;
+	padding: 5px;
+	margin: 5px 0 10px;
+	font-size: 10px;
 }
 .code-coverage-results span.result-bad {
 	color: #a00;
@@ -718,5 +718,5 @@ pre {
 
 /** Elements **/
 #url-rewriting-warning {
-	display:none;
+	display: none;
 }

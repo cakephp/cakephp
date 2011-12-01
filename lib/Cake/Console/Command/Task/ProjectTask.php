@@ -62,7 +62,7 @@ class ProjectTask extends AppShell {
 		$response = false;
 		while ($response == false && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
 			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
-			$response = $this->in($prompt, array('y','n'), 'n');
+			$response = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($response) === 'n') {
 				$response = $project = false;
 			}

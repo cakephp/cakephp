@@ -38,7 +38,7 @@ class TranslateBehavior extends ModelBehavior {
  * Callback
  *
  * $config for TranslateBehavior should be
- * array( 'fields' => array('field_one',
+ * array('fields' => array('field_one',
  * 'field_two' => 'FieldAssoc', 'field_three'))
  *
  * With above example only one permanent hasMany will be joined (for field_two

@@ -349,7 +349,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 
 		if (!isset($containments['models'][$Model->alias])) {
-			$containments['models'][$Model->alias] = array('keep' => array(),'instance' => &$Model);
+			$containments['models'][$Model->alias] = array('keep' => array(), 'instance' => &$Model);
 		}
 
 		$containments['models'][$Model->alias]['keep'] = array_merge($containments['models'][$Model->alias]['keep'], $keep);

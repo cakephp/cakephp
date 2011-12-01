@@ -169,8 +169,8 @@ class TimeHelperTest extends CakeTestCase {
 				$relative_date .= ($relative_date ? ', -' : '-') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
 
-			if (date('j/n/y', strtotime(str_replace(',','',$relative_date))) != '1/1/70') {
-				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',','',$relative_date)), array('end' => '8 years'), true);
+			if (date('j/n/y', strtotime(str_replace(',', '', $relative_date))) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relative_date)), array('end' => '8 years'), true);
 				if ($relative_date == '0 seconds') {
 					$relative_date = '0 seconds ago';
 				}
@@ -223,8 +223,8 @@ class TimeHelperTest extends CakeTestCase {
 				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
 
-			if (date('j/n/y', strtotime(str_replace(',','',$relative_date))) != '1/1/70') {
-				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',','',$relative_date)), array('end' => '8 years'), true);
+			if (date('j/n/y', strtotime(str_replace(',', '', $relative_date))) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relative_date)), array('end' => '8 years'), true);
 				if ($relative_date == '0 seconds') {
 					$relative_date = '0 seconds ago';
 				}
