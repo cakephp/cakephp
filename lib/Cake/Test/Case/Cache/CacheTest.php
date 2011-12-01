@@ -135,8 +135,8 @@ class CacheTest extends CakeTestCase {
 	public function testReadNonExistingConfig() {
 		$this->assertFalse(Cache::read('key', 'totally fake'));
 		$this->assertFalse(Cache::write('key', 'value', 'totally fake'));
-		$this->assertFalse(Cache::increment('key', 'value', 'totally fake'));
-		$this->assertFalse(Cache::decrement('key', 'value', 'totally fake'));
+		$this->assertFalse(Cache::increment('key', 1, 'totally fake'));
+		$this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
 	}
 
 /**
