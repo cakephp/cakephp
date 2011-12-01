@@ -366,7 +366,7 @@ class Shell extends Object {
 			return $this->_displayHelp($command);
 		}
 
-		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
+		if (($isTask || $isMethod || $isMain) && $command !== 'execute') {
 			$this->startup();
 		}
 
@@ -672,7 +672,7 @@ class Shell extends Object {
 			return true;
 		}
 		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
-		$unitTest = $this->in($prompt, array('y','n'), 'y');
+		$unitTest = $this->in($prompt, array('y', 'n'), 'y');
 		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
 
 		if ($result) {

@@ -165,7 +165,7 @@ class Sqlite extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$table = $this->fullTableName($model);
+		$table = $this->fullTableName($model, false);
 		$fields = array();
 		$result = $this->_execute('PRAGMA table_info(' . $table . ')');
 
@@ -297,7 +297,7 @@ class Sqlite extends DboSource {
 				continue;
 			}
 			if (preg_match('/\bAS\s+(.*)/i', $selects[$j], $matches)) {
-				 $columnName = trim($matches[1],'"');
+				 $columnName = trim($matches[1], '"');
 			} else {
 				$columnName = trim(str_replace('"', '', $selects[$j]));
 			}

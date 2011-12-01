@@ -61,10 +61,10 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testCacheDirChange() {
-		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
+		$result = Cache::config('sessions', array('engine' => 'File', 'path' => TMP . 'sessions'));
 		$this->assertEquals($result['settings'], Cache::settings('sessions'));
 
-		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'tests'));
+		$result = Cache::config('sessions', array('engine' => 'File', 'path' => TMP . 'tests'));
 		$this->assertEquals($result['settings'], Cache::settings('sessions'));
 		$this->assertNotEquals($result['settings'], Cache::settings('default'));
 	}
@@ -276,7 +276,7 @@ class FileEngineTest extends CakeTestCase {
 	public function testRemoveWindowsSlashesFromCache() {
 		Cache::config('windows_test', array('engine' => 'File', 'isWindows' => true, 'prefix' => null, 'path' => TMP));
 
-		$expected = array (
+		$expected = array(
 			'C:\dev\prj2\sites\cake\libs' => array(
 				0 => 'C:\dev\prj2\sites\cake\libs', 1 => 'C:\dev\prj2\sites\cake\libs\view',
 				2 => 'C:\dev\prj2\sites\cake\libs\view\scaffolds', 3 => 'C:\dev\prj2\sites\cake\libs\view\pages',

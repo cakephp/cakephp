@@ -1291,7 +1291,7 @@ class ControllerTest extends CakeTestCase {
  */
 	public function testInvokeActionPrefixProtection() {
 		Router::reload();
-		Router::connect('/admin/:controller/:action/*', array('prefix'=>'admin'));
+		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
 
 		$url = new CakeRequest('test/admin_add/');
 		$url->addParams(array('controller' => 'test_controller', 'action' => 'admin_add'));

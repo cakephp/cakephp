@@ -46,12 +46,12 @@ class Test extends CakeTestModel {
  * @var array
  */
 	protected $_schema = array(
-		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
-		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
-		'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'id' => array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'notes' => array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
+		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
 
@@ -89,12 +89,12 @@ class TestAlias extends CakeTestModel {
  * @var array
  */
 	protected $_schema = array(
-		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
-		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
-		'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'id' => array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'notes' => array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
+		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
 
@@ -2543,7 +2543,7 @@ class Campaign extends CakeTestModel {
  *
  * @var array
  */
-	public $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name')));
+	public $hasMany = array('Ad' => array('fields' => array('id', 'campaign_id', 'name')));
 }
 
 /**
@@ -3845,7 +3845,7 @@ class Level extends CakeTestModel {
  * @var array
  */
 	public $hasMany = array(
-		'Group'=> array(
+		'Group' => array(
 			'className' => 'Group'
 		),
 		'User2' => array(
@@ -4056,9 +4056,9 @@ class Category2 extends CakeTestModel {
 		),
 		'Article2' => array(
 			'className' => 'Article2',
-			'order'=>'Article2.published_date DESC',
+			'order' => 'Article2.published_date DESC',
 			'foreignKey' => 'category_id',
-			'limit'=>'3')
+			'limit' => '3')
 	);
 
 /**
@@ -4363,7 +4363,7 @@ class ArticleFeatured2 extends CakeTestModel {
  * @var array
  */
 	public $hasMany = array(
-		'Comment2' => array('className'=>'Comment2', 'dependent' => true)
+		'Comment2' => array('className' => 'Comment2', 'dependent' => true)
 	);
 
 /**

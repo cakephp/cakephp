@@ -220,13 +220,13 @@ class ModelTask extends BakeTask {
 		}
 
 		$prompt = __d('cake_console', "Would you like to supply validation criteria \nfor the fields in your model?");
-		$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
+		$wannaDoValidation = $this->in($prompt, array('y', 'n'), 'y');
 		if (array_search($useTable, $this->_tables) !== false && strtolower($wannaDoValidation) == 'y') {
 			$validate = $this->doValidation($tempModel);
 		}
 
 		$prompt = __d('cake_console', "Would you like to define model associations\n(hasMany, hasOne, belongsTo, etc.)?");
-		$wannaDoAssoc = $this->in($prompt, array('y','n'), 'y');
+		$wannaDoAssoc = $this->in($prompt, array('y', 'n'), 'y');
 		if (strtolower($wannaDoAssoc) == 'y') {
 			$associations = $this->doAssociations($tempModel);
 		}
@@ -258,7 +258,7 @@ class ModelTask extends BakeTask {
 		}
 
 		$this->hr();
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y','n'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
 			$vars = compact('associations', 'validate', 'primaryKey', 'useTable', 'displayField');
@@ -487,7 +487,7 @@ class ModelTask extends BakeTask {
 		}
 
 		$associations = array(
-			'belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array()
+			'belongsTo' => array(), 'hasMany' => array(), 'hasOne' => array(), 'hasAndBelongsToMany' => array()
 		);
 
 		$associations = $this->findBelongsTo($model, $associations);
@@ -636,7 +636,7 @@ class ModelTask extends BakeTask {
 			if (!empty($associations[$type])) {
 				foreach ($associations[$type] as $i => $assoc) {
 					$prompt = "{$model->name} {$type} {$assoc['alias']}?";
-					$response = $this->in($prompt, array('y','n'), 'y');
+					$response = $this->in($prompt, array('y', 'n'), 'y');
 
 					if ('n' == strtolower($response)) {
 						unset($associations[$type][$i]);
@@ -659,7 +659,7 @@ class ModelTask extends BakeTask {
  */
 	public function doMoreAssociations($model, $associations) {
 		$prompt = __d('cake_console', 'Would you like to define some additional model associations?');
-		$wannaDoMoreAssoc = $this->in($prompt, array('y','n'), 'n');
+		$wannaDoMoreAssoc = $this->in($prompt, array('y', 'n'), 'n');
 		$possibleKeys = $this->_generatePossibleKeys();
 		while (strtolower($wannaDoMoreAssoc) == 'y') {
 			$assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
@@ -711,7 +711,7 @@ class ModelTask extends BakeTask {
 				$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
 				$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
 			}
-			$wannaDoMoreAssoc = $this->in(__d('cake_console', 'Define another association?'), array('y','n'), 'y');
+			$wannaDoMoreAssoc = $this->in(__d('cake_console', 'Define another association?'), array('y', 'n'), 'y');
 		}
 		return $associations;
 	}
@@ -833,7 +833,7 @@ class ModelTask extends BakeTask {
 		if (array_search($useTable, $this->_tables) === false) {
 			$this->out();
 			$this->out(__d('cake_console', "Given your model named '%s',\nCake would expect a database table named '%s'", $modelName, $fullTableName));
-			$tableIsGood = $this->in(__d('cake_console', 'Do you want to use this table?'), array('y','n'), 'y');
+			$tableIsGood = $this->in(__d('cake_console', 'Do you want to use this table?'), array('y', 'n'), 'y');
 		}
 		if (strtolower($tableIsGood) == 'n') {
 			$useTable = $this->in(__d('cake_console', 'What is the name of the table?'));
