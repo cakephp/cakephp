@@ -298,6 +298,7 @@ class ModelTask extends BakeTask {
  * @return string Name of field that is a primary key.
  */
 	public function findPrimaryKey($fields) {
+		$name = 'id';
 		foreach ($fields as $name => $field) {
 			if (isset($field['key']) && $field['key'] == 'primary') {
 				break;
