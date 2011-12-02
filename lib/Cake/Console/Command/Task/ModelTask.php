@@ -516,7 +516,7 @@ class ModelTask extends BakeTask {
  * Find belongsTo relations and add them to the associations list.
  *
  * @param Model $model Model instance of model being generated.
- * @param array $associations Array of inprogress associations
+ * @param array $associations Array of in progress associations
  * @return array $associations with belongsTo added in.
  */
 	public function findBelongsTo($model, $associations) {
@@ -545,7 +545,7 @@ class ModelTask extends BakeTask {
  * Find the hasOne and HasMany relations and add them to associations list
  *
  * @param Model $model Model instance being generated
- * @param array $associations Array of inprogress associations
+ * @param array $associations Array of in progress associations
  * @return array $associations with hasOne and hasMany added in.
  */
 	public function findHasOneAndMany($model, $associations) {

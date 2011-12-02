@@ -483,7 +483,7 @@ class CakeRequest implements ArrayAccess {
  * ### Callback detectors
  *
  * Callback detectors allow you to provide a 'callback' type to handle the check.  The callback will
- * recieve the request object as its only parameter.
+ * receive the request object as its only parameter.
  *
  * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
  *

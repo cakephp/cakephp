@@ -188,7 +188,7 @@ class Helper extends Object {
 	}
 
 /**
- * Provides backwards compatiblity access for setting values to the request object.
+ * Provides backwards compatibility access for setting values to the request object.
  *
  * @param string $name Name of the property being accessed.
  * @param mixed $value
@@ -504,7 +504,7 @@ class Helper extends Object {
 
 /**
  * Gets the currently-used model field of the rendering context.
- * Strips off fieldsuffixes such as year, month, day, hour, min, meridian
+ * Strips off field suffixes such as year, month, day, hour, min, meridian
  * when the current entity is longer than 2 elements.
  *
  * @return string

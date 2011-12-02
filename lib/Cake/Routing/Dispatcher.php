@@ -56,7 +56,7 @@ class Dispatcher {
  * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
  * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
- * want controller methods to be public and in-accesible by URL, then prefix them with a `_`.
+ * want controller methods to be public and in-accessible by URL, then prefix them with a `_`.
  * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
  * are also not accessible via URL.
  *

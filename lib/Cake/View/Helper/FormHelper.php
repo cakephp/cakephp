@@ -86,7 +86,7 @@ class FormHelper extends AppHelper {
 	protected $_inputDefaults = array();
 
 /**
- * An array of fieldnames that have been excluded from
+ * An array of field names that have been excluded from
  * the Token hash used by SecurityComponent's validatePost method
  *
  * @see FormHelper::_secure()
@@ -592,7 +592,7 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param mixed $field Reference to field to be secured.  Should be dot separted to indicate nesting.
+ * @param mixed $field Reference to field to be secured.  Should be dot separated to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
  */
@@ -931,10 +931,10 @@ class FormHelper extends AppHelper {
 
 			if (isset($type)) {
 				$map = array(
-					'string'  => 'text',	 'datetime'  => 'datetime',
+					'string' => 'text', 'datetime' => 'datetime',
 					'boolean' => 'checkbox', 'timestamp' => 'datetime',
-					'text'	=> 'textarea', 'time'	  => 'time',
-					'date'	=> 'date',	 'float'	 => 'number',
+					'text' => 'textarea', 'time' => 'time',
+					'date' => 'date', 'float' => 'number',
 					'integer' => 'number'
 				);
 

@@ -62,7 +62,7 @@ class CakeRoute {
 	protected $_greedy = false;
 
 /**
- * The compiled route regular expresssion
+ * The compiled route regular expression
  *
  * @var string
  */
@@ -343,7 +343,7 @@ class CakeRoute {
 	}
 
 /**
- * Apply persistent parameters to a url array. Persistant parameters are a special
+ * Apply persistent parameters to a url array. Persistent parameters are a special
  * key used during route creation to force route parameters to persist when omitted from
  * a url array.
  *

@@ -204,7 +204,7 @@ class AuthComponent extends Component {
 
 /**
  * Error to display when user attempts to access an object or action to which they do not have
- * acccess.
+ * access.
  *
  * @var string
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#AuthComponent::$authError

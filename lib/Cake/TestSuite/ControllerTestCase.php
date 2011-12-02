@@ -284,7 +284,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
  * - `models` Models to mock. Models are added to the ClassRegistry so they any
- *   time they are instatiated the mock will be created. Pass as key value pairs
+ *   time they are instantiated the mock will be created. Pass as key value pairs
  *   with the value being specific methods on the model to mock. If `true` or
  *   no value is passed, the entire model will be mocked.
  * - `components` Components to mock. Components are only mocked on this controller

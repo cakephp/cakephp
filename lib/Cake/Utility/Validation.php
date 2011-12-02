@@ -441,7 +441,7 @@ class Validation {
  * Check that value has a valid file extension.
  *
  * @param mixed $check Value to check
- * @param array $extensions file extenstions to allow
+ * @param array $extensions file extensions to allow
  * @return boolean Success
  */
 	public static function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {

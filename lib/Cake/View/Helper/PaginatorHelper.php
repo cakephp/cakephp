@@ -292,7 +292,7 @@ class PaginatorHelper extends AppHelper {
  *
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
- * - `direction` The default directon to use when this link isn't active.
+ * - `direction` The default direction to use when this link isn't active.
  *
  * @param string $key The name of the key that the recordset should be sorted.
  * @param string $title Title for the link. If $title is null $key will be used

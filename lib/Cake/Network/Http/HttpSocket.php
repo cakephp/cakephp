@@ -610,7 +610,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $uri Either A $uri array, or a request string. Will use $this->config if left empty.
  * @param string $uriTemplate The Uri template/format to use.
- * @return mixed A fully qualified URL formated according to $uriTemplate, or false on failure
+ * @return mixed A fully qualified URL formatted according to $uriTemplate, or false on failure
  */
 	protected function _buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
 		if (is_string($uri)) {
@@ -712,7 +712,7 @@ class HttpSocket extends CakeSocket {
 
 /**
  * This function can be thought of as a reverse to PHP5's http_build_query(). It takes a given query string and turns it into an array and
- * supports nesting by using the php bracket syntax. So this menas you can parse queries like:
+ * supports nesting by using the php bracket syntax. So this means you can parse queries like:
  *
  * - ?key[subKey]=value
  * - ?key[]=value1&key[]=value2
