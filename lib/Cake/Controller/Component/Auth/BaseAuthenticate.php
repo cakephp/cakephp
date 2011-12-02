@@ -90,7 +90,7 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Hash the plain text password so that it matches the hashed/encrytped password
+ * Hash the plain text password so that it matches the hashed/encrypted password
  * in the datasource.
  *
  * @param string $password The plain text password.
@@ -111,7 +111,7 @@ abstract class BaseAuthenticate {
 
 /**
  * Allows you to hook into AuthComponent::logout(),
- * and implement specialized logout behaviour.
+ * and implement specialized logout behavior.
  *
  * All attached authentication objects will have this method
  * called when a user logs out.

@@ -645,7 +645,7 @@ class HtmlHelper extends AppHelper {
  * Returns breadcrumbs as a (x)html list
  *
  * This method uses HtmlHelper::tag() to generate list and its elements. Works
- * similiary to HtmlHelper::getCrumbs(), so it uses options which every
+ * similar to HtmlHelper::getCrumbs(), so it uses options which every
  * crumb was added with.
  *
  * @param array $options Array of html attributes to apply to the generated list elements.

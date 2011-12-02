@@ -58,7 +58,7 @@ class TimeHelper extends AppHelper {
  * windows safe and i18n aware format.
  *
  * @param string $format Format with specifiers for strftime function.
- *    Accepts the special specifier %S which mimics th modifier S for date()
+ *    Accepts the special specifier %S which mimics the modifier S for date()
  * @param string $time UNIX timestamp
  * @return string windows safe and date() function compatible format for strftime
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -72,7 +72,7 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Auxiliary function to translate a matched specifier element from a regular expresion into
+ * Auxiliary function to translate a matched specifier element from a regular expression into
  * a windows safe and i18n aware specifier
  *
  * @param array $specifier match from regular expression

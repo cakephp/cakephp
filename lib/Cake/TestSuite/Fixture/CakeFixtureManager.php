@@ -43,7 +43,7 @@ class CakeFixtureManager {
 	protected $_loaded = array();
 
 /**
- * Holds the fixture classes that where ins	tantiated indexed by class name
+ * Holds the fixture classes that where instantiated indexed by class name
  *
  * @var array
  */
@@ -195,7 +195,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Trucantes the fixtures tables
+ * Truncates the fixtures tables
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void
@@ -213,7 +213,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Trucantes the fixtures tables
+ * Truncates the fixtures tables
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void

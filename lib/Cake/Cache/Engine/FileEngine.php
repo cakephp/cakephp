@@ -84,7 +84,7 @@ class FileEngine extends CacheEngine {
 /**
  * Garbage collection. Permanently remove all expired and deleted data
  *
- * @return boolean True if garbage collection was succesful, false on failure
+ * @return boolean True if garbage collection was successful, false on failure
  */
 	public function gc() {
 		return $this->clear(true);
@@ -273,7 +273,7 @@ class FileEngine extends CacheEngine {
 
 /**
  * Sets the current cache key this class is managing, and creates a writable SplFileObject
- * for the cache file the key is refering to.
+ * for the cache file the key is referring to.
  *
  * @param string $key The key
  * @param boolean $createKey Whether the key should be created if it doesn't exists, or not

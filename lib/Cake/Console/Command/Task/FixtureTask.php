@@ -91,7 +91,7 @@ class FixtureTask extends BakeTask {
 
 /**
  * Execution method always used for tasks
- * Handles dispatching to interactive, named, or all processeses.
+ * Handles dispatching to interactive, named, or all processes.
  *
  * @return void
  */
