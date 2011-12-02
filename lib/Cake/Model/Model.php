@@ -725,7 +725,7 @@ class Model extends Object {
 /**
  * Handles the lazy loading of model associations by looking in the association arrays for the requested variable
  *
- * @param string $name variable tested for existance in class
+ * @param string $name variable tested for existence in class
  * @return boolean true if the variable exists (if is a not loaded model association it will be created), false otherwise
  */
 	public function __isset($name) {
@@ -1395,7 +1395,7 @@ class Model extends Object {
  * Returns a list of fields from the database, and sets the current model
  * data (Model::$data) with the record found.
  *
- * @param mixed $fields String of single fieldname, or an array of fieldnames.
+ * @param mixed $fields String of single field name, or an array of field names.
  * @param mixed $id The ID of the record to read
  * @return array Array of database fields, or false if not found
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-read
@@ -1850,7 +1850,7 @@ class Model extends Object {
 	}
 
 /**
- * Backwards compatible passtrough method for:
+ * Backwards compatible passthrough method for:
  * saveMany(), validateMany(), saveAssociated() and validateAssociated()
  *
  * Saves multiple individual records for a single model; Also works with a single record, as well as

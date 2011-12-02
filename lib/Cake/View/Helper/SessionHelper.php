@@ -90,7 +90,7 @@ class SessionHelper extends AppHelper {
  * echo $this->Session->flash('flash', array('params' => array('name' => $user['User']['name'])));
  * }}}
  *
- * This would pass the current user's name into the flash message, so you could create peronsonalized
+ * This would pass the current user's name into the flash message, so you could create personalized
  * messages without the controller needing access to that data.
  *
  * Lastly you can choose the element that is rendered when creating the flash message. Using

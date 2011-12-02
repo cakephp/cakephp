@@ -135,7 +135,7 @@ class DboSource extends DataSource {
 	protected $_queriesLogMax = 200;
 
 /**
- * Caches serialzed results of executed queries
+ * Caches serialized results of executed queries
  *
  * @var array Maximum number of queries in the queries log.
  */
@@ -344,7 +344,7 @@ class DboSource extends DataSource {
 
 /**
  * Returns an object to represent a database identifier in a query. Expression objects
- * are not sanitized or esacped.
+ * are not sanitized or escaped.
  *
  * @param string $identifier A SQL expression to be used as an identifier
  * @return stdClass An object representing a database identifier to be used in a query
@@ -358,7 +358,7 @@ class DboSource extends DataSource {
 
 /**
  * Returns an object to represent a database expression in a query.  Expression objects
- * are not sanitized or esacped.
+ * are not sanitized or escaped.
  *
  * @param string $expression An arbitrary SQL expression to be inserted into a query.
  * @return stdClass An object representing a database expression to be used in a query
@@ -418,7 +418,7 @@ class DboSource extends DataSource {
  * @param array $params list of params to be bound to query
  * @param array $prepareOptions Options to be used in the prepare statement
  * @return mixed PDOStatement if query executes with no problem, true as the result of a successful, false on error
- * query returning no rows, suchs as a CREATE statement, false otherwise
+ * query returning no rows, such as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$sql = trim($sql);
@@ -744,7 +744,7 @@ class DboSource extends DataSource {
  * A read will either return the value or null.
  *
  * @param string $method Name of the method being cached.
- * @param string $key The keyname for the cache operation.
+ * @param string $key The key name for the cache operation.
  * @param mixed $value The value to cache into memory.
  * @return mixed Either null on failure, or the value if its set.
  */
@@ -1791,7 +1791,7 @@ class DboSource extends DataSource {
  * @param array $fields
  * @param boolean $quoteValues If values should be quoted, or treated as SQL snippets
  * @param boolean $alias Include the model alias in the field name
- * @return array Fields and values, quoted and preparted
+ * @return array Fields and values, quoted and prepared
  */
 	protected function _prepareUpdateFields($model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
@@ -2048,7 +2048,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param mixed $conditions Array of conditions, conditions string, null or false. If an array of conditions,
- *   or string conditions those conditions will be returned.  With other values the model's existance will be checked.
+ *   or string conditions those conditions will be returned.  With other values the model's existence will be checked.
  *   If the model doesn't exist a null or false will be returned depending on the input value.
  * @param boolean $useAlias Use model aliases rather than table names when generating conditions
  * @return mixed Either null, false, $conditions or an array of default conditions to use.
@@ -2110,7 +2110,7 @@ class DboSource extends DataSource {
  * Converts model virtual fields into sql expressions to be fetched later
  *
  * @param Model $model
- * @param string $alias Alias tablename
+ * @param string $alias Alias table name
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
@@ -2128,7 +2128,7 @@ class DboSource extends DataSource {
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
- * @param string $alias Alias tablename
+ * @param string $alias Alias table name
  * @param mixed $fields
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
@@ -2505,7 +2505,7 @@ class DboSource extends DataSource {
  * Auxiliary function to quote matches `Model.fields` from a preg_replace_callback call
  *
  * @param string $match matched string
- * @return string quoted strig
+ * @return string quoted string
  */
 	protected function _quoteMatchedField($match) {
 		if (is_numeric($match[0])) {

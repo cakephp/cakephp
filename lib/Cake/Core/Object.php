@@ -55,7 +55,7 @@ class Object {
  * or tie plugins into a main application. requestAction can be used to return rendered views
  * or fetch the return value from controller actions.
  *
- * Under the hood this method uses Router::reverse() to convert the $url parmeter into a string
+ * Under the hood this method uses Router::reverse() to convert the $url parameter into a string
  * URL.  You should use URL formats that are compatible with Router::reverse()
  *
  * #### Passing POST and GET data
@@ -64,7 +64,7 @@ class Object {
  * GET data.  The `$extra['data']` parameter allows POST data simulation.
  *
  * @param mixed $url String or array-based url.  Unlike other url arrays in CakePHP, this
- *    url will not automatically handle passed and named arguments in the $url paramenter.
+ *    url will not automatically handle passed and named arguments in the $url parameter.
  * @param array $extra if array includes the key "return" it sets the AutoRender to true.  Can
  *    also be used to submit GET/POST data, and named/passed arguments.
  * @return mixed Boolean true or false on success/failure, or contents
@@ -144,7 +144,7 @@ class Object {
 	}
 
 /**
- * Convience method to write a message to CakeLog.  See CakeLog::write()
+ * Convenience method to write a message to CakeLog.  See CakeLog::write()
  * for more information on writing to logs.
  *
  * @param string $msg Log message

@@ -131,7 +131,7 @@ class Sqlite extends DboSource {
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -454,7 +454,7 @@ class Sqlite extends DboSource {
 	}
 
 /**
- * Overrides DboSource::index to handle SQLite indexe introspection
+ * Overrides DboSource::index to handle SQLite index introspection
  * Returns an array of the indexes in given table name.
  *
  * @param string $model Name of model to inspect

@@ -295,7 +295,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * Requires the `Drag` and `Drag.Move` plugins from MootoolsMore
  *
  * Droppables in Mootools function differently from other libraries.  Droppables
- * are implemented as an extension of Drag.  So in addtion to making a get() selection for
+ * are implemented as an extension of Drag.  So in addition to making a get() selection for
  * the droppable element. You must also provide a selector rule to the draggable element. Furthermore,
  * Mootools droppables inherit all options from Drag.
  *
