@@ -1,13 +1,5 @@
 <?php
 /**
- * A single Route used by the Router to connect requests to
- * parameter maps.
- *
- * Not normally created as a standalone.  Use Router::connect() to create
- * Routes for your application.
- *
- * PHP5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,9 +8,19 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Routing.Route
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+App::uses('Set', 'Utility');
+
+/**
+ * A single Route used by the Router to connect requests to
+ * parameter maps.
+ *
+ * Not normally created as a standalone.  Use Router::connect() to create
+ * Routes for your application.
+ *
+ * @package Cake.Routing.Route
  */
 class CakeRoute {
 
@@ -475,7 +477,8 @@ class CakeRoute {
 			$named = array();
 			foreach ($params['named'] as $key => $value) {
 				if (is_array($value)) {
-					foreach ($value as $namedKey => $namedValue) {
+					$flat = Set::flatten($value, '][');
+					foreach ($flat as $namedKey => $namedValue) {
 						$named[] = $key . "[$namedKey]" . $separator . rawurlencode($namedValue);
 					}
 				} else {
