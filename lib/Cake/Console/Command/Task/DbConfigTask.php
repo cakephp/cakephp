@@ -16,12 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
+
 /**
  * Task class for creating and updating the database configuration file.
  *
  * @package       Cake.Console.Command.Task
  */
-class DbConfigTask extends Shell {
+class DbConfigTask extends AppShell {
 
 /**
  * path to CONFIG directory

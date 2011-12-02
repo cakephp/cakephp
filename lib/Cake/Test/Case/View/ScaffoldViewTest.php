@@ -118,39 +118,39 @@ class ScaffoldViewTest extends CakeTestCase {
 		$ScaffoldView = new TestScaffoldView($this->Controller);
 		$result = $ScaffoldView->testGetFilename('index');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'index.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('edit');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('add');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('view');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'view.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_index');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'index.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_view');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'view.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_edit');
 		$expected =CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_add');
 		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('error');
 		$expected = CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$Controller = new ScaffoldViewMockController($this->request);
 		$Controller->scaffold = 'admin';
@@ -160,11 +160,11 @@ class ScaffoldViewTest extends CakeTestCase {
 		$ScaffoldView = new TestScaffoldView($Controller);
 		$result = $ScaffoldView->testGetFilename('admin_edit');
 		$expected = CAKE . 'Test' . DS . 'test_app' .DS . 'View' . DS . 'Posts' . DS . 'scaffold.form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('edit');
 		$expected = CAKE . 'Test' . DS . 'test_app' .DS . 'View' . DS . 'Posts' . DS . 'scaffold.form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$Controller = new ScaffoldViewMockController($this->request);
 		$Controller->scaffold = 'admin';
@@ -180,12 +180,12 @@ class ScaffoldViewTest extends CakeTestCase {
 		$result = $ScaffoldView->testGetFilename('admin_add');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'
 			. DS .'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'scaffold.form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('add');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'
 			. DS .'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'scaffold.form.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		Configure::write('Routing.prefixes', $_admin);
 	}
@@ -204,7 +204,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$result = $ScaffoldView->testGetFilename('index');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
 			. 'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'scaffold.index.ctp';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -237,13 +237,13 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertPattern('#<h2>Scaffold Mock</h2>#', $result);
-		$this->assertPattern('#<table cellpadding="0" cellspacing="0">#', $result);
+		$this->assertRegExp('#<h2>Scaffold Mock</h2>#', $result);
+		$this->assertRegExp('#<table cellpadding="0" cellspacing="0">#', $result);
 
-		$this->assertPattern('#<a href="/scaffold_users/view/1">1</a>#', $result); //belongsTo links
-		$this->assertPattern('#<li><a href="/scaffold_mock/add">New Scaffold Mock</a></li>#', $result);
-		$this->assertPattern('#<li><a href="/scaffold_users">List Scaffold Users</a></li>#', $result);
-		$this->assertPattern('#<li><a href="/scaffold_comments/add">New Comment</a></li>#', $result);
+		$this->assertRegExp('#<a href="/scaffold_users/view/1">1</a>#', $result); //belongsTo links
+		$this->assertRegExp('#<li><a href="/scaffold_mock/add">New Scaffold Mock</a></li>#', $result);
+		$this->assertRegExp('#<li><a href="/scaffold_users">List Scaffold Users</a></li>#', $result);
+		$this->assertRegExp('#<li><a href="/scaffold_comments/add">New Comment</a></li>#', $result);
 	}
 
 /**
@@ -276,16 +276,16 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>View Scaffold Mock<\/h2>/', $result);
-		$this->assertPattern('/<dl>/', $result);
+		$this->assertRegExp('/<h2>View Scaffold Mock<\/h2>/', $result);
+		$this->assertRegExp('/<dl>/', $result);
 		//TODO: add specific tests for fields.
-		$this->assertPattern('/<a href="\/scaffold_users\/view\/1">1<\/a>/', $result); //belongsTo links
-		$this->assertPattern('/<li><a href="\/scaffold_mock\/edit\/1">Edit Scaffold Mock<\/a>\s<\/li>/', $result);
-		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete Scaffold Mock<\/a>\s*<\/li>/', $result);
+		$this->assertRegExp('/<a href="\/scaffold_users\/view\/1">1<\/a>/', $result); //belongsTo links
+		$this->assertRegExp('/<li><a href="\/scaffold_mock\/edit\/1">Edit Scaffold Mock<\/a>\s<\/li>/', $result);
+		$this->assertRegExp('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete Scaffold Mock<\/a>\s*<\/li>/', $result);
 		//check related table
-		$this->assertPattern('/<div class="related">\s*<h3>Related Scaffold Comments<\/h3>\s*<table cellpadding="0" cellspacing="0">/', $result);
-		$this->assertPattern('/<li><a href="\/scaffold_comments\/add">New Comment<\/a><\/li>/', $result);
-		$this->assertNoPattern('/<th>JoinThing<\/th>/', $result);
+		$this->assertRegExp('/<div class="related">\s*<h3>Related Scaffold Comments<\/h3>\s*<table cellpadding="0" cellspacing="0">/', $result);
+		$this->assertRegExp('/<li><a href="\/scaffold_comments\/add">New Comment<\/a><\/li>/', $result);
+		$this->assertNotRegExp('/<th>JoinThing<\/th>/', $result);
 	}
 
 /**
@@ -327,7 +327,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertContains('input name="data[ScaffoldMock][title]" maxlength="255" type="text" value="First Article" id="ScaffoldMockTitle"', $result);
 		$this->assertContains('input name="data[ScaffoldMock][published]" maxlength="1" type="text" value="Y" id="ScaffoldMockPublished"', $result);
 		$this->assertContains('textarea name="data[ScaffoldMock][body]" cols="30" rows="6" id="ScaffoldMockBody"', $result);
-		$this->assertPattern('/<a href="\#" onclick="if[^>]*>Delete<\/a><\/li>/', $result);
+		$this->assertRegExp('/<a href="\#" onclick="if[^>]*>Delete<\/a><\/li>/', $result);
 	}
 
 /**
@@ -367,10 +367,10 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Scaffold Mock<\/h2>/', $result);
-		$this->assertPattern('/<table cellpadding="0" cellspacing="0">/', $result);
+		$this->assertRegExp('/<h2>Scaffold Mock<\/h2>/', $result);
+		$this->assertRegExp('/<table cellpadding="0" cellspacing="0">/', $result);
 		//TODO: add testing for table generation
-		$this->assertPattern('/<li><a href="\/admin\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
+		$this->assertRegExp('/<li><a href="\/admin\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
 
 		Configure::write('Routing.prefixes', $_backAdmin);
 	}
@@ -410,8 +410,8 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertPattern('#admin/scaffold_mock/edit/1#', $result);
-		$this->assertPattern('#Scaffold Mock#', $result);
+		$this->assertRegExp('#admin/scaffold_mock/edit/1#', $result);
+		$this->assertRegExp('#Scaffold Mock#', $result);
 	}
 
 /**
@@ -451,10 +451,10 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Scaffold Mock<\/h2>/', $result);
-		$this->assertPattern('/<table cellpadding="0" cellspacing="0">/', $result);
+		$this->assertRegExp('/<h2>Scaffold Mock<\/h2>/', $result);
+		$this->assertRegExp('/<table cellpadding="0" cellspacing="0">/', $result);
 		//TODO: add testing for table generation
-		$this->assertPattern('/<li><a href="\/member\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
+		$this->assertRegExp('/<li><a href="\/member\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
 
 		Configure::write('Routing.prefixes', $_backAdmin);
 	}

@@ -569,6 +569,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $name The dot separated name for the field.
  * @return mixed Either null, or the list of fields.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::unlockField
  */
 	public function unlockField($name = null) {
 		if ($name === null) {
@@ -590,7 +591,7 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param mixed $field Reference to field to be secured
+ * @param mixed $field Reference to field to be secured.  Should be dot separted to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
  */
@@ -1465,7 +1466,8 @@ class FormHelper extends AppHelper {
 			$title = h($title);
 		}
 		if (isset($options['name'])) {
-			$this->_secure($options['secure'], $options['name']);
+			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
+			$this->_secure($options['secure'], $name);
 		}
 		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
 	}
@@ -1609,7 +1611,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($options['name'])) {
-			$this->_secure($options['secure'], $options['name']);
+			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
+			$this->_secure($options['secure'], $name);
 		}
 		unset($options['secure']);
 

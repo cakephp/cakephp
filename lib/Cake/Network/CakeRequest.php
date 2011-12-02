@@ -184,7 +184,7 @@ class CakeRequest implements ArrayAccess {
 			$query = $_GET;
 		}
 
-		unset($query['/' . $this->url]);
+		unset($query['/' . str_replace('.', '_', $this->url)]);
 		if (strpos($this->url, '?') !== false) {
 			list(, $querystr) = explode('?', $this->url);
 			parse_str($querystr, $queryArgs);
@@ -411,6 +411,17 @@ class CakeRequest implements ArrayAccess {
 			return $this->params[$name];
 		}
 		return null;
+	}
+
+/**
+ * Magic isset method allows isset/empty checks
+ * on routing parameters.
+ *
+ * @param string $name The property being accessed.
+ * @return bool Existence
+ */
+	public function __isset($name) {
+		return isset($this->params[$name]);
 	}
 
 /**

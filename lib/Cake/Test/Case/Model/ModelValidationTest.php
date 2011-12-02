@@ -53,7 +53,7 @@ class ModelValidationTest extends BaseModelTest {
 			'or' => true,
 			'ignore_on_same' => 'id'
 		);
-		$this->assertEqual($TestModel->validatorParams, $expected);
+		$this->assertEquals($TestModel->validatorParams, $expected);
 
 		$TestModel->validate['title'] = array(
 			'rule' => 'customValidatorWithMessage',
@@ -63,7 +63,7 @@ class ModelValidationTest extends BaseModelTest {
 			'title' => array('This field will *never* validate! Muhahaha!')
 		);
 
-		$this->assertEqual($TestModel->invalidFields(), $expected);
+		$this->assertEquals($TestModel->invalidFields(), $expected);
 
 		$TestModel->validate['title'] = array(
 			'rule' => array('customValidatorWithSixParams', 'one', 'two', null, 'four'),
@@ -88,7 +88,7 @@ class ModelValidationTest extends BaseModelTest {
 			),
 			'six' => 6
 		);
-		$this->assertEqual($TestModel->validatorParams, $expected);
+		$this->assertEquals($TestModel->validatorParams, $expected);
 
 		$TestModel->validate['title'] = array(
 			'rule' => array('customValidatorWithSixParams', 'one', array('two'), null, 'four', array('five' => 5)),
@@ -113,7 +113,7 @@ class ModelValidationTest extends BaseModelTest {
 				'required' => true
 			)
 		);
-		$this->assertEqual($TestModel->validatorParams, $expected);
+		$this->assertEquals($TestModel->validatorParams, $expected);
 	}
 
 /**
@@ -137,14 +137,14 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'title' => array('This field cannot be left blank')
 		);
-		$this->assertEqual($TestModel->validationErrors, $expected);
+		$this->assertEquals($TestModel->validationErrors, $expected);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name')));
 		$expected = array(
 			'name' => array('This field cannot be left blank')
 		);
-		$this->assertEqual($TestModel->validationErrors, $expected);
+		$this->assertEquals($TestModel->validationErrors, $expected);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
@@ -152,15 +152,15 @@ class ModelValidationTest extends BaseModelTest {
 			'name' => array('This field cannot be left blank'),
 			'title' => array('This field cannot be left blank')
 		);
-		$this->assertEqual($TestModel->validationErrors, $expected);
+		$this->assertEquals($TestModel->validationErrors, $expected);
 		$TestModel->validationErrors = array();
 
 		$TestModel->whitelist = array('name');
 		$TestModel->invalidFields();
 		$expected = array('name' => array('This field cannot be left blank'));
-		$this->assertEqual($TestModel->validationErrors, $expected);
+		$this->assertEquals($TestModel->validationErrors, $expected);
 
-		$this->assertEqual($TestModel->validate, $validate);
+		$this->assertEquals($TestModel->validate, $validate);
 	}
 
 /**
@@ -184,7 +184,7 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->save(array('name' => '#$$#', 'title' => '$$$$'));
 
 		$expected = array('name' => array('This field cannot be left blank'));
-		$this->assertEqual($TestModel->validationErrors, $expected);
+		$this->assertEquals($TestModel->validationErrors, $expected);
 	}
 
 /**
@@ -515,7 +515,7 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'title' => array('tooShort')
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$TestModel->validate = array(
 			'title' => array(
@@ -536,7 +536,7 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'title' => array('tooShort', 'onlyLetters')
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -569,9 +569,9 @@ class ModelValidationTest extends BaseModelTest {
 		$Something->create();
 		$result = $Something->save($data);
 		$this->assertFalse($result, 'Save occured even when with models failed. %s');
-		$this->assertEqual($JoinThing->validationErrors, $expectedError);
+		$this->assertEquals($JoinThing->validationErrors, $expectedError);
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
-		$this->assertIdentical($count, 0);
+		$this->assertSame($count, 0);
 
 		$data = array(
 			'Something' => array(
@@ -592,7 +592,7 @@ class ModelValidationTest extends BaseModelTest {
 		$joinRecords = $JoinThing->find('count', array(
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
 		));
-		$this->assertEqual($joinRecords, 0, 'Records were saved on the join table. %s');
+		$this->assertEquals($joinRecords, 0, 'Records were saved on the join table. %s');
 	}
 
 /**
@@ -621,20 +621,20 @@ class ModelValidationTest extends BaseModelTest {
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'only'));
 		$this->assertFalse($result);
-		$this->assertEqual($JoinThing->validationErrors, $expectedError);
+		$this->assertEquals($JoinThing->validationErrors, $expectedError);
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'first'));
 		$this->assertFalse($result);
-		$this->assertEqual($JoinThing->validationErrors, $expectedError);
+		$this->assertEquals($JoinThing->validationErrors, $expectedError);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
-		$this->assertIdentical($count, 0);
+		$this->assertSame($count, 0);
 
 		$joinRecords = $JoinThing->find('count', array(
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
 		));
-		$this->assertEqual($joinRecords, 0, 'Records were saved on the join table. %s');
+		$this->assertEquals($joinRecords, 0, 'Records were saved on the join table. %s');
 	}
 
 /**
@@ -671,12 +671,12 @@ class ModelValidationTest extends BaseModelTest {
 
 		$id = $Author->id;
 		$count = $Author->find('count', array('conditions' => array('Author.id' => $id)));
-		$this->assertIdentical($count, 1);
+		$this->assertSame($count, 1);
 
 		$count = $Post->find('count', array(
 			'conditions' => array('Post.author_id' => $id)
 		));
-		$this->assertEqual($count, count($data['Post']));
+		$this->assertEquals($count, count($data['Post']));
 	}
 
 /**

@@ -268,8 +268,8 @@ class AuthComponent extends Component {
 			return true;
 		}
 
-		$methods = array_flip($controller->methods);
-		$action = $controller->request->params['action'];
+		$methods = array_flip(array_map('strtolower', $controller->methods));
+		$action = strtolower($controller->request->params['action']);
 
 		$isMissingAction = (
 			$controller->scaffold === false &&
@@ -296,7 +296,7 @@ class AuthComponent extends Component {
 		$allowedActions = $this->allowedActions;
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
-			in_array($action, $allowedActions)
+			in_array($action, array_map('strtolower', $allowedActions))
 		);
 
 		if ($loginAction != $url && $isAllowed) {
@@ -337,8 +337,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Attempts to introspect the correct values for object properties including
- * $userModel and $sessionKey.
+ * Attempts to introspect the correct values for object properties.
  *
  * @return boolean
  */

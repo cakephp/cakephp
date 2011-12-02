@@ -16,6 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Shell', 'Console');
+
 /**
  * This is a placeholder class.
  * Create the same file in app/Console/Command/AppShell.php

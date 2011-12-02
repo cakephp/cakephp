@@ -84,55 +84,55 @@ class ExtractTaskTest extends CakeTestCase {
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
 		$pattern = '/"Content-Type\: text\/plain; charset\=utf-8/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/"Content-Transfer-Encoding\: 8bit/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/"Plural-Forms\: nplurals\=INTEGER; plural\=EXPRESSION;/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		// home.ctp
 		$pattern = '/msgid "Your tmp directory is writable."\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Your tmp directory is NOT writable."\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "The %s is being used for caching. To change the config edit ';
 		$pattern .= 'APP\/config\/core.php "\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Your cache is NOT working. Please check ';
 		$pattern .= 'the settings in APP\/config\/core.php"\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Your database configuration file is present."\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Your database configuration file is NOT present."\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Rename config\/database.php.default to ';
 		$pattern .= 'config\/database.php"\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Cake is able to connect to the database."\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Cake is NOT able to connect to the database."\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "Editing this Page"\nmsgstr ""\n/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "To change the content of this page, create: APP\/views\/pages\/home\.ctp/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/To change its layout, create: APP\/views\/layouts\/default\.ctp\./s';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		// extract.ctp
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:6\n';
 		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:7\n';
 		$pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
 		$pattern .= '\#: (\\\\|\/)home\.ctp:99\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:17\nmsgid "';
 		$pattern .= 'Hot features!';
@@ -140,20 +140,20 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
 		$pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
 		$pattern .= '"\nmsgstr ""/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($this->path . DS . 'domain.pot');
 
 		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
-		$this->assertNoPattern($pattern, $result);
+		$this->assertNotRegExp($pattern, $result);
 		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
-		$this->assertNoPattern($pattern, $result);
+		$this->assertNotRegExp($pattern, $result);
 
 		$pattern = '/msgid "You have %d new message \(domain\)."\nmsgid_plural "You have %d new messages \(domain\)."/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 	}
 
 /**
@@ -202,7 +202,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
 		$pattern = '/msgid "Add User"/';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 	}
 
 /**
@@ -228,7 +228,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
-		$this->assertNoPattern('#TestPlugin#', $result);
+		$this->assertNotRegExp('#TestPlugin#', $result);
 	}
 
 /**
@@ -253,7 +253,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
-		$this->assertNoPattern('#Pages#', $result);
+		$this->assertNotRegExp('#Pages#', $result);
 		$this->assertContains('translate.ctp:1', $result);
 		$this->assertContains('This is a translatable string', $result);
 	}
@@ -285,22 +285,22 @@ class ExtractTaskTest extends CakeTestCase {
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
 		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field title#', '\\');
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field body#', '\\');
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "You may enter up to %s chars \(minimum is %s chars\)"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post body is required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post body is super required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 	}
 
 /**
@@ -330,19 +330,19 @@ class ExtractTaskTest extends CakeTestCase {
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
 		$pattern = preg_quote('#Plugin' . DS. 'TestPlugin' . DS. 'Model' . DS. 'TestPluginPost.php:validation for field title#', '\\');
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = preg_quote('#Plugin' . DS. 'TestPlugin' . DS. 'Model' . DS. 'TestPluginPost.php:validation for field body#', '\\');
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post body is required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post body is super required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 	}
 
 
@@ -370,21 +370,21 @@ class ExtractTaskTest extends CakeTestCase {
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
 		$pattern =  preg_quote('#Model' . DS. 'TestPluginPost.php:validation for field title#', '\\');
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern =  preg_quote('#Model' . DS. 'TestPluginPost.php:validation for field body#', '\\');
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post body is required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post body is super required"#';
-		$this->assertPattern($pattern, $result);
+		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
-		$this->assertNoPattern($pattern, $result);
+		$this->assertNotRegExp($pattern, $result);
 	}
 }

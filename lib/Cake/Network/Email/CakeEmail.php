@@ -546,9 +546,9 @@ class CakeEmail {
 	}
 
 /**
- * Set Subject
+ * Get/Set Subject.
  *
- * @param string $subject
+ * @param null|string $subject
  * @return mixed
  */
 	public function subject($subject = null) {
