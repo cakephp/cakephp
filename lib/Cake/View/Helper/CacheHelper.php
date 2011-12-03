@@ -283,7 +283,7 @@ class CacheHelper extends AppHelper {
 				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->helpers)) . '\'));
 				$controller->layout = $this->layout = \'' . $this->_View->layout. '\';
 				$controller->theme = $this->theme = \'' . $this->_View->theme . '\';
-				$controller->viewVars = $this->viewVars = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->viewVars)) . '\'));
+				$controller->viewVars = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->viewVars)) . '\'));
 				Router::setRequestInfo($controller->request);
 				$this->request = $request;';
 
@@ -294,6 +294,7 @@ class CacheHelper extends AppHelper {
 		}
 
 		$file .= '
+				$this->viewVars = $controller->viewVars;
 				$this->loadHelpers();
 				extract($this->viewVars, EXTR_SKIP);
 		?>';
