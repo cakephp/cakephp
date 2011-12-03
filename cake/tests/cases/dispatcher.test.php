@@ -1208,6 +1208,31 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
+ * Check that a sub-directory containing app|webroot doesn't get mishandled when re-writing is off.
+ *
+ * @return void
+ */
+	function testBaseUrlWithAppAndWebrootInDirname() {
+		Configure::write('App.baseUrl', '/approval/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
+		$Dispatcher =& new Dispatcher();
+		$result = $Dispatcher->baseUrl();
+
+		$this->assertEqual('/approval/index.php', $result);
+		$this->assertEqual('/approval/app/webroot/', $Dispatcher->webroot);
+
+		Configure::write('App.baseUrl', '/webrootable/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
+		$Dispatcher =& new Dispatcher();
+		$result = $Dispatcher->baseUrl();
+
+		$this->assertEqual('/webrootable/index.php', $result);
+		$this->assertEqual('/webrootable/app/webroot/', $Dispatcher->webroot);
+	}
+
+/**
  * test baseUrl with no rewrite and using the top level index.php.
  *
  * @return void
