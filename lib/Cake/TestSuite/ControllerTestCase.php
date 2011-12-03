@@ -263,12 +263,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
-		if ($options['return'] != 'result') {
-			if (isset($this->controller->View)) {
-				$this->vars = $this->controller->View->viewVars;
-				$this->view = $this->controller->View->_viewNoLayout;
-			}
-			$this->contents = $this->controller->response->body();
+		$this->vars = $this->controller->viewVars;
+		$this->contents = $this->controller->response->body();
+		if (isset($this->controller->View)) {
+			$this->view = $this->controller->View->_viewNoLayout;
 		}
 		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
