@@ -567,13 +567,14 @@ class RssHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testItemEnclosureLength() {
-		$tmpFile = $this->_getWwwTmpFile();
-
-		if (file_exists($tmpFile)) {
-			unlink($tmpFile);
+		if (!is_writable(WWW_ROOT)) {
+			$this->markTestSkipped(__d('cake_dev', 'Webroot is not writable.'));
 		}
+		$testExists = is_dir(WWW_ROOT . 'tests');
 
-		$File = new File($tmpFile, true, '0777');
+		$tmpFile = WWW_ROOT . 'tests' . DS . 'cakephp.file.test.tmp';
+		$File = new File($tmpFile, true);
+
 		$this->assertTrue($File->write('123'), 'Could not write to ' . $tmpFile);
 		clearstatcache(true, $tmpFile);
 
@@ -637,15 +638,12 @@ class RssHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		unlink($tmpFile);
-	}
+		$File->delete();
 
-/**
- * testTime method
- *
- * @return void
- */
-	public function testTime() {
+		if (!$testExists) {
+			$Folder = new Folder(WWW_ROOT . 'tests');
+			$Folder->delete();
+		}
 	}
 
 /**
@@ -676,21 +674,4 @@ class RssHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
-/**
- * getWwwTmpFile method
- *
- * @param bool $paintSkip
- * @return void
- */
-	function _getWwwTmpFile() {
-		$path = WWW_ROOT . 'tests' . DS;
-		$tmpFile = $path. 'cakephp.file.test.tmp';
-		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
-			return $tmpFile;
-		};
-
-		$message = __d('cake_dev', '%s is not writeable', $path );
-		$this->markTestSkipped($message);
-		return false;
-	}
 }

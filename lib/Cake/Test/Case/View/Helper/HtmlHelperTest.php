@@ -373,7 +373,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testImageTagWithTheme() {
-		$this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme.');
+		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
+		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		App::uses('File', 'Utility');
 
@@ -406,6 +407,10 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$dir = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$dir->delete();
+		if (!$themeExists) {
+			$dir = new Folder(WWW_ROOT . 'theme');
+			$dir->delete();
+		}
 	}
 
 /**
@@ -682,7 +687,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testScriptInTheme() {
-		$this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme.');
+		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
+		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		App::uses('File', 'Utility');
 
@@ -703,7 +709,11 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$Folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$Folder->delete();
-		App::build();
+
+		if (!$themeExists) {
+			$dir = new Folder(WWW_ROOT . 'theme');
+			$dir->delete();
+		}
 	}
 
 /**
