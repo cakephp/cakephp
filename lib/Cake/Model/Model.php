@@ -1184,12 +1184,14 @@ class Model extends Object {
 				}
 			}
 
-			$format = $this->getDataSource()->columns[$type]['format'];
-			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
-			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
-			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date->format($format);
+				$format = $this->getDataSource()->columns[$type]['format'];
+				foreach (array('m', 'd', 'H', 'i', 's') as $index) {
+					if (isset($date[$index])) {
+						$date[$index] = sprintf('%02d', $date[$index]);
+					}
+				}
+				return str_replace(array_keys($date), array_values($date), $format);
 			}
 		}
 		return $data;
