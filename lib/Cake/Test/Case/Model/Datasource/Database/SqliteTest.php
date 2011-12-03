@@ -262,6 +262,10 @@ class SqliteTest extends CakeTestCase {
 	public function testDescribe() {
 		$this->loadFixtures('User');
 		$Model = new Model(array('name' => 'User', 'ds' => 'test', 'table' => 'users'));
+
+		$this->Dbo->cacheSources = true;
+		Configure::write('Cache.disable', false);
+
 		$result = $this->Dbo->describe($Model);
 		$expected = array(
 			'id' => array(
@@ -299,6 +303,9 @@ class SqliteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->describe($Model->useTable);
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::read('test_users', '_cake_model_');
 		$this->assertEquals($expected, $result);
 	}
 

@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('String', 'Utility');
@@ -27,7 +28,7 @@ App::uses('Security', 'Utility');
  *
  * @package       Cake.Console.Command.Task
  */
-class ProjectTask extends Shell {
+class ProjectTask extends AppShell {
 
 /**
  * configs path (used in testing).
@@ -61,7 +62,7 @@ class ProjectTask extends Shell {
 		$response = false;
 		while ($response == false && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
 			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
-			$response = $this->in($prompt, array('y','n'), 'n');
+			$response = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($response) === 'n') {
 				$response = $project = false;
 			}

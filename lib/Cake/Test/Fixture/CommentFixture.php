@@ -38,8 +38,8 @@ class CommentFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'article_id' => array('type' => 'integer', 'null'=>false),
-		'user_id' => array('type' => 'integer', 'null'=>false),
+		'article_id' => array('type' => 'integer', 'null' => false),
+		'user_id' => array('type' => 'integer', 'null' => false),
 		'comment' => 'text',
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'created' => 'datetime',

@@ -226,7 +226,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Convert all links and email adresses to HTML links.
+ * Convert all links and email addresses to HTML links.
  *
  * ### Options
  *
@@ -405,7 +405,7 @@ class TextHelper extends AppHelper {
  *
  * @param array $list The list to be joined
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
- * @param string $separator The separator used to join all othe other items together. Defaults to ', '
+ * @param string $separator The separator used to join all the other items together. Defaults to ', '
  * @return string The glued together string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */

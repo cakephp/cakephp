@@ -19,6 +19,10 @@
  */
 
 App::uses('TestShell', 'Console/Command');
+App::uses('AppShell', 'Console/Command');
+App::uses('CakeTestSuiteDispatcher', 'TestSuite');
+App::uses('CakeTestSuiteCommand', 'TestSuite');
+App::uses('CakeTestLoader', 'TestSuite');
 
 /**
  * Provides a CakePHP wrapper around PHPUnit.
@@ -26,7 +30,18 @@ App::uses('TestShell', 'Console/Command');
  *
  * @package       Cake.Console.Command
  */
+<<<<<<< HEAD
 class TestsuiteShell extends TestShell {
+=======
+class TestsuiteShell extends AppShell {
+
+/**
+ * Dispatcher object for the run.
+ *
+ * @var CakeTestDispatcher
+ */
+	protected $_dispatcher = null;
+>>>>>>> 2.0
 
 /**
  * get the option parser for the test suite.

@@ -210,7 +210,7 @@ class ShellDispatcher {
 		$class = Inflector::camelize($shell) . 'Shell';
 
 		App::uses('Shell', 'Console');
-		App::uses('AppShell', 'Console');
+		App::uses('AppShell', 'Console/Command');
 		App::uses($class, $plugin . 'Console/Command');
 
 		if (!class_exists($class)) {

@@ -164,7 +164,7 @@ class CakeTestFixture {
 
 		if (empty($this->fields['tableParameters']['engine'])) {
 			$canUseMemory = true;
-			foreach($this->fields as $field => $args) {
+			foreach ($this->fields as $field => $args) {
 
 				if (is_string($args)) {
 					$type = $args;
@@ -227,7 +227,7 @@ class CakeTestFixture {
 			$values = array();
 			if (isset($this->records) && !empty($this->records)) {
 				$fields = array();
-				foreach($this->records as $record) {
+				foreach ($this->records as $record) {
 					$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
 				}
 				$fields = array_unique($fields);

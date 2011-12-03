@@ -446,11 +446,11 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->style('display: none;');
 		$this->assertEquals($result, 'display: none;');
 
-		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
+		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'));
 		$expected = 'display:none; margin:10px;';
 		$this->assertRegExp('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
 
-		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);
+		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'), false);
 		$lines = explode("\n", $result);
 		$this->assertRegExp('/^\s*display\s*:\s*none\s*;\s*$/', $lines[0]);
 		$this->assertRegExp('/^\s*margin\s*:\s*10px\s*;?$/', $lines[1]);
@@ -488,6 +488,10 @@ class HtmlHelperTest extends CakeTestCase {
 		Configure::write('Asset.filter.css', 'css.php');
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css/';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('//example.com/css/cake.generic.css');
+		$expected['link']['href'] = 'preg:/.*example\.com\/css\/cake\.generic\.css/';
 		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.filter.css', false);
@@ -649,6 +653,27 @@ class HtmlHelperTest extends CakeTestCase {
 			->with($this->matchesRegularExpression('/script_in_head.js/'));
 		$result = $this->Html->script('script_in_head', array('inline' => false));
 		$this->assertNull($result);
+	}
+
+/**
+ * Test that Asset.filter.js works.
+ *
+ * @return void
+ */
+	function testScriptAssetFilter() {
+		Configure::write('Asset.filter.js', 'js.php');
+	
+		$result = $this->Html->script('jquery-1.3');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'cjs/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('//example.com/js/jquery-1.3.js');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => '//example.com/js/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -1030,7 +1055,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->nestedList($list, array('class'=>'list'));
+		$result = $this->Html->nestedList($list, array('class' => 'list'));
 		$expected = array(
 			array('ul' => array('class' => 'list')),
 			'<li', 'Item 1', '/li',
@@ -1120,7 +1145,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->nestedList($list, array('class'=>'list'), array('class' => 'item'));
+		$result = $this->Html->nestedList($list, array('class' => 'list'), array('class' => 'item'));
 		$expected = array(
 			array('ul' => array('class' => 'list')),
 			array('li' => array('class' => 'item')), 'Item 1', '/li',

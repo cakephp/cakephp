@@ -1305,7 +1305,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
 
-		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4');
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -1716,7 +1716,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
 
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array('conditions' => array('TestModel4.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
@@ -1749,7 +1749,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->hasAndBelongsToMany['TestModel7']['offset'] = 2;
 		$this->Model->hasAndBelongsToMany['TestModel7']['limit'] = 5;
 
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -1785,7 +1785,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->hasAndBelongsToMany['TestModel7']['page'] = 2;
 		$this->Model->hasAndBelongsToMany['TestModel7']['limit'] = 5;
 
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -1856,7 +1856,7 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->conditions(array('score' => array(2=>1, 2, 10)));
+		$result = $this->Dbo->conditions(array('score' => array(2 => 1, 2, 10)));
 		$expected = " WHERE score IN (1, 2, 10)";
 		$this->assertEquals($expected, $result);
 

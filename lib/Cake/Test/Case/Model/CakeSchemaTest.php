@@ -741,7 +741,7 @@ class CakeSchemaTest extends CakeTestCase {
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		);
 		$result = $this->Schema->generateTable('posts', $posts);
-		$this->assertRegExp('/var \$posts/', $result);
+		$this->assertRegExp('/public \$posts/', $result);
 	}
 /**
  * testSchemaWrite method

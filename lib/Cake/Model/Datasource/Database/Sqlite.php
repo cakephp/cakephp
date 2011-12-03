@@ -131,7 +131,7 @@ class Sqlite extends DboSource {
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -286,9 +286,9 @@ class Sqlite extends DboSource {
 			}
 		} elseif (strpos($querystring, 'PRAGMA table_info') === 0) {
 			$selects = array('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk');
-		} elseif(strpos($querystring, 'PRAGMA index_list') === 0) {
+		} elseif (strpos($querystring, 'PRAGMA index_list') === 0) {
 			$selects = array('seq', 'name', 'unique');
-		} elseif(strpos($querystring, 'PRAGMA index_info') === 0) {
+		} elseif (strpos($querystring, 'PRAGMA index_info') === 0) {
 			$selects = array('seqno', 'cid', 'name');
 		}
 		while ($j < $num_fields) {
@@ -297,7 +297,7 @@ class Sqlite extends DboSource {
 				continue;
 			}
 			if (preg_match('/\bAS\s+(.*)/i', $selects[$j], $matches)) {
-				 $columnName = trim($matches[1],'"');
+				 $columnName = trim($matches[1], '"');
 			} else {
 				$columnName = trim(str_replace('"', '', $selects[$j]));
 			}
@@ -330,7 +330,7 @@ class Sqlite extends DboSource {
  * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
 	public function fetchResult() {
-		if ($row = $this->_result->fetch()) {
+		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
@@ -460,7 +460,7 @@ class Sqlite extends DboSource {
 	}
 
 /**
- * Overrides DboSource::index to handle SQLite indexe introspection
+ * Overrides DboSource::index to handle SQLite index introspection
  * Returns an array of the indexes in given table name.
  *
  * @param string $model Name of model to inspect

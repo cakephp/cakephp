@@ -20,6 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('Model', 'Model');
 
 /**
@@ -28,7 +29,7 @@ App::uses('Model', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
-class BakeShell extends Shell {
+class BakeShell extends AppShell {
 
 /**
  * Contains tasks to load and instantiate
@@ -184,7 +185,7 @@ class BakeShell extends Shell {
 			}
 			App::uses($controller . 'Controller', 'Controller');
 			if (class_exists($controller . 'Controller')) {
-				$this->View->args = array($controller);
+				$this->View->args = array($name);
 				$this->View->execute();
 			}
 			$this->out('', 1, Shell::QUIET);

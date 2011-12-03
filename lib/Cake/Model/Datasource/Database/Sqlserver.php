@@ -167,7 +167,7 @@ class Sqlserver extends DboSource {
  * Returns an array of sources (tables) in the database.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -260,7 +260,7 @@ class Sqlserver extends DboSource {
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
- * @param string $alias Alias tablename
+ * @param string $alias Alias table name
  * @param array $fields
  * @param boolean $quote
  * @return array
@@ -607,7 +607,7 @@ class Sqlserver extends DboSource {
  * @return mixed
  */
 	public function fetchResult() {
-		if ($row = $this->_result->fetch()) {
+		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
@@ -748,8 +748,8 @@ class Sqlserver extends DboSource {
  * @param string $sql SQL statement
  * @param array $params list of params to be bound to query (supported only in select)
  * @param array $prepareOptions Options to be used in the prepare statement
- * @return mixed PDOStatement if query executes with no problem, true as the result of a succesfull, false on error
- * query returning no rows, suchs as a CREATE statement, false otherwise
+ * @return mixed PDOStatement if query executes with no problem, true as the result of a successful, false on error
+ * query returning no rows, such as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_lastAffected = false;
