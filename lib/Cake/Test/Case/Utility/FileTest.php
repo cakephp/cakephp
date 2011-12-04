@@ -45,12 +45,12 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
- * tear down for test.
+ * tearDown method
  *
  * @return void
  */
-	public function teardown() {
-		parent::teardown();
+	public function tearDown() {
+		parent::tearDown();
 		$this->File->close();
 		unset($this->File);
 	}

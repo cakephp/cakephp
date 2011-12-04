@@ -91,12 +91,12 @@ class XmlTest extends CakeTestCase {
 	);
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
 	public function setUp() {
-		parent::setup();
+		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
 		Configure::write('App.encoding', 'UTF-8');
 	}

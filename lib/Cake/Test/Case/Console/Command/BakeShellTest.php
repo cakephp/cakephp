@@ -59,7 +59,7 @@ class BakeShellTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */

@@ -29,21 +29,23 @@ class CookieAliasComponent extends CookieComponent {
 
 class ComponentCollectionTest extends CakeTestCase {
 /**
- * setup
+ * setUp
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
+		parent::setUp();
 		$this->Components = new ComponentCollection();
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Components);
+		parent::tearDown();
 	}
 
 /**

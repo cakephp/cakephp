@@ -95,7 +95,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */
