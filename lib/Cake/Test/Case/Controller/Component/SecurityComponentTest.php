@@ -1277,4 +1277,44 @@ class SecurityComponentTest extends CakeTestCase {
 		$token = $this->Security->Session->read('_Token');
 		$this->assertTrue(isset($token['csrfTokens']['nonce1']), 'Token was consumed');
 	}
+
+/**
+ * Test generateToken()
+ *
+ * @return void
+ */
+	public function testGenerateToken() {
+		$request = $this->Controller->request;
+		$this->Security->generateToken($request);
+
+		$this->assertNotEmpty($request->params['_Token']);
+		$this->assertTrue(isset($request->params['_Token']['unlockedFields']));
+		$this->assertTrue(isset($request->params['_Token']['key']));
+	}
+
+/**
+ * Test the limiting of CSRF tokens.
+ *
+ * @return void
+ */
+	public function testCsrfLimit() {
+		$this->Security->csrfLimit = 3;
+		$time = strtotime('+10 minutes');
+		$tokens = array(
+			'1' => $time,
+			'2' => $time,
+			'3' => $time,
+			'4' => $time,
+			'5' => $time,
+		);
+		$this->Security->Session->write('_Token', array('csrfTokens' => $tokens));
+		$this->Security->generateToken($this->Controller->request);
+		$result = $this->Security->Session->read('_Token.csrfTokens');
+
+		$this->assertFalse(isset($result['1']));
+		$this->assertFalse(isset($result['2']));
+		$this->assertFalse(isset($result['3']));
+		$this->assertTrue(isset($result['4']));
+		$this->assertTrue(isset($result['5']));
+	}
 }
