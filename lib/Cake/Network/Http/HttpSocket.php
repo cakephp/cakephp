@@ -157,7 +157,30 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Set authentication settings
+ * Set authentication settings.
+ *
+ * Accepts two forms of parameters.  If all you need is a username + password, as with
+ * Basic authentication you can do the following:
+ *
+ * {{{
+ * $http->configAuth('Basic', 'mark', 'secret');
+ * }}}
+ *
+ * If you are using an authentication strategy that requires more inputs, like Digest authentication
+ * you can call `configAuth()` with an array of user information.
+ *
+ * {{{
+ * $http->configAuth('Digest', array(
+ *		'user' => 'mark',
+ *		'pass' => 'secret',
+ *		'realm' => 'my-realm',
+ *		'nonce' => 1235
+ * ));
+ * }}}
+ *
+ * To remove any set authentication strategy, call `configAuth()` with no parameters:
+ *
+ * `$http->configAuth();`
  *
  * @param string $method Authentication method (ie. Basic, Digest). If empty, disable authentication
  * @param mixed $user Username for authentication. Can be an array with settings to authentication class
