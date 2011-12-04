@@ -169,11 +169,14 @@ class DatabaseSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testGc() {
+		ClassRegistry::flush();
 		Configure::write('Session.timeout', 0);
-		$this->storage->write('foo', 'Some value');
+
+		$storage = new DatabaseSession();
+		$storage->write('foo', 'Some value');
 
 		sleep(1);
-		$this->storage->gc();
-		$this->assertFalse($this->storage->read('foo'));
+		$storage->gc();
+		$this->assertFalse($storage->read('foo'));
 	}
 }
