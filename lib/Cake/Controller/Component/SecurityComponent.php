@@ -207,7 +207,7 @@ class SecurityComponent extends Component {
 				return $this->blackHole($controller, 'csrf');
 			}
 		}
-		$this->_generateToken($controller);
+		$this->generateToken($controller->request);
 		if ($isPost) {
 			unset($controller->request->data['_Token']);
 		}
@@ -469,16 +469,15 @@ class SecurityComponent extends Component {
 	}
 
 /**
- * Add authentication key for new form posts
+ * Manually add CSRF token information into the provided request object.
  *
- * @param Controller $controller Instantiating controller
- * @return boolean Success
+ * @param CakeRequest $request The request object to add into.
+ * @return boolean
  */
-	protected function _generateToken($controller) {
-		if (isset($controller->request->params['requested']) && $controller->request->params['requested'] === 1) {
+	public function generateToken(CakeRequest $request) {
+		if (isset($request->params['requested']) && $request->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
-				$tokenData = $this->Session->read('_Token');
-				$controller->request->params['_Token'] = $tokenData;
+				$request->params['_Token'] = $this->Session->read('_Token');
 			}
 			return false;
 		}
@@ -498,15 +497,15 @@ class SecurityComponent extends Component {
 				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
 			}
 		}
-		if ($this->csrfCheck && ($this->csrfUseOnce || empty($token['csrfTokens'])) ) {
+		if ($this->csrfUseOnce || empty($token['csrfTokens'])) {
 			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
-		if ($this->csrfCheck && $this->csrfUseOnce == false) {
+		if (!$this->csrfUseOnce) {
 			$csrfTokens = array_keys($token['csrfTokens']);
 			$token['key'] = $csrfTokens[0];
 		}
 		$this->Session->write('_Token', $token);
-		$controller->request->params['_Token'] = array(
+		$request->params['_Token'] = array(
 			'key' => $token['key'],
 			'unlockedFields' => $token['unlockedFields']
 		);

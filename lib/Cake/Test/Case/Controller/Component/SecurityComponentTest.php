@@ -1277,4 +1277,16 @@ class SecurityComponentTest extends CakeTestCase {
 		$token = $this->Security->Session->read('_Token');
 		$this->assertTrue(isset($token['csrfTokens']['nonce1']), 'Token was consumed');
 	}
+
+/**
+ * Test generateToken()
+ *
+ * @return void
+ */
+	public function testGenerateToken() {
+		$request = $this->Controller->request;
+		$this->Security->generateToken($request);
+
+		$this->assertNotEmpty($request->params['_Token']);
+	}
 }
