@@ -158,6 +158,19 @@ class SecurityComponent extends Component {
 	public $csrfUseOnce = true;
 
 /**
+ * Control the number of tokens a user can keep open.
+ * This is most useful with one-time use tokens.  Since new tokens
+ * are created on each request, having a hard limit on the number of open tokens
+ * can be useful in controlling the size of the session file.
+ *
+ * When tokens are evicted, the oldest ones will be removed, as they are the most likely
+ * to be dead/expired.
+ *
+ * @var integer
+ */
+	public $csrfLimit = 100;
+
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -541,6 +554,10 @@ class SecurityComponent extends Component {
  */
 	protected function _expireTokens($tokens) {
 		$now = time();
+		$overflow = count($tokens) - $this->csrfLimit;
+		if ($overflow > 0) {
+			$tokens = array_slice($tokens, $overflow + 1, null, true);
+		}
 		foreach ($tokens as $nonce => $expires) {
 			if ($expires < $now) {
 				unset($tokens[$nonce]);
