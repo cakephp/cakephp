@@ -166,7 +166,7 @@ class CakeLogTest extends CakeTestCase {
  */
 	function testLoggingWithErrorHandling() {
 		@unlink(LOGS . 'debug.log');
-		Configure::write('log', E_ALL & ~E_DEPRECATED);
+		Configure::write('log', E_ALL & ~E_DEPRECATED & ~E_STRICT);
 		Configure::write('debug', 0);
 
 		set_error_handler(array('CakeLog', 'handleError'));
