@@ -66,22 +66,24 @@ class DatabaseSessionTest extends CakeTestCase {
 	}
 
 /**
- * setup
+ * setUp
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
+		parent::setUp();
 		$this->storage = new DatabaseSession();
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->storage);
 		ClassRegistry::flush();
+		parent::tearDown();
 	}
 
 /**

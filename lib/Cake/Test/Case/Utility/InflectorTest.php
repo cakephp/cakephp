@@ -34,7 +34,7 @@ App::uses('Inflector', 'Utility');
 class InflectorTest extends CakeTestCase {
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */

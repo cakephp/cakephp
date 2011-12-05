@@ -71,8 +71,8 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setup() {
-		parent::setup();
+	public function setUp() {
+		parent::setUp();
 		Configure::write('Session', array(
 			'defaults' => 'php',
 			'cookie' => 'cakephp',

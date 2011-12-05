@@ -381,19 +381,21 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::objects('plugin', null, false);
 		App::build();
 		Router::reload();
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		CakePlugin::unload();
 		App::build();
+		parent::tearDown();
 	}
 
 /**
