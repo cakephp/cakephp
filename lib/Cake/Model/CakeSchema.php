@@ -402,7 +402,7 @@ class CakeSchema extends Object {
 				if ($field != 'indexes' && $field != 'tableParameters') {
 					if (is_string($value)) {
 						$type = $value;
-						$value = array('type'=> $type);
+						$value = array('type' => $type);
 					}
 					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 					unset($value['type']);

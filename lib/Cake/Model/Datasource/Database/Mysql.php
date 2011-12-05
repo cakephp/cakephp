@@ -181,7 +181,7 @@ class Mysql extends DboSource {
  * Returns an array of sources (tables) in the database.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -543,11 +543,11 @@ class Mysql extends DboSource {
 	}
 
 /**
- * Generate MySQL table parameter alteration statementes for a table.
+ * Generate MySQL table parameter alteration statements for a table.
  *
  * @param string $table Table to alter parameters for.
  * @param array $parameters Parameters to add & drop.
- * @return array Array of table property alteration statementes.
+ * @return array Array of table property alteration statements.
  * @todo Implement this method.
  */
 	protected function _alterTableParameters($table, $parameters) {
@@ -567,7 +567,7 @@ class Mysql extends DboSource {
 	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
-			foreach($indexes['drop'] as $name => $value) {
+			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
 				if ($name == 'PRIMARY') {
 					$out .= 'PRIMARY KEY';
@@ -603,7 +603,7 @@ class Mysql extends DboSource {
  * Returns an detailed array of sources (tables) in the database.
  *
  * @param string $name Table name to get parameters
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listDetailedSources($name = null) {
 		$condition = '';

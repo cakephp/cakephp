@@ -185,7 +185,7 @@ class BakeShell extends AppShell {
 			}
 			App::uses($controller . 'Controller', 'Controller');
 			if (class_exists($controller . 'Controller')) {
-				$this->View->args = array($controller);
+				$this->View->args = array($name);
 				$this->View->execute();
 			}
 			$this->out('', 1, Shell::QUIET);

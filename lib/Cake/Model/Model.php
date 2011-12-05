@@ -25,6 +25,7 @@
 App::uses('ClassRegistry', 'Utility');
 App::uses('Validation', 'Utility');
 App::uses('String', 'Utility');
+App::uses('Set', 'Utility');
 App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
 App::uses('ConnectionManager', 'Model');
@@ -536,7 +537,7 @@ class Model extends Object {
  */
 	protected $_associationKeys = array(
 		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
-		'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
+		'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
 	);
@@ -675,7 +676,8 @@ class Model extends Object {
 
 		if (is_subclass_of($this, 'AppModel')) {
 			$merge = array('findMethods');
-			if ($this->actsAs !== null || $this->actsAs !== false) {
+			#if (!empty($this->actsAs)) { //Another possible solution
+			if ($this->actsAs !== null && $this->actsAs !== false) {
 				$merge[] = 'actsAs';
 			}
 			$parentClass = get_parent_class($this);
@@ -724,7 +726,7 @@ class Model extends Object {
 /**
  * Handles the lazy loading of model associations by looking in the association arrays for the requested variable
  *
- * @param string $name variable tested for existance in class
+ * @param string $name variable tested for existence in class
  * @return boolean true if the variable exists (if is a not loaded model association it will be created), false otherwise
  */
 	public function __isset($name) {
@@ -1183,12 +1185,14 @@ class Model extends Object {
 				}
 			}
 
-			$format = $this->getDataSource()->columns[$type]['format'];
-			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
-			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
-			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date->format($format);
+				$format = $this->getDataSource()->columns[$type]['format'];
+				foreach (array('m', 'd', 'H', 'i', 's') as $index) {
+					if (isset($date[$index])) {
+						$date[$index] = sprintf('%02d', $date[$index]);
+					}
+				}
+				return str_replace(array_keys($date), array_values($date), $format);
 			}
 		}
 		return $data;
@@ -1394,7 +1398,7 @@ class Model extends Object {
  * Returns a list of fields from the database, and sets the current model
  * data (Model::$data) with the record found.
  *
- * @param mixed $fields String of single fieldname, or an array of fieldnames.
+ * @param mixed $fields String of single field name, or an array of field names.
  * @param mixed $id The ID of the record to read
  * @return array Array of database fields, or false if not found
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-read
@@ -1849,7 +1853,7 @@ class Model extends Object {
 	}
 
 /**
- * Backwards compatible passtrough method for:
+ * Backwards compatible passthrough method for:
  * saveMany(), validateMany(), saveAssociated() and validateAssociated()
  *
  * Saves multiple individual records for a single model; Also works with a single record, as well as
@@ -2136,7 +2140,7 @@ class Model extends Object {
 				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
 					$validates = $this->{$association}->create($values) && $this->{$association}->validates($options);
 					$return[$association][] = $validates;
-				} elseif($associations[$association] === 'hasMany') {
+				} elseif ($associations[$association] === 'hasMany') {
 					$validates = $this->{$association}->validateMany($values, $options);
 					$return[$association] = $validates;
 				}
@@ -2249,11 +2253,17 @@ class Model extends Object {
 				if ($data['dependent'] === true) {
 
 					$model = $this->{$assoc};
-					$conditions = array($model->escapeField($data['foreignKey']) => $id);
-					if ($data['conditions']) {
-						$conditions = array_merge((array)$data['conditions'], $conditions);
+
+					if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $model->getAssociated('belongsTo'))) {
+						$model->recursive = 0;
+						$conditions = array($this->escapeField(null, $this->name) => $id);
+					} else {
+						$model->recursive = -1;
+						$conditions = array($model->escapeField($data['foreignKey']) => $id);
+						if ($data['conditions']) {
+							$conditions = array_merge((array)$data['conditions'], $conditions);
+						}
 					}
-					$model->recursive = -1;
 
 					if (isset($data['exclusive']) && $data['exclusive']) {
 						$model->deleteAll($conditions);

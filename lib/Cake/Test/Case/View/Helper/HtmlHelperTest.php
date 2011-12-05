@@ -373,7 +373,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testImageTagWithTheme() {
-		$this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme.');
+		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
+		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		App::uses('File', 'Utility');
 
@@ -406,6 +407,10 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$dir = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$dir->delete();
+		if (!$themeExists) {
+			$dir = new Folder(WWW_ROOT . 'theme');
+			$dir->delete();
+		}
 	}
 
 /**
@@ -446,11 +451,11 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->style('display: none;');
 		$this->assertEquals($result, 'display: none;');
 
-		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
+		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'));
 		$expected = 'display:none; margin:10px;';
 		$this->assertRegExp('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
 
-		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);
+		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'), false);
 		$lines = explode("\n", $result);
 		$this->assertRegExp('/^\s*display\s*:\s*none\s*;\s*$/', $lines[0]);
 		$this->assertRegExp('/^\s*margin\s*:\s*10px\s*;?$/', $lines[1]);
@@ -682,7 +687,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testScriptInTheme() {
-		$this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme.');
+		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
+		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		App::uses('File', 'Utility');
 
@@ -703,7 +709,11 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$Folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$Folder->delete();
-		App::build();
+
+		if (!$themeExists) {
+			$dir = new Folder(WWW_ROOT . 'theme');
+			$dir->delete();
+		}
 	}
 
 /**
@@ -1055,7 +1065,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->nestedList($list, array('class'=>'list'));
+		$result = $this->Html->nestedList($list, array('class' => 'list'));
 		$expected = array(
 			array('ul' => array('class' => 'list')),
 			'<li', 'Item 1', '/li',
@@ -1145,7 +1155,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->nestedList($list, array('class'=>'list'), array('class' => 'item'));
+		$result = $this->Html->nestedList($list, array('class' => 'list'), array('class' => 'item'));
 		$expected = array(
 			array('ul' => array('class' => 'list')),
 			array('li' => array('class' => 'item')), 'Item 1', '/li',

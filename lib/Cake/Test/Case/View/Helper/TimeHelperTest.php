@@ -116,7 +116,7 @@ class TimeHelperTest extends CakeTestCase {
 		$result = $this->Time->timeAgoInWords(strtotime('+1 month +1 week +6 days'), array('end' => '8 years'), true);
 		$this->assertEquals($result, '1 month, 1 week, 6 days');
 
-		for($i = 0; $i < 200; $i ++) {
+		for ($i = 0; $i < 200; $i ++) {
 			$years = mt_rand(0, 3);
 			$months = mt_rand(0, 11);
 			$weeks = mt_rand(0, 3);
@@ -125,6 +125,18 @@ class TimeHelperTest extends CakeTestCase {
 			$minutes = 0;
 			$seconds = 0;
 			$relative_date = '';
+
+			// Trying to take into account the number of days in a month
+			$month = date('m') - $months;
+			if ($month <= 0) {
+				$month = $months % 12;
+			}
+			$time = mktime(0, 0, 0, $month, 1, date('y') - $years);
+			$diffDays = date('t') - date('t', $time);
+
+			if ($diffDays > 0 && date('j') - date('t', $time) - $days > 0 && $months > 0 && $weeks === 0) {
+				continue;
+			}
 
 			if ($years > 0) {
 				// years and months and days
@@ -157,8 +169,8 @@ class TimeHelperTest extends CakeTestCase {
 				$relative_date .= ($relative_date ? ', -' : '-') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
 
-			if (date('j/n/y', strtotime(str_replace(',','',$relative_date))) != '1/1/70') {
-				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',','',$relative_date)), array('end' => '8 years'), true);
+			if (date('j/n/y', strtotime(str_replace(',', '', $relative_date))) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relative_date)), array('end' => '8 years'), true);
 				if ($relative_date == '0 seconds') {
 					$relative_date = '0 seconds ago';
 				}
@@ -211,8 +223,8 @@ class TimeHelperTest extends CakeTestCase {
 				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
 
-			if (date('j/n/y', strtotime(str_replace(',','',$relative_date))) != '1/1/70') {
-				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',','',$relative_date)), array('end' => '8 years'), true);
+			if (date('j/n/y', strtotime(str_replace(',', '', $relative_date))) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relative_date)), array('end' => '8 years'), true);
 				if ($relative_date == '0 seconds') {
 					$relative_date = '0 seconds ago';
 				}
@@ -399,7 +411,7 @@ class TimeHelperTest extends CakeTestCase {
 
 		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
 			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-			foreach($timezones as $timezone) {
+			foreach ($timezones as $timezone) {
 				$yourTimezone = new DateTimeZone($timezone);
 				$yourTime = new DateTime('now', $yourTimezone);
 				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;

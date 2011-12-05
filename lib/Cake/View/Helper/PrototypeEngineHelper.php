@@ -255,7 +255,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * #### Note: Requires scriptaculous to be loaded.
  *
- * The scriptaculous implementation of sortables does not suppot the 'start'
+ * The scriptaculous implementation of sortables does not support the 'start'
  * and 'distance' options.
  *
  * @param array $options Array of options for the sortable.
