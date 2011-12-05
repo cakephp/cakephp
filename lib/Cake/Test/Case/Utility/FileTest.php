@@ -324,12 +324,13 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testLastChange() {
+		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
-		$this->assertEquals($someFile->lastChange(), time());
+		$this->assertTrue($someFile->lastChange() >= $ts);
 		$someFile->write('something');
-		$this->assertEquals($someFile->lastChange(), time());
+		$this->assertTrue($someFile->lastChange() >= $ts);
 		$someFile->close();
 		$someFile->delete();
 	}
