@@ -16,10 +16,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('Multibyte')) {
-	App::import('Core', 'Multibyte');
-}
-
+App::uses('Multibyte', 'I18n');
 App::uses('AppHelper', 'View/Helper');
 
 /**
@@ -61,7 +58,7 @@ class TimeHelper extends AppHelper {
  * windows safe and i18n aware format.
  *
  * @param string $format Format with specifiers for strftime function.
- *    Accepts the special specifier %S which mimics th modifier S for date()
+ *    Accepts the special specifier %S which mimics the modifier S for date()
  * @param string $time UNIX timestamp
  * @return string windows safe and date() function compatible format for strftime
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -75,7 +72,7 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Auxiliary function to translate a matched specifier element from a regular expresion into
+ * Auxiliary function to translate a matched specifier element from a regular expression into
  * a windows safe and i18n aware specifier
  *
  * @param array $specifier match from regular expression
@@ -462,8 +459,8 @@ class TimeHelper extends AppHelper {
 	public function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 
-		if(!is_null($userOffset)) {
-			if($userOffset == 0) {
+		if (!is_null($userOffset)) {
+			if ($userOffset == 0) {
 				$timezone = '+0000';
 			} else {
 				$hours = (int) floor(abs($userOffset));

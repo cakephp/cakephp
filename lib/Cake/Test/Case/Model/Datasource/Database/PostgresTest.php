@@ -487,22 +487,22 @@ class PostgresTest extends CakeTestCase {
 		$schema = new CakeSchema();
 		$schema->tables = array('i18n' => array(
 			'id' => array(
-			    'type' => 'integer', 'null' => false, 'default' => null,
-			    'length' => 10, 'key' => 'primary'
+				'type' => 'integer', 'null' => false, 'default' => null,
+				'length' => 10, 'key' => 'primary'
 			),
-			'locale' => array('type'=>'string', 'null' => false, 'length' => 6, 'key' => 'index'),
-			'model' => array('type'=>'string', 'null' => false, 'key' => 'index'),
+			'locale' => array('type' => 'string', 'null' => false, 'length' => 6, 'key' => 'index'),
+			'model' => array('type' => 'string', 'null' => false, 'key' => 'index'),
 			'foreign_key' => array(
-			    'type'=>'integer', 'null' => false, 'length' => 10, 'key' => 'index'
+				'type' => 'integer', 'null' => false, 'length' => 10, 'key' => 'index'
 			),
-			'field' => array('type'=>'string', 'null' => false, 'key' => 'index'),
-			'content' => array('type'=>'text', 'null' => true, 'default' => null),
+			'field' => array('type' => 'string', 'null' => false, 'key' => 'index'),
+			'content' => array('type' => 'text', 'null' => true, 'default' => null),
 			'indexes' => array(
-			    'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			    'locale' => array('column' => 'locale', 'unique' => 0),
-			    'model' => array('column' => 'model', 'unique' => 0),
-			    'row_id' => array('column' => 'foreign_key', 'unique' => 0),
-			    'field' => array('column' => 'field', 'unique' => 0)
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'locale' => array('column' => 'locale', 'unique' => 0),
+				'model' => array('column' => 'model', 'unique' => 0),
+				'row_id' => array('column' => 'foreign_key', 'unique' => 0),
+				'field' => array('column' => 'field', 'unique' => 0)
 			)
 		));
 
@@ -566,7 +566,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testIndexGeneration() {
-		$name = $this->Dbo->fullTableName('index_test', false);
+		$name = $this->Dbo->fullTableName('index_test', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -579,7 +579,7 @@ class PostgresTest extends CakeTestCase {
 		$this->Dbo->query('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 
-		$name = $this->Dbo->fullTableName('index_test_2', false);
+		$name = $this->Dbo->fullTableName('index_test_2', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(

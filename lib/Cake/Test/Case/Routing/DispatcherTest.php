@@ -854,8 +854,8 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->parseParams($url);
 		$expected = array(
 			'pass' => array('home'),
-			'named' => array('param'=> 'value', 'param2'=> 'value2'), 'plugin'=> 'my_plugin',
-			'controller'=> 'some_pages', 'action'=> 'display'
+			'named' => array('param' => 'value', 'param2' => 'value2'), 'plugin' => 'my_plugin',
+			'controller' => 'some_pages', 'action' => 'display'
 		);
 		foreach ($expected as $key => $value) {
 			$this->assertEquals($result[$key], $value, 'Value mismatch ' . $key . ' %');
@@ -864,7 +864,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertSame($controller->plugin, 'MyPlugin');
 		$this->assertSame($controller->name, 'SomePages');
 		$this->assertSame($controller->params['controller'], 'some_pages');
-		$this->assertSame($controller->passedArgs, array('0' => 'home', 'param'=>'value', 'param2'=>'value2'));
+		$this->assertSame($controller->passedArgs, array('0' => 'home', 'param' => 'value', 'param2' => 'value2'));
 	}
 
 /**
@@ -969,7 +969,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertSame($controller->name, 'MyPlugin');
 		$this->assertSame($controller->action, 'admin_add');
 
-		$expected = array(0 => 5, 'param'=>'value', 'param2'=>'value2');
+		$expected = array(0 => 5, 'param' => 'value', 'param2' => 'value2');
 		$this->assertEquals($controller->passedArgs, $expected);
 
 		Configure::write('Routing.prefixes', array('admin'));
@@ -985,7 +985,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertSame($controller->action, 'admin_index');
 
 		$expected = array(
-			'pass'=> array(),
+			'pass' => array(),
 			'named' => array(),
 			'controller' => 'articles_test',
 			'plugin' => 'articles_test',
@@ -1081,7 +1081,7 @@ class DispatcherTest extends CakeTestCase {
 		$url = new CakeRequest('my_plugin/not_here/param:value/param2:value2');
 		$response = $this->getMock('CakeResponse');
 
-		$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
+		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
 
 /**
@@ -1099,7 +1099,7 @@ class DispatcherTest extends CakeTestCase {
 		$url = new CakeRequest('my_plugin/param:value/param2:value2');
 		$response = $this->getMock('CakeResponse');
 
-		$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
+		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
 
 /**
@@ -1141,7 +1141,7 @@ class DispatcherTest extends CakeTestCase {
 		$url = new CakeRequest('some_posts/index/param:value/param2:value2');
 
 		try {
-			$controller = $Dispatcher->dispatch($url, $response, array('return'=> 1));
+			$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
 			$this->fail('No exception.');
 		} catch (MissingActionException $e) {
 			$this->assertEquals('Action SomePostsController::view() could not be found.', $e->getMessage());
@@ -1228,6 +1228,10 @@ class DispatcherTest extends CakeTestCase {
 			array(
 				'theme/test_theme/js/one/theme_one.js',
 				'View/Themed/TestTheme/webroot/js/one/theme_one.js'
+			),
+			array(
+				'theme/test_theme/space%20image.text',
+				'View/Themed/TestTheme/webroot/space image.text'
 			),
 			array(
 				'test_plugin/root.js',
@@ -1487,10 +1491,10 @@ class DispatcherTest extends CakeTestCase {
  */
 	function __backupEnvironment() {
 		return array(
-			'App'	=> Configure::read('App'),
-			'GET'	=> $_GET,
-			'POST'	=> $_POST,
-			'SERVER'=> $_SERVER
+			'App' => Configure::read('App'),
+			'GET' => $_GET,
+			'POST' => $_POST,
+			'SERVER' => $_SERVER
 		);
 	}
 

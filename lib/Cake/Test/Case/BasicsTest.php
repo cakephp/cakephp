@@ -256,7 +256,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = am(array('one' => array(2, 3), 'two' => array('foo')), array('one' => array(4, 5)));
-		$expected = array('one' => array(4, 5),'two' => array('foo'));
+		$expected = array('one' => array(4, 5), 'two' => array('foo'));
 		$this->assertEquals($expected, $result);
 	}
 

@@ -28,6 +28,7 @@ App::uses('AppHelper', 'View/Helper');
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
 class HtmlHelper extends AppHelper {
+
 /**
  * html tags used by this helper.
  *
@@ -129,12 +130,14 @@ class HtmlHelper extends AppHelper {
  * @var array
  */
 	protected $_includedScripts = array();
+
 /**
  * Options for the currently opened script block buffer if any.
  *
  * @var array
  */
 	protected $_scriptBlockOptions = array();
+
 /**
  * Document type definitions
  *
@@ -178,7 +181,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
- * @param mixed $options Link attributes e.g. array('id'=>'selected')
+ * @param mixed $options Link attributes e.g. array('id' => 'selected')
  * @return void
  * @see HtmlHelper::link() for details on $options that can be used.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
@@ -195,7 +198,7 @@ class HtmlHelper extends AppHelper {
  *  - html4-strict:  HTML4 Strict.
  *  - html4-trans:  HTML4 Transitional.
  *  - html4-frame:  HTML4 Frameset.
- *  - html5: HTML5.
+ *  - html5: HTML5. Default value.
  *  - xhtml-strict: XHTML1 Strict.
  *  - xhtml-trans: XHTML1 Transitional.
  *  - xhtml-frame: XHTML1 Frameset.
@@ -205,7 +208,7 @@ class HtmlHelper extends AppHelper {
  * @return string Doctype string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::docType
  */
-	public function docType($type = 'xhtml-strict') {
+	public function docType($type = 'html5') {
 		if (isset($this->_docTypes[$type])) {
 			return $this->_docTypes[$type];
 		}
@@ -399,7 +402,7 @@ class HtmlHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($path, '://') !== false) {
+		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
 			if ($path[0] !== '/') {
@@ -491,7 +494,7 @@ class HtmlHelper extends AppHelper {
 		}
 		$this->_includedScripts[$url] = true;
 
-		if (strpos($url, '://') === false) {
+		if (strpos($url, '//') === false) {
 			if ($url[0] !== '/') {
 				$url = JS_URL . $url;
 			}
@@ -642,7 +645,7 @@ class HtmlHelper extends AppHelper {
  * Returns breadcrumbs as a (x)html list
  *
  * This method uses HtmlHelper::tag() to generate list and its elements. Works
- * similiary to HtmlHelper::getCrumbs(), so it uses options which every
+ * similar to HtmlHelper::getCrumbs(), so it uses options which every
  * crumb was added with.
  *
  * @param array $options Array of html attributes to apply to the generated list elements.
@@ -828,6 +831,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $tag Tag name
  * @return string Formatted block
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::useTag
  */
 	public function useTag($tag) {
 		if (!isset($this->_tags[$tag])) {
@@ -900,6 +904,7 @@ class HtmlHelper extends AppHelper {
  * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::nestedList
  */
 	public function nestedList($list, $options = array(), $itemOptions = array(), $tag = 'ul') {
 		if (is_string($options)) {

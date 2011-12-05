@@ -15,6 +15,8 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('AppShell', 'Console/Command');
 App::uses('ComponentCollection', 'Controller');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('DbAcl', 'Model');
@@ -25,7 +27,7 @@ App::uses('DbAcl', 'Model');
  *
  * @package       Cake.Console.Command
  */
-class AclShell extends Shell {
+class AclShell extends AppShell {
 
 /**
  * Contains instance of AclComponent

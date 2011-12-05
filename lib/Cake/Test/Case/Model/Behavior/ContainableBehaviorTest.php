@@ -2921,9 +2921,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'order' => array('Article.id' => 'ASC')
 		));
 		if (!empty($result)) {
-			foreach($result as $i=>$article) {
-				foreach($article['Comment'] as $j=>$comment) {
-					$result[$i]['Comment'][$j] = array_diff_key($comment, array('id'=>true));
+			foreach ($result as $i => $article) {
+				foreach ($article['Comment'] as $j => $comment) {
+					$result[$i]['Comment'][$j] = array_diff_key($comment, array('id' => true));
 				}
 			}
 		}
@@ -3628,7 +3628,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			return $this->__containments($result['models']);
 		} else {
 			$result = $Model;
-			foreach($result as $i => $containment) {
+			foreach ($result as $i => $containment) {
 				$result[$i] = array_diff_key($containment, array('instance' => true));
 			}
 		}
@@ -3646,7 +3646,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 	function __assertBindings(&$Model, $expected = array()) {
 		$expected = array_merge(array('belongsTo' => array(), 'hasOne' => array(), 'hasMany' => array(), 'hasAndBelongsToMany' => array()), $expected);
 
-		foreach($expected as $binding => $expect) {
+		foreach ($expected as $binding => $expect) {
 			$this->assertEquals(array_keys($Model->$binding), $expect);
 		}
 	}
@@ -3664,14 +3664,14 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$debug = '[';
 		$lines = array();
-		foreach($relationTypes as $binding) {
+		foreach ($relationTypes as $binding) {
 			if (!empty($Model->$binding)) {
 				$models = array_keys($Model->$binding);
-				foreach($models as $linkedModel) {
+				foreach ($models as $linkedModel) {
 					$line = $linkedModel;
 					if (!empty($extra) && !empty($Model->{$binding}[$linkedModel])) {
 						$extraData = array();
-						foreach(array_intersect_key($Model->{$binding}[$linkedModel], array_flip($extra)) as $key => $value) {
+						foreach (array_intersect_key($Model->{$binding}[$linkedModel], array_flip($extra)) as $key => $value) {
 							$extraData[] = $key . ': ' . (is_array($value) ? '(' . implode(', ', $value) . ')' : $value);
 						}
 						$line .= ' {' . implode(' - ', $extraData) . '}';

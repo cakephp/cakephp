@@ -128,7 +128,7 @@ class SqliteTest extends CakeTestCase {
  * @return void
  */
 	public function testIndex() {
-		$name = $this->Dbo->fullTableName('with_a_key');
+		$name = $this->Dbo->fullTableName('with_a_key', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -262,6 +262,10 @@ class SqliteTest extends CakeTestCase {
 	public function testDescribe() {
 		$this->loadFixtures('User');
 		$Model = new Model(array('name' => 'User', 'ds' => 'test', 'table' => 'users'));
+
+		$this->Dbo->cacheSources = true;
+		Configure::write('Cache.disable', false);
+
 		$result = $this->Dbo->describe($Model);
 		$expected = array(
 			'id' => array(
@@ -299,6 +303,9 @@ class SqliteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->describe($Model->useTable);
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::read('test_users', '_cake_model_');
 		$this->assertEquals($expected, $result);
 	}
 

@@ -59,7 +59,7 @@ class XcacheEngineTest extends CakeTestCase {
 		$settings = Cache::settings();
 		$expecting = array(
 			'prefix' => 'cake_',
-			'duration'=> 3600,
+			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'Xcache',
 		);

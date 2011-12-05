@@ -485,7 +485,7 @@ class RequestHandlerComponent extends Component {
  *   'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
  *    list, based on preference, is returned.  If a single type is provided
- *    a boolean will be returnend if that type is preferred.
+ *    a boolean will be returned if that type is preferred.
  *    If an array of types are provided then the first preferred type is returned.
  *    If no type is provided the first preferred type is returned.
  * @see RequestHandlerComponent::setContent()
@@ -556,7 +556,12 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		if (empty($this->_renderType)) {
+		$viewClass = Inflector::classify($type);
+		App::uses($viewClass . 'View', 'View');
+
+		if (class_exists($viewClass . 'View')) {
+			$controller->viewClass = $viewClass;
+		} elseif (empty($this->_renderType)) {
 			$controller->viewPath .= DS . $type;
 		} else {
 			$remove = preg_replace("/([\/\\\\]{$this->_renderType})$/", DS . $type, $controller->viewPath);

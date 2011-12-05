@@ -735,6 +735,42 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
+ * Test that match can handle array named parameters
+ *
+ * @return void
+ */
+	public function testMatchNamedParametersArray() {
+		$route = new CakeRoute('/:controller/:action/*');
+
+		$url = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'filter' => array(
+				'one',
+				'model' => 'value'
+			)
+		);
+		$result = $route->match($url);
+		$expected = '/posts/index/filter[0]:one/filter[model]:value';
+		$this->assertEquals($expected, $result);
+
+		$url = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'filter' => array(
+				'one',
+				'model' => array(
+					'two',
+					'order' => 'field'
+				)
+			)
+		);
+		$result = $route->match($url);
+		$expected = '/posts/index/filter[0]:one/filter[model][0]:two/filter[model][order]:field';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test restructuring args with pass key
  *
  * @return void

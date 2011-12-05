@@ -16,12 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
+
 /**
  * Task class for creating and updating the database configuration file.
  *
  * @package       Cake.Console.Command.Task
  */
-class DbConfigTask extends Shell {
+class DbConfigTask extends AppShell {
 
 /**
  * path to CONFIG directory
@@ -37,14 +39,14 @@ class DbConfigTask extends Shell {
  */
 	protected $_defaultConfig = array(
 		'name' => 'default',
-		'datasource'=> 'Database/Mysql',
-		'persistent'=> 'false',
-		'host'=> 'localhost',
-		'login'=> 'root',
-		'password'=> 'password',
-		'database'=> 'project_name',
-		'schema'=> null,
-		'prefix'=> null,
+		'datasource' => 'Database/Mysql',
+		'persistent' => 'false',
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => 'password',
+		'database' => 'project_name',
+		'schema' => null,
+		'prefix' => null,
 		'encoding' => null,
 		'port' => null
 	);

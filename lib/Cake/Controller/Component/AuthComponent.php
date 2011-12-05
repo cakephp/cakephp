@@ -204,7 +204,7 @@ class AuthComponent extends Component {
 
 /**
  * Error to display when user attempts to access an object or action to which they do not have
- * acccess.
+ * access.
  *
  * @var string
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#AuthComponent::$authError
@@ -268,8 +268,8 @@ class AuthComponent extends Component {
 			return true;
 		}
 
-		$methods = array_flip($controller->methods);
-		$action = $controller->request->params['action'];
+		$methods = array_flip(array_map('strtolower', $controller->methods));
+		$action = strtolower($controller->request->params['action']);
 
 		$isMissingAction = (
 			$controller->scaffold === false &&
@@ -296,7 +296,7 @@ class AuthComponent extends Component {
 		$allowedActions = $this->allowedActions;
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
-			in_array($action, $allowedActions)
+			in_array($action, array_map('strtolower', $allowedActions))
 		);
 
 		if ($loginAction != $url && $isAllowed) {

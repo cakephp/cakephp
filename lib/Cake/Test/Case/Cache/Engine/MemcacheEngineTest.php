@@ -81,7 +81,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		unset($settings['serialize'], $settings['path']);
 		$expecting = array(
 			'prefix' => 'cake_',
-			'duration'=> 3600,
+			'duration' => 3600,
 			'probability' => 100,
 			'servers' => array('127.0.0.1'),
 			'persistent' => true,
@@ -102,7 +102,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$available = true;
 		$Memcache = new Memcache();
 
-		foreach($servers as $server) {
+		foreach ($servers as $server) {
 			list($host, $port) = explode(':', $server);
 			if (!@$Memcache->connect($host, $port)) {
 				$available = false;
@@ -312,12 +312,12 @@ class MemcacheEngineTest extends CakeTestCase {
 	public function testConfigurationConflict() {
 		Cache::config('long_memcache', array(
 		  'engine' => 'Memcache',
-		  'duration'=> '+2 seconds',
+		  'duration' => '+2 seconds',
 		  'servers' => array('127.0.0.1:11211'),
 		));
 		Cache::config('short_memcache', array(
 		  'engine' => 'Memcache',
-		  'duration'=> '+1 seconds',
+		  'duration' => '+1 seconds',
 		  'servers' => array('127.0.0.1:11211'),
 		));
 		Cache::config('some_file', array('engine' => 'File'));

@@ -697,16 +697,16 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testFullTablePermutations() {
 		$Article = ClassRegistry::init('Article');
-		$result = $this->testDb->fullTableName($Article, false);
+		$result = $this->testDb->fullTableName($Article, false, false);
 		$this->assertEquals($result, 'articles');
 
 		$Article->tablePrefix = 'tbl_';
-		$result = $this->testDb->fullTableName($Article, false);
+		$result = $this->testDb->fullTableName($Article, false, false);
 		$this->assertEquals($result, 'tbl_articles');
 
 		$Article->useTable = $Article->table = 'with spaces';
 		$Article->tablePrefix = '';
-		$result = $this->testDb->fullTableName($Article);
+		$result = $this->testDb->fullTableName($Article, true, false);
 		$this->assertEquals($result, '`with spaces`');
 	}
 

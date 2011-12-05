@@ -353,12 +353,12 @@ class SchemaShellTest extends CakeTestCase {
 		$contents = $this->file->read();
 
 		$this->assertRegExp('/class TestPluginSchema/', $contents);
-		$this->assertRegExp('/var \$posts/', $contents);
-		$this->assertRegExp('/var \$auth_users/', $contents);
-		$this->assertRegExp('/var \$authors/', $contents);
-		$this->assertRegExp('/var \$test_plugin_comments/', $contents);
-		$this->assertNotRegExp('/var \$users/', $contents);
-		$this->assertNotRegExp('/var \$articles/', $contents);
+		$this->assertRegExp('/public \$posts/', $contents);
+		$this->assertRegExp('/public \$auth_users/', $contents);
+		$this->assertRegExp('/public \$authors/', $contents);
+		$this->assertRegExp('/public \$test_plugin_comments/', $contents);
+		$this->assertNotRegExp('/public \$users/', $contents);
+		$this->assertNotRegExp('/public \$articles/', $contents);
 		CakePlugin::unload();
 	}
 

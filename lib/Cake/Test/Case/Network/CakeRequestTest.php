@@ -1049,6 +1049,29 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Check that a sub-directory containing app|webroot doesn't get mishandled when re-writing is off.
+ *
+ * @return void
+ */
+	public function testBaseUrlWithAppAndWebrootInDirname() {
+		Configure::write('App.baseUrl', '/approval/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEquals('/approval/index.php', $request->base);
+		$this->assertEquals('/approval/app/webroot/', $request->webroot);
+
+		Configure::write('App.baseUrl', '/webrootable/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEquals('/webrootable/index.php', $request->base);
+		$this->assertEquals('/webrootable/app/webroot/', $request->webroot);
+	}
+
+/**
  * test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
  *
  * @return void
@@ -1061,6 +1084,21 @@ class CakeRequestTest extends CakeTestCase {
 		$request = new CakeRequest();
 		$this->assertEquals('/index.php', $request->base);
 		$this->assertEquals('/', $request->webroot);
+	}
+
+/**
+ * Test that a request with a . in the main GET parameter is filtered out.
+ * PHP changes GET parameter keys containing dots to _.
+ *
+ * @return void
+ */
+	public function testGetParamsWithDot() {
+		$_GET['/posts/index/add_add'] = '';
+		$_SERVER['SCRIPT_NAME'] = '/cake_dev/app/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
+
+		$request = new CakeRequest();
+		$this->assertEquals(array(), $request->query);
 	}
 
 /**
