@@ -716,10 +716,10 @@ class Shell extends Object {
 	}
 
 /**
- * Creates the proper controller camelized name (singularized) for the specified name
+ * Creates the proper model camelized name (singularized) for the specified name
  *
  * @param string $name Name
- * @return string Camelized and singularized controller name
+ * @return string Camelized and singularized model name
  */
 	protected function _modelName($name) {
 		return Inflector::camelize(Inflector::singularize($name));
