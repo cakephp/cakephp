@@ -169,7 +169,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testDocType() {
 		$result = $this->Html->docType();
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+		$expected = '<!DOCTYPE html>';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Html->docType('html4-strict');
@@ -662,7 +662,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	function testScriptAssetFilter() {
 		Configure::write('Asset.filter.js', 'js.php');
-	
+
 		$result = $this->Html->script('jquery-1.3');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'cjs/jquery-1.3.js')

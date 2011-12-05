@@ -198,7 +198,7 @@ class HtmlHelper extends AppHelper {
  *  - html4-strict:  HTML4 Strict.
  *  - html4-trans:  HTML4 Transitional.
  *  - html4-frame:  HTML4 Frameset.
- *  - html5: HTML5.
+ *  - html5: HTML5. Default value.
  *  - xhtml-strict: XHTML1 Strict.
  *  - xhtml-trans: XHTML1 Transitional.
  *  - xhtml-frame: XHTML1 Frameset.
@@ -208,7 +208,7 @@ class HtmlHelper extends AppHelper {
  * @return string Doctype string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::docType
  */
-	public function docType($type = 'xhtml-strict') {
+	public function docType($type = 'html5') {
 		if (isset($this->_docTypes[$type])) {
 			return $this->_docTypes[$type];
 		}
