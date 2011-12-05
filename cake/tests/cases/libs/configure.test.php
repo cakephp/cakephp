@@ -149,7 +149,7 @@ class ConfigureTest extends CakeTestCase {
 
 		Configure::write('debug', 2);
 		$result = ini_get('error_reporting');
-		$this->assertEqual($result, E_ALL & ~E_DEPRECATED);
+		$this->assertEqual($result, E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 		$result = ini_get('display_errors');
 		$this->assertEqual($result, 1);
@@ -177,7 +177,7 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEqual(ini_get('display_errors'), 0);
 
 		Configure::write('debug', 2);
-		$this->assertEqual(ini_get('error_reporting'), E_ALL & ~E_DEPRECATED);
+		$this->assertEqual(ini_get('error_reporting'), E_ALL & ~E_DEPRECATED & ~E_STRICT);
 		$this->assertEqual(ini_get('display_errors'), 1);
 
 		Configure::write('debug', 0);
