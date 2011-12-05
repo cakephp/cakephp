@@ -309,10 +309,11 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testLastAccess() {
+		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
-		$this->assertEquals($someFile->lastAccess(), time());
+		$this->assertTrue($someFile->lastAccess() >= $ts);
 		$someFile->close();
 		$someFile->delete();
 	}
