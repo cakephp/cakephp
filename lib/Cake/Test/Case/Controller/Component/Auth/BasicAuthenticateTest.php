@@ -57,7 +57,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */

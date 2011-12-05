@@ -142,12 +142,14 @@ class MissingWidgetThingException extends NotFoundException { }
 class ExceptionRendererTest extends CakeTestCase {
 
 	public $_restoreError = false;
+
 /**
  * setup create a request object to get out of router later.
  *
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::build(array(
 			'views' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
@@ -164,17 +166,18 @@ class ExceptionRendererTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		Configure::write('debug', $this->_debug);
 		Configure::write('Error', $this->_error);
 		App::build();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
+		parent::tearDown();
 	}
 
 /**

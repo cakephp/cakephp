@@ -26,7 +26,7 @@ App::uses('CakeResponse', 'Network');
 class ActionsAuthorizeTest extends CakeTestCase {
 
 /**
- * setup
+ * setUp
  *
  * @return void
  */

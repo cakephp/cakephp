@@ -32,8 +32,8 @@ class IniReaderTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setup() {
-		parent::setup();
+	public function setUp() {
+		parent::setUp();
 		$this->path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS;
 	}
 

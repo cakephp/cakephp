@@ -90,12 +90,12 @@ class TestDeValidation {
 class ValidationTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
 	public function setUp() {
-		parent::setup();
+		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
 	}
 
