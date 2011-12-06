@@ -321,34 +321,31 @@ class TextHelper extends AppHelper {
 			return $this->truncate($text, $radius * 2, array('ending' => $ending));
 		}
 
+		$append = $prepend = $ending;
+
 		$phraseLen = mb_strlen($phrase);
-		if ($radius < $phraseLen) {
-			$radius = $phraseLen;
-		}
+		$textLen = mb_strlen($text);
 
 		$pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
-
-		$startPos = 0;
-		if ($pos > $radius) {
-			$startPos = $pos - $radius;
+		if ($pos === false) {
+			return mb_substr($text, 0, $radius) . $ending;
 		}
 
-		$textLen = mb_strlen($text);
+		$startPos = $pos - $radius;
+		if ($startPos <= 0) {
+			$startPos = 0;
+			$prepend = '';
+		}
 
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
+			$append = '';
 		}
 
 		$excerpt = mb_substr($text, $startPos, $endPos - $startPos);
-		if ($startPos != 0) {
-			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
-		}
-
-		if ($endPos != $textLen) {
-			$excerpt = substr_replace($excerpt, $ending, -$phraseLen);
-		}
-
+		$excerpt = $prepend . $excerpt . $append;
+		
 		return $excerpt;
 	}
 
