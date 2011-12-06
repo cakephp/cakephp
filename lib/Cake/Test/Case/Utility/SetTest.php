@@ -1291,6 +1291,7 @@ class SetTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 		$this->assertSame($result, Set::extract('{n}.B.field1', $items));
 	}
+
 /**
  * testExtractWithArrays method
  *

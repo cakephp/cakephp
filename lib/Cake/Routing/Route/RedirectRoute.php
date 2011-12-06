@@ -1,7 +1,4 @@
 <?php
-App::uses('CakeResponse', 'Network');
-App::uses('CakeRoute', 'Routing/Route');
-
 /**
  * Redirect route will perform an immediate redirect.  Redirect routes
  * are useful when you want to have Routing layer redirects occur in your
@@ -20,6 +17,14 @@ App::uses('CakeRoute', 'Routing/Route');
  * @package       Cake.Routing.Route
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+App::uses('CakeResponse', 'Network');
+App::uses('CakeRoute', 'Routing/Route');
+
+/**
+ * Redirect Route class
+ *
+ * @package Cake.Routing.Route
  */
 class RedirectRoute extends CakeRoute {
 

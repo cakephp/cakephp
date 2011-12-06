@@ -291,6 +291,7 @@ class ArticlesTestController extends ArticlesTestAppController {
 	public function admin_index() {
 		return true;
 	}
+
 /**
  * fake index method.
  *
@@ -441,6 +442,7 @@ class TestCachedPagesController extends Controller {
 	public function view($id = null) {
 		$this->render('index');
 	}
+
 /**
  * test cached forms / tests view object being registered
  *
@@ -723,6 +725,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$controller = $Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
+
 /**
  * testDispatch method
  *

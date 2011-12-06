@@ -32,6 +32,7 @@ class DboMock extends DboSource {
 	public function name($field) {
 		return $field;
 	}
+
 /**
 * Returns true to fake a database connection
 */

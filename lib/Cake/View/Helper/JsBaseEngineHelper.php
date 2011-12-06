@@ -472,6 +472,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @return string Completed slider script
  */
 	abstract public function slider($options = array());
+
 /**
  * Serialize the form attached to $selector.
  * Pass `true` for $isForm if the current selection is a form element.

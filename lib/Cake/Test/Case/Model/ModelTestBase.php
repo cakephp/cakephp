@@ -41,6 +41,7 @@ abstract class BaseModelTest extends CakeTestCase {
  * @var bool false
  */
 	public $backupGlobals = false;
+
 /**
  * fixtures property
  *

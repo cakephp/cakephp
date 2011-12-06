@@ -1894,6 +1894,7 @@ class AssociationTest2 extends CakeTestModel {
 class Callback extends CakeTestModel {
 
 }
+
 /**
  * CallbackPostTestModel class
  *
