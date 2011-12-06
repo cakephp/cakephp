@@ -553,15 +553,15 @@ class SecurityComponent extends Component {
  * @return array An array of nonce => expires.
  */
 	protected function _expireTokens($tokens) {
-		$now = time();
-		$overflow = count($tokens) - $this->csrfLimit;
-		if ($overflow > 0) {
-			$tokens = array_slice($tokens, $overflow + 1, null, true);
-		}
 		foreach ($tokens as $nonce => $expires) {
 			if ($expires < $now) {
 				unset($tokens[$nonce]);
 			}
+		}
+		$now = time();
+		$overflow = count($tokens) - $this->csrfLimit;
+		if ($overflow > 0) {
+			$tokens = array_slice($tokens, $overflow + 1, null, true);
 		}
 		return $tokens;
 	}
