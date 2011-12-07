@@ -206,6 +206,7 @@ class PostgresTest extends CakeTestCase {
 		'core.tag', 'core.articles_tag', 'core.attachment', 'core.person', 'core.post', 'core.author',
 		'core.datatype',
 	);
+
 /**
  * Actual DB connection used in testing
  *

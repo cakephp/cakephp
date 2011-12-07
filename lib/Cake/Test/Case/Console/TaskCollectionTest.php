@@ -71,6 +71,7 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
+
 /**
  * test missingtask exception
  *

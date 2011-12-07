@@ -554,6 +554,7 @@ class UpgradeShell extends AppShell {
 		);
 		$this->_filesRegexpUpdate($patterns);
 	}
+
 /**
  * Move application views files to where they now should be
  *

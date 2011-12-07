@@ -53,6 +53,7 @@ class TestNlValidation {
 	static function postal($check) {
 		return true;
 	}
+
 /**
  * ssn function for testing ssn pass through
  *

@@ -184,6 +184,7 @@ class FolderTest extends CakeTestCase {
 		chmod($path, '0777');
 		rmdir($path);
 	}
+
 /**
  * testOperations method
  *
@@ -343,6 +344,7 @@ class FolderTest extends CakeTestCase {
 		$result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, 'another_path');
 		$this->assertEquals($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
 	}
+
 /**
  * testFolderRead method
  *

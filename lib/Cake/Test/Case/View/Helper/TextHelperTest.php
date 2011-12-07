@@ -87,6 +87,7 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
 		$this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
 	}
+
 /**
  * testHighlight method
  *

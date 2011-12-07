@@ -470,6 +470,7 @@ class DbAclTest extends CakeTestCase {
 
 		$this->Acl->deny('Bobs', 'ROOT/printers/DoesNotExist', 'create');
 	}
+
 /**
  * debug function - to help editing/creating test cases for the ACL component
  *

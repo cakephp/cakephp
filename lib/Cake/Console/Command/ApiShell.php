@@ -151,6 +151,7 @@ class ApiShell extends AppShell {
 		))->description(__d('cake_console', 'Lookup doc block comments for classes in CakePHP.'));
 		return $parser;
 	}
+
 /**
  * Show help for this shell.
  *

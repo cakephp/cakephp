@@ -110,6 +110,7 @@ class ComponentCollectionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Components->enabled('Cookie'), 'Cookie should be disabled');
 	}
+
 /**
  * test missingcomponent exception
  *

@@ -676,6 +676,7 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->transportClass();
 		$this->assertInstanceOf('DebugTransport', $result);
 	}
+
 /**
  * testSendWithContent method
  *
@@ -1213,6 +1214,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
 	}
+
 /**
  * testViewRender method
  *
