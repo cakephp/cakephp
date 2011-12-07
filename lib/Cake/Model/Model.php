@@ -675,7 +675,7 @@ class Model extends Object {
 		}
 
 		if (is_subclass_of($this, 'AppModel')) {
-			$merge = array('actsAs','findMethods');
+			$merge = array('actsAs', 'findMethods');
 			$parentClass = get_parent_class($this);
 			if ($parentClass !== 'AppModel') {
 				$this->_mergeVars($merge, $parentClass);
