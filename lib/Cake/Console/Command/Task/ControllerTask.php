@@ -46,7 +46,7 @@ class ControllerTask extends BakeTask {
  *
  * @var array
  */
-	public $skipTables = array('cake_sesions', 'i18n');
+	public $skipTables = array('cake_sessions', 'i18n');
 
 /**
  * Override initialize
