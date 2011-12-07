@@ -19,12 +19,12 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('ShellDispatcher', 'Console');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('TemplateTask', 'Console/Command/Task');
+
 /**
  * TemplateTaskTest class
  *

@@ -440,12 +440,14 @@ class SchemaPrefixAuthUser extends CakeTestModel {
  * @var string
  */
 	public $name = 'SchemaPrefixAuthUser';
+
 /**
  * table prefix
  *
  * @var string
  */
 	public $tablePrefix = 'auth_';
+
 /**
  * useTable
  *
@@ -746,6 +748,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$result = $this->Schema->generateTable('posts', $posts);
 		$this->assertRegExp('/public \$posts/', $result);
 	}
+
 /**
  * testSchemaWrite method
  *

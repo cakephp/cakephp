@@ -374,6 +374,7 @@ class Cache {
 		self::set(null, $config);
 		return $success;
 	}
+
 /**
  * Decrement a number under the key and return decremented value.
  *
@@ -401,6 +402,7 @@ class Cache {
 		self::set(null, $config);
 		return $success;
 	}
+
 /**
  * Delete a key from the cache.
  *

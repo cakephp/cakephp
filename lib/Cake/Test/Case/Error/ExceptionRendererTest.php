@@ -126,6 +126,7 @@ class MyCustomExceptionRenderer extends ExceptionRenderer {
 		echo 'widget thing is missing';
 	}
 }
+
 /**
  * Exception class for testing app error handlers and custom errors.
  *
@@ -409,6 +410,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertContains('Not Found', $result);
 	}
+
 /**
  * test that error400 doesn't expose XSS
  *

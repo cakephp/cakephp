@@ -16,7 +16,6 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Router', 'Routing');
 App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
@@ -105,8 +104,6 @@ class TestScaffoldMock extends Scaffold {
     }
 }
 
-
-
 /**
  * Scaffold Test class
  *
@@ -127,6 +124,7 @@ class ScaffoldTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
+
 /**
  * setUp method
  *
@@ -273,6 +271,7 @@ class ScaffoldTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertRegExp('/Scaffold Mock has been updated/', $result);
 	}
+
 /**
  * test that habtm relationship keys get added to scaffoldFields.
  *
@@ -308,6 +307,7 @@ class ScaffoldTest extends CakeTestCase {
 		$result = $Scaffold->controller->viewVars;
 		$this->assertEquals($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'ScaffoldTag'));
 	}
+
 /**
  * test that the proper names and variable values are set by Scaffold
  *

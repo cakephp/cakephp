@@ -990,6 +990,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->unlockField();
 		$this->assertEquals(array('Address.button'), $result);
 	}
+
 /**
  * Test that the correct fields are unlocked for image submits with no names.
  *
@@ -1029,6 +1030,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertEquals(array('test', 'test_x', 'test_y'), $this->Form->unlockField());
 	}
+
 /**
  * testFormSecurityMultipleInputFields method
  *
@@ -4143,6 +4145,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSelectHiddenFieldOmission method
  *
@@ -5824,6 +5827,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testPostLink method
  *
@@ -6597,6 +6601,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertRegExp('/name="created\[min\]"/', $result, 'min name attribute is wrong.');
 		$this->assertRegExp('/name="created\[meridian\]"/', $result, 'meridian name attribute is wrong.');
 	}
+
 /**
  * testEditFormWithData method
  *

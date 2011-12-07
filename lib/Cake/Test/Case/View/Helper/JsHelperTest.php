@@ -48,6 +48,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 	public function testMap($options = array()) {
 		return $this->_mapOptions('request', $options);
 	}
+
 /**
  * test method for option parsing
  *
@@ -697,6 +698,7 @@ class JsBaseEngineTest extends CakeTestCase {
 		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
 		$this->JsEngine = new OptionEngineHelper($this->View);
 	}
+
 /**
  * tearDown method
  *

@@ -186,6 +186,7 @@ class DbAroUserTest extends CakeTestModel {
  * @var string 'auth_users'
  */
 	public $useTable = 'auth_users';
+
 /**
  * bindNode method
  *

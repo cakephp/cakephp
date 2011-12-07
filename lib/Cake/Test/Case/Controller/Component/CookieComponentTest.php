@@ -499,6 +499,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertNull($this->Cookie->read('User.email'));
 		$this->Cookie->destroy();
 	}
+
 /**
  * Test deleting recursively with keys that don't exist.
  *

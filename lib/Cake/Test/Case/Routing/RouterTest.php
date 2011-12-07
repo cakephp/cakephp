@@ -2084,6 +2084,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(Router::stripPlugin($url), $url);
 		$this->assertEquals(Router::stripPlugin($url, null), $url);
 	}
+
 /**
  * testCurentRoute
  *
@@ -2098,6 +2099,7 @@ class RouterTest extends CakeTestCase {
 		$route = Router::currentRoute();
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
 	}
+
 /**
  * testRequestRoute
  *
@@ -2124,6 +2126,7 @@ class RouterTest extends CakeTestCase {
 		$route = Router::requestRoute();
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
 	}
+
 /**
  * testGetParams
  *
@@ -2389,6 +2392,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('base' => false));
 		$this->assertEquals('/posts', $result, 'with second requests, the last should win.');
 	}
+
 /**
  * test that a route object returning a full url is not modified.
  *

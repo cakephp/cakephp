@@ -1,5 +1,4 @@
 <?php
-App::uses('CakeRoute', 'Routing/Route');
 /**
  * Plugin short route, that copies the plugin param to the controller parameters
  * It is used for supporting /:plugin routes.
@@ -17,6 +16,13 @@ App::uses('CakeRoute', 'Routing/Route');
  * @package       Cake.Routing.Route
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+App::uses('CakeRoute', 'Routing/Route');
+
+/**
+ * Plugin Short Route class
+ * 
+ * @package Cake.Routing.Route
  */
 class PluginShortRoute extends CakeRoute {
 

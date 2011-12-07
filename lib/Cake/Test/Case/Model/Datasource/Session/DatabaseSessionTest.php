@@ -137,6 +137,7 @@ class DatabaseSessionTest extends CakeTestCase {
 		$result = $this->storage->write('', 'This is a Test');
 		$this->assertFalse($result);
 	}
+
 /**
  * test read()
  *
