@@ -75,7 +75,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $skipTables = array('i18n');
+	public $skipTables = array('cake_sessions', 'i18n');
 
 /**
  * Override initialize
