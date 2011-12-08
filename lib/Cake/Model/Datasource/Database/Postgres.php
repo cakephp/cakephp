@@ -22,8 +22,6 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * PostgreSQL layer for DBO.
  *
- * Long description for class
- *
  * @package       Cake.Model.Datasource.Database
  */
 class Postgres extends DboSource {
