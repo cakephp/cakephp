@@ -1462,7 +1462,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::button
  */
 	public function button($title, $options = array()) {
-		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
+		$options += array('escape' => false, 'secure' => false);
 		if ($options['escape']) {
 			$title = h($title);
 		}
