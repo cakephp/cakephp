@@ -22,7 +22,11 @@
 App::uses('Xml', 'Utility');
 
 /**
- * Request object for handling HTTP requests
+ * Request object for handling alternative HTTP requests
+ *
+ * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
+ * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
+ * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html

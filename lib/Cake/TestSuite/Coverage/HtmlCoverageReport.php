@@ -16,8 +16,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('BaseCoverageReport', 'TestSuite/Coverage');
 
+/**
+ * Generates code coverage reports in HTML from data obtained from PHPUnit
+ *
+ * @package       Cake.TestSuite.Coverage
+ */
 class HtmlCoverageReport extends BaseCoverageReport {
 
 /**

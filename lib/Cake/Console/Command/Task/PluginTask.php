@@ -21,7 +21,7 @@ App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 
 /**
- * Task class for creating a plugin
+ * The Plugin Task handles creating an empty plugin, ready to be used
  *
  * @package       Cake.Console.Command.Task
  */
