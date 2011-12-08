@@ -701,6 +701,11 @@ class Model extends Object {
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
+
+		if ($this->tablePrefix === null) {
+			unset($this->tablePrefix);
+		}
+
 		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
@@ -799,6 +804,13 @@ class Model extends Object {
 	public function __get($name) {
 		if ($name === 'displayField') {
 			return $this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
+		}
+		if ($name === 'tablePrefix') {
+			$this->setDataSource();
+			if (property_exists($this, 'tablePrefix')) {
+				return $this->tablePrefix;
+			}
+			return $this->tablePrefix = null;
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};

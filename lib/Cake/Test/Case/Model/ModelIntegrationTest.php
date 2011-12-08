@@ -2049,6 +2049,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $TestModel->escapeField('DomainHandle', 'Domain');
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEquals($expected, $result);
+		ConnectionManager::drop('mock');
 	}
 
 /**
@@ -2073,4 +2074,21 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertTrue($Article->hasMethod('pass'));
 		$this->assertFalse($Article->hasMethod('fail'));
 	}
+
+/**
+ * Tests that tablePrefix is taken from the datasource if none is defined in the model
+ *
+ * @return void
+ * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/2277-caketestmodels-in-test-cases-do-not-set-model-tableprefix
+ */
+	public function testModelPrefixFromDatasource() {
+		ConnectionManager::create('mock', array(
+			'datasource' => 'DboMock',
+			'prefix' => 'custom_prefix_'
+		));
+		$Article = new Article(false, null, 'mock');
+		$this->assertEquals('custom_prefix_', $Article->tablePrefix);
+		ConnectionManager::drop('mock');
+	}
+
 }
