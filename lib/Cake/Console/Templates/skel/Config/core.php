@@ -200,6 +200,7 @@
  * timestamping regardless of debug value.
  */
 	//Configure::write('Asset.timestamp', true);
+
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
@@ -239,8 +240,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'File', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
  * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
  * 		'lock' => false, //[optional]  use file locking
@@ -251,8 +252,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Apc', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  *
@@ -260,8 +261,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Xcache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
  *		'user' => 'user', //user from xcache.admin.user settings
  *		'password' => 'password', //plaintext password (xcache.admin.pass)
@@ -271,8 +272,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Memcache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  * 		'servers' => array(
  * 			'127.0.0.1:11211' // localhost, default port 11211
@@ -285,8 +286,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Wincache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  */

@@ -2603,7 +2603,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testTimeDefinitionJapanese(){
+	public function testTimeDefinitionJapanese() {
 		Configure::write('Config.language', 'ja_jp');
 		$result = __c('d_fmt', 5);
 

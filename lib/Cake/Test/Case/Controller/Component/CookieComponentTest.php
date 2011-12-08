@@ -102,12 +102,12 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	protected function _setCookieData() {
-		$this->Cookie->write(array('Encrytped_array' => array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!')));
+		$this->Cookie->write(array('Encrytped_array' => array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')));
 		$this->Cookie->write(array('Encrytped_multi_cookies.name' => 'CakePHP'));
 		$this->Cookie->write(array('Encrytped_multi_cookies.version' => '1.2.0.x'));
 		$this->Cookie->write(array('Encrytped_multi_cookies.tag' => 'CakePHP Rocks!'));
 
-		$this->Cookie->write(array('Plain_array' => array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!')), null, false);
+		$this->Cookie->write(array('Plain_array' => array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')), null, false);
 		$this->Cookie->write(array('Plain_multi_cookies.name' => 'CakePHP'), null, false);
 		$this->Cookie->write(array('Plain_multi_cookies.version' => '1.2.0.x'), null, false);
 		$this->Cookie->write(array('Plain_multi_cookies.tag' => 'CakePHP Rocks!'), null, false);
@@ -145,11 +145,11 @@ class CookieComponentTest extends CakeTestCase {
 	public function testReadEncryptedCookieData() {
 		$this->_setCookieData();
 		$data = $this->Cookie->read('Encrytped_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($data, $expected);
 
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($data, $expected);
 	}
 
@@ -162,11 +162,11 @@ class CookieComponentTest extends CakeTestCase {
 		$this->_setCookieData();
 
 		$data = $this->Cookie->read('Plain_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($data, $expected);
 
 		$data = $this->Cookie->read('Plain_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($data, $expected);
 	}
 
@@ -279,7 +279,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->_setCookieData();
 		$this->Cookie->delete('Encrytped_multi_cookies.name');
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
-		$expected = array('version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($data, $expected);
 
 		$this->Cookie->delete('Encrytped_array');
@@ -288,7 +288,7 @@ class CookieComponentTest extends CakeTestCase {
 
 		$this->Cookie->delete('Plain_multi_cookies.name');
 		$data = $this->Cookie->read('Plain_multi_cookies');
-		$expected = array('version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($data, $expected);
 
 		$this->Cookie->delete('Plain_array');
@@ -372,7 +372,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertNull($data);
 
 		$_COOKIE['CakeTestCookie'] = array(
-				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!')),
+				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
 				'Encrytped_multi_cookies' => array(
 						'name' => $this->__encrypt('CakePHP'),
 						'version' => $this->__encrypt('1.2.0.x'),
@@ -386,19 +386,19 @@ class CookieComponentTest extends CakeTestCase {
 		$this->Cookie->startup(null);
 
 		$data = $this->Cookie->read('Encrytped_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 		$this->Cookie->destroy();
 		unset($_COOKIE['CakeTestCookie']);
@@ -427,7 +427,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertEquals($expected, $data);
 
 		$_COOKIE['CakeTestCookie'] = array(
-				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!')),
+				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
 				'Encrytped_multi_cookies' => array(
 						'name' => $this->__encrypt('CakePHP'),
 						'version' => $this->__encrypt('1.2.0.x'),
@@ -439,19 +439,19 @@ class CookieComponentTest extends CakeTestCase {
 						'tag' => 'CakePHP Rocks!'));
 
 		$data = $this->Cookie->read('Encrytped_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Encrytped_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 
 		$data = $this->Cookie->read('Plain_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
+		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
 		$this->assertEquals($expected, $data);
 		$this->Cookie->destroy();
 		unset($_COOKIE['CakeTestCookie']);
@@ -499,6 +499,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertNull($this->Cookie->read('User.email'));
 		$this->Cookie->destroy();
 	}
+
 /**
  * Test deleting recursively with keys that don't exist.
  *

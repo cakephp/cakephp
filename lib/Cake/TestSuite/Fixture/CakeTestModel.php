@@ -39,7 +39,7 @@ class CakeTestModel extends Model {
 	public function beforeFind($queryData) {
 		$pk = $this->primaryKey;
 		$aliasedPk = $this->alias . '.' . $this->primaryKey;
-		switch(true) {
+		switch (true) {
 			case !$pk:
 			case !$this->useTable:
 			case !$this->schema('id'):

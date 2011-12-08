@@ -98,6 +98,7 @@ class RssHelper extends AppHelper {
  * @param array $attrib `<rss />` tag attributes
  * @param string $content
  * @return string An RSS document
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::document
  */
 	public function document($attrib = array(), $content = null) {
 		if ($content === null) {
@@ -118,6 +119,7 @@ class RssHelper extends AppHelper {
  * @param mixed $elements Named array elements which are converted to tags
  * @param mixed $content Content (`<item />`'s belonging to this channel
  * @return string An RSS `<channel />`
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::channel
  */
 	public function channel($attrib = array(), $elements = array(), $content = null) {
 		if (!isset($elements['title']) && !empty($this->_View->pageTitle)) {
@@ -162,6 +164,7 @@ class RssHelper extends AppHelper {
  * @param mixed $callback A string function name, or array containing an object
  *     and a string method name
  * @return string A set of RSS `<item />` elements
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::items
  */
 	public function items($items, $callback = null) {
 		if ($callback != null) {
@@ -183,6 +186,7 @@ class RssHelper extends AppHelper {
  * @param array $att The attributes of the `<item />` element
  * @param array $elements The list of elements contained in this `<item />`
  * @return string An RSS `<item />` element
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::item
  */
 	public function item($att = array(), $elements = array()) {
 		$content = null;
@@ -270,6 +274,7 @@ class RssHelper extends AppHelper {
  * @param mixed $time
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time
  */
 	public function time($time) {
 		return $this->Time->toRSS($time);
@@ -283,6 +288,7 @@ class RssHelper extends AppHelper {
  * @param mixed $content XML element content
  * @param boolean $endTag Whether the end tag of the element should be printed
  * @return string XML
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::elem
  */
 	public function elem($name, $attrib = array(), $content = null, $endTag = true) {
 		$namespace = null;

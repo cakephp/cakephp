@@ -45,6 +45,7 @@ class CakeTestSuiteDispatcher {
 		'filter' => false,
 		'fixture' => null
 	);
+
 /**
  * Baseurl for the request
  *
@@ -228,7 +229,7 @@ class CakeTestSuiteDispatcher {
 	function _runTestCase() {
 		$commandArgs = array(
 			'case' => $this->params['case'],
-			'core' =>$this->params['core'],
+			'core' => $this->params['core'],
 			'app' => $this->params['app'],
 			'plugin' => $this->params['plugin'],
 			'codeCoverage' => $this->params['codeCoverage'],

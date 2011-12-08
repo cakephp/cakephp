@@ -472,6 +472,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @return string Completed slider script
  */
 	abstract public function slider($options = array());
+
 /**
  * Serialize the form attached to $selector.
  * Pass `true` for $isForm if the current selection is a form element.
@@ -569,7 +570,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Conveinence wrapper method for all common option processing steps.
+ * Convenience wrapper method for all common option processing steps.
  * Runs _mapOptions, _prepareCallbacks, and _parseOptions in order.
  *
  * @param string $method Name of method processing options for.

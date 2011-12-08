@@ -19,7 +19,7 @@
 
 /**
  * This component is used to handle automatic model data pagination.  The primary way to use this
- * component is to call the paginate() method. There is a convience wrapper on Controller as well.
+ * component is to call the paginate() method. There is a convenience wrapper on Controller as well.
  *
  * ### Configuring pagination
  *

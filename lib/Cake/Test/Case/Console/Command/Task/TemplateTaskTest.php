@@ -19,12 +19,12 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('ShellDispatcher', 'Console');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('TemplateTask', 'Console/Command/Task');
+
 /**
  * TemplateTaskTest class
  *
@@ -33,11 +33,11 @@ App::uses('TemplateTask', 'Console/Command/Task');
 class TemplateTaskTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
 		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
@@ -49,7 +49,7 @@ class TemplateTaskTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */

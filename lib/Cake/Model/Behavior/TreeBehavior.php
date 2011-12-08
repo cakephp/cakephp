@@ -73,7 +73,7 @@ class TreeBehavior extends ModelBehavior {
 /**
  * After save method. Called after all saves
  *
- * Overriden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
+ * Overridden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
  * parameters to be saved.
  *
  * @param Model $Model Model instance.
@@ -125,7 +125,7 @@ class TreeBehavior extends ModelBehavior {
 /**
  * Before save method. Called before all saves
  *
- * Overriden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
+ * Overridden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
  * parameters to be saved. For newly created nodes with NO parent the left and right field values are set directly by
  * this method bypassing the setParent logic.
  *
@@ -562,7 +562,7 @@ class TreeBehavior extends ModelBehavior {
 		$Model->recursive = $recursive;
 		if ($mode == 'parent') {
 			$Model->bindModel(array('belongsTo' => array('VerifyParent' => array(
-				'className' => $Model->alias,
+				'className' => $Model->name,
 				'foreignKey' => $parent,
 				'fields' => array($Model->primaryKey, $left, $right, $parent),
 			))));
@@ -624,7 +624,7 @@ class TreeBehavior extends ModelBehavior {
  * Options:
  *
  * - 'id' id of record to use as top node for reordering
- * - 'field' Which field to use in reordeing defaults to displayField
+ * - 'field' Which field to use in reordering defaults to displayField
  * - 'order' Direction to order either DESC or ASC (defaults to ASC)
  * - 'verify' Whether or not to verify the tree before reorder. defaults to true.
  *
@@ -770,7 +770,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 
 		$Model->bindModel(array('belongsTo' => array('VerifyParent' => array(
-			'className' => $Model->alias,
+			'className' => $Model->name,
 			'foreignKey' => $parent,
 			'fields' => array($Model->primaryKey, $left, $right, $parent)
 		))));

@@ -60,7 +60,7 @@ class CommandListShellTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */

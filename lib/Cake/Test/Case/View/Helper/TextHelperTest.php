@@ -87,6 +87,7 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
 		$this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
 	}
+
 /**
  * testHighlight method
  *
@@ -221,12 +222,12 @@ class TextHelperTest extends CakeTestCase {
 
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link">http://www.cakephp.org</a>';
-		$result = $this->Text->autoLink($text, array('class'=>'link'));
+		$result = $this->Text->autoLink($text, array('class' => 'link'));
 		$this->assertEquals($expected, $result);
 
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link" id="MyLink">http://www.cakephp.org</a>';
-		$result = $this->Text->autoLink($text, array('class'=>'link', 'id'=>'MyLink'));
+		$result = $this->Text->autoLink($text, array('class' => 'link', 'id' => 'MyLink'));
 		$this->assertEquals($expected, $result);
 	}
 
@@ -354,7 +355,7 @@ class TextHelperTest extends CakeTestCase {
 	public function testExcerpt() {
 		$text = 'This is a phrase with test text to play with';
 
-		$expected = '...with test text...';
+		$expected = '...ase with test text to ...';
 		$result = $this->Text->excerpt($text, 'test', 9, '...');
 		$this->assertEquals($expected, $result);
 
@@ -370,18 +371,19 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->excerpt($text, null, 200, '...');
 		$this->assertEquals($expected, $result);
 
-		$expected = '...phrase...';
+		$expected = '...a phrase w...';
 		$result = $this->Text->excerpt($text, 'phrase', 2, '...');
 		$this->assertEquals($expected, $result);
 
-		$phrase = 'This is a phrase with test';
+		$phrase = 'This is a phrase with test text';
 		$expected = $text;
-		$result = $this->Text->excerpt($text, $phrase, strlen($phrase) + 3, '...');
+		$result = $this->Text->excerpt($text, $phrase, 13, '...');
 		$this->assertEquals($expected, $result);
-
-		$phrase = 'This is a phrase with text';
-		$expected = $text;
-		$result = $this->Text->excerpt($text, $phrase, 10, '...');
+		
+		$text = 'aaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa';
+		$phrase = 'bbbbbbbb';
+		$result = $this->Text->excerpt($text, $phrase, 10);
+		$expected = '...aaaaaaaaaabbbbbbbbaaaaaaaaaa...';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -393,7 +395,7 @@ class TextHelperTest extends CakeTestCase {
 	public function testExcerptCaseInsensitivity() {
 		$text = 'This is a phrase with test text to play with';
 
-		$expected = '...with test text...';
+		$expected = '...ase with test text to ...';
 		$result = $this->Text->excerpt($text, 'TEST', 9, '...');
 		$this->assertEquals($expected, $result);
 
@@ -420,16 +422,16 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
 		$this->assertEquals($result, 'Dusty, Lucky y Ned');
 
-		$result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'y');
+		$result = $this->Text->toList(array(1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'y');
 		$this->assertEquals($result, 'Dusty, Lucky y Ned');
 
-		$result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'and', ' + ');
+		$result = $this->Text->toList(array(1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'and', ' + ');
 		$this->assertEquals($result, 'Dusty + Lucky and Ned');
 
-		$result = $this->Text->toList(array( 'name1' => 'Dusty', 'name2' => 'Lucky'));
+		$result = $this->Text->toList(array('name1' => 'Dusty', 'name2' => 'Lucky'));
 		$this->assertEquals($result, 'Dusty and Lucky');
 
-		$result = $this->Text->toList(array( 'test_0' => 'banana', 'test_1' => 'apple', 'test_2' => 'lemon'));
+		$result = $this->Text->toList(array('test_0' => 'banana', 'test_1' => 'apple', 'test_2' => 'lemon'));
 		$this->assertEquals($result, 'banana, apple and lemon');
 	}
 }

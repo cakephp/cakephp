@@ -157,7 +157,30 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Set authentication settings
+ * Set authentication settings.
+ *
+ * Accepts two forms of parameters.  If all you need is a username + password, as with
+ * Basic authentication you can do the following:
+ *
+ * {{{
+ * $http->configAuth('Basic', 'mark', 'secret');
+ * }}}
+ *
+ * If you are using an authentication strategy that requires more inputs, like Digest authentication
+ * you can call `configAuth()` with an array of user information.
+ *
+ * {{{
+ * $http->configAuth('Digest', array(
+ *		'user' => 'mark',
+ *		'pass' => 'secret',
+ *		'realm' => 'my-realm',
+ *		'nonce' => 1235
+ * ));
+ * }}}
+ *
+ * To remove any set authentication strategy, call `configAuth()` with no parameters:
+ *
+ * `$http->configAuth();`
  *
  * @param string $method Authentication method (ie. Basic, Digest). If empty, disable authentication
  * @param mixed $user Username for authentication. Can be an array with settings to authentication class
@@ -273,17 +296,17 @@ class HttpSocket extends CakeSocket {
 			if (!empty($this->request['cookies'])) {
 				$cookies = $this->buildCookies($this->request['cookies']);
 			}
-			$schema = '';
+			$scheme = '';
 			$port = 0;
-			if (isset($this->request['uri']['schema'])) {
-				$schema = $this->request['uri']['schema'];
+			if (isset($this->request['uri']['scheme'])) {
+				$scheme = $this->request['uri']['scheme'];
 			}
 			if (isset($this->request['uri']['port'])) {
 				$port = $this->request['uri']['port'];
 			}
 			if (
-				($schema === 'http' && $port != 80) ||
-				($schema === 'https' && $port != 443) ||
+				($scheme === 'http' && $port != 80) ||
+				($scheme === 'https' && $port != 443) ||
 				($port != 80 && $port != 443)
 			) {
 				$Host .= ':' . $port;
@@ -610,7 +633,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $uri Either A $uri array, or a request string. Will use $this->config if left empty.
  * @param string $uriTemplate The Uri template/format to use.
- * @return mixed A fully qualified URL formated according to $uriTemplate, or false on failure
+ * @return mixed A fully qualified URL formatted according to $uriTemplate, or false on failure
  */
 	protected function _buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
 		if (is_string($uri)) {
@@ -712,7 +735,7 @@ class HttpSocket extends CakeSocket {
 
 /**
  * This function can be thought of as a reverse to PHP5's http_build_query(). It takes a given query string and turns it into an array and
- * supports nesting by using the php bracket syntax. So this menas you can parse queries like:
+ * supports nesting by using the php bracket syntax. So this means you can parse queries like:
  *
  * - ?key[subKey]=value
  * - ?key[]=value1&key[]=value2

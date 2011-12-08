@@ -88,7 +88,7 @@ class ConsoleShell extends AppShell {
 		$out .= "\n";
 		$out .= 'To dynamically set associations, you can do the following:';
 		$out .= "\tModelA bind <association> ModelB";
-		$out .= "where the supported assocations are hasOne, hasMany, belongsTo, hasAndBelongsToMany";
+		$out .= "where the supported associations are hasOne, hasMany, belongsTo, hasAndBelongsToMany";
 		$out .= "\n";
 		$out .= 'To dynamically remove associations, you can do the following:';
 		$out .= "\t ModelA unbind <association> ModelB";
@@ -117,7 +117,7 @@ class ConsoleShell extends AppShell {
 		$out .= "\n";
 		$out .= "will return something like the following:";
 		$out .= "\n";
-		$out .= "\tarray (";
+		$out .= "\tarray(";
 		$out .= "\t  [...]";
 		$out .= "\t  'controller' => 'posts',";
 		$out .= "\t  'action' => 'view',";

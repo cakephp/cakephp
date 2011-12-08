@@ -163,6 +163,7 @@ class SqlserverTestModel extends Model {
 			'foreignKey' => 'client_id'
 		)
 	);
+
 /**
  * find method
  *
@@ -302,6 +303,7 @@ class SqlserverTest extends CakeTestCase {
 		$result = $this->db->value('', 'binary');
 		$this->assertSame($expected, $result);
 	}
+
 /**
  * testFields method
  *
@@ -459,6 +461,7 @@ class SqlserverTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * testBuildColumn
  *
@@ -521,6 +524,7 @@ class SqlserverTest extends CakeTestCase {
 		$expected = '[body] nvarchar(MAX)';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * testBuildIndex method
  *
@@ -547,6 +551,7 @@ class SqlserverTest extends CakeTestCase {
 		$expected = array('ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id], [period_id]);');
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * testUpdateAllSyntax method
  *

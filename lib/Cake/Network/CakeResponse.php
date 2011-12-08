@@ -423,7 +423,7 @@ class CakeResponse {
  * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
  *
  * @param mixed $header. An array of header strings or a single header string
- *	- an assotiative array of "header name" => "header value" is also accepted
+ *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
  * @param mixed $value. The header value.
  * @return array list of headers to be sent
@@ -674,7 +674,7 @@ class CakeResponse {
 	}
 
 /**
- * Sets the correct headers to instruct the browser to dowload the response as a file.
+ * Sets the correct headers to instruct the browser to download the response as a file.
  *
  * @param string $filename the name of the file as the browser will download the response
  * @return void

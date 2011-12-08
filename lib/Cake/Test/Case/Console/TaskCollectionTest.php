@@ -22,23 +22,25 @@ App::uses('Shell', 'Console');
 
 class TaskCollectionTest extends CakeTestCase {
 /**
- * setup
+ * setUp
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
+		parent::setUp();
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Tasks);
+		parent::tearDown();
 	}
 
 /**
@@ -69,6 +71,7 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
+
 /**
  * test missingtask exception
  *

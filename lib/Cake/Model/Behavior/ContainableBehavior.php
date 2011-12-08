@@ -259,7 +259,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param Model $Model Model on which binding restriction is being applied
  * @param array $contain Parameters to use for restricting this model
  * @param array $containments Current set of containments
- * @param boolean $throwErrors Wether unexisting bindings show throw errors
+ * @param boolean $throwErrors Whether non-existent bindings show throw errors
  * @return array Containments
  */
 	public function containments($Model, $contain, $containments = array(), $throwErrors = null) {
@@ -349,7 +349,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 
 		if (!isset($containments['models'][$Model->alias])) {
-			$containments['models'][$Model->alias] = array('keep' => array(),'instance' => &$Model);
+			$containments['models'][$Model->alias] = array('keep' => array(), 'instance' => &$Model);
 		}
 
 		$containments['models'][$Model->alias]['keep'] = array_merge($containments['models'][$Model->alias]['keep'], $keep);
