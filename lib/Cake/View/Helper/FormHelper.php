@@ -1527,8 +1527,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a `<button>` tag.  The type attribute defaults to `type="submit"`
- * You can change it to a different value by using `$options['type']`.
+ * Creates a `<button>` tag.
  *
  * ### Options:
  *
@@ -1540,7 +1539,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::button
  */
 	public function button($title, $options = array()) {
-		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
+		$options += array('escape' => false, 'secure' => false);
 		if ($options['escape']) {
 			$title = h($title);
 		}
@@ -1548,7 +1547,7 @@ class FormHelper extends AppHelper {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $name);
 		}
-		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
+		return $this->Html->useTag('button', $options, $title);
 	}
 
 /**
@@ -1569,6 +1568,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
+		$options = array_merge(array('type' => 'submit'), $options);
 		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
