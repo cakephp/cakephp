@@ -1491,6 +1491,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
+		$options = array_merge(array('type' => 'submit'), $options);
 		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
