@@ -5747,7 +5747,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testButton() {
 		$result = $this->Form->button('Hi');
-		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
+		$this->assertTags($result, array('button', 'Hi', '/button'));
 
 		$result = $this->Form->button('Clear Form >', array('type' => 'reset'));
 		$this->assertTags($result, array('button' => array('type' => 'reset'), 'Clear Form >', '/button'));
