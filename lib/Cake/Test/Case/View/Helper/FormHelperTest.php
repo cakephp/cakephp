@@ -1366,6 +1366,34 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that forms with disabled inputs + secured forms leave off the inputs from the form
+ * hashing.
+ *
+ * @return void
+ */
+	public function testFormSecuredAndDisabled() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+
+		$this->Form->checkbox('Model.checkbox', array('disabled' => true));
+		$this->Form->text('Model.text', array('disabled' => true));
+		$this->Form->password('Model.text', array('disabled' => true));
+		$this->Form->textarea('Model.textarea', array('disabled' => true));
+		$this->Form->select('Model.select', array(1, 2), array('disabled' => true));
+		$this->Form->radio('Model.radio', array(1, 2), array('disabled' => array(1, 2)));
+		$this->Form->year('Model.year', null, null, array('disabled' => true));
+		$this->Form->month('Model.month', array('disabled' => true));
+		$this->Form->day('Model.day', array('disabled' => true));
+		$this->Form->hour('Model.hour', false, array('disabled' => true));
+		$this->Form->minute('Model.minute', array('disabled' => true));
+		$this->Form->meridian('Model.meridian', array('disabled' => true));
+
+		$expected = array(
+			'Model.radio' => ''
+		);
+		$this->assertEquals($expected, $this->Form->fields);
+	}
+
+/**
  * testDisableSecurityUsingForm method
  *
  * @return void
