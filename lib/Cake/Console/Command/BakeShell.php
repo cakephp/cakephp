@@ -24,7 +24,11 @@ App::uses('AppShell', 'Console/Command');
 App::uses('Model', 'Model');
 
 /**
- * Bake is a command-line code generation utility for automating programmer chores.
+ * Command-line code generation utility to automate programmer chores.
+ *
+ * Bake is CakePHP's code generation script, which can help you kickstart
+ * application development by writing fully functional skeleton controllers,
+ * models, and views. Going further, Bake can also write Unit Tests for you.
  *
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html

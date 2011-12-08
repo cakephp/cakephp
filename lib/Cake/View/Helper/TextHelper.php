@@ -19,10 +19,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Included libraries.
- *
- */
 App::uses('AppHelper', 'View/Helper');
 App::uses('HtmlHelper', 'Helper');
 App::uses('Multibyte', 'I18n');

@@ -18,6 +18,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+/**
+ * Error Handling Controller
+ *
+ * Controller used by ErrorHandler to render error views.
+ *
+ * @package       Cake.Controller
+ */
 class CakeErrorController extends AppController {
 
 /**

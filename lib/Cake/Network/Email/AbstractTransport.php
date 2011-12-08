@@ -18,7 +18,7 @@
  */
 
 /**
- * Abstract class
+ * Abstract transport for sending email
  *
  * @package       Cake.Network.Email
  */

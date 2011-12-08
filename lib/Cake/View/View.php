@@ -17,9 +17,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Included libraries.
- */
 App::uses('HelperCollection', 'View');
 App::uses('AppHelper', 'View/Helper');
 App::uses('Router', 'Routing');

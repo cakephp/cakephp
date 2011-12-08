@@ -27,6 +27,19 @@
 
 App::uses('JsBaseEngineHelper', 'View/Helper');
 
+/**
+ * MooTools Engine Helper for JsHelper
+ *
+ * Provides MooTools specific Javascript for JsHelper.
+ * Assumes that you have the following MooTools packages
+ *
+ * - Remote, Remote.HTML, Remote.JSON
+ * - Fx, Fx.Tween, Fx.Morph
+ * - Selectors, DomReady,
+ * - Drag, Drag.Move
+ *
+ * @package       Cake.View.Helper
+ */
 class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Option mappings for MooTools

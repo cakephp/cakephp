@@ -1,6 +1,6 @@
 <?php
 /**
- * SessionComponent.  Provides access to Sessions from the Controller layer
+ * SessionComponent. Provides access to Sessions from the Controller layer
  *
  * PHP 5
  *
@@ -21,9 +21,9 @@ App::uses('Component', 'Controller');
 App::uses('CakeSession', 'Model/Datasource');
 
 /**
- * Session Component.
- *
- * Session handling from the controller.
+ * The CakePHP SessionComponent provides a way to persist client data between 
+ * page requests. It acts as a wrapper for the `$_SESSION` as well as providing 
+ * convenience methods for several `$_SESSION` related functions.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html
