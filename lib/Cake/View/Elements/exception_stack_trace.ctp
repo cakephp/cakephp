@@ -29,12 +29,14 @@ App::uses('Debugger', 'Utility');
 		printf(
 			'<a href="#" onclick="traceToggle(event, \'file-excerpt-%s\')">%s line %s</a>',
 			$i,
-			$stack['file'],
+			Debugger::trimPath($stack['file']),
 			$stack['line']
 		);
 		$excerpt = sprintf('<div id="file-excerpt-%s" class="cake-code-dump" style="display:none;"><pre>', $i);
 		$excerpt .= implode("\n", Debugger::excerpt($stack['file'], $stack['line'] - 1, 2));
 		$excerpt .= '</pre></div> ';
+	else:
+		echo '<a href="#">[internal function]</a>';
 	endif;
 	echo ' &rarr; ';
 	if ($stack['function']):
@@ -43,13 +45,13 @@ App::uses('Debugger', 'Utility');
 			$args[] = Debugger::getType($arg);
 			$params[] = Debugger::exportVar($arg, 2);
 		endforeach;
+
+		$called = isset($stack['class']) ? $stack['class'] . $stack['type'] . $stack['function'] : $stack['function'];
 	
 		printf(
-			'<a href="#" onclick="traceToggle(event, \'trace-args-%s\')">%s%s%s(%s)</a> ',
+			'<a href="#" onclick="traceToggle(event, \'trace-args-%s\')">%s(%s)</a> ',
 			$i,
-			$stack['class'],
-			$stack['type'],
-			$stack['function'],
+			$called,
 			implode(', ', $args)
 		);
 		$arguments = sprintf('<div id="trace-args-%s" class="cake-code-dump" style="display: none;"><pre>', $i);

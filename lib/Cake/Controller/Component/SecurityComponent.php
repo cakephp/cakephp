@@ -554,14 +554,14 @@ class SecurityComponent extends Component {
  */
 	protected function _expireTokens($tokens) {
 		$now = time();
-		$overflow = count($tokens) - $this->csrfLimit;
-		if ($overflow > 0) {
-			$tokens = array_slice($tokens, $overflow + 1, null, true);
-		}
 		foreach ($tokens as $nonce => $expires) {
 			if ($expires < $now) {
 				unset($tokens[$nonce]);
 			}
+		}
+		$overflow = count($tokens) - $this->csrfLimit;
+		if ($overflow > 0) {
+			$tokens = array_slice($tokens, $overflow + 1, null, true);
 		}
 		return $tokens;
 	}

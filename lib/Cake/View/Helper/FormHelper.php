@@ -1778,7 +1778,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			if (!isset($secure) || $secure == true) {
+			if ((!isset($secure) || $secure == true) && empty($attributes['disabled'])) {
 				$this->_secure(true);
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
@@ -2492,7 +2492,9 @@ class FormHelper extends AppHelper {
  *
  * ### Options
  *
- *  - `secure` - boolean whether or not the field should be added to the security fields.
+ * - `secure` - boolean whether or not the field should be added to the security fields.
+ *   Disabling the field using the `disabled` option, will also omit the field from being
+ *   part of the hashed key.
  *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
@@ -2507,7 +2509,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$result = parent::_initInputField($field, $options);
-		if ($secure === self::SECURE_SKIP) {
+		if (!empty($result['disabled']) || $secure === self::SECURE_SKIP) {
 			return $result;
 		}
 
