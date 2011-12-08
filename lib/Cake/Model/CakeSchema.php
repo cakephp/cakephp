@@ -247,7 +247,12 @@ class CakeSchema extends Object {
 					continue;
 				}
 
-				$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
+				try {
+					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
+				} catch (CakeException $e) {
+					continue;
+				}
+
 				$db = $Object->getDataSource();
 				if (is_object($Object) && $Object->useTable !== false) {
 					$fulltable = $table = $db->fullTableName($Object, false);
