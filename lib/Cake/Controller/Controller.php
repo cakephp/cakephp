@@ -999,7 +999,13 @@ class Controller extends Object {
 				if ($fieldOp === 'LIKE') {
 					$key = $key.' LIKE';
 					$value = '%'.$value.'%';
-				} elseif ($fieldOp && $fieldOp != '=') {
+				} elseif ( $fieldOp === 'LIKE-R' ){
+					$key = $key.' LIKE';
+					$value = $value.'%'; 
+				} elseif ( $fieldOp === 'LIKE-L' ){
+					$key = $key.' LIKE';
+					$value = '%'.$value; 
+                } elseif ($fieldOp && $fieldOp != '=') {
 					$key = $key.' '.$fieldOp;
 				}
 				$cond[$key] = $value;
