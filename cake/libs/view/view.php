@@ -163,7 +163,7 @@ class View extends Object {
  * @access public
  */
 	var $subDir = null;
-	
+
 /**
  * Theme name.
  *
@@ -357,9 +357,11 @@ class View extends Object {
 			if (is_array($params['cache'])) {
 				$expires = $params['cache']['time'];
 				$key = Inflector::slug($params['cache']['key']);
-			} elseif ($params['cache'] !== true) {
-				$expires = $params['cache'];
+			} else {
 				$key = implode('_', array_keys($params));
+				if ($params['cache'] !== true) {
+					$expires = $params['cache'];
+				}
 			}
 
 			if ($expires) {
@@ -503,7 +505,7 @@ class View extends Object {
 	}
 
 /**
- * Fire a callback on all loaded Helpers. All helpers must implement this method, 
+ * Fire a callback on all loaded Helpers. All helpers must implement this method,
  * it is not checked before being called.  You can add additional helper callbacks in AppHelper.
  *
  * @param string $callback name of callback fire.
@@ -526,7 +528,7 @@ class View extends Object {
 	}
 
 /**
- * Render cached view. Works in concert with CacheHelper and Dispatcher to 
+ * Render cached view. Works in concert with CacheHelper and Dispatcher to
  * render cached view files.
  *
  * @param string $filename the cache file to include
@@ -866,7 +868,7 @@ class View extends Object {
 			}
 		}
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
-		
+
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
