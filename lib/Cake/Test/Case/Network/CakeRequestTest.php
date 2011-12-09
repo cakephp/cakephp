@@ -104,9 +104,24 @@ class CakeRequestTest extends CakeTestCase {
 		$_GET = array();
 		$request = new CakeRequest('some/path?one=something&two=else');
 		$expected = array('one' => 'something', 'two' => 'else');
-		$this->assertEquals($request->query, $expected);
+		$this->assertEquals($expected, $request->query);
 		$this->assertEquals('some/path?one=something&two=else', $request->url);
 
+	}
+
+/**
+ * Test that named arguments + querystrings are handled correctly.
+ *
+ * @return void
+ */
+	public function testQueryStringAndNamedParams() {
+		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1?ts=123456';
+		$request = new CakeRequest();
+		$this->assertEquals('tasks/index/page:1', $request->url);
+
+		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1/?ts=123456';
+		$request = new CakeRequest();
+		$this->assertEquals('tasks/index/page:1/', $request->url);
 	}
 
 /**
@@ -1622,6 +1637,7 @@ XML;
 			$result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
 		);
 	}
+
 
 /**
  * loadEnvironment method
