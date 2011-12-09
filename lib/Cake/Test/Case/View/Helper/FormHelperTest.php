@@ -3529,6 +3529,17 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = 0;
+		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
+			array('option' => array('value' => '1')), 'Yes', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
