@@ -52,6 +52,9 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 		$files = $Folder->tree(null, false, 'files');
 
 		foreach ($files as $file) {
+			if (strpos($file, DS.'.') !== false) {
+				continue;
+			}
 			$this->addTestFile($file);
 		}
 	}
