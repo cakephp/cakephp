@@ -295,21 +295,20 @@ class Postgres extends DboSource {
  *
  * @param mixed $table A string or model class representing the table to be truncated
  * @param boolean $reset true for resetting the sequence, false to leave it as is.
- *						and if 1, sequences are not modified
+ *    and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
-	public function truncate($table, $reset = 0) {
-		$table = $this->fullTableName($table, false);
-		if (!isset($this->_sequenceMap[$table])) {
+	public function truncate($table, $reset = false) {
+		$fullTable = $this->fullTableName($table, false);
+		if (!isset($this->_sequenceMap[$fullTable])) {
 			$cache = $this->cacheSources;
 			$this->cacheSources = false;
 			$this->describe($table);
 			$this->cacheSources = $cache;
 		}
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
-			$table = $this->fullTableName($table, false);
-			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
-				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
+			if (isset($this->_sequenceMap[$fullTable]) && $reset != true) {
+				foreach ($this->_sequenceMap[$fullTable] as $field => $sequence) {
 					$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
 				}
 			}
