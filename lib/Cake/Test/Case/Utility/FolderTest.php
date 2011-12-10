@@ -436,7 +436,9 @@ class FolderTest extends CakeTestCase {
 		);
 
 		$result = $Folder->tree(null, false);
-		$this->assertEquals(sort($expected), sort($result));
+		sort($result[1]);
+		sort($expected[1]);
+		$this->assertEquals($expected, $result);
 
 		$expected = array(
 			array(
@@ -451,7 +453,9 @@ class FolderTest extends CakeTestCase {
 		);
 
 		$result = $Folder->tree(null, true);
-		$this->assertEquals(sort($expected), sort($result));
+		sort($result[1]);
+		sort($expected[1]);
+		$this->assertEquals($expected, $result);
 
 		$Folder->delete();
 	}
