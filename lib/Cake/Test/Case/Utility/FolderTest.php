@@ -412,6 +412,51 @@ class FolderTest extends CakeTestCase {
 	}
 
 /**
+ * testFolderTreeWithHiddenFiles method
+ *
+ * @return void
+ */
+	public function testFolderTreeWithHiddenFiles() {
+		$this->skipIf(!is_writeable(TMP), 'Cant test Folder::tree with hidden files unless the tmp folder is writable.');
+
+		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
+		mkdir($Folder->path . DS . '.svn', 0777, true);
+		touch($Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php');
+		touch($Folder->path . DS . 'not_hidden.txt');
+		touch($Folder->path . DS . '.hidden.txt');
+
+		$expected = array(
+			array(
+				$Folder->path,
+			),
+			array(
+				$Folder->path . DS . 'not_hidden.txt',
+				$Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php',
+			),
+		);
+
+		$result = $Folder->tree(null, false);
+		$this->assertEquals($expected, $result);
+
+		$expected = array(
+			array(
+				$Folder->path,
+				$Folder->path . DS . '.svn',
+			),
+			array(
+				$Folder->path . DS . 'not_hidden.txt',
+				$Folder->path . DS . '.hidden.txt',
+				$Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php',
+			),
+		);
+
+		$result = $Folder->tree(null, true);
+		$this->assertEquals($expected, $result);
+
+		$Folder->delete();
+	}
+
+/**
  * testWindowsPath method
  *
  * @return void
