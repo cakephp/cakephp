@@ -80,6 +80,14 @@ class Shell extends Object {
 	public $name = null;
 
 /**
+ * The name of the plugin the shell belongs to.
+ * Is automatically set by ShellDispatcher when a shell is constructed.
+ *
+ * @var string
+ */
+	public $plugin = null;
+
+/**
  * Contains tasks to load and instantiate
  *
  * @var array
@@ -409,7 +417,8 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::getOptionParser
  */
 	public function getOptionParser() {
-		$parser = new ConsoleOptionParser($this->name);
+		$name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+		$parser = new ConsoleOptionParser($name);
 		return $parser;
 	}
 

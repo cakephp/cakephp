@@ -841,4 +841,17 @@ TEXT;
 		$expected = 'TestApple';
 		$this->assertEquals($expected, $this->Shell->TestApple->name);
 	}
+
+/**
+ * Test that option parsers are created with the correct name/command.
+ *
+ * @return void
+ */
+	public function testGetOptionParser() {
+		$this->Shell->name = 'test';
+		$this->Shell->plugin = 'plugin';
+		$parser = $this->Shell->getOptionParser();
+	
+		$this->assertEquals('plugin.test', $parser->command());
+	}
 }
