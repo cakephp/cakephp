@@ -16,9 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('ConnectionManager', 'Model');
 App::uses('ClassRegistry', 'Utility');
 
+/**
+ * A factory class to manage the life cycle of test fixtures
+ *
+ * @package       Cake.TestSuite.Fixture
+ */
 class CakeFixtureManager {
 
 /**

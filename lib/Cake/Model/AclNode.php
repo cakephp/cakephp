@@ -16,14 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Load Model and AppModel
- */
 App::uses('AppModel', 'Model');
 
 /**
  * ACL Node
- *
  *
  * @package       Cake.Model
  */

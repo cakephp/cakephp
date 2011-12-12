@@ -1202,6 +1202,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->assertTrue($this->Tree->cacheQueries, 'cacheQueries was not restored after reorder(). %s');
 		$this->Tree->cacheQueries = $original;
 	}
+
 /**
  * testGenerateTreeListWithSelfJoin method
  *

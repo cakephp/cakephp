@@ -68,6 +68,7 @@ class CacheHelperTest extends CakeTestCase {
 			$this->markTestSkipped('TMP/views is not writable %s');
 		}
 	}
+
 /**
  * setUp method
  *
@@ -158,6 +159,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		@unlink($filename);
 	}
+
 /**
  * Test cache parsing with cake:nocache tags in view file.
  *

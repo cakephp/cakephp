@@ -32,6 +32,7 @@ class DboMock extends DboSource {
 	public function name($field) {
 		return $field;
 	}
+
 /**
 * Returns true to fake a database connection
 */
@@ -2048,6 +2049,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $TestModel->escapeField('DomainHandle', 'Domain');
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEquals($expected, $result);
+		ConnectionManager::drop('mock');
 	}
 
 /**

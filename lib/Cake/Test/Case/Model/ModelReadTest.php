@@ -7447,6 +7447,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * Testing availability of $this->findQueryType in Model callbacks
  *

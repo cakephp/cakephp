@@ -190,7 +190,7 @@ class JsHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::writeBuffer
  */
 	public function writeBuffer($options = array()) {
-		$domReady = $this->request->is('ajax');
+		$domReady = !$this->request->is('ajax');
 		$defaults = array(
 			'onDomReady' => $domReady, 'inline' => true,
 			'cache' => false, 'clear' => true, 'safe' => true

@@ -19,6 +19,12 @@
 App::uses('ObjectCollection', 'Utility');
 App::uses('Component', 'Controller');
 
+/**
+ * Components collection is used as a registry for loaded components and handles loading
+ * and constructing component class objects.
+ *
+ * @package       Cake.Controller
+ */
 class ComponentCollection extends ObjectCollection {
 
 /**

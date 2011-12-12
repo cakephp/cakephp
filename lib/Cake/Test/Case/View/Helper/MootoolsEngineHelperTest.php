@@ -74,6 +74,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$this->assertEquals($result, $this->Moo);
 		$this->assertEquals($this->Moo->selection, '$$("#some_long-id.class")');
 	}
+
 /**
  * test event binding
  *
@@ -93,6 +94,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = "\$(\"myLink\").addEvent(\"click\", function (event) {event.stop();\nthis.setStyle(\"display\", \"none\");});";
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test dom ready event creation
  *
@@ -103,6 +105,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = 'window.addEvent("domready", function (event) {foo.name = "bar";});';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test Each method
  *
@@ -114,6 +117,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = '$("foo").each(function (item, index) {item.setStyle("display", "none");});';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test Effect generation
  *
@@ -153,6 +157,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = '$("foo").set("slide", {duration:"long"}).slide("out");';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * Test Request Generation
  *
@@ -223,6 +228,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:function () {doComplete}, onRequest:function () {doBefore}, onSuccess:function (responseText, responseXML) {doSuccess}, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test sortable list generation
  *
@@ -241,6 +247,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = 'var jsSortable = new Sortables($("myList"), {constrain:"parent", onComplete:onStop, onSort:onSort, onStart:onStart, snap:5});';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test drag() method
  *
@@ -273,6 +280,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'hover' => 'onHover',
 		));
 	}
+
 /**
  * test drop() method
  *
@@ -300,6 +308,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = '$("my-drag").makeDraggable({droppables:$("drop-me"), onDrop:function (element, droppable, event) {onDrop}, onEnter:function (element, droppable) {onHover}, onLeave:function (element, droppable) {onLeave}});';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test slider generation
  *
@@ -341,6 +350,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:function (step) {change;}, onComplete:function (event) {complete;}});';
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * test the serializeForm implementation.
  *

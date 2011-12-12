@@ -225,6 +225,7 @@ class MysqlTest extends CakeTestCase {
 
 		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 	}
+
 /**
  * testLastAffected method
  *

@@ -22,23 +22,25 @@ App::uses('Shell', 'Console');
 
 class TaskCollectionTest extends CakeTestCase {
 /**
- * setup
+ * setUp
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
+		parent::setUp();
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Tasks);
+		parent::tearDown();
 	}
 
 /**
@@ -53,6 +55,19 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
+	}
+
+/**
+ * test load and enable = false
+ *
+ * @return void
+ */
+	public function testLoadWithEnableFalse() {
+		$result = $this->Tasks->load('DbConfig', array('enabled' => false));
+		$this->assertInstanceOf('DbConfigTask', $result);
+		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
+
+		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
 
 /**

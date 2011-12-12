@@ -101,10 +101,12 @@ class ModelTask extends BakeTask {
 				return $this->all();
 			}
 			$model = $this->_modelName($this->args[0]);
-			$object = $this->_getModelObject($model);
+			$this->listAll($this->connection);
+			$useTable = $this->getTable($model);
+			$object = $this->_getModelObject($model, $useTable);
 			if ($this->bake($object, false)) {
 				if ($this->_checkUnitTest()) {
-					$this->bakeFixture($model);
+					$this->bakeFixture($model, $useTable);
 					$this->bakeTest($model);
 				}
 			}
@@ -822,12 +824,14 @@ class ModelTask extends BakeTask {
 	public function listAll($useDbConfig = null) {
 		$this->_tables = (array) $this->getAllTables($useDbConfig);
 
+		$this->_modelNames = array();
+		$count = count($this->_tables);
+		for ($i = 0; $i < $count; $i++) {
+			$this->_modelNames[] = $this->_modelName($this->_tables[$i]);
+		}
 		if ($this->interactive === true) {
 			$this->out(__d('cake_console', 'Possible Models based on your current database:'));
-			$this->_modelNames = array();
-			$count = count($this->_tables);
 			for ($i = 0; $i < $count; $i++) {
-				$this->_modelNames[] = $this->_modelName($this->_tables[$i]);
 				$this->out($i + 1 . ". " . $this->_modelNames[$i]);
 			}
 		}
@@ -842,26 +846,27 @@ class ModelTask extends BakeTask {
  * @return string Table name
  */
 	public function getTable($modelName, $useDbConfig = null) {
-		if (!isset($useDbConfig)) {
-			$useDbConfig = $this->connection;
-		}
-
-		$db = ConnectionManager::getDataSource($useDbConfig);
 		$useTable = Inflector::tableize($modelName);
 		if (in_array($modelName, $this->_modelNames)) {
 			$modelNames = array_flip($this->_modelNames);
 			$useTable = $this->_tables[$modelNames[$modelName]];
 		}
-		$fullTableName = $db->fullTableName($useTable, false);
-		$tableIsGood = false;
 
-		if (array_search($useTable, $this->_tables) === false) {
-			$this->out();
-			$this->out(__d('cake_console', "Given your model named '%s',\nCake would expect a database table named '%s'", $modelName, $fullTableName));
-			$tableIsGood = $this->in(__d('cake_console', 'Do you want to use this table?'), array('y', 'n'), 'y');
-		}
-		if (strtolower($tableIsGood) == 'n') {
-			$useTable = $this->in(__d('cake_console', 'What is the name of the table?'));
+		if ($this->interactive === true) {
+			if (!isset($useDbConfig)) {
+				$useDbConfig = $this->connection;
+			}
+			$db = ConnectionManager::getDataSource($useDbConfig);
+			$fullTableName = $db->fullTableName($useTable, false);
+			$tableIsGood = false;
+			if (array_search($useTable, $this->_tables) === false) {
+				$this->out();
+				$this->out(__d('cake_console', "Given your model named '%s',\nCake would expect a database table named '%s'", $modelName, $fullTableName));
+				$tableIsGood = $this->in(__d('cake_console', 'Do you want to use this table?'), array('y', 'n'), 'y');
+			}
+			if (strtolower($tableIsGood) == 'n') {
+				$useTable = $this->in(__d('cake_console', 'What is the name of the table?'));
+			}
 		}
 		return $useTable;
 	}

@@ -35,7 +35,7 @@ App::uses('File', 'Utility');
 class ProjectTaskTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
@@ -52,7 +52,7 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */

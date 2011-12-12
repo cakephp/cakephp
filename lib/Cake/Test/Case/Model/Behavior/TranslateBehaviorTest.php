@@ -829,6 +829,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * testTranslateTableWithPrefix method
  * Tests that is possible to have a translation model with a custom tablePrefix

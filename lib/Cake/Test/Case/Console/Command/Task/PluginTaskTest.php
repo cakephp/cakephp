@@ -36,7 +36,7 @@ App::uses('File', 'Utility');
 class PluginTaskTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */

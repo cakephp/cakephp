@@ -20,8 +20,9 @@
  */
 
 /**
- * Behavior to allow for dynamic and atomic manipulation of a Model's associations used for a find call. Most useful for limiting
- * the amount of associations and data returned.
+ * Behavior to allow for dynamic and atomic manipulation of a Model's associations 
+ * used for a find call. Most useful for limiting the amount of associations and 
+ * data returned.
  *
  * @package       Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html

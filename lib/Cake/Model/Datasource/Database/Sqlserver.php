@@ -585,6 +585,7 @@ class Sqlserver extends DboSource {
 				return parent::value($data, $column);
 		}
 	}
+
 /**
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
@@ -742,6 +743,7 @@ class Sqlserver extends DboSource {
 		}
 		return $affected;
 	}
+
 /**
  * Executes given SQL statement.
  *

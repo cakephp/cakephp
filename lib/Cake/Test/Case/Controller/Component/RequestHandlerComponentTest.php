@@ -45,6 +45,7 @@ class RequestHandlerTestController extends Controller {
 		$this->viewPath = 'Posts';
 		$this->render('index');
 	}
+
 /**
  * test method for ajax redirection + parameter parsing
  *

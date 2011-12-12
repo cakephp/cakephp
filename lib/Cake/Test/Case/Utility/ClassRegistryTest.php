@@ -124,18 +124,19 @@ class RegisterCategory extends ClassRegisterModel {
 }
 
 /**
- * RegisterPrefixedDs class
- *
- * @package       Cake.Test.Case.Utility
+ * Abstract class for testing ClassRegistry.
  */
-class RegisterPrefixedDs extends ClassRegisterModel {
+abstract class ClassRegistryAbstractModel extends ClassRegisterModel {
+
+	abstract function doSomething();
+}
 
 /**
- * useDbConfig property
- *
- * @var string 'doesnotexist'
+ * Interface for testing ClassRegistry
  */
-	public $useDbConfig = 'doesnotexist';
+interface ClassRegistryInterfaceTest {
+
+	function doSomething();
 }
 
 /**
@@ -309,5 +310,25 @@ class ClassRegistryTest extends CakeTestCase {
  */
 	public function testInitStrict() {
 		$this->assertFalse(ClassRegistry::init('NonExistent', true));
+	}
+
+/**
+ * Test that you cannot init() an abstract class. An exception will be raised.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testInitAbstractClass() {
+		ClassRegistry::init('ClassRegistryAbstractModel');
+	}
+	
+/**
+ * Test that you cannot init() an abstract class. A exception will be raised.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testInitInterface() {
+		ClassRegistry::init('ClassRegistryInterfaceTest');
 	}
 }

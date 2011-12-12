@@ -45,6 +45,7 @@ class CakeTestSuiteDispatcher {
 		'filter' => false,
 		'fixture' => null
 	);
+
 /**
  * Baseurl for the request
  *

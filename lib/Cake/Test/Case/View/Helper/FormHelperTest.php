@@ -990,6 +990,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->unlockField();
 		$this->assertEquals(array('Address.button'), $result);
 	}
+
 /**
  * Test that the correct fields are unlocked for image submits with no names.
  *
@@ -1029,6 +1030,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertEquals(array('test', 'test_x', 'test_y'), $this->Form->unlockField());
 	}
+
 /**
  * testFormSecurityMultipleInputFields method
  *
@@ -3555,6 +3557,17 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = 0;
+		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
+			array('option' => array('value' => '1')), 'Yes', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4171,6 +4184,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSelectHiddenFieldOmission method
  *
@@ -5638,6 +5652,9 @@ class FormHelperTest extends CakeTestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->year('published', array(), array(), array('empty' => false));
+		$this->assertContains('data[Contact][published][year]', $result);
 	}
 
 /**
@@ -5852,6 +5869,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testPostLink method
  *
@@ -6625,6 +6643,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertRegExp('/name="created\[min\]"/', $result, 'min name attribute is wrong.');
 		$this->assertRegExp('/name="created\[meridian\]"/', $result, 'meridian name attribute is wrong.');
 	}
+
 /**
  * testEditFormWithData method
  *
