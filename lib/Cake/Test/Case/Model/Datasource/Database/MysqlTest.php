@@ -917,7 +917,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testFieldDoubleEscaping() {
+		$db = $this->Dbo->config['database'];
 		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
+		$test->config['database'] = $db;
+
 		$this->Model = $this->getMock('Article2', array('getDataSource'));
 		$this->Model->alias = 'Article';
 		$this->Model->expects($this->any())
@@ -1096,7 +1099,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testGenerateInnerJoinAssociationQuery() {
+		$db = $this->Dbo->config['database'];
 		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
+		$test->config['database'] = $db;
+
 		$this->Model = $this->getMock('TestModel9', array('getDataSource'));
 		$this->Model->expects($this->any())
 			->method('getDataSource')
@@ -2910,7 +2916,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testHasAny() {
+		$db = $this->Dbo->config['database'];
 		$this->Dbo = $this->getMock('Mysql', array('connect', '_execute', 'execute', 'value'));
+		$this->Dbo->config['database'] = $db;
+
 		$this->Model = $this->getMock('TestModel', array('getDataSource'));
 		$this->Model->expects($this->any())
 			->method('getDataSource')
