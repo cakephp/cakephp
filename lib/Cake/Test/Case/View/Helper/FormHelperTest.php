@@ -5624,6 +5624,9 @@ class FormHelperTest extends CakeTestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->year('published', array(), array(), array('empty' => false));
+		$this->assertContains('data[Contact][published][year]', $result);
 	}
 
 /**
