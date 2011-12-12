@@ -251,7 +251,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 
 		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
-			$this->generate(Inflector::camelize($plugin . $request->params['controller']));
+			$this->generate($plugin . Inflector::camelize($request->params['controller']));
 		}
 		$params = array();
 		if ($options['return'] == 'result') {
