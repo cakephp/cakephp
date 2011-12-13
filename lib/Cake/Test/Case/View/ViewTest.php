@@ -1037,6 +1037,24 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test that blocks can be nested.
+ *
+ * @return void
+ */
+	public function testNestedBlocks() {
+		$this->View->start('first');
+		echo 'In first ';
+		$this->View->start('second');
+		echo 'In second';
+		$this->View->end();
+		echo 'In first';
+		$this->View->end();
+
+		$this->assertEquals('In first In first', $this->View->fetch('first'));
+		$this->assertEquals('In second', $this->View->fetch('second'));
+	}
+
+/**
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *

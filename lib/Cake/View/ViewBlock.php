@@ -31,11 +31,11 @@ class ViewBlock {
 	protected $_blocks = array();
 
 /**
- * The active block being captured.
+ * The active blocks being captured.
  *
- * @var string
+ * @var array
  */
-	protected $_active = null;
+	protected $_active = array();
 
 /**
  * Start capturing output for a 'block'
@@ -50,7 +50,7 @@ class ViewBlock {
  * @return void
  */
 	public function start($name) {
-		$this->_active = $name;
+		$this->_active[] = $name;
 		ob_start();
 	}
 
@@ -62,13 +62,14 @@ class ViewBlock {
  */
 	public function end() {
 		if (!empty($this->_active)) {
+			$active = end($this->_active);
 			$content = ob_get_clean();
-			if (!isset($this->_blocks[$this->_active])) {
-				$this->_blocks[$this->_active] = '';
+			if (!isset($this->_blocks[$active])) {
+				$this->_blocks[$active] = '';
 			}
-			$this->_blocks[$this->_active] .= $content;
+			$this->_blocks[$active] .= $content;
+			array_pop($this->_active);
 		}
-		$this->_active = null;
 	}
 
 /**
@@ -139,9 +140,9 @@ class ViewBlock {
 /**
  * Get the name of the currently open block.
  *
- * @return mixed Either null or the name of the open block.
+ * @return mixed Either null or the name of the last open block.
  */
 	public function active() {
-		return $this->_active;
+		return end($this->_active);
 	}
 }
