@@ -331,12 +331,13 @@ class Sqlite extends DboSource {
  */
 	public function fetchResult() {
 		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
-			$resultRow = array();
+			$resultRow = new Record($this);
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
-				$resultRow[$table][$column] = $row[$col];
+				$resultRow->setModelName($table);
+				$resultRow->{$column} = $row[$col];
 				if ($type == 'boolean' && !is_null($row[$col])) {
-					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
+					$resultRow->{$column} = $this->boolean($resultRow[$table][$column]);
 				}
 			}
 			return $resultRow;

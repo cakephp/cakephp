@@ -22,6 +22,7 @@
  *
  * @package       Cake.Model.Datasource
  */
+ App::uses('Record', 'Model');
 class DataSource extends Object {
 
 /**

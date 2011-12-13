@@ -72,8 +72,7 @@ class Record implements ArrayAccess
 
 		if(!$this->offsetExists($key))
 		{
-			// this is most likely an association that is beinh loaded
-			// TODO : query model association
+			// TODO : fetch model associations
 			throw new CakeException(__d('cake_dev', 'No association found - %s', $key));
 		} else {
 			return $this->_data[$key];
