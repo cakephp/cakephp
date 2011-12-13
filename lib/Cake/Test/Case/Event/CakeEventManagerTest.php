@@ -1,0 +1,208 @@
+<?php
+/**
+ * ControllerTestCaseTest file
+ *
+ * Test Case for ControllerTestCase class
+ *
+ * PHP version 5
+ *
+ * CakePHP : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc.
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
+ * @link          http://cakephp.org CakePHP Project
+ * @package       Cake.Test.Case.Event
+ * @since         CakePHP v 2.1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventManager', 'Event');
+
+/**
+ * Mock class used to test event dispatching
+ *
+ * @package Cake.Test.Case.Event
+ */
+class CakeEventTestListener {
+
+	public $callStack = array();
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function listenerFunction() {
+		$this->callStack[] = __FUNCTION__;
+	}
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function secondListenerFunction() {
+		$this->callStack[] = __FUNCTION__;
+	}
+}
+
+/**
+ * Tests the CakeEventManager class functionality
+ *
+ */
+class CakeEventManagerTest extends CakeTestCase {
+
+/**
+ * Tests the attach() method for a single event key in multiple queues
+ *
+ * @return void
+ */
+	public function testAttachListeners() {
+		$manager = new CakeEventManager;
+		$manager->attach('fake.event', 'fakeFunction');
+		$expected = array(
+			array('callable' => 'fakeFunction', 'passParams' => false)
+		);
+		$this->assertEquals($expected, $manager->listeners('fake.event'));
+
+		$manager->attach('fake.event', 'fakeFunction2');
+		$expected[] = array('callable' => 'fakeFunction2', 'passParams' => false);
+		$this->assertEquals($expected, $manager->listeners('fake.event'));
+
+		$manager->attach('fake.event', 'inQ5', array('priority' => 5));
+		$manager->attach('fake.event', 'inQ1', array('priority' => 1));
+		$manager->attach('fake.event', 'otherInQ5', array('priority' => 5));
+
+		$expected = array_merge(
+			array(
+				array('callable' => 'inQ1', 'passParams' => false),
+				array('callable' => 'inQ5', 'passParams' => false),
+				array('callable' => 'otherInQ5', 'passParams' => false)
+			),
+			$expected
+		);
+		$this->assertEquals($expected, $manager->listeners('fake.event'));
+	}
+
+/**
+ * Tests the attach() method for multiple event key in multiple queues
+ *
+ * @return void
+ */
+	public function testAttachMultipleEventKeys() {
+		$manager = new CakeEventManager;
+		$manager->attach('fake.event', 'fakeFunction');
+		$manager->attach('another.event', 'fakeFunction2');
+		$manager->attach('another.event', 'fakeFunction3', array('priority' => 1, 'passParams' => true));
+		$expected = array(
+			array('callable' => 'fakeFunction', 'passParams' => false)
+		);
+		$this->assertEquals($expected, $manager->listeners('fake.event'));
+
+		$expected = array(
+			array('callable' => 'fakeFunction3', 'passParams' => true),
+			array('callable' => 'fakeFunction2', 'passParams' => false)
+		);
+		$this->assertEquals($expected, $manager->listeners('another.event'));
+	}
+
+/**
+ * Tests detaching an event from a event key queue
+ *
+ * @return void
+ */
+	public function testDetach() {
+		$manager = new CakeEventManager;
+		$manager->attach('fake.event', array('AClass', 'aMethod'));
+		$manager->attach('another.event', array('AClass', 'anotherMethod'));
+		$manager->attach('another.event', 'fakeFunction', array('priority' => 1));
+
+		$manager->detach(array('AClass', 'aMethod'), 'fake.event');
+		$this->assertEquals(array(), $manager->listeners('fake.event'));
+
+		$manager->detach(array('AClass', 'anotherMethod'), 'another.event');
+		$expected = array(
+			array('callable' => 'fakeFunction', 'passParams' => false)
+		);
+		$this->assertEquals($expected, $manager->listeners('another.event'));
+
+		$manager->detach('fakeFunction', 'another.event');
+		$this->assertEquals(array(), $manager->listeners('another.event'));
+	}
+
+/**
+ * Tests detaching an event from all event queues
+ *
+ * @return void
+ */
+	public function testDetachFromAll() {
+		$manager = new CakeEventManager;
+		$manager->attach('fake.event', array('AClass', 'aMethod'));
+		$manager->attach('another.event', array('AClass', 'aMethod'));
+		$manager->attach('another.event', 'fakeFunction', array('priority' => 1));
+
+		$manager->detach(array('AClass', 'aMethod'));
+		$expected = array(
+			array('callable' => 'fakeFunction', 'passParams' => false)
+		);
+		$this->assertEquals($expected, $manager->listeners('another.event'));
+		$this->assertEquals(array(), $manager->listeners('fake.event'));
+	}
+
+/**
+ * Tests event dispatching
+ *
+ * @return void
+ */
+	public function testDispatch() {
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CakeEventTestListener');
+		$anotherListener = $this->getMock('CakeEventTestListener');
+		$manager->attach('fake.event', array($listener, 'listenerFunction'));
+		$manager->attach('fake.event', array($anotherListener, 'listenerFunction'));
+		$event = new CakeEvent('fake.event');
+
+		$listener->expects($this->once())->method('listenerFunction')->with($event);
+		$anotherListener->expects($this->once())->method('listenerFunction')->with($event);
+		$manager->dispatch($event);
+	}
+
+/**
+ * Tests event dispatching using priorities
+ *
+ * @return void
+ */
+	public function testDispatchPrioritized() {
+		$manager = new CakeEventManager;
+		$listener = new CakeEventTestListener;
+		$manager->attach('fake.event', array($listener, 'listenerFunction'));
+		$manager->attach('fake.event', array($listener, 'secondListenerFunction'), array('priority' => 5));
+		$event = new CakeEvent('fake.event');
+		$manager->dispatch($event);
+
+		$expected = array('secondListenerFunction', 'listenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+	}
+
+/**
+ * Tests event dispatching with passed params
+ *
+ * @return void
+ */
+	public function testDispatchPassingParams() {
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CakeEventTestListener');
+		$anotherListener = $this->getMock('CakeEventTestListener');
+		$manager->attach('fake.event', array($listener, 'listenerFunction'));
+		$manager->attach('fake.event', array($anotherListener, 'secondListenerFunction'), array('passParams' => true));
+		$event = new CakeEvent('fake.event', $this, array('some' => 'data'));
+
+		$listener->expects($this->once())->method('listenerFunction')->with($event);
+		$anotherListener->expects($this->once())->method('secondListenerFunction')->with('data');
+		$manager->dispatch($event);
+	}
+}
