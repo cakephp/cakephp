@@ -25,7 +25,8 @@
  */
 	public function <?php echo $admin ?>index() {
 		$this-><?php echo $currentModelName ?>->recursive = 0;
-		$this->set('<?php echo $pluralName ?>', $this->paginate());
+		$this->Paginator = $this->Components->load('Paginator');
+		$this->set('<?php echo $pluralName ?>', $this->Paginator->paginate());
 	}
 
 /**
