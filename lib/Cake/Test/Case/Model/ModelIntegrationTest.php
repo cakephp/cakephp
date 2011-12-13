@@ -281,9 +281,9 @@ class ModelIntegrationTest extends BaseModelTest {
  * or one connection will step on the other.
  */
 	public function testCrossDatabaseJoins() {
-		$config = new DATABASE_CONFIG();
+		$config = ConnectionManager::enumConnectionObjects();
 
-		$skip = (!isset($config->test) || !isset($config->test2));
+		$skip = (!isset($config['test']) || !isset($config['test2']));
 		if ($skip) {
 			$this->markTestSkipped('Primary and secondary test databases not configured, skipping cross-database
 				join tests.  To run theses tests defined $test and $test2 in your database configuration.'
@@ -2234,9 +2234,9 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testMultischemaFixture() {
 
-		$config = new DATABASE_CONFIG();
+		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
-		$this->skipIf(!isset($config->test) || !isset($config->test2),
+		$this->skipIf(!isset($config['test']) || !isset($config['test2']),
 			'Primary and secondary test databases not configured, skipping cross-database join tests.  To run these tests define $test and $test2 in your database configuration.'
 			);
 
@@ -2264,10 +2264,10 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testMultischemaFixtureWithThreeDatabases() {
 
-		$config = new DATABASE_CONFIG();
+		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(
-			!isset($config->test) || !isset($config->test2) || !isset($config->test_database_three),
+			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
 			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
 			);
 
