@@ -624,6 +624,158 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * test HABM operations without clobbering existing records #275
+ *
+ * @return void
+ */
+	function testHABTMKeepExisting() {
+		$this->loadFixtures('Site', 'Domain', 'DomainsSite');
+
+		$Site = new Site();
+		$results = $Site->find('count');
+		$expected = 3;
+		$this->assertEquals($results, $expected);
+
+		$data = $Site->findById(1);
+
+		// include api.cakephp.org
+		$data['Domain'] = array('Domain' => array(1, 2, 3));
+		$Site->save($data);
+
+		$Site->id = 1;
+		$results = $Site->read();
+		$expected = 3; // 3 domains belonging to cakephp
+		$this->assertEquals($expected, count($results['Domain']));
+
+
+		$Site->id = 2;
+		$results = $Site->read();
+		$expected = 2; // 2 domains belonging to markstory
+		$this->assertEquals($expected, count($results['Domain']));
+
+		$Site->id = 3;
+		$results = $Site->read();
+		$expected = 2;
+		$this->assertEquals($expected, count($results['Domain']));
+		$results['Domain'] = array('Domain' => array(7));
+		$Site->save($results); // remove association from domain 6
+		$results = $Site->read();
+		$expected = 1; // only 1 domain left belonging to rchavik
+		$this->assertEquals($expected, count($results['Domain']));
+
+		// add deleted domain back
+		$results['Domain'] = array('Domain' => array(6, 7));
+		$Site->save($results);
+		$results = $Site->read();
+		$expected = 2; // 2 domains belonging to rchavik
+		$this->assertEquals($expected, count($results['Domain']));
+
+		$Site->DomainsSite->id = $results['Domain'][0]['DomainsSite']['id'];
+		$Site->DomainsSite->saveField('active', true);
+
+		$results = $Site->Domain->DomainsSite->find('count', array(
+			'conditions' => array(
+				'DomainsSite.active' => true,
+				),
+			));
+		$expected = 5;
+		$this->assertEquals($expected, $results);
+
+		// activate api.cakephp.org
+		$activated = $Site->DomainsSite->findByDomainId(3);
+		$activated['DomainsSite']['active'] = true;
+		$Site->DomainsSite->save($activated);
+
+		$results = $Site->DomainsSite->find('count', array(
+			'conditions' => array(
+				'DomainsSite.active' => true,
+				),
+			));
+		$expected = 6;
+		$this->assertEquals($expected, $results);
+
+		// remove 2 previously active domains, and leave $activated alone
+		$data = array(
+			'Site' => array('id' => 1, 'name' => 'cakephp (modified)'),
+			'Domain' => array(
+				'Domain' => array(3),
+				)
+			);
+		$Site->create($data);
+		$Site->save($data);
+
+		// tests that record is still identical prior to removal
+		$Site->id = 1;
+		$results = $Site->read();
+		unset($results['Domain'][0]['DomainsSite']['updated']);
+		unset($activated['DomainsSite']['updated']);
+		$this->assertEquals($activated['DomainsSite'], $results['Domain'][0]['DomainsSite']);
+	}
+
+/**
+ * test HABM operations without clobbering existing records #275
+ *
+ * @return void
+ */
+	function testHABTMKeepExistingWithThreeDbs() {
+		$config = ConnectionManager::enumConnectionObjects();
+		$this->skipIf(
+			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
+			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
+			);
+
+		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
+		$Player = ClassRegistry::init('Player');
+		$Player->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'Armor' => array(
+					'with' => 'ArmorsPlayer',
+					'unique' => 'keepExisting',
+					),
+				),
+			), false);
+		$this->assertEquals('test', $Player->useDbConfig);
+		$this->assertEquals('test', $Player->Guild->useDbConfig);
+		$this->assertEquals('test2', $Player->Guild->GuildsPlayer->useDbConfig);
+		$this->assertEquals('test2', $Player->Armor->useDbConfig);
+		$this->assertEquals('test_database_three', $Player->ArmorsPlayer->useDbConfig);
+
+		$players = $Player->find('all');
+		$this->assertEquals(4 , count($players));
+		$playersGuilds = Set::extract('/Guild/GuildsPlayer', $players);
+		$this->assertEquals(3 , count($playersGuilds));
+		$playersArmors = Set::extract('/Armor/ArmorsPlayer', $players);
+		$this->assertEquals(3 , count($playersArmors));
+		unset($players);
+
+		$larry = $Player->findByName('larry');
+		$larrysArmor = Set::extract('/Armor/ArmorsPlayer', $larry);
+		$this->assertEquals(1 , count($larrysArmor));
+
+		$larry['Guild']['Guild'] = array(1, 3); // larry joins another guild
+		$larry['Armor']['Armor'] = array(2, 3); // purchases chainmail
+		$Player->save($larry);
+		unset($larry);
+
+		$larry = $Player->findByName('larry');
+		$larrysGuild = Set::extract('/Guild/GuildsPlayer', $larry);
+		$this->assertEquals(2 , count($larrysGuild));
+		$larrysArmor = Set::extract('/Armor/ArmorsPlayer', $larry);
+		$this->assertEquals(2 , count($larrysArmor));
+
+		$larrysArmorsPlayersIds = Set::extract('/Armor/ArmorsPlayer/id', $larry);
+
+		$Player->ArmorsPlayer->id = 3;
+		$Player->ArmorsPlayer->saveField('broken', true); // larry's cloak broke
+
+		$larry = $Player->findByName('larry');
+		$larrysArmor = Set::extract('/Armor/ArmorsPlayer', $larry);
+		$larrysCloak = Set::extract('/ArmorsPlayer[armor_id=3]', $larrysArmor);
+		$this->assertNotEmpty($larrysCloak);
+		$this->assertTrue($larrysCloak[0]['ArmorsPlayer']['broken']); // still broken
+	}
+
+/**
  * testDisplayField method
  *
  * @return void
