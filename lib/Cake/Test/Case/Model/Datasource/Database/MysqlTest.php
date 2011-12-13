@@ -1932,7 +1932,7 @@ class MysqlTest extends CakeTestCase {
 		$conditions = array('Company.name similar to ' => 'a word');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Company`.`name` similar to 'a word'";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2104,7 +2104,7 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->conditions(array('lower(Article.title)' =>  'secrets'));
 		$expected = " WHERE lower(`Article`.`title`) = 'secrets'";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";
@@ -2279,7 +2279,7 @@ class MysqlTest extends CakeTestCase {
 		$conditions = array('MysqlModel.id' => '');
 		$result = $this->Dbo->conditions($conditions, true, true, $this->model);
 		$expected = " WHERE `MysqlModel`.`id` IS NULL";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";
