@@ -43,6 +43,7 @@ App::uses('ViewBlock', 'View');
  * @property      SessionHelper $Session
  * @property      TextHelper $Text
  * @property      TimeHelper $Time
+ * @property      ViewBlock $Blocks
  */
 class View extends Object {
 
@@ -755,6 +756,7 @@ class View extends Object {
  * @param string $viewFile Filename of the view
  * @param array $data Data to include in rendered view. If empty the current View::$viewVars will be used.
  * @return string Rendered output
+ * @throws CakeException when a block is left open.
  */
 	protected function _render($viewFile, $data = array()) {
 		if (empty($data)) {
@@ -764,6 +766,9 @@ class View extends Object {
 
 		$this->Helpers->trigger('beforeRenderFile', array($viewFile));
 		$content = $this->_evaluate($viewFile, $data);
+		if ($this->Blocks->active()) {
+			throw new CakeException(__d('cake_dev', 'The "%s" block was left open.', $this->Blocks->active()));
+		}
 		$content = $this->Helpers->trigger(
 			'afterRenderFile',
 			array($viewFile, $content),

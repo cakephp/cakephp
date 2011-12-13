@@ -754,7 +754,8 @@ class Helper extends Object {
 	}
 
 /**
- * Before render file callback. Called before any view fragment is rendered.
+ * Before render file callback.
+ * Called before any view fragment is rendered.
  *
  * Overridden in subclasses.
  *
@@ -765,14 +766,16 @@ class Helper extends Object {
 	}
 
 /**
- * After render file callback. Called before any view fragment is rendered.
+ * After render file callback.
+ * Called after any view fragment is rendered.
  *
  * Overridden in subclasses.
  *
- * @param string $viewFile The file about to be rendered.
+ * @param string $viewFile The file just be rendered.
+ * @param string $content The content that was rendered.
  * @return void
  */
-	public function afterRenderFile($viewfile) {
+	public function afterRenderFile($viewfile, $content) {
 	}
 
 /**

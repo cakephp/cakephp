@@ -580,7 +580,7 @@ class ViewTest extends CakeTestCase {
  */
 	public function testHelperCallbackTriggering() {
 		$View = new View($this->PostsController);
-		$View->helpers = array('Html', 'Session');
+		$View->helpers = array();
 		$View->Helpers = $this->getMock('HelperCollection', array('trigger'), array($View));
 
 		$View->Helpers->expects($this->at(0))->method('trigger')
@@ -588,7 +588,8 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(1))->method('trigger')
 			->with('beforeRenderFile', $this->anything());
 		$View->Helpers->expects($this->at(2))->method('trigger')
-			->with('afterRenderFile', $this->anything());
+			->with('afterRenderFile', $this->anything())
+			->will($this->returnValue(''));
 		$View->Helpers->expects($this->at(3))->method('trigger')
 			->with('afterRender', $this->anything());
 
@@ -597,7 +598,8 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(5))->method('trigger')
 			->with('beforeRenderFile', $this->anything());
 		$View->Helpers->expects($this->at(6))->method('trigger')
-			->with('afterRenderFile', $this->anything());
+			->with('afterRenderFile', $this->anything())
+			->will($this->returnValue('')) ;
 		$View->Helpers->expects($this->at(7))->method('trigger')
 			->with('afterLayout', $this->anything());
 
@@ -1032,6 +1034,17 @@ class ViewTest extends CakeTestCase {
 		$this->View->assign('test1', 'one');
 
 		$this->assertEquals(array('test', 'test1'), $this->View->blocks());
+	}
+
+/**
+ * Test that an exception gets thrown when you leave a block open at the end
+ * of a view.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testExceptionOnOpenBlock() {
+		$this->View->render('open_block');
 	}
 
 /**

@@ -135,4 +135,13 @@ class ViewBlock {
 	public function keys() {
 		return array_keys($this->_blocks);
 	}
+
+/**
+ * Get the name of the currently open block.
+ *
+ * @return mixed Either null or the name of the open block.
+ */
+	public function active() {
+		return $this->_active;
+	}
 }
