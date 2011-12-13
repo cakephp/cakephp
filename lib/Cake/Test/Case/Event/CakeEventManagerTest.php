@@ -21,6 +21,7 @@
 
 App::uses('CakeEvent', 'Event');
 App::uses('CakeEventManager', 'Event');
+App::uses('CakeEventListener', 'Event');
 
 /**
  * Mock class used to test event dispatching
@@ -46,6 +47,30 @@ class CakeEventTestListener {
  * @return void
  */
 	public function secondListenerFunction() {
+		$this->callStack[] = __FUNCTION__;
+	}
+}
+
+/**
+ * Mock used for testing the subscriber objects
+ *
+ * @package Cake.Test.Case.Event
+ */
+class CustomTestEventListerner extends CakeEventTestListener implements CakeEventListener {
+
+	public function implementedEvents() {
+		return array(
+			'fake.event' => 'listenerFunction',
+			'another.event' => array('callable' => 'secondListenerFunction', 'passParams' => true)
+		);
+	}
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function thirdListenerFunction() {
 		$this->callStack[] = __FUNCTION__;
 	}
 }
@@ -203,6 +228,27 @@ class CakeEventManagerTest extends CakeTestCase {
 
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
 		$anotherListener->expects($this->once())->method('secondListenerFunction')->with('data');
+		$manager->dispatch($event);
+	}
+
+/**
+ * Tests subscribing a listener object and firing the events it subscribed to
+ *
+ * @return void
+ */
+	public function testAttachSubscriber() {
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CustomTestEventListerner', array('secondListenerFunction'));
+		$manager->attach($listener);
+		$event = new CakeEvent('fake.event');
+		
+		$manager->dispatch($event);
+
+		$expected = array('listenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+
+		$listener->expects($this->once())->method('secondListenerFunction')->with('data');
+		$event = new CakeEvent('another.event', $this, array('some' => 'data'));
 		$manager->dispatch($event);
 	}
 }
