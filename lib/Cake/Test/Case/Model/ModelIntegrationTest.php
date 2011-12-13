@@ -272,7 +272,7 @@ class ModelIntegrationTest extends BaseModelTest {
 			array('User' => array('user' => 'mariano'), 'Article' => array('published' => 'Y')),
 			array('User' => array('user' => 'nate'), 'Article' => array('published' => ''))
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
