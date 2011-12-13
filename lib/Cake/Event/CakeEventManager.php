@@ -16,6 +16,7 @@
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('CakeEventListener', 'Event');
 
 /**
  * The event manager is responsible for keeping track of event listeners and pass the correct
@@ -44,12 +45,35 @@ class CakeEventManager {
 /**
  * Adds a new listener to an event. Listeners 
  *
- * @param mixed $eventKey The event unique identifier name to with the callback will be associated
- * @param callback|CakeListener PHP valid callback type or instance of CakeListener to be called
+ * @param callback|CakeEventListener $callable PHP valid callback type or instance of CakeListener to be called
  * when the event named with $eventKey is triggered.
+ * @param mixed $eventKey The event unique identifier name to with the callback will be associated. If $callable
+ * is an instance of CakeEventListener this argument will be ignored
+ * @param array $options used to set the `priority` and `passParams` flags to the listener.
+ * Priorities are handled like queues, and multiple attachments into the same priority queue will be treated in
+ * the order of insertion. `passParams` means that the event data property will be converted to function arguments
+ * when the listener is called. If $called is an instance of CakeEventListener, this parameter will be ignored
  * @return void
  */
-	public function attach($eventKey, $callable, $options = array()) {
+	public function attach($callable, $eventKey = null, $options = array()) {
+		if (!$eventKey && !($callable instanceof CakeEventListener)) {
+			throw new InvalidArgumentException(__d('cake_dev', 'The eventKey variable is required'));
+		}
+		if ($callable instanceof CakeEventListener) {
+			foreach ($callable->implementedEvents() as $eventKey => $function) {
+				$options = array();
+				$method = null;
+				if (is_array($function)) {
+					$method = array($callable, $function['callable']);
+					unset($function['callable']);
+					$options = $function;
+				} else {
+					$method = array($callable, $function);
+				}
+				$this->attach($method, $eventKey, $options);
+			}
+			return;
+		}
 		$options = $options + array('priority' => self::$defaultPriority, 'passParams' => false);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,

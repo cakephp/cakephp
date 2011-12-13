@@ -63,19 +63,19 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testAttachListeners() {
 		$manager = new CakeEventManager;
-		$manager->attach('fake.event', 'fakeFunction');
+		$manager->attach('fakeFunction', 'fake.event');
 		$expected = array(
 			array('callable' => 'fakeFunction', 'passParams' => false)
 		);
 		$this->assertEquals($expected, $manager->listeners('fake.event'));
 
-		$manager->attach('fake.event', 'fakeFunction2');
+		$manager->attach('fakeFunction2', 'fake.event');
 		$expected[] = array('callable' => 'fakeFunction2', 'passParams' => false);
 		$this->assertEquals($expected, $manager->listeners('fake.event'));
 
-		$manager->attach('fake.event', 'inQ5', array('priority' => 5));
-		$manager->attach('fake.event', 'inQ1', array('priority' => 1));
-		$manager->attach('fake.event', 'otherInQ5', array('priority' => 5));
+		$manager->attach('inQ5', 'fake.event', array('priority' => 5));
+		$manager->attach('inQ1', 'fake.event', array('priority' => 1));
+		$manager->attach('otherInQ5', 'fake.event', array('priority' => 5));
 
 		$expected = array_merge(
 			array(
@@ -95,9 +95,9 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testAttachMultipleEventKeys() {
 		$manager = new CakeEventManager;
-		$manager->attach('fake.event', 'fakeFunction');
-		$manager->attach('another.event', 'fakeFunction2');
-		$manager->attach('another.event', 'fakeFunction3', array('priority' => 1, 'passParams' => true));
+		$manager->attach('fakeFunction', 'fake.event');
+		$manager->attach('fakeFunction2', 'another.event');
+		$manager->attach('fakeFunction3', 'another.event', array('priority' => 1, 'passParams' => true));
 		$expected = array(
 			array('callable' => 'fakeFunction', 'passParams' => false)
 		);
@@ -117,9 +117,9 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testDetach() {
 		$manager = new CakeEventManager;
-		$manager->attach('fake.event', array('AClass', 'aMethod'));
-		$manager->attach('another.event', array('AClass', 'anotherMethod'));
-		$manager->attach('another.event', 'fakeFunction', array('priority' => 1));
+		$manager->attach(array('AClass', 'aMethod'), 'fake.event');
+		$manager->attach(array('AClass', 'anotherMethod'), 'another.event');
+		$manager->attach('fakeFunction', 'another.event', array('priority' => 1));
 
 		$manager->detach(array('AClass', 'aMethod'), 'fake.event');
 		$this->assertEquals(array(), $manager->listeners('fake.event'));
@@ -141,9 +141,9 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testDetachFromAll() {
 		$manager = new CakeEventManager;
-		$manager->attach('fake.event', array('AClass', 'aMethod'));
-		$manager->attach('another.event', array('AClass', 'aMethod'));
-		$manager->attach('another.event', 'fakeFunction', array('priority' => 1));
+		$manager->attach(array('AClass', 'aMethod'), 'fake.event');
+		$manager->attach(array('AClass', 'aMethod'), 'another.event');
+		$manager->attach('fakeFunction', 'another.event', array('priority' => 1));
 
 		$manager->detach(array('AClass', 'aMethod'));
 		$expected = array(
@@ -162,8 +162,8 @@ class CakeEventManagerTest extends CakeTestCase {
 		$manager = new CakeEventManager;
 		$listener = $this->getMock('CakeEventTestListener');
 		$anotherListener = $this->getMock('CakeEventTestListener');
-		$manager->attach('fake.event', array($listener, 'listenerFunction'));
-		$manager->attach('fake.event', array($anotherListener, 'listenerFunction'));
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($anotherListener, 'listenerFunction'), 'fake.event');
 		$event = new CakeEvent('fake.event');
 
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
@@ -179,8 +179,8 @@ class CakeEventManagerTest extends CakeTestCase {
 	public function testDispatchPrioritized() {
 		$manager = new CakeEventManager;
 		$listener = new CakeEventTestListener;
-		$manager->attach('fake.event', array($listener, 'listenerFunction'));
-		$manager->attach('fake.event', array($listener, 'secondListenerFunction'), array('priority' => 5));
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event', array('priority' => 5));
 		$event = new CakeEvent('fake.event');
 		$manager->dispatch($event);
 
@@ -197,8 +197,8 @@ class CakeEventManagerTest extends CakeTestCase {
 		$manager = new CakeEventManager;
 		$listener = $this->getMock('CakeEventTestListener');
 		$anotherListener = $this->getMock('CakeEventTestListener');
-		$manager->attach('fake.event', array($listener, 'listenerFunction'));
-		$manager->attach('fake.event', array($anotherListener, 'secondListenerFunction'), array('passParams' => true));
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($anotherListener, 'secondListenerFunction'), 'fake.event', array('passParams' => true));
 		$event = new CakeEvent('fake.event', $this, array('some' => 'data'));
 
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
