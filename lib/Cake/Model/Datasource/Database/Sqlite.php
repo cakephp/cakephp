@@ -331,7 +331,7 @@ class Sqlite extends DboSource {
  */
 	public function fetchResult() {
 		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
-			$resultRow = new Record($this);
+			$resultRow = new Record;
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
 				$resultRow->setModelName($table);

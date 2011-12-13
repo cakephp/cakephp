@@ -708,7 +708,7 @@ class Postgres extends DboSource {
  */
 	public function fetchResult() {
 		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
-			$resultRow = new Record($this);
+			$resultRow = new Record;
 
 			foreach ($this->map as $index => $meta) {
 				list($table, $column, $type) = $meta;

@@ -8,14 +8,14 @@ class Record implements ArrayAccess
 
 	protected $_model_name;
 
-	public function __construct(DataSource $source)
-	{
-		$this->setDbSource($source);
-	}
-
 	public function setModelName($model)
 	{
 		$this->_model_name = $model;
+	}
+
+	public function getModel()
+	{
+		return ClassRegistry::init($this->getModelName());
 	}
 
 	public function getModelName()
@@ -23,14 +23,10 @@ class Record implements ArrayAccess
 		return $this->_model_name;
 	}
 
-	public function setDbSource(DataSource $source)
+	public function getDataSource()
 	{
-		$this->_db_source = $source;
-	}
-
-	public function getDbSource()
-	{
-		return $this->_db_source;
+		$model = $this->getModel();
+		return ConnectionManager::getDataSource($model->useDbConfig);
 	}
 
 	public function __call($method, $args)
@@ -48,7 +44,7 @@ class Record implements ArrayAccess
 		{
 			if(isset($args[0]))
 			{
-				$this->offsetSet($field, $args[0]);
+				return $this->offsetSet($field, $args[0]);
 			}
 		}
 	}
@@ -65,15 +61,15 @@ class Record implements ArrayAccess
 
 	public function offsetGet($key)
 	{
-		if($key == $this->getModelName())
+		if($key == get_class($this->getModel()))
 		{
 			return $this;
 		}
 
 		if(!$this->offsetExists($key))
 		{
-			// TODO : fetch model associations
-			throw new CakeException(__d('cake_dev', 'No association found - %s', $key));
+			$model = $this->getModel();
+			return $this->getDataSource()->getAssociatedData($model, $key, $this);
 		} else {
 			return $this->_data[$key];
 		}
@@ -82,6 +78,8 @@ class Record implements ArrayAccess
 	public function offsetSet($key, $value)
 	{
 		$this->_data[$key] = $value;
+
+		return $this;
 	}
 
 	public function offsetUnset($key)
@@ -97,5 +95,15 @@ class Record implements ArrayAccess
 		}
 
 		return isset($this->_data[$key]);
+	}
+
+	public function save()
+	{
+		return $this->getModel()->save($this->_data);
+	}
+
+	public function delete()
+	{
+		return $this->getModel()->delete($this->_data);
 	}
 }
