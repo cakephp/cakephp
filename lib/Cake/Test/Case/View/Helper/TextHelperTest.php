@@ -240,12 +240,12 @@ class TextHelperTest extends CakeTestCase {
 		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
 		$expected = 'This is a &lt;b&gt;test&lt;/b&gt; text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
 		$expected = 'This is a <b>test</b> text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text, array('escape' => false));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

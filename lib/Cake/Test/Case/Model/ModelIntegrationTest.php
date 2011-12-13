@@ -2243,18 +2243,18 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer');
 
 		$Player = ClassRegistry::init('Player');
-		$this->assertEqual($Player->useDbConfig, 'test');
-		$this->assertEqual($Player->Guild->useDbConfig, 'test');
-		$this->assertEqual($Player->Guild->GuildsPlayer->useDbConfig, 'test2');
-		$this->assertEqual($Player->GuildsPlayer->useDbConfig, 'test2');
+		$this->assertEquals($Player->useDbConfig, 'test');
+		$this->assertEquals($Player->Guild->useDbConfig, 'test');
+		$this->assertEquals($Player->Guild->GuildsPlayer->useDbConfig, 'test2');
+		$this->assertEquals($Player->GuildsPlayer->useDbConfig, 'test2');
 
 		$players = $Player->find('all', array('recursive' => -1));
 		$guilds = $Player->Guild->find('all', array('recursive' => -1));
 		$guildsPlayers = $Player->GuildsPlayer->find('all', array('recursive' => -1));
 
-		$this->assertEqual(true, count($players) > 1);
-		$this->assertEqual(true, count($guilds) > 1);
-		$this->assertEqual(true, count($guildsPlayers) > 1);
+		$this->assertEquals(true, count($players) > 1);
+		$this->assertEquals(true, count($guilds) > 1);
+		$this->assertEquals(true, count($guildsPlayers) > 1);
 	}
 
 /**
@@ -2281,27 +2281,27 @@ class ModelIntegrationTest extends BaseModelTest {
 					),
 				),
 			), false);
-		$this->assertEqual('test', $Player->useDbConfig);
-		$this->assertEqual('test', $Player->Guild->useDbConfig);
-		$this->assertEqual('test2', $Player->Guild->GuildsPlayer->useDbConfig);
-		$this->assertEqual('test2', $Player->GuildsPlayer->useDbConfig);
-		$this->assertEqual('test2', $Player->Armor->useDbConfig);
-		$this->assertEqual('test_database_three', $Player->Armor->ArmorsPlayer->useDbConfig);
-		$this->assertEqual('test', $Player->getDataSource()->configKeyName);
-		$this->assertEqual('test', $Player->Guild->getDataSource()->configKeyName);
-		$this->assertEqual('test2', $Player->GuildsPlayer->getDataSource()->configKeyName);
-		$this->assertEqual('test2', $Player->Armor->getDataSource()->configKeyName);
-		$this->assertEqual('test_database_three', $Player->Armor->ArmorsPlayer->getDataSource()->configKeyName);
+		$this->assertEquals('test', $Player->useDbConfig);
+		$this->assertEquals('test', $Player->Guild->useDbConfig);
+		$this->assertEquals('test2', $Player->Guild->GuildsPlayer->useDbConfig);
+		$this->assertEquals('test2', $Player->GuildsPlayer->useDbConfig);
+		$this->assertEquals('test2', $Player->Armor->useDbConfig);
+		$this->assertEquals('test_database_three', $Player->Armor->ArmorsPlayer->useDbConfig);
+		$this->assertEquals('test', $Player->getDataSource()->configKeyName);
+		$this->assertEquals('test', $Player->Guild->getDataSource()->configKeyName);
+		$this->assertEquals('test2', $Player->GuildsPlayer->getDataSource()->configKeyName);
+		$this->assertEquals('test2', $Player->Armor->getDataSource()->configKeyName);
+		$this->assertEquals('test_database_three', $Player->Armor->ArmorsPlayer->getDataSource()->configKeyName);
 
 		$players = $Player->find('all', array('recursive' => -1));
 		$guilds = $Player->Guild->find('all', array('recursive' => -1));
 		$guildsPlayers = $Player->GuildsPlayer->find('all', array('recursive' => -1));
 		$armorsPlayers = $Player->ArmorsPlayer->find('all', array('recursive' => -1));
 
-		$this->assertEqual(true, count($players) > 1);
-		$this->assertEqual(true, count($guilds) > 1);
-		$this->assertEqual(true, count($guildsPlayers) > 1);
-		$this->assertEqual(true, count($armorsPlayers) > 1);
+		$this->assertEquals(true, count($players) > 1);
+		$this->assertEquals(true, count($guilds) > 1);
+		$this->assertEquals(true, count($guildsPlayers) > 1);
+		$this->assertEquals(true, count($armorsPlayers) > 1);
 	}
 
 }

@@ -207,7 +207,7 @@ class AppTest extends CakeTestCase {
  */
 	public function testBuildPackage() {
 		$paths = App::path('Service');
-		$this->assertEqual(array(), $paths);
+		$this->assertEquals(array(), $paths);
 
 		App::build(array(
 			'Service' => array(
