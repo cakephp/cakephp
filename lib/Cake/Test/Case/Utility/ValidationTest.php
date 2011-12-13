@@ -1412,6 +1412,16 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * Test validating dates with multiple formats
+ *
+ * @return void
+ */
+	public function testDateMultiple() {
+		$this->assertTrue(Validation::date('2011-12-31', array('ymd', 'dmy')));
+		$this->assertTrue(Validation::date('31-12-2011', array('ymd', 'dmy')));
+	}
+
+/**
  * testTime method
  *
  * @return void
