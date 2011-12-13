@@ -890,7 +890,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Sample->create();
 		$result = $Sample->save($record);
 		$expected['Sample']['id'] = $Sample->id;
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify', 'afterSave' => 'modify'));
 		$expected = Set::merge($record, array('Sample' => array('name' => 'sample99 modified before modified after on create')));
