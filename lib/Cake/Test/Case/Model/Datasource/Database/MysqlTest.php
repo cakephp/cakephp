@@ -3461,4 +3461,62 @@ class MysqlTest extends CakeTestCase {
 			'database' => 'imaginary'
 		));
 	}
+
+/**
+ * testStatements method
+ *
+ * @return void
+ */
+	public function testUpdateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("UPDATE `articles` SET `field1` = 'value1'  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("UPDATE `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				" SET `Article`.`field1` = 2  WHERE 2=2");
+
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with("UPDATE `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				" SET `Article`.`field1` = 'value'  WHERE `index` = 'val'");
+
+		$Article = new Article();
+
+		$this->Dbo->update($Article, array('field1'), array('value1'));
+		$this->Dbo->update($Article, array('field1'), array('2'), '2=2');
+		$this->Dbo->update($Article, array('field1'), array("'value'"), array('index' => 'val'));
+
+	}
+
+/**
+ * Test deletes with a mock.
+ *
+ * @return void
+ */
+	public function testDeleteStatements() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE  FROM `articles`  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("DELETE `Article` FROM `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				"  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with("DELETE `Article` FROM `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				"  WHERE 2=2");
+		$Article = new Article();
+
+		$this->Dbo->delete($Article);
+		$this->Dbo->delete($Article, true);
+		$this->Dbo->delete($Article, '2=2');
+	}
 }
