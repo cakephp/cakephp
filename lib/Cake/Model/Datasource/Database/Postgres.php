@@ -308,8 +308,9 @@ class Postgres extends DboSource {
 		}
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
 			$schema = $this->config['schema'];
-			if (isset($this->_sequenceMap[$fullTable]) && $reset != true) {
-				foreach ($this->_sequenceMap[$fullTable] as $field => $sequence) {
+			$table = $this->fullTableName($table, false, false);
+			if (isset($this->_sequenceMap[$table]) && $reset != true) {
+				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
 					$this->_execute("ALTER SEQUENCE \"{$schema}\".\"{$sequence}\" RESTART WITH 1");
 				}
 			}
