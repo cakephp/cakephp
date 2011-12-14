@@ -3540,4 +3540,37 @@ class MysqlTest extends CakeTestCase {
 		$this->Dbo->delete($Article, true);
 		$this->Dbo->delete($Article, '2=2');
 	}
+
+/**
+ * Test truncate with a mock.
+ *
+ * @return void
+ */
+	public function testTruncateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$db = ConnectionManager::getDatasource('test');
+		$schema = $db->config['database'];
+		$Article = new Article();
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($db->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`articles`");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`articles`");
+		$this->Dbo->truncate('articles');
+
+		// #2355: prevent duplicate prefix
+		$this->Dbo->config['prefix'] = 'tbl_';
+		$Article->tablePrefix = 'tbl_';
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`tbl_articles`");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`tbl_articles`");
+		$this->Dbo->truncate('articles');
+	}
 }

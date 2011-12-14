@@ -871,4 +871,38 @@ class PostgresTest extends CakeTestCase {
 		$result = $this->Dbo->getEncoding();
 		$this->assertEquals('EUC-JP', $result) ;
 	}
+
+/**
+ * Test truncate with a mock.
+ *
+ * @return void
+ */
+	public function testTruncateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$db = ConnectionManager::getDatasource('test');
+		$schema = $db->config['schema'];
+		$Article = new Article();
+
+		$this->Dbo = $this->getMock('Postgres', array('execute'), array($db->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"articles\"");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"articles\"");
+		$this->Dbo->truncate('articles');
+
+		// #2355: prevent duplicate prefix
+		$this->Dbo->config['prefix'] = 'tbl_';
+		$Article->tablePrefix = 'tbl_';
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
+		$this->Dbo->truncate('articles');
+	}
+
 }
