@@ -21,7 +21,11 @@
  */
 
 /**
- * File Storage engine for cache
+ * File Storage engine for cache.  Filestorage is the slowest cache storage
+ * to read and write.  However, it is good for servers that don't have other storage
+ * engine available, or have content which is not performance sensitive.
+ *
+ * You can configure a FileEngine cache, using Cache::config()
  *
  * @package       Cake.Cache.Engine
  */
@@ -66,8 +70,8 @@ class FileEngine extends CacheEngine {
 	public function init($settings = array()) {
 		parent::init(array_merge(
 			array(
-				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> true,
-				'serialize'=> true, 'isWindows' => false, 'mask' => 0664
+				'engine' => 'File', 'path' => CACHE, 'prefix' => 'cake_', 'lock' => true,
+				'serialize' => true, 'isWindows' => false, 'mask' => 0664
 			),
 			$settings
 		));
@@ -84,7 +88,7 @@ class FileEngine extends CacheEngine {
 /**
  * Garbage collection. Permanently remove all expired and deleted data
  *
- * @return boolean True if garbage collection was succesful, false on failure
+ * @return boolean True if garbage collection was successful, false on failure
  */
 	public function gc() {
 		return $this->clear(true);
@@ -273,7 +277,7 @@ class FileEngine extends CacheEngine {
 
 /**
  * Sets the current cache key this class is managing, and creates a writable SplFileObject
- * for the cache file the key is refering to.
+ * for the cache file the key is referring to.
  *
  * @param string $key The key
  * @param boolean $createKey Whether the key should be created if it doesn't exists, or not

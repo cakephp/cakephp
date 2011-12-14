@@ -251,7 +251,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 
 		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
-			$this->generate(Inflector::camelize($plugin . $request->params['controller']));
+			$this->generate($plugin . Inflector::camelize($request->params['controller']));
 		}
 		$params = array();
 		if ($options['return'] == 'result') {
@@ -263,12 +263,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
-		if ($options['return'] != 'result') {
-			if (isset($this->controller->View)) {
-				$this->vars = $this->controller->View->viewVars;
-				$this->view = $this->controller->View->_viewNoLayout;
-			}
-			$this->contents = $this->controller->response->body();
+		$this->vars = $this->controller->viewVars;
+		$this->contents = $this->controller->response->body();
+		if (isset($this->controller->View)) {
+			$this->view = $this->controller->View->_viewNoLayout;
 		}
 		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
@@ -284,7 +282,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
  * - `models` Models to mock. Models are added to the ClassRegistry so they any
- *   time they are instatiated the mock will be created. Pass as key value pairs
+ *   time they are instantiated the mock will be created. Pass as key value pairs
  *   with the value being specific methods on the model to mock. If `true` or
  *   no value is passed, the entire model will be mocked.
  * - `components` Components to mock. Components are only mocked on this controller

@@ -16,9 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('ConnectionManager', 'Model');
 App::uses('ClassRegistry', 'Utility');
 
+/**
+ * A factory class to manage the life cycle of test fixtures
+ *
+ * @package       Cake.TestSuite.Fixture
+ */
 class CakeFixtureManager {
 
 /**
@@ -43,7 +49,7 @@ class CakeFixtureManager {
 	protected $_loaded = array();
 
 /**
- * Holds the fixture classes that where ins	tantiated indexed by class name
+ * Holds the fixture classes that where instantiated indexed by class name
  *
  * @var array
  */
@@ -195,7 +201,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Trucantes the fixtures tables
+ * Truncates the fixtures tables
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void
@@ -213,7 +219,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Trucantes the fixtures tables
+ * Truncates the fixtures tables
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void

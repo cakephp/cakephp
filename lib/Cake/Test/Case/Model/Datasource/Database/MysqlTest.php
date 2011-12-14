@@ -225,6 +225,7 @@ class MysqlTest extends CakeTestCase {
 
 		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 	}
+
 /**
  * testLastAffected method
  *
@@ -1302,7 +1303,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
 
-		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4');
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -1711,7 +1712,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
 
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array('conditions' => array('TestModel4.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
@@ -1744,7 +1745,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->hasAndBelongsToMany['TestModel7']['offset'] = 2;
 		$this->Model->hasAndBelongsToMany['TestModel7']['limit'] = 5;
 
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -1780,7 +1781,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->hasAndBelongsToMany['TestModel7']['page'] = 2;
 		$this->Model->hasAndBelongsToMany['TestModel7']['limit'] = 5;
 
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -1851,7 +1852,7 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->conditions(array('score' => array(2=>1, 2, 10)));
+		$result = $this->Dbo->conditions(array('score' => array(2 => 1, 2, 10)));
 		$expected = " WHERE score IN (1, 2, 10)";
 		$this->assertEquals($expected, $result);
 
@@ -1931,7 +1932,7 @@ class MysqlTest extends CakeTestCase {
 		$conditions = array('Company.name similar to ' => 'a word');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Company`.`name` similar to 'a word'";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2103,7 +2104,7 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->conditions(array('lower(Article.title)' =>  'secrets'));
 		$expected = " WHERE lower(`Article`.`title`) = 'secrets'";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";
@@ -2278,7 +2279,7 @@ class MysqlTest extends CakeTestCase {
 		$conditions = array('MysqlModel.id' => '');
 		$result = $this->Dbo->conditions($conditions, true, true, $this->model);
 		$expected = " WHERE `MysqlModel`.`id` IS NULL";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";
@@ -3459,5 +3460,63 @@ class MysqlTest extends CakeTestCase {
 			'password' => 'inyurdatabase',
 			'database' => 'imaginary'
 		));
+	}
+
+/**
+ * testStatements method
+ *
+ * @return void
+ */
+	public function testUpdateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("UPDATE `articles` SET `field1` = 'value1'  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("UPDATE `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				" SET `Article`.`field1` = 2  WHERE 2=2");
+
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with("UPDATE `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				" SET `Article`.`field1` = 'value'  WHERE `index` = 'val'");
+
+		$Article = new Article();
+
+		$this->Dbo->update($Article, array('field1'), array('value1'));
+		$this->Dbo->update($Article, array('field1'), array('2'), '2=2');
+		$this->Dbo->update($Article, array('field1'), array("'value'"), array('index' => 'val'));
+
+	}
+
+/**
+ * Test deletes with a mock.
+ *
+ * @return void
+ */
+	public function testDeleteStatements() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE  FROM `articles`  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("DELETE `Article` FROM `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				"  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with("DELETE `Article` FROM `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+				"  WHERE 2=2");
+		$Article = new Article();
+
+		$this->Dbo->delete($Article);
+		$this->Dbo->delete($Article, true);
+		$this->Dbo->delete($Article, '2=2');
 	}
 }

@@ -13,7 +13,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         CakePHP(tm) v 1.3.14
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -22,14 +22,14 @@
  *
  * @package       Cake.Test.Fixture
  */
-class ArticleFeaturedsTagsFixture extends CakeTestFixture {
+class BiddingFixture extends CakeTestFixture {
 
 /**
  * name property
  *
- * @var string 'ArticleFeaturedsTags'
+ * @var string 'Bidding'
  */
-	public $name = 'ArticleFeaturedsTags';
+	public $name = 'Bidding';
 
 /**
  * fields property
@@ -37,8 +37,20 @@ class ArticleFeaturedsTagsFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'article_featured_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_FEATURED' => array('column' => array('article_featured_id', 'tag_id'), 'unique' => 1))
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'bid' => array('type' => 'string', 'null' => false),
+		'name' => array('type' => 'string', 'null' => false)
+	);
+
+/**
+ * records property
+ *
+ * @var array
+ */
+	public $records = array(
+		array('bid' => 'One', 'name' => 'Bid 1'),
+		array('bid' => 'Two', 'name' => 'Bid 2'),
+		array('bid' => 'Three', 'name' => 'Bid 3'),
+		array('bid' => 'Five', 'name' => 'Bid 5')
 	);
 }

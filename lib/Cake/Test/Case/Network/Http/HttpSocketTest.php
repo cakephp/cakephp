@@ -317,7 +317,7 @@ class HttpSocketTest extends CakeTestCase {
 						'port' => 80,
 						'timeout' => 30,
 						'request' => array(
-							'uri' => array (
+							'uri' => array(
 								'scheme' => 'http',
 								'host' => 'www.cakephp.org',
 								'port' => 80
@@ -546,6 +546,26 @@ class HttpSocketTest extends CakeTestCase {
 		$request = array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'));
 		$response = $this->Socket->request($request);
 		$this->assertEquals($this->Socket->request['body'], "name=HttpSocket-is-released&date=today");
+	}
+
+/**
+ * Test the scheme + port keys
+ * 
+ * @return void
+ */
+	public function testGetWithSchemeAndPort() {
+		$this->Socket->reset();
+		$request = array(
+			'uri' => array(
+				'scheme' => 'http',
+				'host' => 'cakephp.org',
+				'port' => 8080,
+				'path' => '/',
+			),
+			'method' => 'GET'
+		);
+		$response = $this->Socket->request($request);
+		$this->assertContains('Host: cakephp.org:8080', $this->Socket->request['header']);
 	}
 
 /**

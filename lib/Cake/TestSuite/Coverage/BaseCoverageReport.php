@@ -17,6 +17,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+/**
+ * Abstract class for common CoverageReport methods.
+ * Provides several template methods for custom output.
+ *
+ * @package       Cake.TestSuite.Coverage
+ */
 abstract class BaseCoverageReport {
 
 /**

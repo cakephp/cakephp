@@ -20,9 +20,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * List of helpers to include
- */
 App::uses('Router', 'Routing');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
@@ -56,7 +53,7 @@ class Dispatcher {
  * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
  * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
- * want controller methods to be public and in-accesible by URL, then prefix them with a `_`.
+ * want controller methods to be public and in-accessible by URL, then prefix them with a `_`.
  * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
  * are also not accessible via URL.
  *
@@ -272,7 +269,7 @@ class Dispatcher {
 		if ($parts[0] === 'theme') {
 			$themeName = $parts[1];
 			unset($parts[0], $parts[1]);
-			$fileFragment = implode(DS, $parts);
+			$fileFragment = urldecode(implode(DS, $parts));
 			$path = App::themePath($themeName) . 'webroot' . DS;
 			if (file_exists($path . $fileFragment)) {
 				$assetFile = $path . $fileFragment;
@@ -281,7 +278,7 @@ class Dispatcher {
 			$plugin = Inflector::camelize($parts[0]);
 			if (CakePlugin::loaded($plugin)) {
 				unset($parts[0]);
-				$fileFragment = implode(DS, $parts);
+				$fileFragment = urldecode(implode(DS, $parts));
 				$pluginWebroot = CakePlugin::path($plugin) . 'webroot' . DS;
 				if (file_exists($pluginWebroot . $fileFragment)) {
 					$assetFile = $pluginWebroot . $fileFragment;

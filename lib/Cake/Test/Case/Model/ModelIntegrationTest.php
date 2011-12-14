@@ -32,6 +32,7 @@ class DboMock extends DboSource {
 	public function name($field) {
 		return $field;
 	}
+
 /**
 * Returns true to fake a database connection
 */
@@ -245,13 +246,13 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User');
 		$TestUser =& new User();
 
-		$options = array (
+		$options = array(
 			'fields' => array(
 				'user',
 				'Article.published',
 			),
-			'joins' => array (
-				array (
+			'joins' => array(
+				array(
 					'table' => 'articles',
 					'alias' => 'Article',
 					'type'  => 'LEFT',
@@ -271,7 +272,7 @@ class ModelIntegrationTest extends BaseModelTest {
 			array('User' => array('user' => 'mariano'), 'Article' => array('published' => 'Y')),
 			array('User' => array('user' => 'nate'), 'Article' => array('published' => ''))
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -678,7 +679,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('mytime'=> ''));
+		$expected = array('Apple' => array('mytime' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -688,7 +689,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('mytime'=> ''));
+		$expected = array('Apple' => array('mytime' => ''));
 		$this->assertEquals($TestModel->data, $expected, 'Empty values are not returning properly. %s');
 
 		$data = array();
@@ -698,7 +699,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('mytime'=> '00:00:00'));
+		$expected = array('Apple' => array('mytime' => '00:00:00'));
 		$this->assertEquals($TestModel->data, $expected, 'Midnight is not returning proper values. %s');
 
 		$data = array();
@@ -707,7 +708,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('mytime'=> '00:00:00'));
+		$expected = array('Apple' => array('mytime' => '00:00:00'));
 		$this->assertEquals($TestModel->data, $expected, 'Midnight is not returning proper values. %s');
 
 		$data = array();
@@ -717,7 +718,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
+		$expected = array('Apple' => array('mytime' => '03:04:04'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -727,7 +728,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime'=> '03:04:04'));
+		$expected = array('Apple' => array('mytime' => '03:04:04'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -737,7 +738,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
+		$expected = array('Apple' => array('mytime' => '03:04:04'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$db = ConnectionManager::getDataSource('test');
@@ -769,7 +770,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> ''));
+		$expected = array('Apple' => array('created' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -779,7 +780,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('date'=> ''));
+		$expected = array('Apple' => array('date' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -792,7 +793,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> '2007-08-20 00:00:00'));
+		$expected = array('Apple' => array('created' => '2007-08-20 00:00:00'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -805,7 +806,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> '2007-08-20 10:12:00'));
+		$expected = array('Apple' => array('created' => '2007-08-20 10:12:00'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -818,7 +819,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> ''));
+		$expected = array('Apple' => array('created' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -827,7 +828,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> ''));
+		$expected = array('Apple' => array('created' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -837,7 +838,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> ''));
+		$expected = array('Apple' => array('created' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -850,9 +851,9 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel->data = null;
 		$TestModel->set($data);
 		$expected = array(
-			'Apple'=> array(
-			'created'=> '',
-			'date'=> '2006-12-25'
+			'Apple' => array(
+			'created' => '',
+			'date' => '2006-12-25'
 		));
 		$this->assertEquals($TestModel->data, $expected);
 
@@ -870,9 +871,9 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel->data = null;
 		$TestModel->set($data);
 		$expected = array(
-			'Apple'=> array(
-				'created'=> '2007-08-20 10:12:09',
-				'date'=> '2006-12-25'
+			'Apple' => array(
+				'created' => '2007-08-20 10:12:09',
+				'date' => '2006-12-25'
 		));
 		$this->assertEquals($TestModel->data, $expected);
 
@@ -889,7 +890,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> '', 'date'=> ''));
+		$expected = array('Apple' => array('created' => '', 'date' => ''));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -905,7 +906,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> '', 'date'=> '2006-12-25'));
+		$expected = array('Apple' => array('created' => '', 'date' => '2006-12-25'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$data = array();
@@ -915,7 +916,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('date'=> '2006-12-25'));
+		$expected = array('Apple' => array('date' => '2006-12-25'));
 		$this->assertEquals($TestModel->data, $expected);
 
 		$db = ConnectionManager::getDataSource('test');
@@ -1954,7 +1955,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'default' => null,
 				'length' => null
 			),
-			'updated'=> array(
+			'updated' => array(
 				'type' => 'datetime',
 				'null' => true,
 				'default' => null,
@@ -2048,6 +2049,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $TestModel->escapeField('DomainHandle', 'Domain');
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEquals($expected, $result);
+		ConnectionManager::drop('mock');
 	}
 
 /**
@@ -2072,4 +2074,21 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertTrue($Article->hasMethod('pass'));
 		$this->assertFalse($Article->hasMethod('fail'));
 	}
+
+/**
+ * Tests that tablePrefix is taken from the datasource if none is defined in the model
+ *
+ * @return void
+ * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/2277-caketestmodels-in-test-cases-do-not-set-model-tableprefix
+ */
+	public function testModelPrefixFromDatasource() {
+		ConnectionManager::create('mock', array(
+			'datasource' => 'DboMock',
+			'prefix' => 'custom_prefix_'
+		));
+		$Article = new Article(false, null, 'mock');
+		$this->assertEquals('custom_prefix_', $Article->tablePrefix);
+		ConnectionManager::drop('mock');
+	}
+
 }

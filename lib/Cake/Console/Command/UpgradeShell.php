@@ -83,7 +83,7 @@ class UpgradeShell extends AppShell {
  * @return void
  */
 	public function all() {
-		foreach($this->OptionParser->subcommands() as $command) {
+		foreach ($this->OptionParser->subcommands() as $command) {
 			$name = $command->name();
 			if ($name === 'all') {
 				continue;
@@ -135,7 +135,7 @@ class UpgradeShell extends AppShell {
 		if (is_dir('plugins')) {
 			$Folder = new Folder('plugins');
 			list($plugins) = $Folder->read();
-			foreach($plugins as $plugin) {
+			foreach ($plugins as $plugin) {
 				chdir($cwd . DS . 'plugins' . DS . $plugin);
 				$this->locations();
 			}
@@ -155,7 +155,7 @@ class UpgradeShell extends AppShell {
 			'Test' . DS . 'fixtures' => 'Test' . DS . 'Fixture',
 			'vendors' . DS . 'shells' . DS . 'templates' => 'Console' . DS . 'Templates',
 		);
-		foreach($moves as $old => $new) {
+		foreach ($moves as $old => $new) {
 			if (is_dir($old)) {
 				$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
 				if (!$this->params['dry-run']) {
@@ -190,7 +190,7 @@ class UpgradeShell extends AppShell {
 			'checkFolder' => true,
 			'regex' => '@class (\S*) .*{@i'
 		);
-		foreach($sourceDirs as $dir => $options) {
+		foreach ($sourceDirs as $dir => $options) {
 			if (is_numeric($dir)) {
 				$dir = $options;
 				$options = array();
@@ -555,6 +555,7 @@ class UpgradeShell extends AppShell {
 		);
 		$this->_filesRegexpUpdate($patterns);
 	}
+
 /**
  * Move application views files to where they now should be
  *
@@ -615,7 +616,7 @@ class UpgradeShell extends AppShell {
 			$this->_findFiles('php');
 		} else {
 			$this->_files = scandir($path);
-			foreach($this->_files as $i => $file) {
+			foreach ($this->_files as $i => $file) {
 				if (strlen($file) < 5 || substr($file, -4) !== '.php') {
 					unset($this->_files[$i]);
 				}
@@ -765,7 +766,7 @@ class UpgradeShell extends AppShell {
 					'help' => __d('cake_console', 'Use git command for moving files around.'),
 					'boolean' => true
 				),
-				'dry-run'=> array(
+				'dry-run' => array(
 					'short' => 'd',
 					'help' => __d('cake_console', 'Dry run the update, no files will actually be modified.'),
 					'boolean' => true

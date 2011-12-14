@@ -22,7 +22,11 @@
 App::uses('Xml', 'Utility');
 
 /**
- * Request object for handling HTTP requests
+ * Request object for handling alternative HTTP requests
+ *
+ * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
+ * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
+ * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
@@ -485,7 +489,7 @@ class RequestHandlerComponent extends Component {
  *   'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
  *    list, based on preference, is returned.  If a single type is provided
- *    a boolean will be returnend if that type is preferred.
+ *    a boolean will be returned if that type is preferred.
  *    If an array of types are provided then the first preferred type is returned.
  *    If no type is provided the first preferred type is returned.
  * @see RequestHandlerComponent::setContent()

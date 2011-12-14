@@ -990,6 +990,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->unlockField();
 		$this->assertEquals(array('Address.button'), $result);
 	}
+
 /**
  * Test that the correct fields are unlocked for image submits with no names.
  *
@@ -1029,6 +1030,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertEquals(array('test', 'test_x', 'test_y'), $this->Form->unlockField());
 	}
+
 /**
  * testFormSecurityMultipleInputFields method
  *
@@ -1324,7 +1326,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEquals($this->Form->fields, array());
 
 		$result = $this->Form->file('Attachment.file');
-		$expected = array (
+		$expected = array(
 			'Attachment.file.name', 'Attachment.file.type', 'Attachment.file.tmp_name',
 			'Attachment.file.error', 'Attachment.file.size'
 		);
@@ -2144,7 +2146,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
 
 		$result = $this->Form->input('prueba', array(
-			'type' => 'time', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008,
+			'type' => 'time', 'timeFormat' => 24 , 'dateFormat' => 'DMY' , 'minYear' => 2008,
 			'maxYear' => date('Y') + 1 ,'interval' => 15
 		));
 		$result = explode(':', $result);
@@ -2170,8 +2172,8 @@ class FormHelperTest extends CakeTestCase {
 	function testInputDatetime() {
 		extract($this->dateRegex);
 		$result = $this->Form->input('prueba', array(
-			'type' => 'datetime', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008,
-			'maxYear' => date('Y') + 1 ,'interval' => 15
+			'type' => 'datetime', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
+			'maxYear' => date('Y') + 1, 'interval' => 15
 		));
 		$result = explode(':', $result);
 		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
@@ -3527,6 +3529,17 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = 0;
+		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
+			array('option' => array('value' => '1')), 'Yes', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4143,6 +4156,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSelectHiddenFieldOmission method
  *
@@ -4337,7 +4351,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = 0;
-		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
+		$result = $this->Form->checkbox('Contact.published', array('id' => 'theID'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][published]', 'value' => '0', 'id' => 'theID_'),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][published]', 'value' => '1', 'id' => 'theID'))
@@ -5610,6 +5624,9 @@ class FormHelperTest extends CakeTestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->year('published', array(), array(), array('empty' => false));
+		$this->assertContains('data[Contact][published][year]', $result);
 	}
 
 /**
@@ -5824,6 +5841,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testPostLink method
  *
@@ -6597,6 +6615,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertRegExp('/name="created\[min\]"/', $result, 'min name attribute is wrong.');
 		$this->assertRegExp('/name="created\[meridian\]"/', $result, 'meridian name attribute is wrong.');
 	}
+
 /**
  * testEditFormWithData method
  *

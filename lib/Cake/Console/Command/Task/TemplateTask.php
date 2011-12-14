@@ -59,7 +59,7 @@ class TemplateTask extends AppShell {
  * @return array Array of bake themes that are installed.
  */
 	protected function _findThemes() {
-		$paths = App::path('Console');
+		$paths = array();
 		$core = current(App::core('Console'));
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
@@ -70,10 +70,12 @@ class TemplateTask extends AppShell {
 		$themeFolders = $contents[0];
 
 		$plugins = App::objects('plugin');
+		$paths[] = $core;
 		foreach ($plugins as $plugin) {
 			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
 		}
-		$paths[] = $core;
+		
+		$paths = array_merge($paths, App::path('Console'));
 
 		// TEMPORARY TODO remove when all paths are DS terminated
 		foreach ($paths as $i => $path) {

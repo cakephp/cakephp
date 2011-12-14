@@ -1,5 +1,4 @@
 <?php
-App::import('Model', 'ConnectionManager');
 /**
  * Washes strings from unwanted noise.
  *
@@ -20,10 +19,12 @@ App::import('Model', 'ConnectionManager');
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::import('Model', 'ConnectionManager');
+
 /**
  * Data Sanitization.
  *
- * Removal of alpahnumeric characters, SQL-safe slash-added strings, HTML-friendly strings,
+ * Removal of alphanumeric characters, SQL-safe slash-added strings, HTML-friendly strings,
  * and all of the above on arrays.
  *
  * @package       Cake.Utility

@@ -306,9 +306,7 @@ class Validation {
 
 		$format = (is_array($format)) ? array_values($format) : array($format);
 		foreach ($format as $key) {
-			$regex = $regex[$key];
-
-			if (self::_check($check, $regex) === true) {
+			if (self::_check($check, $regex[$key]) === true) {
 				return true;
 			}
 		}
@@ -441,7 +439,7 @@ class Validation {
  * Check that value has a valid file extension.
  *
  * @param mixed $check Value to check
- * @param array $extensions file extenstions to allow
+ * @param array $extensions file extensions to allow
  * @return boolean Success
  */
 	public static function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {

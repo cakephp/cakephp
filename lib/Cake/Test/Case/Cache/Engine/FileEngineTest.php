@@ -45,7 +45,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */
@@ -61,10 +61,10 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testCacheDirChange() {
-		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
+		$result = Cache::config('sessions', array('engine' => 'File', 'path' => TMP . 'sessions'));
 		$this->assertEquals($result['settings'], Cache::settings('sessions'));
 
-		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'tests'));
+		$result = Cache::config('sessions', array('engine' => 'File', 'path' => TMP . 'tests'));
 		$this->assertEquals($result['settings'], Cache::settings('sessions'));
 		$this->assertNotEquals($result['settings'], Cache::settings('default'));
 	}
@@ -276,7 +276,7 @@ class FileEngineTest extends CakeTestCase {
 	public function testRemoveWindowsSlashesFromCache() {
 		Cache::config('windows_test', array('engine' => 'File', 'isWindows' => true, 'prefix' => null, 'path' => TMP));
 
-		$expected = array (
+		$expected = array(
 			'C:\dev\prj2\sites\cake\libs' => array(
 				0 => 'C:\dev\prj2\sites\cake\libs', 1 => 'C:\dev\prj2\sites\cake\libs\view',
 				2 => 'C:\dev\prj2\sites\cake\libs\view\scaffolds', 3 => 'C:\dev\prj2\sites\cake\libs\view\pages',
@@ -361,7 +361,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0664';
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
@@ -369,7 +369,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0666';
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
@@ -377,7 +377,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0644';
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
@@ -385,7 +385,7 @@ class FileEngineTest extends CakeTestCase {
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS .'cake_masking_test')), -4);
 		$expected = '0640';
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 	}

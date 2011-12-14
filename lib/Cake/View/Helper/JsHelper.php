@@ -32,6 +32,7 @@ App::uses('Multibyte', 'I18n');
  * @property      FormHelper $Form
  */
 class JsHelper extends AppHelper {
+
 /**
  * Whether or not you want scripts to be buffered or output.
  *
@@ -189,7 +190,7 @@ class JsHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::writeBuffer
  */
 	public function writeBuffer($options = array()) {
-		$domReady = $this->request->is('ajax');
+		$domReady = !$this->request->is('ajax');
 		$defaults = array(
 			'onDomReady' => $domReady, 'inline' => true,
 			'cache' => false, 'clear' => true, 'safe' => true
@@ -323,6 +324,7 @@ class JsHelper extends AppHelper {
  * @param mixed $one Either an array of variables to set, or the name of the variable to set.
  * @param mixed $two If $one is a string, $two is the value for that key.
  * @return void
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::set
  */
 	public function set($one, $two = null) {
 		$data = null;

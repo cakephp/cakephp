@@ -59,7 +59,7 @@ class DigestAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */

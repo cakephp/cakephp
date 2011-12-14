@@ -22,8 +22,6 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * PostgreSQL layer for DBO.
  *
- * Long description for class
- *
  * @package       Cake.Model.Datasource.Database
  */
 class Postgres extends DboSource {
@@ -153,7 +151,7 @@ class Postgres extends DboSource {
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -296,22 +294,21 @@ class Postgres extends DboSource {
  * Deletes all the records in a table and drops all associated auto-increment sequences
  *
  * @param mixed $table A string or model class representing the table to be truncated
- * @param boolean $reset true for resseting the sequence, false to leave it as is.
- *						and if 1, sequences are not modified
+ * @param boolean $reset true for resetting the sequence, false to leave it as is.
+ *    and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
-	public function truncate($table, $reset = 0) {
-		$table = $this->fullTableName($table, false);
-		if (!isset($this->_sequenceMap[$table])) {
+	public function truncate($table, $reset = false) {
+		$fullTable = $this->fullTableName($table, false);
+		if (!isset($this->_sequenceMap[$fullTable])) {
 			$cache = $this->cacheSources;
 			$this->cacheSources = false;
 			$this->describe($table);
 			$this->cacheSources = $cache;
 		}
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
-			$table = $this->fullTableName($table, false);
-			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
-				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
+			if (isset($this->_sequenceMap[$fullTable]) && $reset != true) {
+				foreach ($this->_sequenceMap[$fullTable] as $field => $sequence) {
 					$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
 				}
 			}
@@ -337,7 +334,7 @@ class Postgres extends DboSource {
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
- * @param string $alias Alias tablename
+ * @param string $alias Alias table name
  * @param mixed $fields
  * @param boolean $quote
  * @return array
@@ -397,7 +394,7 @@ class Postgres extends DboSource {
  * Quotes the fields in a function call.
  *
  * @param string $match matched string
- * @return string quoted strig
+ * @return string quoted string
  */
 	protected function _quoteFunctionField($match) {
 		$prepend = '';
@@ -409,7 +406,7 @@ class Postgres extends DboSource {
 
 		if (!$constant && strpos($match[1], '.') === false) {
 			$match[1] = $this->name($match[1]);
-		} elseif (!$constant){
+		} elseif (!$constant) {
 			$parts = explode('.', $match[1]);
 			if (!Set::numeric($parts)) {
 				$match[1] = $this->name($match[1]);
@@ -550,7 +547,7 @@ class Postgres extends DboSource {
 	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
-			foreach($indexes['drop'] as $name => $value) {
+			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
 				if ($name == 'PRIMARY') {
 					continue;
@@ -737,7 +734,7 @@ class Postgres extends DboSource {
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
  * @param mixed $data Value to be translated
- * @param boolean $quote true to quote a boolean to be used in a query, flase to return the boolean value
+ * @param boolean $quote true to quote a boolean to be used in a query, false to return the boolean value
  * @return boolean Converted boolean value
  */
 	public function boolean($data, $quote = false) {

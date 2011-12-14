@@ -57,7 +57,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
@@ -163,6 +163,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertFalse($result);
 	}
+
 /**
  * test authenticate sucesss
  *

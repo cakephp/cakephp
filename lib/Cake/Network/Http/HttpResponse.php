@@ -18,7 +18,7 @@
  */
 
 /**
- * HTTP Response
+ * HTTP Response from HttpSocket.
  *
  * @package       Cake.Network.Http
  */
@@ -74,7 +74,7 @@ class HttpResponse implements ArrayAccess {
 	public $raw = '';
 
 /**
- * Contructor
+ * Constructor
  *
  * @param string $message
  */
@@ -168,7 +168,7 @@ class HttpResponse implements ArrayAccess {
  * Generic function to decode a $body with a given $encoding. Returns either an array with the keys
  * 'body' and 'header' or false on failure.
  *
- * @param string $body A string continaing the body to decode.
+ * @param string $body A string containing the body to decode.
  * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding.
  * @return mixed Array of response headers and body or false.
  */
@@ -191,7 +191,7 @@ class HttpResponse implements ArrayAccess {
  * Decodes a chunked message $body and returns either an array with the keys 'body' and 'header' or false as
  * a result.
  *
- * @param string $body A string continaing the chunked body to decode.
+ * @param string $body A string containing the chunked body to decode.
  * @return mixed Array of response headers and body or false.
  * @throws SocketException
  */
@@ -283,7 +283,7 @@ class HttpResponse implements ArrayAccess {
  * Parses cookies in response headers.
  *
  * @param array $header Header array containing one ore more 'Set-Cookie' headers.
- * @return mixed Either false on no cookies, or an array of cookies recieved.
+ * @return mixed Either false on no cookies, or an array of cookies received.
  * @todo Make this 100% RFC 2965 confirm
  */
 	public function parseCookies($header) {
@@ -411,7 +411,7 @@ class HttpResponse implements ArrayAccess {
 	}
 
 /**
- * ArrayAccess - 0ffset Set
+ * ArrayAccess - Offset Set
  *
  * @param mixed $offset
  * @param mixed $value

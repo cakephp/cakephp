@@ -38,7 +38,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */

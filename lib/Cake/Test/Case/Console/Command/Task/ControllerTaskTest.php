@@ -64,6 +64,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ControllerTask',
@@ -86,14 +87,15 @@ class ControllerTaskTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Task);
 		ClassRegistry::flush();
 		App::build();
+		parent::tearDown();
 	}
 
 /**
@@ -274,8 +276,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains(' * @property AclComponent $Acl', $result);
 		$this->assertContains(' * @property AuthComponent $Auth', $result);
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertContains("\$components = array('Acl', 'Auth')", $result);
-		$this->assertContains("\$helpers = array('Ajax', 'Time')", $result);
+		$this->assertContains("public \$components = array('Acl', 'Auth')", $result);
+		$this->assertContains("public \$helpers = array('Ajax', 'Time')", $result);
 		$this->assertContains("--actions--", $result);
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);

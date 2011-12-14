@@ -96,7 +96,7 @@ class I18n {
  *
  * @return void
  */
-	protected function __construct() {
+	public function __construct() {
 		$this->l10n = new L10n();
 	}
 
@@ -511,7 +511,7 @@ class I18n {
 				continue;
 			}
 
-			$mustEscape = array($escape . ',' , $escape . ';', $escape . '<', $escape . '>', $escape . $escape);
+			$mustEscape = array($escape . ',', $escape . ';', $escape . '<', $escape . '>', $escape . $escape);
 			$replacements = array_map('crc32', $mustEscape);
 			$value = str_replace($mustEscape, $replacements, $value);
 			$value = explode(';', $value);

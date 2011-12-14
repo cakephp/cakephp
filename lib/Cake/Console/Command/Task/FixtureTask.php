@@ -91,7 +91,7 @@ class FixtureTask extends BakeTask {
 
 /**
  * Execution method always used for tasks
- * Handles dispatching to interactive, named, or all processeses.
+ * Handles dispatching to interactive, named, or all processes.
  *
  * @return void
  */
@@ -222,14 +222,14 @@ class FixtureTask extends BakeTask {
 			$schema = $this->_generateSchema($tableInfo);
 		}
 
-		if (!isset($importOptions['records']) && !isset($importOptions['fromTable'])) {
+		if (empty($importOptions['records']) && !isset($importOptions['fromTable'])) {
 			$recordCount = 1;
 			if (isset($this->params['count'])) {
 				$recordCount = $this->params['count'];
 			}
 			$records = $this->_makeRecordString($this->_generateRecords($tableInfo, $recordCount));
 		}
-		if (isset($this->params['records']) || isset($importOptions['fromTable'])) {
+		if (!empty($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
 		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));

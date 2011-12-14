@@ -104,9 +104,24 @@ class CakeRequestTest extends CakeTestCase {
 		$_GET = array();
 		$request = new CakeRequest('some/path?one=something&two=else');
 		$expected = array('one' => 'something', 'two' => 'else');
-		$this->assertEquals($request->query, $expected);
+		$this->assertEquals($expected, $request->query);
 		$this->assertEquals('some/path?one=something&two=else', $request->url);
 
+	}
+
+/**
+ * Test that named arguments + querystrings are handled correctly.
+ *
+ * @return void
+ */
+	public function testQueryStringAndNamedParams() {
+		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1?ts=123456';
+		$request = new CakeRequest();
+		$this->assertEquals('tasks/index/page:1', $request->url);
+
+		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1/?ts=123456';
+		$request = new CakeRequest();
+		$this->assertEquals('tasks/index/page:1/', $request->url);
 	}
 
 /**
@@ -1042,6 +1057,29 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Check that a sub-directory containing app|webroot doesn't get mishandled when re-writing is off.
+ *
+ * @return void
+ */
+	public function testBaseUrlWithAppAndWebrootInDirname() {
+		Configure::write('App.baseUrl', '/approval/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEquals('/approval/index.php', $request->base);
+		$this->assertEquals('/approval/app/webroot/', $request->webroot);
+
+		Configure::write('App.baseUrl', '/webrootable/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
+
+		$request = new CakeRequest();
+		$this->assertEquals('/webrootable/index.php', $request->base);
+		$this->assertEquals('/webrootable/app/webroot/', $request->webroot);
+	}
+
+/**
  * test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
  *
  * @return void
@@ -1599,6 +1637,7 @@ XML;
 			$result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
 		);
 	}
+
 
 /**
  * loadEnvironment method
