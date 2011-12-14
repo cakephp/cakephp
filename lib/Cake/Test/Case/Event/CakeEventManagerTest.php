@@ -251,4 +251,26 @@ class CakeEventManagerTest extends CakeTestCase {
 		$event = new CakeEvent('another.event', $this, array('some' => 'data'));
 		$manager->dispatch($event);
 	}
+
+/**
+ * Tests subscribing a listener object and firing the events it subscribed to
+ *
+ * @return void
+ */
+	public function testDetachSubscriber() {
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CustomTestEventListerner', array('secondListenerFunction'));
+		$manager->attach($listener);
+		$expected = array(
+			array('callable' => array($listener, 'secondListenerFunction'), 'passParams' => true)
+		);
+		$this->assertEquals($expected, $manager->listeners('another.event'));
+		$expected = array(
+			array('callable' => array($listener, 'listenerFunction'), 'passParams' => false)
+		);
+		$this->assertEquals($expected, $manager->listeners('fake.event'));
+		$manager->detach($listener);
+		$this->assertEquals(array(), $manager->listeners('fake.event'));
+		$this->assertEquals(array(), $manager->listeners('another.event'));
+	}
 }

@@ -88,6 +88,9 @@ class CakeEventManager {
  * @return void
  */
 	public function detach($callable, $eventKey = null) {
+		if ($callable instanceof CakeEventListener) {
+			return $this->_detachSubscriber($callable, $eventKey);
+		}
 		if (empty($eventKey)) {
 			foreach (array_keys($this->_listeners) as $eventKey) {
 				$this->detach($callable, $eventKey);
@@ -104,6 +107,28 @@ class CakeEventManager {
 					break;
 				}
 			}
+		}
+	}
+
+/**
+ * Auxiliary function to help detach all listeners provided by an object implementing CakeEventListener
+ *
+ * @param CakeEventListener $subscriber the subscriber to be detached
+ * @param string $eventKey optional event key name to unsubscribe the listener from
+ * @return void
+ */
+	protected function _detachSubscriber(CakeEventListener $subscriber, $eventKey = null) {
+		$events = $subscriber->implementedEvents();
+		if (!empty($eventKey) && empty($events[$eventKey])) {
+			return;
+		} else if (!empty($eventKey)) {
+			$events = array($eventKey => $events[$eventKey]);
+		}
+		foreach ($events as $key => $function) {
+			if (is_array($function)) {
+				$function = $function['callable'];
+			}
+			$this->detach(array($subscriber, $function), $key);
 		}
 	}
 
