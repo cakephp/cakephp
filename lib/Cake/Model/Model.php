@@ -3164,11 +3164,7 @@ class Model extends Object {
 			return false;
 		}
 
-		foreach ($this->id as $id) {
-			return $id;
-		}
-
-		return false;
+		return current($this->id);
 	}
 
 /**
