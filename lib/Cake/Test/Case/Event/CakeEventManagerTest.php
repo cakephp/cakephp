@@ -273,4 +273,32 @@ class CakeEventManagerTest extends CakeTestCase {
 		$this->assertEquals(array(), $manager->listeners('fake.event'));
 		$this->assertEquals(array(), $manager->listeners('another.event'));
 	}
+
+/**
+ * Tests that it is possible to get/set the manager singleton
+ *
+ * @return void
+ */
+	public function testGlobalDispatcherGetter() {
+		$this->assertInstanceOf('CakeEventManager', CakeEventManager::instance());
+		$manager = new CakeEventManager;
+
+		CakeEventManager::instance($manager);
+		$this->assertSame($manager, CakeEventManager::instance());
+	}
+
+/**
+ * Tests that the global event manager gets the event too from any other manager
+ *
+ * @return void
+ */
+	public function testDispatchWithGlobal() {
+		$generalManager = $this->getMock('CakeEventManager', array('dispatch'));
+		$manager = new CakeEventManager;
+		$event = new CakeEvent('fake.event');
+		CakeEventManager::instance($generalManager);
+
+		$generalManager->expects($this->once())->method('dispatch')->with($event);
+		$manager->dispatch($event);
+	}
 }

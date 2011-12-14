@@ -36,11 +36,49 @@ class CakeEventManager {
 	public static $defaultPriority = 10;
 
 /**
+ * The globally available instance, used for dispatching events attached from any scope
+ *
+ * @var CakeEventManager
+ */
+	protected static $_generalManager = null;
+
+/**
  * List of listener callbacks associated to
  *
  * @var object $Listeners
  */
 	protected $_listeners = array();
+
+/**
+ * Internal flag to distinguish a common manager from the sigleton 
+ *
+ * @var boolean
+ */
+	protected $_isGlobal = false;
+
+
+/**
+ * Returns the globally available instance of a CakeEventManager
+ * this is used for dispatching events attached from outside the scope
+ * other managers were created. Usually for creating hook systems or inter-class
+ * communication
+ *
+ * If called with a first params, it will be set as the globally available instance
+ *
+ * @param CakeEventManager $manager 
+ * @return CakeEventManager the global event manager
+ */
+	public static function instance($manager = null) {
+		if ($manager instanceof CakeEventManager) {
+			self::$_generalManager = $manager;
+		}
+		if (empty(self::$_generalManager)) {
+			self::$_generalManager = new CakeEventManager;
+		}
+
+		self::$_generalManager->_isGlobal = true;
+		return self::$_generalManager;
+	}
 
 /**
  * Adds a new listener to an event. Listeners 
@@ -142,6 +180,11 @@ class CakeEventManager {
 		if (is_string($event)) {
 			$Event = new CakeEvent($event);
 		}
+
+		if (!$this->_isGlobal) {
+			self::instance()->dispatch($event);
+		}
+
 		if (empty($this->_listeners[$event->name()])) {
 			return;
 		}
