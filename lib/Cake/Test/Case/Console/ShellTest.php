@@ -126,6 +126,11 @@ class ShellTest extends CakeTestCase {
 		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Shell = new ShellTestShell($output, $error, $in);
+
+		if (is_dir(TMP . 'shell_test')) {
+			$Folder = new Folder(TMP . 'shell_test');
+			$Folder->delete();
+		}
 	}
 
 /**
@@ -490,11 +495,6 @@ class ShellTest extends CakeTestCase {
 		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'index.php';
 		$this->assertEquals($this->Shell->shortPath($path), $expected);
 
-		// Shell::shortPath needs Folder::realpath
-		// $path = DS . 'tmp' . DS . 'ab' . DS . '..' . DS . 'cd';
-		// $expected = DS . 'tmp' . DS . 'cd';
-		// $this->assertEquals($this->Shell->shortPath($path), $expected);
-
 		$path = DS . 'tmp' . DS . 'ab' . DS . DS . 'cd';
 		$expected = DS . 'tmp' . DS . 'ab' . DS . 'cd';
 		$this->assertEquals($this->Shell->shortPath($path), $expected);
@@ -542,8 +542,6 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEquals(file_get_contents($file), $contents);
-
-		$Folder->delete();
 	}
 
 /**
@@ -588,8 +586,25 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEquals($contents, file_get_contents($file));
+	}
 
-		$Folder->delete();
+/**
+ * Test that you can't create files that aren't writable.
+ *
+ * @return void
+ */
+	public function testCreateFileNoPermissions() {
+		$path = TMP . 'shell_test';
+		$file = $path . DS . 'no_perms';
+
+		mkdir($path);
+		chmod($path, 0444);
+
+		$this->Shell->createFile($file, 'testing');
+		$this->assertFalse(file_exists($file));
+
+		chmod($path, 0744);
+		rmdir($path);
 	}
 
 /**

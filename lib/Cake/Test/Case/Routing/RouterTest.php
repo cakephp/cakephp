@@ -149,7 +149,7 @@ class RouterTest extends CakeTestCase {
 			'action' => 'index',
 			'[method]' => 'GET'
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		$this->assertEquals($resources, array('test_plugin'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -163,7 +163,7 @@ class RouterTest extends CakeTestCase {
 			'id' => '13',
 			'[method]' => 'GET'
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -189,7 +189,7 @@ class RouterTest extends CakeTestCase {
 			'action' => 'index',
 			'[method]' => 'GET'
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 		$this->assertEquals($resources, array('test_plugin'));
 	}
 

@@ -740,45 +740,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
 	}
 
-/**
- * testStatements method
- *
- * @return void
- */
-	public function testStatements() {
-		$this->skipIf(!$this->testDb instanceof DboMysql);
-
-		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
-		$Article = new Article();
-
-		$result = $this->testDb->update($Article, array('field1'), array('value1'));
-		$this->assertFalse($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertRegExp('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
-
-		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
-		$this->assertFalse($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertRegExp('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
-
-		$result = $this->testDb->delete($Article);
-		$this->assertTrue($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertRegExp('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
-
-		$result = $this->testDb->delete($Article, true);
-		$this->assertTrue($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertRegExp('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
-
-		$result = $this->testDb->delete($Article, '2=2');
-		$this->assertTrue($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertRegExp('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
-
-		$result = $this->testDb->hasAny($Article, '1=2');
-		$this->assertFalse($result);
-	}
 
 /**
  * Test that group works without a model
