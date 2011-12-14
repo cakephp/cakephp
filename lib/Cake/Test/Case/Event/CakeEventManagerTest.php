@@ -49,6 +49,16 @@ class CakeEventTestListener {
 	public function secondListenerFunction() {
 		$this->callStack[] = __FUNCTION__;
 	}
+
+/**
+ * Auxiliary function to help in stopPropagation testing
+ *
+ * @param CakeEvent $event 
+ * @return void
+ */
+	public function stopListener($event) {
+		$event->stopPropagation();
+	}
 }
 
 /**
@@ -300,5 +310,23 @@ class CakeEventManagerTest extends CakeTestCase {
 
 		$generalManager->expects($this->once())->method('dispatch')->with($event);
 		$manager->dispatch($event);
+	}
+
+/**
+ * Tests that stopping an event will not notify the rest of the listeners
+ *
+ * @return void
+ */
+	public function testStopPropagation() {
+		$manager = new CakeEventManager;
+		$listener = new CakeEventTestListener;
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($listener, 'stopListener'), 'fake.event', array('priority' => 8));
+		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event', array('priority' => 5));
+		$event = new CakeEvent('fake.event');
+		$manager->dispatch($event);
+
+		$expected = array('secondListenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
 	}
 }
