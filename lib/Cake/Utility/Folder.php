@@ -554,36 +554,32 @@ class Folder {
 			return null;
 		}
 		$path = Folder::slashTerm($path);
-		if (is_dir($path) === true) {
-			$normalFiles = glob($path . '*');
-			$hiddenFiles = glob($path . '\.?*');
-
-			$normalFiles = $normalFiles ? $normalFiles : array();
-			$hiddenFiles = $hiddenFiles ? $hiddenFiles : array();
-
-			$files = array_merge($normalFiles, $hiddenFiles);
-			if (is_array($files)) {
-				foreach ($files as $file) {
-					if (preg_match('/(\.|\.\.)$/', $file)) {
-						continue;
+		if (is_dir($path)) {
+			$iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+			foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+				$filePath = $file->getPathname();
+				if ($file->isFile() || $file->isLink()) {
+					if (@unlink($filePath)) {
+						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
+					} else {
+						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 					}
-					if (is_file($file) === true) {
-						if (@unlink($file)) {
-							$this->_messages[] = __d('cake_dev', '%s removed', $file);
-						} else {
-							$this->_errors[] = __d('cake_dev', '%s NOT removed', $file);
-						}
-					} elseif (is_dir($file) === true && $this->delete($file) === false) {
+				} elseif ($file->isDir()) {
+					if (@rmdir($filePath)) {
+						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
+					} else {
+						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 						return false;
 					}
 				}
 			}
-			$path = substr($path, 0, strlen($path) - 1);
-			if (rmdir($path) === false) {
+
+			$path = rtrim($path, DS);
+			if (@rmdir($path)) {
+				$this->_messages[] = __d('cake_dev', '%s removed', $path);
+			} else {
 				$this->_errors[] = __d('cake_dev', '%s NOT removed', $path);
 				return false;
-			} else {
-				$this->_messages[] = __d('cake_dev', '%s removed', $path);
 			}
 		}
 		return true;

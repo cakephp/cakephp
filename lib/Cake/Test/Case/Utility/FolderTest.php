@@ -723,10 +723,16 @@ class FolderTest extends CakeTestCase {
  */
 	public function testDelete() {
 		$path = TMP . 'folder_delete_test';
-		$Folder = new Folder($path, true);
-		touch(TMP . 'folder_delete_test' . DS . 'file1');
-		touch(TMP . 'folder_delete_test' . DS . 'file2');
+		mkdir($path);
+		touch($path . DS . 'file_1');
+		mkdir($path . DS . 'level_1_1');
+		touch($path . DS . 'level_1_1' . DS . 'file_1_1');
+		mkdir($path . DS . 'level_1_1' . DS . 'level_2_1');
+		touch($path . DS . 'level_1_1' . DS . 'level_2_1' . DS . 'file_2_1');
+		touch($path . DS . 'level_1_1' . DS . 'level_2_1' . DS . 'file_2_2');
+		mkdir($path . DS . 'level_1_1' . DS . 'level_2_2');
 
+		$Folder = new Folder($path, true);
 		$return = $Folder->delete();
 		$this->assertTrue($return);
 
@@ -735,9 +741,13 @@ class FolderTest extends CakeTestCase {
 		$this->assertEquals($errors, array());
 
 		$expected = array(
-			$path . ' created',
-			$path . DS . 'file1 removed',
-			$path . DS . 'file2 removed',
+			$path . DS . 'file_1 removed',
+			$path . DS . 'level_1_1' . DS . 'file_1_1 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_1' . DS . 'file_2_1 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_1' . DS . 'file_2_2 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_1 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_2 removed',
+			$path . DS . 'level_1_1 removed',
 			$path . ' removed'
 		);
 		$this->assertEquals($expected, $messages);
