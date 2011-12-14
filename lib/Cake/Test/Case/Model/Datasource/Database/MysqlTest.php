@@ -3485,18 +3485,21 @@ class MysqlTest extends CakeTestCase {
 	public function testUpdateStatements() {
 		$this->loadFixtures('Article', 'User');
 		$test = ConnectionManager::getDatasource('test');
+		$db = $test->config['database'];
 
 		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
 
 		$this->Dbo->expects($this->at(0))->method('execute')
-			->with("UPDATE `articles` SET `field1` = 'value1'  WHERE 1 = 1");
+			->with("UPDATE `$db`.`articles` SET `field1` = 'value1'  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with("UPDATE `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " . 
+				"(`Article`.`user_id` = `User`.`id`)" .
 				" SET `Article`.`field1` = 2  WHERE 2=2");
 
 		$this->Dbo->expects($this->at(2))->method('execute')
-			->with("UPDATE `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " .
+				"(`Article`.`user_id` = `User`.`id`)" .
 				" SET `Article`.`field1` = 'value'  WHERE `index` = 'val'");
 
 		$Article = new Article();
@@ -3515,18 +3518,21 @@ class MysqlTest extends CakeTestCase {
 	public function testDeleteStatements() {
 		$this->loadFixtures('Article', 'User');
 		$test = ConnectionManager::getDatasource('test');
+		$db = $test->config['database'];
 
 		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
 
 		$this->Dbo->expects($this->at(0))->method('execute')
-			->with("DELETE  FROM `articles`  WHERE 1 = 1");
+			->with("DELETE  FROM `$db`.`articles`  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with("DELETE `Article` FROM `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " . 
+				"ON (`Article`.`user_id` = `User`.`id`)" .
 				"  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(2))->method('execute')
-			->with("DELETE `Article` FROM `articles` AS `Article` LEFT JOIN `users` AS `User` ON (`Article`.`user_id` = `User`.`id`)" .
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " .
+				"ON (`Article`.`user_id` = `User`.`id`)" .
 				"  WHERE 2=2");
 		$Article = new Article();
 
