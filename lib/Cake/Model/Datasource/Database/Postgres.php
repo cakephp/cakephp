@@ -193,7 +193,7 @@ class Postgres extends DboSource {
 
 		if ($fields === null) {
 			$cols = $this->_execute(
-				"SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null,
+				"SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type, is_nullable AS null,
 					column_default AS default, ordinal_position AS position, character_maximum_length AS char_length,
 					character_octet_length AS oct_length FROM information_schema.columns
 				WHERE table_name = ? AND table_schema = ?  ORDER BY position",
@@ -241,7 +241,12 @@ class Postgres extends DboSource {
 				) {
 					$fields[$c->name]['default'] = null;
 					if (!empty($seq) && isset($seq[1])) {
-						$this->_sequenceMap[$table][$c->default] = $seq[1];
+						if (strpos($seq[1], '.') === false) {
+							$sequenceName = $c->schema . '.' . $seq[1];
+						} else {
+							$sequenceName = $seq[1];
+						}
+						$this->_sequenceMap[$table][$c->name] = $sequenceName;
 					}
 				}
 				if ($fields[$c->name]['type'] == 'boolean' && !empty($fields[$c->name]['default'])) {
@@ -310,6 +315,7 @@ class Postgres extends DboSource {
 			$schema = $this->config['schema'];
 			if (isset($this->_sequenceMap[$table]) && $reset != true) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
+					list($schema, $sequence) = explode('.', $sequence);
 					$this->_execute("ALTER SEQUENCE \"{$schema}\".\"{$sequence}\" RESTART WITH 1");
 				}
 			}
