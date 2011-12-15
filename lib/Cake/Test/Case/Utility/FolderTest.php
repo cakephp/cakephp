@@ -750,7 +750,9 @@ class FolderTest extends CakeTestCase {
 			$path . DS . 'level_1_1 removed',
 			$path . ' removed'
 		);
-		$this->assertEquals(sort($expected), sort($messages));
+		sort($expected);
+		sort($messages);
+		$this->assertEquals($expected, $messages);
 	}
 
 /**
