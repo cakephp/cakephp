@@ -22,7 +22,14 @@ App::uses('String', 'Utility');
 App::uses('Security', 'Utility');
 
 /**
- * SecurityComponent
+ * The Security Component creates an easy way to integrate tighter security in 
+ * your application. It provides methods for various tasks like:
+ *
+ * - Restricting which HTTP methods your application accepts.
+ * - CSRF protection.
+ * - Form tampering protection
+ * - Requiring that SSL be used.
+ * - Limiting cross controller communication.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html

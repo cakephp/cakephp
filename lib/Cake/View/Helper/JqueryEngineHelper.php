@@ -26,6 +26,17 @@
 App::uses('AppHelper', 'View/Helper');
 App::uses('JsBaseEngineHelper', 'View/Helper');
 
+/**
+ * jQuery Engine Helper for JsHelper
+ *
+ * Provides jQuery specific Javascript for JsHelper.
+ *
+ * Implements the JsHelper interface for jQuery.  All $options arrays
+ * support all options found in the JsHelper, as well as those in the jQuery
+ * documentation.
+ *
+ * @package       Cake.View.Helper
+ */
 class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Option mappings for jQuery

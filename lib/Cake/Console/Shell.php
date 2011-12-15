@@ -80,6 +80,14 @@ class Shell extends Object {
 	public $name = null;
 
 /**
+ * The name of the plugin the shell belongs to.
+ * Is automatically set by ShellDispatcher when a shell is constructed.
+ *
+ * @var string
+ */
+	public $plugin = null;
+
+/**
  * Contains tasks to load and instantiate
  *
  * @var array
@@ -409,7 +417,8 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::getOptionParser
  */
 	public function getOptionParser() {
-		$parser = new ConsoleOptionParser($this->name);
+		$name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+		$parser = new ConsoleOptionParser($name);
 		return $parser;
 	}
 
@@ -648,7 +657,7 @@ class Shell extends Object {
 		}
 
 		$File = new File($path, true);
-		if ($File->exists()) {
+		if ($File->exists() && $File->writable()) {
 			$data = $File->prepare($contents);
 			$File->write($data);
 			$this->out(__d('cake_console', '<success>Wrote</success> `%s`', $path));
@@ -716,10 +725,10 @@ class Shell extends Object {
 	}
 
 /**
- * Creates the proper controller camelized name (singularized) for the specified name
+ * Creates the proper model camelized name (singularized) for the specified name
  *
  * @param string $name Name
- * @return string Camelized and singularized controller name
+ * @return string Camelized and singularized model name
  */
 	protected function _modelName($name) {
 		return Inflector::camelize(Inflector::singularize($name));

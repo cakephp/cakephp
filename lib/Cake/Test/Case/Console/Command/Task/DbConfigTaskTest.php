@@ -31,7 +31,7 @@ App::uses('DbConfigTask', 'Console/Command/Task');
 class DbConfigTaskTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */

@@ -45,12 +45,12 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
- * tear down for test.
+ * tearDown method
  *
  * @return void
  */
-	public function teardown() {
-		parent::teardown();
+	public function tearDown() {
+		parent::tearDown();
 		$this->File->close();
 		unset($this->File);
 	}
@@ -309,10 +309,11 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testLastAccess() {
+		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
-		$this->assertEquals($someFile->lastAccess(), time());
+		$this->assertTrue($someFile->lastAccess() >= $ts);
 		$someFile->close();
 		$someFile->delete();
 	}
@@ -323,12 +324,13 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testLastChange() {
+		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
-		$this->assertEquals($someFile->lastChange(), time());
+		$this->assertTrue($someFile->lastChange() >= $ts);
 		$someFile->write('something');
-		$this->assertEquals($someFile->lastChange(), time());
+		$this->assertTrue($someFile->lastChange() >= $ts);
 		$someFile->close();
 		$someFile->delete();
 	}

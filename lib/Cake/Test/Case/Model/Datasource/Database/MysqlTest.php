@@ -225,6 +225,7 @@ class MysqlTest extends CakeTestCase {
 
 		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 	}
+
 /**
  * testLastAffected method
  *
@@ -916,7 +917,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testFieldDoubleEscaping() {
+		$db = $this->Dbo->config['database'];
 		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
+		$test->config['database'] = $db;
+
 		$this->Model = $this->getMock('Article2', array('getDataSource'));
 		$this->Model->alias = 'Article';
 		$this->Model->expects($this->any())
@@ -1095,7 +1099,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testGenerateInnerJoinAssociationQuery() {
+		$db = $this->Dbo->config['database'];
 		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
+		$test->config['database'] = $db;
+
 		$this->Model = $this->getMock('TestModel9', array('getDataSource'));
 		$this->Model->expects($this->any())
 			->method('getDataSource')
@@ -1936,7 +1943,7 @@ class MysqlTest extends CakeTestCase {
 		$conditions = array('Company.name similar to ' => 'a word');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `Company`.`name` similar to 'a word'";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2108,7 +2115,7 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->conditions(array('lower(Article.title)' =>  'secrets'));
 		$expected = " WHERE lower(`Article`.`title`) = 'secrets'";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('title LIKE' => '%hello'));
 		$expected = " WHERE `title` LIKE '%hello'";
@@ -2283,7 +2290,7 @@ class MysqlTest extends CakeTestCase {
 		$conditions = array('MysqlModel.id' => '');
 		$result = $this->Dbo->conditions($conditions, true, true, $this->model);
 		$expected = " WHERE `MysqlModel`.`id` IS NULL";
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";
@@ -2909,7 +2916,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testHasAny() {
+		$db = $this->Dbo->config['database'];
 		$this->Dbo = $this->getMock('Mysql', array('connect', '_execute', 'execute', 'value'));
+		$this->Dbo->config['database'] = $db;
+
 		$this->Model = $this->getMock('TestModel', array('getDataSource'));
 		$this->Model->expects($this->any())
 			->method('getDataSource')
@@ -3465,5 +3475,102 @@ class MysqlTest extends CakeTestCase {
 			'password' => 'inyurdatabase',
 			'database' => 'imaginary'
 		));
+	}
+
+/**
+ * testStatements method
+ *
+ * @return void
+ */
+	public function testUpdateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+		$db = $test->config['database'];
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("UPDATE `$db`.`articles` SET `field1` = 'value1'  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " . 
+				"(`Article`.`user_id` = `User`.`id`)" .
+				" SET `Article`.`field1` = 2  WHERE 2=2");
+
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " .
+				"(`Article`.`user_id` = `User`.`id`)" .
+				" SET `Article`.`field1` = 'value'  WHERE `index` = 'val'");
+
+		$Article = new Article();
+
+		$this->Dbo->update($Article, array('field1'), array('value1'));
+		$this->Dbo->update($Article, array('field1'), array('2'), '2=2');
+		$this->Dbo->update($Article, array('field1'), array("'value'"), array('index' => 'val'));
+
+	}
+
+/**
+ * Test deletes with a mock.
+ *
+ * @return void
+ */
+	public function testDeleteStatements() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+		$db = $test->config['database'];
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE  FROM `$db`.`articles`  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " . 
+				"ON (`Article`.`user_id` = `User`.`id`)" .
+				"  WHERE 1 = 1");
+
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " .
+				"ON (`Article`.`user_id` = `User`.`id`)" .
+				"  WHERE 2=2");
+		$Article = new Article();
+
+		$this->Dbo->delete($Article);
+		$this->Dbo->delete($Article, true);
+		$this->Dbo->delete($Article, '2=2');
+	}
+
+/**
+ * Test truncate with a mock.
+ *
+ * @return void
+ */
+	public function testTruncateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$db = ConnectionManager::getDatasource('test');
+		$schema = $db->config['database'];
+		$Article = new Article();
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($db->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`articles`");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`articles`");
+		$this->Dbo->truncate('articles');
+
+		// #2355: prevent duplicate prefix
+		$this->Dbo->config['prefix'] = 'tbl_';
+		$Article->tablePrefix = 'tbl_';
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`tbl_articles`");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("TRUNCATE TABLE `$schema`.`tbl_articles`");
+		$this->Dbo->truncate('articles');
 	}
 }

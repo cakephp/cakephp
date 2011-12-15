@@ -96,7 +96,7 @@ class I18n {
  *
  * @return void
  */
-	protected function __construct() {
+	public function __construct() {
 		$this->l10n = new L10n();
 	}
 

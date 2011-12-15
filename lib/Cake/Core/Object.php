@@ -152,9 +152,7 @@ class Object {
  * @return boolean Success of log write
  */
 	public function log($msg, $type = LOG_ERROR) {
-		if (!class_exists('CakeLog')) {
-			require CAKE . 'cake_log.php';
-		}
+		App::uses('CakeLog', 'Log');
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}

@@ -10,6 +10,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * Deals with Collections of objects.  Keeping registries of those objects,
  * loading and constructing new objects and triggering callbacks. Each subclass needs

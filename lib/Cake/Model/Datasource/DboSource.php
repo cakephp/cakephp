@@ -920,7 +920,7 @@ class DboSource extends DataSource {
 		if (is_object($model)) {
 			$schemaName = $model->schemaName;
 			$table = $model->tablePrefix . $model->table;
-		} elseif (isset($this->config['prefix'])) {
+		} elseif (!empty($this->config['prefix']) && strpos($model, $this->config['prefix']) === false) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
 			$table = strval($model);
@@ -2782,15 +2782,15 @@ class DboSource extends DataSource {
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();
 
-		foreach ($values[0] as $key => $val) {
+		foreach ($values[key($values)] as $key => $val) {
 			$type = $this->introspectType($val);
 			$columnMap[$key] = $pdoMap[$type];
 		}
 
-		for ($x = 0; $x < $count; $x++) {
+		foreach ($values as $row => $value) {
 			$i = 1;
-			foreach ($values[$x] as $key => $val) {
-				$statement->bindValue($i, $val, $columnMap[$key]);
+			foreach ($value as $col => $val) {
+				$statement->bindValue($i, $val, $columnMap[$col]);
 				$i += 1;
 			}
 			$statement->execute();

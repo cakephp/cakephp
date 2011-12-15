@@ -306,9 +306,7 @@ class Validation {
 
 		$format = (is_array($format)) ? array_values($format) : array($format);
 		foreach ($format as $key) {
-			$regex = $regex[$key];
-
-			if (self::_check($check, $regex) === true) {
+			if (self::_check($check, $regex[$key]) === true) {
 				return true;
 			}
 		}

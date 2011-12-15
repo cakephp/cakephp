@@ -48,6 +48,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 	public function testMap($options = array()) {
 		return $this->_mapOptions('request', $options);
 	}
+
 /**
  * test method for option parsing
  *
@@ -301,10 +302,20 @@ class JsHelperTest extends CakeTestCase {
  */
 	public function testWriteBufferAndXhr() {
 		$this->_useMock();
-		$this->Js->params['isAjax'] = true;
+		$requestWith = null;
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+			$requestWith = $_SERVER['HTTP_X_REQUESTED_WITH'];
+		}
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+
 		$this->Js->buffer('alert("test");');
 		$this->Js->TestJsEngine->expects($this->never())->method('domReady');
 		$result = $this->Js->writeBuffer();
+
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		if ($requestWith !== null) {
+			$_SERVER['HTTP_X_REQUESTED_WITH'] = $requestWith;
+		}
 	}
 
 /**
@@ -697,6 +708,7 @@ class JsBaseEngineTest extends CakeTestCase {
 		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
 		$this->JsEngine = new OptionEngineHelper($this->View);
 	}
+
 /**
  * tearDown method
  *

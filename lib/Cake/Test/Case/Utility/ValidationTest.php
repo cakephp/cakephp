@@ -53,6 +53,7 @@ class TestNlValidation {
 	static function postal($check) {
 		return true;
 	}
+
 /**
  * ssn function for testing ssn pass through
  *
@@ -90,12 +91,12 @@ class TestDeValidation {
 class ValidationTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
 	public function setUp() {
-		parent::setup();
+		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
 	}
 
@@ -1408,6 +1409,16 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::date('12-06', array('my')));
 		$this->assertFalse(Validation::date('12.06', array('my')));
 		$this->assertFalse(Validation::date('12 06', array('my')));
+	}
+
+/**
+ * Test validating dates with multiple formats
+ *
+ * @return void
+ */
+	public function testDateMultiple() {
+		$this->assertTrue(Validation::date('2011-12-31', array('ymd', 'dmy')));
+		$this->assertTrue(Validation::date('31-12-2011', array('ymd', 'dmy')));
 	}
 
 /**

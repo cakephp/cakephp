@@ -539,6 +539,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Model->save($data);
 		$this->assertFalse($result);
 	}
+
 /**
  * test that beforeSave returning false can abort saves.
  *
@@ -1795,6 +1796,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(count($result['NotDoomedSomethingElse']), 2);
 		$this->assertEquals(count($result['DoomedSomethingElse']), 1);
 	}
+
 /**
  * testHabtmSaveKeyResolution method
  *

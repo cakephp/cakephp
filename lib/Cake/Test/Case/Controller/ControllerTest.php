@@ -35,12 +35,14 @@ class ControllerTestAppController extends Controller {
  * @var array
  */
 	public $helpers = array('Html');
+
 /**
  * uses property
  *
  * @var array
  */
 	public $uses = array('ControllerPost');
+
 /**
  * components property
  *
@@ -305,6 +307,7 @@ class TestComponent extends Object {
  */
 	public function beforeRedirect() {
 	}
+
 /**
  * initialize method
  *
@@ -320,6 +323,7 @@ class TestComponent extends Object {
  */
 	public function startup(&$controller) {
 	}
+
 /**
  * shutdown method
  *
@@ -327,6 +331,7 @@ class TestComponent extends Object {
  */
 	public function shutdown(&$controller) {
 	}
+
 /**
  * beforeRender callback
  *
@@ -351,6 +356,7 @@ class AnotherTestController extends ControllerTestAppController {
  * @var string 'Name'
  */
 	public $name = 'AnotherTest';
+
 /**
  * uses property
  *
@@ -358,6 +364,11 @@ class AnotherTestController extends ControllerTestAppController {
  */
 	public $uses = null;
 
+/**
+ * merge parent
+ * 
+ * @var string
+ */
 	protected $_mergeParent = 'ControllerTestAppController';
 }
 
@@ -381,19 +392,21 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::objects('plugin', null, false);
 		App::build();
 		Router::reload();
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		CakePlugin::unload();
 		App::build();
+		parent::tearDown();
 	}
 
 /**
@@ -1112,6 +1125,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->startupProcess();
 	}
+
 /**
  * Tests that the shutdown process calls the correct functions
  *

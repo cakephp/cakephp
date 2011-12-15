@@ -24,6 +24,7 @@
 	if (!defined('DS')) {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
+
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -37,6 +38,7 @@
 	if (!defined('ROOT')) {
 		define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The actual directory name for the "app".
  *

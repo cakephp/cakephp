@@ -37,11 +37,12 @@ class AclShellTest extends CakeTestCase {
 	public $fixtures = array('core.aco', 'core.aro', 'core.aros_aco');
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
 

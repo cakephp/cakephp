@@ -23,6 +23,8 @@ App::uses('AclNode', 'Model');
 /**
  * ACL behavior
  *
+ * Enables objects to easily tie into an ACL system
+ *
  * @package       Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html
  */

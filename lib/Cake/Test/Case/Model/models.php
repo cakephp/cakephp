@@ -1894,6 +1894,7 @@ class AssociationTest2 extends CakeTestModel {
 class Callback extends CakeTestModel {
 
 }
+
 /**
  * CallbackPostTestModel class
  *
@@ -3276,6 +3277,24 @@ class TransactionManyTestModel extends CakeTestModel {
 		);
 		$this->saveMany($data, array('atomic' => true, 'callbacks' => false));
 	}
+}
+
+class Site extends CakeTestModel {
+	var $name = 'Site';
+	var $useTable = 'sites';
+
+	var $hasAndBelongsToMany = array(
+		'Domain' => array('unique' => 'keepExisting'),
+		);
+}
+
+class Domain extends CakeTestModel {
+	var $name = 'Domain';
+	var $useTable = 'domains';
+
+	var $hasAndBelongsToMany = array(
+		'Site' => array('unique' => 'keepExisting'),
+		);
 }
 
 /**

@@ -24,7 +24,6 @@ App::uses('ConnectionManager', 'Model');
  */
 class ConnectionManagerTest extends CakeTestCase {
 
-
 /**
  * tearDown method
  *
@@ -34,6 +33,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		parent::tearDown();
 		CakePlugin::unload();
 	}
+
 /**
  * testEnumConnectionObjects method
  *

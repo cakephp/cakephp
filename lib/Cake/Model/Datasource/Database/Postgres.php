@@ -22,8 +22,6 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * PostgreSQL layer for DBO.
  *
- * Long description for class
- *
  * @package       Cake.Model.Datasource.Database
  */
 class Postgres extends DboSource {
@@ -297,10 +295,10 @@ class Postgres extends DboSource {
  *
  * @param mixed $table A string or model class representing the table to be truncated
  * @param boolean $reset true for resetting the sequence, false to leave it as is.
- *						and if 1, sequences are not modified
+ *    and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
-	public function truncate($table, $reset = 0) {
+	public function truncate($table, $reset = false) {
 		$table = $this->fullTableName($table, false, false);
 		if (!isset($this->_sequenceMap[$table])) {
 			$cache = $this->cacheSources;
@@ -310,8 +308,7 @@ class Postgres extends DboSource {
 		}
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
 			$schema = $this->config['schema'];
-			$table = $this->fullTableName($table, false, false);
-			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
+			if (isset($this->_sequenceMap[$table]) && $reset != true) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
 					$this->_execute("ALTER SEQUENCE \"{$schema}\".\"{$sequence}\" RESTART WITH 1");
 				}

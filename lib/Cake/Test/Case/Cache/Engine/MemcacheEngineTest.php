@@ -364,6 +364,7 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		Cache::clear(false, 'memcache2');
 	}
+
 /**
  * test that a 0 duration can succesfully write.
  *

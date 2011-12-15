@@ -16,10 +16,11 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('CakeSocket', 'Network');
 
 /**
- * SendEmail class
+ * Send mail using SMTP protocol
  *
  * @package       Cake.Network.Email
  */

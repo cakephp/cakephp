@@ -22,6 +22,14 @@
 
 App::uses('JsBaseEngineHelper', 'View/Helper');
 
+/**
+ * Prototype Engine Helper for JsHelper
+ *
+ * Provides Prototype specific Javascript for JsHelper. Requires at least
+ * Prototype 1.6
+ *
+ * @package       Cake.View.Helper
+ */
 class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
  * Is the current selection a multiple selection? or is it just a single element.

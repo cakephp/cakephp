@@ -97,7 +97,7 @@ class SchemaShellTest extends CakeTestCase {
 	);
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */

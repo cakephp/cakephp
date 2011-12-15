@@ -19,9 +19,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Included libs
- */
 App::uses('ClassRegistry', 'Utility');
 App::uses('Validation', 'Utility');
 App::uses('String', 'Utility');
@@ -709,6 +706,11 @@ class Model extends Object {
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
+
+		if ($this->tablePrefix === null) {
+			unset($this->tablePrefix);
+		}
+
 		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
@@ -807,6 +809,13 @@ class Model extends Object {
 	public function __get($name) {
 		if ($name === 'displayField') {
 			return $this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
+		}
+		if ($name === 'tablePrefix') {
+			$this->setDataSource();
+			if (property_exists($this, 'tablePrefix')) {
+				return $this->tablePrefix;
+			}
+			return $this->tablePrefix = null;
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
@@ -1193,12 +1202,14 @@ class Model extends Object {
 				}
 			}
 
-			$format = $this->getDataSource()->columns[$type]['format'];
-			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
-			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
-			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date->format($format);
+				$format = $this->getDataSource()->columns[$type]['format'];
+				foreach (array('m', 'd', 'H', 'i', 's') as $index) {
+					if (isset($date[$index])) {
+						$date[$index] = sprintf('%02d', $date[$index]);
+					}
+				}
+				return str_replace(array_keys($date), array_values($date), $format);
 			}
 		}
 		return $data;
@@ -1704,7 +1715,7 @@ class Model extends Object {
 					)
 				);
 
-				$newData = $newValues = array();
+				$newData = $newValues = $newJoins = array();
 				$primaryAdded = false;
 
 				$fields =  array(
@@ -1720,11 +1731,12 @@ class Model extends Object {
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
+						$newJoins[] = $row;
 						$values = array($id, $row);
 						if ($isUUID && $primaryAdded) {
 							$values[] = String::uuid();
 						}
-						$newValues[] = $values;
+						$newValues[$row] = $values;
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
@@ -1733,6 +1745,7 @@ class Model extends Object {
 					}
 				}
 
+				$keepExisting = $this->hasAndBelongsToMany[$assoc]['unique'] === 'keepExisting';
 				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
 					$conditions = array(
 						$join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id
@@ -1740,16 +1753,20 @@ class Model extends Object {
 					if (!empty($this->hasAndBelongsToMany[$assoc]['conditions'])) {
 						$conditions = array_merge($conditions, (array)$this->hasAndBelongsToMany[$assoc]['conditions']);
 					}
+					$associationForeignKey = $this->{$join}->alias .'.'. $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
 					$links = $this->{$join}->find('all', array(
 						'conditions' => $conditions,
 						'recursive' => empty($this->hasAndBelongsToMany[$assoc]['conditions']) ? -1 : 0,
-						'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
+						'fields' => $associationForeignKey,
 					));
 
-					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
 					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
- 						$conditions[$associationForeignKey] = $oldLinks;
+						if ($keepExisting && !empty($newJoins)) {
+							$conditions[$associationForeignKey] = array_diff($oldLinks, $newJoins);
+						} else {
+							$conditions[$associationForeignKey] = $oldLinks;
+						}
 						$dbMulti->delete($this->{$join}, $conditions);
 					}
 				}
@@ -1763,7 +1780,21 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$dbMulti->insertMulti($this->{$join}, $fields, $newValues);
+					if ($keepExisting && !empty($links)) {
+						foreach ($links as $link) {
+							$oldJoin = $link[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
+							if (! in_array($oldJoin, $newJoins) ) {
+								$conditions[$associationForeignKey] = $oldJoin;
+								$db->delete($this->{$join}, $conditions);
+							} else {
+								unset($newValues[$oldJoin]);
+							}
+						}
+						$newValues = array_values($newValues);
+					}
+					if (!empty($newValues)) {
+						$dbMulti->insertMulti($this->{$join}, $fields, $newValues);
+					}
 				}
 			}
 		}
@@ -3090,6 +3121,7 @@ class Model extends Object {
 		}
 		return $valid;
 	}
+
 /**
  * Marks a field as invalid, optionally setting the name of validation
  * rule (in case of multiple validation for field) that was broken.

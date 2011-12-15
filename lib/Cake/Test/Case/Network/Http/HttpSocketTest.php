@@ -553,6 +553,26 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * Test the scheme + port keys
+ * 
+ * @return void
+ */
+	public function testGetWithSchemeAndPort() {
+		$this->Socket->reset();
+		$request = array(
+			'uri' => array(
+				'scheme' => 'http',
+				'host' => 'cakephp.org',
+				'port' => 8080,
+				'path' => '/',
+			),
+			'method' => 'GET'
+		);
+		$response = $this->Socket->request($request);
+		$this->assertContains('Host: cakephp.org:8080', $this->Socket->request['header']);
+	}
+
+/**
  * The "*" asterisk character is only allowed for the following methods: OPTIONS.
  *
  * @expectedException SocketException

@@ -18,7 +18,7 @@
  */
 
 /**
- * HTTP Response
+ * HTTP Response from HttpSocket.
  *
  * @package       Cake.Network.Http
  */

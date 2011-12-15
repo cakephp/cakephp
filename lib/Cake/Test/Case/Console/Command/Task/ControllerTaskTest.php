@@ -64,6 +64,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ControllerTask',
@@ -86,14 +87,15 @@ class ControllerTaskTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Task);
 		ClassRegistry::flush();
 		App::build();
+		parent::tearDown();
 	}
 
 /**

@@ -91,21 +91,23 @@ class GenericObjectCollection extends ObjectCollection {
 
 class ObjectCollectionTest extends CakeTestCase {
 /**
- * setup
+ * setUp
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
+		parent::setUp();
 		$this->Objects = new GenericObjectCollection();
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Objects);
+		parent::tearDown();
 	}
 
 /**

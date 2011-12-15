@@ -159,7 +159,30 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Set authentication settings
+ * Set authentication settings.
+ *
+ * Accepts two forms of parameters.  If all you need is a username + password, as with
+ * Basic authentication you can do the following:
+ *
+ * {{{
+ * $http->configAuth('Basic', 'mark', 'secret');
+ * }}}
+ *
+ * If you are using an authentication strategy that requires more inputs, like Digest authentication
+ * you can call `configAuth()` with an array of user information.
+ *
+ * {{{
+ * $http->configAuth('Digest', array(
+ *		'user' => 'mark',
+ *		'pass' => 'secret',
+ *		'realm' => 'my-realm',
+ *		'nonce' => 1235
+ * ));
+ * }}}
+ *
+ * To remove any set authentication strategy, call `configAuth()` with no parameters:
+ *
+ * `$http->configAuth();`
  *
  * @param string $method Authentication method (ie. Basic, Digest). If empty, disable authentication
  * @param mixed $user Username for authentication. Can be an array with settings to authentication class
@@ -275,17 +298,17 @@ class HttpSocket extends CakeSocket {
 			if (!empty($this->request['cookies'])) {
 				$cookies = $this->buildCookies($this->request['cookies']);
 			}
-			$schema = '';
+			$scheme = '';
 			$port = 0;
-			if (isset($this->request['uri']['schema'])) {
-				$schema = $this->request['uri']['schema'];
+			if (isset($this->request['uri']['scheme'])) {
+				$scheme = $this->request['uri']['scheme'];
 			}
 			if (isset($this->request['uri']['port'])) {
 				$port = $this->request['uri']['port'];
 			}
 			if (
-				($schema === 'http' && $port != 80) ||
-				($schema === 'https' && $port != 443) ||
+				($scheme === 'http' && $port != 80) ||
+				($scheme === 'https' && $port != 443) ||
 				($port != 80 && $port != 443)
 			) {
 				$Host .= ':' . $port;

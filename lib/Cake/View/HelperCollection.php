@@ -18,6 +18,12 @@
 
 App::uses('ObjectCollection', 'Utility');
 
+/**
+ * Helpers collection is used as a registry for loaded helpers and handles loading
+ * and constructing helper class objects.
+ *
+ * @package       Cake.View
+ */
 class HelperCollection extends ObjectCollection {
 
 /**

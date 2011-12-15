@@ -2989,6 +2989,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertFalse(isset($result[0]['Comment']['published']), 'published found %s');
 		$this->assertFalse(isset($result[0]['User']['password']), 'password found %s');
 	}
+
 /**
  * testFindConditionalBinding method
  *
@@ -3568,6 +3569,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertTrue(isset($result[0]['Article']));
 		$this->assertTrue(isset($result[0]['User']));
 	}
+
 /**
  * test that autoFields doesn't splice in columns that aren't part of the join.
  *

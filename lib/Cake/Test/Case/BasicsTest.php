@@ -80,6 +80,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertEquals($result, array());
 
 	}
+
 /**
  * testHttpBase method
  *

@@ -7447,6 +7447,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * Testing availability of $this->findQueryType in Model callbacks
  *
@@ -7560,7 +7561,7 @@ class ModelReadTest extends BaseModelTest {
 			'2' => 'Second Post',
 			'1' => 'First Post'
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('list', array('order' => array('Post.other_field' => 'DESC')));
 		$expected = array(
@@ -7568,23 +7569,23 @@ class ModelReadTest extends BaseModelTest {
 			'2' => 'Second Post',
 			'3' => 'Third Post'
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$Post->Author->virtualFields = array('joined' => 'Post.id * Author.id');
 		$result = $Post->find('all');
 		$result = Set::extract('{n}.Author.joined', $result);
 		$expected = array(1, 6, 3);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'ASC')));
 		$result = Set::extract('{n}.Author.joined', $result);
 		$expected = array(1, 3, 6);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'DESC')));
 		$result = Set::extract('{n}.Author.joined', $result);
 		$expected = array(6, 3, 1);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
