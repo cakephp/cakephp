@@ -412,7 +412,7 @@ class Postgres extends DboSource {
 				$match[1] = $this->name($match[1]);
 			}
 		}
-		return '(' . $prepend .$match[1] . ')';
+		return '(' . $prepend . $match[1] . ')';
 	}
 
 /**
@@ -480,13 +480,13 @@ class Postgres extends DboSource {
 						case 'add':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$colList[] = 'ADD COLUMN '.$this->buildColumn($col);
+								$colList[] = 'ADD COLUMN ' . $this->buildColumn($col);
 							}
 						break;
 						case 'drop':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$colList[] = 'DROP COLUMN '.$this->name($field);
+								$colList[] = 'DROP COLUMN ' . $this->name($field);
 							}
 						break;
 						case 'change':

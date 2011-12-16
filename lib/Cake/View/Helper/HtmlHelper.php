@@ -605,7 +605,7 @@ class HtmlHelper extends AppHelper {
 		}
 		$out = array();
 		foreach ($data as $key=> $value) {
-			$out[] = $key.':'.$value.';';
+			$out[] = $key . ':' . $value . ';';
 		}
 		if ($oneline) {
 			return join(' ', $out);

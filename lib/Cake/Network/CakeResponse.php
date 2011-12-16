@@ -372,7 +372,7 @@ class CakeResponse {
 				$this->_headers['Content-Length'] = $offset + strlen($this->_body);
 			}
 		}
-    }
+	}
 
 /**
  * Sends a header to the client.

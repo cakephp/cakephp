@@ -103,8 +103,8 @@ class TranslateBehavior extends ModelBehavior {
 		$joinTable->tablePrefix = $tablePrefix;
 		$joinTable->table = $RuntimeModel->table;
 
-		if (is_string($query['fields']) && 'COUNT(*) AS '.$db->name('count') == $query['fields']) {
-			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
+		if (is_string($query['fields']) && 'COUNT(*) AS ' . $db->name('count') == $query['fields']) {
+			$query['fields'] = 'COUNT(DISTINCT(' . $db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
 			$query['joins'][] = array(
 				'type' => 'INNER',
 				'alias' => $RuntimeModel->alias,
@@ -126,7 +126,7 @@ class TranslateBehavior extends ModelBehavior {
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
 
-				if (in_array($model->alias.'.*', $query['fields']) || in_array($model->alias.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
+				if (in_array($model->alias.'.*', $query['fields']) || in_array($model->alias.'.' . $field, $query['fields']) || in_array($field, $query['fields'])) {
 					$addFields[] = $field;
 				}
 			}
@@ -137,7 +137,7 @@ class TranslateBehavior extends ModelBehavior {
 			foreach ($addFields as $_f => $field) {
 				$aliasField = is_numeric($_f) ? $field : $_f;
 
-				foreach (array($aliasField, $model->alias.'.'.$aliasField) as $_field) {
+				foreach (array($aliasField, $model->alias . '.' . $aliasField) as $_field) {
 					$key = array_search($_field, (array)$query['fields']);
 
 					if ($key !== false) {
@@ -147,36 +147,36 @@ class TranslateBehavior extends ModelBehavior {
 
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
-						$model->virtualFields['i18n_'.$field.'_'.$_locale] = 'I18n__'.$field.'__'.$_locale.'.content';
+						$model->virtualFields['i18n_' . $field . '_' . $_locale] = 'I18n__' . $field . '__' . $_locale . '.content';
 						if (!empty($query['fields'])) {
-							$query['fields'][] = 'i18n_'.$field.'_'.$_locale;
+							$query['fields'][] = 'i18n_' . $field . '_' . $_locale;
 						}
 						$query['joins'][] = array(
 							'type' => 'LEFT',
-							'alias' => 'I18n__'.$field.'__'.$_locale,
+							'alias' => 'I18n__' . $field . '__' . $_locale,
 							'table' => $joinTable,
 							'conditions' => array(
 								$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}__{$_locale}.foreign_key"),
-								'I18n__'.$field.'__'.$_locale.'.model' => $model->name,
-								'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $aliasField,
-								'I18n__'.$field.'__'.$_locale.'.locale' => $_locale
+								'I18n__' . $field . '__' . $_locale . '.model' => $model->name,
+								'I18n__' . $field . '__' . $_locale . '.' . $RuntimeModel->displayField => $aliasField,
+								'I18n__' . $field . '__' . $_locale . '.locale' => $_locale
 							)
 						);
 					}
 				} else {
-					$model->virtualFields['i18n_'.$field] = 'I18n__'.$field.'.content';
+					$model->virtualFields['i18n_' . $field] = 'I18n__' . $field . '.content';
 					if (!empty($query['fields'])) {
-						$query['fields'][] = 'i18n_'.$field;
+						$query['fields'][] = 'i18n_' . $field;
 					}
 					$query['joins'][] = array(
 						'type' => 'INNER',
-						'alias' => 'I18n__'.$field,
+						'alias' => 'I18n__' . $field,
 						'table' => $joinTable,
 						'conditions' => array(
 							$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
-							'I18n__'.$field.'.model' => $model->name,
-							'I18n__'.$field.'.'.$RuntimeModel->displayField => $aliasField,
-							'I18n__'.$field.'.locale' => $locale
+							'I18n__' . $field . '.model' => $model->name,
+							'I18n__' . $field . '.' . $RuntimeModel->displayField => $aliasField,
+							'I18n__' . $field . '.locale' => $locale
 						)
 					);
 				}
@@ -211,11 +211,11 @@ class TranslateBehavior extends ModelBehavior {
 
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
-						if (!isset($row[$model->alias][$aliasField]) && !empty($row[$model->alias]['i18n_'.$field.'_'.$_locale])) {
-							$row[$model->alias][$aliasField] = $row[$model->alias]['i18n_'.$field.'_'.$_locale];
+						if (!isset($row[$model->alias][$aliasField]) && !empty($row[$model->alias]['i18n_' . $field . '_' . $_locale])) {
+							$row[$model->alias][$aliasField] = $row[$model->alias]['i18n_' . $field . '_' . $_locale];
 							$row[$model->alias]['locale'] = $_locale;
 						}
-						unset($row[$model->alias]['i18n_'.$field.'_'.$_locale]);
+						unset($row[$model->alias]['i18n_' . $field . '_' . $_locale]);
 					}
 
 					if (!isset($row[$model->alias][$aliasField])) {

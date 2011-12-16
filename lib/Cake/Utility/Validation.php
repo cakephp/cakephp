@@ -382,7 +382,7 @@ class Validation {
 			if (is_null($places)) {
 				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
 			} else {
-				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/';
+				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]{' . $places . '}$/';
 			}
 		}
 		return self::_check($check, $regex);

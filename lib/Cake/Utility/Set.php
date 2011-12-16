@@ -529,7 +529,7 @@ class Set {
 				}
 				continue;
 			}
-			list(,$key,$op,$expected) = $match;
+			list(, $key, $op, $expected) = $match;
 			if (!isset($data[$key])) {
 				return false;
 			}
@@ -630,7 +630,7 @@ class Set {
 				$pattern = substr($key, 1, -1);
 
 				foreach ($data as $j => $val) {
-					if (preg_match('/^'.$pattern.'/s', $j) !== 0) {
+					if (preg_match('/^' . $pattern . '/s', $j) !== 0) {
 						$tmpPath = array_slice($path, $i + 1);
 						if (empty($tmpPath)) {
 							$tmp[$j] = $val;

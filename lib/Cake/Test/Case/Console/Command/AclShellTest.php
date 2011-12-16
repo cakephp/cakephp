@@ -289,9 +289,9 @@ class AclShellTest extends CakeTestCase {
 		$first = $node[0]['Aro']['id'];
 		$second = $node[1]['Aro']['id'];
 		$last = $node[2]['Aro']['id'];
-		$this->Task->expects($this->at(2))->method('out')->with('['.$last.'] ROOT');
-		$this->Task->expects($this->at(3))->method('out')->with('  ['.$second.'] admins');
-		$this->Task->expects($this->at(4))->method('out')->with('    ['.$first.'] Elrond');
+		$this->Task->expects($this->at(2))->method('out')->with('[' . $last . '] ROOT');
+		$this->Task->expects($this->at(3))->method('out')->with('  [' . $second . '] admins');
+		$this->Task->expects($this->at(4))->method('out')->with('    [' . $first . '] Elrond');
 		$this->Task->getPath();
 	}
 

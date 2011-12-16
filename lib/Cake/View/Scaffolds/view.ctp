@@ -45,10 +45,10 @@ foreach ($scaffoldFields as $_field) {
 	<h3><?php echo __d('cake', 'Actions'); ?></h3>
 	<ul>
 <?php
-	echo "\t\t<li>" .$this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(__d('cake', 'List %s', $pluralHumanName), array('action' => 'index')). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add')). " </li>\n";
+	echo "\t\t<li>" . $this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])) . " </li>\n";
+	echo "\t\t<li>" . $this->Html->link(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?') . " </li>\n";
+	echo "\t\t<li>" . $this->Html->link(__d('cake', 'List %s', $pluralHumanName), array('action' => 'index')) . " </li>\n";
+	echo "\t\t<li>" . $this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add')) . " </li>\n";
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {

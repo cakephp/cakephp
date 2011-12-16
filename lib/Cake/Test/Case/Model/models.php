@@ -3131,7 +3131,7 @@ class CounterCachePost extends CakeTestModel {
 class CounterCacheUserNonstandardPrimaryKey extends CakeTestModel {
 	public $name = 'CounterCacheUserNonstandardPrimaryKey';
 	public $alias = 'User';
-    public $primaryKey = 'uid';
+	public $primaryKey = 'uid';
 
 	public $hasMany = array('Post' => array(
 		'className' => 'CounterCachePostNonstandardPrimaryKey',
@@ -3142,7 +3142,7 @@ class CounterCacheUserNonstandardPrimaryKey extends CakeTestModel {
 class CounterCachePostNonstandardPrimaryKey extends CakeTestModel {
 	public $name = 'CounterCachePostNonstandardPrimaryKey';
 	public $alias = 'Post';
-    public $primaryKey = 'pid';
+	public $primaryKey = 'pid';
 
 	public $belongsTo = array('User' => array(
 		'className' => 'CounterCacheUserNonstandardPrimaryKey',
@@ -4473,8 +4473,8 @@ class MysqlTestModel extends Model {
 class PrefixTestModel extends CakeTestModel {
 }
 class PrefixTestUseTableModel extends CakeTestModel {
-       public $name = 'PrefixTest';
-       public $useTable = 'prefix_tests';
+	public $name = 'PrefixTest';
+	public $useTable = 'prefix_tests';
 }
 
 /**

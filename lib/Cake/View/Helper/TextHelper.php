@@ -294,7 +294,7 @@ class TextHelper extends AppHelper {
 
 		if ($html) {
 			foreach ($openTags as $tag) {
-				$truncate .= '</'.$tag.'>';
+				$truncate .= '</' . $tag . '>';
 			}
 		}
 

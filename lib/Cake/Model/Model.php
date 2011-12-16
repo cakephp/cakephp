@@ -2417,7 +2417,7 @@ class Model extends Object {
  * Queries the datasource and returns a result set array.
  *
  * Also used to perform notation finds, where the first argument is type of find operation to perform
- * (all / first / count / neighbors / list / threaded ),
+ * (all / first / count / neighbors / list / threaded),
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
