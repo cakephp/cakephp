@@ -573,7 +573,7 @@ class HtmlHelperTest extends CakeTestCase {
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
 
-		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
+		touch(WWW_ROOT . 'js' . DS . '__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
 		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
@@ -583,7 +583,7 @@ class HtmlHelperTest extends CakeTestCase {
 		Configure::write('Asset.timestamp', 'force');
 		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
-		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
+		unlink(WWW_ROOT . 'js' . DS . '__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
 	}
 

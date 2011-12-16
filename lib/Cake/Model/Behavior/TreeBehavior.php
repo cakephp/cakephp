@@ -163,8 +163,8 @@ class TreeBehavior extends ModelBehavior {
 				$this->_addToWhitelist($Model, $parent);
 			} else {
 				$values = $Model->find('first', array(
-					'conditions' => array($scope,$Model->escapeField() => $Model->id),
-					'fields' => array($Model->primaryKey, $parent, $left, $right ), 'recursive' => $recursive)
+					'conditions' => array($scope, $Model->escapeField() => $Model->id),
+					'fields' => array($Model->primaryKey, $parent, $left, $right), 'recursive' => $recursive)
 				);
 
 				if ($values === false) {
@@ -503,7 +503,7 @@ class TreeBehavior extends ModelBehavior {
 		extract($this->settings[$Model->alias]);
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
-			'fields' => array($Model->primaryKey, $left, $right, $parent ), 'recursive' => $recursive
+			'fields' => array($Model->primaryKey, $left, $right, $parent), 'recursive' => $recursive
 		)));
 		if ($node[$parent]) {
 			list($parentNode) = array_values($Model->find('first', array(
@@ -527,7 +527,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		$edge = $this->_getMax($Model, $scope, $right, $recursive);
 		$this->_sync($Model, $edge - $previousNode[$left] +1, '+', 'BETWEEN ' . $previousNode[$left] . ' AND ' . $previousNode[$right]);
-		$this->_sync($Model, $node[$left] - $previousNode[$left], '-', 'BETWEEN ' .$node[$left] . ' AND ' . $node[$right]);
+		$this->_sync($Model, $node[$left] - $previousNode[$left], '-', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
 		$this->_sync($Model, $edge - $previousNode[$left] - ($node[$right] - $node[$left]), '-', '> ' . $edge);
 		if (is_int($number)) {
 			$number--;

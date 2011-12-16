@@ -276,12 +276,12 @@ class Debugger {
 	public static function trace($options = array()) {
 		$_this = Debugger::getInstance();
 		$defaults = array(
-			'depth'   => 999,
-			'format'  => $_this->_outputFormat,
-			'args'    => false,
-			'start'   => 0,
-			'scope'   => null,
-			'exclude' => array('call_user_func_array', 'trigger_error')
+			'depth'		=> 999,
+			'format'	=> $_this->_outputFormat,
+			'args'		=> false,
+			'start'		=> 0,
+			'scope'		=> null,
+			'exclude'	=> array('call_user_func_array', 'trigger_error')
 		);
 		$options = Set::merge($defaults, $options);
 
@@ -453,13 +453,13 @@ class Debugger {
 				return get_class($var) . "\n" . self::_object($var);
 			case 'array':
 				$var = array_merge($var,  array_intersect_key(array(
-					'password' => '*****',
-					'login'  => '*****',
-					'host' => '*****',
-					'database' => '*****',
-					'port' => '*****',
-					'prefix' => '*****',
-					'schema' => '*****'
+					'password'	=> '*****',
+					'login'		=> '*****',
+					'host'		=> '*****',
+					'database'	=> '*****',
+					'port'		=> '*****',
+					'prefix'	=> '*****',
+					'schema'	=> '*****'
 				), $var));
 
 				$out = "array(";

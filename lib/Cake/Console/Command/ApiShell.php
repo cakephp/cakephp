@@ -101,7 +101,7 @@ class ApiShell extends AppShell {
 					$this->_stop();
 				}
 				$method = $parsed[$this->params['method']];
-				$this->out($class .'::'.$method['method'] . $method['parameters']);
+				$this->out($class . '::' . $method['method'] . $method['parameters']);
 				$this->hr();
 				$this->out($method['comment'], true);
 			} else {
@@ -127,7 +127,7 @@ class ApiShell extends AppShell {
 					if (isset($methods[--$number])) {
 						$method = $parsed[$methods[$number]];
 						$this->hr();
-						$this->out($class .'::'.$method['method'] . $method['parameters']);
+						$this->out($class . '::' . $method['method'] . $method['parameters']);
 						$this->hr();
 						$this->out($method['comment'], true);
 					}
