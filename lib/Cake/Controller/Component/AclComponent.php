@@ -489,7 +489,7 @@ class DbAcl extends Object implements AclInterface {
 
 		return array(
 			'aro' => Set::extract($obj, 'Aro.0.' . $this->Aro->alias . '.id'),
-			'aco'  => Set::extract($obj, 'Aco.0.' . $this->Aco->alias . '.id'),
+			'aco' => Set::extract($obj, 'Aco.0.' . $this->Aco->alias . '.id'),
 			'link' => $this->Aro->Permission->find('all', array('conditions' => array(
 				$this->Aro->Permission->alias . '.aro_id' => Set::extract($obj, 'Aro.0.' . $this->Aro->alias . '.id'),
 				$this->Aro->Permission->alias . '.aco_id' => Set::extract($obj, 'Aco.0.' . $this->Aco->alias . '.id')

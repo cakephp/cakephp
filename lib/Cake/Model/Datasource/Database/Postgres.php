@@ -67,7 +67,7 @@ class Postgres extends DboSource {
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'serial NOT NULL'),
-		'string' => array('name'  => 'varchar', 'limit' => '255'),
+		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
@@ -78,7 +78,7 @@ class Postgres extends DboSource {
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
 		'number' => array('name' => 'numeric'),
-		'inet' => array('name'  => 'inet')
+		'inet' => array('name' => 'inet')
 	);
 
 /**
@@ -218,14 +218,14 @@ class Postgres extends DboSource {
 					$length = null;
 				}
 				$fields[$c->name] = array(
-					'type'    => $this->column($type),
-					'null'    => ($c->null == 'NO' ? false : true),
+					'type' => $this->column($type),
+					'null' => ($c->null == 'NO' ? false : true),
 					'default' => preg_replace(
 						"/^'(.*)'$/",
 						"$1",
 						preg_replace('/::.*/', '', $c->default)
 					),
-					'length'  => $length
+					'length' => $length
 				);
 				if ($model instanceof Model) {
 					if ($c->name == $model->primaryKey) {

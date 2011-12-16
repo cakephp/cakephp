@@ -3780,7 +3780,7 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			array(
 				'body' => 3,
-				'published'  => 'sd',
+				'published' => 'sd',
 			),
 		);
 		$Something->create();
@@ -5320,7 +5320,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'0' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 1,
+					'id' => 1,
 					'name'	=> 'product one',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5331,7 +5331,7 @@ class ModelWriteTest extends BaseModelTest {
 				),
 			'1' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 2,
+					'id' => 2,
 					'name'	=> 'product two',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5384,7 +5384,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'0' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 1,
+					'id' => 1,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5395,7 +5395,7 @@ class ModelWriteTest extends BaseModelTest {
 				),
 			'1' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 2,
+					'id' => 2,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5437,7 +5437,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'0' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 1,
+					'id' => 1,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5448,7 +5448,7 @@ class ModelWriteTest extends BaseModelTest {
 				),
 			'1' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 2,
+					'id' => 2,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),

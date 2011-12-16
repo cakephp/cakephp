@@ -2504,7 +2504,7 @@ class UnconventionalTree extends NumberTree {
 	public $actsAs = array(
 		'Tree' => array(
 			'parent' => 'join',
-			'left'  => 'left',
+			'left' => 'left',
 			'right' => 'right'
 		)
 	);

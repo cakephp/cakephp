@@ -34,24 +34,24 @@ class GroupUpdateAllFixture extends CakeTestFixture {
 	);
 	public $records = array(
 		array(
-			'id'  => 1,
-			'name'  => 'group one',
-			'code'  => 120
+			'id' => 1,
+			'name' => 'group one',
+			'code' => 120
 		),
 		array(
-			'id'  => 2,
-			'name'  => 'group two',
-			'code'  => 125
+			'id' => 2,
+			'name' => 'group two',
+			'code' => 125
 		),
 		array(
-			'id'  => 3,
-			'name'  => 'group three',
-			'code'  => 130
+			'id' => 3,
+			'name' => 'group three',
+			'code' => 130
 		),
 		array(
-			'id'  => 4,
-			'name'  => 'group four',
-			'code'  => 135
+			'id' => 4,
+			'name' => 'group four',
+			'code' => 135
 		),
 	);
 }

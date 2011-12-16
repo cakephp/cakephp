@@ -2909,7 +2909,7 @@ class SetTest extends CakeTestCase {
 				'item' => array(
 					'@attr' => '123',
 					'titles' => 'list',
-					'@'  => 'textforitems'
+					'@' => 'textforitems'
 				)
 			)
 		);
