@@ -817,7 +817,7 @@ class AuthComponentTest extends CakeTestCase {
 		$expected = Router::normalize('posts/view/1');
 		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 
-        // QueryString parameters
+		// QueryString parameters
 		$_back = $_GET;
 		$_GET = array(
 			'print' => 'true',

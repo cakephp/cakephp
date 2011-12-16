@@ -84,7 +84,7 @@ class CakeTextReporter extends CakeBaseReporter {
 			', Exceptions: ' . $result->errorCount() . "\n";
 
 		echo 'Time: ' . $result->time() . " seconds\n";
-        echo 'Peak memory: ' . number_format(memory_get_peak_usage()) . " bytes\n";
+		echo 'Peak memory: ' . number_format(memory_get_peak_usage()) . " bytes\n";
 
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
 			$coverage = $result->getCodeCoverage()->getSummary();

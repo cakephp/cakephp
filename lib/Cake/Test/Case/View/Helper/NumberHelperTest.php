@@ -118,15 +118,15 @@ class NumberHelperTest extends CakeTestCase {
 
 		$result = $this->Number->currency(1000.45, NULL, array('after' => 'øre', 'before' => 'Kr. ', 'decimals' => ',', 'thousands' => '.'));
 		$expected = 'Kr. 1.000,45';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency(0.5, 'USD');
 		$expected = '50c';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency(0.5, NULL, array('after' => 'øre'));
 		$expected = '50øre';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency(1, null, array('wholeSymbol' => '$ '));
 		$expected = '$ 1.00';
@@ -174,16 +174,16 @@ class NumberHelperTest extends CakeTestCase {
 		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
 		$result = $this->Number->currency(1000, 'NOK');
 		$expected = 'Kr. 1,000.00';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 
 		$this->Number->addFormat('Other', array('before' => '$$ ', 'after' => 'c!'));
 		$result = $this->Number->currency(0.22, 'Other');
 		$expected = '22c!';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency(-10, 'Other');
 		$expected = '($$ 10.00)';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

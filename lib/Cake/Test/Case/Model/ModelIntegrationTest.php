@@ -255,7 +255,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				array(
 					'table' => 'articles',
 					'alias' => 'Article',
-					'type'  => 'LEFT',
+					'type' => 'LEFT',
 					'conditions' => array(
 						'User.id = Article.user_id',
 					),

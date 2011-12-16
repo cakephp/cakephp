@@ -74,7 +74,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 			}
 		}
 		return $result;
-    }
+	}
 
 /**
  * Get the fixture manager class specified or use the default one.

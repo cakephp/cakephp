@@ -535,7 +535,7 @@ class CacheHelperTest extends CakeTestCase {
 		$filename = CACHE . 'views' . DS . 'cache_cachetest_cache_name.php';
 		$this->assertTrue(file_exists($filename));
 		@unlink($filename);
-    }
+	}
 
 /**
  * test that afterRender checks the conditions correctly.
