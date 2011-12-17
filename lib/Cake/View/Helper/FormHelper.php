@@ -1756,10 +1756,6 @@ class FormHelper extends AppHelper {
 			unset($attributes['type']);
 		}
 
-		if (!isset($selected)) {
-			$selected = $attributes['value'];
-		}
-
 		if (!empty($attributes['multiple'])) {
 			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
 			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
