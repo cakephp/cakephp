@@ -109,7 +109,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -143,7 +142,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array('風街ろまん'),
 			'named' => array()
 		));
@@ -170,7 +168,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -205,7 +202,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -237,7 +233,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_complex',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -298,7 +293,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->params = array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		);
@@ -332,7 +326,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->params = array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		);
@@ -368,7 +361,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -411,7 +403,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -443,7 +434,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(1, 2),
 			'named' => array(
 				'name' => 'mark',
@@ -467,6 +457,38 @@ class CacheHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that query string parameters are included in the cache filename.
+ *
+ * @return void
+ */
+	public function testCacheWithQueryStringParams() {
+		Router::reload();
+
+		$this->Controller->cache_parsing();
+		$this->Controller->request->addParams(array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'pass' => array(),
+			'named' => array()
+		));
+		$this->Controller->request->query = array('q' => 'cakephp');
+		$this->Controller->cacheAction = array(
+			'cache_parsing' => 21600
+		);
+		$this->Controller->request->here = '/cache_test/cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNotRegExp('/cake:nocache/', $result);
+		$this->assertNotRegExp('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cache_test_cache_parsing_q_cakephp.php';
+		$this->assertTrue(file_exists($filename), 'Missing cache file ' . $filename);
+		@unlink($filename);
+	}
+
+/**
  * test that custom routes are respected when generating cache files.
  *
  * @return void
@@ -480,7 +502,6 @@ class CacheHelperTest extends CakeTestCase {
 			'lang' => 'en',
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		));
@@ -518,7 +539,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->params = array(
 			'controller' => 'cacheTest',
 			'action' => 'cache_name',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		);
@@ -597,7 +617,6 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->params = array(
 			'controller' => 'cacheTest',
 			'action' => 'cache_empty_sections',
-			'url' => array(),
 			'pass' => array(),
 			'named' => array()
 		);
