@@ -589,7 +589,6 @@ class TreeBehavior extends ModelBehavior {
 				if ($missingParentAction == 'return') {
 					foreach ($missingParents as $id => $display) {
 						$this->errors[]	= 'cannot find the parent for ' . $Model->alias . ' with id ' . $id . '(' . $display . ')';
-
 					}
 					return false;
 				} elseif ($missingParentAction == 'delete') {
@@ -600,13 +599,14 @@ class TreeBehavior extends ModelBehavior {
 			}
 			$count = 1;
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey), 'order' => $left)) as $array) {
-				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$lft = $count++;
 				$rght = $count++;
+				$Model->create(false);
+				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
 			}
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
-				$Model->create();
+				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$this->_setParent($Model, $array[$Model->alias][$parent]);
 			}
@@ -827,6 +827,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $Model Model instance
  * @param mixed $parentId
+ * @param boolean $created
  * @return boolean true on success, false on failure
  * @access protected
  */
@@ -861,11 +862,10 @@ class TreeBehavior extends ModelBehavior {
 
 			if (($Model->id == $parentId)) {
 				return false;
-
 			} elseif (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
 				return false;
 			}
-			if (empty ($node[$left]) && empty ($node[$right])) {
+			if (empty($node[$left]) && empty ($node[$right])) {
 				$this->__sync($Model, 2, '+', '>= ' . $parentNode[$right], $created);
 				$result = $Model->save(
 					array($left => $parentNode[$right], $right => $parentNode[$right] + 1, $parent => $parentId),
@@ -899,6 +899,8 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $Model
  * @param string $scope
  * @param string $right
+ * @param int $recursive
+ * @param boolean $created
  * @return int
  * @access private
  */
@@ -950,6 +952,7 @@ class TreeBehavior extends ModelBehavior {
  * @param integer $shift
  * @param string $direction
  * @param array $conditions
+ * @param boolean $created
  * @param string $field
  * @access private
  */
