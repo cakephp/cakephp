@@ -91,10 +91,14 @@ class JsonView extends View {
 			} else {
 				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 			}
-			return $this->output = json_encode($data);
+			$content = json_encode($data);
+			$this->Blocks->set('content', $content);
+			return $content;
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			return $this->output = $this->_render($viewFileName);
+			$content = $this->_render($viewFileName);
+			$this->Blocks->set('content', $content);
+			return $content;
 		}
 	}
 

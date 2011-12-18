@@ -251,7 +251,7 @@ class CacheHelperTest extends CakeTestCase {
 		$result = $View->render('sequencial_nocache');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
-		$this->assertNotRegExpy('/php echo/', $result);
+		$this->assertNotRegExp('/php echo/', $result);
 		$this->assertRegExp('/A\. Layout Before Content/', $result);
 		$this->assertRegExp('/B\. In Plain Element/', $result);
 		$this->assertRegExp('/C\. Layout After Test Element/', $result);

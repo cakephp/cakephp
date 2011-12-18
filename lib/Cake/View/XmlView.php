@@ -94,10 +94,14 @@ class XmlView extends View {
 			} else {
 				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 			}
-			return $this->output = Xml::fromArray($data)->asXML();
+			$content = Xml::fromArray($data)->asXML();
+			$this->Blocks->set('content', $content);
+			return $content;
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			return $this->output = $this->_render($viewFileName);
+			$content = $this->_render($viewFileName);
+			$this->Blocks->set('content', (string)$content);
+			return $content;
 		}
 	}
 

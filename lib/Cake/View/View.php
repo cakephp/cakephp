@@ -773,11 +773,14 @@ class View extends Object {
 		if ($this->Blocks->active()) {
 			throw new CakeException(__d('cake_dev', 'The "%s" block was left open.', $this->Blocks->active()));
 		}
-		$content = $this->Helpers->trigger(
+		$result = $this->Helpers->trigger(
 			'afterRenderFile',
 			array($viewFile, $content),
 			array('modParams' => 1)
 		);
+		if ($result !== true) {
+			$content = $result;
+		}
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');
