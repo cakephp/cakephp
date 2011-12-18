@@ -1070,6 +1070,10 @@ class FormHelper extends AppHelper {
 				$format = $format ? $format : array('before', 'input', 'between', 'label', 'after', 'error');
 			break;
 			case 'radio':
+				if (isset($out['between'])) {
+					$options['between'] = $out['between'];
+					$out['between'] = null;
+				}
 				$input = $this->radio($fieldName, $radioOptions, $options);
 			break;
 			case 'file':
@@ -1248,6 +1252,7 @@ class FormHelper extends AppHelper {
  * ### Attributes:
  *
  * - `separator` - define the string in between the radio buttons
+ * - `between` - the string between legend and input set
  * - `legend` - control whether or not the widget set has a fieldset & legend
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
@@ -1262,34 +1267,41 @@ class FormHelper extends AppHelper {
  */
 	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
-		$legend = false;
-		$disabled = array();
 
+		$legend = false;
 		if (isset($attributes['legend'])) {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
 			$legend = __(Inflector::humanize($this->field()));
 		}
-		$label = true;
 
+		$label = true;
 		if (isset($attributes['label'])) {
 			$label = $attributes['label'];
 			unset($attributes['label']);
 		}
-		$inbetween = null;
 
+		$separator = null;
 		if (isset($attributes['separator'])) {
-			$inbetween = $attributes['separator'];
+			$separator = $attributes['separator'];
 			unset($attributes['separator']);
 		}
 
+		$between = null;
+		if (isset($attributes['between'])) {
+			$between = $attributes['between'];
+			unset($attributes['between']);
+		}
+
+		$value = null;
 		if (isset($attributes['value'])) {
 			$value = $attributes['value'];
 		} else {
-			$value =  $this->value($fieldName);
+			$value = $this->value($fieldName);
 		}
 
+		$disabled = array();
 		if (isset($attributes['disabled'])) {
 			$disabled = $attributes['disabled'];
 		}
@@ -1330,10 +1342,10 @@ class FormHelper extends AppHelper {
 				));
 			}
 		}
-		$out = $hidden . implode($inbetween, $out);
+		$out = $hidden . implode($separator, $out);
 
 		if ($legend) {
-			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $out);
+			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $between . $out);
 		}
 		return $out;
 	}

@@ -3356,7 +3356,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'data[Model][custom]'));
 		$expected = array(
 			'fieldset' => array(),
@@ -3369,6 +3368,39 @@ class FormHelperTest extends CakeTestCase {
 			'option A',
 			'/label',
 			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'option B',
+			'/label',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio(
+			'Model.field',
+			array('option A', 'option B'),
+			array('between' => 'I am between')
+		);
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			'I am between',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][field]',
+				'value' => '', 'id' => 'ModelField_'
+			),
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => '0', 'id' => 'ModelField0'
+			)),
+			array('label' => array('for' => 'ModelField0')),
+			'option A',
+			'/label',
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => '1', 'id' => 'ModelField1'
+			)),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -7566,6 +7598,41 @@ class FormHelperTest extends CakeTestCase {
 			'Some text at the end',
 			'/span',
 			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.method', array(
+			'type' => 'radio',
+			'options' => array('email' => 'Email', 'pigeon' => 'Pigeon'),
+			'between' => 'I am between',
+		));
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'fieldset' => array(),
+			'legend' => array(),
+			'Method',
+			'/legend',
+			'I am between',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][method]',
+				'value' => '', 'id' => 'ContactMethod_'
+			),
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Contact][method]',
+				'value' => 'email', 'id' => 'ContactMethodEmail'
+			)),
+			array('label' => array('for' => 'ContactMethodEmail')),
+			'Email',
+			'/label',
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Contact][method]',
+				'value' => 'pigeon', 'id' => 'ContactMethodPigeon'
+			)),
+			array('label' => array('for' => 'ContactMethodPigeon')),
+			'Pigeon',
+			'/label',
+			'/fieldset',
+			'/div',
 		);
 		$this->assertTags($result, $expected);
 	}
