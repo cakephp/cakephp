@@ -28,8 +28,7 @@ App::uses('ViewBlock', 'View');
  * but can also take the form of JSON, XML, PDF's or streaming files.
  *
  * CakePHP uses a two-step-view pattern.  This means that the view content is rendered first,
- * and then inserted into the selected layout.  A special `$content_for_layout` variable is available
- * in the layout, and it contains the rendered view.  This also means you can pass data from the view to the
+ * and then inserted into the selected layout.  This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
  * @package       Cake.View
@@ -428,7 +427,7 @@ class View extends Object {
  *   Use the block features instead.  `meta`, `css` and `script` will be populated
  *   by the matching methods on HtmlHelper.
  * - `$title_for_layout` is deprecated and will be removed in CakePHP 3.0
- * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.  
+ * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.
  *   Use the `content` block instead.
  *
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
