@@ -174,6 +174,57 @@ class NumberTreeTest extends CakeTestCase {
 	}
 
 /**
+ * testRecoverUsingParentMode method
+ *
+ * @return void
+ */
+	public function testRecoverUsingParentMode() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->Behaviors->disable('Tree');
+
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
+		$node1	= $this->Tree->id;
+
+		$this->Tree->create(false);
+		$this->Tree->save(array('parent_id' => null, 'name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$node11	= $this->Tree->id;
+		$this->Tree->create(false);
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$node12	= $this->Tree->id;
+		$this->Tree->create(false);
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+		$this->Tree->create(false);
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
+
+		$this->Tree->Behaviors->enable('Tree');
+
+		$result = $this->Tree->verify();
+		$this->assertNotIdentical($result, false);
+
+		$result = $this->Tree->recover();
+		$this->assertTrue($result);
+
+		$result = $this->Tree->verify();
+		$this->assertTrue($result);
+
+		$result = $this->Tree->find('first', array(
+			'fields' => array('name', $parentField, $leftField, $rightField),
+			'conditions' => array('name' => 'Main'),
+			'recursive' => -1
+		));
+		$expected = array(
+			$modelClass => array(
+				'name' => 'Main',
+				$parentField => null,
+				$leftField => 1,
+				$rightField => 10
+			)
+		);
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testRecoverFromMissingParent method
  *
  * @access public
