@@ -46,7 +46,7 @@ class HtmlHelper extends AppHelper {
 		'hidden' => '<input type="hidden" name="%s"%s/>',
 		'checkbox' => '<input type="checkbox" name="%s" %s/>',
 		'checkboxmultiple' => '<input type="checkbox" name="%s[]"%s />',
-		'radio' => '<input type="radio" name="%s" id="%s" %s />%s',
+		'radio' => '<input type="radio" name="%s" id="%s"%s />%s',
 		'selectstart' => '<select name="%s"%s>',
 		'selectmultiplestart' => '<select name="%s[]"%s>',
 		'selectempty' => '<option value=""%s>&nbsp;</option>',
@@ -235,9 +235,9 @@ class HtmlHelper extends AppHelper {
 
 		if (!is_array($type)) {
 			$types = array(
-				'rss'	=> array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
-				'atom'	=> array('type' => 'application/atom+xml', 'title' => $type, 'link' => $url),
-				'icon'	=> array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $url),
+				'rss' => array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
+				'atom' => array('type' => 'application/atom+xml', 'title' => $type, 'link' => $url),
+				'icon' => array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $url),
 				'keywords' => array('name' => 'keywords', 'content' => $url),
 				'description' => array('name' => 'description', 'content' => $url),
 			);
