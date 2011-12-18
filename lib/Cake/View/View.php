@@ -393,12 +393,12 @@ class View extends Object {
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
-		$this->output = '';
+		$this->Blocks->set('content', '');
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = self::TYPE_VIEW;
 			$this->Helpers->trigger('beforeRender', array($viewFileName));
-			$this->output = $this->_render($viewFileName);
+			$this->Blocks->set('content', $this->_render($viewFileName));
 			$this->Helpers->trigger('afterRender', array($viewFileName));
 		}
 
@@ -406,10 +406,10 @@ class View extends Object {
 			$layout = $this->layout;
 		}
 		if ($layout && $this->autoLayout) {
-			$this->output = $this->renderLayout('', $layout);
+			$this->Blocks->set('content', $this->renderLayout('', $layout));
 		}
 		$this->hasRendered = true;
-		return $this->output;
+		return $this->Blocks->get('content');
 	}
 
 /**
@@ -462,10 +462,10 @@ class View extends Object {
 		}
 
 		$this->_currentType = self::TYPE_LAYOUT;
-		$this->output = $this->_render($layoutFileName);
+		$this->Blocks->set('content', $this->_render($layoutFileName));
 
 		$this->Helpers->trigger('afterLayout', array($layoutFileName));
-		return $this->output;
+		return $this->Blocks->get('content');
 	}
 
 /**
@@ -717,6 +717,8 @@ class View extends Object {
 				return $this->request;
 			case 'output':
 				return $this->Blocks->get('content');
+			default:
+				return $this->{$name};
 		}
 		return null;
 	}
@@ -732,6 +734,8 @@ class View extends Object {
 		switch ($name) {
 			case 'output':
 				return $this->Blocks->set('content', $value);
+			default:
+				$this->{$name} = $value;
 		}
 	}
 

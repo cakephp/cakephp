@@ -302,6 +302,7 @@ class DebuggerTest extends CakeTestCase {
 		$expected = <<<TEXT
 object(View) {
 	Helpers => object(HelperCollection) {}
+	Blocks => object(ViewBlock) {}
 	plugin => null
 	name => ''
 	passedArgs => array()
@@ -322,15 +323,14 @@ object(View) {
 	validationErrors => array()
 	hasRendered => false
 	uuids => array()
-	output => false
 	request => null
 	elementCache => 'default'
 	int => (int) 2
 	float => (float) 1.333
 }
 TEXT;
-		$result = str_replace(array("\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
+		// $result = str_replace(array("\r\n", "\n"), "", $result);
+		// $expected =  str_replace(array("\r\n", "\n"), "", $expected);
 		$this->assertEquals($expected, $result);
 	}
 
