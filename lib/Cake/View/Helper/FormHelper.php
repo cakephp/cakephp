@@ -1232,8 +1232,10 @@ class FormHelper extends AppHelper {
 		}
 		if ($options['hiddenField']) {
 			$hiddenOptions = array(
-				'id' => $options['id'] . '_', 'name' => $options['name'],
-				'value' => '0', 'secure' => false
+				'id' => $options['id'] . '_',
+				'name' => $options['name'],
+				'value' => ($options['hiddenField'] !== true ? $options['hiddenField'] : '0'),
+				'secure' => false
 			);
 			if (isset($options['disabled']) && $options['disabled'] == true) {
 				$hiddenOptions['disabled'] = 'disabled';
