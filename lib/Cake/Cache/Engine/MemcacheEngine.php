@@ -104,7 +104,7 @@ class MemcacheEngine extends CacheEngine {
 				$position++;
 			}
 		} else {
-		    $position = strpos($server, ':');
+			$position = strpos($server, ':');
 		}
 		$port = 11211;
 		$host = $server;

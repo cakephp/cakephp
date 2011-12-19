@@ -839,10 +839,10 @@ class JsBaseEngineTest extends CakeTestCase {
 			),
 			'2006' => array(
 				'Spring' => array(
-				    '1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
+					'1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
 				),
 				'Fall' => array(
-				    '1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
+					'1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
 				)
 			)
 		));

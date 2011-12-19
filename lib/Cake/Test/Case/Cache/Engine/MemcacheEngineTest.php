@@ -311,14 +311,14 @@ class MemcacheEngineTest extends CakeTestCase {
  */
 	public function testConfigurationConflict() {
 		Cache::config('long_memcache', array(
-		  'engine' => 'Memcache',
-		  'duration' => '+2 seconds',
-		  'servers' => array('127.0.0.1:11211'),
+			'engine' => 'Memcache',
+			'duration' => '+2 seconds',
+			'servers' => array('127.0.0.1:11211'),
 		));
 		Cache::config('short_memcache', array(
-		  'engine' => 'Memcache',
-		  'duration' => '+1 seconds',
-		  'servers' => array('127.0.0.1:11211'),
+			'engine' => 'Memcache',
+			'duration' => '+1 seconds',
+			'servers' => array('127.0.0.1:11211'),
 		));
 		Cache::config('some_file', array('engine' => 'File'));
 

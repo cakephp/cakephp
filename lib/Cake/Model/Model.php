@@ -761,7 +761,7 @@ class Model extends Object {
 					}
 				}
 			}
-	    }
+		}
 
 		if (!$className) {
 			return false;

@@ -303,7 +303,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false)])
+				isset($result[0][$this->db->fullTableName('articles', false)])
 			|| isset($result[0][0])
 		);
 		$result = $this->db->getQueryCache($query, $params);
@@ -317,7 +317,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false)]['title'])
+				isset($result[0][$this->db->fullTableName('articles', false)]['title'])
 			|| isset($result[0][0]['title'])
 		);
 
@@ -7651,7 +7651,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Post', 'Author');
 		$Post = new Post();
 		$Post->virtualFields = array(
-		    'writer' => 'Author.user'
+			'writer' => 'Author.user'
 		);
 		$result = $Post->find('first');
 		$this->assertTrue(isset($result['Post']['writer']), 'virtual field not fetched %s');

@@ -767,7 +767,7 @@ class ModelDeleteTest extends BaseModelTest {
 		)), true);
 
 		// Article 1 should have Tag.1 and Tag.2
-	    $before = $Article->find("all", array(
+		$before = $Article->find("all", array(
 			"conditions" => array("Article.id" => 1),
 		));
 		$this->assertEquals(count($before[0]['Tag']), 2, 'Tag count for Article.id = 1 is incorrect, should be 2 %s');
@@ -781,17 +781,17 @@ class ModelDeleteTest extends BaseModelTest {
 		);
 		$Tag->save($submitted_data);
 
-	    // One more submission (The other way around) to make sure the reverse save looks good.
-	    $submitted_data = array(
+		// One more submission (The other way around) to make sure the reverse save looks good.
+		$submitted_data = array(
 			"Article" => array("id" => 2, 'title' => 'second article'),
 			"Tag" => array(
 				"Tag" => array(2, 3)
 			)
 		);
-	    // ERROR:
-	    // Postgresql: DELETE FROM "articles_tags" WHERE tag_id IN ('1', '3')
-	    // MySQL: DELETE `ArticlesTag` FROM `articles_tags` AS `ArticlesTag` WHERE `ArticlesTag`.`article_id` = 2 AND `ArticlesTag`.`tag_id` IN (1, 3)
-	    $Article->save($submitted_data);
+		// ERROR:
+		// Postgresql: DELETE FROM "articles_tags" WHERE tag_id IN ('1', '3')
+		// MySQL: DELETE `ArticlesTag` FROM `articles_tags` AS `ArticlesTag` WHERE `ArticlesTag`.`article_id` = 2 AND `ArticlesTag`.`tag_id` IN (1, 3)
+		$Article->save($submitted_data);
 
 		// Want to make sure Article #1 has Tag #1 and Tag #2 still.
 		$after = $Article->find("all", array(

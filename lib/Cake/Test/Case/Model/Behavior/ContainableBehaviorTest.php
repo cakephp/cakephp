@@ -3614,7 +3614,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		} catch (Exception $e) {
 			$exceptions = true;
 		}
-        $this->assertTrue(empty($exceptions));
+		$this->assertTrue(empty($exceptions));
 	}
 
 /**
