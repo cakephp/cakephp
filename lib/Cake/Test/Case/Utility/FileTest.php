@@ -73,8 +73,12 @@ class FileTest extends CakeTestCase {
 
 		$result = $this->File->info();
 		$expecting = array(
-			'dirname' => dirname(__FILE__), 'basename' => basename(__FILE__),
-			'extension' => 'php', 'filename' =>'FileTest', 'filesize' => filesize($file)
+			'dirname' => dirname(__FILE__),
+			'basename' => basename(__FILE__),
+			'extension' => 'php',
+			'filename' =>'FileTest',
+			'filesize' => filesize($file),
+			'mime' => 'text/x-php'
 		);
 		$this->assertEquals($expecting, $result);
 

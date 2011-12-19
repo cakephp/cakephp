@@ -554,6 +554,9 @@ class File {
  * @return false|string The mimetype of the file, or false if reading fails.
  */
 	public function mime() {
+		if (!$this->exists()) {
+			return false;
+		}
 		if (function_exists('finfo_open')) {
 			$finfo = finfo_open(FILEINFO_MIME);
 			list($type, $charset) = explode(';', finfo_file($finfo, $this->pwd()));
