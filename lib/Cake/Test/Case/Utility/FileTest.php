@@ -464,6 +464,17 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
+ * Test mime()
+ *
+ * @return void
+ */
+	public function testMime() {
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$file = new File($path);
+		$this->assertEquals('image/gif', $file->mime());
+	}
+
+/**
  * getTmpFile method
  *
  * @param bool $paintSkip
