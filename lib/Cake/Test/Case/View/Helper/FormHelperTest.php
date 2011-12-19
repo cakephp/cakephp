@@ -4512,21 +4512,43 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Test that the hidden input for checkboxes can be removed/omitted from the output.
+ * Test that the hidden input for checkboxes can be omitted or set to a
+ * specific value.
  *
  * @return void
  */
-	public function testCheckboxHiddenFieldOmission() {
+	public function testCheckboxHiddenField() {
 		$result = $this->Form->input('UserForm.something', array(
-				'type' => 'checkbox',
-				'hiddenField' => false
-			)
-		);
+			'type' => 'checkbox',
+			'hiddenField' => false
+		));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
 				'value' => '1', 'id' => 'UserFormSomething'
+			)),
+			'label' => array('for' => 'UserFormSomething'),
+			'Something',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('UserForm.something', array(
+			'type' => 'checkbox',
+			'value' => 'Y',
+			'hiddenField' => 'N',
+		));
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[UserForm][something]',
+				'value' => 'N', 'id' => 'UserFormSomething_'
+			)),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
+				'value' => 'Y', 'id' => 'UserFormSomething'
 			)),
 			'label' => array('for' => 'UserFormSomething'),
 			'Something',
