@@ -460,20 +460,6 @@ class Folder {
 	}
 
 /**
- * Private method to list directories and files in each directory
- *
- * @param string $path The Path to read.
- * @param mixed $exceptions Array of files to exclude from the read that will be performed.
- * @return void
- */
-	protected function _tree($path, $exceptions) {
-		$this->path = $path;
-		list($dirs, $files) = $this->read(false, $exceptions, true);
-		$this->_directories = array_merge($this->_directories, $dirs);
-		$this->_files = array_merge($this->_files, $files);
-	}
-
-/**
  * Create a directory structure recursively. Can be used to create
  * deep path structures like `/foo/bar/baz/shoe/horn`
  *
@@ -567,16 +553,22 @@ class Folder {
 		}
 		$path = Folder::slashTerm($path);
 		if (is_dir($path)) {
-			$iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
-			foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
-				$filePath = $file->getPathname();
-				if ($file->isFile() || $file->isLink()) {
+			try {
+				$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+				$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
+			} catch (UnexpectedValueException $e) {
+				return false;
+			}
+
+			foreach ($iterator as $item) {
+				$filePath = $item->getPathname();
+				if ($item->isFile() || $item->isLink()) {
 					if (@unlink($filePath)) {
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 					}
-				} elseif ($file->isDir()) {
+				} elseif ($item->isDir()) {
 					if (@rmdir($filePath)) {
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
