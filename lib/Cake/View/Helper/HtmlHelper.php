@@ -327,7 +327,7 @@ class HtmlHelper extends AppHelper {
 			$url = $this->url($url);
 		} else {
 			$url = $this->url($title);
-			$title = $url;
+			$title = h(urldecode($url));
 			$escapeTitle = false;
 		}
 
