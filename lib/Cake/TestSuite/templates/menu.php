@@ -22,7 +22,7 @@
 	<li>
 		<span style="font-size: 18px">App</span>
 		<ul>
-			<li><a href='<?php echo $cases;?>&amp;app=true'>Tests</a></li>
+			<li><a href='<?php echo $cases;?>'>Tests</a></li>
 		</ul>
 	</li>
 <?php
@@ -45,7 +45,7 @@ if (!empty($plugins)):
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Core</span>
 		<ul>
-			<li><a href='<?php echo $cases;?>'>Tests</a></li>
+			<li><a href='<?php echo $cases;?>&amp;core=true'>Tests</a></li>
 		</ul>
 	</li>
 </ul>

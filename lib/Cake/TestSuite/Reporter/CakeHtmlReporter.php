@@ -70,14 +70,14 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function testCaseList() {
 		$testCases = parent::testCaseList();
-		$app = $this->params['app'];
+		$core = $this->params['core'];
 		$plugin = $this->params['plugin'];
 
-		$buffer = "<h3>Core Test Cases:</h3>\n<ul>";
+		$buffer = "<h3>App Test Cases:</h3>\n<ul>";
 		$urlExtra = null;
-		if ($app) {
-			$buffer = "<h3>App Test Cases:</h3>\n<ul>";
-			$urlExtra = '&app=true';
+		if ($core) {
+			$buffer = "<h3>Core Test Cases:</h3>\n<ul>";
+			$urlExtra = '&core=true';
 		} elseif ($plugin) {
 			$buffer = "<h3>" . Inflector::humanize($plugin) . " Test Cases:</h3>\n<ul>";
 			$urlExtra = '&plugin=' . $plugin;
@@ -177,8 +177,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			$show['show'] = 'cases';
 		}
 
-		if (!empty($this->params['app'])) {
-			$show['app'] = $query['app'] = 'true';
+		if (!empty($this->params['core'])) {
+			$show['core'] = $query['core'] = 'true';
 		}
 		if (!empty($this->params['plugin'])) {
 			$show['plugin'] = $query['plugin'] = $this->params['plugin'];
