@@ -1156,6 +1156,7 @@ class FormHelper extends AppHelper {
  * @param string $label
  * @param array $options Options for the label element.
  * @return string Generated label element
+ * @deprecated 'NONE' option is deprecated and will be removed in 3.0
  */
 	protected function _inputLabel($fieldName, $label, $options) {
 		$labelAttributes = $this->domId(array(), 'for');
@@ -2125,8 +2126,8 @@ class FormHelper extends AppHelper {
  *   matching the field name will override this value.  If no default is provided `time()` will be used.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $dateFormat DMY, MDY, YMD.
- * @param string $timeFormat 12, 24.
+ * @param string $dateFormat DMY, MDY, YMD, or null to not generate date inputs.
+ * @param string $timeFormat 12, 24, or null to not generate time inputs.
  * @param string $attributes array of Attributes
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
