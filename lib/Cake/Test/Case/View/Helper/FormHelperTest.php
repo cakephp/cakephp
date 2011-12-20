@@ -5186,6 +5186,24 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * When changing the date format, the label should always focus the first select box when
+ * clicked.
+ *
+ * @return void
+ */
+	function testDateTimeLabelIdMatchesFirstInput() {
+		$result = $this->Form->input('Model.date', array('type' => 'date'));
+		$this->assertContains('label for="ModelDateMonth"', $result);
+
+		$result = $this->Form->input('Model.date', array('type' => 'date', 'dateFormat' => 'DMY'));
+		$this->assertContains('label for="ModelDateDay"', $result);
+
+		$result = $this->Form->input('Model.date', array('type' => 'date', 'dateFormat' => 'YMD'));
+		$this->assertContains('label for="ModelDateYear"', $result);
+	}
+
+
+/**
  * testMonth method
  *
  * @return void

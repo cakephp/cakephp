@@ -1149,6 +1149,9 @@ class FormHelper extends AppHelper {
 /**
  * Generate a label for an input() call.
  *
+ * $options can contain a hash of id overrides.  These overrides will be
+ * used instead of the generated values if present.
+ *
  * @param string $fieldName
  * @param string $label
  * @param array $options Options for the label element.
@@ -1156,22 +1159,41 @@ class FormHelper extends AppHelper {
  */
 	protected function _inputLabel($fieldName, $label, $options) {
 		$labelAttributes = $this->domId(array(), 'for');
+		$idKey = null;
 		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
-			if (isset($options['dateFormat']) && $options['dateFormat'] === 'NONE') {
-				$labelAttributes['for'] .= 'Hour';
-				$idKey = 'hour';
-			} else {
-				$labelAttributes['for'] .= 'Month';
-				$idKey = 'month';
+			$firstInput = 'M';
+			if (
+				array_key_exists('dateFormat', $options) &&
+				($options['dateFormat'] === null || $options['dateFormat'] === 'NONE')
+			) {
+				$firstInput = 'H';
+			} elseif (!empty($options['dateFormat'])) {
+				$firstInput = substr($options['dateFormat'], 0, 1);
 			}
-			if (isset($options['id']) && isset($options['id'][$idKey])) {
-				$labelAttributes['for'] = $options['id'][$idKey];
+			switch ($firstInput) {
+				case 'D':
+					$idKey = 'day';
+					$labelAttributes['for'] .= 'Day';
+					break;
+				case 'Y':
+					$idKey = 'year';
+					$labelAttributes['for'] .= 'Year';
+					break;
+				case 'M':
+					$idKey = 'month';
+					$labelAttributes['for'] .= 'Month';
+					break;
+				case 'H':
+					$idKey = 'hour';
+					$labelAttributes['for'] .= 'Hour';
 			}
-		} elseif ($options['type'] === 'time') {
+		}
+		if ($options['type'] === 'time') {
 			$labelAttributes['for'] .= 'Hour';
-			if (isset($options['id']) && isset($options['id']['hour'])) {
-				$labelAttributes['for'] = $options['id']['hour'];
-			}
+			$idKey = 'hour';
+		}
+		if (isset($idKey) && isset($options['id']) && isset($options['id'][$idKey])) {
+			$labelAttributes['for'] = $options['id'][$idKey];
 		}
 
 		if (is_array($label)) {
