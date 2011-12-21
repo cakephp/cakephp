@@ -493,6 +493,8 @@ class FolderTest extends CakeTestCase {
 		);
 
 		$result = $Folder->tree(null, false);
+		sort($result[0]);
+		sort($expected[0]);
 		sort($result[1]);
 		sort($expected[1]);
 		$this->assertEquals($expected, $result);
