@@ -380,8 +380,8 @@ class ShellTest extends CakeTestCase {
 		$bar = '---------------------------------------------------------------';
 
 		$this->Shell->stdout->expects($this->at(0))->method('write')->with('', 0);
-        $this->Shell->stdout->expects($this->at(1))->method('write')->with($bar, 1);
-        $this->Shell->stdout->expects($this->at(2))->method('write')->with('', 0);
+		$this->Shell->stdout->expects($this->at(1))->method('write')->with($bar, 1);
+		$this->Shell->stdout->expects($this->at(2))->method('write')->with('', 0);
 
 		$this->Shell->stdout->expects($this->at(3))->method('write')->with("", true);
 		$this->Shell->stdout->expects($this->at(4))->method('write')->with($bar, 1);

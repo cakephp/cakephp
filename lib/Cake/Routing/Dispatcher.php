@@ -68,7 +68,7 @@ class Dispatcher {
  *    are encountered.
  */
 	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
-		if ($this->asset($request->url, $response) || $this->cached($request->here)) {
+		if ($this->asset($request->url, $response) || $this->cached($request->here())) {
 			return;
 		}
 
@@ -203,7 +203,7 @@ class Dispatcher {
 /**
  * Outputs cached dispatch view cache
  *
- * @param string $path Requested URL path
+ * @param string $path Requested URL path with any query string parameters
  * @return string|boolean False if is not cached or output
  */
 	public function cached($path) {
@@ -313,7 +313,7 @@ class Dispatcher {
 			$response->type($contentType);
 		}
 		if (!$compressionEnabled) {
-		    $response->header('Content-Length', filesize($assetFile));
+			$response->header('Content-Length', filesize($assetFile));
 		}
 		$response->cache(filemtime($assetFile));
 		$response->send();

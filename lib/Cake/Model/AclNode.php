@@ -95,7 +95,7 @@ class AclNode extends AppModel {
 				$queryData['joins'][] = array(
 					'table' => $table,
 					'alias' => "{$type}{$i}",
-					'type'  => 'LEFT',
+					'type' => 'LEFT',
 					'conditions' => array(
 						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
 						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),

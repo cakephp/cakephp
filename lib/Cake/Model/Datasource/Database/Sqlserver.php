@@ -302,7 +302,7 @@ class Sqlserver extends DboSource {
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
-						$this->_fieldMappings[$build[0] . '__' .$build[1]] = $fields[$i];
+						$this->_fieldMappings[$build[0] . '__'  . $build[1]] = $fields[$i];
 						$fieldName  = $this->name($build[0] . '.' . $build[1]);
 						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $build[1]);
 					}

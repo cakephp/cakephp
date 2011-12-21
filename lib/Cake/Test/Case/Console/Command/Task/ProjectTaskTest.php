@@ -301,7 +301,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecute() {
-		$this->Task->params['skel'] = CAKE . 'Console' . DS. 'Templates' . DS . 'skel';
+		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;
 
 		$path = $this->Task->path . 'bake_test_app';

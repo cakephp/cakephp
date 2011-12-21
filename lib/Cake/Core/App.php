@@ -681,7 +681,7 @@ class App {
 			}
 			App::uses($extends, $extendType);
 			if ($plugin && in_array($originalType, array('controller', 'model'))) {
-				App::uses($plugin . $extends, $plugin . '.' .$type);
+				App::uses($plugin . $extends, $plugin . '.' . $type);
 			}
 		}
 		if ($plugin) {

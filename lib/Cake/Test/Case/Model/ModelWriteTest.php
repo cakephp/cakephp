@@ -3780,7 +3780,7 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			array(
 				'body' => 3,
-				'published'  => 'sd',
+				'published' => 'sd',
 			),
 		);
 		$Something->create();
@@ -5320,7 +5320,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'0' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 1,
+					'id' => 1,
 					'name'	=> 'product one',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5331,7 +5331,7 @@ class ModelWriteTest extends BaseModelTest {
 				),
 			'1' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 2,
+					'id' => 2,
 					'name'	=> 'product two',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5384,7 +5384,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'0' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 1,
+					'id' => 1,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5395,7 +5395,7 @@ class ModelWriteTest extends BaseModelTest {
 				),
 			'1' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 2,
+					'id' => 2,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5412,7 +5412,7 @@ class ModelWriteTest extends BaseModelTest {
  *
  * @return void
  */
-    function testUpdateAllWithoutForeignKey() {
+	public function testUpdateAllWithoutForeignKey() {
 		$this->skipIf(!$this->db instanceof Mysql, 'Currently, there is no way of doing joins in an update statement in postgresql');
 
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
@@ -5420,12 +5420,12 @@ class ModelWriteTest extends BaseModelTest {
 
 		$conditions = array('Group.name' => 'group one');
 
-        $ProductUpdateAll->bindModel(array('belongsTo' => array(
+		$ProductUpdateAll->bindModel(array('belongsTo' => array(
 			'Group' => array('className' => 'GroupUpdateAll')
 		)));
 
-        $ProductUpdateAll->belongsTo = array(
-            'Group' => array(
+		$ProductUpdateAll->belongsTo = array(
+			'Group' => array(
 				'className' => 'GroupUpdateAll',
 				'foreignKey' => false,
 				'conditions' => 'ProductUpdateAll.groupcode = Group.code'
@@ -5437,7 +5437,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'0' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 1,
+					'id' => 1,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),
@@ -5448,7 +5448,7 @@ class ModelWriteTest extends BaseModelTest {
 				),
 			'1' => array(
 				'ProductUpdateAll' => array(
-					'id'  => 2,
+					'id' => 2,
 					'name'	=> 'new product',
 					'groupcode'	 => 120,
 					'group_id'	=> 1),

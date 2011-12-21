@@ -7651,7 +7651,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Post', 'Author');
 		$Post = new Post();
 		$Post->virtualFields = array(
-		    'writer' => 'Author.user'
+			'writer' => 'Author.user'
 		);
 		$result = $Post->find('first');
 		$this->assertTrue(isset($result['Post']['writer']), 'virtual field not fetched %s');

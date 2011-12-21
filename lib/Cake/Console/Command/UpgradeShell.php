@@ -222,6 +222,7 @@ class UpgradeShell extends AppShell {
 		$plugins = App::objects('plugin');
 		$pluginHelpers = array();
 		foreach ($plugins as $plugin) {
+			CakePlugin::load($plugin);
 			$pluginHelpers = array_merge(
 				$pluginHelpers,
 				App::objects('helper', App::pluginPath($plugin) . DS . 'views' . DS . 'helpers' . DS, false)

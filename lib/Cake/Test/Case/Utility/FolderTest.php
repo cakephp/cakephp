@@ -431,7 +431,6 @@ class FolderTest extends CakeTestCase {
 			),
 			array(
 				$Folder->path . DS . 'not_hidden.txt',
-				$Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php',
 			),
 		);
 

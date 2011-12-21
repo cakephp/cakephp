@@ -3600,8 +3600,8 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testLazyLoad() {
-        // Local set up
-        $this->User = ClassRegistry::init('User');
+		// Local set up
+		$this->User = ClassRegistry::init('User');
 		$this->User->bindModel(array(
 			'hasMany' => array('Article', 'ArticleFeatured', 'Comment')
 		), false);
@@ -3614,7 +3614,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		} catch (Exception $e) {
 			$exceptions = true;
 		}
-        $this->assertTrue(empty($exceptions));
+		$this->assertTrue(empty($exceptions));
 	}
 
 /**

@@ -680,10 +680,7 @@ class Model extends Object {
 		}
 
 		if (is_subclass_of($this, 'AppModel')) {
-			$merge = array('findMethods');
-			if ($this->actsAs !== null || $this->actsAs !== false) {
-				$merge[] = 'actsAs';
-			}
+			$merge = array('actsAs', 'findMethods');
 			$parentClass = get_parent_class($this);
 			if ($parentClass !== 'AppModel') {
 				$this->_mergeVars($merge, $parentClass);
@@ -772,7 +769,7 @@ class Model extends Object {
 					}
 				}
 			}
-	    }
+		}
 
 		if (!$className) {
 			return false;
@@ -2454,7 +2451,7 @@ class Model extends Object {
  * Queries the datasource and returns a result set array.
  *
  * Also used to perform notation finds, where the first argument is type of find operation to perform
- * (all / first / count / neighbors / list / threaded ),
+ * (all / first / count / neighbors / list / threaded),
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
@@ -3201,11 +3198,7 @@ class Model extends Object {
 			return false;
 		}
 
-		foreach ($this->id as $id) {
-			return $id;
-		}
-
-		return false;
+		return current($this->id);
 	}
 
 /**

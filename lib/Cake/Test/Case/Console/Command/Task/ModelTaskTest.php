@@ -948,7 +948,7 @@ STRINGEND;
  *
  * @return void
  */
-    public function testExecuteIntoAllOddTables() {
+	public function testExecuteIntoAllOddTables() {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ModelTask',
@@ -1003,7 +1003,7 @@ STRINGEND;
  *
  * @return void
  */
-    public function testExecuteIntoBakeOddTables() {
+	public function testExecuteIntoBakeOddTables() {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ModelTask',

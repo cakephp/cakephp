@@ -285,10 +285,10 @@ class PostgresTest extends CakeTestCase {
 		$result = $this->Dbo->fields($this->model, null, array('*', 'PostgresClientTestModel.*'));
 		$expected = array_merge($fields, array(
 			'"PostgresClientTestModel"."id" AS "PostgresClientTestModel__id"',
-    		'"PostgresClientTestModel"."name" AS "PostgresClientTestModel__name"',
-    		'"PostgresClientTestModel"."email" AS "PostgresClientTestModel__email"',
-    		'"PostgresClientTestModel"."created" AS "PostgresClientTestModel__created"',
-    		'"PostgresClientTestModel"."updated" AS "PostgresClientTestModel__updated"'));
+			'"PostgresClientTestModel"."name" AS "PostgresClientTestModel__name"',
+			'"PostgresClientTestModel"."email" AS "PostgresClientTestModel__email"',
+			'"PostgresClientTestModel"."created" AS "PostgresClientTestModel__created"',
+			'"PostgresClientTestModel"."updated" AS "PostgresClientTestModel__updated"'));
 		$this->assertEquals($expected, $result);
 	}
 

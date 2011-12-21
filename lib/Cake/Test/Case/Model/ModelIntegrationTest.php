@@ -255,7 +255,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				array(
 					'table' => 'articles',
 					'alias' => 'Article',
-					'type'  => 'LEFT',
+					'type' => 'LEFT',
 					'conditions' => array(
 						'User.id = Article.user_id',
 					),
@@ -2174,7 +2174,6 @@ class ModelIntegrationTest extends BaseModelTest {
 
 /**
  * testEscapeField to prove it escapes the field well even when it has part of the alias on it
- * @see ttp://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/473-escapefield-doesnt-consistently-prepend-modelname
  *
  * @return void
  */
@@ -2202,6 +2201,30 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEquals($expected, $result);
 		ConnectionManager::drop('mock');
+	}
+
+/**
+ * testGetID
+ *
+ * @return void
+ */
+	public function testGetID() {
+		$TestModel = new Test();
+
+		$result = $TestModel->getID();
+		$this->assertFalse($result);
+
+		$TestModel->id = 9;
+		$result = $TestModel->getID();
+		$this->assertEquals(9, $result);
+
+		$TestModel->id = array(10, 9, 8, 7);
+		$result = $TestModel->getID(2);
+		$this->assertEquals(8, $result);
+
+		$TestModel->id = array(array(), 1, 2, 3);
+		$result = $TestModel->getID();
+		$this->assertFalse($result);
 	}
 
 /**

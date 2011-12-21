@@ -795,10 +795,11 @@ class AuthComponentTest extends CakeTestCase {
 
 		//Ticket #4750
 		//named params
+		$this->Controller->request = $this->Auth->request;
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/index/year:2008/month:feb';
 		$this->Auth->request->addParams(Router::parse($url));
-		$this->Auth->request->url = Router::normalize($url);
+		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->initialize($this->Controller);
 		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Auth->startup($this->Controller);
@@ -809,24 +810,24 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/view/1';
 		$this->Auth->request->addParams(Router::parse($url));
-		$this->Auth->request->url = Router::normalize($url);
+		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->initialize($this->Controller);
 		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/view/1');
 		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 
-        // QueryString parameters
+		// QueryString parameters
 		$_back = $_GET;
 		$_GET = array(
-			'url' => '/posts/index/29',
 			'print' => 'true',
 			'refer' => 'menu'
 		);
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/index/29';
-		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
 		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
+		$this->Auth->request->query = $_GET;
 
 		$this->Auth->initialize($this->Controller);
 		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
@@ -834,33 +835,15 @@ class AuthComponentTest extends CakeTestCase {
 		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
 		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 
-		$_GET = array(
-			'url' => '/posts/index/29',
-			'print' => 'true',
-			'refer' => 'menu'
-		);
-		$this->Auth->Session->delete('Auth');
-		$url = '/posts/index/29';
-		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
-		$this->Auth->request->addParams(Router::parse($url));
-
-		$this->Auth->initialize($this->Controller);
-		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
-		$this->Auth->startup($this->Controller);
-		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
-		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 		$_GET = $_back;
 
 		//external authed action
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
-		$_GET = array(
-			'url' => '/posts/edit/1'
-		);
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/edit/1';
 		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
 		$this->Auth->request->addParams(Router::parse($url));
-		$this->Auth->request->url = Router::normalize($url);
+		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->initialize($this->Controller);
 		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Auth->startup($this->Controller);

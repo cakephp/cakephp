@@ -259,9 +259,9 @@ abstract class JsBaseEngineHelper extends AppHelper {
 					break;
 				case (($ord & 0xF8) == 0xF0):
 					if ($i + 3 >= $length) {
-					   $i += 3;
-					   $return .= '?';
-					   break;
+						$i += 3;
+						$return .= '?';
+						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3};
 					$char = Multibyte::utf8($charbits);
@@ -270,9 +270,9 @@ abstract class JsBaseEngineHelper extends AppHelper {
 					break;
 				case (($ord & 0xFC) == 0xF8):
 					if ($i + 4 >= $length) {
-					   $i += 4;
-					   $return .= '?';
-					   break;
+						$i += 4;
+						$return .= '?';
+						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4};
 					$char = Multibyte::utf8($charbits);
@@ -281,9 +281,9 @@ abstract class JsBaseEngineHelper extends AppHelper {
 					break;
 				case (($ord & 0xFE) == 0xFC):
 					if ($i + 5 >= $length) {
-					   $i += 5;
-					   $return .= '?';
-					   break;
+						$i += 5;
+						$return .= '?';
+						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4} . $string{$i + 5};
 					$char = Multibyte::utf8($charbits);

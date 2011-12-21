@@ -2815,26 +2815,26 @@ class SetTest extends CakeTestCase {
 
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0">
-		  <channel>
-		  <title>Cake PHP Google Group</title>
-		  <link>http://groups.google.com/group/cake-php</link>
-		  <description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
-		  <language>en</language>
-		  	<item>
-			  <title>constructng result array when using findall</title>
-			  <link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
-			  <description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
-			  <author>bmil...@gmail.com(bpscrugs)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
-			  </item>
-			  <item>
-			  <title>Re: share views between actions?</title>
-			  <link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
-			  <description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
-			  <author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
+			<channel>
+			<title>Cake PHP Google Group</title>
+			<link>http://groups.google.com/group/cake-php</link>
+			<description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
+			<language>en</language>
+				<item>
+				<title>constructng result array when using findall</title>
+				<link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
+				<description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
+				<author>bmil...@gmail.com(bpscrugs)</author>
+				<pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
+				</item>
+				<item>
+				<title>Re: share views between actions?</title>
+				<link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
+				<description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
+				<author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
+				<pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
 			 </item>
 		</channel>
 		</rss>';
@@ -2909,7 +2909,7 @@ class SetTest extends CakeTestCase {
 				'item' => array(
 					'@attr' => '123',
 					'titles' => 'list',
-					'@'  => 'textforitems'
+					'@' => 'textforitems'
 				)
 			)
 		);
@@ -2917,32 +2917,32 @@ class SetTest extends CakeTestCase {
 
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0" xmlns:dc="http://www.cakephp.org/">
-		  <channel>
-		  <title>Cake PHP Google Group</title>
-		  <link>http://groups.google.com/group/cake-php</link>
-		  <description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
-		  <language>en</language>
-		  	<item>
-			  <title>constructng result array when using findall</title>
-			  <link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
-			  <description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
-			  	<dc:creator>cakephp</dc:creator>
+			<channel>
+			<title>Cake PHP Google Group</title>
+			<link>http://groups.google.com/group/cake-php</link>
+			<description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
+			<language>en</language>
+				<item>
+				<title>constructng result array when using findall</title>
+				<link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
+				<description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
+					<dc:creator>cakephp</dc:creator>
 				<category><![CDATA[cakephp]]></category>
 				<category><![CDATA[model]]></category>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
-			  <author>bmil...@gmail.com(bpscrugs)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
-			  </item>
-			  <item>
-			  <title>Re: share views between actions?</title>
-			  <link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
-			  <description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
-			  	<dc:creator>cakephp</dc:creator>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
+				<author>bmil...@gmail.com(bpscrugs)</author>
+				<pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
+				</item>
+				<item>
+				<title>Re: share views between actions?</title>
+				<link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
+				<description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
+					<dc:creator>cakephp</dc:creator>
 				<category><![CDATA[cakephp]]></category>
 				<category><![CDATA[model]]></category>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
-			  <author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
+				<author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
+				<pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
 			 </item>
 		</channel>
 		</rss>';

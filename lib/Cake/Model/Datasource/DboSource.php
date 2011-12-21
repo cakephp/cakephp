@@ -787,7 +787,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = crc32($this->startQuote.$data.$this->endQuote);
+		$cacheKey = crc32($this->startQuote . $data . $this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}

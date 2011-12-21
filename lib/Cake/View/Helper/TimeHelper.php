@@ -132,7 +132,7 @@ class TimeHelper extends AppHelper {
 			case 'p':
 			case 'P':
 				$default = array('am' => 0, 'pm' => 1);
-				$meridiem = $default[date('a',$this->__time)];
+				$meridiem = $default[date('a', $this->__time)];
 				$format = __dc('cake', 'am_pm', 5);
 				if (is_array($format)) {
 					$meridiem = $format[$meridiem];
@@ -142,7 +142,7 @@ class TimeHelper extends AppHelper {
 			case 'r':
 				$complete = __dc('cake', 't_fmt_ampm', 5);
 				if ($complete != 't_fmt_ampm') {
-					return str_replace('%p',$this->_translateSpecifier(array('%p', 'p')),$complete);
+					return str_replace('%p', $this->_translateSpecifier(array('%p', 'p')), $complete);
 				}
 				break;
 			case 'R':
@@ -344,7 +344,7 @@ class TimeHelper extends AppHelper {
  */
 	public function isThisMonth($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString);
-		return date('m Y',$date) == date('m Y', time());
+		return date('m Y', $date) == date('m Y', time());
 	}
 
 /**
@@ -671,7 +671,7 @@ class TimeHelper extends AppHelper {
 		}
 
 		$date = $this->fromString($dateString, $userOffset);
-		$interval = $this->fromString('-'.$timeInterval);
+		$interval = $this->fromString('-' . $timeInterval);
 
 		if ($date >= $interval && $date <= time()) {
 			return true;

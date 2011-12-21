@@ -238,7 +238,7 @@ class Sqlite extends DboSource {
 		if (is_array($real)) {
 			$col = $real['name'];
 			if (isset($real['limit'])) {
-				$col .= '('.$real['limit'].')';
+				$col .= '(' . $real['limit'] . ')';
 			}
 			return $col;
 		}

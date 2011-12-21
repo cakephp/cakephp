@@ -17,6 +17,7 @@
  */
 
 App::uses('AppModel', 'Model');
+App::uses('AclNode', 'Model');
 
 /**
  * Access Control Object

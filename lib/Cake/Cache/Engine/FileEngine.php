@@ -129,14 +129,14 @@ class FileEngine extends CacheEngine {
 		$contents = $expires . $lineBreak . $data . $lineBreak;
 
 		if ($this->settings['lock']) {
-		    $this->_File->flock(LOCK_EX);
+			$this->_File->flock(LOCK_EX);
 		}
 
 		$this->_File->rewind();
 		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents) && $this->_File->fflush();
 
 		if ($this->settings['lock']) {
-		    $this->_File->flock(LOCK_UN);
+			$this->_File->flock(LOCK_UN);
 		}
 
 		return $success;

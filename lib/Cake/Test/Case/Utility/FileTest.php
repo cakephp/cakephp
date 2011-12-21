@@ -230,7 +230,7 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testCreate() {
-		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
+		$tmpFile = TMP.'tests' . DS . 'cakephp.file.test.tmp';
 		$File = new File($tmpFile, true, 0777);
 		$this->assertTrue($File->exists());
 	}
@@ -391,7 +391,7 @@ class FileTest extends CakeTestCase {
 			$r = $TmpFile->append($fragment);
 			$this->assertTrue($r);
 			$this->assertTrue(file_exists($tmpFile));
-			$data = $data.$fragment;
+			$data = $data . $fragment;
 			$this->assertEquals($data, file_get_contents($tmpFile));
 			$TmpFile->close();
 		}
