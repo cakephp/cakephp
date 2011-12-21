@@ -364,6 +364,41 @@ class FolderTest extends CakeTestCase {
 	}
 
 /**
+ * testFolderReadWithHiddenFiles method
+ *
+ * @return void
+ */
+	public function testFolderReadWithHiddenFiles() {
+		$this->skipIf(!is_writeable(TMP), 'Cant test Folder::read with hidden files unless the tmp folder is writable.');
+
+		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
+		mkdir($Folder->path . DS . '.svn');
+		mkdir($Folder->path . DS . 'some_folder');
+		touch($Folder->path . DS . 'not_hidden.txt');
+		touch($Folder->path . DS . '.hidden.txt');
+
+		$expected = array(
+			array('some_folder'),
+			array('not_hidden.txt'),
+		);
+		$result = $Folder->read(true, true);
+		$this->assertEquals($expected, $result);
+
+		$expected = array(
+			array(
+				'.svn',
+				'some_folder'
+			),
+			array(
+				'.hidden.txt',
+				'not_hidden.txt'
+			),
+		);
+		$result = $Folder->read(true);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testFolderTree method
  *
  * @return void
@@ -417,41 +452,47 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testFolderTreeWithHiddenFiles() {
-		$this->skipIf(!is_writeable(TMP), 'Cant test Folder::tree with hidden files unless the tmp folder is writable.');
+		$this->skipIf(!is_writeable(TMP), 'Can\'t test Folder::tree with hidden files unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
 		mkdir($Folder->path . DS . '.svn', 0777, true);
 		touch($Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php');
+		mkdir($Folder->path . DS . '.svn' . DS . 'inhiddenfolder');
+		touch($Folder->path . DS . '.svn' . DS . 'inhiddenfolder' . DS . 'NestedInHiddenFolder.php');
 		touch($Folder->path . DS . 'not_hidden.txt');
 		touch($Folder->path . DS . '.hidden.txt');
+		mkdir($Folder->path . DS . 'visible_folder' . DS . '.git', 0777, true);
 
 		$expected = array(
 			array(
 				$Folder->path,
+				$Folder->path . DS . 'visible_folder',
 			),
 			array(
 				$Folder->path . DS . 'not_hidden.txt',
 			),
 		);
 
-		$result = $Folder->tree(null, false);
-		sort($result[1]);
-		sort($expected[1]);
+		$result = $Folder->tree(null, true);
 		$this->assertEquals($expected, $result);
 
 		$expected = array(
 			array(
 				$Folder->path,
+				$Folder->path . DS . 'visible_folder',
+				$Folder->path . DS . 'visible_folder' . DS . '.git',
 				$Folder->path . DS . '.svn',
+				$Folder->path . DS . '.svn' . DS . 'inhiddenfolder',
 			),
 			array(
 				$Folder->path . DS . 'not_hidden.txt',
 				$Folder->path . DS . '.hidden.txt',
+				$Folder->path . DS . '.svn' . DS . 'inhiddenfolder' . DS . 'NestedInHiddenFolder.php',
 				$Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php',
 			),
 		);
 
-		$result = $Folder->tree(null, true);
+		$result = $Folder->tree(null, false);
 		sort($result[1]);
 		sort($expected[1]);
 		$this->assertEquals($expected, $result);

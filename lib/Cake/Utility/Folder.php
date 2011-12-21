@@ -398,28 +398,32 @@ class Folder {
  * Returns an array of nested directories and files in each directory
  *
  * @param string $path the directory path to build the tree from
- * @param mixed $exceptions Array of files to exclude, false to exclude dot files.
- * @param string $type either file or dir. null returns both files and directories
+ * @param mixed $exceptions Either an array of files/folder to exclude
+ *   or boolean true to not grab dot files/folders
+ * @param string $type either 'file' or 'dir'. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::tree
  */
-	public function tree($path = null, $exceptions = true, $type = null) {
+	public function tree($path = null, $exceptions = false, $type = null) {
 		if ($path == null) {
 			$path = $this->path;
 		}
 		$files = array();
 		$directories = array($path);
-		$skipHidden = false;
 
-		if ($exceptions === false) {
-			$skipHidden = true;
-		}
 		if (is_array($exceptions)) {
 			$exceptions = array_flip($exceptions);
 			if (isset($exceptions['.'])) {
 				$skipHidden = true;
 				unset($exceptions['.']);
 			}
+		}
+		$skipHidden = false;
+		if ($exceptions === true) {
+			$skipHidden = true;
+		} elseif (isset($exceptions['.'])) {
+			$skipHidden = true;
+			unset($exceptions['.']);
 		}
 
 		try {
