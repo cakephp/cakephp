@@ -31,6 +31,7 @@ App::uses('ViewBlock', 'View');
  * and then inserted into the selected layout.  This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
+ *
  * @package       Cake.View
  * @property      CacheHelper $Cache
  * @property      FormHelper $Form
@@ -291,30 +292,29 @@ class View extends Object {
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
  * @param string $name Name of template file in the/app/View/Elements/ folder,
- * or `MyPlugin.template` to use the template element from MyPlugin , will be overriden by $options['plugin']
+ *   or `MyPlugin.template` to use the template element from MyPlugin.  If the element
+ *   is not found in the plugin, the normal view path cascade will be searched.
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
  * @param array $options Array of options. Possible keys are:
  * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
  *   If an array, the following keys can be used:
  *   - `config` - Used to store the cached element in a custom cache configuration.
  *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
- * - `plugin` - Load an element from a specific plugin.
+ * - `plugin` - Load an element from a specific plugin.  This option is deprecated, see below.
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * @return string Rendered Element
+ * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0.  Use
+ *   `Plugin.element_name` instead.
  */
 	public function element($name, $data = array(), $options = array()) {
 		$file = $plugin = $key = null;
 		$callbacks = false;
 
 		if (isset($options['plugin'])) {
-			$plugin = Inflector::camelize($options['plugin']);
-		} else {
-			list($plugin, $name) = $this->_pluginSplit($name);
+			$name = Inflector::camelize($options['plugin']) . '.' . $name;
 		}
-		if (isset($this->plugin) && !$plugin) {
-			$plugin = $this->plugin;
-		}
+
 		if (isset($options['callbacks'])) {
 			$callbacks = $options['callbacks'];
 		}
@@ -343,7 +343,7 @@ class View extends Object {
 			}
 		}
 
-		$file = $this->_getElementFilename($name, $plugin);
+		$file = $this->_getElementFilename($name);
 
 		if ($file) {
 			if (!$this->_helpersLoaded) {
@@ -383,6 +383,10 @@ class View extends Object {
  * - `afterLayout`
  *
  * If View::$autoRender is false and no `$layout` is provided, the view will be returned bare.
+ *
+ * View and layout names can point to plugin views/layouts.  Using the `Plugin.view` syntax
+ * a plugin view/layout can be used instead of the app ones.  If the chosen plugin is not found
+ * the view will be located along the regular view path cascade.
  *
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
@@ -955,10 +959,11 @@ class View extends Object {
  * Finds an element filename, returns false on failure.
  *
  * @param string $name The name of the element to find.
- * @param string $plugin The plugin name the element is in.
  * @return mixed Either a string to the element filename or false when one can't be found.
  */
-	protected function _getElementFileName($name, $plugin = null) {
+	protected function _getElementFileName($name) {
+		list($plugin, $name) = $this->_pluginSplit($name);
+
 		$paths = $this->_paths($plugin);
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
