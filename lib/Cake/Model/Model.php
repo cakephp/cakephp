@@ -1527,7 +1527,11 @@ class Model extends Object {
 		}
 
 		if (!empty($options['fieldList'])) {
-			$this->whitelist = $options['fieldList'];
+			if (!empty($options['fieldList'][$this->alias]) && is_array($options['fieldList'][$this->alias])) {
+				$this->whitelist = $options['fieldList'][$this->alias];
+			} else {
+				$this->whitelist = $options['fieldList'];
+			}
 		} elseif ($options['fieldList'] === null) {
 			$this->whitelist = array();
 		}
@@ -2963,7 +2967,11 @@ class Model extends Object {
 		$whitelist = $this->whitelist;
 
 		if (!empty($options['fieldList'])) {
-			$whitelist = $options['fieldList'];
+			if (!empty($options['fieldList'][$this->alias]) && is_array($options['fieldList'][$this->alias])) {
+				$whitelist = $options['fieldList'][$this->alias];
+			} else {
+				$whitelist = $options['fieldList'];
+			}
 		}
 
 		if (!empty($whitelist)) {
