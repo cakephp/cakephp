@@ -5641,34 +5641,31 @@ class ModelWriteTest extends BaseModelTest {
 		$this->loadFixtures('Attachment', 'Comment', 'Article', 'User');
 		$TestModel = new Comment();
 
-		$expected = $TestModel->find('first', array(
-			'conditions' => array('Comment.id' => 5),
-			'recursive' => 0
-		));
+		$TestModel->validate = array('comment' => 'notEmpty');
+		$TestModel->Attachment->validate = array('attachment' => 'notEmpty');
+
+		$record = array(
+			'Comment' => array(
+				'user_id' => 1,
+				'article_id' => 1,
+				'comment' => '',
+			),
+			'Attachment' => array(
+				'attachment' => ''
+			)
+		);
+		$result = $TestModel->saveAll($record, array('validate' => 'only'));
+		$this->assertFalse($result);
 
 		$fieldList = array(
 			'Comment' => array('id', 'article_id', 'user_id'),
 			'Attachment' => array('comment_id')
 		);
-		$result = $TestModel->saveAll(array(
-			'Comment' => array(
-				'id' => 5,
-				'comment' => $expected['Comment']['comment'] .' some more',
-			),
-			'Attachment' => array(
-				'comment_id' => $expected['Attachment']['comment_id'],
-				'attachment' => $expected['Attachment']['attachment'] .' some more'
-			)
-		), array('fieldList' => $fieldList));
-		$this->assertTrue($result);
-
-		$result = $TestModel->find('first', array(
-			'conditions' => array('Comment.id' => 5),
-			'recursive' => 0
+		$result = $TestModel->saveAll($record, array(
+			'fieldList' => $fieldList, 'validate' => 'only'
 		));
-
-		$this->assertEquals($expected['Comment']['comment'], $result['Comment']['comment']);
-		$this->assertEquals($expected['Attachment']['attachment'], $result['Attachment']['attachment']);
+		$this->assertTrue($result);
+		$this->assertEmpty($TestModel->validationErrors);
 	}
 
 }
