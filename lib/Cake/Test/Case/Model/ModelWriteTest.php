@@ -5616,7 +5616,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$fieldList = array(
 			'Article' => array('id'),
-			'Comment' => array('article_id')
+			'Comment' => array('article_id', 'user_id')
 		);
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2, 'title' => 'I will not save'),
@@ -5640,33 +5640,37 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllFieldListHasOne() {
 		$this->loadFixtures('Attachment', 'Comment', 'Article', 'User');
 		$TestModel = new Comment();
-		$TestModel->deleteAll(true);
-		$this->assertEqual($TestModel->find('all'), array());
 
-		$TestModel->Attachment->deleteAll(true);
-		$this->assertEqual($TestModel->Attachment->find('all'), array());
+		$expected = $TestModel->find('first', array(
+			'fields' => array('Comment.*', 'Attachment.*'),
+			'conditions' => array('Comment.id' => 5),
+			'recursive' => 0
+		));
 
 		$fieldList = array(
-			'Comment' => array('article_id', 'user_id'),
+			'Comment' => array('id', 'article_id', 'user_id'),
 			'Attachment' => array('comment_id')
 		);
-		$this->assertTrue($TestModel->saveAll(array(
+		$result = $TestModel->saveAll(array(
 			'Comment' => array(
-				'comment' => 'Comment with attachment',
-				'article_id' => 1,
-				'user_id' => 1
+				'id' => 5,
+				'comment' => $expected['Comment']['comment'] .' some more',
 			),
 			'Attachment' => array(
-				'attachment' => 'some_file.zip'
+				'comment_id' => $expected['Attachment']['comment_id'],
+				'attachment' => $expected['Attachment']['attachment'] .' some more'
 			)
-		), array('fieldList' => $fieldList)));
+		), array('fieldList' => $fieldList));
+		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => array(
-			'Comment.id', 'Comment.comment', 'Attachment.id',
-			'Attachment.comment_id', 'Attachment.attachment'
-		)));
-		$this->assertEquals('', $result[0]['Comment']['comment']);
-		$this->assertEquals('', $result[0]['Attachment']['attachment']);
+		$result = $TestModel->find('first', array(
+			'fields' => array('Comment.*', 'Attachment.*'),
+			'conditions' => array('Comment.id' => 5),
+			'recursive' => 0
+		));
+
+		$this->assertEquals($expected['Comment']['comment'], $result['Comment']['comment']);
+		$this->assertEquals($expected['Attachment']['attachment'], $result['Attachment']['attachment']);
 	}
 
 }
