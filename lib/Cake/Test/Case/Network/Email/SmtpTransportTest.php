@@ -214,6 +214,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->getMock('CakeEmail', array('message'), array(), 'SmtpCakeEmail');
 		$email = new SmtpCakeEmail();
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
+		$email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->cc(array('mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso'));
 		$email->bcc('phpnut@cakephp.org');
@@ -222,6 +223,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
 
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+		$data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
 		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
 		$data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
 		$data .= "X-Mailer: CakePHP Email\r\n";
