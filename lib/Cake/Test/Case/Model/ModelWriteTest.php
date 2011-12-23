@@ -5642,7 +5642,6 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new Comment();
 
 		$expected = $TestModel->find('first', array(
-			'fields' => array('Comment.*', 'Attachment.*'),
 			'conditions' => array('Comment.id' => 5),
 			'recursive' => 0
 		));
@@ -5664,7 +5663,6 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('first', array(
-			'fields' => array('Comment.*', 'Attachment.*'),
 			'conditions' => array('Comment.id' => 5),
 			'recursive' => 0
 		));
