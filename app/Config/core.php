@@ -268,7 +268,7 @@
  *		'password' => 'password', //plaintext password (xcache.admin.pass)
  *	));
  *
- * Memcache (http://www.danga.com/memcached/)
+ * Memcache (http://memcached.org/)
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Memcache', //[required]
