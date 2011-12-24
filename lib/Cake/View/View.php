@@ -619,6 +619,7 @@ class View extends Object {
  *
  * @param string $name The view or element to 'extend' the current one with.
  * @return void
+ * @throws LogicException when you extend a view with itself or make extend loops.
  */
 	public function extend($name) {
 		switch ($this->_currentType) {
@@ -635,6 +636,9 @@ class View extends Object {
 		}
 		if ($parent == $this->_current) {
 			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
+		}
+		if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
+			throw new LogicException(__d('cake_dev', 'You cannot have views extend in a loop.'));
 		}
 		$this->_parents[$this->_current] = $parent;
 	}

@@ -1159,6 +1159,18 @@ TEXT;
 	}
 
 /**
+ * Make sure that extending in a loop causes an exception
+ *
+ * @expectedException LogicException
+ * @return void
+ */
+	public function testExtendLoop() {
+		$this->View->layout = false;
+		$this->View->render('extend_loop');
+	}
+
+
+/**
  * Test extend() in an element and a view.
  *
  * @return void
