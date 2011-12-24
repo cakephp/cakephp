@@ -4,18 +4,17 @@
  *
  * The Front Controller for handling every request
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.app.webroot
+ * @package       app.webroot
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -45,13 +44,19 @@
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
+ * Un-comment this line to specify a fixed path to CakePHP.
+ * This should point at the directory containing `Cake`.
+ *
+ * For ease of development CakePHP uses PHP's include_path.  If you
+ * cannot modify your include_path set this value.
+ *
+ * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
-	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT);
-	}
+	//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 
 /**
  * Editing below this line should NOT be necessary.
@@ -64,21 +69,28 @@
 	if (!defined('WWW_ROOT')) {
 		define('WWW_ROOT', dirname(__FILE__) . DS);
 	}
-	if (!defined('CORE_PATH')) {
-		if (function_exists('ini_set') && ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS . PATH_SEPARATOR . ini_get('include_path'))) {
-			define('APP_PATH', null);
-			define('CORE_PATH', null);
-		} else {
-			define('APP_PATH', ROOT . DS . APP_DIR . DS);
-			define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+
+	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+		if (function_exists('ini_set')) {
+			ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+		}
+		if (!include('Cake' . DS . 'bootstrap.php')) {
+			$failed = true;
+		}
+	} else {
+		if (!include(CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php')) {
+			$failed = true;
 		}
 	}
-	if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
+	if (!empty($failed)) {
 		trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 	}
-	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
+
+	if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] == '/favicon.ico') {
 		return;
-	} else {
-		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch();
 	}
+
+	App::uses('Dispatcher', 'Routing');
+
+	$Dispatcher = new Dispatcher();
+	$Dispatcher->dispatch(new CakeRequest(), new CakeResponse(array('charset' => Configure::read('App.encoding'))));
