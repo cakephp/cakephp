@@ -1007,7 +1007,10 @@ class View extends Object {
 			$paths = array_merge($paths, App::path('View', $plugin));
 		}
 
-		$this->_paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
-		return $this->_paths;
+		$paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		if ($plugin !== null) {
+			return $paths;
+		}
+		return $this->_paths = $paths;
 	}
 }
