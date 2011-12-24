@@ -633,6 +633,9 @@ class View extends Object {
 			break;
 		
 		}
+		if ($parent == $this->_current) {
+			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
+		}
 		$this->_parents[$this->_current] = $parent;
 	}
 

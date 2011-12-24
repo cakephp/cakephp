@@ -1148,6 +1148,17 @@ TEXT;
 	}
 
 /**
+ * Make sure that extending the current view with itself causes an exception
+ *
+ * @expectedException LogicException
+ * @return void
+ */
+	public function testExtendSelf() {
+		$this->View->layout = false;
+		$this->View->render('extend_self');
+	}
+
+/**
  * Test extend() in an element and a view.
  *
  * @return void
