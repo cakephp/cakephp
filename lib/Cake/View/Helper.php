@@ -672,9 +672,6 @@ class Helper extends Object {
 		$options = $this->_name($options);
 		$options = $this->value($options);
 		$options = $this->domId($options);
-		if ($this->tagIsInvalid() !== false) {
-			$options = $this->addClass($options, 'form-error');
-		}
 		return $options;
 	}
 

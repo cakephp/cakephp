@@ -2495,6 +2495,9 @@ class FormHelper extends AppHelper {
 		}
 
 		$result = parent::_initInputField($field, $options);
+		if ($this->tagIsInvalid() !== false) {
+			$result = $this->addClass($result, 'form-error');
+		}
 		if ($secure === self::SECURE_SKIP) {
 			return $result;
 		}
