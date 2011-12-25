@@ -313,7 +313,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function initialize(&$controller) {
+	public function initialize($controller) {
 	}
 
 /**
@@ -321,7 +321,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function startup(&$controller) {
+	public function startup($controller) {
 	}
 
 /**
@@ -329,7 +329,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function shutdown(&$controller) {
+	public function shutdown($controller) {
 	}
 
 /**
@@ -337,7 +337,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function beforeRender(&$controller) {
+	public function beforeRender($controller) {
 		if ($this->viewclass) {
 			$controller->viewClass = $this->viewclass;
 		}
@@ -1111,17 +1111,35 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testStartupProcess() {
-		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
+		$Controller = $this->getMock('Controller', array('getEventManager'));
 
-		$Controller->components = array('MockStartup');
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$eventManager = $this->getMock('CakeEventManager');
+		$eventManager->expects($this->once())->method('dispatch')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'Controller.startup'),
+					$this->attributeEqualTo('_subject', $Controller)
+				)
+			);
+		$Controller->expects($this->once())->method('getEventManager')
+			->will($this->returnValue($eventManager));
+		$Controller->startupProcess();
+	}
+
+/**
+ * Tests that the shutdown process calls the correct functions
+ *
+ * @return void
+ */
+	public function testStartupProcessIndirect() {
+		$Controller = $this->getMock('Controller', array('beforeFilter'));
+
+		$Controller->components = array('MockShutdown');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('beforeFilter');
-		$Controller->Components->expects($this->at(0))->method('trigger')
-			->with('initialize', array(&$Controller));
-
-		$Controller->Components->expects($this->at(1))->method('trigger')
-			->with('startup', array(&$Controller));
+		$Controller->Components->expects($this->exactly(2))->method('trigger')->with($this->isInstanceOf('CakeEvent'));
 
 		$Controller->startupProcess();
 	}
@@ -1132,14 +1150,35 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testShutdownProcess() {
-		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
+		$Controller = $this->getMock('Controller', array('getEventManager'));
+
+		$eventManager = $this->getMock('CakeEventManager');
+		$eventManager->expects($this->once())->method('dispatch')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'Controller.shutdown'),
+					$this->attributeEqualTo('_subject', $Controller)
+				)
+			);
+		$Controller->expects($this->once())->method('getEventManager')
+			->will($this->returnValue($eventManager));
+		$Controller->shutdownProcess();
+	}
+
+/**
+ * Tests that the shutdown process calls the correct functions
+ *
+ * @return void
+ */
+	public function testShutdownProcessIndirect() {
+		$Controller = $this->getMock('Controller', array('afterFilter'));
 
 		$Controller->components = array('MockShutdown');
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('afterFilter');
-		$Controller->Components->expects($this->once())->method('trigger')
-			->with('shutdown', array(&$Controller));
+		$Controller->Components->expects($this->exactly(1))->method('trigger')->with($this->isInstanceOf('CakeEvent'));
 
 		$Controller->shutdownProcess();
 	}
