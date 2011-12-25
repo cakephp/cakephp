@@ -287,9 +287,15 @@ class TextHelper extends AppHelper {
 				$bits = mb_substr($truncate, $spacepos);
 				preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
 				if (!empty($droppedTags)) {
-					foreach ($droppedTags as $closingTag) {
-						if (!in_array($closingTag[1], $openTags)) {
-							array_unshift($openTags, $closingTag[1]);
+					if (!empty($openTags)) {
+						foreach ($droppedTags as $closingTag) {
+							if (!in_array($closingTag[1], $openTags)) {
+								array_unshift($openTags, $closingTag[1]);
+							}
+						}
+					} else {
+						foreach ($droppedTags as $closingTag) {
+							array_push($openTags, $closingTag[1]);
 						}
 					}
 				}

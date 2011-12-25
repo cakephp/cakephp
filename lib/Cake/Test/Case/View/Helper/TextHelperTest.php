@@ -129,7 +129,7 @@ Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
 Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
 Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>... </p></span></a>';
+<p><span style="font-size: medium;"><a>... </a></span></p>';
 		$this->assertEquals($expected, $result);
 	}
 
