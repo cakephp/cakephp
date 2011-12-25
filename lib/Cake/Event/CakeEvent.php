@@ -76,6 +76,18 @@ class CakeEvent {
 	}
 
 /**
+ * Dynamically returns the name and subject if accessed directly
+ *
+ * @param string $attribute
+ * @return mixed
+ */
+	public function __get($attribute) {
+		if ($attribute === 'name' || $attribute === 'subject') {
+			return $this->{$attribute}();
+		}
+	}
+
+/**
  * Returns the name of this event. This is usually used as the event identifier
  *
  * @return string

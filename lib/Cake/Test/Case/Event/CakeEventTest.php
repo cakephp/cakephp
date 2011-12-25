@@ -71,4 +71,15 @@ class CakeEventTest extends CakeTestCase {
 		$event = new CakeEvent('fake.event', $this, array('some' => 'data'));
 		$this->assertEquals(array('some' => 'data'), $event->data);
 	}
+
+/**
+ * Tests that it is possible to get the name and subject directly
+ *
+ * @return void
+ */
+	public function testEventDirectPropertyAccess() {
+		$event = new CakeEvent('fake.event', $this);
+		$this->assertEquals($this, $event->subject);
+		$this->assertEquals('fake.event', $event->name);
+	}
 }
