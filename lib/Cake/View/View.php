@@ -21,6 +21,8 @@ App::uses('HelperCollection', 'View');
 App::uses('AppHelper', 'View/Helper');
 App::uses('Router', 'Routing');
 App::uses('ViewBlock', 'View');
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventManager', 'Event');
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -262,6 +264,23 @@ class View extends Object {
  */
 	protected $_stack = array();
 
+/**
+ * Instance of the CakeEventManager this View object is using
+ * to dispatch inner events. Usually the manager is shared with
+ * the controller, so it it possible to register view events in
+ * the controller layer.
+ *
+ * @var CakeEventManager
+ */
+	protected $_eventManager = null;
+
+/**
+ * Whether the event manager was already configured for this object
+ *
+ * @var boolean
+ */
+	protected $_eventManagerConfigured = false;
+
 	const TYPE_VIEW = 'view';
 	const TYPE_ELEMENT = 'element';
 	const TYPE_LAYOUT = 'layout';
@@ -278,10 +297,27 @@ class View extends Object {
 				$var = $this->_passedVars[$j];
 				$this->{$var} = $controller->{$var};
 			}
+			$this->_eventManager = $controller->getEventManager();
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
 		parent::__construct();
+	}
+
+/**
+ * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * You can use this instance to register any new listeners or callbacks to the
+ * controller events, or create your own events and trigger them at will.
+ *
+ * @return CakeEventManager
+ */
+	public function getEventManager() {
+		if (empty($this->_eventManager) || !$this->_eventManagerConfigured) {
+			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager->attach($this->Helpers);
+			$this->_eventManagerConfigured = true;
+		}
+		return $this->_eventManager;
 	}
 
 /**
@@ -347,14 +383,14 @@ class View extends Object {
 				$this->loadHelpers();
 			}
 			if ($callbacks) {
-				$this->Helpers->trigger('beforeRender', array($file));
+				$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 			}
 
 			$this->_currentType = self::TYPE_ELEMENT;
 			$element = $this->_render($file, array_merge($this->viewVars, $data));
 
 			if ($callbacks) {
-				$this->Helpers->trigger('afterRender', array($file, $element));
+				$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
 			}
 			if (isset($options['cache'])) {
 				Cache::write($key, $element, $caching['config']);
@@ -397,9 +433,9 @@ class View extends Object {
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = self::TYPE_VIEW;
-			$this->Helpers->trigger('beforeRender', array($viewFileName));
+			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
-			$this->Helpers->trigger('afterRender', array($viewFileName));
+			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($viewFileName)));
 		}
 
 		if ($layout === null) {
@@ -447,7 +483,7 @@ class View extends Object {
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
 		}
-		$this->Helpers->trigger('beforeLayout', array($layoutFileName));
+		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 
 		$scripts = implode("\n\t", $this->_scripts);
 		$scripts .= $this->get('meta') . $this->get('css') . $this->get('script');
@@ -464,7 +500,7 @@ class View extends Object {
 		$this->_currentType = self::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
 
-		$this->Helpers->trigger('afterLayout', array($layoutFileName));
+		$this->getEventManager()->dispatch(new CakeEvent('View.afterLayout', $this, array($layoutFileName)));
 		return $this->Blocks->get('content');
 	}
 
@@ -768,19 +804,16 @@ class View extends Object {
 		}
 		$this->_current = $viewFile;
 
-		$this->Helpers->trigger('beforeRenderFile', array($viewFile));
+		$this->getEventManager()->dispatch(new CakeEvent('View.beforeRenderFile', $this, array($viewFile)));
 		$content = $this->_evaluate($viewFile, $data);
 		if ($this->Blocks->active()) {
 			throw new CakeException(__d('cake_dev', 'The "%s" block was left open.', $this->Blocks->active()));
 		}
-		$result = $this->Helpers->trigger(
-			'afterRenderFile',
-			array($viewFile, $content),
-			array('modParams' => 1)
-		);
-		if ($result !== true) {
-			$content = $result;
-		}
+		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
+		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
+		$afterEvent->modParams = 1;
+		$this->getEventManager()->dispatch($afterEvent);
+		$content = $afterEvent->data[1];
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');

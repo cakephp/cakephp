@@ -584,24 +584,74 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers = $this->getMock('HelperCollection', array('trigger'), array($View));
 
 		$View->Helpers->expects($this->at(0))->method('trigger')
-			->with('beforeRender', $this->anything());
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.beforeRender'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
 		$View->Helpers->expects($this->at(1))->method('trigger')
-			->with('beforeRenderFile', $this->anything());
-		$View->Helpers->expects($this->at(2))->method('trigger')
-			->with('afterRenderFile', $this->anything())
-			->will($this->returnValue(''));
-		$View->Helpers->expects($this->at(3))->method('trigger')
-			->with('afterRender', $this->anything());
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.beforeRenderFile'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
 
+		$View->Helpers->expects($this->at(2))->method('trigger')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.afterRenderFile'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
+		$View->Helpers->expects($this->at(3))->method('trigger')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.afterRender'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
+			
 		$View->Helpers->expects($this->at(4))->method('trigger')
-			->with('beforeLayout', $this->anything());
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.beforeLayout'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
+
 		$View->Helpers->expects($this->at(5))->method('trigger')
-			->with('beforeRenderFile', $this->anything());
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.beforeRenderFile'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
+
 		$View->Helpers->expects($this->at(6))->method('trigger')
-			->with('afterRenderFile', $this->anything())
-			->will($this->returnValue('')) ;
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.afterRenderFile'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
+
 		$View->Helpers->expects($this->at(7))->method('trigger')
-			->with('afterLayout', $this->anything());
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'View.afterLayout'),
+					$this->attributeEqualTo('_subject', $View)
+				)
+			);
 
 		$View->render('index');
 	}

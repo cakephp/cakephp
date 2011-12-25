@@ -96,11 +96,17 @@ abstract class ObjectCollection {
 			return true;
 		}
 		if ($callback instanceof CakeEvent) {
-			if (is_array($callback->data)) {
-				$params = $callback->data;
+			$event = $callback;
+			if (is_array($event->data)) {
+				$params =& $event->data;
+			} else {
+				$params = array($event->subject());
 			}
-			$params = array($callback->subject());
-			$callback = array_pop(explode('.', $callback->name()));
+			//TODO: Temporary BC check, while we move all the triggers system into the CakeEventManager
+			if (isset($event->modParams)) {
+				$options['modParams'] = $event->modParams;
+			}
+			$callback = array_pop(explode('.', $event->name()));
 		}
 		$options = array_merge(
 			array(

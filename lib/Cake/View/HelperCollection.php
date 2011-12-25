@@ -17,6 +17,7 @@
  */
 
 App::uses('ObjectCollection', 'Utility');
+App::uses('CakeEventListener', 'Event');
 
 /**
  * Helpers collection is used as a registry for loaded helpers and handles loading
@@ -24,7 +25,7 @@ App::uses('ObjectCollection', 'Utility');
  *
  * @package       Cake.View
  */
-class HelperCollection extends ObjectCollection {
+class HelperCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * View object to use when making helpers.
@@ -97,4 +98,19 @@ class HelperCollection extends ObjectCollection {
 		return $this->_loaded[$alias];
 	}
 
+/**
+ * Returns a list of all events that will fire in the View during it's lifecycle.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'View.beforeRenderFile' => 'trigger',
+			'View.afterRenderFile' => 'trigger',
+			'View.beforeRender' => 'trigger',
+			'View.afterRender' => 'trigger',
+			'View.beforeLayout' => 'trigger',
+			'View.afterLayout' => 'trigger'
+		);
+	}
 }
