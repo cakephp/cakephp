@@ -83,14 +83,19 @@ class CakeEventManager {
 /**
  * Adds a new listener to an event. Listeners 
  *
- * @param callback|CakeEventListener $callable PHP valid callback type or instance of CakeListener to be called
- * when the event named with $eventKey is triggered.
+ * @param callback|CakeEventListener $callable PHP valid callback type or instance of CakeEventListener to be called
+ * when the event named with $eventKey is triggered. If a CakeEventListener instances is passed, then the `implementedEvents`
+ * method will be called on the object to register the declared events individually as methods to be managed by this class.
+ * It is possible to define multiple event handlers per event name.
+ *
  * @param mixed $eventKey The event unique identifier name to with the callback will be associated. If $callable
  * is an instance of CakeEventListener this argument will be ignored
+ *
  * @param array $options used to set the `priority` and `passParams` flags to the listener.
  * Priorities are handled like queues, and multiple attachments into the same priority queue will be treated in
  * the order of insertion. `passParams` means that the event data property will be converted to function arguments
  * when the listener is called. If $called is an instance of CakeEventListener, this parameter will be ignored
+ *
  * @return void
  */
 	public function attach($callable, $eventKey = null, $options = array()) {
@@ -98,18 +103,7 @@ class CakeEventManager {
 			throw new InvalidArgumentException(__d('cake_dev', 'The eventKey variable is required'));
 		}
 		if ($callable instanceof CakeEventListener) {
-			foreach ($callable->implementedEvents() as $eventKey => $function) {
-				$options = array();
-				$method = null;
-				if (is_array($function)) {
-					$method = array($callable, $function['callable']);
-					unset($function['callable']);
-					$options = $function;
-				} else {
-					$method = array($callable, $function);
-				}
-				$this->attach($method, $eventKey, $options);
-			}
+			$this->_attachSubscriber($callable);
 			return;
 		}
 		$options = $options + array('priority' => self::$defaultPriority, 'passParams' => false);
@@ -120,9 +114,54 @@ class CakeEventManager {
 	}
 
 /**
+ * Auxiliary function to attach all implemented callbacks of a CakeEventListener class instance
+ * as individual methods on this manager
+ *
+ * @param CakeEventListener $subscriber
+ * @return void
+ */
+	protected function _attachSubscriber(CakeEventListener $subscriber) {
+		foreach ($subscriber->implementedEvents() as $eventKey => $function) {
+			$options = array();
+			$method = $function;
+			if (is_array($function) && isset($function['callable'])) {
+				list($method, $options) = $this->_extractCallable($function, $subscriber);
+			} else if (is_array($function) && is_numeric(key($function))) {
+				foreach ($function as $f) {
+					list($method, $options) = $this->_extractCallable($f, $subscriber);
+					$this->attach($method, $eventKey, $options);
+				}
+				continue;
+			}
+			if (is_string($method)) {
+				$method = array($subscriber, $function);
+			}
+			$this->attach($method, $eventKey, $options);
+		}
+	}
+
+/**
+ * Auxiliary function to extract and return a PHP callback type out of the callable definition
+ * from the return value of the `implementedEvents` method on a CakeEventListener
+ *
+ * @param array $function the array taken from a handler definition for a event
+ * @param CakeEventListener $object The handler object
+ * @return callback
+ */
+	protected function _extractCallable($function, $object) {
+		$method = $function['callable'];
+		$options = $function;
+		unset($options['callable']);
+		if (is_string($method)) {
+			$method = array($object, $method);
+		}
+		return array($method, $options);
+	}
+
+/**
  * Removes a listener from the active listeners.
  *
- * @param callback|CakeListener $callable any valid PHP callback type or an instance of CakeListener
+ * @param callback|CakeEventListener $callable any valid PHP callback type or an instance of CakeEventListener
  * @return void
  */
 	public function detach($callable, $eventKey = null) {
@@ -164,6 +203,13 @@ class CakeEventManager {
 		}
 		foreach ($events as $key => $function) {
 			if (is_array($function)) {
+				if (is_numeric(key($function))) {
+					foreach ($function as $handler) {
+						$handler = isset($handler['callable']) ? $handler['callable'] : $handler;
+						$this->detach(array($subscriber, $handler), $key);
+					}
+					continue;
+				}
 				$function = $function['callable'];
 			}
 			$this->detach(array($subscriber, $function), $key);

@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Event
- * @since         CakePHP v 2.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	  Copyright 2005-2011, Cake Software Foundation, Inc.
+ * @link		  http://cakephp.org CakePHP Project
+ * @package		  Cake.Test.Case.Event
+ * @since		  CakePHP v 2.1
+ * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeEvent', 'Event');
@@ -71,7 +71,11 @@ class CustomTestEventListerner extends CakeEventTestListener implements CakeEven
 	public function implementedEvents() {
 		return array(
 			'fake.event' => 'listenerFunction',
-			'another.event' => array('callable' => 'secondListenerFunction', 'passParams' => true)
+			'another.event' => array('callable' => 'secondListenerFunction', 'passParams' => true),
+			'multiple.handlers' => array(
+				array('callable' => 'listenerFunction'),
+				array('callable' => 'thirdListenerFunction')
+			)
 		);
 	}
 
@@ -257,8 +261,16 @@ class CakeEventManagerTest extends CakeTestCase {
 		$expected = array('listenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
 
-		$listener->expects($this->once())->method('secondListenerFunction')->with('data');
+		$listener->expects($this->at(0))->method('secondListenerFunction')->with('data');
 		$event = new CakeEvent('another.event', $this, array('some' => 'data'));
+		$manager->dispatch($event);
+
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CustomTestEventListerner', array('listenerFunction', 'thirdListenerFunction'));
+		$manager->attach($listener);
+		$event = new CakeEvent('multiple.handlers');
+		$listener->expects($this->once())->method('listenerFunction')->with($event);
+		$listener->expects($this->once())->method('thirdListenerFunction')->with($event);
 		$manager->dispatch($event);
 	}
 
