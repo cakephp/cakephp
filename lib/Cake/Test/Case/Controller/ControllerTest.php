@@ -768,7 +768,7 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * test that beforeRedirect callback returnning null doesn't affect things.
+ * test that beforeRedirect callback returning null doesn't affect things.
  *
  * @return void
  */
@@ -790,7 +790,7 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * test that beforeRedirect callback returnning null doesn't affect things.
+ * test that beforeRedirect callback returning null doesn't affect things.
  *
  * @return void
  */
@@ -823,7 +823,7 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * test that beforeRedirect callback returnning false in controller
+ * test that beforeRedirect callback returning false in controller
  *
  * @return void
  */
@@ -833,6 +833,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('beforeRedirect')
+			->with('http://cakephp.org')
 			->will($this->returnValue(false));
 		$Controller->response->expects($this->never())->method('header');
 		$Controller->expects($this->never())->method('_stop');

@@ -99,8 +99,9 @@ abstract class ObjectCollection {
 			$event = $callback;
 			if (is_array($event->data)) {
 				$params =& $event->data;
-			} else {
-				$params = array($event->subject());
+			}
+			if (empty($event->omitSubject)) {
+				$subject = $event->subject();
 			}
 			//TODO: Temporary BC check, while we move all the triggers system into the CakeEventManager
 			foreach (array('breakOn', 'collectReturn', 'modParams') as $opt) {
@@ -125,7 +126,7 @@ abstract class ObjectCollection {
 			throw new CakeException(__d('cake_dev', 'Cannot use modParams with indexes that do not exist.'));
 		}
 		foreach ($list as $name) {
-			$result = call_user_func_array(array($this->_loaded[$name], $callback), $params);
+			$result = call_user_func_array(array($this->_loaded[$name], $callback), compact('subject') + $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}
