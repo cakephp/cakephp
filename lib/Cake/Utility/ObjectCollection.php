@@ -103,8 +103,10 @@ abstract class ObjectCollection {
 				$params = array($event->subject());
 			}
 			//TODO: Temporary BC check, while we move all the triggers system into the CakeEventManager
-			if (isset($event->modParams)) {
-				$options['modParams'] = $event->modParams;
+			foreach (array('breakOn', 'collectReturn', 'modParams') as $opt) {
+				if (isset($event->{$opt})) {
+					$options[$opt] = $event->{$opt};
+				}
 			}
 			$callback = array_pop(explode('.', $event->name()));
 		}

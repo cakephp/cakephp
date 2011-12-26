@@ -589,8 +589,9 @@ class Controller extends Object implements CakeEventListener {
  */
 	public function implementedEvents() {
 		return array(
-			'Controller.startup' => 'beforeFilter',
+			'Controller.initialize' => 'beforeFilter',
 			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
 			'Controller.shutdown' => 'afterFilter'
 		);
 	}
@@ -625,8 +626,8 @@ class Controller extends Object implements CakeEventListener {
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
 			$this->_eventManager = new CakeEventManager();
-			$this->_eventManager->attach($this);
 			$this->_eventManager->attach($this->Components);
+			$this->_eventManager->attach($this);
 		}
 		return $this->_eventManager;
 	}
@@ -730,21 +731,16 @@ class Controller extends Object implements CakeEventListener {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$response = $this->Components->trigger(
-			'beforeRedirect',
-			array(&$this, $url, $status, $exit),
-			array('break' => true, 'breakOn' => false, 'collectReturn' => true)
-		);
+		$event = new CakeEvent('Controller.beforeRedirect', $this, array($url, $status, $exit));
+		//TODO: Remove the following two lines when the events are fully migrated to the CakeEventManager
+		$event->breakOn = false;
+		$event->collectReturn = true;
+		$this->getEventManager()->dispatch($event);
 
-		if ($response === false) {
+		if ($event->isStopped()) {
 			return;
 		}
-		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
-
-		$response = $this->beforeRedirect($url, $status, $exit);
-		if ($response === false) {
-			return;
-		}
+		$response = $event->result;
 		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
 		if (function_exists('session_write_close')) {
@@ -1094,11 +1090,13 @@ class Controller extends Object implements CakeEventListener {
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
- * @return boolean
+ * @return mixed
+ *   false to stop redirection event,
+ *   string controllers a new redirection url or
+ *   array with the keys url, status and exit to be used by the redirect method.
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect($url, $status = null, $exit = true) {
-		return true;
 	}
 
 /**

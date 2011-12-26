@@ -712,7 +712,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
 
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with($code);
@@ -733,7 +733,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
 
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with($code);
@@ -753,7 +753,7 @@ class ControllerTest extends CakeTestCase {
 	public function testRedirectTriggeringComponentsReturnNull() {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(null));
@@ -775,7 +775,7 @@ class ControllerTest extends CakeTestCase {
 	public function testRedirectBeforeRedirectModifyingParams() {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(array('http://book.cakephp.org')));
@@ -797,7 +797,7 @@ class ControllerTest extends CakeTestCase {
 	public function testRedirectBeforeRedirectModifyingParamsArrayReturn() {
 		$Controller = $this->getMock('Controller', array('header', '_stop'));
 		$Controller->response = $this->getMock('CakeResponse');
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$return = array(
 			array(
@@ -812,7 +812,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue($return));
 
-		$Controller->response->expects($this->at(0))->method('header')
+		$Controller->response->expects($this->once())->method('header')
 			->with('Location', 'http://example.com/test/2');
 
 		$Controller->response->expects($this->at(1))->method('statusCode')
@@ -830,7 +830,7 @@ class ControllerTest extends CakeTestCase {
 	public function testRedirectBeforeRedirectInController() {
 		$Controller = $this->getMock('Controller', array('_stop', 'beforeRedirect'));
 		$Controller->response = $this->getMock('CakeResponse', array('header'));
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('beforeRedirect')
 			->will($this->returnValue(false));

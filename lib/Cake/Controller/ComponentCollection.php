@@ -121,7 +121,7 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 			'Controller.startup' => array('callable' => 'trigger'),
 			'Controller.beforeRender' => array('callable' => 'trigger'),
 			'Controller.beforeRedirect' => array('callable' => 'trigger'),
-			'Controller.shutdown' => array('callable' => 'trigger', 'priority' => 9),
+			'Controller.shutdown' => array('callable' => 'trigger'),
 		);
 	}
 }
