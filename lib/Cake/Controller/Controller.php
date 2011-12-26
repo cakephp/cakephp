@@ -732,9 +732,8 @@ class Controller extends Object implements CakeEventListener {
 			extract($status, EXTR_OVERWRITE);
 		}
 		$event = new CakeEvent('Controller.beforeRedirect', $this, array($url, $status, $exit));
-		//TODO: Remove the following two lines when the events are fully migrated to the CakeEventManager
-		$event->breakOn = false;
-		$event->collectReturn = true;
+		//TODO: Remove the following line when the events are fully migrated to the CakeEventManager
+		list($event->break, $event->breakOn, $event->collectReturn) = array(true, false, true);
 		$this->getEventManager()->dispatch($event);
 
 		if ($event->isStopped()) {

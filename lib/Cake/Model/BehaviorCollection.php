@@ -20,6 +20,7 @@
  */
 
 App::uses('ObjectCollection', 'Utility');
+App::uses('CakeEventListener', 'Event');
 
 /**
  * Model behavior collection class.
@@ -28,7 +29,7 @@ App::uses('ObjectCollection', 'Utility');
  *
  * @package       Cake.Model
  */
-class BehaviorCollection extends ObjectCollection {
+class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * Stores a reference to the attached name
@@ -271,4 +272,21 @@ class BehaviorCollection extends ObjectCollection {
 		return false;
 	}
 
+/**
+ * Returns the implemented events that will get routed to the trigger function
+ * in order to dispatch them separately on each behavior
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'Model.beforeFind' => 'trigger',
+			'Model.afterFind' => 'trigger',
+			'Model.beforeValidate' => 'trigger',
+			'Model.beforeSave' => 'trigger',
+			'Model.afterSave' => 'trigger',
+			'Model.beforeDelete' => 'trigger',
+			'Model.afterDelete' => 'trigger'
+		);
+	}
 }
