@@ -1149,7 +1149,17 @@ class Model extends Object {
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$date = array();
 
-			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
+			if (isset($data['meridian']) && empty($data['meridian'])) {
+				return null;
+			}
+
+			if (
+				isset($data['hour']) &&
+				isset($data['meridian']) &&
+				!empty($data['hour']) &&
+				$data['hour'] != 12 &&
+				'pm' == $data['meridian']
+			) {
 				$data['hour'] = $data['hour'] + 12;
 			}
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
