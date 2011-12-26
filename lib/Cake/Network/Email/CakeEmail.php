@@ -835,10 +835,37 @@ class CakeEmail {
 	}
 
 /**
- * Attachments
+ * Add attachments to the email message
+ *
+ * Attachments can be defined in a few forms depending on how much control you need:
+ *
+ * Attach a single file:
+ *
+ * {{{
+ * $email->attachments('path/to/file');
+ * }}}
+ *
+ * Attach a file with a different filename:
+ *
+ * {{{
+ * $email->attachments(array('custom_name.txt' => 'path/to/file.txt'));
+ * }}}
+ *
+ * Attach a file and specify additional properties:
+ *
+ * {{{
+ * $email->attachments(array('custom_name.png' => array(
+ *		'file' => 'path/to/file',
+ *		'mimetype' => 'image/png',
+ *		'contentId' => 'abc123'
+ * ));
+ * }}}
+ *
+ * The `contentId` key allows you to specify an inline attachment. In your email text, you
+ * can use `<img src="cid:abc123" />` to display the image inline.
  *
  * @param mixed $attachments String with the filename or array with filenames
- * @return mixed
+ * @return mixed Either the array of attachments when getting or $this when setting.
  * @throws SocketException
  */
 	public function attachments($attachments = null) {
