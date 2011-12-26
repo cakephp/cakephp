@@ -1169,9 +1169,7 @@ class Model extends Object {
 				foreach ($timeFields as $key => $val) {
 					if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 						$data[$val] = '00';
-					} elseif ($data[$val] === '') {
-						$data[$val] = '';
-					} else {
+					} elseif ($data[$val] !== '') {
 						$data[$val] = sprintf('%02d', $data[$val]);
 					}
 					if (!empty($data[$val])) {
