@@ -240,9 +240,15 @@ class CakeEventManager {
 				break;
 			}
 			if ($listener['passParams'] === true) {
-				call_user_func_array($listener['callable'], $event->data);
+				$result = call_user_func_array($listener['callable'], $event->data);
 			} else {
-				call_user_func($listener['callable'], $event);
+				$result = call_user_func($listener['callable'], $event);
+			}
+			if ($result === false) {
+				$event->stopPropagation();
+			}
+			if ($result !== null) {
+				$event->result = $result;
 			}
 			continue;
 		}

@@ -117,10 +117,8 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
  */
 	public function implementedEvents() {
 		return array(
-			'Controller.startup' => array(
-				array('callable' => 'trigger', 'priority' => 9),
-				array('callable' => 'trigger')
-			),
+			'Controller.initialize' => array('callable' => 'trigger'),
+			'Controller.startup' => array('callable' => 'trigger'),
 			'Controller.beforeRender' => array('callable' => 'trigger'),
 			'Controller.beforeRedirect' => array('callable' => 'trigger'),
 			'Controller.shutdown' => array('callable' => 'trigger', 'priority' => 9),

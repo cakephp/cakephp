@@ -1114,7 +1114,15 @@ class ControllerTest extends CakeTestCase {
 		$Controller = $this->getMock('Controller', array('getEventManager'));
 
 		$eventManager = $this->getMock('CakeEventManager');
-		$eventManager->expects($this->once())->method('dispatch')
+		$eventManager->expects($this->at(0))->method('dispatch')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'Controller.initialize'),
+					$this->attributeEqualTo('_subject', $Controller)
+				)
+			);
+		$eventManager->expects($this->at(1))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('CakeEvent'),
@@ -1122,7 +1130,7 @@ class ControllerTest extends CakeTestCase {
 					$this->attributeEqualTo('_subject', $Controller)
 				)
 			);
-		$Controller->expects($this->once())->method('getEventManager')
+		$Controller->expects($this->exactly(2))->method('getEventManager')
 			->will($this->returnValue($eventManager));
 		$Controller->startupProcess();
 	}

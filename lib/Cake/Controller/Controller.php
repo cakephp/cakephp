@@ -591,7 +591,6 @@ class Controller extends Object implements CakeEventListener {
 		return array(
 			'Controller.startup' => 'beforeFilter',
 			'Controller.beforeRender' => 'beforeRender',
-			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
 			'Controller.shutdown' => 'afterFilter'
 		);
 	}
@@ -643,6 +642,7 @@ class Controller extends Object implements CakeEventListener {
  * @return void
  */
 	public function startupProcess() {
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.initialize', $this));
 		$this->getEventManager()->dispatch(new CakeEvent('Controller.startup', $this));
 	}
 

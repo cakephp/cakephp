@@ -211,6 +211,51 @@ class CakeEventManagerTest extends CakeTestCase {
 	}
 
 /**
+ * Tests event dispatching with a return value
+ *
+ * @return void
+ */
+	public function testDispatchReturnValue() {
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CakeEventTestListener');
+		$anotherListener = $this->getMock('CakeEventTestListener');
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($anotherListener, 'listenerFunction'), 'fake.event');
+		$event = new CakeEvent('fake.event');
+
+		$firstStep = clone $event;
+		$listener->expects($this->at(0))->method('listenerFunction')
+			->with($firstStep)
+			->will($this->returnValue('something special'));
+		$anotherListener->expects($this->at(0))->method('listenerFunction')->with($event);
+		$manager->dispatch($event);
+		$this->assertEquals('something special', $event->result);
+	}
+
+/**
+ * Tests that returning false in a callback stops the event
+ *
+ * @return void
+ */
+	public function testDispatchFalseStopsEvent() {
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CakeEventTestListener');
+		$anotherListener = $this->getMock('CakeEventTestListener');
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($anotherListener, 'listenerFunction'), 'fake.event');
+		$event = new CakeEvent('fake.event');
+
+		$originalEvent = clone $event;
+		$listener->expects($this->at(0))->method('listenerFunction')
+			->with($originalEvent)
+			->will($this->returnValue(false));
+		$anotherListener->expects($this->never())->method('listenerFunction');
+		$manager->dispatch($event);
+		$this->assertTrue($event->isStopped());
+	}
+
+
+/**
  * Tests event dispatching using priorities
  *
  * @return void

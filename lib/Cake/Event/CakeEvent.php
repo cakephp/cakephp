@@ -46,6 +46,12 @@ class CakeEvent {
  */
 	public $data = null;
 
+/**
+ * Property used to retain the result value of the event listeners
+ *
+ * @var mixed $result
+ */
+	public $result = null;
 
 /**
  * Flags an event as stopped or not, default is false
