@@ -2614,7 +2614,7 @@ class Model extends Object implements CakeEventListener {
 			if ($event->isStopped()) {
 				return null;
 			}
-			$query = $event->data[0];
+			$query = $event->result === true ? $event->data[0] : $event->result;
 		}
 
 		return $query;
