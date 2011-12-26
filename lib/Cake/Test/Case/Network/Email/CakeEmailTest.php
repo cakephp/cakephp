@@ -789,9 +789,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->template('default', 'default');
 		$result = $this->CakeEmail->send();
 
-		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the CakePHP Framework'));
-		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
-		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+		$this->assertContains('This email was sent using the CakePHP Framework', $result['message']);
+		$this->assertContains('Message-ID: ', $result['headers']);
+		$this->assertContains('To: ', $result['headers']);
 	}
 
 /**
@@ -814,9 +814,9 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->send();
 
 		$expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 http://cakephp.org.','ISO-2022-JP');
-		$this->assertTrue((bool)strpos($result['message'], $expected));
-		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
-		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+		$this->assertContains($expected, $result['message']);
+		$this->assertContains('Message-ID: ', $result['headers']);
+		$this->assertContains('To: ', $result['headers']);
 	}
 
 /**
@@ -836,7 +836,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$result = $this->CakeEmail->send();
 
-		$this->assertTrue((bool)strpos($result['message'], 'Here is your value: 12345'));
+		$this->assertContains('Here is your value: 12345', $result['message']);
 	}
 
 /**
@@ -908,21 +908,21 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array('empty'));
 
 		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'default')->send();
-		$this->assertTrue((bool)strpos($result['message'], 'Into TestPlugin.'));
-		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the CakePHP Framework'));
+		$this->assertContains('Into TestPlugin.', $result['message']);
+		$this->assertContains('This email was sent using the CakePHP Framework', $result['message']);
 
 		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'TestPlugin.plug_default')->send();
-		$this->assertTrue((bool)strpos($result['message'], 'Into TestPlugin.'));
-		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
+		$this->assertContains('Into TestPlugin.', $result['message']);
+		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
 		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
-		$this->assertTrue((bool)strpos($result['message'], 'Into TestPlugin.'));
-		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
+		$this->assertContains('Into TestPlugin.', $result['message']);
+		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$result = $this->CakeEmail->template('custom', 'TestPlugin.plug_default')->send();
-		$this->assertTrue((bool)strpos($result['message'], 'Here is your value: 12345'));
-		$this->assertTrue((bool)strpos($result['message'], 'This email was sent using the TestPlugin.'));
+		$this->assertContains('Here is your value: 12345', $result['message']);
+		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
 		$this->setExpectedException('MissingViewException');
 		$this->CakeEmail->template('test_plugin_tpl', 'plug_default')->send();
@@ -949,10 +949,10 @@ class CakeEmailTest extends CakeTestCase {
 		$message = $this->CakeEmail->message();
 		$boundary = $this->CakeEmail->getBoundary();
 		$this->assertFalse(empty($boundary));
-		$this->assertFalse(in_array('--' . $boundary, $message));
-		$this->assertFalse(in_array('--' . $boundary . '--', $message));
-		$this->assertTrue(in_array('--alt-' . $boundary, $message));
-		$this->assertTrue(in_array('--alt-' . $boundary . '--', $message));
+		$this->assertNotContains('--' . $boundary, $message);
+		$this->assertNotContains('--' . $boundary . '--', $message);
+		$this->assertContains('--alt-' . $boundary, $message);
+		$this->assertContains('--alt-' . $boundary . '--', $message);
 
 		$this->CakeEmail->attachments(array('fake.php' => __FILE__));
 		$this->CakeEmail->send();
@@ -960,10 +960,10 @@ class CakeEmailTest extends CakeTestCase {
 		$message = $this->CakeEmail->message();
 		$boundary = $this->CakeEmail->getBoundary();
 		$this->assertFalse(empty($boundary));
-		$this->assertTrue(in_array('--' . $boundary, $message));
-		$this->assertTrue(in_array('--' . $boundary . '--', $message));
-		$this->assertTrue(in_array('--alt-' . $boundary, $message));
-		$this->assertTrue(in_array('--alt-' . $boundary . '--', $message));
+		$this->assertContains('--' . $boundary, $message);
+		$this->assertContains('--' . $boundary . '--', $message);
+		$this->assertContains('--alt-' . $boundary, $message);
+		$this->assertContains('--alt-' . $boundary . '--', $message);
 	}
 
 /**
@@ -1047,14 +1047,14 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->send();
 
 		$expected = '<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>';
-		$this->assertTrue((bool)strpos($this->CakeEmail->message(CakeEmail::MESSAGE_HTML), $expected));
+		$this->assertContains($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_HTML));
 
 		$expected = 'This email was sent using the CakePHP Framework, http://cakephp.org.';
-		$this->assertTrue((bool)strpos($this->CakeEmail->message(CakeEmail::MESSAGE_TEXT), $expected));
+		$this->assertContains($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_TEXT));
 
 		$message = $this->CakeEmail->message();
-		$this->assertTrue(in_array('Content-Type: text/plain; charset=UTF-8', $message));
-		$this->assertTrue(in_array('Content-Type: text/html; charset=UTF-8', $message));
+		$this->assertContains('Content-Type: text/plain; charset=UTF-8', $message);
+		$this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
 
 		// UTF-8 is 8bit
 		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
@@ -1063,8 +1063,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$this->CakeEmail->send();
 		$message = $this->CakeEmail->message();
-		$this->assertTrue(in_array('Content-Type: text/plain; charset=ISO-2022-JP', $message));
-		$this->assertTrue(in_array('Content-Type: text/html; charset=ISO-2022-JP',  $message));
+		$this->assertContains('Content-Type: text/plain; charset=ISO-2022-JP', $message);
+		$this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
 
 		// ISO-2022-JP is 7bit
 		$this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
