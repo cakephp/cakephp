@@ -963,38 +963,9 @@ class CakeEmail {
 		}
 
 		$this->_textMessage = $this->_htmlMessage = '';
-		if ($content !== null) {
-			if ($this->_emailFormat === 'text') {
-				$this->_textMessage = $content;
-			} elseif ($this->_emailFormat === 'html') {
-				$this->_htmlMessage = $content;
-			} elseif ($this->_emailFormat === 'both') {
-				$this->_textMessage = $this->_htmlMessage = $content;
-			}
-		}
-
 		$this->_createBoundary();
+		$this->_message = $this->_render($this->_wrap($content));
 
-		$message = $this->_wrap($content);
-		// two methods doing similar things seems silly.
-		// both handle attachments.
-		if (empty($this->_template)) {
-			$message = $this->_formatMessage($message);
-		} else {
-			$message = $this->_render($message);
-		}
-		$message[] = '';
-		$this->_message = $message;
-
-		// should be part of a compose method.
-		if (!empty($this->_attachments)) {
-			$this->_attachFiles();
-
-			$this->_message[] = '';
-			$this->_message[] = '--' . $this->_boundary . '--';
-			$this->_message[] = '';
-		}
-	
 		$contents = $this->transportClass()->send($this);
 		if (!empty($this->_config['log'])) {
 			$level = LOG_DEBUG;
@@ -1269,142 +1240,179 @@ class CakeEmail {
 	}
 
 /**
- * Attach files by adding file contents inside boundaries.
+ * Attach non-embedded files by adding file contents inside boundaries.
  *
- * @return void
+ * @return array An array of lines to add to the message
  */
 	protected function _attachFiles() {
+		$msg = array();
 		foreach ($this->_attachments as $filename => $fileInfo) {
-			$handle = fopen($fileInfo['file'], 'rb');
-			$data = fread($handle, filesize($fileInfo['file']));
-			$data = chunk_split(base64_encode($data)) ;
-			fclose($handle);
-
-			$this->_message[] = '--' . $this->_boundary;
-			$this->_message[] = 'Content-Type: ' . $fileInfo['mimetype'];
-			$this->_message[] = 'Content-Transfer-Encoding: base64';
-			if (empty($fileInfo['contentId'])) {
-				$this->_message[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
-			} else {
-				$this->_message[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
-				$this->_message[] = 'Content-Disposition: inline; filename="' . $filename . '"';
+			if (!empty($fileInfo['contentId'])) {
+				continue;
 			}
-			$this->_message[] = '';
-			$this->_message[] = $data;
-			$this->_message[] = '';
+			$data = $this->_readFile($fileInfo['file']);
+
+			$msg[] = '--' . $this->_boundary;
+			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
+			$msg[] = 'Content-Transfer-Encoding: base64';
+			$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			$msg[] = '';
+			$msg[] = $data;
+			$msg[] = '';
 		}
+		return $msg;
 	}
 
 /**
- * Format the message by seeing if it has attachments.
+ * Read the file contents and return a base64 version of the file contents.
  *
- * @param array $message Message to format
- * @return array
+ * @param string $file The file to read.
+ * @return string File contents in base64 encoding
  */
-	protected function _formatMessage($message) {
-		if (!empty($this->_attachments)) {
-			$prefix = array('--' . $this->_boundary);
-			if ($this->_emailFormat === 'text') {
-				$prefix[] = 'Content-Type: text/plain; charset=' . $this->charset;
-			} elseif ($this->_emailFormat === 'html') {
-				$prefix[] = 'Content-Type: text/html; charset=' . $this->charset;
-			} elseif ($this->_emailFormat === 'both') {
-				$prefix[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
-			}
-			$prefix[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
-			$prefix[] = '';
-			$message = array_merge($prefix, $message);
-		}
-
-		$tmp = array();
-		foreach ($message as $msg) {
-			$tmp[] = $this->_encodeString($msg, $this->charset);
-		}
-		$message = $tmp;
-
-		return $message;
+	protected function _readFile($file) {
+		$handle = fopen($file, 'rb');
+		$data = fread($handle, filesize($file));
+		$data = chunk_split(base64_encode($data)) ;
+		fclose($handle);
+		return $data;
 	}
 
 /**
- * Render the contents using the current layout and template.
+ * Attach inline/embedded files to the message.
+ *
+ * @return array An array of lines to add to the message
+ */
+	protected function _attachInlineFiles() {
+		$msg = array();
+		foreach ($this->_attachments as $filename => $fileInfo) {
+			if (empty($fileInfo['contentId'])) {
+				continue;
+			}
+			$data = $this->_readFile($fileInfo['file']);
+
+			$msg[] = '--' . $this->_boundary;
+			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
+			$msg[] = 'Content-Transfer-Encoding: base64';
+			$msg[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
+			$msg[] = 'Content-Disposition: inline; filename="' . $filename . '"';
+			$msg[] = '';
+			$msg[] = $data;
+			$msg[] = '';
+		}
+		return $msg;
+	}
+
+/**
+ * Render the body of the email.
  *
  * @param string $content Content to render
- * @return array Email ready to be sent
+ * @return array Email body ready to be sent
  */
 	protected function _render($content) {
 		$content = implode("\n", $content);
 		$rendered = $this->_renderTemplates($content);
 
 		$msg = array();
-		if ($this->_emailFormat === 'both') {
-			if (!empty($this->_attachments)) {
-				$msg[] = '--' . $this->_boundary;
-				$msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
-				$msg[] = '';
-			}
-			$msg[] = '--alt-' . $this->_boundary;
-			$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
-			$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
-			$msg[] = '';
 
-			$this->_textMessage = $rendered['text'];
-			$content = explode("\n", $this->_textMessage);
-			$msg = array_merge($msg, $content);
+		$contentIds = array_filter((array)Set::classicExtract($this->_attachments, '{s}.contentId'));
+		$hasInlineAttachments = count($contentIds) > 0;
+		$hasAttachments = !empty($this->_attachments);
+		$hasMultipleTypes = count($rendered) > 1;
 
-			$msg[] = '';
-			$msg[] = '--alt-' . $this->_boundary;
-			$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
-			$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
-			$msg[] = '';
+		$boundary = $relBoundary = $textBoundary = $this->_boundary;
 
-			$this->_htmlMessage = $rendered['html'];
-			$content = explode("\n", $this->_htmlMessage);
-			$msg = array_merge($msg, $content);
-
+		if ($hasInlineAttachments) {
+			$msg[] = '--' . $boundary;
+			$msg[] = 'Content-Type: multipart/related; boundary="rel-' . $boundary . '"';
 			$msg[] = '';
-			$msg[] = '--alt-' . $this->_boundary . '--';
-			$msg[] = '';
-
-			return $msg;
+			$relBoundary = 'rel-' . $boundary;
 		}
 
-		if (!empty($this->_attachments)) {
-			if ($this->_emailFormat === 'html') {
-				$msg[] = '';
-				$msg[] = '--' . $this->_boundary;
-				$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
-				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
-				$msg[] = '';
-			} else {
-				$msg[] = '--' . $this->_boundary;
+		if ($hasMultipleTypes) {
+			$msg[] = '--' . $relBoundary;
+			$msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $boundary . '"';
+			$msg[] = '';
+			$textBoundary = 'alt-' . $boundary;
+		}
+
+		if (isset($rendered['text'])) {
+			if ($textBoundary !== $boundary || $hasAttachments) {
+				$msg[] = '--' . $textBoundary;
 				$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
 				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 				$msg[] = '';
 			}
+			$this->_textMessage = $rendered['text'];
+			$content = explode("\n", $this->_textMessage);
+			$msg = array_merge($msg, $content);
+			$msg[] = '';
+		}
+	
+		if (isset($rendered['html'])) {
+			if ($textBoundary !== $boundary || $hasAttachments) {
+				$msg[] = '--' . $textBoundary;
+				$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
+				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
+				$msg[] = '';
+			}
+			$this->_htmlMessage = $rendered['html'];
+			$content = explode("\n", $this->_htmlMessage);
+			$msg = array_merge($msg, $content);
+			$msg[] = '';
 		}
 
-		$rendered = $this->_encodeString($rendered[$this->_emailFormat], $this->charset);
-		$content = explode("\n", $rendered);
-
-		if ($this->_emailFormat === 'html') {
-			$this->_htmlMessage = $rendered;
-		} else {
-			$this->_textMessage = $rendered;
+		if ($hasMultipleTypes) {
+			$msg[] = '--' . $textBoundary . '--';
+			$msg[] = '';
 		}
 
-		return array_merge($msg, $content);
+		if ($hasInlineAttachments) {
+			$attachments = $this->_attachInlineFiles();
+			$msg = array_merge($msg, $attachments);
+			$msg[] = '';
+			$msg[] = '--' . $relBoundary . '--';
+			$msg[] = '';
+		}
+
+		if ($hasAttachments) {
+			$attachments = $this->_attachFiles();
+			$msg = array_merge($msg, $attachments);
+			$msg[] = '';
+			$msg[] = '--' . $boundary . '--';
+			$msg[] = '';
+		}
+		return $msg;
+	}
+
+/**
+ * Gets the text body types that are in this email message
+ *
+ * @return array Array of types.  Valid types are 'text' and 'html'
+ */
+	protected function _getTypes() {
+		$types = array($this->_emailFormat);
+		if ($this->_emailFormat == 'both') {
+			$types = array('html', 'text');
+		}
+		return $types;
 	}
 
 /**
  * Build and set all the view properties needed to render the templated emails.
- * Returns false if the email is not templated.
+ * If there is no template set, the $content will be returned in a hash
+ * of the text content types for the email.
  *
  * @param string $content The content passed in from send() in most cases.
  * @return array The rendered content with html and text keys.
  */
-	public function _renderTemplates($content) {
+	protected function _renderTemplates($content) {
+		$types = $this->_getTypes();
+		$rendered = array();
 		if (empty($this->_template)) {
-			return false;
+			foreach ($types as $type) {
+				$rendered[$type] = $this->_encodeString($content, $this->charset);
+			}
+			return $rendered;
 		}
 		$viewClass = $this->_viewRender;
 		if ($viewClass !== 'View') {
@@ -1425,12 +1433,6 @@ class CakeEmail {
 			$View->plugin = $layoutPlugin;
 		}
 
-		$types = array($this->_emailFormat);
-		if ($this->_emailFormat == 'both') {
-			$types = array('html', 'text');
-		}
-
-		$rendered = array();
 		foreach ($types as $type) {
 			$View->set('content', $content);
 			$View->hasRendered = false;
@@ -1438,7 +1440,7 @@ class CakeEmail {
 	
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);
-			$rendered[$type] = $render;
+			$rendered[$type] = $this->_encodeString($render, $this->charset);
 		}
 		return $rendered;
 	}

@@ -794,11 +794,24 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
 		$expected = "--$boundary\r\n" .
 			"Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+			"\r\n" .
+			"--alt-$boundary\r\n" .
+			"Content-Type: text/plain; charset=UTF-8\r\n" .
 			"Content-Transfer-Encoding: 8bit\r\n" .
 			"\r\n" .
 			"Hello" .
 			"\r\n" .
 			"\r\n" .
+			"\r\n" .
+			"--alt-$boundary\r\n" .
+			"Content-Type: text/html; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"Hello" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
 			"--$boundary\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
@@ -875,7 +888,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$result = $this->CakeEmail->send();
 
-		$expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 http://cakephp.org.','ISO-2022-JP');
+		$expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 http://cakephp.org.', 'ISO-2022-JP');
 		$this->assertContains($expected, $result['message']);
 		$this->assertContains('Message-ID: ', $result['headers']);
 		$this->assertContains('To: ', $result['headers']);
@@ -1011,7 +1024,7 @@ class CakeEmailTest extends CakeTestCase {
 		$message = $this->CakeEmail->message();
 		$boundary = $this->CakeEmail->getBoundary();
 		$this->assertFalse(empty($boundary));
-		$this->assertNotContains('--' . $boundary, $message);
+		$this->assertContains('--' . $boundary, $message);
 		$this->assertNotContains('--' . $boundary . '--', $message);
 		$this->assertContains('--alt-' . $boundary, $message);
 		$this->assertContains('--alt-' . $boundary . '--', $message);
@@ -1120,7 +1133,6 @@ class CakeEmailTest extends CakeTestCase {
 
 		// UTF-8 is 8bit
 		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
-
 
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$this->CakeEmail->send();
