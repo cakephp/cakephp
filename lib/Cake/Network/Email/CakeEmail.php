@@ -976,6 +976,8 @@ class CakeEmail {
 		$this->_createBoundary();
 
 		$message = $this->_wrap($content);
+		// two methods doing similar things seems silly.
+		// both handle attachments.
 		if (empty($this->_template)) {
 			$message = $this->_formatMessage($message);
 		} else {
@@ -984,6 +986,7 @@ class CakeEmail {
 		$message[] = '';
 		$this->_message = $message;
 
+		// should be part of a compose method.
 		if (!empty($this->_attachments)) {
 			$this->_attachFiles();
 
@@ -991,6 +994,7 @@ class CakeEmail {
 			$this->_message[] = '--' . $this->_boundary . '--';
 			$this->_message[] = '';
 		}
+	
 		$contents = $this->transportClass()->send($this);
 		if (!empty($this->_config['log'])) {
 			$level = LOG_DEBUG;
@@ -1240,6 +1244,7 @@ class CakeEmail {
 						}
 						$formatted[] = trim(substr($tmpLine, 0, $lastSpace));
 						$tmpLine = substr($tmpLine, $lastSpace + 1);
+
 						$tmpLineLength = strlen($tmpLine);
 					}
 				}
@@ -1327,31 +1332,11 @@ class CakeEmail {
  * @return array Email ready to be sent
  */
 	protected function _render($content) {
-		$viewClass = $this->_viewRender;
-
-		if ($viewClass !== 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass, true);
-			$viewClass .= 'View';
-			App::uses($viewClass, $plugin . 'View');
-		}
-
-		$View = new $viewClass(null);
-		$View->viewVars = $this->_viewVars;
-		$View->helpers = $this->_helpers;
-		$msg = array();
-
-		list($templatePlugin, $template) = pluginSplit($this->_template);
-		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
-		if ($templatePlugin) {
-			$View->plugin = $templatePlugin;
-		} elseif ($layoutPlugin) {
-			$View->plugin = $layoutPlugin;
-		}
-
 		$content = implode("\n", $content);
+		$rendered = $this->_renderTemplates($content);
 
+		$msg = array();
 		if ($this->_emailFormat === 'both') {
-			$originalContent = $content;
 			if (!empty($this->_attachments)) {
 				$msg[] = '--' . $this->_boundary;
 				$msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->_boundary . '"';
@@ -1362,9 +1347,7 @@ class CakeEmail {
 			$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 			$msg[] = '';
 
-			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'text';
-			$View->viewVars['content'] = $originalContent;
-			$this->_textMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($template, $layout));
+			$this->_textMessage = $rendered['text'];
 			$content = explode("\n", $this->_textMessage);
 			$msg = array_merge($msg, $content);
 
@@ -1374,10 +1357,7 @@ class CakeEmail {
 			$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 			$msg[] = '';
 
-			$View->viewPath = $View->layoutPath = 'Emails' . DS . 'html';
-			$View->viewVars['content'] = $originalContent;
-			$View->hasRendered = false;
-			$this->_htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->render($template, $layout));
+			$this->_htmlMessage = $rendered['html'];
 			$content = explode("\n", $this->_htmlMessage);
 			$msg = array_merge($msg, $content);
 
@@ -1403,9 +1383,7 @@ class CakeEmail {
 			}
 		}
 
-		$View->viewPath = $View->layoutPath = 'Emails' . DS . $this->_emailFormat;
-		$View->viewVars['content'] = $content;
-		$rendered = $this->_encodeString($View->render($template, $layout), $this->charset);
+		$rendered = $this->_encodeString($rendered[$this->_emailFormat], $this->charset);
 		$content = explode("\n", $rendered);
 
 		if ($this->_emailFormat === 'html') {
@@ -1415,6 +1393,54 @@ class CakeEmail {
 		}
 
 		return array_merge($msg, $content);
+	}
+
+/**
+ * Build and set all the view properties needed to render the templated emails.
+ * Returns false if the email is not templated.
+ *
+ * @param string $content The content passed in from send() in most cases.
+ * @return array The rendered content with html and text keys.
+ */
+	public function _renderTemplates($content) {
+		if (empty($this->_template)) {
+			return false;
+		}
+		$viewClass = $this->_viewRender;
+		if ($viewClass !== 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass .= 'View';
+			App::uses($viewClass, $plugin . 'View');
+		}
+
+		$View = new $viewClass(null);
+		$View->viewVars = $this->_viewVars;
+		$View->helpers = $this->_helpers;
+
+		list($templatePlugin, $template) = pluginSplit($this->_template);
+		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
+		if ($templatePlugin) {
+			$View->plugin = $templatePlugin;
+		} elseif ($layoutPlugin) {
+			$View->plugin = $layoutPlugin;
+		}
+
+		$types = array($this->_emailFormat);
+		if ($this->_emailFormat == 'both') {
+			$types = array('html', 'text');
+		}
+
+		$rendered = array();
+		foreach ($types as $type) {
+			$View->set('content', $content);
+			$View->hasRendered = false;
+			$View->viewPath = $View->layoutPath = 'Emails' . DS . $type;
+	
+			$render = $View->render($template, $layout);
+			$render = str_replace(array("\r\n", "\r"), "\n", $render);
+			$rendered[$type] = $render;
+		}
+		return $rendered;
 	}
 
 /**
