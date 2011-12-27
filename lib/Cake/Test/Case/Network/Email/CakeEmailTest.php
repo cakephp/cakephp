@@ -821,6 +821,61 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * Test setting inline attachments and messages.
+ *
+ * @return void
+ */
+	public function testSendWithInlineAttachments() {
+		$this->CakeEmail->transport('debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->emailFormat('both');
+		$this->CakeEmail->attachments(array(
+			'cake.png' => array(
+				'file' => CAKE . 'VERSION.txt',
+				'contentId' => 'abc123'
+			)
+		));
+		$result = $this->CakeEmail->send('Hello');
+
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+		$expected = "--$boundary\r\n" .
+			"Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+			"\r\n" .
+			"--rel-$boundary\r\n" .
+			"Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+			"\r\n" .
+			"--alt-$boundary\r\n" .
+			"Content-Type: text/plain; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"Hello" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--alt-$boundary\r\n" .
+			"Content-Type: text/html; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"Hello" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--alt-{$boundary}--\r\n" .
+			"\r\n" .
+			"--$boundary\r\n" .
+			"Content-Type: application/octet-stream\r\n" .
+			"Content-Transfer-Encoding: base64\r\n" .
+			"Content-ID: <abc123>\r\n" .
+			"Content-Disposition: inline; filename=\"cake.png\"\r\n\r\n";
+		$this->assertContains($expected, $result['message']);
+		$this->assertContains('--rel-' . $boundary . '--', $result['message']);
+		$this->assertContains('--' . $boundary . '--', $result['message']);
+}
+
+/**
  * testSendWithLog method
  *
  * @return void
