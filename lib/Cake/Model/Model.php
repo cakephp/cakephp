@@ -736,7 +736,7 @@ class Model extends Object implements CakeEventListener {
 			'Model.beforeValidate' => array('callable' => 'beforeValidate', 'passParams' => true),
 			'Model.beforeSave' => array('callable' => 'beforeSave', 'passParams' => true),
 			'Model.afterSave' => array('callable' => 'afterSave', 'passParams' => true),
-			'Model.beforeDelete' => array('callable' => 'beforeDelete', 'passParams' => true, 'priority' => 9),
+			'Model.beforeDelete' => array('callable' => 'beforeDelete', 'passParams' => true),
 			'Model.afterDelete' => array('callable' => 'afterDelete'),
 		);
 	}
