@@ -982,7 +982,7 @@ class Multibyte {
 			$parts = array();
 			$maxchars = floor(($length * 3) / 4);
 			while (strlen($string) > $maxchars) {
-				$i = $maxchars;
+				$i = (int)$maxchars;
 				$test = ord($string[$i]);
 				while ($test >= 128 && $test <= 191) {
 					$i--;
