@@ -225,6 +225,12 @@ class BehaviorCollection extends Object {
 	var $modelName = null;
 
 /**
+ * Contains model instance (defined in construct)
+ * @var Model
+ */
+	var $__modelInstance;
+
+/**
  * Lists the currently-attached behavior objects
  *
  * @var array
@@ -253,6 +259,14 @@ class BehaviorCollection extends Object {
  * @var array
  */
 	var $__mappedMethods = array();
+
+/**
+ * ModelBehavior constructor
+ * @param Model $model
+ */
+	function __construct($model){
+		$this->__modelInstance = $model;
+	}
 
 /**
  * Attaches a model object and loads a list of behaviors
@@ -329,7 +343,7 @@ class BehaviorCollection extends Object {
 		if (empty($config)) {
 			$config = array();
 		}
-		$this->{$name}->setup(ClassRegistry::getObject($this->modelName), $config);
+		$this->{$name}->setup($this->__modelInstance, $config);
 
 		foreach ($this->{$name}->mapMethods as $method => $alias) {
 			$this->__mappedMethods[$method] = array($alias, $name);
