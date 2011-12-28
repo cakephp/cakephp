@@ -704,6 +704,9 @@ class Set {
 				}
 				$_list =& $_list[$key];
 			}
+			if (!is_array($_list)) {
+				return array();
+			}
 		}
 		return $list;
 	}

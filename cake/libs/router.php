@@ -948,7 +948,14 @@ class Router {
 
 		if (!empty($named)) {
 			foreach ($named as $name => $value) {
-				$output .= '/' . $name . $this->named['separator'] . $value;
+				if (is_array($value)) {
+					$flattend = Set::flatten($value, '][');
+					foreach ($flattend as $namedKey => $namedValue) {
+						$output .= '/' . $name . "[$namedKey]" . $this->named['separator'] . $namedValue;
+					}
+				} else {
+					$output .= '/' . $name . $this->named['separator'] . $value;
+				}
 			}
 		}
 		return $output;

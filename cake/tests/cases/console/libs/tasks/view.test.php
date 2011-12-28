@@ -260,6 +260,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 		$this->Task->Controller =& new ViewTaskMockControllerTask();
 		$this->Task->Project =& new ViewTaskMockProjectTask();
+		$this->Task->DbConfig =& new ViewTaskMockProjectTask();
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
 		
