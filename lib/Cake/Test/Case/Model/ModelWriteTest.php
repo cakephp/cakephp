@@ -2770,7 +2770,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(count($result['Tag']), 2);
 		$this->assertEquals($result['Tag'][0]['tag'], 'tag1');
 		$this->assertEquals(count($result['Comment']), 1);
-		$this->assertEquals(count($result['Comment'][0]['comment']['Article comment']), 1);
+		$this->assertEquals(count($result['Comment'][0]['comment']), 1);
 	}
 
 /**
@@ -4098,7 +4098,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(count($result['Tag']), 2);
 		$this->assertEquals($result['Tag'][0]['tag'], 'tag1');
 		$this->assertEquals(count($result['Comment']), 1);
-		$this->assertEquals(count($result['Comment'][0]['comment']['Article comment']), 1);
+		$this->assertEquals(count($result['Comment'][0]['comment']), 1);
 	}
 
 /**
