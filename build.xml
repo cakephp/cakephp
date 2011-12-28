@@ -40,7 +40,7 @@
 
 		<exec executable="php" outputProperty="version">
 			<arg value="-r" />
-			<arg value="$fh = file('./lib/Cake/VERSION.txt'); echo strtoupper(array_pop($fh));" />
+			<arg value="$fh = file('./lib/Cake/VERSION.txt'); echo array_pop($fh);" />
 		</exec>
 
 		<!-- set PEAR stability based on version number. -->
@@ -120,6 +120,21 @@
 	<!-- top level easy to type target -->
 	<target name="build" depends="generate-package" />
 
+
+	<!--
+		Bump the version number and commit that.
+	-->
+	<target name="next-version" depends="prepare">
+		<echo msg="Incrementing version." />
+		<propertyprompt propertyName="release_version" defaultValue="${version}" promptText="Enter version to be released (without -DEV)"/>
+		<echo msg="New version will be ${release_version}" />
+		<echo msg="$file = file_get_contents('./lib/Cake/VERSION.txt'); $file = str_replace('${version}', '${release_version}', $file); file_put_contents('./lib/Cake/VERSION.txt', $file);" />
+		<exec executable="php">
+			<arg value="-r" />
+			<arg value="$file = file_get_contents('./lib/Cake/VERSION.txt'); $file = str_replace('${version}', '${release_version}', $file); file_put_contents('./lib/Cake/VERSION.txt', $file);" />
+		</exec>
+
+	</target>
 
 
 </project>
