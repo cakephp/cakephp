@@ -1080,7 +1080,7 @@ class CakeEmailTest extends CakeTestCase {
 		$boundary = $this->CakeEmail->getBoundary();
 		$this->assertFalse(empty($boundary));
 		$this->assertContains('--' . $boundary, $message);
-		$this->assertNotContains('--' . $boundary . '--', $message);
+		$this->assertContains('--' . $boundary . '--', $message);
 		$this->assertContains('--alt-' . $boundary, $message);
 		$this->assertContains('--alt-' . $boundary . '--', $message);
 

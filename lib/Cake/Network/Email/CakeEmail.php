@@ -662,14 +662,12 @@ class CakeEmail {
 		}
 
 		$headers['MIME-Version'] = '1.0';
-		if (!empty($this->_attachments)) {
+		if (!empty($this->_attachments) || $this->_emailFormat === 'both') {
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
 		} elseif ($this->_emailFormat === 'text') {
 			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
 		} elseif ($this->_emailFormat === 'html') {
 			$headers['Content-Type'] = 'text/html; charset=' . $this->charset;
-		} elseif ($this->_emailFormat === 'both') {
-			$headers['Content-Type'] = 'multipart/alternative; boundary="alt-' . $this->_boundary . '"';
 		}
 		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding();
 
@@ -1377,6 +1375,8 @@ class CakeEmail {
 		if ($hasAttachments) {
 			$attachments = $this->_attachFiles();
 			$msg = array_merge($msg, $attachments);
+		}
+		if ($hasAttachments || $hasMultipleTypes) {
 			$msg[] = '';
 			$msg[] = '--' . $boundary . '--';
 			$msg[] = '';
