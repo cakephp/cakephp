@@ -5041,7 +5041,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testCallbackSourceChangeUnknownDatasource() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Post', 'Author');
 		$TestModel = new Post();
 		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}

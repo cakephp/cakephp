@@ -27,6 +27,9 @@ App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
 App::uses('ConnectionManager', 'Model');
 App::uses('Xml', 'Utility');
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventListener', 'Event');
+App::uses('CakeEventManager', 'Event');
 
 /**
  * Object-relational mapper.
@@ -39,7 +42,7 @@ App::uses('Xml', 'Utility');
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/models.html
  */
-class Model extends Object {
+class Model extends Object implements CakeEventListener {
 
 /**
  * The name of the DataSource connection that this Model uses
@@ -608,6 +611,14 @@ class Model extends Object {
 	);
 
 /**
+ * Instance of the CakeEventManager this model is using
+ * to dispatch inner events.
+ *
+ * @var CakeEventManager
+ */
+	protected $_eventManager = null;
+
+/**
  * Constructor. Binds the model's database table to the object.
  *
  * If `$id` is an array it can be used to pass several options into the model.
@@ -710,6 +721,40 @@ class Model extends Object {
 
 		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
+	}
+
+/**
+ * Returns a list of all events that will fire in the model during it's lifecycle.
+ * You can override this function to add you own listener callbacks
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'Model.beforeFind' => array('callable' => 'beforeFind', 'passParams' => true),
+			'Model.afterFind' => array('callable' => 'afterFind', 'passParams' => true),
+			'Model.beforeValidate' => array('callable' => 'beforeValidate', 'passParams' => true),
+			'Model.beforeSave' => array('callable' => 'beforeSave', 'passParams' => true),
+			'Model.afterSave' => array('callable' => 'afterSave', 'passParams' => true),
+			'Model.beforeDelete' => array('callable' => 'beforeDelete', 'passParams' => true),
+			'Model.afterDelete' => array('callable' => 'afterDelete'),
+		);
+	}
+
+/**
+ * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * You can use this instance to register any new listeners or callbacks to the
+ * controller events, or create your own events and trigger them at will.
+ *
+ * @return CakeEventManager
+ */
+	public function getEventManager() {
+		if (empty($this->_eventManager)) {
+			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager->attach($this->Behaviors);
+			$this->_eventManager->attach($this);
+		}
+		return $this->_eventManager;
 	}
 
 /**
@@ -1585,10 +1630,10 @@ class Model extends Object {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
-			$result = $this->Behaviors->trigger('beforeSave', array(&$this, $options), array(
-				'break' => true, 'breakOn' => array(false, null)
-			));
-			if (!$result || !$this->beforeSave($options)) {
+			$event = new CakeEvent('Model.beforeSave', $this, array($options));
+			list($event->break, $event->breakOn) = array(true, array(false, null));
+			$this->getEventManager()->dispatch($event);
+			if (!$event->result) {
 				$this->whitelist = $_whitelist;
 				return false;
 			}
@@ -1672,8 +1717,8 @@ class Model extends Object {
 				}
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
-				$this->Behaviors->trigger('afterSave', array(&$this, $created, $options));
-				$this->afterSave($created);
+				$event = new CakeEvent('Model.afterSave', $this, array($created, $options));
+				$this->getEventManager()->dispatch($event);
 			}
 			if (!empty($this->data)) {
 				$success = Set::merge($success, $this->data);
@@ -2236,13 +2281,11 @@ class Model extends Object {
 		}
 		$id = $this->id;
 
-		if ($this->beforeDelete($cascade)) {
-			$filters = $this->Behaviors->trigger(
-				'beforeDelete',
-				array(&$this, $cascade),
-				array('break' => true, 'breakOn' => array(false, null))
-			);
-			if (!$filters || !$this->exists()) {
+		$event = new CakeEvent('Model.beforeDelete', $this, array($cascade));
+		list($event->break, $event->breakOn) = array(true, array(false, null));
+		$this->getEventManager()->dispatch($event);
+		if (!$event->isStopped()) {
+			if (!$this->exists()) {
 				return false;
 			}
 			$db = $this->getDataSource();
@@ -2272,8 +2315,7 @@ class Model extends Object {
 				if ($updateCounterCache) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				$this->Behaviors->trigger('afterDelete', array(&$this));
-				$this->afterDelete();
+				$this->getEventManager()->dispatch(new CakeEvent('Model.afterDelete', $this));
 				$this->_clearCache();
 				$this->id = false;
 				return true;
@@ -2566,24 +2608,13 @@ class Model extends Object {
 		$query['order'] = array($query['order']);
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
-			$return = $this->Behaviors->trigger(
-				'beforeFind',
-				array(&$this, $query),
-				array('break' => true, 'breakOn' => array(false, null), 'modParams' => 1)
-			);
-
-			$query = (is_array($return)) ? $return : $query;
-
-			if ($return === false) {
+			$event = new CakeEvent('Model.beforeFind', $this, array($query));
+			list($event->break, $event->breakOn, $event->modParams) = array(true, array(false, null), 0);
+			$this->getEventManager()->dispatch($event);
+			if ($event->isStopped()) {
 				return null;
 			}
-
-			$return = $this->beforeFind($query);
-			$query = (is_array($return)) ? $return : $query;
-
-			if ($return === false) {
-				return null;
-			}
+			$query = $event->result === true ? $event->data[0] : $event->result;
 		}
 
 		return $query;
@@ -2814,15 +2845,10 @@ class Model extends Object {
  * @return array Set of filtered results
  */
 	protected function _filterResults($results, $primary = true) {
-		$return = $this->Behaviors->trigger(
-			'afterFind',
-			array(&$this, $results, $primary),
-			array('modParams' => 1)
-		);
-		if ($return !== true) {
-			$results = $return;
-		}
-		return $this->afterFind($results, $primary);
+		$event = new CakeEvent('Model.afterFind', $this, array($results, $primary));
+		$event->modParams = 0;
+		$this->getEventManager()->dispatch($event);
+		return $event->result;
 	}
 
 /**
@@ -2936,14 +2962,10 @@ class Model extends Object {
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {
-		if (
-			!$this->Behaviors->trigger(
-				'beforeValidate',
-				array(&$this, $options),
-				array('break' => true, 'breakOn' => false)
-			) ||
-			$this->beforeValidate($options) === false
-		) {
+		$event = new CakeEvent('Model.beforeValidate', $this, array($options));
+		list($event->break, $event->breakOn) = array(true, false);
+		$this->getEventManager()->dispatch($event);
+		if ($event->isStopped()) {
 			return false;
 		}
 

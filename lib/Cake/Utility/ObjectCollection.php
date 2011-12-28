@@ -82,8 +82,10 @@ abstract class ObjectCollection {
  *    Defaults to false.
  *
  *
- * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
- *   the method you are calling.
+ * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
+ *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
+ *   get the callback name. This is done by getting the last word after any dot in the event name
+ *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
  * @return mixed Either the last result or all results if collectReturn is on.
@@ -92,6 +94,22 @@ abstract class ObjectCollection {
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_enabled)) {
 			return true;
+		}
+		if ($callback instanceof CakeEvent) {
+			$event = $callback;
+			if (is_array($event->data)) {
+				$params =& $event->data;
+			}
+			if (empty($event->omitSubject)) {
+				$subject = $event->subject();
+			}
+			//TODO: Temporary BC check, while we move all the triggers system into the CakeEventManager
+			foreach (array('break', 'breakOn', 'collectReturn', 'modParams') as $opt) {
+				if (isset($event->{$opt})) {
+					$options[$opt] = $event->{$opt};
+				}
+			}
+			$callback = array_pop(explode('.', $event->name()));
 		}
 		$options = array_merge(
 			array(
@@ -108,7 +126,7 @@ abstract class ObjectCollection {
 			throw new CakeException(__d('cake_dev', 'Cannot use modParams with indexes that do not exist.'));
 		}
 		foreach ($list as $name) {
-			$result = call_user_func_array(array($this->_loaded[$name], $callback), $params);
+			$result = call_user_func_array(array($this->_loaded[$name], $callback), compact('subject') + $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}

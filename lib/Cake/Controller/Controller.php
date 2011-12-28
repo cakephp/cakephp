@@ -24,6 +24,9 @@ App::uses('CakeResponse', 'Network');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ComponentCollection', 'Controller');
 App::uses('View', 'View');
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventListener', 'Event');
+App::uses('CakeEventManager', 'Event');
 
 /**
  * Application controller class for organization of business logic.
@@ -57,7 +60,7 @@ App::uses('View', 'View');
  * @property      SessionComponent $Session
  * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
-class Controller extends Object {
+class Controller extends Object implements CakeEventListener {
 
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.
@@ -293,6 +296,14 @@ class Controller extends Object {
  * @var string
  */
 	protected $_mergeParent = 'AppController';
+
+/**
+ * Instance of the CakeEventManager this controller is using
+ * to dispatch inner events.
+ *
+ * @var CakeEventManager
+ */
+	protected $_eventManager = null;
 
 /**
  * Constructor.
@@ -571,6 +582,21 @@ class Controller extends Object {
 	}
 
 /**
+ * Returns a list of all events that will fire in the controller during it's lifecycle.
+ * You can override this function to add you own listener callbacks
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'Controller.initialize' => 'beforeFilter',
+			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
+			'Controller.shutdown' => 'afterFilter'
+		);
+	}
+
+/**
  * Loads Model classes based on the uses property
  * see Controller::loadModel(); for more info.
  * Loads Components and prepares them for initialization.
@@ -591,6 +617,22 @@ class Controller extends Object {
 	}
 
 /**
+ * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * You can use this instance to register any new listeners or callbacks to the
+ * controller events, or create your own events and trigger them at will.
+ *
+ * @return CakeEventManager
+ */
+	public function getEventManager() {
+		if (empty($this->_eventManager)) {
+			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager->attach($this->Components);
+			$this->_eventManager->attach($this);
+		}
+		return $this->_eventManager;
+	}
+
+/**
  * Perform the startup process for this controller.
  * Fire the Components and Controller callbacks in the correct order.
  *
@@ -601,9 +643,8 @@ class Controller extends Object {
  * @return void
  */
 	public function startupProcess() {
-		$this->Components->trigger('initialize', array(&$this));
-		$this->beforeFilter();
-		$this->Components->trigger('startup', array(&$this));
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.initialize', $this));
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.startup', $this));
 	}
 
 /**
@@ -616,8 +657,7 @@ class Controller extends Object {
  * @return void
  */
 	public function shutdownProcess() {
-		$this->Components->trigger('shutdown', array(&$this));
-		$this->afterFilter();
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.shutdown', $this));
 	}
 
 /**
@@ -691,21 +731,15 @@ class Controller extends Object {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$response = $this->Components->trigger(
-			'beforeRedirect',
-			array(&$this, $url, $status, $exit),
-			array('break' => true, 'breakOn' => false, 'collectReturn' => true)
-		);
+		$event = new CakeEvent('Controller.beforeRedirect', $this, array($url, $status, $exit));
+		//TODO: Remove the following line when the events are fully migrated to the CakeEventManager
+		list($event->break, $event->breakOn, $event->collectReturn) = array(true, false, true);
+		$this->getEventManager()->dispatch($event);
 
-		if ($response === false) {
+		if ($event->isStopped()) {
 			return;
 		}
-		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
-
-		$response = $this->beforeRedirect($url, $status, $exit);
-		if ($response === false) {
-			return;
-		}
+		$response = $event->result;
 		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
 		if (function_exists('session_write_close')) {
@@ -862,8 +896,7 @@ class Controller extends Object {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
-		$this->beforeRender();
-		$this->Components->trigger('beforeRender', array(&$this));
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.beforeRender', $this));
 
 		$viewClass = $this->viewClass;
 		if ($this->viewClass != 'View') {
@@ -1056,11 +1089,13 @@ class Controller extends Object {
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
- * @return boolean
+ * @return mixed
+ *   false to stop redirection event,
+ *   string controllers a new redirection url or
+ *   array with the keys url, status and exit to be used by the redirect method.
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect($url, $status = null, $exit = true) {
-		return true;
 	}
 
 /**
