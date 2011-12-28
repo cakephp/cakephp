@@ -463,7 +463,7 @@ class Model extends Overloadable {
 				}
 			}
 		}
-		$this->Behaviors = new BehaviorCollection();
+		$this->Behaviors = new BehaviorCollection($this);
 
 		if ($this->useTable !== false) {
 			$this->setDataSource($ds);
