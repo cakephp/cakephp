@@ -33,6 +33,7 @@ App::uses('CakeEventManager', 'Event');
  * and then inserted into the selected layout.  This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
+ *
  * @package       Cake.View
  * @property      CacheHelper $Cache
  * @property      FormHelper $Form
@@ -326,28 +327,30 @@ class View extends Object {
  * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
- * @param string $name Name of template file in the/app/View/Elements/ folder
+ * @param string $name Name of template file in the/app/View/Elements/ folder,
+ *   or `MyPlugin.template` to use the template element from MyPlugin.  If the element
+ *   is not found in the plugin, the normal view path cascade will be searched.
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
  * @param array $options Array of options. Possible keys are:
  * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
  *   If an array, the following keys can be used:
  *   - `config` - Used to store the cached element in a custom cache configuration.
  *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
- * - `plugin` - Load an element from a specific plugin.
+ * - `plugin` - Load an element from a specific plugin.  This option is deprecated, see below.
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * @return string Rendered Element
+ * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0.  Use
+ *   `Plugin.element_name` instead.
  */
 	public function element($name, $data = array(), $options = array()) {
 		$file = $plugin = $key = null;
 		$callbacks = false;
 
 		if (isset($options['plugin'])) {
-			$plugin = Inflector::camelize($options['plugin']);
+			$name = Inflector::camelize($options['plugin']) . '.' . $name;
 		}
-		if (isset($this->plugin) && !$plugin) {
-			$plugin = $this->plugin;
-		}
+
 		if (isset($options['callbacks'])) {
 			$callbacks = $options['callbacks'];
 		}
@@ -376,7 +379,7 @@ class View extends Object {
 			}
 		}
 
-		$file = $this->_getElementFilename($name, $plugin);
+		$file = $this->_getElementFilename($name);
 
 		if ($file) {
 			if (!$this->_helpersLoaded) {
@@ -416,6 +419,10 @@ class View extends Object {
  * - `afterLayout`
  *
  * If View::$autoRender is false and no `$layout` is provided, the view will be returned bare.
+ *
+ * View and layout names can point to plugin views/layouts.  Using the `Plugin.view` syntax
+ * a plugin view/layout can be used instead of the app ones.  If the chosen plugin is not found
+ * the view will be located along the regular view path cascade.
  *
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
@@ -648,6 +655,7 @@ class View extends Object {
  *
  * @param string $name The view or element to 'extend' the current one with.
  * @return void
+ * @throws LogicException when you extend a view with itself or make extend loops.
  */
 	public function extend($name) {
 		switch ($this->_currentType) {
@@ -661,6 +669,12 @@ class View extends Object {
 				$parent = $this->_getLayoutFileName($name);
 			break;
 		
+		}
+		if ($parent == $this->_current) {
+			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
+		}
+		if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
+			throw new LogicException(__d('cake_dev', 'You cannot have views extend in a loop.'));
 		}
 		$this->_parents[$this->_current] = $parent;
 	}
@@ -876,6 +890,7 @@ class View extends Object {
 			$name = $this->view;
 		}
 		$name = str_replace('/', DS, $name);
+		list($plugin, $name) = $this->_pluginSplit($name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
@@ -891,8 +906,7 @@ class View extends Object {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-		$paths = $this->_paths($this->plugin);
-
+		$paths = $this->_paths($plugin);
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
@@ -916,6 +930,27 @@ class View extends Object {
 	}
 
 /**
+ * Splits a dot syntax plugin name into its plugin and filename.
+ * If $name does not have a dot, then index 0 will be null.
+ * It checks if the plugin is loaded, else filename will stay unchanged for filenames containing dot
+ *
+ * @param string $name The name you want to plugin split.
+ * @return array Array with 2 indexes.  0 => plugin name, 1 => filename
+ */
+	protected function _pluginSplit($name) {
+		$plugin = null;
+		list($first, $second) = pluginSplit($name);
+		if (CakePlugin::loaded($first) === true) {
+			$name = $second;
+			$plugin = $first;
+		}
+		if (isset($this->plugin) && !$plugin) {
+			$plugin = $this->plugin;
+		}
+		return array($plugin, $name);
+	}
+
+/**
  * Returns layout filename for this template as a string.
  *
  * @param string $name The name of the layout to find.
@@ -931,7 +966,8 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths($this->plugin);
+		list($plugin, $name) = $this->_pluginSplit($name);
+		$paths = $this->_paths($plugin);
 		$file = 'Layouts' . DS . $subDir . $name;
 
 		$exts = $this->_getExtensions();
@@ -963,10 +999,11 @@ class View extends Object {
  * Finds an element filename, returns false on failure.
  *
  * @param string $name The name of the element to find.
- * @param string $plugin The plugin name the element is in.
  * @return mixed Either a string to the element filename or false when one can't be found.
  */
-	protected function _getElementFileName($name, $plugin = null) {
+	protected function _getElementFileName($name) {
+		list($plugin, $name) = $this->_pluginSplit($name);
+
 		$paths = $this->_paths($plugin);
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
@@ -1003,7 +1040,10 @@ class View extends Object {
 			$paths = array_merge($paths, App::path('View', $plugin));
 		}
 
-		$this->_paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
-		return $this->_paths;
+		$paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		if ($plugin !== null) {
+			return $paths;
+		}
+		return $this->_paths = $paths;
 	}
 }
