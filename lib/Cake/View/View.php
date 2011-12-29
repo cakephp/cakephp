@@ -465,7 +465,7 @@ class View extends Object {
  *   the 'meta', 'css', and 'script' blocks.  They are appended in that order.
  *
  * Deprecated features:
- * 
+ *
  * - `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0.
  *   Use the block features instead.  `meta`, `css` and `script` will be populated
  *   by the matching methods on HtmlHelper.
@@ -600,7 +600,7 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new 
+ * Append to an existing or new block.  Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
@@ -650,7 +650,7 @@ class View extends Object {
 	}
 
 /**
- * Provides view or element extension/inheritance.  Views can extends a 
+ * Provides view or element extension/inheritance.  Views can extends a
  * parent view and populate blocks in the parent template.
  *
  * @param string $name The view or element to 'extend' the current one with.
@@ -668,7 +668,7 @@ class View extends Object {
 			case self::TYPE_LAYOUT:
 				$parent = $this->_getLayoutFileName($name);
 			break;
-		
+
 		}
 		if ($parent == $this->_current) {
 			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
@@ -775,7 +775,7 @@ class View extends Object {
 
 /**
  * Magic accessor for deprecated attributes.
- * 
+ *
  * @param string $name Name of the attribute to set.
  * @param string $value Value of the attribute to set.
  * @return mixed
@@ -787,6 +787,16 @@ class View extends Object {
 			default:
 				$this->{$name} = $value;
 		}
+	}
+
+/**
+ * Magic isset check for deprecated attributes.
+ *
+ * @param string $name Name of the attribute to check.
+ * @return boolean
+ */
+	public function __isset($name) {
+		return isset($this->name);
 	}
 
 /**
@@ -845,7 +855,7 @@ class View extends Object {
  * Sandbox method to evaluate a template / view script in.
  *
  * @param string $___viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view. 
+ * @param array $___dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
