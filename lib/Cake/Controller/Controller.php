@@ -534,6 +534,18 @@ class Controller extends Object {
 			$pluginDot = $this->plugin . '.';
 		}
 
+		if ($pluginController && $this->plugin != null) {
+			$merge = array('components', 'helpers');
+			$appVars = get_class_vars($pluginController);
+			if (
+				($this->uses !== null || $this->uses !== false) &&
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
+			}
+			$this->_mergeVars($merge, $pluginController);
+		}
+
 		if (is_subclass_of($this, $this->_mergeParent) || !empty($pluginController)) {
 			$appVars = get_class_vars($this->_mergeParent);
 			$uses = $appVars['uses'];
@@ -555,18 +567,6 @@ class Controller extends Object {
 				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
 			$this->_mergeVars($merge, $this->_mergeParent, true);
-		}
-
-		if ($pluginController && $this->plugin != null) {
-			$merge = array('components', 'helpers');
-			$appVars = get_class_vars($pluginController);
-			if (
-				($this->uses !== null || $this->uses !== false) &&
-				is_array($this->uses) && !empty($appVars['uses'])
-			) {
-				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
-			}
-			$this->_mergeVars($merge, $pluginController);
 		}
 	}
 
