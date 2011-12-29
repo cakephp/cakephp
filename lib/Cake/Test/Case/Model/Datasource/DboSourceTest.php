@@ -708,6 +708,22 @@ class DboSourceTest extends CakeTestCase {
 		$Article->tablePrefix = '';
 		$result = $this->testDb->fullTableName($Article, true, false);
 		$this->assertEquals($result, '`with spaces`');
+
+		$this->loadFixtures('Article');
+		$Article->useTable = $Article->table = 'articles';
+		$Article->setDataSource('test');
+		$testdb = $Article->getDataSource();
+		$result = $testdb->fullTableName($Article, false, true);
+		$this->assertEquals($testdb->getSchemaName() . '.articles', $result);
+
+		// tests for empty schemaName
+		$noschema = ConnectionManager::create('noschema', array(
+			'datasource' => 'DboTestSource'
+			));
+		$Article->setDataSource('noschema');
+		$Article->schemaName = null;
+		$result = $noschema->fullTableName($Article, false, true);
+		$this->assertEquals('articles', $result);
 	}
 
 /**
