@@ -493,7 +493,7 @@ class View extends Object {
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 
 		$scripts = implode("\n\t", $this->_scripts);
-		$scripts .= $this->get('meta') . $this->get('css') . $this->get('script');
+		$scripts .= $this->Blocks->get('meta') . $this->Blocks->get('css') . $this->Blocks->get('script');
 
 		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content,
