@@ -133,6 +133,9 @@
 		<echo msg="Version number updated." />
 	</target>
 
+	<!--
+		Create the release commit that updates the version number and pushes the commits.
+	-->
 	<target name="release-commit" depends="prepare,next-version">
 		<echo msg="Creating new release commit" />
 		<exec command="git add ./lib/Cake/VERSION.txt" />
@@ -152,10 +155,18 @@
 		<echo msg="Pushed commit and tag." />
 	</target>
 
+	<!--
+		Upload to pirium pear channel.
+	-->
+	<target name="distribute">
+		
+	</target>
 
-	<!-- top level easy to type targets -->
+
+	<!--
+		Top level easy to type targets
+	-->
 	<target name="build" depends="generate-package" />
-	<target name="release" depends="release-commit,build" />
-
+	<target name="release" depends="release-commit,build,distribute" />
 
 </project>
