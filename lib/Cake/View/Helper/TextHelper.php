@@ -275,20 +275,32 @@ class TextHelper extends AppHelper {
 		}
 		if (!$exact) {
 			$spacepos = mb_strrpos($truncate, ' ');
-			if (isset($spacepos)) {
-				if ($html) {
-					$bits = mb_substr($truncate, $spacepos);
-					preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-					if (!empty($droppedTags)) {
+			if ($html) {
+				$truncateCheck = mb_substr($truncate, 0, $spacepos);
+				$lastOpenTag = mb_strrpos($truncateCheck, '<');
+				$lastCloseTag = mb_strrpos($truncateCheck, '>');
+				if ($lastOpenTag > $lastCloseTag) {
+					preg_match_all('/<[\w]+[^>]*>/s', $truncate, $lastTagMatches);
+					$lastTag = array_pop($lastTagMatches[0]);
+					$spacepos = mb_strrpos($truncate, $lastTag) + mb_strlen($lastTag);
+				}
+				$bits = mb_substr($truncate, $spacepos);
+				preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
+				if (!empty($droppedTags)) {
+					if (!empty($openTags)) {
 						foreach ($droppedTags as $closingTag) {
 							if (!in_array($closingTag[1], $openTags)) {
 								array_unshift($openTags, $closingTag[1]);
 							}
 						}
+					} else {
+						foreach ($droppedTags as $closingTag) {
+							array_push($openTags, $closingTag[1]);
+						}
 					}
 				}
-				$truncate = mb_substr($truncate, 0, $spacepos);
 			}
+			$truncate = mb_substr($truncate, 0, $spacepos);
 		}
 		$truncate .= $ending;
 
