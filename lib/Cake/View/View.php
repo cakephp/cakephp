@@ -827,12 +827,10 @@ class View extends Object {
 			$data = $this->viewVars;
 		}
 		$this->_current = $viewFile;
+		$initialBlocks = count($this->Blocks->unclosed());
 
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeRenderFile', $this, array($viewFile)));
 		$content = $this->_evaluate($viewFile, $data);
-		if ($this->Blocks->active()) {
-			throw new CakeException(__d('cake_dev', 'The "%s" block was left open.', $this->Blocks->active()));
-		}
 		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
 		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
 		$afterEvent->modParams = 1;
@@ -843,9 +841,14 @@ class View extends Object {
 			$this->_stack[] = $this->fetch('content');
 			$this->assign('content', $content);
 
-			$content = $this->_render($this->_parents[$viewFile], $data);
-
+			$content = $this->_render($this->_parents[$viewFile]);
 			$this->assign('content', array_pop($this->_stack));
+		}
+
+		$remainingBlocks = count($this->Blocks->unclosed());
+
+		if ($initialBlocks !== $remainingBlocks) {
+			throw new CakeException(__d('cake_dev', 'The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
 		}
 
 		return $content;
