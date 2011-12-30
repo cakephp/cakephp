@@ -814,91 +814,85 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
- * test deconstruct() with time fields.
+ * data provider for time tests.
  *
+ * @return array
+ */
+	public static function timeProvider() {
+		$db = ConnectionManager::getDataSource('test');
+		$now = $db->expression('NOW()');
+		return array(
+			// blank
+			array(
+				array('hour' => '', 'min' => '', 'meridian' => ''),
+				''
+			),
+			// missing hour
+			array(
+				array('hour' => '', 'min' => '00', 'meridian' => 'pm'),
+				''
+			),
+			// all blank
+			array(
+				array('hour' => '', 'min' => '', 'sec' => ''),
+				''
+			),
+			// set and empty merdian 
+			array(
+				array('hour' => '1', 'min' => '00', 'meridian' => ''),
+				''
+			),
+			// midnight
+			array(
+				array('hour' => '12', 'min' => '0', 'meridian' => 'am'),
+				'00:00:00'
+			),
+			array(
+				array('hour' => '00', 'min' => '00'),
+				'00:00:00'
+			),
+			// 3am
+			array(
+				array('hour' => '03', 'min' => '04', 'sec' => '04'),
+				'03:04:04'
+			),
+			array(
+				array('hour' => '3', 'min' => '4', 'sec' => '4'),
+				'03:04:04'
+			),
+			array(
+				array('hour' => '03', 'min' => '4', 'sec' => '4'),
+				'03:04:04'
+			),
+			array(
+				$now,
+				$now
+			)
+		);
+	}
+
+/**
+ * test deconstruct with time fields.
+ *
+ * @dataProvider timeProvider
  * @return void
  */
-	public function testDeconstructFieldsTime() {
+	public function testDeconstructFieldsTime($input, $result) {
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
 		$this->loadFixtures('Apple');
 		$TestModel = new Apple();
 
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '';
-		$data['Apple']['mytime']['min'] = '';
-		$data['Apple']['mytime']['sec'] = '';
+		$data = array(
+			'Apple' => array(
+				'mytime' => $input
+			)
+		);
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => ''));
+		$expected = array('Apple' => array('mytime' => $result));
 		$this->assertEquals($TestModel->data, $expected);
-
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '';
-		$data['Apple']['mytime']['min'] = '';
-		$data['Apple']['mytime']['meridan'] = '';
-
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => ''));
-		$this->assertEquals($TestModel->data, $expected, 'Empty values are not returning properly. %s');
-
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '12';
-		$data['Apple']['mytime']['min'] = '0';
-		$data['Apple']['mytime']['meridian'] = 'am';
-
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => '00:00:00'));
-		$this->assertEquals($TestModel->data, $expected, 'Midnight is not returning proper values. %s');
-
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '00';
-		$data['Apple']['mytime']['min'] = '00';
-
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => '00:00:00'));
-		$this->assertEquals($TestModel->data, $expected, 'Midnight is not returning proper values. %s');
-
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '03';
-		$data['Apple']['mytime']['min'] = '04';
-		$data['Apple']['mytime']['sec'] = '04';
-
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => '03:04:04'));
-		$this->assertEquals($TestModel->data, $expected);
-
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '3';
-		$data['Apple']['mytime']['min'] = '4';
-		$data['Apple']['mytime']['sec'] = '4';
-
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => '03:04:04'));
-		$this->assertEquals($TestModel->data, $expected);
-
-		$data = array();
-		$data['Apple']['mytime']['hour'] = '03';
-		$data['Apple']['mytime']['min'] = '4';
-		$data['Apple']['mytime']['sec'] = '4';
-
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$expected = array('Apple' => array('mytime' => '03:04:04'));
-		$this->assertEquals($TestModel->data, $expected);
-
-		$db = ConnectionManager::getDataSource('test');
-		$data = array();
-		$data['Apple']['mytime'] = $db->expression('NOW()');
-		$TestModel->data = null;
-		$TestModel->set($data);
-		$this->assertEquals($TestModel->data, $data);
 	}
 
 /**

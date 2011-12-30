@@ -737,8 +737,48 @@ class FormHelper extends AppHelper {
  * Returns a formatted LABEL element for HTML FORMs. Will automatically generate
  * a for attribute if one is not provided.
  *
+ * ### Options
+ *
+ * - `for` - Set the for attribute, if its not defined the for attribute 
+ *   will be generated from the $fieldName parameter using
+ *   FormHelper::domId().
+ *
+ * Examples:
+ *
+ * The text and for attribute are generated off of the fieldname
+ *
+ * {{{
+ * echo $this->Form->label('Post.published');
+ * <label for="PostPublished">Published</label>
+ * }}}
+ *
+ * Custom text:
+ *
+ * {{{
+ * echo $this->Form->label('Post.published', 'Publish');
+ * <label for="PostPublished">Publish</label>
+ * }}}
+ *
+ * Custom class name:
+ *
+ * {{{
+ * echo $this->Form->label('Post.published', 'Publish', 'required');
+ * <label for="PostPublished" class="required">Publish</label>
+ * }}}
+ *
+ * Custom attributes:
+ *
+ * {{{
+ * echo $this->Form->label('Post.published', 'Publish', array(
+ *		'for' => 'post-publish'
+ * ));
+ * <label for="post-publish">Publish</label>
+ * }}}
+ *
  * @param string $fieldName This should be "Modelname.fieldname"
- * @param string $text Text that will appear in the label field.
+ * @param string $text Text that will appear in the label field.  If 
+ *   $text is left undefined the text will be inflected from the 
+ *   fieldName.
  * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::label
@@ -2534,6 +2574,9 @@ class FormHelper extends AppHelper {
 		}
 
 		$result = parent::_initInputField($field, $options);
+		if ($this->tagIsInvalid() !== false) {
+			$result = $this->addClass($result, 'form-error');
+		}
 		if (!empty($result['disabled']) || $secure === self::SECURE_SKIP) {
 			return $result;
 		}

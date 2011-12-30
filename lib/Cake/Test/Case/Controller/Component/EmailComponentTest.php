@@ -228,12 +228,6 @@ MSGBLOC;
 		$expect = str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $message);
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
-
-		// TODO: better test for format of message sent?
-		$this->Controller->EmailTest->sendAs = 'both';
-		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $message);
-		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(preg_replace('/alt-[a-z0-9]{32}/i', 'alt-', DebugCompTransport::$lastEmail), $this->__osFix($expect));
 	}
 
 /**
@@ -307,13 +301,29 @@ HTMLBLOC;
 		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
 
 		$this->Controller->EmailTest->sendAs = 'both';
-		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $header);
-		$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 8bit' . "\n\n" . $text . "\n\n";
-		$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 8bit' . "\n\n" . $html . "\n\n";
-		$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/mixed; boundary="{boundary}"', $header);
+		$expect .= "--{boundary}\n" .
+			'Content-Type: multipart/alternative; boundary="alt-{boundary}"' . "\n\n" .
+			'--alt-{boundary}' . "\n" .
+			'Content-Type: text/plain; charset=UTF-8' . "\n" .
+			'Content-Transfer-Encoding: 8bit' . "\n\n" .
+			$text .
+			"\n\n" .
+			'--alt-{boundary}' . "\n" .
+			'Content-Type: text/html; charset=UTF-8' . "\n" .
+			'Content-Transfer-Encoding: 8bit' . "\n\n" . 
+			$html .
+			"\n\n" . 
+			'--alt-{boundary}--' . "\n\n\n" . 
+			'--{boundary}--' . "\n";
+
+		$expect = '<pre>' . $expect . '</pre>';
 
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(preg_replace('/alt-[a-z0-9]{32}/i', 'alt-', DebugCompTransport::$lastEmail), $this->__osFix($expect));
+		$this->assertEquals(
+			$this->__osFix($expect),
+			preg_replace('/[a-z0-9]{32}/i', '{boundary}', DebugCompTransport::$lastEmail)
+		);
 
 		$html = <<<HTMLBLOC
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
@@ -441,7 +451,7 @@ HTMLBLOC;
 
 		$this->Controller->EmailTest->delivery = 'DebugComp';
 
-		$text = $html = 'This is the body of the message';
+		$text = $html = "This is the body of the message\n";
 
 		$this->Controller->EmailTest->sendAs = 'both';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
@@ -740,8 +750,8 @@ HTMLBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send($body));
 		$msg = DebugCompTransport::$lastEmail;
 
-		$this->assertNotRegExp('/text\/plain/', $msg);
-		$this->assertNotRegExp('/text\/html/', $msg);
+		$this->assertRegExp('/text\/plain/', $msg);
+		$this->assertRegExp('/text\/html/', $msg);
 		$this->assertRegExp('/multipart\/alternative/', $msg);
 	}
 
