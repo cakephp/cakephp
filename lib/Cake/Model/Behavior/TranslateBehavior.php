@@ -394,7 +394,7 @@ class TranslateBehavior extends ModelBehavior {
 				$field = $key;
 				$association = $value;
 			}
-			if ($field === 'name') {
+			if ($association === 'name') {
 				throw new CakeException(
 					__d('cake_dev', 'You cannot bind a translation named "name".')
 				);
