@@ -636,6 +636,10 @@ class CakeRequestTest extends CakeTestCase {
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 5.1; rv:2.0b6pre) Gecko/20100902 Firefox/4.0b6pre Fennec/2.0b1pre';
 		$this->assertTrue($request->is('mobile'));
 		$this->assertTrue($request->isMobile());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; OMNIA7)';
+		$this->assertTrue($request->is('mobile'));
+		$this->assertTrue($request->isMobile());
 	}
 
 /**
