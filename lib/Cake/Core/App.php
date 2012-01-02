@@ -211,7 +211,7 @@ class App {
  *
  * @param string $type type of path
  * @param string $plugin name of plugin
- * @return string array
+ * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::path
  */
 	public static function path($type, $plugin = null) {
@@ -386,7 +386,7 @@ class App {
  * `App::core('Cache/Engine'); will return the full path to the cache engines package`
  *
  * @param string $type
- * @return string full path to package
+ * @return array full path to package
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::core
  */
 	public static function core($type) {
@@ -598,7 +598,7 @@ class App {
  *              based on Inflector::underscore($name) . ".$ext";
  * @param array $search paths to search for files, array('path 1', 'path 2', 'path 3');
  * @param string $file full name of the file to search for including extension
- * @param boolean $return, return the loaded file, the file must have a return
+ * @param boolean $return Return the loaded file, the file must have a return
  *                         statement in it to work: return $variable;
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  */

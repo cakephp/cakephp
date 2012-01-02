@@ -369,7 +369,10 @@ class TranslateBehavior extends ModelBehavior {
 
 /**
  * Bind translation for fields, optionally with hasMany association for
- * fake field
+ * fake field.
+ *
+ * *Note* You should avoid binding translations that overlap existing model properties.
+ * This can cause un-expected and un-desirable behavior.
  *
  * @param Model $model instance of model
  * @param string|array $fields string with field or array(field1, field2=>AssocName, field3)
@@ -391,6 +394,11 @@ class TranslateBehavior extends ModelBehavior {
 			} else {
 				$field = $key;
 				$association = $value;
+			}
+			if ($association === 'name') {
+				throw new CakeException(
+					__d('cake_dev', 'You cannot bind a translation named "name".')
+				);
 			}
 
 			if (array_key_exists($field, $this->settings[$model->alias])) {
