@@ -2455,6 +2455,37 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * Tests resourceMap as getter and setter.
+ *
+ * @return void
+ */
+	public function testResourceMap() {
+		$default = Router::resourceMap();
+		$exepcted = array(
+			array('action' => 'index',	'method' => 'GET',		'id' => false),
+			array('action' => 'view',	'method' => 'GET',		'id' => true),
+			array('action' => 'add',	'method' => 'POST',		'id' => false),
+			array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
+			array('action' => 'edit',	'method' => 'POST', 	'id' => true)
+		);
+		$this->assertEquals($default, $exepcted);
+		
+		$custom = array(
+			array('action' => 'index',	'method' => 'GET',		'id' => false),
+			array('action' => 'view',	'method' => 'GET',		'id' => true),
+			array('action' => 'add',	'method' => 'POST',		'id' => false),
+			array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
+			array('action' => 'update',	'method' => 'POST', 	'id' => true)
+		);
+		Router::resourceMap($custom);
+		$this->assertEquals($custom, Router::resourceMap());
+		
+		Router::resourceMap($default);
+	}
+
+/**
  * test setting redirect routes
  *
  * @return void
