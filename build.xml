@@ -103,9 +103,9 @@
 	<target name="define-pear-package" depends="copy-files">
 		<d51pearpkg2 baseinstalldir="/" dir="${build.dir}/${project.name}-${version}">
 			<name>CakePHP</name>
-			<summary>CakePHP Framework</summary>
+			<summary>CakePHP Rapid Development Framework</summary>
 			<channel>pear.php.net</channel>
-			<description>CakePHP </description>
+			<description>CakePHP is a application development framework for PHP 5.2+</description>
 			<lead user="mark_story" name="Mark Story" email="mark@mark-story.com" />
 			<lead user="lorenzo" name="José Lorenzo Rodríguez" email="jose.zap@gmail.com" />
 			<lead user="PhpNut" name="Larry Masters" email="phpnut@cakephp.org" />
@@ -114,7 +114,7 @@
 			<stability release="${pear.stability}" api="${pear.stability}" />
 			<notes>http://github.com/cakephp/cakephp/blob/master/README</notes>
 			<dependencies>
-				<php minimum_version="5.2.9" />
+				<php minimum_version="5.2.6" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />
 				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.5.0" type="optional" />
 			</dependencies>
@@ -171,7 +171,7 @@
 	</target>
 
 	<!--
-		Upload to pirium pear channel.
+		Upload to pirum pear channel.
 	-->
 	<target name="distribute">
 		
