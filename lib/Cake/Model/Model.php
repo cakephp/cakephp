@@ -2818,6 +2818,13 @@ class Model extends Object implements CakeEventListener {
 			foreach ($results as $result) {
 				$result['children'] = array();
 				$id = $result[$this->alias][$this->primaryKey];
+				if (!isset($result[$this->alias]['parent_id'])) {
+					trigger_error(
+						__d('cake_dev', 'You cannot use find("threaded") on models without a "parent_id" field.'),
+						E_USER_WARNING
+					);
+					return $return;
+				}
 				$parentId = $result[$this->alias]['parent_id'];
 				if (isset($idMap[$id]['children'])) {
 					$idMap[$id] = array_merge($result, (array)$idMap[$id]);
