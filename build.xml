@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="CakePHP" default="build">
+	<!--
+	Build.xml file for CakePHP
+
+	Uses phing to create releases, and pear packages.
+	Based off of build.xml in doctrine.
+
+	Requires the d51PearPkg2 to be installed:
+
+	pear channel-discover pear.domain51.com
+	pear install domain51/Phing_d51PearPkg2Task
+
+	Use the `release` task to update VERSION.txt, and create a new tag.
+	Use the `build` task to create a pear package based on the current working copy.
+	Use the `clean` task to clean up packaging artifacts.
+
+	-->
+
 	<taskdef classname="phing.tasks.ext.d51PearPkg2Task" name="d51pearpkg2" />
 	<property file="build.properties" />
 
