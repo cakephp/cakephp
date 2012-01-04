@@ -759,7 +759,7 @@ class PostgresTest extends CakeTestCase {
  */
 	function testVirtualFieldAsAConstant() {
 		$this->loadFixtures('Article', 'Comment');
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'empty' => "NULL",
 			'number' => 43,

@@ -716,7 +716,7 @@ class Postgres extends DboSource {
 					break;
 					case 'binary':
 					case 'bytea':
-						$resultRow[$table][$column] = stream_get_contents($row[$index]);
+						$resultRow[$table][$column] = is_null($row[$index]) ? null : stream_get_contents($row[$index]);
 					break;
 					default:
 						$resultRow[$table][$column] = $row[$index];
