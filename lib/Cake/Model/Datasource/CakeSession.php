@@ -71,13 +71,6 @@ class CakeSession {
 	public static $lastError = null;
 
 /**
- * 'Security.level' setting, "high", "medium", or "low".
- *
- * @var string
- */
-	public static $security = null;
-
-/**
  * Start time for this session.
  *
  * @var integer
