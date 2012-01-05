@@ -48,11 +48,7 @@
 	</target>
 
 	<!-- makes directories and sets properties -->
-	<target name="prepare" depends="clean">
-		<echo msg="Creating build + dist directories." />
-		<mkdir dir="${build.dir}" />
-		<mkdir dir="${dist.dir}" />
-
+	<target name="prepare">
 		<exec executable="php" outputProperty="version">
 			<arg value="-r" />
 			<arg value="$fh = file('./lib/Cake/VERSION.txt'); echo array_pop($fh);" />
@@ -81,18 +77,25 @@
 			<arg value="echo str_replace(array('-'), array(''), '${version}');" />
 		</exec>
 
+		<!-- Used for other targets -->
+		<property name="pear.package" value="${project.name}-${pear.version}" />
+
 		<echo msg="Preparing package of ${version} (${pear.version}+${pear.stability})" />
 	</target>
 
 	<!--
 		Copy all the files to build/ so they can be packaged up.
 	-->
-	<target name="copy-files" depends="prepare">
+	<target name="copy-files" depends="clean,prepare">
+		<echo msg="Creating build + dist directories." />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+
 		<echo msg="Copying files to build directory" />
-		<copy todir="${build.dir}/${project.name}-${version}/Cake">
+		<copy todir="${build.dir}/${pear.package}/Cake">
 			<fileset refid="libs" />
 		</copy>
-		<copy todir="${build.dir}/${project.name}-${version}/bin">
+		<copy todir="${build.dir}/${pear.package}/bin">
 			<fileset refid="cli" />
 		</copy>
 	</target>
@@ -101,10 +104,10 @@
 		Define the package.xml.  Using xml to make xml is fun!
 	-->
 	<target name="define-pear-package" depends="copy-files">
-		<d51pearpkg2 baseinstalldir="/" dir="${build.dir}/${project.name}-${version}">
+		<d51pearpkg2 baseinstalldir="/" dir="${build.dir}/${pear.package}">
 			<name>CakePHP</name>
 			<summary>CakePHP Rapid Development Framework</summary>
-			<channel>pear.php.net</channel>
+			<channel>pear.cakephp.org</channel>
 			<description>CakePHP is a application development framework for PHP 5.2+</description>
 			<lead user="mark_story" name="Mark Story" email="mark@mark-story.com" />
 			<lead user="lorenzo" name="José Lorenzo Rodríguez" email="jose.zap@gmail.com" />
@@ -129,9 +132,9 @@
 
 	<!-- Generate the PEAR package from a directory and move the files to the dist folder -->
 	<target name="generate-package" depends="define-pear-package">
-		<exec command="pear package" dir="${build.dir}/${project.name}-${version}" passthru="true"/>
-		<echo msg="Moving ${project.name}-${pear.version}.tgz"/>
-		<move file="${build.dir}/${project.name}-${version}/${project.name}-${pear.version}.tgz" todir="${dist.dir}" />
+		<exec command="pear package" dir="${build.dir}/${pear.package}" passthru="true"/>
+		<echo msg="Moving ${pear.package}.tgz"/>
+		<move file="${build.dir}/${pear.package}/${pear.package}.tgz" todir="${dist.dir}" />
 	</target>
 
 	<!--
@@ -161,7 +164,7 @@
 		<condition property="noshipit" value="1">
 			<not>
 				<equals arg1="y" arg2="${shipit}" casesensitive="false" />
-			</not>
+			</not>"
 		</condition>
 		<fail if="noshipit" msg="You said not to ship it." />
 
@@ -173,8 +176,12 @@
 	<!--
 		Upload to pirum pear channel.
 	-->
-	<target name="distribute">
-		
+	<target name="distribute" depends="prepare">
+		<echo msg="Uploading tgz file to cakephp.org" />
+		<exec command="scp ${dist.dir}/${pear.package}.tgz cakephp@cakephp.org:${pirum.dir}" dir="." />
+
+		<echo msg="Adding new release to pirum" />
+		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" />
 	</target>
 
 	<!--
