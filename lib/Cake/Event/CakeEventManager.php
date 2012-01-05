@@ -224,7 +224,7 @@ class CakeEventManager {
  */
 	public function dispatch($event) {
 		if (is_string($event)) {
-			$Event = new CakeEvent($event);
+			$event = new CakeEvent($event);
 		}
 
 		if (!$this->_isGlobal) {
