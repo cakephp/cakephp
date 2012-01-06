@@ -47,13 +47,16 @@
 		<delete dir="${dist.dir}" includeemptydirs="true" />
 	</target>
 
-	<!-- makes directories and sets properties -->
-	<target name="prepare">
+	<!-- Read the current version, so we can replace it -->
+	<target name="current-version">
 		<exec executable="php" outputProperty="version">
 			<arg value="-r" />
 			<arg value="$fh = file('./lib/Cake/VERSION.txt'); echo array_pop($fh);" />
 		</exec>
+	</target>
 
+	<!-- Makes directories and sets properties -->
+	<target name="prepare" depends="current-version">
 		<!-- set PEAR stability based on version number. -->
 		<condition property="pear.stability" value="beta">
 			<contains string="${version}" substring="beta" casesensitive="false"/>
@@ -149,37 +152,39 @@
 	<!--
 		Bump the version number and commit that.
 	-->
-	<target name="next-version" depends="prepare">
+	<target name="next-version" depends="current-version">
 		<echo msg="Incrementing version." />
-		<propertyprompt propertyName="release_version" defaultValue="${version}" promptText="Enter version to be released (without -DEV)"/>
+		<propertyprompt propertyName="release_version" defaultValue="${version}" promptText="Enter version to be released."/>
 		<echo msg="$file = file_get_contents('./lib/Cake/VERSION.txt'); $file = str_replace('${version}', '${release_version}', $file); file_put_contents('./lib/Cake/VERSION.txt', $file);" />
 		<exec executable="php">
 			<arg value="-r" />
 			<arg value="$file = file_get_contents('./lib/Cake/VERSION.txt'); $file = str_replace('${version}', '${release_version}', $file); file_put_contents('./lib/Cake/VERSION.txt', $file);" />
 		</exec>
 		<echo msg="Version number updated." />
+		<property name="version" value="${release_version}" override="true" />
+		<echo msg="${version}" />
+		<echo msg="${release_version}" />
 	</target>
 
 	<!--
 		Create the release commit that updates the version number and pushes the commits.
 	-->
-	<target name="release-commit" depends="prepare,next-version">
+	<target name="release-commit" depends="next-version,prepare">
 		<echo msg="Creating new release commit" />
-		<exec command="git add ./lib/Cake/VERSION.txt" />
-		<exec command="git commit -m 'Update version number to ${release_version}'" />
-		<exec command="git tag -a ${release_version} -m 'CakePHP ${release_version}'" />
+		<exec command="git add ./lib/Cake/VERSION.txt" checkreturn="true" />
+		<exec command="git commit -m 'Update version number to ${release_version}'" checkreturn="true" />
+		<exec command="git tag -a ${release_version} -m 'CakePHP ${release_version}'" checkreturn="true" />
 
 		<propertyprompt propertyName="shipit" defaultValue="n" promptText="Ship the new commit and tag?" />
 		<condition property="noshipit" value="1">
-			<not>
-				<equals arg1="y" arg2="${shipit}" casesensitive="false" />
-			</not>"
+			<equals arg1="n" arg2="${shipit}" casesensitive="false" />
 		</condition>
 		<fail if="noshipit" msg="You said not to ship it." />
 
-		<exec command="git push ${git.remote}" />
-		<exec command="git push --tags ${git.remote}" />
-		<echo msg="Pushed commit and tag." />
+		<echo msg="Pushing commit and tag." />
+		<exec command="git push ${git.remote}" checkreturn="true" />
+		<exec command="git push ${git.remote} ${release_version}" checkreturn="true" />
+		<echo msg="Push complete." />
 	</target>
 
 	<!--
@@ -187,10 +192,10 @@
 	-->
 	<target name="distribute" depends="prepare">
 		<echo msg="Uploading tgz file to cakephp.org" />
-		<exec command="scp ${dist.dir}/${pear.package}.tgz cakephp@cakephp.org:${pirum.dir}" dir="." />
+		<exec command="scp ${dist.dir}/${pear.package}.tgz cakephp@cakephp.org:${pirum.dir}" dir="." checkreturn="true"  />
 
 		<echo msg="Adding new release to pirum" />
-		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" />
+		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" checkreturn="true" />
 	</target>
 
 	<!--
@@ -198,5 +203,6 @@
 	-->
 	<target name="build" depends="generate-package" />
 	<target name="release" depends="release-commit,build,distribute" />
+
 
 </project>
