@@ -145,4 +145,13 @@ class ViewBlock {
 	public function active() {
 		return end($this->_active);
 	}
+
+/**
+ * Get the names of the unclosed/active blocks.
+ *
+ * @return array An array of unclosed blocks.
+ */
+	public function unclosed() {
+		return $this->_active;
+	}
 }

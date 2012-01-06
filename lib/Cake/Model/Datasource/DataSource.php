@@ -413,7 +413,7 @@ class DataSource extends Object {
  * @access public
  */
 	public function getSchemaName() {
-		return false;
+		return null;
 	}
 
 /**

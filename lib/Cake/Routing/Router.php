@@ -175,6 +175,20 @@ class Router {
 	}
 
 /**
+ * Resource map getter & setter.
+ *
+ * @param array $resourceMap Resource map
+ * @return mixed
+ * @see Router::$_resourceMap
+ */
+	public static function resourceMap($resourceMap = null) {
+		if ($resourceMap === null) {
+			return self::$_resourceMap;
+		}
+		self::$_resourceMap = $resourceMap;
+	}
+
+/**
  * Connects a new Route in the router.
  *
  * Routes are a way of connecting request urls to objects in your application.  At their core routes

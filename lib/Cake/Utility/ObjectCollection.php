@@ -109,7 +109,8 @@ abstract class ObjectCollection {
 					$options[$opt] = $event->{$opt};
 				}
 			}
-			$callback = array_pop(explode('.', $event->name()));
+			$parts = explode('.', $event->name());
+			$callback = array_pop($parts);
 		}
 		$options = array_merge(
 			array(

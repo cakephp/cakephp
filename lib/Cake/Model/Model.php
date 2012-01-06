@@ -1203,7 +1203,17 @@ class Model extends Object implements CakeEventListener {
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$date = array();
 
-			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
+			if (isset($data['meridian']) && empty($data['meridian'])) {
+				return null;
+			}
+
+			if (
+				isset($data['hour']) &&
+				isset($data['meridian']) &&
+				!empty($data['hour']) &&
+				$data['hour'] != 12 &&
+				'pm' == $data['meridian']
+			) {
 				$data['hour'] = $data['hour'] + 12;
 			}
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
@@ -1213,9 +1223,7 @@ class Model extends Object implements CakeEventListener {
 				foreach ($timeFields as $key => $val) {
 					if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 						$data[$val] = '00';
-					} elseif ($data[$val] === '') {
-						$data[$val] = '';
-					} else {
+					} elseif ($data[$val] !== '') {
 						$data[$val] = sprintf('%02d', $data[$val]);
 					}
 					if (!empty($data[$val])) {
@@ -2810,6 +2818,13 @@ class Model extends Object implements CakeEventListener {
 			foreach ($results as $result) {
 				$result['children'] = array();
 				$id = $result[$this->alias][$this->primaryKey];
+				if (!isset($result[$this->alias]['parent_id'])) {
+					trigger_error(
+						__d('cake_dev', 'You cannot use find("threaded") on models without a "parent_id" field.'),
+						E_USER_WARNING
+					);
+					return $return;
+				}
 				$parentId = $result[$this->alias]['parent_id'];
 				if (isset($idMap[$id]['children'])) {
 					$idMap[$id] = array_merge($result, (array)$idMap[$id]);

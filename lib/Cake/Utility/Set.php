@@ -671,13 +671,16 @@ class Set {
 			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
-			if ($i === $count - 1) {
+			if ($i === $count - 1 && is_array($_list)) {
 				$_list[$key] = $data;
 			} else {
 				if (!isset($_list[$key])) {
 					$_list[$key] = array();
 				}
 				$_list =& $_list[$key];
+			}
+			if (!is_array($_list)) {
+				return array();
 			}
 		}
 		return $list;

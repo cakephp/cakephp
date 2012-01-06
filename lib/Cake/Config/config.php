@@ -17,4 +17,4 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $versionFile = file(CAKE . 'VERSION.txt');
-return $config['Cake.version'] = array_pop($versionFile);
+return $config['Cake.version'] = trim(array_pop($versionFile));

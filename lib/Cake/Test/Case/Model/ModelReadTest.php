@@ -2987,11 +2987,19 @@ class ModelReadTest extends BaseModelTest {
 		$noAfterFindData = $noAfterFindModel->find('all');
 
 		$this->assertFalse($afterFindModel == $noAfterFindModel);
-		// Limitation of PHP 4 and PHP 5 > 5.1.6 when comparing recursive objects
-		if (PHP_VERSION === '5.1.6') {
-			$this->assertFalse($afterFindModel != $duplicateModel);
-		}
 		$this->assertEquals($afterFindData, $noAfterFindData);
+	}
+
+/**
+ * find(threaded) should trigger errors whne there is no parent_id field.
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @return void
+ */
+	public function testFindThreadedError() {
+		$this->loadFixtures('Apple', 'Sample');
+		$Apple = new Apple();
+		$Apple->find('threaded');
 	}
 
 /**

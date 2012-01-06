@@ -107,7 +107,7 @@ class CakeRequest implements ArrayAccess {
 			'Android', 'AvantGo', 'BlackBerry', 'DoCoMo', 'Fennec', 'iPod', 'iPhone',
 			'J2ME', 'MIDP', 'NetFront', 'Nokia', 'Opera Mini', 'Opera Mobi', 'PalmOS', 'PalmSource',
 			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\\.Browser',
-			'webOS', 'Windows CE', 'Xiino'
+			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
 		)),
 		'requested' => array('param' => 'requested', 'value' => 1)
 	);

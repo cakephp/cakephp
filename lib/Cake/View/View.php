@@ -465,7 +465,7 @@ class View extends Object {
  *   the 'meta', 'css', and 'script' blocks.  They are appended in that order.
  *
  * Deprecated features:
- * 
+ *
  * - `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0.
  *   Use the block features instead.  `meta`, `css` and `script` will be populated
  *   by the matching methods on HtmlHelper.
@@ -493,7 +493,7 @@ class View extends Object {
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 
 		$scripts = implode("\n\t", $this->_scripts);
-		$scripts .= $this->get('meta') . $this->get('css') . $this->get('script');
+		$scripts .= $this->Blocks->get('meta') . $this->Blocks->get('css') . $this->Blocks->get('script');
 
 		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content,
@@ -600,7 +600,7 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new 
+ * Append to an existing or new block.  Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
@@ -650,7 +650,7 @@ class View extends Object {
 	}
 
 /**
- * Provides view or element extension/inheritance.  Views can extends a 
+ * Provides view or element extension/inheritance.  Views can extends a
  * parent view and populate blocks in the parent template.
  *
  * @param string $name The view or element to 'extend' the current one with.
@@ -668,7 +668,7 @@ class View extends Object {
 			case self::TYPE_LAYOUT:
 				$parent = $this->_getLayoutFileName($name);
 			break;
-		
+
 		}
 		if ($parent == $this->_current) {
 			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
@@ -775,7 +775,7 @@ class View extends Object {
 
 /**
  * Magic accessor for deprecated attributes.
- * 
+ *
  * @param string $name Name of the attribute to set.
  * @param string $value Value of the attribute to set.
  * @return mixed
@@ -787,6 +787,16 @@ class View extends Object {
 			default:
 				$this->{$name} = $value;
 		}
+	}
+
+/**
+ * Magic isset check for deprecated attributes.
+ *
+ * @param string $name Name of the attribute to check.
+ * @return boolean
+ */
+	public function __isset($name) {
+		return isset($this->name);
 	}
 
 /**
@@ -817,12 +827,10 @@ class View extends Object {
 			$data = $this->viewVars;
 		}
 		$this->_current = $viewFile;
+		$initialBlocks = count($this->Blocks->unclosed());
 
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeRenderFile', $this, array($viewFile)));
 		$content = $this->_evaluate($viewFile, $data);
-		if ($this->Blocks->active()) {
-			throw new CakeException(__d('cake_dev', 'The "%s" block was left open.', $this->Blocks->active()));
-		}
 		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
 		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
 		$afterEvent->modParams = 1;
@@ -833,9 +841,14 @@ class View extends Object {
 			$this->_stack[] = $this->fetch('content');
 			$this->assign('content', $content);
 
-			$content = $this->_render($this->_parents[$viewFile], $data);
-
+			$content = $this->_render($this->_parents[$viewFile]);
 			$this->assign('content', array_pop($this->_stack));
+		}
+
+		$remainingBlocks = count($this->Blocks->unclosed());
+
+		if ($initialBlocks !== $remainingBlocks) {
+			throw new CakeException(__d('cake_dev', 'The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
 		}
 
 		return $content;
@@ -845,7 +858,7 @@ class View extends Object {
  * Sandbox method to evaluate a template / view script in.
  *
  * @param string $___viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view. 
+ * @param array $___dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */

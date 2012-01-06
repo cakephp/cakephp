@@ -71,13 +71,6 @@ class CakeSession {
 	public static $lastError = null;
 
 /**
- * 'Security.level' setting, "high", "medium", or "low".
- *
- * @var string
- */
-	public static $security = null;
-
-/**
  * Start time for this session.
  *
  * @var integer
@@ -121,7 +114,7 @@ class CakeSession {
 
 /**
  * Number of requests that can occur during a session time without the session being renewed.
- * This feature is only used when `Session.harden` is set to true.
+ * This feature is only used when `Session.autoRegenerate` is set to true.
  *
  * @var integer
  * @see CakeSession::_checkValid()

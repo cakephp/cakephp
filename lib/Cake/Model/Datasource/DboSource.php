@@ -484,7 +484,7 @@ class DboSource extends DataSource {
 		if ($this->hasResult()) {
 			return $this->_result->rowCount();
 		}
-		return null;
+		return 0;
 	}
 
 /**
@@ -930,14 +930,14 @@ class DboSource extends DataSource {
 		}
 
 		if ($quote) {
-			if ($schema && isset($schemaName)) {
+			if ($schema && !empty($schemaName)) {
 				if (false == strstr($table, '.')) {
 					return $this->name($schemaName) . '.' . $this->name($table);
 				}
 			}
 			return $this->name($table);
 		}
-		if ($schema && isset($schemaName)) {
+		if ($schema && !empty($schemaName)) {
 			if (false == strstr($table, '.')) {
 				return $schemaName . '.' . $table;
 			}

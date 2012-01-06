@@ -211,6 +211,22 @@ class CakeEventManagerTest extends CakeTestCase {
 	}
 
 /**
+ * Tests event dispatching using event key name
+ *
+ * @return void
+ */
+	public function testDispatchWithKeyName() {
+		$manager = new CakeEventManager;
+		$listener = new CakeEventTestListener;
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$event = 'fake.event';
+		$manager->dispatch($event);
+
+		$expected = array('listenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+	}
+
+/**
  * Tests event dispatching with a return value
  *
  * @return void
