@@ -215,11 +215,11 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'TestPlugin.TestPluginComment'
 			),
 			'components' => array(
-				'TestPlugin.PluginsComponent'
+				'TestPlugin.Plugins'
 			)
 		));
 		$this->assertEquals($Tests->name, 'Tests');
-		$this->assertInstanceOf('PluginsComponentComponent', $Tests->PluginsComponent);
+		$this->assertInstanceOf('PluginsComponent', $Tests->Plugins);
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPluginComment', $result);
