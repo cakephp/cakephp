@@ -106,6 +106,9 @@ class BehaviorCollection extends ObjectCollection {
 			$alias = $behavior;
 			$behavior = $config['className'];
 		}
+		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
+		unset($config['enabled'], $config['className']);
+
 		list($plugin, $name) = pluginSplit($behavior, true);
 		if (!isset($alias)) {
 			$alias = $name;
@@ -165,7 +168,6 @@ class BehaviorCollection extends ObjectCollection {
 			}
 		}
 
-		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
 		if (!in_array($alias, $this->_enabled) && !$configDisabled) {
 			$this->enable($alias);
 		} elseif ($configDisabled) {
