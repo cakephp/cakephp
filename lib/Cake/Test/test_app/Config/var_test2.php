@@ -5,5 +5,9 @@ $config = array(
 		'Second' => array(
 			'SecondDeepest' => 'buried2'
 		)
+	),
+	'TestAcl' => array(
+		'classname' => 'Overwrite',
+		'custom' => 'one'
 	)
 );
