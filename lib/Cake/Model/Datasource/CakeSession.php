@@ -125,10 +125,9 @@ class CakeSession {
  * Constructor.
  *
  * @param string $base The base path for the Session
- * @param boolean $start Should session be started right now
  * @return void
  */
-	public static function init($base = null, $start = true) {
+	public static function init($base = null) {
 		self::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
@@ -181,6 +180,7 @@ class CakeSession {
 		if (self::started()) {
 			return true;
 		}
+		CakeSession::init();
 		$id = self::id();
 		session_write_close();
 		self::_configureSession();
@@ -341,6 +341,9 @@ class CakeSession {
 	public static function userAgent($userAgent = null) {
 		if ($userAgent) {
 			self::$_userAgent = $userAgent;
+		}
+		if (empty(self::$_userAgent)) {
+			CakeSession::init(self::$path);
 		}
 		return self::$_userAgent;
 	}
@@ -681,6 +684,3 @@ class CakeSession {
 		self::$lastError = $errorNumber;
 	}
 }
-
-// Initialize the session
-CakeSession::init();
