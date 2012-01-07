@@ -182,7 +182,7 @@ class Sqlserver extends DboSource {
 		} else {
 			$tables = array();
 
-			while ($line = $result->fetch()) {
+			while ($line = $result->fetch(PDO::FETCH_NUM)) {
 				$tables[] = $line[0];
 			}
 
@@ -222,7 +222,7 @@ class Sqlserver extends DboSource {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		foreach ($cols as $column) {
+		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
 			$field = $column->Field;
 			$fields[$field] = array(
 				'type' => $this->column($column),
