@@ -601,43 +601,6 @@ class SqlserverTest extends CakeTestCase {
 	}
 
 /**
- * testInsertMulti
- *
- * @return void
- */
-	public function testInsertMulti() {
-		$this->db->describe = $this->model->schema();
-
-		$fields = array('id', 'name', 'login');
-		$values = array(
-			array(1, 'Larry', 'PhpNut'),
-			array(2, 'Renan', 'renan.saddam'));
-		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values);
-		$result = $this->db->simulated;
-		$expected = array(
-			'SET IDENTITY_INSERT [sqlserver_test_models] ON',
-			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (1, N'Larry', N'PhpNut')",
-			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (2, N'Renan', N'renan.saddam')",
-			'SET IDENTITY_INSERT [sqlserver_test_models] OFF'
-		);
-		$this->assertEquals($expected, $result);
-
-		$fields = array('name', 'login');
-		$values = array(
-			array('Larry', 'PhpNut'),
-			array('Renan', 'renan.saddam'));
-		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values);
-		$result = $this->db->simulated;
-		$expected = array(
-			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES (N'Larry', N'PhpNut')",
-			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES (N'Renan', N'renan.saddam')",
-		);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * SQL server < 11 doesn't have proper limit/offset support, test that our hack works.
  *
  * @return void
