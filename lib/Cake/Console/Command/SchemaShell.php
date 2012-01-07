@@ -523,7 +523,7 @@ class SchemaShell extends AppShell {
 		))->addSubcommand('update', array(
 			'help' => __d('cake_console', 'Alter the tables based on the schema file.'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot', 'force'),
 				'args' => array(
 					'name' => array(
 						'help' => __d('cake_console', 'Name of schema to use.')

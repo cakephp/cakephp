@@ -250,7 +250,7 @@ class CakeRequest implements ArrayAccess {
 		}
 
 		if (!$baseUrl) {
-			$base = dirname(env('SCRIPT_NAME'));
+			$base = dirname(env('PHP_SELF'));
 
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base = dirname($base);

@@ -898,7 +898,7 @@ class CakeRequestTest extends CakeTestCase {
 		Configure::write('App.baseUrl', false);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['SCRIPT_NAME'] = '/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = new CakeRequest();
@@ -908,7 +908,7 @@ class CakeRequestTest extends CakeTestCase {
 
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
-		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$_SERVER['PHP_SELF'] = '/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/add';
 		$request = new CakeRequest();
 
@@ -917,7 +917,7 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals($request->url, 'posts/add');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
-		$_SERVER['SCRIPT_NAME'] = '/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEquals('', $request->base);
@@ -925,7 +925,7 @@ class CakeRequestTest extends CakeTestCase {
 
 
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
-		$_SERVER['SCRIPT_NAME'] = '/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/app/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEquals($request->base, '');
@@ -934,7 +934,7 @@ class CakeRequestTest extends CakeTestCase {
 		Configure::write('App.dir', 'auth');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['SCRIPT_NAME'] = '/demos/auth/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
 
 		$request = new CakeRequest();
 
@@ -944,7 +944,7 @@ class CakeRequestTest extends CakeTestCase {
 		Configure::write('App.dir', 'code');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
-		$_SERVER['SCRIPT_NAME'] = '/clients/PewterReport/code/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEquals($request->base, '/clients/PewterReport/code');
@@ -958,7 +958,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testBaseUrlwithModRewriteAlias() {
 		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
-		$_SERVER['SCRIPT_NAME'] = '/control/index.php';
+		$_SERVER['PHP_SELF'] = '/control/index.php';
 
 		Configure::write('App.base', '/control');
 
@@ -972,7 +972,7 @@ class CakeRequestTest extends CakeTestCase {
 		Configure::write('App.webroot', 'newaffiliate');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
-		$_SERVER['SCRIPT_NAME'] = '/newaffiliate/index.php';
+		$_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
 		$request = new CakeRequest();
 
 		$this->assertEquals($request->base, '/newaffiliate');
@@ -1113,7 +1113,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testGetParamsWithDot() {
 		$_GET['/posts/index/add_add'] = '';
-		$_SERVER['SCRIPT_NAME'] = '/cake_dev/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake_dev/app/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
 
 		$request = new CakeRequest();
