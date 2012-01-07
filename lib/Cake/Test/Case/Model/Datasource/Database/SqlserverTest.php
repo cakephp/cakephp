@@ -111,7 +111,7 @@ class SqlserverTestDb extends Sqlserver {
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class SqlserverTestModel extends Model {
+class SqlserverTestModel extends CakeTestModel {
 
 /**
  * name property
@@ -183,7 +183,7 @@ class SqlserverTestModel extends Model {
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class SqlserverClientTestModel extends Model {
+class SqlserverClientTestModel extends CakeTestModel {
 /**
  * name property
  *
@@ -224,6 +224,20 @@ class SqlserverTestResultIterator extends ArrayIterator {
  * @return void
  */
 	public function closeCursor() {}
+
+/**
+ * fetch method
+ *
+ * @return void
+ */
+	public function fetch() {
+		if (!$this->valid()) {
+			return null;
+		}
+		$current = $this->current();
+		$this->next();
+		return $current;
+	}
 }
 
 /**
@@ -283,7 +297,7 @@ class SqlserverTest extends CakeTestCase {
  * @return void
  */
 	public function testQuoting() {
-		$expected = "1.200000";
+		$expected = "1.2";
 		$result = $this->db->value(1.2, 'float');
 		$this->assertSame($expected, $result);
 
