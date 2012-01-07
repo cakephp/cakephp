@@ -72,7 +72,10 @@ class Sanitize {
 		$string = $db->value($string, 'string');
 		if ($string[0] === 'N') {
 			$string = substr($string, 2);
+		} else {
+			$string = substr($string, 1);
 		}
+
 		$string = substr($string, 0, -1);
 		return $string;
 	}
