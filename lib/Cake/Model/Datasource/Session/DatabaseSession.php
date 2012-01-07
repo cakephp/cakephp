@@ -16,6 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
+
 /**
  * DatabaseSession provides methods to be used with CakeSession.
  *
