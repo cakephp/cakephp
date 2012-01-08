@@ -746,7 +746,8 @@ class FormHelper extends AppHelper {
 					'string'  => 'text',     'datetime'  => 'datetime',
 					'boolean' => 'checkbox', 'timestamp' => 'datetime',
 					'text'    => 'textarea', 'time'      => 'time',
-					'date'    => 'date',     'float'     => 'text'
+					'date'    => 'date',     'float'     => 'text',
+					'integer' => 'number'
 				);
 
 				if (isset($this->map[$type])) {
@@ -883,6 +884,7 @@ class FormHelper extends AppHelper {
 			case 'text':
 			case 'password':
 			case 'file':
+			case 'number':
 				$input = $this->{$type}($fieldName, $options);
 			break;
 			case 'select':
@@ -1151,6 +1153,12 @@ class FormHelper extends AppHelper {
 			$this->Html->tags['input'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
+		);
+	}
+
+	function number($fieldName, $options = array()) {
+		return $this->text($fieldName, array_merge(
+			array('type' => 'number'), $options)
 		);
 	}
 

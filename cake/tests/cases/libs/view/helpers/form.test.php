@@ -873,6 +873,38 @@ class FormHelperTest extends CakeTestCase {
 			)),
 			'/div'
 		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Tests correct generation of text fields for integers fields
+ *
+ * @access public
+ * @return void
+ */
+	function testTextFieldGenerationForIntegers() {
+		$model = ClassRegistry::getObject('Contact');
+		$model->setSchema(array('foo' => array(
+			'type' => 'integer',
+			'null' => false,
+			'default' => null,
+			'length' => null
+		)));
+
+		$this->Form->create('Contact');
+		$result = $this->Form->input('foo');
+		$expected = array(
+			'div' => array('class' => 'input number'),
+			'label' => array('for' => 'ContactFoo'),
+			'Foo',
+			'/label',
+			array('input' => array(
+				'type' => 'number', 'name' => 'data[Contact][foo]',
+				'id' => 'ContactFoo'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
