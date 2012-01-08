@@ -3,8 +3,6 @@
 /**
  * Command-line code generation utility to automate programmer chores.
  *
- * Shell dispatcher class
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -32,7 +30,7 @@ foreach ($paths as $path) {
 
 if (!$found && function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
-	ini_set('include_path', __CAKE_PATH__ . PATH_SEPARATOR . ini_get('include_path'));
+	ini_set('include_path', $root . $ds . PATH_SEPARATOR . ini_get('include_path'));
 }
 
 if (!include($dispatcher)) {
