@@ -309,7 +309,7 @@ class Mysql extends DboSource {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		foreach ($cols as $column) {
+		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
 			$fields[$column->Field] = array(
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
