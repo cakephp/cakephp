@@ -35,6 +35,20 @@ class TranslateBehavior extends ModelBehavior {
 	public $runtime = array();
 
 /**
+ * Stores the joinTable object for generating joins.
+ *
+ * @var object
+ */
+	var $_joinTable;
+
+/**
+ * Stores the runtime model for generating joins.
+ *
+ * @var Model
+ */
+	var $_runtimeModel;
+
+/**
  * Callback
  *
  * $config for TranslateBehavior should be
@@ -94,6 +108,7 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$db = $model->getDataSource();
 		$RuntimeModel = $this->translateModel($model);
+
 		if (!empty($RuntimeModel->tablePrefix)) {
 			$tablePrefix = $RuntimeModel->tablePrefix;
 		} else {
@@ -104,8 +119,11 @@ class TranslateBehavior extends ModelBehavior {
 		$joinTable->table = $RuntimeModel->table;
 		$joinTable->schemaName = $RuntimeModel->getDataSource()->getSchemaName();
 
+		$this->_joinTable = $joinTable;
+		$this->_runtimeModel = $RuntimeModel;
+
 		if (is_string($query['fields']) && 'COUNT(*) AS ' . $db->name('count') == $query['fields']) {
-			$query['fields'] = 'COUNT(DISTINCT(' . $db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
+			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
 			$query['joins'][] = array(
 				'type' => 'INNER',
 				'alias' => $RuntimeModel->alias,
@@ -116,6 +134,11 @@ class TranslateBehavior extends ModelBehavior {
 					$RuntimeModel->alias.'.locale' => $locale
 				)
 			);
+			$conditionFields = $this->_checkConditions($model, $query);
+			foreach ($conditionFields as $field) {
+				$query = $this->_addJoin($model, $query, $field, $field, $locale);
+			}
+			unset($this->_joinTable, $this->_runtimeModel);
 			return $query;
 		}
 
@@ -145,45 +168,93 @@ class TranslateBehavior extends ModelBehavior {
 						unset($query['fields'][$key]);
 					}
 				}
-
-				if (is_array($locale)) {
-					foreach ($locale as $_locale) {
-						$model->virtualFields['i18n_' . $field . '_' . $_locale] = 'I18n__' . $field . '__' . $_locale . '.content';
-						if (!empty($query['fields'])) {
-							$query['fields'][] = 'i18n_' . $field . '_' . $_locale;
-						}
-						$query['joins'][] = array(
-							'type' => 'LEFT',
-							'alias' => 'I18n__' . $field . '__' . $_locale,
-							'table' => $joinTable,
-							'conditions' => array(
-								$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}__{$_locale}.foreign_key"),
-								'I18n__' . $field . '__' . $_locale . '.model' => $model->name,
-								'I18n__' . $field . '__' . $_locale . '.' . $RuntimeModel->displayField => $aliasField,
-								'I18n__' . $field . '__' . $_locale . '.locale' => $_locale
-							)
-						);
-					}
-				} else {
-					$model->virtualFields['i18n_' . $field] = 'I18n__' . $field . '.content';
-					if (!empty($query['fields'])) {
-						$query['fields'][] = 'i18n_' . $field;
-					}
-					$query['joins'][] = array(
-						'type' => 'INNER',
-						'alias' => 'I18n__' . $field,
-						'table' => $joinTable,
-						'conditions' => array(
-							$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
-							'I18n__' . $field . '.model' => $model->name,
-							'I18n__' . $field . '.' . $RuntimeModel->displayField => $aliasField,
-							'I18n__' . $field . '.locale' => $locale
-						)
-					);
-				}
+				$query = $this->_addJoin($model, $query, $field, $aliasField, $locale);
 			}
 		}
 		$this->runtime[$model->alias]['beforeFind'] = $addFields;
+		unset($this->_joinTable, $this->_runtimeModel);
+		return $query;
+	}
+
+/**
+ * Check a query's conditions for translated fields.
+ * Return an array of translated fields found in the conditions.
+ *
+ * @param Model $model The model being read.
+ * @param array $query The query array.
+ * @return array The list of translated fields that are in the conditions.
+ */
+	protected function _checkConditions(Model $model, $query) {
+		$conditionFields = array();
+		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions'])) ) {
+			return $conditionFields;
+		}
+		foreach ($query['conditions'] as $col => $val) {
+			foreach ($this->settings[$model->alias] as $field => $assoc) {
+				if (is_numeric($field)) {
+					$field = $assoc;
+				}
+				if (strpos($col, $field) !== false) {
+					$conditionFields[] = $field;
+				}
+			}
+		}
+		return $conditionFields;
+	}
+
+/**
+ * Appends a join for translated fields and possibly a field.
+ *
+ * @param Model $model The model being worked on.
+ * @param object $joinTable The jointable object.
+ * @param array $query The query array to append a join to.
+ * @param string $field The field name being joined.
+ * @param string $aliasField The aliased field name being joined.
+ * @param mixed $locale The locale(s) having joins added.
+ * @param boolean $addField Whether or not to add a field.
+ * @return array The modfied query
+ */
+	protected function _addJoin(Model $model, $query, $field, $aliasField, $locale, $addField = false) {
+		$db = ConnectionManager::getDataSource($model->useDbConfig);
+
+		$RuntimeModel = $this->_runtimeModel;
+		$joinTable = $this->_joinTable;
+
+		if (is_array($locale)) {
+			foreach ($locale as $_locale) {
+				$model->virtualFields['i18n_' . $field . '_' . $_locale] = 'I18n__' . $field . '__' . $_locale . '.content';
+				if (!empty($query['fields']) && is_array($query['fields'])) {
+					$query['fields'][] = 'i18n_'.$field.'_'.$_locale;
+				}
+				$query['joins'][] = array(
+					'type' => 'LEFT',
+					'alias' => 'I18n__'.$field.'__'.$_locale,
+					'table' => $joinTable,
+					'conditions' => array(
+						$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}__{$_locale}.foreign_key"),
+						'I18n__'.$field.'__'.$_locale.'.model' => $model->name,
+						'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $aliasField,
+						'I18n__'.$field.'__'.$_locale.'.locale' => $_locale
+					)
+				);
+			}
+		} else {
+			$model->virtualFields['i18n_' . $field] = 'I18n__' . $field . '.content';
+			if (!empty($query['fields']) && is_array($query['fields'])) {
+				$query['fields'][] = 'i18n_'.$field;
+			}
+			$query['joins'][] = array(
+				'type' => 'INNER',
+				'alias' => 'I18n__'.$field,
+				'table' => $joinTable,
+				'conditions' => array(
+					$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
+					'I18n__'.$field.'.model' => $model->name,
+					'I18n__'.$field.'.'.$RuntimeModel->displayField => $aliasField,
+					'I18n__'.$field.'.locale' => $locale
+				)
+			);
+		}
 		return $query;
 	}
 

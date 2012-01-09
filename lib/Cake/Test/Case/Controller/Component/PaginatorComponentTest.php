@@ -777,6 +777,26 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that no sort doesn't trigger an error.
+ *
+ * @return void
+ */
+	public function testValidateSortNoSort() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('direction' => 'asc');
+		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
+		$this->assertFalse(isset($result['order']));
+
+		$options = array('order' => 'invalid desc');
+		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
+
+		$this->assertEquals($options['order'], $result['order']);
+	}
+
+/**
  * test that maxLimit is respected
  *
  * @return void

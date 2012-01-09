@@ -182,7 +182,7 @@ class Sqlserver extends DboSource {
 		} else {
 			$tables = array();
 
-			while ($line = $result->fetch()) {
+			while ($line = $result->fetch(PDO::FETCH_NUM)) {
 				$tables[] = $line[0];
 			}
 
@@ -222,7 +222,7 @@ class Sqlserver extends DboSource {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		foreach ($cols as $column) {
+		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
 			$field = $column->Field;
 			$fields[$field] = array(
 				'type' => $this->column($column),
@@ -645,14 +645,7 @@ class Sqlserver extends DboSource {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' ON');
 		}
 
-		$table = $this->fullTableName($table);
-		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
-		$this->begin();
-		foreach ($values as $value) {
-			$holder = implode(', ', array_map(array(&$this, 'value'), $value));
-			$this->_execute("INSERT INTO {$table} ({$fields}) VALUES ({$holder})");
-		}
-		$this->commit();
+		parent::insertMulti($table, $fields, $values);
 
 		if ($hasPrimaryKey) {
 			$this->_execute('SET IDENTITY_INSERT ' . $this->fullTableName($table) . ' OFF');
@@ -717,9 +710,6 @@ class Sqlserver extends DboSource {
  * @return string
  */
 	protected function _getPrimaryKey($model) {
-		if (!is_object($model)) {
-			$model = new Model(false, $model);
-		}
 		$schema = $this->describe($model);
 		foreach ($schema as $field => $props) {
 			if (isset($props['key']) && $props['key'] == 'primary') {
