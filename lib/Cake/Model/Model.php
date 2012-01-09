@@ -2813,11 +2813,11 @@ class Model extends Object implements CakeEventListener {
 			return $query;
 		} elseif ($state === 'after') {
 			return Set::nest($results, array(
-                'alias' => $this->alias,
-                'primaryKey' => $this->primaryKey,
-                'parent' => 'parent_id',
-                'children' => 'children'
-            ));
+				'alias' => $this->alias,
+				'key' => $this->primaryKey,
+				'parent' => 'parent_id',
+				'children' => 'children'
+			));
 		}
 	}
 

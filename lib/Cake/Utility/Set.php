@@ -1121,9 +1121,11 @@ class Set {
  * @param mixed $data
  * @param array $options Options are:
  *      alias - the first array key to look for
- *      primaryKey - the key to use to identify the rows
+ *      key - the key to use to identify the rows
  *      parentId - the key to use to identify the parent
  *      children - the key name to use in the resultset for children
+ *      idPath - the path to a key that identifies each entry
+ *      parentPath - the path to a key that identifies the parent of each entry
  * @return array of results, nested
  * @link
  */
@@ -1134,35 +1136,42 @@ class Set {
 
 		$options = array(
 			'alias' => key(current($data)),
-			'primaryKey' => 'id',
+			'key' => 'id',
 			'parentId' => 'parent_id',
-			'children' => 'children'
+			'children' => 'children',
 		) + $options;
 
+		if (empty($options['idPath'])) {
+			$options['idPath'] = '/' . $options['alias'] . '/' . $options['key'];
+		}
+		if (empty($options['parentPath'])) {
+			$options['parentPath'] = '/' . $options['alias'] . '/' . $options['parentId'];
+		}
+
 		$return = $idMap = array();
-		$ids = Set::extract($data, '{n}.' . $options['alias'] . '.' . $options['primaryKey']);
+		$ids = Set::extract($data, $options['idPath']);
 
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
-			$id = $result[$options['alias']][$options['primaryKey']];
+			$id = $result[$options['alias']][$options['key']];
 			if (isset($result[$options['alias']][$options['parentId']])) {
 				$parentId = $result[$options['alias']][$options['parentId']];
 			} else {
 				$parentId = null;
 			}
-			if (isset($idMap[$id]['children'])) {
+			if (isset($idMap[$id][$options['children']])) {
 				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
 			} else {
-				$idMap[$id] = array_merge($result, array('children' => array()));
+				$idMap[$id] = array_merge($result, array($options['children'] => array()));
 			}
 			if (!$parentId || !in_array($parentId, $ids)) {
 				$return[] =& $idMap[$id];
 			} else {
-				$idMap[$parentId]['children'][] =& $idMap[$id];
+				$idMap[$parentId][$options['children']][] =& $idMap[$id];
 			}
 		}
 		if (count($return) > 1) {
-			$ids = array_unique(Set::extract('/' . $options['alias'] . '/' . $options['parentId'], $return));
+			$ids = array_unique(Set::extract($options['parentPath'], $return));
 			if (count($ids) > 1) {
 				$root = $return[0][$options['alias']][$options['parentId']];
 				foreach ($return as $key => $value) {
