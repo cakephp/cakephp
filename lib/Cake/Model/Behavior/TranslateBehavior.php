@@ -135,7 +135,7 @@ class TranslateBehavior extends ModelBehavior {
 			);
 			$conditionFields = $this->_checkConditions($model, $query);
 			foreach ($conditionFields as $field) {
-				$query = $this->_addJoin($model, $query, $field, $locale);
+				$query = $this->_addJoin($model, $query, $field, $field, $locale);
 			}
 			unset($this->_joinTable, $this->_runtimeModel);
 			return $query;
@@ -167,7 +167,7 @@ class TranslateBehavior extends ModelBehavior {
 						unset($query['fields'][$key]);
 					}
 				}
-				$query = $this->_addJoin($model, $query, $field, $locale);
+				$query = $this->_addJoin($model, $query, $field, $aliasField, $locale);
 			}
 		}
 		$this->runtime[$model->alias]['beforeFind'] = $addFields;
@@ -208,11 +208,12 @@ class TranslateBehavior extends ModelBehavior {
  * @param object $joinTable The jointable object.
  * @param array $query The query array to append a join to.
  * @param string $field The field name being joined.
+ * @param string $aliasField The aliased field name being joined.
  * @param mixed $locale The locale(s) having joins added.
  * @param boolean $addField Whether or not to add a field.
  * @return array The modfied query
  */
-	protected function _addJoin(Model $model, $query, $field, $locale, $addField = false) {
+	protected function _addJoin(Model $model, $query, $field, $aliasField, $locale, $addField = false) {
 		$db = ConnectionManager::getDataSource($model->useDbConfig);
 
 		$RuntimeModel = $this->_runtimeModel;
@@ -231,7 +232,7 @@ class TranslateBehavior extends ModelBehavior {
 					'conditions' => array(
 						$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}__{$_locale}.foreign_key"),
 						'I18n__'.$field.'__'.$_locale.'.model' => $model->name,
-						'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $field,
+						'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $aliasField,
 						'I18n__'.$field.'__'.$_locale.'.locale' => $_locale
 					)
 				);
@@ -248,7 +249,7 @@ class TranslateBehavior extends ModelBehavior {
 				'conditions' => array(
 					$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
 					'I18n__'.$field.'.model' => $model->name,
-					'I18n__'.$field.'.'.$RuntimeModel->displayField => $field,
+					'I18n__'.$field.'.'.$RuntimeModel->displayField => $aliasField,
 					'I18n__'.$field.'.locale' => $locale
 				)
 			);
