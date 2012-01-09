@@ -158,7 +158,11 @@ class ClassRegistry {
 							}
 						}
 					}
-					$instance = $reflection->newInstance($settings);
+					if ($reflection->getConstructor()) {
+						$instance = $reflection->newInstance($settings);
+					} else {
+						$instance = $reflection->newInstance();
+					}
 					if ($strict) {
 						$instance = ($instance instanceof Model) ? $instance : null;
 					}
