@@ -3078,7 +3078,7 @@ class Model extends Object implements CakeEventListener {
 							$ruleParams[] = $validator;
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
 							$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
-						} elseif (method_exists('Validation', $rule)) {
+						} elseif (class_exists('Validation') && method_exists('Validation', $rule)) {
 							$valid = call_user_func_array(array('Validation', $rule), $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);

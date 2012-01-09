@@ -79,7 +79,9 @@ class String {
 			$node = crc32(Configure::read('Security.salt'));
 		}
 
-		if (function_exists('zend_thread_id')) {
+		if (function_exists('hphp_get_thread_id')) {
+			$pid = hphp_get_thread_id();
+		} else if (function_exists('zend_thread_id')) {
 			$pid = zend_thread_id();
 		} else {
 			$pid = getmypid();

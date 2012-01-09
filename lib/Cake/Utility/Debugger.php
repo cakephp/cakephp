@@ -402,7 +402,7 @@ class Debugger {
 			if (!isset($data[$i])) {
 				continue;
 			}
-			$string = str_replace(array("\r\n", "\n"), "", highlight_string($data[$i], true));
+			$string = str_replace(array("\r\n", "\n"), "", self::_highlight($data[$i]));
 			if ($i == $line) {
 				$lines[] = '<span class="code-highlight">' . $string . '</span>';
 			} else {
@@ -410,6 +410,23 @@ class Debugger {
 			}
 		}
 		return $lines;
+	}
+
+/**
+ * Wraps the highlight_string funciton in case the server API does not
+ * implement the function as it is the case of the HipHop interpreter
+ *
+ * @param string $str the string to convert
+ * @return string
+ */
+	protected static function _highlight($str) {
+		static $supportHighlight = null;
+		if (!$supportHighlight && function_exists('hphp_log')) {
+			$supportHighlight = false;
+			return htmlentities($str);
+		}
+		$supportHighlight = true;
+		return highlight_string($str, true);
 	}
 
 /**
