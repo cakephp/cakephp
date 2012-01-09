@@ -1114,4 +1114,64 @@ class Set {
 		}
 		return null;
 	}
+
+/**
+ * Takes in a flat 2 dimensional array and returns a nested array
+ *
+ * @param mixed $data
+ * @param array $options Options are:
+ *      alias - the first array key to look for
+ *      primaryKey - the key to use to identify the rows
+ *      parentId - the key to use to identify the parent
+ *      children - the key name to use in the resultset for children
+ * @return array of results, nested
+ * @link
+ */
+	public static function nest($data, $options = array()) {
+		if (!$data) {
+			return $data;
+		}
+
+		$options = array(
+			'alias' => key(current($data)),
+			'primaryKey' => 'id',
+			'parentId' => 'parent_id',
+			'children' => 'children'
+		) + $options;
+
+		$return = $idMap = array();
+		$ids = Set::extract($data, '{n}.' . $options['alias'] . '.' . $options['primaryKey']);
+
+		foreach ($data as $result) {
+			$result[$options['children']] = array();
+			$id = $result[$options['alias']][$options['primaryKey']];
+			if (isset($result[$options['alias']][$options['parentId']])) {
+				$parentId = $result[$options['alias']][$options['parentId']];
+			} else {
+				$parentId = null;
+			}
+			if (isset($idMap[$id]['children'])) {
+				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
+			} else {
+				$idMap[$id] = array_merge($result, array('children' => array()));
+			}
+			if (!$parentId || !in_array($parentId, $ids)) {
+				$return[] =& $idMap[$id];
+			} else {
+				$idMap[$parentId]['children'][] =& $idMap[$id];
+			}
+		}
+		if (count($return) > 1) {
+			$ids = array_unique(Set::extract('/' . $options['alias'] . '/' . $options['parentId'], $return));
+			if (count($ids) > 1) {
+				$root = $return[0][$options['alias']][$options['parentId']];
+				foreach ($return as $key => $value) {
+					if ($value[$options['alias']][$options['parentId']] != $root) {
+						unset($return[$key]);
+					}
+				}
+			}
+		}
+		return $return;
+	}
 }
