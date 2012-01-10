@@ -115,6 +115,7 @@ class RequestHandlerComponent extends Object {
 		'DoCoMo',
 		'iPod',
 		'iPhone',
+		'iPad',
 		'J2ME',
 		'MIDP',
 		'NetFront',
@@ -131,6 +132,7 @@ class RequestHandlerComponent extends Object {
 		'UP\.Browser',
 		'webOS',
 		'Windows CE',
+		'Windows Phone OS',
 		'Xiino'
 	);
 
