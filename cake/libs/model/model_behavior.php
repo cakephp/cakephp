@@ -491,6 +491,11 @@ class BehaviorCollection extends Object {
 			if (in_array($name, $this->_disabled)) {
 				continue;
 			}
+
+			if (!method_exists($this->{$name}, $callback)) {
+				continue;
+			}
+
 			$result = $this->{$name}->dispatchMethod($model, $callback, $params);
 
 			if ($options['break'] && ($result === $options['breakOn'] || (is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))) {
