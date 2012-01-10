@@ -3435,11 +3435,11 @@ class SetTest extends CakeTestCase {
 		);
 
 		$result = Set::nest($input, array('idPath' => '/id', 'parentPath' => '/parent_id'));
-        foreach($result as &$row) {
-            if (empty($row['children'])) {
-                unset($row['children']);
-            }
-        }
+		foreach($result as &$row) {
+			if (empty($row['children'])) {
+				unset($row['children']);
+			}
+		}
 		$this->assertEquals($input, $result);
 	}
 }
