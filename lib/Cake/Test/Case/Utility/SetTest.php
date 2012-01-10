@@ -3138,6 +3138,12 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * test Set nest with a normal model result set. For kicks rely on Set nest detecting the key names
+ * automatically
+ *
+ * @return void
+ */
 	public function testNestModel() {
 		$input = array(
 			array(
@@ -3280,6 +3286,11 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * test Set nest with a 1d array - this method should be able to handle any type of array input
+ *
+ * @return void
+ */
 	public function testNest1Dimensional() {
 		$input = array(
 			array(
@@ -3380,5 +3391,55 @@ class SetTest extends CakeTestCase {
 		);
 		$result = Set::nest($input, array('idPath' => '/id', 'parentPath' => '/parent_id'));
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test Set nest with no specified parent data.
+ *
+ * For an easier comparison, unset all the empty children arrays from the result
+ *
+ * @return void
+ */
+	public function testMissingParent() {
+		$input = array(
+			array(
+				'id' => 1,
+			),
+			array(
+				'id' => 2,
+			),
+			array(
+				'id' => 3,
+			),
+			array(
+				'id' => 4,
+			),
+			array(
+				'id' => 5,
+			),
+			array(
+				'id' => 6,
+			),
+			array(
+				'id' => 7,
+			),
+			array(
+				'id' => 8,
+			),
+			array(
+				'id' => 9,
+			),
+			array(
+				'id' => 10,
+			)
+		);
+
+		$result = Set::nest($input, array('idPath' => '/id', 'parentPath' => '/parent_id'));
+        foreach($result as &$row) {
+            if (empty($row['children'])) {
+                unset($row['children']);
+            }
+        }
+		$this->assertEquals($input, $result);
 	}
 }
