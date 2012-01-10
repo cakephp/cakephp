@@ -1132,11 +1132,11 @@ class Set {
 		}
 
 		$alias = key(current($data));
-		$options = array(
+		$options += array(
 			'idPath' => "/$alias/id",
 			'parentPath' => "/$alias/parent_id",
 			'children' => 'children'
-		) + $options;
+		);
 
 		$return = $idMap = array();
 		$ids = Set::extract($data, $options['idPath']);

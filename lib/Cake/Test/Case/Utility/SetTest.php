@@ -3137,4 +3137,248 @@ class SetTest extends CakeTestCase {
 		$expected = array('one' => array('a', 'b', 'c' => 'cee'), 'two' => 2, 'three' => null);
 		$this->assertEquals($expected, $result);
 	}
+
+	public function testNestModel() {
+		$input = array(
+			array(
+				'ModelName' => array(
+					'id' => 1,
+					'parent_id' => null
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 2,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 3,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 4,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 5,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 6,
+					'parent_id' => null
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 7,
+					'parent_id' => 6
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 8,
+					'parent_id' => 6
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 9,
+					'parent_id' => 6
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 10,
+					'parent_id' => 6
+				)
+			)
+		);
+		$expected = array(
+			array(
+				'ModelName' => array(
+					'id' => 1,
+					'parent_id' => null
+				),
+				'children' => array(
+					array(
+						'ModelName' => array(
+							'id' => 2,
+							'parent_id' => 1
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 3,
+							'parent_id' => 1
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 4,
+							'parent_id' => 1
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 5,
+							'parent_id' => 1
+						),
+						'children' => array()
+					),
+
+				)
+			),
+			array(
+				'ModelName' => array(
+					'id' => 6,
+					'parent_id' => null
+				),
+				'children' => array(
+					array(
+						'ModelName' => array(
+							'id' => 7,
+							'parent_id' => 6
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 8,
+							'parent_id' => 6
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 9,
+							'parent_id' => 6
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 10,
+							'parent_id' => 6
+						),
+						'children' => array()
+					)
+				)
+			)
+		);
+		$result = Set::nest($input);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testNest1Dimensional() {
+		$input = array(
+			array(
+				'id' => 1,
+				'parent_id' => null
+			),
+			array(
+				'id' => 2,
+				'parent_id' => 1
+			),
+			array(
+				'id' => 3,
+				'parent_id' => 1
+			),
+			array(
+				'id' => 4,
+				'parent_id' => 1
+			),
+			array(
+				'id' => 5,
+				'parent_id' => 1
+			),
+			array(
+				'id' => 6,
+				'parent_id' => null
+			),
+			array(
+				'id' => 7,
+				'parent_id' => 6
+			),
+			array(
+				'id' => 8,
+				'parent_id' => 6
+			),
+			array(
+				'id' => 9,
+				'parent_id' => 6
+			),
+			array(
+				'id' => 10,
+				'parent_id' => 6
+			)
+		);
+		$expected = array(
+			array(
+				'id' => 1,
+				'parent_id' => null,
+				'children' => array(
+					array(
+						'id' => 2,
+						'parent_id' => 1,
+						'children' => array()
+					),
+					array(
+						'id' => 3,
+						'parent_id' => 1,
+						'children' => array()
+					),
+					array(
+						'id' => 4,
+						'parent_id' => 1,
+						'children' => array()
+					),
+					array(
+						'id' => 5,
+						'parent_id' => 1,
+						'children' => array()
+					),
+
+				)
+			),
+			array(
+				'id' => 6,
+				'parent_id' => null,
+				'children' => array(
+					array(
+						'id' => 7,
+						'parent_id' => 6,
+						'children' => array()
+					),
+					array(
+						'id' => 8,
+						'parent_id' => 6,
+						'children' => array()
+					),
+					array(
+						'id' => 9,
+						'parent_id' => 6,
+						'children' => array()
+					),
+					array(
+						'id' => 10,
+						'parent_id' => 6,
+						'children' => array()
+					)
+				)
+			)
+		);
+		$result = Set::nest($input, array('idPath' => '/id', 'parentPath' => '/parent_id'));
+		$this->assertEquals($expected, $result);
+	}
 }
