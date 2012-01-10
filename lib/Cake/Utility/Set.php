@@ -1146,21 +1146,8 @@ class Set {
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
 
-			$id = $result;
-			foreach($idKeys as $key) {
-				$id = $id[$key];
-			}
-
-			$parentId = $result;
-			foreach($parentKeys as $key) {
-				if (!isset($parentId[$key])) {
-					break;
-				}
-				$parentId = $parentId[$key];
-			}
-			if (!is_scalar($parentId)) {
-				$parentId = null;
-			}
+			$id = Set::getValue($result, $idKeys);
+			$parentId = Set::getValue($result, $parentKeys);
 
 			if (isset($idMap[$id][$options['children']])) {
 				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
@@ -1174,35 +1161,39 @@ class Set {
 			}
 		}
 
-		$root = $return[0];
-		foreach($parentKeys as $key) {
-			if (!isset($root[$key])) {
-				break;
-			}
-			$root = $root[$key];
-		}
-		if (!is_scalar($root)) {
-			$root = null;
-		}
+		$root = Set::getValue($return[0], $parentKeys);
 
 		foreach ($return as $i => $result) {
-
-			$parentId = $result;
-			foreach($parentKeys as $key) {
-				if (!isset($parentId[$key])) {
-					break;
-				}
-				$parentId = $parentId[$key];
-			}
-			if (!is_scalar($parentId)) {
-				$parentId = null;
-			}
-
+			$parentId = Set::getValue($result, $parentKeys);
 			if ($parentId != $root) {
 				unset($return[$i]);
 			}
 		}
 
+		return $return;
+	}
+
+/**
+ * A slimmed down set extract
+ *
+ * @param mixed $input an array
+ * @param mixed $path string or array of array keys
+ * @return the value at the specified position or null if it doesn't exist
+ */
+	protected static function getValue($input, $path) {
+		if (is_string($path)) {
+			$keys = explode('/', trim($path, '/'));
+		} else {
+			$keys = $path;
+		}
+
+		$return = $input;
+		foreach($keys as $key) {
+			if (!isset($return[$key])) {
+				return null;
+			}
+			$return = $return[$key];
+		}
 		return $return;
 	}
 }
