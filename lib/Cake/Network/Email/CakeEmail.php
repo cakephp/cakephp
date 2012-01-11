@@ -1288,7 +1288,7 @@ class CakeEmail {
 			}
 			$data = $this->_readFile($fileInfo['file']);
 
-			$msg[] = '--' . $this->_boundary;
+			$msg[] = '--rel-' . $this->_boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
 			$msg[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
