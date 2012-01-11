@@ -801,7 +801,7 @@ class Model extends Object {
 		}
 		if ($name === 'tablePrefix') {
 			$this->setDataSource();
-			if (property_exists($this, 'tablePrefix')) {
+			if (property_exists($this, 'tablePrefix') && !empty($this->tablePrefix)) {
 				return $this->tablePrefix;
 			}
 			return $this->tablePrefix = null;
