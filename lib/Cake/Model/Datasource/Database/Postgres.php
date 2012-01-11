@@ -206,6 +206,8 @@ class Postgres extends DboSource {
 					if ($c->type == 'character varying') {
 						$length = null;
 						$type = 'text';
+					} else if ($c->type == 'uuid') {
+						$length = 36;
 					} else {
 						$length = intval($c->oct_length);
 					}
