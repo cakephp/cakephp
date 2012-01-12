@@ -288,13 +288,13 @@ class Model extends Object implements CakeEventListener {
  * ### Possible keys in association
  *
  * - `className`: the classname of the model being associated to the current model.
- *   If you’re defining a ‘Profile belongsTo User’ relationship, the className key should equal ‘User.’
+ *   If you're defining a 'Profile belongsTo User' relationship, the className key should equal 'User.'
  * - `foreignKey`: the name of the foreign key found in the current model. This is
  *   especially handy if you need to define multiple belongsTo relationships. The default
- *   value for this key is the underscored, singular name of the other model, suffixed with ‘_id’.
- * - `conditions`: An SQL fragment used to filter related model records. It’s good
- *   practice to use model names in SQL fragments: “User.active = 1” is always
- *   better than just “active = 1.”
+ *   value for this key is the underscored, singular name of the other model, suffixed with '_id'.
+ * - `conditions`: An SQL fragment used to filter related model records. It's good
+ *   practice to use model names in SQL fragments: 'User.active = 1' is always
+ *   better than just 'active = 1.'
  * - `type`: the type of the join to use in the SQL query, default is LEFT which
  *   may not fit your needs in all situations, INNER may be helpful when you want
  *   everything from your main and associated models or nothing at all!(effective
@@ -303,7 +303,7 @@ class Model extends Object implements CakeEventListener {
  *   fetched. Returns all fields by default.
  * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
  * - `counterCache`: If set to true the associated Model will automatically increase or
- *   decrease the “[singular_model_name]_count” field in the foreign table whenever you do
+ *   decrease the "[singular_model_name]_count" field in the foreign table whenever you do
  *   a save() or delete(). If its a string then its the field name to use. The value in the
  *   counter field represents the number of related rows.
  * - `counterScope`: Optional conditions array to use for updating counter cache field.
@@ -335,18 +335,18 @@ class Model extends Object implements CakeEventListener {
  * ### Possible keys in association
  *
  * - `className`: the classname of the model being associated to the current model.
- *   If you’re defining a ‘User hasOne Profile’ relationship, the className key should equal ‘Profile.’
+ *   If you're defining a 'User hasOne Profile' relationship, the className key should equal 'Profile.'
  * - `foreignKey`: the name of the foreign key found in the other model. This is
  *   especially handy if you need to define multiple hasOne relationships.
  *   The default value for this key is the underscored, singular name of the
- *   current model, suffixed with ‘_id’. In the example above it would default to 'user_id'.
- * - `conditions`: An SQL fragment used to filter related model records. It’s good
- *   practice to use model names in SQL fragments: “Profile.approved = 1” is
- *   always better than just “approved = 1.”
+ *   current model, suffixed with '_id'. In the example above it would default to 'user_id'.
+ * - `conditions`: An SQL fragment used to filter related model records. It's good
+ *   practice to use model names in SQL fragments: "Profile.approved = 1" is
+ *   always better than just "approved = 1."
  * - `fields`: A list of fields to be retrieved when the associated model data is
  *   fetched. Returns all fields by default.
  * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
- * - `dependent`: When the dependent key is set to true, and the model’s delete()
+ * - `dependent`: When the dependent key is set to true, and the model's delete()
  *   method is called with the cascade parameter set to true, associated model
  *   records are also deleted. In this case we set it true so that deleting a
  *   User will also delete her associated Profile.
@@ -378,13 +378,13 @@ class Model extends Object implements CakeEventListener {
  * ### Possible keys in association
  *
  * - `className`: the classname of the model being associated to the current model.
- *   If you’re defining a ‘User hasMany Comment’ relationship, the className key should equal ‘Comment.’
+ *   If you're defining a 'User hasMany Comment' relationship, the className key should equal 'Comment.'
  * - `foreignKey`: the name of the foreign key found in the other model. This is
  *   especially handy if you need to define multiple hasMany relationships. The default
- *   value for this key is the underscored, singular name of the actual model, suffixed with ‘_id’.
- * - `conditions`: An SQL fragment used to filter related model records. It’s good
- *   practice to use model names in SQL fragments: “Comment.status = 1” is always
- *   better than just “status = 1.”
+ *   value for this key is the underscored, singular name of the actual model, suffixed with '_id'.
+ * - `conditions`: An SQL fragment used to filter related model records. It's good
+ *   practice to use model names in SQL fragments: "Comment.status = 1" is always
+ *   better than just "status = 1."
  * - `fields`: A list of fields to be retrieved when the associated model data is
  *   fetched. Returns all fields by default.
  * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
@@ -429,7 +429,7 @@ class Model extends Object implements CakeEventListener {
  * ### Possible keys in association
  *
  * - `className`: the classname of the model being associated to the current model.
- *   If you're defining a ‘Recipe HABTM Tag' relationship, the className key should equal ‘Tag.'
+ *   If you're defining a 'Recipe HABTM Tag' relationship, the className key should equal 'Tag.'
  * - `joinTable`: The name of the join table used in this association (if the
  *   current table doesn't adhere to the naming convention for HABTM join tables).
  * - `with`: Defines the name of the model for the join table. By default CakePHP
@@ -439,11 +439,11 @@ class Model extends Object implements CakeEventListener {
  * - `foreignKey`: the name of the foreign key found in the current model.
  *   This is especially handy if you need to define multiple HABTM relationships.
  *   The default value for this key is the underscored, singular name of the
- *   current model, suffixed with ‘_id'.
+ *   current model, suffixed with '_id'.
  * - `associationForeignKey`: the name of the foreign key found in the other model.
  *   This is especially handy if you need to define multiple HABTM relationships.
  *   The default value for this key is the underscored, singular name of the other
- *   model, suffixed with ‘_id'.
+ *   model, suffixed with '_id'.
  * - `unique`: If true (default value) cake will first delete existing relationship
  *   records in the foreign keys table before inserting new ones, when updating a
  *   record. So existing associations need to be passed again when updating.
@@ -854,7 +854,7 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($name === 'tablePrefix') {
 			$this->setDataSource();
-			if (property_exists($this, 'tablePrefix')) {
+			if (property_exists($this, 'tablePrefix') && !empty($this->tablePrefix)) {
 				return $this->tablePrefix;
 			}
 			return $this->tablePrefix = null;
