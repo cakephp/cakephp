@@ -733,4 +733,34 @@ class CakeResponseTest extends CakeTestCase {
 			->method('_sendHeader')->with('Cache-Control', 's-maxage=3600, public');
 		$response->send();
 	}
+
+/**
+ * Tests setting of must-revalidate Cache-Control directive
+ *
+ * @return void
+ */
+	public function testMustRevalidate() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$this->assertFalse($response->mustRevalidate());
+		$response->mustRevalidate(true);
+		$this->assertTrue($response->mustRevalidate());
+		$headers = $response->header();
+		$this->assertEquals('must-revalidate', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 'must-revalidate');
+		$response->send();
+		$response->mustRevalidate(false);
+		$this->assertFalse($response->mustRevalidate());
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->sharedMaxAge(3600);
+		$response->mustRevalidate(true);
+		$headers = $response->header();
+		$this->assertEquals('s-maxage=3600, must-revalidate', $headers['Cache-Control']);
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Cache-Control', 's-maxage=3600, must-revalidate');
+		$response->send();
+
+	}
+
 }

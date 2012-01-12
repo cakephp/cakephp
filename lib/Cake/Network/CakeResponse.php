@@ -768,6 +768,29 @@ class CakeResponse {
 	}
 
 /**
+ * Sets the Cache-Control must-revalidate directive.
+ * must-revalidate indicates that the response should not be served 
+ * stale by a cache under any cirumstance without first revalidating 
+ * with the origin.
+ * If called with no parameters, this function will return wheter must-revalidate is present.
+ *
+ * @param int $seconds if null, the method will return the current 
+ * must-revalidate value
+ * @return boolean
+ */
+	public function mustRevalidate($enable = null) {
+		if ($enable !== null) {
+			if ($enable) {
+				$this->_cacheDirectives['must-revalidate'] = null;
+			} else {
+				unset($this->_cacheDirectives['must-revalidate']);
+			}
+			$this->_setCacheControl();
+		}
+		return array_key_exists('must-revalidate', $this->_cacheDirectives);
+	}
+
+/**
  * Helper method to generate a valid Cache-Control header from the options set
  * in other methods
  *
