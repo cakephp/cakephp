@@ -1236,4 +1236,16 @@ Element content.
 TEXT;
 		$this->assertEquals($expected, $content);
 	}
+
+/**
+ * Test that setting arbitrary properties still works.
+ *
+ * @return void
+ */
+	public function testPropertySetting() {
+		$this->assertFalse(isset($this->View->pageTitle));
+		$this->View->pageTitle = 'test';
+		$this->assertTrue(isset($this->View->pageTitle));
+		$this->assertEquals('test', $this->View->pageTitle);
+	}
 }

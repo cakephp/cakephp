@@ -107,6 +107,9 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			$alias = $behavior;
 			$behavior = $config['className'];
 		}
+		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
+		unset($config['enabled'], $config['className']);
+
 		list($plugin, $name) = pluginSplit($behavior, true);
 		if (!isset($alias)) {
 			$alias = $name;
@@ -166,8 +169,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			}
 		}
 
-		$enable = isset($config['enabled']) ? $config['enabled'] : true;
-		if ($enable) {
+		if (!in_array($alias, $this->_enabled) && !$configDisabled) {
 			$this->enable($alias);
 		} else {
 			$this->disable($alias);

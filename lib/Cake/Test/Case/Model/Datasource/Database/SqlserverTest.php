@@ -111,7 +111,7 @@ class SqlserverTestDb extends Sqlserver {
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class SqlserverTestModel extends Model {
+class SqlserverTestModel extends CakeTestModel {
 
 /**
  * name property
@@ -183,7 +183,7 @@ class SqlserverTestModel extends Model {
  *
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
-class SqlserverClientTestModel extends Model {
+class SqlserverClientTestModel extends CakeTestModel {
 /**
  * name property
  *
@@ -224,6 +224,20 @@ class SqlserverTestResultIterator extends ArrayIterator {
  * @return void
  */
 	public function closeCursor() {}
+
+/**
+ * fetch method
+ *
+ * @return void
+ */
+	public function fetch() {
+		if (!$this->valid()) {
+			return null;
+		}
+		$current = $this->current();
+		$this->next();
+		return $current;
+	}
 }
 
 /**
@@ -283,7 +297,7 @@ class SqlserverTest extends CakeTestCase {
  * @return void
  */
 	public function testQuoting() {
-		$expected = "1.200000";
+		$expected = "1.2";
 		$result = $this->db->value(1.2, 'float');
 		$this->assertSame($expected, $result);
 
@@ -584,43 +598,6 @@ class SqlserverTest extends CakeTestCase {
 		$this->db->describe = $schema;
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertNull($result);
-	}
-
-/**
- * testInsertMulti
- *
- * @return void
- */
-	public function testInsertMulti() {
-		$this->db->describe = $this->model->schema();
-
-		$fields = array('id', 'name', 'login');
-		$values = array(
-			array(1, 'Larry', 'PhpNut'),
-			array(2, 'Renan', 'renan.saddam'));
-		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values);
-		$result = $this->db->simulated;
-		$expected = array(
-			'SET IDENTITY_INSERT [sqlserver_test_models] ON',
-			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (1, N'Larry', N'PhpNut')",
-			"INSERT INTO [sqlserver_test_models] ([id], [name], [login]) VALUES (2, N'Renan', N'renan.saddam')",
-			'SET IDENTITY_INSERT [sqlserver_test_models] OFF'
-		);
-		$this->assertEquals($expected, $result);
-
-		$fields = array('name', 'login');
-		$values = array(
-			array('Larry', 'PhpNut'),
-			array('Renan', 'renan.saddam'));
-		$this->db->simulated = array();
-		$this->db->insertMulti($this->model, $fields, $values);
-		$result = $this->db->simulated;
-		$expected = array(
-			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES (N'Larry', N'PhpNut')",
-			"INSERT INTO [sqlserver_test_models] ([name], [login]) VALUES (N'Renan', N'renan.saddam')",
-		);
-		$this->assertEquals($expected, $result);
 	}
 
 /**

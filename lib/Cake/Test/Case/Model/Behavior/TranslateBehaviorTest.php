@@ -59,6 +59,24 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Test that count queries with conditions get the correct joins
+ *
+ * @return void
+ */
+	function testCountWithConditions() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$Model =& new TranslatedItem();
+		$Model->locale = 'eng';
+		$result = $Model->find('count', array(
+			'conditions' => array(
+				'I18n__content.locale' => 'eng'
+			)
+		));
+		$this->assertEqual(3, $result);
+	}
+
+/**
  * testTranslateModel method
  *
  * @return void

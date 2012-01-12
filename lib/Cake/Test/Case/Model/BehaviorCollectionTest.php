@@ -419,8 +419,21 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'core.apple', 'core.sample', 'core.article', 'core.user', 'core.comment',
-		'core.attachment', 'core.tag', 'core.articles_tag'
+		'core.attachment', 'core.tag', 'core.articles_tag', 'core.translate'
 	);
+
+/**
+ * Test load() with enabled => false
+ *
+ */
+	public function testLoadDisabled() {
+		$Apple = new Apple();
+		$this->assertSame($Apple->Behaviors->attached(), array());
+
+		$Apple->Behaviors->load('Translate', array('enabled' => false));
+		$this->assertTrue($Apple->Behaviors->attached('Translate'));
+		$this->assertFalse($Apple->Behaviors->enabled('Translate'));
+	}
 
 /**
  * Tests loading aliased behaviors

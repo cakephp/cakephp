@@ -796,7 +796,7 @@ class View extends Object {
  * @return boolean
  */
 	public function __isset($name) {
-		return isset($this->name);
+		return isset($this->{$name});
 	}
 
 /**
