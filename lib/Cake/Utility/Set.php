@@ -1146,8 +1146,8 @@ class Set {
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
 
-			$id = Set::getValue($result, $idKeys);
-			$parentId = Set::getValue($result, $parentKeys);
+			$id = Set::get($result, $idKeys);
+			$parentId = Set::get($result, $parentKeys);
 
 			if (isset($idMap[$id][$options['children']])) {
 				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
@@ -1161,10 +1161,10 @@ class Set {
 			}
 		}
 
-		$root = Set::getValue($return[0], $parentKeys);
+		$root = Set::get($return[0], $parentKeys);
 
 		foreach ($return as $i => $result) {
-			$parentId = Set::getValue($result, $parentKeys);
+			$parentId = Set::get($result, $parentKeys);
 			if ($parentId != $root) {
 				unset($return[$i]);
 			}
@@ -1174,18 +1174,25 @@ class Set {
 	}
 
 /**
- * A slimmed down set extract
+ * Return the value at the specified position
  *
  * @param mixed $input an array
  * @param mixed $path string or array of array keys
  * @return the value at the specified position or null if it doesn't exist
  */
-	protected static function getValue($input, $path) {
+	public static function get($input, $path = null) {
 		if (is_string($path)) {
-			$keys = explode('/', trim($path, '/'));
+            if (strpos($path, '/') !== false) {
+			    $keys = explode('/', trim($path, '/'));
+            } else {
+			    $keys = explode('.', trim($path, '.'));
+            }
 		} else {
 			$keys = $path;
 		}
+        if (!$keys) {
+            return $input;
+        }
 
 		$return = $input;
 		foreach($keys as $key) {
