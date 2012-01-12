@@ -1323,7 +1323,7 @@ class CakeEmail {
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: multipart/related; boundary="rel-' . $boundary . '"';
 			$msg[] = '';
-			$relBoundary = 'rel-' . $boundary;
+			$relBoundary = $textBoundary = 'rel-' . $boundary;
 		}
 
 		if ($hasMultipleTypes) {
