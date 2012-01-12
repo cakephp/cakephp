@@ -53,4 +53,66 @@ class Set2 {
 		}
 		return $data;
 	}
+
+	public static function extract(array $data, $path) {
+
+	}
+
+	public static function insert(array $data, $path, $values = null) {
+
+	}
+
+	public static function remove(array $data, $path) {
+
+	}
+
+	public static function combine(array $data, $keyPath, $valuePath = null) {
+
+	}
+
+	public static function contains(array $data, $needle) {
+
+	}
+
+	public static function check(array $data, $path) {
+
+	}
+
+	public static function filter(array $data) {
+	
+	}
+
+	public static function flatten(array $data) {
+
+	}
+
+	public static function merge(array $data, $merge) {
+
+	}
+
+	public static function dimensions(array $data) {
+	
+	}
+
+	/**
+	 * Map a callback across all elements in a set.
+	 * Can be provided a path to only modify slices of the set.
+	 *
+	 */
+	public static function map(array $data, $path, $function = null) {
+
+	}
+
+	public static function sort(array $data, $path, $dir) {
+
+	}
+
+	public static function diff(array $data, $data2) {
+
+	}
+
+	public static function normalize(array $data, $assoc = true) {
+
+	}
+
 }
