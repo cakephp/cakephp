@@ -153,6 +153,23 @@ class Router {
 	protected static $_initialState = array();
 
 /**
+ * Default route class to use
+ *
+ * @var string
+ */
+    protected static $_routeClass = 'CakeRoute';
+
+/**
+ * Set the default rotue class to use
+ *
+ * @param sting $routeClass to set as default
+ * @return void
+ */
+    public static function defaultRouteClass($routeClass) {
+        self::$_routeClass = $routeClass;
+    }
+
+/**
  * Sets the Routing prefixes.
  *
  * @return void
@@ -259,7 +276,7 @@ class Router {
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
 		}
-		$routeClass = 'CakeRoute';
+		$routeClass = self::$_routeClass;
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
 			if (!is_subclass_of($routeClass, 'CakeRoute')) {

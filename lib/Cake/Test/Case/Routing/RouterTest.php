@@ -2506,4 +2506,17 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(Router::$routes[0]->response->header(), array());
 	}
 
+/**
+ * Test setting the default route class
+ *
+ * @return void
+ */
+	public function testDefaultRouteClass() {
+		$this->getMock('CakeRoute', array(), array('/test'), 'TestDefaultRouteClass');
+		Router::defaultRouteClass('TestDefaultRouteClass');
+
+		$result = Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$this->assertInstanceOf('TestDefaultRouteClass', $result[0]);
+	}
+
 }
