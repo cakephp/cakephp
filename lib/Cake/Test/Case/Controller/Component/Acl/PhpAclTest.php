@@ -33,7 +33,7 @@ class PhpAclTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$this->PhpAcl = new PhpAcl();
 		$this->Acl = new AclComponent($Collection, array(
-			'ini_acl' => array(
+			'adapter' => array(
 				'config' => CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.php',
 			),
 		));
@@ -299,7 +299,7 @@ class PhpAclTest extends CakeTestCase {
  */
 	public function testPolicy() {
 		// allow by default
-		$this->Acl->settings['ini_acl']['policy'] = PhpAcl::ALLOW;
+		$this->Acl->settings['adapter']['policy'] = PhpAcl::ALLOW;
 		$this->PhpAcl->initialize($this->Acl);
 
 		$this->assertTrue($this->Acl->check('Role/sales', 'foo'));

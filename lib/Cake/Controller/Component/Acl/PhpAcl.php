@@ -49,8 +49,8 @@ class PhpAcl extends Object implements AclInterface {
  * @return void
  */
 	public function initialize($Component) {
-		if (!empty($Component->settings['ini_acl'])) {
-			$this->options = array_merge($this->options, $Component->settings['ini_acl']);
+		if (!empty($Component->settings['adapter'])) {
+			$this->options = array_merge($this->options, $Component->settings['adapter']);
 		}
 		
 		App::uses('PhpReader', 'Configure');
