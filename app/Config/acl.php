@@ -30,7 +30,7 @@
  * 2. You configured AuthComponent to authorize actions via 
  *    $this->Auth->authorize = array('Actions' => array('actionPath' => 'controllers/'),...) 
  * 
- * Now, when a user (i.e. jeff) authenticates successfully and requests a controller action (i.e. /invoices/edit)
+ * Now, when a user (i.e. jeff) authenticates successfully and requests a controller action (i.e. /invoices/delete)
  * that is not allowed by default (e.g. via $this->Auth->allow('edit') in the Invoices controller) then AuthComponent 
  * will ask the configured ACL interface if access is granted. Under the assumptions 1. and 2. this will be 
  * done via a call to Acl->check() with 
