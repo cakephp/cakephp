@@ -160,14 +160,33 @@ class Router {
     protected static $_routeClass = 'CakeRoute';
 
 /**
- * Set the default rotue class to use
+ * Set the default route class to use or return the current one
  *
- * @param sting $routeClass to set as default
- * @return void
+ * @param string $routeClass to set as default
+ * @return mixed void|string
+ * @throws RouterException
  */
-    public static function defaultRouteClass($routeClass) {
-        self::$_routeClass = $routeClass;
-    }
+	public static function defaultRouteClass($routeClass = null) {
+		if (is_null($routeClass)) {
+			return self::$_routeClass;
+		}
+
+		self::$_routeClass = self::_validateRouteClass($routeClass);
+	}
+
+/**
+ * Validates that the passed route class exists and is a subclass of CakeRoute
+ *
+ * @param $routeClass
+ * @return string
+ * @throws RouterException
+ */
+	protected static function _validateRouteClass($routeClass) {
+		if (!class_exists($routeClass) || !is_subclass_of($routeClass, 'CakeRoute')) {
+			throw new RouterException(__d('cake_dev', 'Route classes must extend CakeRoute'));
+		}
+		return $routeClass;
+	}
 
 /**
  * Sets the Routing prefixes.
@@ -278,14 +297,11 @@ class Router {
 		}
 		$routeClass = self::$_routeClass;
 		if (isset($options['routeClass'])) {
-			$routeClass = $options['routeClass'];
-			if (!is_subclass_of($routeClass, 'CakeRoute')) {
-				throw new RouterException(__d('cake_dev', 'Route classes must extend CakeRoute'));
-			}
+			$routeClass = self::_validateRouteClass($options['routeClass']);
 			unset($options['routeClass']);
-			if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {
-				$defaults = $defaults['redirect'];
-			}
+		}
+		if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {
+			$defaults = $defaults['redirect'];
 		}
 		self::$routes[] = new $routeClass($route, $defaults, $options);
 		return self::$routes;

@@ -2519,4 +2519,48 @@ class RouterTest extends CakeTestCase {
 		$this->assertInstanceOf('TestDefaultRouteClass', $result[0]);
 	}
 
+/**
+ * Test getting the default route class
+ *
+ * @return void
+ */
+	public function testDefaultRouteClassGetter() {
+		$routeClass = 'TestDefaultRouteClass';
+		Router::defaultRouteClass($routeClass);
+
+		$this->assertEqual($routeClass, Router::defaultRouteClass());
+		$this->assertEqual($routeClass, Router::defaultRouteClass(null));
+	}
+
+/**
+ * Test that route classes must extend CakeRoute
+ *
+ * @expectedException RouterException
+ * @return void
+ */
+	public function testDefaultRouteException() {
+		Router::defaultRouteClass('');
+		Router::connect('/:controller', array());
+	}
+
+/**
+ * Test that route classes must extend CakeRoute
+ *
+ * @expectedException RouterException
+ * @return void
+ */
+	public function testSettingInvalidDefaultRouteException() {
+		Router::defaultRouteClass('Object');
+	}
+
+/**
+ * Test that class must exist
+ *
+ * @expectedException RouterException
+ * @return void
+ */
+	public function testSettingNonExistentDefaultRouteException() {
+		Router::defaultRouteClass('NonExistentClass');
+	}
+
 }
