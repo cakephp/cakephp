@@ -855,6 +855,27 @@ class CakeResponse {
 	}
 
 /**
+ * Sets the Vary header for the response, if an array is passed,
+ * values will be imploded into a comma separated string. If no 
+ * parameters are passed, then an array with the current Vary header 
+ * value is returned
+ *
+ * @param string|array $cacheVariances a single Vary string or a array 
+ * containig the list for variances.
+ * @return array
+ **/
+	public function vary($cacheVariances = null) {
+		if ($cacheVariances !== null) {
+			$cacheVariances = (array) $cacheVariances;
+			$this->_headers['Vary'] = implode(', ', $cacheVariances);
+		}
+		if (isset($this->_headers['Vary'])) {
+			return explode(', ', $this->_headers['Vary']);
+		}
+		return null;
+	}
+
+/**
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *

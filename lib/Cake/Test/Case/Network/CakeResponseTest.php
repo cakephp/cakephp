@@ -763,4 +763,25 @@ class CakeResponseTest extends CakeTestCase {
 
 	}
 
+/**
+ * Tests getting/setting the Vary header
+ *
+ * @return void
+ */
+	public function testVary() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->vary('Accept-encoding');
+		$this->assertEquals(array('Accept-encoding'), $response->vary());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Vary', 'Accept-encoding');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->vary(array('Accept-language', 'Accept-encoding'));
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Vary', 'Accept-language, Accept-encoding');
+		$response->send();
+		$this->assertEquals(array('Accept-language', 'Accept-encoding'), $response->vary());
+	}
+
 }
