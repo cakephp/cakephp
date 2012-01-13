@@ -325,7 +325,11 @@ class DboMssql extends DboSource {
 		$fields = parent::fields($model, $alias, $fields, false);
 		$count = count($fields);
 
-		if ($count >= 1 && strpos($fields[0], 'COUNT(*)') === false) {
+		if (
+			$count >= 1 &&
+			strpos($fields[0], 'COUNT(*)') === false &&
+			strpos($fields[0], 'COUNT(DISTINCT') === false
+		) {
 			$result = array();
 			for ($i = 0; $i < $count; $i++) {
 				$prepend = '';
