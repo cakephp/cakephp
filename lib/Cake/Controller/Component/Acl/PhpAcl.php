@@ -43,9 +43,9 @@ class PhpAcl extends Object implements AclInterface {
 		);
 	}
 /**
- * Phptialize method
- *
- * @param AclBase $component
+ * Initialize method
+ * 
+ * @param AclComponent $Component Component instance 
  * @return void
  */
 	public function initialize($Component) {
@@ -61,12 +61,13 @@ class PhpAcl extends Object implements AclInterface {
 		$Component->Aro = $this->Aro;
 	}
 
-
-	public function build($config) {
-		if ($config instanceOf ConfigReaderInterface) {
-			$config = $config->read(basename($this->options['config']));
-		}
-
+/**
+ * build and setup internal ACL representation
+ *
+ * @param array $config configuration array, see docs
+ * @return void
+ */
+	public function build(array $config) {
 		if (empty($config['roles'])) {
 			throw new AclException(__d('cake_dev','"roles" section not found in configuration.'));
 		}
@@ -110,7 +111,7 @@ class PhpAcl extends Object implements AclInterface {
 	}
 
 /**
- * No op method, inherit cannot be done with PhpAcl
+ * No op method
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
@@ -118,6 +119,7 @@ class PhpAcl extends Object implements AclInterface {
  * @return boolean Success
  */
 	public function inherit($aro, $aco, $action = "*") {
+		return false;
 	}
 
 /**
@@ -192,7 +194,7 @@ class PhpAco {
 	}
 
 /**
- * return path to the requested ACO with allow and deny rules for each level
+ * return path to the requested ACO with allow and deny rules attached on each level
  *
  * @return array
  */
@@ -202,7 +204,7 @@ class PhpAco {
 		$level = 0;
 		$root = $this->tree;	
 		$stack = array(array($root, 0));
-
+		
 		while (!empty($stack)) {
 			list($root, $level) = array_pop($stack);
 
@@ -211,10 +213,6 @@ class PhpAco {
 			}
 
 			foreach ($root as $node => $elements) {
-				if (strpos($node, '*') === false && $node != $aco[$level]) {
-					continue;
-				}
-
 				$pattern = '#^'.str_replace(array_keys(self::$modifiers), array_values(self::$modifiers), $node).'$#';
 
 				if ($node == $aco[$level] || preg_match($pattern, $aco[$level])) {
