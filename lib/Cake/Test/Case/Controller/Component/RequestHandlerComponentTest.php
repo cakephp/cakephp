@@ -915,7 +915,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertTrue($RequestHandler->checkNotModified());
 	}
 
-		/**
+/**
  * Test checkNotModified method
  *
  * @return void
