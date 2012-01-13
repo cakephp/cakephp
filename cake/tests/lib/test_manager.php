@@ -113,7 +113,7 @@ class TestManager {
 		}
 
 		foreach ($testCases as $testCase) {
-			$test->addTestFile($testCase);
+			$test->addFile($testCase);
 		}
 
 		return $test->run($reporter);
@@ -144,7 +144,7 @@ class TestManager {
 		}
 
 		$test =& new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
-		$test->addTestFile($testCaseFileWithPath);
+		$test->addFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
 
