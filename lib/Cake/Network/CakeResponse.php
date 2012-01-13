@@ -876,6 +876,38 @@ class CakeResponse {
 	}
 
 /**
+ * Sets the response Etag, Etags are a strong indicative that a response
+ * can be cached by a HTTP client. A bad way of generaing Etags is 
+ * creating a hash of teh response output, instead generate a unique 
+ * hash of the unique components that identifies a request, such as a 
+ * modification time, a resource Id, and anything else you consider it 
+ * makes it unique.
+ *
+ * Second parameter is used to instuct clients that the content has 
+ * changed, but sematicallly, it can be used as the same thing. Think 
+ * for instance of a page with a hit counter, two different page views 
+ * are equivalent, but they differ by a few bytes. This leaves off to 
+ * the Client the decision of using or not the cached page.
+ *
+ * If no parameters are passed, current Etag header is returned.
+ *
+ * @param string $hash the unique has that identifies this resposnse
+ * @param boolean $weak whether the response is semantically the same as 
+ * other with th same hash or not
+ * @return string
+ **/
+	public function etag($tag = null, $weak = false) {
+		if ($tag !== null) {
+			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $tag);
+		}
+		if (isset($this->_headers['Etag'])) {
+			return $this->_headers['Etag'];
+		}
+		return null;
+	}
+
+
+/**
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *

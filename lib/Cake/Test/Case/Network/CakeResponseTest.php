@@ -784,4 +784,25 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertEquals(array('Accept-language', 'Accept-encoding'), $response->vary());
 	}
 
+/**
+ * Tests getting/setting the Etag header
+ *
+ * @return void
+ */
+	public function testEtag() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->etag('something');
+		$this->assertEquals('"something"', $response->etag());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Etag', '"something"');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->etag('something', true);
+		$this->assertEquals('W/"something"', $response->etag());
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Etag', 'W/"something"');
+		$response->send();
+
+	}
 }
