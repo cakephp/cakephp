@@ -823,4 +823,109 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testAddInputTypeException() {
 		$this->RequestHandler->addInputType('csv', array('I am not callable'));
 	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagStar() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something');
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$RequestHandler->checkNotModified();
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagExact() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something', true);
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$this->assertTrue($RequestHandler->checkNotModified());
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagAndTime() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something', true);
+		$RequestHandler->response->modified('2012-01-01 00:00:00');
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$this->assertTrue($RequestHandler->checkNotModified());
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagAndTimeMismatch() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something', true);
+		$RequestHandler->response->modified('2012-01-01 00:00:01');
+		$RequestHandler->response->expects($this->never())->method('notModified');
+		$this->assertFalse($RequestHandler->checkNotModified());
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagMismatch() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something', true);
+		$RequestHandler->response->modified('2012-01-01 00:00:00');
+		$RequestHandler->response->expects($this->never())->method('notModified');
+		$this->assertFalse($RequestHandler->checkNotModified());
+	}
+
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByTime() {
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->modified('2012-01-01 00:00:00');
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$this->assertTrue($RequestHandler->checkNotModified());
+	}
+
+		/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedNoHints() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->expects($this->never())->method('notModified');
+		$this->assertFalse($RequestHandler->checkNotModified());
+	}
 }
