@@ -37,7 +37,6 @@ class PhpAclTest extends CakeTestCase {
 				'config' => CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS . 'acl.php',
 			),
 		));
-		$this->Acl->adapter($this->PhpAcl);
 	}
 
 
@@ -300,7 +299,7 @@ class PhpAclTest extends CakeTestCase {
 	public function testPolicy() {
 		// allow by default
 		$this->Acl->settings['adapter']['policy'] = PhpAcl::ALLOW;
-		$this->PhpAcl->initialize($this->Acl);
+		$this->Acl->adapter($this->PhpAcl);
 
 		$this->assertTrue($this->Acl->check('Role/sales', 'foo'));
 		$this->assertTrue($this->Acl->check('Role/sales', 'controllers/bla/create'));
