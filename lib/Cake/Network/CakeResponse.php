@@ -902,7 +902,7 @@ class CakeResponse {
 /**
  * Sets the response Etag, Etags are a strong indicative that a response
  * can be cached by a HTTP client. A bad way of generaing Etags is 
- * creating a hash of teh response output, instead generate a unique 
+ * creating a hash of the response output, instead generate a unique 
  * hash of the unique components that identifies a request, such as a 
  * modification time, a resource Id, and anything else you consider it 
  * makes it unique.
