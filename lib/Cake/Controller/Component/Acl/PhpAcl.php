@@ -300,13 +300,19 @@ class PhpAco {
 		$tree = array();
 		$root = &$tree;
 
-		foreach ($allow as $dotPath => $commaSeparatedAros) {
-			$aros = array_map('trim', explode(',', $commaSeparatedAros));
+		foreach ($allow as $dotPath => $aros) {
+			if (is_string($aros)) {
+				$aros = array_map('trim', explode(',', $aros));
+			}
+
 			$this->access($aros, $dotPath, null, 'allow');
 		}
 	
-		foreach ($deny as $dotPath => $commaSeparatedAros) {
-			$aros = array_map('trim', explode(',', $commaSeparatedAros));
+		foreach ($deny as $dotPath => $aros) {
+			if (is_string($aros)) {
+				$aros = array_map('trim', explode(',', $aros));
+			}
+
 			$this->access($aros, $dotPath, null, 'deny');
 		}
 	}

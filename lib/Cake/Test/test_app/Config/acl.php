@@ -20,7 +20,7 @@
 
 
 // -------------------------------------
-// AROs
+// Roles
 // -------------------------------------
 $config['roles'] = array(
 	'Role/admin' 				=> null,
@@ -30,6 +30,7 @@ $config['roles'] = array(
 	'Role/sales' 				=> null,
 	'Role/data_analyst' 		=> 'Role/data_acquirer, Role/database_manager',
 	'Role/reports' 				=> 'Role/data_analyst',
+	// allow inherited roles to be defined as an array or comma separated list
 	'Role/manager' 				=> array(
 		'Role/accounting',
 		'Role/sales',
@@ -49,7 +50,7 @@ $config['roles'] = array(
 );
 
 //-------------------------------------
-// ACOs
+// Rules
 //-------------------------------------
 $config['rules']['allow'] = array(
 	'/*' 						=> 'Role/admin',
@@ -67,6 +68,9 @@ $config['rules']['allow'] = array(
 );
 $config['rules']['deny'] = array(
 	// accountants and sales should not delete anything
-	'/controllers/*/delete' => 'Role/sales, Role/accounting',
-	'/controllers/db/drop'  => 'User/db_manager_2',
+	'/controllers/*/delete' 	=> array(
+		'Role/sales',
+		'Role/accounting'
+	),
+	'/controllers/db/drop'  	=> 'User/db_manager_2',
 );
