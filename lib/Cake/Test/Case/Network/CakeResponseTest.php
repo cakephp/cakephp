@@ -803,6 +803,24 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Etag', 'W/"something"');
 		$response->send();
-
 	}
+
+/**
+ * Tests that the response is able to be marked as not modified
+ *
+ * @return void
+ */
+	public function testNotModified() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->body('something');
+		$response->statusCode(200);
+		$response->length(100);
+		$response->modified('now');
+		$response->notModified();
+
+		$this->assertEmpty($response->header());
+		$this->assertEmpty($response->body());
+		$this->assertEquals(304, $response->statusCode());
+	}
+
 }

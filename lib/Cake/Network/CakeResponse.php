@@ -855,6 +855,30 @@ class CakeResponse {
 	}
 
 /**
+ * Sets the response as Not Modified by removing any body contents 
+ * setting the status code to "304 Not Modified" and removing all 
+ * conflicting headers
+ *
+ * @return void
+ **/
+	public function notModified() {
+		$this->statusCode(304);
+		$this->body('');
+		$remove = array(
+			'Allow',
+			'Content-Encoding',
+			'Content-Language',
+			'Content-Length',
+			'Content-MD5',
+			'Content-Type',
+			'Last-Modified'
+		);
+		foreach ($remove as $header) {
+			unset($this->_headers[$header]);
+		}
+	}
+
+/**
  * Sets the Vary header for the response, if an array is passed,
  * values will be imploded into a comma separated string. If no 
  * parameters are passed, then an array with the current Vary header 
