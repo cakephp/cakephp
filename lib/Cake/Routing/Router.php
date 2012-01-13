@@ -144,13 +144,30 @@ class Router {
 	protected static $_requests = array();
 
 /**
- * Initial state is popualated the first time reload() is called which is at the bottom
+ * Initial state is populated the first time reload() is called which is at the bottom
  * of this file.  This is a cheat as get_class_vars() returns the value of static vars even if they
  * have changed.
  *
  * @var array
  */
 	protected static $_initialState = array();
+
+/**
+ * Default route class to use
+ *
+ * @var string
+ */
+    protected static $_routeClass = 'CakeRoute';
+
+/**
+ * Set the default rotue class to use
+ *
+ * @param sting $routeClass to set as default
+ * @return void
+ */
+    public static function defaultRouteClass($routeClass) {
+        self::$_routeClass = $routeClass;
+    }
 
 /**
  * Sets the Routing prefixes.
@@ -172,6 +189,20 @@ class Router {
  */
 	public static function getNamedExpressions() {
 		return self::$_namedExpressions;
+	}
+
+/**
+ * Resource map getter & setter.
+ *
+ * @param array $resourceMap Resource map
+ * @return mixed
+ * @see Router::$_resourceMap
+ */
+	public static function resourceMap($resourceMap = null) {
+		if ($resourceMap === null) {
+			return self::$_resourceMap;
+		}
+		self::$_resourceMap = $resourceMap;
 	}
 
 /**
@@ -245,7 +276,7 @@ class Router {
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
 		}
-		$routeClass = 'CakeRoute';
+		$routeClass = self::$_routeClass;
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
 			if (!is_subclass_of($routeClass, 'CakeRoute')) {
@@ -433,7 +464,7 @@ class Router {
 				Router::connect($url,
 					array(
 						'plugin' => $plugin,
-						'controller' => $urlName, 
+						'controller' => $urlName,
 						'action' => $params['action'],
 						'[method]' => $params['method']
 					),
@@ -820,7 +851,7 @@ class Router {
  * @see Router::url()
  */
 	protected static function _handleNoRoute($url) {
-		$named = $args = $query = array();
+		$named = $args = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
 			self::$_prefixes
@@ -847,7 +878,7 @@ class Router {
 			}
 		}
 
-		if (empty($named) && empty($args) && empty($query) && (!isset($url['action']) || $url['action'] === 'index')) {
+		if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
 			$url['action'] = null;
 		}
 
@@ -880,9 +911,6 @@ class Router {
 					$output .= '/' . $name . self::$_namedConfig['separator'] . $value;
 				}
 			}
-		}
-		if (!empty($query)) {
-			$output .= Router::queryString($query);
 		}
 		return $output;
 	}

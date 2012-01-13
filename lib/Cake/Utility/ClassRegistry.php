@@ -20,6 +20,13 @@
  */
 
 /**
+ * Included libraries.
+ */
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('ConnectionManager', 'Model');
+
+/**
  * Class Collections.
  *
  * A repository for class objects, each registered with a key.
@@ -88,7 +95,8 @@ class ClassRegistry {
  *  stored in the registry and returned.
  * @param boolean $strict if set to true it will return false if the class was not found instead
  *	of trying to create an AppModel
- * @return object instance of ClassName
+ * @return object instance of ClassName.
+ * @throws CakeException when you try to construct an interface or abstract class.
  */
 	public static function init($class, $strict = false) {
 		$_this = ClassRegistry::getInstance();
@@ -105,6 +113,7 @@ class ClassRegistry {
 		}
 		$defaults = isset($_this->_config['Model']) ? $_this->_config['Model'] : array();
 		$count = count($objects);
+		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
@@ -127,18 +136,38 @@ class ClassRegistry {
 					return $model;
 				}
 
-				App::uses('Model', 'Model');
-				App::uses('AppModel', 'Model');
 				App::uses($plugin . 'AppModel', $pluginPath . 'Model');
 				App::uses($class, $pluginPath . 'Model');
 
-				if (class_exists($class)) {
-					${$class} = new $class($settings);
+				if (class_exists($class) || interface_exists($class)) {
+					$reflection = new ReflectionClass($class);
+					if ($reflection->isAbstract() || $reflection->isInterface()) {
+						throw new CakeException(__d('cake_dev', 'Cannot create instance of %s, as it is abstract or is an interface', $class));
+					}
+					$testing = isset($settings['testing']) ? $settings['testing'] : false;
+					if ($testing) {
+						$settings['ds'] = 'test';
+						$defaultProperties = $reflection->getDefaultProperties();
+						if (isset($defaultProperties['useDbConfig'])) {
+							$useDbConfig = $defaultProperties['useDbConfig'];
+							if (in_array('test_' . $useDbConfig, $availableDs)) {
+								$useDbConfig = 'test_' . $useDbConfig;
+							}
+							if (strpos($useDbConfig, 'test') === 0) {
+								$settings['ds'] = $useDbConfig;
+							}
+						}
+					}
+					if ($reflection->getConstructor()) {
+						$instance = $reflection->newInstance($settings);
+					} else {
+						$instance = $reflection->newInstance();
+					}
 					if ($strict) {
-						${$class} = (${$class} instanceof Model) ? ${$class} : null;
+						$instance = ($instance instanceof Model) ? $instance : null;
 					}
 				}
-				if (!isset(${$class})) {
+				if (!isset($instance)) {
 					if ($strict) {
 						return false;
 					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
@@ -148,10 +177,10 @@ class ClassRegistry {
 					}
 					if (!empty($appModel)) {
 						$settings['name'] = $class;
-						${$class} = new $appModel($settings);
+						$instance = new $appModel($settings);
 					}
 
-					if (!isset(${$class})) {
+					if (!isset($instance)) {
 						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
 						return $false;
 					}
@@ -166,7 +195,7 @@ class ClassRegistry {
 		if ($count > 1) {
 			return $true;
 		}
-		return ${$class};
+		return $instance;
 	}
 
 /**
@@ -267,6 +296,9 @@ class ClassRegistry {
 			unset($_this->_config[$type]);
 		} elseif (empty($param) && is_string($type)) {
 			return isset($_this->_config[$type]) ? $_this->_config[$type] : null;
+		}
+		if (isset($_this->_config[$type]['testing'])) {
+			$param['testing'] = true;
 		}
 		$_this->_config[$type] = $param;
 	}

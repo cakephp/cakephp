@@ -31,7 +31,7 @@ App::uses('DbConfigTask', 'Console/Command/Task');
 class DbConfigTaskTest extends CakeTestCase {
 
 /**
- * setup method
+ * setUp method
  *
  * @return void
  */
@@ -40,7 +40,7 @@ class DbConfigTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('DbConfigTask', 
+		$this->Task = $this->getMock('DbConfigTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest', '_verify'),
 			array($out, $out, $in)
 		);
@@ -115,7 +115,7 @@ class DbConfigTaskTest extends CakeTestCase {
 			->with(array(
 				array(
 					'name' => 'default',
-					'driver' => 'mysql',
+					'datasource' => 'mysql',
 					'persistent' => 'false',
 					'host' => 'localhost',
 					'login' => 'root',

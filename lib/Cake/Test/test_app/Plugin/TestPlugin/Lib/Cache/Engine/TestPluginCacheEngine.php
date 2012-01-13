@@ -29,5 +29,5 @@ class TestPluginCacheEngine extends CacheEngine {
 	public function delete($key) { }
 
 	public function clear($check) { }
-	
+
 }

@@ -17,8 +17,15 @@
  */
 
 App::uses('ObjectCollection', 'Utility');
+App::uses('CakeEventListener', 'Event');
 
-class HelperCollection extends ObjectCollection {
+/**
+ * Helpers collection is used as a registry for loaded helpers and handles loading
+ * and constructing helper class objects.
+ *
+ * @package       Cake.View
+ */
+class HelperCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * View object to use when making helpers.
@@ -85,10 +92,64 @@ class HelperCollection extends ObjectCollection {
 			$this->_loaded[$alias]->{$var} = $this->_View->{$var};
 		}
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable === true) {
-			$this->_enabled[] = $alias;
+		if ($enable) {
+			$this->enable($alias);
 		}
 		return $this->_loaded[$alias];
 	}
 
+/**
+ * Returns a list of all events that will fire in the View during it's lifecycle.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'View.beforeRenderFile' => 'trigger',
+			'View.afterRenderFile' => 'trigger',
+			'View.beforeRender' => 'trigger',
+			'View.afterRender' => 'trigger',
+			'View.beforeLayout' => 'trigger',
+			'View.afterLayout' => 'trigger'
+		);
+	}
+
+/**
+ * Trigger a callback method on every object in the collection.
+ * Used to trigger methods on objects in the collection.  Will fire the methods in the
+ * order they were attached.
+ *
+ * ### Options
+ *
+ * - `breakOn` Set to the value or values you want the callback propagation to stop on.
+ *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
+ *
+ * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
+ *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
+ *    Defaults to `false`.
+ *
+ * - `collectReturn` Set to true to collect the return of each object into an array.
+ *    This array of return values will be returned from the trigger() call. Defaults to `false`.
+ *
+ * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
+ *    Setting modParams to an integer value will allow you to modify the parameter with that index.
+ *    Any non-null value will modify the parameter index indicated.
+ *    Defaults to false.
+ *
+ *
+ * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
+ *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
+ *   get the callback name. This is done by getting the last word after any dot in the event name
+ *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
+ * @param array $params Array of parameters for the triggered callback.
+ * @param array $options Array of options.
+ * @return mixed Either the last result or all results if collectReturn is on.
+ * @throws CakeException when modParams is used with an index that does not exist.
+ */
+	public function trigger($callback, $params = array(), $options = array()) {
+		if ($callback instanceof CakeEvent) {
+			$callback->omitSubject = true;
+		}
+		return parent::trigger($callback, $params, $options);
+	}
 }

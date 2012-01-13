@@ -37,7 +37,7 @@ class CakeTestSuiteDispatcher {
 		'codeCoverage' => false,
 		'case' => null,
 		'core' => false,
-		'app' => false,
+		'app' => true,
 		'plugin' => null,
 		'output' => 'html',
 		'show' => 'groups',
@@ -45,6 +45,7 @@ class CakeTestSuiteDispatcher {
 		'filter' => false,
 		'fixture' => null
 	);
+
 /**
  * Baseurl for the request
  *
@@ -151,9 +152,6 @@ class CakeTestSuiteDispatcher {
 				$found = include 'PHPUnit' . DS . 'Autoload.php';
 			}
 		}
-		if ($found) {
-			PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-		}
 		return $found;
 	}
 
@@ -216,8 +214,8 @@ class CakeTestSuiteDispatcher {
 				$this->_checkXdebug();
 			}
 		}
-		if (empty($this->params['plugin']) && empty($this->params['app'])) {
-			$this->params['core'] = true;
+		if (empty($this->params['plugin']) && empty($this->params['core'])) {
+			$this->params['app'] = true;
 		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
@@ -231,7 +229,7 @@ class CakeTestSuiteDispatcher {
 	function _runTestCase() {
 		$commandArgs = array(
 			'case' => $this->params['case'],
-			'core' =>$this->params['core'],
+			'core' => $this->params['core'],
 			'app' => $this->params['app'],
 			'plugin' => $this->params['plugin'],
 			'codeCoverage' => $this->params['codeCoverage'],

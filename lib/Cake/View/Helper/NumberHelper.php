@@ -43,11 +43,11 @@ class NumberHelper extends AppHelper {
 			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
 		),
 		'GBP' => array(
-			'wholeSymbol'=>'&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
+			'wholeSymbol' => '&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => false
 		),
 		'EUR' => array(
-			'wholeSymbol'=>'&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
+			'wholeSymbol' => '&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => false
 		)
 	);
@@ -58,7 +58,7 @@ class NumberHelper extends AppHelper {
  * @var array
  */
 	protected $_currencyDefaults = array(
-		'wholeSymbol'=>'', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
+		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
 		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true
 	);
 
@@ -86,13 +86,13 @@ class NumberHelper extends AppHelper {
 			case $size < 1024:
 				return __dn('cake', '%d Byte', '%d Bytes', $size, $size);
 			case round($size / 1024) < 1024:
-				return __('%d KB', $this->precision($size / 1024, 0));
+				return __d('cake', '%d KB', $this->precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
-				return __('%.2f MB', $this->precision($size / 1024 / 1024, 2));
+				return __d('cake', '%.2f MB', $this->precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return __('%.2f GB', $this->precision($size / 1024 / 1024 / 1024, 2));
+				return __d('cake', '%.2f GB', $this->precision($size / 1024 / 1024 / 1024, 2));
 			default:
-				return __('%.2f TB', $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
+				return __d('cake', '%.2f TB', $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
 
@@ -140,7 +140,7 @@ class NumberHelper extends AppHelper {
 
 		$escape = true;
 		if (is_array($options)) {
-			$options = array_merge(array('before'=>'$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
+			$options = array_merge(array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
 			extract($options);
 		}
 
@@ -247,6 +247,7 @@ class NumberHelper extends AppHelper {
  * @param array $options The array of options for this format.
  * @return void
  * @see NumberHelper::currency()
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, $options) {
 		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;

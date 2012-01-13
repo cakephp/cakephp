@@ -54,7 +54,7 @@ class CakeSocketTest extends CakeTestCase {
 	public function testConstruct() {
 		$this->Socket = new CakeSocket();
 		$config = $this->Socket->config;
-		$this->assertIdentical($config, array(
+		$this->assertSame($config, array(
 			'persistent'	=> false,
 			'host'			=> 'localhost',
 			'protocol'		=> getprotobyname('tcp'),
@@ -65,7 +65,7 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket->reset();
 		$this->Socket->__construct(array('host' => 'foo-bar'));
 		$config['host'] = 'foo-bar';
-		$this->assertIdentical($this->Socket->config, $config);
+		$this->assertSame($this->Socket->config, $config);
 
 		$this->Socket = new CakeSocket(array('host' => 'www.cakephp.org', 'port' => 23, 'protocol' => 'udp'));
 		$config = $this->Socket->config;
@@ -74,7 +74,7 @@ class CakeSocketTest extends CakeTestCase {
 		$config['port'] = 23;
 		$config['protocol'] = 17;
 
-		$this->assertIdentical($this->Socket->config, $config);
+		$this->assertSame($this->Socket->config, $config);
 	}
 
 /**
@@ -130,16 +130,16 @@ class CakeSocketTest extends CakeTestCase {
 	public function testSocketHost() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->connect();
-		$this->assertEqual($this->Socket->address(), '127.0.0.1');
-		$this->assertEqual(gethostbyaddr('127.0.0.1'), $this->Socket->host());
-		$this->assertEqual($this->Socket->lastError(), null);
+		$this->assertEquals($this->Socket->address(), '127.0.0.1');
+		$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
+		$this->assertEquals($this->Socket->lastError(), null);
 		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 
 		$this->Socket = new CakeSocket(array('host' => '127.0.0.1'));
 		$this->Socket->connect();
-		$this->assertEqual($this->Socket->address(), '127.0.0.1');
-		$this->assertEqual(gethostbyaddr('127.0.0.1'), $this->Socket->host());
-		$this->assertEqual($this->Socket->lastError(), null);
+		$this->assertEquals($this->Socket->address(), '127.0.0.1');
+		$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
+		$this->assertEquals($this->Socket->lastError(), null);
 		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 	}
 
@@ -161,13 +161,13 @@ class CakeSocketTest extends CakeTestCase {
 	public function testSocketReading() {
 		$this->Socket = new CakeSocket(array('timeout' => 5));
 		$this->Socket->connect();
-		$this->assertEqual($this->Socket->read(26), null);
+		$this->assertEquals($this->Socket->read(26), null);
 
 		$config = array('host' => 'google.com', 'port' => 80, 'timeout' => 1);
 		$this->Socket = new CakeSocket($config);
 		$this->assertTrue($this->Socket->connect());
-		$this->assertEqual($this->Socket->read(26), null);
-		$this->assertEqual($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
+		$this->assertEquals($this->Socket->read(26), null);
+		$this->assertEquals($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
 	}
 
 /**
@@ -182,7 +182,7 @@ class CakeSocketTest extends CakeTestCase {
 
 		$config = array('host' => '127.0.0.1', 'timeout' => 0.00001);
 		$this->assertFalse($this->Socket->read(1024 * 1024));
-		$this->assertEqual($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
+		$this->assertEquals($this->Socket->lastError(), '2: ' . __d('cake_dev', 'Connection timed out'));
 	}
 
 /**
@@ -193,7 +193,7 @@ class CakeSocketTest extends CakeTestCase {
 	public function testLastError() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->setLastError(4, 'some error here');
-		$this->assertEqual($this->Socket->lastError(), '4: some error here');
+		$this->assertEquals($this->Socket->lastError(), '4: some error here');
 	}
 
 /**
@@ -211,6 +211,6 @@ class CakeSocketTest extends CakeTestCase {
 		);
 		$anotherSocket = new CakeSocket($config);
 		$anotherSocket->reset();
-		$this->assertEqual(array(), $anotherSocket->config);
+		$this->assertEquals(array(), $anotherSocket->config);
 	}
 }

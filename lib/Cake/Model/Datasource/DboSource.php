@@ -135,7 +135,7 @@ class DboSource extends DataSource {
 	protected $_queriesLogMax = 200;
 
 /**
- * Caches serialzed results of executed queries
+ * Caches serialized results of executed queries
  *
  * @var array Maximum number of queries in the queries log.
  */
@@ -344,7 +344,7 @@ class DboSource extends DataSource {
 
 /**
  * Returns an object to represent a database identifier in a query. Expression objects
- * are not sanitized or esacped.
+ * are not sanitized or escaped.
  *
  * @param string $identifier A SQL expression to be used as an identifier
  * @return stdClass An object representing a database identifier to be used in a query
@@ -358,7 +358,7 @@ class DboSource extends DataSource {
 
 /**
  * Returns an object to represent a database expression in a query.  Expression objects
- * are not sanitized or esacped.
+ * are not sanitized or escaped.
  *
  * @param string $expression An arbitrary SQL expression to be inserted into a query.
  * @return stdClass An object representing a database expression to be used in a query
@@ -418,7 +418,7 @@ class DboSource extends DataSource {
  * @param array $params list of params to be bound to query
  * @param array $prepareOptions Options to be used in the prepare statement
  * @return mixed PDOStatement if query executes with no problem, true as the result of a successful, false on error
- * query returning no rows, suchs as a CREATE statement, false otherwise
+ * query returning no rows, such as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$sql = trim($sql);
@@ -440,7 +440,9 @@ class DboSource extends DataSource {
 			}
 			if (!$query->columnCount()) {
 				$query->closeCursor();
-				return true;
+				if (!$query->rowCount()) {
+					return true;
+				}
 			}
 			return $query;
 		} catch (PDOException $e) {
@@ -482,7 +484,7 @@ class DboSource extends DataSource {
 		if ($this->hasResult()) {
 			return $this->_result->rowCount();
 		}
-		return null;
+		return 0;
 	}
 
 /**
@@ -742,7 +744,7 @@ class DboSource extends DataSource {
  * A read will either return the value or null.
  *
  * @param string $method Name of the method being cached.
- * @param string $key The keyname for the cache operation.
+ * @param string $key The key name for the cache operation.
  * @param mixed $value The value to cache into memory.
  * @return mixed Either null on failure, or the value if its set.
  */
@@ -785,7 +787,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = crc32($this->startQuote.$data.$this->endQuote);
+		$cacheKey = crc32($this->startQuote . $data . $this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -911,18 +913,34 @@ class DboSource extends DataSource {
  *
  * @param mixed $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
+ * @param boolean $schema Whether you want the schema name included.
  * @return string Full quoted table name
  */
-	public function fullTableName($model, $quote = true) {
+	public function fullTableName($model, $quote = true, $schema = true) {
 		if (is_object($model)) {
+			$schemaName = $model->schemaName;
 			$table = $model->tablePrefix . $model->table;
-		} elseif (isset($this->config['prefix'])) {
+		} elseif (!empty($this->config['prefix']) && strpos($model, $this->config['prefix']) === false) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
 			$table = strval($model);
 		}
+		if ($schema && !isset($schemaName)) {
+			$schemaName = $this->getSchemaName();
+		}
+
 		if ($quote) {
+			if ($schema && !empty($schemaName)) {
+				if (false == strstr($table, '.')) {
+					return $this->name($schemaName) . '.' . $this->name($table);
+				}
+			}
 			return $this->name($table);
+		}
+		if ($schema && !empty($schemaName)) {
+			if (false == strstr($table, '.')) {
+				return $schemaName . '.' . $table;
+			}
 		}
 		return $table;
 	}
@@ -951,8 +969,6 @@ class DboSource extends DataSource {
 
 		for ($i = 0; $i < $count; $i++) {
 			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
-		}
-		for ($i = 0; $i < $count; $i++) {
 			$fieldInsert[] = $this->name($fields[$i]);
 			if ($fields[$i] == $model->primaryKey) {
 				$id = $values[$i];
@@ -966,7 +982,7 @@ class DboSource extends DataSource {
 
 		if ($this->execute($this->renderStatement('create', $query))) {
 			if (empty($id)) {
-				$id = $this->lastInsertId($this->fullTableName($model, false), $model->primaryKey);
+				$id = $this->lastInsertId($this->fullTableName($model, false, false), $model->primaryKey);
 			}
 			$model->setInsertID($id);
 			$model->id = $id;
@@ -990,7 +1006,7 @@ class DboSource extends DataSource {
 		$queryData = $this->_scrubQueryData($queryData);
 
 		$null = null;
-		$array = array();
+		$array = array('callbacks' => $queryData['callbacks']);
 		$linkedModels = array();
 		$bypass = false;
 
@@ -1043,7 +1059,11 @@ class DboSource extends DataSource {
 			return false;
 		}
 
-		$filtered = $this->_filterResults($resultSet, $model);
+		$filtered = array();
+
+		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+			$filtered = $this->_filterResults($resultSet, $model);
+		}
 
 		if ($model->recursive > -1) {
 			foreach ($_associations as $type) {
@@ -1071,7 +1091,9 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-			$this->_filterResults($resultSet, $model, $filtered);
+			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+				$this->_filterResults($resultSet, $model, $filtered);
+			}
 		}
 
 		if (!is_null($recursive)) {
@@ -1162,7 +1184,9 @@ class DboSource extends DataSource {
 						}
 					}
 				}
-				$this->_filterResults($fetch, $model);
+				if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+					$this->_filterResults($fetch, $model);
+				}
 				return $this->_mergeHasMany($resultSet, $fetch, $association, $model, $linkModel);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
@@ -1783,7 +1807,7 @@ class DboSource extends DataSource {
  * @param array $fields
  * @param boolean $quoteValues If values should be quoted, or treated as SQL snippets
  * @param boolean $alias Include the model alias in the field name
- * @return array Fields and values, quoted and preparted
+ * @return array Fields and values, quoted and prepared
  */
 	protected function _prepareUpdateFields($model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
@@ -1939,7 +1963,7 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				if (is_object($model) && $model->isVirtualField($params[0])){
+				if (is_object($model) && $model->isVirtualField($params[0])) {
 					$arg = $this->_quoteFields($model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
@@ -2040,7 +2064,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param mixed $conditions Array of conditions, conditions string, null or false. If an array of conditions,
- *   or string conditions those conditions will be returned.  With other values the model's existance will be checked.
+ *   or string conditions those conditions will be returned.  With other values the model's existence will be checked.
  *   If the model doesn't exist a null or false will be returned depending on the input value.
  * @param boolean $useAlias Use model aliases rather than table names when generating conditions
  * @return mixed Either null, false, $conditions or an array of default conditions to use.
@@ -2093,6 +2117,7 @@ class DboSource extends DataSource {
 		static $base = null;
 		if ($base === null) {
 			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());
+			$base['callbacks'] = null;
 		}
 		return (array)$data + $base;
 	}
@@ -2101,7 +2126,7 @@ class DboSource extends DataSource {
  * Converts model virtual fields into sql expressions to be fetched later
  *
  * @param Model $model
- * @param string $alias Alias tablename
+ * @param string $alias Alias table name
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
@@ -2119,7 +2144,7 @@ class DboSource extends DataSource {
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
- * @param string $alias Alias tablename
+ * @param string $alias Alias table name
  * @param mixed $fields
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
@@ -2182,7 +2207,7 @@ class DboSource extends DataSource {
 				}
 				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
 					$fields[$i] = $fields[$i]->value;
-				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
+				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])) {
 					continue;
 				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';
@@ -2496,7 +2521,7 @@ class DboSource extends DataSource {
  * Auxiliary function to quote matches `Model.fields` from a preg_replace_callback call
  *
  * @param string $match matched string
- * @return string quoted strig
+ * @return string quoted string
  */
 	protected function _quoteMatchedField($match) {
 		if (is_numeric($match[0])) {
@@ -2581,6 +2606,10 @@ class DboSource extends DataSource {
 			if (is_object($model) && $model->isVirtualField($key)) {
 				$key =  '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
 			}
+			list($alias, $field) = pluginSplit($key);
+			if (is_object($model) && $alias !== $model->alias && is_object($model->{$alias}) && $model->{$alias}->isVirtualField($key)) {
+				$key =  '(' . $this->_quoteFields($model->{$alias}->getVirtualField($key)) . ')';
+			}
 
 			if (strpos($key, '.')) {
 				$key = preg_replace_callback('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', array(&$this, '_quoteMatchedField'), $key);
@@ -2609,7 +2638,7 @@ class DboSource extends DataSource {
 			if (!is_array($group)) {
 				$group = array($group);
 			}
-			foreach($group as $index => $key) {
+			foreach ($group as $index => $key) {
 				if (is_object($model) && $model->isVirtualField($key)) {
 					$group[$index] = '(' . $model->getVirtualField($key) . ')';
 				}
@@ -2727,9 +2756,11 @@ class DboSource extends DataSource {
 /**
  * Inserts multiple values into a table
  *
- * @param string $table
- * @param string $fields
- * @param array $values
+ * @param string $table The table being inserted into.
+ * @param array $fields The array of field/column names being inserted.
+ * @param array $values The array of values to insert.  The values should
+ *   be an array of rows.  Each row should have values keyed by the column name.
+ *   Each row must have the values in the same order as $fields.
  * @return boolean
  */
 	public function insertMulti($table, $fields, $values) {
@@ -2737,12 +2768,32 @@ class DboSource extends DataSource {
 		$holder = implode(',', array_fill(0, count($fields), '?'));
 		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
 
+		$pdoMap = array(
+			'integer' => PDO::PARAM_INT,
+			'float' => PDO::PARAM_STR,
+			'boolean' => PDO::PARAM_BOOL,
+			'string' => PDO::PARAM_STR,
+			'text' => PDO::PARAM_STR
+		);
+		$columnMap = array();
+
 		$count = count($values);
 		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();
-		for ($x = 0; $x < $count; $x++) {
-			$statement->execute($values[$x]);
+
+		foreach ($values[key($values)] as $key => $val) {
+			$type = $this->introspectType($val);
+			$columnMap[$key] = $pdoMap[$type];
+		}
+
+		foreach ($values as $row => $value) {
+			$i = 1;
+			foreach ($value as $col => $val) {
+				$statement->bindValue($i, $val, $columnMap[$col]);
+				$i += 1;
+			}
+			$statement->execute();
 			$statement->closeCursor();
 		}
 		return $this->commit();
@@ -2842,7 +2893,7 @@ class DboSource extends DataSource {
 /**
  * Generate a database-native column schema string
  *
- * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ * @param array $column An array structured like the following: array('name' => 'value', 'type' => 'value'[, options]),
  *   where options can be 'default', 'length', or 'key'.
  * @return string
  */
@@ -2876,7 +2927,7 @@ class DboSource extends DataSource {
 			$out .= '(' . $length . ')';
 		}
 
-		if (($column['type'] === 'integer' || $column['type'] === 'float' ) && isset($column['default']) && $column['default'] === '') {
+		if (($column['type'] === 'integer' || $column['type'] === 'float') && isset($column['default']) && $column['default'] === '') {
 			$column['default'] = null;
 		}
 		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');

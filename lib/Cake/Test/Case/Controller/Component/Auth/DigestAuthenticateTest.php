@@ -3,7 +3,7 @@
  * DigestAuthenticateTest file
  *
  * PHP 5
- * 
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -59,7 +59,7 @@ class DigestAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
@@ -290,7 +290,7 @@ DIGEST;
 			'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
 		);
 		$result = $this->auth->parseAuthData($digest);
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 	}
 
 /**

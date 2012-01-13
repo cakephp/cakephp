@@ -22,7 +22,11 @@
 App::uses('Xml', 'Utility');
 
 /**
- * Request object for handling HTTP requests
+ * Request object for handling alternative HTTP requests
+ *
+ * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
+ * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
+ * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
@@ -91,14 +95,18 @@ class RequestHandlerComponent extends Component {
  * @param array $settings Array of settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->addInputType('xml', array(array($this, 'convertXml')));
 		parent::__construct($collection, $settings);
+		$this->addInputType('xml', array(array($this, 'convertXml')));
+
+		$Controller = $collection->getController();
+		$this->request = $Controller->request;
+		$this->response = $Controller->response;
 	}
 
 /**
  * Checks to see if a file extension has been parsed by the Router, or if the
  * HTTP_ACCEPT_TYPE has matches only one content type with the supported extensions.
- * If there is only one matching type between the supported content types & extensions, 
+ * If there is only one matching type between the supported content types & extensions,
  * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
  * @param Controller $controller A reference to the controller
@@ -107,8 +115,6 @@ class RequestHandlerComponent extends Component {
  * @see Router::parseExtensions()
  */
 	public function initialize($controller, $settings = array()) {
-		$this->request = $controller->request;
-		$this->response = $controller->response;
 		if (isset($this->request->params['ext'])) {
 			$this->ext = $this->request->params['ext'];
 		}
@@ -137,10 +143,10 @@ class RequestHandlerComponent extends Component {
 		}
 		$extensions = Router::extensions();
 		$preferred = array_shift($accept);
-		$preferredTypes = $this->mapType($preferred);
+		$preferredTypes = $this->response->mapType($preferred);
 		$similarTypes = array_intersect($extensions, $preferredTypes);
-		if (count($similarTypes) === 1 && !in_array('html', $preferredTypes)) {
-			$this->ext = $similarTypes[0];
+		if (count($similarTypes) === 1 && !in_array('xhtml', $preferredTypes) && !in_array('html', $preferredTypes)) {
+			$this->ext = array_shift($similarTypes);
 		}
 	}
 
@@ -483,7 +489,7 @@ class RequestHandlerComponent extends Component {
  *   'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
  *    list, based on preference, is returned.  If a single type is provided
- *    a boolean will be returnend if that type is preferred.
+ *    a boolean will be returned if that type is preferred.
  *    If an array of types are provided then the first preferred type is returned.
  *    If no type is provided the first preferred type is returned.
  * @see RequestHandlerComponent::setContent()
@@ -554,7 +560,12 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		if (empty($this->_renderType)) {
+		$viewClass = Inflector::classify($type);
+		App::uses($viewClass . 'View', 'View');
+
+		if (class_exists($viewClass . 'View')) {
+			$controller->viewClass = $viewClass;
+		} elseif (empty($this->_renderType)) {
 			$controller->viewPath .= DS . $type;
 		} else {
 			$remove = preg_replace("/([\/\\\\]{$this->_renderType})$/", DS . $type, $controller->viewPath);

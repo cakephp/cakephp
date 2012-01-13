@@ -39,6 +39,6 @@ class ArticleFeaturedsTagsFixture extends CakeTestFixture {
 	public $fields = array(
 		'article_featured_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_FEATURED' => array('column'=> array('article_featured_id', 'tag_id'), 'unique'=> 1))
+		'indexes' => array('UNIQUE_FEATURED' => array('column' => array('article_featured_id', 'tag_id'), 'unique' => 1))
 	);
 }

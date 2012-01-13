@@ -27,15 +27,6 @@ App::uses('PagesController', 'Controller');
 class PagesControllerTest extends CakeTestCase {
 
 /**
- * endTest method
- *
- * @return void
- */
-	public function endTest() {
-		App::build();
-	}
-
-/**
  * testDisplay method
  *
  * @return void
@@ -50,13 +41,13 @@ class PagesControllerTest extends CakeTestCase {
 
 		$Pages->viewPath = 'Posts';
 		$Pages->display('index');
-		$this->assertPattern('/posts index/', $Pages->response->body());
-		$this->assertEqual($Pages->viewVars['page'], 'index');
+		$this->assertRegExp('/posts index/', $Pages->response->body());
+		$this->assertEquals($Pages->viewVars['page'], 'index');
 
 		$Pages->viewPath = 'Themed';
 		$Pages->display('TestTheme', 'Posts', 'index');
-		$this->assertPattern('/posts index themed view/', $Pages->response->body());
-		$this->assertEqual($Pages->viewVars['page'], 'TestTheme');
-		$this->assertEqual($Pages->viewVars['subpage'], 'Posts');
+		$this->assertRegExp('/posts index themed view/', $Pages->response->body());
+		$this->assertEquals($Pages->viewVars['page'], 'TestTheme');
+		$this->assertEquals($Pages->viewVars['subpage'], 'Posts');
 	}
 }

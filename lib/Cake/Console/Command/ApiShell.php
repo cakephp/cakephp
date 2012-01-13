@@ -17,14 +17,18 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 
 /**
  * API shell to show method signatures of CakePHP core classes.
  *
+ * Implementation of a Cake Shell to show CakePHP core method signatures.
+ *
  * @package       Cake.Console.Command
  */
-class ApiShell extends Shell {
+class ApiShell extends AppShell {
 
 /**
  * Map between short name for paths and real paths.
@@ -97,7 +101,7 @@ class ApiShell extends Shell {
 					$this->_stop();
 				}
 				$method = $parsed[$this->params['method']];
-				$this->out($class .'::'.$method['method'] . $method['parameters']);
+				$this->out($class . '::' . $method['method'] . $method['parameters']);
 				$this->hr();
 				$this->out($method['comment'], true);
 			} else {
@@ -123,7 +127,7 @@ class ApiShell extends Shell {
 					if (isset($methods[--$number])) {
 						$method = $parsed[$methods[$number]];
 						$this->hr();
-						$this->out($class .'::'.$method['method'] . $method['parameters']);
+						$this->out($class . '::' . $method['method'] . $method['parameters']);
 						$this->hr();
 						$this->out($method['comment'], true);
 					}
@@ -149,6 +153,7 @@ class ApiShell extends Shell {
 		))->description(__d('cake_console', 'Lookup doc block comments for classes in CakePHP.'));
 		return $parser;
 	}
+
 /**
  * Show help for this shell.
  *

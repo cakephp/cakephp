@@ -46,52 +46,52 @@ if (!defined('WEBROOT_DIR')) {
  * Path to the application's directory.
  */
 if (!defined('APP')) {
-	define('APP', ROOT.DS.APP_DIR.DS);
+	define('APP', ROOT . DS . APP_DIR.DS);
 }
 
 /**
  * Path to the application's libs directory.
  */
-	define('APPLIBS', APP.'Lib'.DS);
+	define('APPLIBS', APP . 'Lib' . DS);
 
 /**
  * Path to the public CSS directory.
  */
-	define('CSS', WWW_ROOT.'css'.DS);
+	define('CSS', WWW_ROOT . 'css' . DS);
 
 /**
  * Path to the public JavaScript directory.
  */
-	define('JS', WWW_ROOT.'js'.DS);
+	define('JS', WWW_ROOT . 'js' . DS);
 
 /**
  * Path to the public images directory.
  */
-	define('IMAGES', WWW_ROOT.'img'.DS);
+	define('IMAGES', WWW_ROOT . 'img' . DS);
 
 /**
  * Path to the tests directory.
  */
 if (!defined('TESTS')) {
-	define('TESTS', APP.'Test'.DS);
+	define('TESTS', APP . 'Test' . DS);
 }
 
 /**
  * Path to the temporary files directory.
  */
 if (!defined('TMP')) {
-	define('TMP', APP.'tmp'.DS);
+	define('TMP', APP . 'tmp' . DS);
 }
 
 /**
  * Path to the logs directory.
  */
-	define('LOGS', TMP.'logs'.DS);
+	define('LOGS', TMP . 'logs' . DS);
 
 /**
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
  */
-	define('CACHE', TMP.'cache'.DS);
+	define('CACHE', TMP . 'cache' . DS);
 
 /**
  * Path to the vendors directory.
@@ -130,6 +130,7 @@ spl_autoload_register(array('App', 'load'));
 
 App::uses('ErrorHandler', 'Error');
 App::uses('Configure', 'Core');
+App::uses('CakePlugin', 'Core');
 App::uses('Cache', 'Cache');
 App::uses('Object', 'Core');
 App::$bootstrapping = true;
@@ -142,13 +143,13 @@ Configure::bootstrap(isset($boot) ? $boot : true);
 if (!defined('FULL_BASE_URL')) {
 	$s = null;
 	if (env('HTTPS')) {
-		$s ='s';
+		$s = 's';
 	}
 
 	$httpHost = env('HTTP_HOST');
 
 	if (isset($httpHost)) {
-		define('FULL_BASE_URL', 'http'.$s.'://'.$httpHost);
+		define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
 	}
 	unset($httpHost, $s);
 }

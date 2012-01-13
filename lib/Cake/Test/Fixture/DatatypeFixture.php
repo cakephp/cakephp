@@ -37,7 +37,7 @@ class DatatypeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null),
 		'bool' => array('type' => 'boolean', 'null' => false, 'default' => false),
 	);

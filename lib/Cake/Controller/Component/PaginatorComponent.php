@@ -19,7 +19,7 @@
 
 /**
  * This component is used to handle automatic model data pagination.  The primary way to use this
- * component is to call the paginate() method. There is a convience wrapper on Controller as well.
+ * component is to call the paginate() method. There is a convenience wrapper on Controller as well.
  *
  * ### Configuring pagination
  *
@@ -333,7 +333,7 @@ class PaginatorComponent extends Component {
 			$options['order'] = array($options['sort'] => $direction);
 		}
 
-		if (!empty($whitelist)) {
+		if (!empty($whitelist) && isset($options['order']) && is_array($options['order'])) {
 			$field = key($options['order']);
 			if (!in_array($field, $whitelist)) {
 				$options['order'] = null;
@@ -353,7 +353,7 @@ class PaginatorComponent extends Component {
 					$order[$alias . '.' . $field] = $value;
 				} elseif ($object->hasField($key, true)) {
 					$order[$field] = $value;
-				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
 					$order[$alias . '.' . $field] = $value;
 				}
 			}

@@ -18,6 +18,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+/**
+ * Error Handling Controller
+ *
+ * Controller used by ErrorHandler to render error views.
+ *
+ * @package       Cake.Controller
+ */
 class CakeErrorController extends AppController {
 
 /**
@@ -42,9 +50,17 @@ class CakeErrorController extends AppController {
  */
 	public function __construct($request = null, $response = null) {
 		parent::__construct($request, $response);
+		if (count(Router::extensions())) {
+			$this->components[] = 'RequestHandler';
+		}
 		$this->constructClasses();
 		$this->Components->trigger('initialize', array(&$this));
+
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
+
+		if (isset($this->RequestHandler)) {
+			$this->RequestHandler->startup($this);
+		}
 	}
 
 /**
@@ -55,7 +71,7 @@ class CakeErrorController extends AppController {
 	public function beforeRender() {
 		parent::beforeRender();
 		foreach ($this->viewVars as $key => $value) {
-			if (!is_object($value)){
+			if (!is_object($value)) {
 				$this->viewVars[$key] = h($value);
 			}
 		}

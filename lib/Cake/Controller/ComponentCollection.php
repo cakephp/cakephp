@@ -18,8 +18,15 @@
 
 App::uses('ObjectCollection', 'Utility');
 App::uses('Component', 'Controller');
+App::uses('CakeEventListener', 'Event');
 
-class ComponentCollection extends ObjectCollection {
+/**
+ * Components collection is used as a registry for loaded components and handles loading
+ * and constructing component class objects.
+ *
+ * @package       Cake.Controller
+ */
+class ComponentCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * The controller that this collection was initialized with.
@@ -96,10 +103,25 @@ class ComponentCollection extends ObjectCollection {
 		}
 		$this->_loaded[$alias] = new $componentClass($this, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable === true) {
-			$this->_enabled[] = $alias;
+		if ($enable) {
+			$this->enable($alias);
 		}
 		return $this->_loaded[$alias];
 	}
 
+/**
+ * Returns the implemented events that will get routed to the trigger function
+ * in order to dispatch them separately on each component
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'Controller.initialize' => array('callable' => 'trigger'),
+			'Controller.startup' => array('callable' => 'trigger'),
+			'Controller.beforeRender' => array('callable' => 'trigger'),
+			'Controller.beforeRedirect' => array('callable' => 'trigger'),
+			'Controller.shutdown' => array('callable' => 'trigger'),
+		);
+	}
 }

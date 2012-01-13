@@ -17,8 +17,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 App::uses('Dispatcher', 'Routing');
 App::uses('CakeTestCase', 'TestSuite');
 App::uses('Router', 'Routing');
@@ -59,12 +57,21 @@ class ControllerTestDispatcher extends Dispatcher {
 		$this->testController->helpers = array_merge(array('InterceptContent'), $this->testController->helpers);
 		$this->testController->setRequest($request);
 		$this->testController->response = $this->response;
+		foreach ($this->testController->Components->attached() as $component) {
+			$object = $this->testController->Components->{$component};
+			if (isset($object->response)) {
+				$object->response = $response;
+			}
+		}
+		if (isset($object->request)) {
+			$object->request = $request;
+		}
 		return $this->testController;
 	}
 
 /**
  * Loads routes and resets if the test case dictates it should
- * 
+ *
  * @return void
  */
 	protected function _loadRoutes() {
@@ -88,7 +95,7 @@ class InterceptContentHelper extends Helper {
  * @param string $viewFile The view file
  */
 	public function afterRender($viewFile) {
-		$this->_View->_viewNoLayout = $this->_View->output;
+		$this->_View->assign('__view_no_layout__', $this->_View->fetch('content'));
 		$this->_View->Helpers->unload('InterceptContent');
 	}
 }
@@ -112,7 +119,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * @var boolean
  */
-	public $autoMock = false;
+	public $autoMock = true;
 
 /**
  * Use custom routes during tests
@@ -157,6 +164,15 @@ abstract class ControllerTestCase extends CakeTestCase {
 	public $headers = null;
 
 /**
+ * Flag for checking if the controller instance is dirty.
+ * Once a test has been run on a controller it should be rebuilt
+ * to clean up properties.
+ *
+ * @var boolean
+ */
+	private $__dirtyController = false;
+
+/**
  * Used to enable calling ControllerTestCase::testAction() without the testing
  * framework thinking that it's a test case
  *
@@ -171,17 +187,20 @@ abstract class ControllerTestCase extends CakeTestCase {
 	}
 
 /**
- * Tests a controller action.
+ * Lets you do functional tests of a controller action.
  *
  * ### Options:
  *
- * - `data` POST or GET data to pass. Depends on the method.
+ * - `data` Will be used as the request data.  If the `method` is GET,
+ *   data will be used a GET params.  If the `method` is POST, it will be used
+ *   as POST data. By setting `$options['data']` to a string, you can simulate XML or JSON
+ *   payloads to your controllers allowing you to test REST webservices.
  * - `method` POST or GET. Defaults to POST.
  * - `return` Specify the return type you want.  Choose from:
  *     - `vars` Get the set view variables.
  *     - `view` Get the rendered view, without a layout.
  *     - `contents` Get the rendered view including the layout.
- *     - `result` Get the return value of the controller action.  Useful 
+ *     - `result` Get the return value of the controller action.  Useful
  *       for testing requestAction methods.
  *
  * @param string $url The url to test
@@ -197,14 +216,23 @@ abstract class ControllerTestCase extends CakeTestCase {
 		), $options);
 
 		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
-		if (strtoupper($options['method']) == 'GET') {
-			$_GET = $options['data'];
-			$_POST = array();
-		} else {
-			$_POST = $options['data'];
-			$_GET = array();
+		if (is_array($options['data'])) {
+			if (strtoupper($options['method']) == 'GET') {
+				$_GET = $options['data'];
+				$_POST = array();
+			} else {
+				$_POST = $options['data'];
+				$_GET = array();
+			}
 		}
-		$request = new CakeRequest($url);
+		$request = $this->getMock('CakeRequest', array('_readInput'), array($url));
+
+		if (is_string($options['data'])) {
+			$request->expects($this->any())
+				->method('_readInput')
+				->will($this->returnValue($options['data']));
+		}
+
 		$Dispatch = new ControllerTestDispatcher();
 		foreach (Router::$routes as $route) {
 			if ($route instanceof RedirectRoute) {
@@ -217,12 +245,13 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$this->headers = Router::currentRoute()->response->header();
 			return;
 		}
-		if ($this->controller !== null && Inflector::camelize($request->params['controller']) !== $this->controller->name) {
+		if ($this->__dirtyController) {
 			$this->controller = null;
 		}
+
 		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
-			$this->generate(Inflector::camelize($plugin . $request->params['controller']));
+			$this->generate($plugin . Inflector::camelize($request->params['controller']));
 		}
 		$params = array();
 		if ($options['return'] == 'result') {
@@ -234,13 +263,12 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
-		if ($options['return'] != 'result') {
-			if (isset($this->controller->View)) {
-				$this->vars = $this->controller->View->viewVars;
-				$this->view = $this->controller->View->_viewNoLayout;
-			}
-			$this->contents = $this->controller->response->body();
+		$this->vars = $this->controller->viewVars;
+		$this->contents = $this->controller->response->body();
+		if (isset($this->controller->View)) {
+			$this->view = $this->controller->View->fetch('__view_no_layout__');
 		}
+		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
 		return $this->{$options['return']};
 	}
@@ -249,12 +277,12 @@ abstract class ControllerTestCase extends CakeTestCase {
  * Generates a mocked controller and mocks any classes passed to `$mocks`. By
  * default, `_stop()` is stubbed as is sending the response headers, so to not
  * interfere with testing.
- * 
+ *
  * ### Mocks:
  *
  * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
  * - `models` Models to mock. Models are added to the ClassRegistry so they any
- *   time they are instatiated the mock will be created. Pass as key value pairs
+ *   time they are instantiated the mock will be created. Pass as key value pairs
  *   with the value being specific methods on the model to mock. If `true` or
  *   no value is passed, the entire model will be mocked.
  * - `components` Components to mock. Components are only mocked on this controller
@@ -278,10 +306,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 			));
 		}
 		ClassRegistry::flush();
-		
+
 		$mocks = array_merge_recursive(array(
 			'methods' => array('_stop'),
-			'models' => array(), 
+			'models' => array(),
 			'components' => array()
 		), (array)$mocks);
 
@@ -324,12 +352,13 @@ abstract class ControllerTestCase extends CakeTestCase {
 				throw new MissingComponentException(array(
 					'class' => $componentClass
 				));
-			}			
+			}
 			$_component = $this->getMock($componentClass, $methods, array(), '', false);
 			$_controller->Components->set($name, $_component);
 		}
 
 		$_controller->constructClasses();
+		$this->__dirtyController = false;
 
 		$this->controller = $_controller;
 		return $this->controller;

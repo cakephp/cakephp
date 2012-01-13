@@ -16,11 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 App::uses('ConnectionManager', 'Model');
 App::uses('ClassRegistry', 'Utility');
 
+/**
+ * A factory class to manage the life cycle of test fixtures
+ *
+ * @package       Cake.TestSuite.Fixture
+ */
 class CakeFixtureManager {
 
 /**
@@ -45,7 +49,7 @@ class CakeFixtureManager {
 	protected $_loaded = array();
 
 /**
- * Holds the fixture classes that where ins	tantiated indexed by class name
+ * Holds the fixture classes that where instantiated indexed by class name
  *
  * @var array
  */
@@ -86,7 +90,7 @@ class CakeFixtureManager {
 		$db = ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 		$this->_db = $db;
-		ClassRegistry::config(array('ds' => 'test'));
+		ClassRegistry::config(array('ds' => 'test', 'testing' => true));
 		$this->_initialized = true;
 	}
 
@@ -133,7 +137,7 @@ class CakeFixtureManager {
 					$fixtureFile = $path . DS . $className . 'Fixture.php';
 					require_once($fixtureFile);
 					$fixtureClass = $className . 'Fixture';
-					$this->_loaded[$fixtureIndex] = new $fixtureClass($this->_db);
+					$this->_loaded[$fixtureIndex] = new $fixtureClass();
 					$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
 					break;
 				}
@@ -151,9 +155,13 @@ class CakeFixtureManager {
  */
 	protected function _setupTable($fixture, $db = null, $drop = true) {
 		if (!$db) {
-			$db = $this->_db;
+			if (!empty($fixture->useDbConfig)) {
+				$db = ClassRegistry::getDataSource($fixture->useDbConfig);
+			} else {
+				$db = $this->_db;
+			}
 		}
-		if (!empty($fixture->created) && $fixture->created == $db->configKeyName) {
+		if (!empty($fixture->created) && in_array($db->configKeyName, $fixture->created)) {
 			return;
 		}
 
@@ -163,10 +171,8 @@ class CakeFixtureManager {
 		if ($drop && in_array($table, $sources)) {
 			$fixture->drop($db);
 			$fixture->create($db);
-			$fixture->created = $db->configKeyName;
 		} elseif (!in_array($table, $sources)) {
 			$fixture->create($db);
-			$fixture->created = $db->configKeyName;
 		}
 	}
 
@@ -189,15 +195,16 @@ class CakeFixtureManager {
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
-				$this->_setupTable($fixture, $test->db, $test->dropTables);
-				$fixture->insert($test->db);
+				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+				$this->_setupTable($fixture, $db, $test->dropTables);
+				$fixture->insert($db);
 			}
 		}
 		$test->db->commit();
 	}
 
 /**
- * Trucantes the fixtures tables
+ * Truncates the fixtures tables
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void
@@ -208,14 +215,17 @@ class CakeFixtureManager {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {
-					$fixture->truncate($test->db);
+					foreach ($fixture->created as $ds) {
+						$db = ConnectionManager::getDataSource($ds);
+						$fixture->truncate($db);
+					}
 				}
 			}
 		}
 	}
 
 /**
- * Trucantes the fixtures tables
+ * Truncates the fixtures tables
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void
@@ -224,10 +234,10 @@ class CakeFixtureManager {
 	public function loadSingle($name, $db = null) {
 		$name .= 'Fixture';
 		if (isset($this->_fixtureMap[$name])) {
-			if (!$db) {
-				$db = $this->_db;
-			}
 			$fixture = $this->_fixtureMap[$name];
+			if (!$db) {
+				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+			}
 			$this->_setupTable($fixture, $db);
 			$fixture->truncate($db);
 			$fixture->insert($db);
@@ -244,8 +254,12 @@ class CakeFixtureManager {
 	public function shutDown() {
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
-				$fixture->drop($this->_db);
+				foreach ($fixture->created as $ds) {
+					$db = ConnectionManager::getDataSource($ds);
+					$fixture->drop($db);
+				}
 			}
 		}
 	}
+
 }

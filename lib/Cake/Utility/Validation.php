@@ -154,20 +154,22 @@ class Validation {
 		}
 		$cards = array(
 			'all' => array(
-				'amex' => '/^3[4|7]\\d{13}$/',
-				'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
-				'diners'   => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
-				'disc'     => '/^(?:6011|650\\d)\\d{12}$/',
-				'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
-				'enroute'  => '/^2(?:014|149)\\d{11}$/',
-				'jcb'      => '/^(3\\d{4}|2100|1800)\\d{11}$/',
-				'maestro'  => '/^(?:5020|6\\d{3})\\d{12}$/',
-				'mc'       => '/^5[1-5]\\d{14}$/',
-				'solo'     => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
-				'switch'   => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
-				'visa'     => '/^4\\d{12}(\\d{3})?$/',
-				'voyager'  => '/^8699[0-9]{11}$/'),
-			'fast'   => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/');
+				'amex'		=> '/^3[4|7]\\d{13}$/',
+				'bankcard'	=> '/^56(10\\d\\d|022[1-5])\\d{10}$/',
+				'diners'	=> '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
+				'disc'		=> '/^(?:6011|650\\d)\\d{12}$/',
+				'electron'	=> '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
+				'enroute'	=> '/^2(?:014|149)\\d{11}$/',
+				'jcb'		=> '/^(3\\d{4}|2100|1800)\\d{11}$/',
+				'maestro'	=> '/^(?:5020|6\\d{3})\\d{12}$/',
+				'mc'		=> '/^5[1-5]\\d{14}$/',
+				'solo'		=> '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
+				'switch'	=> '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
+				'visa'		=> '/^4\\d{12}(\\d{3})?$/',
+				'voyager'	=> '/^8699[0-9]{11}$/'
+			),
+			'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
+		);
 
 		if (is_array($type)) {
 			foreach ($type as $value) {
@@ -306,9 +308,7 @@ class Validation {
 
 		$format = (is_array($format)) ? array_values($format) : array($format);
 		foreach ($format as $key) {
-			$regex = $regex[$key];
-
-			if (self::_check($check, $regex) === true) {
+			if (self::_check($check, $regex[$key]) === true) {
 				return true;
 			}
 		}
@@ -336,7 +336,7 @@ class Validation {
  * @see Validation::date
  * @see Validation::time
  */
-	public function datetime($check, $dateFormat = 'ymd', $regex = null) {
+	public static function datetime($check, $dateFormat = 'ymd', $regex = null) {
 		$valid = false;
 		$parts = explode(' ', $check);
 		if (!empty($parts) && count($parts) > 1) {
@@ -384,7 +384,7 @@ class Validation {
 			if (is_null($places)) {
 				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
 			} else {
-				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/';
+				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]{' . $places . '}$/';
 			}
 		}
 		return self::_check($check, $regex);
@@ -441,7 +441,7 @@ class Validation {
  * Check that value has a valid file extension.
  *
  * @param mixed $check Value to check
- * @param array $extensions file extenstions to allow
+ * @param array $extensions file extensions to allow
  * @return boolean Success
  */
 	public static function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
@@ -522,7 +522,7 @@ class Validation {
  * Valid Options
  *
  * - in => provide a list of choices that selections must be made from
- * - max => maximun number of non-zero choices that can be made
+ * - max => maximum number of non-zero choices that can be made
  * - min => minimum number of non-zero choices that can be made
  *
  * @param mixed $check Value to check
@@ -556,7 +556,7 @@ class Validation {
  * Checks if a value is numeric.
  *
  * @param string $check Value to check
- * @return boolean Succcess
+ * @return boolean Success
  */
 	public static function numeric($check) {
 		return is_numeric($check);
@@ -715,7 +715,7 @@ class Validation {
  *
  * @param string $check Value to check
  * @param array $list List to check against
- * @return boolean Succcess
+ * @return boolean Success
  */
 	public static function inList($check, $list) {
 		return in_array($check, $list);

@@ -19,10 +19,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Included libraries.
- *
- */
 App::uses('CakeLog', 'Log');
 App::uses('String', 'Utility');
 
@@ -204,7 +200,7 @@ class Debugger {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return boolean true if error was handled
- * @deprecated This function is supersceeded by Debugger::outputError()
+ * @deprecated This function is superseded by Debugger::outputError()
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$_this = Debugger::getInstance();
@@ -280,14 +276,14 @@ class Debugger {
 	public static function trace($options = array()) {
 		$_this = Debugger::getInstance();
 		$defaults = array(
-			'depth'   => 999,
-			'format'  => $_this->_outputFormat,
-			'args'    => false,
-			'start'   => 0,
-			'scope'   => null,
-			'exclude' => null
+			'depth'		=> 999,
+			'format'	=> $_this->_outputFormat,
+			'args'		=> false,
+			'start'		=> 0,
+			'scope'		=> null,
+			'exclude'	=> array('call_user_func_array', 'trigger_error')
 		);
-		$options += $defaults;
+		$options = Set::merge($defaults, $options);
 
 		$backtrace = debug_backtrace();
 		$count = count($backtrace);
@@ -302,13 +298,15 @@ class Debugger {
 
 		for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
 			$trace = array_merge(array('file' => '[internal]', 'line' => '??'), $backtrace[$i]);
+			$signature = $reference = '[main]';
 
 			if (isset($backtrace[$i + 1])) {
 				$next = array_merge($_trace, $backtrace[$i + 1]);
-				$reference = $next['function'];
+				$signature = $reference = $next['function'];
 
 				if (!empty($next['class'])) {
-					$reference = $next['class'] . '::' . $reference . '(';
+					$signature = $next['class'] . '::' . $next['function'];
+					$reference = $signature . '(';
 					if ($options['args'] && isset($next['args'])) {
 						$args = array();
 						foreach ($next['args'] as $arg) {
@@ -318,10 +316,8 @@ class Debugger {
 					}
 					$reference .= ')';
 				}
-			} else {
-				$reference = '[main]';
 			}
-			if (in_array($reference, array('call_user_func_array', 'trigger_error'))) {
+			if (in_array($signature, $options['exclude'])) {
 				continue;
 			}
 			if ($options['format'] == 'points' && $trace['file'] != '[internal]') {
@@ -406,7 +402,7 @@ class Debugger {
 			if (!isset($data[$i])) {
 				continue;
 			}
-			$string = str_replace(array("\r\n", "\n"), "", highlight_string($data[$i], true));
+			$string = str_replace(array("\r\n", "\n"), "", self::_highlight($data[$i]));
 			if ($i == $line) {
 				$lines[] = '<span class="code-highlight">' . $string . '</span>';
 			} else {
@@ -417,10 +413,27 @@ class Debugger {
 	}
 
 /**
+ * Wraps the highlight_string funciton in case the server API does not
+ * implement the function as it is the case of the HipHop interpreter
+ *
+ * @param string $str the string to convert
+ * @return string
+ */
+	protected static function _highlight($str) {
+		static $supportHighlight = null;
+		if (!$supportHighlight && function_exists('hphp_log')) {
+			$supportHighlight = false;
+			return htmlentities($str);
+		}
+		$supportHighlight = true;
+		return highlight_string($str, true);
+	}
+
+/**
  * Converts a variable to a string for debug output.
  *
- * *Note:* The following keys will have their contents replaced with
- * `*****`:
+ * *Note:* The following keys will have their contents
+ * replaced with `*****`:
  *
  *  - password
  *  - login
@@ -434,93 +447,118 @@ class Debugger {
  * shown in an error message if CakePHP is deployed in development mode.
  *
  * @param string $var Variable to convert
- * @param integer $recursion
+ * @param integer $depth The depth to output to. Defaults to 3.
  * @return string Variable as a formatted string
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
-	public static function exportVar($var, $recursion = 0) {
-		switch (strtolower(gettype($var))) {
+	public static function exportVar($var, $depth = 3) {
+		return self::_export($var, $depth, 0);
+	}
+
+/**
+ * Protected export function used to keep track of indentation and recursion.
+ *
+ * @param mixed $var The variable to dump.
+ * @param integer $depth The remaining depth.
+ * @param integer $indent The current indentation level.
+ * @return string The dumped variable.
+ */
+	protected static function _export($var, $depth, $indent) {
+		switch (self::getType($var)) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
 			break;
 			case 'integer':
-			case 'double':
-				return $var;
+				return '(int) ' . $var;
+			case 'float':
+				return '(float) ' . $var;
 			break;
 			case 'string':
-				if (trim($var) == "") {
-					return '""';
+				if (trim($var) == '') {
+					return "''";
 				}
-				return '"' . h($var) . '"';
+				return "'" . $var . "'";
 			break;
-			case 'object':
-				return get_class($var) . "\n" . self::_object($var);
 			case 'array':
-				$var = array_merge($var,  array_intersect_key(array(
-					'password' => '*****',
-					'login'  => '*****',
-					'host' => '*****',
-					'database' => '*****',
-					'port' => '*****',
-					'prefix' => '*****',
-					'schema' => '*****'
-				), $var));
-
-				$out = "array(";
-				$vars = array();
-				foreach ($var as $key => $val) {
-					if ($recursion >= 0) {
-						if (is_numeric($key)) {
-							$vars[] = "\n\t" . self::exportVar($val, $recursion - 1);
-						} else {
-							$vars[] = "\n\t" . self::exportVar($key, $recursion - 1)
-										. ' => ' . self::exportVar($val, $recursion - 1);
-						}
-					}
-				}
-				$n = null;
-				if (!empty($vars)) {
-					$n = "\n";
-				}
-				return $out . implode(",", $vars) . "{$n})";
+				return self::_array($var, $depth - 1, $indent + 1);
 			break;
 			case 'resource':
 				return strtolower(gettype($var));
 			break;
 			case 'null':
 				return 'null';
+			default:
+				return self::_object($var, $depth - 1, $indent + 1);
 			break;
 		}
+	}
+
+/**
+ * Export an array type object.  Filters out keys used in datasource configuration.
+ *
+ * @param array $var The array to export.
+ * @param integer $depth The current depth, used for recursion tracking.
+ * @param integer $indent The current indentation level.
+ * @return string Exported array.
+ */
+	protected static function _array(array $var, $depth, $indent) {
+		$var = array_merge($var,  array_intersect_key(array(
+			'password' => '*****',
+			'login'  => '*****',
+			'host' => '*****',
+			'database' => '*****',
+			'port' => '*****',
+			'prefix' => '*****',
+			'schema' => '*****'
+		), $var));
+
+		$out = "array(";
+		$n = $break = $end = null;
+		if (!empty($var)) {
+			$n = "\n";
+			$break = "\n" . str_repeat("\t", $indent);
+			$end = "\n" . str_repeat("\t", $indent - 1);
+		}
+		$vars = array();
+
+		if ($depth >= 0) {
+			foreach ($var as $key => $val) {
+				$vars[] = $break . self::exportVar($key) .
+					' => ' .
+					self::_export($val, $depth - 1, $indent);
+			}
+		}
+		return $out . implode(',', $vars) . $end . ')';
 	}
 
 /**
  * Handles object to string conversion.
  *
  * @param string $var Object to convert
+ * @param integer $depth The current depth, used for tracking recursion.
+ * @param integer $indent The current indentation level.
  * @return string
  * @see Debugger::exportVar()
  */
-	protected static function _object($var) {
-		$out = array();
+	protected static function _object($var, $depth, $indent) {
+		$out = '';
+		$props = array();
 
-		if (is_object($var)) {
-			$className = get_class($var);
+		$className = get_class($var);
+		$out .= 'object(' . $className . ') {';
+
+		if ($depth > 0) {
+			$end = "\n" . str_repeat("\t", $indent - 1);
+			$break = "\n" . str_repeat("\t", $indent);
 			$objectVars = get_object_vars($var);
-
 			foreach ($objectVars as $key => $value) {
-				if (is_object($value)) {
-					$value = get_class($value) . ' object';
-				} elseif (is_array($value)) {
-					$value = 'array';
-				} elseif ($value === null) {
-					$value = 'NULL';
-				} elseif (in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource'))) {
-					$value = Debugger::exportVar($value);
-				}
-				$out[] = "$className::$$key = " . $value;
+				$value = self::_export($value, $depth - 1, $indent);
+				$props[] = "$key => " . $value;
 			}
+			$out .= $break . implode($break, $props) . $end;
 		}
-		return implode("\n", $out);
+		$out .= '}';
+		return $out;
 	}
 
 /**
@@ -547,8 +585,8 @@ class Debugger {
  *
  * `Debugger::addFormat('custom', $data);`
  *
- * Where $data is an array of strings that use String::insert() variable 
- * replacement.  The template vars should be in a `{:id}` style.  
+ * Where $data is an array of strings that use String::insert() variable
+ * replacement.  The template vars should be in a `{:id}` style.
  * An error formatter can have the following keys:
  *
  * - 'error' - Used for the container for the error message. Gets the following template
@@ -557,11 +595,11 @@ class Debugger {
  *   the contents of the other template keys.
  * - 'trace' - The container for a stack trace. Gets the following template
  *   variables: `trace`
- * - 'context' - The container element for the context variables. 
+ * - 'context' - The container element for the context variables.
  *   Gets the following templates: `id`, `context`
  * - 'links' - An array of HTML links that are used for creating links to other resources.
  *   Typically this is used to create javascript links to open other sections.
- *   Link keys, are: `code`, `context`, `help`.  See the js output format for an 
+ *   Link keys, are: `code`, `context`, `help`.  See the js output format for an
  *   example.
  * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
  *   template variables: `reference`, `path`, `line`
@@ -599,14 +637,14 @@ class Debugger {
 	}
 
 /**
- * Switches output format, updates format strings. 
+ * Switches output format, updates format strings.
  * Can be used to switch the active output format:
  *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
  * @return string
- * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed 
+ * @deprecated Use Debugger::outputAs() and  Debugger::addFormat(). Will be removed
  *   in 3.0
  */
 	public function output($format = null, $strings = array()) {
@@ -650,7 +688,10 @@ class Debugger {
 		$data += $defaults;
 
 		$files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
-		$code = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
+		$code = '';
+		if (isset($files[0]['file'])) {
+			$code = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
+		}
 		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');
 		$context = array();
@@ -701,6 +742,41 @@ class Debugger {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));
 		}
 		echo String::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
+	}
+
+/**
+ * Get the type of the given variable. Will return the classname
+ * for objects.
+ *
+ * @param mixed $var The variable to get the type of
+ * @return string The type of variable.
+ */
+	public static function getType($var) {
+		if (is_object($var)) {
+			return get_class($var);
+		}
+		if (is_null($var)) {
+			return 'null';
+		}
+		if (is_string($var)) {
+			return 'string';
+		}
+		if (is_array($var)) {
+			return 'array';
+		}
+		if (is_int($var)) {
+			return 'integer';
+		}
+		if (is_bool($var)) {
+			return 'boolean';
+		}
+		if (is_float($var)) {
+			return 'float';
+		}
+		if (is_resource($var)) {
+			return 'resource';
+		}
+		return 'unknown';
 	}
 
 /**

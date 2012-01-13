@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('BakeTask', 'Console/Command/Task');
 App::uses('ClassRegistry', 'Utility');
 
@@ -145,7 +146,7 @@ class TestTask extends BakeTask {
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set(compact(
-			'className', 'methods', 'type', 'fullClassName', 'mock', 
+			'className', 'methods', 'type', 'fullClassName', 'mock',
 			'construction', 'realType'
 		));
 		$out = $this->Template->generate('classes', 'test');
@@ -205,12 +206,14 @@ class TestTask extends BakeTask {
 			$this->out(++$key . '. ' . $option);
 			$keys[] = $key;
 		}
-		$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
-		if (isset($options[$selection - 1])) {
-			$selection = $options[$selection - 1];
-		}
-		if ($type !== 'Model') {
-			$selection = substr($selection, 0, $typeLength * - 1);
+		while (empty($selection)) {
+			$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
+			if (is_numeric($selection) && isset($options[$selection - 1])) {
+				$selection = $options[$selection - 1];
+			}
+			if ($type !== 'Model') {
+				$selection = substr($selection, 0, $typeLength * - 1);
+			}
 		}
 		return $selection;
 	}
@@ -349,7 +352,11 @@ class TestTask extends BakeTask {
 				$this->_processModel($subject->{$alias});
 			}
 			if ($type == 'hasAndBelongsToMany') {
-				$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
+				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
+					list($plugin, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
+				} else {
+					$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
+				}
 				if (!isset($this->_fixtures[$joinModel])) {
 					$this->_processModel($subject->{$joinModel});
 				}
@@ -399,7 +406,7 @@ class TestTask extends BakeTask {
  * @return array Array of fixtures the user wants to add.
  */
 	public function getUserFixtures() {
-		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), array('y','n'), 'n');
+		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), array('y', 'n'), 'n');
 		$fixtures = array();
 		if (strtolower($proceed) == 'y') {
 			$fixtureList = $this->in(__d('cake_console', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
@@ -451,6 +458,7 @@ class TestTask extends BakeTask {
  */
 	public function testCaseFileName($type, $className) {
 		$path = $this->getPath() . 'Case' . DS;
+		$type = Inflector::camelize($type);
 		if (isset($this->classTypes[$type])) {
 			$path .= $this->classTypes[$type] . DS;
 		}
@@ -468,7 +476,13 @@ class TestTask extends BakeTask {
 		return $parser->description(__d('cake_console', 'Bake test case skeletons for classes.'))
 			->addArgument('type', array(
 				'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
-				'choices' => array('controller', 'model', 'helper', 'component', 'behavior')
+				'choices' => array(
+					'Controller', 'controller',
+					'Model', 'model',
+					'Helper', 'helper',
+					'Component', 'component',
+					'Behavior', 'behavior'
+				)
 			))->addArgument('name', array(
 				'help' => __d('cake_console', 'An existing class to bake tests for.')
 			))->addOption('plugin', array(

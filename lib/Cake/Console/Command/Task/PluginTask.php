@@ -16,15 +16,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 
 /**
- * Task class for creating a plugin
+ * The Plugin Task handles creating an empty plugin, ready to be used
  *
  * @package       Cake.Console.Command.Task
  */
-class PluginTask extends Shell {
+class PluginTask extends AppShell {
 
 /**
  * path to plugins directory
@@ -74,7 +75,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake_console', "An error occured trying to bake: %s in %s", $plugin, $this->path . $plugin));
+			$this->error(__d('cake_console', "An error occurred trying to bake: %s in %s", $plugin, $this->path . $plugin));
 		}
 	}
 
@@ -158,8 +159,8 @@ class PluginTask extends Shell {
  */
 	public function findPath($pathOptions) {
 		$valid = false;
-		foreach ($pathOptions as $i =>$path) {
-			if(!is_dir($path)) {
+		foreach ($pathOptions as $i => $path) {
+			if (!is_dir($path)) {
 				array_splice($pathOptions, $i, 1);
 			}
 		}

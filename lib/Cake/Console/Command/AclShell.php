@@ -15,6 +15,8 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('AppShell', 'Console/Command');
 App::uses('ComponentCollection', 'Controller');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('DbAcl', 'Model');
@@ -25,7 +27,7 @@ App::uses('DbAcl', 'Model');
  *
  * @package       Cake.Console.Command
  */
-class AclShell extends Shell {
+class AclShell extends AppShell {
 
 /**
  * Contains instance of AclComponent
@@ -485,7 +487,7 @@ class AclShell extends Shell {
 					)
 				)
 			))->addSubcommand('initdb', array(
-				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema run create DbAcl')
+				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')
 			))->epilog(
 				array(
 					'Node and parent arguments can be in one of the following formats:',

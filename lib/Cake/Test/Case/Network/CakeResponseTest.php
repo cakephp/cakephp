@@ -21,6 +21,24 @@ App::uses('CakeResponse', 'Network');
 class CakeResponseTest extends CakeTestCase {
 
 /**
+ * Setup for tests
+ *
+ * @return void
+ */
+	public function setUp() {
+		ob_start();
+	}
+
+/**
+ * Cleanup after tests
+ *
+ * @return void
+ */
+	public function tearDown() {
+		ob_end_clean();
+	}
+
+/**
 * Tests the request object constructor
 *
 */
@@ -282,11 +300,14 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the compress method
-*
-*/
+ * Tests the compress method
+ *
+ * @return void
+ */
 	public function testCompress() {
-		$this->skipIf(php_sapi_name() !== 'cli', 'The response compression can only be tested in cli.');
+		if (php_sapi_name() !== 'cli') {
+			$this->markTestSkipped('The response compression can only be tested in cli.');
+		}
 
 		$response = new CakeResponse();
 		if (ini_get("zlib.output_compression") === '1' || !extension_loaded("zlib")) {
@@ -313,11 +334,11 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHttpCodes() {
 		$response = new CakeResponse();
 		$result = $response->httpCodes();
-		$this->assertEqual(count($result), 39);
+		$this->assertEquals(count($result), 39);
 
 		$result =  $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$codes = array(
 			1337 => 'Undefined Unicorn',
@@ -326,20 +347,20 @@ class CakeResponseTest extends CakeTestCase {
 
 		$result =  $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEqual(count($response->httpCodes()), 41);
+		$this->assertEquals(count($response->httpCodes()), 41);
 
 		$result = $response->httpCodes(1337);
 		$expected = array(1337 => 'Undefined Unicorn');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEqual(count($response->httpCodes()), 41);
+		$this->assertEquals(count($response->httpCodes()), 41);
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -369,5 +390,114 @@ class CakeResponseTest extends CakeTestCase {
 		$expected = array('json', 'xhtml', 'css');
 		$result = $response->mapType(array('application/json', 'application/xhtml+xml', 'text/css'));
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+* Tests the outputCompressed method
+*
+*/
+	public function testOutputCompressed() {
+		$response = new CakeResponse();
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
+		$result = $response->outputCompressed();
+		$this->assertFalse($result);
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = '';
+		$result = $response->outputCompressed();
+		$this->assertFalse($result);
+
+		if (!extension_loaded("zlib")) {
+			$this->markTestSkipped('Skipping further tests for outputCompressed as zlib extension is not loaded');
+		}
+		if (php_sapi_name() !== 'cli') {
+			$this->markTestSkipped('Testing outputCompressed method with compression enabled done only in cli');
+		}
+
+		if (ini_get("zlib.output_compression") !== '1') {
+			ob_start('ob_gzhandler');
+		}
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
+		$result = $response->outputCompressed();
+		$this->assertTrue($result);
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = '';
+		$result = $response->outputCompressed();
+		$this->assertFalse($result);
+		if (ini_get("zlib.output_compression") !== '1') {
+			ob_get_clean();
+		}
+	}
+
+/**
+* Tests the send and setting of Content-Length
+*
+*/
+	public function testSendContentLength() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->body('the response body');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', strlen('the response body'));
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 116);
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', 'outputCompressed'));
+		$body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
+		$response->body($body);
+		$response->expects($this->once())->method('outputCompressed')->will($this->returnValue(true));
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->exactly(2))->method('_sendHeader');
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', 'outputCompressed'));
+		$body = 'hwy';
+		$response->body($body);
+		$response->header('Content-Length', 1);
+		$response->expects($this->never())->method('outputCompressed');
+		$response->expects($this->once())->method('_sendContent')->with($body);
+			$response->expects($this->at(2))
+				->method('_sendHeader')->with('Content-Length', 1);
+		$response->send();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = 'content';
+		$response->statusCode(301);
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->exactly(2))->method('_sendHeader');
+		$response->send();
+
+		ob_start();
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$goofyOutput = 'I am goofily sending output in the controller';
+		echo $goofyOutput;
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
+		$response->body($body);
+		$response->expects($this->once())->method('_sendContent')->with($body);
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', strlen($goofyOutput) + 116);
+		$response->send();
+		ob_end_clean();
 	}
 }

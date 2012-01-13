@@ -73,7 +73,7 @@ class AclComponentTest extends CakeTestCase {
 		$implementation->expects($this->once())->method('initialize')->with($this->Acl);
 		$this->assertNull($this->Acl->adapter($implementation));
 
-		$this->assertEqual($this->Acl->adapter(), $implementation, 'Returned object is different %s');
+		$this->assertEquals($this->Acl->adapter(), $implementation, 'Returned object is different %s');
 	}
 
 /**

@@ -18,6 +18,7 @@
  */
 
 App::uses('DboSource', 'Model/Datasource');
+App::uses('String', 'Utility');
 
 /**
  * DBO implementation for the SQLite3 DBMS.
@@ -130,7 +131,7 @@ class Sqlite extends DboSource {
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -164,7 +165,7 @@ class Sqlite extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$table = $this->fullTableName($model);
+		$table = $this->fullTableName($model, false, false);
 		$fields = array();
 		$result = $this->_execute('PRAGMA table_info(' . $table . ')');
 
@@ -223,7 +224,7 @@ class Sqlite extends DboSource {
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
-		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->fullTableName($table));
+		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->startQuote . $this->fullTableName($table, false, false) . $this->endQuote);
 		return $this->execute('DELETE FROM ' . $this->fullTableName($table));
 	}
 
@@ -237,7 +238,7 @@ class Sqlite extends DboSource {
 		if (is_array($real)) {
 			$col = $real['name'];
 			if (isset($real['limit'])) {
-				$col .= '('.$real['limit'].')';
+				$col .= '(' . $real['limit'] . ')';
 			}
 			return $col;
 		}
@@ -249,7 +250,7 @@ class Sqlite extends DboSource {
 		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp', 'date', 'datetime', 'time'))) {
 			return $col;
 		}
-		if (strpos($col, 'varchar') !== false) {
+		if (strpos($col, 'char') !== false) {
 			return 'string';
 		}
 		if (in_array($col, array('blob', 'clob'))) {
@@ -281,13 +282,13 @@ class Sqlite extends DboSource {
 			$last = strripos($querystring, 'FROM');
 			if ($last !== false) {
 				$selectpart = substr($querystring, 7, $last - 8);
-				$selects = explode(',', $selectpart);
+				$selects = String::tokenize($selectpart, ',', '(', ')');
 			}
 		} elseif (strpos($querystring, 'PRAGMA table_info') === 0) {
 			$selects = array('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk');
-		} elseif(strpos($querystring, 'PRAGMA index_list') === 0) {
+		} elseif (strpos($querystring, 'PRAGMA index_list') === 0) {
 			$selects = array('seq', 'name', 'unique');
-		} elseif(strpos($querystring, 'PRAGMA index_info') === 0) {
+		} elseif (strpos($querystring, 'PRAGMA index_info') === 0) {
 			$selects = array('seqno', 'cid', 'name');
 		}
 		while ($j < $num_fields) {
@@ -296,7 +297,7 @@ class Sqlite extends DboSource {
 				continue;
 			}
 			if (preg_match('/\bAS\s+(.*)/i', $selects[$j], $matches)) {
-				 $columnName = trim($matches[1],'"');
+				 $columnName = trim($matches[1], '"');
 			} else {
 				$columnName = trim(str_replace('"', '', $selects[$j]));
 			}
@@ -329,7 +330,7 @@ class Sqlite extends DboSource {
  * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
 	public function fetchResult() {
-		if ($row = $this->_result->fetch()) {
+		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
@@ -430,6 +431,10 @@ class Sqlite extends DboSource {
 	public function buildIndex($indexes, $table = null) {
 		$join = array();
 
+		$table = str_replace('"', '', $table);
+		list($dbname, $table) = explode('.', $table);
+		$dbname = $this->name($dbname);
+
 		foreach ($indexes as $name => $value) {
 
 			if ($name == 'PRIMARY') {
@@ -446,14 +451,16 @@ class Sqlite extends DboSource {
 				$value['column'] = $this->name($value['column']);
 			}
 			$t = trim($table, '"');
-			$out .= "INDEX {$t}_{$name} ON {$table}({$value['column']});";
+			$indexname = $this->name($t . '_' .$name);
+			$table = $this->name($table);
+			$out .= "INDEX {$dbname}.{$indexname} ON {$table}({$value['column']});";
 			$join[] = $out;
 		}
 		return $join;
 	}
 
 /**
- * Overrides DboSource::index to handle SQLite indexe introspection
+ * Overrides DboSource::index to handle SQLite index introspection
  * Returns an array of the indexes in given table name.
  *
  * @param string $model Name of model to inspect
@@ -461,7 +468,7 @@ class Sqlite extends DboSource {
  */
 	public function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model);
+		$table = $this->fullTableName($model, false, false);
 		if ($table) {
 			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
 
@@ -543,4 +550,14 @@ class Sqlite extends DboSource {
 		}
 		return $out;
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return "main"; // Sqlite Datasource does not support multidb
+	}
+
 }

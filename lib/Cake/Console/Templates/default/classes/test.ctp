@@ -18,13 +18,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
-echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
 /**
- * Test<?php echo $fullClassName; ?> 
+ * Test<?php echo $fullClassName; ?>
  *
  */
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {

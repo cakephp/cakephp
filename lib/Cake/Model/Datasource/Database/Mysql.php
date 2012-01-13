@@ -181,7 +181,7 @@ class Mysql extends DboSource {
  * Returns an array of sources (tables) in the database.
  *
  * @param mixed $data
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
@@ -196,7 +196,7 @@ class Mysql extends DboSource {
 		} else {
 			$tables = array();
 
-			while ($line = $result->fetch()) {
+			while ($line = $result->fetch(PDO::FETCH_NUM)) {
 				$tables[] = $line[0];
 			}
 
@@ -238,7 +238,7 @@ class Mysql extends DboSource {
  * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
 	public function fetchResult() {
-		if ($row = $this->_result->fetch()) {
+		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
@@ -280,7 +280,7 @@ class Mysql extends DboSource {
 	public function getCharsetName($name) {
 		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
 			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
-			$cols = $r->fetch();
+			$cols = $r->fetch(PDO::FETCH_ASSOC);
 
 			if (isset($cols['CHARACTER_SET_NAME'])) {
 				return $cols['CHARACTER_SET_NAME'];
@@ -309,7 +309,7 @@ class Mysql extends DboSource {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		foreach ($cols as $column) {
+		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
 			$fields[$column->Field] = array(
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
@@ -442,7 +442,7 @@ class Mysql extends DboSource {
 		$old = version_compare($this->getVersion(), '4.1', '<=');
 		if ($table) {
 			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
-			while ($idx = $indices->fetch()) {
+			while ($idx = $indices->fetch(PDO::FETCH_OBJ)) {
 				if ($old) {
 					$idx = (object) current((array)$idx);
 				}
@@ -543,11 +543,11 @@ class Mysql extends DboSource {
 	}
 
 /**
- * Generate MySQL table parameter alteration statementes for a table.
+ * Generate MySQL table parameter alteration statements for a table.
  *
  * @param string $table Table to alter parameters for.
  * @param array $parameters Parameters to add & drop.
- * @return array Array of table property alteration statementes.
+ * @return array Array of table property alteration statements.
  * @todo Implement this method.
  */
 	protected function _alterTableParameters($table, $parameters) {
@@ -567,7 +567,7 @@ class Mysql extends DboSource {
 	protected function _alterIndexes($table, $indexes) {
 		$alter = array();
 		if (isset($indexes['drop'])) {
-			foreach($indexes['drop'] as $name => $value) {
+			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
 				if ($name == 'PRIMARY') {
 					$out .= 'PRIMARY KEY';
@@ -603,7 +603,7 @@ class Mysql extends DboSource {
  * Returns an detailed array of sources (tables) in the database.
  *
  * @param string $name Table name to get parameters
- * @return array Array of tablenames in the database
+ * @return array Array of table names in the database
  */
 	public function listDetailedSources($name = null) {
 		$condition = '';
@@ -685,4 +685,14 @@ class Mysql extends DboSource {
 		}
 		return 'text';
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return $this->config['database'];
+	}
+
 }
