@@ -658,8 +658,16 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
+ * If `$startText` is an array, the accepted keys are:
+ *
+ * - `text` Define the text/content for the link.
+ * - `url` Define the target of the created link.
+ *
+ * All other keys will be passed to HtmlHelper::link() as the `$options` parameter.
+ *
  * @param string $separator Text to separate crumbs.
- * @param string $startText This will be the first crumb, if false it defaults to first crumb in array
+ * @param mixed $startText This will be the first crumb, if false it defaults to first crumb in array. Can
+ *   also be an array, see above for details.
  * @return string Composed bread crumbs
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
@@ -667,7 +675,17 @@ class HtmlHelper extends AppHelper {
 		if (!empty($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
-				$out[] = $this->link($startText, '/');
+				if (!is_array($startText)) {
+					$startText = array(
+						'url' => '/',
+						'text' => $startText
+					);
+				}
+				$startText += array('url' => '/', 'text' => __('Home'));
+				list($url, $text) = array($startText['url'], $startText['text']);
+				unset($startText['url'], $startText['text']);
+
+				$out[] = $this->link($text, $url, $startText);
 			}
 
 			foreach ($this->_crumbs as $crumb) {
