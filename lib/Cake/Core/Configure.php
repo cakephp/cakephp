@@ -124,26 +124,12 @@ class Configure {
 		}
 
 		foreach ($config as $name => $value) {
-			if (strpos($name, '.') === false) {
-				self::$_values[$name] = $value;
-			} else {
-				$names = explode('.', $name, 4);
-				switch (count($names)) {
-					case 2:
-						self::$_values[$names[0]][$names[1]] = $value;
-					break;
-					case 3:
-						self::$_values[$names[0]][$names[1]][$names[2]] = $value;
-					break;
-					case 4:
-						$names = explode('.', $name, 2);
-						if (!isset(self::$_values[$names[0]])) {
-							self::$_values[$names[0]] = array();
-						}
-						self::$_values[$names[0]] = Set::insert(self::$_values[$names[0]], $names[1], $value);
-					break;
-				}
+			$pointer = &self::$_values;
+			foreach (explode('.', $name) as $key) {
+				$pointer = &$pointer[$key];
 			}
+			$pointer = $value;
+			unset($pointer);
 		}
 
 		if (isset($config['debug']) && function_exists('ini_set')) {
