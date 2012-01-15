@@ -142,4 +142,83 @@ class Set2Test extends CakeTestCase {
 		$result = Set2::get($data, '1.Article');
 		$this->assertEquals($data[1]['Article'], $result);
 	}
+
+/**
+ * Test dimensions.
+ *
+ * @return void
+ */
+	public function testDimensions() {
+		$result = Set2::dimensions(array());
+		$this->assertEquals($result, 0);
+
+		$data = array('one', '2', 'three');
+		$result = Set2::dimensions($data);
+		$this->assertEquals($result, 1);
+
+		$data = array('1' => '1.1', '2', '3');
+		$result = Set2::dimensions($data);
+		$this->assertEquals($result, 1);
+
+		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => '3.1.1'));
+		$result = Set2::dimensions($data);
+		$this->assertEquals($result, 2);
+
+		$data = array('1' => '1.1', '2', '3' => array('3.1' => '3.1.1'));
+		$result = Set2::dimensions($data);
+		$this->assertEquals($result, 1);
+
+		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set2::dimensions($data);
+		$this->assertEquals($result, 2);
+
+	}
+
+/**
+ * Test maxDimensions
+ *
+ * @return void
+ */
+	public function testMaxDimensions() {
+		$data = array('1' => '1.1', '2', '3' => array('3.1' => '3.1.1'));
+		$result = Set2::maxDimensions($data);
+		$this->assertEquals($result, 2);
+
+		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set2::maxDimensions($data);
+		$this->assertEquals($result, 3);
+
+		$data = array(
+			'1' => array('1.1' => '1.1.1'),
+			array('2' => array('2.1' => array('2.1.1' => '2.1.1.1'))),
+			'3' => array('3.1' => array('3.1.1' => '3.1.1.1'))
+		);
+		$result = Set2::maxDimensions($data);
+		$this->assertEquals($result, 4);
+
+		$data = array(
+			'1' => array('1.1' => '1.1.1'),
+			array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1')))),
+			'3' => array('3.1' => array('3.1.1' => '3.1.1.1'))
+		);
+		$result = Set2::maxDimensions($data);
+		$this->assertEquals($result, 5);
+
+		$data = array(
+			'1' => array('1.1' => '1.1.1'),
+			array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1' => '2.1.1.1.1')))),
+			'3' => array('3.1' => array('3.1.1' => '3.1.1.1'))
+		);
+		$result = Set2::maxDimensions($data);
+		$this->assertEquals($result, 5);
+
+		$data = array(
+			'1' => array('1.1' => '1.1.1'),
+			array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1' => '2.1.1.1.1')))),
+			'3' => array('3.1' => array('3.1.1' => '3.1.1.1'))
+		);
+		$result = Set2::maxDimensions($data);
+		$this->assertEquals($result, 5);
+	}
+
 }

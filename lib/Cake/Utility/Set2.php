@@ -90,15 +90,57 @@ class Set2 {
 
 	}
 
+/**
+ * Counts the dimensions of an array. 
+ * Only considers the dimension of the first element in the array.
+ *
+ * If you have an un-even or hetrogenous array, consider using Set2::maxDimensions() 
+ * to get the dimensions of the array.
+ *
+ * @param array $array Array to count dimensions on
+ * @return integer The number of dimensions in $data
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
+ */
 	public static function dimensions(array $data) {
-	
+		if (empty($data)) {
+			return 0;
+		}
+		reset($data);
+		$depth = 1;
+		while ($elem = array_shift($data)) {
+			if (is_array($elem)) {
+				$depth += 1;
+				$data =& $elem;
+			} else {
+				break;
+			}
+		}
+		return $depth;
 	}
 
-	/**
-	 * Map a callback across all elements in a set.
-	 * Can be provided a path to only modify slices of the set.
-	 *
-	 */
+/**
+ * Counts the dimensions of *all* array elements. Useful for finding the maximum
+ * number of dimensions in a mixed array.
+ * 
+ * @param array $data Array to count dimensions on
+ * @return integer The maximum number of dimensions in $data
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
+ */
+	public static function maxDimensions(array $data) {
+		$depth = array();
+		if (is_array($data) && reset($data) !== false) {
+			foreach ($data as $value) {
+				$depth[] = Set2::dimensions((array)$value) + 1;
+			}
+		}
+		return max($depth);
+	}
+
+/**
+ * Map a callback across all elements in a set.
+ * Can be provided a path to only modify slices of the set.
+ *
+ */
 	public static function map(array $data, $path, $function = null) {
 
 	}
