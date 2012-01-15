@@ -762,7 +762,7 @@ class View extends Object {
 			case 'data':
 				return $this->request->{$name};
 			case 'action':
-				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
+				return $this->request->params['action'];
 			case 'params':
 				return $this->request;
 			case 'output':
@@ -796,7 +796,14 @@ class View extends Object {
  * @return boolean
  */
 	public function __isset($name) {
-		return isset($this->{$name});
+		if (isset($this->{$name})) {
+			return true;
+		}
+		$magicGet = array('base', 'here', 'webroot', 'data', 'action', 'params', 'output');
+		if (in_array($name, $magicGet)) {
+			return $this->__get($name) !== null;
+		}
+		return false;
 	}
 
 /**

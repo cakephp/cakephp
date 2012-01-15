@@ -232,7 +232,7 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `inline` Whether or not the link element should be output inline. Set to false to 
+ * - `inline` Whether or not the link element should be output inline. Set to false to
  *   have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
  * - `block` Choose a custom block to append the meta tag to.  Using this option
  *   will override the inline option.
@@ -401,7 +401,7 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `inline` If set to false, the generated tag will be appended to the 'css' block, 
+ * - `inline` If set to false, the generated tag will be appended to the 'css' block,
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
  * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
  *   option.
@@ -455,12 +455,12 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline', 'block'), '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
+			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline', 'block'), '', ' '));
 		}
 
 		if (empty($options['block'])) {
@@ -658,8 +658,16 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
+ * If `$startText` is an array, the accepted keys are:
+ *
+ * - `text` Define the text/content for the link.
+ * - `url` Define the target of the created link.
+ *
+ * All other keys will be passed to HtmlHelper::link() as the `$options` parameter.
+ *
  * @param string $separator Text to separate crumbs.
- * @param string $startText This will be the first crumb, if false it defaults to first crumb in array
+ * @param mixed $startText This will be the first crumb, if false it defaults to first crumb in array. Can
+ *   also be an array, see above for details.
  * @return string Composed bread crumbs
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
@@ -667,7 +675,17 @@ class HtmlHelper extends AppHelper {
 		if (!empty($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
-				$out[] = $this->link($startText, '/');
+				if (!is_array($startText)) {
+					$startText = array(
+						'url' => '/',
+						'text' => $startText
+					);
+				}
+				$startText += array('url' => '/', 'text' => __('Home'));
+				list($url, $text) = array($startText['url'], $startText['text']);
+				unset($startText['url'], $startText['text']);
+
+				$out[] = $this->link($text, $url, $startText);
 			}
 
 			foreach ($this->_crumbs as $crumb) {

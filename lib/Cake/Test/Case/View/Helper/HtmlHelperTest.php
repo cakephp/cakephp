@@ -866,7 +866,7 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
- * testBreadcrumb method
+ * testGetCrumb and addCrumb method
  *
  * @return void
  */
@@ -909,11 +909,6 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->assertRegExp('/^<a[^<>]+>First<\/a> &gt; <a[^<>]+>Second<\/a> &gt; <a[^<>]+>Third<\/a>$/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
-		$this->assertNotRegExp('/<a[^<>]+[^href]=[^<>]*>/', $result);
 
 		$this->Html->addCrumb('Fourth', null);
 
@@ -954,6 +949,30 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a',
 			'-',
 			'Fourth'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test the array form of $startText
+ */
+	public function testGetCrumbFirstLink() {
+		$this->Html->addCrumb('First', '#first');
+		$this->Html->addCrumb('Second', '#second');
+
+		$result = $this->Html->getCrumbs(' - ', array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+		$expected = array(
+			array('a' => array('href' => '/home')),
+			'img' => array('src' => '/home.png'),
+			'/a',
+			' - ',
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			' - ',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
 		);
 		$this->assertTags($result, $expected);
 	}
