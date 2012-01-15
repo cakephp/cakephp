@@ -224,6 +224,8 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEquals('value2', Configure::read('Read'));
 		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
 		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
+		$this->assertEquals('Overwrite', Configure::read('TestAcl.classname'));
+		$this->assertEquals('one', Configure::read('TestAcl.custom'));
 	}
 
 /**

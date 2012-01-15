@@ -493,6 +493,9 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testValue() {
+		if ($this->db instanceof Sqlserver) {
+			$this->markTestSkipped('Cannot run this test with SqlServer');
+		}
 		$result = $this->db->value('{$__cakeForeignKey__$}');
 		$this->assertEquals($result, '{$__cakeForeignKey__$}');
 

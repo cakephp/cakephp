@@ -484,7 +484,7 @@ class DboSource extends DataSource {
 		if ($this->hasResult()) {
 			return $this->_result->rowCount();
 		}
-		return null;
+		return 0;
 	}
 
 /**
