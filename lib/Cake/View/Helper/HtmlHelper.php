@@ -232,7 +232,7 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `inline` Whether or not the link element should be output inline. Set to false to 
+ * - `inline` Whether or not the link element should be output inline. Set to false to
  *   have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
  * - `block` Choose a custom block to append the meta tag to.  Using this option
  *   will override the inline option.
@@ -401,7 +401,7 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `inline` If set to false, the generated tag will be appended to the 'css' block, 
+ * - `inline` If set to false, the generated tag will be appended to the 'css' block,
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
  * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
  *   option.
@@ -455,12 +455,12 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline', 'block'), '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
+			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline', 'block'), '', ' '));
 		}
 
 		if (empty($options['block'])) {
