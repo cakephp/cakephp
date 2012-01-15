@@ -188,13 +188,13 @@ class Configure {
  * @return void
  */
 	public static function delete($var = null) {
-		if (strpos($var, '.') === false) {
-			unset(self::$_values[$var]);
-			return;
+		$keys = explode('.', $var);
+		$last = array_pop($keys);
+		$pointer = &self::$_values;
+		foreach ($keys as $key) {
+			$pointer = &$pointer[$key];
 		}
-
-		$names = explode('.', $var, 2);
-		self::$_values[$names[0]] = Set::remove(self::$_values[$names[0]], $names[1]);
+		unset($pointer[$last]);
 	}
 
 /**
