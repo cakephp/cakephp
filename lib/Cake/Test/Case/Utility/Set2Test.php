@@ -221,4 +221,59 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals($result, 5);
 	}
 
+/**
+ * Tests Set::flatten
+ *
+ * @return void
+ */
+	public function testFlatten() {
+		$data = array('Larry', 'Curly', 'Moe');
+		$result = Set2::flatten($data);
+		$this->assertEquals($result, $data);
+
+		$data[9] = 'Shemp';
+		$result = Set2::flatten($data);
+		$this->assertEquals($result, $data);
+
+		$data = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post'),
+				'Author' => array('id' => '1', 'user' => 'nate', 'password' => 'foo'),
+			),
+			array(
+				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'),
+				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
+			)
+		);
+
+		$result = Set2::flatten($data);
+		$expected = array(
+			'0.Post.id' => '1',
+			'0.Post.author_id' => '1',
+			'0.Post.title' => 'First Post',
+			'0.Author.id' => '1',
+			'0.Author.user' => 'nate',
+			'0.Author.password' => 'foo',
+			'1.Post.id' => '2',
+			'1.Post.author_id' => '3',
+			'1.Post.title' => 'Second Post',
+			'1.Post.body' => 'Second Post Body',
+			'1.Author.id' => '3',
+			'1.Author.user' => 'larry',
+			'1.Author.password' => null
+		);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			array('Post' => array('id' => 1)),
+			array('Post' => array('id' => 2)),
+		);
+		$result = Set2::flatten($data, '/');
+		$expected = array(
+			'0/Post/id' => '1',
+			'1/Post/id' => '2',
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 }
