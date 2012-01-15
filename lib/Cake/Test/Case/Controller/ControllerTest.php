@@ -997,7 +997,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertSame($expected, $TestController->request->data);
 		$this->assertSame('view', $TestController->request->params['action']);
-		$this->assertSame('index', $TestController->view);
+		$this->assertSame('view', $TestController->view);
 	}
 
 /**
