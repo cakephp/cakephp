@@ -3,6 +3,9 @@
  * Test suite app/Model/Datasource/Session session handler
  *
  */
+
+App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
+
 class TestAppLibSession implements CakeSessionHandlerInterface {
 
 	public function open() {

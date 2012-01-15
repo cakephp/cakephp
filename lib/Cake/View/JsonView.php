@@ -96,6 +96,9 @@ class JsonView extends View {
 			return $content;
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+			if (!$this->_helpersLoaded) {
+				$this->loadHelpers();
+			}
 			$content = $this->_render($viewFileName);
 			$this->Blocks->set('content', $content);
 			return $content;

@@ -265,7 +265,11 @@ class CakeEventManager {
 			return array();
 		}
 		ksort($this->_listeners[$eventKey]);
-		return array_reduce($this->_listeners[$eventKey], 'array_merge', array());
+		$result = array();
+		foreach ($this->_listeners[$eventKey] as $priorityQ) {
+			$result = array_merge($result, $priorityQ);
+		}
+		return $result;
 	}
 
 }
