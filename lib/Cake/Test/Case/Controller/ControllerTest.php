@@ -273,6 +273,21 @@ class TestController extends ControllerTestAppController {
 		);
 	}
 
+
+/**
+ * view method
+ *
+ * @param mixed $testId
+ * @param mixed $test2Id
+ * @return void
+ */
+	public function view($testId, $test2Id) {
+		$this->data = array(
+			'testId' => $testId,
+			'test2Id' => $test2Id
+		);
+	}
+
 	public function returner() {
 		return 'I am from the controller.';
 	}
@@ -978,9 +993,10 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 
 		$TestController = new TestController($request);
-		$TestController->setAction('index', 1, 2);
+		$TestController->setAction('view', 1, 2);
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertSame($expected, $TestController->request->data);
+		$this->assertSame('view', $TestController->request->params['action']);
 		$this->assertSame('index', $TestController->view);
 	}
 
