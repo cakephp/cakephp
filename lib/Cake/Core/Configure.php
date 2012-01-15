@@ -163,30 +163,15 @@ class Configure {
 		if (isset(self::$_values[$var])) {
 			return self::$_values[$var];
 		}
-		if (strpos($var, '.') !== false) {
-			$names = explode('.', $var, 3);
-			$var = $names[0];
+		$pointer = &self::$_values;
+		foreach (explode('.', $var) as $key) {
+			if (isset($pointer[$key])) {
+				$pointer = &$pointer[$key];
+			} else {
+				return null;
+			}
 		}
-		if (!isset(self::$_values[$var])) {
-			return null;
-		}
-		switch (count($names)) {
-			case 2:
-				if (isset(self::$_values[$var][$names[1]])) {
-					return self::$_values[$var][$names[1]];
-				}
-			break;
-			case 3:
-				if (isset(self::$_values[$var][$names[1]][$names[2]])) {
-					return self::$_values[$var][$names[1]][$names[2]];
-				}
-				if (!isset(self::$_values[$var][$names[1]])) {
-					return null;
-				}
-				return Set::classicExtract(self::$_values[$var][$names[1]], $names[2]);
-			break;
-		}
-		return null;
+		return $pointer;
 	}
 
 /**
