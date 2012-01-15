@@ -138,7 +138,11 @@ class ClassRegistry {
 					if ($reflection->isAbstract() || $reflection->isInterface()) {
 						throw new CakeException(__d('cake_dev', 'Cannot create instance of %s, as it is abstract or is an interface', $class));
 					}
-					$instance = $reflection->newInstance($settings);
+					if ($reflection->getConstructor()) {
+						$instance = $reflection->newInstance($settings);
+					} else {
+						$instance = $reflection->newInstance();
+					}
 					if ($strict) {
 						$instance = ($instance instanceof Model) ? $instance : null;
 					}
