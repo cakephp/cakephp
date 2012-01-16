@@ -46,7 +46,7 @@ foreach ($scaffoldFields as $_field) {
 	<ul>
 <?php
 	echo "\t\t<li>" . $this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])) . " </li>\n";
-	echo "\t\t<li>" . $this->Html->link(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?') . " </li>\n";
+	echo "\t\t<li>" . $this->Form->postLink(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?') . " </li>\n";
 	echo "\t\t<li>" . $this->Html->link(__d('cake', 'List %s', $pluralHumanName), array('action' => 'index')) . " </li>\n";
 	echo "\t\t<li>" . $this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add')) . " </li>\n";
 
@@ -130,7 +130,7 @@ $otherSingularVar = Inflector::variable($_alias);
 			echo "\t\t\t<td class=\"actions\">\n";
 			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'View'), array('controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
 			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'Edit'), array('controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'Delete'), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __d('cake', 'Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
+			echo "\t\t\t\t" . $this->Form->postLink(__d('cake', 'Delete'), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __d('cake', 'Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;
