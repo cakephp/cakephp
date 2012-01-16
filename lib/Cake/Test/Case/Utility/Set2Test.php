@@ -473,4 +473,31 @@ class Set2Test extends CakeTestCase {
 		$expected = array('one' => array('a', 'b', 'c' => 'cee'), 'two' => 2, 'three' => null);
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * testContains method
+ *
+ * @return void
+ */
+	public function testContains() {
+		$data = array('apple', 'bee', 'cyclops');
+		// $this->assertTrue(Set2::contains($data, array('apple')));
+		// $this->assertFalse(Set2::contains($data, array('data')));
+
+		$a = array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about')
+		);
+		$b = array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about'),
+			2 => array('name' => 'contact'),
+			'a' => 'b'
+		);
+
+		$this->assertTrue(Set2::contains($a, $a));
+		$this->assertFalse(Set2::contains($a, $b));
+		$this->assertTrue(Set2::contains($b, $a));
+	}
+
 }

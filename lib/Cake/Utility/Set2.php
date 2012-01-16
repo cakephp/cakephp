@@ -70,8 +70,29 @@ class Set2 {
 
 	}
 
-	public static function contains(array $data, $needle) {
+/**
+ * Determines if one array contains the exact keys and values of another.
+ *
+ * @param array $data The data to search through.
+ * @param array $needle The values to file in $data
+ * @return boolean true if $data contains $needle, false otherwise
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::contains
+ */
+	public static function contains(array $data, array $needle) {
+		if (empty($data) || empty($needle)) {
+			return false;
+		}
 
+		foreach ($needle as $key => $val) {
+			if (isset($data[$key]) && is_array($val)) {
+				if (!Set2::contains($data[$key], $val)) {
+					return false;
+				}
+			} elseif (!isset($data[$key]) || $data[$key] != $val) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static function check(array $data, $path) {
