@@ -243,7 +243,7 @@ class FormHelper extends AppHelper {
  * @param array $validateProperties
  * @return boolean true if field is required to be filled, false otherwise
  */
-	protected function _isRequiredField($validateProperties, $model = null) {
+	protected function _isRequiredField($validateProperties, $Model = null) {
 		$required = false;
 		if (is_string($validateProperties)) {
 			return true;
@@ -255,10 +255,10 @@ class FormHelper extends AppHelper {
 			}
 
 			foreach ($validateProperties as $rule => $validateProp) {
-				if(isset($validateProp['on']) && !empty($model) &&
+				if(isset($validateProp['on']) && !empty($Model) &&
 					(
-						!($validateProp['on'] == 'create' && empty($this->request->data[$model->name][$model->primaryKey])) &&
-					 	!($validateProp['on'] == 'update' && !empty($this->request->data[$model->name][$model->primaryKey]))
+						!($validateProp['on'] == 'create' && empty($this->request->data[$Model->alias][$Model->primaryKey])) &&
+					 	!($validateProp['on'] == 'update' && !empty($this->request->data[$Model->alias][$Model->primaryKey]))
 					)
 				){
 					return false;
