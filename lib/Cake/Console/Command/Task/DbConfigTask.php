@@ -87,7 +87,7 @@ class DbConfigTask extends AppShell {
  */
 	protected function _interactive() {
 		$this->hr();
-		$this->out('Database Configuration:');
+		$this->out(__d('cake_console', 'Database Configuration:'));
 		$this->hr();
 		$done = false;
 		$dbConfigs = array();
