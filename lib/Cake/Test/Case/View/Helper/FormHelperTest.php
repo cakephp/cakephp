@@ -114,6 +114,8 @@ class Contact extends CakeTestModel {
 			'between' => array('rule' => array('between', 5, 30)),
 		),
 		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
+		'imrequiredoncreate' => array('rule' => 'notEmpty', 'on' => 'create'),
+		'imrequiredonupdate' => array('rule' => 'notEmpty', 'on' => 'update')
 	);
 
 /**
@@ -7755,4 +7757,100 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
 		$this->assertEquals('Badness!', $result);
 	}
+
+/**
+ * Tests for on create is required when no model ID is present
+ * FormHelper will look for `on create` key
+ * @return void
+ */
+
+    public function testOnCreateNoIdValidation() {
+		$result = $this->Form->input('Contact.imrequiredoncreate');
+		
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequiredoncreate'),
+			'Imrequiredoncreate',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
+				'id' => 'ContactImrequiredoncreate'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+    }
+
+/**
+ * Tests for on create is NOT required when model ID is present
+ * FormHelper will look for `on create` key
+ * @return void
+ */    
+    
+    public function testOnCreateWithIdValidation() {
+    	$this->Form->request->data = array('Contact' => array('id' => 1));
+    
+		$result = $this->Form->input('Contact.imrequiredoncreate');
+		
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactImrequiredoncreate'),
+			'Imrequiredoncreate',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
+				'id' => 'ContactImrequiredoncreate'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+    }
+
+/**
+ * Tests for on update is NOT required when model ID is not present
+ * FormHelper will look for `on update` key
+ * @return void
+ */    
+    
+    public function testOnUpdateNoIdValidation() {
+     	$result = $this->Form->input('Contact.imrequiredonupdate');
+		
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactImrequiredonupdate'),
+			'Imrequiredonupdate',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
+				'id' => 'ContactImrequiredonupdate'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+    }
+
+/**
+ * Tests for on update is required when model ID is present
+ * FormHelper will look for `on update` key
+ * @return void
+ */    
+    
+    public function testOnUpdateWithIdValidation() {
+     	$this->Form->request->data = array('Contact' => array('id' => 1));
+     
+		$result = $this->Form->input('Contact.imrequiredonupdate');
+		
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequiredonupdate'),
+			'Imrequiredonupdate',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
+				'id' => 'ContactImrequiredonupdate'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+    }
 }
