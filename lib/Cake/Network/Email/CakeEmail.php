@@ -1365,7 +1365,10 @@ class CakeEmail {
 		}
 
 		if ($hasInlineAttachments) {
+    			$boundary = $this->_boundary;
+    			$this->_boundary = $relBoundary;
 			$attachments = $this->_attachInlineFiles();
+	    		$this->_boundary = $boundary;
 			$msg = array_merge($msg, $attachments);
 			$msg[] = '';
 			$msg[] = '--' . $relBoundary . '--';
