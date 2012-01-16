@@ -447,4 +447,30 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals(Set2::merge($a, $b), $expected);
 	}
 
+/**
+ * test normalizing arrays
+ *
+ * @return void
+ */
+	public function testNormalize() {
+		$result = Set2::normalize(array('one', 'two', 'three'));
+		$expected = array('one' => null, 'two' => null, 'three' => null);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::normalize(array('one', 'two', 'three'), false);
+		$expected = array('one', 'two', 'three');
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::normalize(array('one' => 1, 'two' => 2, 'three' => 3, 'four'), false);
+		$expected = array('one' => 1, 'two' => 2, 'three' => 3, 'four' => null);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::normalize(array('one' => 1, 'two' => 2, 'three' => 3, 'four'));
+		$expected = array('one' => 1, 'two' => 2, 'three' => 3, 'four' => null);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::normalize(array('one' => array('a', 'b', 'c' => 'cee'), 'two' => 2, 'three'));
+		$expected = array('one' => array('a', 'b', 'c' => 'cee'), 'two' => 2, 'three' => null);
+		$this->assertEquals($expected, $result);
+	}
 }

@@ -240,8 +240,39 @@ class Set2 {
 		return $data + $data2;
 	}
 
+/**
+ * Normalizes an array, and converts it to a standard format.
+ *
+ * @param mixed $data List to normalize
+ * @param boolean $assoc If true, $data will be converted to an associative array.
+ * @return array
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::normalize
+ */
 	public static function normalize(array $data, $assoc = true) {
+		$keys = array_keys($data);
+		$count = count($keys);
+		$numeric = true;
 
+		if (!$assoc) {
+			for ($i = 0; $i < $count; $i++) {
+				if (!is_int($keys[$i])) {
+					$numeric = false;
+					break;
+				}
+			}
+		}
+		if (!$numeric || $assoc) {
+			$newList = array();
+			for ($i = 0; $i < $count; $i++) {
+				if (is_int($keys[$i])) {
+					$newList[$data[$keys[$i]]] = null;
+				} else {
+					$newList[$keys[$i]] = $data[$keys[$i]];
+				}
+			}
+			$data = $newList;
+		}
+		return $data;
 	}
 
 }
