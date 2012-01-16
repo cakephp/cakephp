@@ -276,4 +276,175 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test diff();
+ *
+ * @return void
+ */
+	public function testDiff() {
+		$a = array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about')
+		);
+		$b = array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about'),
+			2 => array('name' => 'contact')
+		);
+
+		$result = Set2::diff($a, array());
+		$expected = $a;
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::diff(array(), $b);
+		$expected = $b;
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::diff($a, $b);
+		$expected = array(
+			2 => array('name' => 'contact')
+		);
+		$this->assertEquals($expected, $result);
+
+
+		$b = array(
+			0 => array('name' => 'me'),
+			1 => array('name' => 'about')
+		);
+
+		$result = Set2::diff($a, $b);
+		$expected = array(
+			0 => array('name' => 'main')
+		);
+		$this->assertEquals($expected, $result);
+
+		$a = array();
+		$b = array('name' => 'bob', 'address' => 'home');
+		$result = Set2::diff($a, $b);
+		$this->assertEquals($result, $b);
+
+
+		$a = array('name' => 'bob', 'address' => 'home');
+		$b = array();
+		$result = Set2::diff($a, $b);
+		$this->assertEquals($result, $a);
+
+		$a = array('key' => true, 'another' => false, 'name' => 'me');
+		$b = array('key' => 1, 'another' => 0);
+		$expected = array('name' => 'me');
+		$result = Set2::diff($a, $b);
+		$this->assertEquals($expected, $result);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array('key' => 'differentValue', 'another' => null);
+		$expected = array('key' => 'value', 'name' => 'me');
+		$result = Set2::diff($a, $b);
+		$this->assertEquals($expected, $result);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array('key' => 'differentValue', 'another' => 'value');
+		$expected = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$result = Set2::diff($a, $b);
+		$this->assertEquals($expected, $result);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array('key' => 'differentValue', 'another' => 'value');
+		$expected = array('key' => 'differentValue', 'another' => 'value', 'name' => 'me');
+		$result = Set2::diff($b, $a);
+		$this->assertEquals($expected, $result);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array(0 => 'differentValue', 1 => 'value');
+		$expected = $a + $b;
+		$result = Set2::diff($a, $b);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test merge()
+ *
+ * @return void
+ */
+	public function testMerge() {
+		$result = Set2::merge(array('foo'), array('bar'));
+		$this->assertEquals($result, array('foo', 'bar'));
+
+		$result = Set2::merge(array('foo'), array('user' => 'bob', 'no-bar'), 'bar');
+		$this->assertEquals($result, array('foo', 'user' => 'bob', 'no-bar', 'bar'));
+
+		$a = array('foo', 'foo2');
+		$b = array('bar', 'bar2');
+		$expected = array('foo', 'foo2', 'bar', 'bar2');
+		$this->assertEquals($expected, Set2::merge($a, $b));
+
+		$a = array('foo' => 'bar', 'bar' => 'foo');
+		$b = array('foo' => 'no-bar', 'bar' => 'no-foo');
+		$expected = array('foo' => 'no-bar', 'bar' => 'no-foo');
+		$this->assertEquals($expected, Set2::merge($a, $b));
+
+		$a = array('users' => array('bob', 'jim'));
+		$b = array('users' => array('lisa', 'tina'));
+		$expected = array('users' => array('bob', 'jim', 'lisa', 'tina'));
+		$this->assertEquals($expected, Set2::merge($a, $b));
+
+		$a = array('users' => array('jim', 'bob'));
+		$b = array('users' => 'none');
+		$expected = array('users' => 'none');
+		$this->assertEquals($expected, Set2::merge($a, $b));
+
+		$a = array('users' => array('lisa' => array('id' => 5, 'pw' => 'secret')), 'cakephp');
+		$b = array('users' => array('lisa' => array('pw' => 'new-pass', 'age' => 23)), 'ice-cream');
+		$expected = array(
+			'users' => array('lisa' => array('id' => 5, 'pw' => 'new-pass', 'age' => 23)),
+			'cakephp',
+			'ice-cream'
+		);
+		$result = Set2::merge($a, $b); 
+		$this->assertEquals($expected, $result);
+
+		$c = array(
+			'users' => array('lisa' => array('pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog')),
+			'chocolate'
+		);
+		$expected = array(
+			'users' => array('lisa' => array('id' => 5, 'pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog')),
+			'cakephp',
+			'ice-cream',
+			'chocolate'
+		);
+		$this->assertEquals($expected, Set2::merge($a, $b, $c));
+
+		$this->assertEquals($expected, Set2::merge($a, $b, array(), $c));
+
+		$a = array(
+			'Tree',
+			'CounterCache',
+			'Upload' => array(
+				'folder' => 'products',
+				'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')
+			)
+		);
+		$b =  array(
+			'Cacheable' => array('enabled' => false),
+			'Limit',
+			'Bindable',
+			'Validator',
+			'Transactional'
+		);
+		$expected = array(
+			'Tree',
+			'CounterCache',
+			'Upload' => array(
+				'folder' => 'products',
+				'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')
+			),
+			'Cacheable' => array('enabled' => false),
+			'Limit',
+			'Bindable',
+			'Validator',
+			'Transactional'
+		);
+		$this->assertEquals(Set2::merge($a, $b), $expected);
+	}
+
 }

@@ -85,7 +85,7 @@ class Set2 {
 /**
  * Collapses a multi-dimensional array into a single dimension, using a delimited array path for
  * each array element's key, i.e. array(array('Foo' => array('Bar' => 'Far'))) becomes
- * array('0.Foo.Bar' => 'Far').
+ * array('0.Foo.Bar' => 'Far').)
  *
  * @param array $data Array to flatten
  * @param string $separator String used to separate array key elements in a path, defaults to '.'
@@ -120,8 +120,36 @@ class Set2 {
 		return $result;
 	}
 
+/**
+ * This function can be thought of as a hybrid between PHP's `array_merge` and `array_merge_recursive`.
+ *
+ * The difference between this method and the built-in ones, is that if an array key contains another array, then 
+ * Set2::merge() will behave in a recursive fashion (unlike `array_merge`).  But it will not act recursively for
+ * keys that contain scalar values (unlike `array_merge_recursive`).
+ *
+ * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
+ *
+ * @param array $data Array to be merged
+ * @param mixed $merge Array to merge with. The argument and all trailing arguments will be array cast when merged
+ * @return array Merged array
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::merge
+ */
 	public static function merge(array $data, $merge) {
+		$args = func_get_args();
+		$return = current($args);
 
+		while (($arg = next($args)) !== false) {
+			foreach ((array)$arg as $key => $val)	 {
+				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
+					$return[$key] = self::merge($return[$key], $val);
+				} elseif (is_int($key)) {
+					$return[] = $val;
+				} else {
+					$return[$key] = $val;
+				}
+			}
+		}
+		return $return;
 	}
 
 /**
@@ -183,8 +211,33 @@ class Set2 {
 
 	}
 
+/**
+ * Computes the difference between two complex arrays.
+ * This method differs from the built-in array_diff() in that it will preserve keys
+ * and work on multi-dimensional arrays.
+ *
+ * @param mixed $data First value
+ * @param mixed $data2 Second value
+ * @return array Returns the key => value pairs that are not common in $data and $data2
+ *    The expression for this function is ($data - $data2) + ($data2 - ($data - $data2))
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::diff
+ */
 	public static function diff(array $data, $data2) {
-
+		if (empty($data)) {
+			return (array)$data2;
+		}
+		if (empty($data2)) {
+			return (array)$data;
+		}
+		$intersection = array_intersect_key($data, $data2);
+		while (($key = key($intersection)) !== null) {
+			if ($data[$key] == $data2[$key]) {
+				unset($data[$key]);
+				unset($data2[$key]);
+			}
+			next($intersection);
+		}
+		return $data + $data2;
 	}
 
 	public static function normalize(array $data, $assoc = true) {
