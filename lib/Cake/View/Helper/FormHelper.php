@@ -241,6 +241,7 @@ class FormHelper extends AppHelper {
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
  * @param array $validateProperties
+ * @param object $Model model used to check existance of primary key for on create/update check
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validateProperties, $Model = null) {
