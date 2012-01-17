@@ -2034,7 +2034,7 @@ class Model extends Object implements CakeEventListener {
 
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
-			$transactionBegun = $db->begin($this);
+			$transactionBegun = $db->begin();
 		}
 		$return = array();
 		foreach ($data as $key => $record) {
@@ -2055,12 +2055,12 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($validates) {
 			if ($transactionBegun) {
-				return $db->commit($this) !== false;
+				return $db->commit() !== false;
 			} else {
 				return true;
 			}
 		}
-		$db->rollback($this);
+		$db->rollback();
 		return false;
 	}
 
@@ -2138,7 +2138,7 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
-			$transactionBegun = $db->begin($this);
+			$transactionBegun = $db->begin();
 		}
 		$associations = $this->getAssociated();
 		$return = array();
@@ -2200,12 +2200,12 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($validates) {
 			if ($transactionBegun) {
-				return $db->commit($this) !== false;
+				return $db->commit() !== false;
 			} else {
 				return true;
 			}
 		}
-		$db->rollback($this);
+		$db->rollback();
 		return false;
 	}
 
