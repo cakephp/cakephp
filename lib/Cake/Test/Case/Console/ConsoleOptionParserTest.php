@@ -351,6 +351,19 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test parsing arguments with 0 value.
+ *
+ * @return void
+ */
+	public function testParseArgumentZero() {
+		$parser = new ConsoleOptionParser('test', false);
+
+		$expected = array('one', 'two', 0, 'after', 'zero');
+		$result = $parser->parse($expected);
+		$this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+	}
+
+/**
  * test that when there are not enough arguments an exception is raised
  *
  * @expectedException ConsoleException
