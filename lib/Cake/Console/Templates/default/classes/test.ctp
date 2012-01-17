@@ -84,21 +84,14 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 		parent::tearDown();
 	}
 
-<?php $methodKeys = array();?>
 <?php foreach ($methods as $method): ?>
-<?php 
-	$classifyMethodName = Inflector::classify($method);
-	if(!in_array($classifyMethodName, $methodKeys)):	
-		$methodKeys[] = $classifyMethodName;
-?>
 /**
- * test<?php echo $classifyMethodName; ?> method
+ * test<?php echo Inflector::camelize($method); ?> method
  *
  * @return void
  */
-	public function test<?php echo $classifyMethodName; ?>() {
+	public function test<?php echo Inflector::camelize($method); ?>() {
 
 	}
-	<?php endif; ?>
 <?php endforeach;?>
 }
