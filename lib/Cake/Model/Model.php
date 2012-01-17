@@ -3234,10 +3234,6 @@ class Model extends Object implements CakeEventListener {
 			return $this->id;
 		}
 
-		if (empty($this->id)) {
-			return false;
-		}
-
 		if (isset($this->id[$list]) && !empty($this->id[$list])) {
 			return $this->id[$list];
 		} elseif (isset($this->id[$list])) {
