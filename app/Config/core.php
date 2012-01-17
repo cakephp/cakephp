@@ -235,6 +235,7 @@
  * Pick the caching engine to use.  If APC is enabled use it.
  * If running via cli - apc is disabled by default. ensure it's available and enabled in this case
  *
+ * Note: 'default' and other application caches should be configured in app/Config/bootstrap.php
  */
 $engine = 'File';
 if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
@@ -270,7 +271,3 @@ Cache::config('_cake_model_', array(
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
-
-/**
- * Note: 'default' and other application caches should be configured in app/Config/bootstrap.php
- */
