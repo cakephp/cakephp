@@ -447,6 +447,7 @@ class Model extends Object implements CakeEventListener {
  * - `unique`: If true (default value) cake will first delete existing relationship
  *   records in the foreign keys table before inserting new ones, when updating a
  *   record. So existing associations need to be passed again when updating.
+ *   To prevent deletion of existing relationship records, set this key to a string 'keepExisting'.
  * - `conditions`: An SQL fragment used to filter related model records. It's good
  *   practice to use model names in SQL fragments: "Comment.status = 1" is always
  *   better than just "status = 1."
@@ -2034,7 +2035,7 @@ class Model extends Object implements CakeEventListener {
 
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
-			$transactionBegun = $db->begin($this);
+			$transactionBegun = $db->begin();
 		}
 		$return = array();
 		foreach ($data as $key => $record) {
@@ -2055,12 +2056,12 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($validates) {
 			if ($transactionBegun) {
-				return $db->commit($this) !== false;
+				return $db->commit() !== false;
 			} else {
 				return true;
 			}
 		}
-		$db->rollback($this);
+		$db->rollback();
 		return false;
 	}
 
@@ -2138,7 +2139,7 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
-			$transactionBegun = $db->begin($this);
+			$transactionBegun = $db->begin();
 		}
 		$associations = $this->getAssociated();
 		$return = array();
@@ -2200,12 +2201,12 @@ class Model extends Object implements CakeEventListener {
 		}
 		if ($validates) {
 			if ($transactionBegun) {
-				return $db->commit($this) !== false;
+				return $db->commit() !== false;
 			} else {
 				return true;
 			}
 		}
-		$db->rollback($this);
+		$db->rollback();
 		return false;
 	}
 
@@ -3232,10 +3233,6 @@ class Model extends Object implements CakeEventListener {
 
 		if (!is_array($this->id)) {
 			return $this->id;
-		}
-
-		if (empty($this->id)) {
-			return false;
 		}
 
 		if (isset($this->id[$list]) && !empty($this->id[$list])) {
