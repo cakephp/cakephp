@@ -315,18 +315,19 @@ class HtmlHelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', 'force');
 
- 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
+		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
  		$expected = array(
  			'a' => array('href' => '#'),
-			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
+			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->image('../favicon.ico', array('url' => '#'));
+
 		$expected = array(
 			'a' => array('href' => '#'),
-			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
+			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -351,6 +352,10 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
+		
+		$result = $this->Html->image('test.gif', array('fullPath' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
 	}
 
 /**
