@@ -1120,9 +1120,10 @@ class Set {
  *
  * @param mixed $data
  * @param array $options Options are:
- *      children - the key name to use in the resultset for children
- *      idPath - the path to a key that identifies each entry
+ *      children   - the key name to use in the resultset for children
+ *      idPath     - the path to a key that identifies each entry
  *      parentPath - the path to a key that identifies the parent of each entry
+ *      root       - the id of the desired top-most result
  * @return array of results, nested
  * @link
  */
@@ -1135,7 +1136,8 @@ class Set {
 		$options += array(
 			'idPath' => "/$alias/id",
 			'parentPath' => "/$alias/parent_id",
-			'children' => 'children'
+			'children' => 'children',
+			'root' => null
 		);
 
 		$return = $idMap = array();
@@ -1161,16 +1163,21 @@ class Set {
 			}
 		}
 
-		$root = Set::get($return[0], $parentKeys);
+		if ($options['root']) {
+			$root = $options['root'];
+		} else {
+			$root = Set::get($return[0], $parentKeys);
+		}
 
 		foreach ($return as $i => $result) {
+			$id = Set::get($result, $idKeys);
 			$parentId = Set::get($result, $parentKeys);
-			if ($parentId != $root) {
+			if ($id !== $root && $parentId != $root) {
 				unset($return[$i]);
 			}
 		}
 
-		return $return;
+		return array_values($return);
 	}
 
 /**
@@ -1182,17 +1189,17 @@ class Set {
  */
 	public static function get($input, $path = null) {
 		if (is_string($path)) {
-            if (strpos($path, '/') !== false) {
-			    $keys = explode('/', trim($path, '/'));
-            } else {
-			    $keys = explode('.', trim($path, '.'));
-            }
+			if (strpos($path, '/') !== false) {
+				$keys = explode('/', trim($path, '/'));
+			} else {
+				$keys = explode('.', trim($path, '.'));
+			}
 		} else {
 			$keys = $path;
 		}
-        if (!$keys) {
-            return $input;
-        }
+		if (!$keys) {
+			return $input;
+		}
 
 		$return = $input;
 		foreach($keys as $key) {

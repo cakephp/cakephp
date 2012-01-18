@@ -3287,6 +3287,116 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * test Set nest with a normal model result set, and a nominated root id
+ *
+ * @return void
+ */
+	public function testNestModelExplicitRoot() {
+		$input = array(
+			array(
+				'ModelName' => array(
+					'id' => 1,
+					'parent_id' => null
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 2,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 3,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 4,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 5,
+					'parent_id' => 1
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 6,
+					'parent_id' => null
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 7,
+					'parent_id' => 6
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 8,
+					'parent_id' => 6
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 9,
+					'parent_id' => 6
+				),
+			),
+			array(
+				'ModelName' => array(
+					'id' => 10,
+					'parent_id' => 6
+				)
+			)
+		);
+		$expected = array(
+			array(
+				'ModelName' => array(
+					'id' => 6,
+					'parent_id' => null
+				),
+				'children' => array(
+					array(
+						'ModelName' => array(
+							'id' => 7,
+							'parent_id' => 6
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 8,
+							'parent_id' => 6
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 9,
+							'parent_id' => 6
+						),
+						'children' => array()
+					),
+					array(
+						'ModelName' => array(
+							'id' => 10,
+							'parent_id' => 6
+						),
+						'children' => array()
+					)
+				)
+			)
+		);
+		$result = Set::nest($input, array('root' => 6));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test Set nest with a 1d array - this method should be able to handle any type of array input
  *
  * @return void
