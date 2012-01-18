@@ -465,7 +465,12 @@ class Shell extends Object {
 			}
 		}
 		if (is_array($options)) {
-			while ($in === '' || !(in_array(strtolower($in), $options) || in_array(strtoupper($in), $options) || in_array($in, $options))) {
+			$options = array_merge(
+				array_map('strtolower', $options),
+				array_map('strtoupper', $options),
+				$options
+			);
+			while ($in === '' || !in_array($in, $options)) {
 				$in = $this->_getInput($prompt, $options, $default);
 			}
 		}
