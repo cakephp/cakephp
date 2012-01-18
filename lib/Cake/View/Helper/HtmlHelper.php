@@ -706,6 +706,11 @@ class HtmlHelper extends AppHelper {
 			}
 			$path = $this->assetTimestamp($this->webroot($path));
 		}
+		
+		if(!empty($options['fullPath'])) {
+			$path = $this->url('/', true) . $path;
+			unset($options['fullPath']);
+		}
 
 		if (!isset($options['alt'])) {
 			$options['alt'] = '';
