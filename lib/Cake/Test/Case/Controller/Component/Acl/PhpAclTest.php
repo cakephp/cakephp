@@ -54,11 +54,13 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertEquals(array('User/hardy'), $roles[4]);
 	}
 
+
 	public function testAddRole() {
 		$this->assertEquals(array(array(PhpAro::DEFAULT_ROLE)), $this->Acl->Aro->roles('foobar'));
 		$this->Acl->Aro->addRole(array('User/foobar' => 'Role/accounting'));
 		$this->assertEquals(array(array('Role/default'), array('Role/accounting'), array('User/foobar')), $this->Acl->Aro->roles('foobar'));
 	}
+
 
 	public function testAroResolve() {
 		$map = $this->Acl->Aro->map;
@@ -82,7 +84,9 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertEquals(PhpAro::DEFAULT_ROLE, $this->Acl->Aro->resolve(array('FooModel' => array('role' => 'hardy'))));
 	}
 
-
+/**
+ * test correct resolution of defined aliases
+ */
 	public function testAroAliases() {
 		$this->Acl->Aro->map = array(
 			'User' => 'User/username',
@@ -130,8 +134,9 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check($user, '/controllers/invoices/send'));
 	}
 
+
 /**
- * testPhpCheck method
+ * test check method
  *
  * @return void
  */
@@ -182,6 +187,9 @@ class PhpAclTest extends CakeTestCase {
 	}
 
 
+/**
+ * lhs of defined rules are case insensitive
+ */
 	public function testCheckIsCaseInsensitive() {
 		$this->assertTrue($this->Acl->check('hardy', 'controllers/forms/new'));
 		$this->assertTrue($this->Acl->check('Role/data_acquirer', 'controllers/forms/new'));
@@ -190,6 +198,9 @@ class PhpAclTest extends CakeTestCase {
 	}
 
 
+/**
+ * allow should work in-memory
+ */
 	public function testAllow() {
 		$this->assertFalse($this->Acl->check('jeff', 'foo/bar'));
 
@@ -208,6 +219,9 @@ class PhpAclTest extends CakeTestCase {
 	}
 
 
+/**
+ * deny should work in-memory
+ */
 	public function testDeny() {
 		$this->assertTrue($this->Acl->check('stan', 'controllers/baz/manager_foo'));
 
@@ -220,6 +234,9 @@ class PhpAclTest extends CakeTestCase {
 	}
 
 
+/**
+ * test that a deny rule wins over an equally specific allow rule
+ */
 	public function testDenyRuleIsStrongerThanAllowRule() {	
 		$this->assertFalse($this->Acl->check('peter', 'baz/bam'));
 		$this->Acl->allow('peter', 'baz/bam');
@@ -241,7 +258,10 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('stan', 'controllers/reports/delete'));
 	}
 
-	
+
+/**
+ * test that an invalid configuration throws exception
+ */
 	public function testInvalidConfigWithAroMissing() {
 		$this->setExpectedException(
 			'AclException',
@@ -265,13 +285,28 @@ class PhpAclTest extends CakeTestCase {
 		$this->PhpAcl->build($config);
 	}
 
+/**
+ * test resolving of ACOs
+ */
 	public function testAcoResolve() {
 		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('foo/bar'));
 		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('foo/bar'));
 		$this->assertEquals(array('foo', 'bar', 'baz'), $this->Acl->Aco->resolve('foo/bar/baz'));
 		$this->assertEquals(array('foo', '*-bar', '?-baz'), $this->Acl->Aco->resolve('foo/*-bar/?-baz'));
+		
+		$this->assertEquals(array('foo', 'bar', '[a-f0-9]{24}', '*_bla', 'bla'), $this->Acl->Aco->resolve('foo/bar/[a-f0-9]{24}/*_bla/bla'));
+
+		// multiple slashes will be squashed to a single, then exploded
+		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('foo//bar'));
+		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('//foo//bar'));
+		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('/foo//bar'));
+		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('/foo // bar'));
+		$this->assertEquals(array(''), $this->Acl->Aco->resolve('/////'));
 	}
 
+/**
+ * test that declaring cyclic dependencies should give an error when building the tree
+ */
 	public function testAroDeclarationContainsCycles() {
 		$config = array(
 			'roles' => array(

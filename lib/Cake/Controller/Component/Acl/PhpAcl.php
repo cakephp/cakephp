@@ -148,12 +148,12 @@ class PhpAcl extends Object implements AclInterface {
  * @param string $aco_action Action
  * @return boolean true if access is granted, false otherwise
  */
-	public function check($aro, $aco, $aco_action = null) {
+	public function check($aro, $aco, $aco_action = "*") {
 		$allow = $this->options['policy'];
 		$prioritizedAros = $this->Aro->roles($aro);
 
-		if ($aco_action) {
-			$aco .= (strpos($aco, '.') ? '.' : '/') . $aco_action;
+		if ($aco_action && $aco_action != "*") {
+			$aco .= '/' . $aco_action;
 		}
 
 		$path = $this->Aco->path($aco);	
@@ -202,7 +202,7 @@ class PhpAco {
 
 	public function __construct(array $rules = array()) {
 		foreach (array('allow', 'deny') as $type) {
-			if(empty($rules[$type])) {
+			if (empty($rules[$type])) {
 				$rules[$type] = array();
 			}
 		}
@@ -230,7 +230,7 @@ class PhpAco {
 			}
 
 			foreach ($root as $node => $elements) {
-				$pattern = '#^'.str_replace(array_keys(self::$modifiers), array_values(self::$modifiers), $node).'$#';
+				$pattern = '/^'.str_replace(array_keys(self::$modifiers), array_values(self::$modifiers), $node).'$/';
 
 				if ($node == $aco[$level] || preg_match($pattern, $aco[$level])) {
 					// merge allow/denies with $path of current level
@@ -299,7 +299,11 @@ class PhpAco {
 			return array_map('strtolower', $aco);
 		}
 
-		return array_map('trim', explode('/', ltrim(strtolower($aco), '/')));
+		// strip multiple occurences of '/'
+		$aco = preg_replace('#/+#', '/', $aco);
+		// make case insensitive
+		$aco = ltrim(strtolower($aco), '/');
+		return array_map('trim', explode('/', $aco));
 	}
 
 /**
@@ -381,7 +385,10 @@ class PhpAro {
 	protected $tree = array();
 
 	public function __construct(array $aro = array(), array $map = array(), array $aliases = array()) {
-		!empty($map) && $this->map = $map;
+		if (!empty($map)) {
+			$this->map = $map;
+		}
+
 		$this->aliases = $aliases;
 		$this->build($aro);
 	}
@@ -415,7 +422,7 @@ class PhpAro {
 
 		// everybody inherits from the default role
 		if ($aro != self::DEFAULT_ROLE) {
-			$aros[]= array(self::DEFAULT_ROLE);
+			$aros[] = array(self::DEFAULT_ROLE);
 		}
 		return array_reverse($aros);
 	}
@@ -430,7 +437,7 @@ class PhpAro {
  */
 	public function resolve($aro) {
 		foreach ($this->map as $aroGroup => $map) {
-			list ($model, $field) = explode('/', $map);
+			list ($model, $field) = explode('/', $map, 2);
 			$mapped = '';
 
 			if (is_array($aro)) {
@@ -447,7 +454,7 @@ class PhpAro {
 				if (strpos($aro, '/') === false) {
 					$mapped = $aroGroup . '/' . $aro;
 				} else {
-					list($aroModel, $aroValue) =  explode('/', $aro);
+					list($aroModel, $aroValue) =  explode('/', $aro, 2);
 
 					$aroModel = Inflector::camelize($aroModel);
 
