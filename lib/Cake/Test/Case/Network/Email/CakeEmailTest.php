@@ -1205,6 +1205,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
 
 		// ISO-2022-JP is 7bit
+		$this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
 		$this->assertTrue($this->checkAlternativesCharset($message, 'ISO-2022-JP'));
 	}
 
