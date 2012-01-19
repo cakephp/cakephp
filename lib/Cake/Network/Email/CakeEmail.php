@@ -245,7 +245,7 @@ class CakeEmail {
  *
  * @var array
  */
-	protected $_transferEncodingsAvailable = array(null, 'quoted-printable', 'base64');
+	protected $_transferEncodingsAvailable = array('quoted-printable', 'base64');
 
 /**
  * Encoding used for the text parts (text and html respectively)
@@ -828,13 +828,13 @@ class CakeEmail {
 		return $this->_transportClass = new $transportClassname();
 	}
 
-	/**
-	 * Email content transfer encoding schema
-	 *
-	 * @param string $encoding
-	 * @return mixed
-	 * @throws SocketException
-	 */
+/**
+ * Email content transfer encoding schema
+ *
+ * @param string $encoding
+ * @return mixed
+ * @throws SocketException
+ */
 	public function transferEncoding($encoding = null) {
 		if ($encoding === null) {
 			return $this->_transfer_encoding;
