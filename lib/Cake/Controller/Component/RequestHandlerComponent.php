@@ -705,32 +705,4 @@ class RequestHandlerComponent extends Component {
 		$this->_inputTypeMap[$type] = $handler;
 	}
 
-/**
- * Checks whether a response has not been modified according to the 'If-None-Match' 
- * (Etags) and 'If-Modified-Since' (last modification date) request 
- * headers headers. If the response is detected to be not modified, it 
- * is marked as so accordingly so the client can be informed of that.
- *
- * In order to mark a response as not modified, you need to set at least 
- * the Last-Modified response header or a response etag to be compared 
- * with the request itself
- *
- * @return boolean whether the response was marked as not modified or 
- * not
- **/
-	public function checkNotModified() {
-		$etags = preg_split('/\s*,\s*/', $this->request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
-		$modifiedSince = $this->request->header('If-Modified-Since');
-		if ($responseTag = $this->response->etag()) {
-			$etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
-		}
-		if ($modifiedSince) {
-			$timeMatches = strtotime($this->response->modified()) == strtotime($modifiedSince);
-		}
-		$notModified = (!isset($etagMatches) || $etagMatches) && (!isset($timeMatches) || $timeMatches);
-		if ($notModified) {
-			$this->response->notModified();
-		}
-		return $notModified;
-	}
 }

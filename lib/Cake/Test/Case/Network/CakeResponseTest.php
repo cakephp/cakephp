@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeResponse', 'Network');
+App::uses('CakeRequest', 'Network');
 
 class CakeResponseTest extends CakeTestCase {
 
@@ -823,4 +824,101 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertEquals(304, $response->statusCode());
 	}
 
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagStar() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->etag('something');
+		$response->expects($this->once())->method('notModified');
+		$response->checkNotModified(new CakeRequest);
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagExact() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->etag('something', true);
+		$response->expects($this->once())->method('notModified');
+		$this->assertTrue($response->checkNotModified(new CakeRequest));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagAndTime() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->etag('something', true);
+		$response->modified('2012-01-01 00:00:00');
+		$response->expects($this->once())->method('notModified');
+		$this->assertTrue($response->checkNotModified(new CakeRequest));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagAndTimeMismatch() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->etag('something', true);
+		$response->modified('2012-01-01 00:00:01');
+		$response->expects($this->never())->method('notModified');
+		$this->assertFalse($response->checkNotModified(new CakeRequest));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagMismatch() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->etag('something', true);
+		$response->modified('2012-01-01 00:00:00');
+		$response->expects($this->never())->method('notModified');
+		$this->assertFalse($response->checkNotModified(new CakeRequest));
+	}
+
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByTime() {
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->modified('2012-01-01 00:00:00');
+		$response->expects($this->once())->method('notModified');
+		$this->assertTrue($response->checkNotModified(new CakeRequest));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedNoHints() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response->expects($this->never())->method('notModified');
+		$this->assertFalse($response->checkNotModified(new CakeRequest));
+	}
 }
