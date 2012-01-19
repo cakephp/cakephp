@@ -37,7 +37,7 @@ class TestCakeEmail extends CakeEmail {
 	public function formatAddress($address) {
 		return parent::_formatAddress($address);
 	}
-
+	
 /**
  * Wrap to protected method
  *
@@ -45,7 +45,15 @@ class TestCakeEmail extends CakeEmail {
 	public function wrap($text) {
 		return parent::_wrap($text);
 	}
-
+	
+/**
+ * Wrap to protected method
+ *
+ */
+	public function getContentTransferEncoding($content = true) {
+		return parent::_getContentTransferEncoding($content);
+	}
+	
 /**
  * Get the boundary attribute
  *
@@ -865,7 +873,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
-			"--$boundary\r\n" .
+			"--rel-$boundary\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .
@@ -1188,6 +1196,7 @@ class CakeEmailTest extends CakeTestCase {
 
 		// UTF-8 is 8bit
 		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
+		$this->assertTrue($this->checkAlternativesCharset($message, 'UTF-8'));
 
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$this->CakeEmail->send();
@@ -1197,8 +1206,8 @@ class CakeEmailTest extends CakeTestCase {
 
 		// ISO-2022-JP is 7bit
 		$this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
+		$this->assertTrue($this->checkAlternativesCharset($message, 'ISO-2022-JP'));
 	}
-
 
 /**
  * testReset method
@@ -1443,7 +1452,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains(mb_convert_encoding('ってテーブルを作ってやってたらう','ISO-2022-JP'), $result['message']);
 	}
 
-	private function checkContentTransferEncoding($message, $charset) {
+	private function checkContentTransferEncoding($message, $encoding) {
 		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;
 		$result['html'] = false;
@@ -1458,8 +1467,31 @@ class CakeEmailTest extends CakeTestCase {
 					if (preg_match('/^Content-Type: text\/html/', $message[$i])) {
 						$type = 'html';
 					}
-					if ($message[$i] === 'Content-Transfer-Encoding: ' . $charset) {
+					if ($message[$i] === 'Content-Transfer-Encoding: ' . $encoding) {
 						$flag = true;
+					}
+					++$i;
+				}
+				$result[$type] = $flag;
+			}
+		}
+		return $result['text'] && $result['html'];
+	}
+
+	private function checkAlternativesCharset($message, $charset) {
+		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
+		$result['text'] = false;
+		$result['html'] = false;
+		for ($i = 0; $i < count($message); ++$i) {
+			if ($message[$i] == $boundary) {
+				$flag = false;
+				$type = '';
+				while (!preg_match('/^$/', $message[$i])) {
+					if (preg_match('/^Content-Type: text\/plain; charset=' . $charset . '/', $message[$i])) {
+						$result['text'] = true;;
+					}
+					if (preg_match('/^Content-Type: text\/html; charset=' . $charset . '/', $message[$i])) {
+						$result['html'] = true;;
 					}
 					++$i;
 				}
@@ -1488,4 +1520,92 @@ class CakeEmailTest extends CakeTestCase {
 					. " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
 		$this->assertSame($expected, $result);
 	}
+
+/**
+ * Test CakeEmail::_getContentTransferEncoding
+ * 
+ */
+	public function testGetContentTransferEncoding() {
+		$this->CakeEmail->charset = 'utf-8';
+		$result = $this->CakeEmail->getContentTransferEncoding();
+		$this->assertSame('8bit', $result);
+
+		$result = $this->CakeEmail->getContentTransferEncoding(false);
+		$this->assertSame('8bit', $result);
+
+		$this->CakeEmail->transferEncoding('base64');
+		$result = $this->CakeEmail->getContentTransferEncoding();
+		$this->assertSame('base64', $result);
+
+		$result = $this->CakeEmail->getContentTransferEncoding(false);
+		$this->assertSame('8bit', $result);
+	}
+
+/**
+ * Test CakeEmail::transferEncoding
+ * 
+ */
+	public function testTransferEncoding() {
+		$this->CakeEmail->transferEncoding('quoted-printable');
+		$result = $this->CakeEmail->_transfer_encoding;
+		$this->assertSame('quoted-printable', $result);
+
+		$result = $this->CakeEmail->transferEncoding('base64');
+		$this->assertInstanceOf('CakeEmail', $result);
+		$result = $this->CakeEmail->_transfer_encoding;
+		$this->assertSame('base64', $result);
+
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->transferEncoding('xcode');
+	}
+
+/**
+ * testMessage method
+ *
+ * @return void
+ */
+	public function testTransferEncodedMessage() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('default', 'default');
+		$this->CakeEmail->emailFormat('both');
+
+		$this->CakeEmail->transferEncoding('base64');
+		$result = $this->CakeEmail->send();
+
+		$expected = "PCFET0NUWVBFIGh0bWwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEvL0VOIj4KCjxodG1s\r\n";
+		$expected .= "Pgo8aGVhZD4KCTx0aXRsZT5FbWFpbHMvaHRtbDwvdGl0bGU+CjwvaGVhZD4KCjxib2R5PgoJPHA+\r\n";
+		$expected .= "IDwvcD48cD4gPC9wPgoJPHA+VGhpcyBlbWFpbCB3YXMgc2VudCB1c2luZyB0aGUgPGEgaHJlZj0i\r\n";
+		$expected .= "aHR0cDovL2Nha2VwaHAub3JnIj5DYWtlUEhQIEZyYW1ld29yazwvYT48L3A+CjwvYm9keT4KPC9o\r\n";
+		$expected .= "dG1sPg==\r\n";
+
+		$this->assertSame($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_HTML));
+
+		$expected = "CgoKVGhpcyBlbWFpbCB3YXMgc2VudCB1c2luZyB0aGUgQ2FrZVBIUCBGcmFtZXdvcmssIGh0dHA6\r\n";
+		$expected .= "Ly9jYWtlcGhwLm9yZy4=\r\n";
+
+		$this->assertSame($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_TEXT));
+
+		$message = $this->CakeEmail->message();
+
+		// UTF-8 is 8bit
+		$this->assertTrue($this->checkContentTransferEncoding($message, 'base64'));
+		$this->assertContains('Content-Type: text/plain; charset=UTF-8', $message);
+		$this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
+
+		// ISO-2022-JP is 7bit
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$this->CakeEmail->transferEncoding('quoted-printable');
+		$this->CakeEmail->send();
+		$message = $this->CakeEmail->message();
+
+		$this->assertTrue($this->checkContentTransferEncoding($message, 'quoted-printable'));
+		$this->assertContains('Content-Type: text/plain; charset=ISO-2022-JP', $message);
+		$this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
+	}
+
 }
