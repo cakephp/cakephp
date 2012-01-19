@@ -154,7 +154,7 @@ class Folder {
 
 		try {
 			$iterator = new DirectoryIterator($this->path);
-		} catch (UnexpectedValueException $e) {
+		} catch (Exception $e) {
 			return array($dirs, $files);
 		}
 
@@ -427,9 +427,9 @@ class Folder {
 		}
 
 		try {
-			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF | RecursiveDirectoryIterator::SKIP_DOTS);
+			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF);
 			$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
-		} catch (UnexpectedValueException $e) {
+		} catch (Exception $e) {
 			if ($type === null) {
 				return array(array(), array());
 			}
@@ -450,7 +450,7 @@ class Folder {
 
 			if ($item->isFile()) {
 				$files[] = $itemPath;
-			} elseif ($item->isDir()) {
+			} elseif ($item->isDir() && !$item->isDot()) {
 				$directories[] = $itemPath;
 			}
 		}
@@ -558,9 +558,9 @@ class Folder {
 		$path = Folder::slashTerm($path);
 		if (is_dir($path)) {
 			try {
-				$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+				$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
 				$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
-			} catch (UnexpectedValueException $e) {
+			} catch (Exception $e) {
 				return false;
 			}
 
@@ -572,7 +572,7 @@ class Folder {
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 					}
-				} elseif ($item->isDir()) {
+				} elseif ($item->isDir() && !$item->isDot()) {
 					if (@rmdir($filePath)) {
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
