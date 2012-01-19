@@ -2813,9 +2813,13 @@ class Model extends Object implements CakeEventListener {
 		if ($state === 'before') {
 			return $query;
 		} elseif ($state === 'after') {
+			$parent = 'parent_id';
+			if (isset($query['parent'])) {
+				$parent = $query['parent'];
+			}
 			return Set::nest($results, array(
 				'idPath' => '/' . $this->alias . '/' . $this->primaryKey,
-				'parentPath' => '/' . $this->alias . '/parent_id'
+				'parentPath' => '/' . $this->alias . '/' . $parent
 			));
 		}
 	}
