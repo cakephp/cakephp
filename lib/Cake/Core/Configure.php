@@ -124,26 +124,12 @@ class Configure {
 		}
 
 		foreach ($config as $name => $value) {
-			if (strpos($name, '.') === false) {
-				self::$_values[$name] = $value;
-			} else {
-				$names = explode('.', $name, 4);
-				switch (count($names)) {
-					case 2:
-						self::$_values[$names[0]][$names[1]] = $value;
-					break;
-					case 3:
-						self::$_values[$names[0]][$names[1]][$names[2]] = $value;
-					break;
-					case 4:
-						$names = explode('.', $name, 2);
-						if (!isset(self::$_values[$names[0]])) {
-							self::$_values[$names[0]] = array();
-						}
-						self::$_values[$names[0]] = Set::insert(self::$_values[$names[0]], $names[1], $value);
-					break;
-				}
+			$pointer = &self::$_values;
+			foreach (explode('.', $name) as $key) {
+				$pointer = &$pointer[$key];
 			}
+			$pointer = $value;
+			unset($pointer);
 		}
 
 		if (isset($config['debug']) && function_exists('ini_set')) {
@@ -177,30 +163,15 @@ class Configure {
 		if (isset(self::$_values[$var])) {
 			return self::$_values[$var];
 		}
-		if (strpos($var, '.') !== false) {
-			$names = explode('.', $var, 3);
-			$var = $names[0];
+		$pointer = &self::$_values;
+		foreach (explode('.', $var) as $key) {
+			if (isset($pointer[$key])) {
+				$pointer = &$pointer[$key];
+			} else {
+				return null;
+			}
 		}
-		if (!isset(self::$_values[$var])) {
-			return null;
-		}
-		switch (count($names)) {
-			case 2:
-				if (isset(self::$_values[$var][$names[1]])) {
-					return self::$_values[$var][$names[1]];
-				}
-			break;
-			case 3:
-				if (isset(self::$_values[$var][$names[1]][$names[2]])) {
-					return self::$_values[$var][$names[1]][$names[2]];
-				}
-				if (!isset(self::$_values[$var][$names[1]])) {
-					return null;
-				}
-				return Set::classicExtract(self::$_values[$var][$names[1]], $names[2]);
-			break;
-		}
-		return null;
+		return $pointer;
 	}
 
 /**
@@ -217,13 +188,13 @@ class Configure {
  * @return void
  */
 	public static function delete($var = null) {
-		if (strpos($var, '.') === false) {
-			unset(self::$_values[$var]);
-			return;
+		$keys = explode('.', $var);
+		$last = array_pop($keys);
+		$pointer = &self::$_values;
+		foreach ($keys as $key) {
+			$pointer = &$pointer[$key];
 		}
-
-		$names = explode('.', $var, 2);
-		self::$_values[$names[0]] = Set::remove(self::$_values[$names[0]], $names[1]);
+		unset($pointer[$last]);
 	}
 
 /**

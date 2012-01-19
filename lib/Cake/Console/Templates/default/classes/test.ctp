@@ -86,13 +86,12 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 
 <?php foreach ($methods as $method): ?>
 /**
- * test<?php echo Inflector::classify($method); ?> method
+ * test<?php echo Inflector::camelize($method); ?> method
  *
  * @return void
  */
-	public function test<?php echo Inflector::classify($method); ?>() {
+	public function test<?php echo Inflector::camelize($method); ?>() {
 
 	}
-
 <?php endforeach;?>
 }
