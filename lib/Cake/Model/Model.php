@@ -2812,44 +2812,10 @@ class Model extends Object implements CakeEventListener {
 		if ($state === 'before') {
 			return $query;
 		} elseif ($state === 'after') {
-			$return = $idMap = array();
-			$ids = Set::extract($results, '{n}.' . $this->alias . '.' . $this->primaryKey);
-
-			if (isset($results[0][$this->alias]) && !array_key_exists('parent_id', $results[0][$this->alias])) {
-				trigger_error(
-					__d('cake_dev', 'You cannot use find("threaded") on models without a "parent_id" field.'),
-					E_USER_WARNING
-				);
-				return $return;
-			}
-
-			foreach ($results as $result) {
-				$result['children'] = array();
-				$id = $result[$this->alias][$this->primaryKey];
-				$parentId = $result[$this->alias]['parent_id'];
-				if (isset($idMap[$id]['children'])) {
-					$idMap[$id] = array_merge($result, (array)$idMap[$id]);
-				} else {
-					$idMap[$id] = array_merge($result, array('children' => array()));
-				}
-				if (!$parentId || !in_array($parentId, $ids)) {
-					$return[] =& $idMap[$id];
-				} else {
-					$idMap[$parentId]['children'][] =& $idMap[$id];
-				}
-			}
-			if (count($return) > 1) {
-				$ids = array_unique(Set::extract('/' . $this->alias . '/parent_id', $return));
-				if (count($ids) > 1) {
-					$root = $return[0][$this->alias]['parent_id'];
-					foreach ($return as $key => $value) {
-						if ($value[$this->alias]['parent_id'] != $root) {
-							unset($return[$key]);
-						}
-					}
-				}
-			}
-			return $return;
+			return Set::nest($results, array(
+				'idPath' => '/' . $this->alias . '/' . $this->primaryKey,
+				'parentPath' => '/' . $this->alias . '/parent_id'
+			));
 		}
 	}
 
