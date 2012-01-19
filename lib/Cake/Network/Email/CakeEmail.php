@@ -239,6 +239,24 @@ class CakeEmail {
  */
 	protected $_transportClass = null;
 
+
+/**
+ * Available transfer encodings.
+ *
+ * @var array
+ */
+	protected $_transferEncodingsAvailable = array(null, 'quoted-printable', 'base64');
+
+/**
+ * Encoding used for the text parts (text and html respectively)
+ * If null, text is sent plain (7bit or 8bit encoded)
+ * depending on the $charset property, see _getContentTransferEncoding()
+ * 
+ * Options: null (default), 'quoted-printable', 'base64'
+ * @var string
+ */
+	public $_transfer_encoding = null;
+
 /**
  * Charset the email body is sent in
  *
@@ -669,7 +687,7 @@ class CakeEmail {
 		} elseif ($this->_emailFormat === 'html') {
 			$headers['Content-Type'] = 'text/html; charset=' . $this->charset;
 		}
-		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding();
+		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding(false);
 
 		return $headers;
 	}
@@ -808,6 +826,24 @@ class CakeEmail {
 		}
 
 		return $this->_transportClass = new $transportClassname();
+	}
+
+	/**
+	 * Email content transfer encoding schema
+	 *
+	 * @param string $encoding
+	 * @return mixed
+	 * @throws SocketException
+	 */
+	public function transferEncoding($encoding = null) {
+		if ($encoding === null) {
+			return $this->_transfer_encoding;
+		}
+		if (!in_array($encoding, $this->_transferEncodingsAvailable)) {
+			throw new SocketException(__d('cake_dev', 'Encoding not available.'));
+		}
+		$this->_transfer_encoding = $encoding;
+		return $this;
 	}
 
 /**
@@ -1040,7 +1076,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat'
+			'transport', 'emailFormat', 'transferEncoding'
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1092,6 +1128,7 @@ class CakeEmail {
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'Mail';
 		$this->_transportClass = null;
+		$this->_transferEncoding = null;
 		$this->_attachments = array();
 		$this->_config = array();
 		return $this;
@@ -1240,9 +1277,14 @@ class CakeEmail {
 /**
  * Attach non-embedded files by adding file contents inside boundaries.
  *
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
  * @return array An array of lines to add to the message
  */
-	protected function _attachFiles() {
+	protected function _attachFiles($boundary = null) {
+		if($boundary === null) {
+			$boundary = $this->_boundary;
+		}
+
 		$msg = array();
 		foreach ($this->_attachments as $filename => $fileInfo) {
 			if (!empty($fileInfo['contentId'])) {
@@ -1250,7 +1292,7 @@ class CakeEmail {
 			}
 			$data = $this->_readFile($fileInfo['file']);
 
-			$msg[] = '--' . $this->_boundary;
+			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
 			$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
@@ -1278,9 +1320,14 @@ class CakeEmail {
 /**
  * Attach inline/embedded files to the message.
  *
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
  * @return array An array of lines to add to the message
  */
-	protected function _attachInlineFiles() {
+	protected function _attachInlineFiles($boundary = null) {
+		if($boundary === null) {
+			$boundary = $this->_boundary;
+		}
+
 		$msg = array();
 		foreach ($this->_attachments as $filename => $fileInfo) {
 			if (empty($fileInfo['contentId'])) {
@@ -1288,7 +1335,7 @@ class CakeEmail {
 			}
 			$data = $this->_readFile($fileInfo['file']);
 
-			$msg[] = '--rel-' . $this->_boundary;
+			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
 			$msg[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
@@ -1309,6 +1356,21 @@ class CakeEmail {
 	protected function _render($content) {
 		$content = implode("\n", $content);
 		$rendered = $this->_renderTemplates($content);
+
+		switch($this->_transfer_encoding) {
+			case 'quoted-printable':
+				foreach($rendered as &$part) {
+					$part = quoted_printable_encode($part);
+				}
+				break;
+			case 'base64':
+				foreach($rendered as &$part) {
+					$part = chunk_split(base64_encode($part));
+				}
+				break;
+			default:
+				break;
+		}
 
 		$msg = array();
 
@@ -1365,7 +1427,7 @@ class CakeEmail {
 		}
 
 		if ($hasInlineAttachments) {
-			$attachments = $this->_attachInlineFiles();
+			$attachments = $this->_attachInlineFiles($relBoundary);
 			$msg = array_merge($msg, $attachments);
 			$msg[] = '';
 			$msg[] = '--' . $relBoundary . '--';
@@ -1373,7 +1435,7 @@ class CakeEmail {
 		}
 
 		if ($hasAttachments) {
-			$attachments = $this->_attachFiles();
+			$attachments = $this->_attachFiles($boundary);
 			$msg = array_merge($msg, $attachments);
 		}
 		if ($hasAttachments || $hasMultipleTypes) {
@@ -1446,11 +1508,15 @@ class CakeEmail {
 	}
 
 /**
- * Return the Content-Transfer Encoding value based on the set charset
+ * Return the Content-Transfer Encoding value based on the set charset and transfer encoding
  *
+ * @param boolean $content If false, return the header encoding, else text content encoding.
  * @return void
  */
-	protected function _getContentTransferEncoding() {
+	protected function _getContentTransferEncoding($content = true) {
+		if($content && $this->_transfer_encoding) {
+			return $this->_transfer_encoding;
+		}
 		$charset = strtoupper($this->charset);
 		if (in_array($charset, $this->_charset8bit)) {
 			return '8bit';
