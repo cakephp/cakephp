@@ -239,24 +239,6 @@ class CakeEmail {
  */
 	protected $_transportClass = null;
 
-
-/**
- * Available transfer encodings.
- *
- * @var array
- */
-	protected $_transferEncodingsAvailable = array('quoted-printable', 'base64');
-
-/**
- * Encoding used for the text parts (text and html respectively)
- * If null, text is sent plain (7bit or 8bit encoded)
- * depending on the $charset property, see _getContentTransferEncoding()
- * 
- * Options: null (default), 'quoted-printable', 'base64'
- * @var string
- */
-	public $_transferEncoding = null;
-
 /**
  * Charset the email body is sent in
  *
@@ -687,7 +669,7 @@ class CakeEmail {
 		} elseif ($this->_emailFormat === 'html') {
 			$headers['Content-Type'] = 'text/html; charset=' . $this->charset;
 		}
-		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding(false);
+		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding();
 
 		return $headers;
 	}
@@ -826,28 +808,6 @@ class CakeEmail {
 		}
 
 		return $this->_transportClass = new $transportClassname();
-	}
-
-/**
- * Email content transfer encoding schema
- *
- * @param string $encoding
- * @return mixed
- * @throws SocketException
- */
-	public function transferEncoding($encoding = null) {
-		if ($encoding === null) {
-			return $this->_transferEncoding;
-		}
-		if (!in_array($encoding, $this->_transferEncodingsAvailable) ||
-			$encoding == 'quoted-printable' &&
-			!function_exists('quoted_printable_encode') &&
-			!function_exists('imap_8bit')
-		) {
-			throw new SocketException(__d('cake_dev', 'Encoding not available.'));
-		}
-		$this->_transferEncoding = $encoding;
-		return $this;
 	}
 
 /**
@@ -1080,7 +1040,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat', 'transferEncoding'
+			'transport', 'emailFormat'
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1132,7 +1092,6 @@ class CakeEmail {
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'Mail';
 		$this->_transportClass = null;
-		$this->_transferEncoding = null;
 		$this->_attachments = array();
 		$this->_config = array();
 		return $this;
@@ -1361,27 +1320,6 @@ class CakeEmail {
 		$content = implode("\n", $content);
 		$rendered = $this->_renderTemplates($content);
 
-		switch($this->_transferEncoding) {
-			case 'quoted-printable':
-				foreach($rendered as &$part) {
-					if(function_exists('quoted_printable_encode')) {
-						$part = quoted_printable_encode($part);
-					} elseif(function_exists('imap_8bit')) {
-						$part = imap_8bit($part);
-					} else {
-						throw new SocketException(__d('cake_dev', 'Encoding not available. Need php-5.3 (quoted_printable_encode) or imap extension (imap_8bit).'));
-					}
-				}
-				break;
-			case 'base64':
-				foreach($rendered as &$part) {
-					$part = chunk_split(base64_encode($part));
-				}
-				break;
-			default:
-				break;
-		}
-
 		$msg = array();
 
 		$contentIds = array_filter((array)Set::classicExtract($this->_attachments, '{s}.contentId'));
@@ -1518,15 +1456,11 @@ class CakeEmail {
 	}
 
 /**
- * Return the Content-Transfer Encoding value based on the set charset and transfer encoding
+ * Return the Content-Transfer Encoding value based on the set charset
  *
- * @param boolean $content If false, return the header encoding, else text content encoding.
  * @return void
  */
-	protected function _getContentTransferEncoding($content = true) {
-		if($content && $this->_transferEncoding) {
-			return $this->_transferEncoding;
-		}
+	protected function _getContentTransferEncoding() {
 		$charset = strtoupper($this->charset);
 		if (in_array($charset, $this->_charset8bit)) {
 			return '8bit';
