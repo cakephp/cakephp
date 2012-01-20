@@ -151,6 +151,11 @@ class NumberHelperTest extends CakeTestCase {
 		$result = $this->Number->currency(-10, 'Other');
 		$expected = '($$ 10.00)';
 		$this->assertEqual($expected,$result);
+
+		$this->Number->addFormat('Other2', array('before' => '$ '));
+		$result = $this->Number->currency(0.22, 'Other2');
+		$expected = '$ 0.22';
+		$this->assertEqual($expected,$result);
 	}
 
 /**

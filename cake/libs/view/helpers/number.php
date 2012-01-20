@@ -60,7 +60,7 @@ class NumberHelper extends AppHelper {
  * @access protected
  */
 	var $_currencyDefaults = array(
-		'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
+		'before'=>'', 'after' => false, 'zero' => '0', 'places' => 2, 'thousands' => ',',
 		'decimals' => '.','negative' => '()', 'escape' => true
 	);
 
