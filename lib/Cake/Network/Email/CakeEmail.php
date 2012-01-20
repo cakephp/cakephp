@@ -255,7 +255,7 @@ class CakeEmail {
  * Options: null (default), 'quoted-printable', 'base64'
  * @var string
  */
-	public $_transfer_encoding = null;
+	public $_transferEncoding = null;
 
 /**
  * Charset the email body is sent in
@@ -837,12 +837,16 @@ class CakeEmail {
  */
 	public function transferEncoding($encoding = null) {
 		if ($encoding === null) {
-			return $this->_transfer_encoding;
+			return $this->_transferEncoding;
 		}
-		if (!in_array($encoding, $this->_transferEncodingsAvailable)) {
+		if (!in_array($encoding, $this->_transferEncodingsAvailable) ||
+			$encoding == 'quoted-printable' &&
+			!function_exists('quoted_printable_encode') &&
+			!function_exists('imap_8bit')
+		) {
 			throw new SocketException(__d('cake_dev', 'Encoding not available.'));
 		}
-		$this->_transfer_encoding = $encoding;
+		$this->_transferEncoding = $encoding;
 		return $this;
 	}
 
@@ -1357,10 +1361,16 @@ class CakeEmail {
 		$content = implode("\n", $content);
 		$rendered = $this->_renderTemplates($content);
 
-		switch($this->_transfer_encoding) {
+		switch($this->_transferEncoding) {
 			case 'quoted-printable':
 				foreach($rendered as &$part) {
-					$part = quoted_printable_encode($part);
+					if(function_exists('quoted_printable_encode')) {
+						$part = quoted_printable_encode($part);
+					} elseif(function_exists('imap_8bit')) {
+						$part = imap_8bit($part);
+					} else {
+						throw new SocketException(__d('cake_dev', 'Encoding not available. Need php-5.3 (quoted_printable_encode) or imap extension (imap_8bit).'));
+					}
 				}
 				break;
 			case 'base64':
@@ -1514,8 +1524,8 @@ class CakeEmail {
  * @return void
  */
 	protected function _getContentTransferEncoding($content = true) {
-		if($content && $this->_transfer_encoding) {
-			return $this->_transfer_encoding;
+		if($content && $this->_transferEncoding) {
+			return $this->_transferEncoding;
 		}
 		$charset = strtoupper($this->charset);
 		if (in_array($charset, $this->_charset8bit)) {
