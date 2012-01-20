@@ -713,11 +713,11 @@ class CakeResponse {
 			return $sharable;
 		}
 		if ($public) {
-			$this->_cacheDirectives['public'] = null;
+			$this->_cacheDirectives['public'] = true;
 			unset($this->_cacheDirectives['private']);
 			$this->sharedMaxAge($time);
 		} else {
-			$this->_cacheDirectives['private'] = null;
+			$this->_cacheDirectives['private'] = true;
 			unset($this->_cacheDirectives['public']);
 			$this->maxAge($time);
 		}
@@ -781,7 +781,7 @@ class CakeResponse {
 	public function mustRevalidate($enable = null) {
 		if ($enable !== null) {
 			if ($enable) {
-				$this->_cacheDirectives['must-revalidate'] = null;
+				$this->_cacheDirectives['must-revalidate'] = true;
 			} else {
 				unset($this->_cacheDirectives['must-revalidate']);
 			}
@@ -799,7 +799,7 @@ class CakeResponse {
 	protected function _setCacheControl() {
 		$control = '';
 		foreach ($this->_cacheDirectives as $key => $val) {
-			$control .= is_null($val) ? $key : sprintf('%s=%s', $key, $val);
+			$control .= $val === true ? $key : sprintf('%s=%s', $key, $val);
 			$control .= ', ';
 		}
 		$control = rtrim($control, ', ');
