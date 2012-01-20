@@ -253,7 +253,6 @@ class RequestHandlerComponent extends Component {
 	public function beforeRender($controller) {
 		$shouldCheck = $this->settings['checkHttpCache'];
 		if ($shouldCheck && $this->response->checkNotModified($this->request)) {
-			$this->response->send();
 			return false;
 		}
 	}
