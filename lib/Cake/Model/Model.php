@@ -2018,11 +2018,11 @@ class Model extends Object {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before saving,
- *   'first' to validate *all* records before any are saved (default),
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `validate` Set to false to disable validation, true to validate each record before saving,
+ *   'first' to validate *all* records before any are saved. Defaults to `true`.
+ * - `atomic` If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ * - `fieldList` Equivalent to the $fieldList parameter in Model::save()
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
