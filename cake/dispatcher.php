@@ -526,7 +526,7 @@ class Dispatcher extends Object {
 			if ($this->here == '/') {
 				$path = 'home';
 			}
-			$path = strtolower(Inflector::slug($path));
+			$path = strtolower(Inflector::slug(Configure::read('Cache.prefix') . '_' . $path));
 
 			$filename = CACHE . 'views' . DS . $path . '.php';
 
