@@ -2018,8 +2018,8 @@ class Model extends Object {
  *
  * #### Options
  *
- * - `validate` Set to false to disable validation, true to validate each record before saving,
- *   'first' to validate *all* records before any are saved. Defaults to `true`.
+ * - `validate` Set to `false` to disable validation, `true` to validate each record before saving,
+ *   'first' to validate *all* records before any are saved(default),
  * - `atomic` If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
  * - `fieldList` Equivalent to the $fieldList parameter in Model::save()
@@ -2036,7 +2036,7 @@ class Model extends Object {
 			$data = $this->data;
 		}
 
-		$options = array_merge(array('validate' => true, 'atomic' => true), $options);
+		$options = array_merge(array('validate' => 'first', 'atomic' => true), $options);
 		$this->validationErrors = $validationErrors = array();
 
 		if (empty($data) && $options['validate'] !== false) {

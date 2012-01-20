@@ -4260,8 +4260,7 @@ class ModelWriteTest extends BaseModelTest {
 					'user_id' => 1
 				),
 				'Attachment' => array('attachment' => '')
-			),
-			array('validate' => 'first')
+			)
 		), false);
 		$expected = array(
 			'Comment' => array('comment' => array('This field cannot be left blank')),
