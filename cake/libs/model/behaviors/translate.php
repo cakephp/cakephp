@@ -110,7 +110,7 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		$RuntimeModel =& $this->translateModel($model);
-	
+
 		if (!empty($RuntimeModel->tablePrefix)) {
 			$tablePrefix = $RuntimeModel->tablePrefix;
 		} else {

@@ -487,9 +487,16 @@ class CookieComponentTest extends CakeTestCase {
 		if ($this->skipIf(!function_exists('json_decode'), 'no json_decode, skipping.')) {
 			return;
 		}
-		$_COOKIE['CakeTestCookie'] = array('Test' => '{"name":"value"}');
+		$_COOKIE['CakeTestCookie'] = array(
+			'JSON' => '{"name":"value"}',
+			'Empty' => '',
+			'String' => '{"somewhat:"broken"}'
+		);
 		$this->Controller->Cookie->startup($this->Controller);
-		$this->assertEqual('value', $this->Controller->Cookie->read('Test.name'));
+		$this->assertEqual(array('name' => 'value'), $this->Controller->Cookie->read('JSON'));
+		$this->assertEqual('value', $this->Controller->Cookie->read('JSON.name'));
+		$this->assertEqual('', $this->Controller->Cookie->read('Empty'));
+		$this->assertEqual('{"somewhat:"broken"}', $this->Controller->Cookie->read('String'));
 	}
 
 /**
