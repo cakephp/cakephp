@@ -480,7 +480,9 @@ class CakeRoute {
 				if (is_array($value)) {
 					$flat = Set::flatten($value, '][');
 					foreach ($flat as $namedKey => $namedValue) {
-						$named[] = $key . "[$namedKey]" . $separator . rawurlencode($namedValue);
+						if(!is_array($namedValue)) {
+							$named[] = $key . "[$namedKey]" . $separator . rawurlencode($namedValue);
+						}
 					}
 				} else {
 					$named[] = $key . $separator . rawurlencode($value);
