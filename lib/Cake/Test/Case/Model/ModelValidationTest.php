@@ -761,4 +761,57 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($TestModel->validationErrors, $expected);
 	}
 
+/**
+ * Test for 'on' => [create|update] in validation rules.
+ *
+ * @return void
+ */
+	function testStateValidation() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+
+		$data = array(
+			'Article' => array(
+				'title' => '',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			)
+		);
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'on' => 'create'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertFalse($Article->validates());
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertTrue($Article->validates());
+
+		unset($data['Article']['id']);
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'on' => 'update'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertFalse($Article->validates());
+	}
+
 }
