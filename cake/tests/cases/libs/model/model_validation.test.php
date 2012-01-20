@@ -657,8 +657,8 @@ class ModelValidationTest extends BaseModelTest {
 				'published' => '1'
 			),
 			'Comment' => array(
-				array('word' => 'Hello'), 
-				array('word' => 'World'), 
+				array('word' => 'Hello'),
+				array('word' => 'World'),
 			)
 		);
 		$Article =& new Article();
@@ -674,7 +674,7 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $Article->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
 		$this->assertFalse(is_null($Article->id));
-		
+
 		$id = $Article->id;
 		$count = $Article->find('count', array('conditions' => array('Article.id' => $id)));
 		$this->assertIdentical($count, 1);
@@ -710,6 +710,73 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertNoErrors();
 		$TestModel->invalidFields(array('fieldList' => array('title')));
 		Configure::write('debug', $restore);
+	}
+
+/**
+ * Test for 'on' => [create|update] in validation rules.
+ *
+ * @return void
+ */
+	function testStateValidation() {
+		$Article =& new Article();
+
+		$data = array(
+			'Article' => array(
+				'title' => '',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			)
+		);
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'on' => 'create'
+				)
+			),
+			'published' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertFalse($Article->validates());
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->data['Article']['published'] = null;
+		$this->assertFalse($Article->validates());
+
+		unset($data['Article']['id']);
+		$Article->data['Article']['published'] = '1';
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'on' => 'update'
+				)
+			),
+			'published' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertFalse($Article->validates());
+
 	}
 
 }
