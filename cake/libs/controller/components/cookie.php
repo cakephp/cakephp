@@ -464,11 +464,11 @@ class CookieComponent extends Object {
  * Explode method to return array from string set in CookieComponent::__implode()
  *
  * @param string $string String in the form key1|value1,key2|value2
- * @return array Map of key and values
+ * @return mixed If array, map of key and values. If string, value.
  * @access private
  */
 	function __explode($string) {
-		if (($string[0] === '{' || $string[0] === '[') && function_exists('json_decode')) {
+		if (!empty($string[0]) && ($string[0] === '{' || $string[0] === '[') && function_exists('json_decode')) {
 			$ret = json_decode($string, true);
 			return ($ret != null) ? $ret : $string;
 		}
