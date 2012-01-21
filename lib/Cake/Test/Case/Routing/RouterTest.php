@@ -2519,7 +2519,8 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(Router::$routes[0]->options['status'], 302);
 
 		Router::parse('/blog');
-		$this->assertEquals(Router::$routes[0]->response->header(), array('Location' => Router::url('/posts', true)));
+		$header = Router::$routes[0]->response->header();
+		$this->assertEquals($header['Location'], Router::url('/posts', true));
 		$this->assertEquals(Router::$routes[0]->response->statusCode(), 302);
 
 		Router::$routes[0]->response = $this->getMock('CakeResponse', array('_sendHeader'));

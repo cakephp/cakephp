@@ -359,6 +359,14 @@ class TestComponent extends Object {
 	}
 }
 
+class Test2Component extends TestComponent {
+
+
+	public function beforeRender($controller) {
+		return false;
+	}
+}
+
 /**
  * AnotherTestController class
  *
@@ -684,6 +692,21 @@ class ControllerTest extends CakeTestCase {
 		$this->assertRegExp('/default test_theme layout/', (string)$result);
 		App::build();
 	}
+
+/**
+ * test that a component beforeRender can change the controller view class.
+ *
+ * @return void
+ */
+	public function testComponentCancelRender() {
+		$Controller = new Controller($this->getMock('CakeRequest'), new CakeResponse());
+		$Controller->uses = array();
+		$Controller->components = array('Test2');
+		$Controller->constructClasses();
+		$result = $Controller->render('index');
+		$this->assertInstanceOf('CakeResponse', $result);
+	}
+
 
 /**
  * testToBeInheritedGuardmethods method

@@ -95,7 +95,8 @@ class RequestHandlerComponent extends Component {
  * @param array $settings Array of settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
+		$default = array('checkHttpCache' => true);
+		parent::__construct($collection, $settings + $default);
 		$this->addInputType('xml', array(array($this, 'convertXml')));
 
 		$Controller = $collection->getController();
@@ -238,6 +239,22 @@ class RequestHandlerComponent extends Component {
 		$this->response->body($this->requestAction($url, array('return', 'bare' => false)));
 		$this->response->send();
 		$this->_stop();
+	}
+
+/**
+ * Checks if the response can be considered different according to the request
+ * headers, and the caching response headers. If it was not modified, then the
+ * render process is skipped. And the client will get a blank response with a
+ * "304 Not Modified" header.
+ *
+ * @params Controller $controller
+ * @return boolean false if the render process should be aborted
+ **/
+	public function beforeRender($controller) {
+		$shouldCheck = $this->settings['checkHttpCache'];
+		if ($shouldCheck && $this->response->checkNotModified($this->request)) {
+			return false;
+		}
 	}
 
 /**
@@ -704,4 +721,5 @@ class RequestHandlerComponent extends Component {
 		}
 		$this->_inputTypeMap[$type] = $handler;
 	}
+
 }

@@ -896,7 +896,12 @@ class Controller extends Object implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
-		$this->getEventManager()->dispatch(new CakeEvent('Controller.beforeRender', $this));
+		$event = new CakeEvent('Controller.beforeRender', $this);
+		$this->getEventManager()->dispatch($event);
+		if ($event->isStopped()) {
+			$this->autoRender = false;
+			return $this->response;
+		}
 
 		$viewClass = $this->viewClass;
 		if ($this->viewClass != 'View') {
