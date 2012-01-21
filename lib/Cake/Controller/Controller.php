@@ -838,7 +838,7 @@ class Controller extends Object implements CakeEventListener {
  * @return mixed Returns the return value of the called action
  */
 	public function setAction($action) {
-		$this->request->action = $action;
+		$this->request->params['action'] = $action;
 		$this->view = $action;
 		$args = func_get_args();
 		unset($args[0]);

@@ -2105,11 +2105,11 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before saving,
- *   'first' to validate *all* records before any are saved (default),
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `validate` Set to `false` to disable validation, `true` to validate each record before saving,
+ *   'first' to validate *all* records before any are saved(default),
+ * - `atomic` If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ * - `fieldList` Equivalent to the $fieldList parameter in Model::save()
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
@@ -2123,7 +2123,7 @@ class Model extends Object implements CakeEventListener {
 			$data = $this->data;
 		}
 
-		$options = array_merge(array('validate' => true, 'atomic' => true), $options);
+		$options = array_merge(array('validate' => 'first', 'atomic' => true), $options);
 		$this->validationErrors = $validationErrors = array();
 
 		if (empty($data) && $options['validate'] !== false) {
@@ -2970,7 +2970,7 @@ class Model extends Object implements CakeEventListener {
 			$data = array();
 		}
 
-		$exists = $this->exists();
+		$exists = null;
 
 		$_validate = $this->validate;
 		$whitelist = $this->whitelist;
@@ -3016,81 +3016,85 @@ class Model extends Object implements CakeEventListener {
 				}
 				$validator = array_merge($default, $validator);
 
-				if (
-					empty($validator['on']) || ($validator['on'] == 'create' &&
-					!$exists) || ($validator['on'] == 'update' && $exists
-				)) {
-					$valid = true;
-					$requiredFail = (
-						(!isset($data[$fieldName]) && $validator['required'] === true) ||
-						(
-							isset($data[$fieldName]) && (empty($data[$fieldName]) &&
-							!is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false
-						)
-					);
+				if (!empty($validator['on'])) {
+					if ($exists === null) {
+						$exists = $this->exists();
+					}
+					if (($validator['on'] == 'create' && $exists) || ($validator['on'] == 'update' && !$exists)) {
+						continue;
+					}
+				}
 
-					if (!$requiredFail && array_key_exists($fieldName, $data)) {
-						if (empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
-							break;
-						}
-						if (is_array($validator['rule'])) {
-							$rule = $validator['rule'][0];
-							unset($validator['rule'][0]);
-							$ruleParams = array_merge(array($data[$fieldName]), array_values($validator['rule']));
-						} else {
-							$rule = $validator['rule'];
-							$ruleParams = array($data[$fieldName]);
-						}
+				$valid = true;
+				$requiredFail = (
+					(!isset($data[$fieldName]) && $validator['required'] === true) ||
+					(
+						isset($data[$fieldName]) && (empty($data[$fieldName]) &&
+						!is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false
+					)
+				);
 
-						if (in_array(strtolower($rule), $methods)) {
-							$ruleParams[] = $validator;
-							$ruleParams[0] = array($fieldName => $ruleParams[0]);
-							$valid = $this->dispatchMethod($rule, $ruleParams);
-						} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
-							$ruleParams[] = $validator;
-							$ruleParams[0] = array($fieldName => $ruleParams[0]);
-							$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
-						} elseif (class_exists('Validation') && method_exists('Validation', $rule)) {
-							$valid = call_user_func_array(array('Validation', $rule), $ruleParams);
-						} elseif (!is_array($validator['rule'])) {
-							$valid = preg_match($rule, $data[$fieldName]);
-						} elseif (Configure::read('debug') > 0) {
-							trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $rule, $fieldName), E_USER_WARNING);
-						}
+				if (!$requiredFail && array_key_exists($fieldName, $data)) {
+					if (empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
+						break;
+					}
+					if (is_array($validator['rule'])) {
+						$rule = $validator['rule'][0];
+						unset($validator['rule'][0]);
+						$ruleParams = array_merge(array($data[$fieldName]), array_values($validator['rule']));
+					} else {
+						$rule = $validator['rule'];
+						$ruleParams = array($data[$fieldName]);
 					}
 
-					if ($requiredFail || !$valid || (is_string($valid) && strlen($valid) > 0)) {
-						if (is_string($valid)) {
-							$message = $valid;
-						} elseif (isset($validator['message'])) {
-							$args = null;
-							if (is_array($validator['message'])) {
-								$message = $validator['message'][0];
-								$args = array_slice($validator['message'], 1);
-							} else {
-								$message = $validator['message'];
-							}
-							if (is_array($validator['rule']) && $args === null) {
-								$args = array_slice($ruleSet[$index]['rule'], 1);
-							}
-							$message = __d($validationDomain, $message, $args);
-						} elseif (is_string($index)) {
-							if (is_array($validator['rule'])) {
-								$args = array_slice($ruleSet[$index]['rule'], 1);
-								$message = __d($validationDomain, $index, $args);
-							} else {
-								$message = __d($validationDomain, $index);
-							}
-						} elseif (!$requiredFail && is_numeric($index) && count($ruleSet) > 1) {
-							$message = $index + 1;
-						} else {
-							$message = __d('cake_dev', 'This field cannot be left blank');
-						}
+					if (in_array(strtolower($rule), $methods)) {
+						$ruleParams[] = $validator;
+						$ruleParams[0] = array($fieldName => $ruleParams[0]);
+						$valid = $this->dispatchMethod($rule, $ruleParams);
+					} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
+						$ruleParams[] = $validator;
+						$ruleParams[0] = array($fieldName => $ruleParams[0]);
+						$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
+					} elseif (method_exists('Validation', $rule)) {
+						$valid = call_user_func_array(array('Validation', $rule), $ruleParams);
+					} elseif (!is_array($validator['rule'])) {
+						$valid = preg_match($rule, $data[$fieldName]);
+					} elseif (Configure::read('debug') > 0) {
+						trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $rule, $fieldName), E_USER_WARNING);
+					}
+				}
 
-						$this->invalidate($fieldName, $message);
-						if ($validator['last']) {
-							break;
+				if ($requiredFail || !$valid || (is_string($valid) && strlen($valid) > 0)) {
+					if (is_string($valid)) {
+						$message = $valid;
+					} elseif (isset($validator['message'])) {
+						$args = null;
+						if (is_array($validator['message'])) {
+							$message = $validator['message'][0];
+							$args = array_slice($validator['message'], 1);
+						} else {
+							$message = $validator['message'];
 						}
+						if (is_array($validator['rule']) && $args === null) {
+							$args = array_slice($ruleSet[$index]['rule'], 1);
+						}
+						$message = __d($validationDomain, $message, $args);
+					} elseif (is_string($index)) {
+						if (is_array($validator['rule'])) {
+							$args = array_slice($ruleSet[$index]['rule'], 1);
+							$message = __d($validationDomain, $index, $args);
+						} else {
+							$message = __d($validationDomain, $index);
+						}
+					} elseif (!$requiredFail && is_numeric($index) && count($ruleSet) > 1) {
+						$message = $index + 1;
+					} else {
+						$message = __d('cake_dev', 'This field cannot be left blank');
+					}
+
+					$this->invalidate($fieldName, $message);
+					if ($validator['last']) {
+						break;
 					}
 				}
 			}

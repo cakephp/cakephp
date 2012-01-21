@@ -576,12 +576,9 @@ class AclShell extends AppShell {
 		if (is_string($aco)) {
 			$aco = $this->parseIdentifier($aco);
 		}
-		$action = null;
-		if (isset($this->args[2])) {
+		$action = '*';
+		if (isset($this->args[2]) && !in_array($this->args[2], array('', 'all'))) {
 			$action = $this->args[2];
-			if ($action == '' || $action == 'all') {
-				$action = '*';
-			}
 		}
 		return compact('aro', 'aco', 'action', 'aroName', 'acoName');
 	}
