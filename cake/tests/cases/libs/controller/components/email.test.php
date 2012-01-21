@@ -977,6 +977,11 @@ HTMLBLOC;
 		$result  = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEqual($result, $expected);
+
+		$content = 'This is a test email to: you and whomever you forward it to';
+		$result  = $this->Controller->EmailTest->strip($content, true);
+		$expected = $content;
+		$this->assertEqual($result, $expected);
 	}
 
 /**
