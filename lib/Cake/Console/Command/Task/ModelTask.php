@@ -426,6 +426,8 @@ class ModelTask extends BakeTask {
 					$guess = $methods['uuid'];
 				} elseif ($metaData['type'] == 'string') {
 					$guess = $methods['notempty'];
+				} elseif ($metaData['type'] == 'text') {
+					$guess = $methods['notempty'];
 				} elseif ($metaData['type'] == 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] == 'boolean') {
