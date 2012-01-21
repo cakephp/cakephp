@@ -2106,4 +2106,16 @@ class ModelIntegrationTest extends BaseModelTest {
 		ConnectionManager::drop('mock');
 	}
 
+/**
+ * Tests that calling schema() on a model that is not supposed to use a table
+ * does not trigger any calls on any datasource
+ *
+ * @return void
+ **/
+	public function testSchemaNoDB() {
+		$model = $this->getMock('Article', array('getDataSource'));
+		$model->useTable = false;
+		$model->expects($this->never())->method('getDataSource');
+		$this->assertEmpty($model->schema());
+	}
 }
