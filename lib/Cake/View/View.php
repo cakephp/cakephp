@@ -33,6 +33,12 @@ App::uses('CakeEventManager', 'Event');
  * and then inserted into the selected layout.  This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
+ * Since 2.1, the base View class also includes support for themes by default.  Theme views are regular
+ * view files that can provide unique HTML and static assets.  If theme views are not found for the
+ * current view the default app view files will be used.  You can set `$this->theme = 'mytheme'`
+ * in your Controller to use the Themes.
+ *
+ * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/View/Themed/SuperHot/Posts`
  *
  * @package       Cake.View
  * @property      CacheHelper $Cache
@@ -299,6 +305,9 @@ class View extends Object {
 				$this->{$var} = $controller->{$var};
 			}
 			$this->_eventManager = $controller->getEventManager();
+			if (!empty($controller->theme)) {
+				$this->theme = $controller->theme;
+			}
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
@@ -1061,6 +1070,20 @@ class View extends Object {
 		}
 
 		$paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		if (!empty($this->theme)) {
+			$themePaths = array();
+			$count = count($paths);
+			for ($i = 0; $i < $count; $i++) {
+				if (strpos($paths[$i], DS . 'Plugin' . DS) === false
+					&& strpos($paths[$i], DS . 'Cake' . DS . 'View') === false) {
+						if ($plugin) {
+							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
+						}
+						$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS;
+					}
+			}
+			$paths = array_merge($themePaths, $paths);
+		}
 		if ($plugin !== null) {
 			return $paths;
 		}
