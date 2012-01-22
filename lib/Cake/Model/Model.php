@@ -1274,7 +1274,7 @@ class Model extends Object implements CakeEventListener {
  * @return array Array of table metadata
  */
 	public function schema($field = false) {
-		if (!is_array($this->_schema) || $field === true) {
+		if ($this->useTable !== false && (!is_array($this->_schema) || $field === true)) {
 			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 			if (method_exists($db, 'describe') && $this->useTable !== false) {
