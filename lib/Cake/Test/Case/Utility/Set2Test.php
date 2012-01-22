@@ -130,6 +130,9 @@ class Set2Test extends CakeTestCase {
 		$result = Set2::get($data, '');
 		$this->assertNull($result);
 
+		$result = Set2::get($data, '0.Article.title');
+		$this->assertEquals('First Article', $result);
+
 		$result = Set2::get($data, '1.Article.title');
 		$this->assertEquals('Second Article', $result);
 
@@ -577,4 +580,51 @@ class Set2Test extends CakeTestCase {
 		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
 		$this->assertFalse(Set::numeric(array_keys($data)));
 	}
+
+/**
+ * Test simple paths.
+ *
+ * @return void
+ */
+	public function testExtractBasic() {
+		$data = self::articleData();
+
+		$result = Set2::extract($data, '');
+		$this->assertEquals($data, $result);
+
+		$result = Set2::extract($data, '0.Article.title');
+		$this->assertEquals(array('First Article'), $result);
+
+		$result = Set2::extract($data, '1.Article.title');
+		$this->assertEquals(array('Second Article'), $result);
+	}
+
+	public function testExtractNumericKey() {
+		$data = self::articleData();
+		$result = Set2::extract($data, '{n}.Article.title');
+		$expected = array(
+			'First Article', 'Second Article', 
+			'Third Article', 'Fourth Article',
+			'Fifth Article'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::extract($data, '0.Comment.{n}.user_id');
+		$expected = array(
+			'2', '4'
+		);
+		$this->assertEquals($expected, $result);
+	}
+	
+	public function testExtractStringKey() {
+		$data = self::articleData();
+		$result = Set2::extract($data, '{n}.{s}.user');
+		$expected = array(
+			'mariano', 'mariano', 
+			'mariano', 'mariano',
+			'mariano'
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 }

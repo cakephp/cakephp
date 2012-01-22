@@ -44,18 +44,109 @@ class Set2 {
 			return null;
 		}
 		$parts = explode('.', $path);
-		while ($key = array_shift($parts)) {
-			if (isset($data[$key])) {
+		while (($key = array_shift($parts)) !== null) {
+			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
 			} else {
 				return null;
 			}
+			
 		}
 		return $data;
 	}
 
+/**
+ * Gets the values from an array matching the $path expression.
+ * The path expression is a dot separated expression, that can contain a set
+ * of patterns and expressions:
+ *
+ * - `{n}` Matches any numeric key.
+ * - `{s}` Matches any string key.
+ * - `[id]` Matches elements with an `id` index.
+ * - `[id>2]` Matches elements that have an `id` index greater than 2.  Other operators 
+ *   are `>`, `<`, `<=`, `>=`, `==`, and `=//` which allows you to use regular expression matching.
+ *
+ * Given a set of User array data, from a `$User->find('all')` call:
+ *
+ * - `1.User.name` Get the name of the user at index 1.
+ * - `{n}.User.name` Get the name of every user in the set of users.
+ * - `{n}.User[id]` Get the name of every user with an id key.
+ * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
+ * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
+ *
+ * @param array $data The data to extract from.
+ * @param string $path The path to extract.
+ * @return array An array of the extracted values.  Returns an empty array 
+ *   if there are no matches.
+ */
 	public static function extract(array $data, $path) {
+		if (empty($path)) {
+			return $data;
+		}
 
+		// Simple paths.
+		if (!preg_match('/[{\[]/', $path)) {
+			return (array) self::get($data, $path);
+		}
+
+		return self::_traverse($data, $path, function ($value) {
+			return $value;
+		});
+	}
+
+/**
+ * Traverses $data for $path.  $callback is called for each terminal element.
+ * The results of all the callbacks are returned.
+ */
+	protected static function _traverse(array &$data, $path, $callback) {
+		$result = array();
+		$tokens = String::tokenize($path, '.', '{', '}');
+
+		$_key = '__set_item__';
+
+		$context = array($_key => array($data));
+
+		do  {
+			$token = array_shift($tokens);
+			$next = array();
+
+			foreach ($context[$_key] as $item) {
+				if ($token === '{n}') {
+					// any numeric key
+					foreach ($item as $k => $v) {
+						if (is_numeric($k)) {
+							$next[] = $v;
+						}
+					}
+				} elseif ($token === '{s}') {
+					// any string key
+					foreach ($item as $k => $v) {
+						if (is_string($k)) {
+							$next[] = $v;
+						}
+					}
+				} elseif (is_numeric($token)) {
+					// numeric keys like 0, 1, 2
+					foreach ($item as $k => $v) {
+						if ($k == $token) {
+							$next[] = $v;
+						}
+					}
+				} else {
+					// bare string key
+					foreach ($item as $k => $v) {
+						// index or key match.
+						if ($k === $token) {
+							$next[] = $v;
+						}
+					}
+				}
+			}
+			$context = array($_key => $next);
+
+		} while (!empty($tokens));
+
+		return array_map($callback, $context[$_key]);
 	}
 
 	public static function insert(array $data, $path, $values = null) {
