@@ -599,6 +599,11 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals(array('Second Article'), $result);
 	}
 
+/**
+ * Test the {n} selector
+ *
+ * @return void
+ */
 	public function testExtractNumericKey() {
 		$data = self::articleData();
 		$result = Set2::extract($data, '{n}.Article.title');
@@ -615,7 +620,69 @@ class Set2Test extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * Test the {n} selector with inconsistent arrays
+ *
+ * @return void
+ */
+	public function testExtractNumbericMixedKeys() {
+		$data = array(
+			'User' => array(
+				0 => array(
+					'id' => 4,
+					'name' => 'Neo'
+				),
+				1 => array(
+					'id' => 5,
+					'name' => 'Morpheus'
+				),
+				'stringKey' => array(
+					'name' => 'Fail'
+				)
+			)
+		);
+		$result = Set2::extract($data, 'User.{n}.name');
+		$expected = array('Neo', 'Morpheus');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test the {n} selector with non-zero based arrays
+ *
+ * @return void
+ */
+	public function testExtractNumericNonZero() {
+		$data = array(
+			1 => array(
+				'User' => array(
+					'id' => 1,
+					'name' => 'John',
+				)
+			),
+			2 => array(
+				'User' => array(
+					'id' => 2,
+					'name' => 'Bob',
+				)
+			),
+			3 => array(
+				'User' => array(
+					'id' => 3,
+					'name' => 'Tony',
+				)
+			)
+		);
+		$result = Set2::extract($data, '{n}.User.name');
+		$expected = array('John', 'Bob', 'Tony');
+		$this->assertEquals($expected, $result);
+	}
 	
+/**
+ * Test the {s} selector.
+ *
+ * @return void
+ */
 	public function testExtractStringKey() {
 		$data = self::articleData();
 		$result = Set2::extract($data, '{n}.{s}.user');
@@ -625,6 +692,9 @@ class Set2Test extends CakeTestCase {
 			'mariano'
 		);
 		$this->assertEquals($expected, $result);
+
+		$result = Set2::extract($data, '{n}.{s}.Nesting.test.1');
+		$this->assertEquals(array('foo'), $result);
 	}
 
 }
