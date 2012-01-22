@@ -512,4 +512,33 @@ class Set2Test extends CakeTestCase {
 		$this->assertFalse(Set2::contains($a, $b));
 	}
 
+/**
+ * testFilter method
+ *
+ * @return void
+ */
+	public function testFilter() {
+		$result = Set2::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
+		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be'));
+		$this->assertSame($expected, $result);
+
+		$result = Set2::filter(array(1, array(false)));
+		$expected = array(1);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::filter(array(1, array(false, false)));
+		$expected = array(1);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::filter(array(1, array('empty', false)));
+		$expected = array(1, array('empty'));
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::filter(array(1, array('2', false, array(3, null))));
+		$expected = array(1, array('2', 2 => array(3)));
+		$this->assertEquals($expected, $result);
+
+		$this->assertSame(array(), Set2::filter(array()));
+	}
+
 }

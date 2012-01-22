@@ -112,8 +112,33 @@ class Set2 {
 
 	}
 
+/**
+ * Recursively filters empty elements out of a route array, excluding '0'.
+ *
+ * @param array $data Either an array to filter, or value when in callback
+ * @return array Filtered array
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::filter
+ */
 	public static function filter(array $data) {
-	
+		foreach ($data as $k => $v) {
+			if (is_array($v)) {
+				$data[$k] = Set2::filter($v);
+			}
+		}
+		return array_filter($data, array('Set2', '_filter'));
+	}
+
+/**
+ * Callback function for filtering.
+ *
+ * @param array $var Array to filter.
+ * @return boolean
+ */
+	protected static function _filter($var) {
+		if ($var === 0 || $var === '0' || !empty($var)) {
+			return true;
+		}
+		return false;
 	}
 
 /**
