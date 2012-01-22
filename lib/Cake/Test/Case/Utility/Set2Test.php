@@ -541,4 +541,40 @@ class Set2Test extends CakeTestCase {
 		$this->assertSame(array(), Set2::filter(array()));
 	}
 
+/**
+ * testNumericArrayCheck method
+ *
+ * @return void
+ */
+	public function testNumeric() {
+		$data = array('one');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array(1 => 'one');
+		$this->assertFalse(Set::numeric($data));
+
+		$data = array('one');
+		$this->assertFalse(Set::numeric($data));
+
+		$data = array('one' => 'two');
+		$this->assertFalse(Set::numeric($data));
+
+		$data = array('one' => 1);
+		$this->assertTrue(Set::numeric($data));
+
+		$data = array(0);
+		$this->assertTrue(Set::numeric($data));
+
+		$data = array('one', 'two', 'three', 'four', 'five');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array(1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array('1' => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
+		$this->assertFalse(Set::numeric(array_keys($data)));
+	}
 }

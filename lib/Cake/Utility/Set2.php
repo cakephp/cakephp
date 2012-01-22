@@ -212,6 +212,22 @@ class Set2 {
 	}
 
 /**
+ * Checks to see if all the values in the array are numeric
+ *
+ * @param array $array The array to check.
+ * @return boolean true if values are numeric, false otherwise
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
+ */
+	public static function numeric(array $data) {
+		if (empty($data)) {
+			return false;
+		}
+		$values = array_values($data);
+		$str = implode('', $values);
+		return (bool) ctype_digit($str);
+	}
+
+/**
  * Counts the dimensions of an array. 
  * Only considers the dimension of the first element in the array.
  *
