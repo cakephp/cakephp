@@ -481,8 +481,8 @@ class Set2Test extends CakeTestCase {
  */
 	public function testContains() {
 		$data = array('apple', 'bee', 'cyclops');
-		// $this->assertTrue(Set2::contains($data, array('apple')));
-		// $this->assertFalse(Set2::contains($data, array('data')));
+		$this->assertTrue(Set2::contains($data, array('apple')));
+		$this->assertFalse(Set2::contains($data, array('data')));
 
 		$a = array(
 			0 => array('name' => 'main'),
@@ -498,6 +498,18 @@ class Set2Test extends CakeTestCase {
 		$this->assertTrue(Set2::contains($a, $a));
 		$this->assertFalse(Set2::contains($a, $b));
 		$this->assertTrue(Set2::contains($b, $a));
+
+		$a = array(
+			array('User' => array('id' => 1)),
+			array('User' => array('id' => 2)),
+		);
+		$b = array(
+			array('User' => array('id' => 1)),
+			array('User' => array('id' => 2)),
+			array('User' => array('id' => 3))
+		);
+		$this->assertTrue(Set2::contains($b, $a));
+		$this->assertFalse(Set2::contains($a, $b));
 	}
 
 }

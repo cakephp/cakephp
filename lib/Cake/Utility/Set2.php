@@ -82,14 +82,27 @@ class Set2 {
 		if (empty($data) || empty($needle)) {
 			return false;
 		}
+		$stack = array();
 
-		foreach ($needle as $key => $val) {
+		$i = 1;
+		while (!empty($needle)) {
+			$key = key($needle);
+			$val = $needle[$key];
+			unset($needle[$key]);
+
 			if (isset($data[$key]) && is_array($val)) {
-				if (!Set2::contains($data[$key], $val)) {
-					return false;
+				$next = $data[$key];
+				unset($data[$key]);
+
+				if (!empty($val)) {
+					$stack[] = array($val, $next);
 				}
 			} elseif (!isset($data[$key]) || $data[$key] != $val) {
 				return false;
+			}
+
+			if (empty($needle) && !empty($stack)) {
+				list($needle, $data) = array_pop($stack);
 			}
 		}
 		return true;
