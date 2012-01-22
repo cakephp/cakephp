@@ -54,7 +54,7 @@ class Set2Test extends CakeTestCase {
 			),
 			array(
 				'Article' => array(
-					'id' => '3',
+					'id' => '2',
 					'user_id' => '1',
 					'title' => 'Second Article',
 					'body' => 'Second Article Body',
@@ -695,6 +695,46 @@ class Set2Test extends CakeTestCase {
 
 		$result = Set2::extract($data, '{n}.{s}.Nesting.test.1');
 		$this->assertEquals(array('foo'), $result);
+	}
+
+/**
+ * Test the attribute presense selector.
+ *
+ * @return void
+ */
+	public function testExtractAttributePresence() {
+		$data = self::articleData();
+
+		$result = Set2::extract($data, '{n}.Article[published]');
+		$expected = array($data['1']['Article']);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::extract($data, '{n}.Article[id][published]');
+		$expected = array($data['1']['Article']);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test = and != operators.
+ *
+ * @return void
+ */
+	public function testExtractAttributeEquality() {
+		$data = self::articleData();
+
+		$result = Set2::extract($data, '{n}.Article[id=3]');
+		$expected = array($data[2]['Article']);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::extract($data, '{n}.Article[id = 3]');
+		$expected = array($data[2]['Article']);
+		$this->assertEquals($expected, $result, 'Whitespace should not matter.');
+
+		$result = Set2::extract($data, '{n}.Article[id!=3]');
+		$this->assertEquals(1, $result[0]['id']);
+		$this->assertEquals(2, $result[1]['id']);
+		$this->assertEquals(4, $result[2]['id']);
+		$this->assertEquals(5, $result[3]['id']);
 	}
 
 }

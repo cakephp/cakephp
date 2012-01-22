@@ -63,8 +63,13 @@ class Set2 {
  * - `{n}` Matches any numeric key.
  * - `{s}` Matches any string key.
  * - `[id]` Matches elements with an `id` index.
- * - `[id>2]` Matches elements that have an `id` index greater than 2.  Other operators 
- *   are `>`, `<`, `<=`, `>=`, `==`, and `=//` which allows you to use regular expression matching.
+ * - `[id>2]` Matches elements that have an `id` index greater than 2.  
+ *
+ * There are a number of attribute operators:
+ *
+ *  - `=`, `!=` Equality.
+ *  - `>`, `<`, `>=`, `<=` Value comparison.
+ *  - `=/.../` Regular expression pattern match.
  *
  * Given a set of User array data, from a `$User->find('all')` call:
  *
@@ -72,7 +77,7 @@ class Set2 {
  * - `{n}.User.name` Get the name of every user in the set of users.
  * - `{n}.User[id]` Get the name of every user with an id key.
  * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
- * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
+ * - `{n}.User[username=/^paul/]` Get User elements with username containing `^paul`.
  *
  * @param array $data The data to extract from.
  * @param string $path The path to extract.
@@ -97,10 +102,20 @@ class Set2 {
 /**
  * Traverses $data for $path.  $callback is called for each terminal element.
  * The results of all the callbacks are returned.
+ *
+ * @param array $data The data to traverse.
+ * @param string $path The set path to walk.
+ * @param callable $callback to call on the result set.
+ * @return array Results of the callback mapped over the leaf nodes of the path expression.
  */
 	protected static function _traverse(array &$data, $path, $callback) {
 		$result = array();
-		$tokens = String::tokenize($path, '.', '{', '}');
+
+		if (strpos('[', $path) === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
 
 		$_key = '__set_item__';
 
@@ -132,11 +147,18 @@ class Set2 {
 							$next[] = $v;
 						}
 					}
-				} else {
+				} elseif (strpos($token, '[') === false) {
 					// bare string key
 					foreach ($item as $k => $v) {
 						// index or key match.
 						if ($k === $token) {
+							$next[] = $v;
+						}
+					}
+				} else {
+					// attributes
+					foreach ($item as $k => $v) {
+						if (self::_matches(array($k => $v), $token)) {
 							$next[] = $v;
 						}
 					}
@@ -147,6 +169,51 @@ class Set2 {
 		} while (!empty($tokens));
 
 		return array_map($callback, $context[$_key]);
+	}
+
+/**
+ * Checks whether or not $data matches the selector
+ *
+ * @param array $data Array of data to match.
+ * @param string $selector The selector to match.
+ * @return boolean Fitness of expression.
+ */ 
+	protected static function _matches(array $data, $selector) {
+		preg_match_all(
+			'/(?<key>[^\[]+?)? (\[ (?<attr>.+?) (?: \s* (?<op>[><!]?[=]) \s* (?<val>.*) )? \])+/x',
+			$selector,
+			$conditions,
+			PREG_SET_ORDER
+		);
+
+		foreach ($conditions as $cond) {
+			$key = $cond['key'];
+			$attr = $cond['attr'];
+			$op = isset($cond['op']) ? $cond['op'] : null;
+			$val = isset($cond['val']) ? $cond['val'] : null;
+
+			if ($key && !isset($data[$key])) {
+				return false;
+			}
+
+			// Presence test.
+			if (empty($op) && empty($val)) {
+				return isset($data[$key][$attr]);
+			}
+
+			// Empty attribute = fail.
+			if (!isset($data[$key][$attr])) {
+				return false;
+			}
+			$prop = $data[$key][$attr];
+
+			if ($op === '=') {
+				return $prop == $val;
+			} elseif ($op === '!=') {
+				return $prop != $val;
+			}
+		}
+		return false;
 	}
 
 	public static function insert(array $data, $path, $values = null) {
