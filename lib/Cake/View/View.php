@@ -157,7 +157,7 @@ class View extends Object {
 	public $subDir = null;
 
 /**
- * Theme name.  If you are using themes, you should remember to use ThemeView as well.
+ * Theme name.
  *
  * @var string
  */
@@ -217,7 +217,7 @@ class View extends Object {
  * @var array
  */
 	protected $_passedVars = array(
-		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name',
+		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name', 'theme',
 		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
@@ -305,9 +305,6 @@ class View extends Object {
 				$this->{$var} = $controller->{$var};
 			}
 			$this->_eventManager = $controller->getEventManager();
-			if (!empty($controller->theme)) {
-				$this->theme = $controller->theme;
-			}
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
