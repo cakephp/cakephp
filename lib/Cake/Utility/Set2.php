@@ -158,6 +158,7 @@ class Set2 {
 				} else {
 					// attributes
 					foreach ($item as $k => $v) {
+						debug(array($k => $v));
 						if (self::_matches(array($k => $v), $token)) {
 							$next[] = $v;
 						}
@@ -211,6 +212,14 @@ class Set2 {
 				return $prop == $val;
 			} elseif ($op === '!=') {
 				return $prop != $val;
+			} elseif ($op === '>') {
+				return $prop > $val;
+			} elseif ($op === '<') {
+				return $prop < $val;
+			} elseif ($op === '>=') {
+				return $prop >= $val;
+			} elseif ($op === '<=') {
+				return $prop <= $val;
 			}
 		}
 		return false;

@@ -737,4 +737,16 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals(5, $result[3]['id']);
 	}
 
+/**
+ * Test comparison operators.
+ *
+ * @return void
+ */
+	public function testExtractAttributeComparison() {
+		$data = self::articleData();
+
+		$result = Set2::extract($data, '{n}.Comment.{n}.[user_id > 2]');
+		$this->assertEquals($data[0]['Comment'][1], $result);
+	}
+
 }
