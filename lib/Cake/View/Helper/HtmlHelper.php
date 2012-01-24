@@ -459,7 +459,7 @@ class HtmlHelper extends AppHelper {
  *
  * Add the script file to the `$scripts_for_layout` layout var:
  *
- * `$this->Html->script('styles.js', null, array('inline' => false));`
+ * `$this->Html->script('styles.js', array('inline' => false));`
  *
  * ### Options
  *
