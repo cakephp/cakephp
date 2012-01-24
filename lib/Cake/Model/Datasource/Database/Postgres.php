@@ -705,21 +705,21 @@ class Postgres extends DboSource {
  */
 	public function fetchResult() {
 		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
-			$resultRow = array();
+			$resultRow = new Record;
 
 			foreach ($this->map as $index => $meta) {
 				list($table, $column, $type) = $meta;
-
+				$resultRow->setModelName($table);
 				switch ($type) {
 					case 'bool':
-						$resultRow[$table][$column] = is_null($row[$index]) ? null : $this->boolean($row[$index]);
+						$resultRow->{$column} = is_null($row[$index]) ? null : $this->boolean($row[$index]);
 					break;
 					case 'binary':
 					case 'bytea':
-						$resultRow[$table][$column] = stream_get_contents($row[$index]);
+						$resultRow->{$column} = stream_get_contents($row[$index]);
 					break;
 					default:
-						$resultRow[$table][$column] = $row[$index];
+						$resultRow->{$column} = $row[$index];
 					break;
 				}
 			}
