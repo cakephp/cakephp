@@ -706,11 +706,11 @@ class Set2Test extends CakeTestCase {
 		$data = self::articleData();
 
 		$result = Set2::extract($data, '{n}.Article[published]');
-		$expected = array($data['1']['Article']);
+		$expected = array($data[1]['Article']);
 		$this->assertEquals($expected, $result);
 
 		$result = Set2::extract($data, '{n}.Article[id][published]');
-		$expected = array($data['1']['Article']);
+		$expected = array($data[1]['Article']);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -764,6 +764,23 @@ class Set2Test extends CakeTestCase {
 		$expected = array($data[0]['Comment'][0]);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals(2, $expected[0]['user_id']);
+	}
+
+/**
+ * Test multiple attributes with conditions.
+ *
+ * @return void
+ */
+	public function testExtractAttributeMultiple() {
+		$data = self::articleData();
+
+		$result = Set2::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
+		$this->assertEmpty($result);
+
+		$result = Set2::extract($data, '{n}.Comment.{n}[user_id > 2][id=2]');
+		$expected = array($data[0]['Comment'][1]);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals(4, $expected[0]['user_id']);
 	}
 
 }

@@ -193,43 +193,49 @@ class Set2 {
  */ 
 	protected static function _matches(array $data, $selector) {
 		preg_match_all(
-			'/(\[ (?<attr>.+?) (?: \s* (?<op>(?:[><!]?[=]|[><])) \s* (?<val>.*) )? \])+/x',
+			'/(\[ (?<attr>[^=><!]+?) (\s* (?<op>[><!]?[=]|[><]) \s* (?<val>[^\]]+) )? \])/x',
 			$selector,
 			$conditions,
 			PREG_SET_ORDER
 		);
 
-		foreach ($conditions as $cond) {
+		$ok = true;
+		while ($ok) {
+			if (empty($conditions)) {
+				break;
+			}
+			$cond = array_shift($conditions);
 			$attr = $cond['attr'];
 			$op = isset($cond['op']) ? $cond['op'] : null;
 			$val = isset($cond['val']) ? $cond['val'] : null;
 
 			// Presence test.
-			if (empty($op) && empty($val)) {
-				return isset($data[$attr]);
+			if (empty($op) && empty($val) && !isset($data[$attr])) {
+				$ok = false;
 			}
 
 			// Empty attribute = fail.
 			if (!isset($data[$attr])) {
+				$ok = false;
+			}
+
+			$prop = isset($data[$attr]) ? $data[$attr] : null;
+
+			if (
+				($op === '=' && $prop != $val) ||
+				($op === '!=' && $prop == $val) ||
+				($op === '>' && $prop <= $val) ||
+				($op === '<' && $prop >= $val) ||
+				($op === '>=' && $prop < $val) ||
+				($op === '<=' && $prop > $val)
+			) {
+				$ok = false;
+			}
+			if (!$ok) {
 				return false;
 			}
-			$prop = $data[$attr];
-
-			if ($op === '=') {
-				return $prop == $val;
-			} elseif ($op === '!=') {
-				return $prop != $val;
-			} elseif ($op === '>') {
-				return $prop > $val;
-			} elseif ($op === '<') {
-				return $prop < $val;
-			} elseif ($op === '>=') {
-				return $prop >= $val;
-			} elseif ($op === '<=') {
-				return $prop <= $val;
-			}
 		}
-		return false;
+		return true;
 	}
 
 	public static function insert(array $data, $path, $values = null) {
