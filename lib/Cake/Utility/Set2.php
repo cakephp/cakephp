@@ -125,6 +125,13 @@ class Set2 {
 			$token = array_shift($tokens);
 			$next = array();
 
+			$conditions = false;
+			$position = strpos($token, '[');
+			if ($position !== false) {
+				$conditions = substr($token, $position);
+				$token = substr($token, 0, $position);
+			}
+
 			foreach ($context[$_key] as $item) {
 				if ($token === '{n}') {
 					// any numeric key
@@ -147,7 +154,7 @@ class Set2 {
 							$next[] = $v;
 						}
 					}
-				} elseif (strpos($token, '[') === false) {
+				} else {
 					// bare string key
 					foreach ($item as $k => $v) {
 						// index or key match.
@@ -155,16 +162,21 @@ class Set2 {
 							$next[] = $v;
 						}
 					}
-				} else {
-					// attributes
-					foreach ($item as $k => $v) {
-						debug(array($k => $v));
-						if (self::_matches(array($k => $v), $token)) {
-							$next[] = $v;
-						}
+				}
+
+			}
+	
+			// Filter for attributes.
+			if ($conditions) {
+				$filter = array();
+				foreach ($next as $item) {
+					if (self::_matches($item, $conditions)) {
+						$filter[] = $item;
 					}
 				}
+				$next = $filter;
 			}
+
 			$context = array($_key => $next);
 
 		} while (!empty($tokens));
@@ -181,32 +193,27 @@ class Set2 {
  */ 
 	protected static function _matches(array $data, $selector) {
 		preg_match_all(
-			'/(?<key>[^\[]+?)? (\[ (?<attr>.+?) (?: \s* (?<op>[><!]?[=]) \s* (?<val>.*) )? \])+/x',
+			'/(\[ (?<attr>.+?) (?: \s* (?<op>(?:[><!]?[=]|[><])) \s* (?<val>.*) )? \])+/x',
 			$selector,
 			$conditions,
 			PREG_SET_ORDER
 		);
 
 		foreach ($conditions as $cond) {
-			$key = $cond['key'];
 			$attr = $cond['attr'];
 			$op = isset($cond['op']) ? $cond['op'] : null;
 			$val = isset($cond['val']) ? $cond['val'] : null;
 
-			if ($key && !isset($data[$key])) {
-				return false;
-			}
-
 			// Presence test.
 			if (empty($op) && empty($val)) {
-				return isset($data[$key][$attr]);
+				return isset($data[$attr]);
 			}
 
 			// Empty attribute = fail.
-			if (!isset($data[$key][$attr])) {
+			if (!isset($data[$attr])) {
 				return false;
 			}
-			$prop = $data[$key][$attr];
+			$prop = $data[$attr];
 
 			if ($op === '=') {
 				return $prop == $val;

@@ -745,8 +745,25 @@ class Set2Test extends CakeTestCase {
 	public function testExtractAttributeComparison() {
 		$data = self::articleData();
 
-		$result = Set2::extract($data, '{n}.Comment.{n}.[user_id > 2]');
-		$this->assertEquals($data[0]['Comment'][1], $result);
+		$result = Set2::extract($data, '{n}.Comment.{n}[user_id > 2]');
+		$expected = array($data[0]['Comment'][1]);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals(4, $expected[0]['user_id']);
+
+		$result = Set2::extract($data, '{n}.Comment.{n}[user_id >= 4]');
+		$expected = array($data[0]['Comment'][1]);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals(4, $expected[0]['user_id']);
+
+		$result = Set2::extract($data, '{n}.Comment.{n}[user_id < 3]');
+		$expected = array($data[0]['Comment'][0]);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals(2, $expected[0]['user_id']);
+
+		$result = Set2::extract($data, '{n}.Comment.{n}[user_id <= 2]');
+		$expected = array($data[0]['Comment'][0]);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals(2, $expected[0]['user_id']);
 	}
 
 }
