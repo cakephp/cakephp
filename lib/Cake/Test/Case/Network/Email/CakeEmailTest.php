@@ -865,7 +865,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
-			"--$boundary\r\n" .
+			"--rel-$boundary\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .

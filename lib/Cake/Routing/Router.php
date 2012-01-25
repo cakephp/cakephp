@@ -233,7 +233,11 @@ class Router {
 	public static function connect($route, $defaults = array(), $options = array()) {
 		foreach (self::$_prefixes as $prefix) {
 			if (isset($defaults[$prefix])) {
-				$defaults['prefix'] = $prefix;
+				if ($defaults[$prefix]) {
+					$defaults['prefix'] = $prefix;
+				} else {
+					unset($defaults[$prefix]);
+				}
 				break;
 			}
 		}

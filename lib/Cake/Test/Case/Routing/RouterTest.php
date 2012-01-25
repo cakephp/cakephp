@@ -1699,6 +1699,27 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * Test that setting a prefix to false is ignored, as its generally user error.
+ *
+ * @return void
+ */
+	public function testPrefixFalseIgnored() {
+		Configure::write('Routing.prefixes', array('admin'));
+		Router::connect('/cache_css/*', array('admin' => false, 'controller' => 'asset_compress', 'action' => 'get'));
+
+		$url = Router::url(array('controller' => 'asset_compress', 'action' => 'get', 'test'));
+		$expected = '/cache_css/test';
+		$this->assertEquals($expected, $url);
+
+		$url = Router::url(array('admin' => false, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
+		$expected = '/cache_css/test';
+		$this->assertEquals($expected, $url);
+
+		$url = Router::url(array('admin' => true, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
+		$this->assertEquals('/admin/asset_compress/get/test', $url);
+	}
+
+/**
  * testRemoveBase method
  *
  * @return void
@@ -2474,5 +2495,4 @@ class RouterTest extends CakeTestCase {
 		Router::parse('/not-a-match');
 		$this->assertEquals(Router::$routes[0]->response->header(), array());
 	}
-
 }

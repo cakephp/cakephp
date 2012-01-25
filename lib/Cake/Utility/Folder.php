@@ -154,7 +154,7 @@ class Folder {
 
 		try {
 			$iterator = new DirectoryIterator($this->path);
-		} catch (UnexpectedValueException $e) {
+		} catch (Exception $e) {
 			return array($dirs, $files);
 		}
 
@@ -423,9 +423,9 @@ class Folder {
 		}
 
 		try {
-			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF | RecursiveDirectoryIterator::SKIP_DOTS);
+			$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF);
 			$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
-		} catch (UnexpectedValueException $e) {
+		} catch (Exception $e) {
 			if ($type === null) {
 				return array(array(), array());
 			}
@@ -446,7 +446,7 @@ class Folder {
 
 			if ($item->isFile()) {
 				$files[] = $itemPath;
-			} elseif ($item->isDir()) {
+			} elseif ($item->isDir() && !$item->isDot()) {
 				$directories[] = $itemPath;
 			}
 		}

@@ -59,6 +59,24 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Test that count queries with conditions get the correct joins
+ *
+ * @return void
+ */
+	function testCountWithConditions() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$Model =& new TranslatedItem();
+		$Model->locale = 'eng';
+		$result = $Model->find('count', array(
+			'conditions' => array(
+				'I18n__content.locale' => 'eng'
+			)
+		));
+		$this->assertEqual(3, $result);
+	}
+
+/**
  * testTranslateModel method
  *
  * @return void
@@ -867,5 +885,17 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$result = $TestModel->unbindTranslation();
 
 		$this->assertFalse($result);
+	}
+
+/**
+ * Test that an exception is raised when you try to over-write the name attribute.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testExceptionOnNameTranslation() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+		$TestModel = new TranslatedItem();
+		$TestModel->bindTranslation(array('name' => 'name'));
 	}
 }

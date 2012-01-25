@@ -1521,6 +1521,10 @@ class HtmlHelperTest extends CakeTestCase {
 		}
 		$this->assertEquals($helper->parseAttributes(array('compact')), ' compact="compact"');
 
+		$attrs = array('class' => array('foo', 'bar'));
+		$expected = ' class="foo bar"';
+		$this->assertEquals(' class="foo bar"', $helper->parseAttributes($attrs));
+
 		$helper = new Html5TestHelper($this->View);
 		$expected = ' require';
 		$this->assertEquals($helper->parseAttributes(array('require')), $expected);

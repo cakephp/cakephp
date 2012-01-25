@@ -208,11 +208,11 @@ class ModelIntegrationTest extends BaseModelTest {
 	public function testDynamicBehaviorAttachment() {
 		$this->loadFixtures('Apple', 'Sample', 'Author');
 		$TestModel = new Apple();
-		$this->assertEquals($TestModel->Behaviors->attached(), array());
+		$this->assertEquals(array(), $TestModel->Behaviors->attached());
 
 		$TestModel->Behaviors->attach('Tree', array('left' => 'left_field', 'right' => 'right_field'));
 		$this->assertTrue(is_object($TestModel->Behaviors->Tree));
-		$this->assertEquals($TestModel->Behaviors->attached(), array('Tree'));
+		$this->assertEquals(array('Tree'), $TestModel->Behaviors->attached());
 
 		$expected = array(
 			'parent' => 'parent_id',
@@ -223,16 +223,14 @@ class ModelIntegrationTest extends BaseModelTest {
 			'__parentChange' => false,
 			'recursive' => -1
 		);
+		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
 
-		$this->assertEquals($TestModel->Behaviors->Tree->settings['Apple'], $expected);
-
-		$expected['enabled'] = false;
 		$TestModel->Behaviors->attach('Tree', array('enabled' => false));
-		$this->assertEquals($TestModel->Behaviors->Tree->settings['Apple'], $expected);
-		$this->assertEquals($TestModel->Behaviors->attached(), array('Tree'));
+		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
+		$this->assertEquals(array('Tree'), $TestModel->Behaviors->attached());
 
 		$TestModel->Behaviors->detach('Tree');
-		$this->assertEquals($TestModel->Behaviors->attached(), array());
+		$this->assertEquals(array(), $TestModel->Behaviors->attached());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
 
@@ -2108,4 +2106,16 @@ class ModelIntegrationTest extends BaseModelTest {
 		ConnectionManager::drop('mock');
 	}
 
+/**
+ * Tests that calling schema() on a model that is not supposed to use a table
+ * does not trigger any calls on any datasource
+ *
+ * @return void
+ **/
+	public function testSchemaNoDB() {
+		$model = $this->getMock('Article', array('getDataSource'));
+		$model->useTable = false;
+		$model->expects($this->never())->method('getDataSource');
+		$this->assertEmpty($model->schema());
+	}
 }

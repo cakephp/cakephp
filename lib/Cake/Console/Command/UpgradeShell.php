@@ -169,7 +169,10 @@ class UpgradeShell extends AppShell {
 				}
 			}
 		}
+	
 		$this->_moveViewFiles();
+		$this->_moveAppClasses();
+
 		$sourceDirs = array(
 			'.' => array('recursive' => false),
 			'Console',
@@ -588,6 +591,35 @@ class UpgradeShell extends AppShell {
 				} else {
 					$Folder = new Folder($old);
 					$Folder->move($new);
+				}
+			}
+		}
+	}
+
+/**
+ * Move the AppController, and AppModel classes.
+ *
+ * @return void
+ */
+	protected function _moveAppClasses() {
+		$files = array(
+			APP . 'app_controller.php' => APP . 'Controller' . DS . 'AppController.php',
+			APP . 'controllers' . DS .'app_controller.php' => APP . 'Controller' . DS . 'AppController.php',
+			APP . 'app_model.php' => APP . 'Model' . DS . 'AppModel.php',
+			APP . 'models' . DS . 'app_model.php' => APP . 'Model' . DS . 'AppModel.php',
+		);
+		foreach ($files as $old => $new) {
+			if (file_exists($old)) {
+				$this->out(__d('cake_console', 'Moving %s to %s', $old, $new));
+
+				if ($this->params['dry-run']) {
+					continue;
+				}
+				if ($this->params['git']) {
+					exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($old . '__'));
+					exec('git mv -f ' . escapeshellarg($old . '__') . ' ' . escapeshellarg($new));
+				} else {
+					rename($old, $new);
 				}
 			}
 		}

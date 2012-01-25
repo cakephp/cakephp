@@ -877,7 +877,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testAutomaticPluginDispatch() {
 		$_POST = array();
-		$_SERVER['SCRIPT_NAME'] = '/cake/repo/branches/1.2.x.x/index.php';
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$Dispatcher = new TestDispatcher();
