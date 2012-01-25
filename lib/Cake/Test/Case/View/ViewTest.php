@@ -1392,7 +1392,6 @@ TEXT;
 		$this->View->render('extend_loop');
 	}
 
-
 /**
  * Test extend() in an element and a view.
  *
@@ -1409,6 +1408,17 @@ Element content.
 
 TEXT;
 		$this->assertEquals($expected, $content);
+	}
+
+/**
+ * Extending an element which doesn't exist should throw a missing view exception
+ *
+ * @expectedException LogicException
+ * @return void
+ */
+	public function testExtendMissingElement() {
+		$this->View->layout = false;
+		$this->View->render('extend_missing_element');
 	}
 
 /**
