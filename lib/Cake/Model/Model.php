@@ -1488,7 +1488,7 @@ class Model extends Object {
  * @param array $validate See $options param in Model::save(). Does not respect 'fieldList' key if passed
  * @return boolean See Model::save()
  * @see Model::save()
- * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-read
+ * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-savefield-string-fieldname-string-fieldvalue-validate-false
  */
 	public function saveField($name, $value, $validate = false) {
 		$id = $this->id;
