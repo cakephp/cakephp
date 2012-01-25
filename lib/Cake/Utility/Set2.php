@@ -163,7 +163,6 @@ class Set2 {
 						}
 					}
 				}
-
 			}
 	
 			// Filter for attributes.
@@ -211,17 +210,22 @@ class Set2 {
 
 			// Presence test.
 			if (empty($op) && empty($val) && !isset($data[$attr])) {
-				$ok = false;
+				return false;
 			}
 
 			// Empty attribute = fail.
 			if (!isset($data[$attr])) {
-				$ok = false;
+				return false;
 			}
 
 			$prop = isset($data[$attr]) ? $data[$attr] : null;
 
-			if (
+			// Pattern matches and other operators.
+			if ($op === '=' && $val && $val[0] === '/') {
+				if (!preg_match($val, $prop)) {
+					return false;
+				}
+			} elseif (
 				($op === '=' && $prop != $val) ||
 				($op === '!=' && $prop == $val) ||
 				($op === '>' && $prop <= $val) ||
@@ -229,11 +233,9 @@ class Set2 {
 				($op === '>=' && $prop < $val) ||
 				($op === '<=' && $prop > $val)
 			) {
-				$ok = false;
-			}
-			if (!$ok) {
 				return false;
 			}
+
 		}
 		return true;
 	}

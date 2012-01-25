@@ -783,4 +783,17 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals(4, $expected[0]['user_id']);
 	}
 
+/**
+ * Test attribute pattern matching.
+ *
+ * @return void
+ */
+	public function testExtractAttributePattern() {
+		$data = self::articleData();
+
+		$result = Set2::extract($data, '{n}.Article[title=/^First/]');
+		$expected = array($data[0]['Article']);
+		$this->assertEquals($expected, $result);
+	}
+
 }
