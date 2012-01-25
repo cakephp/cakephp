@@ -329,9 +329,7 @@ object(View) {
 	float => (float) 1.333
 }
 TEXT;
-		$result = str_replace(array("\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 
 		$data = array(
 			1 => 'Index one',
@@ -344,7 +342,7 @@ array(
 	(int) 5 => 'Index five'
 )
 TEXT;
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -404,9 +402,7 @@ TEXT;
 	)
 )</pre>
 TEXT;
-		$result = str_replace(array("\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
