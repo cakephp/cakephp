@@ -611,11 +611,25 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
+		$TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
 
 		$TestModel->id = 1;
 		$result = $TestModel->saveField('title', '', true);
 		$this->assertFalse($result);
+
+
+		$TestModel->recursive = -1;
+		$TestModel->id = 1;
+		$result = $TestModel->saveField('user_id', 9999);
+		$this->assertTrue((bool)$result);
+
+		$result = $TestModel->read(array('id', 'user_id'), 1);
+		$expected = array('Article' => array(
+			'id' => '1',
+			'user_id' => '9999',
+		));
+		$this->assertEquals($expected, $result);
+
 
 		$this->loadFixtures('Node', 'Dependency');
 		$Node = new Node();
