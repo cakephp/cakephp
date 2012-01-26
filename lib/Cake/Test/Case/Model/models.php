@@ -2461,6 +2461,87 @@ class UuidTree extends NumberTree {
 	public $name = 'UuidTree';
 }
 
+class NumberMultiTree extends NumberTree {
+
+/**
+ * name property
+ *
+ * @var string 'NumberMultiTree'
+ */
+	public $name = 'NumberMultiTree';
+
+/**
+ * actsAs property
+ *
+ * @var array
+ */
+	public $actsAs = array(
+		'Tree' => array(
+			'multiTree' => true,
+			'scope' => 'User'
+		)
+	);
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('User');
+
+/**
+ * initialize method
+ *
+ * @param int $levelLimit
+ * @param int $childLimit
+ * @param mixed $currentLevel
+ * @param mixed $parent_id
+ * @param string $prefix
+ * @param bool $hierachial
+ * @param int $trees
+ * @return void
+ */
+	public function initialize($tree_ids = array(1), $levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
+		$db->truncate($this->table);
+		foreach ($tree_ids as $tree_id) {
+			$this->buildTree($tree_id, $levelLimit, $childLimit, $currentLevel, $parent_id, $tree_id . '-' . $prefix, true, $tree_id);
+		}
+	}
+
+	private function buildTree($tree_id, $levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
+		if (!$parent_id) {
+			$data = array($this->name => array('name' => $prefix . '. Root'));
+			$data[$this->name]['user_id'] = $tree_id;
+			$this->save($data);
+			$this->buildTree($tree_id, $levelLimit, $childLimit, 1, $this->id, $prefix, $hierachial);
+			$this->create(array());
+		}
+		if (!$currentLevel || $currentLevel > $levelLimit) {
+			return;
+		}
+
+		for ($i = 1; $i <= $childLimit; $i++) {
+			$name = $prefix . '.' . $i;
+			$data = array($this->name => array('name' => $name));
+			$this->create($data);
+
+			if ($hierachial) {
+				if ($this->name == 'UnconventionalTree') {
+					$data[$this->name]['join'] = $parent_id;
+				} else {
+					$data[$this->name]['parent_id'] = $parent_id;
+				}
+			}
+			$data[$this->name]['user_id'] = $tree_id;
+
+			$this->save($data);
+			$this->buildTree($tree_id, $levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierachial);
+		}
+	}
+
+}
+
 /**
  * Campaign class
  *
