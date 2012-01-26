@@ -739,8 +739,9 @@ class HtmlHelper extends AppHelper {
 
 /**
  * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be
- * generated with the link pointed at `$options['url']`.  This method will set an empty
- * alt attribute if one is not supplied.
+ * generated with the link pointed at `$options['url']`. If `$options['fullBase']` is provided,
+ * the src attribute will receive full address (non-relative url) of the image file.
+ * This method will set an empty alt attribute if one is not supplied.
  *
  * ### Usage
  *
@@ -765,6 +766,11 @@ class HtmlHelper extends AppHelper {
 				$path = IMAGES_URL . $path;
 			}
 			$path = $this->assetTimestamp($this->webroot($path));
+		}
+		
+		if (!empty($options['fullBase'])) {
+			$path = $this->url('/', true) . $path;
+			unset($options['fullBase']);
 		}
 
 		if (!isset($options['alt'])) {
