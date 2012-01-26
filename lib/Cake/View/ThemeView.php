@@ -27,5 +27,5 @@ App::uses('View', 'View');
  * @package       Cake.View
  */
 class ThemeView extends View {
-	
+
 }

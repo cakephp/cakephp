@@ -277,6 +277,14 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array('CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>');
 		$this->assertSame($expected, $result);
 
+		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last, First'));
+		$expected = array('"Last, First" <me@example.com>');
+		$this->assertSame($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last First'));
+		$expected = array('Last First <me@example.com>');
+		$this->assertSame($expected, $result);
+
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'ÄÖÜTest'));
 		$expected = array('=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>');
 		$this->assertSame($expected, $result);

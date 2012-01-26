@@ -24,62 +24,62 @@ require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
  */
 class ModelWriteTest extends BaseModelTest {
 
-	/**
-	 * testInsertAnotherHabtmRecordWithSameForeignKey method
-	 *
-	 * @access public
-	 * @return void
-	 */
-		public function testInsertAnotherHabtmRecordWithSameForeignKey() {
-			$this->loadFixtures('JoinA', 'JoinB', 'JoinAB', 'JoinC', 'JoinAC');
-			$TestModel = new JoinA();
+/**
+ * testInsertAnotherHabtmRecordWithSameForeignKey method
+ *
+ * @access public
+ * @return void
+ */
+	public function testInsertAnotherHabtmRecordWithSameForeignKey() {
+		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB', 'JoinC', 'JoinAC');
+		$TestModel = new JoinA();
 
-			$result = $TestModel->JoinAsJoinB->findById(1);
-			$expected = array(
-				'JoinAsJoinB' => array(
-					'id' => 1,
-					'join_a_id' => 1,
-					'join_b_id' => 2,
-					'other' => 'Data for Join A 1 Join B 2',
-					'created' => '2008-01-03 10:56:33',
-					'updated' => '2008-01-03 10:56:33'
-			));
-			$this->assertEquals($expected, $result);
-
-			$TestModel->JoinAsJoinB->create();
-			$data = array(
+		$result = $TestModel->JoinAsJoinB->findById(1);
+		$expected = array(
+			'JoinAsJoinB' => array(
+				'id' => 1,
 				'join_a_id' => 1,
-				'join_b_id' => 1,
-				'other' => 'Data for Join A 1 Join B 1',
-				'created' => '2008-01-03 10:56:44',
-				'updated' => '2008-01-03 10:56:44'
-			);
-			$result = $TestModel->JoinAsJoinB->save($data);
-			$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
-			$data['id'] = $lastInsertId;
-			$this->assertEquals($result, array('JoinAsJoinB' => $data));
-			$this->assertTrue($lastInsertId != null);
+				'join_b_id' => 2,
+				'other' => 'Data for Join A 1 Join B 2',
+				'created' => '2008-01-03 10:56:33',
+				'updated' => '2008-01-03 10:56:33'
+		));
+		$this->assertEquals($expected, $result);
 
-			$result = $TestModel->JoinAsJoinB->findById(1);
-			$expected = array(
-				'JoinAsJoinB' => array(
-					'id' => 1,
-					'join_a_id' => 1,
-					'join_b_id' => 2,
-					'other' => 'Data for Join A 1 Join B 2',
-					'created' => '2008-01-03 10:56:33',
-					'updated' => '2008-01-03 10:56:33'
-			));
-			$this->assertEquals($expected, $result);
+		$TestModel->JoinAsJoinB->create();
+		$data = array(
+			'join_a_id' => 1,
+			'join_b_id' => 1,
+			'other' => 'Data for Join A 1 Join B 1',
+			'created' => '2008-01-03 10:56:44',
+			'updated' => '2008-01-03 10:56:44'
+		);
+		$result = $TestModel->JoinAsJoinB->save($data);
+		$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
+		$data['id'] = $lastInsertId;
+		$this->assertEquals($result, array('JoinAsJoinB' => $data));
+		$this->assertTrue($lastInsertId != null);
 
-			$updatedValue = 'UPDATED Data for Join A 1 Join B 2';
-			$TestModel->JoinAsJoinB->id = 1;
-			$result = $TestModel->JoinAsJoinB->saveField('other', $updatedValue, false);
-			$this->assertFalse(empty($result));
+		$result = $TestModel->JoinAsJoinB->findById(1);
+		$expected = array(
+			'JoinAsJoinB' => array(
+				'id' => 1,
+				'join_a_id' => 1,
+				'join_b_id' => 2,
+				'other' => 'Data for Join A 1 Join B 2',
+				'created' => '2008-01-03 10:56:33',
+				'updated' => '2008-01-03 10:56:33'
+		));
+		$this->assertEquals($expected, $result);
 
-			$result = $TestModel->JoinAsJoinB->findById(1);
-			$this->assertEquals($result['JoinAsJoinB']['other'], $updatedValue);
-		}
+		$updatedValue = 'UPDATED Data for Join A 1 Join B 2';
+		$TestModel->JoinAsJoinB->id = 1;
+		$result = $TestModel->JoinAsJoinB->saveField('other', $updatedValue, false);
+		$this->assertFalse(empty($result));
+
+		$result = $TestModel->JoinAsJoinB->findById(1);
+		$this->assertEquals($result['JoinAsJoinB']['other'], $updatedValue);
+	}
 
 /**
  * testSaveDateAsFirstEntry method
@@ -611,11 +611,25 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
+		$TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
 
 		$TestModel->id = 1;
 		$result = $TestModel->saveField('title', '', true);
 		$this->assertFalse($result);
+
+
+		$TestModel->recursive = -1;
+		$TestModel->id = 1;
+		$result = $TestModel->saveField('user_id', 9999);
+		$this->assertTrue((bool)$result);
+
+		$result = $TestModel->read(array('id', 'user_id'), 1);
+		$expected = array('Article' => array(
+			'id' => '1',
+			'user_id' => '9999',
+		));
+		$this->assertEquals($expected, $result);
+
 
 		$this->loadFixtures('Node', 'Dependency');
 		$Node = new Node();
