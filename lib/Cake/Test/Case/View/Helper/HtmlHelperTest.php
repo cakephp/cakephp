@@ -313,8 +313,6 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		Configure::write('Asset.timestamp', 'force');
-
 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
  		$expected = array(
  			'a' => array('href' => '#'),
@@ -324,7 +322,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->image('../favicon.ico', array('url' => '#'));
-
 		$expected = array(
 			'a' => array('href' => '#'),
 			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
