@@ -626,7 +626,7 @@ class Set2Test extends CakeTestCase {
  *
  * @return void
  */
-	public function testExtractNumbericMixedKeys() {
+	public function testExtractNumericMixedKeys() {
 		$data = array(
 			'User' => array(
 				0 => array(
@@ -794,6 +794,199 @@ class Set2Test extends CakeTestCase {
 		$result = Set2::extract($data, '{n}.Article[title=/^First/]');
 		$expected = array($data[0]['Article']);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSort method
+ *
+ * @return void
+ */
+	public function testSort() {
+		$this->markTestIncomplete('Not done, sort() is broken.');
+		$a = array(
+			0 => array(
+				'Person' => array('name' => 'Jeff'),
+				'Friend' => array(array('name' => 'Nate'))
+			),
+			1 => array(
+				'Person' => array('name' => 'Tracy'),
+				'Friend' => array(array('name' => 'Lindsay'))
+			)
+		);
+		$b = array(
+			0 => array(
+				'Person' => array('name' => 'Tracy'),
+				'Friend' => array(array('name' => 'Lindsay'))
+			),
+			1 => array(
+				'Person' => array('name' => 'Jeff'),
+				'Friend' => array(array('name' => 'Nate'))
+			)
+		);
+		$a = Set2::sort($a, '{n}.Friend.{n}.name', 'asc');
+		$this->assertEquals($a, $b);
+
+		$b = array(
+			0 => array(
+				'Person' => array('name' => 'Jeff'),
+				'Friend' => array(array('name' => 'Nate'))
+			),
+			1 => array(
+				'Person' => array('name' => 'Tracy'),
+				'Friend' => array(array('name' => 'Lindsay'))
+			)
+		);
+		$a = array(
+			0 => array(
+				'Person' => array('name' => 'Tracy'),
+				'Friend' => array(array('name' => 'Lindsay'))
+			),
+			1 => array(
+				'Person' => array('name' => 'Jeff'),
+				'Friend' => array(array('name' => 'Nate'))
+			)
+		);
+		$a = Set2::sort($a, '{n}.Friend.{n}.name', 'desc');
+		$this->assertEquals($a, $b);
+
+		$a = array(
+			0 => array(
+				'Person' => array('name' => 'Jeff'),
+				'Friend' => array(array('name' => 'Nate'))
+			),
+			1 => array(
+				'Person' => array('name' => 'Tracy'),
+				'Friend' => array(array('name' => 'Lindsay'))
+			),
+			2 => array(
+				'Person' => array('name' => 'Adam'),
+				'Friend' => array(array('name' => 'Bob'))
+			)
+		);
+		$b = array(
+			0 => array(
+				'Person' => array('name' => 'Adam'),
+				'Friend' => array(array('name' => 'Bob'))
+			),
+			1 => array(
+				'Person' => array('name' => 'Jeff'),
+				'Friend' => array(array('name' => 'Nate'))
+			),
+			2 => array(
+				'Person' => array('name' => 'Tracy'),
+				'Friend' => array(array('name' => 'Lindsay'))
+			)
+		);
+		$a = Set2::sort($a, '{n}.Person.name', 'asc');
+		$this->assertEquals($a, $b);
+
+		$a = array(
+			array(7,6,4),
+			array(3,4,5),
+			array(3,2,1),
+		);
+
+		$b = array(
+			array(3,2,1),
+			array(3,4,5),
+			array(7,6,4),
+		);
+
+		$a = Set2::sort($a, '{n}.{n}', 'asc');
+		$this->assertEquals($a, $b);
+
+		$a = array(
+			array(7,6,4),
+			array(3,4,5),
+			array(3,2,array(1,1,1)),
+		);
+
+		$b = array(
+			array(3,2,array(1,1,1)),
+			array(3,4,5),
+			array(7,6,4),
+		);
+
+		$a = Set2::sort($a, '{n}', 'asc');
+		$this->assertEquals($a, $b);
+
+		$a = array(
+			0 => array('Person' => array('name' => 'Jeff')),
+			1 => array('Shirt' => array('color' => 'black'))
+		);
+		$b = array(
+			0 => array('Shirt' => array('color' => 'black')),
+			1 => array('Person' => array('name' => 'Jeff')),
+		);
+		$a = Set2::sort($a, '{n}.Person.name', 'ASC');
+		$this->assertEquals($a, $b);
+
+		$names = array(
+			array('employees' => array(
+				array('name' => array('first' => 'John', 'last' => 'Doe')))
+			),
+			array('employees' => array(
+				array('name' => array('first' => 'Jane', 'last' => 'Doe')))
+			),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$result = Set2::sort($names, '{n}.employees.0.name', 'asc', 1);
+		$expected = array(
+			array('employees' => array(
+				array('name' => array('first' => 'John', 'last' => 'Doe')))
+			),
+			array('employees' => array(
+				array('name' => array('first' => 'Jane', 'last' => 'Doe')))
+			),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test sorting with out of order keys.
+ *
+ * @return void
+ */
+	public function testSortWithOutOfOrderKeys() {
+		$data = array(
+			9 => array('class' => 510, 'test2' => 2),
+			1 => array('class' => 500, 'test2' => 1),
+			2 => array('class' => 600, 'test2' => 2),
+			5 => array('class' => 625, 'test2' => 4),
+			0 => array('class' => 605, 'test2' => 3),
+		);
+		$expected = array(
+			array('class' => 500, 'test2' => 1),
+			array('class' => 510, 'test2' => 2),
+			array('class' => 600, 'test2' => 2),
+			array('class' => 605, 'test2' => 3),
+			array('class' => 625, 'test2' => 4),
+		);
+		$result = Set2::sort($data, '{n}.class', 'asc');
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::sort($data, '{n}.test2', 'asc');
+		$this->assertEquals($expected, $result);
+	}
+
+
+/**
+ * Test remove()
+ *
+ * @return void
+ */
+	public function testRemove() {
+		$data = self::articleData();
+
+		$result = Set2::insert($data, '{n}.Article', array('test'));
+		debug($result);
+
+		$result = Set2::remove($data, '{n}.Article');
+		debug($result);
+		$this->assertFalse(isset($data[0]['Article']));
 	}
 
 }

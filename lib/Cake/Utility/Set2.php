@@ -23,8 +23,8 @@ App::uses('String', 'Utility');
  *
  * `Set2` provides an improved interface and more consistent and 
  * predictable set of features over `Set`.  While it lacks the spotty
- * support for pseudo Xpath, its more fully feature dot notation provides
- * the same utility.
+ * support for pseudo Xpath, its more fully featured dot notation provides
+ * the similar features in a more consistent way.
  *
  * @package       Cake.Utility
  */
@@ -137,8 +137,9 @@ class Set2 {
 					// any numeric key
 					foreach ($item as $k => $v) {
 						if (is_numeric($k)) {
-							$next[] = $v;
+							$next[] =& $v;
 						}
+						unset($v);
 					}
 				} elseif ($token === '{s}') {
 					// any string key
@@ -146,6 +147,7 @@ class Set2 {
 						if (is_string($k)) {
 							$next[] = $v;
 						}
+						unset($v);
 					}
 				} elseif (is_numeric($token)) {
 					// numeric keys like 0, 1, 2
@@ -153,6 +155,7 @@ class Set2 {
 						if ($k == $token) {
 							$next[] = $v;
 						}
+						unset($v);
 					}
 				} else {
 					// bare string key
@@ -161,6 +164,7 @@ class Set2 {
 						if ($k === $token) {
 							$next[] = $v;
 						}
+						unset($v);
 					}
 				}
 			}
@@ -241,11 +245,33 @@ class Set2 {
 	}
 
 	public static function insert(array $data, $path, $values = null) {
+		if (empty($path)) {
+			return $data;
+		}
 
+		$result = self::_traverse($data, $path, function (&$value) use ($values) {
+			$value['test'] = $values;
+			return $value;
+		});
+
+		return $data;
 	}
 
+/**
+ * Remove data matching $path from the $data array.
+ *
+ * @param array $data The data to operate on
+ * @param string $path A path expression to use to remove.
+ * @return array The modified array.
+ */
 	public static function remove(array $data, $path) {
+		if (empty($path)) {
+			return $data;
+		}
 
+		return self::_traverse($data, $path, function ($value) {
+			return $value;
+		});
 	}
 
 	public static function combine(array $data, $keyPath, $valuePath = null) {
@@ -464,8 +490,62 @@ class Set2 {
 
 	}
 
+/**
+ * Sorts an array by any value, determined by a Set-compatible path
+ *
+ * @param array $data An array of data to sort
+ * @param string $path A Set-compatible path to the array value
+ * @param string $dir Direction of sorting - either ascending (ASC), or descending (DESC)
+ * @return array Sorted array of data
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::sort
+ */
 	public static function sort(array $data, $path, $dir) {
+		$originalKeys = array_keys($data);
+		if (is_numeric(implode('', $originalKeys))) {
+			$data = array_values($data);
+		}
+		$result = self::_squash(self::extract($data, $path));
+		$keys = self::extract($result, '{n}.id');
+		$values = self::extract($result, '{n}.value');
 
+		$dir = strtolower($dir);
+		if ($dir === 'asc') {
+			$dir = SORT_ASC;
+		} elseif ($dir === 'desc') {
+			$dir = SORT_DESC;
+		}
+		array_multisort($values, $dir, $keys, $dir);
+		$sorted = array();
+		$keys = array_unique($keys);
+
+		foreach ($keys as $k) {
+			$sorted[] = $data[$k];
+		}
+		return $sorted;
+	}
+
+/**
+ * Helper method for sort()
+ * Sqaushes an array to a single hash so it can be sorted.
+ *
+ * @param array $data The data to squash.
+ * @param string $key The key for the data.
+ * @return array
+ */
+	protected static function _squash($data, $key = null) {
+		$stack = array();
+		foreach ($data as $k => $r) {
+			$id = $k;
+			if (!is_null($key)) {
+				$id = $key;
+			}
+			if (is_array($r) && !empty($r)) {
+				$stack = array_merge($stack, self::_squash($r, $id));
+			} else {
+				$stack[] = array('id' => $id, 'value' => $r);
+			}
+		}
+		return $stack;
 	}
 
 /**
