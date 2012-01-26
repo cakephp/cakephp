@@ -1109,6 +1109,9 @@ class CakeEmail {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
 		}
+		if (strpos($text, ',') !== false) {
+			$text = '"' . $text . '"';
+		}
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
 			mb_internal_encoding($restore);
