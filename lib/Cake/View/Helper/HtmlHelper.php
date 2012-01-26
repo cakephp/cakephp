@@ -738,12 +738,11 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be
- * generated with the link pointed at `$options['url']`. If `$options['fullBase']` is provided,
- * the src attribute will receive full address (non-relative url) of the image file.
+ * Creates a formatted IMG element.
+ *
  * This method will set an empty alt attribute if one is not supplied.
  *
- * ### Usage
+ * ### Usage:
  *
  * Create a regular image:
  *
@@ -753,8 +752,15 @@ class HtmlHelper extends AppHelper {
  *
  * `echo $html->image('cake_icon.png', array('alt' => 'CakePHP', 'url' => 'http://cakephp.org'));`
  *
+ * ### Options:
+ *
+ * - `url` If provided an image link will be generated and the link will point at
+ *   `$options['url']`.
+ * - `fullBase` If provided the src attribute will get a full addres (non-relative url) for 
+ *   the image file.
+ *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
- * @param array $options Array of HTML attributes.
+ * @param array $options Array of HTML attributes.  See above for special options.
  * @return string completed img tag
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
