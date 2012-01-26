@@ -133,38 +133,9 @@ class Set2 {
 			}
 
 			foreach ($context[$_key] as $item) {
-				if ($token === '{n}') {
-					// any numeric key
-					foreach ($item as $k => $v) {
-						if (is_numeric($k)) {
-							$next[] =& $v;
-						}
-						unset($v);
-					}
-				} elseif ($token === '{s}') {
-					// any string key
-					foreach ($item as $k => $v) {
-						if (is_string($k)) {
-							$next[] = $v;
-						}
-						unset($v);
-					}
-				} elseif (is_numeric($token)) {
-					// numeric keys like 0, 1, 2
-					foreach ($item as $k => $v) {
-						if ($k == $token) {
-							$next[] = $v;
-						}
-						unset($v);
-					}
-				} else {
-					// bare string key
-					foreach ($item as $k => $v) {
-						// index or key match.
-						if ($k === $token) {
-							$next[] = $v;
-						}
-						unset($v);
+				foreach ($item as $k => $v) {
+					if (self::_matchToken($k, $token)) {
+						$next[] = $v;
 					}
 				}
 			}
@@ -185,6 +156,25 @@ class Set2 {
 		} while (!empty($tokens));
 
 		return array_map($callback, $context[$_key]);
+	}
+
+/**
+ * Check a key against a token.
+ *
+ * @param string $key The key in the array being searched.
+ * @param string $token The token being matched.
+ * @return boolean
+ */
+	protected static function _matchToken($key, $token) {
+		if ($token === '{n}') {
+			return is_numeric($key);
+		} elseif ($token === '{s}') {
+			return is_string($key);
+		} elseif (is_numeric($token)) {
+			return ($key == $token);
+		} else {
+			return ($key === $token);
+		}
 	}
 
 /**

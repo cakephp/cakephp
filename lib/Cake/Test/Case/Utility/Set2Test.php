@@ -687,8 +687,10 @@ class Set2Test extends CakeTestCase {
 		$data = self::articleData();
 		$result = Set2::extract($data, '{n}.{s}.user');
 		$expected = array(
-			'mariano', 'mariano', 
-			'mariano', 'mariano',
+			'mariano',
+			'mariano',
+			'mariano',
+			'mariano',
 			'mariano'
 		);
 		$this->assertEquals($expected, $result);
