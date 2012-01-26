@@ -44,7 +44,8 @@ class TreeBehavior extends ModelBehavior {
  */
 	protected $_defaults = array(
 		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
-		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1
+		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1,
+		'multiTree' => false, '__multiTreeKey' => null
 	);
 
 /**
@@ -66,6 +67,9 @@ class TreeBehavior extends ModelBehavior {
 			$parent = $Model->{$settings['scope']};
 			$settings['scope'] = $Model->alias . '.' . $data['foreignKey'] . ' = ' . $parent->alias . '.' . $parent->primaryKey;
 			$settings['recursive'] = 0;
+			if ($settings['multiTree']) {
+				$settings['__multiTreeKey'] = $data['foreignKey'];
+			}
 		}
 		$this->settings[$Model->alias] = $settings;
 	}
@@ -125,6 +129,9 @@ class TreeBehavior extends ModelBehavior {
 		}
 		$diff = $data[$right] - $data[$left] + 1;
 
+		if ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $data[$__multiTreeKey]);
+		}
 		if ($diff > 2) {
 			if (is_string($scope)) {
 				$scope = array($scope);
@@ -153,9 +160,14 @@ class TreeBehavior extends ModelBehavior {
 		$this->_addToWhitelist($Model, array($left, $right));
 		if (!$Model->id) {
 			if (array_key_exists($parent, $Model->data[$Model->alias]) && $Model->data[$Model->alias][$parent]) {
+				$parentFields = array($Model->primaryKey, $right);
+				if ($multiTree) {
+					$parentFields[] = $__multiTreeKey;
+					$scope = array();
+				}
 				$parentNode = $Model->find('first', array(
 					'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
-					'fields' => array($Model->primaryKey, $right), 'recursive' => $recursive
+					'fields' => $parentFields, 'recursive' => $recursive
 				));
 				if (!$parentNode) {
 					return false;
@@ -163,7 +175,20 @@ class TreeBehavior extends ModelBehavior {
 				list($parentNode) = array_values($parentNode);
 				$Model->data[$Model->alias][$left] = 0; //$parentNode[$right];
 				$Model->data[$Model->alias][$right] = 0; //$parentNode[$right] + 1;
+				if ($multiTree) {
+					$this->_addToWhitelist($Model, $__multiTreeKey);
+					$Model->data[$Model->alias][$__multiTreeKey] = $parentNode[$__multiTreeKey];
+					$scope = $this->_multiTreeScope($Model, $parentNode[$__multiTreeKey]);
+				}
 			} else {
+				if ($multiTree) {
+					if (array_key_exists($__multiTreeKey, $Model->data[$Model->alias]) && $Model->data[$Model->alias][$__multiTreeKey]) { //no parent, must have tree_id
+						$scope = $this->_multiTreeScope($Model, $Model->data[$Model->alias][$__multiTreeKey]);
+						$this->_addToWhitelist($Model, $__multiTreeKey);
+					} else {
+						return false;
+					}
+				}
 				$edge = $this->_getMax($Model, $scope, $right, $recursive);
 				$Model->data[$Model->alias][$left] = $edge + 1;
 				$Model->data[$Model->alias][$right] = $edge + 2;
@@ -176,9 +201,14 @@ class TreeBehavior extends ModelBehavior {
 				$Model->data[$Model->alias][$parent] = null;
 				$this->_addToWhitelist($Model, $parent);
 			} else {
+				$fields = array($Model->primaryKey, $parent, $left, $right);
+				if ($multiTree) {
+					$fields[] = $__multiTreeKey;
+					$scope = array();
+				}
 				$values = $Model->find('first', array(
 					'conditions' => array($scope, $Model->escapeField() => $Model->id),
-					'fields' => array($Model->primaryKey, $parent, $left, $right), 'recursive' => $recursive)
+					'fields' => $fields, 'recursive' => $recursive)
 				);
 
 				if ($values === false) {
@@ -186,9 +216,12 @@ class TreeBehavior extends ModelBehavior {
 				}
 				list($node) = array_values($values);
 
+				if ($multiTree) {
+					$scope = $this->_multiTreeScope($Model, $node[$__multiTreeKey]);
+				}
 				$parentNode = $Model->find('first', array(
 					'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
-					'fields' => array($Model->primaryKey, $left, $right), 'recursive' => $recursive
+					'fields' => $fields, 'recursive' => $recursive
 				));
 				if (!$parentNode) {
 					return false;
@@ -228,6 +261,17 @@ class TreeBehavior extends ModelBehavior {
 		}
 		extract($this->settings[$Model->alias]);
 
+		if ($multiTree) {
+			if (isset($Model->data[$Model->alias][$__multiTreeKey]) && $Model->data[$Model->alias][$__multiTreeKey]) {
+				$scope = $Model->data[$Model->alias][$__multiTreeKey];
+			} else {
+				$node = $Model->find('first', array('conditions' => array($Model->escapeField() => $id), 'fields' => array($__multiTreeKey)));
+				if (!$node) {
+					return false;
+				}
+				$scope = $node[$Model->alias][$__multiTreeKey];
+			}
+		}
 		if ($direct) {
 			return $Model->find('count', array('conditions' => array($scope, $Model->escapeField($parent) => $id)));
 		}
@@ -283,17 +327,28 @@ class TreeBehavior extends ModelBehavior {
 		if (!$order) {
 			$order = $Model->alias . '.' . $left . ' asc';
 		}
+		if ($multiTree) {
+			$order = array($Model->alias . '.' . $__multiTreeKey . ' asc', $order);
+			$scope = array();
+		}
 		if ($direct) {
 			$conditions = array($scope, $Model->escapeField($parent) => $id);
 			return $Model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 		}
 
 		if (!$id) {
+			if ($multiTree) {
+				return false;
+			}
 			$conditions = $scope;
 		} else {
+			$resultFields = array($left, $right);
+			if($multiTree){
+				$resultFields[] = $__multiTreeKey;
+			}
 			$result = array_values((array)$Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $id),
-				'fields' => array($left, $right),
+				'fields' => $resultFields,
 				'recursive' => $recursive
 			)));
 
@@ -304,6 +359,10 @@ class TreeBehavior extends ModelBehavior {
 				$Model->escapeField($right) . ' <' => $result[0][$right],
 				$Model->escapeField($left) . ' >' => $result[0][$left]
 			);
+			if ($multiTree) {
+				$scope = $this->_multiTreeScope($Model, $result[0][$__multiTreeKey]);
+				$conditions = array_merge($scope, $conditions);
+			}
 		}
 		return $Model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 	}
@@ -317,12 +376,30 @@ class TreeBehavior extends ModelBehavior {
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
  * @param string $spacer The character or characters which will be repeated
  * @param integer $recursive The number of levels deep to fetch associated records
+ * @param integer $treeScope id of the desired tree if using multiTree (returns all by default)
  * @return array An associative array of records, where the id is the key, and the display field is the value
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::generateTreeList
  */
-	public function generateTreeList($Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
+	public function generateTreeList($Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null, $treeScope = null) {
 		$overrideRecursive = $recursive;
 		extract($this->settings[$Model->alias]);
+
+		if ($multiTree && !$treeScope) {
+			$trees = $Model->find('all', array('fields' => 'DISTINCT ' . $Model->escapeField($__multiTreeKey), 'recursive' => -1));
+			$conditions = (array)$conditions;
+
+			foreach($trees as $tree){
+				$treeId = $tree[$Model->alias][$__multiTreeKey];
+				$allTrees[$treeId] = $this->generateTreeList($Model, $conditions, $keyPath, $valuePath, $spacer, $recursive, $treeId);
+			}
+			if (empty($allTrees)) {
+				return array();
+			}
+			return $allTrees;
+
+		} elseif ($multiTree) {
+			$conditions[$Model->escapeField($__multiTreeKey)] = $treeScope;
+		}
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
 		}
@@ -421,13 +498,20 @@ class TreeBehavior extends ModelBehavior {
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
 		}
-		$result = $Model->find('first', array('conditions' => array($Model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursive));
+		$resultFields = array($left, $right);
+		if ($multiTree) {
+			$resultFields[] = $__multiTreeKey;
+		}
+		$result = $Model->find('first', array('conditions' => array($Model->escapeField() => $id), 'fields' => $resultFields, 'recursive' => $recursive));
 		if ($result) {
 			$result = array_values($result);
 		} else {
 			return null;
 		}
 		$item = $result[0];
+		if ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $item[$__multiTreeKey]);
+		}
 		$results = $Model->find('all', array(
 			'conditions' => array($scope, $Model->escapeField($left) . ' <=' => $item[$left], $Model->escapeField($right) . ' >=' => $item[$right]),
 			'fields' => $fields, 'order' => array($Model->escapeField($left) => 'asc'), 'recursive' => $recursive
@@ -457,10 +541,18 @@ class TreeBehavior extends ModelBehavior {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
+		$nodeFields = array($Model->primaryKey, $left, $right, $parent);
+		if ($multiTree) {
+			$nodeFields[] = $__multiTreeKey;
+			$scope = array();
+		}
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
-			'fields' => array($Model->primaryKey, $left, $right, $parent), 'recursive' => $recursive
+			'fields' => $nodeFields, 'recursive' => $recursive
 		)));
+		if ($multiTree) {
+    		$scope = $this->_multiTreeScope($Model, $node[$__multiTreeKey]);
+		}
 		if ($node[$parent]) {
 			list($parentNode) = array_values($Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $node[$parent]),
@@ -515,10 +607,18 @@ class TreeBehavior extends ModelBehavior {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
+		$nodeFields = array($Model->primaryKey, $left, $right, $parent);
+		if ($multiTree) {
+			$nodeFields[] = $__multiTreeKey;
+			$scope = array();
+		}
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
-			'fields' => array($Model->primaryKey, $left, $right, $parent), 'recursive' => $recursive
+			'fields' => $nodeFields, 'recursive' => $recursive
 		)));
+		if ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $node[$__multiTreeKey]);
+		}
 		if ($node[$parent]) {
 			list($parentNode) = array_values($Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $node[$parent]),
@@ -565,14 +665,27 @@ class TreeBehavior extends ModelBehavior {
  * @param string $mode parent or tree
  * @param mixed $missingParentAction 'return' to do nothing and return, 'delete' to
  * delete, or the id of the parent to set as the parent_id
+ * @param integer $treeScope id of the tree to be recovered if using multiTree (recovers all by default)
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::recover
  */
-	public function recover($Model, $mode = 'parent', $missingParentAction = null) {
+	public function recover($Model, $mode = 'parent', $missingParentAction = null, $treeScope = null) {
 		if (is_array($mode)) {
 			extract (array_merge(array('mode' => 'parent'), $mode));
 		}
 		extract($this->settings[$Model->alias]);
+		if ($multiTree && !$treeScope) {
+			$trees = $Model->find('all', array('fields' => 'DISTINCT ' . $Model->escapeField($__multiTreeKey), 'recursive' => -1));
+			foreach ($trees as $tree) {
+				$this->recover($Model, $mode, $missingParentAction, $tree[$Model->alias][$__multiTreeKey]);
+			}
+			if ($this->errors){
+				return false;
+			}
+			return true;
+		} elseif ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $treeScope);
+		}
 		$Model->recursive = $recursive;
 		if ($mode == 'parent') {
 			$Model->bindModel(array('belongsTo' => array('VerifyParent' => array(
@@ -600,21 +713,21 @@ class TreeBehavior extends ModelBehavior {
 				}
 			}
 			$count = 1;
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey), 'order' => $left)) as $array) {
+			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey), 'order' => $Model->escapeField($left))) as $array) {
 				$lft = $count++;
 				$rght = $count++;
 				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
 			}
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
+			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $Model->escapeField($left))) as $array) {
 				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$this->_setParent($Model, $array[$Model->alias][$parent]);
 			}
 		} else {
 			$db = ConnectionManager::getDataSource($Model->useDbConfig);
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
+			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $Model->escapeField($left))) as $array) {
 				$path = $this->getPath($Model, $array[$Model->alias][$Model->primaryKey]);
 				if ($path == null || count($path) < 2) {
 					$parentId = null;
@@ -691,13 +804,21 @@ class TreeBehavior extends ModelBehavior {
 			extract (array_merge(array('id' => null), $id));
 		}
 		extract($this->settings[$Model->alias]);
-
+		
+		$nodeFields = array($Model->primaryKey, $left, $right, $parent);
+		if ($multiTree) {
+			$nodeFields[] = $__multiTreeKey;
+			$scope = array();
+		}
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
-			'fields' => array($Model->primaryKey, $left, $right, $parent),
+			'fields' => $nodeFields,
 			'recursive' => $recursive
 		)));
-
+		
+		if ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $node[$__multiTreeKey]);
+		}
 		if ($node[$right] == $node[$left] + 1) {
 			if ($delete) {
 				return $Model->delete($id);
@@ -752,13 +873,30 @@ class TreeBehavior extends ModelBehavior {
  *
  * Returns true if the tree is valid otherwise an array of (type, incorrect left/right index, message)
  *
- * @param Model $Model Model instance
+ * @param $Model Model instance
+ * @param $treeScope id of tree to verify (verifies all by deafault)
  * @return mixed true if the tree is valid or empty, otherwise an array of (error type [index, node],
  *  [incorrect left/right index,node id], message)
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::verify
  */
-	public function verify($Model) {
+	public function verify($Model, $treeScope = null) {
 		extract($this->settings[$Model->alias]);
+		if ($multiTree && !$treeScope) {
+			$trees = $Model->find('all', array('fields' => 'DISTINCT ' . $Model->escapeField($__multiTreeKey), 'recursive' => -1));
+			$errors = array();
+			foreach ($trees as $tree) {
+				$verified = $this->verify($Model, $tree[$Model->alias][$__multiTreeKey]);
+				if ($verified !== true) {
+					$errors[$tree[$Model->alias][$__multiTreeKey]] = $verified;
+				}
+			}
+			if ($errors){
+				return $errors;
+			}
+			return true;
+		} elseif ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $treeScope);
+		}
 		if (!$Model->find('count', array('conditions' => $scope))) {
 			return true;
 		}
@@ -831,11 +969,19 @@ class TreeBehavior extends ModelBehavior {
  */
 	protected function _setParent($Model, $parentId = null, $created = false) {
 		extract($this->settings[$Model->alias]);
+		$nodeFields = array($Model->primaryKey, $parent, $left, $right);
+		if ($multiTree) {
+			$nodeFields[] = $__multiTreeKey;
+			$scope = array();
+		}
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $Model->id),
-			'fields' => array($Model->primaryKey, $parent, $left, $right),
+			'fields' => $nodeFields,
 			'recursive' => $recursive
 		)));
+		if ($multiTree) {
+			$scope = $this->_multiTreeScope($Model, $node[$__multiTreeKey]);
+		}
 		$edge = $this->_getMax($Model, $scope, $right, $recursive, $created);
 
 		if (empty ($parentId)) {
@@ -949,17 +1095,18 @@ class TreeBehavior extends ModelBehavior {
  * @param integer $shift
  * @param string $dir
  * @param array $conditions
+ * @param integer $treeScope
  * @param boolean $created
  * @param string $field
  * @return void
  */
-	protected function _sync($Model, $shift, $dir = '+', $conditions = array(), $created = false, $field = 'both') {
+	protected function _sync($Model, $shift, $dir = '+', $conditions = array(), $treeScope = null, $created = false, $field = 'both') {
 		$ModelRecursive = $Model->recursive;
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;
 
 		if ($field == 'both') {
-			$this->_sync($Model, $shift, $dir, $conditions, $created, $left);
+			$this->_sync($Model, $shift, $dir, $conditions, $treeScope, $created, $left);
 			$field = $right;
 		}
 		if (is_string($conditions)) {
@@ -973,5 +1120,21 @@ class TreeBehavior extends ModelBehavior {
 		}
 		$Model->updateAll(array($Model->alias . '.' . $field => $Model->escapeField($field) . ' ' . $dir . ' ' . $shift), $conditions);
 		$Model->recursive = $ModelRecursive;
+	}
+
+/**
+ * Get scope condition for multiTree and store in current settings
+ *
+ * @param Model $Model
+ * @param integer $treeScope
+ * @return array
+ */
+	protected function _multiTreeScope($Model, $treeScope) {
+		if (!$this->settings[$Model->alias]['__multiTreeKey']) {
+			return $this->settings[$Model->alias]['scope'];
+		}
+		$scope = array($Model->escapeField($this->settings[$Model->alias]['__multiTreeKey']) => $treeScope);
+		$this->settings[$Model->alias]['scope'] = $scope;
+		return $scope;
 	}
 }
