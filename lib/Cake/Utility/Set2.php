@@ -226,7 +226,7 @@ class Set2 {
 	public static function insert(array $data, $path, $values = null) {
 		$tokens = explode('.', $path);
 		if (strpos($path, '{') === false) {
-			return self::_simpleInsert($data, $tokens, $values);
+			return self::_simpleOp('insert', $data, $tokens, $values);
 		}
 
 		$token = array_shift($tokens);
@@ -240,14 +240,15 @@ class Set2 {
 	}
 
 /**
- * Inserts values into simple paths.
+ * Perform a simple insert/remove operation.
  *
- * @param array $data Data to insert into.
- * @param string $path The path to insert into.
- * @param mixed $values The values to insert.
- * @return array Data with values inserted at $path.
+ * @param string $op The operation to do.
+ * @param array $data The data to operate on.
+ * @param array $path The path to work on.
+ * @param mixed $values The values to insert when doing inserts.
+ * @return array $data.
  */
-	protected static function _simpleInsert($data, $path, $values) {
+	protected static function _simpleOp($op, $data, $path, $values = null) {
 		$_list =& $data;
 
 		$count = count($path);
@@ -255,16 +256,27 @@ class Set2 {
 			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
-			if ($i === $count - 1 && is_array($_list)) {
-				$_list[$key] = $values;
-			} else {
-				if (!isset($_list[$key])) {
-					$_list[$key] = array();
+			if ($op === 'insert') {
+				if ($i === $count - 1 && is_array($_list)) {
+					$_list[$key] = $values;
+				} else {
+					if (!isset($_list[$key])) {
+						$_list[$key] = array();
+					}
+					$_list =& $_list[$key];
 				}
-				$_list =& $_list[$key];
-			}
-			if (!is_array($_list)) {
-				return array();
+				if (!is_array($_list)) {
+					return array();
+				}
+			} elseif ($op === 'remove') {
+				if ($i === count($path) - 1) {
+					unset($_list[$key]);
+				} else {
+					if (!isset($_list[$key])) {
+						return $data;
+					}
+					$_list =& $_list[$key];
+				}
 			}
 		}
 		return $data;
@@ -280,7 +292,7 @@ class Set2 {
 	public static function remove(array $data, $path) {
 		$tokens = explode('.', $path);
 		if (strpos($path, '{') === false) {
-			return self::_simpleRemove($data, $path);
+			return self::_simpleOp('remove', $data, $tokens);
 		}
 
 		$token = array_shift($tokens);
@@ -291,38 +303,6 @@ class Set2 {
 				$data[$k] = self::remove($v, $nextPath);
 			} elseif ($match) {
 				unset($data[$k]);
-			}
-		}
-		return $data;
-	}
-
-/**
- * Remove values along a simple path.
- * 
- * @param array $data Array to operate on.
- * @param string $path The path to remove.
- * @return array Data with value removed.
- */
-	protected static function _simpleRemove($data, $path) {
-		if (empty($path)) {
-			return $data;
-		}
-		if (!is_array($path)) {
-			$path = explode('.', $path);
-		}
-		$_list =& $data;
-
-		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
-				$key = intval($key);
-			}
-			if ($i === count($path) - 1) {
-				unset($_list[$key]);
-			} else {
-				if (!isset($_list[$key])) {
-					return $data;
-				}
-				$_list =& $_list[$key];
 			}
 		}
 		return $data;
