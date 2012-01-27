@@ -503,6 +503,40 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Test generateUses()
+ */
+	public function testGenerateUses() {
+		$result = $this->Task->generateUses('model', 'Model', 'Post');
+		$expected = array(
+			array('Post', 'Model')
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateUses('controller', 'Controller', 'PostsController');
+		$expected = array(
+			array('PostsController', 'Controller')
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateUses('helper', 'View/Helper', 'FormHelper');
+		$expected = array(
+			array('View', 'View'),
+			array('Helper', 'View'),
+			array('FormHelper', 'View/Helper'),
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateUses('component', 'Controller/Component', 'AuthComponent');
+		$expected = array(
+			array('ComponentCollection', 'Controller'),
+			array('Component', 'Controller'),
+			array('AuthComponent', 'Controller/Component')
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+
+/**
  * Test that mock class generation works for the appropriate classes
  *
  * @return void
