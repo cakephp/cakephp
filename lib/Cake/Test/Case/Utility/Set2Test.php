@@ -974,21 +974,107 @@ class Set2Test extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test insert()
+ *
+ * @return void
+ */
+	public function testInsertSimple() {
+		$a = array(
+			'pages' => array('name' => 'page')
+		);
+		$result = Set2::insert($a, 'files', array('name' => 'files'));
+		$expected = array(
+			'pages' => array('name' => 'page'),
+			'files' => array('name' => 'files')
+		);
+		$this->assertEquals($expected, $result);
+
+		$a = array(
+			'pages' => array('name' => 'page')
+		);
+		$result = Set2::insert($a, 'pages.name', array());
+		$expected = array(
+			'pages' => array('name' => array()),
+		);
+		$this->assertEquals($expected, $result);
+	}
 
 /**
- * Test remove()
+ * Test inserting with multiple values.
+ *
+ * @return void
+ */
+	public function testInsertMulti() {
+		$data = self::articleData();
+
+		$result = Set2::insert($data, '{n}.Article.insert', 'value');
+		$this->assertEquals('value', $result[0]['Article']['insert']);
+		$this->assertEquals('value', $result[1]['Article']['insert']);
+
+		$result = Set2::insert($data, '{n}.Comment.{n}.insert', 'value');
+		$this->assertEquals('value', $result[0]['Comment'][0]['insert']);
+		$this->assertEquals('value', $result[0]['Comment'][1]['insert']);
+	}
+
+/**
+ * Test remove() method.
  *
  * @return void
  */
 	public function testRemove() {
+		$a = array(
+			'pages' => array('name' => 'page'),
+			'files' => array('name' => 'files')
+		);
+
+		$result = Set2::remove($a, 'files');
+		$expected = array(
+			'pages' => array('name' => 'page')
+		);
+		$this->assertEquals($expected, $result);
+
+		$a = array(
+			'pages' => array(
+				0 => array('name' => 'main'),
+				1 => array(
+					'name' => 'about',
+					'vars' => array('title' => 'page title')
+				)
+			)
+		);
+
+		$result = Set2::remove($a, 'pages.1.vars');
+		$expected = array(
+			'pages' => array(
+				0 => array('name' => 'main'),
+				1 => array('name' => 'about')
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::remove($a, 'pages.2.vars');
+		$expected = $a;
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test removing multiple values.
+ *
+ * @return void
+ */
+	public function testRemoveMulti() {
 		$data = self::articleData();
 
-		$result = Set2::insert($data, '{n}.Article', array('test'));
-		debug($result);
+		$result = Set2::remove($data, '{n}.Article.title');
+		$this->assertFalse(isset($result[0]['Article']['title']));
+		$this->assertFalse(isset($result[1]['Article']['title']));
 
-		$result = Set2::remove($data, '{n}.Article');
-		debug($result);
-		$this->assertFalse(isset($data[0]['Article']));
+		$result = Set2::remove($data, '{n}.Article.{s}');
+		$this->assertFalse(isset($result[0]['Article']['id']));
+		$this->assertFalse(isset($result[0]['Article']['user_id']));
+		$this->assertFalse(isset($result[0]['Article']['title']));
+		$this->assertFalse(isset($result[0]['Article']['body']));
 	}
 
 }

@@ -94,23 +94,6 @@ class Set2 {
 			return (array) self::get($data, $path);
 		}
 
-		return self::_traverse($data, $path, function ($value) {
-			return $value;
-		});
-	}
-
-/**
- * Traverses $data for $path.  $callback is called for each terminal element.
- * The results of all the callbacks are returned.
- *
- * @param array $data The data to traverse.
- * @param string $path The set path to walk.
- * @param callable $callback to call on the result set.
- * @return array Results of the callback mapped over the leaf nodes of the path expression.
- */
-	protected static function _traverse(array &$data, $path, $callback) {
-		$result = array();
-
 		if (strpos('[', $path) === false) {
 			$tokens = explode('.', $path);
 		} else {
@@ -150,12 +133,10 @@ class Set2 {
 				}
 				$next = $filter;
 			}
-
 			$context = array($_key => $next);
 
 		} while (!empty($tokens));
-
-		return array_map($callback, $context[$_key]);
+		return $context[$_key];
 	}
 
 /**
@@ -234,16 +215,58 @@ class Set2 {
 		return true;
 	}
 
+/**
+ * Insert $values into an array with the given $path.
+ *
+ * @param array $data The data to insert into.
+ * @param string $path The path to insert at.
+ * @param mixed $values The values to insert.
+ * @return array The data with $values inserted.
+ */
 	public static function insert(array $data, $path, $values = null) {
-		if (empty($path)) {
-			return $data;
+		$tokens = explode('.', $path);
+		if (strpos($path, '{') === false) {
+			return self::_simpleInsert($data, $tokens, $values);
 		}
 
-		$result = self::_traverse($data, $path, function (&$value) use ($values) {
-			$value['test'] = $values;
-			return $value;
-		});
+		$token = array_shift($tokens);
+		$nextPath = implode('.', $tokens);
+		foreach ($data as $k => $v) {
+			if (self::_matchToken($k, $token)) {
+				$data[$k] = self::insert($v, $nextPath, $values);
+			}
+		}
+		return $data;
+	}
 
+/**
+ * Inserts values into simple paths.
+ *
+ * @param array $data Data to insert into.
+ * @param string $path The path to insert into.
+ * @param mixed $values The values to insert.
+ * @return array Data with values inserted at $path.
+ */
+	protected static function _simpleInsert($data, $path, $values) {
+		$_list =& $data;
+
+		$count = count($path);
+		foreach ($path as $i => $key) {
+			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
+				$key = intval($key);
+			}
+			if ($i === $count - 1 && is_array($_list)) {
+				$_list[$key] = $values;
+			} else {
+				if (!isset($_list[$key])) {
+					$_list[$key] = array();
+				}
+				$_list =& $_list[$key];
+			}
+			if (!is_array($_list)) {
+				return array();
+			}
+		}
 		return $data;
 	}
 
@@ -255,13 +278,54 @@ class Set2 {
  * @return array The modified array.
  */
 	public static function remove(array $data, $path) {
+		$tokens = explode('.', $path);
+		if (strpos($path, '{') === false) {
+			return self::_simpleRemove($data, $path);
+		}
+
+		$token = array_shift($tokens);
+		$nextPath = implode('.', $tokens);
+		foreach ($data as $k => $v) {
+			$match = self::_matchToken($k, $token);
+			if ($match && is_array($v)) {
+				$data[$k] = self::remove($v, $nextPath);
+			} elseif ($match) {
+				unset($data[$k]);
+			}
+		}
+		return $data;
+	}
+
+/**
+ * Remove values along a simple path.
+ * 
+ * @param array $data Array to operate on.
+ * @param string $path The path to remove.
+ * @return array Data with value removed.
+ */
+	protected static function _simpleRemove($data, $path) {
 		if (empty($path)) {
 			return $data;
 		}
+		if (!is_array($path)) {
+			$path = explode('.', $path);
+		}
+		$_list =& $data;
 
-		return self::_traverse($data, $path, function ($value) {
-			return $value;
-		});
+		foreach ($path as $i => $key) {
+			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
+				$key = intval($key);
+			}
+			if ($i === count($path) - 1) {
+				unset($_list[$key]);
+			} else {
+				if (!isset($_list[$key])) {
+					return $data;
+				}
+				$_list =& $_list[$key];
+			}
+		}
+		return $data;
 	}
 
 	public static function combine(array $data, $keyPath, $valuePath = null) {
