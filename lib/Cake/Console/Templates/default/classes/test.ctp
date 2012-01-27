@@ -71,9 +71,9 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		<?php echo $preConstruct; ?>
+<?php echo $preConstruct ? "\t\t" . $preConstruct : ''; ?>
 		$this-><?php echo $className . ' = ' . $construction; ?>
-		<?php echo $postConstruct; ?>
+<?php echo $postConstruct ? "\t\t" . $postConstruct : ''; ?>
 	}
 
 /**
