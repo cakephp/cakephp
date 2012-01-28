@@ -255,6 +255,14 @@ class AuthComponent extends Object {
 	var $params = array();
 
 /**
+ * HTTP Status code to send if user is unauthorized
+ *
+ * @var int
+ * @access public
+ */
+        var $httpUnauthorizedCode = 403;
+
+/**
  * Method list for bound controller
  *
  * @var array
@@ -400,7 +408,7 @@ class AuthComponent extends Object {
 					$this->_stop();
 					return false;
 				} else {
-					$controller->redirect(null, 403);
+					$controller->redirect(null, $this->httpUnauthorizedCode);
 				}
 			}
 		}
@@ -923,7 +931,7 @@ class AuthComponent extends Object {
 
 		if (is_array($data)) {
 			$model =& $this->getModel();
-			
+
 			if(isset($data[$model->alias])) {
 				if (isset($data[$model->alias][$this->fields['username']]) && isset($data[$model->alias][$this->fields['password']])) {
 					$data[$model->alias][$this->fields['password']] = $this->password($data[$model->alias][$this->fields['password']]);
