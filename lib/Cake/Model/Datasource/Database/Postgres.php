@@ -78,7 +78,8 @@ class Postgres extends DboSource {
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
 		'number' => array('name' => 'numeric'),
-		'inet' => array('name' => 'inet')
+		'inet' => array('name' => 'inet'),
+		'uuid' => array('name' => 'uuid')
 	);
 
 /**
@@ -640,7 +641,7 @@ class Postgres extends DboSource {
 				return 'time';
 			case (strpos($col, 'int') !== false && $col != 'interval'):
 				return 'integer';
-			case (strpos($col, 'char') !== false || $col == 'uuid'):
+			case (strpos($col, 'char') !== false/* || $col == 'uuid'*/):
 				return 'string';
 			case (strpos($col, 'text') !== false):
 				return 'text';
@@ -648,6 +649,8 @@ class Postgres extends DboSource {
 				return 'binary';
 			case (in_array($col, $floats)):
 				return 'float';
+			case ($col == 'uuid'):
+				return 'uuid';
 			default:
 				return 'text';
 			break;
