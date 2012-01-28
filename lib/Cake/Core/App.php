@@ -296,23 +296,24 @@ class App {
 			return;
 		}
 
-		foreach ($defaults as $type => $default) {
+		foreach ($paths as $type => $newPaths) {
 			if (!empty(self::$_packages[$type])) {
 				$path = self::$_packages[$type];
+			} else {
+				// new type
+				$path = array();
+				self::objects($type, null, false);
 			}
 
-			if (!empty($paths[$type])) {
-				$newPath = (array)$paths[$type];
+			$newPaths = (array) $newPaths;
 
-				if ($mode === App::PREPEND) {
-					$path = array_merge($newPath, $path);
-				} else {
-					$path = array_merge($path, $newPath);
-				}
-
-				$path = array_values(array_unique($path));
+			if ($mode === App::PREPEND) {
+				$path = array_merge($newPaths, $path);
+			} else {
+				$path = array_merge($path, $newPaths);
 			}
 
+			$path = array_values(array_unique($path));
 			self::$_packages[$type] = $path;
 		}
 	}

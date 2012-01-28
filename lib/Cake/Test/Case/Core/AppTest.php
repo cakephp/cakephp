@@ -94,6 +94,21 @@ class AppTest extends CakeTestCase {
 			'/path/to/controllers/'
 		);
 		$this->assertEquals($expected, $new);
+		App::build(); //reset defaults
+
+		App::build(array(
+			'Foo/Bar' => array(APP.'Foo'.DS.'Bar'.DS),
+			'Model/Baz' => array(APP.'Model'.DS.'Baz'.DS),
+		));
+
+		$this->assertEquals(array(APP.'Foo'.DS.'Bar'.DS), App::path('Foo/Bar'));
+		$this->assertEquals(array(APP.'Model'.DS.'Baz'.DS), App::path('Model/Baz'));
+
+		App::build(array(
+			'Foo/Bar' => array(APP.'Foo'.DS.'Baz'.DS),
+		));
+
+		$this->assertEquals(array(APP.'Foo'.DS.'Baz'.DS, APP.'Foo'.DS.'Bar'.DS), App::path('Foo/Bar'));
 
 		App::build(); //reset defaults
 		$defaults = App::path('Model');
