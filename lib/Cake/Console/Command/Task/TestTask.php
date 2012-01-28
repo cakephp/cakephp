@@ -444,6 +444,9 @@ class TestTask extends BakeTask {
 		if ($type == 'model') {
 			$construct = "ClassRegistry::init('$fullClassName');\n";
 		}
+		if ($type == 'behavior') {
+			$construct = "new $fullClassName();\n";
+		}
 		if ($type == 'controller') {
 			$className = substr($fullClassName, 0, strlen($fullClassName) - 10);
 			$construct = "new Test$fullClassName();\n";
