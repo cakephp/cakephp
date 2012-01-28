@@ -46,6 +46,14 @@ class TreeBehavior extends ModelBehavior {
 		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
 		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1,
 		'multiTree' => false, '__multiTreeKey' => null
+		'parent' => 'parent_id',
+		'left' => 'lft',
+		'right' => 'rght',
+		'scope' => '1 = 1',
+		'scopeField' => false,
+		'type' => 'nested',
+		'__parentChange' => false,
+		'recursive' => -1
 	);
 
 /**
@@ -66,6 +74,7 @@ class TreeBehavior extends ModelBehavior {
 			$data = $Model->getAssociated($settings['scope']);
 			$parent = $Model->{$settings['scope']};
 			$settings['scope'] = $Model->alias . '.' . $data['foreignKey'] . ' = ' . $parent->alias . '.' . $parent->primaryKey;
+			$settings['scopeField'] = $data['foreignKey'];
 			$settings['recursive'] = 0;
 			if ($settings['multiTree']) {
 				$settings['__multiTreeKey'] = $data['foreignKey'];
@@ -121,6 +130,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function beforeDelete($Model, $cascade = true) {
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 		list($name, $data) = array($Model->alias, $Model->read());
 		$data = $data[$name];
 
@@ -156,6 +166,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function beforeSave($Model) {
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 
 		$this->_addToWhitelist($Model, array($left, $right));
 		if (!$Model->id) {
@@ -260,6 +271,7 @@ class TreeBehavior extends ModelBehavior {
 			$id = null;
 		}
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 
 		if ($multiTree) {
 			if (isset($Model->data[$Model->alias][$__multiTreeKey]) && $Model->data[$Model->alias][$__multiTreeKey]) {
@@ -320,6 +332,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		$name = $Model->alias;
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
@@ -400,6 +413,7 @@ class TreeBehavior extends ModelBehavior {
 		} elseif ($multiTree) {
 			$conditions[$Model->escapeField($__multiTreeKey)] = $treeScope;
 		}
+		$scope = $this->_addScopeField($Model, $scope);
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
 		}
@@ -462,6 +476,7 @@ class TreeBehavior extends ModelBehavior {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
 		}
@@ -495,6 +510,7 @@ class TreeBehavior extends ModelBehavior {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
 		}
@@ -539,6 +555,8 @@ class TreeBehavior extends ModelBehavior {
 		}
 		if (empty ($id)) {
 			$id = $Model->id;
+		} else {
+			$Model->id = $id;
 		}
 		extract($this->settings[$Model->alias]);
 		$nodeFields = array($Model->primaryKey, $left, $right, $parent);
@@ -546,6 +564,8 @@ class TreeBehavior extends ModelBehavior {
 			$nodeFields[] = $__multiTreeKey;
 			$scope = array();
 		}
+		$scope = $this->_addScopeField($Model, $scope);
+
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
 			'fields' => $nodeFields, 'recursive' => $recursive
@@ -605,6 +625,8 @@ class TreeBehavior extends ModelBehavior {
 		}
 		if (empty ($id)) {
 			$id = $Model->id;
+		} else {
+			$Model->id = $id;
 		}
 		extract($this->settings[$Model->alias]);
 		$nodeFields = array($Model->primaryKey, $left, $right, $parent);
@@ -612,6 +634,9 @@ class TreeBehavior extends ModelBehavior {
 			$nodeFields[] = $__multiTreeKey;
 			$scope = array();
 		}
+
+		$scope = $this->_addScopeField($Model, $scope);
+
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
 			'fields' => $nodeFields, 'recursive' => $recursive
@@ -810,6 +835,8 @@ class TreeBehavior extends ModelBehavior {
 			$nodeFields[] = $__multiTreeKey;
 			$scope = array();
 		}
+		$scope = $this->_addScopeField($Model, $scope);
+
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $id),
 			'fields' => $nodeFields,
@@ -974,6 +1001,8 @@ class TreeBehavior extends ModelBehavior {
 			$nodeFields[] = $__multiTreeKey;
 			$scope = array();
 		}
+
+		$scope = $this->_addScopeField($Model, $scope);
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $Model->id),
 			'fields' => $nodeFields,
@@ -1053,10 +1082,14 @@ class TreeBehavior extends ModelBehavior {
 			if (is_string($scope)) {
 				$scope .= " AND {$Model->alias}.{$Model->primaryKey} <> ";
 				$scope .= $db->value($Model->id, $Model->getColumnType($Model->primaryKey));
+				$scope = array($scope);
 			} else {
 				$scope['NOT'][$Model->alias . '.' . $Model->primaryKey] = $Model->id;
 			}
 		}
+
+		$scope = $this->_addScopeField($Model, $scope);
+
 		$name = $Model->alias . '.' . $right;
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
@@ -1086,6 +1119,29 @@ class TreeBehavior extends ModelBehavior {
 		return (empty($edge[$left])) ? 0 : $edge[$left];
 	}
 
+	protected function _addScopeField($Model, $scope) {
+		if (empty($this->settings[$Model->alias]['scopeField'])) {
+			return $scope;
+		}
+		if (!is_array($scope)) {
+			$scope = array($scope);
+		}
+		if ($Model->data) {
+			if (!empty($Model->data[$Model->alias][$this->settings[$Model->alias]['scopeField']])) {
+				$value = $Model->data[$Model->alias][$this->settings[$Model->alias]['scopeField']];
+			} else {
+				$value = $Model->field($this->settings[$Model->alias]['scopeField']);
+			}
+		} elseif ($Model->id) {
+			$value = $Model->field($this->settings[$Model->alias]['scopeField']);
+		} else {
+			$value = null;
+		}
+		$scope[][$Model->alias . '.' . $this->settings[$Model->alias]['scopeField']] = $value;
+
+		return $scope;
+	}
+
 /**
  * Table sync method.
  *
@@ -1103,6 +1159,7 @@ class TreeBehavior extends ModelBehavior {
 	protected function _sync($Model, $shift, $dir = '+', $conditions = array(), $treeScope = null, $created = false, $field = 'both') {
 		$ModelRecursive = $Model->recursive;
 		extract($this->settings[$Model->alias]);
+		$scope = $this->_addScopeField($Model, $scope);
 		$Model->recursive = $recursive;
 
 		if ($field == 'both') {
