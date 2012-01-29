@@ -691,12 +691,12 @@ class CakeResponse {
 	}
 
 /**
- * Sets whether a response is eligible to be cached by intermediate proxies
+ * Sets whether a response is eligible to be cached by intermediate proxies.
  * This method controls the `public` or `private` directive in the Cache-Control
- * header
+ * header.
  *
  * @param boolean $public  if set to true, the Cache-Control header will be set as public
- * if set to false, the response will be set to private
+ * if set to false, the response will be set to private.
  * if no value is provided, it will return whether the response is sharable or not
  * @param int $time time in seconds after which the response should no longer be considered fresh
  * @return boolean
@@ -729,9 +729,9 @@ class CakeResponse {
 
 /**
  * Sets the Cache-Control s-maxage directive.
- * The max-age is the number of seconds after which the response should no longer be considered
+ * The s-maxage is the number of seconds after which the response should no longer be considered
  * a good candidate to be fetched from a shared cache (like in a proxy server).
- * If called with no parameters, this function will return the current max-age value if any
+ * If called with no parameters, this function will return the current max-age value if any exists.
  *
  * @param int $seconds if null, the method will return the current s-maxage value
  * @return int
@@ -751,7 +751,7 @@ class CakeResponse {
  * Sets the Cache-Control max-age directive.
  * The max-age is the number of seconds after which the response should no longer be considered
  * a good candidate to be fetched from the local (client) cache.
- * If called with no parameters, this function will return the current max-age value if any
+ * If called with no parameters, this function will return the current max-age value if any exists.
  *
  * @param int $seconds if null, the method will return the current max-age value
  * @return int
@@ -807,13 +807,13 @@ class CakeResponse {
 	}
 
 /**
- * Sets the Expires header for the response by taking an expiration time
- * If called with no parameters it will return the current Expires value
+ * Sets the Expires header for the response by using the expiration time.
+ * If called with no parameters it will return the current Expires value.
  *
  * ## Examples:
  *
  * `$response->expires('now')` Will Expire the response cache now
- * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
+ * `$response->expires(new DateTime('+1 day'))` Will set the expiration in the next 24 hours
  * `$response->expires()` Will return the current expiration header value
  *
  * @param string|DateTime $time
@@ -831,13 +831,13 @@ class CakeResponse {
 	}
 
 /**
- * Sets the Last-Modified header for the response by taking an modification time
- * If called with no parameters it will return the current Last-Modified value
+ * Sets the Last-Modified header for the response by using the modification time.
+ * If called with no parameters it will return the current Last-Modified value.
  *
  * ## Examples:
  *
- * `$response->modified('now')` Will set the Last-Modified to the current time
- * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
+ * `$response->modified('now')` Will set the Last-Modified header to the current time
+ * `$response->modified(new DateTime('-1 day'))` Will set the modification date 24 hours ago
  * `$response->modified()` Will return the current Last-Modified header value
  *
  * @param string|DateTime $time
@@ -879,13 +879,13 @@ class CakeResponse {
 	}
 
 /**
- * Sets the Vary header for the response, if an array is passed,
- * values will be imploded into a comma separated string. If no 
+ * Sets the Vary header for the response. If an array is passed,
+ * the values will be imploded into a comma separated string. If no 
  * parameters are passed, then an array with the current Vary header 
  * value is returned
  *
- * @param string|array $cacheVariances a single Vary string or a array 
- * containig the list for variances.
+ * @param string|array $cacheVariances a single Vary string or an array 
+ * containig the list of variances.
  * @return array
  **/
 	public function vary($cacheVariances = null) {
@@ -901,23 +901,23 @@ class CakeResponse {
 
 /**
  * Sets the response Etag, Etags are a strong indicative that a response
- * can be cached by a HTTP client. A bad way of generaing Etags is 
- * creating a hash of the response output, instead generate a unique 
+ * can be cached by a HTTP client. A bad way of generating Etags is 
+ * creating a hash of the response output, instead of generating a unique 
  * hash of the unique components that identifies a request, such as a 
- * modification time, a resource Id, and anything else you consider it 
- * makes it unique.
+ * modification time, a resource Id, and anything else that make it 
+ * unique.
  *
- * Second parameter is used to instuct clients that the content has 
- * changed, but sematicallly, it can be used as the same thing. Think 
- * for instance of a page with a hit counter, two different page views 
- * are equivalent, but they differ by a few bytes. This leaves off to 
- * the Client the decision of using or not the cached page.
+ * Second parameter is used to instruct clients that the content has 
+ * changed, but semantically it can be used as the same thing. For 
+ * instance, think of a page with a hit counter, two different page views 
+ * are equivalent, but they differ by a few bytes. This leaves the  
+ * decision of using the cached page or not up to the Client.
  *
- * If no parameters are passed, current Etag header is returned.
+ * If no parameters are passed, the current Etag header is returned.
  *
- * @param string $hash the unique has that identifies this resposnse
+ * @param string $hash the unique hash that identifies this resposnse
  * @param boolean $weak whether the response is semantically the same as 
- * other with th same hash or not
+ * another with the same hash or not
  * @return string
  **/
 	public function etag($tag = null, $weak = false) {
@@ -1016,10 +1016,10 @@ class CakeResponse {
  * Checks whether a response has not been modified according to the 'If-None-Match' 
  * (Etags) and 'If-Modified-Since' (last modification date) request 
  * headers headers. If the response is detected to be not modified, it 
- * is marked as so accordingly so the client can be informed of that.
+ * is marked so accordingly so the client can be informed of that.
  *
  * In order to mark a response as not modified, you need to set at least 
- * the Last-Modified response header or a response etag to be compared 
+ * the Last-Modified response header or a response Etag to be compared 
  * with the request itself
  *
  * @return boolean whether the response was marked as not modified or 
