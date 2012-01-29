@@ -165,6 +165,19 @@ class SecurityComponent extends Component {
 	public $csrfUseOnce = true;
 
 /**
+ * Control the number of tokens a user can keep open.
+ * This is most useful with one-time use tokens.  Since new tokens
+ * are created on each request, having a hard limit on the number of open tokens
+ * can be useful in controlling the size of the session file.
+ *
+ * When tokens are evicted, the oldest ones will be removed, as they are the most likely
+ * to be dead/expired.
+ *
+ * @var integer
+ */
+	public $csrfLimit = 100;
+
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -214,7 +227,7 @@ class SecurityComponent extends Component {
 				return $this->blackHole($controller, 'csrf');
 			}
 		}
-		$this->_generateToken($controller);
+		$this->generateToken($controller->request);
 		if ($isPost) {
 			unset($controller->request->data['_Token']);
 		}
@@ -380,7 +393,12 @@ class SecurityComponent extends Component {
 				if ($this->Session->check('_Token')) {
 					$tData = $this->Session->read('_Token');
 
-					if (!empty($tData['allowedControllers']) && !in_array($this->request->params['controller'], $tData['allowedControllers']) || !empty($tData['allowedActions']) && !in_array($this->request->params['action'], $tData['allowedActions'])) {
+					if (
+						!empty($tData['allowedControllers']) && 
+						!in_array($this->request->params['controller'], $tData['allowedControllers']) || 
+						!empty($tData['allowedActions']) && 
+						!in_array($this->request->params['action'], $tData['allowedActions'])
+					) {
 						if (!$this->blackHole($controller, 'auth')) {
 							return null;
 						}
@@ -430,8 +448,8 @@ class SecurityComponent extends Component {
 		$multi = array();
 
 		foreach ($fieldList as $i => $key) {
-			if (preg_match('/\.\d+$/', $key)) {
-				$multi[$i] = preg_replace('/\.\d+$/', '', $key);
+			if (preg_match('/(\.\d+)+$/', $key)) {
+				$multi[$i] = preg_replace('/(\.\d+)+$/', '', $key);
 				unset($fieldList[$i]);
 			}
 		}
@@ -476,16 +494,15 @@ class SecurityComponent extends Component {
 	}
 
 /**
- * Add authentication key for new form posts
+ * Manually add CSRF token information into the provided request object.
  *
- * @param Controller $controller Instantiating controller
- * @return boolean Success
+ * @param CakeRequest $request The request object to add into.
+ * @return boolean
  */
-	protected function _generateToken($controller) {
-		if (isset($controller->request->params['requested']) && $controller->request->params['requested'] === 1) {
+	public function generateToken(CakeRequest $request) {
+		if (isset($request->params['requested']) && $request->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
-				$tokenData = $this->Session->read('_Token');
-				$controller->request->params['_Token'] = $tokenData;
+				$request->params['_Token'] = $this->Session->read('_Token');
 			}
 			return false;
 		}
@@ -505,15 +522,15 @@ class SecurityComponent extends Component {
 				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
 			}
 		}
-		if ($this->csrfCheck && ($this->csrfUseOnce || empty($token['csrfTokens'])) ) {
+		if ($this->csrfUseOnce || empty($token['csrfTokens'])) {
 			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
-		if ($this->csrfCheck && $this->csrfUseOnce == false) {
+		if (!$this->csrfUseOnce) {
 			$csrfTokens = array_keys($token['csrfTokens']);
 			$token['key'] = $csrfTokens[0];
 		}
 		$this->Session->write('_Token', $token);
-		$controller->request->params['_Token'] = array(
+		$request->params['_Token'] = array(
 			'key' => $token['key'],
 			'unlockedFields' => $token['unlockedFields']
 		);
@@ -553,6 +570,10 @@ class SecurityComponent extends Component {
 			if ($expires < $now) {
 				unset($tokens[$nonce]);
 			}
+		}
+		$overflow = count($tokens) - $this->csrfLimit;
+		if ($overflow > 0) {
+			$tokens = array_slice($tokens, $overflow + 1, null, true);
 		}
 		return $tokens;
 	}

@@ -50,10 +50,14 @@ class I18nTest extends CakeTestCase {
 		CakePlugin::unload();
 	}
 
-
+/**
+ * testTranslationCaching method
+ *
+ * @return void
+ */
 	public function testTranslationCaching() {
 		Configure::write('Config.language', 'cache_test_po');
-		$i18n = i18n::getInstance();
+		$i18n = I18n::getInstance();
 
 		// reset internally stored entries
 		I18n::clear();
@@ -92,7 +96,6 @@ class I18nTest extends CakeTestCase {
 		Cache::write('dom1_' . $lang, $cachedDom1, '_cake_core_');
 		$this->assertEquals('FOO', I18n::translate('dom1.foo', false, 'dom1'));
 	}
-
 
 /**
  * testDefaultStrings method
@@ -2588,6 +2591,11 @@ class I18nTest extends CakeTestCase {
 		$this->assertEquals('Po (translated)', $singular);
 	}
 
+/**
+ * testTimeDefinition method
+ *
+ * @return void
+ */
 	public function testTimeDefinition() {
 		Configure::write('Config.language', 'po');
 		$result = __c('d_fmt', 5);
@@ -2603,6 +2611,11 @@ class I18nTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testTimeDefinitionJapanese method
+ *
+ * @return void
+ */
 	public function testTimeDefinitionJapanese() {
 		Configure::write('Config.language', 'ja_jp');
 		$result = __c('d_fmt', 5);
@@ -2621,11 +2634,28 @@ class I18nTest extends CakeTestCase {
 	}
 
 /**
+ * testTranslateLanguageParam method
+ *
+ * @return void
+ */
+	public function testTranslateLanguageParam() {
+		Configure::write('Config.language', 'rule_0_po');
+
+		$result = I18n::translate('Plural Rule 1', null, null, 6);
+		$expected = 'Plural Rule 0 (translated)';
+		$this->assertEquals($expected, $result);
+
+		$result = I18n::translate('Plural Rule 1', null, null, 6, null, 'rule_1_po');
+		$expected = 'Plural Rule 1 (translated)';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Singular method
  *
  * @return void
  */
-	function __domainCategorySingular($domain = 'test_plugin', $category = 3) {
+	private function __domainCategorySingular($domain = 'test_plugin', $category = 3) {
 		$singular = __dc($domain, 'Plural Rule 1', $category);
 		return $singular;
 	}
@@ -2635,7 +2665,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __domainCategoryPlural($domain = 'test_plugin', $category = 3) {
+	private function __domainCategoryPlural($domain = 'test_plugin', $category = 3) {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category), (float)$number);
@@ -2648,7 +2678,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __domainSingular($domain = 'test_plugin') {
+	private function __domainSingular($domain = 'test_plugin') {
 		$singular = __d($domain, 'Plural Rule 1');
 		return $singular;
 	}
@@ -2658,7 +2688,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __domainPlural($domain = 'test_plugin') {
+	private function __domainPlural($domain = 'test_plugin') {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', (float)$number), (float)$number );
@@ -2671,7 +2701,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __category($category = 3) {
+	private function __category($category = 3) {
 		$singular = __c('Plural Rule 1', $category);
 		return $singular;
 	}
@@ -2681,7 +2711,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __singular() {
+	private function __singular() {
 		$singular = __('Plural Rule 1');
 		return $singular;
 	}
@@ -2691,7 +2721,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __plural() {
+	private function __plural() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__n('%d = 1', '%d = 0 or > 1', (float)$number), (float)$number);
@@ -2704,7 +2734,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __singularFromCore() {
+	private function __singularFromCore() {
 		$singular = __('Plural Rule 1 (from core)');
 		return $singular;
 	}
@@ -2714,7 +2744,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	function __pluralFromCore() {
+	private function __pluralFromCore() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', (float)$number), (float)$number );

@@ -131,7 +131,7 @@ class CommandListShellTest extends CakeTestCase {
 		$expected = "/\[.*TestPlugin.*\]\\v*[ ]+example/";
 		$this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*Core.*\]\\v*[ ]+acl, api, bake, command_list, console, i18n, schema, testsuite/";
+		$expected = "/\[.*Core.*\]\\v*[ ]+acl, api, bake, command_list, console, i18n, schema, test, testsuite/";
 		$this->assertRegExp($expected, $output);
 	}
 

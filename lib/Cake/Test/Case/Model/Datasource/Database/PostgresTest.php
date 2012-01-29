@@ -567,7 +567,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testIndexGeneration() {
-		$name = $this->Dbo->fullTableName('index_test', false);
+		$name = $this->Dbo->fullTableName('index_test', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -580,7 +580,7 @@ class PostgresTest extends CakeTestCase {
 		$this->Dbo->query('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 
-		$name = $this->Dbo->fullTableName('index_test_2', false);
+		$name = $this->Dbo->fullTableName('index_test_2', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
@@ -759,7 +759,7 @@ class PostgresTest extends CakeTestCase {
  */
 	function testVirtualFieldAsAConstant() {
 		$this->loadFixtures('Article', 'Comment');
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'empty' => "NULL",
 			'number' => 43,
@@ -871,4 +871,38 @@ class PostgresTest extends CakeTestCase {
 		$result = $this->Dbo->getEncoding();
 		$this->assertEquals('EUC-JP', $result) ;
 	}
+
+/**
+ * Test truncate with a mock.
+ *
+ * @return void
+ */
+	public function testTruncateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$db = ConnectionManager::getDatasource('test');
+		$schema = $db->config['schema'];
+		$Article = new Article();
+
+		$this->Dbo = $this->getMock('Postgres', array('execute'), array($db->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"articles\"");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"articles\"");
+		$this->Dbo->truncate('articles');
+
+		// #2355: prevent duplicate prefix
+		$this->Dbo->config['prefix'] = 'tbl_';
+		$Article->tablePrefix = 'tbl_';
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
+		$this->Dbo->truncate('articles');
+	}
+
 }

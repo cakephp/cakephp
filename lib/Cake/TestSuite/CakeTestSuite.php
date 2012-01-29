@@ -49,12 +49,9 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  */
 	public function addTestDirectoryRecursive($directory = '.') {
 		$Folder = new Folder($directory);
-		$files = $Folder->tree(null, false, 'files');
+		$files = $Folder->tree(null, true, 'files');
 
 		foreach ($files as $file) {
-			if (strpos($file, DS . '.') !== false) {
-				continue;
-			}
 			$this->addTestFile($file);
 		}
 	}

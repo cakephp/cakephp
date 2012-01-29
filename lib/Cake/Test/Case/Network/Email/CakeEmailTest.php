@@ -277,6 +277,14 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array('CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>');
 		$this->assertSame($expected, $result);
 
+		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last, First'));
+		$expected = array('"Last, First" <me@example.com>');
+		$this->assertSame($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last First'));
+		$expected = array('Last First <me@example.com>');
+		$this->assertSame($expected, $result);
+
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => 'ÄÖÜTest'));
 		$expected = array('=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>');
 		$this->assertSame($expected, $result);
@@ -865,7 +873,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
-			"--$boundary\r\n" .
+			"--rel-$boundary\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .

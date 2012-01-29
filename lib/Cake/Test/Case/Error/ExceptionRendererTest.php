@@ -492,10 +492,10 @@ class ExceptionRendererTest extends CakeTestCase {
 				404
 			),
 			array(
-				new MissingTableException(array('table' => 'articles', 'class' => 'Article')),
+				new MissingTableException(array('table' => 'articles', 'class' => 'Article', 'ds' => 'test')),
 				array(
 					'/<h2>Missing Database Table<\/h2>/',
-					'/table <em>articles<\/em> for model <em>Article<\/em>/'
+					'/Table <em>articles<\/em> for model <em>Article<\/em> was not found in datasource <em>test<\/em>/'
 				),
 				500
 			),
@@ -692,9 +692,9 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertRegExp('/<h2>Database Error<\/h2>/', $result);
-		$this->assertRegExp('/There was an error in the SQL query/', $result);
-		$this->assertRegExp('/SELECT \* from poo_query < 5 and :seven/', $result);
-		$this->assertRegExp('/"seven" => 7/', $result);
+		$this->assertContains('<h2>Database Error</h2>', $result);
+		$this->assertContains('There was an error in the SQL query', $result);
+		$this->assertContains('SELECT * from poo_query < 5 and :seven', $result);
+		$this->assertContains("'seven' => (int) 7", $result);
 	}
 }

@@ -60,7 +60,7 @@ class TextHelperTest extends CakeTestCase {
 		$text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
 		$text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
 		$text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
-		$text8 = 'Vive la R'.chr(195).chr(169).'publique de France';
+		$text8 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
 		$text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
 
 		$this->assertSame($this->Text->truncate($text1, 15), 'The quick br...');
@@ -86,6 +86,51 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
 		$this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
+
+		$text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
+		$result = $this->Text->truncate($text, 10, array(
+			'ending' => '...',
+			'exact' => false,
+			'html' => true
+		));
+		$expected = '<p><span style="font-size: medium;"><a>...</a></span></p>';
+		$this->assertEquals($expected, $result);
+
+		$text = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
+Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
+este artículo de El País.</span></p>
+<p><span style="font-size: medium;"><span style="font-size:
+large;">Por qué Steve era distinto.</span></span></p>
+<p><span style="font-size: medium;"><a href="http://www.elpais.com/
+articulo/primer/plano/Steve/era/distinto/elpepueconeg/
+20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
+Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
+<p><span style="font-size: medium;">Ya se ha publicado la biografía de
+Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
+Isaacson</strong>", aquí os dejamos la dirección de amazon donde
+podeís adquirirla.</span></p>
+<p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
+Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
+		$result = $this->Text->truncate($text, 500, array(
+			'ending' => '... ',
+			'exact' => false,
+			'html' => true
+		));
+		$expected = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
+Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
+este artículo de El País.</span></p>
+<p><span style="font-size: medium;"><span style="font-size:
+large;">Por qué Steve era distinto.</span></span></p>
+<p><span style="font-size: medium;"><a href="http://www.elpais.com/
+articulo/primer/plano/Steve/era/distinto/elpepueconeg/
+20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
+Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
+<p><span style="font-size: medium;">Ya se ha publicado la biografía de
+Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
+Isaacson</strong>", aquí os dejamos la dirección de amazon donde
+podeís adquirirla.</span></p>
+<p><span style="font-size: medium;"><a>... </a></span></p>';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -232,6 +277,23 @@ class TextHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test escaping for autoLink
+ *
+ * @return void
+ */
+	public function testAutoLinkEscape() {
+		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
+		$expected = 'This is a &lt;b&gt;test&lt;/b&gt; text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
+		$expected = 'This is a <b>test</b> text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text, array('escape' => false));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testAutoLinkUrls method
  *
  * @return void
@@ -281,7 +343,14 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEquals($expected, $result);
+	}
 
+/**
+ * Test autoLinkUrls with the escape option.
+ *
+ * @return void
+ */
+	public function testAutoLinkUrlsEscape() {
 		$text = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
@@ -290,6 +359,11 @@ class TextHelperTest extends CakeTestCase {
 		$text = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
 		$expected = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
+		$expected = 'Text with a partial &lt;iframe src=&quot;http://www.cakephp.org&quot; /&gt; link';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => true));
 		$this->assertEquals($expected, $result);
 	}
 

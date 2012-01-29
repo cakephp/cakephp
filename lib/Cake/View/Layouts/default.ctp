@@ -31,7 +31,9 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 
 		echo $this->Html->css('cake.generic');
 
-		echo $scripts_for_layout;
+		echo $this->fetch('meta');
+		echo $this->fetch('css');
+		echo $this->fetch('script');
 	?>
 </head>
 <body>
@@ -43,8 +45,7 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 
 			<?php echo $this->Session->flash(); ?>
 
-			<?php echo $content_for_layout; ?>
-
+			<?php echo $this->fetch('content'); ?>
 		</div>
 		<div id="footer">
 			<?php echo $this->Html->link(

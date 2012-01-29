@@ -273,6 +273,21 @@ class TestController extends ControllerTestAppController {
 		);
 	}
 
+
+/**
+ * view method
+ *
+ * @param mixed $testId
+ * @param mixed $test2Id
+ * @return void
+ */
+	public function view($testId, $test2Id) {
+		$this->data = array(
+			'testId' => $testId,
+			'test2Id' => $test2Id
+		);
+	}
+
 	public function returner() {
 		return 'I am from the controller.';
 	}
@@ -313,7 +328,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function initialize(&$controller) {
+	public function initialize($controller) {
 	}
 
 /**
@@ -321,7 +336,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function startup(&$controller) {
+	public function startup($controller) {
 	}
 
 /**
@@ -329,7 +344,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function shutdown(&$controller) {
+	public function shutdown($controller) {
 	}
 
 /**
@@ -337,10 +352,18 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function beforeRender(&$controller) {
+	public function beforeRender($controller) {
 		if ($this->viewclass) {
 			$controller->viewClass = $this->viewclass;
 		}
+	}
+}
+
+class Test2Component extends TestComponent {
+
+
+	public function beforeRender($controller) {
+		return false;
 	}
 }
 
@@ -671,6 +694,21 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * test that a component beforeRender can change the controller view class.
+ *
+ * @return void
+ */
+	public function testComponentCancelRender() {
+		$Controller = new Controller($this->getMock('CakeRequest'), new CakeResponse());
+		$Controller->uses = array();
+		$Controller->components = array('Test2');
+		$Controller->constructClasses();
+		$result = $Controller->render('index');
+		$this->assertInstanceOf('CakeResponse', $result);
+	}
+
+
+/**
  * testToBeInheritedGuardmethods method
  *
  * @return void
@@ -712,7 +750,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
 
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with($code);
@@ -733,7 +771,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
 
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with($code);
@@ -753,7 +791,7 @@ class ControllerTest extends CakeTestCase {
 	public function testRedirectTriggeringComponentsReturnNull() {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(null));
@@ -768,14 +806,14 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * test that beforeRedirect callback returnning null doesn't affect things.
+ * test that beforeRedirect callback returning null doesn't affect things.
  *
  * @return void
  */
 	public function testRedirectBeforeRedirectModifyingParams() {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(array('http://book.cakephp.org')));
@@ -790,14 +828,14 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * test that beforeRedirect callback returnning null doesn't affect things.
+ * test that beforeRedirect callback returning null doesn't affect things.
  *
  * @return void
  */
 	public function testRedirectBeforeRedirectModifyingParamsArrayReturn() {
 		$Controller = $this->getMock('Controller', array('header', '_stop'));
 		$Controller->response = $this->getMock('CakeResponse');
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$return = array(
 			array(
@@ -812,7 +850,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue($return));
 
-		$Controller->response->expects($this->at(0))->method('header')
+		$Controller->response->expects($this->once())->method('header')
 			->with('Location', 'http://example.com/test/2');
 
 		$Controller->response->expects($this->at(1))->method('statusCode')
@@ -823,16 +861,17 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * test that beforeRedirect callback returnning false in controller
+ * test that beforeRedirect callback returning false in controller
  *
  * @return void
  */
 	public function testRedirectBeforeRedirectInController() {
 		$Controller = $this->getMock('Controller', array('_stop', 'beforeRedirect'));
 		$Controller->response = $this->getMock('CakeResponse', array('header'));
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('beforeRedirect')
+			->with('http://cakephp.org')
 			->will($this->returnValue(false));
 		$Controller->response->expects($this->never())->method('header');
 		$Controller->expects($this->never())->method('_stop');
@@ -978,10 +1017,11 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 
 		$TestController = new TestController($request);
-		$TestController->setAction('index', 1, 2);
+		$TestController->setAction('view', 1, 2);
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertSame($expected, $TestController->request->data);
-		$this->assertSame('index', $TestController->view);
+		$this->assertSame('view', $TestController->request->params['action']);
+		$this->assertSame('view', $TestController->view);
 	}
 
 /**
@@ -1111,17 +1151,43 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testStartupProcess() {
-		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
+		$Controller = $this->getMock('Controller', array('getEventManager'));
 
-		$Controller->components = array('MockStartup');
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$eventManager = $this->getMock('CakeEventManager');
+		$eventManager->expects($this->at(0))->method('dispatch')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'Controller.initialize'),
+					$this->attributeEqualTo('_subject', $Controller)
+				)
+			);
+		$eventManager->expects($this->at(1))->method('dispatch')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'Controller.startup'),
+					$this->attributeEqualTo('_subject', $Controller)
+				)
+			);
+		$Controller->expects($this->exactly(2))->method('getEventManager')
+			->will($this->returnValue($eventManager));
+		$Controller->startupProcess();
+	}
+
+/**
+ * Tests that the shutdown process calls the correct functions
+ *
+ * @return void
+ */
+	public function testStartupProcessIndirect() {
+		$Controller = $this->getMock('Controller', array('beforeFilter'));
+
+		$Controller->components = array('MockShutdown');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('beforeFilter');
-		$Controller->Components->expects($this->at(0))->method('trigger')
-			->with('initialize', array(&$Controller));
-
-		$Controller->Components->expects($this->at(1))->method('trigger')
-			->with('startup', array(&$Controller));
+		$Controller->Components->expects($this->exactly(2))->method('trigger')->with($this->isInstanceOf('CakeEvent'));
 
 		$Controller->startupProcess();
 	}
@@ -1132,14 +1198,35 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testShutdownProcess() {
-		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
+		$Controller = $this->getMock('Controller', array('getEventManager'));
+
+		$eventManager = $this->getMock('CakeEventManager');
+		$eventManager->expects($this->once())->method('dispatch')
+			->with(
+				$this->logicalAnd(
+					$this->isInstanceOf('CakeEvent'),
+					$this->attributeEqualTo('_name', 'Controller.shutdown'),
+					$this->attributeEqualTo('_subject', $Controller)
+				)
+			);
+		$Controller->expects($this->once())->method('getEventManager')
+			->will($this->returnValue($eventManager));
+		$Controller->shutdownProcess();
+	}
+
+/**
+ * Tests that the shutdown process calls the correct functions
+ *
+ * @return void
+ */
+	public function testShutdownProcessIndirect() {
+		$Controller = $this->getMock('Controller', array('afterFilter'));
 
 		$Controller->components = array('MockShutdown');
-		$Controller->Components = $this->getMock('ComponentCollection');
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('afterFilter');
-		$Controller->Components->expects($this->once())->method('trigger')
-			->with('shutdown', array(&$Controller));
+		$Controller->Components->expects($this->exactly(1))->method('trigger')->with($this->isInstanceOf('CakeEvent'));
 
 		$Controller->shutdownProcess();
 	}

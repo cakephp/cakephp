@@ -23,6 +23,12 @@ App::uses('DataSource', 'Model/Datasource');
 App::uses('DboSource', 'Model/Datasource');
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
+class MockPDO extends PDO {
+
+	public function __construct() {
+	}
+}
+
 class MockDataSource extends DataSource {
 }
 
@@ -493,6 +499,9 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testValue() {
+		if ($this->db instanceof Sqlserver) {
+			$this->markTestSkipped('Cannot run this test with SqlServer');
+		}
 		$result = $this->db->value('{$__cakeForeignKey__$}');
 		$this->assertEquals($result, '{$__cakeForeignKey__$}');
 
@@ -642,6 +651,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 2');
 
 		$log = $this->testDb->getLog();
+
 		$expected = array('query' => 'Query 1', 'affected' => '', 'numRows' => '', 'took' => '');
 		$this->assertEquals($log['log'][0], $expected);
 		$expected = array('query' => 'Query 2', 'affected' => '', 'numRows' => '', 'took' => '');
@@ -697,17 +707,33 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testFullTablePermutations() {
 		$Article = ClassRegistry::init('Article');
-		$result = $this->testDb->fullTableName($Article, false);
+		$result = $this->testDb->fullTableName($Article, false, false);
 		$this->assertEquals($result, 'articles');
 
 		$Article->tablePrefix = 'tbl_';
-		$result = $this->testDb->fullTableName($Article, false);
+		$result = $this->testDb->fullTableName($Article, false, false);
 		$this->assertEquals($result, 'tbl_articles');
 
 		$Article->useTable = $Article->table = 'with spaces';
 		$Article->tablePrefix = '';
-		$result = $this->testDb->fullTableName($Article);
+		$result = $this->testDb->fullTableName($Article, true, false);
 		$this->assertEquals($result, '`with spaces`');
+
+		$this->loadFixtures('Article');
+		$Article->useTable = $Article->table = 'articles';
+		$Article->setDataSource('test');
+		$testdb = $Article->getDataSource();
+		$result = $testdb->fullTableName($Article, false, true);
+		$this->assertEquals($testdb->getSchemaName() . '.articles', $result);
+
+		// tests for empty schemaName
+		$noschema = ConnectionManager::create('noschema', array(
+			'datasource' => 'DboTestSource'
+			));
+		$Article->setDataSource('noschema');
+		$Article->schemaName = null;
+		$result = $noschema->fullTableName($Article, false, true);
+		$this->assertEquals('articles', $result);
 	}
 
 /**
@@ -763,5 +789,40 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->lastError($stmt);
 		$expected = 'something: bad';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests that transaction commands are logged
+ *
+ * @return void
+ **/
+	public function testTransactionLogging() {
+			$conn = $this->getMock('MockPDO');
+			$db = new DboTestSource;
+			$db->setConnection($conn);
+			$conn->expects($this->exactly(2))->method('beginTransaction')
+				->will($this->returnValue(true));
+			$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
+			$conn->expects($this->once())->method('rollback')->will($this->returnValue(true));
+
+			$db->begin();
+			$log = $db->getLog();
+			$expected = array('query' => 'BEGIN', 'affected' => '', 'numRows' => '', 'took' => '');
+			$this->assertEquals($expected, $log['log'][0]);
+
+			$db->commit();
+			$expected = array('query' => 'COMMIT', 'affected' => '', 'numRows' => '', 'took' => '');
+			$log = $db->getLog();
+			$this->assertEquals($expected, $log['log'][0]);
+
+			$db->begin();
+			$expected = array('query' => 'BEGIN', 'affected' => '', 'numRows' => '', 'took' => '');
+			$log = $db->getLog();
+			$this->assertEquals($expected, $log['log'][0]);
+
+			$db->rollback();
+			$expected = array('query' => 'ROLLBACK', 'affected' => '', 'numRows' => '', 'took' => '');
+			$log = $db->getLog();
+			$this->assertEquals($expected, $log['log'][0]);
 	}
 }

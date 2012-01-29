@@ -1,6 +1,6 @@
 <?php
 /**
- * AllModelTest file
+ * ModelTest file
  *
  * PHP 5
  *
@@ -18,13 +18,13 @@
  */
 
 /**
- * AllModelTest class
+ * ModelTest class
  *
  * This test group will run model class tests
  *
  * @package       Cake.Test.Case
  */
-class AllModelTest extends PHPUnit_Framework_TestSuite {
+class ModelTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -39,6 +39,7 @@ class AllModelTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelDeleteTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelValidationTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelIntegrationTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelCrossSchemaHabtmTest.php');
 		return $suite;
 	}
 }

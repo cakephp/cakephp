@@ -356,6 +356,9 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testMaskSetting() {
+		if (DS === '\\') {
+			$this->markTestSkipped('File permission testing does not work on Windows.');
+		}
 		Cache::config('mask_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		$data = 'This is some test content';
 		$write = Cache::write('masking_test', $data, 'mask_test');

@@ -20,6 +20,7 @@
  */
 
 App::uses('ObjectCollection', 'Utility');
+App::uses('CakeEventListener', 'Event');
 
 /**
  * Model behavior collection class.
@@ -28,7 +29,7 @@ App::uses('ObjectCollection', 'Utility');
  *
  * @package       Cake.Model
  */
-class BehaviorCollection extends ObjectCollection {
+class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * Stores a reference to the attached name
@@ -106,6 +107,9 @@ class BehaviorCollection extends ObjectCollection {
 			$alias = $behavior;
 			$behavior = $config['className'];
 		}
+		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
+		unset($config['enabled'], $config['className']);
+
 		list($plugin, $name) = pluginSplit($behavior, true);
 		if (!isset($alias)) {
 			$alias = $name;
@@ -165,10 +169,9 @@ class BehaviorCollection extends ObjectCollection {
 			}
 		}
 
-		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
 		if (!in_array($alias, $this->_enabled) && !$configDisabled) {
 			$this->enable($alias);
-		} elseif ($configDisabled) {
+		} else {
 			$this->disable($alias);
 		}
 		return true;
@@ -184,14 +187,13 @@ class BehaviorCollection extends ObjectCollection {
 		list($plugin, $name) = pluginSplit($name);
 		if (isset($this->_loaded[$name])) {
 			$this->_loaded[$name]->cleanup(ClassRegistry::getObject($this->modelName));
-			unset($this->_loaded[$name]);
+			parent::unload($name);
 		}
 		foreach ($this->_methods as $m => $callback) {
 			if (is_array($callback) && $callback[0] == $name) {
 				unset($this->_methods[$m]);
 			}
 		}
-		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
 	}
 
 /**
@@ -272,4 +274,21 @@ class BehaviorCollection extends ObjectCollection {
 		return false;
 	}
 
+/**
+ * Returns the implemented events that will get routed to the trigger function
+ * in order to dispatch them separately on each behavior
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'Model.beforeFind' => 'trigger',
+			'Model.afterFind' => 'trigger',
+			'Model.beforeValidate' => 'trigger',
+			'Model.beforeSave' => 'trigger',
+			'Model.afterSave' => 'trigger',
+			'Model.beforeDelete' => 'trigger',
+			'Model.afterDelete' => 'trigger'
+		);
+	}
 }

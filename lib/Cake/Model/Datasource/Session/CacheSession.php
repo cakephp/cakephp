@@ -18,6 +18,7 @@
  */
 
 App::uses('Cache', 'Cache');
+App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
 
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with CakeSession

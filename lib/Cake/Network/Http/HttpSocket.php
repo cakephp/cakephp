@@ -63,6 +63,7 @@ class HttpSocket extends CakeSocket {
 			'User-Agent' => 'CakePHP'
 		),
 		'raw' => null,
+		'redirect' => false,
 		'cookies' => array()
 	);
 
@@ -97,6 +98,7 @@ class HttpSocket extends CakeSocket {
 				'host' => 'localhost',
 				'port' => 80
 			),
+			'redirect' => false,
 			'cookies' => array()
 		)
 	);
@@ -321,7 +323,7 @@ class HttpSocket extends CakeSocket {
 		$this->request['auth'] = $this->_auth;
 
 		if (is_array($this->request['body'])) {
-			$this->request['body'] = $this->_httpSerialize($this->request['body']);
+			$this->request['body'] = http_build_query($this->request['body']);
 		}
 
 		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Type'])) {
@@ -399,6 +401,12 @@ class HttpSocket extends CakeSocket {
 				$this->config['request']['cookies'][$Host] = array();
 			}
 			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response->cookies);
+		}
+		
+		if($this->request['redirect'] && $this->response->isRedirect()) {
+			$request['uri'] = $this->response->getHeader('Location');
+			$request['redirect'] = is_int($this->request['redirect']) ? $this->request['redirect'] - 1 : $this->request['redirect'];
+			$this->response = $this->request($request);
 		}
 
 		return $this->response;
@@ -646,7 +654,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
-		$uri['query'] = $this->_httpSerialize($uri['query']);
+		$uri['query'] = http_build_query($uri['query']);
 		$stripIfEmpty = array(
 			'query' => '?%query',
 			'fragment' => '#%fragment',
@@ -751,49 +759,7 @@ class HttpSocket extends CakeSocket {
 		if (is_array($query)) {
 			return $query;
 		}
-		$parsedQuery = array();
-
-		if (is_string($query) && !empty($query)) {
-			$query = preg_replace('/^\?/', '', $query);
-			$items = explode('&', $query);
-
-			foreach ($items as $item) {
-				if (strpos($item, '=') !== false) {
-					list($key, $value) = explode('=', $item, 2);
-				} else {
-					$key = $item;
-					$value = null;
-				}
-
-				$key = urldecode($key);
-				$value = urldecode($value);
-
-				if (preg_match_all('/\[([^\[\]]*)\]/iUs', $key, $matches)) {
-					$subKeys = $matches[1];
-					$rootKey = substr($key, 0, strpos($key, '['));
-					if (!empty($rootKey)) {
-						array_unshift($subKeys, $rootKey);
-					}
-					$queryNode =& $parsedQuery;
-
-					foreach ($subKeys as $subKey) {
-						if (!is_array($queryNode)) {
-							$queryNode = array();
-						}
-
-						if ($subKey === '') {
-							$queryNode[] = array();
-							end($queryNode);
-							$subKey = key($queryNode);
-						}
-						$queryNode =& $queryNode[$subKey];
-					}
-					$queryNode = $value;
-				} else {
-					$parsedQuery[$key] = $value;
-				}
-			}
-		}
+		parse_str(ltrim($query, '?'), $parsedQuery);
 		return $parsedQuery;
 	}
 
@@ -832,22 +798,6 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', implode(',', $asteriskMethods)));
 		}
 		return $request['method'] . ' ' . $request['uri'] . ' ' . $versionToken . "\r\n";
-	}
-
-/**
- * Serializes an array for transport.
- *
- * @param array $data Data to serialize
- * @return string Serialized variable
- */
-	protected function _httpSerialize($data = array()) {
-		if (is_string($data)) {
-			return $data;
-		}
-		if (empty($data) || !is_array($data)) {
-			return false;
-		}
-		return substr(Router::queryString($data), 1);
 	}
 
 /**

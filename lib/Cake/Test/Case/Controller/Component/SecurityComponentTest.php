@@ -910,6 +910,30 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that values like Foo.0.1
+ *
+ * @return void
+ */
+	public function testValidateNestedNumericSets() {
+	
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->request->params['_Token']['key'];
+		$unlocked = '';
+		$hashFields = array('TaxonomyData');
+		$fields = urlencode(Security::hash(serialize($hashFields) . $unlocked . Configure::read('Security.salt')));
+
+		$this->Controller->request->data = array(
+			'TaxonomyData' => array(
+				1 => array(array(2)),
+				2 => array(array(3))
+			),
+			'_Token' => compact('key', 'fields', 'unlocked')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+	}
+
+/**
  * testValidateHasManyRecords method
  *
  * validatePost should fail, hidden fields have been changed.
@@ -1276,5 +1300,45 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Security->startup($this->Controller);
 		$token = $this->Security->Session->read('_Token');
 		$this->assertTrue(isset($token['csrfTokens']['nonce1']), 'Token was consumed');
+	}
+
+/**
+ * Test generateToken()
+ *
+ * @return void
+ */
+	public function testGenerateToken() {
+		$request = $this->Controller->request;
+		$this->Security->generateToken($request);
+
+		$this->assertNotEmpty($request->params['_Token']);
+		$this->assertTrue(isset($request->params['_Token']['unlockedFields']));
+		$this->assertTrue(isset($request->params['_Token']['key']));
+	}
+
+/**
+ * Test the limiting of CSRF tokens.
+ *
+ * @return void
+ */
+	public function testCsrfLimit() {
+		$this->Security->csrfLimit = 3;
+		$time = strtotime('+10 minutes');
+		$tokens = array(
+			'1' => $time,
+			'2' => $time,
+			'3' => $time,
+			'4' => $time,
+			'5' => $time,
+		);
+		$this->Security->Session->write('_Token', array('csrfTokens' => $tokens));
+		$this->Security->generateToken($this->Controller->request);
+		$result = $this->Security->Session->read('_Token.csrfTokens');
+
+		$this->assertFalse(isset($result['1']));
+		$this->assertFalse(isset($result['2']));
+		$this->assertFalse(isset($result['3']));
+		$this->assertTrue(isset($result['4']));
+		$this->assertTrue(isset($result['5']));
 	}
 }

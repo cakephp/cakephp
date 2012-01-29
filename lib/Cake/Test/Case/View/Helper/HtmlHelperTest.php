@@ -144,7 +144,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
+		$this->View = $this->getMock('View', array('append'), array(new TheHtmlTestController()));
 		$this->Html = new TestHtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
@@ -169,7 +169,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testDocType() {
 		$result = $this->Html->docType();
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+		$expected = '<!DOCTYPE html>';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Html->docType('html4-strict');
@@ -313,12 +313,10 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		Configure::write('Asset.timestamp', 'force');
-
- 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
+		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
  		$expected = array(
  			'a' => array('href' => '#'),
-			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
+			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -326,7 +324,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('../favicon.ico', array('url' => '#'));
 		$expected = array(
 			'a' => array('href' => '#'),
-			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
+			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -351,6 +349,10 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
+		
+		$result = $this->Html->image('test.gif', array('fullBase' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
 	}
 
 /**
@@ -520,12 +522,13 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[1], $expected);
 		$this->assertEquals(count($result), 2);
 
-		$this->View->expects($this->at(0))->method('addScript')
-			->with($this->matchesRegularExpression('/css_in_head.css/'));
+		$this->View->expects($this->at(0))
+			->method('append')
+			->with('css', $this->matchesRegularExpression('/css_in_head.css/'));
 
 		$this->View->expects($this->at(1))
-			->method('addScript')
-			->with($this->matchesRegularExpression('/more_css_in_head.css/'));
+			->method('append')
+			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
 
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
@@ -666,9 +669,33 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->View->expects($this->any())->method('addScript')
-			->with($this->matchesRegularExpression('/script_in_head.js/'));
+	}
+
+/**
+ * test that script() works with blocks.
+ *
+ * @return void
+ */
+	public function testScriptWithBlocks() {
+		$this->View->expects($this->at(0))
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/script_in_head.js/'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/bool_false.js/'));
+	
+		$this->View->expects($this->at(2))
+			->method('append')
+			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
+
 		$result = $this->Html->script('script_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->script('bool_false', false);
+		$this->assertNull($result);
+
+		$result = $this->Html->script('second_script', array('block' => 'headScripts'));
 		$this->assertNull($result);
 	}
 
@@ -679,7 +706,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	function testScriptAssetFilter() {
 		Configure::write('Asset.filter.js', 'js.php');
-	
+
 		$result = $this->Html->script('jquery-1.3');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'cjs/jquery-1.3.js')
@@ -763,8 +790,9 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 
-		$this->View->expects($this->any())->method('addScript')
-			->with($this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
+		$this->View->expects($this->any())
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
 		$this->assertNull($result);
@@ -811,7 +839,8 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->View->expects($this->once())->method('addScript');
+		$this->View->expects($this->once())
+			->method('append');
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
 		$this->assertNull($result);
 		echo 'this is some javascript';
@@ -839,7 +868,7 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
- * testBreadcrumb method
+ * testGetCrumb and addCrumb method
  *
  * @return void
  */
@@ -882,11 +911,6 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->assertRegExp('/^<a[^<>]+>First<\/a> &gt; <a[^<>]+>Second<\/a> &gt; <a[^<>]+>Third<\/a>$/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
-		$this->assertNotRegExp('/<a[^<>]+[^href]=[^<>]*>/', $result);
 
 		$this->Html->addCrumb('Fourth', null);
 
@@ -927,6 +951,30 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a',
 			'-',
 			'Fourth'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test the array form of $startText
+ */
+	public function testGetCrumbFirstLink() {
+		$this->Html->addCrumb('First', '#first');
+		$this->Html->addCrumb('Second', '#second');
+
+		$result = $this->Html->getCrumbs(' - ', array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+		$expected = array(
+			array('a' => array('href' => '/home')),
+			'img' => array('src' => '/home.png'),
+			'/a',
+			' - ',
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			' - ',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1257,10 +1305,24 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 
 
-		$this->View->expects($this->any())->method('addScript')
-			->with($this->matchesRegularExpression('/^<meta/'));
+	}
+
+/**
+ * Test the inline and block options for meta()
+ */
+	public function testMetaWithBlocks() {
+		$this->View->expects($this->at(0))
+			->method('append')
+			->with('meta', $this->stringContains('ROBOTS'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('metaTags', $this->stringContains('favicon.ico'));
 
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->meta('icon', 'favicon.ico', array('block' => 'metaTags'));
 		$this->assertNull($result);
 	}
 
@@ -1520,6 +1582,10 @@ class HtmlHelperTest extends CakeTestCase {
 			}
 		}
 		$this->assertEquals($helper->parseAttributes(array('compact')), ' compact="compact"');
+
+		$attrs = array('class' => array('foo', 'bar'));
+		$expected = ' class="foo bar"';
+		$this->assertEquals(' class="foo bar"', $helper->parseAttributes($attrs));
 
 		$helper = new Html5TestHelper($this->View);
 		$expected = ' require';

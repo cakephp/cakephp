@@ -165,6 +165,42 @@ class HttpResponseTest extends CakeTestCase {
 	}
 
 /**
+ * testIsRedirect
+ *
+ * @return void
+ */
+	public function testIsRedirect() {
+		$this->HttpResponse->code = 0;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = -1;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 201;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 'what?';
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 301;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 302;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 303;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 307;
+		$this->assertFalse($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 301;
+		$this->HttpResponse->headers['Location'] = 'http://somewhere/';
+		$this->assertTrue($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 302;
+		$this->HttpResponse->headers['Location'] = 'http://somewhere/';
+		$this->assertTrue($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 303;
+		$this->HttpResponse->headers['Location'] = 'http://somewhere/';
+		$this->assertTrue($this->HttpResponse->isRedirect());
+		$this->HttpResponse->code = 307;
+		$this->HttpResponse->headers['Location'] = 'http://somewhere/';
+		$this->assertTrue($this->HttpResponse->isRedirect());
+	}
+
+/**
  * Test that HttpSocket::parseHeader can take apart a given (and valid) $header string and turn it into an array.
  *
  * @return void

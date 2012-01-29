@@ -315,7 +315,7 @@ This is the song that never ends.
 This is the song that never ends.
 This is the song that never ends.
 TEXT;
-		$this->assertEquals($expected, $result, 'Text not wrapped.');
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
 		$result = String::wrap($text, array('width' => 20, 'wordWrap' => false));
 		$expected = <<<TEXT
@@ -326,7 +326,7 @@ ever ends. This is
 the song that never
  ends.
 TEXT;
-		$this->assertEquals($expected, $result, 'Text not wrapped.');
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
 
 /**
@@ -342,5 +342,6 @@ This is the song that never ends.
 	This is the song that never ends.
 	This is the song that never ends.
 TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 }

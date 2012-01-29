@@ -628,7 +628,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->request['action'] = 'camelCase';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny(array('add', 'camelCase'));
 
 		$this->Controller->request['action'] = 'delete';
@@ -654,6 +654,18 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->Controller->request['action'] = 'login';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+	
+		$this->Controller->Auth->deny();
+		$this->Controller->Auth->allow(null);
+
+		$this->Controller->request['action'] = 'camelCase';
+		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->Auth->allow();
+		$this->Controller->Auth->deny(null);
+
+		$this->Controller->request['action'] = 'camelCase';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 
 /**
@@ -663,7 +675,7 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function testDenyWithCamelCaseMethods() {
 		$this->Controller->Auth->initialize($this->Controller);
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny('add', 'camelCase');
 
 		$url = '/auth_test/camelCase';
@@ -690,7 +702,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
 

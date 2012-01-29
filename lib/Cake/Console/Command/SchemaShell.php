@@ -223,8 +223,7 @@ class SchemaShell extends AppShell {
 			}
 		}
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
-		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
+		$contents = "\n\n" . $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 
 		if ($write) {
 			if (strpos($write, '.sql') === false) {
@@ -449,9 +448,11 @@ class SchemaShell extends AppShell {
  */
 	public function getOptionParser() {
 		$plugin = array(
+			'short' => 'p',
 			'help' => __d('cake_console', 'The plugin to use.'),
 		);
 		$connection = array(
+			'short' => 'c',
 			'help' => __d('cake_console', 'Set the db config to use.'),
 			'default' => 'default'
 		);
@@ -522,7 +523,7 @@ class SchemaShell extends AppShell {
 		))->addSubcommand('update', array(
 			'help' => __d('cake_console', 'Alter the tables based on the schema file.'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot', 'force'),
 				'args' => array(
 					'name' => array(
 						'help' => __d('cake_console', 'Name of schema to use.')

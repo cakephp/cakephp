@@ -20,6 +20,13 @@
  */
 
 /**
+ * Included libraries.
+ */
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('ConnectionManager', 'Model');
+
+/**
  * Class Collections.
  *
  * A repository for class objects, each registered with a key.
@@ -106,6 +113,7 @@ class ClassRegistry {
 		}
 		$defaults = isset($_this->_config['Model']) ? $_this->_config['Model'] : array();
 		$count = count($objects);
+		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
@@ -128,8 +136,6 @@ class ClassRegistry {
 					return $model;
 				}
 
-				App::uses('Model', 'Model');
-				App::uses('AppModel', 'Model');
 				App::uses($plugin . 'AppModel', $pluginPath . 'Model');
 				App::uses($class, $pluginPath . 'Model');
 
@@ -138,7 +144,25 @@ class ClassRegistry {
 					if ($reflection->isAbstract() || $reflection->isInterface()) {
 						throw new CakeException(__d('cake_dev', 'Cannot create instance of %s, as it is abstract or is an interface', $class));
 					}
-					$instance = $reflection->newInstance($settings);
+					$testing = isset($settings['testing']) ? $settings['testing'] : false;
+					if ($testing) {
+						$settings['ds'] = 'test';
+						$defaultProperties = $reflection->getDefaultProperties();
+						if (isset($defaultProperties['useDbConfig'])) {
+							$useDbConfig = $defaultProperties['useDbConfig'];
+							if (in_array('test_' . $useDbConfig, $availableDs)) {
+								$useDbConfig = 'test_' . $useDbConfig;
+							}
+							if (strpos($useDbConfig, 'test') === 0) {
+								$settings['ds'] = $useDbConfig;
+							}
+						}
+					}
+					if ($reflection->getConstructor()) {
+						$instance = $reflection->newInstance($settings);
+					} else {
+						$instance = $reflection->newInstance();
+					}
 					if ($strict) {
 						$instance = ($instance instanceof Model) ? $instance : null;
 					}
@@ -272,6 +296,9 @@ class ClassRegistry {
 			unset($_this->_config[$type]);
 		} elseif (empty($param) && is_string($type)) {
 			return isset($_this->_config[$type]) ? $_this->_config[$type] : null;
+		}
+		if (isset($_this->_config[$type]['testing'])) {
+			$param['testing'] = true;
 		}
 		$_this->_config[$type] = $param;
 	}
