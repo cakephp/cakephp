@@ -28,6 +28,7 @@ class PhpReaderTest extends CakeTestCase {
 		parent::setUp();
 		$this->path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config'. DS;
 	}
+
 /**
  * test reading files
  *

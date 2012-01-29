@@ -125,7 +125,7 @@ class Scaffold {
 		$this->ScaffoldModel = $this->controller->{$this->modelClass};
 		$this->scaffoldTitle = Inflector::humanize(Inflector::underscore($this->viewPath));
 		$this->scaffoldActions = $controller->scaffold;
-		$title_for_layout = __d('cake_dev', 'Scaffold :: ') . Inflector::humanize($request->action) . ' :: ' . $this->scaffoldTitle;
+		$title_for_layout = __d('cake', 'Scaffold :: ') . Inflector::humanize($request->action) . ' :: ' . $this->scaffoldTitle;
 		$modelClass = $this->controller->modelClass;
 		$primaryKey = $this->ScaffoldModel->primaryKey;
 		$displayField = $this->ScaffoldModel->displayField;
@@ -163,7 +163,7 @@ class Scaffold {
 				$this->ScaffoldModel->id = $request->params['pass'][0];
 			}
 			if (!$this->ScaffoldModel->exists()) {
-				throw new NotFoundException(__d('cake_dev', 'Invalid %s', Inflector::humanize($this->modelKey)));
+				throw new NotFoundException(__d('cake', 'Invalid %s', Inflector::humanize($this->modelKey)));
 			}
 			$this->ScaffoldModel->recursive = 1;
 			$this->controller->request->data = $this->ScaffoldModel->read();
@@ -212,16 +212,16 @@ class Scaffold {
  * Saves or updates the scaffolded model.
  *
  * @param CakeRequest $request Request Object for scaffolding
- * @param string $action add or edt
+ * @param string $action add or edit
  * @return mixed Success on save/update, add/edit form if data is empty or error if save or update fails
  * @throws NotFoundException
  */
 	protected function _scaffoldSave(CakeRequest $request, $action = 'edit') {
 		$formAction = 'edit';
-		$success = __d('cake_dev', 'updated');
+		$success = __d('cake', 'updated');
 		if ($action === 'add') {
 			$formAction = 'add';
-			$success = __d('cake_dev', 'saved');
+			$success = __d('cake', 'saved');
 		}
 
 		if ($this->controller->beforeScaffold($action)) {
@@ -230,7 +230,7 @@ class Scaffold {
 					$this->ScaffoldModel->id = $request['pass'][0];
 				}
 				if (!$this->ScaffoldModel->exists()) {
-					throw new NotFoundException(__d('cake_dev', 'Invalid %s', Inflector::humanize($this->modelKey)));
+					throw new NotFoundException(__d('cake', 'Invalid %s', Inflector::humanize($this->modelKey)));
 				}
 			}
 
@@ -241,7 +241,7 @@ class Scaffold {
 
 				if ($this->ScaffoldModel->save($request->data)) {
 					if ($this->controller->afterScaffoldSave($action)) {
-						$message = __d('cake_dev',
+						$message = __d('cake',
 							'The %1$s has been %2$s',
 							Inflector::humanize($this->modelKey),
 							$success
@@ -252,7 +252,7 @@ class Scaffold {
 					}
 				} else {
 					if ($this->_validSession) {
-						$this->controller->Session->setFlash(__d('cake_dev', 'Please correct errors below.'));
+						$this->controller->Session->setFlash(__d('cake', 'Please correct errors below.'));
 					}
 				}
 			}
@@ -300,13 +300,13 @@ class Scaffold {
 			}
 			$this->ScaffoldModel->id = $id;
 			if (!$this->ScaffoldModel->exists()) {
-				throw new NotFoundException(__d('cake_dev', 'Invalid %s', Inflector::humanize($this->modelClass)));
+				throw new NotFoundException(__d('cake', 'Invalid %s', Inflector::humanize($this->modelClass)));
 			}
 			if ($this->ScaffoldModel->delete()) {
-				$message = __d('cake_dev', 'The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id);
+				$message = __d('cake', 'The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id);
 				return $this->_sendMessage($message);
 			} else {
-				$message = __d('cake_dev',
+				$message = __d('cake',
 					'There was an error deleting the %1$s with id: %2$d',
 					Inflector::humanize($this->modelClass),
 					$id

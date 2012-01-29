@@ -19,10 +19,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Included libraries.
- *
- */
 App::uses('AppHelper', 'View/Helper');
 App::uses('HtmlHelper', 'Helper');
 App::uses('Multibyte', 'I18n');
@@ -44,6 +40,14 @@ class TextHelper extends AppHelper {
  * @var array
  */
 	public $helpers = array('Html');
+
+/**
+ * An array of md5sums and their contents.
+ * Used when inserting links into text.
+ *
+ * @var array
+ */
+	protected $_placeholders = array();
 
 /**
  * Highlights a given phrase in a text. You can specify any expression in highlighter that
@@ -77,7 +81,7 @@ class TextHelper extends AppHelper {
 			$with = array();
 
 			foreach ($phrase as $key => $segment) {
-				$segment = "($segment)";
+				$segment = '(' . preg_quote($segment, '|') . ')';
 				if ($html) {
 					$segment = "(?![^<]+>)$segment(?![^<]+>)";
 				}
@@ -88,7 +92,7 @@ class TextHelper extends AppHelper {
 
 			return preg_replace($replace, $with, $text);
 		} else {
-			$phrase = "($phrase)";
+			$phrase = '(' . preg_quote($phrase, '|') . ')';
 			if ($html) {
 				$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
 			}
@@ -112,86 +116,126 @@ class TextHelper extends AppHelper {
  * Adds links (<a href=....) to a given text, by finding text that begins with
  * strings like http:// and ftp://.
  *
- * @param string $text Text to add links to
- * @param array $htmlOptions Array of HTML options.
+ * ### Options
+ *
+ * - `escape` Control HTML escaping of input. Defaults to true.
+ *
+ * @param string $text Text
+ * @param array $options Array of HTML options, and options listed above.
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkUrls
  */
-	public function autoLinkUrls($text, $htmlOptions = array()) {
-		$this->_linkOptions = $htmlOptions;
+	public function autoLinkUrls($text, $options = array()) {
+		$this->_placeholders = array();
+		$options += array('escape' => true);
+
 		$text = preg_replace_callback(
 			'#(?<!href="|src="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i',
-			array(&$this, '_linkBareUrl'),
+			array(&$this, '_insertPlaceHolder'),
 			$text
 		);
-		return preg_replace_callback(
+		$text = preg_replace_callback(
 			'#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
-			array(&$this, '_linkUrls'),
+			array(&$this, '_insertPlaceHolder'),
 			$text
 		);
+		if ($options['escape']) {
+			$text = h($text);
+		}
+		return $this->_linkUrls($text, $options);
 	}
 
 /**
- * Links urls that include http://
+ * Saves the placeholder for a string, for later use.  This gets around double
+ * escaping content in URL's.
  *
- * @param array $matches
- * @return string
- * @see TextHelper::autoLinkUrls()
+ * @param array $matches An array of regexp matches.
+ * @return string Replaced values.
  */
-	protected function _linkBareUrl($matches) {
-		return $this->Html->link($matches[0], $matches[0], $this->_linkOptions);
+	protected function _insertPlaceHolder($matches) {
+		$key = md5($matches[0]);
+		$this->_placeholders[$key] = $matches[0];
+		return $key;
 	}
 
 /**
- * Links urls missing http://
+ * Replace placeholders with links.
  *
- * @param array $matches
- * @return string
- * @see TextHelper::autoLinkUrls()
+ * @param string $text The text to operate on.
+ * @param array $htmlOptions The options for the generated links.
+ * @return string The text with links inserted.
  */
-	protected function _linkUrls($matches) {
-		return $this->Html->link($matches[0], 'http://' . $matches[0], $this->_linkOptions);
+	protected function _linkUrls($text, $htmlOptions) {
+		$replace = array();
+		foreach ($this->_placeholders as $md5 => $url) {
+			$link = $url;
+			if (!preg_match('#^[a-z]+\://#', $url)) {
+				$url = 'http://' . $url;
+			}
+			$replace[$md5] = $this->Html->link($link, $url, $htmlOptions);
+		}
+		return strtr($text, $replace);
 	}
 
 /**
  * Links email addresses
  *
- * @param array $matches
+ * @param string $text The text to operate on
+ * @param array $options An array of options to use for the HTML.
  * @return string
- * @see TextHelper::autoLinkUrls()
+ * @see TextHelper::autoLinkEmails()
  */
-	protected function _linkEmails($matches) {
-		return $this->Html->link($matches[0], 'mailto:' . $matches[0], $this->_linkOptions);
+	protected function _linkEmails($text, $options) {
+		$replace = array();
+		foreach ($this->_placeholders as $md5 => $url) {
+			$replace[$md5] = $this->Html->link($url, 'mailto:' . $url, $options);
+		}
+		return strtr($text, $replace);
 	}
 
 /**
  * Adds email links (<a href="mailto:....) to a given text.
  *
+ * ### Options
+ *
+ * - `escape` Control HTML escaping of input. Defaults to true.
+ *
  * @param string $text Text
- * @param array $options Array of HTML options.
+ * @param array $options Array of HTML options, and options listed above.
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkEmails
  */
 	public function autoLinkEmails($text, $options = array()) {
-		$this->_linkOptions = $options;
+		$options += array('escape' => true);
+		$this->_placeholders = array();
+
 		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
-		return preg_replace_callback(
+		$text = preg_replace_callback(
 			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
-			array(&$this, '_linkEmails'),
+			array(&$this, '_insertPlaceholder'),
 			$text
 		);
+		if ($options['escape']) {
+			$text = h($text);
+		}
+		return $this->_linkEmails($text, $options);
 	}
 
 /**
- * Convert all links and email adresses to HTML links.
+ * Convert all links and email addresses to HTML links.
+ *
+ * ### Options
+ *
+ * - `escape` Control HTML escaping of input. Defaults to true.
  *
  * @param string $text Text
- * @param array $options Array of HTML options.
+ * @param array $options Array of HTML options, and options listed above.
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLink
  */
 	public function autoLink($text, $options = array()) {
-		return $this->autoLinkEmails($this->autoLinkUrls($text, $options), $options);
+		$text = $this->autoLinkUrls($text, $options);
+		return $this->autoLinkEmails($text, array_merge($options, array('escape' => false)));
 	}
 
 /**
@@ -279,26 +323,38 @@ class TextHelper extends AppHelper {
 		}
 		if (!$exact) {
 			$spacepos = mb_strrpos($truncate, ' ');
-			if (isset($spacepos)) {
-				if ($html) {
-					$bits = mb_substr($truncate, $spacepos);
-					preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-					if (!empty($droppedTags)) {
+			if ($html) {
+				$truncateCheck = mb_substr($truncate, 0, $spacepos);
+				$lastOpenTag = mb_strrpos($truncateCheck, '<');
+				$lastCloseTag = mb_strrpos($truncateCheck, '>');
+				if ($lastOpenTag > $lastCloseTag) {
+					preg_match_all('/<[\w]+[^>]*>/s', $truncate, $lastTagMatches);
+					$lastTag = array_pop($lastTagMatches[0]);
+					$spacepos = mb_strrpos($truncate, $lastTag) + mb_strlen($lastTag);
+				}
+				$bits = mb_substr($truncate, $spacepos);
+				preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
+				if (!empty($droppedTags)) {
+					if (!empty($openTags)) {
 						foreach ($droppedTags as $closingTag) {
 							if (!in_array($closingTag[1], $openTags)) {
 								array_unshift($openTags, $closingTag[1]);
 							}
 						}
+					} else {
+						foreach ($droppedTags as $closingTag) {
+							array_push($openTags, $closingTag[1]);
+						}
 					}
 				}
-				$truncate = mb_substr($truncate, 0, $spacepos);
 			}
+			$truncate = mb_substr($truncate, 0, $spacepos);
 		}
 		$truncate .= $ending;
 
 		if ($html) {
 			foreach ($openTags as $tag) {
-				$truncate .= '</'.$tag.'>';
+				$truncate .= '</' . $tag . '>';
 			}
 		}
 
@@ -321,34 +377,31 @@ class TextHelper extends AppHelper {
 			return $this->truncate($text, $radius * 2, array('ending' => $ending));
 		}
 
+		$append = $prepend = $ending;
+
 		$phraseLen = mb_strlen($phrase);
-		if ($radius < $phraseLen) {
-			$radius = $phraseLen;
-		}
+		$textLen = mb_strlen($text);
 
 		$pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
-
-		$startPos = 0;
-		if ($pos > $radius) {
-			$startPos = $pos - $radius;
+		if ($pos === false) {
+			return mb_substr($text, 0, $radius) . $ending;
 		}
 
-		$textLen = mb_strlen($text);
+		$startPos = $pos - $radius;
+		if ($startPos <= 0) {
+			$startPos = 0;
+			$prepend = '';
+		}
 
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
+			$append = '';
 		}
 
 		$excerpt = mb_substr($text, $startPos, $endPos - $startPos);
-		if ($startPos != 0) {
-			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
-		}
-
-		if ($endPos != $textLen) {
-			$excerpt = substr_replace($excerpt, $ending, -$phraseLen);
-		}
-
+		$excerpt = $prepend . $excerpt . $append;
+		
 		return $excerpt;
 	}
 
@@ -357,7 +410,7 @@ class TextHelper extends AppHelper {
  *
  * @param array $list The list to be joined
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
- * @param string $separator The separator used to join all othe other items together. Defaults to ', '
+ * @param string $separator The separator used to join all the other items together. Defaults to ', '
  * @return string The glued together string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */

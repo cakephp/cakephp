@@ -75,10 +75,6 @@ class TaskCollection extends ObjectCollection {
 		$this->_loaded[$name] = new $taskClass(
 			$this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
-		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable === true) {
-			$this->_enabled[] = $name;
-		}
 		return $this->_loaded[$name];
 	}
 

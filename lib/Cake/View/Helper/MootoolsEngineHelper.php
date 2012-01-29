@@ -27,6 +27,19 @@
 
 App::uses('JsBaseEngineHelper', 'View/Helper');
 
+/**
+ * MooTools Engine Helper for JsHelper
+ *
+ * Provides MooTools specific Javascript for JsHelper.
+ * Assumes that you have the following MooTools packages
+ *
+ * - Remote, Remote.HTML, Remote.JSON
+ * - Fx, Fx.Tween, Fx.Morph
+ * - Selectors, DomReady,
+ * - Drag, Drag.Move
+ *
+ * @package       Cake.View.Helper
+ */
 class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Option mappings for MooTools
@@ -295,7 +308,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * Requires the `Drag` and `Drag.Move` plugins from MootoolsMore
  *
  * Droppables in Mootools function differently from other libraries.  Droppables
- * are implemented as an extension of Drag.  So in addtion to making a get() selection for
+ * are implemented as an extension of Drag.  So in addition to making a get() selection for
  * the droppable element. You must also provide a selector rule to the draggable element. Furthermore,
  * Mootools droppables inherit all options from Drag.
  *

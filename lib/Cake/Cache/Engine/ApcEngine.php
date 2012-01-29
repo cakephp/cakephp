@@ -37,7 +37,7 @@ class ApcEngine extends CacheEngine {
  */
 	public function init($settings = array()) {
 		parent::init(array_merge(array('engine' => 'Apc', 'prefix' => Inflector::slug(APP_DIR) . '_'), $settings));
-		return function_exists('apc_cache_info');
+		return function_exists('apc_dec');
 	}
 
 /**

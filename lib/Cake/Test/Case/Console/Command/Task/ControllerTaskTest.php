@@ -64,6 +64,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ControllerTask',
@@ -86,14 +87,15 @@ class ControllerTaskTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Task);
 		ClassRegistry::flush();
 		App::build();
+		parent::tearDown();
 	}
 
 /**
@@ -116,13 +118,13 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$expected = array('BakeArticles', 'BakeArticlesBakeTags', 'BakeComments', 'BakeTags');
 		$result = $this->Task->listAll('test');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->Task->interactive = false;
 		$result = $this->Task->listAll();
 
 		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -142,11 +144,11 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getName('test');
 		$expected = 'BakeComments';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->getName('test');
 		$expected = 'BakeArticles';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -173,7 +175,7 @@ class ControllerTaskTest extends CakeTestCase {
 	public function testDoHelpersNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doHelpers();
-		$this->assertEqual($result, array());
+		$this->assertEquals($result, array());
 	}
 
 /**
@@ -186,7 +188,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -199,7 +201,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne, , '));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -210,7 +212,7 @@ class ControllerTaskTest extends CakeTestCase {
 	public function testDoComponentsNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doComponents();
-		$this->assertEqual($result, array());
+		$this->assertEquals($result, array());
 	}
 
 /**
@@ -224,7 +226,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -238,7 +240,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -274,8 +276,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains(' * @property AclComponent $Acl', $result);
 		$this->assertContains(' * @property AuthComponent $Auth', $result);
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertContains("\$components = array('Acl', 'Auth')", $result);
-		$this->assertContains("\$helpers = array('Ajax', 'Time')", $result);
+		$this->assertContains("public \$components = array('Acl', 'Auth')", $result);
+		$this->assertContains("public \$helpers = array('Ajax', 'Time')", $result);
 		$this->assertContains("--actions--", $result);
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
@@ -287,7 +289,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Articles', '--actions--', array(), array());
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertIdentical(substr_count($result, '@property'), 1);
+		$this->assertSame(substr_count($result, '@property'), 1);
 		$this->assertNotContains('components', $result);
 		$this->assertNotContains('helpers', $result);
 		$this->assertContains('--actions--', $result);
@@ -415,9 +417,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Test->expects($this->once())->method('bake')->with('Controller', 'BakeArticles');
 		$this->Task->bakeTest('BakeArticles');
 
-		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
-		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
-		$this->assertEqual($this->Task->interactive, $this->Task->Test->interactive);
+		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
+		$this->assertEquals($this->Task->connection, $this->Task->Test->connection);
+		$this->assertEquals($this->Task->interactive, $this->Task->Test->interactive);
 	}
 
 /**
@@ -494,7 +496,7 @@ class ControllerTaskTest extends CakeTestCase {
 		)->will($this->returnValue(true));
 
 		$result = $this->Task->execute();
-		$this->assertPattern('/admin_index/', $result);
+		$this->assertRegExp('/admin_index/', $result);
 	}
 
 /**

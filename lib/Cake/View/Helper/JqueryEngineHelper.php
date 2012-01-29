@@ -26,6 +26,17 @@
 App::uses('AppHelper', 'View/Helper');
 App::uses('JsBaseEngineHelper', 'View/Helper');
 
+/**
+ * jQuery Engine Helper for JsHelper
+ *
+ * Provides jQuery specific Javascript for JsHelper.
+ *
+ * Implements the JsHelper interface for jQuery.  All $options arrays
+ * support all options found in the JsHelper, as well as those in the jQuery
+ * documentation.
+ *
+ * @package       Cake.View.Helper
+ */
 class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Option mappings for jQuery
@@ -247,7 +258,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		if (isset($options['update'])) {
 			$wrapCallbacks = isset($options['wrapCallbacks']) ? $options['wrapCallbacks'] : true;
 			$success = '';
-			if(isset($options['success']) AND !empty($options['success'])) {
+			if (isset($options['success']) AND !empty($options['success'])) {
 				$success .= $options['success'];
 			}
 			$success .= $this->jQueryObject . '("' . $options['update'] . '").html(data);';

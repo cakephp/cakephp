@@ -16,10 +16,11 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('CakeSocket', 'Network');
 
 /**
- * SendEmail class
+ * Send mail using SMTP protocol
  *
  * @package       Cake.Network.Email
  */
@@ -165,7 +166,7 @@ class SmtpTransport extends AbstractTransport {
 	protected function _sendData() {
 		$this->_smtpSend('DATA', '354');
 
-		$headers = $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'));
+		$headers = $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject'));
 		$headers = $this->_headersToString($headers);
 		$message = implode("\r\n", $this->_cakeEmail->message());
 		$this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
@@ -214,7 +215,8 @@ class SmtpTransport extends AbstractTransport {
 			if (substr($response, -2) !== "\r\n") {
 				throw new SocketException(__d('cake_dev', 'SMTP timeout.'));
 			}
-			$response = end(explode("\r\n", rtrim($response, "\r\n")));
+			$responseLines = explode("\r\n", rtrim($response, "\r\n"));
+			$response = end($responseLines);
 
 			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
 				if ($code[2] === '-') {

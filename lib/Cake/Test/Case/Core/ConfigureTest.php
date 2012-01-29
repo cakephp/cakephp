@@ -80,10 +80,10 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('level1.level2.level3_1', $expected);
 		Configure::write('level1.level2.level3_2', 'something_else');
 		$result = Configure::read('level1.level2.level3_1');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Configure::read('level1.level2.level3_2');
-		$this->assertEqual($result, 'something_else');
+		$this->assertEquals($result, 'something_else');
 
 		$result = Configure::read('debug');
 		$this->assertTrue($result >= 0);
@@ -106,28 +106,28 @@ class ConfigureTest extends CakeTestCase {
 		$writeResult = Configure::write('SomeName.someKey', 'myvalue');
 		$this->assertTrue($writeResult);
 		$result = Configure::read('SomeName.someKey');
-		$this->assertEqual($result, 'myvalue');
+		$this->assertEquals($result, 'myvalue');
 
 		$writeResult = Configure::write('SomeName.someKey', null);
 		$this->assertTrue($writeResult);
 		$result = Configure::read('SomeName.someKey');
-		$this->assertEqual($result, null);
+		$this->assertEquals($result, null);
 
 		$expected = array('One' => array('Two' => array('Three' => array('Four' => array('Five' => 'cool')))));
 		$writeResult = Configure::write('Key', $expected);
 		$this->assertTrue($writeResult);
 
 		$result = Configure::read('Key');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Configure::read('Key.One');
-		$this->assertEqual($expected['One'], $result);
+		$this->assertEquals($expected['One'], $result);
 
 		$result = Configure::read('Key.One.Two');
-		$this->assertEqual($expected['One']['Two'], $result);
+		$this->assertEquals($expected['One']['Two'], $result);
 
 		$result = Configure::read('Key.One.Two.Three.Four.Five');
-		$this->assertEqual('cool', $result);
+		$this->assertEquals('cool', $result);
 
 		Configure::write('one.two.three.four', '4');
 		$result = Configure::read('one.two.three.four');
@@ -142,11 +142,11 @@ class ConfigureTest extends CakeTestCase {
 	public function testDebugSettingDisplayErrors() {
 		Configure::write('debug', 0);
 		$result = ini_get('display_errors');
-		$this->assertEqual($result, 0);
+		$this->assertEquals($result, 0);
 
 		Configure::write('debug', 2);
 		$result = ini_get('display_errors');
-		$this->assertEqual($result, 1);
+		$this->assertEquals($result, 1);
 	}
 
 /**
@@ -157,7 +157,7 @@ class ConfigureTest extends CakeTestCase {
 	public function testDelete() {
 		Configure::write('SomeName.someKey', 'myvalue');
 		$result = Configure::read('SomeName.someKey');
-		$this->assertEqual($result, 'myvalue');
+		$this->assertEquals($result, 'myvalue');
 
 		Configure::delete('SomeName.someKey');
 		$result = Configure::read('SomeName.someKey');
@@ -166,10 +166,10 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('SomeName', array('someKey' => 'myvalue', 'otherKey' => 'otherValue'));
 
 		$result = Configure::read('SomeName.someKey');
-		$this->assertEqual($result, 'myvalue');
+		$this->assertEquals($result, 'myvalue');
 
 		$result = Configure::read('SomeName.otherKey');
-		$this->assertEqual($result, 'otherValue');
+		$this->assertEquals($result, 'otherValue');
 
 		Configure::delete('SomeName');
 
@@ -224,6 +224,8 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEquals('value2', Configure::read('Read'));
 		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
 		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
+		$this->assertEquals('Overwrite', Configure::read('TestAcl.classname'));
+		$this->assertEquals('one', Configure::read('TestAcl.custom'));
 	}
 
 /**
@@ -260,13 +262,13 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/load.php';
 		$config = Configure::read('plugin_load');
-		$this->assertEqual($config, $expected);
+		$this->assertEquals($config, $expected);
 
 		$result = Configure::load('TestPlugin.more.load', 'test');
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
 		$config = Configure::read('plugin_more_load');
-		$this->assertEqual($config, $expected);
+		$this->assertEquals($config, $expected);
 		CakePlugin::unload();
 	}
 
@@ -342,7 +344,7 @@ class ConfigureTest extends CakeTestCase {
 /**
  * test reader() throwing exceptions on missing interface.
  *
- * @expectedException Exception
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testReaderExceptionOnIncorrectClass() {

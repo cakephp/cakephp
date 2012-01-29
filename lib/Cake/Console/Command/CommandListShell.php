@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
 App::uses('Inflector', 'Utility');
 
 /**
@@ -24,7 +25,7 @@ App::uses('Inflector', 'Utility');
  *
  * @package       Cake.Console.Command
  */
-class CommandListShell extends Shell {
+class CommandListShell extends AppShell {
 
 /**
  * startup
@@ -80,11 +81,15 @@ class CommandListShell extends Shell {
  */
 	protected function _getShellList() {
 		$shellList = array();
+		$skipFiles = array('AppShell');
 
-		$shells = App::objects('file', App::core('Console/Command'));
+		$corePath = App::core('Console/Command');
+		$shells = App::objects('file', $corePath[0]);
+		$shells = array_diff($shells, $skipFiles);
 		$shellList = $this->_appendShells('CORE', $shells, $shellList);
 
 		$appShells = App::objects('Console/Command', null, false);
+		$appShells = array_diff($appShells, $shells, $skipFiles);
 		$shellList = $this->_appendShells('app', $appShells, $shellList);
 
 		$plugins = CakePlugin::loaded();
@@ -144,7 +149,8 @@ class CommandListShell extends Shell {
 			$this->out(" " . $row);
 		}
 		$this->out();
-		$this->out(__d('cake_console', "To run a command, type <info>cake shell_name [args]</info>"));
+		$this->out(__d('cake_console', "To run an app or core command, type <info>cake shell_name [args]</info>"));
+		$this->out(__d('cake_console', "To run a plugin command, type <info>cake Plugin.shell_name [args]</info>"));
 		$this->out(__d('cake_console', "To get help on a specific command, type <info>cake shell_name --help</info>"), 2);
 	}
 

@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('ConnectionManager', 'Model');
@@ -206,7 +207,7 @@ class CakeSchema extends Object {
 		}
 
 		$tables = array();
-		$currentTables = $db->listSources();
+		$currentTables = (array) $db->listSources();
 
 		$prefix = null;
 		if (isset($db->config['prefix'])) {
@@ -247,10 +248,15 @@ class CakeSchema extends Object {
 					continue;
 				}
 
-				$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
+				try {
+					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
+				} catch (CakeException $e) {
+					continue;
+				}
+
 				$db = $Object->getDataSource();
 				if (is_object($Object) && $Object->useTable !== false) {
-					$fulltable = $table = $db->fullTableName($Object, false);
+					$fulltable = $table = $db->fullTableName($Object, false, false);
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
@@ -270,7 +276,7 @@ class CakeSchema extends Object {
 									$class = $assocData['with'];
 								}
 								if (is_object($Object->$class)) {
-									$withTable = $db->fullTableName($Object->$class, false);
+									$withTable = $db->fullTableName($Object->$class, false, false);
 									if ($prefix && strpos($withTable, $prefix) !== 0) {
 										continue;
 									}
@@ -306,18 +312,21 @@ class CakeSchema extends Object {
 				$systemTables = array(
 					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
 				);
+
+				$fulltable = $db->fullTableName($Object, false, false);
+
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->_columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
-					$tables[$Object->table]['tableParameters'] = $db->readTableParameters($table);
+					$tables[$Object->table]['tableParameters'] = $db->readTableParameters($fulltable);
 				} elseif ($models === false) {
 					$tables[$table] = $this->_columns($Object);
 					$tables[$table]['indexes'] = $db->index($Object);
-					$tables[$table]['tableParameters'] = $db->readTableParameters($table);
+					$tables[$table]['tableParameters'] = $db->readTableParameters($fulltable);
 				} else {
 					$tables['missing'][$table] = $this->_columns($Object);
 					$tables['missing'][$table]['indexes'] = $db->index($Object);
-					$tables['missing'][$table]['tableParameters'] = $db->readTableParameters($table);
+					$tables['missing'][$table]['tableParameters'] = $db->readTableParameters($fulltable);
 				}
 			}
 		}
@@ -348,21 +357,21 @@ class CakeSchema extends Object {
 			get_object_vars($this), $options
 		));
 
-		$out = "class {$name}Schema extends CakeSchema {\n";
+		$out = "class {$name}Schema extends CakeSchema {\n\n";
 
 		if ($path !== $this->path) {
-			$out .= "\tvar \$path = '{$path}';\n\n";
+			$out .= "\tpublic \$path = '{$path}';\n\n";
 		}
 
 		if ($file !== $this->file) {
-			$out .= "\tvar \$file = '{$file}';\n\n";
+			$out .= "\tpublic \$file = '{$file}';\n\n";
 		}
 
 		if ($connection !== 'default') {
-			$out .= "\tvar \$connection = '{$connection}';\n\n";
+			$out .= "\tpublic \$connection = '{$connection}';\n\n";
 		}
 
-		$out .= "\tfunction before(\$event = array()) {\n\t\treturn true;\n\t}\n\n\tfunction after(\$event = array()) {\n\t}\n\n";
+		$out .= "\tpublic function before(\$event = array()) {\n\t\treturn true;\n\t}\n\n\tpublic function after(\$event = array()) {\n\t}\n\n";
 
 		if (empty($tables)) {
 			$this->read();
@@ -376,7 +385,7 @@ class CakeSchema extends Object {
 		$out .= "}\n";
 
 		$file = new SplFileObject($path . DS . $file, 'w+');
-		$content = "<?php \n/* {$name} schema generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php\n{$out}";
 		if ($file->fwrite($content)) {
 			return $content;
 		}
@@ -392,14 +401,14 @@ class CakeSchema extends Object {
  * @return string Variable declaration for a schema class
  */
 	public function generateTable($table, $fields) {
-		$out = "\tvar \${$table} = array(\n";
+		$out = "\tpublic \${$table} = array(\n";
 		if (is_array($fields)) {
 			$cols = array();
 			foreach ($fields as $field => $value) {
 				if ($field != 'indexes' && $field != 'tableParameters') {
 					if (is_string($value)) {
 						$type = $value;
-						$value = array('type'=> $type);
+						$value = array('type' => $type);
 					}
 					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 					unset($value['type']);
@@ -543,9 +552,10 @@ class CakeSchema extends Object {
 				$difference[$key] = $value;
 				continue;
 			}
-			$compare = strval($value);
-			$correspondingValue = strval($correspondingValue);
-			if ($compare === $correspondingValue) {
+			if (is_array($value) && is_array($correspondingValue)) {
+				continue;
+			}
+			if ($value === $correspondingValue) {
 				continue;
 			}
 			$difference[$key] = $value;
@@ -590,7 +600,7 @@ class CakeSchema extends Object {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
-				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s does not exist in DBO', $value['type']), E_USER_NOTICE);
+				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s for %s.%s does not exist in DBO', $value['type'], $Obj->name, $name), E_USER_NOTICE);
 				continue;
 			} else {
 				$defaultCol = $db->columns[$value['type']];

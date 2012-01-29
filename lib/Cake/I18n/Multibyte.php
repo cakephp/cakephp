@@ -893,7 +893,7 @@ class Multibyte {
  * @param string $haystack The string being checked.
  * @param string $needle The string being found.
  * @return integer The number of times the $needle substring occurs in the $haystack string.
-  */
+ */
 	public static function substrCount($haystack, $needle) {
 		$count = 0;
 		$haystack = Multibyte::utf8($haystack);
@@ -982,7 +982,7 @@ class Multibyte {
 			$parts = array();
 			$maxchars = floor(($length * 3) / 4);
 			while (strlen($string) > $maxchars) {
-				$i = $maxchars;
+				$i = (int)$maxchars;
 				$test = ord($string[$i]);
 				while ($test >= 128 && $test <= 191) {
 					$i--;

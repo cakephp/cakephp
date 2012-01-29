@@ -65,7 +65,7 @@
  * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type,
  *   including anonymous functions.
  * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
- *   should place the file for that class in app/Error. This class needs to implement a render method.
+ *   should place the file for that class in app/Lib/Error. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
  *
  * @see ErrorHandler for more information on exception handling and configuration.
@@ -200,6 +200,7 @@
  * timestamping regardless of debug value.
  */
 	//Configure::write('Asset.timestamp', true);
+
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
@@ -225,8 +226,8 @@
 	Configure::write('Acl.database', 'default');
 
 /**
- * If you are on PHP 5.3 uncomment this line and correct your server timezone
- * to fix the date & time related errors.
+ * Uncomment this line and correct your server timezone to fix 
+ * any date & time related errors.
  */
 	//date_default_timezone_set('UTC');
 
@@ -239,8 +240,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'File', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
  * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
  * 		'lock' => false, //[optional]  use file locking
@@ -251,8 +252,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Apc', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  *
@@ -260,8 +261,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Xcache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
  *		'user' => 'user', //user from xcache.admin.user settings
  *		'password' => 'password', //plaintext password (xcache.admin.pass)
@@ -271,8 +272,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Memcache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  * 		'servers' => array(
  * 			'127.0.0.1:11211' // localhost, default port 11211
@@ -285,8 +286,8 @@
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Wincache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
+ *		'duration' => 3600, //[optional]
+ *		'probability' => 100, //[optional]
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  */
@@ -297,7 +298,7 @@
  *
  */
 $engine = 'File';
-if (extension_loaded('apc') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
+if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
 	$engine = 'Apc';
 }
 
@@ -307,13 +308,16 @@ if (Configure::read('debug') >= 1) {
 	$duration = '+10 seconds';
 }
 
+// Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
+$prefix = 'myapp_';
+
 /**
  * Configure the cache used for general framework caching.  Path information,
  * object listings, and translation cache files are stored with this configuration.
  */
 Cache::config('_cake_core_', array(
 	'engine' => $engine,
-	'prefix' => 'cake_core_',
+	'prefix' => $prefix . 'cake_core_',
 	'path' => CACHE . 'persistent' . DS,
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
@@ -325,7 +329,7 @@ Cache::config('_cake_core_', array(
  */
 Cache::config('_cake_model_', array(
 	'engine' => $engine,
-	'prefix' => 'cake_model_',
+	'prefix' => $prefix . 'cake_model_',
 	'path' => CACHE . 'models' . DS,
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration

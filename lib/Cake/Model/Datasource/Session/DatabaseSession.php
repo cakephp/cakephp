@@ -16,6 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
+
 /**
  * DatabaseSession provides methods to be used with CakeSession.
  *
@@ -47,13 +50,13 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 
 		if (empty($modelName)) {
 			$settings = array(
-				'class' =>'Session',
+				'class' => 'Session',
 				'alias' => 'Session',
 				'table' => 'cake_sessions',
 			);
 		} else {
 			$settings = array(
-				'class' =>$modelName,
+				'class' => $modelName,
 				'alias' => 'Session',
 			);
 		}
@@ -147,6 +150,8 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return void
  */
 	public function __destruct() {
-		session_write_close();
+		try {
+			session_write_close();
+		} catch (Exception $e) {}
 	}
 }

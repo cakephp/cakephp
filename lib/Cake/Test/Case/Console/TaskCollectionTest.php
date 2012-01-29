@@ -22,23 +22,25 @@ App::uses('Shell', 'Console');
 
 class TaskCollectionTest extends CakeTestCase {
 /**
- * setup
+ * setUp
  *
  * @return void
  */
-	public function setup() {
+	public function setUp() {
+		parent::setUp();
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		unset($this->Tasks);
+		parent::tearDown();
 	}
 
 /**
@@ -53,8 +55,6 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
-
-		$this->assertTrue($this->Tasks->enabled('DbConfig'));
 	}
 
 /**
@@ -69,6 +69,7 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
+
 /**
  * test missingtask exception
  *
@@ -88,7 +89,7 @@ class TaskCollectionTest extends CakeTestCase {
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Tasks = new TaskCollection($shell, $dispatcher);

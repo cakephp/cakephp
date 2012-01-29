@@ -32,6 +32,7 @@ App::uses('Multibyte', 'I18n');
  * @property      FormHelper $Form
  */
 class JsHelper extends AppHelper {
+
 /**
  * Whether or not you want scripts to be buffered or output.
  *
@@ -159,8 +160,12 @@ class JsHelper extends AppHelper {
  * @param mixed $val A PHP variable to be converted to JSON
  * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::value
  **/
-	public function value($val, $quoteString = true) {
+	public function value($val = array(), $quoteString = null, $key = 'value') {
+		if ($quoteString === null) {
+			$quoteString = true;
+		}
 		return $this->{$this->_engineName}->value($val, $quoteString);
 	}
 
@@ -182,9 +187,10 @@ class JsHelper extends AppHelper {
  * @param array $options options for the code block
  * @return mixed Completed javascript tag if there are scripts, if there are no buffered
  *   scripts null will be returned.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::writeBuffer
  */
 	public function writeBuffer($options = array()) {
-		$domReady = $this->request->is('ajax');
+		$domReady = !$this->request->is('ajax');
 		$defaults = array(
 			'onDomReady' => $domReady, 'inline' => true,
 			'cache' => false, 'clear' => true, 'safe' => true
@@ -224,6 +230,7 @@ class JsHelper extends AppHelper {
  * @param boolean $top If true the script will be added to the top of the
  *   buffered scripts array.  If false the bottom.
  * @return void
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::buffer
  */
 	public function buffer($script, $top = false) {
 		if ($top) {
@@ -238,6 +245,7 @@ class JsHelper extends AppHelper {
  *
  * @param boolean $clear Whether or not to clear the script caches (default true)
  * @return array Array of scripts added to the request.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::getBuffer
  */
 	public function getBuffer($clear = true) {
 		$this->_createVars();
@@ -278,6 +286,7 @@ class JsHelper extends AppHelper {
  * @param mixed $url Mixed either a string URL or an cake url array.
  * @param array $options Options for both the HTML element and Js::request()
  * @return string Completed link. If buffering is disabled a script tag will be returned as well.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::link
  */
 	public function link($title, $url = null, $options = array()) {
 		if (!isset($options['id'])) {
@@ -315,6 +324,7 @@ class JsHelper extends AppHelper {
  * @param mixed $one Either an array of variables to set, or the name of the variable to set.
  * @param mixed $two If $one is a string, $two is the value for that key.
  * @return void
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::set
  */
 	public function set($one, $two = null) {
 		$data = null;
@@ -352,6 +362,7 @@ class JsHelper extends AppHelper {
  * @param string $caption The display text of the submit button.
  * @param array $options Array of options to use. See the options for the above mentioned methods.
  * @return string Completed submit button.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::submit
  */
 	public function submit($caption = null, $options = array()) {
 		if (!isset($options['id'])) {

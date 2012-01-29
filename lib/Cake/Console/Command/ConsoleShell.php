@@ -16,12 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppShell', 'Console/Command');
+
 /**
  * Provides a very basic 'interactive' console for CakePHP apps.
  *
  * @package       Cake.Console.Command
  */
-class ConsoleShell extends Shell {
+class ConsoleShell extends AppShell {
 
 /**
  * Available binding types
@@ -86,7 +88,7 @@ class ConsoleShell extends Shell {
 		$out .= "\n";
 		$out .= 'To dynamically set associations, you can do the following:';
 		$out .= "\tModelA bind <association> ModelB";
-		$out .= "where the supported assocations are hasOne, hasMany, belongsTo, hasAndBelongsToMany";
+		$out .= "where the supported associations are hasOne, hasMany, belongsTo, hasAndBelongsToMany";
 		$out .= "\n";
 		$out .= 'To dynamically remove associations, you can do the following:';
 		$out .= "\t ModelA unbind <association> ModelB";
@@ -115,7 +117,7 @@ class ConsoleShell extends Shell {
 		$out .= "\n";
 		$out .= "will return something like the following:";
 		$out .= "\n";
-		$out .= "\tarray (";
+		$out .= "\tarray(";
 		$out .= "\t  [...]";
 		$out .= "\t  'controller' => 'posts',";
 		$out .= "\t  'action' => 'view',";

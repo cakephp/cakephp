@@ -96,7 +96,7 @@ class Cache {
  *
  * - `duration` Specify how long items in this cache configuration last.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
- *    with either another cache config or annother application.
+ *    with either another cache config or another application.
  * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
  *    cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.
@@ -285,7 +285,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -335,7 +335,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -360,7 +360,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -374,6 +374,7 @@ class Cache {
 		self::set(null, $config);
 		return $success;
 	}
+
 /**
  * Decrement a number under the key and return decremented value.
  *
@@ -387,7 +388,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -401,6 +402,7 @@ class Cache {
 		self::set(null, $config);
 		return $success;
 	}
+
 /**
  * Delete a key from the cache.
  *
@@ -422,7 +424,7 @@ class Cache {
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
-			return null;
+			return false;
 		}
 		if (!self::isInitialized($config)) {
 			return false;
@@ -505,7 +507,7 @@ abstract class CacheEngine {
  */
 	public function init($settings = array()) {
 		$this->settings = array_merge(
-			array('prefix' => 'cake_', 'duration'=> 3600, 'probability'=> 100),
+			array('prefix' => 'cake_', 'duration' => 3600, 'probability' => 100),
 			$this->settings,
 			$settings
 		);

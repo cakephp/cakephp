@@ -467,7 +467,7 @@ class ConsoleOptionParser {
 		}
 		$params = $args = array();
 		$this->_tokens = $argv;
-		while ($token = array_shift($this->_tokens)) {
+		while (($token = array_shift($this->_tokens)) !== null) {
 			if (substr($token, 0, 2) == '--') {
 				$params = $this->_parseLongOption($token, $params);
 			} elseif (substr($token, 0, 1) == '-') {

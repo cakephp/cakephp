@@ -1,9 +1,5 @@
 <?php
 /**
- * Short description for file.
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,12 +13,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
 App::uses('CakeSchema', 'Model');
 
 /**
- * Short description for class.
+ * CakeTestFixture is responsible for building and destroying tables to be used 
+ * during testing.
  *
  * @package       Cake.TestSuite.Fixture
  */
@@ -42,10 +37,22 @@ class CakeTestFixture {
 	public $db = null;
 
 /**
+ * Fixture Datasource
+ *
+ */
+	public $useDbConfig = 'test';
+
+/**
  * Full Table Name
  *
  */
 	public $table = null;
+
+/**
+ * List of datasources where this fixture has been created
+ *
+ */
+	public $created = array();
 
 /**
  * Instantiate the fixture.
@@ -59,7 +66,14 @@ class CakeTestFixture {
 				$this->name = get_class($this);
 			}
 		}
-		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test'));
+		$connection = 'test';
+		if (!empty($this->useDbConfig)) {
+			$connection = $this->useDbConfig;
+			if (strpos($connection, 'test') !== 0) {
+				throw new CakeException(__d('cake_dev', 'Invalid datasource %s for object %s', $connection, $this->name));
+			}
+		}
+		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => $connection));
 		$this->init();
 	}
 
@@ -74,6 +88,7 @@ class CakeTestFixture {
 				is_array($this->import) ? $this->import : array('model' => $this->import)
 			);
 
+			$this->Schema->connection = $import['connection'];
 			if (isset($import['model'])) {
 				list($plugin, $modelClass) = pluginSplit($import['model'], true);
 				App::uses($modelClass, $plugin . 'Model');
@@ -87,7 +102,7 @@ class CakeTestFixture {
 				}
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
-				$this->table = $db->fullTableName($model, false);
+				$this->table = $db->fullTableName($model, false, false);
 				ClassRegistry::config(array('ds' => 'test'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
@@ -147,7 +162,7 @@ class CakeTestFixture {
 
 		if (empty($this->fields['tableParameters']['engine'])) {
 			$canUseMemory = true;
-			foreach($this->fields as $field => $args) {
+			foreach ($this->fields as $field => $args) {
 
 				if (is_string($args)) {
 					$type = $args;
@@ -170,6 +185,7 @@ class CakeTestFixture {
 		$this->Schema->build(array($this->table => $this->fields));
 		try {
 			$db->execute($db->createSchema($this->Schema), array('log' => false));
+			$this->created[] = $db->configKeyName;
 		} catch (Exception $e) {
 			return false;
 		}
@@ -188,8 +204,9 @@ class CakeTestFixture {
 		}
 		$this->Schema->build(array($this->table => $this->fields));
 		try {
-			
+
 			$db->execute($db->dropSchema($this->Schema), array('log' => false));
+			$this->created = array_diff($this->created, array($db->configKeyName));;
 		} catch (Exception $e) {
 			return false;
 		}
@@ -208,7 +225,7 @@ class CakeTestFixture {
 			$values = array();
 			if (isset($this->records) && !empty($this->records)) {
 				$fields = array();
-				foreach($this->records as $record) {
+				foreach ($this->records as $record) {
 					$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
 				}
 				$fields = array_unique($fields);

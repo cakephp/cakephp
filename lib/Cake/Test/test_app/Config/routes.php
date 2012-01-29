@@ -21,5 +21,3 @@
 
 Router::parseExtensions('json');
 Router::connect('/some_alias', array('controller' => 'tests_apps', 'action' => 'some_method'));
-Router::redirect('/redirect_me_now', 'http://cakephp.org');
-Router::redirect('/redirect_me', array('controller' => 'tests_apps', 'action' => 'some_method'));

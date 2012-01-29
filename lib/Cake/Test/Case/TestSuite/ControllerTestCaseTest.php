@@ -131,7 +131,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 	}
 
 /**
- * teardown
+ * tearDown
  *
  * @return void
  */
@@ -215,11 +215,11 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'TestPlugin.TestPluginComment'
 			),
 			'components' => array(
-				'TestPlugin.PluginsComponent'
+				'TestPlugin.Plugins'
 			)
 		));
 		$this->assertEquals($Tests->name, 'Tests');
-		$this->assertInstanceOf('PluginsComponentComponent', $Tests->PluginsComponent);
+		$this->assertInstanceOf('PluginsComponent', $Tests->Plugins);
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPluginComment', $result);
@@ -257,8 +257,9 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->assertEquals($expected, $results);
 
 		$result = $this->Case->controller->response->body();
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertRegExp('/This is the TestsAppsController index view/', $result);
 
+		$Controller = $this->Case->generate('TestsApps');
 		$this->Case->testAction('/tests_apps/redirect_to');
 		$results = $this->Case->headers;
 		$expected = array(
@@ -289,7 +290,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 
 		$controller = $this->Case->generate('TestsApps');
 		$controller->Components->load('RequestHandler');
-		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
+		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'contents'));
 		$result = json_decode($result, true);
 		$expected = array('cakephp' => 'cool');
 		$this->assertEquals($expected, $result);
@@ -297,16 +298,6 @@ class ControllerTestCaseTest extends CakeTestCase {
 		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
 		$result = $this->Case->testAction('/some_alias');
 		$this->assertEquals($result, 5);
-
-		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
-		$this->Case->testAction('/redirect_me_now');
-		$result = $this->Case->headers['Location'];
-		$this->assertEquals($result, 'http://cakephp.org');
-
-		include CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'routes.php';
-		$this->Case->testAction('/redirect_me');
-		$result = $this->Case->headers['Location'];
-		$this->assertEquals($result, Router::url(array('controller' => 'tests_apps', 'action' => 'some_method'), true));
 	}
 
 /**
@@ -341,14 +332,14 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'view'
 		));
-		$this->assertEquals($result, 'This is the TestsAppsController index view');
+		$this->assertEquals($result, 'This is the TestsAppsController index view string');
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
 		));
-		$this->assertPattern('/<html/', $result);
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
-		$this->assertPattern('/<\/html>/', $result);
+		$this->assertRegExp('/<html/', $result);
+		$this->assertRegExp('/This is the TestsAppsController index view/', $result);
+		$this->assertRegExp('/<\/html>/', $result);
 	}
 
 /**
@@ -374,7 +365,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$expected = array(
 			'named' => 'param'
 		);
-		$this->assertEqual($this->Case->controller->request->named, $expected);
+		$this->assertEquals($this->Case->controller->request->named, $expected);
 		$this->assertEquals($this->Case->controller->data, $data);
 
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
@@ -385,11 +376,11 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'pork' => 'and beans',
 			)
 		));
-		$this->assertEqual(array_keys($result['data']), array('name', 'pork'));
+		$this->assertEquals(array_keys($result['data']), array('name', 'pork'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
 		$this->assertTrue(array_key_exists('posts', $result));
-		$this->assertEqual(count($result['posts']), 4);
+		$this->assertEquals(count($result['posts']), 4);
 		$this->assertTrue($this->Case->controller->request->is('post'));
 	}
 
@@ -413,13 +404,13 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'return' => 'vars',
 			'method' => 'get',
 		));
-		$this->assertEqual(array_keys($result['params']['named']), array('var1', 'var2'));
+		$this->assertEquals(array_keys($result['params']['named']), array('var1', 'var2'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var/gogo/val2', array(
 			'return' => 'vars',
 			'method' => 'get',
 		));
-		$this->assertEqual($result['params']['pass'], array('gogo', 'val2'));
+		$this->assertEquals($result['params']['pass'], array('gogo', 'val2'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var', array(
 			'return' => 'vars',
@@ -432,6 +423,21 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$query = $this->Case->controller->request->query;
 		$this->assertTrue(isset($query['red']));
 		$this->assertTrue(isset($query['blue']));
+	}
+
+/**
+ * Test that REST actions with XML/JSON input work.
+ *
+ * @return void
+ */
+	public function testTestActionJsonData() {
+		$result = $this->Case->testAction('/tests_apps_posts/input_data', array(
+			'return' => 'vars',
+			'method' => 'post',
+			'data' => '{"key":"value","json":true}'
+		));
+		$this->assertEquals('value', $result['data']['key']);
+		$this->assertTrue($result['data']['json']);
 	}
 
 /**
@@ -464,14 +470,59 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'view'
 		));
-		$this->assertEquals($result, 'This is the TestsAppsController index view');
+		$this->assertEquals($result, 'This is the TestsAppsController index view string');
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
 		));
-		$this->assertPattern('/<html/', $result);
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
-		$this->assertPattern('/<\/html>/', $result);
+		$this->assertRegExp('/<html/', $result);
+		$this->assertRegExp('/This is the TestsAppsController index view/', $result);
+		$this->assertRegExp('/<\/html>/', $result);
+	}
+
+/**
+ * Test that controllers don't get reused.
+ *
+ * @return void
+ */
+	public function testNoControllerReuse() {
+		$this->Case->autoMock = true;
+		$result = $this->Case->testAction('/tests_apps/index', array(
+			'data' => array('var' => 'first call'),
+			'method' => 'get',
+			'return' => 'contents',
+		));
+		$this->assertContains('<html', $result);
+		$this->assertContains('This is the TestsAppsController index view', $result);
+		$this->assertContains('first call', $result);
+		$this->assertContains('</html>', $result);
+	
+		$result = $this->Case->testAction('/tests_apps/index', array(
+			'data' => array('var' => 'second call'),
+			'method' => 'get',
+			'return' => 'contents'
+		));
+		$this->assertContains('second call', $result);
+
+		$result = $this->Case->testAction('/tests_apps/index', array(
+			'data' => array('var' => 'third call'),
+			'method' => 'get',
+			'return' => 'contents'
+		));
+		$this->assertContains('third call', $result);
+	}
+
+/**
+ * Test that multiple calls to redirect in the same test method don't cause issues.
+ *
+ * @return void
+ */
+	public function testTestActionWithMultipleRedirect() {
+		$Controller = $this->Case->generate('TestsApps');
+
+		$options = array('method' => 'get');
+		$this->Case->testAction('/tests_apps/redirect_to', $options);
+		$this->Case->testAction('/tests_apps/redirect_to', $options);
 	}
 
 }

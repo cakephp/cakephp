@@ -226,6 +226,7 @@ class MissingActionException extends CakeException {
 		parent::__construct($message, $code);
 	}
 }
+
 /**
  * Private Action exception - used when a controller action
  * starts with a  `_`.
@@ -354,7 +355,7 @@ class MissingDatasourceException extends CakeException {
  * @package       Cake.Error
  */
 class MissingTableException extends CakeException {
-	protected $_messageTemplate = 'Database table %s for model %s was not found.';
+	protected $_messageTemplate = 'Table %s for model %s was not found in datasource %s.';
 }
 
 /**
@@ -426,7 +427,7 @@ class ConfigureException extends CakeException { }
 
 /**
  * Exception class for Socket. This exception will be thrown from CakeSocket, CakeEmail, HttpSocket
- * SmtpTransport and HttpResponse when it encounters an error.
+ * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  *
  * @package       Cake.Error
  */

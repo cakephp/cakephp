@@ -178,7 +178,8 @@ class ConsoleOutput {
 			return $text;
 		}
 		if ($this->_outputAs == self::PLAIN) {
-			return strip_tags($text);
+			$tags = implode('|', array_keys(self::$_styles));
+			return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
 		}
 		return preg_replace_callback(
 			'/<(?<tag>[a-z0-9-_]+)>(?<text>.*?)<\/(\1)>/ims', array($this, '_replaceTags'), $text

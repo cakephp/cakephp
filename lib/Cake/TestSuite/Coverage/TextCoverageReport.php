@@ -16,10 +16,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('BaseCoverageReport', 'TestSuite/Coverage');
 
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-
+/**
+ * Generates code coverage reports in Simple plain text from data obtained from PHPUnit
+ *
+ * @package       Cake.TestSuite.Coverage
+ */
 class TextCoverageReport extends BaseCoverageReport {
 
 /**

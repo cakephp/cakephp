@@ -97,7 +97,7 @@ class ConsoleOutputTest extends CakeTestCase {
 	public function testStylesGet() {
 		$result = $this->output->styles('error');
 		$expected = array('text' => 'red', 'underline' => true);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->assertNull($this->output->styles('made_up_goop'));
 
@@ -224,5 +224,18 @@ class ConsoleOutputTest extends CakeTestCase {
 			->with('Bad Regular');
 
 		$this->output->write('<error>Bad</error> Regular', false);
+	}
+
+/**
+ * test plain output only strips tags used for formatting.
+ *
+ * @return void
+ */
+	public function testOutputAsPlainSelectiveTagRemoval() {
+		$this->output->outputAs(ConsoleOutput::PLAIN);
+		$this->output->expects($this->once())->method('_write')
+			->with('Bad Regular <b>Left</b> <i>behind</i> <name>');
+
+		$this->output->write('<error>Bad</error> Regular <b>Left</b> <i>behind</i> <name>', false);
 	}
 }

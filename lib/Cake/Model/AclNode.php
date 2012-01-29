@@ -16,14 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Load Model and AppModel
- */
 App::uses('AppModel', 'Model');
 
 /**
  * ACL Node
- *
  *
  * @package       Cake.Model
  */
@@ -99,7 +95,7 @@ class AclNode extends AppModel {
 				$queryData['joins'][] = array(
 					'table' => $table,
 					'alias' => "{$type}{$i}",
-					'type'  => 'LEFT',
+					'type' => 'LEFT',
 					'conditions' => array(
 						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
 						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
@@ -124,11 +120,12 @@ class AclNode extends AppModel {
 				return false;
 			}
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
-			$ref = array('model' => $ref->alias, 'foreign_key' => $ref->id);
+			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
+			list($plugin, $alias) = pluginSplit($name);
 
-			$model = ClassRegistry::init(array('class' => $name, 'alias' => $name));
+			$model = ClassRegistry::init(array('class' => $name, 'alias' => $alias));
 
 			if (empty($model)) {
 				trigger_error(__d('cake_dev', "Model class '%s' not found in AclNode::node() when trying to bind %s object", $type, $this->alias), E_USER_WARNING);
@@ -140,7 +137,7 @@ class AclNode extends AppModel {
 				$tmpRef = $model->bindNode($ref);
 			}
 			if (empty($tmpRef)) {
-				$ref = array('model' => $name, 'foreign_key' => $ref[$name][$model->primaryKey]);
+				$ref = array('model' => $alias, 'foreign_key' => $ref[$name][$model->primaryKey]);
 			} else {
 				if (is_string($tmpRef)) {
 					return $this->node($tmpRef);

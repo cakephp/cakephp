@@ -75,9 +75,7 @@
 </p>
 <?php
 if (!empty($filePresent)):
-	if (!class_exists('ConnectionManager')) {
-		require CAKE . 'model' . DS . 'connection_manager.php';
-	}
+	App::uses('ConnectionManager', 'Model');
  	$connected = ConnectionManager::getDataSource('default');
 ?>
 <p>

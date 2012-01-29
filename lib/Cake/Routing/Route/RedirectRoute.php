@@ -1,14 +1,5 @@
 <?php
-App::uses('CakeResponse', 'Network');
-App::uses('CakeRoute', 'Routing/Route');
-
 /**
- * Redirect route will perform an immediate redirect.  Redirect routes
- * are useful when you want to have Routing layer redirects occur in your
- * application, for when URLs move.
- *
- * PHP5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -21,6 +12,17 @@ App::uses('CakeRoute', 'Routing/Route');
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('CakeResponse', 'Network');
+App::uses('CakeRoute', 'Routing/Route');
+
+/**
+ * Redirect route will perform an immediate redirect. Redirect routes
+ * are useful when you want to have Routing layer redirects occur in your
+ * application, for when URLs move.
+ *
+ * @package Cake.Routing.Route
+ */
 class RedirectRoute extends CakeRoute {
 
 /**
@@ -31,11 +33,18 @@ class RedirectRoute extends CakeRoute {
 	public $response = null;
 
 /**
- * The location to redirect to.  Either a string or a cake array url.
+ * The location to redirect to. Either a string or a cake array url.
  *
  * @var mixed
  */
 	public $redirect;
+
+/**
+ * Flag for disabling exit() when this route parses a url.
+ *
+ * @var boolean
+ */
+	public $stop = true;
 
 /**
  * Constructor
@@ -79,6 +88,7 @@ class RedirectRoute extends CakeRoute {
 		$this->response->header(array('Location' => Router::url($redirect, true)));
 		$this->response->statusCode($status);
 		$this->response->send();
+		$this->_stop();
 	}
 
 /**
@@ -89,5 +99,18 @@ class RedirectRoute extends CakeRoute {
  */
 	public function match($url) {
 		return false;
+	}
+
+/**
+ * Stop execution of the current script. Wraps exit() making
+ * testing easier.
+ *
+ * @param integer|string $status see http://php.net/exit for values
+ * @return void
+ */
+	protected function _stop($code = 0) {
+		if ($this->stop) {
+			exit($code);
+		}
 	}
 }
