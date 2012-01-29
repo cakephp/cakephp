@@ -831,6 +831,9 @@ class App {
 				'Controller/Component/Auth' => array(
 					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
 				),
+				'Controller/Component/Acl' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
+				),
 				'View' => array(
 					'%s' . 'View' . DS
 				),
