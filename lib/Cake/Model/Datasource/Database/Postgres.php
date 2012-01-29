@@ -77,8 +77,7 @@ class Postgres extends DboSource {
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
-		'number' => array('name' => 'numeric'),
-		'inet' => array('name' => 'inet')
+		'number' => array('name' => 'numeric')
 	);
 
 /**
@@ -632,7 +631,7 @@ class Postgres extends DboSource {
 		);
 
 		switch (true) {
-			case (in_array($col, array('date', 'time', 'inet', 'boolean'))):
+			case (in_array($col, array('date', 'time', 'boolean'))):
 				return $col;
 			case (strpos($col, 'timestamp') !== false):
 				return 'datetime';
@@ -640,7 +639,7 @@ class Postgres extends DboSource {
 				return 'time';
 			case (strpos($col, 'int') !== false && $col != 'interval'):
 				return 'integer';
-			case (strpos($col, 'char') !== false || $col == 'uuid'):
+			case (strpos($col, 'char') !== false || $col == 'uuid' || $col == 'inet'):
 				return 'string';
 			case (strpos($col, 'text') !== false):
 				return 'text';
