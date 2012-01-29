@@ -20,20 +20,20 @@
  */
 
 /**
- * Number Multi Tree Test Fixture
+ * Scoped Number Tree Test Fixture
  *
  * Generates a tree of data for use testing the tree behavior
  *
  * @package       Cake.Test.Fixture
  */
-class NumberMultiTreeFixture extends CakeTestFixture {
+class ScopedNumberTreeFixture extends CakeTestFixture {
 
 /**
  * name property
  *
- * @var string 'NumberMultiTree'
+ * @var string 'ScopedNumberTree'
  */
-	public $name = 'NumberMultiTree';
+	public $name = 'ScopedNumberTree';
 
 /**
  * fields property

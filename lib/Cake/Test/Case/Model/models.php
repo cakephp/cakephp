@@ -2525,14 +2525,19 @@ class UuidTree extends NumberTree {
 	public $name = 'UuidTree';
 }
 
-class NumberMultiTree extends NumberTree {
+/**
+ * ScopedNumberTree class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ScopedNumberTree extends NumberTree {
 
 /**
  * name property
  *
- * @var string 'NumberMultiTree'
+ * @var string 'ScopedNumberTree'
  */
-	public $name = 'NumberMultiTree';
+	public $name = 'ScopedNumberTree';
 
 /**
  * actsAs property
@@ -2541,7 +2546,6 @@ class NumberMultiTree extends NumberTree {
  */
 	public $actsAs = array(
 		'Tree' => array(
-			'multiTree' => true,
 			'scope' => 'User'
 		)
 	);

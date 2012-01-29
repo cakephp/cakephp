@@ -28,7 +28,7 @@ require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
  *
  * @package       Cake.Test.Case.Model.Behavior
  */
-class TreeBehaviorNumberMultiTest extends CakeTestCase {
+class TreeBehaviorScopedNumberTest extends CakeTestCase {
 
 /**
  * Whether backup global state for each test method or not
@@ -43,7 +43,7 @@ class TreeBehaviorNumberMultiTest extends CakeTestCase {
  * @var array
  */
 	protected $settings = array(
-		'modelClass' => 'NumberMultiTree',
+		'modelClass' => 'ScopedNumberTree',
 		'leftField' => 'lft',
 		'rightField' => 'rght',
 		'parentField' => 'parent_id',
@@ -56,7 +56,7 @@ class TreeBehaviorNumberMultiTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.number_multi_tree', 'core.user');
+	public $fixtures = array('core.scoped_number_tree', 'core.user');
 
 /**
  * testInitialize method
@@ -1336,7 +1336,7 @@ class TreeBehaviorNumberMultiTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->User = new User();
-		$this->Tree->initialize($this->User->find('list'), 2, 10);
+		$this->Tree->initialize($this->User->find('list'), 2, 5);
 
 		$original = $this->Tree->cacheQueries;
 		$this->Tree->cacheQueries = true;
