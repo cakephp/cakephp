@@ -1,9 +1,5 @@
 <?php
 /**
- * Configure class
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +14,7 @@
  */
 
 App::uses('Set', 'Utility');
+App::uses('ConfigReaderInterface', 'Configure');
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -340,19 +337,3 @@ class Configure {
 	}
 }
 
-/**
- * An interface for creating objects compatible with Configure::load()
- *
- * @package       Cake.Core
- */
-interface ConfigReaderInterface {
-/**
- * Read method is used for reading configuration information from sources.
- * These sources can either be static resources like files, or dynamic ones like
- * a database, or other datasource.
- *
- * @param string $key
- * @return array An array of data to merge into the runtime configuration
- */
-	public function read($key);
-}
