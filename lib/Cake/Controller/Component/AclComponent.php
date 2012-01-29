@@ -57,7 +57,7 @@ class AclComponent extends Component {
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
-		$name = Inflector::camelize(strtolower(Configure::read('Acl.classname')));
+		$name = Configure::read('Acl.classname');
 		if (!class_exists($name)) {
 			list($plugin, $name) = pluginSplit($name, true);
 			App::uses($name . 'Component', $plugin . 'Controller/Component');
