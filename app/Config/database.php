@@ -63,9 +63,10 @@ class DATABASE_CONFIG {
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'database_name',
+		'port' => '8889',
+		'login' => 'tinyauthdb',
+		'password' => 'tinyauthdb',
+		'database' => 'tinyauthdb',
 		'prefix' => '',
 		//'encoding' => 'utf8',
 	);
