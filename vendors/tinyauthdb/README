@@ -1,3 +1,4 @@
 This folder contains files that can be used to visualize the tinyauthdb relationships, and files saved from development programs.
 
-mob is a file format used by MySQL Workspace.
+mob is a file format used by MySQL Workbench.
+the user will need to be created separately from forward engineering the model from MySQL Workbench.
