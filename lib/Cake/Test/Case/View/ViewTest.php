@@ -403,7 +403,6 @@ class ViewTest extends CakeTestCase {
 		$expected = array(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
 			$pluginPath . 'View' . DS,
-			$pluginPath . 'Lib' . DS . 'View' . DS,
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS,
 			CAKE . 'View' . DS
 		);
