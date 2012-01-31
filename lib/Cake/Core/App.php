@@ -538,6 +538,7 @@ class App {
 		if (empty($plugin)) {
 			$appLibs = empty(self::$_packages['Lib']) ? APPLIBS : current(self::$_packages['Lib']);
 			$paths[] =  $appLibs . $package . DS;
+			$paths[] = APP . $package . DS;
 			$paths[] = CAKE . $package . DS;
 		}
 
