@@ -432,7 +432,7 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
- * test that pluginPath can find paths for plugins.
+ * test that themePath can find paths for themes.
  *
  * @return void
  */
@@ -566,6 +566,9 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Datasource', 'TestPlugin.TestSource');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestSource'));
+
+		App::uses('ExampleExample', 'TestPlugin.Vendor/Example');
+		$this->assertTrue(class_exists('ExampleExample'));
 
 		App::build();
 	}
