@@ -565,11 +565,15 @@ class HtmlHelper extends AppHelper {
  * ### Options
  *
  * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
- * - `inline` (boolean) Whether or not the $script should be added to $scripts_for_layout or output inline
+ * - `inline` (boolean) Whether or not the $script should be added to 
+ *   `$scripts_for_layout` / `script` block, or output inline. (Deprecated, use `block` instead)
+ * - `block` Which block you want this script block appended to.
+ *   Defaults to `script`.
  *
  * @param string $script The script to wrap
- * @param array $options The options to use.
- * @return mixed string or null depending on the value of `$options['inline']`
+ * @param array $options The options to use. Options not listed above will be 
+ *    treated as HTML attributes.
+ * @return mixed string or null depending on the value of `$options['block']`
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptBlock
  */
 	public function scriptBlock($script, $options = array()) {
@@ -577,14 +581,18 @@ class HtmlHelper extends AppHelper {
 		if ($options['safe']) {
 			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
-		$inline = $options['inline'];
+		if (!$options['inline'] && empty($options['block'])) {
+			$options['block'] = 'script';
+		}
 		unset($options['inline'], $options['safe']);
-		$attributes = $this->_parseAttributes($options, ' ', ' ');
-		if ($inline) {
-			return sprintf($this->_tags['javascriptblock'], $attributes, $script);
+
+		$attributes = $this->_parseAttributes($options, array('block'), ' ');
+		$out = sprintf($this->_tags['javascriptblock'], $attributes, $script);
+
+		if (empty($options['block'])) {
+			return $out;
 		} else {
-			$this->_View->append('script', sprintf($this->_tags['javascriptblock'], $attributes, $script));
-			return null;
+			$this->_View->append($options['block'], $out);
 		}
 	}
 

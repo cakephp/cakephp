@@ -790,11 +790,18 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 
-		$this->View->expects($this->any())
+		$this->View->expects($this->at(0))
 			->method('append')
 			->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('scriptTop', $this->stringContains('alert('));
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->scriptBlock('alert("hi")', array('block' => 'scriptTop'));
 		$this->assertNull($result);
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false, 'encoding' => 'utf-8'));
