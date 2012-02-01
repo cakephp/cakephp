@@ -349,10 +349,14 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
-		
+
 		$result = $this->Html->image('test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);
 		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/sub/test.gif', 'alt' => '')));
 	}
 
 /**
@@ -684,7 +688,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('script', $this->matchesRegularExpression('/bool_false.js/'));
-	
+
 		$this->View->expects($this->at(2))
 			->method('append')
 			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
