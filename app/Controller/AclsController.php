@@ -178,7 +178,13 @@ class AclsController extends AppController {
 		 * 
 		 * 
 		 */
+		$this->loadModel('AclFunction');
+		$this->loadModel('AclRole');
 		
+		$controllerName = $this->Acl->find('all');
+		debug($controllerName);
+		//$functionName = $this->AclFunction->find('all');
+		//debug($functionName);
 		
 		$test = array(
 			'Tools.Countries' => array(
@@ -196,7 +202,7 @@ class AclsController extends AppController {
 				'*' => 'moderator,admin'
 			)
 		);
-		debug($iniArray);
+		//debug($iniArray);
 		$data = array('test' => $test);
 
 		$this -> set($data);
