@@ -273,6 +273,21 @@ class TestController extends ControllerTestAppController {
 		);
 	}
 
+
+/**
+ * view method
+ *
+ * @param mixed $testId
+ * @param mixed $test2Id
+ * @return void
+ */
+	public function view($testId, $test2Id) {
+		$this->data = array(
+			'testId' => $testId,
+			'test2Id' => $test2Id
+		);
+	}
+
 	public function returner() {
 		return 'I am from the controller.';
 	}
@@ -341,6 +356,14 @@ class TestComponent extends Object {
 		if ($this->viewclass) {
 			$controller->viewClass = $this->viewclass;
 		}
+	}
+}
+
+class Test2Component extends TestComponent {
+
+
+	public function beforeRender($controller) {
+		return false;
 	}
 }
 
@@ -671,6 +694,21 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * test that a component beforeRender can change the controller view class.
+ *
+ * @return void
+ */
+	public function testComponentCancelRender() {
+		$Controller = new Controller($this->getMock('CakeRequest'), new CakeResponse());
+		$Controller->uses = array();
+		$Controller->components = array('Test2');
+		$Controller->constructClasses();
+		$result = $Controller->render('index');
+		$this->assertInstanceOf('CakeResponse', $result);
+	}
+
+
+/**
  * testToBeInheritedGuardmethods method
  *
  * @return void
@@ -979,10 +1017,11 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 
 		$TestController = new TestController($request);
-		$TestController->setAction('index', 1, 2);
+		$TestController->setAction('view', 1, 2);
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertSame($expected, $TestController->request->data);
-		$this->assertSame('index', $TestController->view);
+		$this->assertSame('view', $TestController->request->params['action']);
+		$this->assertSame('view', $TestController->view);
 	}
 
 /**

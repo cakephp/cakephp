@@ -33,6 +33,12 @@ App::uses('CakeEventManager', 'Event');
  * and then inserted into the selected layout.  This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
+ * Since 2.1, the base View class also includes support for themes by default.  Theme views are regular
+ * view files that can provide unique HTML and static assets.  If theme views are not found for the
+ * current view the default app view files will be used.  You can set `$this->theme = 'mytheme'`
+ * in your Controller to use the Themes.
+ *
+ * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/View/Themed/SuperHot/Posts`
  *
  * @package       Cake.View
  * @property      CacheHelper $Cache
@@ -151,7 +157,7 @@ class View extends Object {
 	public $subDir = null;
 
 /**
- * Theme name.  If you are using themes, you should remember to use ThemeView as well.
+ * Theme name.
  *
  * @var string
  */
@@ -211,7 +217,7 @@ class View extends Object {
  * @var array
  */
 	protected $_passedVars = array(
-		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name',
+		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name', 'theme',
 		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
@@ -656,20 +662,34 @@ class View extends Object {
  * @param string $name The view or element to 'extend' the current one with.
  * @return void
  * @throws LogicException when you extend a view with itself or make extend loops.
+ * @throws LogicException when you extend an element which doesn't exist
  */
 	public function extend($name) {
-		switch ($this->_currentType) {
-			case self::TYPE_VIEW:
-				$parent = $this->_getViewFileName($name);
-			break;
-			case self::TYPE_ELEMENT:
-				$parent = $this->_getElementFileName($name);
-			break;
-			case self::TYPE_LAYOUT:
-				$parent = $this->_getLayoutFileName($name);
-			break;
-
+		if ($name[0] === '/' || $this->_currentType === self::TYPE_VIEW) {
+			$parent = $this->_getViewFileName($name);
+		} else {
+			switch ($this->_currentType) {
+				case self::TYPE_ELEMENT:
+					$parent = $this->_getElementFileName($name);
+					if (!$parent) {
+						list($plugin, $name) = $this->_pluginSplit($name);
+						$paths = $this->_paths($plugin);
+						$defaultPath = $paths[0] . 'Elements' . DS;
+						throw new LogicException(__d(
+							'cake_dev',
+							'You cannot extend an element which does not exist (%s).',
+							$defaultPath . $name . $this->ext
+						));
+					}
+					break;
+				case self::TYPE_LAYOUT:
+					$parent = $this->_getLayoutFileName($name);
+					break;
+				default:
+					$parent = $this->_getViewFileName($name);
+			}
 		}
+
 		if ($parent == $this->_current) {
 			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
 		}
@@ -762,7 +782,7 @@ class View extends Object {
 			case 'data':
 				return $this->request->{$name};
 			case 'action':
-				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
+				return $this->request->params['action'];
 			case 'params':
 				return $this->request;
 			case 'output':
@@ -796,7 +816,14 @@ class View extends Object {
  * @return boolean
  */
 	public function __isset($name) {
-		return isset($this->{$name});
+		if (isset($this->{$name})) {
+			return true;
+		}
+		$magicGet = array('base', 'here', 'webroot', 'data', 'action', 'params', 'output');
+		if (in_array($name, $magicGet)) {
+			return $this->__get($name) !== null;
+		}
+		return false;
 	}
 
 /**
@@ -915,7 +942,7 @@ class View extends Object {
 				$name = trim($name, DS);
 			} else if ($name[0] === '.') {
 				$name = substr($name, 3);
-			} else {
+			} elseif (!$plugin) {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
@@ -1054,6 +1081,20 @@ class View extends Object {
 		}
 
 		$paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		if (!empty($this->theme)) {
+			$themePaths = array();
+			$count = count($paths);
+			for ($i = 0; $i < $count; $i++) {
+				if (strpos($paths[$i], DS . 'Plugin' . DS) === false
+					&& strpos($paths[$i], DS . 'Cake' . DS . 'View') === false) {
+						if ($plugin) {
+							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
+						}
+						$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS;
+					}
+			}
+			$paths = array_merge($themePaths, $paths);
+		}
 		if ($plugin !== null) {
 			return $paths;
 		}

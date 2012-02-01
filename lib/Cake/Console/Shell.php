@@ -453,7 +453,8 @@ class Shell extends Object {
 		if (!$this->interactive) {
 			return $default;
 		}
-		$in = $this->_getInput($prompt, $options, $default);
+		$originalOptions = $options;
+		$in = $this->_getInput($prompt, $originalOptions, $default);
 
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
@@ -465,8 +466,13 @@ class Shell extends Object {
 			}
 		}
 		if (is_array($options)) {
-			while ($in === '' || ($in !== '' && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
-				$in = $this->_getInput($prompt, $options, $default);
+			$options = array_merge(
+				array_map('strtolower', $options),
+				array_map('strtoupper', $options),
+				$options
+			);
+			while ($in === '' || !in_array($in, $options)) {
+				$in = $this->_getInput($prompt, $originalOptions, $default);
 			}
 		}
 		return $in;

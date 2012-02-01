@@ -93,6 +93,20 @@ class TreeBehavior extends ModelBehavior {
 	}
 
 /**
+ * Runs before a find() operation
+ *
+ * @param Model $Model	Model using the behavior
+ * @param array $query Query parameters as set by cake
+ * @return array
+ */
+	public function beforeFind($Model, $query) {
+		if ($Model->findQueryType == 'threaded' && !isset($query['parent'])) {
+			$query['parent'] = $this->settings[$Model->alias]['parent'];
+		}
+		return $query;
+	}
+
+/**
  * Before delete method. Called before all deletes
  *
  * Will delete the current node and all children using the deleteAll method and sync the table

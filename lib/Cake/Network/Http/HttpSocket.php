@@ -402,7 +402,7 @@ class HttpSocket extends CakeSocket {
 			}
 			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response->cookies);
 		}
-		
+
 		if($this->request['redirect'] && $this->response->isRedirect()) {
 			$request['uri'] = $this->response->getHeader('Location');
 			$request['redirect'] = is_int($this->request['redirect']) ? $this->request['redirect'] - 1 : $this->request['redirect'];
@@ -655,6 +655,7 @@ class HttpSocket extends CakeSocket {
 
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
 		$uri['query'] = http_build_query($uri['query']);
+		$uri['query'] = rtrim($uri['query'], '=');
 		$stripIfEmpty = array(
 			'query' => '?%query',
 			'fragment' => '#%fragment',

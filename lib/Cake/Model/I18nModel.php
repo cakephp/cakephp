@@ -1,9 +1,5 @@
 <?php
 /**
- * A custom view class that is used for themeing
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,20 +8,37 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @package       Cake.Model.Behavior
+ * @since         CakePHP(tm) v 1.2.0.4525
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('View', 'View');
+/**
+ * A model used by TranslateBehavior to access the translation tables.
+ *
+ * @package Cake.Model
+ */
+class I18nModel extends AppModel {
 
 /**
- * Theme view class
+ * Model name
  *
- * Stub class for 2.1 Compatibility
- *
- * @package       Cake.View
+ * @var string
  */
-class ThemeView extends View {
+	public $name = 'I18nModel';
+
+/**
+ * Table name
+ *
+ * @var string
+ */
+	public $useTable = 'i18n';
+
+/**
+ * Display field
+ *
+ * @var string
+ */
+	public $displayField = 'field';
 
 }

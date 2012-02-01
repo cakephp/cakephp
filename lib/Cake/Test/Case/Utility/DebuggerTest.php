@@ -329,9 +329,20 @@ object(View) {
 	float => (float) 1.333
 }
 TEXT;
-		// $result = str_replace(array("\r\n", "\n"), "", $result);
-		// $expected =  str_replace(array("\r\n", "\n"), "", $expected);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
+
+		$data = array(
+			1 => 'Index one',
+			5 => 'Index five'
+		);
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+array(
+	(int) 1 => 'Index one',
+	(int) 5 => 'Index five'
+)
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -391,9 +402,7 @@ TEXT;
 	)
 )</pre>
 TEXT;
-		$result = str_replace(array("\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\r\n", "\n"), "", $expected);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**

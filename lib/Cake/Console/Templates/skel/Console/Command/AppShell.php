@@ -1,6 +1,6 @@
 <?php
 /**
- * A custom view class that is used for themeing
+ * AppShell file
  *
  * PHP 5
  *
@@ -12,20 +12,20 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('View', 'View');
+App::uses('Shell', 'Console');
 
 /**
- * Theme view class
+ * Application Shell
  *
- * Stub class for 2.1 Compatibility
+ * Add your application-wide methods in the class below, your shells
+ * will inherit them.
  *
- * @package       Cake.View
+ * @package       app.Console.Command
  */
-class ThemeView extends View {
+class AppShell extends Shell {
 
 }

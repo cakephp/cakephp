@@ -1738,6 +1738,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('ftp://www.cakephp.org/pub/cake'));
 		$this->assertTrue(Validation::url('ftp://cakephp.org/pub/cake'));
 		$this->assertTrue(Validation::url('ftp://192.168.0.1/pub/cake'));
+		$this->assertTrue(Validation::url('sftp://192.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('ftps://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('ftp://256.168.0.1/pub/cake'));
 		$this->assertTrue(Validation::url('https://my.domain.com/gizmo/app?class=MySip;proc=start'));

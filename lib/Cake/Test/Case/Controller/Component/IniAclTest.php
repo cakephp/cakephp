@@ -16,9 +16,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AclComponent', 'Controller/Component');
-class_exists('AclComponent');
+App::uses('IniAcl', 'Controller/Component/Acl');
 
 /**
  * Test case for the IniAcl implementation

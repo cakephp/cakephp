@@ -19,7 +19,9 @@
  */
 echo "<?php\n";
 ?>
-App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
+<?php foreach ($uses as $dependency): ?>
+App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
+<?php endforeach; ?>
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
 /**
@@ -69,8 +71,9 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-
+<?php echo $preConstruct ? "\t\t" . $preConstruct : ''; ?>
 		$this-><?php echo $className . ' = ' . $construction; ?>
+<?php echo $postConstruct ? "\t\t" . $postConstruct : ''; ?>
 	}
 
 /**
@@ -86,13 +89,12 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 
 <?php foreach ($methods as $method): ?>
 /**
- * test<?php echo Inflector::classify($method); ?> method
+ * test<?php echo Inflector::camelize($method); ?> method
  *
  * @return void
  */
-	public function test<?php echo Inflector::classify($method); ?>() {
+	public function test<?php echo Inflector::camelize($method); ?>() {
 
 	}
-
 <?php endforeach;?>
 }

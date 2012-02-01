@@ -2004,6 +2004,9 @@ class DboSource extends DataSource {
  */
 	public function begin() {
 		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
+			if ($this->fullDebug && empty($this->_transactionNesting)) {
+				$this->logQuery('BEGIN');
+			}
 			$this->_transactionStarted = true;
 			$this->_transactionNesting++;
 			return true;
@@ -2024,6 +2027,9 @@ class DboSource extends DataSource {
 			if ($this->_transactionNesting <= 0) {
 				$this->_transactionStarted = false;
 				$this->_transactionNesting = 0;
+				if ($this->fullDebug) {
+					$this->logQuery('COMMIT');
+				}
 				return $this->_connection->commit();
 			}
 			return true;
@@ -2040,6 +2046,9 @@ class DboSource extends DataSource {
  */
 	public function rollback() {
 		if ($this->_transactionStarted && $this->_connection->rollBack()) {
+			if ($this->fullDebug) {
+				$this->logQuery('ROLLBACK');
+			}
 			$this->_transactionStarted = false;
 			$this->_transactionNesting = 0;
 			return true;
@@ -2368,7 +2377,7 @@ class DboSource extends DataSource {
 					$keys = array_keys($value);
 					if ($keys === array_values($keys)) {
 						$count = count($value);
-						if ($count === 1) {
+						if ($count === 1 && !preg_match("/\s+NOT$/", $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
 						} else {
 							$data = $this->_quoteFields($key) . ' IN (';

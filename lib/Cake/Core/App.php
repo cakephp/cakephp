@@ -229,7 +229,6 @@ class App {
 					$path[] = sprintf($f, $pluginPath);
 				}
 			}
-			$path[] = $pluginPath . 'Lib' . DS . $type . DS;
 			return $path;
 		}
 
@@ -538,9 +537,13 @@ class App {
 		if (empty($plugin)) {
 			$appLibs = empty(self::$_packages['Lib']) ? APPLIBS : current(self::$_packages['Lib']);
 			$paths[] =  $appLibs . $package . DS;
+			$paths[] = APP . $package . DS;
 			$paths[] = CAKE . $package . DS;
+		} else {
+			$pluginPath = self::pluginPath($plugin);
+			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
+			$paths[] = $pluginPath . $package . DS;
 		}
-
 		foreach ($paths as $path) {
 			$file = $path . $className . '.php';
 			if (file_exists($file)) {
@@ -831,6 +834,9 @@ class App {
 				'Controller/Component/Auth' => array(
 					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
 				),
+				'Controller/Component/Acl' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
+				),
 				'View' => array(
 					'%s' . 'View' . DS
 				),
@@ -853,7 +859,8 @@ class App {
 					'%s' . 'Locale' . DS
 				),
 				'Vendor' => array(
-					'%s' . 'Vendor' . DS, VENDORS
+					'%s' . 'Vendor' . DS,
+					VENDORS
 				),
 				'Plugin' => array(
 					APP . 'Plugin' . DS,

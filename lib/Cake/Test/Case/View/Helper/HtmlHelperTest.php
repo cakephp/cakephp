@@ -313,12 +313,10 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		Configure::write('Asset.timestamp', 'force');
-
- 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
+		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
  		$expected = array(
  			'a' => array('href' => '#'),
-			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
+			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -326,7 +324,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('../favicon.ico', array('url' => '#'));
 		$expected = array(
 			'a' => array('href' => '#'),
-			'img' => array('src' => 'preg:/img\/..\/favicon\.ico\?\d*/', 'alt' => ''),
+			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -351,6 +349,14 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('fullBase' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/sub/test.gif', 'alt' => '')));
 	}
 
 /**
@@ -682,7 +688,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('script', $this->matchesRegularExpression('/bool_false.js/'));
-	
+
 		$this->View->expects($this->at(2))
 			->method('append')
 			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
@@ -788,11 +794,18 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 
-		$this->View->expects($this->any())
+		$this->View->expects($this->at(0))
 			->method('append')
 			->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('scriptTop', $this->stringContains('alert('));
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->scriptBlock('alert("hi")', array('block' => 'scriptTop'));
 		$this->assertNull($result);
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false, 'encoding' => 'utf-8'));
@@ -866,7 +879,7 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
- * testBreadcrumb method
+ * testGetCrumb and addCrumb method
  *
  * @return void
  */
@@ -909,11 +922,6 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->assertRegExp('/^<a[^<>]+>First<\/a> &gt; <a[^<>]+>Second<\/a> &gt; <a[^<>]+>Third<\/a>$/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
-		$this->assertRegExp('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
-		$this->assertNotRegExp('/<a[^<>]+[^href]=[^<>]*>/', $result);
 
 		$this->Html->addCrumb('Fourth', null);
 
@@ -954,6 +962,30 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a',
 			'-',
 			'Fourth'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test the array form of $startText
+ */
+	public function testGetCrumbFirstLink() {
+		$this->Html->addCrumb('First', '#first');
+		$this->Html->addCrumb('Second', '#second');
+
+		$result = $this->Html->getCrumbs(' - ', array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+		$expected = array(
+			array('a' => array('href' => '/home')),
+			'img' => array('src' => '/home.png'),
+			'/a',
+			' - ',
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			' - ',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
 		);
 		$this->assertTags($result, $expected);
 	}

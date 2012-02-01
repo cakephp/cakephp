@@ -404,6 +404,26 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure that keys at named parameters are urldecoded
+ *
+ * @return void
+ */
+	public function testParseNamedKeyUrlDecode() {
+		Router::connectNamed(true);
+		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
+
+		// checking /post/index/user[0]:a/user[1]:b
+		$result = $route->parse('/posts/index/user%5B0%5D:a/user%5B1%5D:b');
+		$this->assertArrayHasKey('user', $result['named']);
+		$this->assertEquals(array('a', 'b'), $result['named']['user']);
+
+		// checking /post/index/user[]:a/user[]:b
+		$result = $route->parse('/posts/index/user%5B%5D:a/user%5B%5D:b');
+		$this->assertArrayHasKey('user', $result['named']);
+		$this->assertEquals(array('a', 'b'), $result['named']['user']);
+	}
+
+/**
  * test that named params with null/false are excluded
  *
  * @return void

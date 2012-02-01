@@ -2991,15 +2991,103 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
- * find(threaded) should trigger errors whne there is no parent_id field.
+ * testFindThreadedNoParent method
  *
- * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
-	public function testFindThreadedError() {
+	public function testFindThreadedNoParent() {
 		$this->loadFixtures('Apple', 'Sample');
 		$Apple = new Apple();
-		$Apple->find('threaded');
+		$result = $Apple->find('threaded');
+		$result = Set::extract($result, '{n}.children');
+		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFindThreaded method
+ *
+ * @return void
+ */
+	public function testFindThreaded() {
+		$this->loadFixtures('Person');
+		$Model = new Person();
+		$Model->recursive = -1;
+		$result = $Model->find('threaded');
+		$result = Set::extract($result, '{n}.children');
+		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$this->assertEquals($expected, $result);
+
+		$result = $Model->find('threaded', array('parent' => 'mother_id'));
+		$expected = array(
+			array(
+				'Person' => array(
+					'id' => '4',
+					'name' => 'mother - grand mother',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array(
+					array(
+						'Person' => array(
+							'id' => '2',
+							'name' => 'mother',
+							'mother_id' => '4',
+							'father_id' => '5'
+						),
+						'children' => array(
+							array(
+								'Person' => array(
+									'id' => '1',
+									'name' => 'person',
+									'mother_id' => '2',
+									'father_id' => '3'
+								),
+								'children' => array()
+							)
+						)
+					)
+				)
+			),
+			array(
+				'Person' => array(
+					'id' => '5',
+					'name' => 'mother - grand father',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array()
+			),
+			array(
+				'Person' => array(
+					'id' => '6',
+					'name' => 'father - grand mother',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array(
+					array(
+						'Person' => array(
+							'id' => '3',
+							'name' => 'father',
+							'mother_id' => '6',
+							'father_id' => '7'
+						),
+						'children' => array()
+					)
+				)
+			),
+			array(
+				'Person' => array(
+					'id' => '7',
+					'name' => 'father - grand father',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array()
+			)
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
