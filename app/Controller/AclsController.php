@@ -183,7 +183,8 @@ class AclsController extends AppController {
 		$this->loadModel('AclRole');
 		
 		$controllerName = $this->Acl->find('all');
-		debug($controllerName);
+		$result = Set::flatten($controllerName);
+		debug($result);
 		//$functionName = $this->AclFunction->find('all');
 		//debug($functionName);
 		
