@@ -501,7 +501,7 @@ class HttpSocket extends CakeSocket {
  * urls.
  *
  * {{{
- * $http->configUri('http://www.cakephp.org');
+ * $http = new HttpSocket('http://www.cakephp.org');
  * $url = $http->url('/search?q=bar');
  * }}}
  *
