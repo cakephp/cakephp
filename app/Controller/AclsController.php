@@ -1,5 +1,21 @@
 <?php
-App::uses('AppController', 'Controller');
+//XXX I have modified this from the default for testing of the ini to database parsing conversion
+
+App::uses('AppController', 'Controller', 'Inflector', 'Utility');
+
+if (!defined('CLASS_USER')) {
+	define('CLASS_USER', 'User');
+	# override if you have it in a plugin: PluginName.User etc
+}
+if (!defined('AUTH_CACHE')) {
+	define('AUTH_CACHE', '_cake_core_');
+	# use the most persistent cache by default
+}
+if (!defined('ACL_FILE')) {
+	define('ACL_FILE', 'acl.ini');
+	# stored in /app/Config/
+}
+
 /**
  * Acls Controller
  *
@@ -93,6 +109,99 @@ class AclsController extends AppController {
 		$this->Session->setFlash(__('Acl was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+
+/**
+ * test_parse method
+ * @return void
+ */
+	public function test_parse() {
+
+		$iniArray = parse_ini_file(APP . 'Config' . DS . ACL_FILE, true);
+		/*
+		 * The ini file is as below
+		 * 
+		 * 		[Tools.Countries]
+		 *		* = superadmin ; this is a comment
+		 *		 
+		 *		[Account]
+		 *		edit,change_pw = *
+		 *		 
+		 *		[Activities]
+		 *		admin_index,admin_edit,admin_add,admin_delete = admin,superadmin
+		 *		index = *
+		 *		 
+		 *		[Users]
+		 *		index,search = user
+		 *		* = moderator,admin
+		 * 
+		 * iniArray will be parsed into an array that we will have to rebuild from a database query
+		 * The array format from the above ini is below
+		 * 
+		 * array(
+		 *'Tools.Countries' => array(
+		 *		'*' => 'superadmin'
+		 *		),
+		 *	'Account' => array(
+		 *		'edit,change_pw' => '*'
+		 *		),
+		 *	'Activities' => array(
+		 *		'admin_index,admin_edit,admin_add,admin_delete' => 'admin,superadmin',
+		 *		'index' => '*'
+		 *		),
+		 *	'Users' => array(
+		 *		'index,search' => 'user',
+		 *		'*' => 'moderator,admin'
+		 *		)
+		 *	)
+		 * 
+		 * We will need to create 6 tables: acls, acl_functions, acl_roles, roles, roles_users, and users
+		 * acls will contain columns: id, controller
+		 * acl_functions will contain columns: id, acl_id, function 
+		 * acl_roles will contain columns: id, acl_id, acl_function_id, role_id
+		 * roles will contain columns: id, name, description, application_id
+		 * 
+		 * acls will have many acl_functions and have many acl_roles
+		 * acl_functions can have many acl_roles and belongs to acls
+		 * acl_roles belongs to acl_functions and acls
+		 * acl_roles has many roles
+		 * 
+		 * We will have to do a for each acl, select * from acl_functions where acl_id = $thisacl,
+		 * for each acl_function where acl_id = $thisacl, select * from acl_roles inner join roles on roles.id = acl_roles.id where acl_function_id = $thisaclfunction,
+		 * and finally a select * from acl_roles inner join roles on roles.id = acl_roles.id where acl_id = $thisacl and acl_function_id IS NULL for creating the wildcard (*)
+		 * and csv the results as arrays
+		 * 
+		 * Our framework will have a roles table that also has an application_id so that we can filter roles on 
+		 * the admin page to certain applications and define rules for the controllers needed for that application
+		 * 
+		 * I will recommend caching the outputted array used here, and creating logic for beforesave, flushing the key.  
+		 * We can possibly add a button in the GUI for flushing the cache.
+		 * 
+		 * 
+		 */
+		
+		
+		$test = array(
+			'Tools.Countries' => array(
+				'*' => 'superadmin'
+			),
+			'Account' => array(
+				'edit,change_pw' => '*'
+			),
+			'Activities' => array(
+				'admin_index,admin_edit,admin_add,admin_delete' => 'admin,superadmin',
+				'index' => '*'
+			),
+			'Users' => array(
+				'index,search' => 'user',
+				'*' => 'moderator,admin'
+			)
+		);
+		debug($iniArray);
+		$data = array('test' => $test);
+
+		$this -> set($data);
+	}
+
 /**
  * admin_index method
  *
