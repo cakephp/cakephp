@@ -57,13 +57,18 @@
  * unix_socket =>
  * For MySQL to connect via socket specify the `unix_socket` parameter instead of `host` and `port`
  */
+
+
+
+
+
 class DATABASE_CONFIG {
 
 	public $default = array(
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'port' => '8889',
+		'unix_socket' => '/var/run/mysqld/mysql.sock',
 		'login' => 'tinyauthdb',
 		'password' => 'tinyauthdb',
 		'database' => 'tinyauthdb',
