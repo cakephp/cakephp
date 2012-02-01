@@ -554,7 +554,7 @@ class HttpSocketTest extends CakeTestCase {
 
 /**
  * Test the scheme + port keys
- * 
+ *
  * @return void
  */
 	public function testGetWithSchemeAndPort() {
@@ -570,6 +570,26 @@ class HttpSocketTest extends CakeTestCase {
 		);
 		$response = $this->Socket->request($request);
 		$this->assertContains('Host: cakephp.org:8080', $this->Socket->request['header']);
+	}
+
+/**
+ * Test urls like http://cakephp.org/index.php?somestring without key/value pair for query
+ *
+ * @return void
+ */
+	public function testRequestWithStringQuery() {
+		$this->Socket->reset();
+		$request = array(
+			'uri' => array(
+				'scheme' => 'http',
+				'host' => 'cakephp.org',
+				'path' => 'index.php',
+				'query' => 'somestring'
+			),
+			'method' => 'GET'
+		);
+		$response = $this->Socket->request($request);
+		$this->assertContains("GET /index.php?somestring HTTP/1.1", $this->Socket->request['line']);
 	}
 
 /**
