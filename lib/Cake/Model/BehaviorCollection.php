@@ -52,14 +52,13 @@ class BehaviorCollection extends ObjectCollection {
 	protected $_mappedMethods = array();
 
 /**
- * Attaches a model object and loads a list of behaviors
+ * Constructor
  *
- * @todo Make this method a constructor instead..
  * @param string $modelName
  * @param array $behaviors
  * @return void
  */
-	public function init($modelName, $behaviors = array()) {
+	public function __construct($modelName, $behaviors = array()) {
 		$this->modelName = $modelName;
 
 		if (!empty($behaviors)) {
@@ -67,6 +66,18 @@ class BehaviorCollection extends ObjectCollection {
 				$this->load($config['class'], $config['settings']);
 			}
 		}
+	}
+
+/**
+ * Backwards compatible alias for __construct()
+ *
+ * @param string $modelName
+ * @param array $behaviors
+ * @return void
+ * @deprecated Initialize with constructor instead
+ */
+	public function init($modelName, $behaviors = array()) {
+		$this->__construct($modelName, $behaviors);
 	}
 
 /**

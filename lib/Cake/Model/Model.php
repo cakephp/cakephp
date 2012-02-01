@@ -679,7 +679,6 @@ class Model extends Object {
 			}
 			$this->_mergeVars($merge, 'AppModel');
 		}
-		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
 
@@ -701,7 +700,7 @@ class Model extends Object {
 		}
 
 		$this->_createLinks();
-		$this->Behaviors->init($this->alias, $this->actsAs);
+		$this->Behaviors = new BehaviorCollection($this->alias, $this->actsAs);
 	}
 
 /**
