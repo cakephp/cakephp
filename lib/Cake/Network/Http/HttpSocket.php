@@ -647,6 +647,7 @@ class HttpSocket extends CakeSocket {
 
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
 		$uri['query'] = $this->_httpSerialize($uri['query']);
+		$uri['query'] = rtrim($uri['query'], '=');
 		$stripIfEmpty = array(
 			'query' => '?%query',
 			'fragment' => '#%fragment',
