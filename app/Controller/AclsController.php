@@ -178,6 +178,7 @@ class AclsController extends AppController {
 		 * 
 		 * 
 		 */
+		$this->Acl->recursive = 2;
 		$this->loadModel('AclFunction');
 		$this->loadModel('AclRole');
 		
