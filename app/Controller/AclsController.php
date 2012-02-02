@@ -208,7 +208,7 @@ class AclsController extends AppController {
 		// richard test begins
 		/////////////////////////////
 		$richardControllerArray = $this->Acl->find('list', array('fields' => array('Controller')));
-		$richardRoleArray 		= $this->Acl->find('list', array('fields' => array('AclReole.Role')));
+		$richardRoleArray 		= $this->AclRole->find('list', array('fields' => array('Role')));
 		debug($richardControllerArray);
 		debug($richardRoleArray);
 		/////////////////////////////
