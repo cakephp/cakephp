@@ -228,6 +228,8 @@ class AclsController extends AppController {
 		debug($richardAclRoleArray);
 		
 		foreach($richardAclRoleArray as $item) {
+			debug($item);	
+			/**
 			$key = key($item);
     		$element = current($item);
 			
@@ -236,9 +238,10 @@ class AclsController extends AppController {
 			}
 			
 			$richardResult[$key][] = 'something here';
+			*/
 		}
 		
-		debug($richardResult);
+		//debug($richardResult);
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////
