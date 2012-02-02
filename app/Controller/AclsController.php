@@ -207,19 +207,19 @@ class AclsController extends AppController {
 		/////////////////////////////
 		// richard test begins
 		/////////////////////////////
-		$this->loadModel('Roles');
+		//$this->loadModel('Roles');
 		//$richardControllerArray 	= $this->Acl->find('list', array('fields' => array('Controller')));
-		$richardControllerArray 	= $this->Acl->find('list');
+		//$richardControllerArray 	= $this->Acl->find('list');
 		//$richardRoleArray 		= $this->Roles->find('list', array('fields' => array('Name')));
-		$richardRolesArray 			= $this->Roles->find('list');
-		$richardAclRoleArray		= $this->AclRole->find('all');
-		$richardAclFunctionArray	= $this->AclFunction->find('list');
-		$richardAclArray			= $this->Acl->find('list');
-		debug($richardControllerArray);
-		debug($richardRolesArray);
+		//$richardRolesArray 			= $this->Roles->find('list');
+		$richardAclRoleArray		= $this->AclRole->find('all', array('fields' => array('Acl.Controller')));
+		//$richardAclFunctionArray	= $this->AclFunction->find('list');
+		//$richardAclArray			= $this->Acl->find('list');
+		//debug($richardControllerArray);
+		//debug($richardRolesArray);
 		debug($richardAclRoleArray);
-		debug($richardAclFunctionArray);
-		debug($richardAclArray);
+		//debug($richardAclFunctionArray);
+		//debug($richardAclArray);
 		/////////////////////////////
 		// richard test ends
 		/////////////////////////////
