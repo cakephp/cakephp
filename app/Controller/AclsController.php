@@ -237,7 +237,7 @@ class AclsController extends AppController {
 				$richardResult[$item['Acl']['Controller']] = array();
 			}
 			
-			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']]] = $item['Role']['Name'];
+			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
 		}
 		
 		debug($richardResult);
