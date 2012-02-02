@@ -231,11 +231,13 @@ class AclsController extends AppController {
 			debug($item);
 			//debug($item['Acl']['Controller']);
 			
+			//TODO need validation on element exists or not on every level.
+			
 			if(!isset($richardResult[$item['Acl']['Controller']])) {
 				$richardResult[$item['Acl']['Controller']] = array();
 			}
 			
-			$richardResult[$item['Acl']['Controller']][] = 'something here';
+			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']]] = $item['Role']['Name'];
 		}
 		
 		debug($richardResult);
