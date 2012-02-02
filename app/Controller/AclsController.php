@@ -208,6 +208,23 @@ class AclsController extends AppController {
 		// 									richard test begins
 		///////////////////////////////////////////////////////////////////////////////////////
 		
+		$richardAclRoleArray		= $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
+		foreach($richardAclRoleArray as $item) {
+			//debug($item);
+			//debug($item['Acl']['Controller']);
+			
+			//TODO need validation on element exists or not on every level.
+			//TODO Need to compare result to database to make sure it grabs all of data.
+			
+			if(!isset($richardResult[$item['Acl']['Controller']])) {
+				$richardResult[$item['Acl']['Controller']] = array();
+			}
+			
+			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
+		}
+		
+		debug($richardResult);
+		
 		
 		//$this->loadModel('Roles');
 		//$richardControllerArray 	= $this->Acl->find('list', array('fields' => array('Controller')));
@@ -218,29 +235,13 @@ class AclsController extends AppController {
 		//$richardAclRoleArray		= $this->AclRole->find('all', array('fields' => array('Acl.Controller', 'Role.Name', 'AclFunction.Function')));
 		//$richardAclFunctionArray	= $this->AclFunction->find('list');
 		//$richardAclArray			= $this->Acl->find('list');
-		$richardAclRoleArray		= $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
 		//debug($richardControllerArray);
 		//debug($richardRolesArray);
 		//debug($richardAclRoleArrayAll);
 		//debug($richardAclRoleArray);
 		//debug($richardAclFunctionArray);
 		//debug($richardAclArray);
-		debug($richardAclRoleArray);
-		
-		foreach($richardAclRoleArray as $item) {
-			debug($item);
-			//debug($item['Acl']['Controller']);
-			
-			//TODO need validation on element exists or not on every level.
-			
-			if(!isset($richardResult[$item['Acl']['Controller']])) {
-				$richardResult[$item['Acl']['Controller']] = array();
-			}
-			
-			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
-		}
-		
-		debug($richardResult);
+		//debug($richardAclRoleArray);
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////
