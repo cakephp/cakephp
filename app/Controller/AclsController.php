@@ -228,11 +228,11 @@ class AclsController extends AppController {
 		debug($richardAclRoleArray);
 		
 		foreach($richardAclRoleArray as $item) {
-			if(!isset($richardResult[$item['Acl.Controller']]])) {
-				$richardResult[$item['Acl.Controller']]][] = array();
+			if(!isset($richardResult[$item['Acl.Controller']])) {
+				$richardResult[$item['Acl.Controller']][] = array();
 			}
 			
-			$richardResult[$item['Acl.Controller']]][] = 'something here';
+			$richardResult[$item['Acl.Controller']][] = 'something here';
 		}
 		
 		debug($richardResult);
@@ -247,7 +247,7 @@ class AclsController extends AppController {
 		
 		
 		
-		//$result = Set::flatten($controllerName);  //this was a test
+		//$result = Set::flatten($controllerName);  //this was a tests
 		
 		//debug($controllerName);
 		//$functionName = $this->AclFunction->find('all');
