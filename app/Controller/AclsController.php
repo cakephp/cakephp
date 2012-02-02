@@ -183,7 +183,7 @@ class AclsController extends AppController {
 		$this->loadModel('AclRole');
 		
 		
-		$controllerName = $this->Acl->find('all');
+		$controllerName = $this->Acl->find('first');
 		debug($controllerName);
 		foreach($controllerName as $item) {
     		$key = key($item);
