@@ -207,6 +207,7 @@ class AclsController extends AppController {
 		/////////////////////////////
 		// richard test begins
 		/////////////////////////////
+		$this->loadModel('Roles');
 		$richardControllerArray = $this->Acl->find('list', array('fields' => array('Controller')));
 		$richardRoleArray 		= $this->Roles->find('list', array('fields' => array('Role')));
 		debug($richardControllerArray);
