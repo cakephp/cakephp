@@ -182,9 +182,23 @@ class AclsController extends AppController {
 		$this->loadModel('AclFunction');
 		$this->loadModel('AclRole');
 		
+		
 		$controllerName = $this->Acl->find('all');
-		$result = Set::flatten($controllerName);
+		debug($controllerName);
+		foreach($controllerName as $item) {
+    		$key = key($item);
+    		$element = current($item);
+
+	   		 if(!isset($result[$key])) {
+	        	$result[$key] = array();
+	   		 }
+			 
+    		$result[$key][] = $element;
+		}
 		debug($result);
+		//$result = Set::flatten($controllerName);  //this was a test
+		
+		//debug($controllerName);
 		//$functionName = $this->AclFunction->find('all');
 		//debug($functionName);
 		
