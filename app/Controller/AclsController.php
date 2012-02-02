@@ -202,6 +202,18 @@ class AclsController extends AppController {
     		$result[$key][] = $element;
 		}
 		debug($result);
+		
+		
+		/////////////////////////////
+		// richard test begins
+		/////////////////////////////
+		$richardTestArray1 = $result->find('list', array('fields' => array('controller')));
+		debug($richardTestArray1);
+		/////////////////////////////
+		// richard test ends
+		/////////////////////////////
+		
+		
 		//$result = Set::flatten($controllerName);  //this was a test
 		
 		//debug($controllerName);
