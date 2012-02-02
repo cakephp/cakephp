@@ -1181,6 +1181,7 @@ HTMLBLOC;
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 		$this->assertNull($this->Controller->EmailTest->textMessage);
 		$this->assertTrue($this->Controller->EmailTest->messageId);
+		$this->assertEqual('mail', $this->Controller->EmailTest->delivery);
 	}
 
 	function testPluginCustomViewClass() {

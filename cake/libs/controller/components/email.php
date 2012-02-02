@@ -438,6 +438,7 @@ class EmailComponent extends Object{
 		$this->htmlMessage = null;
 		$this->textMessage = null;
 		$this->messageId = true;
+		$this->delivery = 'mail';
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();
