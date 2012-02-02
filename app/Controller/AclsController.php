@@ -207,7 +207,7 @@ class AclsController extends AppController {
 		/////////////////////////////
 		// richard test begins
 		/////////////////////////////
-		$richardTestArray1 = $result->find('list', array('fields' => array('controller')));
+		$richardTestArray1 = $this->result->find('list', array('fields' => array('controller')));
 		debug($richardTestArray1);
 		/////////////////////////////
 		// richard test ends
