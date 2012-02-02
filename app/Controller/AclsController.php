@@ -212,7 +212,7 @@ class AclsController extends AppController {
 		$richardControllerArray 	= $this->Acl->find('list');
 		//$richardRoleArray 		= $this->Roles->find('list', array('fields' => array('Name')));
 		$richardRolesArray 			= $this->Roles->find('list');
-		$richardAclRoleArray		= $this->AclRole->find('list');
+		$richardAclRoleArray		= $this->AclRole->find('all');
 		$richardAclFunctionArray	= $this->AclFunction->find('list');
 		$richardAclArray			= $this->Acl->find('list');
 		debug($richardControllerArray);
