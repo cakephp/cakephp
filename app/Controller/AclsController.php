@@ -212,16 +212,16 @@ class AclsController extends AppController {
 		//$richardControllerArray 	= $this->Acl->find('list');
 		//$richardRoleArray 		= $this->Roles->find('list', array('fields' => array('Name')));
 		//$richardRolesArray 			= $this->Roles->find('list');
-		$richardAclRoleArrayAll		= $this->AclRole->find('all');
-		$richardAclRoleArray		= $this->AclRole->find('all', array('fields' => array('Acl.Controller', 'Role.Name', 'AclFunction.Function')));
+		//$richardAclRoleArrayAll		= $this->AclRole->find('all');
+		//$richardAclRoleArray		= $this->AclRole->find('all', array('fields' => array('Acl.Controller', 'Role.Name', 'AclFunction.Function')));
 		//$richardAclFunctionArray	= $this->AclFunction->find('list');
-		//$richardAclArray			= $this->Acl->find('list');
+		$richardAclArray			= $this->Acl->find('all', array('fields' => array('Acl.Controller')));
 		//debug($richardControllerArray);
 		//debug($richardRolesArray);
-		debug($richardAclRoleArrayAll);
-		debug($richardAclRoleArray);
+		//debug($richardAclRoleArrayAll);
+		//debug($richardAclRoleArray);
 		//debug($richardAclFunctionArray);
-		//debug($richardAclArray);
+		debug($richardAclArray);
 		/////////////////////////////
 		// richard test ends
 		/////////////////////////////
