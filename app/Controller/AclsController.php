@@ -228,7 +228,8 @@ class AclsController extends AppController {
 		debug($richardAclRoleArray);
 		
 		foreach($richardAclRoleArray as $item) {
-			debug($item);	
+			debug($item);
+			debug($item['Acl']['Controller']);
 			/**
 			$key = key($item);
     		$element = current($item);
