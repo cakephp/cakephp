@@ -229,7 +229,7 @@ class AclsController extends AppController {
 		
 		foreach($richardAclRoleArray as $item) {
 			debug($item);
-			debug($item['Acl']['Controller']);
+			//debug($item['Acl']['Controller']);
 			
 			if(!isset($richardResult[$item['Acl']['Controller']])) {
 				$richardResult[$item['Acl']['Controller']] = array();
@@ -238,7 +238,7 @@ class AclsController extends AppController {
 			$richardResult[$item['Acl']['Controller']][] = 'something here';
 		}
 		
-		//debug($richardResult);
+		debug($richardResult);
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////
