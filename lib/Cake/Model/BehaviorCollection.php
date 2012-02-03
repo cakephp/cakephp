@@ -75,10 +75,9 @@ class BehaviorCollection extends ObjectCollection {
  * @param array $behaviors
  * @return void
  * @deprecated Initialize with constructor instead
+ * @todo add link to update guide concerning possibly broken test cases
  */
-	public function init($modelName, $behaviors = array()) {
-		$this->__construct($modelName, $behaviors);
-	}
+	public function init($modelName, $behaviors = array()) {}
 
 /**
  * Backwards compatible alias for load()
