@@ -444,16 +444,4 @@ class DebuggerTest extends CakeTestCase {
 		));
 		$this->assertNotRegExp('/^DebuggerTest::testTraceExclude/', $result);
 	}
-
-/**
- * test deprecate
- * 
- * @return void 
- */
-	public function testDeprecate() {
-		$expected = 'Test is deprecated. Test.';
-		$error = (PHP_VERSION_ID < 50300) ? 'PHPUnit_Framework_Error_Notice' : 'PHPUnit_Framework_Error_Deprecated';
-		$this->expectError($error, $expected);
-		Debugger::deprecate('Test', 'Test.');
-	}
 }

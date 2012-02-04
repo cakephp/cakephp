@@ -721,17 +721,4 @@ class Debugger {
 			trigger_error(__d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/core.php to a numeric (digits only) seed value specific to your application'), E_USER_NOTICE);
 		}
 	}
-
-/**
- * Deprecates a given method
- * 
- * @param string $method The method to be deprecated
- * @param string $msg [optional] The error message.
- * @return void
- */
-	public static function deprecate($method, $msg = null) {
-		trigger_error(
-			__d('cake_dev', '%s is deprecated. %s', array($method, $msg)),
-			E_USER_DEPRECATED);
-	}
 }
