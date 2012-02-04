@@ -49,6 +49,20 @@ if ($noLogs || isset($_forced_from_dbo_)):
 	<?php
 		foreach ($logInfo['log'] as $k => $i) :
 			$i += array('error' => '');
+			if(!empty($i['params']) && is_array($i['params'])) {
+				$bindParam = $bindType = null;
+				if(preg_match('/.+ :.+/', $i['query'])) {
+					$bindType = true;
+				}
+				foreach($i['params'] as $bindKey => $bindVal) {
+					if($bindType === true) {
+						$bindParam .= h($bindKey) ." => " . h($bindVal) . ", ";
+					} else {
+						$bindParam .= h($bindVal) . ", ";
+					}
+				}
+				$i['query'] .= " , params[ " . rtrim($bindParam, ', ') . " ]";
+			}
 			echo "<tr><td>" . ($k + 1) . "</td><td>" . h($i['query']) . "</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n";
 		endforeach;
 	?>
@@ -58,4 +72,3 @@ if ($noLogs || isset($_forced_from_dbo_)):
 else:
 	echo '<p>Encountered unexpected $logs cannot generate SQL log</p>';
 endif;
-?>

@@ -651,13 +651,31 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 2');
 
 		$log = $this->testDb->getLog();
+		$expected = array('query' => 'Query 1', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
 
-		$expected = array('query' => 'Query 1', 'affected' => '', 'numRows' => '', 'took' => '');
 		$this->assertEquals($log['log'][0], $expected);
-		$expected = array('query' => 'Query 2', 'affected' => '', 'numRows' => '', 'took' => '');
+		$expected = array('query' => 'Query 2', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
 		$this->assertEquals($log['log'][1], $expected);
 		$expected = array('query' => 'Error 1', 'affected' => '', 'numRows' => '', 'took' => '');
 	}
+
+
+/**
+ * test getting the query log as an array, setting bind params.
+ *
+ * @return void
+ */
+	public function testGetLogParams() {
+		$this->testDb->logQuery('Query 1', array(1,2,'abc'));
+		$this->testDb->logQuery('Query 2', array('field1' => 1, 'field2' => 'abc'));
+
+		$log = $this->testDb->getLog();
+		$expected = array('query' => 'Query 1', 'params' => array(1,2,'abc'), 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEquals($log['log'][0], $expected);
+		$expected = array('query' => 'Query 2', 'params' => array('field1' => 1, 'field2' => 'abc'), 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEquals($log['log'][1], $expected);
+	}
+
 
 /**
  * test that query() returns boolean values from operations like CREATE TABLE
@@ -797,32 +815,32 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  **/
 	public function testTransactionLogging() {
-			$conn = $this->getMock('MockPDO');
-			$db = new DboTestSource;
-			$db->setConnection($conn);
-			$conn->expects($this->exactly(2))->method('beginTransaction')
-				->will($this->returnValue(true));
-			$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
-			$conn->expects($this->once())->method('rollback')->will($this->returnValue(true));
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource;
+		$db->setConnection($conn);
+		$conn->expects($this->exactly(2))->method('beginTransaction')
+			->will($this->returnValue(true));
+		$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
+		$conn->expects($this->once())->method('rollback')->will($this->returnValue(true));
 
-			$db->begin();
-			$log = $db->getLog();
-			$expected = array('query' => 'BEGIN', 'affected' => '', 'numRows' => '', 'took' => '');
-			$this->assertEquals($expected, $log['log'][0]);
+		$db->begin();
+		$log = $db->getLog();
+		$expected = array('query' => 'BEGIN', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEquals($expected, $log['log'][0]);
 
-			$db->commit();
-			$expected = array('query' => 'COMMIT', 'affected' => '', 'numRows' => '', 'took' => '');
-			$log = $db->getLog();
-			$this->assertEquals($expected, $log['log'][0]);
+		$db->commit();
+		$expected = array('query' => 'COMMIT', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
+		$log = $db->getLog();
+		$this->assertEquals($expected, $log['log'][0]);
 
-			$db->begin();
-			$expected = array('query' => 'BEGIN', 'affected' => '', 'numRows' => '', 'took' => '');
-			$log = $db->getLog();
-			$this->assertEquals($expected, $log['log'][0]);
+		$db->begin();
+		$expected = array('query' => 'BEGIN', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
+		$log = $db->getLog();
+		$this->assertEquals($expected, $log['log'][0]);
 
-			$db->rollback();
-			$expected = array('query' => 'ROLLBACK', 'affected' => '', 'numRows' => '', 'took' => '');
-			$log = $db->getLog();
-			$this->assertEquals($expected, $log['log'][0]);
+		$db->rollback();
+		$expected = array('query' => 'ROLLBACK', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
+		$log = $db->getLog();
+		$this->assertEquals($expected, $log['log'][0]);
 	}
 }

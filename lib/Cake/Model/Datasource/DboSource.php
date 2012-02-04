@@ -405,7 +405,7 @@ class DboSource extends DataSource {
 		if ($options['log']) {
 			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->numRows = $this->affected = $this->lastAffected();
-			$this->logQuery($sql);
+			$this->logQuery($sql, $params);
 		}
 
 		return $this->_result;
@@ -894,11 +894,12 @@ class DboSource extends DataSource {
  * @param string $sql SQL statement
  * @return void
  */
-	public function logQuery($sql) {
+	public function logQuery($sql, $params = array()) {
 		$this->_queriesCnt++;
 		$this->_queriesTime += $this->took;
 		$this->_queriesLog[] = array(
 			'query'		=> $sql,
+			'params'	=> $params,
 			'affected'	=> $this->affected,
 			'numRows'	=> $this->numRows,
 			'took'		=> $this->took
