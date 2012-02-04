@@ -25,7 +25,7 @@ if (!defined('E_DEPRECATED')) {
 }
 
 if (!defined('E_USER_DEPRECATED')) {
-	define('E_USER_DEPRECATED', 16384);
+	define('E_USER_DEPRECATED', E_USER_NOTICE);
 }
 error_reporting(E_ALL & ~E_DEPRECATED);
 
