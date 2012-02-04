@@ -645,12 +645,31 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 2');
 
 		$log = $this->testDb->getLog();
-		$expected = array('query' => 'Query 1', 'affected' => '', 'numRows' => '', 'took' => '');
+		$expected = array('query' => 'Query 1', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
+
 		$this->assertEquals($log['log'][0], $expected);
-		$expected = array('query' => 'Query 2', 'affected' => '', 'numRows' => '', 'took' => '');
+		$expected = array('query' => 'Query 2', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
 		$this->assertEquals($log['log'][1], $expected);
 		$expected = array('query' => 'Error 1', 'affected' => '', 'numRows' => '', 'took' => '');
 	}
+
+
+/**
+ * test getting the query log as an array, setting bind params.
+ *
+ * @return void
+ */
+	public function testGetLogParams() {
+		$this->testDb->logQuery('Query 1', array(1,2,'abc'));
+		$this->testDb->logQuery('Query 2', array('field1' => 1, 'field2' => 'abc'));
+
+		$log = $this->testDb->getLog();
+		$expected = array('query' => 'Query 1', 'params' => array(1,2,'abc'), 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEquals($log['log'][0], $expected);
+		$expected = array('query' => 'Query 2', 'params' => array('field1' => 1, 'field2' => 'abc'), 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEquals($log['log'][1], $expected);
+	}
+
 
 /**
  * test that query() returns boolean values from operations like CREATE TABLE
