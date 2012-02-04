@@ -452,7 +452,8 @@ class DebuggerTest extends CakeTestCase {
  */
 	public function testDeprecate() {
 		$expected = 'Test is deprecated. Test.';
-		$this->expectError('PHPUnit_Framework_Error_Deprecated', $expected);
+		$error = (PHP_VERSION_ID < 50300) ? 'PHPUnit_Framework_Error_Notice' : 'PHPUnit_Framework_Error_Deprecated';
+		$this->expectError($error, $expected);
 		Debugger::deprecate('Test', 'Test.');
 	}
 }
