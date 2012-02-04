@@ -181,7 +181,7 @@ class ExceptionRenderer {
 			'url' => h($url),
 			'name' => $error->getMessage(),
 			'error' => $error,
-			'serialize' => array('code', 'url', 'name')
+			'_serialize' => array('code', 'url', 'name')
 		));
 		$this->controller->set($error->getAttributes());
 		$this->_outputMessage($this->template);
@@ -204,7 +204,7 @@ class ExceptionRenderer {
 			'name' => $message,
 			'url' => h($url),
 			'error' => $error, 
-			'serialize' => array('name', 'url')
+			'_serialize' => array('name', 'url')
 		));
 		$this->_outputMessage('error400');
 	}
@@ -227,7 +227,7 @@ class ExceptionRenderer {
 			'name' => $message,
 			'message' => h($url),
 			'error' => $error,
-			'serialize' => array('name', 'message')
+			'_serialize' => array('name', 'message')
 		));
 		$this->_outputMessage('error500');
 	}
@@ -247,7 +247,7 @@ class ExceptionRenderer {
 			'url' => h($url),
 			'name' => $error->getMessage(),
 			'error' => $error,
-			'serialize' => array('code', 'url', 'name', 'error')
+			'_serialize' => array('code', 'url', 'name', 'error')
 		));
 		$this->_outputMessage($this->template);
 	}
