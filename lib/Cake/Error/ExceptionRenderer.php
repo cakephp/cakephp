@@ -278,8 +278,10 @@ class ExceptionRenderer {
 	protected function _outputMessageSafe($template) {
 		$this->controller->layoutPath = '';
 		$this->controller->subDir = '';
-		$this->controller->helpers = array('Form', 'Html', 'Session');
+		$this->controller->viewPath = 'Errors/';
 		$this->controller->viewClass = 'View';
+		$this->controller->helpers = array('Form', 'Html', 'Session');
+
 		$this->controller->render($template);
 		$this->controller->response->type('html');
 		$this->controller->response->send();
