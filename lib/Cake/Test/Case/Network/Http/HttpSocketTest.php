@@ -230,6 +230,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->__construct('http://www.cakephp.org:23/');
 		$baseConfig['host'] = $baseConfig['request']['uri']['host'] = 'www.cakephp.org';
 		$baseConfig['port'] = $baseConfig['request']['uri']['port'] = 23;
+		$baseConfig['request']['uri']['scheme'] = 'http';
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertEquals($this->Socket->config, $baseConfig);
 
@@ -289,9 +290,11 @@ class HttpSocketTest extends CakeTestCase {
 		);
 		$this->assertEquals($this->Socket->config, $expected);
 		$this->assertTrue($r);
+
 		$r = $this->Socket->configUri('/this-is-broken');
 		$this->assertEquals($this->Socket->config, $expected);
 		$this->assertFalse($r);
+
 		$r = $this->Socket->configUri(false);
 		$this->assertEquals($this->Socket->config, $expected);
 		$this->assertFalse($r);
@@ -967,11 +970,16 @@ class HttpSocketTest extends CakeTestCase {
 			->method('request')
 			->with(array('method' => 'GET', 'uri' => 'http://www.google.com/', 'version' => '1.0'));
 
+		$this->RequestSocket->expects($this->at(5))
+			->method('request')
+			->with(array('method' => 'GET', 'uri' => 'https://secure.example.com/test.php?one=two'));
+
 		$this->RequestSocket->get('http://www.google.com/');
 		$this->RequestSocket->get('http://www.google.com/', array('foo' => 'bar'));
 		$this->RequestSocket->get('http://www.google.com/', 'foo=bar');
 		$this->RequestSocket->get('http://www.google.com/?foo=bar', array('foobar' => '42', 'foo' => '23'));
 		$this->RequestSocket->get('http://www.google.com/', null, array('version' => '1.0'));
+		$this->RequestSocket->get('https://secure.example.com/test.php', array('one' => 'two'));
 	}
 
 /**

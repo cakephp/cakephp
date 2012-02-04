@@ -379,6 +379,7 @@ class EmailComponent extends Component {
 		$this->htmlMessage = null;
 		$this->textMessage = null;
 		$this->messageId = true;
+		$this->delivery = 'mail';
 	}
 
 /**

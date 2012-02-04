@@ -94,9 +94,9 @@ class HttpSocket extends CakeSocket {
 		'timeout' => 30,
 		'request' => array(
 			'uri' => array(
-				'scheme' => 'http',
+				'scheme' => array('http', 'https'),
 				'host' => 'localhost',
-				'port' => 80
+				'port' => array(80, 443)
 			),
 			'redirect' => false,
 			'cookies' => array()
@@ -509,7 +509,7 @@ class HttpSocket extends CakeSocket {
  * urls.
  *
  * {{{
- * $http->configUri('http://www.cakephp.org');
+ * $http = new HttpSocket('http://www.cakephp.org');
  * $url = $http->url('/search?q=bar');
  * }}}
  *
@@ -530,11 +530,19 @@ class HttpSocket extends CakeSocket {
 			$url = '/';
 		}
 		if (is_string($url)) {
+			$scheme = $this->config['request']['uri']['scheme'];
+			if (is_array($scheme)) {
+				$scheme = $scheme[0];
+			}
+			$port = $this->config['request']['uri']['port'];
+			if (is_array($port)) {
+				$port = $port[0];
+			}
 			if ($url{0} == '/') {
-				$url = $this->config['request']['uri']['host'] . ':' . $this->config['request']['uri']['port'] . $url;
+				$url = $this->config['request']['uri']['host'] . ':' . $port . $url;
 			}
 			if (!preg_match('/^.+:\/\/|\*|^\//', $url)) {
-				$url = $this->config['request']['uri']['scheme'] . '://' . $url;
+				$url = $scheme . '://' . $url;
 			}
 		} elseif (!is_array($url) && !empty($url)) {
 			return false;
