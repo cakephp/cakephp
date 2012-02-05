@@ -35,7 +35,7 @@ class CakeNumber {
  *
  * @var array
  */
-	protected $_currencies = array(
+	protected static $_currencies = array(
 		'USD' => array(
 			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
@@ -55,7 +55,7 @@ class CakeNumber {
  *
  * @var array
  */
-	protected $_currencyDefaults = array(
+	protected static $_currencyDefaults = array(
 		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
 		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true,
 	);
@@ -173,10 +173,10 @@ class CakeNumber {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public function currency($number, $currency = 'USD', $options = array()) {
-		$default = $this->_currencyDefaults;
+		$default = self::$_currencyDefaults;
 
-		if (isset($this->_currencies[$currency])) {
-			$default = $this->_currencies[$currency];
+		if (isset(self::$_currencies[$currency])) {
+			$default = self::$_currencies[$currency];
 		} elseif (is_string($currency)) {
 			$options['before'] = $currency;
 		}
@@ -248,7 +248,7 @@ class CakeNumber {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, $options) {
-		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;
+		self::$_currencies[$formatName] = $options + self::$_currencyDefaults;
 	}
 
 }
