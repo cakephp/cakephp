@@ -42,23 +42,21 @@ class PhpAclTest extends CakeTestCase {
 
 	public function testRoleInheritance() {
 		$roles = $this->Acl->Aro->roles('User/peter');
-		$this->assertEquals(array('Role/default'), $roles[0]);
-		$this->assertEquals(array('Role/accounting'), $roles[1]);
-		$this->assertEquals(array('User/peter'), $roles[2]);
+		$this->assertEquals(array('Role/accounting'), $roles[0]);
+		$this->assertEquals(array('User/peter'), $roles[1]);
 
 		$roles = $this->Acl->Aro->roles('hardy');
-		$this->assertEquals(array('Role/default'), $roles[0]);
-		$this->assertEquals(array('Role/database_manager', 'Role/data_acquirer'), $roles[1]);
-		$this->assertEquals(array('Role/accounting', 'Role/data_analyst'), $roles[2]);
-		$this->assertEquals(array('Role/accounting_manager', 'Role/reports'), $roles[3]);
-		$this->assertEquals(array('User/hardy'), $roles[4]);
+		$this->assertEquals(array('Role/database_manager', 'Role/data_acquirer'), $roles[0]);
+		$this->assertEquals(array('Role/accounting', 'Role/data_analyst'), $roles[1]);
+		$this->assertEquals(array('Role/accounting_manager', 'Role/reports'), $roles[2]);
+		$this->assertEquals(array('User/hardy'), $roles[3]);
 	}
 
 
 	public function testAddRole() {
 		$this->assertEquals(array(array(PhpAro::DEFAULT_ROLE)), $this->Acl->Aro->roles('foobar'));
 		$this->Acl->Aro->addRole(array('User/foobar' => 'Role/accounting'));
-		$this->assertEquals(array(array('Role/default'), array('Role/accounting'), array('User/foobar')), $this->Acl->Aro->roles('foobar'));
+		$this->assertEquals(array(array('Role/accounting'), array('User/foobar')), $this->Acl->Aro->roles('foobar'));
 	}
 
 
@@ -122,11 +120,11 @@ class PhpAclTest extends CakeTestCase {
 		$this->Acl->Aro->addAlias(array('Role/25' => 'Role/IT'));
 		$this->Acl->allow('Role/IT', '/rules/debugging/*');
 
-		$this->assertEquals(array(array('Role/default'), array('Role/IT', )), $this->Acl->Aro->roles($user));
+		$this->assertEquals(array(array('Role/IT', )), $this->Acl->Aro->roles($user));
 		$this->assertTrue($this->Acl->check($user, '/rules/debugging/stats/pageload'));
 		$this->assertTrue($this->Acl->check($user, '/rules/debugging/sql/queries'));
-		// Role/default is allowed users dashboard, so is Role/IT
-		$this->assertTrue($this->Acl->check($user, '/controllers/users/dashboard'));
+		// Role/default is allowed users dashboard, but not Role/IT
+		$this->assertFalse($this->Acl->check($user, '/controllers/users/dashboard'));
 
 		$this->assertFalse($this->Acl->check($user, '/controllers/invoices/send'));
 		// wee add an more specific entry for user foo to also inherit from Role/accounting 
@@ -141,7 +139,6 @@ class PhpAclTest extends CakeTestCase {
  * @return void
  */
 	public function testCheck() {
-		$this->assertTrue($this->Acl->check('db_manager_2', '/controllers/users/Dashboard'));
 		$this->assertTrue($this->Acl->check('jan', '/controllers/users/Dashboard'));
 		$this->assertTrue($this->Acl->check('some_unknown_role', '/controllers/users/Dashboard'));
 		$this->assertTrue($this->Acl->check('Role/admin', 'foo/bar'));
@@ -152,6 +149,7 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check(array('User' => array('username' =>'jan')), '/controlers/bar/bll'));
 		$this->assertTrue($this->Acl->check('Role/database_manager', 'controllers/db/create'));
 		$this->assertTrue($this->Acl->check('User/db_manager_2', 'controllers/db/create'));
+		$this->assertFalse($this->Acl->check('db_manager_2', '/controllers/users/Dashboard'));
 
 		// inheritance: hardy -> reports -> data_analyst -> database_manager
 		$this->assertTrue($this->Acl->check('User/hardy', 'controllers/db/create'));
@@ -296,12 +294,12 @@ class PhpAclTest extends CakeTestCase {
 		
 		$this->assertEquals(array('foo', 'bar', '[a-f0-9]{24}', '*_bla', 'bla'), $this->Acl->Aco->resolve('foo/bar/[a-f0-9]{24}/*_bla/bla'));
 
-		// multiple slashes will be squashed to a single, then exploded
+		// multiple slashes will be squashed to a single, trimmed and then exploded
 		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('foo//bar'));
-		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('//foo//bar'));
-		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('/foo//bar'));
+		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('//foo///bar/'));
+		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('/foo//bar//'));
 		$this->assertEquals(array('foo', 'bar'), $this->Acl->Aco->resolve('/foo // bar'));
-		$this->assertEquals(array(''), $this->Acl->Aco->resolve('/////'));
+		$this->assertEquals(array(), $this->Acl->Aco->resolve('/////'));
 	}
 
 /**

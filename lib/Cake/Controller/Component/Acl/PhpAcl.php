@@ -231,7 +231,7 @@ class PhpAco {
 
 			foreach ($root as $node => $elements) {
 				$pattern = '/^'.str_replace(array_keys(self::$modifiers), array_values(self::$modifiers), $node).'$/';
-
+				
 				if ($node == $aco[$level] || preg_match($pattern, $aco[$level])) {
 					// merge allow/denies with $path of current level
 					foreach (array('allow', 'deny') as $policy) {
@@ -303,7 +303,7 @@ class PhpAco {
 		$aco = preg_replace('#/+#', '/', $aco);
 		// make case insensitive
 		$aco = ltrim(strtolower($aco), '/');
-		return array_map('trim', explode('/', $aco));
+		return array_filter(array_map('trim', explode('/', $aco)));
 	}
 
 /**
@@ -420,10 +420,6 @@ class PhpAro {
 			}
 		}
 
-		// everybody inherits from the default role
-		if ($aro != self::DEFAULT_ROLE) {
-			$aros[] = array(self::DEFAULT_ROLE);
-		}
 		return array_reverse($aros);
 	}
 
