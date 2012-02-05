@@ -861,7 +861,9 @@ class App {
 					'%s' . 'locale' . DS
 				),
 				'Vendor' => array(
-					'%s' . 'Vendor' . DS, VENDORS
+					'%s' . 'Vendor' . DS,
+					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
+					VENDORS
 				),
 				'Plugin' => array(
 					APP . 'Plugin' . DS,
