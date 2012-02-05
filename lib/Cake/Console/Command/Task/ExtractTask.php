@@ -330,7 +330,7 @@ class ExtractTask extends Shell {
 					extract(array_combine($map, $strings));
 					$domain = isset($domain) ? $domain : 'default';
 					if (isset($plural)) {
-					    if (!isset($_this->_singulars)) {
+					    if (!isset($_this->_singulars[$domain])) {
 					        $this->_singulars[$domain] = array();
 					    }
 					    array_push($this->_singulars[$domain], $singular);
