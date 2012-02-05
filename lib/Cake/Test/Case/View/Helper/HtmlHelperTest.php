@@ -1492,6 +1492,44 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testVideo method
+ *
+ * @return void
+ */
+	public function testVideo() {
+		$result = $this->Html->video('video.webm');
+		$expected = array('video' => array('src' => 'files/video.webm'));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->video('video.webm', array(
+			'text' => 'Your browser does not support the HTML5 Video element.'
+		));
+		$expected = array('video' => array('src' => 'files/video.webm'), 'Your browser does not support the HTML5 Video element.', '/video');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->video('video.webm', array('autoload', 'muted' => 'muted'));
+		$expected = array('video' => array(
+			'src' => 'files/video.webm',
+			'autoload' => 'autoload',
+			'muted' => 'muted'
+		));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->video(
+			array('video.webm', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
+			array('pathPrefix' => 'videos/', 'poster' => 'poster.jpg', 'text' => 'Your browser does not support the HTML5 Video element.')
+		);
+		$expected = array(
+			'video' => array('poster' => IMAGES_URL . 'poster.jpg'),
+				array('source' => array('src' => 'videos/video.webm', 'type' => 'video/webm')),
+				array('source' => array('src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;')),
+				'Your browser does not support the HTML5 Video element.',
+			'/video'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testCrumbList method
  *
  *
