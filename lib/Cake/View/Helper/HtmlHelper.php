@@ -73,6 +73,7 @@ class HtmlHelper extends AppHelper {
 		'tag' => '<%s%s>%s</%s>',
 		'tagstart' => '<%s%s>',
 		'tagend' => '</%s>',
+		'tagselfclosing' => '<%s%s/>',
 		'para' => '<p%s>%s</p>',
 		'parastart' => '<p%s>',
 		'label' => '<label for="%s"%s>%s</label>',
