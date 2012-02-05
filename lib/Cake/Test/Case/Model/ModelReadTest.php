@@ -7784,4 +7784,27 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($Post->getVirtualField('other_field'), $Post->virtualFields['other_field']);
 		$this->assertEquals($Post->getVirtualField('Post.other_field'), $Post->virtualFields['other_field']);
 	}
+	
+	
+/**
+ * test that checks for error when NOT condition passed in key and a 1 element array value
+ *
+ * @return void
+ */	
+	public function testNotInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+		
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id NOT' => array(1)
+				)
+			)
+		);
+		
+		$this->assertTrue(is_array($result) && !empty($result));
+    }
 }
