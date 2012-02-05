@@ -94,7 +94,7 @@ class TestTask extends BakeTask {
 		$this->interactive = true;
 		$this->hr();
 		$this->out(__d('cake_console', 'Bake Tests'));
-		$this->out(__d('cake_console', 'Path: %s', $this->path));
+		$this->out(__d('cake_console', 'Path: %s', $this->getPath()));
 		$this->hr();
 
 		if ($type) {
