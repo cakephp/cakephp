@@ -2589,6 +2589,10 @@ class Model extends Object {
 	protected function _findCount($state, $query, $results = array()) {
 		if ($state === 'before') {
 			$db = $this->getDataSource();
+			$query['order'] = false;
+			if (!method_exists($db, 'calculate') || !method_exists($db, 'expression')) {
+				return $query;
+			}
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
 			} elseif (is_string($query['fields'])  && !preg_match('/count/i', $query['fields'])) {
@@ -2596,7 +2600,6 @@ class Model extends Object {
 					$db->expression($query['fields']), 'count'
 				));
 			}
-			$query['order'] = false;
 			return $query;
 		} elseif ($state === 'after') {
 			foreach (array(0, $this->alias) as $key) {
