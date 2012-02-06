@@ -324,6 +324,7 @@ object(View) {
 	hasRendered => false
 	uuids => array()
 	request => null
+	response => object(CakeResponse) {}
 	elementCache => 'default'
 	int => (int) 2
 	float => (float) 1.333

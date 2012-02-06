@@ -64,24 +64,12 @@ class MediaView extends View {
 	protected  $_compressionEnabled = false;
 
 /**
- * Reference to the Response object responsible for sending the headers
- *
- * @var CakeResponse
- */
-	public $response = null;
-
-/**
  * Constructor
  *
  * @param Controller $controller The controller with viewVars
  */
 	public function __construct($controller = null) {
 		parent::__construct($controller);
-		if (is_object($controller) && isset($controller->response)) {
-			$this->response = $controller->response;
-		} else {
-			$this->response = new CakeResponse;
-		}
 	}
 
 /**

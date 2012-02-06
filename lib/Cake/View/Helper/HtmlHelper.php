@@ -31,6 +31,13 @@ App::uses('CakeResponse', 'Network');
 class HtmlHelper extends AppHelper {
 
 /**
+ * Reference to the Response object
+ *
+ * @var CakeResponse
+ */
+	public $response;
+
+/**
  * html tags used by this helper.
  *
  * @var array
@@ -174,6 +181,11 @@ class HtmlHelper extends AppHelper {
  */
 	public function __construct(View $View, $settings = array()) {
 		parent::__construct($View, $settings);
+		if (is_object($this->_View->response)) {
+			$this->response = $this->_View->response;
+		} else {
+			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+		}
 		if (!empty($settings['configFile'])) {
 			$this->loadConfig($settings['configFile']);
 		}
@@ -1029,45 +1041,38 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if (is_array($path)) {
-			$response = null;
 			$sourceTags = '';
-			foreach ($path as $source) {
+			foreach ($path as &$source) {
 				if (is_string($source)) {
 					$source = array(
 						'src' => $source,
 					);
 				}
 				if (!isset($source['type'])) {
-					if ($response === null) {
-						$response = new CakeResponse();
-					}
 					$ext = pathinfo($source['src'], PATHINFO_EXTENSION);
-					$source['type'] = $response->getMimeType($ext);
-				}
-				if ($type === null) {
-					if (preg_match('#^video/#', $source['type'])) {
-						$type = 'video';
-					} else {
-						$type = 'audio';
-					}
+					$source['type'] = $this->response->getMimeType($ext);
 				}
 				$source['src'] = $this->assetUrl($source['src'], $options);
 				$sourceTags .= $this->useTag('tagselfclosing', 'source', $source);
 			}
+			unset($source);
 			$options['text'] = $sourceTags . $options['text'];
 			unset($options['fullBase']);
 		} else {
-			if ($type === null) {
-				$response = new CakeResponse();
-				$mimeType = $response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
-				if (preg_match('#^video/#', $mimeType)) {
-					$type = 'video';
-				} else {
-					$type = 'audio';
-				}
+			$options['src'] = $this->assetUrl($path, $options);
+		}
+
+		if ($type === null) {
+			if (is_array($path)) {
+				$mimeType = $path[0]['type'];
+			} else {
+				$mimeType = $this->response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
 			}
-			$path = $this->assetUrl($path, $options);
-			$options['src'] = $path;
+			if (preg_match('#^video/#', $mimeType)) {
+				$type = 'video';
+			} else {
+				$type = 'audio';
+			}
 		}
 
 		if (isset($options['poster'])) {

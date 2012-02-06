@@ -23,6 +23,7 @@ App::uses('Router', 'Routing');
 App::uses('ViewBlock', 'View');
 App::uses('CakeEvent', 'Event');
 App::uses('CakeEventManager', 'Event');
+App::uses('CakeResponse', 'Network');
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -202,6 +203,13 @@ class View extends Object {
 	public $request;
 
 /**
+ * Reference to the Response object
+ *
+ * @var CakeResponse
+ */
+	public $response;
+
+/**
  * The Cache configuration View will use to store cached elements.  Changing this will change
  * the default configuration elements are stored under.  You can also choose a cache config
  * per element.
@@ -305,6 +313,11 @@ class View extends Object {
 				$this->{$var} = $controller->{$var};
 			}
 			$this->_eventManager = $controller->getEventManager();
+		}
+		if (is_object($controller) && isset($controller->response)) {
+			$this->response = $controller->response;
+		} else {
+			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
