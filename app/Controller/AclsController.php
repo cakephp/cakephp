@@ -213,7 +213,7 @@ class AclsController extends AppController {
 		debug($richardAclRoleArray);
 		
 		// this will be used to find if this key already exists or not
-		$compareKey = "";
+		$compareKey = "NONE";
 		
 		foreach($richardAclRoleArray as $item) {
 			//debug($item);
