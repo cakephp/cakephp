@@ -20,6 +20,14 @@
 App::uses('View', 'View');
 App::uses('TextHelper', 'View/Helper');
 
+class TextHelperTestObject extends TextHelper {
+
+	public function attach(String $string) {
+		$this->_String = $string;
+	}
+
+}
+
 /**
  * TextHelperTest class
  *
@@ -45,6 +53,23 @@ class TextHelperTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->View, $this->Text);
+	}
+
+/**
+ * test String class methods are called correctly
+ */
+	public function testTextHelperProxyMethodCalls() {
+		$this->String = $this->getMock('String');
+		unset($this->Text);
+		$this->Text = new TextHelperTestObject($this->View);
+		$this->Text->attach($this->String);
+		$methods = array(
+			'highlight', 'stripLinks', 'truncate', 'excerpt', 'toList',
+			);
+		foreach ($methods as $method) {
+			$this->String->expects($this->at(0))->method($method);
+			$this->Text->{$method}('who', 'what', 'when', 'where', 'how');
+		}
 	}
 
 /**
