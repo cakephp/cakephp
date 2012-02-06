@@ -1,6 +1,6 @@
 <?php
 /**
- * NumberHelperTest file
+ * CakeNumberTest file
  *
  * PHP 5
  *
@@ -18,21 +18,14 @@
  */
 
 App::uses('View', 'View');
-App::uses('NumberHelper', 'View/Helper');
+App::uses('CakeNumber', 'Utility');
 
 /**
- * NumberHelperTest class
+ * CakeNumberTest class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package       Cake.Test.Case.Utility
  */
-class NumberHelperTest extends CakeTestCase {
-
-/**
- * helper property
- *
- * @var mixed null
- */
-	public $helper = null;
+class CakeNumberTest extends CakeTestCase {
 
 /**
  * setUp method
@@ -41,8 +34,7 @@ class NumberHelperTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$view = $this->getMock('View', array(), array(), '', false);
-		$this->Number = new NumberHelper($view);
+		$this->Number = new CakeNumber();
 	}
 
 /**
