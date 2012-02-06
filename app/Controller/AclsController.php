@@ -225,6 +225,7 @@ class AclsController extends AppController {
 			}
 			
 			//TODO I need to loop here one more time. Then I will be done.
+			
 			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
 		}
 		
