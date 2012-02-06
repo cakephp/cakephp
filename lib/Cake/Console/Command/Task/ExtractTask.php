@@ -77,6 +77,13 @@ class ExtractTask extends AppShell {
 	protected $_strings = array();
 
 /**
+ * Extracted sigular strings
+ *
+ * @var array
+ */
+	protected $_singulars = array();
+
+/**
  * Destination path
  *
  * @var string
@@ -325,6 +332,12 @@ class ExtractTask extends AppShell {
 				if ($mapCount == count($strings)) {
 					extract(array_combine($map, $strings));
 					$domain = isset($domain) ? $domain : 'default';
+					if (isset($plural)) {
+					    if (!isset($_this->_singulars[$domain])) {
+					        $this->_singulars[$domain] = array();
+					    }
+					    array_push($this->_singulars[$domain], $singular);
+					}
 					$string = isset($plural) ? $singular . "\0" . $plural : $singular;
 					$this->_strings[$domain][$string][$this->_file][] = $line;
 				} else {
@@ -428,7 +441,10 @@ class ExtractTask extends AppShell {
 				$header = '#: ' . str_replace($this->_paths, '', $occurrences) . "\n";
 
 				if (strpos($string, "\0") === false) {
-					$sentence = "msgid \"{$string}\"\n";
+				    if (isset($this->_singulars[$domain]) && in_array($string, $this->_singulars[$domain])) {
+                        continue;
+				    }
+				    $sentence = "msgid \"{$string}\"\n";
 					$sentence .= "msgstr \"\"\n\n";
 				} else {
 					list($singular, $plural) = explode("\0", $string);
