@@ -178,13 +178,16 @@ class AclsController extends AppController {
 		 * 
 		 * 
 		 */
+		/**
+		 * Justin's testing
+		 */
+		
 		$this->Acl->recursive = 2;
 		$this->loadModel('AclFunction');
 		$this->loadModel('AclRole');
 		
-		
-		$controllerName = $this->Acl->find('all');
-		debug($controllerName);
+		//$controllerName = $this->Acl->find('all');
+		//debug($controllerName);
 		foreach($controllerName as $item) {
     		$key = key($item);
     		$element = current($item);
@@ -201,7 +204,7 @@ class AclsController extends AppController {
 			 
     		$result[$key][] = $element;
 		}
-		debug($result);
+		//debug($result);
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////
