@@ -220,12 +220,11 @@ class AclsController extends AppController {
 			//TODO Need to compare result to database to make sure it grabs all of data.
 			
 			//FIXME array with the same name gets overriden
-			/*
 			if(!isset($richardResult[$item['Acl']['Controller']])) {
 				$richardResult[$item['Acl']['Controller']] = array();
 			}
-			*/
-			$richardResult[$item['Acl']['Controller']] = array();
+			
+			//TODO I need to loop here one more time. Then I will be done.
 			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
 		}
 		
