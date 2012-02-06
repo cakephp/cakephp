@@ -271,17 +271,16 @@ class Helper extends Object {
  */
 	public function assetUrl($path, array $options) {
 		if (is_array($path)) {
-			$path = $this->url($path);
+			$path = $this->url($path, !empty($options['fullBase']));
 		} elseif (strpos($path, '://') === false) {
 			if (!empty($options['pathPrefix']) && $path[0] !== '/') {
 				$path = $options['pathPrefix'] . $path;
 			}
 			$path = $this->assetTimestamp($this->webroot($path));
-		}
 
-		if (!empty($options['fullBase'])) {
-			$path = $this->url('/', true) . $path;
-			unset($options['fullBase']);
+			if (!empty($options['fullBase'])) {
+				$path = $this->url('/', true) . $path;
+			}
 		}
 
 		return $path;
