@@ -1,6 +1,6 @@
 <?php
 /**
- * TimeHelperTest file
+ * CakeTimeTest file
  *
  * PHP 5
  *
@@ -16,15 +16,14 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('TimeHelper', 'View/Helper');
-App::uses('View', 'View');
+App::uses('CakeTime', 'Utility');
 
 /**
- * TimeHelperTest class
+ * CakeTimeTest class
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class TimeHelperTest extends CakeTestCase {
+class CakeTimeTest extends CakeTestCase {
 
 /**
  * setUp method
@@ -32,9 +31,7 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$controller = null;
-		$View = new View($controller);
-		$this->Time = new TimeHelper($View);
+		$this->Time = new CakeTime();
 	}
 
 /**
