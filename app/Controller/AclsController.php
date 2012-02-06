@@ -227,7 +227,7 @@ class AclsController extends AppController {
 			//TODO I need to loop here one more time. Then I will be done.
 			
 			if(isset($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']])) {
-				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = "$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']], $item['Role']['Name']";
+				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = array_merge($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']], $item['Role']['Name']);
 			} else {
 				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];	
 			}
