@@ -211,7 +211,13 @@ class AclsController extends AppController {
 		// 									richard test begins
 		///////////////////////////////////////////////////////////////////////////////////////
 		
-		$richardAclRoleArray		= $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
+		$richardAclRoleArray = $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
+		
+		//debug($richardAclRoleArray);
+		
+		// this will be used to find if this key already exists or not
+		$compareKey = "NONE";
+		
 		foreach($richardAclRoleArray as $item) {
 			//debug($item);
 			//debug($item['Acl']['Controller']);
@@ -219,11 +225,23 @@ class AclsController extends AppController {
 			//TODO need validation on element exists or not on every level.
 			//TODO Need to compare result to database to make sure it grabs all of data.
 			
+			//FIXME array with the same name gets overriden
 			if(!isset($richardResult[$item['Acl']['Controller']])) {
 				$richardResult[$item['Acl']['Controller']] = array();
 			}
 			
-			$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
+			//TODO I need to loop here one more time. Then I will be done.
+			
+			
+			if($compareKey != $item['AclFunction']['Function']) {
+				$compareKey = $item['AclFunction']['Function'];
+				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
+				
+			} else {
+				if($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] != "") {
+					$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']].",".$item['Role']['Name'];	
+				}
+			}
 		}
 		
 		debug($richardResult);
