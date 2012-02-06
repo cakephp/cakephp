@@ -229,7 +229,7 @@ class AclsController extends AppController {
 			if(isset($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']])) {
 				$temp = $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']];
 				
-				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $temp & $item['Role']['Name'];
+				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $temp.",".$item['Role']['Name'];
 			} else {
 				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];	
 			}
