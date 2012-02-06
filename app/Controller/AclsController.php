@@ -227,7 +227,9 @@ class AclsController extends AppController {
 			//TODO I need to loop here one more time. Then I will be done.
 			
 			if(isset($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']])) {
-				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = implode($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']]) && $item['Role']['Name'];
+				$temp = $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']];
+				
+				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $temp & $item['Role']['Name'];
 			} else {
 				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];	
 			}
