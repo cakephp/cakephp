@@ -230,13 +230,16 @@ class AclsController extends AppController {
 			//TODO I need to loop here one more time. Then I will be done.
 			
 			
-			if($compareKey != $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']]) {
-				$compareKey = $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']];
+			if($compareKey != $item['AclFunction']['Function']) {
+				$compareKey = $item['AclFunction']['Function'];
 				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
 				
 			} else {
 				$temp = $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']];
-				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $temp.",".$item['Role']['Name'];
+				
+				if($temp != "") {
+					$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $temp.",".$item['Role']['Name'];	
+				}
 				$temp = "";
 			}
 		}
