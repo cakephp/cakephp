@@ -214,7 +214,7 @@ class AclsController extends AppController {
 		
 		foreach($richardAclRoleArray as $item) {
 			//debug($item);
-			//debug($item['Acl']['Controller']);
+			debug($item['Acl']['Controller']);
 			
 			//TODO need validation on element exists or not on every level.
 			//TODO Need to compare result to database to make sure it grabs all of data.
