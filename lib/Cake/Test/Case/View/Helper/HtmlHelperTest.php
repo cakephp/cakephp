@@ -1492,30 +1492,33 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
- * testVideo method
+ * testMedia method
  *
  * @return void
  */
-	public function testVideo() {
-		$result = $this->Html->video('video.webm');
-		$expected = array('video' => array('src' => 'files/video.webm'));
+	public function testMedia() {
+		$result = $this->Html->media('video.webm');
+		$expected = array('video' => array('src' => 'files/video.webm'), '/video');
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->video('video.webm', array(
+		$result = $this->Html->media('video.webm', array(
 			'text' => 'Your browser does not support the HTML5 Video element.'
 		));
 		$expected = array('video' => array('src' => 'files/video.webm'), 'Your browser does not support the HTML5 Video element.', '/video');
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->video('video.webm', array('autoload', 'muted' => 'muted'));
-		$expected = array('video' => array(
-			'src' => 'files/video.webm',
-			'autoload' => 'autoload',
-			'muted' => 'muted'
-		));
+		$result = $this->Html->media('video.webm', array('autoload', 'muted' => 'muted'));
+		$expected = array(
+			'video' => array(
+				'src' => 'files/video.webm',
+				'autoload' => 'autoload',
+				'muted' => 'muted'
+			),
+			'/video'
+		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->video(
+		$result = $this->Html->media(
 			array('video.webm', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
 			array('pathPrefix' => 'videos/', 'poster' => 'poster.jpg', 'text' => 'Your browser does not support the HTML5 Video element.')
 		);
@@ -1524,6 +1527,25 @@ class HtmlHelperTest extends CakeTestCase {
 				array('source' => array('src' => 'videos/video.webm', 'type' => 'video/webm')),
 				array('source' => array('src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;')),
 				'Your browser does not support the HTML5 Video element.',
+			'/video'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->media('video.ogv', array('type' => 'video'));
+		$expected = array('video' => array('src' => 'files/video.ogv'), '/video');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->media('audio.mp3');
+		$expected = array('audio' => array('src' => 'files/audio.mp3'), '/audio');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->media(
+			array(array('src' => 'video.mov', 'type' => 'video/mp4'), 'video.webm')
+		);
+		$expected = array(
+			'<video',
+				array('source' => array('src' => 'files/video.mov', 'type' => 'video/mp4')),
+				array('source' => array('src' => 'files/video.webm', 'type' => 'video/webm')),
 			'/video'
 		);
 		$this->assertTags($result, $expected);

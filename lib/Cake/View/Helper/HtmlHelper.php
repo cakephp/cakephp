@@ -968,24 +968,32 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Returns a VIDEO element
+ * Returns an audio/video element
  *
  * ### Usage
  *
- * Using single video file:
+ * Using an audio file:
  *
- * `echo $this->Html->video('video.mp4', array('fullBase' => true, 'text' => 'Fallback text'));`
+ * `echo $this->Html->media('audio.mp3', array('fullBase' => true));`
  *
  * Outputs:
  *
- * `<video src="http://www.somehost.com/files/video.mp4">Fallback text</video>`
+ * `<video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>`
+ *
+ * Using a video file:
+ *
+ * `echo $this->Html->media('video.mp4', array('text' => 'Fallback text'));`
+ *
+ * Outputs:
+ *
+ * `<video src="/files/video.mp4">Fallback text</video>`
  *
  * Using multiple video files:
  *
  * {{{
  * echo $this->Html->video(
- * 		array('video.mp4', array('src' => 'video.ogg', 'type' => "video/ogg; codecs='theora, vorbis'")),
- * 		array('autoplay')
+ * 		array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
+ * 		array('type' => 'video', 'autoplay')
  * );
  * }}}
  *
@@ -994,13 +1002,15 @@ class HtmlHelper extends AppHelper {
  * {{{
  * <video autoplay="autoplay">
  * 		<source src="/files/video.mp4" type="video/mp4"/>
- * 		<source src="/files/video.ogg" type="video/ogg; codecs='theora, vorbis'"/>
+ * 		<source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'"/>
  * </video>
  * }}}
  *
  * ### Options
  *
- * - `text` Text to include inside the video tag
+ * - `type` Type of media element to generate, valid values are "audio" or "video".
+ * 	If type is not provided media type is guessed based on file's mime type.
+ * - `text` Text to include inside the audio/video tag
  * - `pathPrefix` Path prefix to use for relative urls, defaults to 'files/'
  * - `fullBase` If provided the src attribute will get a full address including domain name
  *
@@ -1009,8 +1019,14 @@ class HtmlHelper extends AppHelper {
  * @param array $options Array of HTML attributes, and special options above.
  * @return string Generated video tag
  */
-	public function video($path, $options = array()) {
-		$options += array('pathPrefix' => 'files/', 'text' => '');
+	public function media($path, $options = array()) {
+		$options += array('type' => null, 'pathPrefix' => 'files/', 'text' => '');
+
+		if (!empty($options['type'])) {
+			$type = $options['type'];
+		} else {
+			$type = null;
+		}
 
 		if (is_array($path)) {
 			$response = null;
@@ -1025,7 +1041,15 @@ class HtmlHelper extends AppHelper {
 					if ($response === null) {
 						$response = new CakeResponse();
 					}
-					$source['type'] = $response->getMimeType(pathinfo($source['src'], PATHINFO_EXTENSION));
+					$ext = pathinfo($source['src'], PATHINFO_EXTENSION);
+					$source['type'] = $response->getMimeType($ext);
+				}
+				if ($type === null) {
+					if (preg_match('#^video/#', $source['type'])) {
+						$type = 'video';
+					} else {
+						$type = 'audio';
+					}
 				}
 				$source['src'] = $this->assetUrl($source['src'], $options);
 				$sourceTags .= $this->useTag('tagselfclosing', 'source', $source);
@@ -1033,6 +1057,15 @@ class HtmlHelper extends AppHelper {
 			$options['text'] = $sourceTags . $options['text'];
 			unset($options['fullBase']);
 		} else {
+			if ($type === null) {
+				$response = new CakeResponse();
+				$mimeType = $response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
+				if (preg_match('#^video/#', $mimeType)) {
+					$type = 'video';
+				} else {
+					$type = 'audio';
+				}
+			}
 			$path = $this->assetUrl($path, $options);
 			$options['src'] = $path;
 		}
@@ -1040,11 +1073,15 @@ class HtmlHelper extends AppHelper {
 		if (isset($options['poster'])) {
 			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => IMAGES_URL) + $options);
 		}
-
 		$text = $options['text'];
 
-		$options = array_diff_key($options, array('fullBase' => '', 'pathPrefix' => '', 'text' => ''));
-		return $this->tag('video', $text, $options);
+		$options = array_diff_key($options, array(
+			'type' => '',
+			'fullBase' => '',
+			'pathPrefix' => '',
+			'text' => ''
+		));
+		return $this->tag($type, $text, $options);
 	}
 
 /**
