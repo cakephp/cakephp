@@ -229,6 +229,7 @@ class AclsController extends AppController {
 			
 			//TODO I need to loop here one more time. Then I will be done.
 			
+			debug($item['AclFunction']['Function']);
 			
 			if($compareKey != $item['AclFunction']['Function']) {
 				$compareKey = $item['AclFunction']['Function'];
