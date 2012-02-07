@@ -255,8 +255,11 @@ class FormHelper extends AppHelper {
 			}
 
 			foreach ($validateProperties as $rule => $validateProp) {
-				if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
+				$parse = $this->_parseRuleRequired($validateProp);
+				if ($parse === false) {
 					return false;
+				} elseif ($parse == null){
+					continue;
 				}
 				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
 				$required = $rule || empty($validateProp);
@@ -739,7 +742,7 @@ class FormHelper extends AppHelper {
  *
  * ### Options
  *
- * - `for` - Set the for attribute, if its not defined the for attribute 
+ * - `for` - Set the for attribute, if its not defined the for attribute
  *   will be generated from the $fieldName parameter using
  *   FormHelper::domId().
  *
@@ -776,8 +779,8 @@ class FormHelper extends AppHelper {
  * }}}
  *
  * @param string $fieldName This should be "Modelname.fieldname"
- * @param string $text Text that will appear in the label field.  If 
- *   $text is left undefined the text will be inflected from the 
+ * @param string $text Text that will appear in the label field.  If
+ *   $text is left undefined the text will be inflected from the
  *   fieldName.
  * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
@@ -2591,5 +2594,27 @@ class FormHelper extends AppHelper {
 
 		$this->_secure($secure, $fieldName);
 		return $result;
+	}
+
+/**
+ * Checks if the field is required by the 'on' key in validation properties.
+ * If no 'on' key is present in validation props, this method returns true.
+ *
+ * @param array $validateProp
+ * @return mixed. Boolean for required, null if create/update does not match
+ */
+	protected function _parseRuleRequired($validateProp) {
+		if (isset($validateProp['on'])) {
+			if (
+				($validateProp['on'] == 'create' && $this->requestType != 'post') ||
+				($validateProp['on'] == 'update' && $this->requestType != 'put')
+			) {
+				return null;
+			}
+		}
+		if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
+			return false;
+		}
+		return true;
 	}
 }
