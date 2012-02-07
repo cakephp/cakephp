@@ -170,7 +170,6 @@ class ProjectTaskTest extends CakeTestCase {
 			'Console' . DS . 'Command' . DS . 'Task' => 'empty',
 			'Controller' . DS . 'Component' => 'empty',
 			'Model' . DS . 'Behavior' => 'empty',
-			'View' . DS . 'Helper' => 'AppHelper.php',
 			'View' . DS . 'Errors' => 'empty',
 			'View' . DS . 'Scaffolds' => 'empty',
 			'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior' => 'empty',
