@@ -249,8 +249,11 @@ class FormHelper extends AppHelper {
 			}
 
 			foreach ($validateProperties as $rule => $validateProp) {
-				if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
+				$parse = $this->_parseRuleRequired($validateProp);
+				if ($parse === false) {
 					return false;
+				} elseif ($parse == null){
+					continue;
 				}
 				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
 				$required = $rule || empty($validateProp);
@@ -2582,6 +2585,28 @@ class FormHelper extends AppHelper {
 
 		$this->_secure($secure, $fieldName);
 		return $result;
+	}
+
+/**
+ * Checks if the field is required by the 'on' key in validation properties.
+ * If no 'on' key is present in validation props, this method returns true.
+ *
+ * @param array $validateProp
+ * @return mixed. Boolean for required, null if create/update does not match
+ */
+	protected function _parseRuleRequired($validateProp) {
+		if (isset($validateProp['on'])) {
+			if (
+				($validateProp['on'] == 'create' && $this->requestType != 'post') ||
+				($validateProp['on'] == 'update' && $this->requestType != 'put')
+			) {
+				return null;
+			}
+		}
+		if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
+			return false;
+		}
+		return true;
 	}
 
 }

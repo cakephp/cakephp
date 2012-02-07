@@ -104,6 +104,9 @@ class Contact extends CakeTestModel {
 		'non_existing' => array(),
 		'idontexist' => array(),
 		'imrequired' => array('rule' => array('between', 5, 30), 'allowEmpty' => false),
+		'imrequiredonupdate' => array('notEmpty' => array('rule' => 'alphaNumeric', 'on' => 'update')),
+		'imrequiredoncreate' => array('required' => array('rule' => 'alphaNumeric', 'on' => 'create')),
+		'imrequiredonboth' => array('required' => array('rule' => 'alphaNumeric')),
 		'string_required' => 'notEmpty',
 		'imalsorequired' => array('rule' => 'alphaNumeric', 'allowEmpty' => false),
 		'imrequiredtoo' => array('rule' => 'notEmpty'),
@@ -610,7 +613,8 @@ class TestMail extends CakeTestModel {
  * FormHelperTest class
  *
  * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @subpackage       Cake.Test.Case.View.Helper
+ * @property FormHelper $Form
  */
 class FormHelperTest extends CakeTestCase {
 
@@ -7844,5 +7848,135 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Thing']['field'] = 'Badness!';
 		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
 		$this->assertEquals('Badness!', $result);
+	}
+
+/**
+ * Tests that the 'on' key validates as expected on create
+ *
+ * @return void
+ */
+	public function testRequiredOnCreate() {
+		$this->Form->create('Contact');
+
+		$result = $this->Form->input('Contact.imrequiredonupdate');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactImrequiredonupdate'),
+			'Imrequiredonupdate',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
+				'id' => 'ContactImrequiredonupdate'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequiredoncreate');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequiredoncreate'),
+			'Imrequiredoncreate',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
+				'id' => 'ContactImrequiredoncreate'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequiredonboth');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequiredonboth'),
+			'Imrequiredonboth',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredonboth]',
+				'id' => 'ContactImrequiredonboth'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequired'),
+			'Imrequired',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'id' => 'ContactImrequired'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Tests that the 'on' key validates as expected on update
+ *
+ * @return void
+ */
+	public function testRequiredOnUpdate() {
+		$this->Form->request->data['Contact']['id'] = 1;
+		$this->Form->create('Contact');
+
+		$result = $this->Form->input('Contact.imrequiredonupdate');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequiredonupdate'),
+			'Imrequiredonupdate',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
+				'id' => 'ContactImrequiredonupdate'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		$result = $this->Form->input('Contact.imrequiredoncreate');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactImrequiredoncreate'),
+			'Imrequiredoncreate',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
+				'id' => 'ContactImrequiredoncreate'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequiredonboth');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequiredonboth'),
+			'Imrequiredonboth',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequiredonboth]',
+				'id' => 'ContactImrequiredonboth'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequired'),
+			'Imrequired',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'id' => 'ContactImrequired'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 }
