@@ -2074,7 +2074,8 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testHasMethod() {
 		$Article = new Article();
-		$Article->Behaviors = $this->getMock('BehaviorCollection');
+		$Article->Behaviors = $this->getMock(
+			'BehaviorCollection', array(), array('Article'));
 
 		$Article->Behaviors->expects($this->at(0))
 			->method('hasMethod')

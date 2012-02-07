@@ -570,7 +570,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$expected = $Apple->find('all');
 		$this->assertSame($Apple->Behaviors->enabled(), array());
 
-		$Apple->Behaviors->init('Apple', array('Test' => array('key' => 'value')));
+		$Apple->Behaviors->load('Test', array('key' => 'value'));
 		$this->assertSame($Apple->Behaviors->enabled(), array('Test'));
 
 		$Apple->Behaviors->disable('Test');
@@ -1131,7 +1131,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 	public function testBehaviorAttachAndDetach() {
 		$Sample = new Sample();
 		$Sample->actsAs = array('Test3' => array('bar'), 'Test2' => array('foo', 'bar'));
-		$Sample->Behaviors->init($Sample->alias, $Sample->actsAs);
+
 		$Sample->Behaviors->attach('Test2');
 		$Sample->Behaviors->detach('Test3');
 
@@ -1145,8 +1145,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testHasMethodBasic() {
 		$Sample = new Sample();
-		$Collection = new BehaviorCollection();
-		$Collection->init('Sample', array('Test', 'Test2'));
+		$Collection = new BehaviorCollection('Sample', array('Test', 'Test2'));
 
 		$this->assertTrue($Collection->hasMethod('testMethod'));
 		$this->assertTrue($Collection->hasMethod('resolveMethod'));
@@ -1161,8 +1160,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testHasMethodMappedMethods() {
 		$Sample = new Sample();
-		$Collection = new BehaviorCollection();
-		$Collection->init('Sample', array('Test', 'Test2'));
+		$Collection = new BehaviorCollection('Sample', array('Test', 'Test2'));
 
 		$this->assertTrue($Collection->hasMethod('look for the remote in the couch'));
 		$this->assertTrue($Collection->hasMethod('mappingRobotOnTheRoof'));
@@ -1175,8 +1173,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testHasMethodAsCallback() {
 		$Sample = new Sample();
-		$Collection = new BehaviorCollection();
-		$Collection->init('Sample', array('Test', 'Test2'));
+		$Collection = new BehaviorCollection('Sample', array('Test', 'Test2'));
 
 		$result = $Collection->hasMethod('testMethod', true);
 		$expected = array('Test', 'testMethod');
@@ -1191,5 +1188,17 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * test that backwards compatible init alias works.
+ *
+ * @return void
+ */
+	public function testBackwardsCompatibleInit() {
+		$Sample = new Sample();
+		$Collection = new BehaviorCollection('Sample', array('Test'));
+		$Collection->init('Sample', array('Test2'));
 
+		$this->assertTrue($Collection->enabled('Test'));
+		$this->assertTrue($Collection->enabled('Test2'));
+	}
 }
