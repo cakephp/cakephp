@@ -605,13 +605,13 @@ class HelperTest extends CakeTestCase {
 			),
 			array('fullBase' => true)
 		);
-		$this->assertEquals('http://localhost/js/post.js', $result);
+		$this->assertEquals(FULL_BASE_URL . '/js/post.js', $result);
 
 		$result = $this->Helper->assetUrl('foo.jpg', array('pathPrefix' => 'img/'));
 		$this->assertEquals('img/foo.jpg', $result);
 
 		$result = $this->Helper->assetUrl('foo.jpg', array('fullBase' => true));
-		$this->assertEquals('http://localhost/foo.jpg', $result);
+		$this->assertEquals(FULL_BASE_URL . '/foo.jpg', $result);
 
 		Configure::write('Asset.timestamp', 'force');
 
