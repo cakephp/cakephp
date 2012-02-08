@@ -198,6 +198,10 @@ class HelperTest extends CakeTestCase {
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
+
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+		));
 	}
 
 /**
@@ -613,6 +617,19 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetUrl('foo.jpg', array('fullBase' => true));
 		$this->assertEquals('http://localhost/foo.jpg', $result);
 
+		$result = $this->Helper->assetUrl('style', array('ext' => '.css'));
+		$this->assertEqual('style.css', $result);
+
+		CakePlugin::load('TestPlugin');
+
+		$result = $this->Helper->assetUrl('TestPlugin.style', array('ext' => '.css'));
+		$this->assertEqual('test_plugin/style.css', $result);
+
+		$result = $this->Helper->assetUrl('TestPlugin.style', array('ext' => '.css', 'plugin' => false));
+		$this->assertEqual('TestPlugin.style.css', $result);
+
+		CakePlugin::unload('TestPlugin');
+
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Helper->assetUrl('cake.generic.css', array('pathPrefix' => CSS_URL));
@@ -630,7 +647,6 @@ class HelperTest extends CakeTestCase {
 		$_timestamp = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', 'force');
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 		));
 		CakePlugin::loadAll();
