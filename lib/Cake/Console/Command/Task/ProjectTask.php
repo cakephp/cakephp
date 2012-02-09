@@ -425,6 +425,7 @@ class ProjectTask extends AppShell {
 			)->addArgument('name', array(
 				'help' => __d('cake_console', 'Application directory to make, if it starts with "/" the path is absolute.')
 			))->addOption('empty', array(
+				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',
