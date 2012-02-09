@@ -420,6 +420,7 @@ class HtmlHelper extends AppHelper {
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
  * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
  *   option.
+ * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -450,16 +451,7 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
-			if ($path[0] !== '/') {
-				$path = CSS_URL . $path;
-			}
-
-			if (strpos($path, '?') === false) {
-				if (substr($path, -4) !== '.css') {
-					$path .= '.css';
-				}
-			}
-			$url = $this->assetTimestamp($this->webroot($path));
+			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
 
 			if (Configure::read('Asset.filter.css')) {
 				$pos = strpos($url, CSS_URL);
@@ -518,6 +510,7 @@ class HtmlHelper extends AppHelper {
  *   Using this option will override the inline option.
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
+ * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param mixed $url String or array of javascript files to include
  * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
@@ -552,13 +545,7 @@ class HtmlHelper extends AppHelper {
 		$this->_includedScripts[$url] = true;
 
 		if (strpos($url, '//') === false) {
-			if ($url[0] !== '/') {
-				$url = JS_URL . $url;
-			}
-			if (strpos($url, '?') === false && substr($url, -3) !== '.js') {
-				$url .= '.js';
-			}
-			$url = $this->assetTimestamp($this->webroot($url));
+			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(JS_URL, 'cjs/', $url);
@@ -780,6 +767,7 @@ class HtmlHelper extends AppHelper {
  * - `url` If provided an image link will be generated and the link will point at
  *   `$options['url']`.
  * - `fullBase` If true the src attribute will get a full address for the image file.
+ * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes.  See above for special options.
