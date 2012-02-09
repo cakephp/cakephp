@@ -685,7 +685,7 @@ class View extends Object {
 				case self::TYPE_ELEMENT:
 					$parent = $this->_getElementFileName($name);
 					if (!$parent) {
-						list($plugin, $name) = $this->_pluginSplit($name);
+						list($plugin, $name) = $this->pluginSplit($name);
 						$paths = $this->_paths($plugin);
 						$defaultPath = $paths[0] . 'Elements' . DS;
 						throw new LogicException(__d(
@@ -943,7 +943,7 @@ class View extends Object {
 			$name = $this->view;
 		}
 		$name = str_replace('/', DS, $name);
-		list($plugin, $name) = $this->_pluginSplit($name);
+		list($plugin, $name) = $this->pluginSplit($name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
@@ -988,16 +988,17 @@ class View extends Object {
  * It checks if the plugin is loaded, else filename will stay unchanged for filenames containing dot
  *
  * @param string $name The name you want to plugin split.
+ * @param boolean $fallback If true uses the plugin set in the current CakeRequest when parsed plugin is not loaded
  * @return array Array with 2 indexes.  0 => plugin name, 1 => filename
  */
-	protected function _pluginSplit($name) {
+	public function pluginSplit($name, $fallback = true) {
 		$plugin = null;
 		list($first, $second) = pluginSplit($name);
 		if (CakePlugin::loaded($first) === true) {
 			$name = $second;
 			$plugin = $first;
 		}
-		if (isset($this->plugin) && !$plugin) {
+		if (isset($this->plugin) && !$plugin && $fallback) {
 			$plugin = $this->plugin;
 		}
 		return array($plugin, $name);
@@ -1019,7 +1020,7 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		list($plugin, $name) = $this->_pluginSplit($name);
+		list($plugin, $name) = $this->pluginSplit($name);
 		$paths = $this->_paths($plugin);
 		$file = 'Layouts' . DS . $subDir . $name;
 
@@ -1055,7 +1056,7 @@ class View extends Object {
  * @return mixed Either a string to the element filename or false when one can't be found.
  */
 	protected function _getElementFileName($name) {
-		list($plugin, $name) = $this->_pluginSplit($name);
+		list($plugin, $name) = $this->pluginSplit($name);
 
 		$paths = $this->_paths($plugin);
 		$exts = $this->_getExtensions();
