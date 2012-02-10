@@ -271,7 +271,7 @@ class Helper extends Object {
  * 	`plugin` False value will prevent parsing path as a plugin
  * @return string Generated url
  */
-	public function assetUrl($path, array $options) {
+	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
 			$path = $this->url($path, !empty($options['fullBase']));
 		} elseif (strpos($path, '://') === false) {
