@@ -149,6 +149,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
 
+		App::build(array(
+			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
+		));
+
 		Configure::write('Asset.timestamp', false);
 	}
 
@@ -496,6 +500,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->css('screen.css');
 		$this->assertTags($result, $expected);
 
+		CakePlugin::load('TestPlugin');
+		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
+		$this->assertTags($result, $expected);
+		CakePlugin::unload('TestPlugin');
+
 		$result = $this->Html->css('my.css.library');
 		$expected['link']['href'] = 'preg:/.*css\/my\.css\.library\.css/';
 		$this->assertTags($result, $expected);
@@ -542,6 +552,49 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testPluginCssLink method
+ *
+ * @return void
+ */
+	public function testPluginCssLink() {
+		Configure::write('Asset.filter.css', false);
+		CakePlugin::load('TestPlugin');
+
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('TestPlugin.test_plugin_asset.css');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('TestPlugin.my.css.library');
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/my\.css\.library\.css/';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('TestPlugin.test_plugin_asset.css?1234');
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?1234/';
+		$this->assertTags($result, $expected);
+
+		Configure::write('Asset.filter.css', 'css.php');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected['link']['href'] = 'preg:/.*test_plugin\/ccss\/test_plugin_asset\.css/';
+		$this->assertTags($result, $expected);
+
+		Configure::write('Asset.filter.css', false);
+
+		$result = explode("\n", trim($this->Html->css(array('TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'))));
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
+		$this->assertTags($result[0], $expected);
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/vendor\.generic\.css/';
+		$this->assertTags($result[1], $expected);
+		$this->assertEquals(count($result), 2);
+
+		CakePlugin::unload('TestPlugin');
+	}
+
+/**
  * test use of css() and timestamping
  *
  * @return void
@@ -582,6 +635,50 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test use of css() and timestamping with plugin syntax
+ *
+ * @return void
+ */
+	public function testPluginCssTimestamping() {
+		CakePlugin::load('TestPlugin');
+
+		Configure::write('debug', 2);
+		Configure::write('Asset.timestamp', true);
+
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => '')
+		);
+
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
+
+		Configure::write('debug', 0);
+
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
+		$this->assertTags($result, $expected);
+
+		Configure::write('Asset.timestamp', 'force');
+
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
+
+		$this->Html->request->webroot = '/testing/';
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected['link']['href'] = 'preg:/\/testing\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
+
+		$this->Html->request->webroot = '/testing/longer/';
+		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
+
+		CakePlugin::unload('TestPlugin');
+	}
+
+/**
  * test timestamp enforcement for script tags.
  *
  * @return void
@@ -604,6 +701,37 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink(WWW_ROOT . 'js' . DS . '__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
+	}
+
+/**
+ * test timestamp enforcement for script tags with plugin syntax.
+ *
+ * @return void
+ */
+	public function testPluginScriptTimestamping() {
+		CakePlugin::load('TestPlugin');
+
+		$pluginPath = App::pluginPath('TestPlugin');
+		$pluginJsPath = $pluginPath . 'webroot/js';
+		$this->skipIf(!is_writable($pluginJsPath), $pluginJsPath . ' is not Writable, timestamp testing has been skipped.');
+
+		Configure::write('debug', 2);
+		Configure::write('Asset.timestamp', true);
+
+		touch($pluginJsPath . DS . '__cake_js_test.js');
+		$timestamp = substr(strtotime('now'), 0, 8);
+
+		$result = $this->Html->script('TestPlugin.__cake_js_test', array('inline' => true, 'once' => false));
+		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+
+		Configure::write('debug', 0);
+		Configure::write('Asset.timestamp', 'force');
+		$result = $this->Html->script('TestPlugin.__cake_js_test', array('inline' => true, 'once' => false));
+		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+		unlink($pluginJsPath . DS . '__cake_js_test.js');
+		Configure::write('Asset.timestamp', false);
+
+		CakePlugin::unload('TestPlugin');
 	}
 
 /**
@@ -673,6 +801,72 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+	}
+
+ /**
+ * test that plugin scripts added with uses() are only ever included once.
+ * test script tag generation with plugin syntax
+ *
+ * @return void
+ */
+	public function testPluginScript() {
+		CakePlugin::load('TestPlugin');
+
+		$result = $this->Html->script('TestPlugin.foo');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/foo.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script(array('TestPlugin.foobar', 'TestPlugin.bar'));
+		$expected = array(
+			array('script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/foobar.js')),
+			'/script',
+			array('script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/bar.js')),
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('TestPlugin.jquery-1.3');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('TestPlugin.test.json');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/test.json.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('TestPlugin./jquery-1.3.2.js?someparam=foo');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/jquery-1.3.2.js?someparam=foo')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('TestPlugin.test.json.js?foo=bar');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/test.json.js?foo=bar')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('TestPlugin.foo');
+		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
+
+		$result = $this->Html->script(array('TestPlugin.foo', 'TestPlugin.bar', 'TestPlugin.baz'));
+		$this->assertNotRegExp('/test_plugin\/js\/foo.js/', $result);
+
+		$result = $this->Html->script('TestPlugin.foo', array('inline' => true, 'once' => false));
+		$this->assertNotNull($result);
+
+		$result = $this->Html->script('TestPlugin.jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
+		);
+		$this->assertTags($result, $expected);
+
+		CakePlugin::unload('TestPlugin');
 	}
 
 /**
@@ -1531,7 +1725,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->media('video.ogv', array('type' => 'video'));
+		$result = $this->Html->media('video.ogv', array('tag' => 'video'));
 		$expected = array('video' => array('src' => 'files/video.ogv'), '/video');
 		$this->assertTags($result, $expected);
 
@@ -1546,6 +1740,13 @@ class HtmlHelperTest extends CakeTestCase {
 			'<video',
 				array('source' => array('src' => 'files/video.mov', 'type' => 'video/mp4')),
 				array('source' => array('src' => 'files/video.webm', 'type' => 'video/webm')),
+			'/video'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->media(null, array('src' => 'video.webm'));
+		$expected = array(
+			'video' => array('src' => 'files/video.webm'),
 			'/video'
 		);
 		$this->assertTags($result, $expected);

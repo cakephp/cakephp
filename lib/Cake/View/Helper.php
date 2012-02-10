@@ -267,14 +267,29 @@ class Helper extends Object {
  * @param array $options Options array. Possible keys:
  * 	`fullBase` Return full url with domain name
  * 	`pathPrefix` Path prefix for relative urls
+ * 	`ext` Asset extension to append
+ * 	`plugin` False value will prevent parsing path as a plugin
  * @return string Generated url
  */
-	public function assetUrl($path, array $options) {
+	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
 			$path = $this->url($path, !empty($options['fullBase']));
 		} elseif (strpos($path, '://') === false) {
+			if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
+				list($plugin, $path) = $this->_View->pluginSplit($path, false);
+			}
 			if (!empty($options['pathPrefix']) && $path[0] !== '/') {
 				$path = $options['pathPrefix'] . $path;
+			}
+			if (
+				!empty($options['ext']) &&
+				strpos($path, '?') === false &&
+				substr($path, -strlen($options['ext'])) !== $options['ext']
+			) {
+				$path .= $options['ext'];
+			}
+			if (isset($plugin)) {
+				$path = Inflector::underscore($plugin) . '/' . $path;
 			}
 			$path = $this->assetTimestamp($this->webroot($path));
 

@@ -420,6 +420,7 @@ class HtmlHelper extends AppHelper {
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
  * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
  *   option.
+ * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -450,16 +451,7 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
-			if ($path[0] !== '/') {
-				$path = CSS_URL . $path;
-			}
-
-			if (strpos($path, '?') === false) {
-				if (substr($path, -4) !== '.css') {
-					$path .= '.css';
-				}
-			}
-			$url = $this->assetTimestamp($this->webroot($path));
+			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
 
 			if (Configure::read('Asset.filter.css')) {
 				$pos = strpos($url, CSS_URL);
@@ -518,6 +510,7 @@ class HtmlHelper extends AppHelper {
  *   Using this option will override the inline option.
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
+ * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param mixed $url String or array of javascript files to include
  * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
@@ -552,13 +545,7 @@ class HtmlHelper extends AppHelper {
 		$this->_includedScripts[$url] = true;
 
 		if (strpos($url, '//') === false) {
-			if ($url[0] !== '/') {
-				$url = JS_URL . $url;
-			}
-			if (strpos($url, '?') === false && substr($url, -3) !== '.js') {
-				$url .= '.js';
-			}
-			$url = $this->assetTimestamp($this->webroot($url));
+			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(JS_URL, 'cjs/', $url);
@@ -780,6 +767,7 @@ class HtmlHelper extends AppHelper {
  * - `url` If provided an image link will be generated and the link will point at
  *   `$options['url']`.
  * - `fullBase` If true the src attribute will get a full address for the image file.
+ * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes.  See above for special options.
@@ -1003,9 +991,9 @@ class HtmlHelper extends AppHelper {
  * Using multiple video files:
  *
  * {{{
- * echo $this->Html->video(
+ * echo $this->Html->media(
  * 		array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
- * 		array('type' => 'video', 'autoplay')
+ * 		array('tag' => 'video', 'autoplay')
  * );
  * }}}
  *
@@ -1020,8 +1008,8 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `type` Type of media element to generate, valid values are "audio" or "video".
- * 	If type is not provided media type is guessed based on file's mime type.
+ * - `tag` Type of media element to generate, either "audio" or "video".
+ * 	If tag is not provided it's guessed based on file's mime type.
  * - `text` Text to include inside the audio/video tag
  * - `pathPrefix` Path prefix to use for relative urls, defaults to 'files/'
  * - `fullBase` If provided the src attribute will get a full address including domain name
@@ -1029,15 +1017,19 @@ class HtmlHelper extends AppHelper {
  * @param string|array $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
  *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
  * @param array $options Array of HTML attributes, and special options above.
- * @return string Generated video tag
+ * @return string Generated media element
  */
 	public function media($path, $options = array()) {
-		$options += array('type' => null, 'pathPrefix' => 'files/', 'text' => '');
+		$options += array(
+			'tag' => null,
+			'pathPrefix' => 'files/',
+			'text' => ''
+		);
 
-		if (!empty($options['type'])) {
-			$type = $options['type'];
+		if (!empty($options['tag'])) {
+			$tag = $options['tag'];
 		} else {
-			$type = null;
+			$tag = null;
 		}
 
 		if (is_array($path)) {
@@ -1059,19 +1051,22 @@ class HtmlHelper extends AppHelper {
 			$options['text'] = $sourceTags . $options['text'];
 			unset($options['fullBase']);
 		} else {
+			if (empty($path) && !empty($options['src'])) {
+				$path = $options['src'];
+			}
 			$options['src'] = $this->assetUrl($path, $options);
 		}
 
-		if ($type === null) {
+		if ($tag === null) {
 			if (is_array($path)) {
 				$mimeType = $path[0]['type'];
 			} else {
 				$mimeType = $this->response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
 			}
 			if (preg_match('#^video/#', $mimeType)) {
-				$type = 'video';
+				$tag = 'video';
 			} else {
-				$type = 'audio';
+				$tag = 'audio';
 			}
 		}
 
@@ -1081,12 +1076,12 @@ class HtmlHelper extends AppHelper {
 		$text = $options['text'];
 
 		$options = array_diff_key($options, array(
-			'type' => '',
+			'tag' => '',
 			'fullBase' => '',
 			'pathPrefix' => '',
 			'text' => ''
 		));
-		return $this->tag($type, $text, $options);
+		return $this->tag($tag, $text, $options);
 	}
 
 /**
