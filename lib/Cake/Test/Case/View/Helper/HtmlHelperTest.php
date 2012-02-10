@@ -1725,7 +1725,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->media('video.ogv', array('type' => 'video'));
+		$result = $this->Html->media('video.ogv', array('tag' => 'video'));
 		$expected = array('video' => array('src' => 'files/video.ogv'), '/video');
 		$this->assertTags($result, $expected);
 
