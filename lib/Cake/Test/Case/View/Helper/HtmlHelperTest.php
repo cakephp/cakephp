@@ -1743,6 +1743,13 @@ class HtmlHelperTest extends CakeTestCase {
 			'/video'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->media(null, array('src' => 'video.webm'));
+		$expected = array(
+			'video' => array('src' => 'files/video.webm'),
+			'/video'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

@@ -1047,6 +1047,9 @@ class HtmlHelper extends AppHelper {
 			$options['text'] = $sourceTags . $options['text'];
 			unset($options['fullBase']);
 		} else {
+			if (empty($path) && !empty($options['src'])) {
+				$path = $options['src'];
+			}
 			$options['src'] = $this->assetUrl($path, $options);
 		}
 
