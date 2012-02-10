@@ -222,13 +222,9 @@ class AclsController extends AppController {
 			//TODO need validation on element exists or not on every level.
 			//TODO Need to compare result to database to make sure it grabs all of data.
 			
-			//FIXME array with the same name gets overriden
 			if(!isset($richardResult[$item['Acl']['Controller']])) {
 				$richardResult[$item['Acl']['Controller']] = array();
 			}
-			
-			//TODO I need to loop here one more time. Then I will be done.
-			
 			
 			if($compareKey != $item['AclFunction']['Function']) {
 				$compareKey = $item['AclFunction']['Function'];
