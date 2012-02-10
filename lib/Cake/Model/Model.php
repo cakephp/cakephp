@@ -2483,12 +2483,12 @@ class Model extends Object implements CakeEventListener {
  *
  * @return boolean True if such a record exists
  */
-	public function exists() {
+	public function exists($callbacks = true) {
 		if ($this->getID() === false) {
 			return false;
 		}
 		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
-		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
+		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => $callbacks);
 		return ($this->find('count', $query) > 0);
 	}
 
