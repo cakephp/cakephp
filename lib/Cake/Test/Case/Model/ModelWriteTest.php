@@ -4741,7 +4741,8 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'recursive' => -1,
-			'fields' => array('author_id', 'title','body','published')
+			'fields' => array('author_id', 'title','body','published'),
+			'order' => array('Post.created' => 'ASC')
 		));
 
 		$expected = array(
