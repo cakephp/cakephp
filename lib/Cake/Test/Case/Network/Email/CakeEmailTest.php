@@ -395,6 +395,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject('You have a new message.');
 		$this->assertSame($this->CakeEmail->subject(), 'You have a new message.');
 
+		$this->CakeEmail->subject('You have a new message, I think.');
+		$this->assertSame($this->CakeEmail->subject(), 'You have a new message, I think.');
 		$this->CakeEmail->subject(1);
 		$this->assertSame($this->CakeEmail->subject(), '1');
 
