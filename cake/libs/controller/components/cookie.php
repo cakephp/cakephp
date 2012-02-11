@@ -468,7 +468,8 @@ class CookieComponent extends Object {
  * @access private
  */
 	function __explode($string) {
-		if (!empty($string[0]) && ($string[0] === '{' || $string[0] === '[') && function_exists('json_decode')) {
+		$first = substr($string, 0, 1);
+		if ($first !== false && ($first === '{' || $first === '[') && function_exists('json_decode')) {
 			$ret = json_decode($string, true);
 			return ($ret != null) ? $ret : $string;
 		}
