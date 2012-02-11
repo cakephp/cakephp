@@ -59,7 +59,7 @@ class NumberHelper extends AppHelper {
  */
 	protected $_currencyDefaults = array(
 		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
-		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true,
+		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
 	);
 
 /**
@@ -165,7 +165,11 @@ class NumberHelper extends AppHelper {
  * - `thousands` - Thousands separator ie. ','
  * - `decimals` - Decimal separator symbol ie. '.'
  * - `negative` - Symbol for negative numbers. If equal to '()', the number will be wrapped with ( and )
- * - `escape` - Should the output be htmlentity escaped? Defaults to true
+ * - `escape` - Should the output be htmlentity escaped? Defaults to true.
+ * - `wholeSymbol` String to use for whole numbers ie. ' dollars'.
+ * - `wholePosition` Either 'before' or 'after' to place the whole symbol.
+ * - `fractionSymbol` String to use for fraction numbers ie. ' cents'.
+ * - `fractionPosition` Either 'before' or 'after' to place the fraction symbol.
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -238,8 +242,10 @@ class NumberHelper extends AppHelper {
  *
  * {{{
  *	array(
- *		'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
- *		'decimals' => '.', 'negative' => '()', 'escape' => true
+ *		'wholeSymbol' => '', 'wholePosition' => 'before',
+ *		'fractionSymbol' => '', 'fractionPosition' => 'after',
+ *		'zero' => '0', 'places' => 2, 'thousands' => ',',
+ *		'decimals' => '.', 'negative' => '()', 'escape' => true,
  *	)
  * }}}
  *
