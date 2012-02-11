@@ -159,7 +159,10 @@ class RequestHandlerComponent extends Component {
  *   switched based on the parsed extension or Accept-Type header.  For example, if `controller/action.xml`
  *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
  *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
- *   the view path will become `app/View/Controller/xml/action.ctp`.
+ *   the view path will become `app/View/Controller/xml/action.ctp`.  Layout and template
+ *   types will only switch to mime-types recognized by CakeResponse.  If you need to declare
+ *   additional mime-types, you can do so using CakeResponse::type() in your controllers beforeFilter()
+ *   method.
  * - If a helper with the same name as the extension exists, it is added to the controller.
  * - If the extension is of a type that RequestHandler understands, it will set that
  *   Content-type in the response header.
