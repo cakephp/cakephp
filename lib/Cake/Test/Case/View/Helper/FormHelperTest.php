@@ -1463,6 +1463,31 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testTagIsInvalid method
+ *
+ * @return void
+ */
+	public function testTagIsInvalid() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors[0]['email'] =  array('Please provide an email');
+
+		$this->Form->setEntity('Contact.0.email');
+		$result = $this->Form->tagIsInvalid();
+		$expected = array('Please provide an email');
+		$this->assertEquals($expected, $result);
+
+		$this->Form->setEntity('Contact.1.email');
+		$result = $this->Form->tagIsInvalid();
+		$expected = false;
+		$this->assertIdentical($expected, $result);
+
+		$this->Form->setEntity('Contact.0.name');
+		$result = $this->Form->tagIsInvalid();
+		$expected = false;
+		$this->assertIdentical($expected, $result);
+	}
+
+/**
  * testPasswordValidation method
  *
  * test validation errors on password input.

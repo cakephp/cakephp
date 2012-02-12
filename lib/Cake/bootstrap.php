@@ -23,6 +23,10 @@ define('TIME_START', microtime(true));
 if (!defined('E_DEPRECATED')) {
 	define('E_DEPRECATED', 8192);
 }
+
+if (!defined('E_USER_DEPRECATED')) {
+	define('E_USER_DEPRECATED', E_USER_NOTICE);
+}
 error_reporting(E_ALL & ~E_DEPRECATED);
 
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {

@@ -108,11 +108,13 @@ abstract class BaseAuthorize {
  */
 	public function action($request, $path = '/:plugin/:controller/:action') {
 		$plugin = empty($request['plugin']) ? null : Inflector::camelize($request['plugin']) . '/';
-		return str_replace(
+		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),
 			array(Inflector::camelize($request['controller']), $request['action'], $plugin),
 			$this->settings['actionPath'] . $path
 		);
+		$path = str_replace('//', '/', $path);
+		return trim($path, '/');
 	}
 
 /**

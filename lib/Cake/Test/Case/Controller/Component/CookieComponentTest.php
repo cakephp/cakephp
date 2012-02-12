@@ -472,6 +472,21 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test reading empty values.
+ */
+	public function testReadEmpty() {
+		$_COOKIE['CakeTestCookie'] = array(
+		  'JSON' => '{"name":"value"}',
+		  'Empty' => '',
+		  'String' => '{"somewhat:"broken"}'
+		);
+		$this->assertEqual(array('name' => 'value'), $this->Cookie->read('JSON'));
+		$this->assertEqual('value', $this->Cookie->read('JSON.name'));
+		$this->assertEqual('', $this->Cookie->read('Empty'));
+		$this->assertEqual('{"somewhat:"broken"}', $this->Cookie->read('String'));
+	}
+
+/**
  * test that no error is issued for non array data.
  *
  * @return void
@@ -482,6 +497,7 @@ class CookieComponentTest extends CakeTestCase {
 
 		$this->assertNull($this->Cookie->read('value'));
 	}
+
 
 /**
  * test that deleting a top level keys kills the child elements too.

@@ -195,7 +195,7 @@ class ViewTask extends BakeTask {
  */
 	protected function _interactive() {
 		$this->hr();
-		$this->out(sprintf("Bake View\nPath: %s", $this->path));
+		$this->out(sprintf("Bake View\nPath: %s", $this->getPath()));
 		$this->hr();
 
 		$this->DbConfig->interactive = $this->Controller->interactive = $this->interactive = true;
