@@ -74,14 +74,7 @@ class ExtractTask extends AppShell {
  *
  * @var array
  */
-	protected $_strings = array();
-
-/**
- * Singular strings and their line numbers.
- *
- * @var array
- */
-	protected $_lines = array();
+	protected $_translations = array();
 
 /**
  * Destination path
@@ -201,6 +194,35 @@ class ExtractTask extends AppShell {
 	}
 
 /**
+ * Add a translation to the internal translations property
+ *
+ * Takes care of duplicate translations
+ *
+ * @param string $domain
+ * @param string $msgid
+ * @param array $details
+ */
+	protected function _addTranslation($domain, $msgid, $details = array()) {
+		if (empty($this->_translations[$domain][$msgid])) {
+			$this->_translations[$domain][$msgid] = array(
+				'msgid_plural' => false
+			 );
+		}
+
+		if (isset($details['msgid_plural'])) {
+			$this->_translations[$domain][$msgid]['msgid_plural'] = $details['msgid_plural'];
+		}
+
+		if (isset($details['file'])) {
+			$line = 0;
+			if (isset($details['line'])) {
+				$line = $details['line'];
+			}
+			$this->_translations[$domain][$msgid]['references'][$details['file']][] = $line;
+		}
+	}
+
+/**
  * Extract text
  *
  * @return void
@@ -221,7 +243,7 @@ class ExtractTask extends AppShell {
 		$this->_buildFiles();
 		$this->_writeFiles();
 		$this->_paths = $this->_files = $this->_storage = array();
-		$this->_strings = $this->_tokens = array();
+		$this->_translations = $this->_tokens = array();
 		$this->_extractValidation = true;
 		$this->out();
 		$this->out(__d('cake_console', 'Done.'));
@@ -254,13 +276,16 @@ class ExtractTask extends AppShell {
 			->addOption('ignore-model-validation', array(
 				'boolean' => true,
 				'default' => false,
-				'help' => __d('cake_console', 'Ignores validation messages in the $validate property. If this flag is not set and the command is run from the same app directory, all messages in model validation rules will be extracted as tokens.')
+				'help' => __d('cake_console', 'Ignores validation messages in the $validate property.' .
+					' If this flag is not set and the command is run from the same app directory,' .
+					' all messages in model validation rules will be extracted as tokens.')
 			))
 			->addOption('validation-domain', array(
 				'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages.')
 			))
 			->addOption('exclude', array(
-				'help' => __d('cake_console', 'Comma separated list of directories to exclude. Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
+				'help' => __d('cake_console', 'Comma separated list of directories to exclude.' .
+					' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
 			));
 	}
 
@@ -306,7 +331,8 @@ class ExtractTask extends AppShell {
 		$tokenCount = count($this->_tokens);
 
 		while (($tokenCount - $count) > 1) {
-			list($countToken, $firstParenthesis) = array($this->_tokens[$count], $this->_tokens[$count + 1]);
+			$countToken = $this->_tokens[$count];
+			$firstParenthesis = $this->_tokens[$count + 1];
 			if (!is_array($countToken)) {
 				$count++;
 				continue;
@@ -332,10 +358,14 @@ class ExtractTask extends AppShell {
 				if ($mapCount == count($strings)) {
 					extract(array_combine($map, $strings));
 					$domain = isset($domain) ? $domain : 'default';
-
-					$string = isset($plural) ? $singular . "\0" . $plural : $singular;
-					$this->_strings[$domain][] = $string;
-					$this->_lines[$domain][$singular][$this->_file][] = $line;
+					$details = array(
+						'file' => $this->_file,
+						'line' => $line,
+					);
+					if (isset($plural)) {
+						$details['msgid_plural'] = $plural;
+					}
+					$this->_addTranslation($domain, $singular, $details);
 				} else {
 					$this->_markerError($this->_file, $line, $functionName, $count);
 				}
@@ -354,6 +384,7 @@ class ExtractTask extends AppShell {
 		if (!$this->_extractValidation) {
 			return;
 		}
+
 		App::uses('AppModel', 'Model');
 		$plugin = null;
 		if (!empty($this->params['plugin'])) {
@@ -396,28 +427,32 @@ class ExtractTask extends AppShell {
  * @return void
  */
 	protected function _processValidationRules($field, $rules, $file, $domain) {
-		if (is_array($rules)) {
+		if (!is_array($rules)) {
+			return;
+		}
 
-			$dims = Set::countDim($rules);
-			if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
-				$rules = array($rules);
+		$dims = Set::countDim($rules);
+		if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
+			$rules = array($rules);
+		}
+
+		foreach ($rules as $rule => $validateProp) {
+			$msgid = null;
+			if (isset($validateProp['message'])) {
+				if (is_array($validateProp['message'])) {
+					$msgid = $validateProp['message'][0];
+				} else {
+					$msgid = $validateProp['message'];
+				}
+			} elseif (is_string($rule)) {
+				$msgid = $rule;
 			}
-
-			foreach ($rules as $rule => $validateProp) {
-				$message = null;
-				if (isset($validateProp['message'])) {
-					if (is_array($validateProp['message'])) {
-						$message = $validateProp['message'][0];
-					} else {
-						$message = $validateProp['message'];
-					}
-				} elseif (is_string($rule)) {
-					$message = $rule;
-				}
-				if ($message) {
-					$this->_strings[$domain][] = $message;
-					$this->_lines[$domain][$message][$file][] =  'validation for field ' . $field;
-				}
+			if ($msgid) {
+				$details = array(
+					'file' => $file,
+					'line' => 'validation for field ' . $field
+				);
+				$this->_addTranslation($domain, $msgid, $details);
 			}
 		}
 	}
@@ -428,39 +463,28 @@ class ExtractTask extends AppShell {
  * @return void
  */
 	protected function _buildFiles() {
-		foreach ($this->_strings as $domain => $strings) {
-			$added = array();
-			rsort($strings);
-
-			foreach ($strings as $i => $string) {
-				$plural = false;
-				$singular = $string;
-				if (strpos($string, "\0") !== false) {
-					list($singular, $plural) = explode("\0", $string);
-				}
-				$files = $this->_lines[$domain][$singular];
+		foreach ($this->_translations as $domain => $translations) {
+			foreach ($translations as $msgid => $details) {
+				$plural = $details['msgid_plural'];
+				$files = $details['references'];
 				$occurrences = array();
 				foreach ($files as $file => $lines) {
+					$lines = array_unique($lines);
 					$occurrences[] = $file . ':' . implode(';', $lines);
 				}
 				$occurrences = implode("\n#: ", $occurrences);
 				$header = '#: ' . str_replace($this->_paths, '', $occurrences) . "\n";
 
-				if ($plural === false && !empty($added[$singular])) {
-					continue;
-				}
-
 				if ($plural === false) {
-					$sentence = "msgid \"{$string}\"\n";
+					$sentence = "msgid \"{$msgid}\"\n";
 					$sentence .= "msgstr \"\"\n\n";
 				} else {
-					$sentence = "msgid \"{$singular}\"\n";
+					$sentence = "msgid \"{$msgid}\"\n";
 					$sentence .= "msgid_plural \"{$plural}\"\n";
 					$sentence .= "msgstr[0] \"\"\n";
 					$sentence .= "msgstr[1] \"\"\n\n";
 				}
 
-				$added[$singular] = true;
 				$this->_store($domain, $header, $sentence);
 				if ($domain != 'default' && $this->_merge) {
 					$this->_store('default', $header, $sentence);
@@ -506,7 +530,11 @@ class ExtractTask extends AppShell {
 			$response = '';
 			while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
 				$this->out();
-				$response = $this->in(__d('cake_console', 'Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename), array('y', 'n', 'a'), 'y');
+				$response = $this->in(
+					__d('cake_console', 'Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
+					array('y', 'n', 'a'),
+					'y'
+				);
 				if (strtoupper($response) === 'N') {
 					$response = '';
 					while ($response == '') {
