@@ -1966,7 +1966,14 @@ class Model extends Object implements CakeEventListener {
  *   or 'only' to only validate the records, but not save them.
  * - atomic: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save().
+ *   It should be an associate array with model name as key and array of fields as value. Eg.
+ *   {{{
+ *   array(
+ *       'SomeModel' => array('field'),
+ *       'AssociatedModel' => array('field', 'otherfield')
+ *   )
+ *   }}}
  *
  * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
@@ -2109,7 +2116,14 @@ class Model extends Object implements CakeEventListener {
  *   'first' to validate *all* records before any are saved(default),
  * - `atomic` If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - `fieldList` Equivalent to the $fieldList parameter in Model::save()
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save().
+ *   It should be an associate array with model name as key and array of fields as value. Eg.
+ *   {{{
+ *   array(
+ *       'SomeModel' => array('field'),
+ *       'AssociatedModel' => array('field', 'otherfield')
+ *   )
+ *   }}}
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
