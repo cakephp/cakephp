@@ -484,7 +484,7 @@ class CookieComponent extends Component {
  */
 	protected function _explode($string) {
 		$first = substr($string, 0, 1);
-		if ($first !== false && $first === '{' || $first === '[') {
+		if ($first === '{' || $first === '[') {
 			$ret = json_decode($string, true);
 			return ($ret != null) ? $ret : $string;
 		}
