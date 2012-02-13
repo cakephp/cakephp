@@ -3540,7 +3540,10 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2),
 			'Comment' => array(
-				array('comment' => 'First new comment', 'published' => 'Y', 'User' => array('user' => 'newuser', 'password' => 'newuserpass')),
+				array(
+					'comment' => 'First new comment', 'published' => 'Y', 'user_id' => 2,
+					'User' => array('user' => 'newuser', 'password' => 'newuserpass')
+				),
 				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
 			)
 		), array('deep' => false));
@@ -3569,6 +3572,7 @@ class ModelWriteTest extends BaseModelTest {
 				'comment' => 'First comment deepsave insert',
 				'published' => 'Y',
 				'user_id' => 4,
+				'article_id' => 1,
 				'Article' => array(
 					'title' => 'First Article deepsave insert',
 					'body' => 'First Article Body deepsave insert',
@@ -3597,7 +3601,7 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			'Comment' => array(
 				'id' => '11',
-				'article_id' => '0',
+				'article_id' => 1,
 				'user_id' => '4',
 				'comment' => 'First comment deepsave insert',
 				'published' => 'Y',
@@ -6521,7 +6525,10 @@ class ModelWriteTest extends BaseModelTest {
 			'Article' => array('id' => 2, 'title' => 'I will not save'),
 			'Comment' => array(
 				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
-				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2, 'User' => array('user' => 'nopassword', 'password' => 'not saved'))
+				array(
+					'comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2,
+					'User' => array('user' => 'nopassword', 'password' => 'not saved')
+				)
 			)
 		), array('fieldList' => $fieldList, 'deep' => true));
 

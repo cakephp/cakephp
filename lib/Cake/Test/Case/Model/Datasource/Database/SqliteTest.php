@@ -278,13 +278,13 @@ class SqliteTest extends CakeTestCase {
 			'user' => array(
 				'type' => 'string',
 				'length' => 255,
-				'null' => false,
+				'null' => true,
 				'default' => null
 			),
 			'password' => array(
 				'type' => 'string',
 				'length' => 255,
-				'null' => false,
+				'null' => true,
 				'default' => null
 			),
 			'created' => array(
