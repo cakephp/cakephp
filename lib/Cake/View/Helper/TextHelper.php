@@ -125,7 +125,7 @@ class TextHelper extends AppHelper {
 			$text
 		);
 		return preg_replace_callback(
-			'#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
+			'#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www.[^\n\%\ <]+[^<\n\%\,\.\ <](?<!\))#i',
 			array(&$this, '_linkUrls'),
 			$text
 		);
