@@ -208,6 +208,7 @@ class CakeResponse {
 		'hh' => 'text/plain',
 		'html' => array('text/html', '*/*'),
 		'htm' => array('text/html', '*/*'),
+		'ics' => 'text/calendar',
 		'm' => 'text/plain',
 		'rtf' => 'text/rtf',
 		'rtx' => 'text/richtext',

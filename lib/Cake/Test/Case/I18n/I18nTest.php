@@ -2525,6 +2525,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	public function testPoQuotedString () {
+		Configure::write('Config.language', 'po');
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEquals($expected, __('this is a "quoted string"'));
 	}

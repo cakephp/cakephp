@@ -555,7 +555,9 @@ class ModelDeleteTest extends BaseModelTest {
  * @return void
  */
 	public function testDeleteDependent() {
-		$this->loadFixtures('Bidding', 'BiddingMessage');
+		$this->loadFixtures('Bidding', 'BiddingMessage', 'Article',
+			'ArticlesTag', 'Comment', 'User', 'Attachment'
+		);
 		$Bidding = new Bidding();
 		$result = $Bidding->find('all');
 		$expected = array(
@@ -626,6 +628,20 @@ class ModelDeleteTest extends BaseModelTest {
 			),
 		);
 		$this->assertEquals($expected, $result);
+
+		$Article = new Article();
+		$result = $Article->Comment->find('count', array(
+			'conditions' => array('Comment.article_id' => 1)
+		));
+		$this->assertEquals(4, $result);
+
+		$result = $Article->delete(1, true);
+		$this->assertIdentical(true, true);
+
+		$result = $Article->Comment->find('count', array(
+			'conditions' => array('Comment.article_id' => 1)
+		));
+		$this->assertEquals(0, $result);
 	}
 
 /**

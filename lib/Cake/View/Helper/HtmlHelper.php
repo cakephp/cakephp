@@ -991,9 +991,9 @@ class HtmlHelper extends AppHelper {
  * Using multiple video files:
  *
  * {{{
- * echo $this->Html->video(
+ * echo $this->Html->media(
  * 		array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
- * 		array('type' => 'video', 'autoplay')
+ * 		array('tag' => 'video', 'autoplay')
  * );
  * }}}
  *
@@ -1008,8 +1008,8 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `type` Type of media element to generate, valid values are "audio" or "video".
- * 	If type is not provided media type is guessed based on file's mime type.
+ * - `tag` Type of media element to generate, either "audio" or "video".
+ * 	If tag is not provided it's guessed based on file's mime type.
  * - `text` Text to include inside the audio/video tag
  * - `pathPrefix` Path prefix to use for relative urls, defaults to 'files/'
  * - `fullBase` If provided the src attribute will get a full address including domain name
@@ -1017,15 +1017,19 @@ class HtmlHelper extends AppHelper {
  * @param string|array $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
  *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
  * @param array $options Array of HTML attributes, and special options above.
- * @return string Generated video tag
+ * @return string Generated media element
  */
 	public function media($path, $options = array()) {
-		$options += array('type' => null, 'pathPrefix' => 'files/', 'text' => '');
+		$options += array(
+			'tag' => null,
+			'pathPrefix' => 'files/',
+			'text' => ''
+		);
 
-		if (!empty($options['type'])) {
-			$type = $options['type'];
+		if (!empty($options['tag'])) {
+			$tag = $options['tag'];
 		} else {
-			$type = null;
+			$tag = null;
 		}
 
 		if (is_array($path)) {
@@ -1047,19 +1051,22 @@ class HtmlHelper extends AppHelper {
 			$options['text'] = $sourceTags . $options['text'];
 			unset($options['fullBase']);
 		} else {
+			if (empty($path) && !empty($options['src'])) {
+				$path = $options['src'];
+			}
 			$options['src'] = $this->assetUrl($path, $options);
 		}
 
-		if ($type === null) {
+		if ($tag === null) {
 			if (is_array($path)) {
 				$mimeType = $path[0]['type'];
 			} else {
 				$mimeType = $this->response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
 			}
 			if (preg_match('#^video/#', $mimeType)) {
-				$type = 'video';
+				$tag = 'video';
 			} else {
-				$type = 'audio';
+				$tag = 'audio';
 			}
 		}
 
@@ -1069,12 +1076,12 @@ class HtmlHelper extends AppHelper {
 		$text = $options['text'];
 
 		$options = array_diff_key($options, array(
-			'type' => '',
+			'tag' => '',
 			'fullBase' => '',
 			'pathPrefix' => '',
 			'text' => ''
 		));
-		return $this->tag($type, $text, $options);
+		return $this->tag($tag, $text, $options);
 	}
 
 /**

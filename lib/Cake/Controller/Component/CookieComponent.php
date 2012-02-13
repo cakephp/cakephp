@@ -495,7 +495,8 @@ class CookieComponent extends Component {
  * @return array Map of key and values
  */
 	protected function _explode($string) {
-		if ($string[0] === '{' || $string[0] === '[') {
+		$first = substr($string, 0, 1);
+		if ($first === '{' || $first === '[') {
 			$ret = json_decode($string, true);
 			return ($ret != null) ? $ret : $string;
 		}

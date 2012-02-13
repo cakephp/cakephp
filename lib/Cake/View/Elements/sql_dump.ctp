@@ -37,7 +37,7 @@ if ($noLogs || isset($_forced_from_dbo_)):
 	foreach ($logs as $source => $logInfo):
 		$text = $logInfo['count'] > 1 ? 'queries' : 'query';
 		printf(
-			'<table class="cake-sql-log" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0" border = "0">',
+			'<table class="cake-sql-log" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0">',
 			preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true))
 		);
 		printf('<caption>(%s) %s %s took %s ms</caption>', $source, $logInfo['count'], $text, $logInfo['time']);
@@ -49,13 +49,13 @@ if ($noLogs || isset($_forced_from_dbo_)):
 	<?php
 		foreach ($logInfo['log'] as $k => $i) :
 			$i += array('error' => '');
-			if(!empty($i['params']) && is_array($i['params'])) {
+			if (!empty($i['params']) && is_array($i['params'])) {
 				$bindParam = $bindType = null;
-				if(preg_match('/.+ :.+/', $i['query'])) {
+				if (preg_match('/.+ :.+/', $i['query'])) {
 					$bindType = true;
 				}
-				foreach($i['params'] as $bindKey => $bindVal) {
-					if($bindType === true) {
+				foreach ($i['params'] as $bindKey => $bindVal) {
+					if ($bindType === true) {
 						$bindParam .= h($bindKey) ." => " . h($bindVal) . ", ";
 					} else {
 						$bindParam .= h($bindVal) . ", ";

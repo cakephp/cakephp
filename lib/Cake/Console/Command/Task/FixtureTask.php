@@ -137,7 +137,7 @@ class FixtureTask extends BakeTask {
 	protected function _interactive() {
 		$this->DbConfig->interactive = $this->Model->interactive = $this->interactive = true;
 		$this->hr();
-		$this->out(__d('cake_console', "Bake Fixture\nPath: %s", $this->path));
+		$this->out(__d('cake_console', "Bake Fixture\nPath: %s", $this->getPath()));
 		$this->hr();
 
 		if (!isset($this->connection)) {

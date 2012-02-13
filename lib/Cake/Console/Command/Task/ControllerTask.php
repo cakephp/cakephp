@@ -126,7 +126,7 @@ class ControllerTask extends BakeTask {
 	protected function _interactive() {
 		$this->interactive = true;
 		$this->hr();
-		$this->out(__d('cake_console', "Bake Controller\nPath: %s", $this->path));
+		$this->out(__d('cake_console', "Bake Controller\nPath: %s", $this->getPath()));
 		$this->hr();
 
 		if (empty($this->connection)) {

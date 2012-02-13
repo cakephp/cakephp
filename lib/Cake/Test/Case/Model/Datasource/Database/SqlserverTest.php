@@ -633,4 +633,31 @@ class SqlserverTest extends CakeTestCase {
 		$this->assertEquals('nate', $results[1]['User']['user']);
 	}
 
+/**
+ * Test that the return of stored procedures is honoured
+ *
+ * @return void
+ */
+	public function testStoredProcedureReturn() {
+		$sql = <<<SQL
+CREATE PROCEDURE cake_test_procedure
+AS
+BEGIN
+RETURN 2;
+END
+SQL;
+		$this->Dbo->execute($sql);
+
+		$sql = <<<SQL
+DECLARE @return_value int
+EXEC @return_value = [cake_test_procedure]
+SELECT 'value' = @return_value
+SQL;
+		$query = $this->Dbo->execute($sql);
+		$this->Dbo->execute('DROP PROC cake_test_procedure');
+
+		$result = $query->fetch();
+		$this->assertEquals(2, $result['value']);
+	}
+
 }
