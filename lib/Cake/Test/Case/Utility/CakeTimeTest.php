@@ -328,6 +328,11 @@ class CakeTimeTest extends CakeTestCase {
 
 		$this->Time->niceFormat = '%Y-%d-%m';
 		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
+		$this->assertEquals('%Y-%d-%m', $this->Time->niceFormat);
+
+		CakeTime::$niceFormat = '%Y-%d-%m %H:%M:%S';
+		$this->assertEquals(date('Y-d-m H:i:s', $time), $this->Time->nice($time));
+		$this->assertEquals('%Y-%d-%m %H:%M:%S', $this->Time->niceFormat);
 	}
 
 /**

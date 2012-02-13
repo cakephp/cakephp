@@ -44,8 +44,15 @@ class TimeHelper extends AppHelper {
  * @param array $settings Settings array Settings array
  */
 	public function __construct(View $View, $settings = array()) {
+		$settings = Set::merge(array('engine' => 'CakeTime'), $settings);
 		parent::__construct($View, $settings);
-		$this->_CakeTime = new CakeTime($settings);
+		$engineClass = $settings['engine'];
+		App::uses($engineClass, 'Utility');
+		if (class_exists($engineClass)) {
+			$this->_CakeTime = new $engineClass($settings);
+		} else {
+			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+		}
 	}
 
 /**
@@ -58,9 +65,11 @@ class TimeHelper extends AppHelper {
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'niceFormat':
-				$this->_CakeTime->{$name} = $value; break;
+				$this->_CakeTime->{$name} = $value;
+			break;
 			default:
-				$this->{$name} = $value; break;
+				$this->{$name} = $value;
+			break;
 		}
 	}
 
