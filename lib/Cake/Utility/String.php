@@ -368,7 +368,7 @@ class String {
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
-	public function highlight($text, $phrase, $options = array()) {
+	public static function highlight($text, $phrase, $options = array()) {
 		if (empty($phrase)) {
 			return $text;
 		}
@@ -412,7 +412,7 @@ class String {
  * @return string The text without links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
  */
-	public function stripLinks($text) {
+	public static function stripLinks($text) {
 		return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
 	}
 
@@ -434,7 +434,7 @@ class String {
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
-	public function truncate($text, $length = 100, $options = array()) {
+	public static function truncate($text, $length = 100, $options = array()) {
 		$default = array(
 			'ending' => '...', 'exact' => true, 'html' => false
 		);
@@ -550,9 +550,9 @@ class String {
  * @return string Modified string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
-	public function excerpt($text, $phrase, $radius = 100, $ending = '...') {
+	public static function excerpt($text, $phrase, $radius = 100, $ending = '...') {
 		if (empty($text) or empty($phrase)) {
-			return $this->truncate($text, $radius * 2, array('ending' => $ending));
+			return self::truncate($text, $radius * 2, array('ending' => $ending));
 		}
 
 		$append = $prepend = $ending;
@@ -592,7 +592,7 @@ class String {
  * @return string The glued together string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
-	public function toList($list, $and = 'and', $separator = ', ') {
+	public static function toList($list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
 			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
 		} else {
