@@ -1098,6 +1098,9 @@ class CakeResponse {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  * 
+ * @param $options Either null to get all cookies, string for a specific cookie
+ *  or array to set cookie.
+ *  
  * ### Options (when setting a configuration)
  *  - name: The Cookie name
  *  - value: Value of the cookie
@@ -1119,20 +1122,20 @@ class CakeResponse {
  * 
  * ### Setting a cookie configuration
  * 
- * `$this->cookie((array) $config)`
+ * `$this->cookie((array) $options)`
  * 
  * @return mixed
  */
-	public function cookie($config = null) {
-		if ($config === null) {
+	public function cookie($options = null) {
+		if ($options === null) {
 			return $this->_cookies;
 		}
 
-		if (is_string($config)) {
-			if (!isset($this->_cookies[$config])) {
+		if (is_string($options)) {
+			if (!isset($this->_cookies[$options])) {
 				return null;
 			}
-			return $this->_cookies[$config];
+			return $this->_cookies[$options];
 		}
 
 		$defaults = array(
@@ -1144,8 +1147,8 @@ class CakeResponse {
 			'secure' => false,
 			'httpOnly' => false
 		);
-		$config += $defaults;
+		$options += $defaults;
 
-		$this->_cookies[$config['name']] = $config;
+		$this->_cookies[$options['name']] = $options;
 	}
 }
