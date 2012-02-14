@@ -531,7 +531,7 @@ class HelperTest extends CakeTestCase {
 		$this->assertEquals($result, '/controller/action/1?one=1&amp;two=2');
 
 		$result = $this->Helper->url(array('controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"'));
-		$this->assertEquals($result, "/posts/index/page:1&quot; onclick=&quot;alert(&#039;XSS&#039;);&quot;");
+		$this->assertEquals($result, "/posts/index/page:1%22%20onclick%3D%22alert%28%27XSS%27%29%3B%22");
 
 		$result = $this->Helper->url('/controller/action/1/param:this+one+more');
 		$this->assertEquals($result, '/controller/action/1/param:this+one+more');
@@ -545,7 +545,7 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->url(array(
 			'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
 		));
-		$this->assertEquals($result, "/posts/index/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24");
+		$this->assertEquals($result, "/posts/index/param:%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524");
 
 		$result = $this->Helper->url(array(
 			'controller' => 'posts', 'action' => 'index', 'page' => '1',
