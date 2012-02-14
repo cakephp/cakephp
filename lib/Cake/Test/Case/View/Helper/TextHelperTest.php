@@ -26,6 +26,10 @@ class TextHelperTestObject extends TextHelper {
 		$this->_String = $string;
 	}
 
+	public function engine() {
+		return $this->_String;
+	}
+
 }
 
 /**
@@ -76,6 +80,25 @@ class TextHelperTest extends CakeTestCase {
 			$String->expects($this->at(0))->method($method);
 			$Text->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+	}
+
+/**
+ * test engine override
+ */
+	public function testEngineOverride() {
+		App::build(array(
+			'Utility' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Utility' . DS)
+			), APP::REGISTER);
+		$Text = new TextHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
+		$this->assertInstanceOf('TestAppEngine', $Text->engine());
+
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			));
+		CakePlugin::load('TestPlugin');
+		$Text = new TextHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
+		$this->assertInstanceOf('TestPluginEngine', $Text->engine());
+		CakePlugin::unload('TestPlugin');
 	}
 
 /**

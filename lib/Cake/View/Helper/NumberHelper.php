@@ -45,8 +45,8 @@ class NumberHelper extends AppHelper {
 	function __construct(View $View, $settings = array()) {
 		$settings = Set::merge(array('engine' => 'CakeNumber'), $settings);
 		parent::__construct($View, $settings);
-		$engineClass = $settings['engine'];
-		App::uses($engineClass, 'Utility');
+		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
+		App::uses($engineClass, $plugin . 'Utility');
 		if (class_exists($engineClass)) {
 			$this->_CakeNumber = new $engineClass($settings);
 		} else {

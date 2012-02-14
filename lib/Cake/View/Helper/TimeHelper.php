@@ -46,8 +46,8 @@ class TimeHelper extends AppHelper {
 	public function __construct(View $View, $settings = array()) {
 		$settings = Set::merge(array('engine' => 'CakeTime'), $settings);
 		parent::__construct($View, $settings);
-		$engineClass = $settings['engine'];
-		App::uses($engineClass, 'Utility');
+		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
+		App::uses($engineClass, $plugin . 'Utility');
 		if (class_exists($engineClass)) {
 			$this->_CakeTime = new $engineClass($settings);
 		} else {

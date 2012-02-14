@@ -29,6 +29,10 @@ class TimeHelperTestObject extends TimeHelper {
 		$this->_CakeTime = $cakeTime;
 	}
 
+	public function engine() {
+		return $this->_CakeTime;
+	}
+
 }
 
 /**
@@ -86,6 +90,25 @@ class TimeHelperTest extends CakeTestCase {
 			$CakeTime->expects($this->at(0))->method($method);
 			$Time->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+	}
+
+/**
+ * test engine override
+ */
+	public function testEngineOverride() {
+		App::build(array(
+			'Utility' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Utility' . DS)
+			), APP::REGISTER);
+		$Time = new TimeHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
+		$this->assertInstanceOf('TestAppEngine', $Time->engine());
+
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			));
+		CakePlugin::load('TestPlugin');
+		$Time = new TimeHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
+		$this->assertInstanceOf('TestPluginEngine', $Time->engine());
+		CakePlugin::unload('TestPlugin');
 	}
 
 }

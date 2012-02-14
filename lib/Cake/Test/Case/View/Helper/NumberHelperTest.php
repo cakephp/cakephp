@@ -29,6 +29,10 @@ class NumberHelperTestObject extends NumberHelper {
 		$this->_CakeNumber = $cakeNumber;
 	}
 
+	public function engine() {
+		return $this->_CakeNumber;
+	}
+
 }
 
 /**
@@ -80,6 +84,25 @@ class NumberHelperTest extends CakeTestCase {
 			$CakeNumber->expects($this->at(0))->method($method);
 			$Number->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+	}
+
+/**
+ * test engine override
+ */
+	public function testEngineOverride() {
+		App::build(array(
+			'Utility' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Utility' . DS)
+			), APP::REGISTER);
+		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
+		$this->assertInstanceOf('TestAppEngine', $Number->engine());
+
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			));
+		CakePlugin::load('TestPlugin');
+		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
+		$this->assertInstanceOf('TestPluginEngine', $Number->engine());
+		CakePlugin::unload('TestPlugin');
 	}
 
 }
