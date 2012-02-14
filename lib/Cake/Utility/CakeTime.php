@@ -38,7 +38,43 @@ class CakeTime {
  * @var string
  * @see TimeHelper::format()
  */
-	public $niceFormat = '%a, %b %eS %Y, %H:%M';
+	public static $niceFormat = '%a, %b %eS %Y, %H:%M';
+
+/**
+ * Temporary variable containing timestamp value, used internally convertSpecifiers()
+ */
+	protected static $_time = null;
+
+/**
+ * Magic set method for backward compatibility.
+ *
+ * Used by TimeHelper to modify static variables in CakeTime
+ */
+	public function __set($name, $value) {
+		switch ($name) {
+		case 'niceFormat':
+			self::${$name} = $value;
+			break;
+		default:
+			break;
+		}
+	}
+
+/**
+ * Magic set method for backward compatibility.
+ *
+ * Used by TimeHelper to get static variables in CakeTime
+ */
+	public function __get($name) {
+		switch ($name) {
+		case 'niceFormat':
+			return self::${$name};
+			break;
+		default:
+			return null;
+			break;
+		}
+	}
 
 /**
  * Converts a string representing the format for the function strftime and returns a
@@ -50,12 +86,12 @@ class CakeTime {
  * @return string windows safe and date() function compatible format for strftime
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function convertSpecifiers($format, $time = null) {
+	public static function convertSpecifiers($format, $time = null) {
 		if (!$time) {
 			$time = time();
 		}
-		$this->__time = $time;
-		return preg_replace_callback('/\%(\w+)/', array($this, '_translateSpecifier'), $format);
+		self::$_time = $time;
+		return preg_replace_callback('/\%(\w+)/', array('CakeTime', '_translateSpecifier'), $format);
 	}
 
 /**
@@ -70,47 +106,47 @@ class CakeTime {
 			case 'a':
 				$abday = __dc('cake', 'abday', 5);
 				if (is_array($abday)) {
-					return $abday[date('w', $this->__time)];
+					return $abday[date('w', self::$_time)];
 				}
 				break;
 			case 'A':
 				$day = __dc('cake', 'day', 5);
 				if (is_array($day)) {
-					return $day[date('w', $this->__time)];
+					return $day[date('w', self::$_time)];
 				}
 				break;
 			case 'c':
 				$format = __dc('cake', 'd_t_fmt', 5);
 				if ($format != 'd_t_fmt') {
-					return $this->convertSpecifiers($format, $this->__time);
+					return self::convertSpecifiers($format, self::$_time);
 				}
 				break;
 			case 'C':
-				return sprintf("%02d", date('Y', $this->__time) / 100);
+				return sprintf("%02d", date('Y', self::$_time) / 100);
 			case 'D':
 				return '%m/%d/%y';
 			case 'e':
 				if (DS === '/') {
 					return '%e';
 				}
-				$day = date('j', $this->__time);
+				$day = date('j', self::$_time);
 				if ($day < 10) {
 					$day = ' ' . $day;
 				}
 				return $day;
 			case 'eS' :
-				return date('jS', $this->__time);
+				return date('jS', self::$_time);
 			case 'b':
 			case 'h':
 				$months = __dc('cake', 'abmon', 5);
 				if (is_array($months)) {
-					return $months[date('n', $this->__time) -1];
+					return $months[date('n', self::$_time) -1];
 				}
 				return '%b';
 			case 'B':
 				$months = __dc('cake', 'mon', 5);
 				if (is_array($months)) {
-					return $months[date('n', $this->__time) -1];
+					return $months[date('n', self::$_time) -1];
 				}
 				break;
 			case 'n':
@@ -118,7 +154,7 @@ class CakeTime {
 			case 'p':
 			case 'P':
 				$default = array('am' => 0, 'pm' => 1);
-				$meridiem = $default[date('a', $this->__time)];
+				$meridiem = $default[date('a', self::$_time)];
 				$format = __dc('cake', 'am_pm', 5);
 				if (is_array($format)) {
 					$meridiem = $format[$meridiem];
@@ -128,27 +164,27 @@ class CakeTime {
 			case 'r':
 				$complete = __dc('cake', 't_fmt_ampm', 5);
 				if ($complete != 't_fmt_ampm') {
-					return str_replace('%p', $this->_translateSpecifier(array('%p', 'p')), $complete);
+					return str_replace('%p', self::_translateSpecifier(array('%p', 'p')), $complete);
 				}
 				break;
 			case 'R':
-				return date('H:i', $this->__time);
+				return date('H:i', self::$_time);
 			case 't':
 				return "\t";
 			case 'T':
 				return '%H:%M:%S';
 			case 'u':
-				return ($weekDay = date('w', $this->__time)) ? $weekDay : 7;
+				return ($weekDay = date('w', self::$_time)) ? $weekDay : 7;
 			case 'x':
 				$format = __dc('cake', 'd_fmt', 5);
 				if ($format != 'd_fmt') {
-					return $this->convertSpecifiers($format, $this->__time);
+					return self::convertSpecifiers($format, self::$_time);
 				}
 				break;
 			case 'X':
 				$format = __dc('cake', 't_fmt', 5);
 				if ($format != 't_fmt') {
-					return $this->convertSpecifiers($format, $this->__time);
+					return self::convertSpecifiers($format, self::$_time);
 				}
 				break;
 		}
@@ -163,8 +199,8 @@ class CakeTime {
  * @return integer UNIX timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function convert($serverTime, $userOffset) {
-		$serverOffset = $this->serverOffset();
+	public static function convert($serverTime, $userOffset) {
+		$serverOffset = self::serverOffset();
 		$gmtTime = $serverTime - $serverOffset;
 		$userTime = $gmtTime + $userOffset * (60*60);
 		return $userTime;
@@ -176,7 +212,7 @@ class CakeTime {
  * @return integer Offset
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function serverOffset() {
+	public static function serverOffset() {
 		return date('Z', time());
 	}
 
@@ -188,7 +224,7 @@ class CakeTime {
  * @return string Parsed timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function fromString($dateString, $userOffset = null) {
+	public static function fromString($dateString, $userOffset = null) {
 		if (empty($dateString)) {
 			return false;
 		}
@@ -198,7 +234,7 @@ class CakeTime {
 			$date = strtotime($dateString);
 		}
 		if ($userOffset !== null) {
-			return $this->convert($date, $userOffset);
+			return self::convert($date, $userOffset);
 		}
 		if ($date === -1) {
 			return false;
@@ -218,17 +254,17 @@ class CakeTime {
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function nice($dateString = null, $userOffset = null, $format = null) {
+	public static function nice($dateString = null, $userOffset = null, $format = null) {
 		if ($dateString != null) {
-			$date = $this->fromString($dateString, $userOffset);
+			$date = self::fromString($dateString, $userOffset);
 		} else {
 			$date = time();
 		}
 		if (!$format) {
-			$format = $this->niceFormat;
+			$format = self::$niceFormat;
 		}
-		$format = $this->convertSpecifiers($format, $date);
-		return $this->_strftime($format, $date);
+		$format = self::convertSpecifiers($format, $date);
+		return self::_strftime($format, $date);
 	}
 
 /**
@@ -244,18 +280,18 @@ class CakeTime {
  * @return string Described, relative date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function niceShort($dateString = null, $userOffset = null) {
-		$date = $dateString ? $this->fromString($dateString, $userOffset) : time();
+	public static function niceShort($dateString = null, $userOffset = null) {
+		$date = $dateString ? self::fromString($dateString, $userOffset) : time();
 
-		$y = $this->isThisYear($date) ? '' : ' %Y';
+		$y = self::isThisYear($date) ? '' : ' %Y';
 
-		if ($this->isToday($dateString, $userOffset)) {
-			$ret = __d('cake', 'Today, %s', $this->_strftime("%H:%M", $date));
-		} elseif ($this->wasYesterday($dateString, $userOffset)) {
-			$ret = __d('cake', 'Yesterday, %s', $this->_strftime("%H:%M", $date));
+		if (self::isToday($dateString, $userOffset)) {
+			$ret = __d('cake', 'Today, %s', self::_strftime("%H:%M", $date));
+		} elseif (self::wasYesterday($dateString, $userOffset)) {
+			$ret = __d('cake', 'Yesterday, %s', self::_strftime("%H:%M", $date));
 		} else {
-			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
-			$ret = $this->_strftime($format, $date);
+			$format = self::convertSpecifiers("%b %eS{$y}, %H:%M", $date);
+			$ret = self::_strftime($format, $date);
 		}
 
 		return $ret;
@@ -271,9 +307,9 @@ class CakeTime {
  * @return string Partial SQL string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
-		$begin = $this->fromString($begin, $userOffset);
-		$end = $this->fromString($end, $userOffset);
+	public static function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
+		$begin = self::fromString($begin, $userOffset);
+		$end = self::fromString($end, $userOffset);
 		$begin = date('Y-m-d', $begin) . ' 00:00:00';
 		$end = date('Y-m-d', $end) . ' 23:59:59';
 
@@ -290,9 +326,9 @@ class CakeTime {
  * @return string Partial SQL string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		return $this->daysAsSql($dateString, $dateString, $fieldName);
+	public static function dayAsSql($dateString, $fieldName, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
+		return self::daysAsSql($dateString, $dateString, $fieldName);
 	}
 
 /**
@@ -303,8 +339,8 @@ class CakeTime {
  * @return boolean True if datetime string is today
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isToday($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function isToday($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
 
@@ -316,8 +352,8 @@ class CakeTime {
  * @return boolean True if datetime string is within current week
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isThisWeek($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function isThisWeek($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 		return date('W o', $date) == date('W o', time());
 	}
 
@@ -328,8 +364,8 @@ class CakeTime {
  * @return boolean True if datetime string is within current month
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isThisMonth($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString);
+	public static function isThisMonth($dateString, $userOffset = null) {
+		$date = self::fromString($dateString);
 		return date('m Y', $date) == date('m Y', time());
 	}
 
@@ -341,8 +377,8 @@ class CakeTime {
  * @return boolean True if datetime string is within current year
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isThisYear($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function isThisYear($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 		return  date('Y', $date) == date('Y', time());
 	}
 
@@ -355,8 +391,8 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  *
  */
-	public function wasYesterday($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function wasYesterday($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 	}
 
@@ -368,8 +404,8 @@ class CakeTime {
  * @return boolean True if datetime string was yesterday
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isTomorrow($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function isTomorrow($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
 	}
 
@@ -381,8 +417,8 @@ class CakeTime {
  * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toQuarter($dateString, $range = false) {
-		$time = $this->fromString($dateString);
+	public static function toQuarter($dateString, $range = false) {
+		$time = self::fromString($dateString);
 		$date = ceil(date('m', $time) / 3);
 
 		if ($range === true) {
@@ -418,8 +454,8 @@ class CakeTime {
  * @return integer Unix timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toUnix($dateString, $userOffset = null) {
-		return $this->fromString($dateString, $userOffset);
+	public static function toUnix($dateString, $userOffset = null) {
+		return self::fromString($dateString, $userOffset);
 	}
 
 /**
@@ -430,8 +466,8 @@ class CakeTime {
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toAtom($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function toAtom($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 		return date('Y-m-d\TH:i:s\Z', $date);
 	}
 
@@ -443,8 +479,8 @@ class CakeTime {
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toRSS($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
+	public static function toRSS($dateString, $userOffset = null) {
+		$date = self::fromString($dateString, $userOffset);
 
 		if (!is_null($userOffset)) {
 			if ($userOffset == 0) {
@@ -484,16 +520,16 @@ class CakeTime {
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function timeAgoInWords($dateTime, $options = array()) {
+	public static function timeAgoInWords($dateTime, $options = array()) {
 		$userOffset = null;
 		if (is_array($options) && isset($options['userOffset'])) {
 			$userOffset = $options['userOffset'];
 		}
 		$now = time();
 		if (!is_null($userOffset)) {
-			$now = $this->convert(time(), $userOffset);
+			$now = self::convert(time(), $userOffset);
 		}
-		$inSeconds = $this->fromString($dateTime, $userOffset);
+		$inSeconds = self::fromString($dateTime, $userOffset);
 		$backwards = ($inSeconds > $now);
 
 		$format = 'j/n/y';
@@ -599,7 +635,7 @@ class CakeTime {
 		$relativeDate = '';
 		$diff = $futureTime - $pastTime;
 
-		if ($diff > abs($now - $this->fromString($end))) {
+		if ($diff > abs($now - self::fromString($end))) {
 			$relativeDate = __d('cake', 'on %s', date($format, $inSeconds));
 		} else {
 			if ($years > 0) {
@@ -650,14 +686,14 @@ class CakeTime {
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
+	public static function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
 		$tmp = str_replace(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
 			$timeInterval = $tmp . ' ' . __d('cake', 'days');
 		}
 
-		$date = $this->fromString($dateString, $userOffset);
-		$interval = $this->fromString('-' . $timeInterval);
+		$date = self::fromString($dateString, $userOffset);
+		$interval = self::fromString('-' . $timeInterval);
 
 		if ($date >= $interval && $date <= time()) {
 			return true;
@@ -673,9 +709,9 @@ class CakeTime {
  * @return integer UNIX timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function gmt($string = null) {
+	public static function gmt($string = null) {
 		if ($string != null) {
-			$string = $this->fromString($string);
+			$string = self::fromString($string);
 		} else {
 			$string = time();
 		}
@@ -701,13 +737,13 @@ class CakeTime {
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function format($format, $date = null, $invalid = false, $userOffset = null) {
-		$time = $this->fromString($date, $userOffset);
-		$_time = $this->fromString($format, $userOffset);
+	public static function format($format, $date = null, $invalid = false, $userOffset = null) {
+		$time = self::fromString($date, $userOffset);
+		$_time = self::fromString($format, $userOffset);
 
 		if (is_numeric($_time) && $time === false) {
 			$format = $date;
-			return $this->i18nFormat($_time, $format, $invalid, $userOffset);
+			return self::i18nFormat($_time, $format, $invalid, $userOffset);
 		}
 		if ($time === false && $invalid !== false) {
 			return $invalid;
@@ -726,16 +762,16 @@ class CakeTime {
  * @return string Formatted and translated date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
-		$date = $this->fromString($date, $userOffset);
+	public static function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
+		$date = self::fromString($date, $userOffset);
 		if ($date === false && $invalid !== false) {
 			return $invalid;
 		}
 		if (empty($format)) {
 			$format = '%x';
 		}
-		$format = $this->convertSpecifiers($format, $date);
-		return $this->_strftime($format, $date);
+		$format = self::convertSpecifiers($format, $date);
+		return self::_strftime($format, $date);
 	}
 
 /**
@@ -747,7 +783,7 @@ class CakeTime {
  * @param int $date Timestamp to format.
  * @return string formatted string with correct encoding.
  */
-	protected function _strftime($format, $date) {
+	protected static function _strftime($format, $date) {
 		$format = strftime($format, $date);
 		$encoding = Configure::read('App.encoding');
 

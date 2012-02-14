@@ -25,10 +25,16 @@ App::uses('CakeTime', 'Utility');
  */
 class TimeHelperTestObject extends TimeHelper {
 
-	public function attach(CakeTime $cakeTime) {
+	public function attach(CakeTimeMock $cakeTime) {
 		$this->_CakeTime = $cakeTime;
 	}
 
+}
+
+/**
+ * CakeTimeMock class
+ */
+class CakeTimeMock {
 }
 
 /**
@@ -48,10 +54,8 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$View = new View(null);
-		$this->CakeTime = $this->getMock('CakeTime');
-		$this->Time = new TimeHelperTestObject($View);
-		$this->Time->attach($this->CakeTime);
+		parent::setUp();
+		$this->View = new View(null);
 	}
 
 /**
@@ -60,8 +64,8 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->Time);
-		unset($this->CakeTime);
+		unset($this->View);
+		parent::tearDown();
 	}
 
 /**
@@ -75,9 +79,12 @@ class TimeHelperTest extends CakeTestCase {
 			'isTomorrow', 'toQuarter', 'toUnix', 'toAtom', 'toRSS',
 			'timeAgoInWords', 'wasWithinLast', 'gmt', 'format', 'i18nFormat',
 			);
+		$CakeTime = $this->getMock('CakeTimeMock', $methods);
+		$Time = new TimeHelperTestObject($this->View, array('engine' => 'CakeTimeMock'));
+		$Time->attach($CakeTime);
 		foreach ($methods as $method) {
-			$this->CakeTime->expects($this->at(0))->method($method);
-			$this->Time->{$method}('who', 'what', 'when', 'where', 'how');
+			$CakeTime->expects($this->at(0))->method($method);
+			$Time->{$method}('who', 'what', 'when', 'where', 'how');
 		}
 	}
 

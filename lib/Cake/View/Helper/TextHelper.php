@@ -60,8 +60,15 @@ class TextHelper extends AppHelper {
  * @param array $settings Settings array Settings array
  */
 	public function __construct(View $View, $settings = array()) {
+		$settings = Set::merge(array('engine' => 'String'), $settings);
 		parent::__construct($View, $settings);
-		$this->_String = new String($settings);
+		$engineClass = $settings['engine'];
+		App::uses($engineClass, 'Utility');
+		if (class_exists($engineClass)) {
+			$this->_String = new $engineClass($settings);
+		} else {
+			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+		}
 	}
 
 	/**
