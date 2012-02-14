@@ -336,6 +336,26 @@ podeís adquirirla.</span></p>
 		$expected = 'Text with a partial <iframe src="http://www.cakephp.org" /> link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
 		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
+		$expected = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url www.not-working-www.com and more';
+		$expected = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url http://www.not-working-www.com and more';
+		$expected = 'Text with a url <a href="http://www.not-working-www.com">http://www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url http://www.www.not-working-www.com and more';
+		$expected = 'Text with a url <a href="http://www.www.not-working-www.com">http://www.www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -424,7 +444,7 @@ podeís adquirirla.</span></p>
 		$expected = $text;
 		$result = $this->Text->excerpt($text, $phrase, 13, '...');
 		$this->assertEquals($expected, $result);
-		
+
 		$text = 'aaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa';
 		$phrase = 'bbbbbbbb';
 		$result = $this->Text->excerpt($text, $phrase, 10);
