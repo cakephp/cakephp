@@ -503,7 +503,7 @@ class RouterTest extends CakeTestCase {
 			'keyed' => 'is an array',
 			'test'
 		)));
-		$expected = '/tests/index/namedParam[keyed]:is an array/namedParam[0]:test';
+		$expected = '/tests/index/namedParam[keyed]:is%20an%20array/namedParam[0]:test';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -1705,6 +1705,8 @@ class RouterTest extends CakeTestCase {
  */
 	public function testPrefixFalseIgnored() {
 		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+
 		Router::connect('/cache_css/*', array('admin' => false, 'controller' => 'asset_compress', 'action' => 'get'));
 
 		$url = Router::url(array('controller' => 'asset_compress', 'action' => 'get', 'test'));

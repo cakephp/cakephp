@@ -917,7 +917,7 @@ class Router {
 		$output = implode('/', $urlOut);
 
 		if (!empty($args)) {
-			$output .= '/' . implode('/', $args);
+			$output .= '/' . implode('/', array_map('rawurlencode', $args));
 		}
 
 		if (!empty($named)) {
@@ -925,10 +925,10 @@ class Router {
 				if (is_array($value)) {
 					$flattend = Set::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {
-						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . $namedValue;
+						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
 					}
 				} else {
-					$output .= '/' . $name . self::$_namedConfig['separator'] . $value;
+					$output .= '/' . $name . self::$_namedConfig['separator'] . rawurlencode($value);
 				}
 			}
 		}
