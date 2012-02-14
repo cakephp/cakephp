@@ -25,10 +25,16 @@ App::uses('NumberHelper', 'View/Helper');
  */
 class NumberHelperTestObject extends NumberHelper {
 
-	public function attach(CakeNumber $cakeNumber) {
+	public function attach(CakeNumberMock $cakeNumber) {
 		$this->_CakeNumber = $cakeNumber;
 	}
 
+}
+
+/**
+ * CakeNumberMock class
+ */
+class CakeNumberMock {
 }
 
 /**
@@ -45,10 +51,7 @@ class NumberHelperTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$view = $this->getMock('View', array(), array(), '', false);
-		$this->CakeNumber = $this->getMock('CakeNumber');
-		$this->Number = new NumberHelperTestObject($view);
-		$this->Number->attach($this->CakeNumber);
+		$this->View = new View(null);
 	}
 
 /**
@@ -58,7 +61,7 @@ class NumberHelperTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Number);
+		unset($this->View);
 	}
 
 
@@ -70,9 +73,12 @@ class NumberHelperTest extends CakeTestCase {
 			'precision', 'toReadableSize', 'toPercentage', 'format',
 			'currency', 'addFormat',
 			);
+		$CakeNumber = $this->getMock('CakeNumberMock', $methods);
+		$Number = new NumberHelperTestObject($this->View, array('engine' => 'CakeNumberMock'));
+		$Number->attach($CakeNumber);
 		foreach ($methods as $method) {
-			$this->CakeNumber->expects($this->at(0))->method($method);
-			$this->Number->{$method}('who', 'what', 'when', 'where', 'how');
+			$CakeNumber->expects($this->at(0))->method($method);
+			$Number->{$method}('who', 'what', 'when', 'where', 'how');
 		}
 	}
 

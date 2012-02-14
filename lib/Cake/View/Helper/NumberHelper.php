@@ -43,14 +43,21 @@ class NumberHelper extends AppHelper {
 	 * @param array $settings Configuration settings for the helper
 	 */
 	function __construct(View $View, $settings = array()) {
+		$settings = Set::merge(array('engine' => 'CakeNumber'), $settings);
 		parent::__construct($View, $settings);
-		$this->_CakeNumber = new CakeNumber();
+		$engineClass = $settings['engine'];
+		App::uses($engineClass, 'Utility');
+		if (class_exists($engineClass)) {
+			$this->_CakeNumber = new $engineClass($settings);
+		} else {
+			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+		}
 	}
 
 	/**
 	 * Call methods from CakeNumber utility class
 	 */
-	function __call($method, $params) {
+	public function __call($method, $params) {
 		return call_user_func_array(array($this->_CakeNumber, $method), $params);
 	}
 

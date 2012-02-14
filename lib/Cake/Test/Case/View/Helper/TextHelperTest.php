@@ -22,10 +22,16 @@ App::uses('TextHelper', 'View/Helper');
 
 class TextHelperTestObject extends TextHelper {
 
-	public function attach(String $string) {
+	public function attach(StringMock $string) {
 		$this->_String = $string;
 	}
 
+}
+
+/**
+ * StringMock class
+ */
+class StringMock {
 }
 
 /**
@@ -41,8 +47,8 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$controller = null;
-		$this->View = new View($controller);
+		parent::setUp();
+		$this->View = new View(null);
 		$this->Text = new TextHelper($this->View);
 	}
 
@@ -52,23 +58,23 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->View, $this->Text);
+		unset($this->View);
+		parent::tearDown();
 	}
 
 /**
  * test String class methods are called correctly
  */
 	public function testTextHelperProxyMethodCalls() {
-		$this->String = $this->getMock('String');
-		unset($this->Text);
-		$this->Text = new TextHelperTestObject($this->View);
-		$this->Text->attach($this->String);
 		$methods = array(
 			'highlight', 'stripLinks', 'truncate', 'excerpt', 'toList',
 			);
+		$String = $this->getMock('StringMock', $methods);
+		$Text = new TextHelperTestObject($this->View, array('engine' => 'StringMock'));
+		$Text->attach($String);
 		foreach ($methods as $method) {
-			$this->String->expects($this->at(0))->method($method);
-			$this->Text->{$method}('who', 'what', 'when', 'where', 'how');
+			$String->expects($this->at(0))->method($method);
+			$Text->{$method}('who', 'what', 'when', 'where', 'how');
 		}
 	}
 
