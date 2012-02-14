@@ -5897,6 +5897,9 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->button('<Clear Form>', array('type' => 'reset', 'escape' => true));
 		$this->assertTags($result, array('button' => array('type' => 'reset'), '&lt;Clear Form&gt;', '/button'));
 
+		$result = $this->Form->button('No type', array('type' => false));
+		$this->assertTags($result, array('button' => array(), 'No type', '/button'));
+	
 		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
 		$this->assertNotRegExp('/\&039/', $result);
 	}

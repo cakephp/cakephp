@@ -1548,7 +1548,7 @@ class FormHelper extends AppHelper {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $name);
 		}
-		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
+		return $this->Html->useTag('button', $options, $title);
 	}
 
 /**
