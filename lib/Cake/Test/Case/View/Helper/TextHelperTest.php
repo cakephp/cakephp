@@ -23,11 +23,11 @@ App::uses('TextHelper', 'View/Helper');
 class TextHelperTestObject extends TextHelper {
 
 	public function attach(StringMock $string) {
-		$this->_String = $string;
+		$this->_engine = $string;
 	}
 
 	public function engine() {
-		return $this->_String;
+		return $this->_engine;
 	}
 
 }

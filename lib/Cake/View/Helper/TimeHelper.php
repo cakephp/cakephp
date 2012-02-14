@@ -35,7 +35,7 @@ class TimeHelper extends AppHelper {
 /**
  * CakeTime instance
  */
-	protected $_CakeTime = null;
+	protected $_engine = null;
 
 /**
  * Constructor
@@ -49,7 +49,7 @@ class TimeHelper extends AppHelper {
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
 		if (class_exists($engineClass)) {
-			$this->_CakeTime = new $engineClass($settings);
+			$this->_engine = new $engineClass($settings);
 		} else {
 			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
 		}
@@ -65,7 +65,7 @@ class TimeHelper extends AppHelper {
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'niceFormat':
-				$this->_CakeTime->{$name} = $value;
+				$this->_engine->{$name} = $value;
 			break;
 			default:
 				$this->{$name} = $value;
@@ -97,12 +97,12 @@ class TimeHelper extends AppHelper {
  * @return mixed
  */
 	public function __get($name) {
-		if (isset($this->_CakeTime->{$name})) {
-			return $this->_CakeTime->{$name};
+		if (isset($this->_engine->{$name})) {
+			return $this->_engine->{$name};
 		}
 		$magicGet = array('niceFormat');
 		if (in_array($name, $magicGet)) {
-			return $this->_CakeTime->{$name};
+			return $this->_engine->{$name};
 		}
 		return null;
 	}
@@ -111,7 +111,7 @@ class TimeHelper extends AppHelper {
 	 * Call methods from CakeTime utility class
 	 */
 	public function __call($method, $params) {
-		return call_user_func_array(array($this->_CakeTime, $method), $params);
+		return call_user_func_array(array($this->_engine, $method), $params);
 	}
 
 /**
@@ -124,7 +124,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function convertSpecifiers($format, $time = null) {
-		return $this->_CakeTime->convertSpecifiers($format, $time);
+		return $this->_engine->convertSpecifiers($format, $time);
 	}
 
 /**
@@ -136,7 +136,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function convert($serverTime, $userOffset) {
-		return $this->_CakeTime->convert($serverTime, $userOffset);
+		return $this->_engine->convert($serverTime, $userOffset);
 	}
 
 /**
@@ -146,7 +146,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function serverOffset() {
-		return $this->_CakeTime->serverOffset();
+		return $this->_engine->serverOffset();
 	}
 
 /**
@@ -158,7 +158,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function fromString($dateString, $userOffset = null) {
-		return $this->_CakeTime->fromString($dateString, $userOffset);
+		return $this->_engine->fromString($dateString, $userOffset);
 	}
 
 /**
@@ -171,7 +171,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function nice($dateString = null, $userOffset = null, $format = null) {
-		return $this->_CakeTime->nice($dateString, $userOffset, $format);
+		return $this->_engine->nice($dateString, $userOffset, $format);
 	}
 
 /**
@@ -183,7 +183,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function niceShort($dateString = null, $userOffset = null) {
-		return $this->_CakeTime->niceShort($dateString, $userOffset);
+		return $this->_engine->niceShort($dateString, $userOffset);
 	}
 
 /**
@@ -197,7 +197,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
-		return $this->_CakeTime->daysAsSql($begin, $end, $fieldName, $userOffset);
+		return $this->_engine->daysAsSql($begin, $end, $fieldName, $userOffset);
 	}
 
 /**
@@ -210,7 +210,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
-		return $this->_CakeTime->dayAsSql($dateString, $fieldName, $userOffset);
+		return $this->_engine->dayAsSql($dateString, $fieldName, $userOffset);
 	}
 
 /**
@@ -222,7 +222,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isToday($dateString, $userOffset = null) {
-		return $this->_CakeTime->isToday($dateString, $userOffset);
+		return $this->_engine->isToday($dateString, $userOffset);
 	}
 
 /**
@@ -234,7 +234,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isThisWeek($dateString, $userOffset = null) {
-		return $this->_CakeTime->isThisWeek($dateString, $userOffset);
+		return $this->_engine->isThisWeek($dateString, $userOffset);
 	}
 
 /**
@@ -246,7 +246,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isThisMonth($dateString, $userOffset = null) {
-		return $this->_CakeTime->isThisMonth($dateString, $userOffset);
+		return $this->_engine->isThisMonth($dateString, $userOffset);
 	}
 
 /**
@@ -258,7 +258,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isThisYear($dateString, $userOffset = null) {
-		return $this->_CakeTime->isThisYear($dateString, $userOffset);
+		return $this->_engine->isThisYear($dateString, $userOffset);
 	}
 
 /**
@@ -271,7 +271,7 @@ class TimeHelper extends AppHelper {
  *
  */
 	public function wasYesterday($dateString, $userOffset = null) {
-		return $this->_CakeTime->wasYesterday($dateString, $userOffset);
+		return $this->_engine->wasYesterday($dateString, $userOffset);
 	}
 
 /**
@@ -283,7 +283,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function isTomorrow($dateString, $userOffset = null) {
-		return $this->_CakeTime->isTomorrow($dateString, $userOffset);
+		return $this->_engine->isTomorrow($dateString, $userOffset);
 	}
 
 /**
@@ -295,7 +295,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toQuarter($dateString, $range = false) {
-		return $this->_CakeTime->toQuarter($dateString, $range);
+		return $this->_engine->toQuarter($dateString, $range);
 	}
 
 /**
@@ -307,7 +307,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toUnix($dateString, $userOffset = null) {
-		return $this->_CakeTime->toUnix($dateString, $userOffset);
+		return $this->_engine->toUnix($dateString, $userOffset);
 	}
 
 /**
@@ -319,7 +319,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toAtom($dateString, $userOffset = null) {
-		return $this->_CakeTime->toAtom($dateString, $userOffset);
+		return $this->_engine->toAtom($dateString, $userOffset);
 	}
 
 /**
@@ -331,7 +331,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toRSS($dateString, $userOffset = null) {
-		return $this->_CakeTime->toRSS($dateString, $userOffset);
+		return $this->_engine->toRSS($dateString, $userOffset);
 	}
 
 /**
@@ -343,7 +343,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function timeAgoInWords($dateTime, $options = array()) {
-		return $this->_CakeTime->timeAgoInWords($dateTime, $options);
+		return $this->_engine->timeAgoInWords($dateTime, $options);
 	}
 
 /**
@@ -357,7 +357,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
-		return $this->_CakeTime->wasWithinLast($timeInterval, $dateString, $userOffset);
+		return $this->_engine->wasWithinLast($timeInterval, $dateString, $userOffset);
 	}
 
 /**
@@ -368,7 +368,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function gmt($string = null) {
-		return $this->_CakeTime->gmt($string);
+		return $this->_engine->gmt($string);
 	}
 
 /**
@@ -382,7 +382,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function format($format, $date = null, $invalid = false, $userOffset = null) {
-		return $this->_CakeTime->format($format, $date, $invalid, $userOffset);
+		return $this->_engine->format($format, $date, $invalid, $userOffset);
 	}
 
 /**
@@ -396,7 +396,7 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
-		return $this->_CakeTime->i18nFormat($date, $format, $invalid, $userOffset);
+		return $this->_engine->i18nFormat($date, $format, $invalid, $userOffset);
 	}
 
 }

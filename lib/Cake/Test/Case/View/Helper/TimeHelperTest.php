@@ -26,11 +26,11 @@ App::uses('CakeTime', 'Utility');
 class TimeHelperTestObject extends TimeHelper {
 
 	public function attach(CakeTimeMock $cakeTime) {
-		$this->_CakeTime = $cakeTime;
+		$this->_engine = $cakeTime;
 	}
 
 	public function engine() {
-		return $this->_CakeTime;
+		return $this->_engine;
 	}
 
 }

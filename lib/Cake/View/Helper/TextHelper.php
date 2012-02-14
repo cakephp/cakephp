@@ -51,7 +51,7 @@ class TextHelper extends AppHelper {
 /**
  * String utility instance
  */
-	protected $_String;
+	protected $_engine;
 
 /**
  * Constructor
@@ -65,7 +65,7 @@ class TextHelper extends AppHelper {
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
 		if (class_exists($engineClass)) {
-			$this->_String = new $engineClass($settings);
+			$this->_engine = new $engineClass($settings);
 		} else {
 			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
 		}
@@ -75,7 +75,7 @@ class TextHelper extends AppHelper {
 	 * Call methods from String utility class
 	 */
 	public function __call($method, $params) {
-		return call_user_func_array(array($this->_String, $method), $params);
+		return call_user_func_array(array($this->_engine, $method), $params);
 	}
 
 /**
@@ -214,7 +214,7 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
 	public function highlight($text, $phrase, $options = array()) {
-		return $this->_String->highlight($text, $phrase, $options);
+		return $this->_engine->highlight($text, $phrase, $options);
 	}
 
 /**
@@ -225,7 +225,7 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
  */
 	public function stripLinks($text) {
-		return $this->_String->stripLinks($text);
+		return $this->_engine->stripLinks($text);
 	}
 
 /**
@@ -238,7 +238,7 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
 	public function truncate($text, $length = 100, $options = array()) {
-		return $this->_String->truncate($text, $length, $options);
+		return $this->_engine->truncate($text, $length, $options);
 	}
 
 /**
@@ -252,7 +252,7 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
 	public function excerpt($text, $phrase, $radius = 100, $ending = '...') {
-		return $this->_String->excerpt($text, $phrase, $radius, $ending);
+		return $this->_engine->excerpt($text, $phrase, $radius, $ending);
 	}
 
 /**
@@ -265,7 +265,7 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
 	public function toList($list, $and = 'and', $separator = ', ') {
-		return $this->_String->toList($list, $and, $separator);
+		return $this->_engine->toList($list, $and, $separator);
 	}
 
 }

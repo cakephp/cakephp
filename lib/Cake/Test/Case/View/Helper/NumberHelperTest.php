@@ -26,11 +26,11 @@ App::uses('NumberHelper', 'View/Helper');
 class NumberHelperTestObject extends NumberHelper {
 
 	public function attach(CakeNumberMock $cakeNumber) {
-		$this->_CakeNumber = $cakeNumber;
+		$this->_engine = $cakeNumber;
 	}
 
 	public function engine() {
-		return $this->_CakeNumber;
+		return $this->_engine;
 	}
 
 }

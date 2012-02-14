@@ -35,7 +35,7 @@ class NumberHelper extends AppHelper {
 
 	/** CakeNumber instance
 	 */
-	protected $_CakeNumber = null;
+	protected $_engine = null;
 
 	/* Default Constructor
 	 *
@@ -48,7 +48,7 @@ class NumberHelper extends AppHelper {
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
 		if (class_exists($engineClass)) {
-			$this->_CakeNumber = new $engineClass($settings);
+			$this->_engine = new $engineClass($settings);
 		} else {
 			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
 		}
@@ -58,7 +58,7 @@ class NumberHelper extends AppHelper {
 	 * Call methods from CakeNumber utility class
 	 */
 	public function __call($method, $params) {
-		return call_user_func_array(array($this->_CakeNumber, $method), $params);
+		return call_user_func_array(array($this->_engine, $method), $params);
 	}
 
 /**
@@ -70,7 +70,7 @@ class NumberHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public function precision($number, $precision = 3) {
-		return $this->_CakeNumber->precision($number, $precision);
+		return $this->_engine->precision($number, $precision);
 	}
 
 /**
@@ -81,7 +81,7 @@ class NumberHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
  */
 	public function toReadableSize($size) {
-		return $this->_CakeNumber->toReadableSize($size);
+		return $this->_engine->toReadableSize($size);
 	}
 
 /**
@@ -93,7 +93,7 @@ class NumberHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
 	public function toPercentage($number, $precision = 2) {
-		return $this->_CakeNumber->toPercentage($number, $precision);
+		return $this->_engine->toPercentage($number, $precision);
 	}
 
 /**
@@ -106,7 +106,7 @@ class NumberHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
 	public function format($number, $options = false) {
-		return $this->_CakeNumber->format($number, $options);
+		return $this->_engine->format($number, $options);
 	}
 
 /**
@@ -120,7 +120,7 @@ class NumberHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public function currency($number, $currency = 'USD', $options = array()) {
-		return $this->_CakeNumber->currency($number, $currency, $options);
+		return $this->_engine->currency($number, $currency, $options);
 	}
 
 /**
@@ -133,7 +133,7 @@ class NumberHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, $options) {
-		return $this->_CakeNumber->addFormat($formatName, $options);
+		return $this->_engine->addFormat($formatName, $options);
 	}
 
 }
