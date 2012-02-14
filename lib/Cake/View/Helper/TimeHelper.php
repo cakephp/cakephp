@@ -40,6 +40,11 @@ class TimeHelper extends AppHelper {
 /**
  * Constructor
  *
+ * ### Settings:
+ *
+ * - `engine` Class name to use to replace CakeTime functionality
+ *            The class needs to be placed in the `Utility` directory.
+ *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
  */
@@ -107,9 +112,9 @@ class TimeHelper extends AppHelper {
 		return null;
 	}
 
-	/** 
-	 * Call methods from CakeTime utility class
-	 */
+/**
+ * Call methods from CakeTime utility class
+ */
 	public function __call($method, $params) {
 		return call_user_func_array(array($this->_engine, $method), $params);
 	}

@@ -56,6 +56,11 @@ class TextHelper extends AppHelper {
 /**
  * Constructor
  *
+ * ### Settings:
+ *
+ * - `engine` Class name to use to replace String functionality.
+ *            The class needs to be placed in the `Utility` directory.
+ *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
  */
@@ -71,9 +76,9 @@ class TextHelper extends AppHelper {
 		}
 	}
 
-	/**
-	 * Call methods from String utility class
-	 */
+/**
+ * Call methods from String utility class
+ */
 	public function __call($method, $params) {
 		return call_user_func_array(array($this->_engine, $method), $params);
 	}

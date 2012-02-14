@@ -33,15 +33,20 @@ App::uses('AppHelper', 'View/Helper');
  */
 class NumberHelper extends AppHelper {
 
-	/** CakeNumber instance
-	 */
+/** CakeNumber instance
+ */
 	protected $_engine = null;
 
-	/* Default Constructor
-	 *
-	 * @param View $View The View this helper is being attached to.
-	 * @param array $settings Configuration settings for the helper
-	 */
+/* Default Constructor
+ *
+ * ### Settings:
+ *
+ * - `engine` Class name to use to replace CakeNumber functionality
+ *            The class needs to be placed in the `Utility` directory.
+ *
+ * @param View $View The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper
+ */
 	function __construct(View $View, $settings = array()) {
 		$settings = Set::merge(array('engine' => 'CakeNumber'), $settings);
 		parent::__construct($View, $settings);
@@ -54,9 +59,9 @@ class NumberHelper extends AppHelper {
 		}
 	}
 
-	/**
-	 * Call methods from CakeNumber utility class
-	 */
+/**
+ * Call methods from CakeNumber utility class
+ */
 	public function __call($method, $params) {
 		return call_user_func_array(array($this->_engine, $method), $params);
 	}
