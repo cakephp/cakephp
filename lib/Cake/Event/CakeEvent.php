@@ -61,11 +61,19 @@ class CakeEvent {
 	protected $_stopped = false;
 
 /**
+ * Property used to indicate that the event chain should still continue although 
+ * 
+ * @var boolean
+ */
+	protected $_forcePropagation = false;
+
+/**
  * Constructor
  *
  * @param string $name Name of the event
  * @param object $subject the object that this event applies to (usually the object that is generating the event)
  * @param mixed $data any value you wish to be transported with this event to it can be read by listeners
+ * @param boolean $forcePropagation indicating that the event chain should continue despite of a callback having failed
  *
  * ## Examples of usage:
  *
@@ -75,10 +83,11 @@ class CakeEvent {
  * }}}
  *
  */
-	public function __construct($name, $subject = null, $data = null) {
+	public function __construct($name, $subject = null, $data = null, $forcePropagation = false) {
 		$this->_name = $name;
 		$this->data = $data;
 		$this->_subject = $subject;
+		$this->_forcePropagation = $forcePropagation;
 	}
 
 /**
@@ -113,11 +122,14 @@ class CakeEvent {
 	}
 
 /**
- * Stops the event from being used anymore
+ * Stops the event from being used anymore.
  *
- * @return void
+ * @return boolean
  */
 	public function stopPropagation() {
+		if ($this->_forcePropagation === true) {
+			return $this->_stopped = false;
+		}
 		return $this->_stopped = true;
 	}
 
@@ -130,4 +142,21 @@ class CakeEvent {
 		return $this->_stopped;
 	}
 
+/**
+ * Disables the forced callback propagation
+ *
+ * @return void
+ */
+	public function stopPropagationForcing() {
+		return $this->_forcePropagation = false;
+	}
+
+/**
+ * Checks wether the event forces the propagation
+ * 
+ * @return boolean
+ */
+	public function isForced() {
+		return $this->_forcePropagation;
+	}
 }

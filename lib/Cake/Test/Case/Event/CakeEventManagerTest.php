@@ -402,4 +402,29 @@ class CakeEventManagerTest extends CakeTestCase {
 		$expected = array('secondListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
 	}
+
+/**
+ * Tests that a forced propagation set on an event will be processed by all listeners
+ * 
+ * @return void
+ */
+	public function testPropagationForcing() {
+		$manager = new CakeEventManager;
+		$listener = new CakeEventTestListener;
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($listener, 'stopListener'), 'fake.event', array('priority' => 8));
+		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event', array('priority' => 5));
+		$event = new CakeEvent('fake.event', null, null, true);
+		$manager->dispatch($event);
+
+		$expected = array('secondListenerFunction', 'listenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+
+		$listener->callStack = array();
+		$event->stopPropagationForcing();
+		$manager->dispatch($event);
+
+		$expected = array('secondListenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+	}
 }
