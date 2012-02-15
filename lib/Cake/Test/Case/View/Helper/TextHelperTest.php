@@ -237,6 +237,26 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a partial &lt;iframe src=&quot;http://www.cakephp.org&quot; /&gt; link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => true));
 		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
+		$expected = 'Text with a url &lt;a href=&quot;http://www.not-working-www.com&quot;&gt;www.not-working-www.com&lt;/a&gt; and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url www.not-working-www.com and more';
+		$expected = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url http://www.not-working-www.com and more';
+		$expected = 'Text with a url <a href="http://www.not-working-www.com">http://www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a url http://www.www.not-working-www.com and more';
+		$expected = 'Text with a url <a href="http://www.www.not-working-www.com">http://www.www.not-working-www.com</a> and more';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -278,3 +298,4 @@ class TextHelperTest extends CakeTestCase {
 	}
 
 }
+
