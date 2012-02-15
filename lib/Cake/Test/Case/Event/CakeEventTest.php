@@ -82,4 +82,22 @@ class CakeEventTest extends CakeTestCase {
 		$this->assertEquals($this, $event->subject);
 		$this->assertEquals('fake.event', $event->name);
 	}
+
+/**
+ * Tests that propagation forcing works as expected
+ * 
+ * @return void
+ */
+	public function testEventForcePropagation() {
+		$event = new CakeEvent('fake.event', null, null, true);
+		$this->assertFalse($event->isStopped());
+		$this->assertTrue($event->isForced());
+		$this->assertFalse($event->stopPropagation());
+		$this->assertFalse($event->isStopped());
+		$this->assertTrue($event->isForced());
+		$event->stopPropagationForcing();
+		$this->assertTrue($event->stopPropagation());
+		$this->assertTrue($event->isStopped());
+		$this->assertFalse($event->isForced());
+	}
 }
