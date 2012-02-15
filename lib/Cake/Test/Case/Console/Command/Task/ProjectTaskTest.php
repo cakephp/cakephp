@@ -122,7 +122,7 @@ class ProjectTaskTest extends CakeTestCase {
 			'webroot' . DS . 'files',
 			'webroot' . DS . 'img',
 			'webroot' . DS . 'js',
-			
+
 		);
 		foreach ($dirs as $dir) {
 			$this->assertTrue(is_dir($path . DS . $dir), 'Missing ' . $dir);
@@ -199,7 +199,6 @@ class ProjectTaskTest extends CakeTestCase {
 			'Test' . DS . 'Fixture' => 'empty',
 			'Vendor' => 'empty',
 			'View' . DS . 'Elements' => 'empty',
-			'View' . DS . 'Errors' => 'empty',
 			'View' . DS . 'Scaffolds' => 'empty',
 			'tmp' . DS . 'cache' . DS . 'models' => 'empty',
 			'tmp' . DS . 'cache' . DS . 'persistent' => 'empty',
