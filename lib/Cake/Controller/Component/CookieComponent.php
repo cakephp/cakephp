@@ -172,16 +172,9 @@ class CookieComponent extends Component {
 		if (isset($this->time)) {
 			$this->_expire($this->time);
 		}
-	}
 
-/**
- * Initialize CookieComponent
- * 
- * @param Controller $controller
- * @return void
- */
-	public function initialize($controller) {
-		if (is_object($controller) && isset($controller->response)) {
+		$controller = $collection->getController();
+		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
 			$this->_response = new CakeResponse(array('charset' => Configure::read('App.encoding')));

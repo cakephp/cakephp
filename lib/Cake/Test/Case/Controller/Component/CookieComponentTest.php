@@ -72,10 +72,9 @@ class CookieComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		$_COOKIE = array();
-		$Collection = new ComponentCollection();
-		$this->Cookie = new CookieComponent($Collection);
 		$this->Controller = new CookieComponentTestController(new CakeRequest(), new CakeResponse());
-		$this->Cookie->initialize($this->Controller);
+		$this->Controller->constructClasses();
+		$this->Cookie = $this->Controller->Cookie;
 
 		$this->Cookie->name = 'CakeTestCookie';
 		$this->Cookie->time = 10;
@@ -199,7 +198,7 @@ class CookieComponentTest extends CakeTestCase {
 			'domain' => '',
 			'secure' => false,
 			'httpOnly' => true);
-		$result = $this->Controller->response->cookie($this->Cookie->name.'[Testing]');
+		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
 		$this->assertEquals($result, $expected);
 	}
 
@@ -220,7 +219,7 @@ class CookieComponentTest extends CakeTestCase {
 			'domain' => '',
 			'secure' => false,
 			'httpOnly' => true);
-		$result = $this->Controller->response->cookie($this->Cookie->name.'[Testing]');
+		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
 		$this->assertEquals($result, $expected);
 	}
 
