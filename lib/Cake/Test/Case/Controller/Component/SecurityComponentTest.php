@@ -480,7 +480,6 @@ class SecurityComponentTest extends CakeTestCase {
 	public function testValidatePostFormHacking() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
-		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(

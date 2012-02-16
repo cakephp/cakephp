@@ -969,7 +969,8 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/page/*', array('controller' => 'test'));
 		$result = Router::parse('/page/my-page');
-		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index');
+		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index', 'named' => array());
+		$this->assertEquals($expected, $result);
 
 		Router::reload();
 		Router::connect('/:language/contact', array('language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index'), array('language' => '[a-z]{3}'));

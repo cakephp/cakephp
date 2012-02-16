@@ -76,7 +76,6 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testGroupBy() {
-		$db = ConnectionManager::getDataSource('test');
 		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Sqlserver;
 		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
 
@@ -6769,6 +6768,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = true;
 		$TestModel->order = 'User.id';
 		$result = $TestModel->find('count');
+		$this->db->fullDebug = $fullDebug;
 		$this->assertEquals($result, 4);
 
 		$log = $this->db->getLog();
