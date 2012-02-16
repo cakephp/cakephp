@@ -1082,7 +1082,6 @@ class ViewTest extends CakeTestCase {
 		$View->renderCache($path, '+1 second');
 		$result = ob_get_clean();
 
-		$expected = 'some cacheText';
 		$this->assertRegExp('/^some cacheText/', $result);
 
 		@unlink($path);

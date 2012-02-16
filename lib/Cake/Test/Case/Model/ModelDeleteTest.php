@@ -636,7 +636,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertEquals(4, $result);
 
 		$result = $Article->delete(1, true);
-		$this->assertIdentical(true, true);
+		$this->assertSame($result, true);
 
 		$result = $Article->Comment->find('count', array(
 			'conditions' => array('Comment.article_id' => 1)

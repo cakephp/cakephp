@@ -283,21 +283,27 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty');
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'date', 'length' => 10, 'null' => false));
 		$expected = array('date' => 'date');
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'time', 'length' => 10, 'null' => false));
 		$expected = array('time' => 'time');
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->fieldValidation('email', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('email' => 'email');
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->fieldValidation('test', array('type' => 'integer', 'length' => 10, 'null' => false));
 		$expected = array('numeric' => 'numeric');
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->fieldValidation('test', array('type' => 'boolean', 'length' => 10, 'null' => false));
-		$expected = array('numeric' => 'numeric');
+		$expected = array('boolean' => 'boolean');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -589,6 +595,13 @@ class ModelTaskTest extends CakeTestCase {
 		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$result = $this->Task->doAssociations($model);
 		$expected = array(
+			'belongsTo' => array(
+				array(
+					'alias' => 'BakeUser',
+					'className' => 'BakeUser',
+					'foreignKey' => 'bake_user_id',
+				),
+			),
 			'hasMany' => array(
 				array(
 					'alias' => 'BakeComment',
@@ -606,6 +619,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			),
 		);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
