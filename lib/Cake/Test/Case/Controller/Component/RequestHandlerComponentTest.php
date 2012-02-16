@@ -428,7 +428,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->response->expects($this->at(1))->method('type')
 			->with('text/xml');
 
-		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'), array(&$this->Controller->Components));
 		$result = $this->RequestHandler->respondAs('json');
 		$this->assertTrue($result);
 		$result = $this->RequestHandler->respondAs('text/xml');

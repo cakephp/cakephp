@@ -2140,8 +2140,9 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->options(array('url' => array('plugin' => null)));
 		$result = $this->Paginator->link('Page 3', array('page' => 3));
 		$expected = array(
-			'a' => array('/magazines/index/page:3'), 'Page 3', '/a'
+			'a' => array('href' => '/magazines/index/page:3'), 'Page 3', '/a'
 		);
+		$this->assertTags($result, $expected);
 
 		$this->Paginator->options(array('url' => array('plugin' => null, 'controller' => 'issues')));
 		$result = $this->Paginator->link('Page 3', array('page' => 3));

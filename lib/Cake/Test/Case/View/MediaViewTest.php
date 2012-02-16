@@ -35,7 +35,6 @@ class MediaViewTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$controller = new Controller();
 		$this->MediaView = $this->getMock('MediaView', array('_isActive', '_clearBuffer', '_flushBuffer'));
 		$this->MediaView->response = $this->getMock('CakeResponse');
 	}
