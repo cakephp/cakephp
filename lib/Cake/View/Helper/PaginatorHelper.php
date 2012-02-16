@@ -740,7 +740,6 @@ class PaginatorHelper extends AppHelper {
 
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					$currentClass = 'current';
 					if ($class) {
 						$currentClass .= ' ' . $class;
 					}
