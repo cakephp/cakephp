@@ -476,6 +476,9 @@ class FolderTest extends CakeTestCase {
 		$result = $Folder->tree(null, true);
 		$this->assertEquals($expected, $result);
 
+		$result = $Folder->tree(null, array('.'));
+		$this->assertEquals($expected, $result);
+
 		$expected = array(
 			array(
 				$Folder->path,
