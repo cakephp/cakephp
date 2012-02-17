@@ -261,7 +261,7 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Gets the list of attached behaviors, or, whether the given behavior is attached
+ * Gets the list of attached objects, or, whether the given object is attached
  *
  * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
  *   returns an array of currently-attached behaviors
