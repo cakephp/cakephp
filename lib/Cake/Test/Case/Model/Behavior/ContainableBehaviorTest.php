@@ -3511,7 +3511,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * test that bindModel and unbindModel work with find() calls in between.
  */
-	function testBindMultipleTimesWithFind() {
+	public function testBindMultipleTimesWithFind() {
 		$binding = array(
 			'hasOne' => array(
 				'ArticlesTag' => array(
@@ -3624,7 +3624,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @param array $contain
  * @return void
  */
-	function __containments(&$Model, $contain = array()) {
+	protected function __containments(&$Model, $contain = array()) {
 		if (!is_array($Model)) {
 			$result = $Model->containments($contain);
 			return $this->__containments($result['models']);
@@ -3645,7 +3645,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @param array $expected
  * @return void
  */
-	function __assertBindings(&$Model, $expected = array()) {
+	protected function __assertBindings(&$Model, $expected = array()) {
 		$expected = array_merge(array('belongsTo' => array(), 'hasOne' => array(), 'hasMany' => array(), 'hasAndBelongsToMany' => array()), $expected);
 
 		foreach ($expected as $binding => $expect) {
@@ -3661,7 +3661,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @param bool $output
  * @return void
  */
-	function __bindings(&$Model, $extra = array(), $output = true) {
+	protected function __bindings(&$Model, $extra = array(), $output = true) {
 		$relationTypes = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 		$debug = '[';

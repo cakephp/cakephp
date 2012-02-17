@@ -427,7 +427,7 @@ class FileTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDeleteAfterRead() {
+	public function testDeleteAfterRead() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
 		}
@@ -484,7 +484,7 @@ class FileTest extends CakeTestCase {
  * @param bool $paintSkip
  * @return void
  */
-	function _getTmpFile($paintSkip = true) {
+	protected function _getTmpFile($paintSkip = true) {
 		$tmpFile = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;

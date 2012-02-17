@@ -815,7 +815,7 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
-	function _detectCallback($request) {
+	protected function _detectCallback($request) {
 		return $request->return == true;
 	}
 
@@ -1709,7 +1709,7 @@ XML;
  * @param mixed $env
  * @return void
  */
-	function __loadEnvironment($env) {
+	protected function __loadEnvironment($env) {
 		if (isset($env['App'])) {
 			Configure::write('App', $env['App']);
 		}

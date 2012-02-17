@@ -460,7 +460,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValueWithDefault() {
+	public function testValueWithDefault() {
 		$this->Helper->request->data = array('zero' => 0);
 		$this->Helper->setEntity('zero');
 		$result = $this->Helper->value(array('default' => 'something'), 'zero');
@@ -480,7 +480,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValueHabtmKeys() {
+	public function testValueHabtmKeys() {
 		$this->Helper->request->data = array(
 			'HelperTestTag' => array('HelperTestTag' => '')
 		);

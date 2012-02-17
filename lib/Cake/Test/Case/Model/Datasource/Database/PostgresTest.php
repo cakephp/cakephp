@@ -43,7 +43,7 @@ class DboPostgresTestDb extends Postgres {
  * @param mixed $sql
  * @return void
  */
-	function _execute($sql, $params = array(), $prepareOptions = array()) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}
@@ -757,7 +757,7 @@ class PostgresTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldAsAConstant() {
+	public function testVirtualFieldAsAConstant() {
 		$this->loadFixtures('Article', 'Comment');
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
