@@ -558,7 +558,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestThemeView($this->ThemeController);
 		ob_start();
 		$result = $View->getViewFileName('does_not_exist');
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		$expected = ob_get_clean();
 		$this->assertRegExp("/PagesController::/", $expected);
 		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
 	}
@@ -578,7 +578,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestView($this->Controller);
 		ob_start();
 		$result = $View->getLayoutFileName();
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		$expected = ob_get_clean();
 
 		$this->ThemeController->plugin = null;
 		$this->ThemeController->name = 'Posts';
@@ -589,7 +589,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestThemeView($this->ThemeController);
 		ob_start();
 		$result = $View->getLayoutFileName();
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		$expected = ob_get_clean();
 		$this->assertRegExp("/Missing Layout/", $expected);
 		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
 	}
@@ -955,11 +955,11 @@ class ViewTest extends CakeTestCase {
  */
 	public function testRender() {
 		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
 		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
 		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
@@ -970,7 +970,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->set('page_title', 'yo what up');
 
 		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render(false, 'flash'));
+		$result = $View->render(false, 'flash');
 
 		$this->assertRegExp("/<title>yo what up<\/title>/", $result);
 		$this->assertRegExp("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
@@ -984,11 +984,11 @@ class ViewTest extends CakeTestCase {
 		Configure::write('Cache.check', true);
 
 		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 	}
 
 /**
@@ -1198,7 +1198,6 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->PostsController);
 		$View->render('this_is_missing');
-		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 	}
 
 /**
@@ -1222,7 +1221,6 @@ class ViewTest extends CakeTestCase {
 	public function testAltBadExt() {
 		$View = new TestView($this->PostsController);
 		$View->render('alt_ext');
-		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 	}
 
 /**
