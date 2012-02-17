@@ -450,7 +450,6 @@ class Postgres extends DboSource {
 				if ($key['indisprimary']) {
 					$key['relname'] = 'PRIMARY';
 				}
-				$col = array();
 				preg_match('/\(([^\)]+)\)/', $key['statement'], $indexColumns);
 				$parsedColumn = $indexColumns[1];
 				if (strpos($indexColumns[1], ',') !== false) {

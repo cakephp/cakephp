@@ -153,7 +153,6 @@ class ProjectTask extends AppShell {
  * Looks for a skeleton template of a Cake application,
  * and if not found asks the user for a path. When there is a path
  * this method will make a deep copy of the skeleton to the project directory.
- * A default home page will be added, and the tmp file storage will be chmod'ed to 0777.
  *
  * @param string $path Project path
  * @param string $skel Path to copy from

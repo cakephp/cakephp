@@ -780,7 +780,6 @@ class Sqlserver extends DboSource {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table == $curTable) {
-				$t =  $this->fullTableName($curTable);
 				$out .= "IF OBJECT_ID('" . $this->fullTableName($curTable, false). "', 'U') IS NOT NULL DROP TABLE " .  $this->fullTableName($curTable) . ";\n";
 			}
 		}

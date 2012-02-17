@@ -274,7 +274,7 @@ class TreeBehavior extends ModelBehavior {
 		} elseif (!$id) {
 			$id = null;
 		}
-		$name = $Model->alias;
+
 		extract($this->settings[$Model->alias]);
 
 		if (!is_null($overrideRecursive)) {

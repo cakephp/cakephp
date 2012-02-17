@@ -607,10 +607,8 @@ class Mysql extends DboSource {
  */
 	public function listDetailedSources($name = null) {
 		$condition = '';
-		$params = array();
 		if (is_string($name)) {
 				$condition = ' WHERE name = ' . $this->value($name);
-				$params = array($name);
 		}
 		$result = $this->_connection->query('SHOW TABLE STATUS ' . $condition, PDO::FETCH_ASSOC);
 

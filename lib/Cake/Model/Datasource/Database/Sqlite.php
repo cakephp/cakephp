@@ -151,7 +151,6 @@ class Sqlite extends DboSource {
 			parent::listSources($tables);
 			return $tables;
 		}
-		return array();
 	}
 
 /**
@@ -391,8 +390,6 @@ class Sqlite extends DboSource {
 			return null;
 		}
 
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			return $this->name($name) . ' ' . $this->columns['primary_key']['name'];
 		}

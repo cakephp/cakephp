@@ -803,7 +803,6 @@ class View extends Object {
 			default:
 				return $this->{$name};
 		}
-		return null;
 	}
 
 /**
