@@ -115,7 +115,7 @@ class ThemeViewTest extends CakeTestCase {
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		App::objects('plugins', null, false);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin'));
 	}
 
 /**
