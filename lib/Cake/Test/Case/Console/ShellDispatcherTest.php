@@ -120,7 +120,7 @@ class ShellDispatcherTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load('TestPlugin');
 	}
 
 /**
