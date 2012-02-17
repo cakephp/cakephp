@@ -3511,7 +3511,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * test that bindModel and unbindModel work with find() calls in between.
  */
-	function testBindMultipleTimesWithFind() {
+	public function testBindMultipleTimesWithFind() {
 		$binding = array(
 			'hasOne' => array(
 				'ArticlesTag' => array(

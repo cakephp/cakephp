@@ -898,7 +898,7 @@ class Postgres extends DboSource {
  *
  * @return string The schema name
  */
-	function getSchemaName() {
+	public function getSchemaName() {
 		return $this->config['schema'];
 	}
 

@@ -47,7 +47,7 @@ class NumberHelper extends AppHelper {
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper
  */
-	function __construct(View $View, $settings = array()) {
+	public function __construct(View $View, $settings = array()) {
 		$settings = Set::merge(array('engine' => 'CakeNumber'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);

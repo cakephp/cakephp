@@ -63,7 +63,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCountWithConditions() {
+	public function testCountWithConditions() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$Model =& new TranslatedItem();

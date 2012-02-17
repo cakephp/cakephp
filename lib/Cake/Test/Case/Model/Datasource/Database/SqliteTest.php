@@ -42,7 +42,7 @@ class DboSqliteTestDb extends Sqlite {
  * @param mixed $sql
  * @return void
  */
-	function _execute($sql, $params = array(), $prepareOptions = array()) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}

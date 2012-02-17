@@ -178,7 +178,7 @@ class MysqlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testScientificNotation() {
+	public function testScientificNotation() {
 		$result = $this->db->value(2.2E-54, 'float');
 		$this->assertEquals('2.2E-54', (string)$result);
 
@@ -1055,7 +1055,7 @@ class MysqlTest extends CakeTestCase {
  * @param mixed $model
  * @return void
  */
-	function _buildRelatedModels($model) {
+	protected function _buildRelatedModels($model) {
 		foreach ($model->associations() as $type) {
 			foreach ($model->{$type} as $assoc => $assocData) {
 				if (is_string($assocData)) {
@@ -1077,7 +1077,7 @@ class MysqlTest extends CakeTestCase {
  * @param mixed $binding
  * @return void
  */
-	function &_prepareAssociationQuery($model, &$queryData, $binding) {
+	protected function &_prepareAssociationQuery($model, &$queryData, $binding) {
 		$type = $binding['type'];
 		$assoc = $binding['model'];
 		$assocData = $model->{$type}[$assoc];
