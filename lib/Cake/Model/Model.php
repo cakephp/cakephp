@@ -745,7 +745,7 @@ class Model extends Object implements CakeEventListener {
 /**
  * Returns the CakeEventManager manager instance that is handling any callbacks.
  * You can use this instance to register any new listeners or callbacks to the
- * controller events, or create your own events and trigger them at will.
+ * model events, or create your own events and trigger them at will.
  *
  * @return CakeEventManager
  */
@@ -2994,7 +2994,7 @@ class Model extends Object implements CakeEventListener {
  *
  * Will validate the currently set data.  Use Model::set() or Model::create() to set the active data.
  *
- * @param string $options An optional array of custom options to be made available in the beforeValidate callback
+ * @param array $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
  */
 	public function validates($options = array()) {

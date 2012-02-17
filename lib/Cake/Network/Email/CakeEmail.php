@@ -947,7 +947,8 @@ class CakeEmail {
 
 /**
  * Send an email using the specified content, template and layout
- *
+ * 
+ * @param mixed $content String with message or array with messages
  * @return array
  * @throws SocketException
  */
