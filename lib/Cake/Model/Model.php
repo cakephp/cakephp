@@ -896,7 +896,6 @@ class Model extends Object implements CakeEventListener {
 					$assocName = $value;
 					$value = array();
 				}
-				$modelName = $assocName;
 				$this->{$assoc}[$assocName] = $value;
 				if (property_exists($this, $assocName)) {
 					unset($this->{$assocName});
@@ -1193,7 +1192,6 @@ class Model extends Object implements CakeEventListener {
 			return $data;
 		}
 
-		$copy = $data;
 		$type = $this->getColumnType($field);
 
 		if (in_array($type, array('datetime', 'timestamp', 'date', 'time'))) {
