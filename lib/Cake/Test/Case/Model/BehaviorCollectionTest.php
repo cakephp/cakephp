@@ -1082,8 +1082,6 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function testBindModelCallsInBehaviors() {
-		$this->loadFixtures('Article', 'Comment');
-
 		// hasMany
 		$Article = new Article();
 		$Article->unbindModel(array('hasMany' => array('Comment')));
