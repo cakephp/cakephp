@@ -391,9 +391,9 @@ class DboSource extends DataSource {
  *
  * - log - Whether or not the query should be logged to the memory log.
  *
- * @param string $sql
+ * @param string $sql SQL statement
  * @param array $options
- * @param array $params values to be bided to the query
+ * @param array $params values to be bound to the query
  * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function execute($sql, $options = array(), $params = array()) {
@@ -580,7 +580,6 @@ class DboSource extends DataSource {
 			} else if (isset($args[1]) && !is_array($args[1]) ) {
 				return $this->fetchAll($args[0], false);
 			} else if (isset($args[1]) && is_array($args[1])) {
-				$offset = 0;
 				if (isset($args[2])) {
 					$cache = $args[2];
 				} else {
@@ -892,6 +891,7 @@ class DboSource extends DataSource {
  * Log given SQL query.
  *
  * @param string $sql SQL statement
+ * @param array $params Values binded to the query (prepared statements)
  * @return void
  */
 	public function logQuery($sql, $params = array()) {
@@ -2108,9 +2108,6 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function resolveKey(Model $model, $key, $assoc = null) {
-		if (empty($assoc)) {
-			$assoc = $model->alias;
-		}
 		if (strpos('.', $key) !== false) {
 			return $this->name($model->alias) . '.' . $this->name($key);
 		}
@@ -2235,7 +2232,6 @@ class DboSource extends DataSource {
 						);
 						$fields[$i] = $this->name(($prefix ? $alias . '.' : '') . $fields[$i]);
 					} else {
-						$value = array();
 						if (strpos($fields[$i], ',') === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
@@ -2787,7 +2783,6 @@ class DboSource extends DataSource {
 		);
 		$columnMap = array();
 
-		$count = count($values);
 		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();

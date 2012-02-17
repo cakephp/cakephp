@@ -413,10 +413,6 @@ class Folder {
 
 		if (is_array($exceptions)) {
 			$exceptions = array_flip($exceptions);
-			if (isset($exceptions['.'])) {
-				$skipHidden = true;
-				unset($exceptions['.']);
-			}
 		}
 		$skipHidden = false;
 		if ($exceptions === true) {
@@ -435,7 +431,7 @@ class Folder {
 			}
 			return array();
 		}
-		$pathLength = strlen($path);
+
 		foreach ($iterator as $itemPath => $fsIterator) {
 			if ($skipHidden) {
 				$subPathName = $fsIterator->getSubPathname();
