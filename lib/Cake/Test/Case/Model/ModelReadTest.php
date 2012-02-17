@@ -76,7 +76,6 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testGroupBy() {
-		$db = ConnectionManager::getDataSource('test');
 		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Sqlserver;
 		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
 
@@ -282,13 +281,13 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$expected = array(
 			'0' => array(
-				$this->db->fullTableName('articles', false) => array(
+				$this->db->fullTableName('articles', false, false) => array(
 					'title' => 'First Article', 'published' => 'Y')
 		));
 
 		if (isset($result[0][0])) {
-			$expected[0][0] = $expected[0][$this->db->fullTableName('articles', false)];
-			unset($expected[0][$this->db->fullTableName('articles', false)]);
+			$expected[0][0] = $expected[0][$this->db->fullTableName('articles', false, false)];
+			unset($expected[0][$this->db->fullTableName('articles', false, false)]);
 		}
 
 		$this->assertEquals($expected, $result);
@@ -303,7 +302,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-				isset($result[0][$this->db->fullTableName('articles', false)])
+			   isset($result[0][$this->db->fullTableName('articles', false, false)])
 			|| isset($result[0][0])
 		);
 		$result = $this->db->getQueryCache($query, $params);
@@ -317,7 +316,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-				isset($result[0][$this->db->fullTableName('articles', false)]['title'])
+			   isset($result[0][$this->db->fullTableName('articles', false, false)]['title'])
 			|| isset($result[0][0]['title'])
 		);
 
@@ -2987,11 +2986,107 @@ class ModelReadTest extends BaseModelTest {
 		$noAfterFindData = $noAfterFindModel->find('all');
 
 		$this->assertFalse($afterFindModel == $noAfterFindModel);
-		// Limitation of PHP 4 and PHP 5 > 5.1.6 when comparing recursive objects
-		if (PHP_VERSION === '5.1.6') {
-			$this->assertFalse($afterFindModel != $duplicateModel);
-		}
 		$this->assertEquals($afterFindData, $noAfterFindData);
+	}
+
+/**
+ * testFindThreadedNoParent method
+ *
+ * @return void
+ */
+	public function testFindThreadedNoParent() {
+		$this->loadFixtures('Apple', 'Sample');
+		$Apple = new Apple();
+		$result = $Apple->find('threaded');
+		$result = Set::extract($result, '{n}.children');
+		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFindThreaded method
+ *
+ * @return void
+ */
+	public function testFindThreaded() {
+		$this->loadFixtures('Person');
+		$Model = new Person();
+		$Model->recursive = -1;
+		$result = $Model->find('threaded');
+		$result = Set::extract($result, '{n}.children');
+		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$this->assertEquals($expected, $result);
+
+		$result = $Model->find('threaded', array('parent' => 'mother_id'));
+		$expected = array(
+			array(
+				'Person' => array(
+					'id' => '4',
+					'name' => 'mother - grand mother',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array(
+					array(
+						'Person' => array(
+							'id' => '2',
+							'name' => 'mother',
+							'mother_id' => '4',
+							'father_id' => '5'
+						),
+						'children' => array(
+							array(
+								'Person' => array(
+									'id' => '1',
+									'name' => 'person',
+									'mother_id' => '2',
+									'father_id' => '3'
+								),
+								'children' => array()
+							)
+						)
+					)
+				)
+			),
+			array(
+				'Person' => array(
+					'id' => '5',
+					'name' => 'mother - grand father',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array()
+			),
+			array(
+				'Person' => array(
+					'id' => '6',
+					'name' => 'father - grand mother',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array(
+					array(
+						'Person' => array(
+							'id' => '3',
+							'name' => 'father',
+							'mother_id' => '6',
+							'father_id' => '7'
+						),
+						'children' => array()
+					)
+				)
+			),
+			array(
+				'Person' => array(
+					'id' => '7',
+					'name' => 'father - grand father',
+					'mother_id' => '0',
+					'father_id' => '0'
+				),
+				'children' => array()
+			)
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -5041,7 +5136,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testCallbackSourceChangeUnknownDatasource() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Post', 'Author');
 		$TestModel = new Post();
 		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}
@@ -6673,6 +6768,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = true;
 		$TestModel->order = 'User.id';
 		$result = $TestModel->find('count');
+		$this->db->fullDebug = $fullDebug;
 		$this->assertEquals($result, 4);
 
 		$log = $this->db->getLog();
@@ -7688,4 +7784,27 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($Post->getVirtualField('other_field'), $Post->virtualFields['other_field']);
 		$this->assertEquals($Post->getVirtualField('Post.other_field'), $Post->virtualFields['other_field']);
 	}
+	
+	
+/**
+ * test that checks for error when NOT condition passed in key and a 1 element array value
+ *
+ * @return void
+ */	
+	public function testNotInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+		
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id NOT' => array(1)
+				)
+			)
+		);
+		
+		$this->assertTrue(is_array($result) && !empty($result));
+    }
 }

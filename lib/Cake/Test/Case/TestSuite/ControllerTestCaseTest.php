@@ -215,11 +215,11 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'TestPlugin.TestPluginComment'
 			),
 			'components' => array(
-				'TestPlugin.PluginsComponent'
+				'TestPlugin.Plugins'
 			)
 		));
 		$this->assertEquals($Tests->name, 'Tests');
-		$this->assertInstanceOf('PluginsComponentComponent', $Tests->PluginsComponent);
+		$this->assertInstanceOf('PluginsComponent', $Tests->Plugins);
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPluginComment', $result);
@@ -290,7 +290,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 
 		$controller = $this->Case->generate('TestsApps');
 		$controller->Components->load('RequestHandler');
-		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
+		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'contents'));
 		$result = json_decode($result, true);
 		$expected = array('cakephp' => 'cool');
 		$this->assertEquals($expected, $result);

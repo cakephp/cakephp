@@ -55,8 +55,6 @@ class TaskCollectionTest extends CakeTestCase {
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
-
-		$this->assertTrue($this->Tasks->enabled('DbConfig'));
 	}
 
 /**

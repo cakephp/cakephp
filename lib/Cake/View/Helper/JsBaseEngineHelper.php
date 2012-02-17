@@ -538,7 +538,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  *
  * @param string $method Name of the method you are preparing callbacks for.
  * @param array $options Array of options being parsed
- * @param string $callbacks Additional Keys that contain callbacks
+ * @param array $callbacks Additional Keys that contain callbacks
  * @return array Array of options with callbacks added.
  */
 	protected function _prepareCallbacks($method, $options, $callbacks = array()) {

@@ -1,9 +1,5 @@
 <?php
 /**
- * Translate behavior
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +14,7 @@
  */
 
 App::uses('I18n', 'I18n');
+App::uses('I18nModel', 'Model');
 
 /**
  * Translate behavior
@@ -117,6 +114,7 @@ class TranslateBehavior extends ModelBehavior {
 		$joinTable = new StdClass();
 		$joinTable->tablePrefix = $tablePrefix;
 		$joinTable->table = $RuntimeModel->table;
+		$joinTable->schemaName = $RuntimeModel->getDataSource()->getSchemaName();
 
 		$this->_joinTable = $joinTable;
 		$this->_runtimeModel = $RuntimeModel;
@@ -574,30 +572,3 @@ class TranslateBehavior extends ModelBehavior {
 	}
 }
 
-/**
- * @package       Cake.Model.Behavior
- */
-class I18nModel extends AppModel {
-
-/**
- * Model name
- *
- * @var string
- */
-	public $name = 'I18nModel';
-
-/**
- * Table name
- *
- * @var string
- */
-	public $useTable = 'i18n';
-
-/**
- * Display field
- *
- * @var string
- */
-	public $displayField = 'field';
-
-}

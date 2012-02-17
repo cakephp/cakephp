@@ -19,8 +19,8 @@
 App::uses('Dispatcher', 'Routing');
 
 if (!class_exists('AppController', false)) {
-	require_once CAKE . 'Controller' . DS . 'AppController.php';
-} elseif (!defined('APP_CONTROLLER_EXISTS')) {
+	require_once CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS . 'AppController.php';
+} elseif (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
 }
 
@@ -1124,7 +1124,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch($url, $response, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
 		$this->assertTrue(class_exists('TestPluginAppController'));
-		$this->assertTrue(class_exists('PluginsComponentComponent'));
+		$this->assertTrue(class_exists('PluginsComponent'));
 
 		$this->assertEquals($result->params['controller'], 'tests');
 		$this->assertEquals($result->params['plugin'], 'test_plugin');
@@ -1209,7 +1209,7 @@ class DispatcherTest extends CakeTestCase {
 	public static function assetProvider() {
 		return array(
 			array(
-				'theme/test_theme/flash/theme_test.swf', 
+				'theme/test_theme/flash/theme_test.swf',
 				'View/Themed/TestTheme/webroot/flash/theme_test.swf'
 			),
 			array(
@@ -1378,7 +1378,7 @@ class DispatcherTest extends CakeTestCase {
 			array('test_cached_pages/themed'),
 		);
 	}
-	
+
 /**
  * testFullPageCachingDispatch method
  *
@@ -1410,11 +1410,9 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher->cached($request->here());
 		$cached = ob_get_clean();
 
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($cached, $out);
 
 		$filename = $this->__cachePath($request->here());
 		unlink($filename);

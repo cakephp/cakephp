@@ -260,6 +260,48 @@ class Helper extends Object {
 	}
 
 /**
+ * Generate url for given asset file. Depending on options passed provides full url with domain name.
+ * Also calls Helper::assetTimestamp() to add timestamp to local files
+ *
+ * @param string|array Path string or url array
+ * @param array $options Options array. Possible keys:
+ * 	`fullBase` Return full url with domain name
+ * 	`pathPrefix` Path prefix for relative urls
+ * 	`ext` Asset extension to append
+ * 	`plugin` False value will prevent parsing path as a plugin
+ * @return string Generated url
+ */
+	public function assetUrl($path, $options = array()) {
+		if (is_array($path)) {
+			$path = $this->url($path, !empty($options['fullBase']));
+		} elseif (strpos($path, '://') === false) {
+			if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
+				list($plugin, $path) = $this->_View->pluginSplit($path, false);
+			}
+			if (!empty($options['pathPrefix']) && $path[0] !== '/') {
+				$path = $options['pathPrefix'] . $path;
+			}
+			if (
+				!empty($options['ext']) &&
+				strpos($path, '?') === false &&
+				substr($path, -strlen($options['ext'])) !== $options['ext']
+			) {
+				$path .= $options['ext'];
+			}
+			if (isset($plugin)) {
+				$path = Inflector::underscore($plugin) . '/' . $path;
+			}
+			$path = $this->assetTimestamp($this->webroot($path));
+
+			if (!empty($options['fullBase'])) {
+				$path = $this->url('/', true) . $path;
+			}
+		}
+
+		return $path;
+	}
+
+/**
  * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in
  * Configure.  If Asset.timestamp is true and debug > 0, or Asset.timestamp == 'force'
  * a timestamp will be added.
@@ -446,10 +488,10 @@ class Helper extends Object {
 
 		// 0.name, 0.created.month style inputs.  Excludes inputs with the modelScope in them.
 		if (
-			$count >= 2 && 
-			is_numeric($parts[0]) && 
-			!is_numeric($parts[1]) && 
-			$this->_modelScope && 
+			$count >= 2 &&
+			is_numeric($parts[0]) &&
+			!is_numeric($parts[1]) &&
+			$this->_modelScope &&
 			strpos($entity, $this->_modelScope) === false
 		) {
 			$entity = $this->_modelScope . '.' . $entity;
@@ -748,6 +790,31 @@ class Helper extends Object {
  * @return void
  */
 	public function afterLayout($layoutFile) {
+	}
+
+/**
+ * Before render file callback.
+ * Called before any view fragment is rendered.
+ *
+ * Overridden in subclasses.
+ *
+ * @param string $viewFile The file about to be rendered.
+ * @return void
+ */
+	public function beforeRenderFile($viewfile) {
+	}
+
+/**
+ * After render file callback.
+ * Called after any view fragment is rendered.
+ *
+ * Overridden in subclasses.
+ *
+ * @param string $viewFile The file just be rendered.
+ * @param string $content The content that was rendered.
+ * @return void
+ */
+	public function afterRenderFile($viewfile, $content) {
 	}
 
 /**

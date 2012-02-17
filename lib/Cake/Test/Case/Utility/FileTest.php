@@ -73,8 +73,12 @@ class FileTest extends CakeTestCase {
 
 		$result = $this->File->info();
 		$expecting = array(
-			'dirname' => dirname(__FILE__), 'basename' => basename(__FILE__),
-			'extension' => 'php', 'filename' => 'FileTest'
+			'dirname' => dirname(__FILE__),
+			'basename' => basename(__FILE__),
+			'extension' => 'php',
+			'filename' =>'FileTest',
+			'filesize' => filesize($file),
+			'mime' => 'text/x-php'
 		);
 		$this->assertEquals($expecting, $result);
 
@@ -461,6 +465,17 @@ class FileTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$TmpFile->close();
+	}
+
+/**
+ * Test mime()
+ *
+ * @return void
+ */
+	public function testMime() {
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$file = new File($path);
+		$this->assertEquals('image/gif', $file->mime());
 	}
 
 /**

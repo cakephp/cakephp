@@ -391,9 +391,9 @@ class DboSource extends DataSource {
  *
  * - log - Whether or not the query should be logged to the memory log.
  *
- * @param string $sql
+ * @param string $sql SQL statement
  * @param array $options
- * @param array $params values to be bided to the query
+ * @param array $params values to be bound to the query
  * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function execute($sql, $options = array(), $params = array()) {
@@ -405,7 +405,7 @@ class DboSource extends DataSource {
 		if ($options['log']) {
 			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->numRows = $this->affected = $this->lastAffected();
-			$this->logQuery($sql);
+			$this->logQuery($sql, $params);
 		}
 
 		return $this->_result;
@@ -580,7 +580,6 @@ class DboSource extends DataSource {
 			} else if (isset($args[1]) && !is_array($args[1]) ) {
 				return $this->fetchAll($args[0], false);
 			} else if (isset($args[1]) && is_array($args[1])) {
-				$offset = 0;
 				if (isset($args[2])) {
 					$cache = $args[2];
 				} else {
@@ -892,13 +891,15 @@ class DboSource extends DataSource {
  * Log given SQL query.
  *
  * @param string $sql SQL statement
+ * @param array $params Values binded to the query (prepared statements)
  * @return void
  */
-	public function logQuery($sql) {
+	public function logQuery($sql, $params = array()) {
 		$this->_queriesCnt++;
 		$this->_queriesTime += $this->took;
 		$this->_queriesLog[] = array(
 			'query'		=> $sql,
+			'params'	=> $params,
 			'affected'	=> $this->affected,
 			'numRows'	=> $this->numRows,
 			'took'		=> $this->took
@@ -913,18 +914,34 @@ class DboSource extends DataSource {
  *
  * @param mixed $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
+ * @param boolean $schema Whether you want the schema name included.
  * @return string Full quoted table name
  */
-	public function fullTableName($model, $quote = true) {
+	public function fullTableName($model, $quote = true, $schema = true) {
 		if (is_object($model)) {
+			$schemaName = $model->schemaName;
 			$table = $model->tablePrefix . $model->table;
-		} elseif (isset($this->config['prefix'])) {
+		} elseif (!empty($this->config['prefix']) && strpos($model, $this->config['prefix']) === false) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
 			$table = strval($model);
 		}
+		if ($schema && !isset($schemaName)) {
+			$schemaName = $this->getSchemaName();
+		}
+
 		if ($quote) {
+			if ($schema && !empty($schemaName)) {
+				if (false == strstr($table, '.')) {
+					return $this->name($schemaName) . '.' . $this->name($table);
+				}
+			}
 			return $this->name($table);
+		}
+		if ($schema && !empty($schemaName)) {
+			if (false == strstr($table, '.')) {
+				return $schemaName . '.' . $table;
+			}
 		}
 		return $table;
 	}
@@ -966,7 +983,7 @@ class DboSource extends DataSource {
 
 		if ($this->execute($this->renderStatement('create', $query))) {
 			if (empty($id)) {
-				$id = $this->lastInsertId($this->fullTableName($model, false), $model->primaryKey);
+				$id = $this->lastInsertId($this->fullTableName($model, false, false), $model->primaryKey);
 			}
 			$model->setInsertID($id);
 			$model->id = $id;
@@ -1988,6 +2005,9 @@ class DboSource extends DataSource {
  */
 	public function begin() {
 		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
+			if ($this->fullDebug && empty($this->_transactionNesting)) {
+				$this->logQuery('BEGIN');
+			}
 			$this->_transactionStarted = true;
 			$this->_transactionNesting++;
 			return true;
@@ -2008,6 +2028,9 @@ class DboSource extends DataSource {
 			if ($this->_transactionNesting <= 0) {
 				$this->_transactionStarted = false;
 				$this->_transactionNesting = 0;
+				if ($this->fullDebug) {
+					$this->logQuery('COMMIT');
+				}
 				return $this->_connection->commit();
 			}
 			return true;
@@ -2024,6 +2047,9 @@ class DboSource extends DataSource {
  */
 	public function rollback() {
 		if ($this->_transactionStarted && $this->_connection->rollBack()) {
+			if ($this->fullDebug) {
+				$this->logQuery('ROLLBACK');
+			}
 			$this->_transactionStarted = false;
 			$this->_transactionNesting = 0;
 			return true;
@@ -2082,9 +2108,6 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function resolveKey(Model $model, $key, $assoc = null) {
-		if (empty($assoc)) {
-			$assoc = $model->alias;
-		}
 		if (strpos('.', $key) !== false) {
 			return $this->name($model->alias) . '.' . $this->name($key);
 		}
@@ -2209,7 +2232,6 @@ class DboSource extends DataSource {
 						);
 						$fields[$i] = $this->name(($prefix ? $alias . '.' : '') . $fields[$i]);
 					} else {
-						$value = array();
 						if (strpos($fields[$i], ',') === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
@@ -2352,7 +2374,7 @@ class DboSource extends DataSource {
 					$keys = array_keys($value);
 					if ($keys === array_values($keys)) {
 						$count = count($value);
-						if ($count === 1) {
+						if ($count === 1 && !preg_match("/\s+NOT$/", $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
 						} else {
 							$data = $this->_quoteFields($key) . ' IN (';
@@ -2761,20 +2783,19 @@ class DboSource extends DataSource {
 		);
 		$columnMap = array();
 
-		$count = count($values);
 		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();
 
-		foreach ($values[0] as $key => $val) {
+		foreach ($values[key($values)] as $key => $val) {
 			$type = $this->introspectType($val);
 			$columnMap[$key] = $pdoMap[$type];
 		}
 
-		for ($x = 0; $x < $count; $x++) {
+		foreach ($values as $row => $value) {
 			$i = 1;
-			foreach ($values[$x] as $key => $val) {
-				$statement->bindValue($i, $val, $columnMap[$key]);
+			foreach ($value as $col => $val) {
+				$statement->bindValue($i, $val, $columnMap[$col]);
 				$i += 1;
 			}
 			$statement->execute();

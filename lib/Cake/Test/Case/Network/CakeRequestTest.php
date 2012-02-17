@@ -783,6 +783,13 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, '_detectCallback')));
 
+		$request->addDetector('index', array('param' => 'action', 'value' => 'index'));
+		$request->params['action'] = 'index';
+		$this->assertTrue($request->isIndex());
+
+		$request->params['action'] = 'add';
+		$this->assertFalse($request->isIndex());
+
 		$request->return = true;
 		$this->assertTrue($request->isCallMe());
 
@@ -1642,6 +1649,32 @@ XML;
 		);
 	}
 
+
+/**
+ * Test is('requested') and isRequested()
+ *
+ * @return void
+ */
+	public function testIsRequested() {
+		$request = new CakeRequest('/posts/index');
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'plugin' => null,
+			'requested' => 1
+		));
+		$this->assertTrue($request->is('requested'));
+		$this->assertTrue($request->isRequested());
+
+		$request = new CakeRequest('/posts/index');
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'plugin' => null,
+		));
+		$this->assertFalse($request->is('requested'));
+		$this->assertFalse($request->isRequested());
+	}
 
 /**
  * loadEnvironment method

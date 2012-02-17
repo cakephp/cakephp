@@ -220,6 +220,8 @@ class SmtpTransportTest extends CakeTestCase {
 		$email->bcc('phpnut@cakephp.org');
 		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
 		$email->subject('Testing SMTP');
+		$date = date(DATE_RFC2822);
+		$email->setHeaders(array('X-Mailer' => $email::EMAIL_CLIENT, 'Date' => $date));
 		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
 
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
@@ -227,7 +229,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
 		$data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
 		$data .= "X-Mailer: CakePHP Email\r\n";
-		$data .= "Date: " . date(DATE_RFC2822) . "\r\n";
+		$data .= "Date: " . $date . "\r\n";
 		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
 		$data .= "Subject: Testing SMTP\r\n";
 		$data .= "MIME-Version: 1.0\r\n";

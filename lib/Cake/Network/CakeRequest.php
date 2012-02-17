@@ -108,7 +108,8 @@ class CakeRequest implements ArrayAccess {
 			'J2ME', 'MIDP', 'NetFront', 'Nokia', 'Opera Mini', 'Opera Mobi', 'PalmOS', 'PalmSource',
 			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\\.Browser',
 			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
-		))
+		)),
+		'requested' => array('param' => 'requested', 'value' => 1)
 	);
 
 /**
@@ -450,6 +451,11 @@ class CakeRequest implements ArrayAccess {
 				return (bool)preg_match($pattern, env($detect['env']));
 			}
 		}
+		if (isset($detect['param'])) {
+			$key = $detect['param'];
+			$value = $detect['value'];
+			return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+		}
 		if (isset($detect['callback']) && is_callable($detect['callback'])) {
 			return call_user_func($detect['callback'], $this);
 		}
@@ -486,6 +492,12 @@ class CakeRequest implements ArrayAccess {
  * receive the request object as its only parameter.
  *
  * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
+ *
+ * ### Request parameter detectors
+ *
+ * Allows for custom detectors on the request parameters.
+ *
+ * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
  *
  * @param string $name The name of the detector.
  * @param array $options  The options for the detector definition.  See above.

@@ -151,7 +151,6 @@ class Sqlite extends DboSource {
 			parent::listSources($tables);
 			return $tables;
 		}
-		return array();
 	}
 
 /**
@@ -165,7 +164,7 @@ class Sqlite extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
 		$fields = array();
 		$result = $this->_execute('PRAGMA table_info(' . $table . ')');
 
@@ -224,7 +223,7 @@ class Sqlite extends DboSource {
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
-		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->fullTableName($table));
+		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->startQuote . $this->fullTableName($table, false, false) . $this->endQuote);
 		return $this->execute('DELETE FROM ' . $this->fullTableName($table));
 	}
 
@@ -391,8 +390,6 @@ class Sqlite extends DboSource {
 			return null;
 		}
 
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			return $this->name($name) . ' ' . $this->columns['primary_key']['name'];
 		}
@@ -431,6 +428,10 @@ class Sqlite extends DboSource {
 	public function buildIndex($indexes, $table = null) {
 		$join = array();
 
+		$table = str_replace('"', '', $table);
+		list($dbname, $table) = explode('.', $table);
+		$dbname = $this->name($dbname);
+
 		foreach ($indexes as $name => $value) {
 
 			if ($name == 'PRIMARY') {
@@ -447,7 +448,9 @@ class Sqlite extends DboSource {
 				$value['column'] = $this->name($value['column']);
 			}
 			$t = trim($table, '"');
-			$out .= "INDEX {$t}_{$name} ON {$table}({$value['column']});";
+			$indexname = $this->name($t . '_' .$name);
+			$table = $this->name($table);
+			$out .= "INDEX {$dbname}.{$indexname} ON {$table}({$value['column']});";
 			$join[] = $out;
 		}
 		return $join;
@@ -462,7 +465,7 @@ class Sqlite extends DboSource {
  */
 	public function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model);
+		$table = $this->fullTableName($model, false, false);
 		if ($table) {
 			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
 
@@ -544,4 +547,14 @@ class Sqlite extends DboSource {
 		}
 		return $out;
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return "main"; // Sqlite Datasource does not support multidb
+	}
+
 }

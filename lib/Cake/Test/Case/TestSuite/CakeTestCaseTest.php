@@ -22,12 +22,6 @@
 App::uses('Controller', 'Controller');
 App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
 
-if (!class_exists('AppController', false)) {
-	require_once CAKE . 'Controller' . DS . 'AppController.php';
-} elseif (!defined('APP_CONTROLLER_EXISTS')) {
-	define('APP_CONTROLLER_EXISTS', true);
-}
-
 /**
  * CakeTestCaseTest
  *
@@ -239,5 +233,109 @@ class CakeTestCaseTest extends CakeTestCase {
 	public function testSetupBackUpValues() {
 		$this->assertArrayHasKey('debug', $this->_configure);
 		$this->assertArrayHasKey('Plugin', $this->_pathRestore);
+	}
+
+/**
+ * test assertTextNotEquals()
+ *
+ * @return void
+ */
+	public function testAssertTextNotEquals() {
+		$one = "\r\nOne\rTwooo";
+		$two = "\nOne\nTwo";
+		$this->assertTextNotEquals($one, $two);
+	}
+
+/**
+ * test assertTextEquals()
+ *
+ * @return void
+ */
+	public function testAssertTextEquals() {
+		$one = "\r\nOne\rTwo";
+		$two = "\nOne\nTwo";
+		$this->assertTextEquals($one, $two);
+	}
+	
+/**
+ * test assertTextStartsWith()
+ *
+ * @return void
+ */
+	public function testAssertTextStartsWith() {
+		$stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
+		$stringClean = "some\nstring\nwith\ndifferent\nline endings!";
+		
+		$this->assertStringStartsWith("some\nstring", $stringDirty);
+		$this->assertStringStartsNotWith("some\r\nstring\r\nwith", $stringDirty);
+		$this->assertStringStartsNotWith("some\nstring\nwith", $stringDirty);
+
+		$this->assertTextStartsWith("some\nstring\nwith", $stringDirty);
+		$this->assertTextStartsWith("some\r\nstring\r\nwith", $stringDirty);
+	}
+
+/**
+ * test assertTextStartsNotWith()
+ *
+ * @return void
+ */
+	public function testAssertTextStartsNotWith() {
+		$stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
+		$stringClean = "some\nstring\nwith\ndifferent\nline endings!";
+		
+		$this->assertTextStartsNotWith("some\nstring\nwithout", $stringDirty);
+	}
+		
+/**
+ * test assertTextEndsWith()
+ *
+ * @return void
+ */	
+	public function testAssertTextEndsWith() {
+		$stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
+		$stringClean = "some\nstring\nwith\ndifferent\nline endings!";
+		
+		$this->assertTextEndsWith("string\nwith\r\ndifferent\rline endings!", $stringDirty);
+		$this->assertTextEndsWith("string\r\nwith\ndifferent\nline endings!", $stringDirty);
+	}
+
+/**
+ * test assertTextEndsNotWith()
+ *
+ * @return void
+ */	
+	public function testAssertTextEndsNotWith() {
+		$stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
+		$stringClean = "some\nstring\nwith\ndifferent\nline endings!";
+		
+		$this->assertStringEndsNotWith("different\nline endings", $stringDirty);
+		$this->assertTextEndsNotWith("different\rline endings", $stringDirty);
+	}
+	
+/**
+ * test assertTextContains()
+ *
+ * @return void
+ */	
+	public function testAssertTextContains() {
+		$stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
+		$stringClean = "some\nstring\nwith\ndifferent\nline endings!";
+		
+		$this->assertContains("different", $stringDirty);
+		$this->assertNotContains("different\rline", $stringDirty);
+		
+		$this->assertTextContains("different\rline", $stringDirty);	
+	}
+	
+/**
+ * test assertTextNotContains()
+ *
+ * @return void
+ */	
+	public function testAssertTextNotContains() {
+		$stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
+		$stringClean = "some\nstring\nwith\ndifferent\nline endings!";
+		
+		$this->assertTextNotContains("different\rlines", $stringDirty);	
 	}
 }

@@ -641,6 +641,13 @@ class Attachment extends CakeTestModel {
  * @var string 'Attachment'
  */
 	public $name = 'Attachment';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('Comment');
 }
 
 /**
@@ -3279,6 +3286,24 @@ class TransactionManyTestModel extends CakeTestModel {
 	}
 }
 
+class Site extends CakeTestModel {
+	var $name = 'Site';
+	var $useTable = 'sites';
+
+	var $hasAndBelongsToMany = array(
+		'Domain' => array('unique' => 'keepExisting'),
+		);
+}
+
+class Domain extends CakeTestModel {
+	var $name = 'Domain';
+	var $useTable = 'domains';
+
+	var $hasAndBelongsToMany = array(
+		'Site' => array('unique' => 'keepExisting'),
+		);
+}
+
 /**
  * TestModel class
  *
@@ -4595,4 +4620,72 @@ class ScaffoldTag extends CakeTestModel {
  * @var string 'posts'
  */
 	public $useTable = 'tags';
+}
+
+/**
+ * Player class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Player extends CakeTestModel {
+	public $hasAndBelongsToMany = array(
+		'Guild' => array(
+			'with' => 'GuildsPlayer',
+			'unique' => true,
+			),
+		);
+}
+
+/**
+ * Guild class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Guild extends CakeTestModel {
+	public $hasAndBelongsToMany = array(
+		'Player' => array(
+			'with' => 'GuildsPlayer',
+			'unique' => true,
+			),
+		);
+}
+
+/**
+ * GuildsPlayer class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class GuildsPlayer extends CakeTestModel {
+
+	public $useDbConfig = 'test2';
+
+	public $belongsTo = array(
+		'Player',
+		'Guild',
+		);
+}
+
+/**
+ * Armor class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Armor extends CakeTestModel {
+
+	public $useDbConfig = 'test2';
+
+	public $hasAndBelongsToMany = array(
+		'Player' => array('with' => 'ArmorsPlayer'),
+		);
+}
+
+/**
+ * ArmorsPlayer class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ArmorsPlayer extends CakeTestModel {
+
+	public $useDbConfig = 'test_database_three';
+
 }
