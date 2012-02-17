@@ -101,7 +101,7 @@ class CakeTime {
  * @param array $specifier match from regular expression
  * @return string converted element
  */
-	protected function _translateSpecifier($specifier) {
+	protected static function _translateSpecifier($specifier) {
 		switch ($specifier[1]) {
 			case 'a':
 				$abday = __dc('cake', 'abday', 5);
