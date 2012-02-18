@@ -173,7 +173,7 @@ class ShellTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
-		), true);
+		), App::RESET);
 
 		CakePlugin::load('TestPlugin');
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');

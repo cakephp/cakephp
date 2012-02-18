@@ -119,7 +119,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'Console/Command' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
-		), true);
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 	}
 

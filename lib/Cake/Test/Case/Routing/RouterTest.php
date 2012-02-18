@@ -1187,7 +1187,7 @@ class RouterTest extends CakeTestCase {
 			'plugins' =>  array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
-		), true);
+		), App::RESET);
 		CakePlugin::load(array('TestPlugin'));
 
 		Router::reload();
@@ -2201,7 +2201,7 @@ class RouterTest extends CakeTestCase {
 			'plugins' =>  array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
-		), true);
+		), App::RESET);
 		CakePlugin::load(array('TestPlugin', 'PluginJs'));
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';

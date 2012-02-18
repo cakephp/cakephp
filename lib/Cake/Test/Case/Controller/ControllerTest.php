@@ -624,7 +624,7 @@ class ControllerTest extends CakeTestCase {
 	public function testRender() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
-		), true);
+		), App::RESET);
 		ClassRegistry::flush();
 		$request = new CakeRequest('controller_posts/index');
 		$request->params['action'] = 'index';

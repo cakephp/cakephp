@@ -49,7 +49,7 @@ class CakeLogTest extends CakeTestCase {
 		App::build(array(
 			'libs' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$result = CakeLog::config('libtest', array(

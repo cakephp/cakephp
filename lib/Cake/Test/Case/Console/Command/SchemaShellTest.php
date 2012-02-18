@@ -336,7 +336,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testGenerateWithPlugins() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$this->db->cacheSources = false;

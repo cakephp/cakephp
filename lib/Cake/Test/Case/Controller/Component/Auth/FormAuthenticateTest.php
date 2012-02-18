@@ -160,7 +160,7 @@ class FormAuthenticateTest extends CakeTestCase {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-		), true);
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$ts = date('Y-m-d H:i:s');

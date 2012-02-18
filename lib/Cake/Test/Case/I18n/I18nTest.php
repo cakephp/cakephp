@@ -35,7 +35,7 @@ class I18nTest extends CakeTestCase {
 		App::build(array(
 			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		CakePlugin::load(array('TestPlugin'));
 	}
 

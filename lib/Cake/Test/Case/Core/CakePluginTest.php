@@ -33,7 +33,7 @@ class CakePluginTest extends CakeTestCase {
 	public function setUp() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		App::objects('plugins', null, false);
 	}
 

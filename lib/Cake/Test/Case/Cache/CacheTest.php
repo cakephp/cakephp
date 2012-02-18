@@ -88,7 +88,7 @@ class CacheTest extends CakeTestCase {
 		App::build(array(
 			'Lib' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
@@ -260,7 +260,7 @@ class CacheTest extends CakeTestCase {
 		App::build(array(
 			'libs' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 
 		$result = Cache::drop('some_config_that_does_not_exist');
 		$this->assertFalse($result);
@@ -312,7 +312,7 @@ class CacheTest extends CakeTestCase {
 		App::build(array(
 			'libs' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+		), App::RESET);
 
 		Cache::config('test_trigger', array('engine' => 'TestAppCache', 'prefix' => ''));
 		try {

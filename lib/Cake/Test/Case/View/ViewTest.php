@@ -271,7 +271,7 @@ class ViewTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
-		), true);
+		), App::RESET);
 		App::objects('plugins', null, false);
 
 		CakePlugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
