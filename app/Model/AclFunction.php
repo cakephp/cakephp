@@ -21,6 +21,7 @@ class AclFunction extends AppModel {
  *
  * @var array
  */
+//TODO need to add where acl_id = ACL.id
 	public $belongsTo = array(
 		'Acl' => array(
 			'className' => 'Acl',
