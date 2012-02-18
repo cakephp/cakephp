@@ -420,7 +420,7 @@ class DboSource extends DataSource {
 			}
 
 			if ($cache) {
-				if (strpos(trim(strtolower($sql)), 'select') !== false) {
+				if (preg_match('/^\s*select/i', $sql)) {
 					$this->_queryCache[$sql] = $out;
 				}
 			}
