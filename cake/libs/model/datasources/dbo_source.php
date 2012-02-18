@@ -1192,14 +1192,16 @@ class DboSource extends DataSource {
 				}
 			} else {
 				foreach ($merge as $i => $row) {
-					if (count($row) == 1) {
-						if (empty($data[$association]) || (isset($data[$association]) && !in_array($row[$association], $data[$association]))) {
-							$data[$association][] = $row[$association];
-						}
-					} else if (!empty($row)) {
-						$tmp = array_merge($row[$association], $row);
-						unset($tmp[$association]);
-						$data[$association][] = $tmp;
+					$insert = array();
+					if (count($row) === 1) {
+						$insert = $row[$association];
+					} elseif (isset($row[$association])) {
+						$insert = array_merge($row[$association], $row);
+						unset($insert[$association]);
+					}
+
+					if (empty($data[$association]) || (isset($data[$association]) && !in_array($insert, $data[$association], true))) {
+						$data[$association][] = $insert;
 					}
 				}
 			}
