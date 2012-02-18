@@ -1121,7 +1121,7 @@ class CakeRequestTest extends CakeTestCase {
 	public function testGetParamWithUrlencodedElement() {
 		$_GET['/posts/add/∂∂'] = '';
 		$_SERVER['PHP_SELF'] = '/cake_dev/app/webroot/index.php';
-		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%2202%2202';
+		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
 
 		$request = new CakeRequest();
 		$this->assertEquals(array(), $request->query);

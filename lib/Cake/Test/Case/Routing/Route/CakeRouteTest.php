@@ -519,7 +519,12 @@ class CakeRouteTest extends CakeTestCase {
 			array('action' => 'view')
 		);
 		$route->compile();
-		$result = $route->parse('/posts/%2202%2202');
+		$result = $route->parse('/posts/%E2%88%82%E2%88%82');
+		$this->assertEquals($result['controller'], 'posts');
+		$this->assertEquals($result['action'], 'view');
+		$this->assertEquals($result['slug'], '∂∂');
+
+		$result = $route->parse('/posts/∂∂');
 		$this->assertEquals($result['controller'], 'posts');
 		$this->assertEquals($result['action'], 'view');
 		$this->assertEquals($result['slug'], '∂∂');
