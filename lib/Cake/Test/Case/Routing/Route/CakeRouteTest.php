@@ -509,6 +509,23 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
+ * Test that :key elements are urldecoded
+ *
+ * @return void
+ */
+	public function testParseUrlDecodeElements() {
+		$route = new Cakeroute(
+			'/:controller/:slug',
+			array('action' => 'view')
+		);
+		$route->compile();
+		$result = $route->parse('/posts/%2202%2202');
+		$this->assertEquals($result['controller'], 'posts');
+		$this->assertEquals($result['action'], 'view');
+		$this->assertEquals($result['slug'], '∂∂');
+	}
+
+/**
  * test numerically indexed defaults, get appeneded to pass
  *
  * @return void
