@@ -423,20 +423,20 @@ class CookieComponent extends Object {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
 					$pos = strpos($val, 'Q2FrZQ==.');
-					$decrypted[$name][$key] = $this->__explode($val);
-
 					if ($pos !== false) {
 						$val = substr($val, 8);
 						$decrypted[$name][$key] = $this->__explode(Security::$type(base64_decode($val), $this->key));
+					}else{
+						$decrypted[$name][$key] = $this->__explode($val);
 					}
 				}
 			} else {
 				$pos = strpos($value, 'Q2FrZQ==.');
-				$decrypted[$name] = $this->__explode($value);
-
 				if ($pos !== false) {
 					$value = substr($value, 8);
 					$decrypted[$name] = $this->__explode(Security::$type(base64_decode($value), $this->key));
+				else{
+					$decrypted[$name] = $this->__explode($value);
 				}
 			}
 		}
