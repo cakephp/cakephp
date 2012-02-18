@@ -150,7 +150,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->request->webroot = '';
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
 		));
 
 		Configure::write('Asset.timestamp', false);
@@ -404,7 +404,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$File = new File($testfile, true);
 
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
@@ -442,7 +442,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testThemeAssetsInMainWebrootPath() {
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS);
@@ -933,7 +933,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$File = new File($testfile, true);
 
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$this->Html->webroot = '/';

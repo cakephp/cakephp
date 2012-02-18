@@ -446,9 +446,9 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestAction() {
 		App::build(array(
-			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
 		), App::RESET);
 		$this->assertNull(Router::getRequest(), 'request stack should be empty.');
 
@@ -488,7 +488,7 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		Router::reload();
@@ -525,10 +525,10 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionArray() {
 		App::build(array(
-			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
 		), App::RESET);
 		CakePlugin::load(array('TestPlugin'));
 

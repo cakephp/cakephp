@@ -152,7 +152,7 @@ class ExceptionRendererTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		App::build(array(
-			'views' => array(
+			'View' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
 		), App::RESET);

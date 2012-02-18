@@ -655,7 +655,7 @@ class CakeTimeTest extends CakeTestCase {
  */
 	public function testConvertSpecifiers() {
 		App::build(array(
-			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
+			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		), App::RESET);
 		Configure::write('Config.language', 'time_test');
 		$time = strtotime('Thu Jan 14 11:43:39 2010');
@@ -762,7 +762,7 @@ class CakeTimeTest extends CakeTestCase {
  */
 	public function testI18nFormat() {
 		App::build(array(
-			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
+			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		), App::RESET);
 		Configure::write('Config.language', 'time_test');
 

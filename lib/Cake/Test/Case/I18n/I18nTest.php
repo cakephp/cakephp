@@ -33,8 +33,8 @@ class I18nTest extends CakeTestCase {
 	public function setUp() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), App::RESET);
 		CakePlugin::load(array('TestPlugin'));
 	}
@@ -2398,7 +2398,7 @@ class I18nTest extends CakeTestCase {
  */
 	public function testPluginTranslation() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 
 		Configure::write('Config.language', 'po');

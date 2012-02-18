@@ -182,7 +182,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testViewWithPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.schema');
@@ -234,7 +234,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testDumpFileWritingWithPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
@@ -335,7 +335,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testGenerateWithPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
@@ -450,7 +450,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testPluginParam() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(
@@ -470,7 +470,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testPluginDotSyntaxWithCreate() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(

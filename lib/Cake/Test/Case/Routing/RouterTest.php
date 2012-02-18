@@ -133,7 +133,7 @@ class RouterTest extends CakeTestCase {
  */
 	public function testPluginMapResources() {
 		App::build(array(
-			'plugins' => array(
+			'Plugin' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		));
@@ -173,7 +173,7 @@ class RouterTest extends CakeTestCase {
  */
 	public function testPluginMapResourcesWithPrefix() {
 		App::build(array(
-			'plugins' => array(
+			'Plugin' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		));

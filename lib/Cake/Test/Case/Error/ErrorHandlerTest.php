@@ -229,7 +229,7 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	public function testLoadPluginHanlder() {
 		App::build(array(
-			'plugins' => array(
+			'Plugin' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		), App::RESET);

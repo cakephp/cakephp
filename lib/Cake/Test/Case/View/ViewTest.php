@@ -269,7 +269,7 @@ class ViewTest extends CakeTestCase {
 		$this->ThemeView = new View($this->ThemePostsController);
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		), App::RESET);
 		App::objects('plugins', null, false);
@@ -420,7 +420,7 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
