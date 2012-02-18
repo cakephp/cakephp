@@ -280,6 +280,37 @@ class JsHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that start() and end() captured js generates scripts inline.
+ *
+ * @return void
+ */
+	public function testCaptureJsWithOutputBufferNoFile() {
+		$this->_useMock();
+		$this->Js->start();
+		echo "<script>var answer = 42;</script>";
+		$this->Js->end();
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => false, 'clear' => false));
+		
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"var answer = 42;",
+			$this->cDataEnd,
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Js->TestJsEngine->expects($this->atLeastOnce())->method('domReady');
+		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false, 'clear' => false));
+
+		$this->View->expects($this->once())
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/var\sanswer\s=\s42;/'));
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
+	}
+
+
+/**
  * test that writing the buffer with inline = false includes a script tag.
  *
  * @return void

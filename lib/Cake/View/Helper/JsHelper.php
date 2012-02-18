@@ -78,6 +78,13 @@ class JsHelper extends AppHelper {
 	public $setVariable = 'app';
 
 /**
+ * State indicator
+ *
+ * @var bool true, if output buffering is turned on. false otherwise
+ */
+	protected $_capturing = false;
+
+/**
  * Constructor - determines engine helper
  *
  * @param View $View the view object the helper is attached to.
@@ -255,6 +262,33 @@ class JsHelper extends AppHelper {
 			$this->_jsVars = array();
 		}
 		return $scripts;
+	}
+
+/**
+ * start buffering a javascript block
+ *
+ * @return void
+ */
+	public function start() {
+		if (!$this->_capturing) {
+			$this->_capturing = true;
+			ob_start();
+		}
+	}
+
+
+/**
+ * complement of JsHelper::start()
+ *
+ * @return void
+ */
+	public function end() {
+		if ($this->_capturing) {
+			$contents = ob_get_clean();
+			$contents = preg_replace('#<script[^>]*?>(.*)?</script>#si', '$1', $contents);
+			$this->buffer($contents);
+			$this->capturing = false;
+		}
 	}
 
 /**
