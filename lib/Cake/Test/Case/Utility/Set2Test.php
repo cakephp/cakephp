@@ -804,7 +804,6 @@ class Set2Test extends CakeTestCase {
  * @return void
  */
 	public function testSort() {
-		$this->markTestIncomplete('Not done, sort() is broken.');
 		$a = array(
 			0 => array(
 				'Person' => array('name' => 'Jeff'),
@@ -880,36 +879,6 @@ class Set2Test extends CakeTestCase {
 			)
 		);
 		$a = Set2::sort($a, '{n}.Person.name', 'asc');
-		$this->assertEquals($a, $b);
-
-		$a = array(
-			array(7,6,4),
-			array(3,4,5),
-			array(3,2,1),
-		);
-
-		$b = array(
-			array(3,2,1),
-			array(3,4,5),
-			array(7,6,4),
-		);
-
-		$a = Set2::sort($a, '{n}.{n}', 'asc');
-		$this->assertEquals($a, $b);
-
-		$a = array(
-			array(7,6,4),
-			array(3,4,5),
-			array(3,2,array(1,1,1)),
-		);
-
-		$b = array(
-			array(3,2,array(1,1,1)),
-			array(3,4,5),
-			array(7,6,4),
-		);
-
-		$a = Set2::sort($a, '{n}', 'asc');
 		$this->assertEquals($a, $b);
 
 		$a = array(

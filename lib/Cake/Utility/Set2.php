@@ -538,7 +538,16 @@ class Set2 {
 		if (is_numeric(implode('', $originalKeys))) {
 			$data = array_values($data);
 		}
-		$result = self::_squash(self::extract($data, $path));
+		$sortValues = self::extract($data, $path);
+		$sortCount = count($sortValues);
+		$dataCount = count($data);
+
+		// Make sortValues match the data length, as some keys could be missing
+		// the sorted value path.
+		if ($sortCount < $dataCount) {
+			$sortValues = array_pad($sortValues, $dataCount, null);
+		}
+		$result = self::_squash($sortValues);
 		$keys = self::extract($result, '{n}.id');
 		$values = self::extract($result, '{n}.value');
 
