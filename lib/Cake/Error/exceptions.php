@@ -386,6 +386,13 @@ class MissingPluginException extends CakeException {
 }
 
 /**
+ * Exception class for AclComponent and Interface implementations. 
+ *
+ * @package       Cake.Error
+ */
+class AclException extends CakeException { }
+
+/**
  * Exception class for Cache.  This exception will be thrown from Cache when it
  * encounters an error.
  *
