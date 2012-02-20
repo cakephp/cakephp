@@ -1208,13 +1208,12 @@ class Set2Test extends CakeTestCase {
  * @return void
  */
 	public function testCombineWithFormatting() {
-		$this->markTestIncomplete('Not done, format() is not implemented');
 		$a = self::userData();
 
 		$result = Set2::combine(
 			$a,
 			'{n}.User.id',
-			array('{0}: {1}', '{n}.User.Data.user', '{n}.User.Data.name'),
+			array('%1$s: %2$s', '{n}.User.Data.user', '{n}.User.Data.name'),
 			'{n}.User.group_id'
 		);
 		$expected = array(
@@ -1230,27 +1229,17 @@ class Set2Test extends CakeTestCase {
 
 		$result = Set2::combine(
 			$a,
-			array('{0}: {1}',
-			'{n}.User.Data.user',
-			'{n}.User.Data.name'),
+			array(
+				'%s: %s',
+				'{n}.User.Data.user',
+				'{n}.User.Data.name'
+			),
 			'{n}.User.id'
 		);
 		$expected = array(
 			'mariano.iglesias: Mariano Iglesias' => 2,
 			'phpnut: Larry E. Masters' => 14,
 			'gwoo: The Gwoo' => 25
-		);
-		$this->assertEquals($expected, $result);
-
-		$result = Set2::combine(
-			$a,
-			array('{1}: {0}', '{n}.User.Data.user', '{n}.User.Data.name'),
-			'{n}.User.id'
-		);
-		$expected = array(
-			'Mariano Iglesias: mariano.iglesias' => 2,
-			'Larry E. Masters: phpnut' => 14, 
-			'The Gwoo: gwoo' => 25
 		);
 		$this->assertEquals($expected, $result);
 
@@ -1276,6 +1265,61 @@ class Set2Test extends CakeTestCase {
 			'14: phpnut' => 'Larry E. Masters',
 			'25: gwoo' => 'The Gwoo'
 		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFormat method
+ *
+ * @return void
+ */
+	public function testFormat() {
+		$data = self::userData();
+
+		$result = Set2::format(
+			$data,
+			array('{n}.User.Data.user', '{n}.User.id'),
+			'%s, %s'
+		);
+		$expected = array(
+			'mariano.iglesias, 2',
+			'phpnut, 14',
+			'gwoo, 25'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::format(
+			$data,
+			array('{n}.User.Data.user', '{n}.User.id'),
+			'%2$s, %1$s'
+		);
+		$expected = array(
+			'2, mariano.iglesias',
+			'14, phpnut',
+			'25, gwoo'
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFormattingNullValues method
+ *
+ * @return void
+ */
+	public function testFormatNullValues() {
+		$this->markTestIncomplete('Not done yet');
+
+		$data = array(
+			array('Person' => array('first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42')),
+			array('Person' => array('first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => null)),
+			array('Person' => array('first_name' => 'Garrett', 'last_name' => 'Woodworth', 'city' => 'Venice Beach', 'state' => 'CA', 'something' => null)));
+
+		$result = Set2::format($data, '%s', array('{n}.Person.something'));
+		$expected = array('42', '', '');
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::format($data, '{0}, {1}', array('{n}.Person.city', '{n}.Person.something'));
+		$expected = array('Boston, 42', 'Boondock, ', 'Venice Beach, ');
 		$this->assertEquals($expected, $result);
 	}
 }

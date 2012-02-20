@@ -149,13 +149,14 @@ class Set2 {
 	protected static function _matchToken($key, $token) {
 		if ($token === '{n}') {
 			return is_numeric($key);
-		} elseif ($token === '{s}') {
-			return is_string($key);
-		} elseif (is_numeric($token)) {
-			return ($key == $token);
-		} else {
-			return ($key === $token);
 		}
+		if ($token === '{s}') {
+			return is_string($key);
+		}
+		if (is_numeric($token)) {
+			return ($key == $token);
+		}
+		return ($key === $token);
 	}
 
 /**
@@ -268,7 +269,8 @@ class Set2 {
 				if (!is_array($_list)) {
 					return array();
 				}
-			} elseif ($op === 'remove') {
+			}
+			if ($op === 'remove') {
 				if ($i === count($path) - 1) {
 					unset($_list[$key]);
 				} else {
@@ -329,7 +331,7 @@ class Set2 {
 
 		if (is_array($keyPath)) {
 			$format = array_shift($keyPath);
-			$keys = self::format($data, $format, $keyPath);
+			$keys = self::format($data, $keyPath, $format);
 		} else {
 			$keys = self::extract($data, $keyPath);
 		}
@@ -339,19 +341,17 @@ class Set2 {
 
 		if (!empty($valuePath) && is_array($valuePath)) {
 			$format = array_shift($valuePath);
-			$vals = self::format($data, $format, $valuePath);
+			$vals = self::format($data, $valuePath, $format);
 		} elseif (!empty($valuePath)) {
 			$vals = self::extract($data, $valuePath);
 		}
 
 		$count = count($keys);
 		for ($i = 0; $i < $count; $i++) {
-			if (!isset($vals[$i])) {
-				$vals[$i] = null;
-			}
+			$vals[$i] = isset($vals[$i]) ? $vals[$i] : null;
 		}
 
-		if ($groupPath != null) {
+		if ($groupPath !== null) {
 			$group = self::extract($data, $groupPath);
 			if (!empty($group)) {
 				$c = count($keys);
@@ -371,7 +371,46 @@ class Set2 {
 			return array();
 		}
 		return array_combine($keys, $vals);
+	}
 
+/**
+ * Returns a formated series of values extracted from `$data`, using
+ * `$format` as the format and `$paths` as the values to extract.
+ *
+ * @param array $data Source array from which to extract the data
+ * @param string $paths An array containing one or more Set2::extract()-style key paths
+ * @param string $format Format string into which values will be inserted, see sprintf()
+ * @return array An array of strings extracted from `$path` and formatted with `$format`
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::format
+ * @see sprintf()
+ * @see Set2::extract()
+ */
+	public static function format(array $data, array $paths, $format) {
+		$extracted = array();
+		$count = count($paths);
+
+		if (!$count) {
+			return;
+		}
+
+		for ($i = 0; $i < $count; $i++) {
+			$extracted[] = Set::extract($data, $paths[$i]);
+		}
+		$out = array();
+		$data = $extracted;
+		$count = count($data[0]);
+
+		$count2 = count($data);
+		for ($j = 0; $j < $count; $j++) {
+			$args = array();
+			for ($i = 0; $i < $count2; $i++) {
+				if (array_key_exists($j, $data[$i])) {
+					$args[] = $data[$i][$j];
+				}
+			}
+			$out[] = vsprintf($format, $args);
+		}
+		return $out;
 	}
 
 /**
