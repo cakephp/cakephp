@@ -1046,4 +1046,32 @@ class Set2Test extends CakeTestCase {
 		$this->assertFalse(isset($result[0]['Article']['body']));
 	}
 
+/**
+ * testCheck method
+ *
+ * @return void
+ */
+	public function testCheck() {
+		$set = array(
+			'My Index 1' => array('First' => 'The first item')
+		);
+		$this->assertTrue(Set2::check($set, 'My Index 1.First'));
+		$this->assertTrue(Set2::check($set, 'My Index 1'));
+
+		$set = array(
+			'My Index 1' => array(
+				'First' => array(
+					'Second' => array(
+						'Third' => array(
+							'Fourth' => 'Heavy. Nesting.'
+						)
+					)
+				)
+			)
+		);
+		$this->assertTrue(Set2::check($set, 'My Index 1.First.Second'));
+		$this->assertTrue(Set2::check($set, 'My Index 1.First.Second.Third'));
+		$this->assertTrue(Set2::check($set, 'My Index 1.First.Second.Third.Fourth'));
+		$this->assertFalse(Set2::check($set, 'My Index 1.First.Seconds.Third.Fourth'));
+	}
 }

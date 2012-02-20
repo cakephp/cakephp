@@ -350,8 +350,24 @@ class Set2 {
 		return true;
 	}
 
+/**
+ * Test whether or not a given path exists in $data.
+ * This method uses the same path syntax as Set2::extract()
+ *
+ * Checking for paths that could target more than one element will
+ * make sure that at least one matching element exists.
+ *
+ * @param array $data The data to check.
+ * @param string $path The path to check for.
+ * @return boolean Existence of path.
+ * @see Set2::extract()
+ */
 	public static function check(array $data, $path) {
-
+		$results = self::extract($data, $path);
+		if (!is_array($results)) {
+			return false;
+		}
+		return count($results) > 0;
 	}
 
 /**
