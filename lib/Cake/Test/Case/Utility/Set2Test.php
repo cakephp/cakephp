@@ -116,6 +116,41 @@ class Set2Test extends CakeTestCase {
 		);
 	}
 
+	public static function userData() {
+		return array(
+			array(
+				'User' => array(
+					'id' => 2,
+					'group_id' => 1,
+					'Data' => array(
+						'user' => 'mariano.iglesias',
+						'name' => 'Mariano Iglesias'
+					)
+				)
+			),
+			array(
+				'User' => array(
+					'id' => 14,
+					'group_id' => 2,
+					'Data' => array(
+						'user' => 'phpnut',
+						'name' => 'Larry E. Masters'
+					)
+				)
+			),
+			array(
+				'User' => array(
+					'id' => 25,
+					'group_id' => 1,
+					'Data' => array(
+						'user' => 'gwoo',
+						'name' => 'The Gwoo'
+					)
+				)
+			)
+		);
+	}
+
 /**
  * Test get()
  *
@@ -1073,5 +1108,174 @@ class Set2Test extends CakeTestCase {
 		$this->assertTrue(Set2::check($set, 'My Index 1.First.Second.Third'));
 		$this->assertTrue(Set2::check($set, 'My Index 1.First.Second.Third.Fourth'));
 		$this->assertFalse(Set2::check($set, 'My Index 1.First.Seconds.Third.Fourth'));
+	}
+
+/**
+ * testCombine method
+ *
+ * @return void
+ */
+	public function testCombine() {
+		$result = Set2::combine(array(), '{n}.User.id', '{n}.User.Data');
+		$this->assertTrue(empty($result));
+
+		$a = self::userData();
+
+		$result = Set2::combine($a, '{n}.User.id');
+		$expected = array(2 => null, 14 => null, 25 => null);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.non-existant');
+		$expected = array(2 => null, 14 => null, 25 => null);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.Data');
+		$expected = array(
+			2 => array('user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'),
+			14 => array('user' => 'phpnut', 'name' => 'Larry E. Masters'),
+			25 => array('user' => 'gwoo', 'name' => 'The Gwoo'));
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.Data.name');
+		$expected = array(
+			2 => 'Mariano Iglesias',
+			14 => 'Larry E. Masters',
+			25 => 'The Gwoo');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test combine() with a group path.
+ *
+ * @return void
+ */
+	public function testCombineWithGroupPath() {
+		$a = self::userData();
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => array('user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'),
+				25 => array('user' => 'gwoo', 'name' => 'The Gwoo')
+			),
+			2 => array(
+				14 => array('user' => 'phpnut', 'name' => 'Larry E. Masters')
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => 'Mariano Iglesias',
+				25 => 'The Gwoo'
+			),
+			2 => array(
+				14 => 'Larry E. Masters'
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => array('user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'),
+				25 => array('user' => 'gwoo', 'name' => 'The Gwoo')
+			),
+			2 => array(
+				14 => array('user' => 'phpnut', 'name' => 'Larry E. Masters')
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => 'Mariano Iglesias',
+				25 => 'The Gwoo'
+			),
+			2 => array(
+				14 => 'Larry E. Masters'
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test combine with formatting rules.
+ *
+ * @return void
+ */
+	public function testCombineWithFormatting() {
+		$this->markTestIncomplete('Not done, format() is not implemented');
+		$a = self::userData();
+
+		$result = Set2::combine(
+			$a,
+			'{n}.User.id',
+			array('{0}: {1}', '{n}.User.Data.user', '{n}.User.Data.name'),
+			'{n}.User.group_id'
+		);
+		$expected = array(
+			1 => array(
+				2 => 'mariano.iglesias: Mariano Iglesias',
+				25 => 'gwoo: The Gwoo'
+			),
+			2 => array(
+				14 => 'phpnut: Larry E. Masters'
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine(
+			$a,
+			array('{0}: {1}',
+			'{n}.User.Data.user',
+			'{n}.User.Data.name'),
+			'{n}.User.id'
+		);
+		$expected = array(
+			'mariano.iglesias: Mariano Iglesias' => 2,
+			'phpnut: Larry E. Masters' => 14,
+			'gwoo: The Gwoo' => 25
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine(
+			$a,
+			array('{1}: {0}', '{n}.User.Data.user', '{n}.User.Data.name'),
+			'{n}.User.id'
+		);
+		$expected = array(
+			'Mariano Iglesias: mariano.iglesias' => 2,
+			'Larry E. Masters: phpnut' => 14, 
+			'The Gwoo: gwoo' => 25
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine(
+			$a,
+			array('%1$s: %2$d', '{n}.User.Data.user', '{n}.User.id'),
+			'{n}.User.Data.name'
+		);
+		$expected = array(
+			'mariano.iglesias: 2' => 'Mariano Iglesias',
+			'phpnut: 14' => 'Larry E. Masters',
+			'gwoo: 25' => 'The Gwoo'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Set2::combine(
+			$a,
+			array('%2$d: %1$s', '{n}.User.Data.user', '{n}.User.id'),
+			'{n}.User.Data.name'
+		);
+		$expected = array(
+			'2: mariano.iglesias' => 'Mariano Iglesias',
+			'14: phpnut' => 'Larry E. Masters',
+			'25: gwoo' => 'The Gwoo'
+		);
+		$this->assertEquals($expected, $result);
 	}
 }

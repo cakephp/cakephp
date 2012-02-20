@@ -308,7 +308,69 @@ class Set2 {
 		return $data;
 	}
 
-	public static function combine(array $data, $keyPath, $valuePath = null) {
+
+/**
+ * Creates an associative array using `$keyPath` as the path to build its keys, and optionally
+ * `$valuePath` as path to get the values. If `$valuePath` is not specified, all values will be initialized
+ * to null (useful for Set::merge). You can optionally group the values by what is obtained when
+ * following the path specified in `$groupPath`.
+ *
+ * @param array $data Array from where to extract keys and values
+ * @param string $keyPath A dot-separated string.
+ * @param string $valuePath A dot-separated string.
+ * @param string $groupPath A dot-separated string.
+ * @return array Combined array
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::combine
+ */
+	public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null) {
+		if (empty($data)) {
+			return array();
+		}
+
+		if (is_array($keyPath)) {
+			$format = array_shift($keyPath);
+			$keys = self::format($data, $format, $keyPath);
+		} else {
+			$keys = self::extract($data, $keyPath);
+		}
+		if (empty($keys)) {
+			return array();
+		}
+
+		if (!empty($valuePath) && is_array($valuePath)) {
+			$format = array_shift($valuePath);
+			$vals = self::format($data, $format, $valuePath);
+		} elseif (!empty($valuePath)) {
+			$vals = self::extract($data, $valuePath);
+		}
+
+		$count = count($keys);
+		for ($i = 0; $i < $count; $i++) {
+			if (!isset($vals[$i])) {
+				$vals[$i] = null;
+			}
+		}
+
+		if ($groupPath != null) {
+			$group = self::extract($data, $groupPath);
+			if (!empty($group)) {
+				$c = count($keys);
+				for ($i = 0; $i < $c; $i++) {
+					if (!isset($group[$i])) {
+						$group[$i] = 0;
+					}
+					if (!isset($out[$group[$i]])) {
+						$out[$group[$i]] = array();
+					}
+					$out[$group[$i]][$keys[$i]] = $vals[$i];
+				}
+				return $out;
+			}
+		}
+		if (empty($vals)) {
+			return array();
+		}
+		return array_combine($keys, $vals);
 
 	}
 
@@ -380,10 +442,10 @@ class Set2 {
 	public static function filter(array $data) {
 		foreach ($data as $k => $v) {
 			if (is_array($v)) {
-				$data[$k] = Set2::filter($v);
+				$data[$k] = self::filter($v);
 			}
 		}
-		return array_filter($data, array('Set2', '_filter'));
+		return array_filter($data, array('self', '_filter'));
 	}
 
 /**
