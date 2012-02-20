@@ -1082,7 +1082,8 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = App::path('View');
-		$corePaths = array_flip(App::core('View'));
+		$corePaths = array_flip(array_merge(App::core('View'), App::core('Console/Templates/skel/View')));
+
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
@@ -1099,7 +1100,7 @@ class View extends Object {
 			$count = count($paths);
 			for ($i = 0; $i < $count; $i++) {
 				if (strpos($paths[$i], DS . 'Plugin' . DS) === false
-					&& strpos($paths[$i], DS . 'Cake' . DS . 'View') === false) {
+					&& strpos($paths[$i], DS . 'Cake' . DS) === false) {
 						if ($plugin) {
 							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
 						}
