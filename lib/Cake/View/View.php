@@ -1082,25 +1082,29 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = App::path('View');
-		$corePaths = array_flip(array_merge(App::core('View'), App::core('Console/Templates/skel/View')));
+		$corePaths = array_merge(App::core('View'), App::core('Console/Templates/skel/View'));
 
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
-				if (!isset($corePaths[$viewPaths[$i]])) {
+				if (!in_array($viewPaths[$i], $corePaths)) {
 					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
 			$paths = array_merge($paths, App::path('View', $plugin));
 		}
 
-		$paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		$paths = array_unique(array_merge($paths, $viewPaths, $corePaths));
 		if (!empty($this->theme)) {
+			$skipPatterns = array(
+				DS . 'Cake' . DS . 'View' . DS,
+				DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS
+			);
 			$themePaths = array();
 			$count = count($paths);
 			for ($i = 0; $i < $count; $i++) {
 				if (strpos($paths[$i], DS . 'Plugin' . DS) === false
-					&& strpos($paths[$i], DS . 'Cake' . DS) === false) {
+					&& strpos($paths[$i], $skipPatterns[1]) === false && strpos($paths[$i], $skipPatterns[0]) === false) {
 						if ($plugin) {
 							$themePaths[] = $paths[$i] . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
 						}
