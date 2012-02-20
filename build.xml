@@ -111,7 +111,7 @@
 			<name>CakePHP</name>
 			<summary>CakePHP Rapid Development Framework</summary>
 			<channel>pear.cakephp.org</channel>
-			<description>CakePHP is a application development framework for PHP 5.2+</description>
+			<description>CakePHP is an application development framework for PHP 5.2+</description>
 
 			<lead user="mark_story" name="Mark Story" email="mark@mark-story.com" />
 			<lead user="lorenzo" name="José Lorenzo Rodríguez" email="jose.zap@gmail.com" />
@@ -129,7 +129,7 @@
 			<stability release="${pear.stability}" api="${pear.stability}" />
 			<notes>http://github.com/cakephp/cakephp/blob/master/README</notes>
 			<dependencies>
-				<php minimum_version="5.2.6" />
+				<php minimum_version="5.2.8" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />
 				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.5.0" type="optional" />
 			</dependencies>
