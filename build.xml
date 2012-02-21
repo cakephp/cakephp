@@ -84,6 +84,9 @@
 		<property name="pear.package" value="${project.name}-${pear.version}" />
 
 		<echo msg="Preparing package of ${version} (${pear.version}+${pear.stability})" />
+
+		<!-- Get the current git branch -->
+		<exec command="git name-rev HEAD 2>/dev/null | awk '{ print $2 }'" outputProperty="git.branch" />
 	</target>
 
 	<!--
@@ -180,7 +183,7 @@
 		<fail if="noshipit" msg="You said not to ship it." />
 
 		<echo msg="Pushing commit and tag." />
-		<exec command="git push ${git.remote}" logoutput="true" checkreturn="true" />
+		<exec command="git push ${git.remote} ${git.branch}" logoutput="true" checkreturn="true" />
 		<exec command="git push ${git.remote} ${release_version}" logoutput="true" checkreturn="true" />
 		<echo msg="Push complete." />
 	</target>
