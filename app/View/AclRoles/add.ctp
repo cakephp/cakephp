@@ -3,8 +3,8 @@
 	<fieldset>
 		<legend><?php echo __('Add Acl Role'); ?></legend>
 	<?php
-		echo $this->Form->input('acl_id');
-		echo $this->Form->input('acl_function_id');
+		echo $this->Form->input('acl_id', array( 'empty' => ''));
+		echo $this->Form->input('acl_function_id', array( 'empty' => ''));
 		echo $this->Form->input('role_id');
 	?>
 	</fieldset>
