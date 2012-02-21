@@ -275,7 +275,7 @@ class ConnectionManagerTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS
 			)
 		), App::RESET);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 		$expected = array(
 			'datasource' => 'Test2Source'
 		);

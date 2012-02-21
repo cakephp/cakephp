@@ -47,7 +47,7 @@ class CommandListShellTest extends CakeTestCase {
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$out = new TestStringOutput();
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
