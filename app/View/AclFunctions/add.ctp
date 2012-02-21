@@ -4,7 +4,7 @@
 		<legend><?php echo __('Add Acl Function'); ?></legend>
 	<?php
 		echo $this->Form->input('acl_id');
-		echo $this->Form->input('function', array( 'empty' => ''));
+		echo $this->Form->input('function');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit'));?>
