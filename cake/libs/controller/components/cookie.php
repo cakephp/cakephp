@@ -435,7 +435,7 @@ class CookieComponent extends Object {
 				if ($pos !== false) {
 					$value = substr($value, 8);
 					$decrypted[$name] = $this->__explode(Security::$type(base64_decode($value), $this->key));
-				else{
+				}else{
 					$decrypted[$name] = $this->__explode($value);
 				}
 			}
