@@ -26,7 +26,7 @@ class Acl extends AppModel {
 			'className' => 'AclFunction',
 			'foreignKey' => 'acl_id',
 			'dependent' => false,
-			'conditions' => '',
+			'conditions' => array('AclFunction.acl_id' => 'Acl.id'),
 			'fields' => '',
 			'order' => '',
 			'limit' => '',
