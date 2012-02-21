@@ -276,9 +276,6 @@ class ViewTest extends CakeTestCase {
 
 		CakePlugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
 		Configure::write('debug', 2);
-
-		CakePlugin::loadAll();
-
 	}
 
 /**

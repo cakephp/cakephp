@@ -530,7 +530,7 @@ class ObjectTest extends CakeTestCase {
 			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
 		), true);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin'));
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')
