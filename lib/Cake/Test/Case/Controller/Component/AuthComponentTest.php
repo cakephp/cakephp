@@ -853,7 +853,9 @@ class AuthComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/edit/1';
-		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
+		$request = new CakeRequest($url);
+		$request->query = array();
+		$this->Auth->request = $this->Controller->request = $request;
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->initialize($this->Controller);
