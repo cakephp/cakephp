@@ -216,28 +216,35 @@ class AclsController extends AppController {
 		debug($richardAclRoleArray);
 		
 		// this will be used to find if this key already exists or not
-		$compareKey = "NONE";
+		$compareName = "NONE";
 		
 		foreach($richardAclRoleArray as $item) {
+			$controllerIndex 	= $item['Acl']['Controller'];
+			$functionIndex 		= $item['AclFunction']['Function'];
+			$roleIndex			= $item['Role']['Name'];
+			
 			//debug($item);
 			//debug($item['Acl']['Controller']);
 			
 			//TODO need validation on element exists or not on every level.
 			//TODO Need to compare result to database to make sure it grabs all of data.
 			
-			if(!isset($richardResult[$item['Acl']['Controller']])) {
-				$richardResult[$item['Acl']['Controller']] = array();
+			if(!isset($richardResult[$controllerIndex])) {
+				// if controller does not exist, then create new array
+				$richardResult[$controllerIndex] = array();
 			}
 			
-			if($compareKey != $item['AclFunction']['Function']) {
-				$compareKey = $item['AclFunction']['Function'];
-				$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $item['Role']['Name'];
+			// if Function doesn't exist, then create a new one.
+			if($compareName != $roleIndex) {
+				$compareName = $roleIndex;
+				$richardResult[$controllerIndex][$compareName] = $roleIndex;
 				
 			} else {
-				if($richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] != "") {
-					$richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']] = $richardResult[$item['Acl']['Controller']][$item['AclFunction']['Function']].",".$item['Role']['Name'];	
+				if($richardResult[$controllerIndex][$compareName] != "") {
+					$richardResult[$controllerIndex][$compareName] = $richardResult[$controllerIndex][$compareName].",".$roleIndex;	
 				}
 			}
+			
 		}
 		
 		debug($richardResult);
