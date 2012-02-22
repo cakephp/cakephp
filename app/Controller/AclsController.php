@@ -237,11 +237,11 @@ class AclsController extends AppController {
 			// if Function doesn't exist, then create a new one.
 			if($compareName != $roleIndex) {
 				$compareName = $roleIndex;
-				$richardResult[$controllerIndex][$compareName] = $functionIndex;
+				$richardResult[$controllerIndex][$functionIndex] = $compareName;
 				
 			} else {
-				if($richardResult[$controllerIndex][$compareName] != "") {
-					$richardResult[$controllerIndex][$compareName] = $richardResult[$controllerIndex][$compareName].",".$functionIndex;	
+				if($richardResult[$controllerIndex][$functionIndex] != "") {
+					$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$compareName;	
 				}
 			}
 			
