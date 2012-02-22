@@ -1,7 +1,6 @@
 <div class="aclRoles form">
 	
 <?php 
-	$functionslist = '';
 	
 $this->Js->get('#AclRoleAclId')->event('change', 
 	$this->Js->request(array(
