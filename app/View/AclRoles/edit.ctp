@@ -3,13 +3,21 @@
 <?php 
 	$functionslist = '';
 	
-	$this->Js->event(
-    	'click',
-    $this->Js->request(
-        array('action' => '/acl_functions/ajax_list', 'param1'),
-        array('async' => true, 'update' => '#element')
-    )
-);
+$this->Js->get('#AclRoleAclId')->event('change', 
+	$this->Js->request(array(
+		'controller'=>'acl_functions',
+		'action'=>'ajax_list'
+		), array(
+		'update'=>'#AclRoleAclFunctionId',
+		'async' => true,
+		'method' => 'post',
+		'dataExpression'=>true,
+		'data'=> $this->Js->serializeForm(array(
+			'isForm' => true,
+			'inline' => true
+			))
+		))
+	);
 ?>
 
 <?php echo $this->Form->create('AclRole');?>
