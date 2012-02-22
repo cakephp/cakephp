@@ -251,11 +251,11 @@ class AclsController extends AppController {
 					if(!isset($richardResult[$controllerIndex][$functionIndex])) {
 							
 						$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-						
+						echo('line 254 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 					} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
 							
 						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
-						echo('line 253 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+						echo('line 258 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 					
 					}	
 						
