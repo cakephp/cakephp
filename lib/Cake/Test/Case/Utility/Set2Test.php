@@ -1346,18 +1346,23 @@ class Set2Test extends CakeTestCase {
  * @return void
  */
 	public function testFormatNullValues() {
-		$this->markTestIncomplete('Not done yet');
-
 		$data = array(
-			array('Person' => array('first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42')),
-			array('Person' => array('first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => null)),
-			array('Person' => array('first_name' => 'Garrett', 'last_name' => 'Woodworth', 'city' => 'Venice Beach', 'state' => 'CA', 'something' => null)));
+			array('Person' => array(
+				'first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42'
+			)),
+			array('Person' => array(
+				'first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => null
+			)),
+			array('Person' => array(
+				'first_name' => 'Garrett', 'last_name' => 'Woodworth', 'city' => 'Venice Beach', 'state' => 'CA', 'something' => null
+			))
+		);
 
-		$result = Set2::format($data, '%s', array('{n}.Person.something'));
+		$result = Set2::format($data, array('{n}.Person.something'), '%s');
 		$expected = array('42', '', '');
 		$this->assertEquals($expected, $result);
 
-		$result = Set2::format($data, '{0}, {1}', array('{n}.Person.city', '{n}.Person.something'));
+		$result = Set2::format($data, array('{n}.Person.city', '{n}.Person.something'), '%s, %s');
 		$expected = array('Boston, 42', 'Boondock, ', 'Venice Beach, ');
 		$this->assertEquals($expected, $result);
 	}
