@@ -239,13 +239,13 @@ class AclsController extends AppController {
 			
 			
 			if($compareName != $roleIndex) {
-				echo ('line 242'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $roleIndex='.$roleIndex.'<br />');
+				echo ('line 242'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
 				
 				$compareName = $roleIndex;
 				$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
 				
 			} else {
-				echo ('line 248'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $roleIndex='.$roleIndex.'<br />');
+				echo ('line 248'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
 				
 				if (isset($richardResult[$controllerIndex][$functionIndex])) {
 					//if ($richardResult[$controllerIndex][$functionIndex] != "") {
