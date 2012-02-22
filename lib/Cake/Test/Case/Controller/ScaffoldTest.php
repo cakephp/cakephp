@@ -90,7 +90,7 @@ class TestScaffoldMock extends Scaffold {
  *
  * @param unknown_type $params
  */
-	function _scaffold(CakeRequest $request) {
+	protected function _scaffold(CakeRequest $request) {
 		$this->_params = $request;
 	}
 
@@ -99,7 +99,7 @@ class TestScaffoldMock extends Scaffold {
  *
  * @return unknown
  */
-	function getParams() {
+	public function getParams() {
 		return $this->_params;
 	}
 }
@@ -277,7 +277,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHabtmFieldAdditionWithScaffoldForm() {
+	public function testHabtmFieldAdditionWithScaffoldForm() {
 		CakePlugin::unload();
 		$params = array(
 			'plugin' => null,

@@ -130,7 +130,7 @@ class JsHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function _useMock() {
+	protected function _useMock() {
 		$request = new CakeRequest(null, false);
 
 		if (!class_exists('TestJsEngineHelper', false)) {
