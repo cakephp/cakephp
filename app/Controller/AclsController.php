@@ -232,6 +232,7 @@ class AclsController extends AppController {
 			if(!isset($richardResult[$controllerIndex])) {
 				// if controller does not exist, then create new array
 				$richardResult[$controllerIndex] = array();
+				$compareName = "NONE";
 			}
 			
 			// if Function doesn't exist, then create a new one.
@@ -245,9 +246,7 @@ class AclsController extends AppController {
 				
 				if (isset($richardResult[$controllerIndex][$functionIndex])) {
 					if ($richardResult[$controllerIndex][$functionIndex] != "") {
-						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$compareName;	
-					} else {
-						$richardResult[$controllerIndex][$functionIndex] = $compareName;
+						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$compareName;
 					}
 				} else {
 					$richardResult[$controllerIndex][$functionIndex] = $compareName;
