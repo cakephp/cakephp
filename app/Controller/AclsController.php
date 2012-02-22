@@ -247,6 +247,8 @@ class AclsController extends AppController {
 					if ($richardResult[$controllerIndex][$functionIndex] != "") {
 						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$compareName;	
 					}
+				} else {
+					$richardResult[$controllerIndex][$functionIndex] = $compareName;
 				}
 			}
 		}
