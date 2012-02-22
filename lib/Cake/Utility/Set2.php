@@ -376,6 +376,14 @@ class Set2 {
 /**
  * Returns a formated series of values extracted from `$data`, using
  * `$format` as the format and `$paths` as the values to extract.
+ * 
+ * Usage:
+ *
+ * {{{
+ * $result = Set::format($users, array('{n}.User.id', '{n}.User.name'), '%s : %s');
+ * }}}
+ *
+ * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *
  * @param array $data Source array from which to extract the data
  * @param string $paths An array containing one or more Set2::extract()-style key paths

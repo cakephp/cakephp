@@ -834,6 +834,45 @@ class Set2Test extends CakeTestCase {
 	}
 
 /**
+ * Test that uneven keys are handled correctly.
+ *
+ * @return void
+ */
+	public function testExtractUnevenKeys() {
+		$data = array(
+			'Level1' => array(
+				'Level2' => array('test1', 'test2'),
+				'Level2bis' => array('test3', 'test4')
+			)
+		);
+		$this->assertEquals(
+			array('test1', 'test2'),
+			Set2::extract($data, 'Level1.Level2')
+		);
+		$this->assertEquals(
+			array('test3', 'test4'),
+			Set2::extract($data, 'Level1.Level2bis')
+		);
+
+		$data = array(
+			'Level1' => array(
+				'Level2bis' => array(
+					array('test3', 'test4'),
+					array('test5', 'test6')
+				)
+			)
+		);
+		$expected = array(
+			array('test3', 'test4'),
+			array('test5', 'test6')
+		);
+		$this->assertEquals($expected, Set2::extract($data, 'Level1.Level2bis'));
+		
+		$data['Level1']['Level2'] = array('test1', 'test2');
+		$this->assertEquals($expected, Set2::extract($data, 'Level1.Level2bis'));
+	}
+
+/**
  * testSort method
  *
  * @return void
