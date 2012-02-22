@@ -1134,7 +1134,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'domain', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat', 'theme',
+			'transport', 'emailFormat', 'theme', 'helpers'
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
