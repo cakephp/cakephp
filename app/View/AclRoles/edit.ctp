@@ -3,12 +3,12 @@
 <?php 
 	$functionslist = '';
 	
-$this->Js->get('#PostCategoryId')->event('change', 
+$this->Js->get('#AclRoleAclId')->event('change', 
 	$this->Js->request(array(
-		'controller'=>'subcategories',
-		'action'=>'getByCategory'
+		'controller'=>'acl_functions',
+		'action'=>'ajax_list'
 		), array(
-		'update'=>'#PostSubcategoryId',
+		'update'=>'#AclRoleAclFunctionId',
 		'async' => true,
 		'method' => 'post',
 		'dataExpression'=>true,
