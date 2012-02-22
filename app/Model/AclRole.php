@@ -8,6 +8,7 @@ App::uses('AppModel', 'Model');
  * @property Role $Role
  */
 class AclRole extends AppModel {
+	public $helpers = array('Js');
 /**
  * Display field
  *

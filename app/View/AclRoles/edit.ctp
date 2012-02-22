@@ -1,4 +1,17 @@
 <div class="aclRoles form">
+	
+<?php 
+	$functionslist = '';
+	
+	$this->Js->event(
+    	'click',
+    $this->Js->request(
+        array('action' => '/acl_functions/ajax_list', 'param1'),
+        array('async' => true, 'update' => '#element')
+    )
+);
+?>
+
 <?php echo $this->Form->create('AclRole');?>
 	<fieldset>
 		<legend><?php echo __('Edit Acl Role'); ?></legend>

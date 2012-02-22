@@ -6,6 +6,7 @@ App::uses('AppController', 'Controller');
  * @property AclFunction $AclFunction
  */
 class AclFunctionsController extends AppController {
+	public $helpers = array('Js');
 
 
 /**
@@ -28,11 +29,12 @@ class AclFunctionsController extends AppController {
 	public function ajax_list() {
 		$this->AclFunction->recursive = 0;
 		$ajaxFunctions = $this->AclFunction->find('list', array(
-			'conditions' => array('AclFunction.acl_id' => '4')
+			'conditions' => array('AclFunction.acl_id' => $acl_id)
 		));
 
 		$this->set('ajaxFunctions', $ajaxFunctions);
-		$this->set('_serialize', 'ajaxFunctions');
+		$this->layout = 'ajax';
+		//$this->set('_serialize', 'ajaxFunctions');
 	}
 
 /**
