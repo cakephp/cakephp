@@ -33,7 +33,7 @@ class AclFunctionsController extends AppController {
 		$data = array(
 			aclFunctions => $aclFunctions);
 		$this->set($data);
-		$this->set('_serialize', 'aclFunctions');
+		$this->set('_serialize', $data);
 	}
 
 /**
