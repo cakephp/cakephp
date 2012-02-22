@@ -1291,7 +1291,6 @@ class TreeBehaviorNumberTest extends CakeTestCase {
  * @return void
  */
 	public function testFindThreaded() {
-		$this->loadFixtures('Person');
 		$Model = new Person();
 		$Model->recursive = -1;
 		$Model->Behaviors->attach('Tree', array('parent' => 'mother_id'));
