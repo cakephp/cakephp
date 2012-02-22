@@ -1,4 +1,22 @@
 <div class="aclRoles form">
+	<?php 
+	
+$this->Js->get('#AclRoleAclId')->event('change', 
+	$this->Js->request(array(
+		'controller'=>'acl_functions',
+		'action'=>'ajax_list'
+		), array(
+		'update'=>'#AclRoleAclFunctionId',
+		'async' => true,
+		'method' => 'post',
+		'dataExpression'=>true,
+		'data'=> $this->Js->serializeForm(array(
+			'isForm' => true,
+			'inline' => true
+			))
+		))
+	);
+?>
 <?php echo $this->Form->create('AclRole');?>
 	<fieldset>
 		<legend><?php echo __('Admin Edit Acl Role'); ?></legend>
