@@ -239,23 +239,36 @@ class AclsController extends AppController {
 			
 			
 			if($compareName != $roleIndex) {
-				echo ('line 242'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
+				//echo ('line 242'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
 				
 				$compareName = $roleIndex;
-				$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-				echo('line 246 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+				//$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
+				
+				if(!isset($richardResult[$controllerIndex][$functionIndex])) {
+						
+					$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
+					//echo('line 254 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+				} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
+					//echo('--->line 256 before update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+					$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
+					//echo('line 258 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+				
+				}	
+				
+				
+				//echo('line 246 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 			} else {
-				echo ('line 248'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
+				//echo ('line 248'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
 				
 				//if (isset($richardResult[$controllerIndex][$functionIndex])) {
 					if(!isset($richardResult[$controllerIndex][$functionIndex])) {
 							
 						$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-						echo('line 254 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+						//echo('line 254 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 					} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
-						echo('--->line 256 before update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+						//echo('--->line 256 before update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
-						echo('line 258 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+						//echo('line 258 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 					
 					}	
 						
