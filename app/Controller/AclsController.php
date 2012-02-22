@@ -251,8 +251,8 @@ class AclsController extends AppController {
 					//if ($richardResult[$controllerIndex][$functionIndex] != "") {
 						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
 					//}
-				} else {
-					$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
+				//} else {
+				//	$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
 				}
 			}
 		}
