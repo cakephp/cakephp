@@ -424,7 +424,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @param string $values
  * @return boolean true
  */
-	protected function _insertCallback($table, $fields, $values) {
+	public function _insertCallback($table, $fields, $values) {
 		$this->insertMulti['table'] = $table;
 		$this->insertMulti['fields'] = $fields;
 		$this->insertMulti['values'] = $values;

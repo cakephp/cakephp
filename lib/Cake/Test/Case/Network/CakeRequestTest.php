@@ -815,7 +815,7 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
-	protected function _detectCallback($request) {
+	public function _detectCallback($request) {
 		return $request->return == true;
 	}
 
