@@ -1037,8 +1037,8 @@ class DispatcherTest extends CakeTestCase {
 
 		Router::reload();
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$Dispatcher = new TestDispatcher();
@@ -1113,8 +1113,8 @@ class DispatcherTest extends CakeTestCase {
 	public function testTestPluginDispatch() {
 		$Dispatcher = new TestDispatcher();
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), APP::RESET);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 		Router::reload();
 		Router::parse('/');
@@ -1172,8 +1172,8 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'vendors' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
@@ -1396,7 +1396,7 @@ class DispatcherTest extends CakeTestCase {
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-		), true);
+		), App::RESET);
 
 		$dispatcher = new TestDispatcher();
 		$request = new CakeRequest($url);

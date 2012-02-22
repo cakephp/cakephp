@@ -92,13 +92,13 @@ class NumberHelperTest extends CakeTestCase {
 	public function testEngineOverride() {
 		App::build(array(
 			'Utility' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Utility' . DS)
-			), APP::REGISTER);
+		), App::REGISTER);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
 		$this->assertInstanceOf('TestAppEngine', $Number->engine());
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-			));
+		));
 		CakePlugin::load('TestPlugin');
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
 		$this->assertInstanceOf('TestPluginEngine', $Number->engine());

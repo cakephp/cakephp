@@ -200,7 +200,7 @@ class HelperTest extends CakeTestCase {
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
 	}
 
@@ -886,7 +886,7 @@ class HelperTest extends CakeTestCase {
  */
 	public function testLazyLoadingHelpers() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
 		CakePlugin::load(array('TestPlugin'));
 		$Helper = new TestHelper($this->View);
