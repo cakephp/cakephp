@@ -50,7 +50,7 @@ class ControllerTestDispatcher extends Dispatcher {
  *
  * @return Controller
  */
-	function _getController($request, $response) {
+	protected function _getController($request, $response) {
 		if ($this->testController === null) {
 			$this->testController = parent::_getController($request, $response);
 		}

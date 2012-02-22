@@ -766,7 +766,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testStateValidation() {
+	public function testStateValidation() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
 

@@ -60,7 +60,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @param string $charset The character set to output with. Defaults to UTF-8
  * @param array $params Array of request parameters the reporter should use. See above.
  */
-	function __construct($charset = 'utf-8', $params = array()) {
+	public function __construct($charset = 'utf-8', $params = array()) {
 		if (!$charset) {
 			$charset = 'utf-8';
 		}

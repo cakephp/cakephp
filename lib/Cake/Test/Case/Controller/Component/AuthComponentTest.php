@@ -42,7 +42,7 @@ class TestAuthComponent extends AuthComponent {
  *
  * @return void
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->testStop = true;
 	}
 
@@ -117,7 +117,7 @@ class AuthTestController extends Controller {
  *
  * @return void
  */
-	function __construct($request, $response) {
+	public function __construct($request, $response) {
 		$request->addParams(Router::parse('/auth_test'));
 		$request->here = '/auth_test';
 		$request->webroot = '/';

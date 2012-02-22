@@ -240,7 +240,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testFindWithJoinsOption() {
+	public function testFindWithJoinsOption() {
 		$this->loadFixtures('Article', 'User');
 		$TestUser =& new User();
 
@@ -626,7 +626,7 @@ class ModelIntegrationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testHABTMKeepExisting() {
+	public function testHABTMKeepExisting() {
 		$this->loadFixtures('Site', 'Domain', 'DomainsSite');
 
 		$Site = new Site();
@@ -674,8 +674,8 @@ class ModelIntegrationTest extends BaseModelTest {
 		$results = $Site->Domain->DomainsSite->find('count', array(
 			'conditions' => array(
 				'DomainsSite.active' => true,
-				),
-			));
+			),
+		));
 		$expected = 5;
 		$this->assertEquals($expected, $results);
 
@@ -687,8 +687,8 @@ class ModelIntegrationTest extends BaseModelTest {
 		$results = $Site->DomainsSite->find('count', array(
 			'conditions' => array(
 				'DomainsSite.active' => true,
-				),
-			));
+			),
+		));
 		$expected = 6;
 		$this->assertEquals($expected, $results);
 
@@ -697,8 +697,8 @@ class ModelIntegrationTest extends BaseModelTest {
 			'Site' => array('id' => 1, 'name' => 'cakephp (modified)'),
 			'Domain' => array(
 				'Domain' => array(3),
-				)
-			);
+			)
+		);
 		$Site->create($data);
 		$Site->save($data);
 
@@ -715,12 +715,12 @@ class ModelIntegrationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testHABTMKeepExistingWithThreeDbs() {
+	public function testHABTMKeepExistingWithThreeDbs() {
 		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf(
 			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
 			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
-			);
+		);
 
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
 		$Player = ClassRegistry::init('Player');
@@ -729,9 +729,9 @@ class ModelIntegrationTest extends BaseModelTest {
 				'Armor' => array(
 					'with' => 'ArmorsPlayer',
 					'unique' => 'keepExisting',
-					),
 				),
-			), false);
+			),
+		), false);
 		$this->assertEquals('test', $Player->useDbConfig);
 		$this->assertEquals('test', $Player->Guild->useDbConfig);
 		$this->assertEquals('test2', $Player->Guild->GuildsPlayer->useDbConfig);

@@ -157,7 +157,7 @@ class DbAclTwoTest extends DbAcl {
  *
  * @return void
  */
-	function __construct() {
+	public function __construct() {
 		$this->Aro = new AroTwoTest();
 		$this->Aro->Permission = new PermissionTwoTest();
 		$this->Aco = new AcoTwoTest();
@@ -482,7 +482,7 @@ class DbAclTest extends CakeTestCase {
  * @param bool $treesToo
  * @return void
  */
-	function __debug ($printTreesToo = false) {
+	protected function __debug ($printTreesToo = false) {
 		$this->Acl->Aro->displayField = 'alias';
 		$this->Acl->Aco->displayField = 'alias';
 		$aros = $this->Acl->Aro->find('list', array('order' => 'lft'));
@@ -529,7 +529,7 @@ class DbAclTest extends CakeTestCase {
  * @param int $len
  * @return void
  */
-	function __pad($string = '', $len = 14) {
+	protected function __pad($string = '', $len = 14) {
 		return str_pad($string, $len);
 	}
 }
