@@ -67,7 +67,7 @@ class AclRolesController extends AppController {
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->AclRole->save($this->request->data)) {
-				$this->Session->setFlash(__('The acl role has been saved'));
+				//$this->Session->setFlash(__('The acl role has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The acl role could not be saved. Please, try again.'));
