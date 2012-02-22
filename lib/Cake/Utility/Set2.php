@@ -644,9 +644,39 @@ class Set2 {
  * Map a callback across all elements in a set.
  * Can be provided a path to only modify slices of the set.
  *
+ * @param array $data The data to map over, and extract data out of.
+ * @param string $path The path to extract for mapping over.
+ * @param callable $function The function to call on each extracted value.
+ * @return array An array of the modified values.
  */
-	public static function map(array $data, $path, $function = null) {
+	public static function map(array $data, $path, $function) {
+		$values = (array)self::extract($data, $path);
+		return array_map($function, $values);
+	}
 
+/**
+ * Reduce a set of extracted values using `$function`.
+ *
+ * @param array $data The data to reduce.
+ * @param string $path The path to extract from $data.
+ * @return mixed The reduced value.
+ */
+	public static function reduce(array $data, $path, $function) {
+		$values = (array)self::extract($data, $path);
+		return array_reduce($values, $function);
+	}
+
+/**
+ * Apply a callback to a set of extracted values using `$function`.
+ * The function will get the extracted values as the first argument.
+ *
+ * @param array $data The data to reduce.
+ * @param string $path The path to extract from $data.
+ * @return mixed The results of the applied method.
+ */
+	public static function apply(array $data, $path, $function) {
+		$values = (array)self::extract($data, $path);
+		return call_user_func($function, $values);
 	}
 
 /**

@@ -1361,4 +1361,57 @@ class Set2Test extends CakeTestCase {
 		$expected = array('Boston, 42', 'Boondock, ', 'Venice Beach, ');
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * Test map()
+ *
+ * @return void
+ */
+	public function testMap() {
+		$data = self::articleData();
+
+		$result = Set2::map($data, '{n}.Article.id', array($this, '_mapCallback'));
+		$expected = array(2, 4, 6, 8, 10);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testApply() {
+		$data = self::articleData();
+
+		$result = Set2::apply($data, '{n}.Article.id', 'array_sum');
+		$this->assertEquals(15, $result);
+	}
+
+/**
+ * Test reduce()
+ *
+ * @return void
+ */
+	public function testReduce() {
+		$data = self::articleData();
+
+		$result = Set2::reduce($data, '{n}.Article.id', array($this, '_reduceCallback'));
+		$this->assertEquals(15, $result);
+	}
+
+/**
+ * testing method for map callbacks.
+ *
+ * @param mixed $value
+ * @return mixed.
+ */
+	public function _mapCallback($value) {
+		return $value * 2;
+	}
+
+/**
+ * testing method for reduce callbacks.
+ *
+ * @param mixed $one
+ * @param mixed $two
+ * @return mixed.
+ */
+	public function _reduceCallback($one, $two) {
+		return $one + $two;
+	}
 }
