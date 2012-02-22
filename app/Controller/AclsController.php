@@ -223,60 +223,26 @@ class AclsController extends AppController {
 			$functionIndex 		= $item['AclFunction']['Function'];
 			$roleIndex			= $item['Role']['Name'];
 			
-			//debug($item);
-			//debug($item['Acl']['Controller']);
-			
-			//TODO need validation on element exists or not on every level.
-			//TODO Need to compare result to database to make sure it grabs all of data.
-			
 			if(!isset($richardResult[$controllerIndex])) {
 				// if controller does not exist, then create new array
 				$richardResult[$controllerIndex] = array();
 				$compareName = "NONE";
 			}
 			
-			// if Function doesn't exist, then create a new one.
-			
-			
 			if($compareName != $roleIndex) {
-				//echo ('line 242'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
-				
 				$compareName = $roleIndex;
-				//$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
 				
 				if(!isset($richardResult[$controllerIndex][$functionIndex])) {
-						
 					$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-					//echo('line 254 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 				} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
-					//echo('--->line 256 before update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
 					$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
-					//echo('line 258 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
-				
-				}	
-				
-				
-				//echo('line 246 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
+				}
 			} else {
-				//echo ('line 248'.' $controllerIndex='.$controllerIndex.' $roleIndex='.$roleIndex.' and '.' $compareName='.$compareName.' $functionIndex='.$functionIndex.'<br />');
-				
-				//if (isset($richardResult[$controllerIndex][$functionIndex])) {
-					if(!isset($richardResult[$controllerIndex][$functionIndex])) {
-							
-						$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-						//echo('line 254 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
-					} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
-						//echo('--->line 256 before update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
-						$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
-						//echo('line 258 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br />');
-					
-					}	
-						
-					
-				//} else {
-				//	$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-				//	echo('line 257 after update: $richardResult[$controllerIndex][$functionIndex] ='.$richardResult[$controllerIndex][$functionIndex].' $functionIndex='.$functionIndex.'<br /><br />');
-				//}
+				if(!isset($richardResult[$controllerIndex][$functionIndex])) {
+					$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
+				} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
+					$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
+				}
 			}
 		}
 		
