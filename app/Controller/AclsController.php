@@ -211,26 +211,26 @@ class AclsController extends AppController {
 		// 									richard test begins
 		///////////////////////////////////////////////////////////////////////////////////////
 		
-		$richardAclRoleArray = $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
+		$aclRoleArray = $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
 		
-		foreach($richardAclRoleArray as $item) {
+		foreach($aclRoleArray as $item) {
 			$controllerIndex 	= $item['Acl']['Controller'];
 			$functionIndex 		= $item['AclFunction']['Function'];
 			$roleIndex			= $item['Role']['Name'];
 			
 			if(!isset($richardResult[$controllerIndex])) {
 				// if controller does not exist, then create new array
-				$richardResult[$controllerIndex] = array();
+				$arrayResult[$controllerIndex] = array();
 			}
 			
-			if(!isset($richardResult[$controllerIndex][$functionIndex])) {
-				$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-			} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
-				$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
+			if(!isset($arrayResult[$controllerIndex][$functionIndex])) {
+				$arrayResult[$controllerIndex][$functionIndex] = $roleIndex;
+			} else if ($arrayResult[$controllerIndex][$functionIndex] != "") {
+				$arrayResult[$controllerIndex][$functionIndex] = $arrayResult[$controllerIndex][$functionIndex].",".$roleIndex;
 			}
 		}
 		
-		debug($richardResult);
+		debug($arrayResult);
 		
 		
 		//$this->loadModel('Roles');
