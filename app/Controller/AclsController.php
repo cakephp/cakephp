@@ -216,7 +216,7 @@ class AclsController extends AppController {
 		//debug($richardAclRoleArray);
 		
 		// this will be used to find if this key already exists or not
-		$compareName = "NONE";
+		//$compareName = "NONE";
 		
 		foreach($richardAclRoleArray as $item) {
 			$controllerIndex 	= $item['Acl']['Controller'];
@@ -226,24 +226,24 @@ class AclsController extends AppController {
 			if(!isset($richardResult[$controllerIndex])) {
 				// if controller does not exist, then create new array
 				$richardResult[$controllerIndex] = array();
-				$compareName = "NONE";
+				//$compareName = "NONE";
 			}
 			
-			if($compareName != $roleIndex) {
-				$compareName = $roleIndex;
+			//if($compareName != $roleIndex) {
+			//	$compareName = $roleIndex;
 				
+			//	if(!isset($richardResult[$controllerIndex][$functionIndex])) {
+			//		$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
+			//	} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
+			//		$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
+			//	}
+			//} else {
 				if(!isset($richardResult[$controllerIndex][$functionIndex])) {
 					$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
 				} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
 					$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
 				}
-			} else {
-				if(!isset($richardResult[$controllerIndex][$functionIndex])) {
-					$richardResult[$controllerIndex][$functionIndex] = $roleIndex;
-				} else if ($richardResult[$controllerIndex][$functionIndex] != "") {
-					$richardResult[$controllerIndex][$functionIndex] = $richardResult[$controllerIndex][$functionIndex].",".$roleIndex;
-				}
-			}
+			//}
 		}
 		
 		debug($richardResult);
