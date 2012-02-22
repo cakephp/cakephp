@@ -1786,6 +1786,50 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test getCrumbList startText
+ */
+    public function testCrumbListFirstLink() {
+        $this->Html->addCrumb('First', '#first');
+        $this->Html->addCrumb('Second', '#second');
+
+        $result = $this->Html->getCrumbList(null, 'Home');
+        $this->assertTags(
+            $result,
+            array(
+                '<ul',
+                array('li' => array('class' => 'first')),
+                array('a' => array('href' => '/')), 'Home', '/a',
+                '/li',
+                '<li',
+                array('a' => array('href' => '#first')), 'First', '/a',
+                '/li',
+                array('li' => array('class' => 'last')),
+                array('a' => array('href' => '#second')), 'Second', '/a',
+                '/li',
+                '/ul'
+            )
+        );
+
+        $result = $this->Html->getCrumbList(null, array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+        $this->assertTags(
+            $result,
+            array(
+                '<ul',
+                array('li' => array('class' => 'first')),
+                array('a' => array('href' => '/home')), 'img' => array('src' => '/home.png'), '/a',
+                '/li',
+                '<li',
+                array('a' => array('href' => '#first')), 'First', '/a',
+                '/li',
+                array('li' => array('class' => 'last')),
+                array('a' => array('href' => '#second')), 'Second', '/a',
+                '/li',
+                '/ul'
+            )
+        );
+    }
+
+/**
  * testLoadConfig method
  *
  * @return void
