@@ -6,7 +6,7 @@ App::uses('AppController', 'Controller');
  * @property AclFunction $AclFunction
  */
 class AclFunctionsController extends AppController {
-	public $helpers = array('Js');
+	public $helpers = array('Html', 'Form', 'Js');
 
 
 /**
