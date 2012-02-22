@@ -31,8 +31,8 @@ class AclFunctionsController extends AppController {
 			'conditions' => array('AclFunction.acl_id' => '4')
 		));
 
-		$this->set('aclFunctions', $ajaxFunctions);
-		$this->set('_serialize', 'aclFunctions');
+		$this->set('ajaxFunctions', $ajaxFunctions);
+		$this->set('_serialize', 'ajaxFunctions');
 	}
 
 /**
