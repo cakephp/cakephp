@@ -2506,6 +2506,168 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testSaveAllFieldList method
+ */
+	function testSaveAllFieldList() {
+		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
+		$TestModel =& new Post();
+
+		$result = $TestModel->find('all');
+		$this->assertEqual(count($result), 3);
+		$this->assertFalse(isset($result[3]));
+		$ts = date('Y-m-d H:i:s');
+
+		// test belongsTo
+		$fieldList = array(
+			'Post' => array('title', 'author_id'),
+			'Author' => array('user')
+		);
+		$TestModel->saveAll(array(
+			'Post' => array(
+				'title' => 'Post without body',
+				'body' => 'This will not be saved',
+			),
+			'Author' => array(
+				'user' => 'bob',
+				'test' => 'This will not be saved',
+
+		)), array('fieldList' => $fieldList));
+
+		$result = $TestModel->find('all');
+		$expected = array (
+		  'Post' => 
+		  array (
+		    'id' => '4',
+		    'author_id' => '5',
+		    'title' => 'Post without body',
+		    'body' => NULL,
+		    'published' => 'N',
+		    'created' => $ts,
+		    'updated' => $ts,
+		  ),
+		  'Author' => 
+		  array (
+		    'id' => '5',
+		    'user' => 'bob',
+		    'password' => NULL,
+		    'created' => $ts,
+		    'updated' => $ts,
+		    'test' => 'working',
+		  ),
+		);
+		$this->assertEqual($result[3], $expected);
+		$this->assertEqual(count($result), 4);
+		$this->assertEqual($result[3]['Post']['body'], '');
+		$this->assertEqual($result[3]['Author']['test'], 'working');
+		
+		// test multirecord
+		$this->db->truncate($TestModel);
+
+		$ts = date('Y-m-d H:i:s');
+		$fieldList = array('title', 'author_id');
+		$TestModel->saveAll(array(
+			array(
+				'title' => 'Multi-record post 1',
+				'body' => 'First multi-record post',
+				'author_id' => 2
+			),
+			array(
+				'title' => 'Multi-record post 2',
+				'body' => 'Second multi-record post',
+				'author_id' => 2
+		)), array('fieldList' => $fieldList));
+
+		$result = $TestModel->find('all', array(
+			'recursive' => -1,
+			'order' => 'Post.id ASC'
+		));
+		$expected = array(
+			array(
+				'Post' => array(
+					'id' => '1',
+					'author_id' => '2',
+					'title' => 'Multi-record post 1',
+					'body' => '',
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+			)),
+			array(
+				'Post' => array(
+					'id' => '2',
+					'author_id' => '2',
+					'title' => 'Multi-record post 2',
+					'body' => '',
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+		)));
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testSaveAllFieldListHasMany method
+ */
+	function testSaveAllFieldListHasMany() {
+		$this->loadFixtures('Article', 'Comment');
+		$TestModel =& new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+		
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment);
+
+		$fieldList = array(
+			'Article' => array('id'),
+			'Comment' => array('article_id')
+		);
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'I will not save'),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
+			)
+		), array('fieldList' => $fieldList));
+		
+		$result = $TestModel->find('all');
+		$this->assertEqual($result[0]['Article']['title'], '');
+		$this->assertEqual($result[0]['Comment'][0]['comment'], '');
+		$this->assertEqual($result[0]['Comment'][1]['comment'], '');
+	}
+
+/**
+ * testSaveAllFieldListHasOne method
+ */
+	function testSaveAllFieldListHasOne() {
+		$model = new Comment();
+		$model->deleteAll(true);
+		$this->assertEqual($model->find('all'), array());
+
+		$model->Attachment->deleteAll(true);
+		$this->assertEqual($model->Attachment->find('all'), array());
+
+		$fieldList = array(
+			'Comment' => array('article_id', 'user_id'),
+			'Attachment' => array('comment_id')
+		);
+		$this->assertTrue($model->saveAll(array(
+			'Comment' => array(
+				'comment' => 'Comment with attachment',
+				'article_id' => 1,
+				'user_id' => 1
+			),
+			'Attachment' => array(
+				'attachment' => 'some_file.zip'
+		)), array('fieldList' => $fieldList)));
+
+		$result = $model->find('all', array('fields' => array(
+			'Comment.id', 'Comment.comment', 'Attachment.id',
+			'Attachment.comment_id', 'Attachment.attachment'
+		)));
+		$this->assertEqual($result[0]['Comment']['comment'], '');
+		$this->assertEqual($result[0]['Attachment']['attachment'], '');
+	}
+
+/**
  * testSaveAll method
  *
  * @access public

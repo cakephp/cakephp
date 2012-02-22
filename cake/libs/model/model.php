@@ -1550,6 +1550,23 @@ class Model extends Overloadable {
 	}
 
 /**
+ * returns relevant options/fieldList for saveAll
+ *
+ * @param string $association Name of association
+ * @param array $options Options to use when saving record data, See saveAll options.
+ * @return array Modified options to use when saving record data, See saveAll options.
+ * @access private
+ */
+function __options($association, $options) {
+	if (!empty($options['fieldList'][$association]) 
+		&& is_array($options['fieldList'][$association]))
+	{
+		$options['fieldList'] = $options['fieldList'][$association];
+	}
+	return $options;
+}
+
+/**
  * Saves multiple individual records for a single model; Also works with a single record, as well as
  * all its associated records.
  *
@@ -1656,7 +1673,7 @@ class Model extends Overloadable {
 				if (isset($associations[$association])) {
 					switch ($associations[$association]) {
 						case 'belongsTo':
-							if ($this->{$association}->__save($values, $options)) {
+							if ($this->{$association}->__save($values, $this->__options($association, $options))) {
 								$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
 							} else {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
@@ -1670,7 +1687,7 @@ class Model extends Overloadable {
 				}
 			}
 
-			if (!$this->__save($data, $options)) {
+			if (!$this->__save($data, $this->__options($this->alias, $options))) {
 				$validationErrors[$this->alias] = $this->validationErrors;
 				$validates = false;
 			}
@@ -1691,7 +1708,7 @@ class Model extends Overloadable {
 								$values[$this->{$type}[$association]['foreignKey']] = $this->id;
 							}
 
-							if (!$this->{$association}->__save($values, $options)) {
+							if (!$this->{$association}->__save($values, $this->__options($association, $options))) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
 							}
@@ -1711,7 +1728,7 @@ class Model extends Overloadable {
 							if ($_options['validate'] === 'first') {
 								$_options['validate'] = 'only';
 							}
-							$_return = $this->{$association}->saveAll($values, $_options);
+							$_return = $this->{$association}->saveAll($values, $this->__options($association, $_options));
 
 							if ($_return === false || (is_array($_return) && in_array(false, $_return, true))) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
