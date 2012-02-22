@@ -99,7 +99,7 @@ Cache::config('default', array('engine' => 'File'));
  *     'View/Helper' => array('/full/path/to/helpers/', '/next/full/path/to/helpers/'),
  *     'Vendor' => array('/full/path/to/vendors/', '/next/full/path/to/vendors/'),
  *     'Console/Command' => array('/full/path/to/shells/', '/next/full/path/to/shells/'),
- *     'locales' => array('/full/path/to/locale/', '/next/full/path/to/locale/')
+ *     'Locale' => array('/full/path/to/locale/', '/next/full/path/to/locale/')
  * ));
  *
  */
