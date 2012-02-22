@@ -28,7 +28,7 @@ class AclFunctionsController extends AppController {
 	public function ajax_list() {
 		//$this->AclFunction->recursive = 0;
 		$aclFunctions = $this->AclFunction->find('list', array(
-			'conditions' => array('AclFunction.acl_id' => '')
+			'conditions' => array('AclFunction.acl_id' => '4')
 		));
 		$this->set('aclFunctions', $this->paginate());
 		$this->set('_serialize', 'aclFunctions');
