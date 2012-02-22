@@ -218,7 +218,7 @@ class AclsController extends AppController {
 			$functionIndex 		= $item['AclFunction']['Function'];
 			$roleIndex			= $item['Role']['Name'];
 			
-			if(!isset($richardResult[$controllerIndex])) {
+			if(!isset($arrayResult[$controllerIndex])) {
 				// if controller does not exist, then create new array
 				$arrayResult[$controllerIndex] = array();
 			}
