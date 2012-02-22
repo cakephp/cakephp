@@ -6,6 +6,7 @@ App::uses('AppController', 'Controller');
  * @property AclRole $AclRole
  */
 class AclRolesController extends AppController {
+	public $helpers = array('Html', 'Form', 'Js');
 
 
 /**
