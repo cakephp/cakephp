@@ -213,7 +213,7 @@ class AclsController extends AppController {
 		
 		$richardAclRoleArray = $this->Acl->AclRole->find('all', array('fields' => array('Acl.Controller', 'AclFunction.Function', 'Role.Name')));
 		
-		//debug($richardAclRoleArray);
+		debug($richardAclRoleArray);
 		
 		// this will be used to find if this key already exists or not
 		$compareKey = "NONE";
@@ -258,7 +258,7 @@ class AclsController extends AppController {
 		//debug($richardAclRoleArray);
 		//debug($richardAclFunctionArray);
 		//debug($richardAclArray);
-		//debug($richardAclRoleArray);
+		
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////
