@@ -147,7 +147,7 @@ class CakeRequest implements ArrayAccess {
  * process the post data and set what is there into the object.
  * processed data is available at `$this->data`
  *
- * Will merge POST vars prefixed with `data`, and ones without 
+ * Will merge POST vars prefixed with `data`, and ones without
  * into a single array. Variables prefixed with `data` will overwrite those without.
  *
  * If you have mixed POST values be careful not to make any top level keys numeric
@@ -178,8 +178,7 @@ class CakeRequest implements ArrayAccess {
 		}
 		if (count($this->data) <= 1) {
 			$this->data = $data;
-		}
-		if (count($this->data) > 1) {
+		} else {
 			unset($this->data['data']);
 			$this->data = Set::merge($this->data, $data);
 		}
