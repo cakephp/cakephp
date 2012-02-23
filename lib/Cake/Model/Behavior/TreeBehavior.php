@@ -119,7 +119,8 @@ class TreeBehavior extends ModelBehavior {
 		extract($this->settings[$Model->alias]);
 		$data = current($Model->find('first', array(
 			'conditions' => array($Model->alias . '.' . $Model->primaryKey => $Model->id), 
-			'fields' => array($Model->alias . '.' . $left, $Model->alias . '.' . $right))));
+			'fields' => array($Model->alias . '.' . $left, $Model->alias . '.' . $right),
+			'recursive' => -1)));
 
 		if (!$data[$right] || !$data[$left]) {
 			return true;
