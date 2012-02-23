@@ -43,7 +43,11 @@ class Set2 {
 		if (empty($data) || empty($path)) {
 			return null;
 		}
-		$parts = explode('.', $path);
+		if (is_string($path)) {
+			$parts = explode('.', $path);
+		} else {
+			$parts = $path;
+		}
 		while (($key = array_shift($parts)) !== null) {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
@@ -808,6 +812,74 @@ class Set2 {
 			$data = $newList;
 		}
 		return $data;
+	}
+
+/**
+ * Takes in a flat array and returns a nested array
+ *
+ * @param mixed $data
+ * @param array $options Options are:
+ *      children   - the key name to use in the resultset for children
+ *      idPath     - the path to a key that identifies each entry
+ *      parentPath - the path to a key that identifies the parent of each entry
+ *      root       - the id of the desired top-most result
+ * @return array of results, nested
+ * @link
+ */
+	public static function nest($data, $options = array()) {
+		if (!$data) {
+			return $data;
+		}
+
+		$alias = key(current($data));
+		$options += array(
+			'idPath' => "{n}.$alias.id",
+			'parentPath' => "{n}.$alias.parent_id",
+			'children' => 'children',
+			'root' => null
+		);
+
+		$return = $idMap = array();
+		$ids = self::extract($data, $options['idPath']);
+
+		$idKeys = explode('.', $options['idPath']);
+		array_shift($idKeys);
+
+		$parentKeys = explode('.', $options['parentPath']);
+		array_shift($parentKeys);
+
+		foreach ($data as $result) {
+			$result[$options['children']] = array();
+
+			$id = self::get($result, $idKeys);
+			$parentId = self::get($result, $parentKeys);
+
+			if (isset($idMap[$id][$options['children']])) {
+				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
+			} else {
+				$idMap[$id] = array_merge($result, array($options['children'] => array()));
+			}
+			if (!$parentId || !in_array($parentId, $ids)) {
+				$return[] =& $idMap[$id];
+			} else {
+				$idMap[$parentId][$options['children']][] =& $idMap[$id];
+			}
+		}
+
+		if ($options['root']) {
+			$root = $options['root'];
+		} else {
+			$root = self::get($return[0], $parentKeys);
+		}
+
+		foreach ($return as $i => $result) {
+			$id = self::get($result, $idKeys);
+			$parentId = self::get($result, $parentKeys);
+			if ($id !== $root && $parentId != $root) {
+				unset($return[$i]);
+			}
+		}
+		return array_values($return);
 	}
 
 }
