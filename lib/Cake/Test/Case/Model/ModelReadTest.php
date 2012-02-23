@@ -25,6 +25,25 @@ require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 class ModelReadTest extends BaseModelTest {
 
 /**
+ * testExists function
+ * @retun void
+ */
+	public function testExists() {
+		$this->loadFixtures('User');
+		$TestModel = new User();
+
+		$this->assertTrue($TestModel->exists(1));
+
+		$TestModel->id = 2;
+		$this->assertTrue($TestModel->exists());
+
+		$TestModel->delete();
+		$this->assertFalse($TestModel->exists());
+
+		$this->assertFalse($TestModel->exists(2));
+	}
+
+/**
  * testFetchingNonUniqueFKJoinTableRecords()
  *
  * Tests if the results are properly returned in the case there are non-unique FK's
@@ -7784,18 +7803,18 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($Post->getVirtualField('other_field'), $Post->virtualFields['other_field']);
 		$this->assertEquals($Post->getVirtualField('Post.other_field'), $Post->virtualFields['other_field']);
 	}
-	
-	
+
+
 /**
  * test that checks for error when NOT condition passed in key and a 1 element array value
  *
  * @return void
- */	
+ */
 	public function testNotInArrayWithOneValue() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
 		$Article->recursive = -1;
-		
+
 		$result = $Article->find(
 			'all',
 			array(
@@ -7804,7 +7823,7 @@ class ModelReadTest extends BaseModelTest {
 				)
 			)
 		);
-		
+
 		$this->assertTrue(is_array($result) && !empty($result));
     }
 }
