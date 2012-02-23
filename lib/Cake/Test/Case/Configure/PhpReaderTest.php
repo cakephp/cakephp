@@ -84,8 +84,8 @@ class PhpReaderTest extends CakeTestCase {
  */
 	public function testReadPluginValue() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		$reader = new PhpReader($this->path);
 		$result = $reader->read('TestPlugin.load');

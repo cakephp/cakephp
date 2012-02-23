@@ -684,21 +684,8 @@ class HtmlHelper extends AppHelper {
 	public function getCrumbs($separator = '&raquo;', $startText = false) {
 		if (!empty($this->_crumbs)) {
 			$out = array();
-			if ($startText) {
-				if (!is_array($startText)) {
-					$startText = array(
-						'url' => '/',
-						'text' => $startText
-					);
-				}
-				$startText += array('url' => '/', 'text' => __('Home'));
-				list($url, $text) = array($startText['url'], $startText['text']);
-				unset($startText['url'], $startText['text']);
-
-				$out[] = $this->link($text, $url, $startText);
-			}
-
-			foreach ($this->_crumbs as $crumb) {
+			$crumbs = $this->_prepareCrumbs($startText);
+			foreach ($crumbs as $crumb) {
 				if (!empty($crumb[1])) {
 					$out[] = $this->link($crumb[0], $crumb[1], $crumb[2]);
 				} else {
@@ -719,15 +706,18 @@ class HtmlHelper extends AppHelper {
  * crumb was added with.
  *
  * @param array $options Array of html attributes to apply to the generated list elements.
+ * @param mixed $startText This will be the first crumb, if false it defaults to first crumb in array. Can
+ *   also be an array, see `HtmlHelper::getCrumbs` for details.
  * @return string breadcrumbs html list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
-	public function getCrumbList($options = array()) {
+	public function getCrumbList($options = array(), $startText = false) {
 		if (!empty($this->_crumbs)) {
 			$result = '';
-			$crumbCount = count($this->_crumbs);
+			$crumbs = $this->_prepareCrumbs($startText);
+			$crumbCount = count($crumbs);
 			$ulOptions = $options;
-			foreach ($this->_crumbs as $which => $crumb) {
+			foreach ($crumbs as $which => $crumb) {
 				$options = array();
 				if (empty($crumb[1])) {
 					$elementContent = $crumb[0];
@@ -745,6 +735,29 @@ class HtmlHelper extends AppHelper {
 		} else {
 			return null;
 		}
+	}
+
+/**
+ * Prepends startText to crumbs array if set
+ *
+ * @param $startText
+ * @return array Crumb list including startText (if provided)
+ */
+	protected function _prepareCrumbs($startText) {
+		$crumbs = $this->_crumbs;
+		if ($startText) {
+			if (!is_array($startText)) {
+				$startText = array(
+					'url' => '/',
+					'text' => $startText
+				);
+			}
+			$startText += array('url' => '/', 'text' => __('Home'));
+			list($url, $text) = array($startText['url'], $startText['text']);
+			unset($startText['url'], $startText['text']);
+			array_unshift($crumbs, array($text, $url, $startText));
+		}
+		return $crumbs;
 	}
 
 /**

@@ -269,16 +269,13 @@ class ViewTest extends CakeTestCase {
 		$this->ThemeView = new View($this->ThemePostsController);
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
-		), true);
+		), App::RESET);
 		App::objects('plugins', null, false);
 
 		CakePlugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
 		Configure::write('debug', 2);
-
-		CakePlugin::loadAll();
-
 	}
 
 /**
@@ -395,7 +392,7 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 		$paths = $View->paths();
-		$expected = array_merge(App::path('View'), App::core('View'));
+		$expected = array_merge(App::path('View'), App::core('View'), App::core('Console/Templates/skel/View'));
 		$this->assertEquals($paths, $expected);
 
 		$paths = $View->paths('TestPlugin');
@@ -403,9 +400,9 @@ class ViewTest extends CakeTestCase {
 		$expected = array(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
 			$pluginPath . 'View' . DS,
-			CAKE . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS,
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS,
-			CAKE . 'View' . DS
+			CAKE . 'View' . DS,
+			CAKE . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS
 		);
 		$this->assertEquals($paths, $expected);
 	}
@@ -423,7 +420,7 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 

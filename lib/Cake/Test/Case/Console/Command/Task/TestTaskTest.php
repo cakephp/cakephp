@@ -572,8 +572,8 @@ class TestTaskTest extends CakeTestCase {
 	public function testInteractiveWithPlugin() {
 		$testApp = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array(
-			'plugins' => array($testApp)
-		), true);
+			'Plugin' => array($testApp)
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';

@@ -177,7 +177,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Crates the fixtures tables and inserts data on them
+ * Creates the fixtures tables and inserts data on them.
  *
  * @param CakeTestCase $test the test to inspect for fixture loading
  * @return void
@@ -225,9 +225,10 @@ class CakeFixtureManager {
 	}
 
 /**
- * Truncates the fixtures tables
+ * Creates a single fixture table and loads data into it.
  *
- * @param CakeTestCase $test the test to inspect for fixture unloading
+ * @param string $name of the fixture
+ * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
  * @return void
  * @throws UnexpectedValueException if $name is not a previously loaded class
  */

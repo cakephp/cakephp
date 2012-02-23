@@ -200,7 +200,7 @@ class HelperTest extends CakeTestCase {
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
 	}
 
@@ -460,7 +460,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValueWithDefault() {
+	public function testValueWithDefault() {
 		$this->Helper->request->data = array('zero' => 0);
 		$this->Helper->setEntity('zero');
 		$result = $this->Helper->value(array('default' => 'something'), 'zero');
@@ -480,7 +480,7 @@ class HelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testValueHabtmKeys() {
+	public function testValueHabtmKeys() {
 		$this->Helper->request->data = array(
 			'HelperTestTag' => array('HelperTestTag' => '')
 		);
@@ -649,7 +649,7 @@ class HelperTest extends CakeTestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 		));
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin'));;
 
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
 		$this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
@@ -886,9 +886,9 @@ class HelperTest extends CakeTestCase {
  */
 	public function testLazyLoadingHelpers() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin'));
 		$Helper = new TestHelper($this->View);
 		$this->assertInstanceOf('OtherHelperHelper', $Helper->OtherHelper);
 		$this->assertInstanceOf('HtmlHelper', $Helper->Html);

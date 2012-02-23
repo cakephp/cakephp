@@ -539,7 +539,7 @@ class CookieComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDeleteChildrenNotExist() {
+	public function testDeleteChildrenNotExist() {
 		$this->assertNull($this->Cookie->delete('NotFound'));
 		$this->assertNull($this->Cookie->delete('Not.Found'));
 	}
@@ -573,7 +573,7 @@ class CookieComponentTest extends CakeTestCase {
  * @param mixed $value
  * @return string
  */
-	function __encrypt($value) {
+	protected function __encrypt($value) {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}

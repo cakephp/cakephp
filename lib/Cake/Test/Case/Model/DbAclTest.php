@@ -16,10 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AclComponent', 'Controller/Component');
+App::uses('DbAcl', 'Controller/Component/Acl');
 App::uses('AclNode', 'Model');
-class_exists('AclComponent');
 
 /**
  * DB ACL wrapper test class
@@ -214,7 +212,7 @@ class TestDbAcl extends DbAcl {
  *
  * @return void
  */
-	function __construct() {
+	public function __construct() {
 		$this->Aro = new DbAroTest();
 		$this->Aro->Permission = new DbPermissionTest();
 		$this->Aco = new DbAcoTest();
@@ -368,7 +366,7 @@ class AclNodeTest extends CakeTestCase {
  */
 	public function testNodeActionAuthorize() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 

@@ -150,7 +150,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->request->webroot = '';
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
 		));
 
 		Configure::write('Asset.timestamp', false);
@@ -404,7 +404,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$File = new File($testfile, true);
 
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
@@ -442,7 +442,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testThemeAssetsInMainWebrootPath() {
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS);
@@ -902,7 +902,7 @@ class HtmlHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testScriptAssetFilter() {
+	public function testScriptAssetFilter() {
 		Configure::write('Asset.filter.js', 'js.php');
 
 		$result = $this->Html->script('jquery-1.3');
@@ -933,7 +933,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$File = new File($testfile, true);
 
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 
 		$this->Html->webroot = '/';
@@ -1784,6 +1784,50 @@ class HtmlHelperTest extends CakeTestCase {
 			)
 		);
 	}
+
+/**
+ * Test getCrumbList startText
+ */
+    public function testCrumbListFirstLink() {
+        $this->Html->addCrumb('First', '#first');
+        $this->Html->addCrumb('Second', '#second');
+
+        $result = $this->Html->getCrumbList(null, 'Home');
+        $this->assertTags(
+            $result,
+            array(
+                '<ul',
+                array('li' => array('class' => 'first')),
+                array('a' => array('href' => '/')), 'Home', '/a',
+                '/li',
+                '<li',
+                array('a' => array('href' => '#first')), 'First', '/a',
+                '/li',
+                array('li' => array('class' => 'last')),
+                array('a' => array('href' => '#second')), 'Second', '/a',
+                '/li',
+                '/ul'
+            )
+        );
+
+        $result = $this->Html->getCrumbList(null, array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+        $this->assertTags(
+            $result,
+            array(
+                '<ul',
+                array('li' => array('class' => 'first')),
+                array('a' => array('href' => '/home')), 'img' => array('src' => '/home.png'), '/a',
+                '/li',
+                '<li',
+                array('a' => array('href' => '#first')), 'First', '/a',
+                '/li',
+                array('li' => array('class' => 'last')),
+                array('a' => array('href' => '#second')), 'Second', '/a',
+                '/li',
+                '/ul'
+            )
+        );
+    }
 
 /**
  * testLoadConfig method

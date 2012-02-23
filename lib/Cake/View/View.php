@@ -1082,31 +1082,32 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = App::path('View');
-		$corePaths = array_flip(App::core('View'));
+		$corePaths = array_merge(App::core('View'), App::core('Console/Templates/skel/View'));
+
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
-				if (!isset($corePaths[$viewPaths[$i]])) {
+				if (!in_array($viewPaths[$i], $corePaths)) {
 					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
 			$paths = array_merge($paths, App::path('View', $plugin));
 		}
 
-		$paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
+		$paths = array_unique(array_merge($paths, $viewPaths));
 		if (!empty($this->theme)) {
 			$themePaths = array();
 			foreach ($paths as $path) {
-				if (strpos($path, DS . 'Plugin' . DS) === false
-					&& strpos($path, DS . 'Cake' . DS . 'View') === false) {
-					if ($plugin) {
-						$themePaths[] = $path . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
+				if (strpos($path, DS . 'Plugin' . DS) === false) {
+						if ($plugin) {
+							$themePaths[] = $path . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
+						}
+						$themePaths[] = $path . 'Themed'. DS . $this->theme . DS;
 					}
-					$themePaths[] = $path . 'Themed'. DS . $this->theme . DS;
-				}
 			}
 			$paths = array_merge($themePaths, $paths);
 		}
+		$paths = array_merge($paths, $corePaths);
 		if ($plugin !== null) {
 			return $paths;
 		}

@@ -52,7 +52,7 @@ class BakeTask extends AppShell {
  *
  * @return void
  */
-	function startup() {
+	public function startup() {
 		Configure::write('debug', 2);
 		Configure::write('Cache.disable', 1);
 		parent::startup();

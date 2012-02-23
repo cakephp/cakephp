@@ -85,7 +85,7 @@ class CacheHelperTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
-		), true);
+		), App::RESET);
 	}
 
 /**

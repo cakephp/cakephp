@@ -42,7 +42,7 @@ class TestAuthComponent extends AuthComponent {
  *
  * @return void
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->testStop = true;
 	}
 
@@ -117,7 +117,7 @@ class AuthTestController extends Controller {
  *
  * @return void
  */
-	function __construct($request, $response) {
+	public function __construct($request, $response) {
 		$request->addParams(Router::parse('/auth_test'));
 		$request->here = '/auth_test';
 		$request->webroot = '/';
@@ -853,7 +853,9 @@ class AuthComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/edit/1';
-		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
+		$request = new CakeRequest($url);
+		$request->query = array();
+		$this->Auth->request = $this->Controller->request = $request;
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->initialize($this->Controller);

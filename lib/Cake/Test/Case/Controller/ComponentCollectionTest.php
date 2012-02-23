@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+App::uses('CakeResponse', 'Network');
 App::uses('CookieComponent', 'Controller/Component');
 App::uses('SecurityComponent', 'Controller/Component');
 App::uses('ComponentCollection', 'Controller');
@@ -86,7 +86,7 @@ class ComponentCollectionTest extends CakeTestCase {
 		$result = $this->Components->load('Cookie');
 		$this->assertInstanceOf('CookieAliasComponent', $result);
 
-		App::build(array('plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
 		CakePlugin::load('TestPlugin');
 		$result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.Other'));
 		$this->assertInstanceOf('OtherComponent', $result);
@@ -128,7 +128,7 @@ class ComponentCollectionTest extends CakeTestCase {
  */
 	public function testLoadPluginComponent() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
 		CakePlugin::load('TestPlugin');
 		$result = $this->Components->load('TestPlugin.Other');

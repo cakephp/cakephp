@@ -1090,7 +1090,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormSecurityArrayFields() {
+	public function testFormSecurityArrayFields() {
 		$key = 'testKey';
 
 		$this->Form->request->params['_Token']['key'] = $key;
@@ -1528,7 +1528,7 @@ class FormHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testEmptyErrorValidation() {
+	public function testEmptyErrorValidation() {
 		$this->Form->validationErrors['Contact']['password'] = '';
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
@@ -1556,7 +1556,7 @@ class FormHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testEmptyInputErrorValidation() {
+	public function testEmptyInputErrorValidation() {
 		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
 		$result = $this->Form->input('Contact.password', array('error' => ''));
 		$expected = array(
@@ -2226,7 +2226,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInputDatetime() {
+	public function testInputDatetime() {
 		extract($this->dateRegex);
 		$result = $this->Form->input('prueba', array(
 			'type' => 'datetime', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
@@ -5220,7 +5220,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDateTimeLabelIdMatchesFirstInput() {
+	public function testDateTimeLabelIdMatchesFirstInput() {
 		$result = $this->Form->input('Model.date', array('type' => 'date'));
 		$this->assertContains('label for="ModelDateMonth"', $result);
 
@@ -6234,7 +6234,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testSubmitImageTimestamp() {
+	public function testSubmitImageTimestamp() {
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Form->submit('cake.power.gif');
@@ -6789,7 +6789,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFormInputRequiredDetection() {
+	public function testFormInputRequiredDetection() {
 		$this->Form->create('Contact');
 
 		$result = $this->Form->input('Contact.non_existing');
@@ -7763,7 +7763,7 @@ class FormHelperTest extends CakeTestCase {
 	public function testIntrospectModelFromRequest() {
 		$this->loadFixtures('Post');
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Form->request['models'] = array('TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost'));
