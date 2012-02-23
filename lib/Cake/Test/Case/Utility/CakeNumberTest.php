@@ -155,6 +155,17 @@ class CakeNumberTest extends CakeTestCase {
 		$result = $this->Number->currency(0.5, null, array('fractionSymbol' => false, 'fractionPosition' => 'before', 'wholeSymbol' => '$'));
 		$expected = '$0.50';
 		$this->assertEquals($expected, $result);
+
+		/**
+		 * You cant use more than one char for seperators as number_format() only uses the first char. 
+		 */
+		$result = $this->Number->currency(1000.45, NULL, array('decimals' => '&nbsp;', 'thousands' => '&nbsp;', 'escape' => false));
+		$expected = '1&000&45';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(1000.45, NULL, array('decimals' => '&nbsp;', 'thousands' => '&nbsp;'));
+		$expected = '1&amp;000&amp;45';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
