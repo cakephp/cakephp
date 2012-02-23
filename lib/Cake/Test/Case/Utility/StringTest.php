@@ -370,6 +370,7 @@ TEXT;
 		$text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
 		$text8 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
 		$text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
+		$text10 = 'http://example.com/something/foo:bar';
 
 		$this->assertSame($this->Text->truncate($text1, 15), 'The quick br...');
 		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false)), 'The quick...');
@@ -394,6 +395,7 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
 		$this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
+		$this->assertSame($this->Text->truncate($text10, 30), 'http://example.com/somethin...');
 
 		$text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
 		$result = $this->Text->truncate($text, 10, array(
