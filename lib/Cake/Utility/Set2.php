@@ -36,7 +36,8 @@ class Set2 {
  * but is faster for simple operations.
  *
  * @param array $data Array of data to operate on.
- * @param string $path The path being searched for.
+ * @param mixed $path The path being searched for. Either a dot
+ *   separated string, or an array of path segments.
  * @return mixed The value fetched from the array, or null.
  */
 	public static function get(array $data, $path) {
@@ -484,19 +485,21 @@ class Set2 {
 	}
 
 /**
- * Recursively filters empty elements out of a route array, excluding '0'.
+ * Recursively filters a data set.
  *
  * @param array $data Either an array to filter, or value when in callback
+ * @param callable $callback A function to filter the data with.  Defaults to 
+ *   `self::_filter()` Which strips out all non-zero empty values.
  * @return array Filtered array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::filter
  */
-	public static function filter(array $data) {
+	public static function filter(array $data, $callback = array('self', '_filter')) {
 		foreach ($data as $k => $v) {
 			if (is_array($v)) {
-				$data[$k] = self::filter($v);
+				$data[$k] = self::filter($v, $callback);
 			}
 		}
-		return array_filter($data, array('self', '_filter'));
+		return array_filter($data, $callback);
 	}
 
 /**
@@ -817,16 +820,21 @@ class Set2 {
 /**
  * Takes in a flat array and returns a nested array
  *
- * @param mixed $data
+ * ### Options:
+ *
+ * - `children` The key name to use in the resultset for children.
+ * - `idPath` The path to a key that identifies each entry. Should be
+ *   compatible with Set2::extract(). Defaults to `{n}.$alias.id`
+ * - `parentPath` The path to a key that identifies the parent of each entry.
+ *   Should be compatible with Set2::extract(). Defaults to `{n}.$alias.parent_id`
+ * - `root` The id of the desired top-most result.
+ *
+ * @param mixed $data The data to nest.
  * @param array $options Options are:
- *      children   - the key name to use in the resultset for children
- *      idPath     - the path to a key that identifies each entry
- *      parentPath - the path to a key that identifies the parent of each entry
- *      root       - the id of the desired top-most result
  * @return array of results, nested
- * @link
+ * @see Set::extract()
  */
-	public static function nest($data, $options = array()) {
+	public static function nest(array $data, $options = array()) {
 		if (!$data) {
 			return $data;
 		}
