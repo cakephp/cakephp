@@ -490,7 +490,6 @@ class ControllerTest extends CakeTestCase {
  */
 	public function testConstructClasses() {
 		$request = new CakeRequest('controller_posts/index');
-		$Controller = new Controller($request);
 
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
@@ -511,8 +510,6 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
-
-		unset($Controller);
 	}
 
 /**

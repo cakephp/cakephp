@@ -641,6 +641,13 @@ class Attachment extends CakeTestModel {
  * @var string 'Attachment'
  */
 	public $name = 'Attachment';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('Comment');
 }
 
 /**

@@ -2083,13 +2083,13 @@ class ModelIntegrationTest extends BaseModelTest {
 			),
 			'user' => array(
 				'type' => 'string',
-				'null' => false,
+				'null' => true,
 				'default' => '',
 				'length' => 255
 			),
 			'password' => array(
 				'type' => 'string',
-				'null' => false,
+				'null' => true,
 				'default' => '',
 				'length' => 255
 			),

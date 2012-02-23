@@ -93,27 +93,37 @@ class ExtractTaskTest extends CakeTestCase {
 		// home.ctp
 		$pattern = '/msgid "Your tmp directory is writable."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Your tmp directory is NOT writable."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "The %s is being used for caching. To change the config edit ';
 		$pattern .= 'APP\/config\/core.php "\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Your cache is NOT working. Please check ';
 		$pattern .= 'the settings in APP\/config\/core.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Your database configuration file is present."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Your database configuration file is NOT present."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+		
 		$pattern = '/msgid "Rename config\/database.php.default to ';
 		$pattern .= 'config\/database.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Cake is able to connect to the database."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Cake is NOT able to connect to the database."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "Editing this Page"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
+
 		$pattern = '/msgid "To change the content of this page, create: APP\/views\/pages\/home\.ctp/';
 		$this->assertRegExp($pattern, $result);
 
@@ -121,9 +131,12 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertRegExp($pattern, $result);
 
 		// extract.ctp
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:6\n';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:15;6\n';
 		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
 		$this->assertRegExp($pattern, $result);
+
+		$pattern = '/msgid "You have %d new message."\nmsgstr ""/';
+		$this->assertNotRegExp($pattern, $result, 'No duplicate msgid');
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:7\n';
 		$pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
@@ -134,7 +147,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:17\nmsgid "';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:18\nmsgid "';
 		$pattern .= 'Hot features!';
 		$pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
 		$pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';

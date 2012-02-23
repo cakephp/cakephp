@@ -371,7 +371,6 @@ class TestShell extends Shell {
 				}
 
 				throw new Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
-				return false;
 			}
 		}
 

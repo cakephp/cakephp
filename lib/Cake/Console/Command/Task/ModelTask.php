@@ -190,7 +190,7 @@ class ModelTask extends BakeTask {
  */
 	protected function _interactive() {
 		$this->hr();
-		$this->out(__d('cake_console', "Bake Model\nPath: %s", $this->path));
+		$this->out(__d('cake_console', "Bake Model\nPath: %s", $this->getPath()));
 		$this->hr();
 		$this->interactive = true;
 

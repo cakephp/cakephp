@@ -173,22 +173,23 @@ class CakeResponseTest extends CakeTestCase {
 *
 */
 	public function testSend() {
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header(array(
 			'Content-Language' => 'es',
 			'WWW-Authenticate' => 'Negotiate'
 		));
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
-		$response->expects($this->at(0))
-			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(0))->method('_setCookies');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Language', 'es');
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(2))
-			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
+			->method('_sendHeader')->with('Content-Language', 'es');
 		$response->expects($this->at(3))
-			->method('_sendHeader')->with('Content-Length', 17);
+			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
 		$response->expects($this->at(4))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(5))
 			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 	}
@@ -198,15 +199,16 @@ class CakeResponseTest extends CakeTestCase {
 *
 */
 	public function testSendChangingContentYype() {
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->type('mp3');
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
-		$response->expects($this->at(0))
-			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(0))->method('_setCookies');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Length', 17);
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(3))
 			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
 		$response->send();
 	}
@@ -216,15 +218,16 @@ class CakeResponseTest extends CakeTestCase {
 *
 */
 	public function testSendChangingContentType() {
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->type('mp3');
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
-		$response->expects($this->at(0))
-			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(0))->method('_setCookies');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Content-Length', 17);
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
 		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(3))
 			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
 		$response->send();
 	}
@@ -234,13 +237,14 @@ class CakeResponseTest extends CakeTestCase {
 *
 */
 	public function testSendWithLocation() {
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header('Location', 'http://www.example.com');
-		$response->expects($this->at(0))
-			->method('_sendHeader')->with('HTTP/1.1 302 Found');
+		$response->expects($this->at(0))->method('_setCookies');
 		$response->expects($this->at(1))
-			->method('_sendHeader')->with('Location', 'http://www.example.com');
+			->method('_sendHeader')->with('HTTP/1.1 302 Found');
 		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Location', 'http://www.example.com');
+		$response->expects($this->at(3))
 			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');		
 		$response->send();
 	}
@@ -921,4 +925,87 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->never())->method('notModified');
 		$this->assertFalse($response->checkNotModified(new CakeRequest));
 	}
+
+/**
+ * Test cookie setting
+ * 
+ * @return void
+ */
+	public function testCookieSettings() {
+		$response = new CakeResponse();
+		$cookie = array(
+			'name' => 'CakeTestCookie[Testing]'
+		);
+		$response->cookie($cookie);
+		$expected = array(
+			'name' => 'CakeTestCookie[Testing]',
+			'value' => '',
+			'expire' => 0,
+			'path' => '/',
+			'domain' => '',
+			'secure' => false,
+			'httpOnly' => false);
+		$result = $response->cookie('CakeTestCookie[Testing]');
+		$this->assertEqual($result, $expected);
+
+		$cookie = array(
+			'name' => 'CakeTestCookie[Testing2]',
+			'value' => '[a,b,c]',
+			'expire' => 1000,
+			'path' => '/test',
+			'secure' => true
+		);
+		$response->cookie($cookie);
+		$expected = array(
+			'CakeTestCookie[Testing]' => array(
+				'name' => 'CakeTestCookie[Testing]',
+				'value' => '',
+				'expire' => 0,
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+			'CakeTestCookie[Testing2]' => array(
+				'name' => 'CakeTestCookie[Testing2]',
+				'value' => '[a,b,c]',
+				'expire' => 1000,
+				'path' => '/test',
+				'domain' => '',
+				'secure' => true,
+				'httpOnly' => false
+			)
+		);
+
+		$result = $response->cookie();
+		$this->assertEqual($result, $expected);
+
+		$cookie = $expected['CakeTestCookie[Testing]'];
+		$cookie['value'] = 'test';
+		$response->cookie($cookie);
+		$expected = array(
+			'CakeTestCookie[Testing]' => array(
+				'name' => 'CakeTestCookie[Testing]',
+				'value' => 'test',
+				'expire' => 0,
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+			'CakeTestCookie[Testing2]' => array(
+				'name' => 'CakeTestCookie[Testing2]',
+				'value' => '[a,b,c]',
+				'expire' => 1000,
+				'path' => '/test',
+				'domain' => '',
+				'secure' => true,
+				'httpOnly' => false
+			)
+		);
+
+		$result = $response->cookie();
+		$this->assertEqual($result, $expected);
+	}
+
 }

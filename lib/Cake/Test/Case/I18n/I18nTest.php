@@ -57,13 +57,12 @@ class I18nTest extends CakeTestCase {
  */
 	public function testTranslationCaching() {
 		Configure::write('Config.language', 'cache_test_po');
-		$i18n = I18n::getInstance();
 
 		// reset internally stored entries
 		I18n::clear();
 
 		Cache::clear(false, '_cake_core_');
-		$lang = Configure::read('Config.language');#$i18n->l10n->locale;
+		$lang = Configure::read('Config.language');
 
 		Cache::config('_cake_core_', Cache::config('default'));
 
@@ -2525,6 +2524,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	public function testPoQuotedString () {
+		Configure::write('Config.language', 'po');
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEquals($expected, __('this is a "quoted string"'));
 	}

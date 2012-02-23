@@ -156,7 +156,8 @@ class AppTest extends CakeTestCase {
 		App::build(array('views' => array('/path/to/views/')));
 		$expected = array(
 			'/path/to/views/',
-			APP . 'View' . DS
+			APP . 'View' . DS,
+			CAKE . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS
 		);
 		$result = App::path('views');
 		$this->assertEquals($expected, $result);

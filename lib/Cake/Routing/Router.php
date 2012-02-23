@@ -917,7 +917,7 @@ class Router {
 		$output = implode('/', $urlOut);
 
 		if (!empty($args)) {
-			$output .= '/' . implode('/', $args);
+			$output .= '/' . implode('/', array_map('rawurlencode', $args));
 		}
 
 		if (!empty($named)) {
@@ -925,10 +925,10 @@ class Router {
 				if (is_array($value)) {
 					$flattend = Set::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {
-						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . $namedValue;
+						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
 					}
 				} else {
-					$output .= '/' . $name . self::$_namedConfig['separator'] . $value;
+					$output .= '/' . $name . self::$_namedConfig['separator'] . rawurlencode($value);
 				}
 			}
 		}
@@ -1077,15 +1077,17 @@ class Router {
  * Instructs the router to parse out file extensions from the URL. For example,
  * http://example.com/posts.rss would yield an file extension of "rss".
  * The file extension itself is made available in the controller as
- * $this->params['url']['ext'], and is used by the RequestHandler component to
+ * `$this->params['ext']`, and is used by the RequestHandler component to
  * automatically switch to alternate layouts and templates, and load helpers
- * corresponding to the given content, i.e. RssHelper.
+ * corresponding to the given content, i.e. RssHelper. Switching layouts and helpers
+ * requires that the chosen extension has a defined mime type in `CakeResponse`
  *
  * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
  * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
  * parsed, excluding querystring parameters (i.e. ?q=...).
  *
  * @return void
+ * @see RequestHandler::startup()
  */
 	public static function parseExtensions() {
 		self::$_parseExtensions = true;

@@ -94,7 +94,7 @@ class TestTask extends BakeTask {
 		$this->interactive = true;
 		$this->hr();
 		$this->out(__d('cake_console', 'Bake Tests'));
-		$this->out(__d('cake_console', 'Path: %s', $this->path));
+		$this->out(__d('cake_console', 'Path: %s', $this->getPath()));
 		$this->hr();
 
 		if ($type) {
@@ -467,8 +467,9 @@ class TestTask extends BakeTask {
  * Generate the uses() calls for a type & classname
  *
  * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $realType The package name for the class.
  * @param string $className The Classname of the class the test is being generated for.
- * @return array Constructor snippets for the thing you are building.
+ * @return array An array containing used classes
  */
 	public function generateUses($type, $realType, $className) {
 		$uses = array();

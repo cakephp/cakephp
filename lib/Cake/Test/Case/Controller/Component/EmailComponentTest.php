@@ -176,16 +176,6 @@ class EmailComponentTest extends CakeTestCase {
 	}
 
 /**
- * osFix method
- *
- * @param string $string
- * @return string
- */
-	function __osFix($string) {
-		return str_replace(array("\r\n", "\r"), "\n", $string);
-	}
-
-/**
  * testSendFormats method
  *
  * @return void
@@ -222,12 +212,12 @@ MSGBLOC;
 		$this->Controller->EmailTest->sendAs = 'text';
 		$expect = str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $message);
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertTextEquals(DebugCompTransport::$lastEmail, $expect);
 
 		$this->Controller->EmailTest->sendAs = 'html';
 		$expect = str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $message);
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertTextEquals(DebugCompTransport::$lastEmail, $expect);
 	}
 
 /**
@@ -293,12 +283,12 @@ HTMLBLOC;
 		$this->Controller->EmailTest->sendAs = 'text';
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertTextEquals(DebugCompTransport::$lastEmail, $expect);
 
 		$this->Controller->EmailTest->sendAs = 'html';
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . "\n" . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertTextEquals(DebugCompTransport::$lastEmail, $expect);
 
 		$this->Controller->EmailTest->sendAs = 'both';
 		$expect = str_replace('{CONTENTTYPE}', 'multipart/mixed; boundary="{boundary}"', $header);
@@ -320,8 +310,8 @@ HTMLBLOC;
 		$expect = '<pre>' . $expect . '</pre>';
 
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals(
-			$this->__osFix($expect),
+		$this->assertTextEquals(
+			$expect,
 			preg_replace('/[a-z0-9]{32}/i', '{boundary}', DebugCompTransport::$lastEmail)
 		);
 
@@ -344,7 +334,7 @@ HTMLBLOC;
 		$this->Controller->EmailTest->sendAs = 'html';
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
-		$this->assertEquals(DebugCompTransport::$lastEmail, $this->__osFix($expect));
+		$this->assertTextEquals(DebugCompTransport::$lastEmail, $expect);
 	}
 
 /**
@@ -455,18 +445,18 @@ HTMLBLOC;
 
 		$this->Controller->EmailTest->sendAs = 'both';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals($this->Controller->EmailTest->textMessage, $this->__osFix($text));
-		$this->assertEquals($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+		$this->assertTextEquals($this->Controller->EmailTest->textMessage, $text);
+		$this->assertTextEquals($this->Controller->EmailTest->htmlMessage, $html);
 
 		$this->Controller->EmailTest->sendAs = 'text';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
-		$this->assertEquals($this->Controller->EmailTest->textMessage, $this->__osFix($text));
+		$this->assertTextEquals($this->Controller->EmailTest->textMessage, $text);
 		$this->assertNull($this->Controller->EmailTest->htmlMessage);
 
 		$this->Controller->EmailTest->sendAs = 'html';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertNull($this->Controller->EmailTest->textMessage);
-		$this->assertEquals($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+		$this->assertTextEquals($this->Controller->EmailTest->htmlMessage, $html);
 	}
 
 /**
@@ -515,18 +505,18 @@ HTMLBLOC;
 
 		$this->Controller->EmailTest->sendAs = 'both';
 		$this->assertTrue($this->Controller->EmailTest->send());
-		$this->assertEquals($this->Controller->EmailTest->textMessage, $this->__osFix($text));
-		$this->assertEquals($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+		$this->assertTextEquals($this->Controller->EmailTest->textMessage, $text);
+		$this->assertTextEquals($this->Controller->EmailTest->htmlMessage, $html);
 
 		$this->Controller->EmailTest->sendAs = 'text';
 		$this->assertTrue($this->Controller->EmailTest->send());
-		$this->assertEquals($this->Controller->EmailTest->textMessage, $this->__osFix($text));
+		$this->assertTextEquals($this->Controller->EmailTest->textMessage, $text);
 		$this->assertNull($this->Controller->EmailTest->htmlMessage);
 
 		$this->Controller->EmailTest->sendAs = 'html';
 		$this->assertTrue($this->Controller->EmailTest->send());
 		$this->assertNull($this->Controller->EmailTest->textMessage);
-		$this->assertEquals($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+		$this->assertTextEquals($this->Controller->EmailTest->htmlMessage, $html);
 	}
 
 /**

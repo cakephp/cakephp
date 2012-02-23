@@ -241,6 +241,11 @@ class Debugger {
 				$error = 'Notice';
 				$level = LOG_NOTICE;
 			break;
+			case E_DEPRECATED:
+			case E_USER_DEPRECATED:
+				$error = 'Deprecated';
+				$level = LOG_NOTICE;
+			break;
 			default:
 				return;
 			break;
@@ -805,5 +810,4 @@ class Debugger {
 			trigger_error(__d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/core.php to a numeric (digits only) seed value specific to your application'), E_USER_NOTICE);
 		}
 	}
-
 }

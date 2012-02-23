@@ -403,6 +403,7 @@ class ViewTest extends CakeTestCase {
 		$expected = array(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
 			$pluginPath . 'View' . DS,
+			CAKE . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS,
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS,
 			CAKE . 'View' . DS
 		);
@@ -557,7 +558,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestThemeView($this->ThemeController);
 		ob_start();
 		$result = $View->getViewFileName('does_not_exist');
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		$expected = ob_get_clean();
 		$this->assertRegExp("/PagesController::/", $expected);
 		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
 	}
@@ -577,7 +578,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestView($this->Controller);
 		ob_start();
 		$result = $View->getLayoutFileName();
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		$expected = ob_get_clean();
 
 		$this->ThemeController->plugin = null;
 		$this->ThemeController->name = 'Posts';
@@ -588,7 +589,7 @@ class ViewTest extends CakeTestCase {
 		$View = new TestThemeView($this->ThemeController);
 		ob_start();
 		$result = $View->getLayoutFileName();
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		$expected = ob_get_clean();
 		$this->assertRegExp("/Missing Layout/", $expected);
 		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
 	}
@@ -726,7 +727,7 @@ class ViewTest extends CakeTestCase {
 			'path' => CACHE . 'views' . DS,
 			'prefix' => ''
 		));
-		Cache::clear('test_view');
+		Cache::clear(false, 'test_view');
 
 		$View = new TestView($this->PostsController);
 		$View->elementCache = 'test_view';
@@ -763,6 +764,7 @@ class ViewTest extends CakeTestCase {
 		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
+		Cache::clear(false, 'test_view');
 		Cache::drop('test_view');
 	}
 
@@ -953,11 +955,11 @@ class ViewTest extends CakeTestCase {
  */
 	public function testRender() {
 		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
 		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
 		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
@@ -968,7 +970,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->set('page_title', 'yo what up');
 
 		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render(false, 'flash'));
+		$result = $View->render(false, 'flash');
 
 		$this->assertRegExp("/<title>yo what up<\/title>/", $result);
 		$this->assertRegExp("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
@@ -982,11 +984,11 @@ class ViewTest extends CakeTestCase {
 		Configure::write('Cache.check', true);
 
 		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
-		$this->assertRegExp("/<div id=\"content\">posts index<\/div>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 	}
 
 /**
@@ -1080,7 +1082,6 @@ class ViewTest extends CakeTestCase {
 		$View->renderCache($path, '+1 second');
 		$result = ob_get_clean();
 
-		$expected = 'some cacheText';
 		$this->assertRegExp('/^some cacheText/', $result);
 
 		@unlink($path);
@@ -1197,7 +1198,6 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->PostsController);
 		$View->render('this_is_missing');
-		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 	}
 
 /**
@@ -1221,7 +1221,6 @@ class ViewTest extends CakeTestCase {
 	public function testAltBadExt() {
 		$View = new TestView($this->PostsController);
 		$View->render('alt_ext');
-		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 	}
 
 /**

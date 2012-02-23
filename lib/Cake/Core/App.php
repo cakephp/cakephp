@@ -838,7 +838,8 @@ class App {
 					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
 				),
 				'View' => array(
-					'%s' . 'View' . DS
+					'%s' . 'View' . DS,
+					CAKE . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS
 				),
 				'View/Helper' => array(
 					'%s' . 'View' . DS . 'Helper' . DS
@@ -860,7 +861,7 @@ class App {
 				),
 				'Vendor' => array(
 					'%s' . 'Vendor' . DS,
-					VENDORS
+					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
 				),
 				'Plugin' => array(
 					APP . 'Plugin' . DS,

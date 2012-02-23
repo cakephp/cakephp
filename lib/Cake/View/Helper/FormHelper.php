@@ -275,8 +275,8 @@ class FormHelper extends AppHelper {
  * Returns false if given form field described by the current entity has no errors.
  * Otherwise it returns the validation message
  *
- * @return mixed Either false when there or no errors, or the error
- *    string. The error string could be ''.
+ * @return mixed Either false when there or no errors, or an array of error
+ *    strings. An error string could be ''.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::tagIsInvalid
  */
 	public function tagIsInvalid() {
@@ -292,8 +292,8 @@ class FormHelper extends AppHelper {
 		if (empty($errors)) {
 			return false;
 		}
-		$error = Set::classicExtract($errors, join('.', $entity));
-		return $error === null ? false : $error;
+		$errors = Set::classicExtract($errors, join('.', $entity));
+		return $errors === null ? false : $errors;
 	}
 
 /**
@@ -1551,7 +1551,7 @@ class FormHelper extends AppHelper {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $name);
 		}
-		return $this->Html->useTag('button', $options['type'], array_diff_key($options, array('type' => '')), $title);
+		return $this->Html->useTag('button', $options, $title);
 	}
 
 /**

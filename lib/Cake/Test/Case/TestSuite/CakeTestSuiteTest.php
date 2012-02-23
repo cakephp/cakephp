@@ -60,7 +60,7 @@ class CakeTestSuiteTest extends CakeTestCase {
  * 
  * @return void
  */
-	public function testAddTestDirectoryRecursive() {return;
+	public function testAddTestDirectoryRecursive() {
 		$testFolder = CORE_TEST_CASES . DS . 'Cache';
 		$count = count(glob($testFolder . DS . '*Test.php'));
 		$count += count(glob($testFolder . DS . 'Engine' . DS . '*Test.php'));

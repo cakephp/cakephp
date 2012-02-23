@@ -391,9 +391,9 @@ class DboSource extends DataSource {
  *
  * - log - Whether or not the query should be logged to the memory log.
  *
- * @param string $sql
+ * @param string $sql SQL statement
  * @param array $options
- * @param array $params values to be bided to the query
+ * @param array $params values to be bound to the query
  * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function execute($sql, $options = array(), $params = array()) {
@@ -405,7 +405,7 @@ class DboSource extends DataSource {
 		if ($options['log']) {
 			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->numRows = $this->affected = $this->lastAffected();
-			$this->logQuery($sql);
+			$this->logQuery($sql, $params);
 		}
 
 		return $this->_result;
@@ -580,7 +580,6 @@ class DboSource extends DataSource {
 			} else if (isset($args[1]) && !is_array($args[1]) ) {
 				return $this->fetchAll($args[0], false);
 			} else if (isset($args[1]) && is_array($args[1])) {
-				$offset = 0;
 				if (isset($args[2])) {
 					$cache = $args[2];
 				} else {
@@ -892,13 +891,15 @@ class DboSource extends DataSource {
  * Log given SQL query.
  *
  * @param string $sql SQL statement
+ * @param array $params Values binded to the query (prepared statements)
  * @return void
  */
-	public function logQuery($sql) {
+	public function logQuery($sql, $params = array()) {
 		$this->_queriesCnt++;
 		$this->_queriesTime += $this->took;
 		$this->_queriesLog[] = array(
 			'query'		=> $sql,
+			'params'	=> $params,
 			'affected'	=> $this->affected,
 			'numRows'	=> $this->numRows,
 			'took'		=> $this->took
@@ -1405,14 +1406,16 @@ class DboSource extends DataSource {
 				}
 			} else {
 				foreach ($merge as $i => $row) {
+					$insert = array();
 					if (count($row) === 1) {
-						if (empty($data[$association]) || (isset($data[$association]) && !in_array($row[$association], $data[$association]))) {
-							$data[$association][] = $row[$association];
-						}
-					} elseif (!empty($row)) {
-						$tmp = array_merge($row[$association], $row);
-						unset($tmp[$association]);
-						$data[$association][] = $tmp;
+						$insert = $row[$association];
+					} elseif (isset($row[$association])) {
+						$insert = array_merge($row[$association], $row);
+						unset($insert[$association]);
+					}
+
+					if (empty($data[$association]) || (isset($data[$association]) && !in_array($insert, $data[$association], true))) {
+						$data[$association][] = $insert;
 					}
 				}
 			}
@@ -2107,9 +2110,6 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function resolveKey(Model $model, $key, $assoc = null) {
-		if (empty($assoc)) {
-			$assoc = $model->alias;
-		}
 		if (strpos('.', $key) !== false) {
 			return $this->name($model->alias) . '.' . $this->name($key);
 		}
@@ -2234,7 +2234,6 @@ class DboSource extends DataSource {
 						);
 						$fields[$i] = $this->name(($prefix ? $alias . '.' : '') . $fields[$i]);
 					} else {
-						$value = array();
 						if (strpos($fields[$i], ',') === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
@@ -2786,7 +2785,6 @@ class DboSource extends DataSource {
 		);
 		$columnMap = array();
 
-		$count = count($values);
 		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
 		$statement = $this->_connection->prepare($sql);
 		$this->begin();

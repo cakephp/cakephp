@@ -225,7 +225,13 @@ class CakeRoute {
 			}
 			$route[$key] = $value;
 		}
-
+		
+		foreach ($this->keys as $key) {
+			if (isset($route[$key])) {
+				$route[$key] = rawurldecode($route[$key]);
+			}
+		}
+		
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
