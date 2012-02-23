@@ -1055,7 +1055,7 @@ class MysqlTest extends CakeTestCase {
  * @param mixed $model
  * @return void
  */
-	protected function _buildRelatedModels($model) {
+	protected function _buildRelatedModels(Model $model) {
 		foreach ($model->associations() as $type) {
 			foreach ($model->{$type} as $assoc => $assocData) {
 				if (is_string($assocData)) {
@@ -1077,7 +1077,7 @@ class MysqlTest extends CakeTestCase {
  * @param mixed $binding
  * @return void
  */
-	protected function &_prepareAssociationQuery($model, &$queryData, $binding) {
+	protected function &_prepareAssociationQuery(Model $model, &$queryData, $binding) {
 		$type = $binding['type'];
 		$assoc = $binding['model'];
 		$assocData = $model->{$type}[$assoc];

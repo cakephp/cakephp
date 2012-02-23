@@ -348,7 +348,7 @@ class Postgres extends DboSource {
  * @param boolean $quote
  * @return array
  */
-	public function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
