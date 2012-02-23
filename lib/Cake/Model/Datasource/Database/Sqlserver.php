@@ -76,6 +76,7 @@ class Sqlserver extends DboSource {
 		'login' => '',
 		'password' => '',
 		'database' => 'cake'
+		'schema' => '',
 	);
 
 /**
@@ -792,7 +793,7 @@ class Sqlserver extends DboSource {
  * @return string The schema name
  */
 	public function getSchemaName() {
-		return $this->config['database'];
+		return $this->config['schema'];
 	}
 
 }
