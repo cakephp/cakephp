@@ -24,7 +24,6 @@ App::uses('Controller', 'Controller');
 * TestSecurityComponent
 *
 * @package       Cake.Test.Case.Controller.Component
-* @package       Cake.Test.Case.Controller.Component
 */
 class TestSecurityComponent extends SecurityComponent {
 
@@ -32,7 +31,7 @@ class TestSecurityComponent extends SecurityComponent {
  * validatePost method
  *
  * @param Controller $controller
- * @return unknown
+ * @return boolean
  */
 	public function validatePost($controller) {
 		return $this->_validatePost($controller);
@@ -42,7 +41,6 @@ class TestSecurityComponent extends SecurityComponent {
 /**
 * SecurityTestController
 *
-* @package       Cake.Test.Case.Controller.Component
 * @package       Cake.Test.Case.Controller.Component
 */
 class SecurityTestController extends Controller {
@@ -64,7 +62,7 @@ class SecurityTestController extends Controller {
 /**
  * failed property
  *
- * @var bool false
+ * @var boolean false
  */
 	public $failed = false;
 
@@ -97,7 +95,7 @@ class SecurityTestController extends Controller {
 	}
 
 /**
- * Conveinence method for header()
+ * Convenience method for header()
  *
  * @param string $status
  * @return void
@@ -162,7 +160,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that initalize can set properties.
+ * test that initialize can set properties.
  *
  * @return void
  */

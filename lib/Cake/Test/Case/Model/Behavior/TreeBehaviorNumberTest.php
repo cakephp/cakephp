@@ -151,11 +151,11 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 	}
 
 /**
- * testDetectNoneExistantParent method
+ * testDetectNoneExistentParent method
  *
  * @return void
  */
-	public function testDetectNoneExistantParent() {
+	public function testDetectNoneExistentParent() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);

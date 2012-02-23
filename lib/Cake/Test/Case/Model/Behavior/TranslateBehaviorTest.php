@@ -870,7 +870,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
- * Test infinite loops not occuring with unbindTranslation()
+ * Test infinite loops not occurring with unbindTranslation()
  *
  * @return void
  */

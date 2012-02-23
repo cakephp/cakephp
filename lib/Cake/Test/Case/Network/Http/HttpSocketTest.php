@@ -107,7 +107,7 @@ class TestHttpSocket extends HttpSocket {
  *
  * @param array $uri A $uri array, or uses $this->config if left empty
  * @param string $uriTemplate The Uri template/format to use
- * @return string A fully qualified URL formated according to $uriTemplate
+ * @return string A fully qualified URL formatted according to $uriTemplate
  */
 	public function buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
 		return parent::_buildUri($uri, $uriTemplate);
@@ -1538,7 +1538,7 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * Test that HttpSocket::escapeToken is escaping all characters as descriped in RFC 2616 (HTTP 1.1 specs)
+ * Test that HttpSocket::escapeToken is escaping all characters as described in RFC 2616 (HTTP 1.1 specs)
  *
  * @return void
  */

@@ -256,7 +256,7 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
- * Test setting an entity and retriving the entity, model and field.
+ * Test setting an entity and retrieving the entity, model and field.
  *
  * @dataProvider entityProvider
  * @return void
