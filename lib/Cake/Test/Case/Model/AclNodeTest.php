@@ -1,6 +1,6 @@
 <?php
 /**
- * DbAclTest file
+ * AclNodeTest file
  *
  * PHP 5
  *
