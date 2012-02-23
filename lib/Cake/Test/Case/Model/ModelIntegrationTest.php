@@ -242,7 +242,7 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testFindWithJoinsOption() {
 		$this->loadFixtures('Article', 'User');
-		$TestUser =& new User();
+		$TestUser = new User();
 
 		$options = array(
 			'fields' => array(

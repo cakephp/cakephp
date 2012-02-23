@@ -862,7 +862,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginateOrderVirtualFieldSharedWithRealField() {
-		$Controller =& new Controller($this->request);
+		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerComment->virtualFields = array(
