@@ -197,12 +197,38 @@ class FileEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
-		if ($this->_setKey($key) === false || !$this->_init) {
+	    if (!$this->_init) {
 			return false;
 		}
-		$path = $this->_File->getRealPath();
-		$this->_File = null;
-		return unlink($path);
+        if ( substr($key, -1, 1) != '*' ) {
+            
+  		    if ($this->_setKey($key) === false) {
+			     return false;
+            }
+		    $path = $this->_File->getRealPath();
+		    $this->_File = null;
+		    return unlink($path);            
+        } else {
+            $key = substr($key, 0, -1);
+            $dir = dir($this->settings['path']);
+            while (($entry = $dir->read()) !== false) {
+               if ( strpos( $entry, $key ) === false ) {
+                    continue;
+               } 
+                    
+      		   if ($this->_setKey($entry) === false) {
+    	           continue;
+               }
+                
+	           $path = $this->_File->getRealPath();
+               $this->_File = null;
+			   if (file_exists($path)) {
+		          unlink($path);
+			   }            
+            }
+            $dir->close();
+            return true;
+        }
 	}
 
 /**
