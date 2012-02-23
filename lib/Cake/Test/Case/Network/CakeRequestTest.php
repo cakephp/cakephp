@@ -808,7 +808,7 @@ class CakeRequestTest extends CakeTestCase {
 		$_SERVER['HTTP_USER_AGENT'] = 'iPhone 3.0';
 		$this->assertTrue($request->isMobile());
 
-		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, '_detectCallback')));
+		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
 
 		$request->addDetector('index', array('param' => 'action', 'value' => 'index'));
 		$request->params['action'] = 'index';
@@ -829,7 +829,7 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
-	public function _detectCallback($request) {
+	public function detectCallback($request) {
 		return $request->return == true;
 	}
 
