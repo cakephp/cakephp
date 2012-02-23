@@ -3644,7 +3644,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @param array $expected
  * @return void
  */
-	protected function _assertBindings($Model, $expected = array()) {
+	protected function _assertBindings(Model $Model, $expected = array()) {
 		$expected = array_merge(array(
 			'belongsTo' => array(),
 			'hasOne' => array(),

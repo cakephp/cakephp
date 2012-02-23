@@ -32,7 +32,7 @@
  * the model instance to be shifted onto the parameter list.
  *
  * {{{
- * function doSomething($model, $arg1, $arg2) {
+ * function doSomething(Model $model, $arg1, $arg2) {
  *		//do something
  * }
  * }}}
@@ -49,7 +49,7 @@
  * {{{
  * public $mapMethods = array('/do(\w+)/' => 'doSomething');
  *
- * function doSomething($model, $method, $arg1, $arg2) {
+ * function doSomething(Model $model, $method, $arg1, $arg2) {
  *		//do something
  * }
  * }}}
@@ -92,7 +92,7 @@ class ModelBehavior extends Object {
  * @param array $config Configuration settings for $model
  * @return void
  */
-	public function setup($model, $config = array()) { }
+	public function setup(Model $model, $config = array()) { }
 
 /**
  * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
@@ -102,7 +102,7 @@ class ModelBehavior extends Object {
  * @return void
  * @see BehaviorCollection::detach()
  */
-	public function cleanup($model) {
+	public function cleanup(Model $model) {
 		if (isset($this->settings[$model->alias])) {
 			unset($this->settings[$model->alias]);
 		}
@@ -118,7 +118,7 @@ class ModelBehavior extends Object {
  * @return boolean|array False or null will abort the operation. You can return an array to replace the
  *   $query that will be eventually run.
  */
-	public function beforeFind($model, $query) {
+	public function beforeFind(Model $model, $query) {
 		return true;
 	}
 
@@ -130,7 +130,7 @@ class ModelBehavior extends Object {
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
  */
-	public function afterFind($model, $results, $primary) { }
+	public function afterFind(Model $model, $results, $primary) { }
 
 /**
  * beforeValidate is called before a model is validated, you can use this callback to
@@ -140,7 +140,7 @@ class ModelBehavior extends Object {
  * @param Model $model Model using this behavior
  * @return mixed False or null will abort the operation. Any other result will continue.
  */
-	public function beforeValidate($model) {
+	public function beforeValidate(Model $model) {
 		return true;
 	}
 
@@ -151,7 +151,7 @@ class ModelBehavior extends Object {
  * @param Model $model Model using this behavior
  * @return mixed False if the operation should abort. Any other result will continue.
  */
-	public function beforeSave($model) {
+	public function beforeSave(Model $model) {
 		return true;
 	}
 
@@ -162,7 +162,7 @@ class ModelBehavior extends Object {
  * @param boolean $created True if this save created a new record
  * @return boolean
  */
-	public function afterSave($model, $created) {
+	public function afterSave(Model $model, $created) {
 		return true;
 	}
 
@@ -174,7 +174,7 @@ class ModelBehavior extends Object {
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return mixed False if the operation should abort. Any other result will continue.
  */
-	public function beforeDelete($model, $cascade = true) {
+	public function beforeDelete(Model $model, $cascade = true) {
 		return true;
 	}
 
@@ -184,7 +184,7 @@ class ModelBehavior extends Object {
  * @param Model $model Model using this behavior
  * @return void
  */
-	public function afterDelete($model) { }
+	public function afterDelete(Model $model) { }
 
 /**
  * DataSource error callback
@@ -193,7 +193,7 @@ class ModelBehavior extends Object {
  * @param string $error Error generated in DataSource
  * @return void
  */
-	public function onError($model, $error) { }
+	public function onError(Model $model, $error) { }
 
 /**
  * If $model's whitelist property is non-empty, $field will be added to it.
@@ -205,7 +205,7 @@ class ModelBehavior extends Object {
  * @param string $field Field to be added to $model's whitelist
  * @return void
  */
-	protected function _addToWhitelist($model, $field) {
+	protected function _addToWhitelist(Model $model, $field) {
 		if (is_array($field)) {
 			foreach ($field as $f) {
 				$this->_addToWhitelist($model, $f);
