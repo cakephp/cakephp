@@ -70,7 +70,7 @@ class MediaView extends View {
  *
  * @param Controller $controller The controller with viewVars
  */
-	public function __construct($controller = null) {
+	public function __construct(Controller $controller = null) {
 		parent::__construct($controller);
 	}
 
