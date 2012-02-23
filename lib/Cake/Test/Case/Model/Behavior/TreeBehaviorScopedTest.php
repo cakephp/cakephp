@@ -136,12 +136,13 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 	public function testMoveUpWithScope() {
 		$this->Ad = new Ad();
 		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
-		$this->Ad->moveUp(6);
+		$this->Ad->id = 6;
+		$this->Ad->moveUp();
 
 		$this->Ad->id = 4;
 		$result = $this->Ad->children();
-		$this->assertEquals(Set::extract('/Ad/id', $result), array(6, 5));
-		$this->assertEquals(Set::extract('/Campaign/id', $result), array(2, 2));
+		$this->assertEquals(array(6, 5), Set::extract('/Ad/id', $result));
+		$this->assertEquals(array(2, 2), Set::extract('/Campaign/id', $result));
 	}
 
 /**
@@ -312,5 +313,19 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			'rght' => 2
 		));
 		$this->assertEquals($expected, $result);
+	}
+
+	public function testNotOneBigTree() {
+		$this->Ad = new Ad();
+		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
+		$this->Ad->deleteAll(true);
+
+		$expected = array(1, 2);
+		$return = $this->Ad->save(array('campaign_id' => 1));
+		$this->assertEquals($expected, array($return['Ad']['lft'], $return['Ad']['rght']));
+
+		$this->Ad->create();
+		$return = $this->Ad->save(array('campaign_id' => 2));
+		$this->assertEquals($expected, array($return['Ad']['lft'], $return['Ad']['rght']));
 	}
 }

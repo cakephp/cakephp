@@ -38,6 +38,7 @@ class TreeBehaviorTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorScopedTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorAfterTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorUuidTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorScopedNumberTest.php');
 		return $suite;
 	}
 }
