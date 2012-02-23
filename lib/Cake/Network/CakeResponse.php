@@ -972,7 +972,7 @@ class CakeResponse {
 	protected function _getUTCDate($time = null) {
 		if ($time instanceof DateTime) {
 			$result = clone $time;
-		} else if (is_integer($time)) {
+		} elseif (is_integer($time)) {
 			$result = new DateTime(date('Y-m-d H:i:s', $time));
 		} else {
 			$result = new DateTime($time);

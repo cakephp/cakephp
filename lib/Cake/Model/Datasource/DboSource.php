@@ -577,9 +577,9 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
-			} else if (isset($args[1]) && !is_array($args[1]) ) {
+			} elseif (isset($args[1]) && !is_array($args[1]) ) {
 				return $this->fetchAll($args[0], false);
-			} else if (isset($args[1]) && is_array($args[1])) {
+			} elseif (isset($args[1]) && is_array($args[1])) {
 				if (isset($args[2])) {
 					$cache = $args[2];
 				} else {
@@ -1733,7 +1733,7 @@ class DboSource extends DataSource {
 				if (trim($indexes) !== '') {
 					$columns .= ',';
 				}
-				return "CREATE TABLE {$table} (\n{$columns}{$indexes}){$tableParameters};";
+				return "CREATE TABLE {$table} (\n{$columns}{$indexes}) {$tableParameters};";
 			case 'alter':
 				return;
 		}

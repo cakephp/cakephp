@@ -952,7 +952,7 @@ class View extends Object {
 					return $name;
 				}
 				$name = trim($name, DS);
-			} else if ($name[0] === '.') {
+			} elseif ($name[0] === '.') {
 				$name = substr($name, 3);
 			} elseif (!$plugin) {
 				$name = $this->viewPath . DS . $subDir . $name;

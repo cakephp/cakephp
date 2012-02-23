@@ -41,7 +41,7 @@ App::uses('CakeRequest', 'Network');
  *
  * {{{
  * class ExampleController extends AppController {
- *		public function download () {
+ *		public function download() {
  *			$this->viewClass = 'Media';
  *			$params = array(
  *				'id' => 'example.zip',
@@ -142,7 +142,7 @@ class MediaView extends View {
 
 				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
 					$contentType = 'application/octetstream';
-				} else if (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+				} elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 					$contentType = 'application/force-download';
 				}
 

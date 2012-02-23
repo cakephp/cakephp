@@ -81,7 +81,7 @@ class String {
 
 		if (function_exists('hphp_get_thread_id')) {
 			$pid = hphp_get_thread_id();
-		} else if (function_exists('zend_thread_id')) {
+		} elseif (function_exists('zend_thread_id')) {
 			$pid = zend_thread_id();
 		} else {
 			$pid = getmypid();
@@ -458,7 +458,7 @@ class String {
 				if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
 					if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
 						array_unshift($openTags, $tag[2]);
-					} else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
+					} elseif (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
 						$pos = array_search($closeTag[1], $openTags);
 						if ($pos !== false) {
 							array_splice($openTags, $pos, 1);

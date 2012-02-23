@@ -652,7 +652,7 @@ class App {
 	protected static function _loadClass($name, $plugin, $type, $originalType, $parent) {
 		if ($type == 'Console/Command' && $name == 'Shell') {
 			$type = 'Console';
-		} else if (isset(self::$types[$originalType]['suffix'])) {
+		} elseif (isset(self::$types[$originalType]['suffix'])) {
 			$suffix = self::$types[$originalType]['suffix'];
 			$name .= ($suffix == $name) ? '' : $suffix;
 		}
@@ -691,7 +691,7 @@ class App {
 		$mapped = self::_mapped($name, $plugin);
 		if ($mapped) {
 			$file = $mapped;
-		} else if (!empty($search)) {
+		} elseif (!empty($search)) {
 			foreach ($search as $path) {
 				$found = false;
 				if (file_exists($path . $file)) {

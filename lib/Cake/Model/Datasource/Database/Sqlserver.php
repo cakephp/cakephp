@@ -689,7 +689,7 @@ class Sqlserver extends DboSource {
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
 				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
-			} else if (isset($value['unique']) && $value['unique']) {
+			} elseif (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {

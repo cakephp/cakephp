@@ -156,7 +156,7 @@ class ContainableBehavior extends ModelBehavior {
 							}
 							if (!$reset && empty($instance->__backOriginalAssociation)) {
 								$instance->__backOriginalAssociation = $backupBindings;
-							} else if ($reset) {
+							} elseif ($reset) {
 								$instance->__backAssociation[$type] = $backupBindings[$type];
 							}
 							$instance->{$type}[$assoc] = array_merge($instance->{$type}[$assoc], $model['keep'][$assoc]);
@@ -198,7 +198,7 @@ class ContainableBehavior extends ModelBehavior {
 			foreach ($mandatory[$Model->alias] as $field) {
 				if ($field == '--primaryKey--') {
 					$field = $Model->primaryKey;
-				} else if (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
+				} elseif (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
 					list($modelName, $field) = explode('.', $field);
 					if ($Model->useDbConfig == $Model->{$modelName}->useDbConfig) {
 						$field = $modelName . '.' . (
@@ -372,7 +372,7 @@ class ContainableBehavior extends ModelBehavior {
 					foreach ($bindings as $dependency) {
 						if ($type == 'hasAndBelongsToMany') {
 							$fields[$parent][] = '--primaryKey--';
-						} else if ($type == 'belongsTo') {
+						} elseif ($type == 'belongsTo') {
 							$fields[$parent][] = $dependency . '.--primaryKey--';
 						}
 					}

@@ -561,7 +561,7 @@ class File {
 			$finfo = finfo_open(FILEINFO_MIME);
 			list($type, $charset) = explode(';', finfo_file($finfo, $this->pwd()));
 			return $type;
-		} else if (function_exists('mime_content_type')) {
+		} elseif (function_exists('mime_content_type')) {
 			return mime_content_type($this->pwd());
 		}
 		return false;

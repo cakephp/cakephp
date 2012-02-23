@@ -154,7 +154,7 @@ HTML;
 			var element = document.getElementById(selector);
 			element.style.display = (element.style.display == 'none') ? '' : 'none';
 		}
-		function coverage_toggle_all () {
+		function coverage_toggle_all() {
 			var divs = document.querySelectorAll('div.coverage-container');
 			var i = divs.length;
 			while (i--) {
