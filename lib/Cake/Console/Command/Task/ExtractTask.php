@@ -118,7 +118,7 @@ class ExtractTask extends AppShell {
 		}
 		if (isset($this->params['paths'])) {
 			$this->_paths = explode(',', $this->params['paths']);
-		} else if (isset($this->params['plugin'])) {
+		} elseif (isset($this->params['plugin'])) {
 			$plugin = Inflector::camelize($this->params['plugin']);
 			if (!CakePlugin::loaded($plugin)) {
 				CakePlugin::load($plugin);
@@ -159,7 +159,7 @@ class ExtractTask extends AppShell {
 
 		if (isset($this->params['output'])) {
 			$this->_output = $this->params['output'];
-		} else if (isset($this->params['plugin'])) {
+		} elseif (isset($this->params['plugin'])) {
 			$this->_output = $this->_paths[0] . DS . 'Locale';
 		} else {
 			$message = __d('cake_console', "What is the path you would like to output?\n[Q]uit", $this->_paths[0] . DS . 'Locale');
@@ -594,7 +594,7 @@ class ExtractTask extends AppShell {
 					$position++;
 				}
 				$strings[] = $string;
-			} else if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
+			} elseif ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
 				$strings[] = $this->_formatString($this->_tokens[$position][1]);
 			}
 			$position++;

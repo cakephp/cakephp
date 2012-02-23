@@ -143,7 +143,7 @@ class TranslateBehavior extends ModelBehavior {
 		$addFields = array();
 		if (empty($query['fields'])) {
 			$addFields = $fields;
-		} else if (is_array($query['fields'])) {
+		} elseif (is_array($query['fields'])) {
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
 

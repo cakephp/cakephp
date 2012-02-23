@@ -1136,7 +1136,7 @@ class HtmlHelper extends AppHelper {
 			}
 			if (isset($itemOptions['even']) && $index % 2 == 0) {
 				$itemOptions['class'] = $itemOptions['even'];
-			} else if (isset($itemOptions['odd']) && $index % 2 != 0) {
+			} elseif (isset($itemOptions['odd']) && $index % 2 != 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
 			$out .= sprintf($this->_tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);

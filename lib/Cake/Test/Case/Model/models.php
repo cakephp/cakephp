@@ -183,7 +183,7 @@ class User extends CakeTestModel {
  *
  * @return bool
 */
-	public function beforeFind ($queryData) {
+	public function beforeFind($queryData) {
 		if (!empty($queryData['lazyLoad'])) {
 			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
 				throw new Exception('Unavailable associations');
@@ -257,7 +257,7 @@ class Article extends CakeTestModel {
  * @param mixed $title
  * @return void
  */
-	static function titleDuplicate ($title) {
+	static function titleDuplicate($title) {
 		if ($title === 'My Article Title') {
 			return false;
 		}
