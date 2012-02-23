@@ -2523,7 +2523,7 @@ class FormHelper extends AppHelper {
 					$data['10'] = __d('cake', 'October');
 					$data['11'] = __d('cake', 'November');
 					$data['12'] = __d('cake', 'December');
-				} else if (is_array($options['monthNames'])) {
+				} elseif (is_array($options['monthNames'])) {
 					$data = $options['monthNames'];
 				} else {
 					for ($m = 1; $m <= 12; $m++) {

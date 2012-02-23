@@ -577,9 +577,9 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
-			} else if (isset($args[1]) && !is_array($args[1]) ) {
+			} elseif (isset($args[1]) && !is_array($args[1]) ) {
 				return $this->fetchAll($args[0], false);
-			} else if (isset($args[1]) && is_array($args[1])) {
+			} elseif (isset($args[1]) && is_array($args[1])) {
 				if (isset($args[2])) {
 					$cache = $args[2];
 				} else {
@@ -1149,7 +1149,7 @@ class DboSource extends DataSource {
  * @param array $stack
  * @return mixed
  */
-	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!is_array($resultSet)) {
 				throw new CakeException(__d('cake_dev', 'Error in Model %s', get_class($model)));
@@ -1291,7 +1291,7 @@ class DboSource extends DataSource {
  * @param array $ids Array of IDs of associated records
  * @return array Association results
  */
-	public function fetchAssociated($model, $query, $ids) {
+	public function fetchAssociated(Model $model, $query, $ids) {
 		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
@@ -1435,7 +1435,7 @@ class DboSource extends DataSource {
  * @param array $resultSet
  * @return mixed
  */
-	public function generateAssociationQuery($model, $linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
+	public function generateAssociationQuery(Model $model, $linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
 		$queryData = $this->_scrubQueryData($queryData);
 		$assocData = $this->_scrubQueryData($assocData);
 		$modelAlias = $model->alias;
@@ -1733,7 +1733,7 @@ class DboSource extends DataSource {
 				if (trim($indexes) !== '') {
 					$columns .= ',';
 				}
-				return "CREATE TABLE {$table} (\n{$columns}{$indexes}){$tableParameters};";
+				return "CREATE TABLE {$table} (\n{$columns}{$indexes}) {$tableParameters};";
 			case 'alter':
 				return;
 		}
@@ -1812,7 +1812,7 @@ class DboSource extends DataSource {
  * @param boolean $alias Include the model alias in the field name
  * @return array Fields and values, quoted and prepared
  */
-	protected function _prepareUpdateFields($model, $fields, $quoteValues = true, $alias = false) {
+	protected function _prepareUpdateFields(Model $model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
 
 		$updates = array();
@@ -1879,7 +1879,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return array List of record IDs
  */
-	protected function _matchRecords($model, $conditions = null) {
+	protected function _matchRecords(Model $model, $conditions = null) {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
 		} elseif ($conditions === null) {
@@ -1926,7 +1926,7 @@ class DboSource extends DataSource {
  * @param Model $model
  * @return array
  */
-	protected function _getJoins($model) {
+	protected function _getJoins(Model $model) {
 		$join = array();
 		$joins = array_merge($model->getAssociated('hasOne'), $model->getAssociated('belongsTo'));
 
@@ -1955,7 +1955,7 @@ class DboSource extends DataSource {
  * @param array $params Function parameters (any values must be quoted manually)
  * @return string An SQL calculation function
  */
-	public function calculate($model, $func, $params = array()) {
+	public function calculate(Model $model, $func, $params = array()) {
 		$params = (array)$params;
 
 		switch (strtolower($func)) {
@@ -2083,7 +2083,7 @@ class DboSource extends DataSource {
  * @see DboSource::update()
  * @see DboSource::conditions()
  */
-	public function defaultConditions($model, $conditions, $useAlias = true) {
+	public function defaultConditions(Model $model, $conditions, $useAlias = true) {
 		if (!empty($conditions)) {
 			return $conditions;
 		}
@@ -2139,7 +2139,7 @@ class DboSource extends DataSource {
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
-	protected function _constructVirtualFields($model, $alias, $fields) {
+	protected function _constructVirtualFields(Model $model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
@@ -2158,7 +2158,7 @@ class DboSource extends DataSource {
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
  */
-	public function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -2673,7 +2673,7 @@ class DboSource extends DataSource {
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
-	public function hasAny($Model, $sql) {
+	public function hasAny(Model $Model, $sql) {
 		$sql = $this->conditions($sql);
 		$table = $this->fullTableName($Model);
 		$alias = $this->alias . $this->name($Model->alias);

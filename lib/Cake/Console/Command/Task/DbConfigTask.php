@@ -100,7 +100,7 @@ class DbConfigTask extends AppShell {
 				if (preg_match('/[^a-z0-9_]/i', $name)) {
 					$name = '';
 					$this->out(__d('cake_console', 'The name may only contain unaccented latin characters, numbers or underscores'));
-				} else if (preg_match('/^[^a-z_]/i', $name)) {
+				} elseif (preg_match('/^[^a-z_]/i', $name)) {
 					$name = '';
 					$this->out(__d('cake_console', 'The name must start with an unaccented latin character or an underscore'));
 				}

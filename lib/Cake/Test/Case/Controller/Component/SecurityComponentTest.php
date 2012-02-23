@@ -34,7 +34,7 @@ class TestSecurityComponent extends SecurityComponent {
  * @param Controller $controller
  * @return unknown
  */
-	public function validatePost($controller) {
+	public function validatePost(Controller $controller) {
 		return $this->_validatePost($controller);
 	}
 }

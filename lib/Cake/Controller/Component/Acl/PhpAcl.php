@@ -65,7 +65,7 @@ class PhpAcl extends Object implements AclInterface {
  * @param AclComponent $Component Component instance 
  * @return void
  */
-	public function initialize($Component) {
+	public function initialize(Component $Component) {
 		if (!empty($Component->settings['adapter'])) {
 			$this->options = array_merge($this->options, $Component->settings['adapter']);
 		}

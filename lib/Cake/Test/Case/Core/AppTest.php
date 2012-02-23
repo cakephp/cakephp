@@ -599,7 +599,7 @@ class AppTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFileLoading () {
+	public function testFileLoading() {
 		$file = App::import('File', 'RealFile', false, array(), CAKE  . 'Config' . DS . 'config.php');
 		$this->assertTrue($file);
 
@@ -629,7 +629,7 @@ class AppTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFileLoadingReturnValue () {
+	public function testFileLoadingReturnValue() {
 		$file = App::import('File', 'Name', false, array(), CAKE  . 'Config' . DS . 'config.php', true);
 		$this->assertTrue(!empty($file));
 
@@ -648,7 +648,7 @@ class AppTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testLoadingWithSearch () {
+	public function testLoadingWithSearch() {
 		$file = App::import('File', 'NewName', false, array(CAKE . 'Config' . DS), 'config.php');
 		$this->assertTrue($file);
 

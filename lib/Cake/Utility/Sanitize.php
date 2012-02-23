@@ -214,7 +214,7 @@ class Sanitize {
 
 		if (is_string($options)) {
 			$options = array('connection' => $options);
-		} else if (!is_array($options)) {
+		} elseif (!is_array($options)) {
 			$options = array();
 		}
 

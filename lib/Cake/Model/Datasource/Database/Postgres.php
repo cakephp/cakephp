@@ -206,7 +206,7 @@ class Postgres extends DboSource {
 					if ($c->type == 'character varying') {
 						$length = null;
 						$type = 'text';
-					} else if ($c->type == 'uuid') {
+					} elseif ($c->type == 'uuid') {
 						$length = 36;
 					} else {
 						$length = intval($c->oct_length);
@@ -348,7 +348,7 @@ class Postgres extends DboSource {
  * @param boolean $quote
  * @return array
  */
-	public function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}

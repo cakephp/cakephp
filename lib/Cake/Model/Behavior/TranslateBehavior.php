@@ -36,14 +36,14 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @var object
  */
-	var $_joinTable;
+	protected $_joinTable;
 
 /**
  * Stores the runtime model for generating joins.
  *
  * @var Model
  */
-	var $_runtimeModel;
+	protected $_runtimeModel;
 
 /**
  * Callback
@@ -62,7 +62,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param array $config Array of configuration information.
  * @return mixed
  */
-	public function setup($model, $config = array()) {
+	public function setup(Model $model, $config = array()) {
 		$db = ConnectionManager::getDataSource($model->useDbConfig);
 		if (!$db->connected) {
 			trigger_error(
@@ -84,7 +84,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $model Model being detached.
  * @return void
  */
-	public function cleanup($model) {
+	public function cleanup(Model $model) {
 		$this->unbindTranslation($model);
 		unset($this->settings[$model->alias]);
 		unset($this->runtime[$model->alias]);
@@ -97,7 +97,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param array $query Array of Query parameters.
  * @return array Modified query
  */
-	public function beforeFind($model, $query) {
+	public function beforeFind(Model $model, $query) {
 		$this->runtime[$model->alias]['virtualFields'] = $model->virtualFields;
 		$locale = $this->_getLocale($model);
 		if (empty($locale)) {
@@ -143,7 +143,7 @@ class TranslateBehavior extends ModelBehavior {
 		$addFields = array();
 		if (empty($query['fields'])) {
 			$addFields = $fields;
-		} else if (is_array($query['fields'])) {
+		} elseif (is_array($query['fields'])) {
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
 
@@ -263,7 +263,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $primary Did the find originate on $model.
  * @return array Modified results
  */
-	public function afterFind($model, $results, $primary) {
+	public function afterFind(Model $model, $results, $primary) {
 		$model->virtualFields = $this->runtime[$model->alias]['virtualFields'];
 		$this->runtime[$model->alias]['virtualFields'] = $this->runtime[$model->alias]['fields'] = array();
 		$locale = $this->_getLocale($model);
@@ -309,7 +309,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $model Model invalidFields was called on.
  * @return boolean
  */
-	public function beforeValidate($model) {
+	public function beforeValidate(Model $model) {
 		$locale = $this->_getLocale($model);
 		if (empty($locale)) {
 			return true;
@@ -343,7 +343,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $created Whether or not the save created a record.
  * @return void
  */
-	public function afterSave($model, $created) {
+	public function afterSave(Model $model, $created) {
 		if (!isset($this->runtime[$model->alias]['beforeSave'])) {
 			return true;
 		}
@@ -386,7 +386,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $model Model the callback was run on.
  * @return void
  */
-	public function afterDelete($model) {
+	public function afterDelete(Model $model) {
 		$RuntimeModel = $this->translateModel($model);
 		$conditions = array('model' => $model->alias, 'foreign_key' => $model->id);
 		$RuntimeModel->deleteAll($conditions);
@@ -398,7 +398,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $model Model the locale needs to be set/get on.
  * @return mixed string or false
  */
-	protected function _getLocale($model) {
+	protected function _getLocale(Model $model) {
 		if (!isset($model->locale) || is_null($model->locale)) {
 			$I18n = I18n::getInstance();
 			$I18n->l10n->get(Configure::read('Config.language'));
@@ -417,7 +417,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $model Model to get a translatemodel for.
  * @return Model
  */
-	public function translateModel($model) {
+	public function translateModel(Model $model) {
 		if (!isset($this->runtime[$model->alias]['model'])) {
 			if (!isset($model->translateModel) || empty($model->translateModel)) {
 				$className = 'I18nModel';
@@ -447,7 +447,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $reset
  * @return boolean
  */
-	public function bindTranslation($model, $fields, $reset = true) {
+	public function bindTranslation(Model $model, $fields, $reset = true) {
 		if (is_string($fields)) {
 			$fields = array($fields);
 		}
@@ -525,7 +525,7 @@ class TranslateBehavior extends ModelBehavior {
  *    unbind all original translations
  * @return boolean
  */
-	public function unbindTranslation($model, $fields = null) {
+	public function unbindTranslation(Model $model, $fields = null) {
 		if (empty($fields) && empty($this->settings[$model->alias])) {
 			return false;
 		}

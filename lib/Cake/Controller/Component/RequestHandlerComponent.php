@@ -115,7 +115,7 @@ class RequestHandlerComponent extends Component {
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize($controller, $settings = array()) {
+	public function initialize(Controller $controller, $settings = array()) {
 		if (isset($this->request->params['ext'])) {
 			$this->ext = $this->request->params['ext'];
 		}
@@ -173,7 +173,7 @@ class RequestHandlerComponent extends Component {
  * @param Controller $controller A reference to the controller
  * @return void
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
@@ -224,7 +224,7 @@ class RequestHandlerComponent extends Component {
  * @param boolean $exit
  * @return void
  */
-	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
+	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
@@ -253,7 +253,7 @@ class RequestHandlerComponent extends Component {
  * @params Controller $controller
  * @return boolean false if the render process should be aborted
  **/
-	public function beforeRender($controller) {
+	public function beforeRender(Controller $controller) {
 		$shouldCheck = $this->settings['checkHttpCache'];
 		if ($shouldCheck && $this->response->checkNotModified($this->request)) {
 			return false;
@@ -566,7 +566,7 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	public function renderAs($controller, $type, $options = array()) {
+	public function renderAs(Controller $controller, $type, $options = array()) {
 		$defaults = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {

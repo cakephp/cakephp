@@ -126,7 +126,7 @@ class CakeEventManager {
 			$method = $function;
 			if (is_array($function) && isset($function['callable'])) {
 				list($method, $options) = $this->_extractCallable($function, $subscriber);
-			} else if (is_array($function) && is_numeric(key($function))) {
+			} elseif (is_array($function) && is_numeric(key($function))) {
 				foreach ($function as $f) {
 					list($method, $options) = $this->_extractCallable($f, $subscriber);
 					$this->attach($method, $eventKey, $options);
@@ -198,7 +198,7 @@ class CakeEventManager {
 		$events = $subscriber->implementedEvents();
 		if (!empty($eventKey) && empty($events[$eventKey])) {
 			return;
-		} else if (!empty($eventKey)) {
+		} elseif (!empty($eventKey)) {
 			$events = array($eventKey => $events[$eventKey]);
 		}
 		foreach ($events as $key => $function) {

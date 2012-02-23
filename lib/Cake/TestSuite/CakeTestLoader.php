@@ -61,7 +61,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 		$result = null;
 		if (!empty($params['core'])) {
 			$result = CORE_TEST_CASES;
-		} else if (!empty($params['plugin'])) {
+		} elseif (!empty($params['plugin'])) {
 			if (!CakePlugin::loaded($params['plugin'])) {
 				try {
 					CakePlugin::load($params['plugin']);
