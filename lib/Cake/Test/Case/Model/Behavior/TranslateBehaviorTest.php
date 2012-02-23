@@ -66,7 +66,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 	public function testCountWithConditions() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
-		$Model =& new TranslatedItem();
+		$Model = new TranslatedItem();
 		$Model->locale = 'eng';
 		$result = $Model->find('count', array(
 			'conditions' => array(

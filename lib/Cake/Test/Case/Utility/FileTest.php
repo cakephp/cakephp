@@ -434,7 +434,7 @@ class FileTest extends CakeTestCase {
 		if (!file_exists($tmpFile)) {
 			touch($tmpFile);
 		}
-		$File =& new File($tmpFile);
+		$File = new File($tmpFile);
 		$File->read();
 		$this->assertTrue($File->delete());
 	}

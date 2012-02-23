@@ -170,7 +170,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testParseServerStringUnix() {
-		$Memcache =& new TestMemcacheEngine();
+		$Memcache = new TestMemcacheEngine();
 		$result = $Memcache->parseServerString('unix:///path/to/memcached.sock');
 		$this->assertEquals($result, array('unix:///path/to/memcached.sock', 0));
 	}
@@ -385,7 +385,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testLongDurationEqualToZero() {
-		$memcache =& new TestMemcacheEngine();
+		$memcache = new TestMemcacheEngine();
 		$memcache->settings['compress'] = false;
 
 		$mock = $this->getMock('Memcache');
