@@ -75,7 +75,7 @@ class Sqlserver extends DboSource {
 		'host' => 'localhost\SQLEXPRESS',
 		'login' => '',
 		'password' => '',
-		'database' => 'cake'
+		'database' => 'cake',
 		'schema' => '',
 	);
 
