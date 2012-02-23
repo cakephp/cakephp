@@ -3287,19 +3287,19 @@ class TransactionManyTestModel extends CakeTestModel {
 }
 
 class Site extends CakeTestModel {
-	var $name = 'Site';
-	var $useTable = 'sites';
+	public $name = 'Site';
+	public $useTable = 'sites';
 
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'Domain' => array('unique' => 'keepExisting'),
 		);
 }
 
 class Domain extends CakeTestModel {
-	var $name = 'Domain';
-	var $useTable = 'domains';
+	public $name = 'Domain';
+	public $useTable = 'domains';
 
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'Site' => array('unique' => 'keepExisting'),
 		);
 }

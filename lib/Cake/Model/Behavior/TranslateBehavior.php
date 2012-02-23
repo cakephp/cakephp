@@ -36,14 +36,14 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @var object
  */
-	var $_joinTable;
+	protected $_joinTable;
 
 /**
  * Stores the runtime model for generating joins.
  *
  * @var Model
  */
-	var $_runtimeModel;
+	protected $_runtimeModel;
 
 /**
  * Callback
