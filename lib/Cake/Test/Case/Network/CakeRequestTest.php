@@ -172,11 +172,38 @@ class CakeRequestTest extends CakeTestCase {
 			'Article' => array('title')
 		));
 		$request = new CakeRequest('some/path');
-		$this->assertEquals($request->data, $_POST['data']);
+		$this->assertEquals($_POST['data'], $request->data);
 
 		$_POST = array('one' => 1, 'two' => 'three');
 		$request = new CakeRequest('some/path');
 		$this->assertEquals($_POST, $request->data);
+
+		$_POST = array(
+			'data' => array(
+				'Article' => array('title' => 'Testing'),
+			),
+			'action' => 'update'
+		);
+		$request = new CakeRequest('some/path');
+		$expected = array(
+			'Article' => array('title' => 'Testing'),
+			'action' => 'update'
+		);
+		$this->assertEquals($expected, $request->data);
+
+		$_POST = array('data' => array(
+			'Article' => array('title'),
+			'Tag' => array('Tag' => array(1, 2))
+		));
+		$request = new CakeRequest('some/path');
+		$this->assertEquals($_POST['data'], $request->data);
+
+		$_POST = array('data' => array(
+			'Article' => array('title' => 'some title'),
+			'Tag' => array('Tag' => array(1, 2))
+		));
+		$request = new CakeRequest('some/path');
+		$this->assertEquals($_POST['data'], $request->data);
 	}
 
 /**
@@ -1108,6 +1135,20 @@ class CakeRequestTest extends CakeTestCase {
 		$_GET['/posts/index/add_add'] = '';
 		$_SERVER['PHP_SELF'] = '/cake_dev/app/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
+
+		$request = new CakeRequest();
+		$this->assertEquals(array(), $request->query);
+	}
+
+/**
+ * Test that a request with urlencoded bits in the main GET parameter are filtered out.
+ *
+ * @return void
+ */
+	public function testGetParamWithUrlencodedElement() {
+		$_GET['/posts/add/∂∂'] = '';
+		$_SERVER['PHP_SELF'] = '/cake_dev/app/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
 
 		$request = new CakeRequest();
 		$this->assertEquals(array(), $request->query);

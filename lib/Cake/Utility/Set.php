@@ -30,9 +30,12 @@ class Set {
  * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
  * but does not do if for keys containing strings (unlike array_merge_recursive).
- * See the unit test for more information.
  *
- * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
+ * Since this method emulates `array_merge`, it will re-order numeric keys.  When combined with out of
+ * order numeric keys containing arrays, results can be lossy.
+ *
+ * Note: This function will work with an unlimited amount of arguments and typecasts non-array 
+ * parameters into arrays.
  *
  * @param array $arr1 Array to be merged
  * @param array $arr2 Array to merge with

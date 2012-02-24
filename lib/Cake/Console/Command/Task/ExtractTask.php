@@ -70,11 +70,18 @@ class ExtractTask extends AppShell {
 	protected $_tokens = array();
 
 /**
- * Extracted strings
+ * Extracted strings indexed by domain.
  *
  * @var array
  */
 	protected $_strings = array();
+
+/**
+ * Singular strings and their line numbers.
+ *
+ * @var array
+ */
+	protected $_lines = array();
 
 /**
  * Destination path
@@ -325,8 +332,10 @@ class ExtractTask extends AppShell {
 				if ($mapCount == count($strings)) {
 					extract(array_combine($map, $strings));
 					$domain = isset($domain) ? $domain : 'default';
+
 					$string = isset($plural) ? $singular . "\0" . $plural : $singular;
-					$this->_strings[$domain][$string][$this->_file][] = $line;
+					$this->_strings[$domain][] = $string;
+					$this->_lines[$domain][$singular][$this->_file][] = $line;
 				} else {
 					$this->_markerError($this->_file, $line, $functionName, $count);
 				}
@@ -406,7 +415,8 @@ class ExtractTask extends AppShell {
 					$message = $rule;
 				}
 				if ($message) {
-					$this->_strings[$domain][$message][$file][] = 'validation for field ' . $field;
+					$this->_strings[$domain][] = $message;
+					$this->_lines[$domain][$message][$file][] =  'validation for field ' . $field;
 				}
 			}
 		}
@@ -419,7 +429,16 @@ class ExtractTask extends AppShell {
  */
 	protected function _buildFiles() {
 		foreach ($this->_strings as $domain => $strings) {
-			foreach ($strings as $string => $files) {
+			$added = array();
+			rsort($strings);
+
+			foreach ($strings as $i => $string) {
+				$plural = false;
+				$singular = $string;
+				if (strpos($string, "\0") !== false) {
+					list($singular, $plural) = explode("\0", $string);
+				}
+				$files = $this->_lines[$domain][$singular];
 				$occurrences = array();
 				foreach ($files as $file => $lines) {
 					$occurrences[] = $file . ':' . implode(';', $lines);
@@ -427,17 +446,21 @@ class ExtractTask extends AppShell {
 				$occurrences = implode("\n#: ", $occurrences);
 				$header = '#: ' . str_replace($this->_paths, '', $occurrences) . "\n";
 
-				if (strpos($string, "\0") === false) {
+				if ($plural === false && !empty($added[$singular])) {
+					continue;
+				}
+
+				if ($plural === false) {
 					$sentence = "msgid \"{$string}\"\n";
 					$sentence .= "msgstr \"\"\n\n";
 				} else {
-					list($singular, $plural) = explode("\0", $string);
 					$sentence = "msgid \"{$singular}\"\n";
 					$sentence .= "msgid_plural \"{$plural}\"\n";
 					$sentence .= "msgstr[0] \"\"\n";
 					$sentence .= "msgstr[1] \"\"\n\n";
 				}
 
+				$added[$singular] = true;
 				$this->_store($domain, $header, $sentence);
 				if ($domain != 'default' && $this->_merge) {
 					$this->_store('default', $header, $sentence);

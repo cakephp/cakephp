@@ -272,8 +272,8 @@ class FormHelper extends AppHelper {
  * Returns false if given form field described by the current entity has no errors.
  * Otherwise it returns the validation message
  *
- * @return mixed Either false when there or no errors, or the error
- *    string. The error string could be ''.
+ * @return mixed Either false when there or no errors, or an array of error
+ *    strings. An error string could be ''.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::tagIsInvalid
  */
 	public function tagIsInvalid() {
@@ -289,8 +289,8 @@ class FormHelper extends AppHelper {
 		if (empty($errors)) {
 			return false;
 		}
-		$error = Set::classicExtract($errors, join('.', $entity));
-		return $error === null ? false : $error;
+		$errors = Set::classicExtract($errors, join('.', $entity));
+		return $errors === null ? false : $errors;
 	}
 
 /**
@@ -739,7 +739,7 @@ class FormHelper extends AppHelper {
  *
  * ### Options
  *
- * - `for` - Set the for attribute, if its not defined the for attribute 
+ * - `for` - Set the for attribute, if its not defined the for attribute
  *   will be generated from the $fieldName parameter using
  *   FormHelper::domId().
  *
@@ -776,8 +776,8 @@ class FormHelper extends AppHelper {
  * }}}
  *
  * @param string $fieldName This should be "Modelname.fieldname"
- * @param string $text Text that will appear in the label field.  If 
- *   $text is left undefined the text will be inflected from the 
+ * @param string $text Text that will appear in the label field.  If
+ *   $text is left undefined the text will be inflected from the
  *   fieldName.
  * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
