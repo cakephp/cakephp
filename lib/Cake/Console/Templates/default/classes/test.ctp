@@ -83,7 +83,6 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
-
 		parent::tearDown();
 	}
 
