@@ -531,7 +531,7 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
- * test numerically indexed defaults, get appeneded to pass
+ * test numerically indexed defaults, get appended to pass
  *
  * @return void
  */

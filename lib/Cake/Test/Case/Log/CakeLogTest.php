@@ -131,7 +131,7 @@ class CakeLogTest extends CakeTestCase {
 	}
 
 /**
- * explict tests for drop()
+ * explicit tests for drop()
  *
  * @return void
  **/

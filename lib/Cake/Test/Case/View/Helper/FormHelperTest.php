@@ -1547,7 +1547,7 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testEmptyInputErrorValidation method
  *
- * test validation error div when validation message is overriden by an empty string when calling input()
+ * test validation error div when validation message is overridden by an empty string when calling input()
  *
  * @access public
  * @return void

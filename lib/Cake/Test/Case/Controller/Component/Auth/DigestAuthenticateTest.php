@@ -160,7 +160,7 @@ DIGEST;
 	}
 
 /**
- * test authenticate sucesss
+ * test authenticate success
  *
  * @return void
  */

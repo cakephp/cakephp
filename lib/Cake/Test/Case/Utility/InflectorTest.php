@@ -28,7 +28,6 @@ App::uses('Inflector', 'Utility');
 /**
  * Short description for class.
  *
- * @package		  cake.tests
  * @package       Cake.Test.Case.Utility
  */
 class InflectorTest extends CakeTestCase {

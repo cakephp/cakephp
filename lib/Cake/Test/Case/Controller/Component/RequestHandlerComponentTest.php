@@ -189,7 +189,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 /**
  * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
- * and the application is configured to handle multiplate extensions
+ * and the application is configured to handle multiple extensions
  *
  * @return void
  */
@@ -203,7 +203,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
- * Test that RequestHandler does not set $this->ext when multple accepts are sent.
+ * Test that RequestHandler does not set $this->ext when multiple accepts are sent.
  *
  * @return void
  */

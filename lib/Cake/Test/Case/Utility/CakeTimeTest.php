@@ -800,7 +800,7 @@ class CakeTimeTest extends CakeTestCase {
 	}
 
 /**
- * test new format() syntax which inverts first and secod parameters
+ * test new format() syntax which inverts first and second parameters
  *
  * @return void
  */

@@ -712,7 +712,7 @@ class XmlTest extends CakeTestCase {
 /**
  * testNamespace
  *
- * @retun void
+ * @return void
  */
 	public function testNamespace() {
 		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:tag id="1"><child>good</child><otherchild>bad</otherchild></ns:tag><tag>Tag without ns</tag></root>');
