@@ -655,9 +655,9 @@ class ViewTest extends CakeTestCase {
 		$result = $this->View->element('test_plugin_element');
 		$this->assertEquals($result, 'this is the test set using View::$plugin plugin element');
 
-		$result = $this->View->element('non_existant_element');
+		$result = $this->View->element('non_existent_element');
 		$this->assertRegExp('/Not Found:/', $result);
-		$this->assertRegExp('/non_existant_element/', $result);
+		$this->assertRegExp('/non_existent_element/', $result);
 
 		$result = $this->View->element('TestPlugin.plugin_element', array(), array('plugin' => 'test_plugin'));
 		$this->assertRegExp('/Not Found:/', $result);

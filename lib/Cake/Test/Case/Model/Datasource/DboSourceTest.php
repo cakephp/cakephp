@@ -581,7 +581,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that cacheMethod works as exepected
+ * test that cacheMethod works as expected
  *
  * @return void
  */

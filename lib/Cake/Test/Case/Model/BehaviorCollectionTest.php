@@ -550,7 +550,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 	}
 
 /**
- * test that attaching a non existant Behavior triggers a cake error.
+ * test that attaching a non existent Behavior triggers a cake error.
  *
  * @expectedException MissingBehaviorException
  * @return void
@@ -793,7 +793,8 @@ class BehaviorCollectionTest extends CakeTestCase {
 		);
 		//$this->assertEquals($Apple->find('all'), $expected);
 	}
-	/**
+
+/**
  * testBehaviorBelongsToFindCallbacks method
  *
  * @return void
@@ -1167,7 +1168,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 	}
 
 /**
- * test hasMethod returrning a 'callback'
+ * test hasMethod returning a 'callback'
  *
  * @return void
  */

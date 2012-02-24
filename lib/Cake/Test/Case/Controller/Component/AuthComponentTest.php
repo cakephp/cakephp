@@ -481,7 +481,7 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that isAuthroized calls methods correctly
+ * test that isAuthorized calls methods correctly
  *
  * @return void
  */
@@ -881,7 +881,7 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that no redirects or authoization tests occur on the loginAction
+ * test that no redirects or authorization tests occur on the loginAction
  *
  * @return void
  */

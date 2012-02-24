@@ -38,7 +38,7 @@ class IniReaderTest extends CakeTestCase {
 	}
 
 /**
- * test constrction
+ * test construct
  *
  * @return void
  */

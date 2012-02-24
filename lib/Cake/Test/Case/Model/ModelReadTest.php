@@ -7692,7 +7692,7 @@ class ModelReadTest extends BaseModelTest {
  *
  */
 	public function testVirtualFieldsMysql() {
-		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFieds test only compatible with Mysql.');
+		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFields test only compatible with Mysql.');
 
 		$this->loadFixtures('Post', 'Author');
 		$Post = ClassRegistry::init('Post');

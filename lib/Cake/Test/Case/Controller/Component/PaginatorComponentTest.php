@@ -162,7 +162,7 @@ class ControllerPaginateModel extends CakeTestModel {
 }
 
 /**
- * PaginatorControllerCommentclass
+ * PaginatorControllerComment class
  *
  * @package       Cake.Test.Case.Controller.Component
  */
@@ -191,7 +191,7 @@ class PaginatorControllerComment extends CakeTestModel {
 }
 
 /**
- * PaginatorAuthorclass
+ * PaginatorAuthor class
  *
  * @package       Cake.Test.Case.Controller.Component
  */
