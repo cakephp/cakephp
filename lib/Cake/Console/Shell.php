@@ -492,11 +492,16 @@ class Shell extends Object {
 		} else {
 			$printOptions = '(' . implode('/', $options) . ')';
 		}
-
-		if ($default === null) {
-			$this->stdout->write('<question>' . $prompt . '</question>' . " $printOptions \n" . '> ', 0);
+		if ($prompt!='') {
+			$question='<question>' . $prompt . '</question> ';
 		} else {
-			$this->stdout->write('<question>' . $prompt . '</question>' . " $printOptions \n" . "[$default] > ", 0);
+			$question='';	
+		}
+		
+		if ($default === null) {
+			$this->stdout->write($question . "$printOptions \n" . '> ', 0);
+		} else {
+			$this->stdout->write($question . "$printOptions \n" . "[$default] > ", 0);
 		}
 		$result = $this->stdin->read();
 
