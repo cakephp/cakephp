@@ -384,9 +384,9 @@ class HttpSocket extends CakeSocket {
 		$responseClass = $this->responseClass;
 		$this->response = new $responseClass($response);
 
-		if (!empty($context) && isset($context['ssl']['peer_certificate']))
+		if (!empty($context) && isset($context['ssl']['peer_certificate'])){
 			$this->response->setContext($context['ssl']['peer_certificate']);
-
+		}
 		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();
@@ -759,8 +759,9 @@ class HttpSocket extends CakeSocket {
 
 	
 	public function checkFingerprint($fingerprint){
-		if (!isset($this->request['context']['ssl']['peer_certificate']))
+		if (!isset($this->request['context']['ssl']['peer_certificate'])){
 			return false;
+		}
 		openssl_x509_export($this->request['context']['ssl']['peer_certificate'], &$certstring);
 		$certstring = str_replace('-----BEGIN CERTIFICATE-----', '', $certstring);
 		$certstring = str_replace('-----END CERTIFICATE-----', '', $certstring);

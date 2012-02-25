@@ -428,8 +428,9 @@ class HttpResponse implements ArrayAccess {
 
 	public function setContext($context){
 		if (get_resource_type($context) === "OpenSSL X.509" && function_exists(openssl_x509_export)){
-			if (!isset($context))
+			if (!isset($context)){
 				return false;
+			}
 			openssl_x509_export($context, &$certstring);
 			$certstring = str_replace('-----BEGIN CERTIFICATE-----', '', $certstring);
 			$certstring = str_replace('-----END CERTIFICATE-----', '', $certstring);
