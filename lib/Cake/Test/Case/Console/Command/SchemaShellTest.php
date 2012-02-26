@@ -188,7 +188,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->args = array('TestPlugin.schema');
 		$this->Shell->startup();
 		$this->Shell->expects($this->exactly(2))->method('_stop');
-		$this->Shell->expects($this->exactly(2))->method('out');
+		$this->Shell->expects($this->atLeastOnce())->method('out');
 		$this->Shell->view();
 
 		$this->Shell->args = array();
