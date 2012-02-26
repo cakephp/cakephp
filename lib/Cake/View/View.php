@@ -422,7 +422,7 @@ class View extends Object {
 		$file = 'Elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
-			return "Element Not Found: " . $file;
+			return __d('cake_dev', 'Element Not Found: %s', $file);
 		}
 	}
 
