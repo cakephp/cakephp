@@ -63,7 +63,7 @@ class SqlserverTestDb extends Sqlserver {
  * @param mixed $sql
  * @return void
  */
-	protected function _matchRecords($model, $conditions = null) {
+	protected function _matchRecords(Model $model, $conditions = null) {
 		return $this->conditions(array('id' => array(1, 2)));
 	}
 
