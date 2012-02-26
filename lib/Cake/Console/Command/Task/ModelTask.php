@@ -534,7 +534,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in progress associations
  * @return array $associations with belongsTo added in.
  */
-	public function findBelongsTo($model, $associations) {
+	public function findBelongsTo(Model $model, $associations) {
 		$fields = $model->schema(true);
 		foreach ($fields as $fieldName => $field) {
 			$offset = strpos($fieldName, '_id');
@@ -563,7 +563,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in progress associations
  * @return array $associations with hasOne and hasMany added in.
  */
-	public function findHasOneAndMany($model, $associations) {
+	public function findHasOneAndMany(Model $model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
@@ -606,7 +606,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in-progress associations
  * @return array $associations with hasAndBelongsToMany added in.
  */
-	public function findHasAndBelongsToMany($model, $associations) {
+	public function findHasAndBelongsToMany(Model $model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
@@ -646,7 +646,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of associations to be confirmed.
  * @return array Array of confirmed associations
  */
-	public function confirmAssociations($model, $associations) {
+	public function confirmAssociations(Model $model, $associations) {
 		foreach ($associations as $type => $settings) {
 			if (!empty($associations[$type])) {
 				foreach ($associations[$type] as $i => $assoc) {
@@ -672,7 +672,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of associations.
  * @return array Array of associations.
  */
-	public function doMoreAssociations($model, $associations) {
+	public function doMoreAssociations(Model $model, $associations) {
 		$prompt = __d('cake_console', 'Would you like to define some additional model associations?');
 		$wannaDoMoreAssoc = $this->in($prompt, array('y', 'n'), 'n');
 		$possibleKeys = $this->_generatePossibleKeys();

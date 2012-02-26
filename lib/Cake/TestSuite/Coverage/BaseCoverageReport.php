@@ -152,7 +152,7 @@ abstract class BaseCoverageReport {
 			if (is_array($coverageData[$lineno]) && !empty($coverageData[$lineno])) {
 				$covered++;
 				$total++;
-			} else if ($coverageData[$lineno] === -1 || $coverageData[$lineno] === array()) {
+			} elseif ($coverageData[$lineno] === -1 || $coverageData[$lineno] === array()) {
 				$total++;
 			}
 		}

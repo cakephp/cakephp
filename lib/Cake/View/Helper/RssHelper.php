@@ -220,7 +220,7 @@ class RssHelper extends AppHelper {
 						}
 						$elements[$key] = implode('', $categories);
 						continue 2;
-					} else if (is_array($val) && isset($val['domain'])) {
+					} elseif (is_array($val) && isset($val['domain'])) {
 						$attrib['domain'] = $val['domain'];
 					}
 				break;

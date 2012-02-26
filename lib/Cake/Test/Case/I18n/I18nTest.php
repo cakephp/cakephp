@@ -2314,7 +2314,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testSetLanguageWithSession () {
+	public function testSetLanguageWithSession() {
 		$_SESSION['Config']['language'] = 'po';
 		$singular = $this->__singular();
 		$this->assertEquals('Po (translated)', $singular);
@@ -2354,7 +2354,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testNoCoreTranslation () {
+	public function testNoCoreTranslation() {
 		Configure::write('Config.language', 'po');
 		$singular = $this->__singular();
 		$this->assertEquals('Po (translated)', $singular);
@@ -2439,7 +2439,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testPoMultipleLineTranslation () {
+	public function testPoMultipleLineTranslation() {
 		Configure::write('Config.language', 'po');
 
 		$string = "This is a multiline translation\n";
@@ -2512,7 +2512,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testPoNoTranslationNeeded () {
+	public function testPoNoTranslationNeeded() {
 		Configure::write('Config.language', 'po');
 		$result = __('No Translation needed');
 		$this->assertEquals('No Translation needed', $result);
@@ -2523,7 +2523,7 @@ class I18nTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testPoQuotedString () {
+	public function testPoQuotedString() {
 		Configure::write('Config.language', 'po');
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEquals($expected, __('this is a "quoted string"'));

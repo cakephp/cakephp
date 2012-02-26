@@ -477,7 +477,7 @@ class Set {
 			if (empty($tokens)) {
 				break;
 			}
-		} while(1);
+		} while (1);
 
 		$r = array();
 
@@ -760,7 +760,7 @@ class Set {
  * @param mixed $val1 First value
  * @param mixed $val2 Second value
  * @return array Returns the key => value pairs that are not common in $val1 and $val2
- * The expression for this function is ($val1 - $val2) + ($val2 - ($val1 - $val2))
+ * The expression for this function is($val1 - $val2) + ($val2 - ($val1 - $val2))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::diff
  */
 	public static function diff($val1, $val2 = null) {
@@ -963,7 +963,7 @@ class Set {
 		$out = array();
 		if ($object instanceof SimpleXMLElement) {
 			return Xml::toArray($object);
-		} else if (is_object($object)) {
+		} elseif (is_object($object)) {
 			$keys = get_object_vars($object);
 			if (isset($keys['_name_'])) {
 				$identity = $keys['_name_'];
@@ -1205,7 +1205,7 @@ class Set {
 		}
 
 		$return = $input;
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			if (!isset($return[$key])) {
 				return null;
 			}

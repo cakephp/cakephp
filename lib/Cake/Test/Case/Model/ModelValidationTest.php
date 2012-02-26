@@ -819,7 +819,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testStateRequiredValidation() {
+	public function testStateRequiredValidation() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
 
@@ -872,7 +872,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testOnRequiredConflictValidation() {
+	public function testOnRequiredConflictValidation() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
 

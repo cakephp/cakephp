@@ -482,7 +482,7 @@ class DbAclTest extends CakeTestCase {
  * @param bool $treesToo
  * @return void
  */
-	protected function __debug ($printTreesToo = false) {
+	protected function __debug($printTreesToo = false) {
 		$this->Acl->Aro->displayField = 'alias';
 		$this->Acl->Aco->displayField = 'alias';
 		$aros = $this->Acl->Aro->find('list', array('order' => 'lft'));

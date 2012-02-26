@@ -92,7 +92,7 @@ class AppleComponent extends Component {
  * @param mixed $controller
  * @return void
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$this->testName = $controller->name;
 	}
 }
@@ -117,7 +117,7 @@ class OrangeComponent extends Component {
  * @param mixed $controller
  * @return void
  */
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
 	}
@@ -128,7 +128,7 @@ class OrangeComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$controller->foo = 'pass';
 	}
 }
@@ -153,7 +153,7 @@ class BananaComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$controller->bar = 'fail';
 	}
 }

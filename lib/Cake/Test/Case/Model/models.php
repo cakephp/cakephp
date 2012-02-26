@@ -183,7 +183,7 @@ class User extends CakeTestModel {
  *
  * @return bool
 */
-	public function beforeFind ($queryData) {
+	public function beforeFind($queryData) {
 		if (!empty($queryData['lazyLoad'])) {
 			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
 				throw new Exception('Unavailable associations');
@@ -257,7 +257,7 @@ class Article extends CakeTestModel {
  * @param mixed $title
  * @return void
  */
-	static function titleDuplicate ($title) {
+	static function titleDuplicate($title) {
 		if ($title === 'My Article Title') {
 			return false;
 		}
@@ -3287,19 +3287,19 @@ class TransactionManyTestModel extends CakeTestModel {
 }
 
 class Site extends CakeTestModel {
-	var $name = 'Site';
-	var $useTable = 'sites';
+	public $name = 'Site';
+	public $useTable = 'sites';
 
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'Domain' => array('unique' => 'keepExisting'),
 		);
 }
 
 class Domain extends CakeTestModel {
-	var $name = 'Domain';
-	var $useTable = 'domains';
+	public $name = 'Domain';
+	public $useTable = 'domains';
 
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'Site' => array('unique' => 'keepExisting'),
 		);
 }

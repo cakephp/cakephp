@@ -328,7 +328,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 	}
 
 /**
@@ -336,7 +336,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 	}
 
 /**
@@ -344,7 +344,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function shutdown($controller) {
+	public function shutdown(Controller $controller) {
 	}
 
 /**
@@ -352,7 +352,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function beforeRender($controller) {
+	public function beforeRender(Controller $controller) {
 		if ($this->viewclass) {
 			$controller->viewClass = $this->viewclass;
 		}
@@ -362,7 +362,7 @@ class TestComponent extends Object {
 class Test2Component extends TestComponent {
 
 
-	public function beforeRender($controller) {
+	public function beforeRender(Controller $controller) {
 		return false;
 	}
 }

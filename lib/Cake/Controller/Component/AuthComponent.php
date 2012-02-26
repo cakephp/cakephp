@@ -246,7 +246,7 @@ class AuthComponent extends Component {
  * @param Controller $controller A reference to the instantiating controller object
  * @return void
  */
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
@@ -263,7 +263,7 @@ class AuthComponent extends Component {
  * @param Controller $controller A reference to the instantiating controller object
  * @return boolean
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		if ($controller->name == 'CakeError') {
 			return true;
 		}
@@ -694,7 +694,7 @@ class AuthComponent extends Component {
  * @param Controller $controller Instantiating controller
  * @return void
  */
-	public function shutdown($controller) {
+	public function shutdown(Controller $controller) {
 		if ($this->loggedIn()) {
 			$this->Session->delete('Auth.redirect');
 		}
