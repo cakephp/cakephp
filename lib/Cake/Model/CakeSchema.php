@@ -384,9 +384,9 @@ class CakeSchema extends Object {
 		}
 		$out .= "}\n";
 
-		$file = new SplFileObject($path . DS . $file, 'w+');
+		$file = new File($path . DS . $file, true);
 		$content = "<?php \n/* generated on: " . date('Y-m-d H:i:s') . " : ". time() . " */\n{$out}";
-		if ($file->fwrite($content)) {
+		if ($file->write($content)) {
 			return $content;
 		}
 		return false;
