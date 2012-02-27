@@ -501,12 +501,13 @@ class App {
 			return false;
 		}
 
-		if ($file = self::_mapped($className)) {
-			return include $file;
-		}
-
 		$parts = explode('.', self::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
+
+		if ($file = self::_mapped($className, $plugin)) {
+			return include $file;
+		}
+        
 		$paths = self::path($package, $plugin);
 
 		if (empty($plugin)) {
@@ -518,7 +519,7 @@ class App {
 		foreach ($paths as $path) {
 			$file = $path . $className . '.php';
 			if (file_exists($file)) {
-				self::_map($file, $className);
+				self::_map($file, $className, $plugin);
 				return include $file;
 			}
 		}
@@ -536,7 +537,7 @@ class App {
 			}
 			foreach ($tries as $file) {
 				if (file_exists($file)) {
-					self::_map($file, $className);
+					self::_map($file, $className, $plugin);
 					return include $file;
 				}
 			}
