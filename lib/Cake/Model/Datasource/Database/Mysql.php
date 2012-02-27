@@ -608,30 +608,30 @@ class Mysql extends DboSource {
 	public function listDetailedSources($name = null) {
 		$condition = '';
 		if (is_string($name)) {
-				$condition = ' WHERE name = ' . $this->value($name);
+			$condition = ' WHERE name = ' . $this->value($name);
 		}
 		$result = $this->_connection->query('SHOW TABLE STATUS ' . $condition, PDO::FETCH_ASSOC);
 
 		if (!$result) {
-				$result->closeCursor();
-				return array();
+			$result->closeCursor();
+			return array();
 		} else {
-				$tables = array();
-				foreach ($result as $row) {
-						$tables[$row['Name']] = (array) $row;
-						unset($tables[$row['Name']]['queryString']);
-						if (!empty($row['Collation'])) {
-								$charset = $this->getCharsetName($row['Collation']);
-								if ($charset) {
-										$tables[$row['Name']]['charset'] = $charset;
-								}
-						}
+			$tables = array();
+			foreach ($result as $row) {
+				$tables[$row['Name']] = (array) $row;
+				unset($tables[$row['Name']]['queryString']);
+				if (!empty($row['Collation'])) {
+					$charset = $this->getCharsetName($row['Collation']);
+					if ($charset) {
+						$tables[$row['Name']]['charset'] = $charset;
+					}
 				}
-				$result->closeCursor();
-				if (is_string($name) && isset($tables[$name])) {
-						return $tables[$name];
-				}
-				return $tables;
+			}
+			$result->closeCursor();
+			if (is_string($name) && isset($tables[$name])) {
+				return $tables[$name];
+			}
+			return $tables;
 		}
 	}
 
