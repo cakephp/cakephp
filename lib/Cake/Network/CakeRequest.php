@@ -516,6 +516,7 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	public function addDetector($name, $options) {
+		$name = strtolower($name);
 		if (isset($this->_detectors[$name]) && isset($options['options'])) {
 			$options = Set::merge($this->_detectors[$name], $options);
 		}
