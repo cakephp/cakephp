@@ -232,9 +232,9 @@ class Xml {
 					}
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
-							$data = compact('dom', 'node', 'key', 'format');
-							$data['value'] = $item;
-							self::_createChild($data);
+							$item_data = compact('dom', 'node', 'key', 'format');
+							$item_data['value'] = $item;
+							self::_createChild($item_data);
 						}
 					} else { // Struct
 						self::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
