@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
- * @since         CakePHP(tm) v 1.2.0
+ * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -21,14 +19,14 @@ App::uses('String', 'Utility');
  * Library of array functions for manipulating and extracting data
  * from arrays or 'sets' of data.
  *
- * `Set2` provides an improved interface and more consistent and 
+ * `Hash` provides an improved interface and more consistent and 
  * predictable set of features over `Set`.  While it lacks the spotty
  * support for pseudo Xpath, its more fully featured dot notation provides
  * the similar features in a more consistent way.
  *
  * @package       Cake.Utility
  */
-class Set2 {
+class Hash {
 
 /**
  * Get a single value specified by $path out of $data.
@@ -391,12 +389,12 @@ class Set2 {
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *
  * @param array $data Source array from which to extract the data
- * @param string $paths An array containing one or more Set2::extract()-style key paths
+ * @param string $paths An array containing one or more Hash::extract()-style key paths
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @return array An array of strings extracted from `$path` and formatted with `$format`
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::format
  * @see sprintf()
- * @see Set2::extract()
+ * @see Hash::extract()
  */
 	public static function format(array $data, array $paths, $format) {
 		$extracted = array();
@@ -466,7 +464,7 @@ class Set2 {
 
 /**
  * Test whether or not a given path exists in $data.
- * This method uses the same path syntax as Set2::extract()
+ * This method uses the same path syntax as Hash::extract()
  *
  * Checking for paths that could target more than one element will
  * make sure that at least one matching element exists.
@@ -474,7 +472,7 @@ class Set2 {
  * @param array $data The data to check.
  * @param string $path The path to check for.
  * @return boolean Existence of path.
- * @see Set2::extract()
+ * @see Hash::extract()
  */
 	public static function check(array $data, $path) {
 		$results = self::extract($data, $path);
@@ -557,7 +555,7 @@ class Set2 {
  * This function can be thought of as a hybrid between PHP's `array_merge` and `array_merge_recursive`.
  *
  * The difference between this method and the built-in ones, is that if an array key contains another array, then 
- * Set2::merge() will behave in a recursive fashion (unlike `array_merge`).  But it will not act recursively for
+ * Hash::merge() will behave in a recursive fashion (unlike `array_merge`).  But it will not act recursively for
  * keys that contain scalar values (unlike `array_merge_recursive`).
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
@@ -605,7 +603,7 @@ class Set2 {
  * Counts the dimensions of an array. 
  * Only considers the dimension of the first element in the array.
  *
- * If you have an un-even or hetrogenous array, consider using Set2::maxDimensions() 
+ * If you have an un-even or hetrogenous array, consider using Hash::maxDimensions() 
  * to get the dimensions of the array.
  *
  * @param array $array Array to count dimensions on
@@ -641,7 +639,7 @@ class Set2 {
 		$depth = array();
 		if (is_array($data) && reset($data) !== false) {
 			foreach ($data as $value) {
-				$depth[] = Set2::dimensions((array)$value) + 1;
+				$depth[] = Hash::dimensions((array)$value) + 1;
 			}
 		}
 		return max($depth);
@@ -824,9 +822,9 @@ class Set2 {
  *
  * - `children` The key name to use in the resultset for children.
  * - `idPath` The path to a key that identifies each entry. Should be
- *   compatible with Set2::extract(). Defaults to `{n}.$alias.id`
+ *   compatible with Hash::extract(). Defaults to `{n}.$alias.id`
  * - `parentPath` The path to a key that identifies the parent of each entry.
- *   Should be compatible with Set2::extract(). Defaults to `{n}.$alias.parent_id`
+ *   Should be compatible with Hash::extract(). Defaults to `{n}.$alias.parent_id`
  * - `root` The id of the desired top-most result.
  *
  * @param mixed $data The data to nest.
