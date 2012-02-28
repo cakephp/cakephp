@@ -903,15 +903,6 @@ class Controller extends Object implements CakeEventListener {
 			return $this->response;
 		}
 
-		$viewClass = $this->viewClass;
-		if ($this->viewClass != 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass, true);
-			$viewClass = $viewClass . 'View';
-			App::uses($viewClass, $plugin . 'View');
-		}
-
-		$View = new $viewClass($this);
-
 		if (!empty($this->uses)) {
 			foreach ($this->uses as $model) {
 				list($plugin, $className) = pluginSplit($model);
@@ -921,6 +912,15 @@ class Controller extends Object implements CakeEventListener {
 		if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
 			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass);
 		}
+
+		$viewClass = $this->viewClass;
+		if ($this->viewClass != 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass = $viewClass . 'View';
+			App::uses($viewClass, $plugin . 'View');
+		}
+
+		$View = new $viewClass($this);
 
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {

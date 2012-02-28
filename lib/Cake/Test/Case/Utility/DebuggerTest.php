@@ -201,7 +201,7 @@ class DebuggerTest extends CakeTestCase {
 	}
 
 /**
- * Test that choosing a non-existant format causes an exception
+ * Test that choosing a non-existent format causes an exception
  *
  * @expectedException CakeException
  * @return void

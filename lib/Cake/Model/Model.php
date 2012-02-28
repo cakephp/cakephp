@@ -2537,19 +2537,23 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Returns true if a record with the currently set ID exists.
+ * Returns true if a record with particular ID exists.
  *
- * Internally calls Model::getID() to obtain the current record ID to verify,
+ * If $id is not passed it calls Model::getID() to obtain the current record ID,
  * and then performs a Model::find('count') on the currently configured datasource
  * to ascertain the existence of the record in persistent storage.
  *
+ * @param mixed $id ID of record to check for existence
  * @return boolean True if such a record exists
  */
-	public function exists() {
-		if ($this->getID() === false) {
+	public function exists($id = null) {
+		if ($id === null) {
+			$id = $this->getID();
+		}
+		if ($id === false) {
 			return false;
 		}
-		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
+		$conditions = array($this->alias . '.' . $this->primaryKey => $id);
 		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
 		return ($this->find('count', $query) > 0);
 	}

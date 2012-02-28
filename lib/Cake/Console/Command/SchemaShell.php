@@ -50,22 +50,15 @@ class SchemaShell extends AppShell {
 	protected $_dry = null;
 
 /**
- * Override initialize
- *
- * @return string
- */
-	public function initialize() {
-		$this->_welcome();
-		$this->out('Cake Schema Shell');
-		$this->hr();
-	}
-
-/**
  * Override startup
  *
  * @return void
  */
 	public function startup() {
+		$this->_welcome();
+		$this->out('Cake Schema Shell');
+		$this->hr();
+	
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];

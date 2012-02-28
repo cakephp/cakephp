@@ -146,7 +146,7 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('jan', 'foo/bar'));
 		$this->assertTrue($this->Acl->check('user/jan', 'foo/bar'));
 		$this->assertTrue($this->Acl->check('Role/admin', 'controllers/bar'));
-		$this->assertTrue($this->Acl->check(array('User' => array('username' =>'jan')), '/controlers/bar/bll'));
+		$this->assertTrue($this->Acl->check(array('User' => array('username' =>'jan')), '/controllers/bar/bll'));
 		$this->assertTrue($this->Acl->check('Role/database_manager', 'controllers/db/create'));
 		$this->assertTrue($this->Acl->check('User/db_manager_2', 'controllers/db/create'));
 		$this->assertFalse($this->Acl->check('db_manager_2', '/controllers/users/Dashboard'));
@@ -338,7 +338,7 @@ class PhpAclTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Role/sales', 'controllers/bla/create'));
 		$this->assertTrue($this->Acl->check('Role/default', 'foo'));
 		// undefined user, undefined aco
-		$this->assertTrue($this->Acl->check('foobart', 'foo/bar'));
+		$this->assertTrue($this->Acl->check('foobar', 'foo/bar'));
 
 		// deny rule: Role.sales -> controllers.*.delete
 		$this->assertFalse($this->Acl->check('Role/sales', 'controllers/bar/delete'));

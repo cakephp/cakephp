@@ -1050,8 +1050,8 @@ class ModelWriteTest extends BaseModelTest {
 		$data = array(
 			'user_id' => '1',
 			'non_existent' => 'This field does not exist',
-			'title' => 'Fiveth Article - New Title',
-			'body' => 'Fiveth Article Body',
+			'title' => 'Fifth Article - New Title',
+			'body' => 'Fifth Article Body',
 			'published' => 'N'
 		);
 		$result = $TestModel->create() && $TestModel->save($data);
@@ -1060,8 +1060,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array('Article' => array(
 			'id' => '5',
 			'user_id' => '1',
-			'title' => 'Fiveth Article - New Title',
-			'body' => 'Fiveth Article Body',
+			'title' => 'Fifth Article - New Title',
+			'body' => 'Fifth Article Body',
 			'published' => 'N'
 		));
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
@@ -4689,7 +4689,7 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * test that saveAll behaves like plain save() when suplied empty data
+ * test that saveAll behaves like plain save() when supplied empty data
  *
  * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
@@ -6024,7 +6024,7 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * test that saveAssociated behaves like plain save() when suplied empty data
+ * test that saveAssociated behaves like plain save() when supplied empty data
  *
  * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void

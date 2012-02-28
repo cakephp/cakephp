@@ -366,7 +366,7 @@ class MemcacheEngineTest extends CakeTestCase {
 	}
 
 /**
- * test that a 0 duration can succesfully write.
+ * test that a 0 duration can successfully write.
  *
  * @return void
  */

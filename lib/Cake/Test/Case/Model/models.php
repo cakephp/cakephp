@@ -2070,7 +2070,7 @@ class ValidationTest1 extends CakeTestModel {
 	}
 
 /**
- * Custom validator with messaage
+ * Custom validator with message
  *
  * @return array
  */

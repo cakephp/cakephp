@@ -516,6 +516,7 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	public function addDetector($name, $options) {
+		$name = strtolower($name);
 		if (isset($this->_detectors[$name]) && isset($options['options'])) {
 			$options = Set::merge($this->_detectors[$name], $options);
 		}
@@ -559,7 +560,7 @@ class CakeRequest implements ArrayAccess {
 	public function here($base = true) {
 		$url = $this->here;
 		if (!empty($this->query)) {
-			$url .= '?' . http_build_query($this->query);
+			$url .= '?' . http_build_query($this->query, null, '&');
 		}
 		if (!$base) {
 			$url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);

@@ -384,9 +384,9 @@ class CakeSchema extends Object {
 		}
 		$out .= "}\n";
 
-		$file = new SplFileObject($path . DS . $file, 'w+');
-		$content = "<?php\n{$out}";
-		if ($file->fwrite($content)) {
+		$file = new File($path . DS . $file, true);
+		$content = "<?php \n{$out}";
+		if ($file->write($content)) {
 			return $content;
 		}
 		return false;

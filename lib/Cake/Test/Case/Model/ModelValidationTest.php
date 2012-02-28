@@ -568,7 +568,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Something->create();
 		$result = $Something->save($data);
-		$this->assertFalse($result, 'Save occured even when with models failed. %s');
+		$this->assertFalse($result, 'Save occurred even when with models failed. %s');
 		$this->assertEquals($JoinThing->validationErrors, $expectedError);
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
 		$this->assertSame($count, 0);
@@ -587,7 +587,7 @@ class ModelValidationTest extends BaseModelTest {
 		);
 		$Something->create();
 		$result = $Something->save($data);
-		$this->assertFalse($result, 'Save occured even when with models failed. %s');
+		$this->assertFalse($result, 'Save occurred even when with models failed. %s');
 
 		$joinRecords = $JoinThing->find('count', array(
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
@@ -681,7 +681,7 @@ class ModelValidationTest extends BaseModelTest {
 
 /**
  * Test that missing validation methods trigger errors in development mode.
- * Helps to make developement easier.
+ * Helps to make development easier.
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void

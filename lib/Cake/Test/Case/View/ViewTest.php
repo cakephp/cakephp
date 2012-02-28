@@ -655,9 +655,9 @@ class ViewTest extends CakeTestCase {
 		$result = $this->View->element('test_plugin_element');
 		$this->assertEquals($result, 'this is the test set using View::$plugin plugin element');
 
-		$result = $this->View->element('non_existant_element');
+		$result = $this->View->element('non_existent_element');
 		$this->assertRegExp('/Not Found:/', $result);
-		$this->assertRegExp('/non_existant_element/', $result);
+		$this->assertRegExp('/non_existent_element/', $result);
 
 		$result = $this->View->element('TestPlugin.plugin_element', array(), array('plugin' => 'test_plugin'));
 		$this->assertRegExp('/Not Found:/', $result);
@@ -724,7 +724,7 @@ class ViewTest extends CakeTestCase {
 			'path' => CACHE . 'views' . DS,
 			'prefix' => ''
 		));
-		Cache::clear(false, 'test_view');
+		Cache::clear(true, 'test_view');
 
 		$View = new TestView($this->PostsController);
 		$View->elementCache = 'test_view';
@@ -761,7 +761,7 @@ class ViewTest extends CakeTestCase {
 		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
-		Cache::clear(false, 'test_view');
+		Cache::clear(true, 'test_view');
 		Cache::drop('test_view');
 	}
 

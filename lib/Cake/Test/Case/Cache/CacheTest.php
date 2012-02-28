@@ -205,7 +205,7 @@ class CacheTest extends CakeTestCase {
 	public function testWritingWithConfig() {
 		$_cacheConfigSessions = Cache::config('sessions');
 
-		Cache::write('test_somthing', 'this is the test data', 'tests');
+		Cache::write('test_something', 'this is the test data', 'tests');
 
 		$expected = array(
 			'path' => TMP . 'sessions' . DS,

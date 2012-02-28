@@ -403,7 +403,7 @@ class TestCachedPagesController extends Controller {
 	);
 
 /**
- * Mock out the reponse object so it doesn't send headers.
+ * Mock out the response object so it doesn't send headers.
  *
  * @var string
  */
