@@ -196,7 +196,7 @@ class Mysql extends DboSource {
 		} else {
 			$tables = array();
 
-			while ($line = $result->fetch()) {
+			while ($line = $result->fetch(PDO::FETCH_NUM)) {
 				$tables[] = $line[0];
 			}
 
@@ -280,7 +280,7 @@ class Mysql extends DboSource {
 	public function getCharsetName($name) {
 		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
 			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
-			$cols = $r->fetch();
+			$cols = $r->fetch(PDO::FETCH_ASSOC);
 
 			if (isset($cols['CHARACTER_SET_NAME'])) {
 				return $cols['CHARACTER_SET_NAME'];
@@ -309,7 +309,7 @@ class Mysql extends DboSource {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		foreach ($cols as $column) {
+		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
 			$fields[$column->Field] = array(
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
@@ -442,7 +442,7 @@ class Mysql extends DboSource {
 		$old = version_compare($this->getVersion(), '4.1', '<=');
 		if ($table) {
 			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
-			while ($idx = $indices->fetch()) {
+			while ($idx = $indices->fetch(PDO::FETCH_OBJ)) {
 				if ($old) {
 					$idx = (object) current((array)$idx);
 				}
@@ -607,33 +607,31 @@ class Mysql extends DboSource {
  */
 	public function listDetailedSources($name = null) {
 		$condition = '';
-		$params = array();
 		if (is_string($name)) {
-				$condition = ' WHERE name = ' . $this->value($name);
-				$params = array($name);
+			$condition = ' WHERE name = ' . $this->value($name);
 		}
 		$result = $this->_connection->query('SHOW TABLE STATUS ' . $condition, PDO::FETCH_ASSOC);
 
 		if (!$result) {
-				$result->closeCursor();
-				return array();
+			$result->closeCursor();
+			return array();
 		} else {
-				$tables = array();
-				foreach ($result as $row) {
-						$tables[$row['Name']] = (array) $row;
-						unset($tables[$row['Name']]['queryString']);
-						if (!empty($row['Collation'])) {
-								$charset = $this->getCharsetName($row['Collation']);
-								if ($charset) {
-										$tables[$row['Name']]['charset'] = $charset;
-								}
-						}
+			$tables = array();
+			foreach ($result as $row) {
+				$tables[$row['Name']] = (array) $row;
+				unset($tables[$row['Name']]['queryString']);
+				if (!empty($row['Collation'])) {
+					$charset = $this->getCharsetName($row['Collation']);
+					if ($charset) {
+						$tables[$row['Name']]['charset'] = $charset;
+					}
 				}
-				$result->closeCursor();
-				if (is_string($name) && isset($tables[$name])) {
-						return $tables[$name];
-				}
-				return $tables;
+			}
+			$result->closeCursor();
+			if (is_string($name) && isset($tables[$name])) {
+				return $tables[$name];
+			}
+			return $tables;
 		}
 	}
 
@@ -685,4 +683,14 @@ class Mysql extends DboSource {
 		}
 		return 'text';
 	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return $this->config['database'];
+	}
+
 }

@@ -50,22 +50,15 @@ class SchemaShell extends AppShell {
 	protected $_dry = null;
 
 /**
- * Override initialize
- *
- * @return string
- */
-	public function initialize() {
-		$this->_welcome();
-		$this->out('Cake Schema Shell');
-		$this->hr();
-	}
-
-/**
  * Override startup
  *
  * @return void
  */
 	public function startup() {
+		$this->_welcome();
+		$this->out('Cake Schema Shell');
+		$this->hr();
+	
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
@@ -223,8 +216,7 @@ class SchemaShell extends AppShell {
 			}
 		}
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
-		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
+		$contents = "\n\n" . $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 
 		if ($write) {
 			if (strpos($write, '.sql') === false) {
@@ -449,9 +441,11 @@ class SchemaShell extends AppShell {
  */
 	public function getOptionParser() {
 		$plugin = array(
+			'short' => 'p',
 			'help' => __d('cake_console', 'The plugin to use.'),
 		);
 		$connection = array(
+			'short' => 'c',
 			'help' => __d('cake_console', 'Set the db config to use.'),
 			'default' => 'default'
 		);

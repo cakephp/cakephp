@@ -110,7 +110,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail = new TestCakeEmail();
 
 		App::build(array(
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
 	}
 
@@ -395,6 +395,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject('You have a new message.');
 		$this->assertSame($this->CakeEmail->subject(), 'You have a new message.');
 
+		$this->CakeEmail->subject('You have a new message, I think.');
+		$this->assertSame($this->CakeEmail->subject(), 'You have a new message, I think.');
 		$this->CakeEmail->subject(1);
 		$this->assertSame($this->CakeEmail->subject(), '1');
 
@@ -1034,7 +1036,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testSendRenderPlugin() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 

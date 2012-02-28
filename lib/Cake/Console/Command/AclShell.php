@@ -17,6 +17,7 @@
  */
 
 App::uses('AppShell', 'Console/Command');
+App::uses('Controller', 'Controller');
 App::uses('ComponentCollection', 'Controller');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('DbAcl', 'Model');
@@ -90,7 +91,7 @@ class AclShell extends AppShell {
 			if (!in_array($this->command, array('initdb'))) {
 				$collection = new ComponentCollection();
 				$this->Acl = new AclComponent($collection);
-				$controller = null;
+				$controller = new Controller();
 				$this->Acl->startup($controller);
 			}
 		}

@@ -218,12 +218,9 @@ class Dispatcher {
 			if (!file_exists($filename)) {
 				$filename = CACHE . 'views' . DS . $path . '_index.php';
 			}
-
 			if (file_exists($filename)) {
-				App::uses('ThemeView', 'View');
-
 				$controller = null;
-				$view = new ThemeView($controller);
+				$view = new View($controller);
 				return $view->renderCache($filename, microtime(true));
 			}
 		}

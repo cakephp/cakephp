@@ -115,9 +115,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		if ($exit) {
 			if (isset($result) && $result->wasSuccessful()) {
 				exit(PHPUnit_TextUI_TestRunner::SUCCESS_EXIT);
-			}
-
-			else if (!isset($result) || $result->errorCount() > 0) {
+			} elseif (!isset($result) || $result->errorCount() > 0) {
 				exit(PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT);
 			}
 

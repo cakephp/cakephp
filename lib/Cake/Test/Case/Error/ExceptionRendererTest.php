@@ -64,7 +64,7 @@ class BlueberryComponent extends Component {
  *
  * @return void
  */
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 		$this->testName = 'BlueberryComponent';
 	}
 }
@@ -152,10 +152,10 @@ class ExceptionRendererTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		App::build(array(
-			'views' => array(
+			'View' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
 			)
-		), true);
+		), App::RESET);
 		Router::reload();
 
 		$request = new CakeRequest(null, false);
@@ -492,10 +492,10 @@ class ExceptionRendererTest extends CakeTestCase {
 				404
 			),
 			array(
-				new MissingTableException(array('table' => 'articles', 'class' => 'Article')),
+				new MissingTableException(array('table' => 'articles', 'class' => 'Article', 'ds' => 'test')),
 				array(
 					'/<h2>Missing Database Table<\/h2>/',
-					'/table <em>articles<\/em> for model <em>Article<\/em>/'
+					'/Table <em>articles<\/em> for model <em>Article<\/em> was not found in datasource <em>test<\/em>/'
 				),
 				500
 			),
@@ -640,7 +640,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('missingHelper')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(3))
+		$ExceptionRenderer->controller->expects($this->at(4))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));
@@ -649,6 +649,44 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		sort($ExceptionRenderer->controller->helpers);
 		$this->assertEquals(array('Form', 'Html', 'Session'), $ExceptionRenderer->controller->helpers);
+	}
+
+/**
+ * Test that missing subDir/layoutPath don't cause other fatal errors.
+ *
+ * @return void
+ */
+	public function testMissingSubdirRenderSafe() {
+		$exception = new NotFoundException();
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		$ExceptionRenderer->controller = $this->getMock('Controller');
+		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
+		$ExceptionRenderer->controller->layoutPath = 'json';
+		$ExceptionRenderer->controller->subDir = 'json';
+		$ExceptionRenderer->controller->viewClass = 'Json';
+		$ExceptionRenderer->controller->request = $this->getMock('CakeRequest');
+
+		$ExceptionRenderer->controller->expects($this->at(1))
+			->method('render')
+			->with('error400')
+			->will($this->throwException($exception));
+
+		$ExceptionRenderer->controller->expects($this->at(3))
+			->method('render')
+			->with('error500')
+			->will($this->returnValue(true));
+
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse');
+		$ExceptionRenderer->controller->response->expects($this->once())
+			->method('type')
+			->with('html');
+
+		$ExceptionRenderer->render();
+		$this->assertEquals('', $ExceptionRenderer->controller->layoutPath);
+		$this->assertEquals('', $ExceptionRenderer->controller->subDir);
+		$this->assertEquals('View', $ExceptionRenderer->controller->viewClass);
+		$this->assertEquals('Errors/', $ExceptionRenderer->controller->viewPath);
 	}
 
 /**
@@ -692,9 +730,9 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertRegExp('/<h2>Database Error<\/h2>/', $result);
-		$this->assertRegExp('/There was an error in the SQL query/', $result);
-		$this->assertRegExp('/SELECT \* from poo_query < 5 and :seven/', $result);
-		$this->assertRegExp('/"seven" => 7/', $result);
+		$this->assertContains('<h2>Database Error</h2>', $result);
+		$this->assertContains('There was an error in the SQL query', $result);
+		$this->assertContains('SELECT * from poo_query < 5 and :seven', $result);
+		$this->assertContains("'seven' => (int) 7", $result);
 	}
 }

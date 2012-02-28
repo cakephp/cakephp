@@ -568,7 +568,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Something->create();
 		$result = $Something->save($data);
-		$this->assertFalse($result, 'Save occured even when with models failed. %s');
+		$this->assertFalse($result, 'Save occurred even when with models failed. %s');
 		$this->assertEquals($JoinThing->validationErrors, $expectedError);
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
 		$this->assertSame($count, 0);
@@ -587,7 +587,7 @@ class ModelValidationTest extends BaseModelTest {
 		);
 		$Something->create();
 		$result = $Something->save($data);
-		$this->assertFalse($result, 'Save occured even when with models failed. %s');
+		$this->assertFalse($result, 'Save occurred even when with models failed. %s');
 
 		$joinRecords = $JoinThing->find('count', array(
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
@@ -681,7 +681,7 @@ class ModelValidationTest extends BaseModelTest {
 
 /**
  * Test that missing validation methods trigger errors in development mode.
- * Helps to make developement easier.
+ * Helps to make development easier.
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void
@@ -766,7 +766,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	function testStateValidation() {
+	public function testStateValidation() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
 
@@ -810,6 +810,183 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Article->save(null, array('validate' => false));
 		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertFalse($Article->validates());
+	}
+
+/**
+ * Test for 'required' => [create|update] in validation rules.
+ *
+ * @return void
+ */
+	public function testStateRequiredValidation() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+
+		// no title field present
+		$data = array(
+			'Article' => array(
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			)
+		);
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'create'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertFalse($Article->validates());
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertTrue($Article->validates());
+
+		unset($data['Article']['id']);
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'update'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertFalse($Article->validates());
+	}
+
+/**
+ * Test that 'required' and 'on' are not conflicting
+ *
+ * @return void
+ */
+	public function testOnRequiredConflictValidation() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+
+		// no title field present
+		$data = array(
+			'Article' => array(
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			)
+		);
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'create',
+					'on' => 'create'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertFalse($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'update',
+					'on' => 'create'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'create',
+					'on' => 'update'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'update',
+					'on' => 'update'
+				)
+			)
+		);
+
+		$Article->create($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'create',
+					'on' => 'create'
+				)
+			)
+		);
+
+		$Article->save(null, array('validate' => false));
+		$data['Article']['id'] = $Article->id;
+		$Article->set($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'update',
+					'on' => 'create'
+				)
+			)
+		);
+
+		$Article->set($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'create',
+					'on' => 'update'
+				)
+			)
+		);
+
+		$Article->set($data);
+		$this->assertTrue($Article->validates());
+
+		$Article->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => 'update',
+					'on' => 'update'
+				)
+			)
+		);
+
 		$Article->set($data);
 		$this->assertFalse($Article->validates());
 	}

@@ -19,7 +19,7 @@
 App::uses('Dispatcher', 'Routing');
 
 if (!class_exists('AppController', false)) {
-	require_once CAKE . 'Controller' . DS . 'AppController.php';
+	require_once CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS . 'AppController.php';
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
@@ -403,7 +403,7 @@ class TestCachedPagesController extends Controller {
 	);
 
 /**
- * Mock out the reponse object so it doesn't send headers.
+ * Mock out the response object so it doesn't send headers.
  *
  * @var string
  */
@@ -1037,9 +1037,9 @@ class DispatcherTest extends CakeTestCase {
 
 		Router::reload();
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
-		CakePlugin::loadAll();
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
@@ -1113,9 +1113,9 @@ class DispatcherTest extends CakeTestCase {
 	public function testTestPluginDispatch() {
 		$Dispatcher = new TestDispatcher();
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), APP::RESET);
-		CakePlugin::loadAll();
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 		Router::reload();
 		Router::parse('/');
 
@@ -1124,7 +1124,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch($url, $response, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
 		$this->assertTrue(class_exists('TestPluginAppController'));
-		$this->assertTrue(class_exists('PluginsComponentComponent'));
+		$this->assertTrue(class_exists('PluginsComponent'));
 
 		$this->assertEquals($result->params['controller'], 'tests');
 		$this->assertEquals($result->params['plugin'], 'test_plugin');
@@ -1172,11 +1172,11 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'vendors' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$Dispatcher = new TestDispatcher();
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -1209,7 +1209,7 @@ class DispatcherTest extends CakeTestCase {
 	public static function assetProvider() {
 		return array(
 			array(
-				'theme/test_theme/flash/theme_test.swf', 
+				'theme/test_theme/flash/theme_test.swf',
 				'View/Themed/TestTheme/webroot/flash/theme_test.swf'
 			),
 			array(
@@ -1294,7 +1294,7 @@ class DispatcherTest extends CakeTestCase {
 			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
 		));
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'PluginJs'));
 
 		$Dispatcher = new TestDispatcher();
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -1378,7 +1378,7 @@ class DispatcherTest extends CakeTestCase {
 			array('test_cached_pages/themed'),
 		);
 	}
-	
+
 /**
  * testFullPageCachingDispatch method
  *
@@ -1396,7 +1396,7 @@ class DispatcherTest extends CakeTestCase {
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-		), true);
+		), App::RESET);
 
 		$dispatcher = new TestDispatcher();
 		$request = new CakeRequest($url);
@@ -1410,11 +1410,9 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher->cached($request->here());
 		$cached = ob_get_clean();
 
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($cached, $out);
 
 		$filename = $this->__cachePath($request->here());
 		unlink($filename);
@@ -1494,7 +1492,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	function __backupEnvironment() {
+	protected function __backupEnvironment() {
 		return array(
 			'App' => Configure::read('App'),
 			'GET' => $_GET,
@@ -1508,7 +1506,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	function __reloadEnvironment() {
+	protected function __reloadEnvironment() {
 		foreach ($_GET as $key => $val) {
 			unset($_GET[$key]);
 		}
@@ -1527,7 +1525,7 @@ class DispatcherTest extends CakeTestCase {
  * @param mixed $env
  * @return void
  */
-	function __loadEnvironment($env) {
+	protected function __loadEnvironment($env) {
 		if ($env['reload']) {
 			$this->__reloadEnvironment();
 		}
@@ -1561,7 +1559,7 @@ class DispatcherTest extends CakeTestCase {
  * @param mixed $her
  * @return string
  */
-	function __cachePath($here) {
+	protected function __cachePath($here) {
 		$path = $here;
 		if ($here == '/') {
 			$path = 'home';

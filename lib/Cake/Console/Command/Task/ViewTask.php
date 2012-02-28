@@ -448,7 +448,7 @@ class ViewTask extends BakeTask {
  * @param Model $model
  * @return array $associations
  */
-	protected function _associations($model) {
+	protected function _associations(Model $model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 

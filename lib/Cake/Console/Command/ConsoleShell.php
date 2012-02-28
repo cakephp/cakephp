@@ -47,11 +47,11 @@ class ConsoleShell extends AppShell {
 	public $models = array();
 
 /**
- * Override initialize of the Shell
+ * Override startup of the Shell
  *
  * @return void
  */
-	public function initialize() {
+	public function startup() {
 		App::uses('Dispatcher', 'Routing');
 		$this->Dispatcher = new Dispatcher();
 		$this->models = App::objects('Model');

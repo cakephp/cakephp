@@ -255,7 +255,9 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadPlugin() {
-		App::build(array('plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)), true);
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		Configure::config('test', new PhpReader());
 		CakePlugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');
@@ -303,7 +305,7 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('testing', 'value');
 		Configure::store('store_test', 'default', array('store_test' => 'one'));
 		Configure::delete('testing');
-		$this->assertNull(Configure::read('store_test'), 'Calling store with data shouldnt modify runtime.');
+		$this->assertNull(Configure::read('store_test'), 'Calling store with data shouldn\'t modify runtime.');
 
 		Configure::restore('store_test', 'default');
 		$this->assertEquals('one', Configure::read('store_test'));

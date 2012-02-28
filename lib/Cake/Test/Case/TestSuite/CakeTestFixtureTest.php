@@ -400,7 +400,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture = new CakeTestFixtureTestFixture();
 		$this->criticDb->expects($this->atLeastOnce())
 			->method('insertMulti')
-			->will($this->returnCallback(array($this, '_insertCallback')));
+			->will($this->returnCallback(array($this, 'insertCallback')));
 
 		$return = $Fixture->insert($this->criticDb);
 		$this->assertTrue(!empty($this->insertMulti));
@@ -424,7 +424,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @param string $values
  * @return boolean true
  */
-	function _insertCallback($table, $fields, $values) {
+	public function insertCallback($table, $fields, $values) {
 		$this->insertMulti['table'] = $table;
 		$this->insertMulti['fields'] = $fields;
 		$this->insertMulti['values'] = $values;
@@ -440,7 +440,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture = new StringsTestFixture();
 		$this->criticDb->expects($this->atLeastOnce())
 			->method('insertMulti')
-			->will($this->returnCallback(array($this, '_insertCallback')));
+			->will($this->returnCallback(array($this, 'insertCallback')));
 
 		$return = $Fixture->insert($this->criticDb);
 		$this->assertTrue($this->criticDb->fullDebug);

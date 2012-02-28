@@ -183,7 +183,7 @@ class User extends CakeTestModel {
  *
  * @return bool
 */
-	public function beforeFind ($queryData) {
+	public function beforeFind($queryData) {
 		if (!empty($queryData['lazyLoad'])) {
 			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
 				throw new Exception('Unavailable associations');
@@ -257,7 +257,7 @@ class Article extends CakeTestModel {
  * @param mixed $title
  * @return void
  */
-	static function titleDuplicate ($title) {
+	static function titleDuplicate($title) {
 		if ($title === 'My Article Title') {
 			return false;
 		}
@@ -641,6 +641,13 @@ class Attachment extends CakeTestModel {
  * @var string 'Attachment'
  */
 	public $name = 'Attachment';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('Comment');
 }
 
 /**
@@ -2063,7 +2070,7 @@ class ValidationTest1 extends CakeTestModel {
 	}
 
 /**
- * Custom validator with messaage
+ * Custom validator with message
  *
  * @return array
  */
@@ -3277,6 +3284,24 @@ class TransactionManyTestModel extends CakeTestModel {
 		);
 		$this->saveMany($data, array('atomic' => true, 'callbacks' => false));
 	}
+}
+
+class Site extends CakeTestModel {
+	public $name = 'Site';
+	public $useTable = 'sites';
+
+	public $hasAndBelongsToMany = array(
+		'Domain' => array('unique' => 'keepExisting'),
+		);
+}
+
+class Domain extends CakeTestModel {
+	public $name = 'Domain';
+	public $useTable = 'domains';
+
+	public $hasAndBelongsToMany = array(
+		'Site' => array('unique' => 'keepExisting'),
+		);
 }
 
 /**
@@ -4595,4 +4620,72 @@ class ScaffoldTag extends CakeTestModel {
  * @var string 'posts'
  */
 	public $useTable = 'tags';
+}
+
+/**
+ * Player class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Player extends CakeTestModel {
+	public $hasAndBelongsToMany = array(
+		'Guild' => array(
+			'with' => 'GuildsPlayer',
+			'unique' => true,
+			),
+		);
+}
+
+/**
+ * Guild class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Guild extends CakeTestModel {
+	public $hasAndBelongsToMany = array(
+		'Player' => array(
+			'with' => 'GuildsPlayer',
+			'unique' => true,
+			),
+		);
+}
+
+/**
+ * GuildsPlayer class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class GuildsPlayer extends CakeTestModel {
+
+	public $useDbConfig = 'test2';
+
+	public $belongsTo = array(
+		'Player',
+		'Guild',
+		);
+}
+
+/**
+ * Armor class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Armor extends CakeTestModel {
+
+	public $useDbConfig = 'test2';
+
+	public $hasAndBelongsToMany = array(
+		'Player' => array('with' => 'ArmorsPlayer'),
+		);
+}
+
+/**
+ * ArmorsPlayer class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ArmorsPlayer extends CakeTestModel {
+
+	public $useDbConfig = 'test_database_three';
+
 }

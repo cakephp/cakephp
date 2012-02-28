@@ -102,7 +102,7 @@ class JsHelperTest extends CakeTestCase {
 		Configure::write('Asset.timestamp', false);
 
 		$controller = null;
-		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->View = $this->getMock('View', array('append'), array(&$controller));
 		$this->Js = new JsHelper($this->View, 'Option');
 		$request = new CakeRequest(null, false);
 		$this->Js->request = $request;
@@ -130,7 +130,7 @@ class JsHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function _useMock() {
+	protected function _useMock() {
 		$request = new CakeRequest(null, false);
 
 		if (!class_exists('TestJsEngineHelper', false)) {
@@ -274,8 +274,8 @@ class JsHelperTest extends CakeTestCase {
 		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false, 'clear' => false));
 
 		$this->View->expects($this->once())
-			->method('addScript')
-			->with($this->matchesRegularExpression('/one\s\=\s1;\ntwo\s\=\s2;/'));
+			->method('append')
+			->with('script', $this->matchesRegularExpression('/one\s\=\s1;\ntwo\s\=\s2;/'));
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
 	}
 
@@ -288,8 +288,8 @@ class JsHelperTest extends CakeTestCase {
 		$this->Js->set('foo', 1);
 
 		$this->View->expects($this->once())
-			->method('addScript')
-			->with($this->matchesRegularExpression('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#'));
+			->method('append')
+			->with('script', $this->matchesRegularExpression('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#'));
 
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
 	}
@@ -705,7 +705,7 @@ class JsBaseEngineTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$controller = null;
-		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->View = $this->getMock('View', array('append'), array(&$controller));
 		$this->JsEngine = new OptionEngineHelper($this->View);
 	}
 

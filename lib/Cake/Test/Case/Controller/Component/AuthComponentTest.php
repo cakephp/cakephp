@@ -42,7 +42,7 @@ class TestAuthComponent extends AuthComponent {
  *
  * @return void
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->testStop = true;
 	}
 
@@ -117,7 +117,7 @@ class AuthTestController extends Controller {
  *
  * @return void
  */
-	function __construct($request, $response) {
+	public function __construct($request, $response) {
 		$request->addParams(Router::parse('/auth_test'));
 		$request->here = '/auth_test';
 		$request->webroot = '/';
@@ -481,7 +481,7 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that isAuthroized calls methods correctly
+ * test that isAuthorized calls methods correctly
  *
  * @return void
  */
@@ -628,7 +628,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->request['action'] = 'camelCase';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny(array('add', 'camelCase'));
 
 		$this->Controller->request['action'] = 'delete';
@@ -654,6 +654,18 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->Controller->request['action'] = 'login';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+	
+		$this->Controller->Auth->deny();
+		$this->Controller->Auth->allow(null);
+
+		$this->Controller->request['action'] = 'camelCase';
+		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->Auth->allow();
+		$this->Controller->Auth->deny(null);
+
+		$this->Controller->request['action'] = 'camelCase';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 
 /**
@@ -663,7 +675,7 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function testDenyWithCamelCaseMethods() {
 		$this->Controller->Auth->initialize($this->Controller);
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny('add', 'camelCase');
 
 		$url = '/auth_test/camelCase';
@@ -690,7 +702,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
 
@@ -841,7 +853,9 @@ class AuthComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/edit/1';
-		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
+		$request = new CakeRequest($url);
+		$request->query = array();
+		$this->Auth->request = $this->Controller->request = $request;
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->initialize($this->Controller);
@@ -867,7 +881,7 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that no redirects or authoization tests occur on the loginAction
+ * test that no redirects or authorization tests occur on the loginAction
  *
  * @return void
  */

@@ -355,7 +355,7 @@ class MissingDatasourceException extends CakeException {
  * @package       Cake.Error
  */
 class MissingTableException extends CakeException {
-	protected $_messageTemplate = 'Database table %s for model %s was not found.';
+	protected $_messageTemplate = 'Table %s for model %s was not found in datasource %s.';
 }
 
 /**
@@ -384,6 +384,13 @@ class MissingTestLoaderException extends CakeException {
 class MissingPluginException extends CakeException {
 	protected $_messageTemplate = 'Plugin %s could not be found.';
 }
+
+/**
+ * Exception class for AclComponent and Interface implementations. 
+ *
+ * @package       Cake.Error
+ */
+class AclException extends CakeException { }
 
 /**
  * Exception class for Cache.  This exception will be thrown from Cache when it

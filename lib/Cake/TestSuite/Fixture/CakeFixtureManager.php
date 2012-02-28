@@ -90,7 +90,7 @@ class CakeFixtureManager {
 		$db = ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 		$this->_db = $db;
-		ClassRegistry::config(array('ds' => 'test'));
+		ClassRegistry::config(array('ds' => 'test', 'testing' => true));
 		$this->_initialized = true;
 	}
 
@@ -137,7 +137,7 @@ class CakeFixtureManager {
 					$fixtureFile = $path . DS . $className . 'Fixture.php';
 					require_once($fixtureFile);
 					$fixtureClass = $className . 'Fixture';
-					$this->_loaded[$fixtureIndex] = new $fixtureClass($this->_db);
+					$this->_loaded[$fixtureIndex] = new $fixtureClass();
 					$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
 					break;
 				}
@@ -155,9 +155,13 @@ class CakeFixtureManager {
  */
 	protected function _setupTable($fixture, $db = null, $drop = true) {
 		if (!$db) {
-			$db = $this->_db;
+			if (!empty($fixture->useDbConfig)) {
+				$db = ClassRegistry::getDataSource($fixture->useDbConfig);
+			} else {
+				$db = $this->_db;
+			}
 		}
-		if (!empty($fixture->created) && $fixture->created == $db->configKeyName) {
+		if (!empty($fixture->created) && in_array($db->configKeyName, $fixture->created)) {
 			return;
 		}
 
@@ -167,15 +171,13 @@ class CakeFixtureManager {
 		if ($drop && in_array($table, $sources)) {
 			$fixture->drop($db);
 			$fixture->create($db);
-			$fixture->created = $db->configKeyName;
 		} elseif (!in_array($table, $sources)) {
 			$fixture->create($db);
-			$fixture->created = $db->configKeyName;
 		}
 	}
 
 /**
- * Crates the fixtures tables and inserts data on them
+ * Creates the fixtures tables and inserts data on them.
  *
  * @param CakeTestCase $test the test to inspect for fixture loading
  * @return void
@@ -193,8 +195,9 @@ class CakeFixtureManager {
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
-				$this->_setupTable($fixture, $test->db, $test->dropTables);
-				$fixture->insert($test->db);
+				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+				$this->_setupTable($fixture, $db, $test->dropTables);
+				$fixture->insert($db);
 			}
 		}
 		$test->db->commit();
@@ -212,26 +215,30 @@ class CakeFixtureManager {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {
-					$fixture->truncate($test->db);
+					foreach ($fixture->created as $ds) {
+						$db = ConnectionManager::getDataSource($ds);
+						$fixture->truncate($db);
+					}
 				}
 			}
 		}
 	}
 
 /**
- * Truncates the fixtures tables
+ * Creates a single fixture table and loads data into it.
  *
- * @param CakeTestCase $test the test to inspect for fixture unloading
+ * @param string $name of the fixture
+ * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
  * @return void
  * @throws UnexpectedValueException if $name is not a previously loaded class
  */
 	public function loadSingle($name, $db = null) {
 		$name .= 'Fixture';
 		if (isset($this->_fixtureMap[$name])) {
-			if (!$db) {
-				$db = $this->_db;
-			}
 			$fixture = $this->_fixtureMap[$name];
+			if (!$db) {
+				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+			}
 			$this->_setupTable($fixture, $db);
 			$fixture->truncate($db);
 			$fixture->insert($db);
@@ -248,8 +255,12 @@ class CakeFixtureManager {
 	public function shutDown() {
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
-				$fixture->drop($this->_db);
+				foreach ($fixture->created as $ds) {
+					$db = ConnectionManager::getDataSource($ds);
+					$fixture->drop($db);
+				}
 			}
 		}
 	}
+
 }

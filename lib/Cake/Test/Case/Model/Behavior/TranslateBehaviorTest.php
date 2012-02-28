@@ -63,10 +63,10 @@ class TranslateBehaviorTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCountWithConditions() {
+	public function testCountWithConditions() {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
-		$Model =& new TranslatedItem();
+		$Model = new TranslatedItem();
 		$Model->locale = 'eng';
 		$result = $Model->find('count', array(
 			'conditions' => array(
@@ -870,7 +870,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
- * Test infinite loops not occuring with unbindTranslation()
+ * Test infinite loops not occurring with unbindTranslation()
  *
  * @return void
  */

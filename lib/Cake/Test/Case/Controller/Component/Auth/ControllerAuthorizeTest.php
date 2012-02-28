@@ -41,8 +41,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
 	}
 
 /**
- *
- * @expectedException CakeException
+ * @expectedException PHPUnit_Framework_Error
  */
 	public function testControllerTypeError() {
 		$this->auth->controller(new StdClass());
