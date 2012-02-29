@@ -1,9 +1,5 @@
 <?php
 /**
- * ControllerTest file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -385,7 +381,7 @@ class AnotherTestController extends ControllerTestAppController {
  *
  * @var array
  */
-	public $uses = null;
+	public $uses = false;
 
 /**
  * merge parent
@@ -917,7 +913,7 @@ class ControllerTest extends CakeTestCase {
 
 
 		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
-		$this->assertNull($testVars['uses']);
+		$this->assertFalse($testVars['uses']);
 
 		$this->assertFalse(property_exists($TestController, 'ControllerPost'));
 
