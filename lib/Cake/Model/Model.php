@@ -2727,10 +2727,19 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _findCount($state, $query, $results = array()) {
 		if ($state === 'before') {
+			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count' ) {
+				$query['operation'] = 'count';
+				$query = $this->{'_find' . ucfirst($query['type'])}('before', $query);
+			}
 			$db = $this->getDataSource();
 			$query['order'] = false;
 			if (!method_exists($db, 'calculate') || !method_exists($db, 'expression')) {
 				return $query;
+			}
+			if (!empty($query['fields']) && is_array($query['fields'])) {
+				if (!preg_match('/^count/i', current($query['fields']))) {
+					unset($query['fields']);
+				}
 			}
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
