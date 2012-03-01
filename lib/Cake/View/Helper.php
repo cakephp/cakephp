@@ -136,6 +136,18 @@ class Helper extends Object {
 	protected $_entityPath;
 
 /**
+ * Minimized attributes
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array(
+		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
+		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
+		'autoplay', 'controls', 'loop', 'muted'
+	);
+
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.

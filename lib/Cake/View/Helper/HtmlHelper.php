@@ -103,17 +103,6 @@ class HtmlHelper extends AppHelper {
 	);
 
 /**
- * Minimized attributes
- *
- * @var array
- */
-	protected $_minimizedAttributes = array(
-		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
-		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
-		'autoplay', 'controls', 'loop', 'muted'
-	);
-
-/**
  * Format to attribute
  *
  * @var string
