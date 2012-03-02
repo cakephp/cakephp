@@ -70,11 +70,11 @@ class DboSource extends DataSource {
 	public $cacheMethods = true;
 
 /**
- * Print full query debug info?
+ * Enable full query log for debug or another application purpose
  *
  * @var boolean
  */
-	public $fullDebug = false;
+	public $log = false;
 
 /**
  * String to hold how many rows were affected by the last SQL operation.
@@ -234,7 +234,7 @@ class DboSource extends DataSource {
 			$config['prefix'] = '';
 		}
 		parent::__construct($config);
-		$this->fullDebug = Configure::read('debug') > 1;
+		$this->log = Configure::read('debug') > 1;
 		if (!$this->enabled()) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this)
@@ -397,7 +397,7 @@ class DboSource extends DataSource {
  * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function execute($sql, $options = array(), $params = array()) {
-		$options += array('log' => $this->fullDebug);
+		$options += array('log' => $this->log);
 
 		$t = microtime(true);
 		$this->_result = $this->_execute($sql, $params);
@@ -2007,7 +2007,7 @@ class DboSource extends DataSource {
  */
 	public function begin() {
 		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
-			if ($this->fullDebug && empty($this->_transactionNesting)) {
+			if ($this->log && empty($this->_transactionNesting)) {
 				$this->logQuery('BEGIN');
 			}
 			$this->_transactionStarted = true;
@@ -2030,7 +2030,7 @@ class DboSource extends DataSource {
 			if ($this->_transactionNesting <= 0) {
 				$this->_transactionStarted = false;
 				$this->_transactionNesting = 0;
-				if ($this->fullDebug) {
+				if ($this->log) {
 					$this->logQuery('COMMIT');
 				}
 				return $this->_connection->commit();
@@ -2049,7 +2049,7 @@ class DboSource extends DataSource {
  */
 	public function rollback() {
 		if ($this->_transactionStarted && $this->_connection->rollBack()) {
-			if ($this->fullDebug) {
+			if ($this->log) {
 				$this->logQuery('ROLLBACK');
 			}
 			$this->_transactionStarted = false;

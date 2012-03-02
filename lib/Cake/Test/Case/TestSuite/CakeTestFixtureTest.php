@@ -185,7 +185,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$methods[] = 'connect';
 
 		$this->criticDb = $this->getMock('DboSource', $methods);
-		$this->criticDb->fullDebug = true;
+		$this->criticDb->log = true;
 		$this->db = ConnectionManager::getDataSource('test');
 		$this->_backupConfig = $this->db->config;
 	}
@@ -383,7 +383,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->criticDb->expects($this->atLeastOnce())->method('execute');
 		$this->criticDb->expects($this->atLeastOnce())->method('createSchema');
 		$return = $Fixture->create($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
+		$this->assertTrue($this->criticDb->log);
 		$this->assertTrue($return);
 
 		unset($Fixture->fields);
@@ -404,7 +404,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 
 		$return = $Fixture->insert($this->criticDb);
 		$this->assertTrue(!empty($this->insertMulti));
-		$this->assertTrue($this->criticDb->fullDebug);
+		$this->assertTrue($this->criticDb->log);
 		$this->assertTrue($return);
 		$this->assertEquals('fixture_tests', $this->insertMulti['table']);
 		$this->assertEquals(array('name', 'created'), $this->insertMulti['fields']);
@@ -443,7 +443,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 			->will($this->returnCallback(array($this, 'insertCallback')));
 
 		$return = $Fixture->insert($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
+		$this->assertTrue($this->criticDb->log);
 		$this->assertTrue($return);
 		$this->assertEquals('strings', $this->insertMulti['table']);
 		$this->assertEquals(array('email', 'name', 'age'), $this->insertMulti['fields']);
@@ -467,7 +467,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->criticDb->expects($this->exactly(2))->method('dropSchema');
 
 		$return = $Fixture->drop($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
+		$this->assertTrue($this->criticDb->log);
 		$this->assertTrue($return);
 
 		$return = $Fixture->drop($this->criticDb);
@@ -487,6 +487,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture = new CakeTestFixtureTestFixture();
 		$this->criticDb->expects($this->atLeastOnce())->method('truncate');
 		$Fixture->truncate($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
+		$this->assertTrue($this->criticDb->log);
 	}
 }
