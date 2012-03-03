@@ -1034,7 +1034,6 @@ class View extends Object {
 		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
 	}
 
-
 /**
  * Get the extensions that view files can use.
  *
@@ -1099,11 +1098,11 @@ class View extends Object {
 			$themePaths = array();
 			foreach ($paths as $path) {
 				if (strpos($path, DS . 'Plugin' . DS) === false) {
-						if ($plugin) {
-							$themePaths[] = $path . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
-						}
-						$themePaths[] = $path . 'Themed'. DS . $this->theme . DS;
+					if ($plugin) {
+						$themePaths[] = $path . 'Themed' . DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
 					}
+					$themePaths[] = $path . 'Themed' . DS . $this->theme . DS;
+				}
 			}
 			$paths = array_merge($themePaths, $paths);
 		}
@@ -1113,4 +1112,5 @@ class View extends Object {
 		}
 		return $this->_paths = $paths;
 	}
+
 }
