@@ -276,7 +276,10 @@ class TestTask extends BakeTask {
 		if (strtolower($type) == 'model' || empty($this->classTypes[$type])) {
 			return $class;
 		}
-		if (strlen($class) - strpos($class, $type) == strlen($type)) {
+	
+		$position = strpos($class, $type);
+		 
+		if ($position !== false && strlen($class) - $position == strlen($type)) {
 			return $class;
 		}
 		return $class . $type;

@@ -403,6 +403,9 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getRealClassname('Controller', 'PostsController');
 		$this->assertEquals('PostsController', $result);
+		
+		$result = $this->Task->getRealClassname('Controller', 'AlertTypes');
+		$this->assertEquals('AlertTypesController', $result);
 
 		$result = $this->Task->getRealClassname('Helper', 'Form');
 		$this->assertEquals('FormHelper', $result);

@@ -319,8 +319,9 @@ class Set {
 	}
 
 /**
- * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call
- * is delegated to Set::classicExtract.
+ * Implements partial support for XPath 2.0. If $path does not contain a '/' the call
+ * is delegated to Set::classicExtract(). Also the $path and $data arguments are 
+ * reversible.
  *
  * #### Currently implemented selectors:
  *
