@@ -344,7 +344,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testLocalizedFloats() {
-		$restore = setlocale(LC_ALL, null);
+		$restore = setlocale(LC_ALL, 0);
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');

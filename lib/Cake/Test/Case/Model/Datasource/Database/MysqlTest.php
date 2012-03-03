@@ -146,7 +146,7 @@ class MysqlTest extends CakeTestCase {
 	public function testLocalizedFloats() {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
 
-		$restore = setlocale(LC_ALL, null);
+		$restore = setlocale(LC_ALL, 0);
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->Dbo->value(3.141593);
@@ -3505,7 +3505,7 @@ class MysqlTest extends CakeTestCase {
 			->with("UPDATE `$db`.`articles` SET `field1` = 'value1'  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " . 
+			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " .
 				"(`Article`.`user_id` = `User`.`id`)" .
 				" SET `Article`.`field1` = 2  WHERE 2=2");
 
@@ -3538,7 +3538,7 @@ class MysqlTest extends CakeTestCase {
 			->with("DELETE  FROM `$db`.`articles`  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " . 
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " .
 				"ON (`Article`.`user_id` = `User`.`id`)" .
 				"  WHERE 1 = 1");
 
