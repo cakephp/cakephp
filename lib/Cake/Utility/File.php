@@ -528,7 +528,7 @@ class File {
  * @return Folder Current folder
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::Folder
  */
-	public function &Folder() {
+	public function &folder() {
 		return $this->Folder;
 	}
 
@@ -566,5 +566,5 @@ class File {
 		}
 		return false;
 	}
-	
+
 }

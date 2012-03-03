@@ -47,7 +47,7 @@ class Set {
 
 		$r = (array)current($args);
 		while (($arg = next($args)) !== false) {
-			foreach ((array)$arg as $key => $val)	 {
+			foreach ((array)$arg as $key => $val) {
 				if (!empty($r[$key]) && is_array($r[$key]) && is_array($val)) {
 					$r[$key] = Set::merge($r[$key], $val);
 				} elseif (is_int($key)) {
@@ -1214,4 +1214,5 @@ class Set {
 		}
 		return $return;
 	}
+
 }
