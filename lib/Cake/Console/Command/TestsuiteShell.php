@@ -207,4 +207,5 @@ class TestsuiteShell extends TestShell {
 
 		$this->_run($args, $this->_runnerOptions());
 	}
+
 }

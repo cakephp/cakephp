@@ -169,7 +169,7 @@ class UpgradeShell extends AppShell {
 				}
 			}
 		}
-	
+
 		$this->_moveViewFiles();
 		$this->_moveAppClasses();
 
@@ -234,7 +234,7 @@ class UpgradeShell extends AppShell {
 		$helpers = array_merge($pluginHelpers, $helpers);
 		foreach ($helpers as $helper) {
 			$helper = preg_replace('/Helper$/', '', $helper);
-			$oldHelper = strtolower(substr($helper, 0, 1)).substr($helper, 1);
+			$oldHelper = strtolower(substr($helper, 0, 1)) . substr($helper, 1);
 			$patterns[] = array(
 				"\${$oldHelper} to \$this->{$helper}",
 				"/\\\${$oldHelper}->/",
@@ -355,7 +355,7 @@ class UpgradeShell extends AppShell {
 			$pluginPath = App::pluginPath($this->params['plugin']);
 			$this->_paths = array(
 				$pluginPath . 'controllers' . DS,
-				$pluginPath . 'controllers' . DS . 'components' .DS,
+				$pluginPath . 'controllers' . DS . 'components' . DS,
 				$pluginPath . 'views' . DS,
 			);
 		}
@@ -536,7 +536,7 @@ class UpgradeShell extends AppShell {
 			$pluginPath = App::pluginPath($this->params['plugin']);
 			$this->_paths = array(
 				$pluginPath . 'controllers' . DS,
-				$pluginPath . 'controllers' . DS . 'components' .DS,
+				$pluginPath . 'controllers' . DS . 'components' . DS,
 			);
 		}
 		$patterns = array(
@@ -604,7 +604,7 @@ class UpgradeShell extends AppShell {
 	protected function _moveAppClasses() {
 		$files = array(
 			APP . 'app_controller.php' => APP . 'Controller' . DS . 'AppController.php',
-			APP . 'controllers' . DS .'app_controller.php' => APP . 'Controller' . DS . 'AppController.php',
+			APP . 'controllers' . DS . 'app_controller.php' => APP . 'Controller' . DS . 'AppController.php',
 			APP . 'app_model.php' => APP . 'Model' . DS . 'AppModel.php',
 			APP . 'models' . DS . 'app_model.php' => APP . 'Model' . DS . 'AppModel.php',
 		);
@@ -706,7 +706,7 @@ class UpgradeShell extends AppShell {
 			if (!$this->params['dry-run']) {
 				if ($this->params['git']) {
 					exec('git mv -f ' . escapeshellarg($file) . ' ' . escapeshellarg($file . '__'));
-					exec('git mv -f ' . escapeshellarg($file. '__') . ' ' . escapeshellarg($new));
+					exec('git mv -f ' . escapeshellarg($file . '__') . ' ' . escapeshellarg($new));
 				} else {
 					rename($file, $new);
 				}
@@ -854,4 +854,5 @@ class UpgradeShell extends AppShell {
 				'parser' => $subcommandParser
 			));
 	}
+
 }

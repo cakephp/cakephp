@@ -284,4 +284,5 @@ class ConsoleOutput {
 	public function __destruct() {
 		fclose($this->_output);
 	}
+
 }

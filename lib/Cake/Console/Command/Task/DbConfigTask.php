@@ -364,7 +364,7 @@ class DbConfigTask extends AppShell {
 		$connections = array_keys($configs);
 
 		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') .':', $connections, $useDbConfig);
+			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') . ':', $connections, $useDbConfig);
 		}
 		return $useDbConfig;
 	}
@@ -380,4 +380,5 @@ class DbConfigTask extends AppShell {
 				__d('cake_console', 'Bake new database configuration settings.')
 			);
 	}
+
 }

@@ -54,7 +54,6 @@ class ProjectTask extends AppShell {
 			$project = $this->in($prompt, null, APP . 'myapp');
 		}
 
-
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
 			$project = $_SERVER['PWD'] . DS . $project;
 		}
@@ -112,7 +111,7 @@ class ProjectTask extends AppShell {
 				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
 				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
 			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
+				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' . DS .'index.php'));
 				$success = false;
 			}
 			if ($success && $hardCode) {
@@ -231,8 +230,8 @@ class ProjectTask extends AppShell {
 		$app = basename($dir);
 		$path = $dir . 'View' . DS . 'Pages' . DS;
 		$source = CAKE . 'Console' . DS . 'Templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
-		include($source);
-		return $this->createFile($path.'home.ctp', $output);
+		include $source;
+		return $this->createFile($path . 'home.ctp', $output);
 	}
 
 /**
@@ -282,7 +281,7 @@ class ProjectTask extends AppShell {
  *
  * @param string $path Project path
  * @return boolean Success
-	 */
+ */
 	public function securityCipherSeed($path) {
 		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();

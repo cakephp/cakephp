@@ -170,7 +170,7 @@ class ModelTask extends BakeTask {
 		$max = count($options);
 		while (!$valid) {
 			foreach ($options as $i => $option) {
-				$this->out($i + 1 .'. ' . $option);
+				$this->out($i + 1 . '. ' . $option);
 			}
 			if (empty($prompt)) {
 				$prompt = __d('cake_console', 'Make a selection from the choices above');
@@ -297,7 +297,7 @@ class ModelTask extends BakeTask {
  */
 	protected function _printAssociation($modelName, $type, $associations) {
 		if (!empty($associations[$type])) {
-			for ($i = 0; $i < count($associations[$type]); $i++) {
+			for ($i = 0, $len = count($associations[$type]); $i < $len; $i++) {
 				$out = "\t" . $modelName . ' ' . $type . ' ' . $associations[$type][$i]['alias'];
 				$this->out($out);
 			}
@@ -414,7 +414,7 @@ class ModelTask extends BakeTask {
 			for ($i = 1; $i < $defaultChoice; $i++) {
 				$prompt .= $i . ' - ' . $this->_validations[$i] . "\n";
 			}
-			$prompt .=  __d('cake_console', "%s - Do not do any validation on this field.\n", $defaultChoice);
+			$prompt .= __d('cake_console', "%s - Do not do any validation on this field.\n", $defaultChoice);
 			$prompt .= __d('cake_console', "... or enter in a valid regex validation string.\n");
 
 			$methods = array_flip($this->_validations);
@@ -498,11 +498,14 @@ class ModelTask extends BakeTask {
 		}
 
 		if (empty($this->_tables)) {
-			$this->_tables = (array) $this->getAllTables();
+			$this->_tables = (array)$this->getAllTables();
 		}
 
 		$associations = array(
-			'belongsTo' => array(), 'hasMany' => array(), 'hasOne' => array(), 'hasAndBelongsToMany' => array()
+			'belongsTo' => array(),
+			'hasMany' => array(),
+			'hasOne' => array(),
+			'hasAndBelongsToMany' => array()
 		);
 
 		$associations = $this->findBelongsTo($model, $associations);
@@ -780,13 +783,19 @@ class ModelTask extends BakeTask {
 		} else {
 			$data['name'] = $name;
 		}
-		$defaults = array('associations' => array(), 'validate' => array(), 'primaryKey' => 'id',
-			'useTable' => null, 'useDbConfig' => 'default', 'displayField' => null);
+		$defaults = array(
+			'associations' => array(),
+			'validate' => array(),
+			'primaryKey' => 'id',
+			'useTable' => null,
+			'useDbConfig' => 'default',
+			'displayField' => null
+		);
 		$data = array_merge($defaults, $data);
 
 		$pluginPath = '';
 		if ($this->plugin) {
-			$pluginPath =  $this->plugin . '.';
+			$pluginPath = $this->plugin . '.';
 		}
 
 		$this->Template->set($data);
@@ -824,7 +833,7 @@ class ModelTask extends BakeTask {
  * @return array
  */
 	public function listAll($useDbConfig = null) {
-		$this->_tables = (array) $this->getAllTables($useDbConfig);
+		$this->_tables = (array)$this->getAllTables($useDbConfig);
 
 		$this->_modelNames = array();
 		$count = count($this->_tables);
@@ -926,7 +935,7 @@ class ModelTask extends BakeTask {
 			}
 
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
-				$this->err(__d('cake_console', "The model name you supplied was empty,\n" . 
+				$this->err(__d('cake_console', "The model name you supplied was empty,\n" .
 					"or the number you selected was not an option. Please try again."));
 				$enteredModel = '';
 			}
@@ -975,4 +984,5 @@ class ModelTask extends BakeTask {
 		$this->Fixture->plugin = $this->plugin;
 		$this->Fixture->bake($className, $useTable);
 	}
+
 }

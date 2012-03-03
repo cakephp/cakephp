@@ -74,7 +74,7 @@ class TemplateTask extends AppShell {
 		foreach ($plugins as $plugin) {
 			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
 		}
-		
+
 		$paths = array_merge($paths, App::path('Console'));
 
 		// TEMPORARY TODO remove when all paths are DS terminated
@@ -149,7 +149,7 @@ class TemplateTask extends AppShell {
 			extract($this->templateVars);
 			ob_start();
 			ob_implicit_flush(0);
-			include($templateFile);
+			include $templateFile;
 			$content = ob_get_clean();
 			return $content;
 		}
@@ -214,4 +214,5 @@ class TemplateTask extends AppShell {
 		$this->err(__d('cake_console', 'Could not find template for %s', $filename));
 		return false;
 	}
+
 }

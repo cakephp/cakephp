@@ -29,6 +29,7 @@ App::uses('String', 'Utility');
  * @since  CakePHP(tm) v 2.0
  */
 class HelpFormatter {
+
 /**
  * The maximum number of arguments shown when generating usage.
  *
@@ -196,4 +197,5 @@ class HelpFormatter {
 		}
 		return $string ? $xml->asXml() : $xml;
 	}
+
 }

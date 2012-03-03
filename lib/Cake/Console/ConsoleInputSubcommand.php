@@ -117,4 +117,5 @@ class ConsoleInputSubcommand {
 		$command->addAttribute('help', $this->_help);
 		return $parent;
 	}
+
 }

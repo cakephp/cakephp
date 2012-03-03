@@ -46,7 +46,7 @@ class TestTask extends BakeTask {
  *
  * @var array
  */
-	public $classTypes =  array(
+	public $classTypes = array(
 		'Model' => 'Model',
 		'Controller' => 'Controller',
 		'Component' => 'Controller/Component',
@@ -276,9 +276,9 @@ class TestTask extends BakeTask {
 		if (strtolower($type) == 'model' || empty($this->classTypes[$type])) {
 			return $class;
 		}
-	
+
 		$position = strpos($class, $type);
-		 
+
 		if ($position !== false && strlen($class) - $position == strlen($type)) {
 			return $class;
 		}
@@ -291,6 +291,7 @@ class TestTask extends BakeTask {
  * @param string $type The type of thing having a test generated.
  * @param string $plugin The plugin name.
  * @return string
+ * @throws CakeException When invalid object types are requested.
  */
 	public function mapType($type, $plugin) {
 		$type = ucfirst($type);
@@ -397,8 +398,8 @@ class TestTask extends BakeTask {
 	protected function _addFixture($name) {
 		$parent = get_parent_class($name);
 		$prefix = 'app.';
-		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, -8)) == 'appmodel') {
-			$pluginName = substr($parent, 0, strlen($parent) -8);
+		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, - 8)) == 'appmodel') {
+			$pluginName = substr($parent, 0, strlen($parent) - 8);
 			$prefix = 'plugin.' . Inflector::underscore($pluginName) . '.';
 		}
 		$fixture = $prefix . Inflector::underscore($name);
@@ -530,4 +531,5 @@ class TestTask extends BakeTask {
 				'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
+
 }
