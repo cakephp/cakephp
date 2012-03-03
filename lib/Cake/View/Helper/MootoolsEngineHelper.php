@@ -1,17 +1,5 @@
 <?php
 /**
- * MooTools Engine Helper for JsHelper
- *
- * Provides MooTools specific Javascript for JsHelper.
- * Assumes that you have the following MooTools packages
- *
- * - Remote, Remote.HTML, Remote.JSON
- * - Fx, Fx.Tween, Fx.Morph
- * - Selectors, DomReady,
- * - Drag, Drag.Move
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -41,6 +29,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  * @package       Cake.View.Helper
  */
 class MootoolsEngineHelper extends JsBaseEngineHelper {
+
 /**
  * Option mappings for MooTools
  *
@@ -133,7 +122,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	public function get($selector) {
 		$this->_multipleSelection = false;
 		if ($selector == 'window' || $selector == 'document') {
-			$this->selection = "$(" . $selector .")";
+			$this->selection = "$(" . $selector . ")";
 			return $this;
 		}
 		if (preg_match('/^#[^\s.]+$/', $selector)) {
@@ -383,4 +372,5 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		}
 		return $selection . $method;
 	}
+
 }

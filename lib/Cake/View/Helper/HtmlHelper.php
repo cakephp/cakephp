@@ -431,7 +431,7 @@ class HtmlHelper extends AppHelper {
 			foreach ($path as $i) {
 				$out .= "\n\t" . $this->css($i, $rel, $options);
 			}
-			if (empty($options['block']))  {
+			if (empty($options['block'])) {
 				return $out . "\n";
 			}
 			return;
@@ -523,7 +523,7 @@ class HtmlHelper extends AppHelper {
 			foreach ($url as $i) {
 				$out .= "\n\t" . $this->script($i, $options);
 			}
-			if (empty($options['block']))  {
+			if (empty($options['block'])) {
 				return $out . "\n";
 			}
 			return null;
@@ -645,7 +645,7 @@ class HtmlHelper extends AppHelper {
 			return $data;
 		}
 		$out = array();
-		foreach ($data as $key=> $value) {
+		foreach ($data as $key => $value) {
 			$out[] = $key . ':' . $value . ';';
 		}
 		if ($oneline) {

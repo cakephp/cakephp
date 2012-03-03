@@ -690,7 +690,7 @@ class PaginatorHelper extends AppHelper {
 			$start = $params['page'] - ($modulus - ($end - $params['page']));
 			if ($start <= 1) {
 				$start = 1;
-				$end = $params['page'] + ($modulus  - $params['page']) + 1;
+				$end = $params['page'] + ($modulus - $params['page']) + 1;
 			}
 
 			if ($first && $start > 1) {
@@ -705,8 +705,7 @@ class PaginatorHelper extends AppHelper {
 			$out .= $before;
 
 			for ($i = $start; $i < $params['page']; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'))
-					. $separator;
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class')) . $separator;
 			}
 
 			if ($class) {
@@ -719,8 +718,7 @@ class PaginatorHelper extends AppHelper {
 
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'))
-					. $separator;
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class')) . $separator;
 			}
 
 			if ($end != $params['page']) {
@@ -823,8 +821,7 @@ class PaginatorHelper extends AppHelper {
 			$out .= $after;
 		} elseif ($params['page'] > 1 && is_string($first)) {
 			$options += array('rel' => 'first');
-			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options), compact('class'))
-				. $after;
+			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options), compact('class')) . $after;
 		}
 		return $out;
 	}
@@ -897,4 +894,5 @@ class PaginatorHelper extends AppHelper {
 		}
 		return $out;
 	}
+
 }

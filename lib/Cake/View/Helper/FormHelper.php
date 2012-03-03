@@ -1,11 +1,5 @@
 <?php
 /**
- * Automatic generation of HTML FORMs from given data.
- *
- * Used for scaffolding.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -154,11 +148,11 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->_models[$model] = $object;
-		if (!$object) {;
+		if (!$object) {
 			return null;
 		}
 
-		$this->fieldset[$model] = array('fields' => null, 'key' =>  $object->primaryKey, 'validates' => null);
+		$this->fieldset[$model] = array('fields' => null, 'key' => $object->primaryKey, 'validates' => null);
 		return $object;
 	}
 
@@ -183,58 +177,58 @@ class FormHelper extends AppHelper {
  * @return mixed information extracted for the special key and field in a model
  */
 	protected function _introspectModel($model, $key, $field = null) {
-			$object = $this->_getModel($model);
-			if (!$object) {
-				return;
-			}
+		$object = $this->_getModel($model);
+		if (!$object) {
+			return;
+		}
 
-			if ($key === 'key') {
-				return $this->fieldset[$model]['key'] = $object->primaryKey;
-			}
+		if ($key === 'key') {
+			return $this->fieldset[$model]['key'] = $object->primaryKey;
+		}
 
-			if ($key === 'fields') {
-				if (!isset($this->fieldset[$model]['fields'])) {
-					$fields = $this->fieldset[$model]['fields'] = $object->schema();
-					foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
-						$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
+		if ($key === 'fields') {
+			if (!isset($this->fieldset[$model]['fields'])) {
+				$fields = $this->fieldset[$model]['fields'] = $object->schema();
+				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
+					$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
+				}
+			}
+			if (empty($field)) {
+				return $this->fieldset[$model]['fields'];
+			} elseif (isset($this->fieldset[$model]['fields'][$field])) {
+				return $this->fieldset[$model]['fields'][$field];
+			} else {
+				return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
+			}
+		}
+
+		if ($key === 'errors' && !isset($this->validationErrors[$model])) {
+			$this->validationErrors[$model] =& $object->validationErrors;
+			return $this->validationErrors[$model];
+		} elseif ($key === 'errors' && isset($this->validationErrors[$model])) {
+			return $this->validationErrors[$model];
+		}
+
+		if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
+			$validates = array();
+			if (!empty($object->validate)) {
+				foreach ($object->validate as $validateField => $validateProperties) {
+					if ($this->_isRequiredField($validateProperties)) {
+						$validates[$validateField] = true;
 					}
 				}
-				if (empty($field)) {
-					return $this->fieldset[$model]['fields'];
-				} elseif (isset($this->fieldset[$model]['fields'][$field])) {
-					return $this->fieldset[$model]['fields'][$field];
-				} else {
-					return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
-				}
 			}
+			$this->fieldset[$model]['validates'] = $validates;
+		}
 
-			if ($key === 'errors' && !isset($this->validationErrors[$model])) {
-				$this->validationErrors[$model] =& $object->validationErrors;
-				return $this->validationErrors[$model];
-			} elseif ($key === 'errors' && isset($this->validationErrors[$model])) {
-				return $this->validationErrors[$model];
+		if ($key === 'validates') {
+			if (empty($field)) {
+				return $this->fieldset[$model]['validates'];
+			} else {
+				return isset($this->fieldset[$model]['validates'][$field]) ?
+					$this->fieldset[$model]['validates'] : null;
 			}
-
-			if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
-				$validates = array();
-				if (!empty($object->validate)) {
-					foreach ($object->validate as $validateField => $validateProperties) {
-						if ($this->_isRequiredField($validateProperties)) {
-							$validates[$validateField] = true;
-						}
-					}
-				}
-				$this->fieldset[$model]['validates'] = $validates;
-			}
-
-			if ($key === 'validates') {
-				if (empty($field)) {
-					return $this->fieldset[$model]['validates'];
-				} else {
-					return isset($this->fieldset[$model]['validates'][$field]) ?
-						$this->fieldset[$model]['validates'] : null;
-				}
-			}
+		}
 	}
 
 /**
@@ -675,9 +669,9 @@ class FormHelper extends AppHelper {
 			$tmp = array();
 			foreach ($error as &$e) {
 				if (isset($text[$e])) {
-					$tmp []= $text[$e];
+					$tmp[] = $text[$e];
 				} else {
-					$tmp []= $e;
+					$tmp[] = $e;
 				}
 			}
 			$text = $tmp;
@@ -702,16 +696,16 @@ class FormHelper extends AppHelper {
 				$listParams = array();
 				if (isset($options['listOptions'])) {
 					if (is_string($options['listOptions'])) {
-						$listParams []= $options['listOptions'];
+						$listParams[] = $options['listOptions'];
 					} else {
 						if (isset($options['listOptions']['itemOptions'])) {
-							$listParams []= $options['listOptions']['itemOptions'];
+							$listParams[] = $options['listOptions']['itemOptions'];
 							unset($options['listOptions']['itemOptions']);
 						} else {
-							$listParams []= array();
+							$listParams[] = array();
 						}
 						if (isset($options['listOptions']['tag'])) {
-							$listParams []= $options['listOptions']['tag'];
+							$listParams[] = $options['listOptions']['tag'];
 							unset($options['listOptions']['tag']);
 						}
 						array_unshift($listParams, $options['listOptions']);
@@ -1028,7 +1022,7 @@ class FormHelper extends AppHelper {
 			$options['maxlength'] = $fieldDef['length'];
 		}
 		if ($autoLength && $fieldDef['type'] == 'float') {
-			$options['maxlength'] = array_sum(explode(',', $fieldDef['length']))+1;
+			$options['maxlength'] = array_sum(explode(',', $fieldDef['length'])) + 1;
 		}
 
 		$divOptions = array();
@@ -1999,7 +1993,7 @@ class FormHelper extends AppHelper {
 			$attributes['value'] = null;
 		}
 		$defaults = array('monthNames' => true);
-		$attributes = array_merge($defaults, (array) $attributes);
+		$attributes = array_merge($defaults, (array)$attributes);
 		$monthNames = $attributes['monthNames'];
 		unset($attributes['monthNames']);
 
@@ -2229,7 +2223,7 @@ class FormHelper extends AppHelper {
 			'minYear' => null, 'maxYear' => null, 'separator' => '-',
 			'interval' => 1, 'monthNames' => true
 		);
-		$attributes = array_merge($defaults, (array) $attributes);
+		$attributes = array_merge($defaults, (array)$attributes);
 		if (isset($attributes['minuteInterval'])) {
 			$attributes['interval'] = $attributes['minuteInterval'];
 			unset($attributes['minuteInterval']);
@@ -2592,4 +2586,5 @@ class FormHelper extends AppHelper {
 		$this->_secure($secure, $fieldName);
 		return $result;
 	}
+
 }

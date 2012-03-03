@@ -58,21 +58,13 @@ App::uses('CakeRequest', 'Network');
  * @package       Cake.View
  */
 class MediaView extends View {
+
 /**
  * Indicates whether response gzip compression was enabled for this class
  *
  * @var boolean
  */
 	protected  $_compressionEnabled = false;
-
-/**
- * Constructor
- *
- * @param Controller $controller The controller with viewVars
- */
-	public function __construct(Controller $controller = null) {
-		parent::__construct($controller);
-	}
 
 /**
  * Display or download the given file
@@ -242,4 +234,5 @@ class MediaView extends View {
 		@flush();
 		@ob_flush();
 	}
+
 }
