@@ -52,11 +52,11 @@ class CakeTime {
  */
 	public function __set($name, $value) {
 		switch ($name) {
-		case 'niceFormat':
-			self::${$name} = $value;
-			break;
-		default:
-			break;
+			case 'niceFormat':
+				self::${$name} = $value;
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -67,12 +67,12 @@ class CakeTime {
  */
 	public function __get($name) {
 		switch ($name) {
-		case 'niceFormat':
-			return self::${$name};
-			break;
-		default:
-			return null;
-			break;
+			case 'niceFormat':
+				return self::${$name};
+				break;
+			default:
+				return null;
+				break;
 		}
 	}
 
@@ -140,13 +140,13 @@ class CakeTime {
 			case 'h':
 				$months = __dc('cake', 'abmon', 5);
 				if (is_array($months)) {
-					return $months[date('n', self::$_time) -1];
+					return $months[date('n', self::$_time) - 1];
 				}
 				return '%b';
 			case 'B':
 				$months = __dc('cake', 'mon', 5);
 				if (is_array($months)) {
-					return $months[date('n', self::$_time) -1];
+					return $months[date('n', self::$_time) - 1];
 				}
 				break;
 			case 'n':
@@ -202,7 +202,7 @@ class CakeTime {
 	public static function convert($serverTime, $userOffset) {
 		$serverOffset = self::serverOffset();
 		$gmtTime = $serverTime - $serverOffset;
-		$userTime = $gmtTime + $userOffset * (60*60);
+		$userTime = $gmtTime + $userOffset * (60 * 60);
 		return $userTime;
 	}
 
@@ -378,7 +378,7 @@ class CakeTime {
  */
 	public static function isThisYear($dateString, $userOffset = null) {
 		$date = self::fromString($dateString, $userOffset);
-		return  date('Y', $date) == date('Y', time());
+		return date('Y', $date) == date('Y', time());
 	}
 
 /**
@@ -429,16 +429,16 @@ class CakeTime {
 
 			switch ($date) {
 				case 1:
-					$date = array($year.'-01-01', $year.'-03-31');
+					$date = array($year . '-01-01', $year . '-03-31');
 					break;
 				case 2:
-					$date = array($year.'-04-01', $year.'-06-30');
+					$date = array($year . '-04-01', $year . '-06-30');
 					break;
 				case 3:
-					$date = array($year.'-07-01', $year.'-09-30');
+					$date = array($year . '-07-01', $year . '-09-30');
 					break;
 				case 4:
-					$date = array($year.'-10-01', $year.'-12-31');
+					$date = array($year . '-10-01', $year . '-12-31');
 					break;
 			}
 		}
@@ -485,8 +485,8 @@ class CakeTime {
 			if ($userOffset == 0) {
 				$timezone = '+0000';
 			} else {
-				$hours = (int) floor(abs($userOffset));
-				$minutes = (int) (fmod(abs($userOffset), $hours) * 60);
+				$hours = (int)floor(abs($userOffset));
+				$minutes = (int)(fmod(abs($userOffset), $hours) * 60);
 				$timezone = ($userOffset < 0 ? '-' : '+') . str_pad($hours, 2, '0', STR_PAD_LEFT) . str_pad($minutes, 2, '0', STR_PAD_LEFT);
 			}
 			return date('D, d M Y H:i:s', $date) . ' ' . $timezone;
@@ -795,4 +795,5 @@ class CakeTime {
 		}
 		return $format;
 	}
+
 }

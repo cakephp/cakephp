@@ -19,6 +19,7 @@
  * @package       Cake.Core
  */
 interface ConfigReaderInterface {
+
 /**
  * Read method is used for reading configuration information from sources.
  * These sources can either be static resources like files, or dynamic ones like
@@ -28,4 +29,5 @@ interface ConfigReaderInterface {
  * @return array An array of data to merge into the runtime configuration
  */
 	public function read($key);
+
 }
