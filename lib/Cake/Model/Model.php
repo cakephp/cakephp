@@ -699,6 +699,8 @@ class Model extends Object implements CakeEventListener {
 			}
 			$this->_mergeVars($merge, 'AppModel');
 		}
+		$this->_mergeVars(array('findMethods'), 'Model');
+
 		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
