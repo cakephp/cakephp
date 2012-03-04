@@ -73,8 +73,12 @@ class FileTest extends CakeTestCase {
 
 		$result = $this->File->info();
 		$expecting = array(
-			'dirname' => dirname(__FILE__), 'basename' => basename(__FILE__),
-			'extension' => 'php', 'filename' => 'FileTest'
+			'dirname' => dirname(__FILE__),
+			'basename' => basename(__FILE__),
+			'extension' => 'php',
+			'filename' =>'FileTest',
+			'filesize' => filesize($file),
+			'mime' => 'text/x-php'
 		);
 		$this->assertEquals($expecting, $result);
 
@@ -232,11 +236,11 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
- * testOpeningNonExistantFileCreatesIt method
+ * testOpeningNonExistentFileCreatesIt method
  *
  * @return void
  */
-	public function testOpeningNonExistantFileCreatesIt() {
+	public function testOpeningNonExistentFileCreatesIt() {
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertEquals('', $someFile->read());
@@ -423,14 +427,14 @@ class FileTest extends CakeTestCase {
  *
  * @return void
  */
-	function testDeleteAfterRead() {
+	public function testDeleteAfterRead() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
 		}
 		if (!file_exists($tmpFile)) {
 			touch($tmpFile);
 		}
-		$File =& new File($tmpFile);
+		$File = new File($tmpFile);
 		$File->read();
 		$this->assertTrue($File->delete());
 	}
@@ -464,12 +468,23 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
+ * Test mime()
+ *
+ * @return void
+ */
+	public function testMime() {
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$file = new File($path);
+		$this->assertEquals('image/gif', $file->mime());
+	}
+
+/**
  * getTmpFile method
  *
  * @param bool $paintSkip
  * @return void
  */
-	function _getTmpFile($paintSkip = true) {
+	protected function _getTmpFile($paintSkip = true) {
 		$tmpFile = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;

@@ -77,6 +77,13 @@ class App {
 	const PREPEND = 'prepend';
 
 /**
+ * Register package
+ *
+ * @constant REGISTER
+ */
+	const REGISTER = 'register';
+
+/**
  * Reset paths instead of merging
  *
  * @constant RESET
@@ -169,6 +176,7 @@ class App {
 		'libs' => 'Lib',
 		'vendors' => 'Vendor',
 		'plugins' => 'Plugin',
+		'locales' => 'Locale'
 	);
 
 /**
@@ -215,13 +223,12 @@ class App {
 		if (!empty($plugin)) {
 			$path = array();
 			$pluginPath = self::pluginPath($plugin);
-			$packageFormat= self::_packageFormat();
+			$packageFormat = self::_packageFormat();
 			if (!empty($packageFormat[$type])) {
 				foreach ($packageFormat[$type] as $f) {
 					$path[] = sprintf($f, $pluginPath);
 				}
 			}
-			$path[] = $pluginPath . 'Lib' . DS . $type . DS;
 			return $path;
 		}
 
@@ -283,6 +290,24 @@ class App {
 		}
 
 		$packageFormat = self::_packageFormat();
+
+		if ($mode === App::REGISTER) {
+			if (empty($paths)) {
+				self::$_packageFormat = null;
+				$packageFormat = self::_packageFormat();
+			} else {
+				foreach ($paths as $package => $formats) {
+					if (!empty($packageFormat[$package])) {
+						$formats = array_merge($packageFormat[$package], $formats);
+					}
+
+					$packageFormat[$package] = array_values(array_unique($formats));
+				}
+
+				self::$_packageFormat = $packageFormat;
+				$paths = array();
+			}
+		}
 
 		$defaults = array();
 		foreach ($packageFormat as $package => $format) {
@@ -347,7 +372,7 @@ class App {
 		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
 		foreach (self::$_packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
-				return $path . $themeDir . DS ;
+				return $path . $themeDir . DS;
 			}
 		}
 		return self::$_packages['View'][0] . $themeDir . DS;
@@ -437,7 +462,7 @@ class App {
 					foreach ($files as $file) {
 						$fileName = basename($file);
 						if (!$file->isDot() && $fileName[0] !== '.') {
-							$isDir = $file->isDir() ;
+							$isDir = $file->isDir();
 							if ($isDir && $includeDirectories) {
 								$objects[] = $fileName;
 							} elseif (!$includeDirectories && !$isDir) {
@@ -511,34 +536,19 @@ class App {
 
 		if (empty($plugin)) {
 			$appLibs = empty(self::$_packages['Lib']) ? APPLIBS : current(self::$_packages['Lib']);
-			$paths[] =  $appLibs . $package . DS;
+			$paths[] = $appLibs . $package . DS;
+			$paths[] = APP . $package . DS;
 			$paths[] = CAKE . $package . DS;
+		} else {
+			$pluginPath = self::pluginPath($plugin);
+			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
+			$paths[] = $pluginPath . $package . DS;
 		}
-
 		foreach ($paths as $path) {
 			$file = $path . $className . '.php';
 			if (file_exists($file)) {
 				self::_map($file, $className);
 				return include $file;
-			}
-		}
-
-		// To help apps migrate to 2.0 old style file names are allowed
-		// if the trailing segment is one of the types that changed, alternates will be tried.
-		foreach ($paths as $path) {
-			$underscored = Inflector::underscore($className);
-			$tries = array($path . $underscored . '.php');
-			$parts = explode('_', $underscored);
-			$numParts = count($parts);
-			if ($numParts > 1 && in_array($parts[$numParts - 1], array('behavior', 'helper', 'component'))) {
-				array_pop($parts);
-				$tries[] = $path . implode('_', $parts) . '.php';
-			}
-			foreach ($tries as $file) {
-				if (file_exists($file)) {
-					self::_map($file, $className);
-					return include $file;
-				}
 			}
 		}
 
@@ -642,7 +652,7 @@ class App {
 	protected static function _loadClass($name, $plugin, $type, $originalType, $parent) {
 		if ($type == 'Console/Command' && $name == 'Shell') {
 			$type = 'Console';
-		} else if (isset(self::$types[$originalType]['suffix'])) {
+		} elseif (isset(self::$types[$originalType]['suffix'])) {
 			$suffix = self::$types[$originalType]['suffix'];
 			$name .= ($suffix == $name) ? '' : $suffix;
 		}
@@ -681,7 +691,7 @@ class App {
 		$mapped = self::_mapped($name, $plugin);
 		if ($mapped) {
 			$file = $mapped;
-		} else if (!empty($search)) {
+		} elseif (!empty($search)) {
 			foreach ($search as $path) {
 				$found = false;
 				if (file_exists($path . $file)) {
@@ -700,7 +710,7 @@ class App {
 			if ($return) {
 				return $returnValue;
 			}
-			return (bool) $returnValue;
+			return (bool)$returnValue;
 		}
 		return false;
 	}
@@ -716,7 +726,7 @@ class App {
  */
 	protected static function _loadVendor($name, $plugin, $file, $ext) {
 		if ($mapped = self::_mapped($name, $plugin)) {
-			return (bool) include_once($mapped);
+			return (bool)include_once $mapped;
 		}
 		$fileTries = array();
 		$paths = ($plugin) ? App::path('vendors', $plugin) : App::path('vendors');
@@ -734,7 +744,7 @@ class App {
 			foreach ($paths as $path) {
 				if (file_exists($path . $file)) {
 					self::_map($path . $file, $name, $plugin);
-					return (bool) include($path . $file);
+					return (bool)include $path . $file;
 				}
 			}
 		}
@@ -801,73 +811,59 @@ class App {
 		if (empty(self::$_packageFormat)) {
 			self::$_packageFormat = array(
 				'Model' => array(
-					'%s' . 'Model' . DS,
-					'%s' . 'models' . DS
+					'%s' . 'Model' . DS
 				),
 				'Model/Behavior' => array(
-					'%s' . 'Model' . DS . 'Behavior' . DS,
-					'%s' . 'models' . DS . 'behaviors' . DS
+					'%s' . 'Model' . DS . 'Behavior' . DS
 				),
 				'Model/Datasource' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS,
-					'%s' . 'models' . DS . 'datasources' . DS
+					'%s' . 'Model' . DS . 'Datasource' . DS
 				),
 				'Model/Datasource/Database' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS,
-					'%s' . 'models' . DS . 'datasources' . DS . 'database' . DS
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
 				),
 				'Model/Datasource/Session' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS,
-					'%s' . 'models' . DS . 'datasources' . DS . 'session' . DS
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
 				),
 				'Controller' => array(
-					'%s' . 'Controller' . DS,
-					'%s' . 'controllers' . DS
+					'%s' . 'Controller' . DS
 				),
 				'Controller/Component' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS,
-					'%s' . 'controllers' . DS . 'components' . DS
+					'%s' . 'Controller' . DS . 'Component' . DS
 				),
 				'Controller/Component/Auth' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS,
-					'%s' . 'controllers' . DS . 'components' . DS . 'auth' . DS
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
+				),
+				'Controller/Component/Acl' => array(
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
 				),
 				'View' => array(
-					'%s' . 'View' . DS,
-					'%s' . 'views' . DS
+					'%s' . 'View' . DS
 				),
 				'View/Helper' => array(
-					'%s' . 'View' . DS . 'Helper' . DS,
-					'%s' . 'views' . DS . 'helpers' . DS
+					'%s' . 'View' . DS . 'Helper' . DS
 				),
 				'Console' => array(
-					'%s' . 'Console' . DS,
-					'%s' . 'console' . DS
+					'%s' . 'Console' . DS
 				),
 				'Console/Command' => array(
-					'%s' . 'Console' . DS . 'Command' . DS,
-					'%s' . 'console' . DS . 'shells' . DS,
+					'%s' . 'Console' . DS . 'Command' . DS
 				),
 				'Console/Command/Task' => array(
-					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS,
-					'%s' . 'console' . DS . 'shells' . DS . 'tasks' . DS
+					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS
 				),
 				'Lib' => array(
-					'%s' . 'Lib' . DS,
-					'%s' . 'libs' . DS
+					'%s' . 'Lib' . DS
 				),
-				'locales' => array(
-					'%s' . 'Locale' . DS,
-					'%s' . 'locale' . DS
+				'Locale' => array(
+					'%s' . 'Locale' . DS
 				),
 				'Vendor' => array(
 					'%s' . 'Vendor' . DS,
 					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
-					VENDORS
 				),
 				'Plugin' => array(
 					APP . 'Plugin' . DS,
-					APP . 'plugins' . DS,
 					dirname(dirname(CAKE)) . DS . 'plugins' . DS
 				)
 			);
@@ -891,4 +887,5 @@ class App {
 			Cache::write('object_map', self::$_objects, '_cake_core_');
 		}
 	}
+
 }

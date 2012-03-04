@@ -135,7 +135,7 @@ class PluginTask extends AppShell {
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n\n";
-			$this->createFile($this->path . $plugin. DS . 'Controller' . DS . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$modelFileName = $plugin . 'AppModel.php';
 
@@ -167,7 +167,7 @@ class PluginTask extends AppShell {
 		$max = count($pathOptions);
 		while (!$valid) {
 			foreach ($pathOptions as $i => $option) {
-				$this->out($i + 1 .'. ' . $option);
+				$this->out($i + 1 . '. ' . $option);
 			}
 			$prompt = __d('cake_console', 'Choose a plugin path from the paths above.');
 			$choice = $this->in($prompt);
@@ -191,7 +191,6 @@ class PluginTask extends AppShell {
 		))->addArgument('name', array(
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
 		));
-
 	}
 
 }

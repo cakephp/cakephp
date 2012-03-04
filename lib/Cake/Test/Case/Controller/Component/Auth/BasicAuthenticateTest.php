@@ -47,6 +47,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User',
 			'realm' => 'localhost',
+			'recursive' => 0
 		));
 
 		$password = Security::hash('password', null, true);

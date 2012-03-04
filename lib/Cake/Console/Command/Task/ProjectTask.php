@@ -54,7 +54,6 @@ class ProjectTask extends AppShell {
 			$project = $this->in($prompt, null, APP . 'myapp');
 		}
 
-
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
 			$project = $_SERVER['PWD'] . DS . $project;
 		}
@@ -112,7 +111,7 @@ class ProjectTask extends AppShell {
 				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
 				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
 			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
+				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' . DS .'index.php'));
 				$success = false;
 			}
 			if ($success && $hardCode) {
@@ -153,7 +152,6 @@ class ProjectTask extends AppShell {
  * Looks for a skeleton template of a Cake application,
  * and if not found asks the user for a path. When there is a path
  * this method will make a deep copy of the skeleton to the project directory.
- * A default home page will be added, and the tmp file storage will be chmod'ed to 0777.
  *
  * @param string $path Project path
  * @param string $skel Path to copy from
@@ -232,8 +230,8 @@ class ProjectTask extends AppShell {
 		$app = basename($dir);
 		$path = $dir . 'View' . DS . 'Pages' . DS;
 		$source = CAKE . 'Console' . DS . 'Templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
-		include($source);
-		return $this->createFile($path.'home.ctp', $output);
+		include $source;
+		return $this->createFile($path . 'home.ctp', $output);
 	}
 
 /**
@@ -283,7 +281,7 @@ class ProjectTask extends AppShell {
  *
  * @param string $path Project path
  * @return boolean Success
-	 */
+ */
 	public function securityCipherSeed($path) {
 		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
@@ -425,6 +423,7 @@ class ProjectTask extends AppShell {
 			)->addArgument('name', array(
 				'help' => __d('cake_console', 'Application directory to make, if it starts with "/" the path is absolute.')
 			))->addOption('empty', array(
+				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',

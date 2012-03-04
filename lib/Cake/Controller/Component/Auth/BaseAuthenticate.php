@@ -29,6 +29,7 @@ abstract class BaseAuthenticate {
  * - `userModel` The model name of the User, defaults to User.
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `array('User.is_active' => 1).`
+ * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
  *
  * @var array
  */
@@ -38,7 +39,8 @@ abstract class BaseAuthenticate {
 			'password' => 'password'
 		),
 		'userModel' => 'User',
-		'scope' => array()
+		'scope' => array(),
+		'recursive' => 0
 	);
 
 /**
@@ -80,7 +82,7 @@ abstract class BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => 0
+			'recursive' => $this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;
@@ -119,7 +121,8 @@ abstract class BaseAuthenticate {
  * @param array $user The user about to be logged out.
  * @return void
  */
-	public function logout($user) { }
+	public function logout($user) {
+	}
 
 /**
  * Get a user based on information in the request.  Primarily used by stateless authentication
@@ -131,4 +134,5 @@ abstract class BaseAuthenticate {
 	public function getUser($request) {
 		return false;
 	}
+
 }

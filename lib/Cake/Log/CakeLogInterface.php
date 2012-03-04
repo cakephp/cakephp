@@ -24,6 +24,7 @@
  * @package       Cake.Log
  */
 interface CakeLogInterface {
+
 /**
  * Write method to handle writes being made to the Logger
  *
@@ -32,4 +33,5 @@ interface CakeLogInterface {
  * @return void
  */
 	public function write($type, $message);
+
 }

@@ -291,9 +291,16 @@ class File {
 	}
 
 /**
- * Returns the File info.
+ * Returns the File info as an array with the following keys:
  *
- * @return string The File extension
+ * - dirname
+ * - basename
+ * - extension
+ * - filename
+ * - filesize
+ * - mime
+ *
+ * @return array File information.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::info
  */
 	public function info() {
@@ -302,6 +309,12 @@ class File {
 		}
 		if (!isset($this->info['filename'])) {
 			$this->info['filename'] = $this->name();
+		}
+		if (!isset($this->info['filesize'])) {
+			$this->info['filesize'] = $this->size();
+		}
+		if (!isset($this->info['mime'])) {
+			$this->info['mime'] = $this->mime();
 		}
 		return $this->info;
 	}
@@ -515,7 +528,7 @@ class File {
  * @return Folder Current folder
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::Folder
  */
-	public function &Folder() {
+	public function &folder() {
 		return $this->Folder;
 	}
 
@@ -533,4 +546,25 @@ class File {
 		}
 		return copy($this->path, $dest);
 	}
+
+/**
+ * Get the mime type of the file.  Uses the finfo extension if 
+ * its available, otherwise falls back to mime_content_type
+ *
+ * @return false|string The mimetype of the file, or false if reading fails.
+ */
+	public function mime() {
+		if (!$this->exists()) {
+			return false;
+		}
+		if (function_exists('finfo_open')) {
+			$finfo = finfo_open(FILEINFO_MIME);
+			list($type, $charset) = explode(';', finfo_file($finfo, $this->pwd()));
+			return $type;
+		} elseif (function_exists('mime_content_type')) {
+			return mime_content_type($this->pwd());
+		}
+		return false;
+	}
+
 }

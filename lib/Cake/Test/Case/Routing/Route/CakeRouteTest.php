@@ -509,7 +509,29 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
- * test numerically indexed defaults, get appeneded to pass
+ * Test that :key elements are urldecoded
+ *
+ * @return void
+ */
+	public function testParseUrlDecodeElements() {
+		$route = new Cakeroute(
+			'/:controller/:slug',
+			array('action' => 'view')
+		);
+		$route->compile();
+		$result = $route->parse('/posts/%E2%88%82%E2%88%82');
+		$this->assertEquals($result['controller'], 'posts');
+		$this->assertEquals($result['action'], 'view');
+		$this->assertEquals($result['slug'], '∂∂');
+
+		$result = $route->parse('/posts/∂∂');
+		$this->assertEquals($result['controller'], 'posts');
+		$this->assertEquals($result['action'], 'view');
+		$this->assertEquals($result['slug'], '∂∂');
+	}
+
+/**
+ * test numerically indexed defaults, get appended to pass
  *
  * @return void
  */
@@ -808,5 +830,31 @@ class CakeRouteTest extends CakeTestCase {
 			'named' => array()
 		);
 		$this->assertEquals($expected, $result, 'Slug should have moved');
+	}
+
+/**
+ * Test the /** special type on parsing.
+ *
+ * @return void
+ */
+	public function testParseTrailing() {
+		$route = new CakeRoute('/:controller/:action/**');
+		$result = $route->parse('/posts/index/1/2/3/foo:bar');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('1/2/3/foo:bar'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $route->parse('/posts/index/http://example.com');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('http://example.com'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
 	}
 }

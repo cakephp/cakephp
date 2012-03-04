@@ -71,13 +71,6 @@ class CakeSession {
 	public static $lastError = null;
 
 /**
- * 'Security.level' setting, "high", "medium", or "low".
- *
- * @var string
- */
-	public static $security = null;
-
-/**
  * Start time for this session.
  *
  * @var integer
@@ -132,10 +125,9 @@ class CakeSession {
  * Constructor.
  *
  * @param string $base The base path for the Session
- * @param boolean $start Should session be started right now
  * @return void
  */
-	public static function init($base = null, $start = true) {
+	public static function init($base = null) {
 		self::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
@@ -188,6 +180,7 @@ class CakeSession {
 		if (self::started()) {
 			return true;
 		}
+		CakeSession::init();
 		$id = self::id();
 		session_write_close();
 		self::_configureSession();
@@ -348,6 +341,9 @@ class CakeSession {
 	public static function userAgent($userAgent = null) {
 		if ($userAgent) {
 			self::$_userAgent = $userAgent;
+		}
+		if (empty(self::$_userAgent)) {
+			CakeSession::init(self::$path);
 		}
 		return self::$_userAgent;
 	}
@@ -687,64 +683,3 @@ class CakeSession {
 		self::$lastError = $errorNumber;
 	}
 }
-
-
-/**
- * Interface for Session handlers.  Custom session handler classes should implement
- * this interface as it allows CakeSession know how to map methods to session_set_save_handler()
- *
- * @package       Cake.Model.Datasource
- */
-interface CakeSessionHandlerInterface {
-/**
- * Method called on open of a session.
- *
- * @return boolean Success
- */
-	public function open();
-
-/**
- * Method called on close of a session.
- *
- * @return boolean Success
- */
-	public function close();
-
-/**
- * Method used to read from a session.
- *
- * @param mixed $id The key of the value to read
- * @return mixed The value of the key or false if it does not exist
- */
-	public function read($id);
-
-/**
- * Helper function called on write for sessions.
- *
- * @param integer $id ID that uniquely identifies session in database
- * @param mixed $data The value of the data to be saved.
- * @return boolean True for successful write, false otherwise.
- */
-	public function write($id, $data);
-
-/**
- * Method called on the destruction of a session.
- *
- * @param integer $id ID that uniquely identifies session in database
- * @return boolean True for successful delete, false otherwise.
- */
-	public function destroy($id);
-
-/**
- * Run the Garbage collection on the session storage.  This method should vacuum all
- * expired or dead sessions.
- *
- * @param integer $expires Timestamp (defaults to current time)
- * @return boolean Success
- */
-	public function gc($expires = null);
-}
-
-
-// Initialize the session
-CakeSession::init();

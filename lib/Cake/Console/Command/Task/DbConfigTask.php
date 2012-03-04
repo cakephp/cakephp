@@ -100,7 +100,7 @@ class DbConfigTask extends AppShell {
 				if (preg_match('/[^a-z0-9_]/i', $name)) {
 					$name = '';
 					$this->out(__d('cake_console', 'The name may only contain unaccented latin characters, numbers or underscores'));
-				} else if (preg_match('/^[^a-z_]/i', $name)) {
+				} elseif (preg_match('/^[^a-z_]/i', $name)) {
 					$name = '';
 					$this->out(__d('cake_console', 'The name must start with an unaccented latin character or an underscore'));
 				}
@@ -364,7 +364,7 @@ class DbConfigTask extends AppShell {
 		$connections = array_keys($configs);
 
 		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') .':', $connections, $useDbConfig);
+			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') . ':', $connections, $useDbConfig);
 		}
 		return $useDbConfig;
 	}
@@ -380,4 +380,5 @@ class DbConfigTask extends AppShell {
 				__d('cake_console', 'Bake new database configuration settings.')
 			);
 	}
+
 }

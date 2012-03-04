@@ -224,4 +224,5 @@ class ErrorHandler {
 		}
 		return array($error, $log);
 	}
+
 }

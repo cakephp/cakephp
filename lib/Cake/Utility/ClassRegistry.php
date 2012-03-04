@@ -1,11 +1,5 @@
 <?php
 /**
- * Class collections.
- *
- * A repository for class objects, each registered with a key.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +12,13 @@
  * @since         CakePHP(tm) v 0.9.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+/**
+ * Included libraries.
+ */
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Class Collections.
@@ -106,6 +107,7 @@ class ClassRegistry {
 		}
 		$defaults = isset($_this->_config['Model']) ? $_this->_config['Model'] : array();
 		$count = count($objects);
+		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
@@ -128,8 +130,6 @@ class ClassRegistry {
 					return $model;
 				}
 
-				App::uses('Model', 'Model');
-				App::uses('AppModel', 'Model');
 				App::uses($plugin . 'AppModel', $pluginPath . 'Model');
 				App::uses($class, $pluginPath . 'Model');
 
@@ -137,6 +137,20 @@ class ClassRegistry {
 					$reflection = new ReflectionClass($class);
 					if ($reflection->isAbstract() || $reflection->isInterface()) {
 						throw new CakeException(__d('cake_dev', 'Cannot create instance of %s, as it is abstract or is an interface', $class));
+					}
+					$testing = isset($settings['testing']) ? $settings['testing'] : false;
+					if ($testing) {
+						$settings['ds'] = 'test';
+						$defaultProperties = $reflection->getDefaultProperties();
+						if (isset($defaultProperties['useDbConfig'])) {
+							$useDbConfig = $defaultProperties['useDbConfig'];
+							if (in_array('test_' . $useDbConfig, $availableDs)) {
+								$useDbConfig = 'test_' . $useDbConfig;
+							}
+							if (strpos($useDbConfig, 'test') === 0) {
+								$settings['ds'] = $useDbConfig;
+							}
+						}
 					}
 					if ($reflection->getConstructor()) {
 						$instance = $reflection->newInstance($settings);
@@ -277,6 +291,9 @@ class ClassRegistry {
 		} elseif (empty($param) && is_string($type)) {
 			return isset($_this->_config[$type]) ? $_this->_config[$type] : null;
 		}
+		if (isset($_this->_config[$type]['testing'])) {
+			$param['testing'] = true;
+		}
 		$_this->_config[$type] = $param;
 	}
 
@@ -347,4 +364,5 @@ class ClassRegistry {
 		$_this->_objects = array();
 		$_this->_map = array();
 	}
+
 }

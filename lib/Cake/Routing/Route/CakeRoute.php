@@ -151,7 +151,10 @@ class CakeRoute {
 			}
 			$names[] = $name;
 		}
-		if (preg_match('#\/\*$#', $route)) {
+		if (preg_match('#\/\*\*$#', $route)) {
+			$parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
+			$this->_greedy = true;
+		} elseif (preg_match('#\/\*$#', $route)) {
 			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
 			$this->_greedy = true;
 		}
@@ -182,6 +185,7 @@ class CakeRoute {
 			return false;
 		}
 		foreach ($this->defaults as $key => $val) {
+			$key = (string)$key;
 			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
 				if (isset($this->_headerMap[$header[1]])) {
 					$header = $this->_headerMap[$header[1]];
@@ -222,11 +226,22 @@ class CakeRoute {
 			$route[$key] = $value;
 		}
 
+		foreach ($this->keys as $key) {
+			if (isset($route[$key])) {
+				$route[$key] = rawurldecode($route[$key]);
+			}
+		}
+
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
 			$route['named'] = $named;
 			unset($route['_args_']);
+		}
+
+		if (isset($route['_trailing_'])) {
+			$route['pass'][] = $route['_trailing_'];
+			unset($route['_trailing_']);
 		}
 
 		// restructure 'pass' key route params

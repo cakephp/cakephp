@@ -1,9 +1,5 @@
 <?php
 /**
- * Base controller class.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,6 +20,9 @@ App::uses('CakeResponse', 'Network');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ComponentCollection', 'Controller');
 App::uses('View', 'View');
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventListener', 'Event');
+App::uses('CakeEventManager', 'Event');
 
 /**
  * Application controller class for organization of business logic.
@@ -57,7 +56,7 @@ App::uses('View', 'View');
  * @property      SessionComponent $Session
  * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
-class Controller extends Object {
+class Controller extends Object implements CakeEventListener {
 
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.
@@ -72,13 +71,20 @@ class Controller extends Object {
  *
  * Example: `public $uses = array('Product', 'Post', 'Comment');`
  *
- * Can be set to array() to use no models.  Can be set to false to
- * use no models and prevent the merging of $uses with AppController
+ * Can be set to several values to express different options:
+ *
+ * - `true` Use the default inflected model name.
+ * - `array()` Use only models defined in the parent class.
+ * - `false` Use no models at all, do not merge with parent class either.
+ * - `array('Post', 'Comment')` Use only the Post and Comment models. Models
+ *   Will also be merged with the parent class.
+ *
+ * The default value is `true`.
  *
  * @var mixed A single name as a string or a list of names as an array.
  * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
-	public $uses = false;
+	public $uses = true;
 
 /**
  * An array containing the names of helpers this controller uses. The array elements should
@@ -134,7 +140,6 @@ class Controller extends Object {
  * @var array
  */
 	public $viewVars = array();
-
 
 /**
  * The name of the view file to render. The name specified
@@ -295,6 +300,14 @@ class Controller extends Object {
 	protected $_mergeParent = 'AppController';
 
 /**
+ * Instance of the CakeEventManager this controller is using
+ * to dispatch inner events.
+ *
+ * @var CakeEventManager
+ */
+	protected $_eventManager = null;
+
+/**
  * Constructor.
  *
  * @param CakeRequest $request Request object for this controller. Can be null for testing,
@@ -303,7 +316,7 @@ class Controller extends Object {
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
-			$this->name = substr(get_class($this), 0, strlen(get_class($this)) -10);
+			$this->name = substr(get_class($this), 0, strlen(get_class($this)) - 10);
 		}
 
 		if ($this->viewPath == null) {
@@ -458,7 +471,9 @@ class Controller extends Object {
  *
  * @param CakeRequest $request
  * @return mixed The resulting response.
- * @throws PrivateActionException, MissingActionException
+ * @throws PrivateActionException When actions are not public or prefixed by _
+ * @throws MissingActionException When actions are not defined and scaffolding is
+ *    not enabled.
  */
 	public function invokeAction(CakeRequest $request) {
 		try {
@@ -519,12 +534,16 @@ class Controller extends Object {
 	}
 
 /**
- * Merge components, helpers, and uses vars from Controller::$_mergeParent and PluginAppController.
+ * Merge components, helpers, and uses vars from 
+ * Controller::$_mergeParent and PluginAppController.
  *
  * @return void
  */
 	protected function _mergeControllerVars() {
 		$pluginController = $pluginDot = null;
+		$mergeParent = is_subclass_of($this, $this->_mergeParent);
+		$pluginVars = array();
+		$appVars = array();
 
 		if (!empty($this->plugin)) {
 			$pluginController = $this->plugin . 'AppController';
@@ -534,40 +553,74 @@ class Controller extends Object {
 			$pluginDot = $this->plugin . '.';
 		}
 
-		if ($pluginController && $this->plugin != null) {
+		if ($pluginController) {
 			$merge = array('components', 'helpers');
-			$appVars = get_class_vars($pluginController);
-			if (
-				($this->uses !== null || $this->uses !== false) &&
-				is_array($this->uses) && !empty($appVars['uses'])
-			) {
-				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
-			}
 			$this->_mergeVars($merge, $pluginController);
 		}
 
-		if (is_subclass_of($this, $this->_mergeParent) || !empty($pluginController)) {
+		if ($mergeParent || !empty($pluginController)) {
 			$appVars = get_class_vars($this->_mergeParent);
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
-
-			if ($uses == $this->uses && !empty($this->uses)) {
-				if (!in_array($pluginDot . $this->modelClass, $this->uses)) {
-					array_unshift($this->uses, $pluginDot . $this->modelClass);
-				} elseif ($this->uses[0] !== $pluginDot . $this->modelClass) {
-					$this->uses = array_flip($this->uses);
-					unset($this->uses[$pluginDot . $this->modelClass]);
-					$this->uses = array_flip($this->uses);
-					array_unshift($this->uses, $pluginDot . $this->modelClass);
-				}
-			} elseif (
-				($this->uses !== null || $this->uses !== false) &&
-				is_array($this->uses) && !empty($appVars['uses'])
-			) {
-				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
-			}
 			$this->_mergeVars($merge, $this->_mergeParent, true);
 		}
+
+		if ($this->uses === null) {
+			$this->uses = false;
+		}
+		if ($this->uses === true) {
+			$this->uses = array($pluginDot . $this->modelClass);
+		}
+		if (isset($appVars['uses']) && $appVars['uses'] === $this->uses) {
+			array_unshift($this->uses, $pluginDot . $this->modelClass);
+		}
+		if ($pluginController) {
+			$pluginVars = get_class_vars($pluginController);
+		}
+		if ($this->uses !== false) {
+			$this->_mergeUses($pluginVars);
+			$this->_mergeUses($appVars);
+		} else {
+			$this->uses = array();
+			$this->modelClass = '';
+		}
+	}
+
+/**
+ * Helper method for merging the $uses property together.
+ *
+ * Merges the elements not already in $this->uses into
+ * $this->uses.
+ *
+ * @param mixed $merge The data to merge in.
+ * @return void
+ */
+	protected function _mergeUses($merge) {
+		if (!isset($merge['uses'])) {
+			return;
+		}
+		if ($merge['uses'] === true) {
+			return;
+		}
+		$this->uses = array_merge(
+			$this->uses,
+			array_diff($merge['uses'], $this->uses)
+		);
+	}
+
+/**
+ * Returns a list of all events that will fire in the controller during it's lifecycle.
+ * You can override this function to add you own listener callbacks
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'Controller.initialize' => 'beforeFilter',
+			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
+			'Controller.shutdown' => 'afterFilter'
+		);
 	}
 
 /**
@@ -584,10 +637,26 @@ class Controller extends Object {
 		$this->_mergeControllerVars();
 		$this->Components->init($this);
 		if ($this->uses) {
-			$this->uses = (array) $this->uses;
+			$this->uses = (array)$this->uses;
 			list(, $this->modelClass) = pluginSplit(current($this->uses));
 		}
 		return true;
+	}
+
+/**
+ * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * You can use this instance to register any new listeners or callbacks to the
+ * controller events, or create your own events and trigger them at will.
+ *
+ * @return CakeEventManager
+ */
+	public function getEventManager() {
+		if (empty($this->_eventManager)) {
+			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager->attach($this->Components);
+			$this->_eventManager->attach($this);
+		}
+		return $this->_eventManager;
 	}
 
 /**
@@ -601,9 +670,8 @@ class Controller extends Object {
  * @return void
  */
 	public function startupProcess() {
-		$this->Components->trigger('initialize', array(&$this));
-		$this->beforeFilter();
-		$this->Components->trigger('startup', array(&$this));
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.initialize', $this));
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.startup', $this));
 	}
 
 /**
@@ -616,8 +684,7 @@ class Controller extends Object {
  * @return void
  */
 	public function shutdownProcess() {
-		$this->Components->trigger('shutdown', array(&$this));
-		$this->afterFilter();
+		$this->getEventManager()->dispatch(new CakeEvent('Controller.shutdown', $this));
 	}
 
 /**
@@ -658,7 +725,7 @@ class Controller extends Object {
 			$modelClass = $this->modelClass;
 		}
 
-		$this->uses = ($this->uses) ? $this->uses : array();
+		$this->uses = ($this->uses) ? (array)$this->uses : array();
 		if (!in_array($modelClass, $this->uses)) {
 			$this->uses[] = $modelClass;
 		}
@@ -691,21 +758,15 @@ class Controller extends Object {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$response = $this->Components->trigger(
-			'beforeRedirect',
-			array(&$this, $url, $status, $exit),
-			array('break' => true, 'breakOn' => false, 'collectReturn' => true)
-		);
+		$event = new CakeEvent('Controller.beforeRedirect', $this, array($url, $status, $exit));
+		//TODO: Remove the following line when the events are fully migrated to the CakeEventManager
+		list($event->break, $event->breakOn, $event->collectReturn) = array(true, false, true);
+		$this->getEventManager()->dispatch($event);
 
-		if ($response === false) {
+		if ($event->isStopped()) {
 			return;
 		}
-		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
-
-		$response = $this->beforeRedirect($url, $status, $exit);
-		if ($response === false) {
-			return;
-		}
+		$response = $event->result;
 		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
 		if (function_exists('session_write_close')) {
@@ -862,8 +923,19 @@ class Controller extends Object {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
-		$this->beforeRender();
-		$this->Components->trigger('beforeRender', array(&$this));
+		$event = new CakeEvent('Controller.beforeRender', $this);
+		$this->getEventManager()->dispatch($event);
+		if ($event->isStopped()) {
+			$this->autoRender = false;
+			return $this->response;
+		}
+
+		if (!empty($this->uses) && is_array($this->uses)) {
+			foreach ($this->uses as $model) {
+				list($plugin, $className) = pluginSplit($model);
+				$this->request->params['models'][$className] = compact('plugin', 'className');
+			}
+		}
 
 		$viewClass = $this->viewClass;
 		if ($this->viewClass != 'View') {
@@ -873,16 +945,6 @@ class Controller extends Object {
 		}
 
 		$View = new $viewClass($this);
-
-		if (!empty($this->uses)) {
-			foreach ($this->uses as $model) {
-				list($plugin, $className) = pluginSplit($model);
-				$this->request->params['models'][$className] = compact('plugin', 'className');
-			}
-		}
-		if (!empty($this->modelClass) && ($this->uses === false || $this->uses === array())) {
-			$this->request->params['models'][$this->modelClass] = array('plugin' => $this->plugin, 'className' => $this->modelClass);
-		}
 
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
@@ -997,10 +1059,10 @@ class Controller extends Object {
 				}
 				$fieldOp = strtoupper(trim($fieldOp));
 				if ($fieldOp === 'LIKE') {
-					$key = $key.' LIKE';
+					$key = $key . ' LIKE';
 					$value = '%' . $value . '%';
 				} elseif ($fieldOp && $fieldOp != '=') {
-					$key = $key.' ' . $fieldOp;
+					$key = $key . ' ' . $fieldOp;
 				}
 				$cond[$key] = $value;
 			}
@@ -1056,11 +1118,13 @@ class Controller extends Object {
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
- * @return boolean
+ * @return mixed
+ *   false to stop redirection event,
+ *   string controllers a new redirection url or
+ *   array with the keys url, status and exit to be used by the redirect method.
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect($url, $status = null, $exit = true) {
-		return true;
 	}
 
 /**

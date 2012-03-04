@@ -75,7 +75,8 @@ class Sqlserver extends DboSource {
 		'host' => 'localhost\SQLEXPRESS',
 		'login' => '',
 		'password' => '',
-		'database' => 'cake'
+		'database' => 'cake',
+		'schema' => '',
 	);
 
 /**
@@ -265,7 +266,7 @@ class Sqlserver extends DboSource {
  * @param boolean $quote
  * @return array
  */
-	public function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -688,7 +689,7 @@ class Sqlserver extends DboSource {
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
 				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
-			} else if (isset($value['unique']) && $value['unique']) {
+			} elseif (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {
@@ -745,7 +746,7 @@ class Sqlserver extends DboSource {
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_lastAffected = false;
-		if (strncasecmp($sql, 'SELECT', 6) == 0) {
+		if (strncasecmp($sql, 'SELECT', 6) == 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
 			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
 			return parent::_execute($sql, $params, $prepareOptions);
 		}
@@ -780,11 +781,19 @@ class Sqlserver extends DboSource {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table == $curTable) {
-				$t =  $this->fullTableName($curTable);
 				$out .= "IF OBJECT_ID('" . $this->fullTableName($curTable, false). "', 'U') IS NOT NULL DROP TABLE " .  $this->fullTableName($curTable) . ";\n";
 			}
 		}
 		return $out;
+	}
+
+/**
+ * Gets the schema name
+ *
+ * @return string The schema name
+ */
+	public function getSchemaName() {
+		return $this->config['schema'];
 	}
 
 }

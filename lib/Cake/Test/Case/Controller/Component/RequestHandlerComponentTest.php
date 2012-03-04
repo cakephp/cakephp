@@ -107,7 +107,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function _init() {
+	protected function _init() {
 		$request = new CakeRequest('controller_posts/index');
 		$response = new CakeResponse();
 		$this->Controller = new RequestHandlerTestController($request, $response);
@@ -189,7 +189,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 /**
  * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
- * and the application is configured to handle multiplate extensions
+ * and the application is configured to handle multiple extensions
  *
  * @return void
  */
@@ -203,7 +203,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
- * Test that RequestHandler does not set $this->ext when multple accepts are sent.
+ * Test that RequestHandler does not set $this->ext when multiple accepts are sent.
  *
  * @return void
  */
@@ -413,8 +413,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$this->RequestHandler->renderAs($this->Controller, 'xml', array('attachment' => 'myfile.xml'));
 
-		$expected = 'RequestHandlerTest' . DS . 'xml';
-		$this->assertEquals($expected, $this->Controller->viewPath);
+		$this->assertEquals('Xml', $this->Controller->viewClass);
 	}
 
 /**
@@ -429,7 +428,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->response->expects($this->at(1))->method('type')
 			->with('text/xml');
 
-		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'), array(&$this->Controller->Components));
 		$result = $this->RequestHandler->respondAs('json');
 		$this->assertTrue($result);
 		$result = $this->RequestHandler->respondAs('text/xml');
@@ -470,13 +468,13 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderAsCalledTwice() {
-		$this->RequestHandler->renderAs($this->Controller, 'xml');
-		$this->assertEquals($this->Controller->viewPath, 'RequestHandlerTest' . DS . 'xml');
-		$this->assertEquals($this->Controller->layoutPath, 'xml');
+		$this->RequestHandler->renderAs($this->Controller, 'print');
+		$this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewPath);
+		$this->assertEquals('print', $this->Controller->layoutPath);
 
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals($this->Controller->viewPath, 'RequestHandlerTest' . DS . 'js');
-		$this->assertEquals($this->Controller->layoutPath, 'js');
+		$this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewPath);
+		$this->assertEquals('js', $this->Controller->layoutPath);
 		$this->assertTrue(in_array('Js', $this->Controller->helpers));
 	}
 
@@ -714,7 +712,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testAjaxRedirectAsRequestAction() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
-		), true);
+		), App::RESET);
 
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$this->Controller->request = $this->getMock('CakeRequest');
@@ -743,7 +741,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testAjaxRedirectAsRequestActionStillRenderingLayout() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
-		), true);
+		), App::RESET);
 
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$this->Controller->request = $this->getMock('CakeRequest');
@@ -823,5 +821,61 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testAddInputTypeException() {
 		$this->RequestHandler->addInputType('csv', array('I am not callable'));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagStar() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something');
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$this->assertFalse($RequestHandler->beforeRender($this->Controller));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagExact() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something', true);
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$this->assertFalse($RequestHandler->beforeRender($this->Controller));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedByEtagAndTime() {
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->etag('something', true);
+		$RequestHandler->response->modified('2012-01-01 00:00:00');
+		$RequestHandler->response->expects($this->once())->method('notModified');
+		$this->assertFalse($RequestHandler->beforeRender($this->Controller));
+	}
+
+/**
+ * Test checkNotModified method
+ *
+ * @return void
+ **/
+	public function testCheckNotModifiedNoInfo() {
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response->expects($this->never())->method('notModified');
+		$this->assertNull($RequestHandler->beforeRender($this->Controller));
 	}
 }

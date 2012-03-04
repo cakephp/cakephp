@@ -24,6 +24,7 @@ App::uses('ObjectCollection', 'Utility');
  * @package       Cake.Console
  */
 class TaskCollection extends ObjectCollection {
+
 /**
  * Shell to use to set params to tasks.
  *
@@ -75,10 +76,6 @@ class TaskCollection extends ObjectCollection {
 		$this->_loaded[$name] = new $taskClass(
 			$this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
-		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable === true) {
-			$this->_enabled[] = $name;
-		}
 		return $this->_loaded[$name];
 	}
 

@@ -86,7 +86,7 @@ class FixtureTask extends BakeTask {
 			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10'),
 			'short' => 'r',
 			'boolean' => true
-		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));;
+		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
 
 /**
@@ -388,7 +388,7 @@ class FixtureTask extends BakeTask {
 				$condition = $this->in($prompt, null, 'WHERE 1=1');
 			}
 			$prompt = __d('cake_console', "How many records do you want to import?");
-			$recordCount =  $this->in($prompt, null, 10);
+			$recordCount = $this->in($prompt, null, 10);
 		} else {
 			$condition = 'WHERE 1=1';
 			$recordCount = (isset($this->params['count']) ? $this->params['count'] : 10);

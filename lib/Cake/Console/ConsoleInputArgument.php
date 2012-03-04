@@ -23,6 +23,7 @@
  * @package       Cake.Console
  */
 class ConsoleInputArgument {
+
 /**
  * Name of the argument.
  *
@@ -125,7 +126,7 @@ class ConsoleInputArgument {
  * @return boolean
  */
 	public function isRequired() {
-		return (bool) $this->_required;
+		return (bool)$this->_required;
 	}
 
 /**
@@ -165,4 +166,5 @@ class ConsoleInputArgument {
 		}
 		return $parent;
 	}
+
 }

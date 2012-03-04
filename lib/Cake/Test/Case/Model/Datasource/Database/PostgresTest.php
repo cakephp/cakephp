@@ -43,7 +43,7 @@ class DboPostgresTestDb extends Postgres {
  * @param mixed $sql
  * @return void
  */
-	function _execute($sql, $params = array(), $prepareOptions = array()) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}
@@ -344,7 +344,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testLocalizedFloats() {
-		$restore = setlocale(LC_ALL, null);
+		$restore = setlocale(LC_ALL, 0);
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');
@@ -567,7 +567,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testIndexGeneration() {
-		$name = $this->Dbo->fullTableName('index_test', false);
+		$name = $this->Dbo->fullTableName('index_test', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -580,7 +580,7 @@ class PostgresTest extends CakeTestCase {
 		$this->Dbo->query('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 
-		$name = $this->Dbo->fullTableName('index_test_2', false);
+		$name = $this->Dbo->fullTableName('index_test_2', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
@@ -757,7 +757,7 @@ class PostgresTest extends CakeTestCase {
  *
  * @return void
  */
-	function testVirtualFieldAsAConstant() {
+	public function testVirtualFieldAsAConstant() {
 		$this->loadFixtures('Article', 'Comment');
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
@@ -852,23 +852,57 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals(2, substr_count($result, 'field_two'), 'Too many fields');
 		$this->assertFalse(strpos(';ALTER', $result), 'Too many semi colons');
 	}
-	
+
 /**
  * test encoding setting.
  *
  * @return void
  */
 	public function testEncoding() {
-		$result = $this->Dbo->setEncoding('utf8');
+		$result = $this->Dbo->setEncoding('UTF8');
 		$this->assertTrue($result) ;
-		
+
 		$result = $this->Dbo->getEncoding();
-		$this->assertEquals('utf8', $result) ;
-		
-		$result = $this->Dbo->setEncoding('EUC-JP');
+		$this->assertEquals('UTF8', $result) ;
+
+		$result = $this->Dbo->setEncoding('EUC_JP'); /* 'EUC_JP' is right character code name in PostgreSQL */
 		$this->assertTrue($result) ;
-		
+
 		$result = $this->Dbo->getEncoding();
-		$this->assertEquals('EUC-JP', $result) ;
+		$this->assertEquals('EUC_JP', $result) ;
 	}
+
+/**
+ * Test truncate with a mock.
+ *
+ * @return void
+ */
+	public function testTruncateStatements() {
+		$this->loadFixtures('Article', 'User');
+		$db = ConnectionManager::getDatasource('test');
+		$schema = $db->config['schema'];
+		$Article = new Article();
+
+		$this->Dbo = $this->getMock('Postgres', array('execute'), array($db->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"articles\"");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"articles\"");
+		$this->Dbo->truncate('articles');
+
+		// #2355: prevent duplicate prefix
+		$this->Dbo->config['prefix'] = 'tbl_';
+		$Article->tablePrefix = 'tbl_';
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
+		$this->Dbo->truncate($Article);
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
+		$this->Dbo->truncate('articles');
+	}
+
 }

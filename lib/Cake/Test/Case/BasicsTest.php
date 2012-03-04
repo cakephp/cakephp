@@ -35,7 +35,7 @@ class BasicsTest extends CakeTestCase {
  */
 	public function setUp() {
 		App::build(array(
-			'locales' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
+			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		));
 		$this->_language = Configure::read('Config.language');
 	}
@@ -689,7 +689,7 @@ class BasicsTest extends CakeTestCase {
 $expectedText = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
-this-is-a-test
+'this-is-a-test'
 ###########################
 EXPECTED;
 		$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
@@ -702,7 +702,7 @@ $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
 </pre>
 </div>
 EXPECTED;
@@ -716,7 +716,7 @@ $expected = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
 </pre>
 </div>
 EXPECTED;
@@ -730,7 +730,7 @@ $expected = <<<EXPECTED
 <div class="cake-debug-output">
 
 <pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
 </pre>
 </div>
 EXPECTED;
@@ -744,14 +744,14 @@ $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
 </pre>
 </div>
 EXPECTED;
 $expectedText = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
-<div>this-is-a-test</div>
+'<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
@@ -768,14 +768,14 @@ $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 
 <pre class="cake-debug">
-&lt;div&gt;this-is-a-test&lt;/div&gt;
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
 </pre>
 </div>
 EXPECTED;
 $expectedText = <<<EXPECTED
 
 ########## DEBUG ##########
-<div>this-is-a-test</div>
+'<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
@@ -791,7 +791,7 @@ EXPECTED;
 $expected = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
-<div>this-is-a-test</div>
+'<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
 		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
@@ -803,7 +803,7 @@ EXPECTED;
 $expected = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
-<div>this-is-a-test</div>
+'<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
 		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
@@ -815,7 +815,7 @@ EXPECTED;
 $expected = <<<EXPECTED
 
 ########## DEBUG ##########
-<div>this-is-a-test</div>
+'<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
 		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);

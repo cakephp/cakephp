@@ -686,6 +686,9 @@ class CakeEmail {
 			if ($email === $alias) {
 				$return[] = $email;
 			} else {
+				if (strpos($alias, ',') !== false) {
+					$alias = '"' . $alias . '"';
+				}
 				$return[] = sprintf('%s <%s>', $this->_encode($alias), $email);
 			}
 		}
@@ -825,7 +828,7 @@ class CakeEmail {
 			$this->_messageId = $message;
 		} else {
 			if (!preg_match('/^\<.+@.+\>$/', $message)) {
-				throw new SocketException(__d('cake_dev', 'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
+				throw new SocketException(__d('cake_dev', 'Invalid format for Message-ID. The text should be something like "<uuid@server.com>"'));
 			}
 			$this->_messageId = $message;
 		}
@@ -944,7 +947,8 @@ class CakeEmail {
 
 /**
  * Send an email using the specified content, template and layout
- *
+ * 
+ * @param mixed $content String with message or array with messages
  * @return array
  * @throws SocketException
  */
@@ -953,7 +957,7 @@ class CakeEmail {
 			throw new SocketException(__d('cake_dev', 'From is not specified.'));
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new SocketException(__d('cake_dev', 'You need specify one destination on to, cc or bcc.'));
+			throw new SocketException(__d('cake_dev', 'You need to specify at least one destination for to, cc or bcc.'));
 		}
 
 		if (is_array($content)) {
@@ -1108,9 +1112,6 @@ class CakeEmail {
 		if ($internalEncoding) {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
-		}
-		if (strpos($text, ',') !== false) {
-			$text = '"' . $text . '"';
 		}
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {

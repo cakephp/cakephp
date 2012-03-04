@@ -32,7 +32,7 @@
 	<?php $this->log('5. layout after content') ?>
 <!--/nocache-->
 <p>Additional regular text.</p>
-<?php //echo $this->element('nocache/contains_nocache'); stub?>
+<?php echo $this->element('nocache/contains_nocache'); ?>
 <!--nocache-->
 	<p>G. Layout After Content And After Element With No Cache Tags</p>
 	<?php $this->log('7. layout after content and after element with no cache tags') ?>

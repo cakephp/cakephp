@@ -32,8 +32,8 @@ class CakePluginTest extends CakeTestCase {
  */
 	public function setUp() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		App::objects('plugins', null, false);
 	}
 
@@ -216,7 +216,7 @@ class CakePluginTest extends CakeTestCase {
 	}
 
 /**
- * Tests that CakePlugin::loadAll() will load all plgins in the configured folder
+ * Tests that CakePlugin::loadAll() will load all plugins in the configured folder
  *
  * @return void
  */
@@ -227,7 +227,7 @@ class CakePluginTest extends CakeTestCase {
 	}
 
 /**
- * Tests that CakePlugin::loadAll() will load all plgins in the configured folder with bootstrap loading
+ * Tests that CakePlugin::loadAll() will load all plugins in the configured folder with bootstrap loading
  *
  * @return void
  */
@@ -242,7 +242,7 @@ class CakePluginTest extends CakeTestCase {
 	}
 
 /**
- * Tests that CakePlugin::loadAll() will load all plgins in the configured folder wit defaults
+ * Tests that CakePlugin::loadAll() will load all plugins in the configured folder wit defaults
  * and overrides for a plugin
  *
  * @return void

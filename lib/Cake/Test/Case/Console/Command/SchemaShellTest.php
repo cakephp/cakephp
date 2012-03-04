@@ -182,13 +182,13 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testViewWithPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.schema');
 		$this->Shell->startup();
 		$this->Shell->expects($this->exactly(2))->method('_stop');
-		$this->Shell->expects($this->exactly(2))->method('out');
+		$this->Shell->expects($this->atLeastOnce())->method('out');
 		$this->Shell->view();
 
 		$this->Shell->args = array();
@@ -234,7 +234,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testDumpFileWritingWithPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
@@ -335,8 +335,8 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testGenerateWithPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$this->db->cacheSources = false;
@@ -450,7 +450,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testPluginParam() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(
@@ -470,7 +470,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testPluginDotSyntaxWithCreate() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestPlugin');
 		$this->Shell->params = array(

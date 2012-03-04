@@ -54,4 +54,5 @@ class PluginShortRoute extends CakeRoute {
 		unset($this->defaults['controller']);
 		return $result;
 	}
+
 }

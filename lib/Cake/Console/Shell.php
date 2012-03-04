@@ -400,7 +400,7 @@ class Shell extends Object {
  */
 	protected function _displayHelp($command) {
 		$format = 'text';
-		if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
+		if (!empty($this->args[0]) && $this->args[0] == 'xml') {
 			$format = 'xml';
 			$this->stdout->outputAs(ConsoleOutput::RAW);
 		} else {
@@ -453,7 +453,8 @@ class Shell extends Object {
 		if (!$this->interactive) {
 			return $default;
 		}
-		$in = $this->_getInput($prompt, $options, $default);
+		$originalOptions = $options;
+		$in = $this->_getInput($prompt, $originalOptions, $default);
 
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
@@ -471,7 +472,7 @@ class Shell extends Object {
 				$options
 			);
 			while ($in === '' || !in_array($in, $options)) {
-				$in = $this->_getInput($prompt, $options, $default);
+				$in = $this->_getInput($prompt, $originalOptions, $default);
 			}
 		}
 		return $in;
@@ -811,4 +812,5 @@ class Shell extends Object {
 		}
 		return current(App::path('plugins')) . $pluginName . DS;
 	}
+
 }

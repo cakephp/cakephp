@@ -84,8 +84,8 @@ class HelperCollectionTest extends CakeTestCase {
 		$result = $this->Helpers->load('Html');
 		$this->assertInstanceOf('HtmlAliasHelper', $result);
 
-		App::build(array('plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
-		CakePlugin::loadAll();
+		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
+		CakePlugin::load(array('TestPlugin'));
 		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
 		$this->assertInstanceOf('OtherHelperHelper', $result);
 		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->SomeOther);
@@ -125,9 +125,9 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	public function testLoadPluginHelper() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin'));
 		$result = $this->Helpers->load('TestPlugin.OtherHelper');
 		$this->assertInstanceOf('OtherHelperHelper', $result, 'Helper class is wrong.');
 		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');

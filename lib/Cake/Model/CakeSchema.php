@@ -207,7 +207,7 @@ class CakeSchema extends Object {
 		}
 
 		$tables = array();
-		$currentTables = $db->listSources();
+		$currentTables = (array) $db->listSources();
 
 		$prefix = null;
 		if (isset($db->config['prefix'])) {
@@ -256,7 +256,7 @@ class CakeSchema extends Object {
 
 				$db = $Object->getDataSource();
 				if (is_object($Object) && $Object->useTable !== false) {
-					$fulltable = $table = $db->fullTableName($Object, false);
+					$fulltable = $table = $db->fullTableName($Object, false, false);
 					if ($prefix && strpos($table, $prefix) !== 0) {
 						continue;
 					}
@@ -276,7 +276,7 @@ class CakeSchema extends Object {
 									$class = $assocData['with'];
 								}
 								if (is_object($Object->$class)) {
-									$withTable = $db->fullTableName($Object->$class, false);
+									$withTable = $db->fullTableName($Object->$class, false, false);
 									if ($prefix && strpos($withTable, $prefix) !== 0) {
 										continue;
 									}
@@ -313,7 +313,7 @@ class CakeSchema extends Object {
 					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
 				);
 
-				$fulltable = $db->fullTableName($Object, false);
+				$fulltable = $db->fullTableName($Object, false, false);
 
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->_columns($Object);
@@ -384,9 +384,9 @@ class CakeSchema extends Object {
 		}
 		$out .= "}\n";
 
-		$file = new SplFileObject($path . DS . $file, 'w+');
-		$content = "<?php \n/* generated on: " . date('Y-m-d H:i:s') . " : ". time() . " */\n{$out}";
-		if ($file->fwrite($content)) {
+		$file = new File($path . DS . $file, true);
+		$content = "<?php \n{$out}";
+		if ($file->write($content)) {
 			return $content;
 		}
 		return false;
@@ -575,7 +575,7 @@ class CakeSchema extends Object {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
 					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
-				} else if (!is_numeric($key)) {
+				} elseif (!is_numeric($key)) {
 					$val = var_export($val, true);
 					$vals[] = "'{$key}' => {$val}";
 				}

@@ -1,9 +1,5 @@
 <?php
 /**
- * CakePHP Console Shell
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -47,11 +43,11 @@ class ConsoleShell extends AppShell {
 	public $models = array();
 
 /**
- * Override initialize of the Shell
+ * Override startup of the Shell
  *
  * @return void
  */
-	public function initialize() {
+	public function startup() {
 		App::uses('Dispatcher', 'Routing');
 		$this->Dispatcher = new Dispatcher();
 		$this->models = App::objects('Model');
@@ -343,7 +339,7 @@ class ConsoleShell extends AppShell {
 		Router::reload();
 		extract(Router::getNamedExpressions());
 
-		if (!@include(APP . 'Config' . DS . 'routes.php')) {
+		if (!@include APP . 'Config' . DS . 'routes.php') {
 			return false;
 		}
 		CakePlugin::routes();
@@ -359,4 +355,5 @@ class ConsoleShell extends AppShell {
 		}
 		return true;
 	}
+
 }

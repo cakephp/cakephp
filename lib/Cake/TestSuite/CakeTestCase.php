@@ -193,6 +193,128 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 /**
+ * Assert text equality, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $expected The expected value.
+ * @param string $result The actual value.
+ * @param message The message to use for failure.
+ * @return boolean
+ */
+	public function assertTextNotEquals($expected, $result, $message = '') {
+		$expected = str_replace(array("\r\n", "\r"), "\n", $expected);
+		$result = str_replace(array("\r\n", "\r"), "\n", $result);
+		return $this->assertNotEquals($expected, $result, $message);
+	}
+
+/**
+ * Assert text equality, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $expected The expected value.
+ * @param string $result The actual value.
+ * @param message The message to use for failure.
+ * @return boolean
+ */
+	public function assertTextEquals($expected, $result, $message = '') {
+		$expected = str_replace(array("\r\n", "\r"), "\n", $expected);
+		$result = str_replace(array("\r\n", "\r"), "\n", $result);
+		return $this->assertEquals($expected, $result, $message);
+	}
+
+/**
+ * Asserts that a string starts with a given prefix, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $prefix
+ * @param string $string
+ * @param string $message
+ * @return boolean
+ */	
+	public function assertTextStartsWith($prefix, $string, $message = '') {
+		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
+		$string = str_replace(array("\r\n", "\r"), "\n", $string);
+		return $this->assertStringStartsWith($prefix, $string, $message);
+	}
+
+/**
+ * Asserts that a string starts not with a given prefix, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $prefix
+ * @param string $string
+ * @param string $message
+ * @return boolean
+ */	
+	public function assertTextStartsNotWith($prefix, $string, $message = '') {
+		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
+		$string = str_replace(array("\r\n", "\r"), "\n", $string);
+		return $this->assertStringStartsNotWith($prefix, $string, $message);
+	}
+
+/**
+ * Asserts that a string ends with a given prefix, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $suffix
+ * @param string $string
+ * @param string $message
+ * @return boolean
+ */	
+	public function assertTextEndsWith($suffix, $string, $message = '') {
+		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
+		$string = str_replace(array("\r\n", "\r"), "\n", $string);
+		return $this->assertStringEndsWith($suffix, $string, $message);
+	}
+
+/**
+ * Asserts that a string ends not with a given prefix, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $suffix
+ * @param string $string
+ * @param string $message
+ * @return boolean
+ */
+	public function assertTextEndsNotWith($suffix, $string, $message = '') {
+		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
+		$string = str_replace(array("\r\n", "\r"), "\n", $string);
+		return $this->assertStringEndsNotWith($suffix, $string, $message);
+	}	
+
+/**
+ * Assert that a string contains another string, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $needle
+ * @param string $haystack
+ * @param string $message
+ * @param boolean $ignoreCase
+ * @return boolean
+ */
+	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
+		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
+		$haystack = str_replace(array("\r\n", "\r"), "\n", $haystack);
+		return $this->assertContains($needle, $haystack, $message, $ignoreCase);
+	}
+
+/**
+ * Assert that a text doesn't contain another text, ignoring differences in newlines.
+ * Helpful for doing cross platform tests of blocks of text.
+ *
+ * @param string $needle
+ * @param string $haystack
+ * @param string $message
+ * @param boolean $ignoreCase
+ * @return boolean
+ */
+	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {
+		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
+		$haystack = str_replace(array("\r\n", "\r"), "\n", $haystack);
+		return $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
+	}
+
+/**
  * Takes an array $expected and generates a regex from it to match the provided $string.
  * Samples for $expected:
  *

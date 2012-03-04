@@ -120,12 +120,12 @@ class ControllerTestCaseTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
 			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		), App::RESET);
-		CakePlugin::loadAll();
+		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 		$this->Case = $this->getMockForAbstractClass('ControllerTestCase');
 		Router::reload();
 	}
@@ -215,11 +215,11 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'TestPlugin.TestPluginComment'
 			),
 			'components' => array(
-				'TestPlugin.PluginsComponent'
+				'TestPlugin.Plugins'
 			)
 		));
 		$this->assertEquals($Tests->name, 'Tests');
-		$this->assertInstanceOf('PluginsComponentComponent', $Tests->PluginsComponent);
+		$this->assertInstanceOf('PluginsComponent', $Tests->Plugins);
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPluginComment', $result);
@@ -290,7 +290,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 
 		$controller = $this->Case->generate('TestsApps');
 		$controller->Components->load('RequestHandler');
-		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
+		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'contents'));
 		$result = json_decode($result, true);
 		$expected = array('cakephp' => 'cool');
 		$this->assertEquals($expected, $result);

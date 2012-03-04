@@ -133,7 +133,7 @@ class RouterTest extends CakeTestCase {
  */
 	public function testPluginMapResources() {
 		App::build(array(
-			'plugins' => array(
+			'Plugin' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		));
@@ -173,7 +173,7 @@ class RouterTest extends CakeTestCase {
  */
 	public function testPluginMapResourcesWithPrefix() {
 		App::build(array(
-			'plugins' => array(
+			'Plugin' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		));
@@ -503,7 +503,7 @@ class RouterTest extends CakeTestCase {
 			'keyed' => 'is an array',
 			'test'
 		)));
-		$expected = '/tests/index/namedParam[keyed]:is an array/namedParam[0]:test';
+		$expected = '/tests/index/namedParam[keyed]:is%20an%20array/namedParam[0]:test';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -969,7 +969,8 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/page/*', array('controller' => 'test'));
 		$result = Router::parse('/page/my-page');
-		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index');
+		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index', 'named' => array());
+		$this->assertEquals($expected, $result);
 
 		Router::reload();
 		Router::connect('/:language/contact', array('language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index'), array('language' => '[a-z]{3}'));
@@ -1186,8 +1187,8 @@ class RouterTest extends CakeTestCase {
 			'plugins' =>  array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
-		), true);
-		CakePlugin::loadAll();
+		), App::RESET);
+		CakePlugin::load(array('TestPlugin'));
 
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
@@ -1705,6 +1706,8 @@ class RouterTest extends CakeTestCase {
  */
 	public function testPrefixFalseIgnored() {
 		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+
 		Router::connect('/cache_css/*', array('admin' => false, 'controller' => 'asset_compress', 'action' => 'get'));
 
 		$url = Router::url(array('controller' => 'asset_compress', 'action' => 'get', 'test'));
@@ -2107,7 +2110,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * testCurentRoute
+ * testCurrentRoute
  *
  * This test needs some improvement and actual requestAction() usage
  *
@@ -2198,8 +2201,8 @@ class RouterTest extends CakeTestCase {
 			'plugins' =>  array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
-		), true);
-		CakePlugin::loadAll();
+		), App::RESET);
+		CakePlugin::load(array('TestPlugin', 'PluginJs'));
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
 
@@ -2476,6 +2479,37 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * Tests resourceMap as getter and setter.
+ *
+ * @return void
+ */
+	public function testResourceMap() {
+		$default = Router::resourceMap();
+		$exepcted = array(
+			array('action' => 'index',	'method' => 'GET',		'id' => false),
+			array('action' => 'view',	'method' => 'GET',		'id' => true),
+			array('action' => 'add',	'method' => 'POST',		'id' => false),
+			array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
+			array('action' => 'edit',	'method' => 'POST', 	'id' => true)
+		);
+		$this->assertEquals($default, $exepcted);
+		
+		$custom = array(
+			array('action' => 'index',	'method' => 'GET',		'id' => false),
+			array('action' => 'view',	'method' => 'GET',		'id' => true),
+			array('action' => 'add',	'method' => 'POST',		'id' => false),
+			array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
+			array('action' => 'update',	'method' => 'POST', 	'id' => true)
+		);
+		Router::resourceMap($custom);
+		$this->assertEquals($custom, Router::resourceMap());
+		
+		Router::resourceMap($default);
+	}
+
+/**
  * test setting redirect routes
  *
  * @return void
@@ -2488,11 +2522,70 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(Router::$routes[0]->options['status'], 302);
 
 		Router::parse('/blog');
-		$this->assertEquals(Router::$routes[0]->response->header(), array('Location' => Router::url('/posts', true)));
+		$header = Router::$routes[0]->response->header();
+		$this->assertEquals($header['Location'], Router::url('/posts', true));
 		$this->assertEquals(Router::$routes[0]->response->statusCode(), 302);
 
 		Router::$routes[0]->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		Router::parse('/not-a-match');
 		$this->assertEquals(Router::$routes[0]->response->header(), array());
 	}
+
+/**
+ * Test setting the default route class
+ *
+ * @return void
+ */
+	public function testDefaultRouteClass() {
+		$this->getMock('CakeRoute', array(), array('/test'), 'TestDefaultRouteClass');
+		Router::defaultRouteClass('TestDefaultRouteClass');
+
+		$result = Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$this->assertInstanceOf('TestDefaultRouteClass', $result[0]);
+	}
+
+/**
+ * Test getting the default route class
+ *
+ * @return void
+ */
+	public function testDefaultRouteClassGetter() {
+		$routeClass = 'TestDefaultRouteClass';
+		Router::defaultRouteClass($routeClass);
+
+		$this->assertEqual($routeClass, Router::defaultRouteClass());
+		$this->assertEqual($routeClass, Router::defaultRouteClass(null));
+	}
+
+/**
+ * Test that route classes must extend CakeRoute
+ *
+ * @expectedException RouterException
+ * @return void
+ */
+	public function testDefaultRouteException() {
+		Router::defaultRouteClass('');
+		Router::connect('/:controller', array());
+	}
+
+/**
+ * Test that route classes must extend CakeRoute
+ *
+ * @expectedException RouterException
+ * @return void
+ */
+	public function testSettingInvalidDefaultRouteException() {
+		Router::defaultRouteClass('Object');
+	}
+
+/**
+ * Test that class must exist
+ *
+ * @expectedException RouterException
+ * @return void
+ */
+	public function testSettingNonExistentDefaultRouteException() {
+		Router::defaultRouteClass('NonExistentClass');
+	}
+
 }

@@ -113,4 +113,5 @@ class RedirectRoute extends CakeRoute {
 			exit($code);
 		}
 	}
+
 }

@@ -446,10 +446,10 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestAction() {
 		App::build(array(
-			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
-		), true);
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
+		), App::RESET);
 		$this->assertNull(Router::getRequest(), 'request stack should be empty.');
 
 		$result = $this->object->requestAction('');
@@ -488,8 +488,8 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionPlugins() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		Router::reload();
 
@@ -525,12 +525,12 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionArray() {
 		App::build(array(
-			'models' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'views' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'controllers' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
-		), true);
-		CakePlugin::loadAll();
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin'. DS)
+		), App::RESET);
+		CakePlugin::load(array('TestPlugin'));
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')

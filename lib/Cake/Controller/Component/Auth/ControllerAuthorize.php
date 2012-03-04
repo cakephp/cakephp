@@ -44,7 +44,7 @@ class ControllerAuthorize extends BaseAuthorize {
  * @return mixed
  * @throws CakeException
  */
-	public function controller($controller = null) {
+	public function controller(Controller $controller = null) {
 		if ($controller) {
 			if (!method_exists($controller, 'isAuthorized')) {
 				throw new CakeException(__d('cake_dev', '$controller does not implement an isAuthorized() method.'));
@@ -61,7 +61,7 @@ class ControllerAuthorize extends BaseAuthorize {
  * @return boolean
  */
 	public function authorize($user, CakeRequest $request) {
-		return (bool) $this->_Controller->isAuthorized($user);
+		return (bool)$this->_Controller->isAuthorized($user);
 	}
 
 }

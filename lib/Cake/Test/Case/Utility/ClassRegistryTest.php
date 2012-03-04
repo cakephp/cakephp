@@ -122,6 +122,20 @@ class RegisterCategory extends ClassRegisterModel {
  */
 	public $name = 'RegisterCategory';
 }
+ /**
+ * RegisterPrefixedDs class
+ *
+ * @package       Cake.Test.Case.Utility
+ */
+class RegisterPrefixedDs extends ClassRegisterModel {
+
+/**
+ * useDbConfig property
+ *
+ * @var string 'doesnotexist'
+ */
+	public $useDbConfig = 'doesnotexist';
+}
 
 /**
  * Abstract class for testing ClassRegistry.
@@ -136,7 +150,7 @@ abstract class ClassRegistryAbstractModel extends ClassRegisterModel {
  */
 interface ClassRegistryInterfaceTest {
 
-	function doSomething();
+	public function doSomething();
 }
 
 /**
@@ -284,6 +298,25 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue(is_a($PluginUserCopy, 'RegistryPluginAppModel'));
 		$this->assertSame($PluginUser, $PluginUserCopy);
 		CakePlugin::unload();
+	}
+
+/**
+ * Tests prefixed datasource names for test purposes
+ *
+ */
+	public function testPrefixedTestDatasource() {
+		ClassRegistry::config(array('testing' => true));
+		$Model = ClassRegistry::init('RegisterPrefixedDs');
+		$this->assertEquals('test', $Model->useDbConfig);
+		ClassRegistry::removeObject('RegisterPrefixedDs');
+
+		$testConfig = ConnectionManager::getDataSource('test')->config;
+		ConnectionManager::create('test_doesnotexist', $testConfig);
+
+		$Model = ClassRegistry::init('RegisterArticle');
+		$this->assertEquals('test', $Model->useDbConfig);
+		$Model = ClassRegistry::init('RegisterPrefixedDs');
+		$this->assertEquals('test_doesnotexist', $Model->useDbConfig);
 	}
 
 /**

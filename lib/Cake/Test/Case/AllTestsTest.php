@@ -45,15 +45,16 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'AllControllerTest.php');
 		$suite->addTestFile($path . 'AllDatabaseTest.php');
 		$suite->addTestFile($path . 'AllErrorTest.php');
+		$suite->addTestFile($path . 'AllEventTest.php');
 		$suite->addTestFile($path . 'AllHelpersTest.php');
 		$suite->addTestFile($path . 'AllLogTest.php');
-		$suite->addTestFile($path . 'AllI18nTest.php');
-		$suite->addTestFile($path . 'AllModelTest.php');
+		$suite->addTestFile($path . 'Model' . DS . 'ModelTest.php');
 		$suite->addTestFile($path . 'AllRoutingTest.php');
 		$suite->addTestFile($path . 'AllNetworkTest.php');
 		$suite->addTestFile($path . 'AllTestSuiteTest.php');;
 		$suite->addTestFile($path . 'AllUtilityTest.php');
 		$suite->addTestFile($path . 'AllViewTest.php');
+		$suite->addTestFile($path . 'AllI18nTest.php');
 		return $suite;
 	}
 }

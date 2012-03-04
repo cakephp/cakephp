@@ -36,14 +36,17 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 
 		$path = CORE_TEST_CASES . DS . 'Model' . DS;
 		$tasks = array(
-			'DbAcl',
+			'AclNode',
 			'CakeSchema',
 			'ConnectionManager',
 			'Datasource' . DS . 'DboSource',
 			'Datasource' . DS . 'Database' . DS . 'Mysql',
 			'Datasource' . DS . 'Database' . DS . 'Postgres',
 			'Datasource' . DS . 'Database' . DS . 'Sqlite',
-			'Datasource' . DS . 'Database' . DS . 'Sqlserver'
+			'Datasource' . DS . 'Database' . DS . 'Sqlserver',
+			'Datasource' . DS . 'CakeSession',
+			'Datasource' . DS . 'Session' . DS . 'CacheSession',
+			'Datasource' . DS . 'Session' . DS . 'DatabaseSession',
 		);
 		foreach ($tasks as $task) {
 			$suite->addTestFile($path . $task . 'Test.php');

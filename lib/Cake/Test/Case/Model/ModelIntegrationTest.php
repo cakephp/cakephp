@@ -240,9 +240,9 @@ class ModelIntegrationTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testFindWithJoinsOption() {
+	public function testFindWithJoinsOption() {
 		$this->loadFixtures('Article', 'User');
-		$TestUser =& new User();
+		$TestUser = new User();
 
 		$options = array(
 			'fields' => array(
@@ -279,9 +279,9 @@ class ModelIntegrationTest extends BaseModelTest {
  * or one connection will step on the other.
  */
 	public function testCrossDatabaseJoins() {
-		$config = new DATABASE_CONFIG();
+		$config = ConnectionManager::enumConnectionObjects();
 
-		$skip = (!isset($config->test) || !isset($config->test2));
+		$skip = (!isset($config['test']) || !isset($config['test2']));
 		if ($skip) {
 			$this->markTestSkipped('Primary and secondary test databases not configured, skipping cross-database
 				join tests.  To run theses tests defined $test and $test2 in your database configuration.'
@@ -622,6 +622,158 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * test HABM operations without clobbering existing records #275
+ *
+ * @return void
+ */
+	public function testHABTMKeepExisting() {
+		$this->loadFixtures('Site', 'Domain', 'DomainsSite');
+
+		$Site = new Site();
+		$results = $Site->find('count');
+		$expected = 3;
+		$this->assertEquals($results, $expected);
+
+		$data = $Site->findById(1);
+
+		// include api.cakephp.org
+		$data['Domain'] = array('Domain' => array(1, 2, 3));
+		$Site->save($data);
+
+		$Site->id = 1;
+		$results = $Site->read();
+		$expected = 3; // 3 domains belonging to cakephp
+		$this->assertEquals($expected, count($results['Domain']));
+
+
+		$Site->id = 2;
+		$results = $Site->read();
+		$expected = 2; // 2 domains belonging to markstory
+		$this->assertEquals($expected, count($results['Domain']));
+
+		$Site->id = 3;
+		$results = $Site->read();
+		$expected = 2;
+		$this->assertEquals($expected, count($results['Domain']));
+		$results['Domain'] = array('Domain' => array(7));
+		$Site->save($results); // remove association from domain 6
+		$results = $Site->read();
+		$expected = 1; // only 1 domain left belonging to rchavik
+		$this->assertEquals($expected, count($results['Domain']));
+
+		// add deleted domain back
+		$results['Domain'] = array('Domain' => array(6, 7));
+		$Site->save($results);
+		$results = $Site->read();
+		$expected = 2; // 2 domains belonging to rchavik
+		$this->assertEquals($expected, count($results['Domain']));
+
+		$Site->DomainsSite->id = $results['Domain'][0]['DomainsSite']['id'];
+		$Site->DomainsSite->saveField('active', true);
+
+		$results = $Site->Domain->DomainsSite->find('count', array(
+			'conditions' => array(
+				'DomainsSite.active' => true,
+			),
+		));
+		$expected = 5;
+		$this->assertEquals($expected, $results);
+
+		// activate api.cakephp.org
+		$activated = $Site->DomainsSite->findByDomainId(3);
+		$activated['DomainsSite']['active'] = true;
+		$Site->DomainsSite->save($activated);
+
+		$results = $Site->DomainsSite->find('count', array(
+			'conditions' => array(
+				'DomainsSite.active' => true,
+			),
+		));
+		$expected = 6;
+		$this->assertEquals($expected, $results);
+
+		// remove 2 previously active domains, and leave $activated alone
+		$data = array(
+			'Site' => array('id' => 1, 'name' => 'cakephp (modified)'),
+			'Domain' => array(
+				'Domain' => array(3),
+			)
+		);
+		$Site->create($data);
+		$Site->save($data);
+
+		// tests that record is still identical prior to removal
+		$Site->id = 1;
+		$results = $Site->read();
+		unset($results['Domain'][0]['DomainsSite']['updated']);
+		unset($activated['DomainsSite']['updated']);
+		$this->assertEquals($activated['DomainsSite'], $results['Domain'][0]['DomainsSite']);
+	}
+
+/**
+ * test HABM operations without clobbering existing records #275
+ *
+ * @return void
+ */
+	public function testHABTMKeepExistingWithThreeDbs() {
+		$config = ConnectionManager::enumConnectionObjects();
+		$this->skipIf(
+			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
+			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
+		);
+
+		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
+		$Player = ClassRegistry::init('Player');
+		$Player->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'Armor' => array(
+					'with' => 'ArmorsPlayer',
+					'unique' => 'keepExisting',
+				),
+			),
+		), false);
+		$this->assertEquals('test', $Player->useDbConfig);
+		$this->assertEquals('test', $Player->Guild->useDbConfig);
+		$this->assertEquals('test2', $Player->Guild->GuildsPlayer->useDbConfig);
+		$this->assertEquals('test2', $Player->Armor->useDbConfig);
+		$this->assertEquals('test_database_three', $Player->ArmorsPlayer->useDbConfig);
+
+		$players = $Player->find('all');
+		$this->assertEquals(4 , count($players));
+		$playersGuilds = Set::extract('/Guild/GuildsPlayer', $players);
+		$this->assertEquals(3 , count($playersGuilds));
+		$playersArmors = Set::extract('/Armor/ArmorsPlayer', $players);
+		$this->assertEquals(3 , count($playersArmors));
+		unset($players);
+
+		$larry = $Player->findByName('larry');
+		$larrysArmor = Set::extract('/Armor/ArmorsPlayer', $larry);
+		$this->assertEquals(1 , count($larrysArmor));
+
+		$larry['Guild']['Guild'] = array(1, 3); // larry joins another guild
+		$larry['Armor']['Armor'] = array(2, 3); // purchases chainmail
+		$Player->save($larry);
+		unset($larry);
+
+		$larry = $Player->findByName('larry');
+		$larrysGuild = Set::extract('/Guild/GuildsPlayer', $larry);
+		$this->assertEquals(2 , count($larrysGuild));
+		$larrysArmor = Set::extract('/Armor/ArmorsPlayer', $larry);
+		$this->assertEquals(2 , count($larrysArmor));
+
+		$larrysArmorsPlayersIds = Set::extract('/Armor/ArmorsPlayer/id', $larry);
+
+		$Player->ArmorsPlayer->id = 3;
+		$Player->ArmorsPlayer->saveField('broken', true); // larry's cloak broke
+
+		$larry = $Player->findByName('larry');
+		$larrysArmor = Set::extract('/Armor/ArmorsPlayer', $larry);
+		$larrysCloak = Set::extract('/ArmorsPlayer[armor_id=3]', $larrysArmor);
+		$this->assertNotEmpty($larrysCloak);
+		$this->assertTrue($larrysCloak[0]['ArmorsPlayer']['broken']); // still broken
+	}
+
+/**
  * testDisplayField method
  *
  * @return void
@@ -937,39 +1089,39 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel = new Apple();
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertContains('aaa_apples', $this->db->fullTableName($TestModel));
+		$this->assertContains('aaa_apples', $db1->fullTableName($TestModel));
+		$this->assertContains('aaa_apples', $db2->fullTableName($TestModel));
 
 		$TestModel->setDataSource('database2');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'bbb_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'bbb_apples');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'bbb_apples');
+		$this->assertContains('bbb_apples', $this->db->fullTableName($TestModel));
+		$this->assertContains('bbb_apples', $db1->fullTableName($TestModel));
+		$this->assertContains('bbb_apples', $db2->fullTableName($TestModel));
 
 		$TestModel = new Apple();
 		$TestModel->tablePrefix = 'custom_';
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'custom_apples');
+		$this->assertContains('custom_apples', $this->db->fullTableName($TestModel));
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'custom_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'custom_apples');
+		$this->assertContains('custom_apples', $this->db->fullTableName($TestModel));
+		$this->assertContains('custom_apples', $db1->fullTableName($TestModel));
 
 		$TestModel = new Apple();
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($this->db->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertContains('aaa_apples', $this->db->fullTableName($TestModel));
 		$TestModel->tablePrefix = '';
 		$TestModel->setDataSource('database2');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'apples');
+		$this->assertContains('apples', $db2->fullTableName($TestModel));
+		$this->assertContains('apples', $db1->fullTableName($TestModel));
 
 		$TestModel->tablePrefix = null;
 		$TestModel->setDataSource('database1');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'aaa_apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertContains('aaa_apples', $db2->fullTableName($TestModel));
+		$this->assertContains('aaa_apples', $db1->fullTableName($TestModel));
 
 		$TestModel->tablePrefix = false;
 		$TestModel->setDataSource('database2');
-		$this->assertEquals($db2->fullTableName($TestModel, false), 'apples');
-		$this->assertEquals($db1->fullTableName($TestModel, false), 'apples');
+		$this->assertContains('apples', $db2->fullTableName($TestModel));
+		$this->assertContains('apples', $db1->fullTableName($TestModel));
 	}
 
 /**
@@ -1931,13 +2083,13 @@ class ModelIntegrationTest extends BaseModelTest {
 			),
 			'user' => array(
 				'type' => 'string',
-				'null' => false,
+				'null' => true,
 				'default' => '',
 				'length' => 255
 			),
 			'password' => array(
 				'type' => 'string',
-				'null' => false,
+				'null' => true,
 				'default' => '',
 				'length' => 255
 			),
@@ -2091,19 +2243,80 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
- * Tests that tablePrefix is taken from the datasource if none is defined in the model
+ * testMultischemaFixture
  *
  * @return void
- * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/2277-caketestmodels-in-test-cases-do-not-set-model-tableprefix
  */
-	public function testModelPrefixFromDatasource() {
-		ConnectionManager::create('mock', array(
-			'datasource' => 'DboMock',
-			'prefix' => 'custom_prefix_'
-		));
-		$Article = new Article(false, null, 'mock');
-		$this->assertEquals('custom_prefix_', $Article->tablePrefix);
-		ConnectionManager::drop('mock');
+	public function testMultischemaFixture() {
+
+		$config = ConnectionManager::enumConnectionObjects();
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
+		$this->skipIf(!isset($config['test']) || !isset($config['test2']),
+			'Primary and secondary test databases not configured, skipping cross-database join tests.  To run these tests define $test and $test2 in your database configuration.'
+			);
+
+		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer');
+
+		$Player = ClassRegistry::init('Player');
+		$this->assertEquals($Player->useDbConfig, 'test');
+		$this->assertEquals($Player->Guild->useDbConfig, 'test');
+		$this->assertEquals($Player->Guild->GuildsPlayer->useDbConfig, 'test2');
+		$this->assertEquals($Player->GuildsPlayer->useDbConfig, 'test2');
+
+		$players = $Player->find('all', array('recursive' => -1));
+		$guilds = $Player->Guild->find('all', array('recursive' => -1));
+		$guildsPlayers = $Player->GuildsPlayer->find('all', array('recursive' => -1));
+
+		$this->assertEquals(true, count($players) > 1);
+		$this->assertEquals(true, count($guilds) > 1);
+		$this->assertEquals(true, count($guildsPlayers) > 1);
+	}
+
+/**
+ * testMultischemaFixtureWithThreeDatabases, three databases
+ *
+ * @return void
+ */
+	public function testMultischemaFixtureWithThreeDatabases() {
+
+		$config = ConnectionManager::enumConnectionObjects();
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
+		$this->skipIf(
+			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
+			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
+			);
+
+		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
+
+		$Player = ClassRegistry::init('Player');
+		$Player->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'Armor' => array(
+					'with' => 'ArmorsPlayer',
+					),
+				),
+			), false);
+		$this->assertEquals('test', $Player->useDbConfig);
+		$this->assertEquals('test', $Player->Guild->useDbConfig);
+		$this->assertEquals('test2', $Player->Guild->GuildsPlayer->useDbConfig);
+		$this->assertEquals('test2', $Player->GuildsPlayer->useDbConfig);
+		$this->assertEquals('test2', $Player->Armor->useDbConfig);
+		$this->assertEquals('test_database_three', $Player->Armor->ArmorsPlayer->useDbConfig);
+		$this->assertEquals('test', $Player->getDataSource()->configKeyName);
+		$this->assertEquals('test', $Player->Guild->getDataSource()->configKeyName);
+		$this->assertEquals('test2', $Player->GuildsPlayer->getDataSource()->configKeyName);
+		$this->assertEquals('test2', $Player->Armor->getDataSource()->configKeyName);
+		$this->assertEquals('test_database_three', $Player->Armor->ArmorsPlayer->getDataSource()->configKeyName);
+
+		$players = $Player->find('all', array('recursive' => -1));
+		$guilds = $Player->Guild->find('all', array('recursive' => -1));
+		$guildsPlayers = $Player->GuildsPlayer->find('all', array('recursive' => -1));
+		$armorsPlayers = $Player->ArmorsPlayer->find('all', array('recursive' => -1));
+
+		$this->assertEquals(true, count($players) > 1);
+		$this->assertEquals(true, count($guilds) > 1);
+		$this->assertEquals(true, count($guildsPlayers) > 1);
+		$this->assertEquals(true, count($armorsPlayers) > 1);
 	}
 
 /**

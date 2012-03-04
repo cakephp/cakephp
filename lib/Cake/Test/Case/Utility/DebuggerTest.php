@@ -201,7 +201,7 @@ class DebuggerTest extends CakeTestCase {
 	}
 
 /**
- * Test that choosing a non-existant format causes an exception
+ * Test that choosing a non-existent format causes an exception
  *
  * @expectedException CakeException
  * @return void
@@ -295,33 +295,55 @@ class DebuggerTest extends CakeTestCase {
 		$Controller = new Controller();
 		$Controller->helpers = array('Html', 'Form');
 		$View = new View($Controller);
-		$result = Debugger::exportVar($View);
-		$expected = 'View
-		View::$Helpers = HelperCollection object
-		View::$plugin = NULL
-		View::$name = ""
-		View::$passedArgs = array
-		View::$helpers = array
-		View::$viewPath = ""
-		View::$viewVars = array
-		View::$view = NULL
-		View::$layout = "default"
-		View::$layoutPath = NULL
-		View::$autoLayout = true
-		View::$ext = ".ctp"
-		View::$subDir = NULL
-		View::$theme = NULL
-		View::$cacheAction = false
-		View::$validationErrors = array
-		View::$hasRendered = false
-		View::$uuids = array
-		View::$output = false
-		View::$request = NULL
-		View::$elementCache = "default"';
+		$View->int = 2;
+		$View->float = 1.333;
 
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEquals($expected, $result);
+		$result = Debugger::exportVar($View);
+		$expected = <<<TEXT
+object(View) {
+	Helpers => object(HelperCollection) {}
+	Blocks => object(ViewBlock) {}
+	plugin => null
+	name => ''
+	passedArgs => array()
+	helpers => array(
+		(int) 0 => 'Html',
+		(int) 1 => 'Form'
+	)
+	viewPath => ''
+	viewVars => array()
+	view => null
+	layout => 'default'
+	layoutPath => null
+	autoLayout => true
+	ext => '.ctp'
+	subDir => null
+	theme => null
+	cacheAction => false
+	validationErrors => array()
+	hasRendered => false
+	uuids => array()
+	request => null
+	response => object(CakeResponse) {}
+	elementCache => 'default'
+	int => (int) 2
+	float => (float) 1.333
+}
+TEXT;
+		$this->assertTextEquals($expected, $result);
+
+		$data = array(
+			1 => 'Index one',
+			5 => 'Index five'
+		);
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+array(
+	(int) 1 => 'Index one',
+	(int) 5 => 'Index five'
+)
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -337,7 +359,7 @@ class DebuggerTest extends CakeTestCase {
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertRegExp('/"cool"/', $result);
+		$this->assertRegExp("/'cool'/", $result);
 
 		unlink(TMP . 'logs' . DS . 'debug.log');
 
@@ -346,8 +368,8 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertRegExp('/\[main\]/', $result);
 		$this->assertRegExp('/array/', $result);
-		$this->assertRegExp('/"whatever",/', $result);
-		$this->assertRegExp('/"here"/', $result);
+		$this->assertRegExp("/'whatever',/", $result);
+		$this->assertRegExp("/'here'/", $result);
 	}
 
 /**
@@ -357,23 +379,31 @@ class DebuggerTest extends CakeTestCase {
  */
 	public function testDump() {
 		$var = array('People' => array(
-					array(
-					'name' => 'joeseph',
-					'coat' => 'technicolor',
-					'hair_color' => 'brown'
-					),
-					array(
-					'name' => 'Shaft',
-					'coat' => 'black',
-					'hair' => 'black'
-					)
-				)
-			);
+			array(
+				'name' => 'joeseph',
+				'coat' => 'technicolor',
+				'hair_color' => 'brown'
+			),
+			array(
+				'name' => 'Shaft',
+				'coat' => 'black',
+				'hair' => 'black'
+			)
+		));
 		ob_start();
 		Debugger::dump($var);
 		$result = ob_get_clean();
-		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
-		$this->assertEquals($expected, $result);
+		$expected = <<<TEXT
+<pre>array(
+	'People' => array(
+		(int) 0 => array(
+		),
+		(int) 1 => array(
+		)
+	)
+)</pre>
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**

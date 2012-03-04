@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+App::uses('CakeResponse', 'Network');
 App::uses('CookieComponent', 'Controller/Component');
 App::uses('SecurityComponent', 'Controller/Component');
 App::uses('ComponentCollection', 'Controller');
@@ -86,11 +86,11 @@ class ComponentCollectionTest extends CakeTestCase {
 		$result = $this->Components->load('Cookie');
 		$this->assertInstanceOf('CookieAliasComponent', $result);
 
-		App::build(array('plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
 		CakePlugin::load('TestPlugin');
-		$result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.OtherComponent'));
-		$this->assertInstanceOf('OtherComponentComponent', $result);
-		$this->assertInstanceOf('OtherComponentComponent', $this->Components->SomeOther);
+		$result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.Other'));
+		$this->assertInstanceOf('OtherComponent', $result);
+		$this->assertInstanceOf('OtherComponent', $this->Components->SomeOther);
 
 		$result = $this->Components->attached();
 		$this->assertEquals(array('Cookie', 'SomeOther'), $result, 'attached() results are wrong.');
@@ -128,12 +128,12 @@ class ComponentCollectionTest extends CakeTestCase {
  */
 	public function testLoadPluginComponent() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		));
 		CakePlugin::load('TestPlugin');
-		$result = $this->Components->load('TestPlugin.OtherComponent');
-		$this->assertInstanceOf('OtherComponentComponent', $result, 'Component class is wrong.');
-		$this->assertInstanceOf('OtherComponentComponent', $this->Components->OtherComponent, 'Class is wrong');
+		$result = $this->Components->load('TestPlugin.Other');
+		$this->assertInstanceOf('OtherComponent', $result, 'Component class is wrong.');
+		$this->assertInstanceOf('OtherComponent', $this->Components->Other, 'Class is wrong');
 		App::build();
 		CakePlugin::unload();
 	}

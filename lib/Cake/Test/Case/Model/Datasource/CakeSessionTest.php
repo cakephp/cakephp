@@ -348,7 +348,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testDestroy() {
-		TestCakeSession::write('bulletProof', 'invicible');
+		TestCakeSession::write('bulletProof', 'invincible');
 		$id = TestCakeSession::id();
 		TestCakeSession::destroy();
 
@@ -503,8 +503,8 @@ class CakeSessionTest extends CakeTestCase {
 			'Model/Datasource/Session' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
 			),
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		Configure::write('Session', array(
 			'defaults' => 'cake',
 			'handler' => array(
@@ -524,8 +524,8 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testUsingPluginHandler() {
 		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		), true);
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		Configure::write('Session', array(

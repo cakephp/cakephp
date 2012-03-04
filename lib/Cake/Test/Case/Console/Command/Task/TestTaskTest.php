@@ -403,6 +403,9 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getRealClassname('Controller', 'PostsController');
 		$this->assertEquals('PostsController', $result);
+		
+		$result = $this->Task->getRealClassname('Controller', 'AlertTypes');
+		$this->assertEquals('AlertTypesController', $result);
 
 		$result = $this->Task->getRealClassname('Helper', 'Form');
 		$this->assertEquals('FormHelper', $result);
@@ -490,17 +493,51 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
-		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
+		$expected = array('', "new TestPostsController();\n", "\$this->Posts->constructClasses();\n");
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('model', 'Post');
-		$expected = "ClassRegistry::init('Post');\n";
+		$expected = array('', "ClassRegistry::init('Post');\n", '');
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('helper', 'FormHelper');
-		$expected = "new FormHelper();\n";
+		$expected = array("\$View = new View();\n", "new FormHelper(\$View);\n", '');
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * Test generateUses()
+ */
+	public function testGenerateUses() {
+		$result = $this->Task->generateUses('model', 'Model', 'Post');
+		$expected = array(
+			array('Post', 'Model')
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateUses('controller', 'Controller', 'PostsController');
+		$expected = array(
+			array('PostsController', 'Controller')
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateUses('helper', 'View/Helper', 'FormHelper');
+		$expected = array(
+			array('View', 'View'),
+			array('Helper', 'View'),
+			array('FormHelper', 'View/Helper'),
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateUses('component', 'Controller/Component', 'AuthComponent');
+		$expected = array(
+			array('ComponentCollection', 'Controller'),
+			array('Component', 'Controller'),
+			array('AuthComponent', 'Controller/Component')
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 
 /**
  * Test that mock class generation works for the appropriate classes
@@ -538,8 +575,8 @@ class TestTaskTest extends CakeTestCase {
 	public function testInteractiveWithPlugin() {
 		$testApp = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array(
-			'plugins' => array($testApp)
-		), true);
+			'Plugin' => array($testApp)
+		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';

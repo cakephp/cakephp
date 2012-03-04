@@ -42,7 +42,7 @@ class DboSqliteTestDb extends Sqlite {
  * @param mixed $sql
  * @return void
  */
-	function _execute($sql, $params = array(), $prepareOptions = array()) {
+	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}
@@ -128,7 +128,7 @@ class SqliteTest extends CakeTestCase {
  * @return void
  */
 	public function testIndex() {
-		$name = $this->Dbo->fullTableName('with_a_key');
+		$name = $this->Dbo->fullTableName('with_a_key', false, false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
@@ -278,13 +278,13 @@ class SqliteTest extends CakeTestCase {
 			'user' => array(
 				'type' => 'string',
 				'length' => 255,
-				'null' => false,
+				'null' => true,
 				'default' => null
 			),
 			'password' => array(
 				'type' => 'string',
 				'length' => 255,
-				'null' => false,
+				'null' => true,
 				'default' => null
 			),
 			'created' => array(
