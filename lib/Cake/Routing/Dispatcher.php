@@ -64,8 +64,7 @@ class Dispatcher {
  * @param CakeResponse $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
- * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
- *    are encountered.
+ * @throws MissingControllerException When the controller is missing.
  */
 	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
 		if ($this->asset($request->url, $response) || $this->cached($request->here())) {
@@ -316,7 +315,7 @@ class Dispatcher {
 		$response->send();
 		ob_clean();
 		if ($ext === 'css' || $ext === 'js') {
-			include($assetFile);
+			include $assetFile;
 		} else {
 			readfile($assetFile);
 		}
@@ -325,4 +324,5 @@ class Dispatcher {
 			ob_end_flush();
 		}
 	}
+
 }
