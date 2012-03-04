@@ -203,7 +203,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'name' => $message,
 			'url' => h($url),
-			'error' => $error, 
+			'error' => $error,
 			'_serialize' => array('name', 'url')
 		));
 		$this->_outputMessage('error400');
@@ -286,4 +286,5 @@ class ExceptionRenderer {
 		$this->controller->response->type('html');
 		$this->controller->response->send();
 	}
+
 }
