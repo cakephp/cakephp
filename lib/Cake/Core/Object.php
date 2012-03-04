@@ -1,12 +1,5 @@
 <?php
 /**
- * Object class, allowing __construct and __destruct in PHP4.
- *
- * Also includes methods for logging and the special method RequestAction,
- * to call other Controllers' Actions from anywhere.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -206,4 +199,5 @@ class Object {
 			}
 		}
 	}
+
 }

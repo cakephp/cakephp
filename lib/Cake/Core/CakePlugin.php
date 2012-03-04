@@ -126,7 +126,7 @@ class CakePlugin {
 			if ($opts === null && isset($options[0])) {
 				$opts = $options[0];
 			}
-			self::load($p, (array) $opts);
+			self::load($p, (array)$opts);
 		}
 	}
 
@@ -162,7 +162,7 @@ class CakePlugin {
 
 		$path = self::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include($path . 'Config' . DS . 'bootstrap.php');
+			return include $path . 'Config' . DS . 'bootstrap.php';
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
@@ -191,7 +191,7 @@ class CakePlugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool) include self::path($plugin) . 'Config' . DS . 'routes.php';
+		return (bool)include self::path($plugin) . 'Config' . DS . 'routes.php';
 	}
 
 /**
@@ -224,4 +224,5 @@ class CakePlugin {
 			unset(self::$_plugins[$plugin]);
 		}
 	}
+
 }
