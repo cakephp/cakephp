@@ -140,7 +140,7 @@ class Scaffold {
 			'title_for_layout', 'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
-		$this->set('title_for_layout', $title);
+		$this->controller->set('title_for_layout', $title);
 
 		if ($this->controller->viewClass) {
 			$this->controller->viewClass = 'Scaffold';
