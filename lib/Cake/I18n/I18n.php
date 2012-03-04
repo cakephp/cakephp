@@ -97,6 +97,8 @@ class I18n {
 		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 
+	protected $_escape = null;
+
 /**
  * Constructor, use I18n::getInstance() to get the i18n translation object.
  *
@@ -560,7 +562,7 @@ class I18n {
 			$replacements = array_map('crc32', $mustEscape);
 			$value = str_replace($mustEscape, $replacements, $value);
 			$value = explode(';', $value);
-			$_this->__escape = $escape;
+			$_this->_escape = $escape;
 			foreach ($value as $i => $val) {
 				$val = trim($val, '"');
 				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$_this, '_parseLiteralValue'), $val);
@@ -585,16 +587,16 @@ class I18n {
  */
 	protected function _parseLiteralValue($string) {
 		$string = $string[1];
-		if (substr($string, 0, 2) === $this->__escape . 'x') {
-			$delimiter = $this->__escape . 'x';
+		if (substr($string, 0, 2) === $this->_escape . 'x') {
+			$delimiter = $this->_escape . 'x';
 			return join('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
 		}
-		if (substr($string, 0, 2) === $this->__escape . 'd') {
-			$delimiter = $this->__escape . 'd';
+		if (substr($string, 0, 2) === $this->_escape . 'd') {
+			$delimiter = $this->_escape . 'd';
 			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
-		if ($string[0] === $this->__escape && isset($string[1]) && is_numeric($string[1])) {
-			$delimiter = $this->__escape;
+		if ($string[0] === $this->_escape && isset($string[1]) && is_numeric($string[1])) {
+			$delimiter = $this->_escape;
 			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if (substr($string, 0, 3) === 'U00') {
@@ -622,4 +624,5 @@ class I18n {
 		}
 		return $format;
 	}
+
 }

@@ -240,7 +240,7 @@ if (!function_exists('mb_substr')) {
  * @return string A converted version of the string represented in ASCII.
  */
 if (!function_exists('mb_encode_mimeheader')) {
-	function mb_encode_mimeheader($str, $charset = 'UTF-8', $transfer_encoding = 'B', $linefeed = "\r\n", $indent = 1) {
+	function mb_encode_mimeheader($str, $charset = 'UTF-8', $transferEncoding = 'B', $linefeed = "\r\n", $indent = 1) {
 		return Multibyte::mimeEncode($str, $charset, $linefeed);
 	}
 }
@@ -504,7 +504,7 @@ class Multibyte {
 			if (isset($needle[0]) && $needle[0] === $check[$position]) {
 				for ($i = 1; $i < $needleCount; $i++) {
 					if ($needle[$i] !== $check[$position + $i]) {
-						if ($needle[$i] === $check[($position + $i) -1]) {
+						if ($needle[$i] === $check[($position + $i) - 1]) {
 							$found = true;
 						}
 						unset($parts[$position - 1]);
@@ -566,7 +566,7 @@ class Multibyte {
 			if (isset($needle[0]) && $needle[0] === $check[$position]) {
 				for ($i = 1; $i < $needleCount; $i++) {
 					if ($needle[$i] !== $check[$position + $i]) {
-						if ($needle[$i] === $check[($position + $i) -1]) {
+						if ($needle[$i] === $check[($position + $i) - 1]) {
 							$found = true;
 						}
 						unset($parts[$position - 1]);
@@ -624,7 +624,7 @@ class Multibyte {
 				if (isset($needle[0]) && $needle[0] === $haystack[$position]) {
 					for ($i = 1; $i < $needleCount; $i++) {
 						if ($needle[$i] !== $haystack[$position + $i]) {
-							if ($needle[$i] === $haystack[($position + $i) -1]) {
+							if ($needle[$i] === $haystack[($position + $i) - 1]) {
 								$position--;
 								$found = true;
 								continue;
@@ -674,7 +674,7 @@ class Multibyte {
 				if (isset($needle[0]) && $needle[0] === $haystack[$position]) {
 					for ($i = 1; $i < $needleCount; $i++) {
 						if ($needle[$i] !== $haystack[$position + $i]) {
-							if ($needle[$i] === $haystack[($position + $i) -1]) {
+							if ($needle[$i] === $haystack[($position + $i) - 1]) {
 								$position--;
 								$found = true;
 								continue;
@@ -767,13 +767,13 @@ class Multibyte {
 		$length = count($utf8Map);
 		$lowerCase = array();
 
-		for ($i = 0 ; $i < $length; $i++) {
+		for ($i = 0; $i < $length; $i++) {
 			$char = $utf8Map[$i];
 
 			if ($char < 128) {
 				$str = strtolower(chr($char));
 				$strlen = strlen($str);
-				for ($ii = 0 ; $ii < $strlen; $ii++) {
+				for ($ii = 0; $ii < $strlen; $ii++) {
 					$lower = ord(substr($str, $ii, 1));
 				}
 				$lowerCase[] = $lower;
@@ -812,13 +812,13 @@ class Multibyte {
 		$replaced = array();
 		$upperCase = array();
 
-		for ($i = 0 ; $i < $length; $i++) {
+		for ($i = 0; $i < $length; $i++) {
 			$char = $utf8Map[$i];
 
 			if ($char < 128) {
 				$str = strtoupper(chr($char));
 				$strlen = strlen($str);
-				for ($ii = 0 ; $ii < $strlen; $ii++) {
+				for ($ii = 0; $ii < $strlen; $ii++) {
 					$upper = ord(substr($str, $ii, 1));
 				}
 				$upperCase[] = $upper;
@@ -1007,7 +1007,7 @@ class Multibyte {
  * @return string
  */
 	protected static function _codepoint($decimal) {
-		if ($decimal > 128 && $decimal < 256)  {
+		if ($decimal > 128 && $decimal < 256) {
 			$return = '0080_00ff'; // Latin-1 Supplement
 		} elseif ($decimal < 384) {
 			$return = '0100_017f'; // Latin Extended-A
@@ -1103,4 +1103,5 @@ class Multibyte {
 		}
 		return false;
 	}
+
 }

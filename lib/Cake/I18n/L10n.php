@@ -469,4 +469,5 @@ class L10n {
 		}
 		return $this->_l10nCatalog;
 	}
+
 }
