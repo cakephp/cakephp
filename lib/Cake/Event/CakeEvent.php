@@ -102,7 +102,6 @@ class CakeEvent {
 		return $this->_name;
 	}
 
-
 /**
  * Returns the subject of this event
  *

@@ -56,7 +56,6 @@ class CakeEventManager {
  */
 	protected $_isGlobal = false;
 
-
 /**
  * Returns the globally available instance of a CakeEventManager
  * this is used for dispatching events attached from outside the scope
@@ -97,6 +96,8 @@ class CakeEventManager {
  * when the listener is called. If $called is an instance of CakeEventListener, this parameter will be ignored
  *
  * @return void
+ * @throws InvalidArgumentException When event key is missing or callable is not an
+ *   instance of CakeEventListener.
  */
 	public function attach($callable, $eventKey = null, $options = array()) {
 		if (!$eventKey && !($callable instanceof CakeEventListener)) {
