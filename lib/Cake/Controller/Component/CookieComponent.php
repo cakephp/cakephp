@@ -431,7 +431,7 @@ class CookieComponent extends Component {
 
 		if ($this->_encrypted === true) {
 			$type = $this->_type;
-			$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->key));
+			$value = "Q2FrZQ==." . base64_encode(Security::$type($value, $this->key));
 		}
 		return $value;
 	}
@@ -503,4 +503,5 @@ class CookieComponent extends Component {
 		}
 		return $array;
 	}
+
 }

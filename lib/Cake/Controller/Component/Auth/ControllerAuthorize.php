@@ -61,7 +61,7 @@ class ControllerAuthorize extends BaseAuthorize {
  * @return boolean
  */
 	public function authorize($user, CakeRequest $request) {
-		return (bool) $this->_Controller->isAuthorized($user);
+		return (bool)$this->_Controller->isAuthorized($user);
 	}
 
 }

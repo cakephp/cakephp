@@ -55,6 +55,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * @since 2.0
  */
 class DigestAuthenticate extends BaseAuthenticate {
+
 /**
  * Settings for this object.
  *
@@ -65,7 +66,8 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `realm` The realm authentication is for, Defaults to the servername.
  * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
- * - `opaque` A string that must be returned unchanged by clients. Defaults to `md5($settings['realm'])`
+ * - `opaque` A string that must be returned unchanged by clients. 
+ *    Defaults to `md5($settings['realm'])`
  *
  * @var array
  */
@@ -261,4 +263,5 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		return 'WWW-Authenticate: Digest ' . implode(',', $opts);
 	}
+
 }

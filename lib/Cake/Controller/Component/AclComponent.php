@@ -177,6 +177,5 @@ class AclComponent extends Component {
 		trigger_error(__d('cake_dev', 'AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
 		return $this->_Instance->deny($aro, $aco, $action);
 	}
+
 }
-
-

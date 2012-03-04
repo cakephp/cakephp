@@ -41,6 +41,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * @since 2.0
  */
 class BasicAuthenticate extends BaseAuthenticate {
+
 /**
  * Settings for this object.
  *
@@ -121,4 +122,5 @@ class BasicAuthenticate extends BaseAuthenticate {
 	public function loginHeaders() {
 		return sprintf('WWW-Authenticate: Basic realm="%s"', $this->settings['realm']);
 	}
+
 }

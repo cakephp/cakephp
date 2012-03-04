@@ -223,7 +223,7 @@ class PaginatorComponent extends Component {
 	protected function _getObject($object) {
 		if (is_string($object)) {
 			$assoc = null;
-			if (strpos($object, '.')  !== false) {
+			if (strpos($object, '.') !== false) {
 				list($object, $assoc) = pluginSplit($object);
 			}
 
@@ -370,11 +370,12 @@ class PaginatorComponent extends Component {
  * @return array An array of options for pagination
  */
 	public function checkLimit($options) {
-		$options['limit'] = (int) $options['limit'];
+		$options['limit'] = (int)$options['limit'];
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
 		}
 		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
 		return $options;
 	}
+
 }

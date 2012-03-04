@@ -718,4 +718,5 @@ class AuthComponent extends Component {
 	public function flash($message) {
 		$this->Session->setFlash($message, $this->flash['element'], $this->flash['params'], $this->flash['key']);
 	}
+
 }

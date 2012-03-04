@@ -121,7 +121,8 @@ abstract class BaseAuthenticate {
  * @param array $user The user about to be logged out.
  * @return void
  */
-	public function logout($user) { }
+	public function logout($user) {
+	}
 
 /**
  * Get a user based on information in the request.  Primarily used by stateless authentication
@@ -133,4 +134,5 @@ abstract class BaseAuthenticate {
 	public function getUser($request) {
 		return false;
 	}
+
 }

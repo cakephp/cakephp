@@ -45,7 +45,6 @@ class IniAcl extends Object implements AclInterface {
  * @return void
  */
 	public function initialize(Component $component) {
-
 	}
 
 /**
@@ -57,7 +56,6 @@ class IniAcl extends Object implements AclInterface {
  * @return boolean Success
  */
 	public function allow($aro, $aco, $action = "*") {
-
 	}
 
 /**
@@ -69,7 +67,6 @@ class IniAcl extends Object implements AclInterface {
  * @return boolean Success
  */
 	public function deny($aro, $aco, $action = "*") {
-
 	}
 
 /**
@@ -81,7 +78,6 @@ class IniAcl extends Object implements AclInterface {
  * @return boolean Success
  */
 	public function inherit($aro, $aco, $action = "*") {
-
 	}
 
 /**
@@ -91,10 +87,10 @@ class IniAcl extends Object implements AclInterface {
  *
  * @param string $aro ARO
  * @param string $aco ACO
- * @param string $aco_action Action
+ * @param string $action Action
  * @return boolean Success
  */
-	public function check($aro, $aco, $aco_action = null) {
+	public function check($aro, $aco, $action = null) {
 		if ($this->config == null) {
 			$this->config = $this->readConfigFile(APP . 'Config' . DS . 'acl.ini.php');
 		}
@@ -147,7 +143,8 @@ class IniAcl extends Object implements AclInterface {
 	}
 
 /**
- * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
+ * Parses an INI file and returns an array that reflects the 
+ * INI file's section structure. Double-quote friendly.
  *
  * @param string $filename File
  * @return array INI section structure
@@ -171,4 +168,5 @@ class IniAcl extends Object implements AclInterface {
 		array_unshift($array, "");
 		return $array;
 	}
+
 }

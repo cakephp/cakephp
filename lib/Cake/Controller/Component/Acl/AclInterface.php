@@ -66,4 +66,5 @@ interface AclInterface {
  * @param AclComponent $component
  */
 	public function initialize(Component $component);
+
 }

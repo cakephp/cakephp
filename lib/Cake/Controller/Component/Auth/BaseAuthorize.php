@@ -21,6 +21,7 @@
  * @see AuthComponent::$authenticate
  */
 abstract class BaseAuthorize {
+
 /**
  * Controller for the request.
  *
@@ -156,4 +157,5 @@ abstract class BaseAuthorize {
 			}
 		}
 	}
+
 }
