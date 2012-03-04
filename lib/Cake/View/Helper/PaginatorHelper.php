@@ -199,13 +199,14 @@ class PaginatorHelper extends AppHelper {
 			$params = $this->params($model);
 			$options = $params['options'];
 		}
-
 		if (isset($options['sort']) && !empty($options['sort'])) {
 			return $options['sort'];
-		} elseif (isset($options['order']) && is_array($options['order'])) {
-			return key($options['order']);
-		} elseif (isset($options['order']) && is_string($options['order'])) {
-			return $options['order'];
+		}
+		if (isset($options['order'])) {
+			return is_array($options['order']) ? key($options['order']) : $options['order'];
+		}
+		if (isset($params['order'])) {
+			return is_array($params['order']) ? key($params['order']) : $params['order'];
 		}
 		return null;
 	}
@@ -231,6 +232,8 @@ class PaginatorHelper extends AppHelper {
 			$dir = strtolower($options['direction']);
 		} elseif (isset($options['order']) && is_array($options['order'])) {
 			$dir = strtolower(current($options['order']));
+		} elseif (isset($params['order']) && is_array($params['order'])) {
+			$dir = strtolower(current($params['order']));
 		}
 
 		if ($dir == 'desc') {
