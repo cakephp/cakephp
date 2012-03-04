@@ -29,6 +29,7 @@ App::uses('Set', 'Utility');
  * @package       Cake.Network
  */
 class CakeRequest implements ArrayAccess {
+
 /**
  * Array of parameters parsed from the url.
  *
@@ -275,7 +276,7 @@ class CakeRequest implements ArrayAccess {
 				$base = '';
 			}
 
-			$this->webroot = $base .'/';
+			$this->webroot = $base . '/';
 			return $this->base = $base;
 		}
 
@@ -292,7 +293,7 @@ class CakeRequest implements ArrayAccess {
 
 		if (!empty($base) || !$docRootContainsWebroot) {
 			if (strpos($this->webroot, '/' . $dir . '/') === false) {
-				$this->webroot .= $dir . '/' ;
+				$this->webroot .= $dir . '/';
 			}
 			if (strpos($this->webroot, '/' . $webroot . '/') === false) {
 				$this->webroot .= $webroot . '/';
@@ -847,4 +848,5 @@ class CakeRequest implements ArrayAccess {
 	public function offsetUnset($name) {
 		unset($this->params[$name]);
 	}
+
 }

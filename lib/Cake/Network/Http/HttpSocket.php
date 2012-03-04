@@ -603,7 +603,7 @@ class HttpSocket extends CakeSocket {
 		}
 		list($plugin, $authClass) = pluginSplit($this->_proxy['method'], true);
 		$authClass = Inflector::camelize($authClass) . 'Authentication';
-		App::uses($authClass, $plugin. 'Network/Http');
+		App::uses($authClass, $plugin . 'Network/Http');
 
 		if (!class_exists($authClass)) {
 			throw new SocketException(__d('cake_dev', 'Unknown authentication method for proxy.'));
@@ -926,4 +926,5 @@ class HttpSocket extends CakeSocket {
 		parent::reset($initalState);
 		return true;
 	}
+
 }

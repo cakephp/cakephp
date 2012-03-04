@@ -276,4 +276,5 @@ class CakeSocket {
 		}
 		return true;
 	}
+
 }

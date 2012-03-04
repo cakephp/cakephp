@@ -123,7 +123,7 @@ class HttpResponse implements ArrayAccess {
 	public function isOk() {
 		return $this->code == 200;
 	}
-	
+
 /**
  * If return is a valid 3xx (Redirection)
  *
@@ -238,9 +238,7 @@ class HttpResponse implements ArrayAccess {
 			$chunkLength = hexdec($hexLength);
 			$chunk = substr($body, 0, $chunkLength);
 			if (!empty($chunkExtensionName)) {
-				/**
-				 * @todo See if there are popular chunk extensions we should implement
-				 */
+				 // @todo See if there are popular chunk extensions we should implement
 			}
 			$decodedBody .= $chunk;
 			if ($chunkLength !== 0) {
@@ -427,7 +425,6 @@ class HttpResponse implements ArrayAccess {
  * @return void
  */
 	public function offsetSet($offset, $value) {
-		return;
 	}
 
 /**
@@ -437,7 +434,6 @@ class HttpResponse implements ArrayAccess {
  * @return void
  */
 	public function offsetUnset($offset) {
-		return;
 	}
 
 /**
