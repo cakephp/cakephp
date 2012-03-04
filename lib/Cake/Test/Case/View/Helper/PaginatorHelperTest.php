@@ -53,6 +53,8 @@ class PaginatorHelperTest extends CakeTestCase {
 					'prevPage' => false,
 					'nextPage' => true,
 					'pageCount' => 7,
+					'order' => null,
+					'limit' => 20,
 					'options' => array(
 						'page' => 1,
 						'conditions' => array()
@@ -367,6 +369,21 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article'));
 		$this->assertEquals($result, 'Article');
+	}
+
+/**
+ * Test that sortKey falls back to the default sorting options set
+ * in the $params which are the default pagination options.
+ *
+ * @return void
+ */
+	public function testSortKeyFallbackToParams() {
+		$this->Paginator->request->params['paging']['Article']['order'] = 'Article.body';
+		$result = $this->Paginator->sortKey();
+		$this->assertEquals('Article.body', $result);
+
+		$result = $this->Paginator->sortKey('Article');
+		$this->assertEquals('Article.body', $result);
 	}
 
 /**
