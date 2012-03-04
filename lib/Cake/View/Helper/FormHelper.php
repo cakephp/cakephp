@@ -1317,6 +1317,7 @@ class FormHelper extends AppHelper {
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
  *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
+ * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
