@@ -152,6 +152,8 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 	public function __destruct() {
 		try {
 			session_write_close();
-		} catch (Exception $e) {}
+		} catch (Exception $e) {
+		}
 	}
+
 }

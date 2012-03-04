@@ -228,6 +228,7 @@ class DboSource extends DataSource {
  *
  * @param array $config Array of configuration information for the Datasource.
  * @param boolean $autoConnect Whether or not the datasource should automatically connect.
+ * @throws MissingConnectionException when a connection cannot be made.
  */
 	public function __construct($config = null, $autoConnect = true) {
 		if (!isset($config['prefix'])) {
@@ -341,7 +342,6 @@ class DboSource extends DataSource {
 		}
 	}
 
-
 /**
  * Returns an object to represent a database identifier in a query. Expression objects
  * are not sanitized or escaped.
@@ -419,6 +419,7 @@ class DboSource extends DataSource {
  * @param array $prepareOptions Options to be used in the prepare statement
  * @return mixed PDOStatement if query executes with no problem, true as the result of a successful, false on error
  * query returning no rows, such as a CREATE statement, false otherwise
+ * @throws PDOException
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$sql = trim($sql);
@@ -1148,6 +1149,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  * @return mixed
+ * @throws CakeException when results cannot be created.
  */
 	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
@@ -1199,12 +1201,11 @@ class DboSource extends DataSource {
 				if (!empty($ins)) {
 					$ins = array_unique($ins);
 					if (count($ins) > 1) {
-						$query = str_replace('{$__cakeID__$}', '(' .implode(', ', $ins) .')', $query);
+						$query = str_replace('{$__cakeID__$}', '(' . implode(', ', $ins) . ')', $query);
 						$query = str_replace('= (', 'IN (', $query);
 					} else {
 						$query = str_replace('{$__cakeID__$}', $ins[0], $query);
 					}
-
 					$query = str_replace(' WHERE 1 = 1', '', $query);
 				}
 
@@ -1842,7 +1843,7 @@ class DboSource extends DataSource {
 			} else {
 				$update .= $value;
 			}
-			$updates[] =  $update;
+			$updates[] = $update;
 		}
 		return $updates;
 	}
@@ -2356,7 +2357,7 @@ class DboSource extends DataSource {
 					if ($not) {
 						$out[] = $not . '(' . $value[0] . ')';
 					} else {
-						$out[] = $value[0] ;
+						$out[] = $value[0];
 					}
 				} else {
 					$out[] = '(' . $not . '(' . implode(') ' . strtoupper($key) . ' (', $value) . '))';
@@ -2612,11 +2613,11 @@ class DboSource extends DataSource {
 			$key = trim($key);
 
 			if (is_object($model) && $model->isVirtualField($key)) {
-				$key =  '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
+				$key = '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
 			}
 			list($alias, $field) = pluginSplit($key);
 			if (is_object($model) && $alias !== $model->alias && is_object($model->{$alias}) && $model->{$alias}->isVirtualField($key)) {
-				$key =  '(' . $this->_quoteFields($model->{$alias}->getVirtualField($key)) . ')';
+				$key = '(' . $this->_quoteFields($model->{$alias}->getVirtualField($key)) . ')';
 			}
 
 			if (strpos($key, '.')) {

@@ -682,4 +682,5 @@ class CakeSession {
 		self::$error[$errorNumber] = $errorMessage;
 		self::$lastError = $errorNumber;
 	}
+
 }

@@ -56,6 +56,7 @@ class AclNode extends Model {
  *
  * @param mixed $ref Array with 'model' and 'foreign_key', model object, or string value
  * @return array Node found in database
+ * @throws CakeException when binding to a model that doesn't exist.
  */
 	public function node($ref = null) {
 		$db = $this->getDataSource();
@@ -177,4 +178,5 @@ class AclNode extends Model {
 		}
 		return $result;
 	}
+
 }

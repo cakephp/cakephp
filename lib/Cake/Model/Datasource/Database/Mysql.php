@@ -444,7 +444,7 @@ class Mysql extends DboSource {
 			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
 			while ($idx = $indices->fetch(PDO::FETCH_OBJ)) {
 				if ($old) {
-					$idx = (object) current((array)$idx);
+					$idx = (object)current((array)$idx);
 				}
 				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
@@ -589,9 +589,9 @@ class Mysql extends DboSource {
 					}
 				}
 				if (is_array($value['column'])) {
-					$out .= 'KEY '. $name .' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+					$out .= 'KEY ' . $name . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 				} else {
-					$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+					$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
 				}
 				$alter[] = $out;
 			}
@@ -618,7 +618,7 @@ class Mysql extends DboSource {
 		} else {
 			$tables = array();
 			foreach ($result as $row) {
-				$tables[$row['Name']] = (array) $row;
+				$tables[$row['Name']] = (array)$row;
 				unset($tables[$row['Name']]['queryString']);
 				if (!empty($row['Collation'])) {
 					$charset = $this->getCharsetName($row['Collation']);
@@ -634,7 +634,6 @@ class Mysql extends DboSource {
 			return $tables;
 		}
 	}
-
 
 /**
  * Converts database-layer column types to basic types
