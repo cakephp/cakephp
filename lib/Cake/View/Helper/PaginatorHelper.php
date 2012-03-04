@@ -232,6 +232,8 @@ class PaginatorHelper extends AppHelper {
 			$dir = strtolower($options['direction']);
 		} elseif (isset($options['order']) && is_array($options['order'])) {
 			$dir = strtolower(current($options['order']));
+		} elseif (isset($params['order']) && is_array($params['order'])) {
+			$dir = strtolower(current($params['order']));
 		}
 
 		if ($dir == 'desc') {

@@ -384,6 +384,15 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$result = $this->Paginator->sortKey('Article');
 		$this->assertEquals('Article.body', $result);
+
+		$this->Paginator->request->params['paging']['Article']['order'] = array(
+			'Article.body' => 'DESC'
+		);
+		$result = $this->Paginator->sortKey();
+		$this->assertEquals('Article.body', $result);
+
+		$result = $this->Paginator->sortKey('Article');
+		$this->assertEquals('Article.body', $result);
 	}
 
 /**
@@ -453,6 +462,32 @@ class PaginatorHelperTest extends CakeTestCase {
 		$expected = 'asc';
 
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that sortDir falls back to the default sorting options set
+ * in the $params which are the default pagination options.
+ *
+ * @return void
+ */
+	public function testSortDirFallbackToParams() {
+		$this->Paginator->request->params['paging']['Article']['order'] = array(
+			'Article.body' => 'ASC'
+		);
+		$result = $this->Paginator->sortDir();
+		$this->assertEquals('asc', $result);
+
+		$result = $this->Paginator->sortDir('Article');
+		$this->assertEquals('asc', $result);
+
+		$this->Paginator->request->params['paging']['Article']['order'] = array(
+			'Article.body' => 'DESC'
+		);
+		$result = $this->Paginator->sortDir();
+		$this->assertEquals('desc', $result);
+
+		$result = $this->Paginator->sortDir('Article');
+		$this->assertEquals('desc', $result);
 	}
 
 /**
