@@ -223,7 +223,7 @@ class ConsoleOptionParser {
  */
 	public function command($text = null) {
 		if ($text !== null) {
-			$this->_command = Inflector::underscore($text);
+			$this->_command = Inflector::camelize($text);
 			return $this;
 		}
 		return $this->_command;
