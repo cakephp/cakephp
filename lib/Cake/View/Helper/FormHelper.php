@@ -1376,7 +1376,7 @@ class FormHelper extends AppHelper {
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
-			if (!empty($disabled) && in_array($optValue, $disabled)) {
+			if ($disabled && (!is_array($disabled) || in_array($optValue, $disabled))) {
 				$optionsHere['disabled'] = true;
 			}
 			$tagName = Inflector::camelize(
