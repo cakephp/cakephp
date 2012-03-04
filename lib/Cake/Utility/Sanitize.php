@@ -260,4 +260,5 @@ class Sanitize {
 			return $data;
 		}
 	}
+
 }

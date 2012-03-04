@@ -1,9 +1,5 @@
 <?php
 /**
- * JsEngineBaseClass
- *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc.
  *
@@ -58,16 +54,6 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @var array
  */
 	protected $_callbackArguments = array();
-
-/**
- * Constructor.
- *
- * @param View $View
- * @param array $settings
- */
-	public function __construct($View, $settings = array()) {
-		parent::__construct($View, $settings);
-	}
 
 /**
  * Create an `alert()` message in Javascript
@@ -602,4 +588,5 @@ abstract class JsBaseEngineHelper extends AppHelper {
 		}
 		return $out;
 	}
+
 }

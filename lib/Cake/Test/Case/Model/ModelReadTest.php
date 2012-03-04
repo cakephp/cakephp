@@ -7826,4 +7826,24 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertTrue(is_array($result) && !empty($result));
     }
+
+/**
+ * test custom find method
+ *
+ * @return void
+ */
+	public function testfindCustom() {
+		$this->loadFixtures('Article');
+		$Article = new CustomArticle();
+		$data = array('user_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
+		$Article->create($data);
+		$Article->save();
+		$this->assertEquals(4, $Article->id);
+
+		$result = $Article->find('published');
+		$this->assertEquals(3, count($result));
+
+		$result = $Article->find('unPublished');
+		$this->assertEquals(1, count($result));
+    }
 }

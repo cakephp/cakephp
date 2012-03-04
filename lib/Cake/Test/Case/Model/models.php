@@ -18,6 +18,41 @@
  * @since         CakePHP(tm) v 1.2.0.6464
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Model', 'Model');
+/**
+ * AppModel class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class AppModel extends Model {
+
+/**
+ * findMethods property
+ *
+ * @var array
+ */
+	public $findMethods = array('published' => true);
+
+/**
+ * useDbConfig property
+ *
+ * @var array
+ */
+	public $useDbConfig = 'test';
+
+/**
+ * _findPublished custom find
+ *
+ * @return array
+ */
+	public function _findPublished($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions']['published'] = 'Y';
+            return $query;
+        }
+        return $results;
+	}
+}
 
 /**
  * Test class
@@ -4687,5 +4722,40 @@ class Armor extends CakeTestModel {
 class ArmorsPlayer extends CakeTestModel {
 
 	public $useDbConfig = 'test_database_three';
+
+}
+
+/**
+ * CustomArticle class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class CustomArticle extends AppModel {
+/**
+ * useTable property
+ *
+ * @var string
+ */
+	public $useTable = 'articles';
+
+/**
+ * findMethods property
+ *
+ * @var array
+ */
+	public $findMethods = array('unPublished' => true);
+
+/**
+ * _findUnPublished custom find
+ *
+ * @return array
+ */
+	public function _findUnPublished($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions']['published'] = 'N';
+            return $query;
+        }
+        return $results;
+	}
 
 }

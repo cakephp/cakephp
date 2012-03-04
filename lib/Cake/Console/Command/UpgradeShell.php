@@ -191,7 +191,7 @@ class UpgradeShell extends AppShell {
 		$defaultOptions = array(
 			'recursive' => true,
 			'checkFolder' => true,
-			'regex' => '@class (\S*) .*{@i'
+			'regex' => '@class (\S*) .*(\s|\v)*{@i'
 		);
 		foreach ($sourceDirs as $dir => $options) {
 			if (is_numeric($dir)) {

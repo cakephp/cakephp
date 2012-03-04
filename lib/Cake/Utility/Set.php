@@ -47,7 +47,7 @@ class Set {
 
 		$r = (array)current($args);
 		while (($arg = next($args)) !== false) {
-			foreach ((array)$arg as $key => $val)	 {
+			foreach ((array)$arg as $key => $val) {
 				if (!empty($r[$key]) && is_array($r[$key]) && is_array($val)) {
 					$r[$key] = Set::merge($r[$key], $val);
 				} elseif (is_int($key)) {
@@ -319,8 +319,9 @@ class Set {
 	}
 
 /**
- * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call
- * is delegated to Set::classicExtract.
+ * Implements partial support for XPath 2.0. If $path does not contain a '/' the call
+ * is delegated to Set::classicExtract(). Also the $path and $data arguments are 
+ * reversible.
  *
  * #### Currently implemented selectors:
  *
@@ -1213,4 +1214,5 @@ class Set {
 		}
 		return $return;
 	}
+
 }

@@ -87,4 +87,5 @@ class ScaffoldView extends ThemeView {
 
 		throw new MissingViewException($paths[0] . $name . $this->ext);
 	}
+
 }

@@ -38,6 +38,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  * @package       Cake.View.Helper
  */
 class JqueryEngineHelper extends JsBaseEngineHelper {
+
 /**
  * Option mappings for jQuery
  *
@@ -149,7 +150,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  */
 	public function get($selector) {
 		if ($selector == 'window' || $selector == 'document') {
-			$this->selection = $this->jQueryObject . '(' . $selector .')';
+			$this->selection = $this->jQueryObject . '(' . $selector . ')';
 		} else {
 			$this->selection = $this->jQueryObject . '("' . $selector . '")';
 		}
@@ -258,7 +259,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		if (isset($options['update'])) {
 			$wrapCallbacks = isset($options['wrapCallbacks']) ? $options['wrapCallbacks'] : true;
 			$success = '';
-			if (isset($options['success']) AND !empty($options['success'])) {
+			if (isset($options['success']) && !empty($options['success'])) {
 				$success .= $options['success'];
 			}
 			$success .= $this->jQueryObject . '("' . $options['update'] . '").html(data);';
@@ -276,7 +277,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		$options = $this->_prepareCallbacks('request', $options);
 		$options = $this->_parseOptions($options, $callbacks);
-		return $this->jQueryObject . '.ajax({' . $options .'});';
+		return $this->jQueryObject . '.ajax({' . $options . '});';
 	}
 
 /**
@@ -356,4 +357,5 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return $selector . $method;
 	}
+
 }

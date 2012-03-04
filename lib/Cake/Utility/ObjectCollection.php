@@ -322,4 +322,5 @@ abstract class ObjectCollection {
 		}
 		return $normal;
 	}
+
 }

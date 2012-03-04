@@ -146,7 +146,7 @@ class MysqlTest extends CakeTestCase {
 	public function testLocalizedFloats() {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
 
-		$restore = setlocale(LC_ALL, null);
+		$restore = setlocale(LC_ALL, 0);
 		setlocale(LC_ALL, 'de_DE');
 
 		$result = $this->Dbo->value(3.141593);
@@ -1085,12 +1085,25 @@ class MysqlTest extends CakeTestCase {
 
 		$linkModel = $model->{$className};
 		$external = isset($assocData['external']);
-		$reflection = new ReflectionMethod($this->Dbo, '_scrubQueryData');
-		$reflection->setAccessible(true);
-		$queryData = $reflection->invokeArgs($this->Dbo, array($queryData));
+		$queryData = $this->_scrubQueryData($queryData);
 
 		$result = array_merge(array('linkModel' => &$linkModel), compact('type', 'assoc', 'assocData', 'external'));
 		return $result;
+	}
+
+/**
+ * Helper method copied from DboSource::_scrubQueryData()
+ *
+ * @param array $data
+ * @return array
+ */
+	function _scrubQueryData($data) {
+		static $base = null;
+		if ($base === null) {
+			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());
+			$base['callbacks'] = null;
+		}
+		return (array)$data + $base;
 	}
 
 /**
@@ -3492,7 +3505,7 @@ class MysqlTest extends CakeTestCase {
 			->with("UPDATE `$db`.`articles` SET `field1` = 'value1'  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " . 
+			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " .
 				"(`Article`.`user_id` = `User`.`id`)" .
 				" SET `Article`.`field1` = 2  WHERE 2=2");
 
@@ -3525,7 +3538,7 @@ class MysqlTest extends CakeTestCase {
 			->with("DELETE  FROM `$db`.`articles`  WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
-			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " . 
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " .
 				"ON (`Article`.`user_id` = `User`.`id`)" .
 				"  WHERE 1 = 1");
 

@@ -159,4 +159,5 @@ class SessionHelper extends AppHelper {
 	public function valid() {
 		return CakeSession::valid();
 	}
+
 }

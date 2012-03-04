@@ -54,7 +54,7 @@ class ApcEngine extends CacheEngine {
 		} else {
 			$expires = time() + $duration;
 		}
-		apc_store($key.'_expires', $expires, $duration);
+		apc_store($key . '_expires', $expires, $duration);
 		return apc_store($key, $value, $duration);
 	}
 
@@ -66,7 +66,7 @@ class ApcEngine extends CacheEngine {
  */
 	public function read($key) {
 		$time = time();
-		$cachetime = intval(apc_fetch($key.'_expires'));
+		$cachetime = intval(apc_fetch($key . '_expires'));
 		if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			return false;
 		}
