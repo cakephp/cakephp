@@ -78,6 +78,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		),
 		'userModel' => 'User',
 		'scope' => array(),
+		'recursive' => 0,
 		'realm' => '',
 		'qop' => 'auth',
 		'nonce' => '',
@@ -166,7 +167,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => 0
+			'recursive' => (int)$this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;
