@@ -175,9 +175,11 @@ class Set {
 					}
 				} elseif (is_array($value)) {
 					if ($primary === true) {
+						// @codingStandardsIgnoreStart Legacy junk
 						if (!isset($out->_name_)) {
 							$out->_name_ = $key;
 						}
+						// @codingStandardsIgnoreEnd
 						$primary = false;
 						foreach ($value as $key2 => $value2) {
 							$out->{$key2} = Set::_map($value2, true);
@@ -975,11 +977,13 @@ class Set {
 				if (is_array($value)) {
 					$new[$key] = (array)Set::reverse($value);
 				} else {
+					// @codingStandardsIgnoreStart Legacy junk
 					if (isset($value->_name_)) {
 						$new = array_merge($new, Set::reverse($value));
 					} else {
 						$new[$key] = Set::reverse($value);
-					}
+					}	
+					// @codingStandardsIgnoreEnd
 				}
 			}
 			if (isset($identity)) {

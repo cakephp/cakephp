@@ -404,6 +404,8 @@ class I18n {
 	public static function loadMo($filename) {
 		$translations = false;
 
+		// @codingStandardsIgnoreStart
+		// Binary files extracted makes non-standard local variables
 		if ($data = file_get_contents($filename)) {
 			$translations = array();
 			$header = substr($data, 0, 20);
@@ -433,6 +435,7 @@ class I18n {
 				}
 			}
 		}
+		// @codingStandardsIgnoreEnd
 
 		return $translations;
 	}

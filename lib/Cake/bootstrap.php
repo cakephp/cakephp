@@ -50,7 +50,7 @@ if (!defined('WEBROOT_DIR')) {
  * Path to the application's directory.
  */
 if (!defined('APP')) {
-	define('APP', ROOT . DS . APP_DIR.DS);
+	define('APP', ROOT . DS . APP_DIR . DS);
 }
 
 /**
@@ -127,7 +127,7 @@ if (!defined('JS_URL')) {
 
 
 require CAKE . 'basics.php';
-require CAKE . 'Core' . DS .'App.php';
+require CAKE . 'Core' . DS . 'App.php';
 require CAKE . 'Error' . DS . 'exceptions.php';
 
 spl_autoload_register(array('App', 'load'));

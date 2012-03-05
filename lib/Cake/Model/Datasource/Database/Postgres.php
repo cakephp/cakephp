@@ -200,6 +200,8 @@ class Postgres extends DboSource {
 				array($table, $this->config['schema'])
 			);
 
+			// @codingStandardsIgnoreStart
+			// Postgres columns don't match the coding standards.
 			foreach ($cols as $c) {
 				$type = $c->type;
 				if (!empty($c->oct_length) && $c->char_length === null) {
@@ -257,6 +259,8 @@ class Postgres extends DboSource {
 			}
 			$this->_cacheDescription($table, $fields);
 		}
+		// @codingStandardsIgnoreEnd
+
 		if (isset($model->sequence)) {
 			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;
 		}

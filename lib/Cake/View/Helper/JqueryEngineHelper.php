@@ -229,7 +229,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 				$name = ($name == 'slideIn') ? 'slideDown' : 'slideUp';
 			case 'hide':
 			case 'show':
- 			case 'fadeIn':
+			case 'fadeIn':
 			case 'fadeOut':
 			case 'slideDown':
 			case 'slideUp':
