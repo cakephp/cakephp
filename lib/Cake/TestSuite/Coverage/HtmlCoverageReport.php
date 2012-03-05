@@ -197,4 +197,5 @@ HTML;
 	public function coverageFooter() {
 		return "</pre></div></div>";
 	}
+
 }

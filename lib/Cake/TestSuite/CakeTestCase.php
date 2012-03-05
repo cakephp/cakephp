@@ -63,15 +63,15 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	protected $_pathRestore = array();
 
 /**
-* Runs the test case and collects the results in a TestResult object.
-* If no TestResult object is passed a new one will be created.
-* This method is run for each test method in this class
-*
-* @param  PHPUnit_Framework_TestResult $result
-* @return PHPUnit_Framework_TestResult
-* @throws InvalidArgumentException
-*/
-	public function run(PHPUnit_Framework_TestResult $result = NULL) {
+ * Runs the test case and collects the results in a TestResult object.
+ * If no TestResult object is passed a new one will be created.
+ * This method is run for each test method in this class
+ *
+ * @param  PHPUnit_Framework_TestResult $result
+ * @return PHPUnit_Framework_TestResult
+ * @throws InvalidArgumentException
+ */
+	public function run(PHPUnit_Framework_TestResult $result = null) {
 		if (!empty($this->fixtureManager)) {
 			$this->fixtureManager->load($this);
 		}
@@ -152,6 +152,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+// @codingStandardsIgnoreStart PHPUnit overrides don't match CakePHP
+
 /**
  * Announces the start of a test.
  *
@@ -174,6 +176,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		$this->endTest($this->getName());
 	}
 
+// @codingStandardsIgnoreEnd
+
 /**
  * Chooses which fixtures to load for a given test
  *
@@ -181,6 +185,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *                        fixture, i.e. 'Post', 'Author', etc.
  * @return void
  * @see CakeTestCase::$autoFixtures
+ * @throws Exception when no fixture manager is available.
  */
 	public function loadFixtures() {
 		if (empty($this->fixtureManager)) {
@@ -230,7 +235,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $string
  * @param string $message
  * @return boolean
- */	
+ */
 	public function assertTextStartsWith($prefix, $string, $message = '') {
 		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
@@ -245,7 +250,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $string
  * @param string $message
  * @return boolean
- */	
+ */
 	public function assertTextStartsNotWith($prefix, $string, $message = '') {
 		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
@@ -260,7 +265,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $string
  * @param string $message
  * @return boolean
- */	
+ */
 	public function assertTextEndsWith($suffix, $string, $message = '') {
 		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
@@ -280,7 +285,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
 		return $this->assertStringEndsNotWith($suffix, $string, $message);
-	}	
+	}
 
 /**
  * Assert that a string contains another string, ignoring differences in newlines.
@@ -350,7 +355,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
 		$normalized = array();
-		foreach ((array) $expected as $key => $val) {
+		foreach ((array)$expected as $key => $val) {
 			if (!is_numeric($key)) {
 				$normalized[] = array($key => $val);
 			} else {
@@ -431,7 +436,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 					$i++;
 				}
 				if ($attrs) {
-					$permutations = $this->_array_permute($attrs);
+					$permutations = $this->_arrayPermute($attrs);
 
 					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
@@ -480,7 +485,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param array $items An array of items
  * @return array
  */
-	protected function _array_permute($items, $perms = array()) {
+	protected function _arrayPermute($items, $perms = array()) {
 		static $permuted;
 		if (empty($perms)) {
 			$permuted = array();
@@ -495,14 +500,17 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				$newPerms = $perms;
 				list($tmp) = array_splice($newItems, $i, 1);
 				array_unshift($newPerms, $tmp);
-				$this->_array_permute($newItems, $newPerms);
+				$this->_arrayPermute($newItems, $newPerms);
 			}
 			return $permuted;
 		}
 	}
 
+// @codingStandardsIgnoreStart
+
 /**
  * Compatibility wrapper function for assertEquals
+ *
  *
  * @param mixed $result
  * @param mixed $expected
@@ -653,4 +661,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 		return $condition;
 	}
+	// @codingStandardsIgnoreStop
+
 }

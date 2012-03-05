@@ -80,6 +80,7 @@ class ControllerTestDispatcher extends Dispatcher {
 			Router::reload();
 		}
 	}
+
 }
 
 /**
@@ -98,6 +99,7 @@ class InterceptContentHelper extends Helper {
 		$this->_View->assign('__view_no_layout__', $this->_View->fetch('content'));
 		$this->_View->Helpers->unload('InterceptContent');
 	}
+
 }
 
 /**
@@ -291,6 +293,8 @@ abstract class ControllerTestCase extends CakeTestCase {
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
  * @return Controller Mocked controller
+ * @throws MissingControllerException When controllers could not be created.
+ * @throws MissingComponentException When components could not be created.
  */
 	public function generate($controller, $mocks = array()) {
 		list($plugin, $controller) = pluginSplit($controller);
@@ -299,7 +303,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$plugin .= '.';
 		}
 		App::uses($controller . 'Controller', $plugin . 'Controller');
-		if (!class_exists($controller.'Controller')) {
+		if (!class_exists($controller . 'Controller')) {
 			throw new MissingControllerException(array(
 				'class' => $controller . 'Controller',
 				'plugin' => substr($plugin, 0, -1)
@@ -314,7 +318,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 		), (array)$mocks);
 
 		list($plugin, $name) = pluginSplit($controller);
-		$_controller = $this->getMock($name.'Controller', $mocks['methods'], array(), '', false);
+		$_controller = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
 		$_controller->name = $name;
 		$request = $this->getMock('CakeRequest');
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -363,4 +367,5 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$this->controller = $_controller;
 		return $this->controller;
 	}
+
 }

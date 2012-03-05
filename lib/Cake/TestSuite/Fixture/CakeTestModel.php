@@ -21,7 +21,9 @@ App::uses('Model', 'Model');
  * @package       Cake.TestSuite.Fixture
  */
 class CakeTestModel extends Model {
+
 	public $useDbConfig = 'test';
+
 	public $cacheSources = false;
 
 /**

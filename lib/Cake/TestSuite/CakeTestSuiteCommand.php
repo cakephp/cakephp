@@ -37,6 +37,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  * Construct method
  *
  * @param array $params list of options to be used for this run
+ * @throws MissingTestLoaderException When a loader class could not be found.
  */
 	public function __construct($loader, $params = array()) {
 		if ($loader && !class_exists($loader)) {
@@ -117,9 +118,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 				exit(PHPUnit_TextUI_TestRunner::SUCCESS_EXIT);
 			} elseif (!isset($result) || $result->errorCount() > 0) {
 				exit(PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT);
-			}
-
-			else {
+			} else {
 				exit(PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
 			}
 		}
@@ -168,4 +167,5 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		}
 		return $this->arguments['printer'] = $object;
 	}
+
 }

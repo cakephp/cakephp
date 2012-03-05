@@ -64,7 +64,7 @@ abstract class BaseCoverageReport {
  */
 	public function __construct($coverage, CakeBaseReporter $reporter) {
 		$this->_rawCoverage = $coverage;
-		$this->setParams($reporter);
+		$this->_setParams($reporter);
 	}
 
 /**
@@ -73,7 +73,7 @@ abstract class BaseCoverageReport {
  * @param CakeBaseReporter $reporter Reporter to suck params out of.
  * @return void
  */
-	protected function setParams(CakeBaseReporter $reporter) {
+	protected function _setParams(CakeBaseReporter $reporter) {
 		if ($reporter->params['app']) {
 			$this->appTest = true;
 		}

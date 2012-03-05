@@ -91,7 +91,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			$title = explode(DS, str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
 			$title = implode(' / ', $title);
-				$buffer .= "<li><a href='" . $this->baseUrl() . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
+				$buffer .= "<li><a href='" . $this->baseUrl() . "?case=" . urlencode($testCase) . $urlExtra . "'>" . $title . "</a></li>\n";
 		}
 		$buffer .= "</ul>\n";
 		echo $buffer;
@@ -123,7 +123,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintFooter($result) {
 		ob_end_flush();
-		$colour = ($result->failureCount()  + $result->errorCount() > 0 ? "red" : "green");
+		$colour = ($result->failureCount() + $result->errorCount() > 0 ? "red" : "green");
 		echo "</ul>\n";
 		echo "<div style=\"";
 		echo "padding: 8px; margin: 1em 0; background-color: $colour; color: white;";
@@ -185,7 +185,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		}
 		if (!empty($this->params['case'])) {
 			$query['case'] = $this->params['case'];
- 		}
+		}
 		$show = $this->_queryString($show);
 		$query = $this->_queryString($query);
 
@@ -345,6 +345,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}
-		echo '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName())  . '</h2>';
+		echo '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName()) . '</h2>';
 	}
+
 }
