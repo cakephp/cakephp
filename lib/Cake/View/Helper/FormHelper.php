@@ -372,6 +372,11 @@ class FormHelper extends AppHelper {
 					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
 				}
 			}
+			
+			if(array_key_exists('id', $options['url'])){
+				$id = $options['url']['id'];
+			}
+			
 			if (empty($options['action'])) {
 				$options['action'] = $this->request->params['action'];
 			}

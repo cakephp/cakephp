@@ -7839,4 +7839,36 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
 		$this->assertEquals('Badness!', $result);
 	}
+	
+/**
+ * Tests that id is handled in url if passed through url array
+ *
+ * @return void
+ */
+	public function testUrlId() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$this->Form->request->data['Contact']['id'] = 1;
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'action' => 'edit',
+				'id' => null,
+			)
+		));
+		
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/contacts/edit',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		
+		$this->assertTags($result, $expected);
+	}
 }
