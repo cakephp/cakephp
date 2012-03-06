@@ -692,7 +692,7 @@ $expectedText = <<<EXPECTED
 'this-is-a-test'
 ###########################
 EXPECTED;
-		$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -706,7 +706,7 @@ $expectedHtml = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT)), __LINE__ - 10);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -720,7 +720,7 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 10);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -734,7 +734,7 @@ $expected = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 10);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 10);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -755,9 +755,9 @@ $expectedText = <<<EXPECTED
 ###########################
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 17);
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT)), __LINE__ - 17);
 		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT)), __LINE__ - 19);
 		}
 		$this->assertEquals($expected, $result);
 
@@ -779,9 +779,9 @@ $expectedText = <<<EXPECTED
 ###########################
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 17);
+			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT)), __LINE__ - 17);
 		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 19);
+			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT)), __LINE__ - 19);
 		}
 		$this->assertEquals($expected, $result);
 
@@ -794,7 +794,7 @@ $expected = <<<EXPECTED
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -806,7 +806,7 @@ $expected = <<<EXPECTED
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -818,7 +818,7 @@ $expected = <<<EXPECTED
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT) + 1), __LINE__ - 8);
+		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 	}
 
