@@ -52,7 +52,7 @@ class DbAcl extends Object implements AclInterface {
  * @param AclComponent $component
  * @return void
  */
-	public function initialize($component) {
+	public function initialize(Component $component) {
 		$component->Aro = $this->Aro;
 		$component->Aco = $this->Aco;
 	}
@@ -94,7 +94,7 @@ class DbAcl extends Object implements AclInterface {
 		$acoIDs = Set::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
 
 		$count = count($aroPath);
-		for ($i = 0 ; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			$permAlias = $this->Aro->Permission->alias;
 
 			$perms = $this->Aro->Permission->find('all', array(
@@ -289,5 +289,5 @@ class DbAcl extends Object implements AclInterface {
 		}
 		return $newKeys;
 	}
-}
 
+}

@@ -2110,7 +2110,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * testCurentRoute
+ * testCurrentRoute
  *
  * This test needs some improvement and actual requestAction() usage
  *

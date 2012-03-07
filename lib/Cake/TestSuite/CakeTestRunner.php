@@ -23,6 +23,7 @@ require_once 'PHPUnit/TextUI/TestRunner.php';
  * @package       Cake.TestSuite
  */
 class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
+
 /**
  * Lets us pass in some options needed for cake's webrunner.
  *
@@ -58,6 +59,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 		return $return;
 	}
 
+// @codingStandardsIgnoreStart PHPUnit overrides don't match CakePHP
 /**
  * Create the test result and splice on our code coverage reports.
  *
@@ -75,11 +77,13 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 		}
 		return $result;
 	}
+// @codingStandardsIgnoreEnd
 
 /**
  * Get the fixture manager class specified or use the default one.
  *
  * @return instance of a fixture manager.
+ * @throws RuntimeException When fixture manager class cannot be loaded.
  */
 	protected function _getFixtureManager($arguments) {
 		if (isset($arguments['fixtureManager'])) {
@@ -95,4 +99,5 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 		}
 		return new CakeFixtureManager();
 	}
+
 }

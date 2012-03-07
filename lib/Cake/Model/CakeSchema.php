@@ -161,13 +161,13 @@ class CakeSchema extends Object {
 		$this->build($options);
 		extract(get_object_vars($this));
 
-		$class =  $name .'Schema';
+		$class = $name . 'Schema';
 
 		if (!class_exists($class)) {
 			if (file_exists($path . DS . $file) && is_file($path . DS . $file)) {
-				require_once($path . DS . $file);
+				require_once $path . DS . $file;
 			} elseif (file_exists($path . DS . 'schema.php') && is_file($path . DS . 'schema.php')) {
-				require_once($path . DS . 'schema.php');
+				require_once $path . DS . 'schema.php';
 			}
 		}
 
@@ -175,7 +175,6 @@ class CakeSchema extends Object {
 			$Schema = new $class($options);
 			return $Schema;
 		}
-
 		return false;
 	}
 
@@ -207,7 +206,7 @@ class CakeSchema extends Object {
 		}
 
 		$tables = array();
-		$currentTables = (array) $db->listSources();
+		$currentTables = (array)$db->listSources();
 
 		$prefix = null;
 		if (isset($db->config['prefix'])) {
@@ -384,9 +383,9 @@ class CakeSchema extends Object {
 		}
 		$out .= "}\n";
 
-		$file = new SplFileObject($path . DS . $file, 'w+');
-		$content = "<?php\n{$out}";
-		if ($file->fwrite($content)) {
+		$file = new File($path . DS . $file, true);
+		$content = "<?php \n{$out}";
+		if ($file->write($content)) {
 			return $content;
 		}
 		return false;
@@ -575,7 +574,7 @@ class CakeSchema extends Object {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
 					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
-				} else if (!is_numeric($key)) {
+				} elseif (!is_numeric($key)) {
 					$val = var_export($val, true);
 					$vals[] = "'{$key}' => {$val}";
 				}
@@ -703,4 +702,5 @@ class CakeSchema extends Object {
 	protected function _noPrefixTable($prefix, $table) {
 		return preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
 	}
+
 }

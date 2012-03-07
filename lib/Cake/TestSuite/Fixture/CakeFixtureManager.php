@@ -127,7 +127,7 @@ class CakeFixtureManager {
 			} else {
 				$fixturePaths = array(
 					TESTS . 'Fixture',
-					CAKE  . 'Test' . DS . 'Fixture'
+					CAKE . 'Test' . DS . 'Fixture'
 				);
 			}
 
@@ -135,7 +135,7 @@ class CakeFixtureManager {
 				$className = Inflector::camelize($fixture);
 				if (is_readable($path . DS . $className . 'Fixture.php')) {
 					$fixtureFile = $path . DS . $className . 'Fixture.php';
-					require_once($fixtureFile);
+					require_once $fixtureFile;
 					$fixtureClass = $className . 'Fixture';
 					$this->_loaded[$fixtureIndex] = new $fixtureClass();
 					$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];

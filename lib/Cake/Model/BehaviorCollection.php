@@ -291,4 +291,5 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			'Model.afterDelete' => 'trigger'
 		);
 	}
+
 }

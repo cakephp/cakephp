@@ -528,7 +528,7 @@ class File {
  * @return Folder Current folder
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::Folder
  */
-	public function &Folder() {
+	public function &folder() {
 		return $this->Folder;
 	}
 
@@ -561,10 +561,10 @@ class File {
 			$finfo = finfo_open(FILEINFO_MIME);
 			list($type, $charset) = explode(';', finfo_file($finfo, $this->pwd()));
 			return $type;
-		} else if (function_exists('mime_content_type')) {
+		} elseif (function_exists('mime_content_type')) {
 			return mime_content_type($this->pwd());
 		}
 		return false;
 	}
-	
+
 }

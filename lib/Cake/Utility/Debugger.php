@@ -203,7 +203,7 @@ class Debugger {
  * @deprecated This function is superseded by Debugger::outputError()
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
-		$_this = Debugger::getInstance();
+		$self = Debugger::getInstance();
 
 		if (empty($file)) {
 			$file = '[internal]';
@@ -214,8 +214,8 @@ class Debugger {
 		$path = self::trimPath($file);
 
 		$info = compact('code', 'description', 'file', 'line');
-		if (!in_array($info, $_this->errors)) {
-			$_this->errors[] = $info;
+		if (!in_array($info, $self->errors)) {
+			$self->errors[] = $info;
 		} else {
 			return;
 		}
@@ -254,7 +254,7 @@ class Debugger {
 		$data = compact(
 			'level', 'error', 'code', 'description', 'file', 'path', 'line', 'context'
 		);
-		echo $_this->outputError($data);
+		echo $self->outputError($data);
 
 		if ($error == 'Fatal Error') {
 			exit();
@@ -279,10 +279,10 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::trace
  */
 	public static function trace($options = array()) {
-		$_this = Debugger::getInstance();
+		$self = Debugger::getInstance();
 		$defaults = array(
 			'depth'		=> 999,
-			'format'	=> $_this->_outputFormat,
+			'format'	=> $self->_outputFormat,
 			'args'		=> false,
 			'start'		=> 0,
 			'scope'		=> null,
@@ -330,10 +330,10 @@ class Debugger {
 			} elseif ($options['format'] == 'array') {
 				$back[] = $trace;
 			} else {
-				if (isset($_this->_templates[$options['format']]['traceLine'])) {
-					$tpl = $_this->_templates[$options['format']]['traceLine'];
+				if (isset($self->_templates[$options['format']]['traceLine'])) {
+					$tpl = $self->_templates[$options['format']]['traceLine'];
 				} else {
-					$tpl = $_this->_templates['base']['traceLine'];
+					$tpl = $self->_templates['base']['traceLine'];
 				}
 				$trace['path'] = self::trimPath($trace['file']);
 				$trace['reference'] = $reference;
@@ -665,7 +665,7 @@ class Debugger {
  *   in 3.0
  */
 	public function output($format = null, $strings = array()) {
-		$_this = Debugger::getInstance();
+		$self = Debugger::getInstance();
 		$data = null;
 
 		if (is_null($format)) {
@@ -676,9 +676,9 @@ class Debugger {
 			return Debugger::addFormat($format, $strings);
 		}
 
-		if ($format === true && !empty($_this->_data)) {
-			$data = $_this->_data;
-			$_this->_data = array();
+		if ($format === true && !empty($self->_data)) {
+			$data = $self->_data;
+			$self->_data = array();
 			$format = false;
 		}
 		Debugger::outputAs($format);
@@ -810,4 +810,5 @@ class Debugger {
 			trigger_error(__d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/core.php to a numeric (digits only) seed value specific to your application'), E_USER_NOTICE);
 		}
 	}
+
 }

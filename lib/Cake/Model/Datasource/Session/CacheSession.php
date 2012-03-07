@@ -27,6 +27,7 @@ App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
  * @see CakeSession for configuration information.
  */
 class CacheSession implements CakeSessionHandlerInterface {
+
 /**
  * Method called on open of a database session.
  *
@@ -98,4 +99,5 @@ class CacheSession implements CakeSessionHandlerInterface {
 	public function __destruct() {
 		session_write_close();
 	}
+
 }

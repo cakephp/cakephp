@@ -28,6 +28,7 @@ App::uses('CakeTestSuiteCommand', 'TestSuite');
  * @package       Cake.TestSuite
  */
 class CakeTestSuiteDispatcher {
+
 /**
  * 'Request' parameters
  *
@@ -255,4 +256,5 @@ class CakeTestSuiteDispatcher {
 			exit();
 		}
 	}
+
 }

@@ -117,4 +117,5 @@ class I18nShell extends AppShell {
 				'parser' => $this->Extract->getOptionParser()
 			));
 	}
+
 }

@@ -40,13 +40,13 @@ class String {
 					'::', str_repeat(':0000', 8 - substr_count($node, ':')) . ':', $node
 				);
 			}
-			$node = explode(':', $node) ;
-			$ipv6 = '' ;
+			$node = explode(':', $node);
+			$ipv6 = '';
 
 			foreach ($node as $id) {
 				$ipv6 .= str_pad(base_convert($id, 16, 2), 16, 0, STR_PAD_LEFT);
 			}
-			$node =  base_convert($ipv6, 2, 10);
+			$node = base_convert($ipv6, 2, 10);
 
 			if (strlen($node) < 38) {
 				$node = null;
@@ -81,7 +81,7 @@ class String {
 
 		if (function_exists('hphp_get_thread_id')) {
 			$pid = hphp_get_thread_id();
-		} else if (function_exists('zend_thread_id')) {
+		} elseif (function_exists('zend_thread_id')) {
 			$pid = zend_thread_id();
 		} else {
 			$pid = getmypid();
@@ -458,7 +458,7 @@ class String {
 				if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
 					if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
 						array_unshift($openTags, $tag[2]);
-					} else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
+					} elseif (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
 						$pos = array_search($closeTag[1], $openTags);
 						if ($pos !== false) {
 							array_splice($openTags, $pos, 1);
@@ -551,7 +551,7 @@ class String {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
 	public static function excerpt($text, $phrase, $radius = 100, $ending = '...') {
-		if (empty($text) or empty($phrase)) {
+		if (empty($text) || empty($phrase)) {
 			return self::truncate($text, $radius * 2, array('ending' => $ending));
 		}
 

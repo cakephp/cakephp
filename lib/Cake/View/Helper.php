@@ -1,11 +1,5 @@
 <?php
 /**
- * Backend for helpers.
- *
- * Internal methods for the Helpers.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -136,6 +130,17 @@ class Helper extends Object {
 	protected $_entityPath;
 
 /**
+ * Minimized attributes
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array(
+		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
+		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
+		'autoplay', 'controls', 'loop', 'muted'
+	);
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -243,11 +248,11 @@ class Helper extends Object {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS  . $file)) {
+			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS . $file)) {
 				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 			} else {
 				$themePath = App::themePath($this->theme);
-				$path = $themePath . 'webroot' . DS  . $file;
+				$path = $themePath . 'webroot' . DS . $file;
 				if (file_exists($path)) {
 					$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 				}
@@ -402,13 +407,13 @@ class Helper extends Object {
  */
 	protected function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (!is_string($options)) {
-			$options = (array) $options + array('escape' => true);
+			$options = (array)$options + array('escape' => true);
 
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
 
-			$exclude =  array('escape' => true) + array_flip($exclude);
+			$exclude = array('escape' => true) + array_flip($exclude);
 			$escape = $options['escape'];
 			$attributes = array();
 
@@ -520,7 +525,6 @@ class Helper extends Object {
 			}
 		}
 		$this->_entityPath = $entity;
-		return;
 	}
 
 /**
@@ -887,4 +891,5 @@ class Helper extends Object {
 		} while ($oldstring != $this->_cleaned);
 		$this->_cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->_cleaned);
 	}
+
 }

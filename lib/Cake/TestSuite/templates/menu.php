@@ -25,9 +25,7 @@
 			<li><a href='<?php echo $cases;?>'>Tests</a></li>
 		</ul>
 	</li>
-<?php
-if (!empty($plugins)):
-?>
+<?php if (!empty($plugins)): ?>
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Plugins</span>
 	<?php foreach ($plugins as $plugin): ?>

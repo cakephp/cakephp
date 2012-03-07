@@ -152,4 +152,5 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 		}
 		return parent::trigger($callback, $params, $options);
 	}
+
 }

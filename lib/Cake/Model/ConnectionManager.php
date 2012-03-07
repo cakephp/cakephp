@@ -189,7 +189,7 @@ class ConnectionManager {
 		if (empty(self::$_init)) {
 			self::_init();
 		}
-		return (array) self::$config;
+		return (array)self::$config;
 	}
 
 /**
@@ -262,4 +262,5 @@ class ConnectionManager {
 		}
 		return compact('package', 'classname', 'plugin');
 	}
+
 }

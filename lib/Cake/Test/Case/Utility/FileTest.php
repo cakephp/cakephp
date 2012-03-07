@@ -236,11 +236,11 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
- * testOpeningNonExistantFileCreatesIt method
+ * testOpeningNonExistentFileCreatesIt method
  *
  * @return void
  */
-	public function testOpeningNonExistantFileCreatesIt() {
+	public function testOpeningNonExistentFileCreatesIt() {
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertEquals('', $someFile->read());
@@ -434,7 +434,7 @@ class FileTest extends CakeTestCase {
 		if (!file_exists($tmpFile)) {
 			touch($tmpFile);
 		}
-		$File =& new File($tmpFile);
+		$File = new File($tmpFile);
 		$File->read();
 		$this->assertTrue($File->delete());
 	}

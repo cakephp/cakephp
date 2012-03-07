@@ -165,7 +165,7 @@ class XcacheEngine extends CacheEngine {
 				}
 				if (!empty($this->settings[$setting])) {
 					$_SERVER[$key] = $this->settings[$setting];
-				} else if (!empty($this->settings[$key])) {
+				} elseif (!empty($this->settings[$key])) {
 					$_SERVER[$key] = $this->settings[$key];
 				} else {
 					$_SERVER[$key] = $value;
@@ -173,4 +173,5 @@ class XcacheEngine extends CacheEngine {
 			}
 		}
 	}
+
 }

@@ -38,4 +38,5 @@ class ActionsAuthorize extends BaseAuthorize {
 		$user = array($this->settings['userModel'] => $user);
 		return $Acl->check($user, $this->action($request));
 	}
+
 }

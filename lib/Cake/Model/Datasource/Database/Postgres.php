@@ -200,13 +200,15 @@ class Postgres extends DboSource {
 				array($table, $this->config['schema'])
 			);
 
+			// @codingStandardsIgnoreStart
+			// Postgres columns don't match the coding standards.
 			foreach ($cols as $c) {
 				$type = $c->type;
 				if (!empty($c->oct_length) && $c->char_length === null) {
 					if ($c->type == 'character varying') {
 						$length = null;
 						$type = 'text';
-					} else if ($c->type == 'uuid') {
+					} elseif ($c->type == 'uuid') {
 						$length = 36;
 					} else {
 						$length = intval($c->oct_length);
@@ -257,6 +259,8 @@ class Postgres extends DboSource {
 			}
 			$this->_cacheDescription($table, $fields);
 		}
+		// @codingStandardsIgnoreEnd
+
 		if (isset($model->sequence)) {
 			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;
 		}
@@ -348,7 +352,7 @@ class Postgres extends DboSource {
  * @param boolean $quote
  * @return array
  */
-	public function fields($model, $alias = null, $fields = array(), $quote = true) {
+	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -507,16 +511,16 @@ class Postgres extends DboSource {
 								$default = isset($col['default']) ? $col['default'] : null;
 								$nullable = isset($col['null']) ? $col['null'] : null;
 								unset($col['default'], $col['null']);
-								$colList[] = 'ALTER COLUMN '. $fieldName .' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
+								$colList[] = 'ALTER COLUMN ' . $fieldName . ' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
 								if (isset($nullable)) {
 									$nullable = ($nullable) ? 'DROP NOT NULL' : 'SET NOT NULL';
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  ' . $nullable;
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '  ' . $nullable;
 								}
 
 								if (isset($default)) {
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  SET DEFAULT ' . $this->value($default, $col['type']);
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '  SET DEFAULT ' . $this->value($default, $col['type']);
 								} else {
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  DROP DEFAULT';
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '  DROP DEFAULT';
 								}
 
 							}
@@ -760,14 +764,14 @@ class Postgres extends DboSource {
 				$result = ($data === 'TRUE');
 				break;
 			default:
-				$result = (bool) $data;
+				$result = (bool)$data;
 			break;
 		}
 
 		if ($quote) {
 			return ($result) ? 'TRUE' : 'FALSE';
 		}
-		return (bool) $result;
+		return (bool)$result;
 	}
 
 /**

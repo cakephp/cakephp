@@ -36,7 +36,7 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
 
 		$path = CORE_TEST_CASES . DS . 'Model' . DS;
 		$tasks = array(
-			'DbAcl',
+			'AclNode',
 			'CakeSchema',
 			'ConnectionManager',
 			'Datasource' . DS . 'DboSource',

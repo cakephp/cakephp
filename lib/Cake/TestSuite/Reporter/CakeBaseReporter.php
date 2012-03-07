@@ -41,11 +41,6 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 	protected $_characterSet;
 
 /**
-* The number of assertions done for a test suite
-*/
-	protected $numAssertions = 0;
-
-/**
  * Does nothing yet. The first output will
  * be sent on the first test start.
  *
@@ -86,7 +81,6 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @return void
  */
 	public function paintDocumentStart() {
-
 	}
 
 /**
@@ -96,7 +90,6 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @return void
  */
 	public function paintDocumentEnd() {
-
 	}
 
 /**
@@ -106,7 +99,6 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @return void
  */
 	public function paintTestMenu() {
-
 	}
 
 /**
@@ -130,45 +122,45 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 	}
 
 /**
-* An error occurred.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  Exception              $e
-* @param  float                  $time
-*/
+ * An error occurred.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  Exception              $e
+ * @param  float                  $time
+ */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintException($e, $test);
 	}
 
 /**
-* A failure occurred.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  PHPUnit_Framework_AssertionFailedError $e
-* @param  float $time
-*/
+ * A failure occurred.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  PHPUnit_Framework_AssertionFailedError $e
+ * @param  float $time
+ */
 	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
 		$this->paintFail($e, $test);
 	}
 
 /**
-* Incomplete test.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  Exception $e
-* @param  float $time
-*/
+ * Incomplete test.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  Exception $e
+ * @param  float $time
+ */
 	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintSkip($e, $test);
 	}
 
 /**
-* Skipped test.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  Exception $e
-* @param  float $time
-*/
+ * Skipped test.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  Exception $e
+ * @param  float $time
+ */
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintSkip($e, $test);
 	}

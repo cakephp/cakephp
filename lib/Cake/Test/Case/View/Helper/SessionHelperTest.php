@@ -172,7 +172,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 
 /**
- * test using eleents in plugins.
+ * test using elements in plugins.
  *
  * @return void
  */

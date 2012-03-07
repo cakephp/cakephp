@@ -23,4 +23,5 @@
 	<h3><?php echo $exception->getMessage(); ?></h3>
 	<pre><?php echo $exception->getTraceAsString(); ?></pre>
 </div>
-<?php include dirname(__FILE__) . DS . 'footer.php'; ?>
+<?php
+include dirname(__FILE__) . DS . 'footer.php';

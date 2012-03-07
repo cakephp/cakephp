@@ -355,9 +355,9 @@ class L10n {
 		$langKey = null;
 		if ($language !== null && isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
 			$langKey = $this->_l10nMap[$language];
-		} else if ($language !== null && isset($this->_l10nCatalog[$language])) {
+		} elseif ($language !== null && isset($this->_l10nCatalog[$language])) {
 			$langKey = $language;
-		} else if (defined('DEFAULT_LANGUAGE')) {
+		} elseif (defined('DEFAULT_LANGUAGE')) {
 			$langKey = $language = DEFAULT_LANGUAGE;
 		}
 
@@ -379,7 +379,7 @@ class L10n {
 		if ($this->default) {
 			if (isset($this->_l10nMap[$this->default]) && isset($this->_l10nCatalog[$this->_l10nMap[$this->default]])) {
 				$this->languagePath[] = $this->_l10nCatalog[$this->_l10nMap[$this->default]]['localeFallback'];
-			} else if (isset($this->_l10nCatalog[$this->default])) {
+			} elseif (isset($this->_l10nCatalog[$this->default])) {
 				$this->languagePath[] = $this->_l10nCatalog[$this->default]['localeFallback'];
 			}
 		}
@@ -405,7 +405,7 @@ class L10n {
 			if (isset($this->_l10nCatalog[$langKey])) {
 				$this->_setLanguage($langKey);
 				return true;
-			} else if (strpos($langKey, '-') !== false) {
+			} elseif (strpos($langKey, '-') !== false) {
 				$langKey = substr($langKey, 0, 2);
 				if (isset($this->_l10nCatalog[$langKey])) {
 					$this->_setLanguage($langKey);
@@ -432,10 +432,10 @@ class L10n {
 				}
 			}
 			return $result;
-		} else if (is_string($mixed)) {
+		} elseif (is_string($mixed)) {
 			if (strlen($mixed) === 2 && in_array($mixed, $this->_l10nMap)) {
 				return array_search($mixed, $this->_l10nMap);
-			} else if (isset($this->_l10nMap[$mixed])) {
+			} elseif (isset($this->_l10nMap[$mixed])) {
 				return $this->_l10nMap[$mixed];
 			}
 			return false;
@@ -459,14 +459,15 @@ class L10n {
 				}
 			}
 			return $result;
-		} else if (is_string($language)) {
+		} elseif (is_string($language)) {
 			if (isset($this->_l10nCatalog[$language])) {
 				return $this->_l10nCatalog[$language];
-			} else if (isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
+			} elseif (isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
 				return $this->_l10nCatalog[$this->_l10nMap[$language]];
 			}
 			return false;
 		}
 		return $this->_l10nCatalog;
 	}
+
 }

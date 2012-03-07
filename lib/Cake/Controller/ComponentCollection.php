@@ -124,4 +124,5 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 			'Controller.shutdown' => array('callable' => 'trigger'),
 		);
 	}
+
 }

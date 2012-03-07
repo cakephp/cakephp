@@ -29,6 +29,7 @@ App::uses('Set', 'Utility');
  * @package       Cake.Network
  */
 class CakeRequest implements ArrayAccess {
+
 /**
  * Array of parameters parsed from the url.
  *
@@ -173,15 +174,15 @@ class CakeRequest implements ArrayAccess {
 			}
 			unset($this->data['_method']);
 		}
-		$data = $this->data;
+
 		if (isset($this->data['data'])) {
 			$data = $this->data['data'];
-		}
-		if (count($this->data) <= 1) {
-			$this->data = $data;
-		} else {
-			unset($this->data['data']);
-			$this->data = Set::merge($this->data, $data);
+			if (count($this->data) <= 1) {
+				$this->data = $data;
+			} else {
+				unset($this->data['data']);
+				$this->data = Set::merge($this->data, $data);
+			}
 		}
 	}
 
@@ -275,7 +276,7 @@ class CakeRequest implements ArrayAccess {
 				$base = '';
 			}
 
-			$this->webroot = $base .'/';
+			$this->webroot = $base . '/';
 			return $this->base = $base;
 		}
 
@@ -292,7 +293,7 @@ class CakeRequest implements ArrayAccess {
 
 		if (!empty($base) || !$docRootContainsWebroot) {
 			if (strpos($this->webroot, '/' . $dir . '/') === false) {
-				$this->webroot .= $dir . '/' ;
+				$this->webroot .= $dir . '/';
 			}
 			if (strpos($this->webroot, '/' . $webroot . '/') === false) {
 				$this->webroot .= $webroot . '/';
@@ -516,6 +517,7 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	public function addDetector($name, $options) {
+		$name = strtolower($name);
 		if (isset($this->_detectors[$name]) && isset($options['options'])) {
 			$options = Set::merge($this->_detectors[$name], $options);
 		}
@@ -559,7 +561,7 @@ class CakeRequest implements ArrayAccess {
 	public function here($base = true) {
 		$url = $this->here;
 		if (!empty($this->query)) {
-			$url .= '?' . http_build_query($this->query);
+			$url .= '?' . http_build_query($this->query, null, '&');
 		}
 		if (!$base) {
 			$url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);
@@ -846,4 +848,5 @@ class CakeRequest implements ArrayAccess {
 	public function offsetUnset($name) {
 		unset($this->params[$name]);
 	}
+
 }

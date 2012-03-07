@@ -47,7 +47,7 @@ class Set {
 
 		$r = (array)current($args);
 		while (($arg = next($args)) !== false) {
-			foreach ((array)$arg as $key => $val)	 {
+			foreach ((array)$arg as $key => $val) {
 				if (!empty($r[$key]) && is_array($r[$key]) && is_array($val)) {
 					$r[$key] = Set::merge($r[$key], $val);
 				} elseif (is_int($key)) {
@@ -175,9 +175,11 @@ class Set {
 					}
 				} elseif (is_array($value)) {
 					if ($primary === true) {
+						// @codingStandardsIgnoreStart Legacy junk
 						if (!isset($out->_name_)) {
 							$out->_name_ = $key;
 						}
+						// @codingStandardsIgnoreEnd
 						$primary = false;
 						foreach ($value as $key2 => $value2) {
 							$out->{$key2} = Set::_map($value2, true);
@@ -319,8 +321,9 @@ class Set {
 	}
 
 /**
- * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call
- * is delegated to Set::classicExtract.
+ * Implements partial support for XPath 2.0. If $path does not contain a '/' the call
+ * is delegated to Set::classicExtract(). Also the $path and $data arguments are 
+ * reversible.
  *
  * #### Currently implemented selectors:
  *
@@ -477,7 +480,7 @@ class Set {
 			if (empty($tokens)) {
 				break;
 			}
-		} while(1);
+		} while (1);
 
 		$r = array();
 
@@ -760,7 +763,7 @@ class Set {
  * @param mixed $val1 First value
  * @param mixed $val2 Second value
  * @return array Returns the key => value pairs that are not common in $val1 and $val2
- * The expression for this function is ($val1 - $val2) + ($val2 - ($val1 - $val2))
+ * The expression for this function is($val1 - $val2) + ($val2 - ($val1 - $val2))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::diff
  */
 	public static function diff($val1, $val2 = null) {
@@ -963,7 +966,7 @@ class Set {
 		$out = array();
 		if ($object instanceof SimpleXMLElement) {
 			return Xml::toArray($object);
-		} else if (is_object($object)) {
+		} elseif (is_object($object)) {
 			$keys = get_object_vars($object);
 			if (isset($keys['_name_'])) {
 				$identity = $keys['_name_'];
@@ -974,11 +977,13 @@ class Set {
 				if (is_array($value)) {
 					$new[$key] = (array)Set::reverse($value);
 				} else {
+					// @codingStandardsIgnoreStart Legacy junk
 					if (isset($value->_name_)) {
 						$new = array_merge($new, Set::reverse($value));
 					} else {
 						$new[$key] = Set::reverse($value);
-					}
+					}	
+					// @codingStandardsIgnoreEnd
 				}
 			}
 			if (isset($identity)) {
@@ -1205,7 +1210,7 @@ class Set {
 		}
 
 		$return = $input;
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			if (!isset($return[$key])) {
 				return null;
 			}
@@ -1213,4 +1218,5 @@ class Set {
 		}
 		return $return;
 	}
+
 }

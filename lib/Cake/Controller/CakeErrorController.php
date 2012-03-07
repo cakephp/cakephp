@@ -75,4 +75,5 @@ class CakeErrorController extends AppController {
 			}
 		}
 	}
+
 }

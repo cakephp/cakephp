@@ -206,15 +206,15 @@ class CakeNumber {
 			}
 		}
 
-		$position = $options[$symbolKey.'Position'] != 'after' ? 'before' : 'after';
-		$options[$position] = $options[$symbolKey.'Symbol'];
+		$position = $options[$symbolKey . 'Position'] != 'after' ? 'before' : 'after';
+		$options[$position] = $options[$symbolKey . 'Symbol'];
 
 		$abs = abs($number);
 		$result = self::format($abs, $options);
 
 		if ($number < 0 ) {
 			if ($options['negative'] == '()') {
-				$result = '(' . $result .')';
+				$result = '(' . $result . ')';
 			} else {
 				$result = $options['negative'] . $result;
 			}

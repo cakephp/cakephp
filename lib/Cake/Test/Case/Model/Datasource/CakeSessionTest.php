@@ -348,7 +348,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testDestroy() {
-		TestCakeSession::write('bulletProof', 'invicible');
+		TestCakeSession::write('bulletProof', 'invincible');
 		$id = TestCakeSession::id();
 		TestCakeSession::destroy();
 

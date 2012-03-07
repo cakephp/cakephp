@@ -430,4 +430,5 @@ class JsHelper extends AppHelper {
 		}
 		return array($options, $htmlOptions);
 	}
+
 }

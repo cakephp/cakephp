@@ -115,7 +115,7 @@ class FormAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * test authenticate sucesss
+ * test authenticate success
  *
  * @return void
  */

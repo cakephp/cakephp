@@ -59,7 +59,7 @@ class FileLog implements CakeLogInterface {
 		$debugTypes = array('notice', 'info', 'debug');
 
 		if ($type == 'error' || $type == 'warning') {
-			$filename = $this->_path  . 'error.log';
+			$filename = $this->_path . 'error.log';
 		} elseif (in_array($type, $debugTypes)) {
 			$filename = $this->_path . 'debug.log';
 		} else {
@@ -68,4 +68,5 @@ class FileLog implements CakeLogInterface {
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
 		return file_put_contents($filename, $output, FILE_APPEND);
 	}
+
 }

@@ -305,7 +305,7 @@ class View extends Object {
  *
  * @param Controller $controller A controller object to pull View::_passedVars from.
  */
-	public function __construct($controller) {
+	public function __construct(Controller $controller = null) {
 		if (is_object($controller)) {
 			$count = count($this->_passedVars);
 			for ($j = 0; $j < $count; $j++) {
@@ -422,7 +422,7 @@ class View extends Object {
 		$file = 'Elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
-			return "Element Not Found: " . $file;
+			return __d('cake_dev', 'Element Not Found: %s', $file);
 		}
 	}
 
@@ -952,7 +952,7 @@ class View extends Object {
 					return $name;
 				}
 				$name = trim($name, DS);
-			} else if ($name[0] === '.') {
+			} elseif ($name[0] === '.') {
 				$name = substr($name, 3);
 			} elseif (!$plugin) {
 				$name = $this->viewPath . DS . $subDir . $name;
@@ -1034,7 +1034,6 @@ class View extends Object {
 		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
 	}
 
-
 /**
  * Get the extensions that view files can use.
  *
@@ -1099,11 +1098,11 @@ class View extends Object {
 			$themePaths = array();
 			foreach ($paths as $path) {
 				if (strpos($path, DS . 'Plugin' . DS) === false) {
-						if ($plugin) {
-							$themePaths[] = $path . 'Themed'. DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
-						}
-						$themePaths[] = $path . 'Themed'. DS . $this->theme . DS;
+					if ($plugin) {
+						$themePaths[] = $path . 'Themed' . DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
 					}
+					$themePaths[] = $path . 'Themed' . DS . $this->theme . DS;
+				}
 			}
 			$paths = array_merge($themePaths, $paths);
 		}
@@ -1113,4 +1112,5 @@ class View extends Object {
 		}
 		return $this->_paths = $paths;
 	}
+
 }
