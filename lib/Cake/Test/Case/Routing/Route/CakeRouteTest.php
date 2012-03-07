@@ -857,4 +857,23 @@ class CakeRouteTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * Test the /** special type on parsing - UTF8.
+ *
+ * @return void
+ */	
+	
+	public function testParseTrailingUTF8() {
+		$route = new CakeRoute('/:controller/:action/**');
+		$result = $route->parse('/posts/index/موبایل');
+		$expected = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('موبایل'),
+			'named' => array()
+		);
+		$this->assertEquals($expected, $result);
+
+	}	
 }
