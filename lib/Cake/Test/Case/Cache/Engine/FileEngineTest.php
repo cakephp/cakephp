@@ -160,6 +160,32 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::delete('delete_test', 'file_test');
 		$this->assertFalse($result);
+		
+		$result1 = Cache::write('one', $data, 'file_test');
+		$result2 = Cache::write('one.two', $data, 'file_test');
+		$result3 = Cache::write('one.two.three', $data, 'file_test');
+		$result4 = Cache::write('one.two.three.four', $data, 'file_test');
+		$result5 = Cache::write('one.two.three.five', $data, 'file_test');
+		$this->assertTrue($result1);
+		$this->assertTrue($result2);
+		$this->assertTrue($result3);
+		$this->assertTrue($result4);
+		$this->assertTrue($result5);
+		
+		$result = Cache::delete('one.two.three.*', 'file_test');
+		$this->assertTrue($result);
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'one_two_three_four'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'one_two_three_five'));
+
+		$result = Cache::delete('one.tw*', 'file_test');
+		$this->assertTrue($result);
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'one_two'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'one_two_three'));
+
+		$result = Cache::delete('*', 'file_test');
+		$this->assertTrue($result);
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'one'));
+		
 	}
 
 /**
