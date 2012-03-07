@@ -1806,7 +1806,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::inList('one', array('one', 'two')));
 		$this->assertTrue(Validation::inList('two', array('one', 'two')));
 		$this->assertFalse(Validation::inList('three', array('one', 'two')));
-		$this->assertFalse(Validation::inList('one', '1one', array(0, 1, 2, 3)));
+		$this->assertFalse(Validation::inList('1one', array(0, 1, 2, 3)));
+		$this->assertFalse(Validation::inList('one', array(0, 1, 2, 3)));
 	}
 
 /**
