@@ -174,15 +174,15 @@ class CakeRequest implements ArrayAccess {
 			}
 			unset($this->data['_method']);
 		}
-		$data = $this->data;
+
 		if (isset($this->data['data'])) {
 			$data = $this->data['data'];
-		}
-		if (count($this->data) <= 1) {
-			$this->data = $data;
-		} else {
-			unset($this->data['data']);
-			$this->data = Set::merge($this->data, $data);
+			if (count($this->data) <= 1) {
+				$this->data = $data;
+			} else {
+				unset($this->data['data']);
+				$this->data = Set::merge($this->data, $data);
+			}
 		}
 	}
 
