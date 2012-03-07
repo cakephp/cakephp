@@ -1,0 +1,1 @@
+<?php __('This is a translatable string'); ?>
