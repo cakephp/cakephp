@@ -598,14 +598,14 @@ class TreeBehavior extends ModelBehavior {
 				}
 			}
 			$count = 1;
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey), 'order' => $left)) as $array) {
+			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey), 'order' => $Model->alias . '.' . $left)) as $array) {
 				$lft = $count++;
 				$rght = $count++;
 				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
 			}
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
+			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $Model->alias . '.' . $left)) as $array) {
 				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
 				$this->_setParent($Model, $array[$Model->alias][$parent]);
