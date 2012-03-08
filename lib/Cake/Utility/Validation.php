@@ -544,7 +544,7 @@ class Validation {
 		}
 		if ($options['in'] && is_array($options['in'])) {
 			foreach ($check as $val) {
-				if (!in_array($val, $options['in'])) {
+				if (!in_array($val, $options['in'], true)) {
 					return false;
 				}
 			}
@@ -719,7 +719,7 @@ class Validation {
  * @return boolean Success
  */
 	public static function inList($check, $list) {
-		return in_array($check, $list);
+		return in_array($check, $list, true);
 	}
 
 /**
