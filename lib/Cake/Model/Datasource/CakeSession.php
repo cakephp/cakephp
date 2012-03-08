@@ -22,7 +22,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 App::uses('Security', 'Utility');
 
 /**
@@ -216,7 +216,7 @@ class CakeSession {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Set::classicExtract($_SESSION, $name);
+		$result = Hash::get($_SESSION, $name);
 		return isset($result);
 	}
 
@@ -364,9 +364,9 @@ class CakeSession {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Set::classicExtract($_SESSION, $name);
+		$result = Hash::get($_SESSION, $name);
 
-		if (!is_null($result)) {
+		if (isset($result)) {
 			return $result;
 		}
 		self::_setError(2, "$name doesn't exist");
@@ -405,8 +405,8 @@ class CakeSession {
 			$write = array($name => $value);
 		}
 		foreach ($write as $key => $val) {
-			self::_overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
-			if (Set::classicExtract($_SESSION, $key) !== $val) {
+			self::_overwrite($_SESSION, Hash::insert($_SESSION, $key, $val));
+			if (Hash::get($_SESSION, $key) !== $val) {
 				return false;
 			}
 		}
