@@ -212,7 +212,7 @@ class RssHelper extends AppHelper {
 					if (is_array($val) && !empty($val[0])) {
 						foreach ($val as $category) {
 							$attrib = array();
-							if (isset($category['domain'])) {
+							if (is_array($category) && isset($category['domain'])) {
 								$attrib['domain'] = $category['domain'];
 								unset($category['domain']);
 							}

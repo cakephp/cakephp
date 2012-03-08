@@ -436,6 +436,37 @@ class RssHelperTest extends CakeTestCase {
 			'/item'
 		);
 		$this->assertTags($result, $expected);
+
+		$item = array(
+			'title' => 'My title',
+			'description' => 'My description',
+			'link' => 'http://www.google.com/',
+			'category' => array('Category One', 'Category Two')
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'My title',
+			'/title',
+			'<description',
+			'My description',
+			'/description',
+			'<link',
+			'http://www.google.com/',
+			'/link',
+			'<category',
+			'Category One',
+			'/category',
+			'<category',
+			'Category Two',
+			'/category',
+			'<guid',
+			'http://www.google.com/',
+			'/guid',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
