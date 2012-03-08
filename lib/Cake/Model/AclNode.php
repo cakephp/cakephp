@@ -23,7 +23,7 @@ App::uses('Model', 'Model');
  *
  * @package       Cake.Model
  */
-class AclNode extends AppModel {
+class AclNode extends AppModel  {
 
 /**
  * Explicitly disable in-memory query caching for ACL models
