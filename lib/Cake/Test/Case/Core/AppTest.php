@@ -191,6 +191,19 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testBuildPackage() {
+		$pluginPaths = array(
+			'/foo/bar',
+			APP . 'Plugin' . DS,
+			dirname(dirname(CAKE)) . DS . 'plugins' . DS
+		);
+		App::build(array(
+			'Plugin' => array(
+				'/foo/bar'
+			)
+		));
+		$result = App::path('Plugin');
+		$this->assertEquals($pluginPaths, $result);
+
 		$paths = App::path('Service');
 		$this->assertEquals(array(), $paths);
 
@@ -203,11 +216,16 @@ class AppTest extends CakeTestCase {
 		$expected = array(
 			APP . 'Service' . DS,
 		);
-
 		$result = App::path('Service');
 		$this->assertEquals($expected, $result);
 
-		App::build(array(), App::REGISTER);
+		//Ensure new paths registered for other packages are not affected
+		$result = App::path('Plugin');
+		$this->assertEquals($pluginPaths, $result);
+
+		App::build();
+		$paths = App::path('Service');
+		$this->assertEquals(array(), $paths);
 	}
 
 /**

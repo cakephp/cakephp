@@ -263,10 +263,13 @@ class App {
  *
  * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/'))); will setup multiple search paths for helpers`
  *
+ * `App::build(array('Service' => array('%s' . 'Service' . DS)), App::REGISTER); will register new package 'Service'`
+ *
  * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
  *
  * @param array $paths associative array with package names as keys and a list of directories for new search paths
- * @param mixed $mode App::RESET will set paths, App::APPEND with append paths, App::PREPEND will prepend paths, [default] App::PREPEND
+ * @param mixed $mode App::RESET will set paths, App::APPEND with append paths, App::PREPEND will prepend paths (default)
+ * 	App::REGISTER will register new packages and their paths, %s in path will be replaced by APP path
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::build
  */
@@ -289,24 +292,22 @@ class App {
 			return;
 		}
 
+		if (empty($paths)) {
+			self::$_packageFormat = null;
+		}
+
 		$packageFormat = self::_packageFormat();
 
 		if ($mode === App::REGISTER) {
-			if (empty($paths)) {
-				self::$_packageFormat = null;
-				$packageFormat = self::_packageFormat();
-			} else {
-				foreach ($paths as $package => $formats) {
-					if (!empty($packageFormat[$package])) {
-						$formats = array_merge($packageFormat[$package], $formats);
-					}
-
+			foreach ($paths as $package => $formats) {
+				if (empty($packageFormat[$package])) {
+					$packageFormat[$package] = $formats;
+				} else {
+					$formats = array_merge($packageFormat[$package], $formats);
 					$packageFormat[$package] = array_values(array_unique($formats));
 				}
-
-				self::$_packageFormat = $packageFormat;
-				$paths = array();
 			}
+			self::$_packageFormat = $packageFormat;
 		}
 
 		$defaults = array();
@@ -321,9 +322,15 @@ class App {
 			return;
 		}
 
+		if ($mode === App::REGISTER) {
+			$paths = array();
+		}
+
 		foreach ($defaults as $type => $default) {
 			if (!empty(self::$_packages[$type])) {
 				$path = self::$_packages[$type];
+			} else {
+				$path = $default;
 			}
 
 			if (!empty($paths[$type])) {
