@@ -1450,7 +1450,15 @@ class HttpSocketTest extends CakeTestCase {
 			),
 			'empty' => ''
 		);
-		$this->assertEquals($query, $expectedQuery);
+		$this->assertEquals($expectedQuery, $query);
+
+		$query = 'openid.ns=example.com&foo=bar&foo=baz';
+		$result = $this->Socket->parseQuery($query);
+		$expected = array(
+			'openid.ns' => 'example.com',
+			'foo' => array('bar', 'baz')
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
