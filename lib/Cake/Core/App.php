@@ -533,12 +533,12 @@ class App {
 			return false;
 		}
 
-		if ($file = self::_mapped($className)) {
-			return include $file;
-		}
-
 		$parts = explode('.', self::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
+
+		if ($file = self::_mapped($className, $plugin)) {
+			return include $file;
+		}
 		$paths = self::path($package, $plugin);
 
 		if (empty($plugin)) {
@@ -554,7 +554,7 @@ class App {
 		foreach ($paths as $path) {
 			$file = $path . $className . '.php';
 			if (file_exists($file)) {
-				self::_map($file, $className);
+				self::_map($file, $className, $plugin);
 				return include $file;
 			}
 		}
@@ -778,10 +778,15 @@ class App {
  * @return void
  */
 	protected static function _map($file, $name, $plugin = null) {
+		$key = $name;
 		if ($plugin) {
-			self::$_map['Plugin'][$plugin][$name] = $file;
-		} else {
-			self::$_map[$name] = $file;
+			$key = 'plugin.' . $name;
+		}
+		if ($plugin && empty(self::$_map[$name])) {
+			self::$_map[$key] = $file;
+		}
+		if (!$plugin && empty(self::$_map['plugin.' . $name])) {
+			self::$_map[$key] = $file;
 		}
 		if (!self::$bootstrapping) {
 			self::$_cacheChange = true;
@@ -796,17 +801,11 @@ class App {
  * @return mixed file path if found, false otherwise
  */
 	protected static function _mapped($name, $plugin = null) {
+		$key = $name;
 		if ($plugin) {
-			if (isset(self::$_map['Plugin'][$plugin][$name])) {
-				return self::$_map['Plugin'][$plugin][$name];
-			}
-			return false;
+			$key = 'plugin.' . $name;
 		}
-
-		if (isset(self::$_map[$name])) {
-			return self::$_map[$name];
-		}
-		return false;
+		return isset(self::$_map[$key]) ? self::$_map[$name] : false;
 	}
 
 /**
