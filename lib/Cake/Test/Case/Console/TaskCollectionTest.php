@@ -21,6 +21,7 @@ App::uses('TaskCollection', 'Console');
 App::uses('Shell', 'Console');
 
 class TaskCollectionTest extends CakeTestCase {
+
 /**
  * setUp
  *

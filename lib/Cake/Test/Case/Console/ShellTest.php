@@ -55,20 +55,18 @@ class ShellTestShell extends Shell {
 	}
 
 	public function do_something() {
-
 	}
 
 	protected function _secret() {
-
 	}
 
 	protected function no_access() {
-
 	}
 
 	public function mergeVars($properties, $class, $normalize = true) {
 		return $this->_mergeVars($properties, $class, $normalize);
 	}
+
 }
 
 /**
@@ -77,8 +75,11 @@ class ShellTestShell extends Shell {
  * @package       Cake.Test.Case.Console.Command
  */
 class TestMergeShell extends Shell {
+
 	public $tasks = array('DbConfig', 'Fixture');
+
 	public $uses = array('Comment');
+
 }
 
 /**
@@ -467,7 +468,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__getArgAndParamReferences() {
+	public function testMagicGetArgAndParamReferences() {
 		$this->Shell->tasks = array('TestApple');
 		$this->Shell->args = array('one');
 		$this->Shell->params = array('help' => false);
@@ -489,7 +490,7 @@ class ShellTest extends CakeTestCase {
 		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'cd';
 		$this->assertEquals($this->Shell->shortPath($path), $expected);
 
-		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'cd' . DS ;
+		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'cd' . DS;
 		$this->assertEquals($this->Shell->shortPath($path), $expected);
 
 		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'index.php';
@@ -565,7 +566,6 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->stdin->expects($this->at(1))
 			->method('read')
 			->will($this->returnValue('y'));
-
 
 		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n";
 		$result = $this->Shell->createFile($file, $contents);
@@ -658,7 +658,6 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->stdin->expects($this->at(1))
 			->method('read')
 			->will($this->returnValue('y'));
-
 
 		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n";
 		$result = $this->Shell->createFile($file, $contents);
@@ -774,7 +773,6 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue($Parser));
 		$Mock->expects($this->once())->method('out');
 
-
 		$result = $Mock->runCommand('idontexist', array());
 		$this->assertFalse($result);
 	}
@@ -866,7 +864,8 @@ TEXT;
 		$this->Shell->name = 'test';
 		$this->Shell->plugin = 'plugin';
 		$parser = $this->Shell->getOptionParser();
-	
+
 		$this->assertEquals('plugin.test', $parser->command());
 	}
+
 }

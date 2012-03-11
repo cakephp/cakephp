@@ -28,7 +28,9 @@ App::uses('Controller', 'Controller');
 
 if (!class_exists('UsersController')) {
 	class UsersController extends Controller {
+
 		public $name = 'Users';
+
 	}
 }
 
@@ -89,7 +91,7 @@ class BakeShellTest extends CakeTestCase {
 
 		$this->Shell->Model->expects($this->never())
 			->method('getName');
-	
+
 		$this->Shell->Model->expects($this->once())
 			->method('bake')
 			->will($this->returnValue(true));
@@ -97,7 +99,7 @@ class BakeShellTest extends CakeTestCase {
 		$this->Shell->Controller->expects($this->once())
 			->method('bake')
 			->will($this->returnValue(true));
-	
+
 		$this->Shell->View->expects($this->once())
 			->method('execute');
 

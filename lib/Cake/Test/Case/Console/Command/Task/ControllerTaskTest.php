@@ -38,9 +38,13 @@ if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 
 	class BakeArticle extends Model {
+
 		public $name = 'BakeArticle';
+
 		public $hasMany = array('BakeComment');
+
 		public $hasAndBelongsToMany = array('BakeTag');
+
 	}
 }
 
@@ -303,7 +307,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
-		CakePlugin::load('ControllerTest', array('path' =>  APP . 'Plugin' . DS . 'ControllerTest' . DS));
+		CakePlugin::load('ControllerTest', array('path' => APP . 'Plugin' . DS . 'ControllerTest' . DS));
 		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')->with(
@@ -551,7 +555,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	static function nameVariations() {
+	public static function nameVariations() {
 		return array(
 			array('BakeArticles'), array('BakeArticle'), array('bake_article'), array('bake_articles')
 		);

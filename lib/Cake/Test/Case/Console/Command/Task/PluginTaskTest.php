@@ -72,7 +72,7 @@ class PluginTaskTest extends CakeTestCase {
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 
-		$file = $path . DS . 'Controller' . DS  .'BakeTestPluginAppController.php';
+		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
