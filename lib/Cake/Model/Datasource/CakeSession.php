@@ -532,7 +532,6 @@ class CakeSession {
 			'php' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'session.cookie_path' => self::$path
@@ -541,7 +540,6 @@ class CakeSession {
 			'cake' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -556,7 +554,6 @@ class CakeSession {
 			'cache' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -573,7 +570,6 @@ class CakeSession {
 			'database' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
