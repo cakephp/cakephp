@@ -805,7 +805,7 @@ class App {
 		if ($plugin) {
 			$key = 'plugin.' . $name;
 		}
-		return isset(self::$_map[$key]) ? self::$_map[$name] : false;
+		return isset(self::$_map[$key]) ? self::$_map[$key] : false;
 	}
 
 /**
