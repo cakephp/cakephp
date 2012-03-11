@@ -21,6 +21,7 @@ App::uses('Cache', 'Cache');
 App::uses('MemcacheEngine', 'Cache/Engine');
 
 class TestMemcacheEngine extends MemcacheEngine {
+
 /**
  * public accessor to _parseServerString
  *
@@ -34,6 +35,7 @@ class TestMemcacheEngine extends MemcacheEngine {
 	public function setMemcache($memcache) {
 		$this->_Memcache = $memcache;
 	}
+
 }
 
 /**
@@ -217,7 +219,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  "+1 second"), 'memcache');
+		Cache::set(array('duration' => "+1 second"), 'memcache');
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'memcache');

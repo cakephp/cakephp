@@ -106,7 +106,7 @@ class ApcEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test', 'apc');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  1), 'apc');
+		Cache::set(array('duration' => 1), 'apc');
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'apc');
@@ -157,7 +157,6 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test_decrement', 'apc');
 		$this->assertEquals(2, $result);
-
 	}
 
 /**
