@@ -78,7 +78,6 @@ class BasicsTest extends CakeTestCase {
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$result = array_diff_key($one, $two);
 		$this->assertEquals($result, array());
-
 	}
 
 /**
@@ -89,8 +88,8 @@ class BasicsTest extends CakeTestCase {
 	public function testEnv() {
 		$this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', 'Safe mode is on.');
 
-		$__SERVER = $_SERVER;
-		$__ENV = $_ENV;
+		$server = $_SERVER;
+		$env = $_ENV;
 
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		$this->assertEquals(env('HTTP_BASE'), '.localhost');
@@ -182,8 +181,8 @@ class BasicsTest extends CakeTestCase {
 		unset($_ENV['TEST_ME']);
 		$this->assertEquals(env('TEST_ME'), 'b');
 
-		$_SERVER = $__SERVER;
-		$_ENV = $__ENV;
+		$_SERVER = $server;
+		$_ENV = $env;
 	}
 
 /**
@@ -361,7 +360,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__() {
+	public function testTranslate() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __('Plural Rule 1');
@@ -402,7 +401,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__n() {
+	public function testTranslatePlural() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __n('%d = 1', '%d = 0 or > 1', 0);
@@ -435,7 +434,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__d() {
+	public function testTranslateDomain() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __d('default', 'Plural Rule 1');
@@ -468,7 +467,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__dn() {
+	public function testTranslateDomainPlural() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __dn('default', '%d = 1', '%d = 0 or > 1', 0);
@@ -505,7 +504,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__c() {
+	public function testTranslateCategory() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __c('Plural Rule 1', 6);
@@ -534,7 +533,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__dc() {
+	public function testTranslateDomainCategory() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __dc('default', 'Plural Rule 1', 6);
@@ -571,7 +570,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__dcn() {
+	public function testTranslateDomainCategoryPlural() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __dcn('default', '%d = 1', '%d = 0 or > 1', 0, 6);
@@ -684,7 +683,7 @@ class BasicsTest extends CakeTestCase {
  */
 	public function testDebug() {
 		ob_start();
-			debug('this-is-a-test', false);
+		debug('this-is-a-test', false);
 		$result = ob_get_clean();
 $expectedText = <<<EXPECTED
 %s (line %d)
@@ -696,7 +695,7 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', true);
+		debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
 $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
@@ -850,31 +849,31 @@ EXPECTED;
 		$this->skipIf(ini_get('magic_quotes_sybase') === '1', 'magic_quotes_sybase is on.');
 
 		$this->assertEquals(stripslashes_deep("tes\'t"), "tes't");
-		$this->assertEquals(stripslashes_deep('tes\\' . chr(0) .'t'), 'tes' . chr(0) .'t');
+		$this->assertEquals(stripslashes_deep('tes\\' . chr(0) . 't'), 'tes' . chr(0) . 't');
 		$this->assertEquals(stripslashes_deep('tes\"t'), 'tes"t');
 		$this->assertEquals(stripslashes_deep("tes\'t"), "tes't");
 		$this->assertEquals(stripslashes_deep('te\\st'), 'test');
 
 		$nested = array(
 			'a' => "tes\'t",
-			'b' => 'tes\\' . chr(0) .'t',
+			'b' => 'tes\\' . chr(0) . 't',
 			'c' => array(
 				'd' => 'tes\"t',
 				'e' => "te\'s\'t",
 				array('f' => "tes\'t")
 				),
 			'g' => 'te\\st'
-			);
+		);
 		$expected = array(
 			'a' => "tes't",
-			'b' => 'tes' . chr(0) .'t',
+			'b' => 'tes' . chr(0) . 't',
 			'c' => array(
 				'd' => 'tes"t',
 				'e' => "te's't",
 				array('f' => "tes't")
 				),
 			'g' => 'test'
-			);
+		);
 		$this->assertEquals(stripslashes_deep($nested), $expected);
 	}
 
