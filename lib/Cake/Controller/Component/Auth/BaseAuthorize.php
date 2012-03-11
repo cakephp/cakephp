@@ -12,6 +12,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Hash', 'Utility');
 
 /**
  * Abstract base authorization adapter for AuthComponent.
@@ -69,7 +70,7 @@ abstract class BaseAuthorize {
 		$this->_Collection = $collection;
 		$controller = $collection->getController();
 		$this->controller($controller);
-		$this->settings = Set::merge($this->settings, $settings);
+		$this->settings = Hash::merge($this->settings, $settings);
 	}
 
 /**

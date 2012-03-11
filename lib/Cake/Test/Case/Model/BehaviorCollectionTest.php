@@ -102,7 +102,7 @@ class TestBehavior extends ModelBehavior {
 				return null;
 			break;
 			case 'modify':
-				return Set::extract($results, "{n}.{$model->alias}");
+				return Hash::extract($results, "{n}.{$model->alias}");
 			break;
 		}
 	}
@@ -839,7 +839,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify'));
-		$expected = Set::insert($record, 'Sample.name', 'sample99 modified before');
+		$expected = Hash::insert($record, 'Sample.name', 'sample99 modified before');
 		$Sample->create();
 		$result = $Sample->save($record);
 		$expected['Sample']['id'] = $Sample->id;
@@ -849,14 +849,14 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertSame($record, $Sample->save($record));
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'on'));
-		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified after on create')));
+		$expected = Hash::merge($record, array('Sample' => array('aftersave' => 'modified after on create')));
 		$Sample->create();
 		$result = $Sample->save($record);
 		$expected['Sample']['id'] = $Sample->id;
 		$this->assertEquals($expected, $result);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify', 'afterSave' => 'modify'));
-		$expected = Set::merge($record, array('Sample' => array('name' => 'sample99 modified before modified after on create')));
+		$expected = Hash::merge($record, array('Sample' => array('name' => 'sample99 modified before modified after on create')));
 		$Sample->create();
 		$result = $Sample->save($record);
 		$expected['Sample']['id'] = $Sample->id;
@@ -881,12 +881,12 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$record2 = $Sample->read(null, 1);
 
 		$Sample->Behaviors->attach('Test', array('afterSave' => 'on'));
-		$expected = Set::merge($record2, array('Sample' => array('aftersave' => 'modified after')));
+		$expected = Hash::merge($record2, array('Sample' => array('aftersave' => 'modified after')));
 		$Sample->create();
 		$this->assertSame($expected, $Sample->save($record2));
 
 		$Sample->Behaviors->attach('Test', array('afterSave' => 'modify'));
-		$expected = Set::merge($record2, array('Sample' => array('name' => 'sample1 modified after')));
+		$expected = Hash::merge($record2, array('Sample' => array('name' => 'sample1 modified after')));
 		$Sample->create();
 		$this->assertSame($expected, $Sample->save($record2));
 	}

@@ -19,11 +19,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-
 App::uses('Component', 'Controller');
 App::uses('Router', 'Routing');
 App::uses('Security', 'Utility');
 App::uses('Debugger', 'Utility');
+App::uses('Hash', 'Utility');
 App::uses('CakeSession', 'Model/Datasource');
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
@@ -394,7 +394,7 @@ class AuthComponent extends Component {
 			return;
 		}
 		$this->_authorizeObjects = array();
-		$config = Set::normalize($this->authorize);
+		$config = Hash::normalize((array)$this->authorize);
 		$global = array();
 		if (isset($config[AuthComponent::ALL])) {
 			$global = $config[AuthComponent::ALL];
@@ -652,7 +652,7 @@ class AuthComponent extends Component {
 			return;
 		}
 		$this->_authenticateObjects = array();
-		$config = Set::normalize($this->authenticate);
+		$config = Hash::normalize((array)$this->authenticate);
 		$global = array();
 		if (isset($config[AuthComponent::ALL])) {
 			$global = $config[AuthComponent::ALL];

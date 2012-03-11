@@ -243,7 +243,7 @@ class FormHelper extends AppHelper {
 			return true;
 		} elseif (is_array($validateProperties)) {
 
-			$dims = Set::countDim($validateProperties);
+			$dims = Hash::dimensions($validateProperties);
 			if ($dims == 1 || ($dims == 2 && isset($validateProperties['rule']))) {
 				$validateProperties = array($validateProperties);
 			}
@@ -312,7 +312,7 @@ class FormHelper extends AppHelper {
 		if (empty($errors)) {
 			return false;
 		}
-		$errors = Set::classicExtract($errors, join('.', $entity));
+		$errors = Hash::get($errors, join('.', $entity));
 		return $errors === null ? false : $errors;
 	}
 
@@ -623,7 +623,7 @@ class FormHelper extends AppHelper {
 		if (!$field) {
 			$field = $this->entity();
 		} elseif (is_string($field)) {
-			$field = Set::filter(explode('.', $field), true);
+			$field = Hash::filter(explode('.', $field));
 		}
 
 		foreach ($this->_unlockedFields as $unlockField) {

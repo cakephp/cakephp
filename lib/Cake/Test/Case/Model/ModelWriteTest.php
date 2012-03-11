@@ -411,7 +411,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Category = new CategoryThread();
 		$Category->belongsTo['ParentCategory']['counterCache'] = 'child_count';
 		$Category->updateCounterCache(array('parent_id' => 5));
-		$result = Set::extract($Category->find('all', array('conditions' => array('CategoryThread.id' => 5))), '{n}.CategoryThread.child_count');
+		$result = Hash::extract($Category->find('all', array('conditions' => array('CategoryThread.id' => 5))), '{n}.CategoryThread.child_count');
 		$expected = array(1);
 		$this->assertEquals($expected, $result);
 	}
@@ -1680,7 +1680,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->id = 2;
 		$TestModel->save($data);
 		$result = $TestModel->findById(2);
-		$result['Item'] = Set::sort($result['Item'], '{n}.id', 'asc');
+		$result['Item'] = Hash::sort($result['Item'], '{n}.id', 'asc');
 		$expected = array(
 			'Portfolio' => array(
 				'id' => 2,
@@ -2400,12 +2400,12 @@ class ModelWriteTest extends BaseModelTest {
 	public function testUpdateMultiple() {
 		$this->loadFixtures('Comment', 'Article', 'User', 'CategoryThread');
 		$TestModel = new Comment();
-		$result = Set::extract($TestModel->find('all'), '{n}.Comment.user_id');
+		$result = Hash::extract($TestModel->find('all'), '{n}.Comment.user_id');
 		$expected = array('2', '4', '1', '1', '1', '2');
 		$this->assertEquals($expected, $result);
 
 		$TestModel->updateAll(array('Comment.user_id' => 5), array('Comment.user_id' => 2));
-		$result = Set::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
+		$result = Hash::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
 		$expected = array(1 => 5, 2 => 4, 3 => 1, 4 => 1, 5 => 1, 6 => 5);
 		$this->assertEquals($expected, $result);
 
@@ -2414,7 +2414,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('Comment.user_id' => 5)
 		);
 		$this->assertFalse(empty($result));
-		$result = Set::extract(
+		$result = Hash::extract(
 			$TestModel->find('all', array(
 				'conditions' => array(
 					'Comment.user_id' => 5
@@ -3075,7 +3075,7 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->User->field('id', array('user' => 'newuser', 'password' => 'newuserpass'));
@@ -3098,7 +3098,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Third new comment',
 			'Fourth new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->Attachment->field('id', array('attachment' => 'deepsaved'));
@@ -3850,7 +3850,7 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->saveAll(
@@ -3874,7 +3874,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$TestModel->beforeSaveReturn = false;
@@ -3899,7 +3899,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 	}
 

@@ -245,7 +245,7 @@ class CakeSession {
  */
 	public static function delete($name) {
 		if (self::check($name)) {
-			self::_overwrite($_SESSION, Set::remove($_SESSION, $name));
+			self::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
 		self::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
@@ -452,7 +452,7 @@ class CakeSession {
 		if (isset($sessionConfig['defaults'])) {
 			$defaults = self::_defaultConfig($sessionConfig['defaults']);
 			if ($defaults) {
-				$sessionConfig = Set::merge($defaults, $sessionConfig);
+				$sessionConfig = Hash::merge($defaults, $sessionConfig);
 			}
 		}
 		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {

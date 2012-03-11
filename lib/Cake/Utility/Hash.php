@@ -317,7 +317,7 @@ class Hash {
 /**
  * Creates an associative array using `$keyPath` as the path to build its keys, and optionally
  * `$valuePath` as path to get the values. If `$valuePath` is not specified, all values will be initialized
- * to null (useful for Set::merge). You can optionally group the values by what is obtained when
+ * to null (useful for Hash::merge). You can optionally group the values by what is obtained when
  * following the path specified in `$groupPath`.
  *
  * @param array $data Array from where to extract keys and values
@@ -383,7 +383,7 @@ class Hash {
  * Usage:
  *
  * {{{
- * $result = Set::format($users, array('{n}.User.id', '{n}.User.name'), '%s : %s');
+ * $result = Hash::format($users, array('{n}.User.id', '{n}.User.name'), '%s : %s');
  * }}}
  *
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
@@ -405,7 +405,7 @@ class Hash {
 		}
 
 		for ($i = 0; $i < $count; $i++) {
-			$extracted[] = Set::extract($data, $paths[$i]);
+			$extracted[] = self::extract($data, $paths[$i]);
 		}
 		$out = array();
 		$data = $extracted;
@@ -639,7 +639,7 @@ class Hash {
 		$depth = array();
 		if (is_array($data) && reset($data) !== false) {
 			foreach ($data as $value) {
-				$depth[] = Hash::dimensions((array)$value) + 1;
+				$depth[] = self::dimensions((array)$value) + 1;
 			}
 		}
 		return max($depth);
@@ -830,7 +830,7 @@ class Hash {
  * @param mixed $data The data to nest.
  * @param array $options Options are:
  * @return array of results, nested
- * @see Set::extract()
+ * @see Hash::extract()
  */
 	public static function nest(array $data, $options = array()) {
 		if (!$data) {

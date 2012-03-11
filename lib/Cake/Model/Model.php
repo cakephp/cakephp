@@ -1728,7 +1728,7 @@ class Model extends Object implements CakeEventListener {
 				$this->getEventManager()->dispatch($event);
 			}
 			if (!empty($this->data)) {
-				$success = Set::merge($success, $this->data);
+				$success = Hash::merge($success, $this->data);
 			}
 			$this->data = false;
 			$this->_clearCache();
@@ -1819,7 +1819,7 @@ class Model extends Object implements CakeEventListener {
 						'fields' => $associationForeignKey,
 					));
 
-					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
+					$oldLinks = Hash::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
 						if ($keepExisting && !empty($newJoins)) {
 							$conditions[$associationForeignKey] = array_diff($oldLinks, $newJoins);
@@ -1993,7 +1993,7 @@ class Model extends Object implements CakeEventListener {
  */
 	public function saveAll($data = null, $options = array()) {
 		$options = array_merge(array('validate' => 'first'), $options);
-		if (Set::numeric(array_keys($data))) {
+		if (Hash::numeric(array_keys($data))) {
 			if ($options['validate'] === 'only') {
 				return $this->validateMany($data, $options);
 			}
@@ -2514,7 +2514,7 @@ class Model extends Object implements CakeEventListener {
 				return false;
 			}
 
-			$ids = Set::extract($ids, "{n}.{$this->alias}.{$this->primaryKey}");
+			$ids = Hash::extract($ids, "{n}.{$this->alias}.{$this->primaryKey}");
 			if (empty($ids)) {
 				return true;
 			}
@@ -2837,7 +2837,7 @@ class Model extends Object implements CakeEventListener {
 				return array();
 			}
 			$lst = $query['list'];
-			return Set::combine($results, $lst['keyPath'], $lst['valuePath'], $lst['groupPath']);
+			return Hash::combine($results, $lst['keyPath'], $lst['valuePath'], $lst['groupPath']);
 		}
 	}
 
@@ -2915,9 +2915,9 @@ class Model extends Object implements CakeEventListener {
 			if (isset($query['parent'])) {
 				$parent = $query['parent'];
 			}
-			return Set::nest($results, array(
-				'idPath' => '/' . $this->alias . '/' . $this->primaryKey,
-				'parentPath' => '/' . $this->alias . '/' . $parent
+			return Hash::nest($results, array(
+				'idPath' => '{n}.' . $this->alias . '.' . $this->primaryKey,
+				'parentPath' => '{n}.' . $this->alias . '.' . $parent
 			));
 		}
 	}

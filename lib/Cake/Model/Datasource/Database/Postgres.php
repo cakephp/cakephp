@@ -421,7 +421,7 @@ class Postgres extends DboSource {
 			$match[1] = $this->name($match[1]);
 		} elseif (!$constant) {
 			$parts = explode('.', $match[1]);
-			if (!Set::numeric($parts)) {
+			if (!Hash::numeric($parts)) {
 				$match[1] = $this->name($match[1]);
 			}
 		}

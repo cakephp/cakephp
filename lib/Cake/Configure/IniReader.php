@@ -127,7 +127,7 @@ class IniReader implements ConfigReaderInterface {
 				$value = false;
 			}
 			if (strpos($key, '.') !== false) {
-				$values = Set::insert($values, $key, $value);
+				$values = Hash::insert($values, $key, $value);
 			} else {
 				$values[$key] = $value;
 			}

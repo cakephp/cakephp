@@ -19,6 +19,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * Cookie Component.
@@ -239,7 +240,7 @@ class CookieComponent extends Component {
 				if (!isset($this->_values[$this->name][$names[0]])) {
 					$this->_values[$this->name][$names[0]] = array();
 				}
-				$this->_values[$this->name][$names[0]] = Set::insert($this->_values[$this->name][$names[0]], $names[1], $value);
+				$this->_values[$this->name][$names[0]] = Hash::insert($this->_values[$this->name][$names[0]], $names[1], $value);
 				$this->_write('[' . implode('][', $names) . ']', $value);
 			}
 		}
@@ -276,7 +277,7 @@ class CookieComponent extends Component {
 		}
 
 		if (!empty($names[1])) {
-			return Set::extract($this->_values[$this->name][$key], $names[1]);
+			return Hash::get($this->_values[$this->name][$key], $names[1]);
 		}
 		return $this->_values[$this->name][$key];
 	}
@@ -310,7 +311,7 @@ class CookieComponent extends Component {
 		}
 		$names = explode('.', $key, 2);
 		if (isset($this->_values[$this->name][$names[0]])) {
-			$this->_values[$this->name][$names[0]] = Set::remove($this->_values[$this->name][$names[0]], $names[1]);
+			$this->_values[$this->name][$names[0]] = Hash::remove($this->_values[$this->name][$names[0]], $names[1]);
 		}
 		$this->_delete('[' . implode('][', $names) . ']');
 	}

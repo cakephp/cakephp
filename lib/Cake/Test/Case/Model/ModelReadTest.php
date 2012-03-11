@@ -3015,7 +3015,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Apple', 'Sample');
 		$Apple = new Apple();
 		$result = $Apple->find('threaded');
-		$result = Set::extract($result, '{n}.children');
+		$result = Hash::extract($result, '{n}.children');
 		$expected = array(array(), array(), array(), array(), array(), array(),	array());
 		$this->assertEquals($expected, $result);
 	}
@@ -3030,7 +3030,7 @@ class ModelReadTest extends BaseModelTest {
 		$Model = new Person();
 		$Model->recursive = -1;
 		$result = $Model->find('threaded');
-		$result = Set::extract($result, '{n}.children');
+		$result = Hash::extract($result, '{n}.children');
 		$expected = array(array(), array(), array(), array(), array(), array(),	array());
 		$this->assertEquals($expected, $result);
 
@@ -6479,7 +6479,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->assertEquals($expected, $result);
 		}
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC',
 				'fields' => array('id', 'title')
@@ -6493,7 +6493,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC'
 			)),
@@ -6530,7 +6530,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEquals($expected, $result);
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC'
 			)),
@@ -6569,7 +6569,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEquals($expected, $result);
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC',
 				'fields' => array('id', 'title', 'user_id')
@@ -7689,17 +7689,17 @@ class ModelReadTest extends BaseModelTest {
 
 		$Post->Author->virtualFields = array('joined' => 'Post.id * Author.id');
 		$result = $Post->find('all');
-		$result = Set::extract('{n}.Author.joined', $result);
+		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(1, 6, 3);
 		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'ASC')));
-		$result = Set::extract('{n}.Author.joined', $result);
+		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(1, 3, 6);
 		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'DESC')));
-		$result = Set::extract('{n}.Author.joined', $result);
+		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(6, 3, 1);
 		$this->assertEquals($expected, $result);
 	}

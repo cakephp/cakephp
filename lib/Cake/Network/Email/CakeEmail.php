@@ -1363,7 +1363,7 @@ class CakeEmail {
 
 		$msg = array();
 
-		$contentIds = array_filter((array)Set::classicExtract($this->_attachments, '{s}.contentId'));
+		$contentIds = array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
 		$hasInlineAttachments = count($contentIds) > 0;
 		$hasAttachments = !empty($this->_attachments);
 		$hasMultipleTypes = count($rendered) > 1;

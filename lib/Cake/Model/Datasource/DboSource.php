@@ -1409,7 +1409,7 @@ class DboSource extends DataSource {
 						if ($mergeKeys[0] === $dataKeys[0] || $mergeKeys === $dataKeys) {
 							$data[$association][$association] = $merge[0][$association];
 						} else {
-							$diff = Set::diff($dataAssocTmp, $mergeAssocTmp);
+							$diff = Hash::diff($dataAssocTmp, $mergeAssocTmp);
 							$data[$association] = array_merge($merge[0][$association], $diff);
 						}
 					} elseif ($selfJoin && array_key_exists($association, $merge[0])) {
@@ -1934,7 +1934,7 @@ class DboSource extends DataSource {
 				return false;
 			}
 			$conditions = $this->conditions(array(
-				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+				$model->primaryKey => Hash::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
 			));
 		}
 		return $conditions;
@@ -2256,7 +2256,7 @@ class DboSource extends DataSource {
 					} else {
 						if (strpos($fields[$i], ',') === false) {
 							$build = explode('.', $fields[$i]);
-							if (!Set::numeric($build)) {
+							if (!Hash::numeric($build)) {
 								$fields[$i] = $this->name(implode('.', $build));
 							}
 						}
@@ -2268,7 +2268,7 @@ class DboSource extends DataSource {
 							$field[1] = $this->name($alias . '.' . $field[1]);
 						} else {
 							$field[0] = explode('.', $field[1]);
-							if (!Set::numeric($field[0])) {
+							if (!Hash::numeric($field[0])) {
 								$field[0] = implode('.', array_map(array(&$this, 'name'), $field[0]));
 								$fields[$i] = preg_replace('/\(' . $field[1] . '\)/', '(' . $field[0] . ')', $fields[$i], 1);
 							}

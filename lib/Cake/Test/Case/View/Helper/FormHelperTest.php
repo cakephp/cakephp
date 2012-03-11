@@ -6860,7 +6860,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.non_existing');
 		$expected = array(
-			'div' => array('class' => 'input text required'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactNonExisting'),
 			'Non Existing',
 			'/label',
