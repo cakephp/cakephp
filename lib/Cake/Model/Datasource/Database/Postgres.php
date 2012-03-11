@@ -186,8 +186,8 @@ class Postgres extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
-		$fields = parent::describe($model);
 		$table = $this->fullTableName($model, false, false);
+		$fields = parent::describe($table);
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
 

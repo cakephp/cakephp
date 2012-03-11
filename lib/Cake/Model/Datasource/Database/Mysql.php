@@ -297,7 +297,8 @@ class Mysql extends DboSource {
  * @throws CakeException
  */
 	public function describe($model) {
-		$cache = parent::describe($model);
+		$key = $this->fullTableName($model, false);
+		$cache = parent::describe($key);
 		if ($cache != null) {
 			return $cache;
 		}
@@ -331,7 +332,7 @@ class Mysql extends DboSource {
 				}
 			}
 		}
-		$this->_cacheDescription($this->fullTableName($model, false), $fields);
+		$this->_cacheDescription($key, $fields);
 		$cols->closeCursor();
 		return $fields;
 	}
