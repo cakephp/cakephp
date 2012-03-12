@@ -366,6 +366,30 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * test sorting with string keys.
+ *
+ * @return void
+ */
+	public function testSortString() {
+		$to_sort = array(
+			'four' => array('number' => 4, 'some' => 'foursome'),
+			'six' => array('number' => 6, 'some' => 'sixsome'),
+			'five' => array('number' => 5, 'some' => 'fivesome'),
+			'two' => array('number' => 2, 'some' => 'twosome'),
+			'three' => array('number' => 3, 'some' => 'threesome')
+		);
+		$sorted = Set::sort($to_sort, '{s}.number', 'asc');
+		$expected = array(
+			'two' => array('number' => 2, 'some' => 'twosome'),
+			'three' => array('number' => 3, 'some' => 'threesome'),
+			'four' => array('number' => 4, 'some' => 'foursome'),
+			'five' => array('number' => 5, 'some' => 'fivesome'),
+			'six' => array('number' => 6, 'some' => 'sixsome')
+		);
+		$this->assertEquals($expected, $sorted);
+	}
+
+/**
  * test sorting with out of order keys.
  *
  * @return void

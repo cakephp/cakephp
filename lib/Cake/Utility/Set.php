@@ -34,7 +34,7 @@ class Set {
  * Since this method emulates `array_merge`, it will re-order numeric keys.  When combined with out of
  * order numeric keys containing arrays, results can be lossy.
  *
- * Note: This function will work with an unlimited amount of arguments and typecasts non-array 
+ * Note: This function will work with an unlimited amount of arguments and typecasts non-array
  * parameters into arrays.
  *
  * @param array $arr1 Array to be merged
@@ -322,7 +322,7 @@ class Set {
 
 /**
  * Implements partial support for XPath 2.0. If $path does not contain a '/' the call
- * is delegated to Set::classicExtract(). Also the $path and $data arguments are 
+ * is delegated to Set::classicExtract(). Also the $path and $data arguments are
  * reversible.
  *
  * #### Currently implemented selectors:
@@ -982,7 +982,7 @@ class Set {
 						$new = array_merge($new, Set::reverse($value));
 					} else {
 						$new[$key] = Set::reverse($value);
-					}	
+					}
 					// @codingStandardsIgnoreEnd
 				}
 			}
@@ -1070,8 +1070,10 @@ class Set {
  */
 	public static function sort($data, $path, $dir) {
 		$originalKeys = array_keys($data);
+		$numeric = false;
 		if (is_numeric(implode('', $originalKeys))) {
 			$data = array_values($data);
+			$numeric = true;
 		}
 		$result = Set::_flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
@@ -1087,7 +1089,11 @@ class Set {
 		$keys = array_unique($keys);
 
 		foreach ($keys as $k) {
-			$sorted[] = $data[$k];
+			if (!$numeric) {
+				$sorted[$originalKeys[$k]] = $data[$originalKeys[$k]];
+			} else {
+				$sorted[] = $data[$k];
+			}
 		}
 		return $sorted;
 	}
