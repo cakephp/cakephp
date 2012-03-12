@@ -1354,7 +1354,7 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-			$result = Set::pushDiff($result, array($association => $merged));
+			$result = Hash::mergeDiff($result, array($association => $merged));
 		}
 	}
 
