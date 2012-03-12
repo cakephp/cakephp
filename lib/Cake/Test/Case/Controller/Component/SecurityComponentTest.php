@@ -21,10 +21,10 @@ App::uses('SecurityComponent', 'Controller/Component');
 App::uses('Controller', 'Controller');
 
 /**
-* TestSecurityComponent
-*
-* @package       Cake.Test.Case.Controller.Component
-*/
+ * TestSecurityComponent
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
 class TestSecurityComponent extends SecurityComponent {
 
 /**
@@ -36,13 +36,14 @@ class TestSecurityComponent extends SecurityComponent {
 	public function validatePost(Controller $controller) {
 		return $this->_validatePost($controller);
 	}
+
 }
 
 /**
-* SecurityTestController
-*
-* @package       Cake.Test.Case.Controller.Component
-*/
+ * SecurityTestController
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
 class SecurityTestController extends Controller {
 
 /**
@@ -103,6 +104,7 @@ class SecurityTestController extends Controller {
 	public function header($status) {
 		$this->testHeaders[] = $status;
 	}
+
 }
 
 /**
@@ -677,7 +679,6 @@ class SecurityComponentTest extends CakeTestCase {
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-
 		$this->Controller->request->data = array();
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
@@ -912,7 +913,6 @@ class SecurityComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testValidateNestedNumericSets() {
-
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$unlocked = '';
@@ -1181,7 +1181,6 @@ class SecurityComponentTest extends CakeTestCase {
 		$tokens = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(2, count($tokens), 'Too many tokens left behind');
 		$this->assertNotEmpty('valid', $tokens, 'Valid token was removed.');
-
 	}
 
 /**
@@ -1261,9 +1260,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->assertEquals(1, count($token), 'Should only be one token.');
 
 		$this->Security->startup($this->Controller);
-		$token2 = $this->Security->Session->read('_Token.csrfTokens');
-		$this->assertEquals(1, count($token2), 'Should only be one token.');
-		$this->assertEquals($token, $token2, 'Tokens should not be different.');
+		$tokenTwo = $this->Security->Session->read('_Token.csrfTokens');
+		$this->assertEquals(1, count($tokenTwo), 'Should only be one token.');
+		$this->assertEquals($token, $tokenTwo, 'Tokens should not be different.');
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$this->assertEquals(array($key), array_keys($token), '_Token.key and csrfToken do not match request will blackhole.');

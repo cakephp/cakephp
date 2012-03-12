@@ -114,7 +114,6 @@ class CrudAuthorizeTest extends CakeTestCase {
 		$this->assertFalse($this->auth->authorize($user['User'], $request));
 	}
 
-
 /**
  * test getting actionMap
  *

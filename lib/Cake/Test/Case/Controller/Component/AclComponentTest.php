@@ -25,6 +25,7 @@ class_exists('AclComponent');
  * @package       Cake.Test.Case.Controller.Component
  */
 class AclComponentTest extends CakeTestCase {
+
 /**
  * setUp method
  *

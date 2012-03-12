@@ -163,6 +163,7 @@ class DbAclTwoTest extends DbAcl {
 		$this->Aco = new AcoTwoTest();
 		$this->Aro->Permission = new PermissionTwoTest();
 	}
+
 }
 
 /**
@@ -171,6 +172,7 @@ class DbAclTwoTest extends DbAcl {
  * @package       Cake.Test.Case.Controller.Component.Acl
  */
 class DbAclTest extends CakeTestCase {
+
 /**
  * fixtures property
  *

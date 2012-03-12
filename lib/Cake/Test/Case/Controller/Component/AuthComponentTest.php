@@ -23,11 +23,11 @@ App::uses('AclComponent', 'Controller/Component');
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
 
 /**
-* TestAuthComponent class
-*
-* @package       Cake.Test.Case.Controller.Component
-* @package       Cake.Test.Case.Controller.Component
-*/
+ * TestAuthComponent class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ * @package       Cake.Test.Case.Controller.Component
+ */
 class TestAuthComponent extends AuthComponent {
 
 /**
@@ -53,11 +53,11 @@ class TestAuthComponent extends AuthComponent {
 }
 
 /**
-* AuthUser class
-*
-* @package       Cake.Test.Case.Controller.Component
-* @package       Cake.Test.Case.Controller.Component
-*/
+ * AuthUser class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ * @package       Cake.Test.Case.Controller.Component
+ */
 class AuthUser extends CakeTestModel {
 
 /**
@@ -77,11 +77,11 @@ class AuthUser extends CakeTestModel {
 }
 
 /**
-* AuthTestController class
-*
-* @package       Cake.Test.Case.Controller.Component
-* @package       Cake.Test.Case.Controller.Component
-*/
+ * AuthTestController class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ * @package       Cake.Test.Case.Controller.Component
+ */
 class AuthTestController extends Controller {
 
 /**
@@ -155,7 +155,6 @@ class AuthTestController extends Controller {
  * @return void
  */
 	public function logout() {
-
 	}
 
 /**
@@ -195,7 +194,6 @@ class AuthTestController extends Controller {
  * @return void
  */
 	public function isAuthorized() {
-
 	}
 
 }
@@ -269,14 +267,15 @@ class AjaxAuthController extends Controller {
 		$this->testUrl = Router::url($url);
 		return false;
 	}
+
 }
 
 /**
-* AuthComponentTest class
-*
-* @package       Cake.Test.Case.Controller.Component
-* @package       Cake.Test.Case.Controller.Component
-*/
+ * AuthComponentTest class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ * @package       Cake.Test.Case.Controller.Component
+ */
 class AuthComponentTest extends CakeTestCase {
 
 /**
@@ -951,7 +950,7 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function testAjaxLogin() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
@@ -1225,6 +1224,6 @@ class AuthComponentTest extends CakeTestCase {
 		$result = $this->Auth->password('password');
 		$expected = Security::hash('password', null, true);
 		$this->assertEquals($expected, $result);
-
 	}
+
 }
