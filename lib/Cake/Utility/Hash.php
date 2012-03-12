@@ -757,27 +757,51 @@ class Hash {
  * and work on multi-dimensional arrays.
  *
  * @param mixed $data First value
- * @param mixed $data2 Second value
- * @return array Returns the key => value pairs that are not common in $data and $data2
- *    The expression for this function is ($data - $data2) + ($data2 - ($data - $data2))
+ * @param mixed $compare Second value
+ * @return array Returns the key => value pairs that are not common in $data and $compare
+ *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::diff
  */
-	public static function diff(array $data, $data2) {
+	public static function diff(array $data, $compare) {
 		if (empty($data)) {
-			return (array)$data2;
+			return (array)$compare;
 		}
-		if (empty($data2)) {
+		if (empty($compare)) {
 			return (array)$data;
 		}
-		$intersection = array_intersect_key($data, $data2);
+		$intersection = array_intersect_key($data, $compare);
 		while (($key = key($intersection)) !== null) {
-			if ($data[$key] == $data2[$key]) {
+			if ($data[$key] == $compare[$key]) {
 				unset($data[$key]);
-				unset($data2[$key]);
+				unset($compare[$key]);
 			}
 			next($intersection);
 		}
-		return $data + $data2;
+		return $data + $compare;
+	}
+
+/**
+ * Merges the difference between $data and $push onto $data.
+ *
+ * @param array $data The data to append onto.
+ * @param array $compare The data to compare and append onto.
+ * @return array The merged array.
+ */
+	public static function mergeDiff(array $data, $compare) {
+		if (empty($data) && !empty($compare)) {
+			return $compare;
+		}
+		if (empty($compare)) {
+			return $data;
+		}
+		foreach ($compare as $key => $value) {
+			if (!array_key_exists($key, $data)) {
+				$data[$key] = $value;
+			} elseif (is_array($value)) {
+				$data[$key] = self::mergeDiff($data[$key], $compare[$key]);
+			}
+		}
+		return $data;
 	}
 
 /**
