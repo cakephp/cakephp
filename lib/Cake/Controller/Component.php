@@ -120,8 +120,8 @@ class Component extends Object {
 	}
 
 /**
- * Called after the Controller::beforeRender(), after the view class is loaded, and before the
- * Controller::render()
+ * Called before the Controller::beforeRender(), and before 
+ * the view class is loaded, and before Controller::render()
  *
  * @param Controller $controller Controller with components to beforeRender
  * @return void
