@@ -363,6 +363,49 @@ class Test2Component extends TestComponent {
 	}
 }
 
+class EventTestComponent extends TestComponent {
+
+	var $name = 'EventTestComponent';
+
+/**
+ * initialize method
+ *
+ * @return void
+ */
+	public function initialize(Controller $controller) {
+	}
+
+/**
+ * Event call before controller
+ *
+ * @return void
+ */
+	public function beforeRender(Controller $controller) {
+		$controller->events['beforeRender'][] = $this->name;
+	}
+}
+
+/**
+ * EventTestController class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class EventTestController extends Controller {
+
+	var $name = 'EventTestController';
+
+	var $events = array();
+
+/**
+ * Event call after components
+ *
+ * @return void
+ */
+	public function beforeRender() {
+		$this->events['beforeRender'][] = $this->name;
+	}
+}
+
 /**
  * AnotherTestController class
  *
@@ -683,6 +726,28 @@ class ControllerTest extends CakeTestCase {
 		$Controller->theme = 'TestTheme';
 		$result = $Controller->render('index');
 		$this->assertRegExp('/default test_theme layout/', (string)$result);
+		App::build();
+	}
+
+/**
+ * test that a component beforeRender is called after controller
+ *
+ * @return void
+ */
+	public function testComponentBeforeRenderEventBeforeController() {
+		App::build(array(
+			'View' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
+			)
+		), true);
+		$Controller = new EventTestController($this->getMock('CakeRequest'), new CakeResponse());
+		$Controller->uses = array();
+		$Controller->components = array('EventTest');
+		$Controller->constructClasses();
+		$Controller->viewPath = 'Posts';
+		$Controller->render('index');
+		$this->assertEquals($Controller->events['beforeRender'][0], 'EventTestController');
+		$this->assertEquals($Controller->events['beforeRender'][1], 'EventTestComponent');
 		App::build();
 	}
 
