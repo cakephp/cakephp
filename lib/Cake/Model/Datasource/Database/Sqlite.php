@@ -160,11 +160,11 @@ class Sqlite extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
-		$cache = parent::describe($model);
+		$table = $this->fullTableName($model, false, false);
+		$cache = parent::describe($table);
 		if ($cache != null) {
 			return $cache;
 		}
-		$table = $this->fullTableName($model, false, false);
 		$fields = array();
 		$result = $this->_execute('PRAGMA table_info(' . $table . ')');
 

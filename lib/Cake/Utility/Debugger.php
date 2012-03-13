@@ -706,8 +706,8 @@ class Debugger {
 
 		$files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
 		$code = '';
-		if (isset($files[0]['file'])) {
-			$code = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
+		if (isset($files[1]['file'])) {
+			$code = $this->excerpt($files[1]['file'], $files[1]['line'] - 1, 1);
 		}
 		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');

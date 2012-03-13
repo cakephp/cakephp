@@ -484,7 +484,7 @@ class CakeSchema extends Object {
 				if (!empty($old[$table][$field])) {
 					$diff = $this->_arrayDiffAssoc($value, $old[$table][$field]);
 					if (!empty($diff) && $field !== 'indexes' && $field !== 'tableParameters') {
-						$tables[$table]['change'][$field] = array_merge($old[$table][$field], $diff);
+						$tables[$table]['change'][$field] = $value;
 					}
 				}
 

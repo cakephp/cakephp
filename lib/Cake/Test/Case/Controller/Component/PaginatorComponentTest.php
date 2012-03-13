@@ -30,19 +30,13 @@ App::uses('CakeResponse', 'Network');
  * @package       Cake.Test.Case.Controller.Component
  */
 class PaginatorTestController extends Controller {
+
 /**
  * name property
  *
  * @var string 'PaginatorTest'
  */
 	public $name = 'PaginatorTest';
-
-/**
- * uses property
- *
- * @var array
- */
-	//public $uses = null;
 
 /**
  * components property
@@ -113,12 +107,13 @@ class PaginatorControllerPost extends CakeTestModel {
  */
 	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
 		if ($conditions == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
+			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
 			$options = Set::merge($fields, compact('conditions'));
 			return parent::find('all', $options);
 		}
 		return parent::find($conditions, $fields);
 	}
+
 }
 
 /**
@@ -159,6 +154,7 @@ class ControllerPaginateModel extends CakeTestModel {
 	public function paginateCount($conditions, $recursive, $extra) {
 		$this->extraCount = $extra;
 	}
+
 }
 
 /**
@@ -942,7 +938,7 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '5000');
 		$result = $Controller->paginate('PaginatorControllerPost');
 		$this->assertEquals($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 2000);
-	 }
+	}
 
 /**
  * test paginate() and virtualField overlapping with real fields.

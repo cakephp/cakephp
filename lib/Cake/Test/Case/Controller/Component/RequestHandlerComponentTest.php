@@ -67,6 +67,7 @@ class RequestHandlerTestController extends Controller {
 		}
 		$this->destination();
 	}
+
 }
 
 
@@ -229,7 +230,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
 	}
-	
+
 /**
  * Test that ext is not set with confusing android accepts headers.
  *
@@ -291,7 +292,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertEquals($this->Controller->ext, '.ctp');
 	}
-
 
 /**
  * testAutoAjaxLayout method
@@ -522,7 +522,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
 		$this->assertEquals($result, 'json');
 
-		$result =$this->RequestHandler->requestedWith(array('rss', 'atom'));
+		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
@@ -711,7 +711,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testAjaxRedirectAsRequestAction() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		), App::RESET);
 
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -740,7 +740,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testAjaxRedirectAsRequestActionStillRenderingLayout() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		), App::RESET);
 
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -831,7 +831,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testCheckNotModifiedByEtagStar() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('notModified'));
 		$RequestHandler->response->etag('something');
 		$RequestHandler->response->expects($this->once())->method('notModified');
 		$this->assertFalse($RequestHandler->beforeRender($this->Controller));
@@ -845,7 +845,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('notModified'));
 		$RequestHandler->response->etag('something', true);
 		$RequestHandler->response->expects($this->once())->method('notModified');
 		$this->assertFalse($RequestHandler->beforeRender($this->Controller));
@@ -860,7 +860,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('notModified'));
 		$RequestHandler->response->etag('something', true);
 		$RequestHandler->response->modified('2012-01-01 00:00:00');
 		$RequestHandler->response->expects($this->once())->method('notModified');
@@ -874,7 +874,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  **/
 	public function testCheckNotModifiedNoInfo() {
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response =  $this->getMock('CakeResponse', array('notModified'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('notModified'));
 		$RequestHandler->response->expects($this->never())->method('notModified');
 		$this->assertNull($RequestHandler->beforeRender($this->Controller));
 	}

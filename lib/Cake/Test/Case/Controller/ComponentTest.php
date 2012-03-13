@@ -95,6 +95,7 @@ class AppleComponent extends Component {
 	public function startup(Controller $controller) {
 		$this->testName = $controller->name;
 	}
+
 }
 
 /**
@@ -131,6 +132,7 @@ class OrangeComponent extends Component {
 	public function startup(Controller $controller) {
 		$controller->foo = 'pass';
 	}
+
 }
 
 /**
@@ -156,6 +158,7 @@ class BananaComponent extends Component {
 	public function startup(Controller $controller) {
 		$controller->bar = 'fail';
 	}
+
 }
 
 /**

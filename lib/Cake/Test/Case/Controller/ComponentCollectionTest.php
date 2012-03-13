@@ -28,6 +28,7 @@ class CookieAliasComponent extends CookieComponent {
 }
 
 class ComponentCollectionTest extends CakeTestCase {
+
 /**
  * setUp
  *

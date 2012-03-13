@@ -22,7 +22,7 @@ App::uses('AppModel', 'Model');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
-require_once  CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
+require_once CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
 
 /**
  * Test case for DigestAuthentication

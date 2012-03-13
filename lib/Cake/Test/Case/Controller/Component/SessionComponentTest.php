@@ -34,13 +34,14 @@ class SessionTestController extends Controller {
 	public $uses = array();
 
 /**
- * session_id method
+ * sessionId method
  *
  * @return string
  */
-	public function session_id() {
+	public function sessionId() {
 		return $this->Session->id();
 	}
+
 }
 
 /**
@@ -58,13 +59,14 @@ class OrangeSessionTestController extends Controller {
 	public $uses = array();
 
 /**
- * session_id method
+ * sessionId method
  *
  * @return string
  */
-	public function session_id() {
+	public function sessionId() {
 		return $this->Session->id();
 	}
+
 }
 
 /**
@@ -141,10 +143,10 @@ class SessionComponentTest extends CakeTestCase {
 		$Session = new SessionComponent($this->ComponentCollection);
 		$expected = $Session->id();
 
-		$result = $Object->requestAction('/session_test/session_id');
+		$result = $Object->requestAction('/session_test/sessionId');
 		$this->assertEquals($expected, $result);
 
-		$result = $Object->requestAction('/orange_session_test/session_id');
+		$result = $Object->requestAction('/orange_session_test/sessionId');
 		$this->assertEquals($expected, $result);
 	}
 

@@ -76,6 +76,7 @@ class ScaffoldMockControllerWithFields extends Controller {
 		$this->set('scaffoldFields', array('title'));
 		return true;
 	}
+
 }
 
 /**
@@ -102,6 +103,7 @@ class TestScaffoldMock extends Scaffold {
 	public function getParams() {
 		return $this->_params;
 	}
+
 }
 
 /**
@@ -344,4 +346,5 @@ class ScaffoldTest extends CakeTestCase {
 
 		$this->assertNotRegExp('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 	}
+
 }
