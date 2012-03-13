@@ -1089,10 +1089,14 @@ class Set {
 		$keys = array_unique($keys);
 
 		foreach ($keys as $k) {
-			if (!$numeric) {
-				$sorted[$originalKeys[$k]] = $data[$originalKeys[$k]];
-			} else {
+			if ($numeric) {
 				$sorted[] = $data[$k];
+			} else {
+				if (isset($originalKeys[$k])) {
+					$sorted[$originalKeys[$k]] = $data[$originalKeys[$k]];
+				} else {
+					$sorted[$k] = $data[$k];
+				}
 			}
 		}
 		return $sorted;
