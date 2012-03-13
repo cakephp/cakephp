@@ -325,7 +325,7 @@ class Hash {
  * @param string $valuePath A dot-separated string.
  * @param string $groupPath A dot-separated string.
  * @return array Combined array
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::combine
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::combine
  */
 	public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null) {
 		if (empty($data)) {
@@ -392,7 +392,7 @@ class Hash {
  * @param string $paths An array containing one or more Hash::extract()-style key paths
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @return array An array of strings extracted from `$path` and formatted with `$format`
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::format
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::format
  * @see sprintf()
  * @see Hash::extract()
  */
@@ -430,7 +430,7 @@ class Hash {
  * @param array $data The data to search through.
  * @param array $needle The values to file in $data
  * @return boolean true if $data contains $needle, false otherwise
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::contains
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::contains
  */
 	public static function contains(array $data, array $needle) {
 		if (empty($data) || empty($needle)) {
@@ -489,7 +489,7 @@ class Hash {
  * @param callable $callback A function to filter the data with.  Defaults to 
  *   `self::_filter()` Which strips out all non-zero empty values.
  * @return array Filtered array
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::filter
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::filter
  */
 	public static function filter(array $data, $callback = array('self', '_filter')) {
 		foreach ($data as $k => $v) {
@@ -521,7 +521,7 @@ class Hash {
  * @param array $data Array to flatten
  * @param string $separator String used to separate array key elements in a path, defaults to '.'
  * @return array
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::flatten
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::flatten
  */
 	public static function flatten(array $data, $separator = '.') {
 		$result = array();
@@ -563,7 +563,7 @@ class Hash {
  * @param array $data Array to be merged
  * @param mixed $merge Array to merge with. The argument and all trailing arguments will be array cast when merged
  * @return array Merged array
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::merge
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::merge
  */
 	public static function merge(array $data, $merge) {
 		$args = func_get_args();
@@ -588,7 +588,7 @@ class Hash {
  *
  * @param array $array The array to check.
  * @return boolean true if values are numeric, false otherwise
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::numeric
  */
 	public static function numeric(array $data) {
 		if (empty($data)) {
@@ -608,7 +608,7 @@ class Hash {
  *
  * @param array $array Array to count dimensions on
  * @return integer The number of dimensions in $data
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::dimensions
  */
 	public static function dimensions(array $data) {
 		if (empty($data)) {
@@ -633,7 +633,7 @@ class Hash {
  * 
  * @param array $data Array to count dimensions on
  * @return integer The maximum number of dimensions in $data
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::maxDimensions
  */
 	public static function maxDimensions(array $data) {
 		$depth = array();
@@ -691,7 +691,7 @@ class Hash {
  * @param string $path A Set-compatible path to the array value
  * @param string $dir Direction of sorting - either ascending (ASC), or descending (DESC)
  * @return array Sorted array of data
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::sort
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
  */
 	public static function sort(array $data, $path, $dir) {
 		$originalKeys = array_keys($data);
@@ -760,7 +760,7 @@ class Hash {
  * @param mixed $compare Second value
  * @return array Returns the key => value pairs that are not common in $data and $compare
  *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::diff
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::diff
  */
 	public static function diff(array $data, $compare) {
 		if (empty($data)) {
@@ -810,7 +810,7 @@ class Hash {
  * @param mixed $data List to normalize
  * @param boolean $assoc If true, $data will be converted to an associative array.
  * @return array
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::normalize
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::normalize
  */
 	public static function normalize(array $data, $assoc = true) {
 		$keys = array_keys($data);
