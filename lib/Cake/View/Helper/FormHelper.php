@@ -604,12 +604,8 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$last = end($field);
-		if (is_numeric($last) || empty($last)) {
-			array_pop($field);
-		}
-
 		$field = implode('.', $field);
+		$field = preg_replace('/(\.\d+)+$/', '', $field);
 
 		if ($lock) {
 			if (!in_array($field, $this->fields)) {
