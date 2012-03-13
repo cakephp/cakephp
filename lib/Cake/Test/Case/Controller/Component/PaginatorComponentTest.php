@@ -279,7 +279,8 @@ class PaginatorCustomPost extends CakeTestModel {
 			$query['fields'] = array('author_id');
 			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
 			$query['fields'][] = 'total_posts';
-			$query['group'] = array($this->alias . '.author_id');
+			$query['group'] = array('author_id');
+			$query['order'] = array('author_id' => 'ASC');
 			return $query;
 		}
 		$this->virtualFields = array();
@@ -304,7 +305,8 @@ class PaginatorCustomPost extends CakeTestModel {
 			$query['fields'] = array('author_id', 'Author.user');
 			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
 			$query['fields'][] = 'total_posts';
-			$query['group'] = array('Author.user');
+			$query['group'] = array('author_id');
+			$query['order'] = array('author_id' => 'ASC');
 			return $query;
 		}
 		$this->virtualFields = array();
@@ -1107,7 +1109,7 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
- * test paginate() and custom find with returning otehr query on count operation,
+ * test paginate() and custom find with returning other query on count operation,
  * to make sure the correct count is returned.
  *
  * @return void
@@ -1129,20 +1131,20 @@ class PaginatorComponentTest extends CakeTestCase {
 		$expected = array(
 			array(
 				'PaginatorCustomPost' => array(
-					'author_id' => '3',
-					'total_posts' => '1'
-				),
-				'Author' => array(
-					'user' => 'larry',
-				)
-			),
-			array(
-				'PaginatorCustomPost' => array(
 					'author_id' => '1',
 					'total_posts' => '2'
 				),
 				'Author' => array(
-					'user' => 'mariano'
+					'user' => 'mariano',
+				)
+			),
+			array(
+				'PaginatorCustomPost' => array(
+					'author_id' => '2',
+					'total_posts' => '1'
+				),
+				'Author' => array(
+					'user' => 'nate'
 				)
 			)
 		);
