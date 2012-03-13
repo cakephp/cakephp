@@ -157,7 +157,6 @@ class CakePluginTest extends CakeTestCase {
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 	}
 
-
 /**
  * Tests that it is possible to load plugin bootstrap by calling a callback function
  *
@@ -189,7 +188,6 @@ class CakePluginTest extends CakeTestCase {
 	public function testLoadNotFound() {
 		CakePlugin::load('MissingPlugin');
 	}
-
 
 /**
  * Tests that CakePlugin::path() returns the correct path for the loaded plugins

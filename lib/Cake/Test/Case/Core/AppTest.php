@@ -165,7 +165,7 @@ class AppTest extends CakeTestCase {
 		App::build(array('helpers' => array('/path/to/helpers/')));
 		$expected = array(
 			'/path/to/helpers/',
-			APP . 'View' . DS . 'Helper' .DS
+			APP . 'View' . DS . 'Helper' . DS
 		);
 		$result = App::path('helpers');
 		$this->assertEquals($expected, $result);
@@ -598,7 +598,6 @@ class AppTest extends CakeTestCase {
  * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/410
  */
 	public function testImportingHelpersFromAlternatePaths() {
-
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
 		App::build(array(
 			'View/Helper' => array(
@@ -618,10 +617,10 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testFileLoading() {
-		$file = App::import('File', 'RealFile', false, array(), CAKE  . 'Config' . DS . 'config.php');
+		$file = App::import('File', 'RealFile', false, array(), CAKE . 'Config' . DS . 'config.php');
 		$this->assertTrue($file);
 
-		$file = App::import('File', 'NoFile', false, array(), CAKE  . 'Config' . DS . 'cake' . DS . 'config.php');
+		$file = App::import('File', 'NoFile', false, array(), CAKE . 'Config' . DS . 'cake' . DS . 'config.php');
 		$this->assertFalse($file);
 	}
 
@@ -631,13 +630,21 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testFileLoadingWithArray() {
-		$type = array('type' => 'File', 'name' => 'SomeName', 'parent' => false,
-				'file' => CAKE  . DS . 'Config' . DS . 'config.php');
+		$type = array(
+			'type' => 'File',
+			'name' => 'SomeName',
+			'parent' => false,
+			'file' => CAKE . DS . 'Config' . DS . 'config.php'
+		);
 		$file = App::import($type);
 		$this->assertTrue($file);
 
-		$type = array('type' => 'File', 'name' => 'NoFile', 'parent' => false,
-				'file' => CAKE  . 'Config' . DS . 'cake' . DS . 'config.php');
+		$type = array(
+			'type' => 'File',
+			'name' => 'NoFile',
+			'parent' => false,
+			'file' => CAKE . 'Config' . DS . 'cake' . DS . 'config.php'
+		);
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
@@ -648,13 +655,17 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testFileLoadingReturnValue() {
-		$file = App::import('File', 'Name', false, array(), CAKE  . 'Config' . DS . 'config.php', true);
+		$file = App::import('File', 'Name', false, array(), CAKE . 'Config' . DS . 'config.php', true);
 		$this->assertTrue(!empty($file));
 
 		$this->assertTrue(isset($file['Cake.version']));
 
-		$type = array('type' => 'File', 'name' => 'OtherName', 'parent' => false,
-				'file' => CAKE  . 'Config' . DS . 'config.php', 'return' => true);
+		$type = array(
+			'type' => 'File',
+			'name' => 'OtherName',
+			'parent' => false,
+			'file' => CAKE . 'Config' . DS . 'config.php', 'return' => true
+		);
 		$file = App::import($type);
 		$this->assertTrue(!empty($file));
 
@@ -719,7 +730,6 @@ class AppTest extends CakeTestCase {
 
 		$classes = array_flip(get_declared_classes());
 
-
 		$this->assertTrue(isset($classes['PersisterOne']));
 		$this->assertTrue(isset($classes['PersisterTwo']));
 
@@ -727,11 +737,10 @@ class AppTest extends CakeTestCase {
 		$this->assertFalse($load);
 	}
 
-
 	public function testLoadingVendor() {
 		App::build(array(
 			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'vendors' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
+			'vendors' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS),
 		), App::RESET);
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 
