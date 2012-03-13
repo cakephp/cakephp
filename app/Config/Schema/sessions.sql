@@ -1,6 +1,6 @@
 # $Id$
 #
-# Copyright 2005-2011, Cake Software Foundation, Inc.
+# Copyright 2005-2012, Cake Software Foundation, Inc.
 #								1785 E. Sahara Avenue, Suite 490-204
 #								Las Vegas, Nevada 89104
 #
