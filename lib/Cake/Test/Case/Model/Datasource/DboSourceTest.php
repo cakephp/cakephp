@@ -843,4 +843,27 @@ class DboSourceTest extends CakeTestCase {
 		$log = $db->getLog();
 		$this->assertEquals($expected, $log['log'][0]);
 	}
+	
+/**
+ * Test build statement with some fields missing 
+ * 
+ * @return void
+ */
+	public function testBuildStatementDefaults() {
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource;
+		$db->setConnection($conn);
+		$subQuery = $db->buildStatement(
+			array(
+				'fields' => array('DISTINCT(AssetsTag.asset_id)'),
+				'table' => "assets_tags",
+				'alias'=>"AssetsTag",                                          
+				'conditions' => array("Tag.name"=>'foo bar'),
+				'limit' => null,         
+				'group' => "AssetsTag.asset_id"
+			),
+			$this->Model
+		);
+	}
+	
 }
