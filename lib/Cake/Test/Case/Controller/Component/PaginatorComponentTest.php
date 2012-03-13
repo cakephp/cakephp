@@ -305,7 +305,7 @@ class PaginatorCustomPost extends CakeTestModel {
 			$query['fields'] = array('author_id', 'Author.user');
 			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
 			$query['fields'][] = 'total_posts';
-			$query['group'] = array('author_id');
+			$query['group'] = array('author_id', 'Author.user');
 			$query['order'] = array('author_id' => 'ASC');
 			return $query;
 		}
