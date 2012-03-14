@@ -79,9 +79,9 @@ class AclComponent extends Component {
  *
  * Will call the initialize method on the adapter if setting a new one.
  *
- * @param mixed $adapter Instance of AclBase or a string name of the class to use. (optional)
- * @return mixed either null, or instance of AclBase
- * @throws CakeException when the given class is not an AclBase
+ * @param mixed $adapter Instance of AclInterface or a string name of the class to use. (optional)
+ * @return mixed either null, or the adapter implementation.
+ * @throws CakeException when the given class is not an instance of AclInterface
  */
 	public function adapter($adapter = null) {
 		if ($adapter) {
