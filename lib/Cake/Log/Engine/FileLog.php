@@ -66,6 +66,11 @@ class FileLog implements CakeLogInterface {
 			$filename = $this->_path . $type . '.log';
 		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
+		if (Configure::read('debug') && !is_dir($dir = dirname($filename))) {
+			if (!mkdir($dir, 0755, true)) {
+				return false;
+			}
+		}
 		return file_put_contents($filename, $output, FILE_APPEND);
 	}
 
