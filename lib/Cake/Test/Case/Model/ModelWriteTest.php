@@ -1006,7 +1006,10 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'title')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'title'),
+			'order' => array('Article.id' => 'ASC')
+		));
 		$expected = array(
 			array('Article' => array('id' => 1, 'title' => 'First Article')),
 			array('Article' => array('id' => 2, 'title' => 'Second Article')),
@@ -3075,7 +3078,8 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->User->field('id', array('user' => 'newuser', 'password' => 'newuserpass'));
 		$this->assertEquals(5, $result);
@@ -3097,7 +3101,8 @@ class ModelWriteTest extends BaseModelTest {
 			'Third new comment',
 			'Fourth new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->Attachment->field('id', array('attachment' => 'deepsaved'));
 		$this->assertEquals(2, $result);
@@ -3848,7 +3853,8 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$this->assertEquals(Set::extract($result['Comment'], '{n}.comment'), $expected);
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->saveAll(
 			array(
@@ -3871,7 +3877,8 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$this->assertEquals(Set::extract($result['Comment'], '{n}.comment'), $expected);
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$TestModel->beforeSaveReturn = false;
 		$result = $TestModel->saveAll(
@@ -3895,7 +3902,8 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$this->assertEquals(Set::extract($result['Comment'], '{n}.comment'), $expected);
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
