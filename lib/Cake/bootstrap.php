@@ -142,6 +142,11 @@ App::$bootstrapping = true;
 Configure::bootstrap(isset($boot) ? $boot : true);
 
 /**
+ * Compatibility with 2.1, which expects Set to always be autoloaded.
+ */
+App::uses('Set', 'Utilty');
+
+/**
  *  Full url prefix
  */
 if (!defined('FULL_BASE_URL')) {
