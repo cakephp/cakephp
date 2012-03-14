@@ -695,7 +695,8 @@ class Hash {
  */
 	public static function sort(array $data, $path, $dir) {
 		$originalKeys = array_keys($data);
-		if (is_numeric(implode('', $originalKeys))) {
+		$numeric = is_numeric(implode('', $originalKeys));
+		if ($numeric) {
 			$data = array_values($data);
 		}
 		$sortValues = self::extract($data, $path);
@@ -722,7 +723,15 @@ class Hash {
 		$keys = array_unique($keys);
 
 		foreach ($keys as $k) {
-			$sorted[] = $data[$k];
+			if ($numeric) {
+				$sorted[] = $data[$k];
+				continue;
+			} 
+			if (isset($originalKeys[$k])) {
+				$sorted[$originalKeys[$k]] = $data[$originalKeys[$k]];
+			} else {
+				$sorted[$k] = $data[$k];
+			}
 		}
 		return $sorted;
 	}

@@ -1034,6 +1034,43 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * test sorting with string keys.
+ *
+ * @return void
+ */
+	public function testSortString() {
+		$to_sort = array(
+			'four' => array('number' => 4, 'some' => 'foursome'),
+			'six' => array('number' => 6, 'some' => 'sixsome'),
+			'five' => array('number' => 5, 'some' => 'fivesome'),
+			'two' => array('number' => 2, 'some' => 'twosome'),
+			'three' => array('number' => 3, 'some' => 'threesome')
+		);
+		$sorted = Hash::sort($to_sort, '{s}.number', 'asc');
+		$expected = array(
+			'two' => array('number' => 2, 'some' => 'twosome'),
+			'three' => array('number' => 3, 'some' => 'threesome'),
+			'four' => array('number' => 4, 'some' => 'foursome'),
+			'five' => array('number' => 5, 'some' => 'fivesome'),
+			'six' => array('number' => 6, 'some' => 'sixsome')
+		);
+		$this->assertEquals($expected, $sorted);
+
+		$menus = array(
+			'blogs' => array('title' => 'Blogs', 'weight' => 3),
+			'comments' => array('title' => 'Comments', 'weight' => 2),
+			'users' => array('title' => 'Users', 'weight' => 1),
+		);
+		$expected = array(
+			'users' => array('title' => 'Users', 'weight' => 1),
+			'comments' => array('title' => 'Comments', 'weight' => 2),
+			'blogs' => array('title' => 'Blogs', 'weight' => 3),
+		);
+		$result = Hash::sort($menus, '{s}.weight', 'ASC');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test insert()
  *
  * @return void
