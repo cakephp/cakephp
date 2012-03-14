@@ -121,7 +121,7 @@ class CakeTimeTest extends CakeTestCase {
 			$hours = 0;
 			$minutes = 0;
 			$seconds = 0;
-			$relative_date = '';
+			$relativeDate = '';
 
 			// Trying to take into account the number of days in a month
 			$month = date('m') - $months;
@@ -137,43 +137,43 @@ class CakeTimeTest extends CakeTestCase {
 
 			if ($years > 0) {
 				// years and months and days
-				$relative_date .= ($relative_date ? ', -' : '-') . $years . ' year' . ($years > 1 ? 's' : '');
-				$relative_date .= $months > 0 ? ($relative_date ? ', -' : '-') . $months . ' month' . ($months > 1 ? 's' : '') : '';
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
-				$relative_date .= $days > 0 ? ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $years . ' year' . ($years > 1 ? 's' : '');
+				$relativeDate .= $months > 0 ? ($relativeDate ? ', -' : '-') . $months . ' month' . ($months > 1 ? 's' : '') : '';
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($months) > 0) {
 				// months, weeks and days
-				$relative_date .= ($relative_date ? ', -' : '-') . $months . ' month' . ($months > 1 ? 's' : '');
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
-				$relative_date .= $days > 0 ? ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $months . ' month' . ($months > 1 ? 's' : '');
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($weeks) > 0) {
 				// weeks and days
-				$relative_date .= ($relative_date ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
-				$relative_date .= $days > 0 ? ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($days) > 0) {
 				// days and hours
-				$relative_date .= ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '');
-				$relative_date .= $hours > 0 ? ($relative_date ? ', -' : '-') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '');
+				$relativeDate .= $hours > 0 ? ($relativeDate ? ', -' : '-') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
 			} elseif (abs($hours) > 0) {
 				// hours and minutes
-				$relative_date .= ($relative_date ? ', -' : '-') . $hours . ' hour' . ($hours > 1 ? 's' : '');
-				$relative_date .= $minutes > 0 ? ($relative_date ? ', -' : '-') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $hours . ' hour' . ($hours > 1 ? 's' : '');
+				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', -' : '-') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
 			} elseif (abs($minutes) > 0) {
 				// minutes only
-				$relative_date .= ($relative_date ? ', -' : '-') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
 			} else {
 				// seconds only
-				$relative_date .= ($relative_date ? ', -' : '-') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
+				$relativeDate .= ($relativeDate ? ', -' : '-') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
 
-			if (date('j/n/y', strtotime(str_replace(',', '', $relative_date))) != '1/1/70') {
-				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relative_date)), array('end' => '8 years'), true);
-				if ($relative_date == '0 seconds') {
-					$relative_date = '0 seconds ago';
+			if (date('j/n/y', strtotime(str_replace(',', '', $relativeDate))) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relativeDate)), array('end' => '8 years'), true);
+				if ($relativeDate == '0 seconds') {
+					$relativeDate = '0 seconds ago';
 				}
 
-				$relative_date = str_replace('-', '', $relative_date) . ' ago';
-				$this->assertEquals($result, $relative_date);
+				$relativeDate = str_replace('-', '', $relativeDate) . ' ago';
+				$this->assertEquals($result, $relativeDate);
 
 			}
 		}
@@ -187,47 +187,47 @@ class CakeTimeTest extends CakeTestCase {
 			$minutes = 0;
 			$seconds = 0;
 
-			$relative_date = '';
+			$relativeDate = '';
 
 			if ($years > 0) {
 				// years and months and days
-				$relative_date .= ($relative_date ? ', ' : '') . $years . ' year' . ($years > 1 ? 's' : '');
-				$relative_date .= $months > 0 ? ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '') : '';
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
-				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $years . ' year' . ($years > 1 ? 's' : '');
+				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '') : '';
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($months) > 0) {
 				// months, weeks and days
-				$relative_date .= ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '');
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
-				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '');
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($weeks) > 0) {
 				// weeks and days
-				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
-				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($days) > 0) {
 				// days and hours
-				$relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
-				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
+				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
 			} elseif (abs($hours) > 0) {
 				// hours and minutes
-				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
-				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
+				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
 			} elseif (abs($minutes) > 0) {
 				// minutes only
-				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+				$relativeDate .= ($relativeDate ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
 			} else {
 				// seconds only
-				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
+				$relativeDate .= ($relativeDate ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
 
-			if (date('j/n/y', strtotime(str_replace(',', '', $relative_date))) != '1/1/70') {
-				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relative_date)), array('end' => '8 years'), true);
-				if ($relative_date == '0 seconds') {
-					$relative_date = '0 seconds ago';
+			if (date('j/n/y', strtotime(str_replace(',', '', $relativeDate))) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime(str_replace(',', '', $relativeDate)), array('end' => '8 years'), true);
+				if ($relativeDate == '0 seconds') {
+					$relativeDate = '0 seconds ago';
 				}
 
-				$relative_date = str_replace('-', '', $relative_date) . '';
-				$this->assertEquals($result, $relative_date);
+				$relativeDate = str_replace('-', '', $relativeDate) . '';
+				$this->assertEquals($result, $relativeDate);
 			}
 		}
 
@@ -364,7 +364,7 @@ class CakeTimeTest extends CakeTestCase {
 		$begin = time();
 		$end = time() + DAY;
 		$field = 'my_field';
-		$expected = '(my_field >= \''.date('Y-m-d', $begin).' 00:00:00\') AND (my_field <= \''.date('Y-m-d', $end).' 23:59:59\')';
+		$expected = '(my_field >= \'' . date('Y-m-d', $begin) . ' 00:00:00\') AND (my_field <= \'' . date('Y-m-d', $end) . ' 23:59:59\')';
 		$this->assertEquals($expected, $this->Time->daysAsSql($begin, $end, $field));
 	}
 
@@ -376,7 +376,7 @@ class CakeTimeTest extends CakeTestCase {
 	public function testDayAsSql() {
 		$time = time();
 		$field = 'my_field';
-		$expected = '(my_field >= \''.date('Y-m-d', $time).' 00:00:00\') AND (my_field <= \''.date('Y-m-d', $time).' 23:59:59\')';
+		$expected = '(my_field >= \'' . date('Y-m-d', $time) . ' 00:00:00\') AND (my_field <= \'' . date('Y-m-d', $time) . ' 23:59:59\')';
 		$this->assertEquals($expected, $this->Time->dayAsSql($time, $field));
 	}
 
@@ -515,7 +515,6 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertFalse($result);
 		$result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
 		$this->assertFalse($result);
-
 	}
 
 /**

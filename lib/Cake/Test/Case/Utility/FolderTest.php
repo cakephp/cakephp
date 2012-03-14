@@ -115,7 +115,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = $Folder->realpath('Test/');
-		$this->assertEquals($result, $path . DS .'Test' . DS);
+		$this->assertEquals($result, $path . DS . 'Test' . DS);
 
 		$result = $Folder->inPath('Test' . DS);
 		$this->assertTrue($result);
@@ -285,7 +285,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue($Folder->chmod($new, 0755, true));
 		$perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
 		$this->assertEquals($perms, '0755');
-	
+
 		$this->assertTrue($Folder->chmod($new, 0744, true, array('skip_me.php', 'test2')));
 
 		$perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
@@ -406,27 +406,27 @@ class FolderTest extends CakeTestCase {
 			array(
 				CAKE . 'Config',
 				CAKE . 'Config' . DS . 'unicode',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding'
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding'
 			),
 			array(
 				CAKE . 'Config' . DS . 'config.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0250_02af.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
-				CAKE . 'Config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0080_00ff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0100_017f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0180_024F.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0250_02af.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0370_03ff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0400_04ff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0500_052f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '0530_058f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '1e00_1eff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '1f00_1fff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '2100_214f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '2150_218f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '2460_24ff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '2c00_2c5f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '2c60_2c7f.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . '2c80_2cff.php',
+				CAKE . 'Config' . DS . 'unicode' . DS . 'casefolding' . DS . 'ff00_ffef.php'
 			)
 		);
 
@@ -809,46 +809,46 @@ class FolderTest extends CakeTestCase {
  */
 	public function testCopy() {
 		$path = TMP . 'folder_test';
-		$folder1 = $path . DS . 'folder1';
-		$folder2 = $folder1 . DS . 'folder2';
-		$folder3 = $path . DS . 'folder3';
-		$file1 = $folder1 . DS . 'file1.php';
-		$file2 = $folder2 . DS . 'file2.php';
+		$folderOne = $path . DS . 'folder1';
+		$folderTwo = $folderOne . DS . 'folder2';
+		$folderThree = $path . DS . 'folder3';
+		$fileOne = $folderOne . DS . 'file1.php';
+		$fileTwo = $folderTwo . DS . 'file2.php';
 
 		new Folder($path, true);
-		new Folder($folder1, true);
-		new Folder($folder2, true);
-		new Folder($folder3, true);
-		touch($file1);
-		touch($file2);
+		new Folder($folderOne, true);
+		new Folder($folderTwo, true);
+		new Folder($folderThree, true);
+		touch($fileOne);
+		touch($fileTwo);
 
-		$Folder = new Folder($folder1);
-		$result = $Folder->copy($folder3);
+		$Folder = new Folder($folderOne);
+		$result = $Folder->copy($folderThree);
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertTrue(file_exists($folder3 . DS . 'folder2' . DS . 'file2.php'));
+		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+		$this->assertTrue(file_exists($folderThree . DS . 'folder2' . DS . 'file2.php'));
 
-		$Folder = new Folder($folder3);
+		$Folder = new Folder($folderThree);
 		$Folder->delete();
 
-		$Folder = new Folder($folder1);
-		$result = $Folder->copy($folder3);
+		$Folder = new Folder($folderOne);
+		$result = $Folder->copy($folderThree);
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertTrue(file_exists($folder3 . DS . 'folder2' . DS . 'file2.php'));
+		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+		$this->assertTrue(file_exists($folderThree . DS . 'folder2' . DS . 'file2.php'));
 
-		$Folder = new Folder($folder3);
+		$Folder = new Folder($folderThree);
 		$Folder->delete();
 
-		new Folder($folder3, true);
-		new Folder($folder3 . DS . 'folder2', true);
-		file_put_contents($folder3 . DS . 'folder2' . DS . 'file2.php', 'untouched');
+		new Folder($folderThree, true);
+		new Folder($folderThree . DS . 'folder2', true);
+		file_put_contents($folderThree . DS . 'folder2' . DS . 'file2.php', 'untouched');
 
-		$Folder = new Folder($folder1);
-		$result = $Folder->copy($folder3);
+		$Folder = new Folder($folderOne);
+		$result = $Folder->copy($folderThree);
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertEquals(file_get_contents($folder3 . DS . 'folder2' . DS . 'file2.php'), 'untouched');
+		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+		$this->assertEquals(file_get_contents($folderThree . DS . 'folder2' . DS . 'file2.php'), 'untouched');
 
 		$Folder = new Folder($path);
 		$Folder->delete();
@@ -866,68 +866,69 @@ class FolderTest extends CakeTestCase {
  */
 	public function testMove() {
 		$path = TMP . 'folder_test';
-		$folder1 = $path . DS . 'folder1';
-		$folder2 = $folder1 . DS . 'folder2';
-		$folder3 = $path . DS . 'folder3';
-		$file1 = $folder1 . DS . 'file1.php';
-		$file2 = $folder2 . DS . 'file2.php';
+		$folderOne = $path . DS . 'folder1';
+		$folderTwo = $folderOne . DS . 'folder2';
+		$folderThree = $path . DS . 'folder3';
+		$fileOne = $folderOne . DS . 'file1.php';
+		$fileTwo = $folderTwo . DS . 'file2.php';
 
 		new Folder($path, true);
-		new Folder($folder1, true);
-		new Folder($folder2, true);
-		new Folder($folder3, true);
-		touch($file1);
-		touch($file2);
+		new Folder($folderOne, true);
+		new Folder($folderTwo, true);
+		new Folder($folderThree, true);
+		touch($fileOne);
+		touch($fileTwo);
 
-		$Folder = new Folder($folder1);
-		$result = $Folder->move($folder3);
+		$Folder = new Folder($folderOne);
+		$result = $Folder->move($folderThree);
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertTrue(is_dir($folder3 . DS . 'folder2'));
-		$this->assertTrue(file_exists($folder3 . DS . 'folder2' . DS . 'file2.php'));
-		$this->assertFalse(file_exists($file1));
-		$this->assertFalse(file_exists($folder2));
-		$this->assertFalse(file_exists($file2));
+		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+		$this->assertTrue(is_dir($folderThree . DS . 'folder2'));
+		$this->assertTrue(file_exists($folderThree . DS . 'folder2' . DS . 'file2.php'));
+		$this->assertFalse(file_exists($fileOne));
+		$this->assertFalse(file_exists($folderTwo));
+		$this->assertFalse(file_exists($fileTwo));
 
-		$Folder = new Folder($folder3);
+		$Folder = new Folder($folderThree);
 		$Folder->delete();
 
-		new Folder($folder1, true);
-		new Folder($folder2, true);
-		touch($file1);
-		touch($file2);
+		new Folder($folderOne, true);
+		new Folder($folderTwo, true);
+		touch($fileOne);
+		touch($fileTwo);
 
-		$Folder = new Folder($folder1);
-		$result = $Folder->move($folder3);
+		$Folder = new Folder($folderOne);
+		$result = $Folder->move($folderThree);
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertTrue(is_dir($folder3 . DS . 'folder2'));
-		$this->assertTrue(file_exists($folder3 . DS . 'folder2' . DS . 'file2.php'));
-		$this->assertFalse(file_exists($file1));
-		$this->assertFalse(file_exists($folder2));
-		$this->assertFalse(file_exists($file2));
+		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+		$this->assertTrue(is_dir($folderThree . DS . 'folder2'));
+		$this->assertTrue(file_exists($folderThree . DS . 'folder2' . DS . 'file2.php'));
+		$this->assertFalse(file_exists($fileOne));
+		$this->assertFalse(file_exists($folderTwo));
+		$this->assertFalse(file_exists($fileTwo));
 
-		$Folder = new Folder($folder3);
+		$Folder = new Folder($folderThree);
 		$Folder->delete();
 
-		new Folder($folder1, true);
-		new Folder($folder2, true);
-		new Folder($folder3, true);
-		new Folder($folder3 . DS . 'folder2', true);
-		touch($file1);
-		touch($file2);
-		file_put_contents($folder3 . DS . 'folder2' . DS . 'file2.php', 'untouched');
+		new Folder($folderOne, true);
+		new Folder($folderTwo, true);
+		new Folder($folderThree, true);
+		new Folder($folderThree . DS . 'folder2', true);
+		touch($fileOne);
+		touch($fileTwo);
+		file_put_contents($folderThree . DS . 'folder2' . DS . 'file2.php', 'untouched');
 
-		$Folder = new Folder($folder1);
-		$result = $Folder->move($folder3);
+		$Folder = new Folder($folderOne);
+		$result = $Folder->move($folderThree);
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists($folder3 . DS . 'file1.php'));
-		$this->assertEquals(file_get_contents($folder3 . DS . 'folder2' . DS . 'file2.php'), 'untouched');
-		$this->assertFalse(file_exists($file1));
-		$this->assertFalse(file_exists($folder2));
-		$this->assertFalse(file_exists($file2));
+		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+		$this->assertEquals(file_get_contents($folderThree . DS . 'folder2' . DS . 'file2.php'), 'untouched');
+		$this->assertFalse(file_exists($fileOne));
+		$this->assertFalse(file_exists($folderTwo));
+		$this->assertFalse(file_exists($fileTwo));
 
 		$Folder = new Folder($path);
 		$Folder->delete();
 	}
+
 }

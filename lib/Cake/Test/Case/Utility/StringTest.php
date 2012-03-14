@@ -43,7 +43,7 @@ class StringTest extends CakeTestCase {
 	public function testUuidGeneration() {
 		$result = String::uuid();
 		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
-		$match = (bool) preg_match($pattern, $result);
+		$match = (bool)preg_match($pattern, $result);
 		$this->assertTrue($match);
 	}
 
@@ -59,7 +59,7 @@ class StringTest extends CakeTestCase {
 
 		for ($i = 0; $i < $count; $i++) {
 			$result = String::uuid();
-			$match = (bool) preg_match($pattern, $result);
+			$match = (bool)preg_match($pattern, $result);
 			$this->assertTrue($match);
 			$this->assertFalse(in_array($result, $check));
 			$check[] = $result;
@@ -393,7 +393,7 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
 		$this->assertSame($this->Text->truncate($text7, 255), $text7);
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
-		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
+		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R' . chr(195) . chr(169) . 'pu...');
 		$this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
 		$this->assertSame($this->Text->truncate($text10, 30), 'http://example.com/somethin...');
 
@@ -509,7 +509,6 @@ podeís adquirirla.</span></p>
 		$result = $this->Text->highlight($text, $phrases, array('format' => array('<b>\1</b>', '<em>\1</em>')));
 		$expected = '<b>This</b> is a test <em>text</em>';
 		$this->assertEquals($expected, $result);
-
 	}
 
 /**
