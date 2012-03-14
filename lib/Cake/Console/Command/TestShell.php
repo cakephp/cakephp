@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -192,7 +192,6 @@ class TestShell extends Shell {
 			'output' => 'text',
 		);
 
-
 		if (strpos($this->args[0], '.php')) {
 			$category = $this->_mapFileToCategory($this->args[0]);
 			$params['case'] = $this->_mapFileToCase($this->args[0], $category);
@@ -312,7 +311,7 @@ class TestShell extends Shell {
 		}
 
 		while ($choice = $this->in(__d('cake_console', 'What test case would you like to run?'), null, 'q')) {
-			if (is_numeric($choice)  && isset($cases[$choice])) {
+			if (is_numeric($choice) && isset($cases[$choice])) {
 				$this->args[0] = $category;
 				$this->args[1] = $cases[$choice];
 				$this->_run($this->_parseArgs(), $this->_runnerOptions());
@@ -385,7 +384,7 @@ class TestShell extends Shell {
 			if (!file_exists($testFile) && $throwOnMissingFile) {
 				throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
 			}
-				
+
 			return $testCase;
 		}
 
@@ -431,4 +430,5 @@ class TestShell extends Shell {
 		}
 		return 'app';
 	}
+
 }

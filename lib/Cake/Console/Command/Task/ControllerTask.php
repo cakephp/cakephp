@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc.
+ * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -145,17 +145,16 @@ class ControllerTask extends BakeTask {
 		$useDynamicScaffold = 'n';
 		$wannaBakeCrud = 'y';
 
-
 		$question[] = __d('cake_console', "Would you like to build your controller interactively?");
-		if (file_exists($this->path . $controllerName .'Controller.php')) {
+		if (file_exists($this->path . $controllerName . 'Controller.php')) {
 			$question[] = __d('cake_console', "Warning: Choosing no will overwrite the %sController.", $controllerName);
 		}
-		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
+		$doItInteractive = $this->in(implode("\n", $question), array('y', 'n'), 'y');
 
 		if (strtolower($doItInteractive) == 'y') {
 			$this->interactive = true;
 			$useDynamicScaffold = $this->in(
-				__d('cake_console', "Would you like to use dynamic scaffolding?"), array('y','n'), 'n'
+				__d('cake_console', "Would you like to use dynamic scaffolding?"), array('y', 'n'), 'n'
 			);
 
 			if (strtolower($useDynamicScaffold) == 'y') {
@@ -233,7 +232,7 @@ class ControllerTask extends BakeTask {
 				$output = '';
 				$length = count($$var);
 				foreach ($$var as $i => $propElement) {
-					if ($i != $length -1) {
+					if ($i != $length - 1) {
 						$output .= ucfirst($propElement) . ', ';
 					} else {
 						$output .= ucfirst($propElement);
@@ -468,48 +467,4 @@ class ControllerTask extends BakeTask {
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
 
-/**
- * Displays help contents
- *
- * @return void
- */
-	public function help() {
-		$this->hr();
-		$this->out("Usage: cake bake controller <arg1> <arg2>...");
-		$this->hr();
-		$this->out('Arguments:');
-		$this->out();
-		$this->out("<name>");
-		$this->out("\tName of the controller to bake. Can use Plugin.name");
-		$this->out("\tas a shortcut for plugin baking.");
-		$this->out();
-		$this->out('Params:');
-		$this->out();
-		$this->out('-connection <config>');
-		$this->out("\tset db config <config>. uses 'default' if none is specified");
-		$this->out();
-		$this->out('Commands:');
-		$this->out();
-		$this->out("controller <name>");
-		$this->out("\tbakes controller with var \$scaffold");
-		$this->out();
-		$this->out("controller <name> public");
-		$this->out("\tbakes controller with basic crud actions");
-		$this->out("\t(index, view, add, edit, delete)");
-		$this->out();
-		$this->out("controller <name> admin");
-		$this->out("\tbakes a controller with basic crud actions for one of the");
-		$this->out("\tConfigure::read('Routing.prefixes') methods.");
-		$this->out();
-		$this->out("controller <name> public admin");
-		$this->out("\tbakes a controller with basic crud actions for one");
-		$this->out("\tConfigure::read('Routing.prefixes') and non admin methods.");
-		$this->out("\t(index, view, add, edit, delete,");
-		$this->out("\tadmin_index, admin_view, admin_edit, admin_add, admin_delete)");
-		$this->out();
-		$this->out("controller all");
-		$this->out("\tbakes all controllers with CRUD methods.");
-		$this->out();
-		$this->_stop();
-	}
 }

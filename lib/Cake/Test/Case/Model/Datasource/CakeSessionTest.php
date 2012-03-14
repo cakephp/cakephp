@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Datasource
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -20,6 +20,7 @@
 App::uses('CakeSession', 'Model/Datasource');
 
 class TestCakeSession extends CakeSession {
+
 	public static function setUserAgent($value) {
 		self::$_userAgent = $value;
 	}
@@ -27,6 +28,7 @@ class TestCakeSession extends CakeSession {
 	public static function setHost($host) {
 		self::_setHost($host);
 	}
+
 }
 
 /**
@@ -671,6 +673,32 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEquals(CakeSession::$sessionTime, $_SESSION['Config']['time']);
 		$this->assertEquals(time(), CakeSession::$time);
 		$this->assertEquals(CakeSession::$time + $timeoutSeconds, $_SESSION['Config']['time']);
+	}
+
+/**
+ * Test that cookieTimeout matches timeout when unspecified.
+ *
+ * @return void
+ */
+	public function testCookieTimeoutFallback() {
+		$_SESSION = null;
+		Configure::write('Session', array(
+			'defaults' => 'php',
+			'timeout' => 400,
+		));
+		TestCakeSession::start();
+		$this->assertEquals(400, Configure::read('Session.cookieTimeout'));
+		$this->assertEquals(400, Configure::read('Session.timeout'));
+
+		$_SESSION = null;
+		Configure::write('Session', array(
+			'defaults' => 'php',
+			'timeout' => 400,
+			'cookieTimeout' => 600
+		));
+		TestCakeSession::start();
+		$this->assertEquals(600, Configure::read('Session.cookieTimeout'));
+		$this->assertEquals(400, Configure::read('Session.timeout'));
 	}
 
 }

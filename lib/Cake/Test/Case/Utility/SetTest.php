@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -363,6 +363,43 @@ class SetTest extends CakeTestCase {
 			array('employees' => array(array('name' => array())))
 		);
 		$this->assertEquals($expected, $result);
+
+		$menus = array(
+			'blogs' => array('title' => 'Blogs', 'weight' => 3),
+			'comments' => array('title' => 'Comments', 'weight' => 2),
+			'users' => array('title' => 'Users', 'weight' => 1),
+			);
+		$expected = array(
+			'users' => array('title' => 'Users', 'weight' => 1),
+			'comments' => array('title' => 'Comments', 'weight' => 2),
+			'blogs' => array('title' => 'Blogs', 'weight' => 3),
+			);
+		$result = Set::sort($menus, '{[a-z]+}.weight', 'ASC');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test sorting with string keys.
+ *
+ * @return void
+ */
+	public function testSortString() {
+		$to_sort = array(
+			'four' => array('number' => 4, 'some' => 'foursome'),
+			'six' => array('number' => 6, 'some' => 'sixsome'),
+			'five' => array('number' => 5, 'some' => 'fivesome'),
+			'two' => array('number' => 2, 'some' => 'twosome'),
+			'three' => array('number' => 3, 'some' => 'threesome')
+		);
+		$sorted = Set::sort($to_sort, '{s}.number', 'asc');
+		$expected = array(
+			'two' => array('number' => 2, 'some' => 'twosome'),
+			'three' => array('number' => 3, 'some' => 'threesome'),
+			'four' => array('number' => 4, 'some' => 'foursome'),
+			'five' => array('number' => 5, 'some' => 'fivesome'),
+			'six' => array('number' => 6, 'some' => 'sixsome')
+		);
+		$this->assertEquals($expected, $sorted);
 	}
 
 /**

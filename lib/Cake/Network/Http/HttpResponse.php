@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Http
  * @since         CakePHP(tm) v 2.0.0
@@ -123,7 +123,7 @@ class HttpResponse implements ArrayAccess {
 	public function isOk() {
 		return $this->code == 200;
 	}
-	
+
 /**
  * If return is a valid 3xx (Redirection)
  *
@@ -238,9 +238,7 @@ class HttpResponse implements ArrayAccess {
 			$chunkLength = hexdec($hexLength);
 			$chunk = substr($body, 0, $chunkLength);
 			if (!empty($chunkExtensionName)) {
-				/**
-				 * @todo See if there are popular chunk extensions we should implement
-				 */
+				 // @todo See if there are popular chunk extensions we should implement
 			}
 			$decodedBody .= $chunk;
 			if ($chunkLength !== 0) {
@@ -427,7 +425,6 @@ class HttpResponse implements ArrayAccess {
  * @return void
  */
 	public function offsetSet($offset, $value) {
-		return;
 	}
 
 /**
@@ -437,7 +434,6 @@ class HttpResponse implements ArrayAccess {
  * @return void
  */
 	public function offsetUnset($offset) {
-		return;
 	}
 
 /**

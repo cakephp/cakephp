@@ -3,12 +3,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -82,7 +82,7 @@ abstract class BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => $this->settings['recursive']
+			'recursive' => (int)$this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;
@@ -121,7 +121,8 @@ abstract class BaseAuthenticate {
  * @param array $user The user about to be logged out.
  * @return void
  */
-	public function logout($user) { }
+	public function logout($user) {
+	}
 
 /**
  * Get a user based on information in the request.  Primarily used by stateless authentication
@@ -133,4 +134,5 @@ abstract class BaseAuthenticate {
 	public function getUser($request) {
 		return false;
 	}
+
 }

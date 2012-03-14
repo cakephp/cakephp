@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP(tm) v 2.0
@@ -29,10 +29,10 @@ class TestTestShell extends TestShell {
 	public function mapFileToCategory($file) {
 		return $this->_mapFileToCategory($file);
 	}
+
 }
 
 class TestShellTest extends CakeTestCase {
-
 
 /**
  * setUp test case
@@ -111,7 +111,6 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCategory(APP . 'My/File/Is/Here.php');
 		$this->assertSame('app', $return);
-
 	}
 
 /**
@@ -142,7 +141,6 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCategory(dirname(CAKE) . 'plugins/awesome/Controller/ExampleController.php');
 		$this->assertSame('awesome', $return);
-
 	}
 
 /**
@@ -211,7 +209,6 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/My/File/Is/HereTest.php');
 		$this->assertSame('app', $return);
-
 	}
 
 /**
@@ -242,7 +239,6 @@ class TestShellTest extends CakeTestCase {
 
 		$return = $this->Shell->mapFileToCategory(dirname(CAKE) . 'plugins/awesome/Test/Case/Controller/ExampleControllerTest.php');
 		$this->assertSame('awesome', $return);
-
 	}
 
 /**

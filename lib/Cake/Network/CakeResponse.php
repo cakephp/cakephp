@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network
  * @since         CakePHP(tm) v 2.0
@@ -89,7 +89,7 @@ class CakeResponse {
 		'cpio' => 'application/x-cpio',
 		'cpt' => 'application/mac-compactpro',
 		'csh' => 'application/x-csh',
-		'csv' =>  array('text/csv', 'application/vnd.ms-excel', 'text/plain'),
+		'csv' => array('text/csv', 'application/vnd.ms-excel', 'text/plain'),
 		'dcr' => 'application/x-director',
 		'dir' => 'application/x-director',
 		'dms' => 'application/octet-stream',
@@ -755,7 +755,7 @@ class CakeResponse {
 		if ($time == null) {
 			$this->_setCacheControl();
 		}
-		return (bool) $public;
+		return (bool)$public;
 	}
 
 /**
@@ -921,7 +921,7 @@ class CakeResponse {
  **/
 	public function vary($cacheVariances = null) {
 		if ($cacheVariances !== null) {
-			$cacheVariances = (array) $cacheVariances;
+			$cacheVariances = (array)$cacheVariances;
 			$this->_headers['Vary'] = implode(', ', $cacheVariances);
 		}
 		if (isset($this->_headers['Vary'])) {
@@ -960,7 +960,6 @@ class CakeResponse {
 		}
 		return null;
 	}
-
 
 /**
  * Returns a DateTime object initialized at the $time param and using UTC
@@ -1151,4 +1150,5 @@ class CakeResponse {
 
 		$this->_cookies[$options['name']] = $options;
 	}
+
 }

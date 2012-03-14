@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5432
@@ -122,7 +122,7 @@ class RegisterCategory extends ClassRegisterModel {
  */
 	public $name = 'RegisterCategory';
 }
- /**
+/**
  * RegisterPrefixedDs class
  *
  * @package       Cake.Test.Case.Utility
@@ -142,7 +142,8 @@ class RegisterPrefixedDs extends ClassRegisterModel {
  */
 abstract class ClassRegistryAbstractModel extends ClassRegisterModel {
 
-	abstract function doSomething();
+	public abstract function doSomething();
+
 }
 
 /**
@@ -151,6 +152,7 @@ abstract class ClassRegistryAbstractModel extends ClassRegisterModel {
 interface ClassRegistryInterfaceTest {
 
 	public function doSomething();
+
 }
 
 /**
@@ -166,7 +168,6 @@ class ClassRegistryTest extends CakeTestCase {
  * @return void
  */
 	public function testAddModel() {
-
 		$Tag = ClassRegistry::init('RegisterArticleTag');
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
 
@@ -182,7 +183,6 @@ class ClassRegistryTest extends CakeTestCase {
 
 		$NewTag = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
-
 
 		$NewTagCopy = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
 
@@ -336,7 +336,7 @@ class ClassRegistryTest extends CakeTestCase {
 	public function testInitAbstractClass() {
 		ClassRegistry::init('ClassRegistryAbstractModel');
 	}
-	
+
 /**
  * Test that you cannot init() an abstract class. A exception will be raised.
  *

@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.5434
@@ -91,7 +91,7 @@ class WincacheEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test', 'wincache');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  1), 'wincache');
+		Cache::set(array('duration' => 1), 'wincache');
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'wincache');
@@ -145,7 +145,6 @@ class WincacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test_decrement', 'wincache');
 		$this->assertEquals(2, $result);
-
 	}
 
 /**

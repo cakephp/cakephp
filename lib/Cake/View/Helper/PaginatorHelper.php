@@ -5,12 +5,12 @@
  * Generates pagination links
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.2.0
@@ -199,13 +199,14 @@ class PaginatorHelper extends AppHelper {
 			$params = $this->params($model);
 			$options = $params['options'];
 		}
-
 		if (isset($options['sort']) && !empty($options['sort'])) {
 			return $options['sort'];
-		} elseif (isset($options['order']) && is_array($options['order'])) {
-			return key($options['order']);
-		} elseif (isset($options['order']) && is_string($options['order'])) {
-			return $options['order'];
+		}
+		if (isset($options['order'])) {
+			return is_array($options['order']) ? key($options['order']) : $options['order'];
+		}
+		if (isset($params['order'])) {
+			return is_array($params['order']) ? key($params['order']) : $params['order'];
 		}
 		return null;
 	}
@@ -231,6 +232,8 @@ class PaginatorHelper extends AppHelper {
 			$dir = strtolower($options['direction']);
 		} elseif (isset($options['order']) && is_array($options['order'])) {
 			$dir = strtolower(current($options['order']));
+		} elseif (isset($params['order']) && is_array($params['order'])) {
+			$dir = strtolower(current($params['order']));
 		}
 
 		if ($dir == 'desc') {

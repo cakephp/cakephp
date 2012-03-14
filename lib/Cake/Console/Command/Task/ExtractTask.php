@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -584,8 +584,10 @@ class ExtractTask extends AppShell {
  */
 	protected function _getStrings(&$position, $target) {
 		$strings = array();
-		while (count($strings) < $target && ($this->_tokens[$position] == ',' || $this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
-			if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position+1] == '.') {
+		$count = count($strings);
+		while ($count < $target && ($this->_tokens[$position] == ',' || $this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
+			$count = count($strings);
+			if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] == '.') {
 				$string = '';
 				while ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position] == '.') {
 					if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
@@ -668,7 +670,7 @@ class ExtractTask extends AppShell {
 				}
 				$exclude[] = preg_quote($e, '/');
 			}
-			$pattern =  '/' . implode('|', $exclude) . '/';
+			$pattern = '/' . implode('|', $exclude) . '/';
 		}
 		foreach ($this->_paths as $path) {
 			$Folder = new Folder($path);
@@ -694,4 +696,5 @@ class ExtractTask extends AppShell {
 	protected function _isExtractingApp() {
 		return $this->_paths === array(APP);
 	}
+
 }

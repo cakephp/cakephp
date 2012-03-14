@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -94,7 +94,7 @@ class DbAcl extends Object implements AclInterface {
 		$acoIDs = Set::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
 
 		$count = count($aroPath);
-		for ($i = 0 ; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			$permAlias = $this->Aro->Permission->alias;
 
 			$perms = $this->Aro->Permission->find('all', array(
@@ -289,5 +289,5 @@ class DbAcl extends Object implements AclInterface {
 		}
 		return $newKeys;
 	}
-}
 
+}

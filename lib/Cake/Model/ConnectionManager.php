@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.x.1402
@@ -189,7 +189,7 @@ class ConnectionManager {
 		if (empty(self::$_init)) {
 			self::_init();
 		}
-		return (array) self::$config;
+		return (array)self::$config;
 	}
 
 /**
@@ -262,4 +262,5 @@ class ConnectionManager {
 		}
 		return compact('package', 'classname', 'plugin');
 	}
+
 }

@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5347
@@ -160,7 +160,7 @@ class EmailComponentTest extends CakeTestCase {
 		self::$sentDate = date(DATE_RFC2822);
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 	}
 
@@ -301,10 +301,10 @@ HTMLBLOC;
 			"\n\n" .
 			'--alt-{boundary}' . "\n" .
 			'Content-Type: text/html; charset=UTF-8' . "\n" .
-			'Content-Transfer-Encoding: 8bit' . "\n\n" . 
+			'Content-Transfer-Encoding: 8bit' . "\n\n" .
 			$html .
-			"\n\n" . 
-			'--alt-{boundary}--' . "\n\n\n" . 
+			"\n\n" .
+			'--alt-{boundary}--' . "\n\n\n" .
 			'--{boundary}--' . "\n";
 
 		$expect = '<pre>' . $expect . '</pre>';
@@ -429,7 +429,7 @@ HTMLBLOC;
  */
 	public function testMessageRetrievalWithoutTemplate() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 
 		$this->Controller->EmailTest->to = 'postmaster@example.com';
@@ -466,7 +466,7 @@ HTMLBLOC;
  */
 	public function testMessageRetrievalWithTemplate() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 
 		$this->Controller->set('value', 22091985);
@@ -526,7 +526,7 @@ HTMLBLOC;
  */
 	public function testMessageRetrievalWithHelper() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 
 		$timestamp = time();
@@ -624,7 +624,7 @@ HTMLBLOC;
  *
  * @return void
  */
-	public function test_encodeSettingInternalCharset() {
+	public function testEncodeSettingInternalCharset() {
 		$this->skipIf(!function_exists('mb_internal_encoding'), 'Missing mb_* functions, cannot run test.');
 
 		$restore = mb_internal_encoding();
@@ -820,7 +820,7 @@ HTMLBLOC;
 	public function testPluginCustomViewClass() {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 
 		$this->Controller->view = 'TestPlugin.Email';
@@ -835,7 +835,6 @@ HTMLBLOC;
 		$result = DebugCompTransport::$lastEmail;
 
 		$this->assertRegExp('/Body of message/', $result);
-
 	}
 
 /**

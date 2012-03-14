@@ -3,12 +3,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -55,6 +55,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * @since 2.0
  */
 class DigestAuthenticate extends BaseAuthenticate {
+
 /**
  * Settings for this object.
  *
@@ -65,7 +66,8 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `realm` The realm authentication is for, Defaults to the servername.
  * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
- * - `opaque` A string that must be returned unchanged by clients. Defaults to `md5($settings['realm'])`
+ * - `opaque` A string that must be returned unchanged by clients. 
+ *    Defaults to `md5($settings['realm'])`
  *
  * @var array
  */
@@ -76,6 +78,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		),
 		'userModel' => 'User',
 		'scope' => array(),
+		'recursive' => 0,
 		'realm' => '',
 		'qop' => 'auth',
 		'nonce' => '',
@@ -164,7 +167,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => 0
+			'recursive' => (int)$this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;
@@ -261,4 +264,5 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		return 'WWW-Authenticate: Digest ' . implode(',', $opts);
 	}
+
 }

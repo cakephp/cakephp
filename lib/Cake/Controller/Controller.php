@@ -1,16 +1,12 @@
 <?php
 /**
- * Base controller class.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller
  * @since         CakePHP(tm) v 0.2.9
@@ -144,7 +140,6 @@ class Controller extends Object implements CakeEventListener {
  * @var array
  */
 	public $viewVars = array();
-
 
 /**
  * The name of the view file to render. The name specified
@@ -321,7 +316,7 @@ class Controller extends Object implements CakeEventListener {
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
-			$this->name = substr(get_class($this), 0, strlen(get_class($this)) -10);
+			$this->name = substr(get_class($this), 0, strlen(get_class($this)) - 10);
 		}
 
 		if ($this->viewPath == null) {
@@ -476,7 +471,9 @@ class Controller extends Object implements CakeEventListener {
  *
  * @param CakeRequest $request
  * @return mixed The resulting response.
- * @throws PrivateActionException, MissingActionException
+ * @throws PrivateActionException When actions are not public or prefixed by _
+ * @throws MissingActionException When actions are not defined and scaffolding is
+ *    not enabled.
  */
 	public function invokeAction(CakeRequest $request) {
 		try {
@@ -640,7 +637,7 @@ class Controller extends Object implements CakeEventListener {
 		$this->_mergeControllerVars();
 		$this->Components->init($this);
 		if ($this->uses) {
-			$this->uses = (array) $this->uses;
+			$this->uses = (array)$this->uses;
 			list(, $this->modelClass) = pluginSplit(current($this->uses));
 		}
 		return true;
@@ -1062,10 +1059,10 @@ class Controller extends Object implements CakeEventListener {
 				}
 				$fieldOp = strtoupper(trim($fieldOp));
 				if ($fieldOp === 'LIKE') {
-					$key = $key.' LIKE';
+					$key = $key . ' LIKE';
 					$value = '%' . $value . '%';
 				} elseif ($fieldOp && $fieldOp != '=') {
-					$key = $key.' ' . $fieldOp;
+					$key = $key . ' ' . $fieldOp;
 				}
 				$cond[$key] = $value;
 			}

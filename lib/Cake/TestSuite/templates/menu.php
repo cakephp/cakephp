@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.TestSuite.templates
  * @since         CakePHP(tm) v 1.2.0.4433
@@ -25,9 +25,7 @@
 			<li><a href='<?php echo $cases;?>'>Tests</a></li>
 		</ul>
 	</li>
-<?php
-if (!empty($plugins)):
-?>
+<?php if (!empty($plugins)): ?>
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Plugins</span>
 	<?php foreach ($plugins as $plugin): ?>

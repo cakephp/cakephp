@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 1.2.0.5432
@@ -28,7 +28,7 @@ App::uses('Router', 'Routing');
  */
 class ErrorHandlerTest extends CakeTestCase {
 
-	public $_restoreError = false;
+	protected $_restoreError = false;
 
 /**
  * setup create a request object to get out of router later.
@@ -39,7 +39,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'View' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS
+				CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
 			)
 		), App::RESET);
 		Router::reload();

@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
@@ -186,7 +186,7 @@ class ContainableBehavior extends ModelBehavior {
 			if (!empty($Model->{$type})) {
 				foreach ($Model->{$type} as $assoc => $data) {
 					if ($Model->useDbConfig == $Model->{$assoc}->useDbConfig && !empty($data['fields'])) {
-						foreach ((array) $data['fields'] as $field) {
+						foreach ((array)$data['fields'] as $field) {
 							$query['fields'][] = (strpos($field, '.') === false ? $assoc . '.' : '') . $field;
 						}
 					}
@@ -286,7 +286,7 @@ class ContainableBehavior extends ModelBehavior {
 			$children = (array)$children;
 			foreach ($children as $key => $val) {
 				if (is_string($key) && is_string($val) && !in_array($key, $options, true)) {
-					$children[$key] = (array) $val;
+					$children[$key] = (array)$val;
 				}
 			}
 
@@ -326,7 +326,7 @@ class ContainableBehavior extends ModelBehavior {
 				}
 				if ($optionKey && isset($children[$key])) {
 					if (!empty($keep[$name][$key]) && is_array($keep[$name][$key])) {
-						$keep[$name][$key] = array_merge((isset($keep[$name][$key]) ? $keep[$name][$key] : array()), (array) $children[$key]);
+						$keep[$name][$key] = array_merge((isset($keep[$name][$key]) ? $keep[$name][$key] : array()), (array)$children[$key]);
 					} else {
 						$keep[$name][$key] = $children[$key];
 					}
@@ -424,4 +424,5 @@ class ContainableBehavior extends ModelBehavior {
 		}
 		return $map;
 	}
+
 }

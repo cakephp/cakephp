@@ -7,35 +7,35 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Log
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * Set up error level constants to be used within the framework if they are not defined within the
  * system.
  *
  */
-	if (!defined('LOG_WARNING')) {
-		define('LOG_WARNING', 3);
-	}
-	if (!defined('LOG_NOTICE')) {
-		define('LOG_NOTICE', 4);
-	}
-	if (!defined('LOG_DEBUG')) {
-		define('LOG_DEBUG', 5);
-	}
-	if (!defined('LOG_INFO')) {
-		define('LOG_INFO', 6);
-	}
-
+if (!defined('LOG_WARNING')) {
+	define('LOG_WARNING', 3);
+}
+if (!defined('LOG_NOTICE')) {
+	define('LOG_NOTICE', 4);
+}
+if (!defined('LOG_DEBUG')) {
+	define('LOG_DEBUG', 5);
+}
+if (!defined('LOG_INFO')) {
+	define('LOG_INFO', 6);
+}
 
 /**
  * Logs messages to configured Log adapters.  One or more adapters can be configured
@@ -205,4 +205,5 @@ class CakeLog {
 		}
 		return true;
 	}
+
 }

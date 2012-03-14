@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -185,7 +185,7 @@ class CakeRoute {
 			return false;
 		}
 		foreach ($this->defaults as $key => $val) {
-			$key = (string) $key;
+			$key = (string)$key;
 			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
 				if (isset($this->_headerMap[$header[1]])) {
 					$header = $this->_headerMap[$header[1]];
@@ -225,13 +225,13 @@ class CakeRoute {
 			}
 			$route[$key] = $value;
 		}
-		
+
 		foreach ($this->keys as $key) {
 			if (isset($route[$key])) {
 				$route[$key] = rawurldecode($route[$key]);
 			}
 		}
-		
+
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -240,7 +240,7 @@ class CakeRoute {
 		}
 
 		if (isset($route['_trailing_'])) {
-			$route['pass'][] = $route['_trailing_'];
+			$route['pass'][] = rawurldecode($route['_trailing_']);
 			unset($route['_trailing_']);
 		}
 

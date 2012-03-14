@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5432
@@ -43,7 +43,7 @@ class StringTest extends CakeTestCase {
 	public function testUuidGeneration() {
 		$result = String::uuid();
 		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
-		$match = (bool) preg_match($pattern, $result);
+		$match = (bool)preg_match($pattern, $result);
 		$this->assertTrue($match);
 	}
 
@@ -59,7 +59,7 @@ class StringTest extends CakeTestCase {
 
 		for ($i = 0; $i < $count; $i++) {
 			$result = String::uuid();
-			$match = (bool) preg_match($pattern, $result);
+			$match = (bool)preg_match($pattern, $result);
 			$this->assertTrue($match);
 			$this->assertFalse(in_array($result, $check));
 			$check[] = $result;
@@ -393,7 +393,7 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
 		$this->assertSame($this->Text->truncate($text7, 255), $text7);
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
-		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
+		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R' . chr(195) . chr(169) . 'pu...');
 		$this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
 		$this->assertSame($this->Text->truncate($text10, 30), 'http://example.com/somethin...');
 
@@ -509,7 +509,6 @@ podeís adquirirla.</span></p>
 		$result = $this->Text->highlight($text, $phrases, array('format' => array('<b>\1</b>', '<em>\1</em>')));
 		$expected = '<b>This</b> is a test <em>text</em>';
 		$this->assertEquals($expected, $result);
-
 	}
 
 /**

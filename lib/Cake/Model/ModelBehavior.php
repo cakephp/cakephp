@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 1.2.0.0
@@ -92,7 +92,8 @@ class ModelBehavior extends Object {
  * @param array $config Configuration settings for $model
  * @return void
  */
-	public function setup(Model $model, $config = array()) { }
+	public function setup(Model $model, $config = array()) {
+	}
 
 /**
  * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
@@ -130,7 +131,8 @@ class ModelBehavior extends Object {
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
  */
-	public function afterFind(Model $model, $results, $primary) { }
+	public function afterFind(Model $model, $results, $primary) {
+	}
 
 /**
  * beforeValidate is called before a model is validated, you can use this callback to
@@ -184,7 +186,8 @@ class ModelBehavior extends Object {
  * @param Model $model Model using this behavior
  * @return void
  */
-	public function afterDelete(Model $model) { }
+	public function afterDelete(Model $model) {
+	}
 
 /**
  * DataSource error callback
@@ -193,7 +196,8 @@ class ModelBehavior extends Object {
  * @param string $error Error generated in DataSource
  * @return void
  */
-	public function onError(Model $model, $error) { }
+	public function onError(Model $model, $error) {
+	}
 
 /**
  * If $model's whitelist property is non-empty, $field will be added to it.
@@ -216,5 +220,6 @@ class ModelBehavior extends Object {
 			$model->whitelist[] = $field;
 		}
 	}
+
 }
 

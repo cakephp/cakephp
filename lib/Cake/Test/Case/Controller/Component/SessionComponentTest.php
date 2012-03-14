@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5436
@@ -34,13 +34,14 @@ class SessionTestController extends Controller {
 	public $uses = array();
 
 /**
- * session_id method
+ * sessionId method
  *
  * @return string
  */
-	public function session_id() {
+	public function sessionId() {
 		return $this->Session->id();
 	}
+
 }
 
 /**
@@ -58,13 +59,14 @@ class OrangeSessionTestController extends Controller {
 	public $uses = array();
 
 /**
- * session_id method
+ * sessionId method
  *
  * @return string
  */
-	public function session_id() {
+	public function sessionId() {
 		return $this->Session->id();
 	}
+
 }
 
 /**
@@ -141,10 +143,10 @@ class SessionComponentTest extends CakeTestCase {
 		$Session = new SessionComponent($this->ComponentCollection);
 		$expected = $Session->id();
 
-		$result = $Object->requestAction('/session_test/session_id');
+		$result = $Object->requestAction('/session_test/sessionId');
 		$this->assertEquals($expected, $result);
 
-		$result = $Object->requestAction('/orange_session_test/session_id');
+		$result = $Object->requestAction('/orange_session_test/sessionId');
 		$this->assertEquals($expected, $result);
 	}
 

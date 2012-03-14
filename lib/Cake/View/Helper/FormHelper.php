@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright   Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright   Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link        http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since       CakePHP(tm) v 0.10.0.1076
@@ -1317,6 +1317,7 @@ class FormHelper extends AppHelper {
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
  *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
+ * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1376,7 +1377,7 @@ class FormHelper extends AppHelper {
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
-			if (!empty($disabled) && in_array($optValue, $disabled)) {
+			if ($disabled && (!is_array($disabled) || in_array($optValue, $disabled))) {
 				$optionsHere['disabled'] = true;
 			}
 			$tagName = Inflector::camelize(

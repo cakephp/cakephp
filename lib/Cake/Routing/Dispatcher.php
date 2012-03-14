@@ -8,12 +8,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
@@ -64,8 +64,7 @@ class Dispatcher {
  * @param CakeResponse $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
- * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
- *    are encountered.
+ * @throws MissingControllerException When the controller is missing.
  */
 	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
 		if ($this->asset($request->url, $response) || $this->cached($request->here())) {
@@ -316,7 +315,7 @@ class Dispatcher {
 		$response->send();
 		ob_clean();
 		if ($ext === 'css' || $ext === 'js') {
-			include($assetFile);
+			include $assetFile;
 		} else {
 			readfile($assetFile);
 		}
@@ -325,4 +324,5 @@ class Dispatcher {
 			ob_end_flush();
 		}
 	}
+
 }

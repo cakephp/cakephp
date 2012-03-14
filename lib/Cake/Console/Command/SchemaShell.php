@@ -8,12 +8,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -58,7 +58,7 @@ class SchemaShell extends AppShell {
 		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
-	
+
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
@@ -168,7 +168,7 @@ class SchemaShell extends AppShell {
 			$count = 0;
 			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
-					if (preg_match('/'.preg_quote($fileName).'(?:[_\d]*)?\.php$/', $file)) {
+					if (preg_match('/' . preg_quote($fileName) . '(?:[_\d]*)?\.php$/', $file)) {
 						$count++;
 					}
 				}
@@ -216,7 +216,7 @@ class SchemaShell extends AppShell {
 			}
 		}
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = "\n\n" . $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
+		$contents = "\n\n" . $db->dropSchema($Schema) . "\n\n" . $db->createSchema($Schema);
 
 		if ($write) {
 			if (strpos($write, '.sql') === false) {
@@ -419,7 +419,7 @@ class SchemaShell extends AppShell {
 					try {
 						$db->execute($sql);
 					} catch (PDOException $e) {
-						$error = $table . ': '  . $e->getMessage();
+						$error = $table . ': ' . $e->getMessage();
 					}
 
 					$Schema->after(array($event => $table, 'errors' => $error));
@@ -529,4 +529,5 @@ class SchemaShell extends AppShell {
 		));
 		return $parser;
 	}
+
 }

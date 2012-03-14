@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Core
  * @since         CakePHP(tm) v 2.0.0
@@ -126,7 +126,7 @@ class CakePlugin {
 			if ($opts === null && isset($options[0])) {
 				$opts = $options[0];
 			}
-			self::load($p, (array) $opts);
+			self::load($p, (array)$opts);
 		}
 	}
 
@@ -162,7 +162,7 @@ class CakePlugin {
 
 		$path = self::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include($path . 'Config' . DS . 'bootstrap.php');
+			return include $path . 'Config' . DS . 'bootstrap.php';
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
@@ -191,7 +191,7 @@ class CakePlugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool) include self::path($plugin) . 'Config' . DS . 'routes.php';
+		return (bool)include self::path($plugin) . 'Config' . DS . 'routes.php';
 	}
 
 /**
@@ -224,4 +224,5 @@ class CakePlugin {
 			unset(self::$_plugins[$plugin]);
 		}
 	}
+
 }

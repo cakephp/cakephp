@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc.
+ * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
@@ -119,6 +119,7 @@ class ViewTaskCommentsController extends Controller {
  */
 	public function add() {
 	}
+
 }
 
 /**
@@ -191,6 +192,7 @@ class ViewTaskArticlesController extends Controller {
  */
 	public function admin_delete() {
 	}
+
 }
 
 /**
@@ -230,7 +232,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
-		$this->Task->Template->templatePaths = array('default' => CAKE . 'Console' . DS . 'Templates' . DS . 'default' .DS);
+		$this->Task->Template->templatePaths = array('default' => CAKE . 'Console' . DS . 'Templates' . DS . 'default' . DS);
 	}
 
 /**
@@ -384,8 +386,8 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->name = 'View';
 
 		//fake plugin path
-		CakePlugin::load('TestTest', array('path' =>  APP . 'Plugin' . DS . 'TestTest' . DS));
-		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'View' . DS . 'ViewTaskComments' . DS  . 'view.ctp';
+		CakePlugin::load('TestTest', array('path' => APP . 'Plugin' . DS . 'TestTest' . DS));
+		$path = APP . 'Plugin' . DS . 'TestTest' . DS . 'View' . DS . 'ViewTaskComments' . DS . 'view.ctp';
 
 		$result = $this->Task->getContent('index');
 		$this->assertNotContains('List Test Test.view Task Articles', $result);
@@ -607,7 +609,6 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls('y', 'y', 'n'));
 
-
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments' . DS . 'index.ctp',
@@ -719,7 +720,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertEquals($result, 'form');
 
 		$this->Task->Template->templatePaths = array(
-			'test' => CAKE . 'Test' . DS .  'test_app' . DS . 'Console' . DS . 'Templates' . DS . 'test' .DS
+			'test' => CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Templates' . DS . 'test' . DS
 		);
 		$this->Task->Template->params['theme'] = 'test';
 

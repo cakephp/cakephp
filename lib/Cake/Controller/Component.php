@@ -4,12 +4,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller
  * @since         CakePHP(tm) v 1.2
@@ -106,7 +106,8 @@ class Component extends Object {
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::initialize
  */
-	public function initialize(Controller $controller) { }
+	public function initialize(Controller $controller) {
+	}
 
 /**
  * Called after the Controller::beforeFilter() and before the controller action
@@ -115,17 +116,19 @@ class Component extends Object {
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::startup
  */
-	public function startup(Controller $controller) { }
+	public function startup(Controller $controller) {
+	}
 
 /**
- * Called after the Controller::beforeRender(), after the view class is loaded, and before the
- * Controller::render()
+ * Called before the Controller::beforeRender(), and before 
+ * the view class is loaded, and before Controller::render()
  *
  * @param Controller $controller Controller with components to beforeRender
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRender
  */
-	public function beforeRender(Controller $controller) { }
+	public function beforeRender(Controller $controller) {
+	}
 
 /**
  * Called after Controller::render() and before the output is printed to the browser.
@@ -134,7 +137,8 @@ class Component extends Object {
  * @return void
  * @link @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::shutdown
  */
-	public function shutdown(Controller $controller) { }
+	public function shutdown(Controller $controller) {
+	}
 
 /**
  * Called before Controller::redirect().  Allows you to replace the url that will
@@ -155,6 +159,7 @@ class Component extends Object {
  * @return array|null Either an array or null.
  * @link @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRedirect
  */
-	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {}
+	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
+	}
 
 }

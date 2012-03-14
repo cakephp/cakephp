@@ -6,17 +6,19 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.6833
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+if (!function_exists('mb_stripos')) {
 
 /**
  * Find position of first occurrence of a case-insensitive string.
@@ -28,11 +30,13 @@
  * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string, or false
  *    if $needle is not found.
  */
-if (!function_exists('mb_stripos')) {
 	function mb_stripos($haystack, $needle, $offset = 0, $encoding = null) {
 		return Multibyte::stripos($haystack, $needle, $offset);
 	}
+
 }
+
+if (!function_exists('mb_stristr')) {
 
 /**
  * Finds first occurrence of a string within another, case insensitive.
@@ -46,11 +50,13 @@ if (!function_exists('mb_stripos')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string|boolean The portion of $haystack, or false if $needle is not found.
  */
-if (!function_exists('mb_stristr')) {
 	function mb_stristr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::stristr($haystack, $needle, $part);
 	}
+
 }
+
+if (!function_exists('mb_strlen')) {
 
 /**
  * Get string length.
@@ -60,11 +66,13 @@ if (!function_exists('mb_stristr')) {
  * @return integer The number of characters in string $string having character encoding encoding.
  *    A multi-byte character is counted as 1.
  */
-if (!function_exists('mb_strlen')) {
 	function mb_strlen($string, $encoding = null) {
 		return Multibyte::strlen($string);
 	}
+
 }
+
+if (!function_exists('mb_strpos')) {
 
 /**
  * Find position of first occurrence of a string.
@@ -76,11 +84,13 @@ if (!function_exists('mb_strlen')) {
  * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string.
  *    If $needle is not found, it returns false.
  */
-if (!function_exists('mb_strpos')) {
 	function mb_strpos($haystack, $needle, $offset = 0, $encoding = null) {
 		return Multibyte::strpos($haystack, $needle, $offset);
 	}
+
 }
+
+if (!function_exists('mb_strrchr')) {
 
 /**
  * Finds the last occurrence of a character in a string within another.
@@ -94,11 +104,13 @@ if (!function_exists('mb_strpos')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string|boolean The portion of $haystack. or false if $needle is not found.
  */
-if (!function_exists('mb_strrchr')) {
 	function mb_strrchr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::strrchr($haystack, $needle, $part);
 	}
+
 }
+
+if (!function_exists('mb_strrichr')) {
 
 /**
  * Finds the last occurrence of a character in a string within another, case insensitive.
@@ -112,11 +124,13 @@ if (!function_exists('mb_strrchr')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string|boolean The portion of $haystack. or false if $needle is not found.
  */
-if (!function_exists('mb_strrichr')) {
 	function mb_strrichr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::strrichr($haystack, $needle, $part);
 	}
+
 }
+
+if (!function_exists('mb_strripos')) {
 
 /**
  * Finds position of last occurrence of a string within another, case insensitive
@@ -128,11 +142,13 @@ if (!function_exists('mb_strrichr')) {
  * @return integer|boolean The numeric position of the last occurrence of $needle in the $haystack string,
  *    or false if $needle is not found.
  */
-if (!function_exists('mb_strripos')) {
 	function mb_strripos($haystack, $needle, $offset = 0, $encoding = null) {
 		return Multibyte::strripos($haystack, $needle, $offset);
 	}
+
 }
+
+if (!function_exists('mb_strrpos')) {
 
 /**
  * Find position of last occurrence of a string in a string.
@@ -145,11 +161,13 @@ if (!function_exists('mb_strripos')) {
  * @return integer|boolean The numeric position of the last occurrence of $needle in the $haystack string.
  *    If $needle is not found, it returns false.
  */
-if (!function_exists('mb_strrpos')) {
 	function mb_strrpos($haystack, $needle, $offset = 0, $encoding = null) {
 		return Multibyte::strrpos($haystack, $needle, $offset);
 	}
+
 }
+
+if (!function_exists('mb_strstr')) {
 
 /**
  * Finds first occurrence of a string within another
@@ -163,11 +181,13 @@ if (!function_exists('mb_strrpos')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string|boolean The portion of $haystack, or true if $needle is not found.
  */
-if (!function_exists('mb_strstr')) {
 	function mb_strstr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::strstr($haystack, $needle, $part);
 	}
+
 }
+
+if (!function_exists('mb_strtolower')) {
 
 /**
  * Make a string lowercase
@@ -176,11 +196,13 @@ if (!function_exists('mb_strstr')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string with all alphabetic characters converted to lowercase.
  */
-if (!function_exists('mb_strtolower')) {
 	function mb_strtolower($string, $encoding = null) {
 		return Multibyte::strtolower($string);
 	}
+
 }
+
+if (!function_exists('mb_strtoupper')) {
 
 /**
  * Make a string uppercase
@@ -189,11 +211,13 @@ if (!function_exists('mb_strtolower')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string with all alphabetic characters converted to uppercase.
  */
-if (!function_exists('mb_strtoupper')) {
 	function mb_strtoupper($string, $encoding = null) {
 		return Multibyte::strtoupper($string);
 	}
+
 }
+
+if (!function_exists('mb_substr_count')) {
 
 /**
  * Count the number of substring occurrences
@@ -203,11 +227,13 @@ if (!function_exists('mb_strtoupper')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return integer The number of times the $needle substring occurs in the $haystack string.
  */
-if (!function_exists('mb_substr_count')) {
 	function mb_substr_count($haystack, $needle, $encoding = null) {
 		return Multibyte::substrCount($haystack, $needle);
 	}
+
 }
+
+if (!function_exists('mb_substr')) {
 
 /**
  * Get part of string
@@ -218,11 +244,13 @@ if (!function_exists('mb_substr_count')) {
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string The portion of $string specified by the $string and $length parameters.
  */
-if (!function_exists('mb_substr')) {
 	function mb_substr($string, $start, $length = null, $encoding = null) {
 		return Multibyte::substr($string, $start, $length);
 	}
+
 }
+
+if (!function_exists('mb_encode_mimeheader')) {
 
 /**
  * Encode string for MIME header
@@ -239,15 +267,14 @@ if (!function_exists('mb_substr')) {
  * @param integer $indent [definition unknown and appears to have no affect]
  * @return string A converted version of the string represented in ASCII.
  */
-if (!function_exists('mb_encode_mimeheader')) {
-	function mb_encode_mimeheader($str, $charset = 'UTF-8', $transfer_encoding = 'B', $linefeed = "\r\n", $indent = 1) {
+	function mb_encode_mimeheader($str, $charset = 'UTF-8', $transferEncoding = 'B', $linefeed = "\r\n", $indent = 1) {
 		return Multibyte::mimeEncode($str, $charset, $linefeed);
 	}
+
 }
 
 /**
  * Multibyte handling methods.
- *
  *
  * @package       Cake.I18n
  */
@@ -504,7 +531,7 @@ class Multibyte {
 			if (isset($needle[0]) && $needle[0] === $check[$position]) {
 				for ($i = 1; $i < $needleCount; $i++) {
 					if ($needle[$i] !== $check[$position + $i]) {
-						if ($needle[$i] === $check[($position + $i) -1]) {
+						if ($needle[$i] === $check[($position + $i) - 1]) {
 							$found = true;
 						}
 						unset($parts[$position - 1]);
@@ -566,7 +593,7 @@ class Multibyte {
 			if (isset($needle[0]) && $needle[0] === $check[$position]) {
 				for ($i = 1; $i < $needleCount; $i++) {
 					if ($needle[$i] !== $check[$position + $i]) {
-						if ($needle[$i] === $check[($position + $i) -1]) {
+						if ($needle[$i] === $check[($position + $i) - 1]) {
 							$found = true;
 						}
 						unset($parts[$position - 1]);
@@ -624,7 +651,7 @@ class Multibyte {
 				if (isset($needle[0]) && $needle[0] === $haystack[$position]) {
 					for ($i = 1; $i < $needleCount; $i++) {
 						if ($needle[$i] !== $haystack[$position + $i]) {
-							if ($needle[$i] === $haystack[($position + $i) -1]) {
+							if ($needle[$i] === $haystack[($position + $i) - 1]) {
 								$position--;
 								$found = true;
 								continue;
@@ -674,7 +701,7 @@ class Multibyte {
 				if (isset($needle[0]) && $needle[0] === $haystack[$position]) {
 					for ($i = 1; $i < $needleCount; $i++) {
 						if ($needle[$i] !== $haystack[$position + $i]) {
-							if ($needle[$i] === $haystack[($position + $i) -1]) {
+							if ($needle[$i] === $haystack[($position + $i) - 1]) {
 								$position--;
 								$found = true;
 								continue;
@@ -767,13 +794,13 @@ class Multibyte {
 		$length = count($utf8Map);
 		$lowerCase = array();
 
-		for ($i = 0 ; $i < $length; $i++) {
+		for ($i = 0; $i < $length; $i++) {
 			$char = $utf8Map[$i];
 
 			if ($char < 128) {
 				$str = strtolower(chr($char));
 				$strlen = strlen($str);
-				for ($ii = 0 ; $ii < $strlen; $ii++) {
+				for ($ii = 0; $ii < $strlen; $ii++) {
 					$lower = ord(substr($str, $ii, 1));
 				}
 				$lowerCase[] = $lower;
@@ -812,13 +839,13 @@ class Multibyte {
 		$replaced = array();
 		$upperCase = array();
 
-		for ($i = 0 ; $i < $length; $i++) {
+		for ($i = 0; $i < $length; $i++) {
 			$char = $utf8Map[$i];
 
 			if ($char < 128) {
 				$str = strtoupper(chr($char));
 				$strlen = strlen($str);
-				for ($ii = 0 ; $ii < $strlen; $ii++) {
+				for ($ii = 0; $ii < $strlen; $ii++) {
 					$upper = ord(substr($str, $ii, 1));
 				}
 				$upperCase[] = $upper;
@@ -1007,7 +1034,7 @@ class Multibyte {
  * @return string
  */
 	protected static function _codepoint($decimal) {
-		if ($decimal > 128 && $decimal < 256)  {
+		if ($decimal > 128 && $decimal < 256) {
 			$return = '0080_00ff'; // Latin-1 Supplement
 		} elseif ($decimal < 384) {
 			$return = '0100_017f'; // Latin Extended-A
@@ -1103,4 +1130,5 @@ class Multibyte {
 		}
 		return false;
 	}
+
 }

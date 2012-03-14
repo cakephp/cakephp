@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 2.0
@@ -223,7 +223,7 @@ class PaginatorComponent extends Component {
 	protected function _getObject($object) {
 		if (is_string($object)) {
 			$assoc = null;
-			if (strpos($object, '.')  !== false) {
+			if (strpos($object, '.') !== false) {
 				list($object, $assoc) = pluginSplit($object);
 			}
 
@@ -370,11 +370,12 @@ class PaginatorComponent extends Component {
  * @return array An array of options for pagination
  */
 	public function checkLimit($options) {
-		$options['limit'] = (int) $options['limit'];
+		$options['limit'] = (int)$options['limit'];
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
 		}
 		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
 		return $options;
 	}
+
 }

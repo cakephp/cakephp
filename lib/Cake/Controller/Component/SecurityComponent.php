@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.8.2156
@@ -394,9 +394,9 @@ class SecurityComponent extends Component {
 					$tData = $this->Session->read('_Token');
 
 					if (
-						!empty($tData['allowedControllers']) && 
-						!in_array($this->request->params['controller'], $tData['allowedControllers']) || 
-						!empty($tData['allowedActions']) && 
+						!empty($tData['allowedControllers']) &&
+						!in_array($this->request->params['controller'], $tData['allowedControllers']) ||
+						!empty($tData['allowedActions']) &&
 						!in_array($this->request->params['action'], $tData['allowedActions'])
 					) {
 						if (!$this->blackHole($controller, 'auth')) {
@@ -592,4 +592,5 @@ class SecurityComponent extends Component {
 			return null;
 		}
 	}
+
 }

@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
@@ -37,6 +37,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  * Construct method
  *
  * @param array $params list of options to be used for this run
+ * @throws MissingTestLoaderException When a loader class could not be found.
  */
 	public function __construct($loader, $params = array()) {
 		if ($loader && !class_exists($loader)) {
@@ -117,9 +118,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 				exit(PHPUnit_TextUI_TestRunner::SUCCESS_EXIT);
 			} elseif (!isset($result) || $result->errorCount() > 0) {
 				exit(PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT);
-			}
-
-			else {
+			} else {
 				exit(PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
 			}
 		}
@@ -168,4 +167,5 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		}
 		return $this->arguments['printer'] = $object;
 	}
+
 }

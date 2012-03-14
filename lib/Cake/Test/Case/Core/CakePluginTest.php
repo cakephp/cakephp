@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 2.0
@@ -157,7 +157,6 @@ class CakePluginTest extends CakeTestCase {
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('CakePluginTest.test_plugin.bootstrap'));
 	}
 
-
 /**
  * Tests that it is possible to load plugin bootstrap by calling a callback function
  *
@@ -189,7 +188,6 @@ class CakePluginTest extends CakeTestCase {
 	public function testLoadNotFound() {
 		CakePlugin::load('MissingPlugin');
 	}
-
 
 /**
  * Tests that CakePlugin::path() returns the correct path for the loaded plugins

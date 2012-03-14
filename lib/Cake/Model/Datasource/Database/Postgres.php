@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.9.1.114
@@ -186,8 +186,8 @@ class Postgres extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	public function describe($model) {
-		$fields = parent::describe($model);
 		$table = $this->fullTableName($model, false, false);
+		$fields = parent::describe($table);
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
 
@@ -200,6 +200,8 @@ class Postgres extends DboSource {
 				array($table, $this->config['schema'])
 			);
 
+			// @codingStandardsIgnoreStart
+			// Postgres columns don't match the coding standards.
 			foreach ($cols as $c) {
 				$type = $c->type;
 				if (!empty($c->oct_length) && $c->char_length === null) {
@@ -257,6 +259,8 @@ class Postgres extends DboSource {
 			}
 			$this->_cacheDescription($table, $fields);
 		}
+		// @codingStandardsIgnoreEnd
+
 		if (isset($model->sequence)) {
 			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;
 		}
@@ -507,16 +511,16 @@ class Postgres extends DboSource {
 								$default = isset($col['default']) ? $col['default'] : null;
 								$nullable = isset($col['null']) ? $col['null'] : null;
 								unset($col['default'], $col['null']);
-								$colList[] = 'ALTER COLUMN '. $fieldName .' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
+								$colList[] = 'ALTER COLUMN ' . $fieldName . ' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
 								if (isset($nullable)) {
 									$nullable = ($nullable) ? 'DROP NOT NULL' : 'SET NOT NULL';
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  ' . $nullable;
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '  ' . $nullable;
 								}
 
 								if (isset($default)) {
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  SET DEFAULT ' . $this->value($default, $col['type']);
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '  SET DEFAULT ' . $this->value($default, $col['type']);
 								} else {
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  DROP DEFAULT';
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '  DROP DEFAULT';
 								}
 
 							}
@@ -760,14 +764,14 @@ class Postgres extends DboSource {
 				$result = ($data === 'TRUE');
 				break;
 			default:
-				$result = (bool) $data;
+				$result = (bool)$data;
 			break;
 		}
 
 		if ($quote) {
 			return ($result) ? 'TRUE' : 'FALSE';
 		}
-		return (bool) $result;
+		return (bool)$result;
 	}
 
 /**

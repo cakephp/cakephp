@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Elements
  * @since         CakePHP(tm) v 1.3
@@ -41,10 +41,12 @@ App::uses('Debugger', 'Utility');
 	echo ' &rarr; ';
 	if ($stack['function']):
 		$args = array();
-		foreach ($stack['args'] as $arg):
-			$args[] = Debugger::getType($arg);
-			$params[] = Debugger::exportVar($arg, 2);
-		endforeach;
+		if (!empty($stack['args'])):
+			foreach ((array)$stack['args'] as $arg):
+				$args[] = Debugger::getType($arg);
+				$params[] = Debugger::exportVar($arg, 2);
+			endforeach;
+		endif;
 
 		$called = isset($stack['class']) ? $stack['class'] . $stack['type'] . $stack['function'] : $stack['function'];
 	

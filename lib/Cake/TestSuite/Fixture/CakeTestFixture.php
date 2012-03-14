@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.TestSuite.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
@@ -33,30 +33,35 @@ class CakeTestFixture {
 /**
  * Cake's DBO driver (e.g: DboMysql).
  *
+ * @var object
  */
 	public $db = null;
 
 /**
  * Fixture Datasource
  *
+ * @var string
  */
 	public $useDbConfig = 'test';
 
 /**
  * Full Table Name
  *
+ * @var string
  */
 	public $table = null;
 
 /**
  * List of datasources where this fixture has been created
  *
+ * @var array
  */
 	public $created = array();
 
 /**
  * Instantiate the fixture.
  *
+ * @throws CakeException on invalid datasource usage.
  */
 	public function __construct() {
 		if ($this->name === null) {
@@ -80,6 +85,8 @@ class CakeTestFixture {
 /**
  * Initialize the fixture.
  *
+ * @return void
+ * @throws MissingModelException Whe importing from a model that does not exist.
  */
 	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
@@ -206,7 +213,7 @@ class CakeTestFixture {
 		try {
 
 			$db->execute($db->dropSchema($this->Schema), array('log' => false));
-			$this->created = array_diff($this->created, array($db->configKeyName));;
+			$this->created = array_diff($this->created, array($db->configKeyName));
 		} catch (Exception $e) {
 			return false;
 		}
@@ -240,7 +247,6 @@ class CakeTestFixture {
 		}
 	}
 
-
 /**
  * Truncates the current fixture. Can be overwritten by classes extending CakeFixture to trigger other events before / after
  * truncate.
@@ -255,4 +261,5 @@ class CakeTestFixture {
 		$db->fullDebug = $fullDebug;
 		return $return;
 	}
+
 }

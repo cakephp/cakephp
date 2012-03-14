@@ -10,12 +10,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v .0.10.0.1222
@@ -532,7 +532,6 @@ class CakeSession {
 			'php' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'session.cookie_path' => self::$path
@@ -541,7 +540,6 @@ class CakeSession {
 			'cake' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -556,7 +554,6 @@ class CakeSession {
 			'cache' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -573,7 +570,6 @@ class CakeSession {
 			'database' => array(
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
-				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -682,4 +678,5 @@ class CakeSession {
 		self::$error[$errorNumber] = $errorMessage;
 		self::$lastError = $errorNumber;
 	}
+
 }

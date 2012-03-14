@@ -6,12 +6,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.5550
@@ -642,11 +642,11 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaReadWithConfigPrefix() {
 		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
-		
+
 		$db = ConnectionManager::getDataSource('test');
 		$config = $db->config;
 		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set.');
-		
+
 		$config['prefix'] = 'schema_test_prefix_';
 		ConnectionManager::create('schema_prefix', $config);
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
@@ -962,6 +962,54 @@ class CakeSchemaTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expected, $compare);
+	}
+
+/**
+ * Test comparing with field changed from VARCHAR to DATETIME
+ *
+ * @return void
+ */
+	public function testCompareVarcharToDatetime() {
+		$old = array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'null' => true, 'length' => 45),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
+				),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci'
+				)
+			),
+		);
+		$new = array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'datetime', 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
+				),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci'
+				)
+			),
+		);
+		$compare = $this->Schema->compare($old, $new);
+		$expected = array(
+			'posts' => array(
+				'change' => array(
+					'title' => array(
+						'type' => 'datetime',
+						'null' => false,
+					)
+				)
+			),
+		);
+		$this->assertEquals($expected, $compare, 'Invalid SQL, datetime does not have length');
 	}
 
 /**

@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
@@ -242,7 +242,6 @@ class CakeEmail {
 /**
  * Charset the email body is sent in
  *
- *
  * @var string
  */
 	public $charset = 'utf-8';
@@ -250,15 +249,17 @@ class CakeEmail {
 /**
  * Charset the email header is sent in
  * If null, the $charset property will be used as default
+ *
  * @var string
  */
 	public $headerCharset = null;
 
 /**
  * The application wide charset, used to encode headers and body
+ *
  * @var string
  */
-	public $_appCharset = null;
+	protected $_appCharset = null;
 
 /**
  * List of files that should be attached to the email.
@@ -1019,6 +1020,8 @@ class CakeEmail {
  * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
+ * @throws ConfigureException When configuration file cannot be found, or is missing
+ *   the named config.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
@@ -1279,7 +1282,7 @@ class CakeEmail {
 	protected function _readFile($file) {
 		$handle = fopen($file, 'rb');
 		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data)) ;
+		$data = chunk_split(base64_encode($data));
 		fclose($handle);
 		return $data;
 	}
@@ -1359,7 +1362,7 @@ class CakeEmail {
 			$msg = array_merge($msg, $content);
 			$msg[] = '';
 		}
-	
+
 		if (isset($rendered['html'])) {
 			if ($textBoundary !== $boundary || $hasAttachments) {
 				$msg[] = '--' . $textBoundary;
@@ -1451,7 +1454,7 @@ class CakeEmail {
 			$View->set('content', $content);
 			$View->hasRendered = false;
 			$View->viewPath = $View->layoutPath = 'Emails' . DS . $type;
-	
+
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);
 			$rendered[$type] = $this->_encodeString($render, $this->charset);
@@ -1471,4 +1474,5 @@ class CakeEmail {
 		}
 		return '7bit';
 	}
+
 }

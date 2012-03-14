@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -430,6 +430,37 @@ class RssHelperTest extends CakeTestCase {
 			'source' => array('url' => 'http://www.example.com/'),
 			'Example website',
 			'/source',
+			'<guid',
+			'http://www.google.com/',
+			'/guid',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
+
+		$item = array(
+			'title' => 'My title',
+			'description' => 'My description',
+			'link' => 'http://www.google.com/',
+			'category' => array('Category One', 'Category Two')
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'My title',
+			'/title',
+			'<description',
+			'My description',
+			'/description',
+			'<link',
+			'http://www.google.com/',
+			'/link',
+			'<category',
+			'Category One',
+			'/category',
+			'<category',
+			'Category Two',
+			'/category',
 			'<guid',
 			'http://www.google.com/',
 			'/guid',
