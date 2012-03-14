@@ -2027,13 +2027,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		$articles = $Article->find('all', array(
 			'fields' => array('id','title'),
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array('Article.id' => 'ASC')
 		));
-
-		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
-
-		$this->assertEquals($articles, array(
+		$expected = array(
 			array('Article' => array(
 				'id' => 1,
 				'title' => 'First Article'
@@ -2045,9 +2042,15 @@ class ModelWriteTest extends BaseModelTest {
 			array('Article' => array(
 				'id' => 3,
 				'title' => 'Third Article'
-		))));
+		)));
+		$this->assertEquals($expected, $articles);
 
-		$this->assertEquals($comments, array(
+		$comments = $Comment->find('all', array(
+			'fields' => array('id','article_id','user_id','comment','published'),
+			'recursive' => -1,
+			'order' => array('Comment.id' => 'ASC')
+		));
+		$expected = array(
 			array('Comment' => array(
 				'id' => 1,
 				'article_id' => 1,
@@ -2089,7 +2092,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user_id' => 2,
 				'comment' => 'Second Comment for Second Article',
 				'published' => 'Y'
-		))));
+		)));
+		$this->assertEquals($expected, $comments);
 
 		$data = array(
 			'Comment' => array(
@@ -2102,24 +2106,18 @@ class ModelWriteTest extends BaseModelTest {
 				'id' => 2,
 				'title' => 'Second Article Modified'
 		));
-
 		$result = $Comment->create($data);
-
 		$this->assertFalse(empty($result));
+
 		$result = $Comment->save();
 		$this->assertFalse(empty($result));
 
 		$articles = $Article->find('all', array(
 			'fields' => array('id','title'),
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array('Article.id' => 'ASC')
 		));
-
-		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'),
-			'recursive' => -1
-		));
-
-		$this->assertEquals($articles, array(
+		$expected = array(
 			array('Article' => array(
 				'id' => 1,
 				'title' => 'First Article'
@@ -2131,9 +2129,16 @@ class ModelWriteTest extends BaseModelTest {
 			array('Article' => array(
 				'id' => 3,
 				'title' => 'Third Article'
-		))));
+		)));
 
-		$this->assertEquals($comments, array(
+		$this->assertEquals($expected, $articles);
+
+		$comments = $Comment->find('all', array(
+			'fields' => array('id','article_id','user_id','comment','published'),
+			'recursive' => -1,
+			'order' => array('Comment.id' => 'ASC')
+		));
+		$expected = array(
 			array('Comment' => array(
 				'id' => 1,
 				'article_id' => 1,
@@ -2182,8 +2187,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user_id' => 4,
 				'comment' => 'Brand New Comment',
 				'published' => 'N'
-	))));
-
+		)));
+		$this->assertEquals($expected, $comments);
 	}
 
 /**
@@ -2197,7 +2202,7 @@ class ModelWriteTest extends BaseModelTest {
 		$SecondaryArticle = new Article();
 
 		$result = $Article->field('title', array('id' => 1));
-		$this->assertEquals($result, 'First Article');
+		$this->assertEquals('First Article', $result);
 
 		$data = array(
 			'Article' => array(
@@ -2222,10 +2227,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		$articles = $Article->find('all', array(
 			'fields' => array('id','title'),
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array('Article.id' => 'ASC')
 		));
-
-		$this->assertEquals($articles, array(
+		$expected = array(
 			array('Article' => array(
 				'id' => 1,
 				'title' => 'First Article'
@@ -2241,7 +2246,9 @@ class ModelWriteTest extends BaseModelTest {
 			array('Article' => array(
 				'id' => 4,
 				'title' => 'Brand New Article'
-		))));
+		)));
+
+		$this->assertEquals($expected, $articles);
 	}
 
 /**
@@ -2255,7 +2262,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Secondary = new PrimaryModel();
 
 		$result = $Primary->field('primary_name', array('id' => 1));
-		$this->assertEquals($result, 'Primary Name Existing');
+		$this->assertEquals('Primary Name Existing', $result);
 
 		$data = array(
 			'PrimaryModel' => array(
@@ -2270,16 +2277,16 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$result = $Primary->field('primary_name', array('id' => 1));
-		$this->assertEquals($result, 'Primary Name Existing');
+		$this->assertEquals('Primary Name Existing', $result);
 
 		$result = $Primary->getInsertID();
 		$this->assertTrue(!empty($result));
 
 		$result = $Primary->field('primary_name', array('id' => $result));
-		$this->assertEquals($result, 'Primary Name New');
+		$this->assertEquals('Primary Name New', $result);
 
 		$result = $Primary->find('count');
-		$this->assertEquals($result, 2);
+		$this->assertEquals(2, $result);
 	}
 
 /**
