@@ -221,7 +221,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
 		$email->subject('Testing SMTP');
 		$date = date(DATE_RFC2822);
-		$email->setHeaders(array('X-Mailer' => $email::EMAIL_CLIENT, 'Date' => $date));
+		$email->setHeaders(array('X-Mailer' => SmtpCakeEmail::EMAIL_CLIENT, 'Date' => $date));
 		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
 
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";

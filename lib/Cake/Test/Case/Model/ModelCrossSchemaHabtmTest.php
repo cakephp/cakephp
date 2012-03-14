@@ -63,6 +63,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
  */
 	protected function _checkConfigs() {
 		$config = ConnectionManager::enumConnectionObjects();
+		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(
 			!isset($config['test']) || !isset($config['test2']),
 			 'Primary and secondary test databases not configured, skipping cross-database join tests.'
@@ -95,7 +96,6 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
  */
 	public function testHabtmFind() {
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer');
-
 		$Player = ClassRegistry::init('Player');
 
 		$players = $Player->find('all', array(
@@ -130,7 +130,6 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
  */
 	public function testHabtmSave() {
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer');
-
 		$Player = ClassRegistry::init('Player');
 		$players = $Player->find('count');
 		$this->assertEquals(4, $players);
