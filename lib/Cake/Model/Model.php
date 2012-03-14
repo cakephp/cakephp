@@ -22,7 +22,7 @@
 App::uses('ClassRegistry', 'Utility');
 App::uses('Validation', 'Utility');
 App::uses('String', 'Utility');
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
 App::uses('ConnectionManager', 'Model');
@@ -2873,7 +2873,7 @@ class Model extends Object implements CakeEventListener {
 			unset($query['conditions'][$field . ' <']);
 			$return = array();
 			if (isset($results[0])) {
-				$prevVal = Set::extract('/' . str_replace('.', '/', $field), $results[0]);
+				$prevVal = Hash::get($results[0], $field);
 				$query['conditions'][$field . ' >='] = $prevVal[0];
 				$query['conditions'][$field . ' !='] = $value;
 				$query['limit'] = 2;

@@ -14,6 +14,7 @@
  */
 
 App::uses('AppHelper', 'View/Helper');
+App::uses('Hash', 'Utility');
 
 /**
  * Form helper library.
@@ -965,7 +966,7 @@ class FormHelper extends AppHelper {
 	public function input($fieldName, $options = array()) {
 		$this->setEntity($fieldName);
 
-		$options = Set::merge(
+		$options = Hash::merge(
 			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
 			$this->_inputDefaults,
 			$options
