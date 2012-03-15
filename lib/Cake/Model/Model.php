@@ -3163,7 +3163,7 @@ class Model extends Object implements CakeEventListener {
 					} elseif (!$requiredFail && is_numeric($index) && count($ruleSet) > 1) {
 						$message = $index + 1;
 					} else {
-						$message = __d('cake_dev', 'This field cannot be left blank');
+						$message = __d('cake_dev', __('This field cannot be left blank'));
 					}
 
 					$this->invalidate($fieldName, $message);
