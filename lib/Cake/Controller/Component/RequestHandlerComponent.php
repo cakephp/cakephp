@@ -581,9 +581,11 @@ class RequestHandlerComponent extends Component {
 		$controller->ext = '.ctp';
 
 		$viewClass = Inflector::classify($type);
-		App::uses($viewClass . 'View', 'View');
-
-		if (class_exists($viewClass . 'View')) {
+		$viewName = $viewClass . 'View';
+		if (!class_exists($viewName)) {
+			App::uses($viewName, 'View');
+		}
+		if (class_exists($viewName)) {
 			$controller->viewClass = $viewClass;
 		} elseif (empty($this->_renderType)) {
 			$controller->viewPath .= DS . $type;
