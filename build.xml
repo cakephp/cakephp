@@ -137,11 +137,17 @@
 				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.5.0" type="optional" />
 			</dependencies>
 			<dirroles key="bin">script</dirroles>
+			<dirroles key="Cake/Test">php</dirroles>
+			<dirroles key="Cake/Console/Templates/skel">php</dirroles>
+			<dirroles key="Cake/Console/Templates/default">php</dirroles>
+			<dirroles key="Cake/View">php</dirroles>
 			<release>
 				<install as="cake" name="bin/cake" />
 				<install as="cake.php" name="bin/cake.php" />
 				<install as="cake.bat" name="bin/cake.bat" />
 			</release>
+			<exceptions key="Cake/VERSION.txt">php</exceptions>
+			<exceptions key="Cake/LICENSE.txt">php</exceptions>
 		</d51pearpkg2>
 	</target>
 
