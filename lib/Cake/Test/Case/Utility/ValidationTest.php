@@ -31,9 +31,10 @@ class CustomValidator {
  * @param string $email
  * @return boolean
  */
-	static function customValidate($check) {
+	public static function customValidate($check) {
 		return (bool)preg_match('/^[0-9]{3}$/', $check);
 	}
+
 }
 
 /**
@@ -44,13 +45,14 @@ class CustomValidator {
  * @package       Cake.Test.Case.Utility
  */
 class TestNlValidation {
+
 /**
  * postal function, for testing postal pass through.
  *
  * @param string $check
  * @return void
  */
-	static function postal($check) {
+	public static function postal($check) {
 		return true;
 	}
 
@@ -59,9 +61,10 @@ class TestNlValidation {
  *
  * @return void
  */
-	static function ssn($check) {
+	public static function ssn($check) {
 		return true;
 	}
+
 }
 
 /**
@@ -72,15 +75,17 @@ class TestNlValidation {
  * @package       Cake.Test.Case.Utility
  */
 class TestDeValidation {
+
 /**
  * phone function, for testing phone pass through.
  *
  * @param string $check
  * @return void
  */
-	static function phone($check) {
+	public static function phone($check) {
 		return true;
 	}
+
 }
 
 /**
@@ -118,7 +123,7 @@ class ValidationTest extends CakeTestCase {
 	public function testNotEmpty() {
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
-		$this->assertTrue(Validation::notEmpty('fooo'.chr(243).'blabla'));
+		$this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
 		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
 		$this->assertTrue(Validation::notEmpty('José'));
 		$this->assertTrue(Validation::notEmpty('é'));
@@ -136,7 +141,7 @@ class ValidationTest extends CakeTestCase {
 		Configure::write('App.encoding', 'ISO-8859-1');
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
-		$this->assertTrue(Validation::notEmpty('fooo'.chr(243).'blabla'));
+		$this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
 		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
 		$this->assertTrue(Validation::notEmpty('José'));
 		$this->assertTrue(Validation::notEmpty(utf8_decode('José')));
@@ -184,8 +189,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::alphaNumeric(array('check' => "\n")));
 		$this->assertFalse(Validation::alphaNumeric(array('check' => "\t")));
 		$this->assertFalse(Validation::alphaNumeric(array('check' => "\r")));
-		$this->assertFalse(Validation::alphaNumeric(array('check' =>  ' ')));
-		$this->assertFalse(Validation::alphaNumeric(array('check' =>  '')));
+		$this->assertFalse(Validation::alphaNumeric(array('check' => ' ')));
+		$this->assertFalse(Validation::alphaNumeric(array('check' => '')));
 	}
 
 /**
@@ -930,7 +935,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => '<', 'check2' => 7)));
 		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'greater or equal', 'check2' => 7)));
 		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '>=', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'greater or equal','check2' =>  6)));
+		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'greater or equal','check2' => 6)));
 		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '>=', 'check2' => 6)));
 		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => 'less or equal', 'check2' => 7)));
 		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => '<=', 'check2' => 7)));
@@ -949,7 +954,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'less or equal', 'check2' => 6)));
 		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '<=', 'check2' => 6)));
 		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'equal to', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '==','check2' =>  6)));
+		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '==','check2' => 6)));
 		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'not equal', 'check2' => 7)));
 		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '!=', 'check2' => 7)));
 	}
@@ -1498,21 +1503,21 @@ class ValidationTest extends CakeTestCase {
  */
 	public function testDecimalWithPlaces() {
 		$this->assertTrue(Validation::decimal('.27', '2'));
-		$this->assertTrue(Validation::decimal(.27, 2));
-		$this->assertTrue(Validation::decimal(-.27, 2));
-		$this->assertTrue(Validation::decimal(+.27, 2));
-		$this->assertTrue(Validation::decimal('.277', '3'));
-		$this->assertTrue(Validation::decimal(.277, 3));
-		$this->assertTrue(Validation::decimal(-.277, 3));
-		$this->assertTrue(Validation::decimal(+.277, 3));
+		$this->assertTrue(Validation::decimal(0.27, 2));
+		$this->assertTrue(Validation::decimal(-0.27, 2));
+		$this->assertTrue(Validation::decimal(0.27, 2));
+		$this->assertTrue(Validation::decimal('0.277', '3'));
+		$this->assertTrue(Validation::decimal(0.277, 3));
+		$this->assertTrue(Validation::decimal(-0.277, 3));
+		$this->assertTrue(Validation::decimal(0.277, 3));
 		$this->assertTrue(Validation::decimal('1234.5678', '4'));
 		$this->assertTrue(Validation::decimal(1234.5678, 4));
 		$this->assertTrue(Validation::decimal(-1234.5678, 4));
-		$this->assertTrue(Validation::decimal(+1234.5678, 4));
+		$this->assertTrue(Validation::decimal(1234.5678, 4));
 		$this->assertFalse(Validation::decimal('1234.5678', '3'));
 		$this->assertFalse(Validation::decimal(1234.5678, 3));
 		$this->assertFalse(Validation::decimal(-1234.5678, 3));
-		$this->assertFalse(Validation::decimal(+1234.5678, 3));
+		$this->assertFalse(Validation::decimal(1234.5678, 3));
 	}
 
 /**

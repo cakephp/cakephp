@@ -30,9 +30,11 @@ if (!class_exists('AppController', false)) {
  * @package       Cake.Test.Case.Routing
  */
 class DispatcherMockCakeResponse extends CakeResponse {
+
 	protected function _sendHeader($name, $value = null) {
 		return $name . ' ' . $value;
 	}
+
 }
 
 /**
@@ -65,11 +67,15 @@ class MyPluginAppController extends AppController {
 }
 
 abstract class DispatcherTestAbstractController extends Controller {
+
 	abstract public function index();
+
 }
 
 interface DispatcherTestInterfaceController {
+
 	public function index();
+
 }
 
 /**
@@ -120,6 +126,7 @@ class MyPluginController extends MyPluginAppController {
 	public function admin_add($id = null) {
 		return $id;
 	}
+
 }
 
 /**
@@ -212,6 +219,7 @@ class OtherPagesController extends MyPluginAppController {
 	public function index() {
 		return true;
 	}
+
 }
 
 /**
@@ -252,6 +260,7 @@ class TestDispatchPagesController extends AppController {
 	public function camelCased() {
 		return true;
 	}
+
 }
 
 /**
@@ -300,6 +309,7 @@ class ArticlesTestController extends ArticlesTestAppController {
 	public function index() {
 		return true;
 	}
+
 }
 
 /**
@@ -361,6 +371,7 @@ class SomePostsController extends AppController {
 	public function change() {
 		return true;
 	}
+
 }
 
 /**
@@ -461,6 +472,7 @@ class TestCachedPagesController extends Controller {
 		$this->viewClass = 'Theme';
 		$this->theme = 'TestTheme';
 	}
+
 }
 
 /**
@@ -492,6 +504,7 @@ class TimesheetsController extends Controller {
 	public function index() {
 		return true;
 	}
+
 }
 
 /**
@@ -733,7 +746,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testDispatchBasic() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl', '/index.php');
@@ -930,7 +943,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertSame($controller->action, 'add');
 		$this->assertEquals($controller->params['named'], array('param' => 'value', 'param2' => 'value2'));
 
-
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
 		$Dispatcher = new TestDispatcher();
@@ -950,7 +962,6 @@ class DispatcherTest extends CakeTestCase {
 
 		$expected = $pluginUrl;
 		$this->assertEquals($controller->params['controller'], $expected);
-
 
 		Configure::write('Routing.prefixes', array('admin'));
 
@@ -994,7 +1005,7 @@ class DispatcherTest extends CakeTestCase {
 			'plugin' => 'articles_test',
 			'action' => 'admin_index',
 			'prefix' => 'admin',
-			'admin' =>  true,
+			'admin' => true,
 			'return' => 1
 		);
 		foreach ($expected as $key => $value) {
@@ -1173,8 +1184,8 @@ class DispatcherTest extends CakeTestCase {
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 
@@ -1291,8 +1302,8 @@ class DispatcherTest extends CakeTestCase {
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor'. DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View'. DS)
+			'Vendor' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::load(array('TestPlugin', 'PluginJs'));
 
@@ -1302,7 +1313,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->dispatch(new CakeRequest($url), $response);
 		$result = ob_get_clean();
 
-		$path = CAKE. 'Test' . DS . 'test_app' . DS . str_replace('/', DS, $file);
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . str_replace('/', DS, $file);
 		$file = file_get_contents($path);
 		$this->assertEquals($file, $result);
 

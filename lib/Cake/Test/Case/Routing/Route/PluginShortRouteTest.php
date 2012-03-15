@@ -19,12 +19,14 @@
 
 App::uses('PluginShortRoute', 'Routing/Route');
 App::uses('Router', 'Routing');
+
 /**
  * test case for PluginShortRoute
  *
  * @package       Cake.Test.Case.Routing.Route
  */
 class PluginShortRouteTestCase extends  CakeTestCase {
+
 /**
  * setUp method
  *

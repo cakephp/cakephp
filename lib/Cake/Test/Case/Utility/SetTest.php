@@ -363,6 +363,19 @@ class SetTest extends CakeTestCase {
 			array('employees' => array(array('name' => array())))
 		);
 		$this->assertEquals($expected, $result);
+
+		$menus = array(
+			'blogs' => array('title' => 'Blogs', 'weight' => 3),
+			'comments' => array('title' => 'Comments', 'weight' => 2),
+			'users' => array('title' => 'Users', 'weight' => 1),
+			);
+		$expected = array(
+			'users' => array('title' => 'Users', 'weight' => 1),
+			'comments' => array('title' => 'Comments', 'weight' => 2),
+			'blogs' => array('title' => 'Blogs', 'weight' => 3),
+			);
+		$result = Set::sort($menus, '{[a-z]+}.weight', 'ASC');
+		$this->assertEquals($expected, $result);
 	}
 
 /**

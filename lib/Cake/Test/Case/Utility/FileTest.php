@@ -76,7 +76,7 @@ class FileTest extends CakeTestCase {
 			'dirname' => dirname(__FILE__),
 			'basename' => basename(__FILE__),
 			'extension' => 'php',
-			'filename' =>'FileTest',
+			'filename' => 'FileTest',
 			'filesize' => filesize($file),
 			'mime' => 'text/x-php'
 		);
@@ -179,7 +179,7 @@ class FileTest extends CakeTestCase {
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->offset();
-		$expecting = 5+3;
+		$expecting = 5 + 3;
 		$this->assertSame($result, $expecting);
 	}
 
@@ -230,7 +230,7 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testCreate() {
-		$tmpFile = TMP.'tests' . DS . 'cakephp.file.test.tmp';
+		$tmpFile = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
 		$File = new File($tmpFile, true, 0777);
 		$this->assertTrue($File->exists());
 	}

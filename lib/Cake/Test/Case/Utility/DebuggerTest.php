@@ -29,13 +29,13 @@ class DebuggerTestCaseDebugger extends Debugger {
 /**
  * DebuggerTest class
  *
+ * !!! Be careful with changing code below as it may
+ * !!! change line numbers which are used in the tests
+ *
  * @package       Cake.Test.Case.Utility
  */
 class DebuggerTest extends CakeTestCase {
-// !!!
-// !!! Be careful with changing code below as it may
-// !!! change line numbers which are used in the tests
-// !!!
+
 	protected $_restoreError = false;
 
 /**

@@ -865,7 +865,7 @@ class XmlTest extends CakeTestCase {
 		$expected .= '<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>';
 		$expected .= '</data>';
 		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
-		
+
 		//multiple model results - without a records key it would fatal error
 		$data = $user->find('all', array('limit' => 2));
 		$data = array('records' => $data);

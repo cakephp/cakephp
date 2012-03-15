@@ -59,6 +59,7 @@ class CakeEventTestListener {
 	public function stopListener($event) {
 		$event->stopPropagation();
 	}
+
 }
 
 /**
@@ -87,6 +88,7 @@ class CustomTestEventListerner extends CakeEventTestListener implements CakeEven
 	public function thirdListenerFunction() {
 		$this->callStack[] = __FUNCTION__;
 	}
+
 }
 
 /**
@@ -270,7 +272,6 @@ class CakeEventManagerTest extends CakeTestCase {
 		$this->assertTrue($event->isStopped());
 	}
 
-
 /**
  * Tests event dispatching using priorities
  *
@@ -316,7 +317,7 @@ class CakeEventManagerTest extends CakeTestCase {
 		$listener = $this->getMock('CustomTestEventListerner', array('secondListenerFunction'));
 		$manager->attach($listener);
 		$event = new CakeEvent('fake.event');
-		
+
 		$manager->dispatch($event);
 
 		$expected = array('listenerFunction');

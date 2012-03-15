@@ -686,7 +686,6 @@ class RouterTest extends CakeTestCase {
 		$expected = '/magazine/admin/users/login';
 		$this->assertEquals($expected, $result);
 
-
 		Router::reload();
 		$request = new CakeRequest();
 		$request->addParams(array(
@@ -722,7 +721,6 @@ class RouterTest extends CakeTestCase {
 		$expected = '/admin/pages/add';
 		$this->assertEquals($expected, $result);
 
-
 		Router::reload();
 		Router::parse('/');
 		$request = new CakeRequest();
@@ -757,7 +755,6 @@ class RouterTest extends CakeTestCase {
 		$expected = '/admin/pages/edit/284';
 		$this->assertEquals($expected, $result);
 
-
 		Router::reload();
 		Router::parse('/');
 
@@ -775,7 +772,6 @@ class RouterTest extends CakeTestCase {
 		$expected = '/admin/pages/add';
 		$this->assertEquals($expected, $result);
 
-
 		Router::reload();
 		Router::parse('/');
 
@@ -792,7 +788,6 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('plugin' => null, 'controller' => 'pages', 'action' => 'edit', 284));
 		$expected = '/admin/pages/edit/284';
 		$this->assertEquals($expected, $result);
-
 
 		Router::reload();
 		Router::connect('/admin/posts/*', array('controller' => 'posts', 'action' => 'index', 'admin' => true));
@@ -1057,7 +1052,6 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
 		Router::parse('/en/red/posts/view/5');
 
-
 		$request = new CakeRequest();
 		Router::setRequestInfo(
 			$request->addParams(array(
@@ -1184,7 +1178,7 @@ class RouterTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 		$paths = App::path('plugins');
 		App::build(array(
-			'plugins' =>  array(
+			'plugins' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		), App::RESET);
@@ -1320,7 +1314,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
 		$this->assertEquals($expected, $result);
 
-// Test bug #4614
+		// Test bug #4614
 		$restore = ini_get('arg_separator.output');
 		ini_set('arg_separator.output', '&amp;');
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
@@ -2198,7 +2192,7 @@ class RouterTest extends CakeTestCase {
  */
 	public function testConnectDefaultRoutes() {
 		App::build(array(
-			'plugins' =>  array(
+			'plugins' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
 			)
 		), App::RESET);
@@ -2494,7 +2488,7 @@ class RouterTest extends CakeTestCase {
 			array('action' => 'edit',	'method' => 'POST', 	'id' => true)
 		);
 		$this->assertEquals($default, $exepcted);
-		
+
 		$custom = array(
 			array('action' => 'index',	'method' => 'GET',		'id' => false),
 			array('action' => 'view',	'method' => 'GET',		'id' => true),
@@ -2505,7 +2499,7 @@ class RouterTest extends CakeTestCase {
 		);
 		Router::resourceMap($custom);
 		$this->assertEquals($custom, Router::resourceMap());
-		
+
 		Router::resourceMap($default);
 	}
 
