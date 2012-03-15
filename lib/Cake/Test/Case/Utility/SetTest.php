@@ -3130,6 +3130,52 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * Tests Set::expand
+ *
+ * @return void
+ */
+	public function testExpand() {
+		$data = array('My', 'Array', 'To', 'Flatten');
+		$flat = Set::flatten($data);
+		$result = Set::expand($flat);
+		$this->assertEqual($data, $result);
+
+		$data = array(
+			'0.Post.id' => '1', '0.Post.author_id' => '1', '0.Post.title' => 'First Post', '0.Author.id' => '1',
+			'0.Author.user' => 'nate', '0.Author.password' => 'foo', '1.Post.id' => '2', '1.Post.author_id' => '3',
+			'1.Post.title' => 'Second Post', '1.Post.body' => 'Second Post Body', '1.Author.id' => '3',
+			'1.Author.user' => 'larry', '1.Author.password' => null
+		);
+		$result = Set::expand($data);
+		$expected = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post'),
+				'Author' => array('id' => '1', 'user' => 'nate', 'password' => 'foo'),
+			),
+			array(
+				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'),
+				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'0/Post/id' => 1,
+			'0/Post/name' => 'test post'
+		);
+		$result = Set::expand($data, '/');
+		$expected = array(
+			array(
+				'Post' => array(
+					'id' => 1,
+					'name' => 'test post'
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test normalization
  *
  * @return void
