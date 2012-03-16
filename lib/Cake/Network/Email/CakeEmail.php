@@ -460,6 +460,37 @@ class CakeEmail {
 	}
 
 /**
+ * Charset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function charset($charset = null) {
+		if ($charset === null) {
+			return $this->charset;
+		}
+		$this->charset = $charset;
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $charset;
+		}
+		return $this->charset;
+	}
+
+/**
+ * HeaderCharset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function headerCharset($charset = null) {
+		if ($charset === null) {
+			return $this->headerCharset;
+		}
+		return $this->headerCharset = $charset;
+	}
+
+
+/**
  * Set email
  *
  * @param string $varName
@@ -948,7 +979,7 @@ class CakeEmail {
 
 /**
  * Send an email using the specified content, template and layout
- * 
+ *
  * @param mixed $content String with message or array with messages
  * @return array
  * @throws SocketException
@@ -1116,6 +1147,9 @@ class CakeEmail {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
 		}
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $this->charset;
+		}
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
 			mb_internal_encoding($restore);
@@ -1247,7 +1281,7 @@ class CakeEmail {
 /**
  * Attach non-embedded files by adding file contents inside boundaries.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachFiles($boundary = null) {
@@ -1290,7 +1324,7 @@ class CakeEmail {
 /**
  * Attach inline/embedded files to the message.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachInlineFiles($boundary = null) {
