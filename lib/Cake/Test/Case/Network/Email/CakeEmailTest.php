@@ -1498,4 +1498,135 @@ class CakeEmailTest extends CakeTestCase {
 					. " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
 		$this->assertSame($expected, $result);
 	}
+
+
+/**
+ * Tests charset setter/getter
+ *
+ * @return void
+ */
+	public function testCharset() {
+		$this->CakeEmail->charset('UTF-8');
+		$this->assertSame($this->CakeEmail->charset(), 'UTF-8');
+
+		$this->CakeEmail->charset('ISO-2022-JP');
+		$this->assertSame($this->CakeEmail->charset(), 'ISO-2022-JP');
+
+		$charset = $this->CakeEmail->charset('Shift_JIS');
+		$this->assertSame($charset, 'Shift_JIS');
+
+	}
+
+/**
+ * Tests headerCharset setter/getter
+ *
+ * @return void
+ */
+	public function testHeaderCharset() {
+		$this->CakeEmail->headerCharset('UTF-8');
+		$this->assertSame($this->CakeEmail->headerCharset(), 'UTF-8');
+
+		$this->CakeEmail->headerCharset('ISO-2022-JP');
+		$this->assertSame($this->CakeEmail->headerCharset(), 'ISO-2022-JP');
+
+		$charset = $this->CakeEmail->headerCharset('Shift_JIS');
+		$this->assertSame($charset, 'Shift_JIS');
+	}
+
+
+/**
+ * Tests for compatible check.
+ *          charset property and       charset() method.
+ *    headerCharset property and headerCharset() method.
+ */
+	public function testCharsetsCompatible() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+
+		$checkHeaders = array(
+			'from' => true,
+			'to' => true,
+			'cc' => true,
+			'subject' => true,
+		);
+
+		// Header Charset : null (used by default UTF-8)
+		//   Body Charset : ISO-2022-JP
+		$oldStyleEmail = $this->_getEmailByOldStyleCharset('iso-2022-jp', null);
+		$oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
+
+		$newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', null);
+		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
+
+		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
+
+		// Header Charset : UTF-8
+		//   Boby Charset : ISO-2022-JP
+		$oldStyleEmail = $this->_getEmailByOldStyleCharset('iso-2022-jp', 'utf-8');
+		$oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
+
+		$newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', 'utf-8');
+		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
+
+		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
+
+		// Header Charset : ISO-2022-JP
+		//   Boby Charset : UTF-8
+		$oldStyleEmail = $this->_getEmailByOldStyleCharset('utf-8', 'iso-2022-jp');
+		$oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
+
+		$newStyleEmail = $this->_getEmailByNewStyleCharset('utf-8', 'iso-2022-jp');
+		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
+
+		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
+
+	}
+
+	private function _getEmailByOldStyleCharset($charset, $headerCharset) {
+		$email = new CakeEmail(array('transport' => 'Debug'));
+
+		if (! empty($charset)) {
+			$email->charset = $charset;
+		}
+		if (! empty($headerCharset)) {
+			$email->headerCharset = $headerCharset;
+		}
+
+		$email->from('someone@example.com', 'どこかの誰か');
+		$email->to('someperson@example.jp', 'どこかのどなたか');
+		$email->cc('miku@example.net', 'ミク');
+		$email->subject('テストメール');
+		$email->send('テストメールの本文');
+
+		return $email;
+	}
+
+	private function _getEmailByNewStyleCharset($charset, $headerCharset) {
+		$email = new CakeEmail(array('transport' => 'Debug'));
+
+		if (! empty($charset)) {
+			$email->charset($charset);
+		}
+		if (! empty($headerCharset)) {
+			$email->headerCharset($headerCharset);
+		}
+
+		$email->from('someone@example.com', 'どこかの誰か');
+		$email->to('someperson@example.jp', 'どこかのどなたか');
+		$email->cc('miku@example.net', 'ミク');
+		$email->subject('テストメール');
+		$email->send('テストメールの本文');
+
+		return $email;
+	}
+
+
 }
