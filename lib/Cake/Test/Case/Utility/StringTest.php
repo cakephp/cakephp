@@ -454,6 +454,11 @@ podeís adquirirla.</span></p>
 		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
 		$expected = '<b>This</b> is a test <b>text</b>';
 		$this->assertEquals($expected, $result);
+		
+		$phrases = array('is', 'text');
+		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>', 'regex' => "|\b%s\b|iu"));
+		$expected = 'This <b>is</b> a test <b>text</b>';
+		$this->assertEquals($expected, $result);
 
 		$text = 'This is a test text';
 		$phrases = null;
