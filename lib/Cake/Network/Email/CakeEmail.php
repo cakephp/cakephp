@@ -460,6 +460,37 @@ class CakeEmail {
 	}
 
 /**
+ * Charset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function charset($charset = null) {
+		if ($charset === null) {
+			return $this->charset;
+		}
+		$this->charset = $charset;
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $charset;
+		}
+		return $this->charset;
+	}
+
+/**
+ * HeaderCharset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function headerCharset($charset = null) {
+		if ($charset === null) {
+			return $this->headerCharset;
+		}
+		return $this->headerCharset = $charset;
+	}
+
+
+/**
  * Set email
  *
  * @param string $varName
@@ -1115,6 +1146,9 @@ class CakeEmail {
 		if ($internalEncoding) {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
+		}
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $this->charset;
 		}
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
