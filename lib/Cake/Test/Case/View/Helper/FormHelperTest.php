@@ -182,6 +182,7 @@ class ContactTagsContact extends CakeTestModel {
 	public function setSchema($schema) {
 		$this->_schema = $schema;
 	}
+
 }
 
 /**
@@ -217,6 +218,7 @@ class ContactNonStandardPk extends Contact {
 		unset($this->_schema['id']);
 		return $this->_schema;
 	}
+
 }
 
 /**
@@ -369,6 +371,7 @@ class OpenidUrl extends CakeTestModel {
 		$this->invalidate('openid_not_registered');
 		return true;
 	}
+
 }
 
 /**
@@ -432,6 +435,7 @@ class ValidateUser extends CakeTestModel {
 		$this->invalidate('email');
 		return false;
 	}
+
 }
 
 /**
@@ -505,6 +509,7 @@ class ValidateProfile extends CakeTestModel {
 		$this->invalidate('city');
 		return false;
 	}
+
 }
 
 /**
@@ -568,6 +573,7 @@ class ValidateItem extends CakeTestModel {
 		$this->invalidate('description');
 		return false;
 	}
+
 }
 
 /**
@@ -674,8 +680,6 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
-
-
 
 /**
  * testFormCreateWithSecurity method
@@ -974,7 +978,6 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->unlockField();
 		$this->assertEquals(array('Address.button'), $result);
 	}
-
 
 /**
  * Test that submit inputs created with foo[bar] name attributes are unlocked correctly.
@@ -1469,7 +1472,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testTagIsInvalid() {
 		$Contact = ClassRegistry::getObject('Contact');
-		$Contact->validationErrors[0]['email'] =  array('Please provide an email');
+		$Contact->validationErrors[0]['email'] = array('Please provide an email');
 
 		$this->Form->setEntity('Contact.0.email');
 		$result = $this->Form->tagIsInvalid();
@@ -1496,7 +1499,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testPasswordValidation() {
 		$Contact = ClassRegistry::getObject('Contact');
-		$Contact->validationErrors['password'] =  array('Please provide a password');
+		$Contact->validationErrors['password'] = array('Please provide a password');
 
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
@@ -2388,7 +2391,6 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-
 
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$this->Form->request->data = array('Model' => array('user_id' => 'value'));
@@ -5271,7 +5273,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertContains('label for="ModelDateYear"', $result);
 	}
 
-
 /**
  * testMonth method
  *
@@ -5613,7 +5614,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->hour('Model.field', true, array('value' => 'now'));
 		$thisHour = date('H');
 		$optValue = date('G');
-		$this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">'. $optValue .'<\/option>/', $result);
+		$this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">' . $optValue . '<\/option>/', $result);
 	}
 
 /**
@@ -5943,7 +5944,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->button('No type', array('type' => false));
 		$this->assertTags($result, array('button' => array(), 'No type', '/button'));
-	
+
 		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
 		$this->assertNotRegExp('/\&039/', $result);
 	}
@@ -6459,7 +6460,6 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-
 	}
 
 /**
@@ -6572,8 +6572,12 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testCreateWithInputDefaults() {
 		$this->Form->create('User', array(
-			'inputDefaults' => array('div' => false, 'label' => false, 'error' => array('attributes'=>array('wrap' => 'small', 'class' => 'error')))
-		));	
+			'inputDefaults' => array(
+				'div' => false,
+				'label' => false,
+				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error'))
+			)
+		));
 		$result = $this->Form->input('username');
 		$expected = array(
 			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername')
@@ -6588,7 +6592,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$User = ClassRegistry::getObject('User');
 		$User->validationErrors['username'] = array('empty');
 		$result = $this->Form->input('username', array('div' => true, 'label' => 'username', 'error' => array('empty' => __('Required'))));
@@ -7057,7 +7061,6 @@ class FormHelperTest extends CakeTestCase {
 			)
 		);
 		$this->assertTags($result, $expected);
-
 
 		extract($this->dateRegex);
 		$now = strtotime('now');

@@ -28,6 +28,7 @@ class HtmlAliasHelper extends HtmlHelper {
 }
 
 class HelperCollectionTest extends CakeTestCase {
+
 /**
  * setUp
  *

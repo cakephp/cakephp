@@ -64,7 +64,7 @@ class XmlViewTest extends CakeTestCase {
 		$output = $View->render(false);
 
 		$expected = array(
-			'response' => array('no' =>$data['no'], 'user' => $data['user'])
+			'response' => array('no' => $data['no'], 'user' => $data['user'])
 		);
 		$this->assertIdentical(Xml::build($expected)->asXML(), $output);
 		$this->assertIdentical('application/xml', $Response->type());
