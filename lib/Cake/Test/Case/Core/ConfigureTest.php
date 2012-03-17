@@ -354,45 +354,4 @@ class ConfigureTest extends CakeTestCase {
 		Configure::config('test', $reader);
 	}
 
-/**
- * Tests that resetting the ErrorHandlers works as expected
- * 
- * @return void
- */
-	public function testSetErrorHandlers() {
-		$error = array(
-			'handler' => 'ErrorHandler::handleError',
-			'level' => -2000,
-			'trace' => false
-		);
-		$exception = array(
-			'handler' => 'ErrorHandler::handleException',
-			'renderer' => 'MyExceptionRenderer',
-			'log' => false
-		);
-
-		Configure::write('Error', $error);
-		Configure::setErrorHandlers(true);
-
-		$expected = array(
-			'handler' => 'ErrorHandler::handleError',
-			'level' => E_ALL & ~E_DEPRECATED,
-			'trace' => true
-		);
-		$this->assertEqual(Configure::read('Error'), $expected);
-
-		$expected = array(
-			'handler' => 'ErrorHandler::handleException',
-			'renderer' => 'ExceptionRenderer',
-			'log' => true
-		);
-		$this->assertEqual(Configure::read('Exception'), $expected);
-
-		Configure::write('Error', $error);
-		Configure::write('Exception', $exception);
-		Configure::setErrorHandlers();
-		$this->assertEqual(Configure::read('Error'), $error);
-		$this->assertEqual(Configure::read('Exception'), $exception);
-	}
-
 }
