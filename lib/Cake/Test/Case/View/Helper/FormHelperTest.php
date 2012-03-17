@@ -1096,6 +1096,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Address');
 		$this->Form->input('Address.primary.1');
 		$this->assertEquals('Address.primary', $this->Form->fields[0]);
+
+		$this->Form->input('Address.secondary.1.0');
+		$this->assertEquals('Address.secondary', $this->Form->fields[1]);
 	}
 
 /**
