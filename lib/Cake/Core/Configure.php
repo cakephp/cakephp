@@ -83,6 +83,8 @@ class Configure {
 			if (!include APP . 'Config' . DS . 'bootstrap.php') {
 				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
 			}
+			restore_error_handler();
+			restore_exception_handler();
 
 			self::$_values['Error'] = $error;
 			self::$_values['Exception'] = $exception;
