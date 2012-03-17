@@ -607,7 +607,7 @@ class TreeBehavior extends ModelBehavior {
 				$rght = $count++;
 				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
-				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
+				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false, 'validate' => false));
 			}
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$Model->create(false);
@@ -744,7 +744,7 @@ class TreeBehavior extends ModelBehavior {
 			$Model->id = $id;
 			return $Model->save(
 				array($left => $edge + 1, $right => $edge + 2, $parent => null),
-				array('callbacks' => false)
+				array('callbacks' => false, 'validate' => false)
 			);
 		}
 	}
