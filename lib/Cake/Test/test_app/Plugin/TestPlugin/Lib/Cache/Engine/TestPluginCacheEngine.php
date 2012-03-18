@@ -18,16 +18,22 @@
  */
 class TestPluginCacheEngine extends CacheEngine {
 
-	public function write($key, $value, $duration) { }
+	public function write($key, $value, $duration) {
+	}
 
-	public function read($key) { }
+	public function read($key) {
+	}
 
-	public function increment($key, $offset = 1) { }
+	public function increment($key, $offset = 1) {
+	}
 
-	public function decrement($key, $offset = 1) { }
+	public function decrement($key, $offset = 1) {
+	}
 
-	public function delete($key) { }
+	public function delete($key) {
+	}
 
-	public function clear($check) { }
+	public function clear($check) {
+	}
 
 }

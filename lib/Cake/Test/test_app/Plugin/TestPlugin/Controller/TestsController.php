@@ -17,9 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TestsController extends TestPluginAppController {
+
 	public $name = 'Tests';
+
 	public $uses = array();
+
 	public $helpers = array('TestPlugin.OtherHelper', 'Html');
+
 	public $components = array('TestPlugin.Plugins');
 
 	public function index() {
@@ -29,4 +33,5 @@ class TestsController extends TestPluginAppController {
 	public function some_method() {
 		return 25;
 	}
+
 }
