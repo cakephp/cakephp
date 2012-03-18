@@ -1161,6 +1161,18 @@ class HtmlHelperTest extends CakeTestCase {
  * Test the array form of $startText
  */
 	public function testGetCrumbFirstLink() {
+		$result = $this->Html->getCrumbList(null, 'Home');
+		$this->assertTags(
+			$result,
+			array(
+				'<ul',
+				array('li' => array('class' => 'first')),
+				array('a' => array('href' => '/')), 'Home', '/a',
+				'/li',
+				'/ul'
+			)
+		);
+
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');
 
