@@ -552,6 +552,36 @@ class Hash {
 	}
 
 /**
+ * Expand/unflattens an string to an array
+ *
+ * For example, unflattens an array that was collapsed with `Hash::flatten()`
+ * into a multi-dimensional array. So, `array('0.Foo.Bar' => 'Far')` becomes
+ * `array(array('Foo' => array('Bar' => 'Far')))`.
+ *
+ * @param array $data Flattened array
+ * @param string $separator The delimiter used
+ * @return array
+ */
+	public static function expand($data, $separator = '.') {
+		$result = array();
+		foreach ($data as $flat => $value) {
+			$keys = explode($separator, $flat);
+			$keys = array_reverse($keys);
+			$child = array(
+				$keys[0] => $value
+			);
+			array_shift($keys);
+			foreach ($keys as $k) {
+				$child = array(
+					$k => $child
+				);
+			}
+			$result = self::merge($result, $child);
+		}
+		return $result;
+	}
+
+/**
  * This function can be thought of as a hybrid between PHP's `array_merge` and `array_merge_recursive`.
  *
  * The difference between this method and the built-in ones, is that if an array key contains another array, then 
