@@ -56,6 +56,7 @@ class DboPostgresTestDb extends Postgres {
 	public function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
+
 }
 
 /**
@@ -123,26 +124,27 @@ class PostgresTestModel extends Model {
  */
 	public function schema($field = false) {
 		return array(
-			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 			'client_id' => array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-			'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'login' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'passwd' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'addr_1' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'addr_2' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+			'zip_code' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'city' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'country' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'phone' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'fax' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'url' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
+			'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		);
 	}
+
 }
 
 /**
@@ -173,13 +175,14 @@ class PostgresClientTestModel extends Model {
  */
 	public function schema($field = false) {
 		return array(
-			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
-			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'created'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
+			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'created' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		);
 	}
+
 }
 
 /**
@@ -523,7 +526,7 @@ class PostgresTest extends CakeTestCase {
 		$db1 = ConnectionManager::getDataSource('test');
 		$db1->cacheSources = false;
 
-		$db1->rawQuery('CREATE TABLE ' .  $db1->fullTableName('datatype_tests') . ' (
+		$db1->rawQuery('CREATE TABLE ' . $db1->fullTableName('datatype_tests') . ' (
 			id serial NOT NULL,
 			"varchar" character varying(40) NOT NULL,
 			"full_length" character varying NOT NULL,
@@ -541,11 +544,9 @@ class PostgresTest extends CakeTestCase {
 		$schema->tables = array('datatype_tests' => $result['tables']['missing']['datatype_tests']);
 		$result = $db1->createSchema($schema, 'datatype_tests');
 
-
 		$this->assertNotRegExp('/timestamp DEFAULT/', $result);
 		$this->assertRegExp('/\"full_length\"\s*text\s.*,/', $result);
 		$this->assertRegExp('/timestamp\s*,/', $result);
-
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatype_tests'));
 
@@ -731,7 +732,7 @@ class PostgresTest extends CakeTestCase {
 		$this->Dbo->query($this->Dbo->dropSchema($schema1));
 	}
 
-/*
+/**
  * Test it is possible to use virtual field with postgresql
  *
  * @return void
@@ -783,8 +784,11 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
-* Test it is possible to do a SELECT COUNT(DISTINCT Model.field) query in postgres and it gets correctly quoted
-*/
+ * Test it is possible to do a SELECT COUNT(DISTINCT Model.field) 
+ * query in postgres and it gets correctly quoted
+ *
+ * @return void
+ */
 	public function testQuoteDistinctInFunction() {
 		$this->loadFixtures('Article');
 		$Article = new Article;
@@ -860,16 +864,16 @@ class PostgresTest extends CakeTestCase {
  */
 	public function testEncoding() {
 		$result = $this->Dbo->setEncoding('UTF8');
-		$this->assertTrue($result) ;
+		$this->assertTrue($result);
 
 		$result = $this->Dbo->getEncoding();
-		$this->assertEquals('UTF8', $result) ;
+		$this->assertEquals('UTF8', $result);
 
 		$result = $this->Dbo->setEncoding('EUC_JP'); /* 'EUC_JP' is right character code name in PostgreSQL */
-		$this->assertTrue($result) ;
+		$this->assertTrue($result);
 
 		$result = $this->Dbo->getEncoding();
-		$this->assertEquals('EUC_JP', $result) ;
+		$this->assertEquals('EUC_JP', $result);
 	}
 
 /**
