@@ -55,7 +55,6 @@ class DboSqliteTestDb extends Sqlite {
 	public function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
-
 }
 
 /**

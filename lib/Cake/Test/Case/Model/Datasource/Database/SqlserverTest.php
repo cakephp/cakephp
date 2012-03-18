@@ -104,7 +104,6 @@ class SqlserverTestDb extends Sqlserver {
 	public function describe($model) {
 		return empty($this->describe) ? parent::describe($model) : $this->describe;
 	}
-
 }
 
 /**
@@ -134,24 +133,24 @@ class SqlserverTestModel extends CakeTestModel {
  * @var array
  */
 	protected $_schema = array(
-		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
-		'client_id' => array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'login' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'passwd' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-		'addr_1' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-		'addr_2' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-		'zip_code' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'city' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'country' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'phone' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'fax' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'url' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-		'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
+		'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
+		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+		'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
+		'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+		'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -177,7 +176,6 @@ class SqlserverTestModel extends CakeTestModel {
 	public function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
 }
 
 /**
@@ -186,7 +184,6 @@ class SqlserverTestModel extends CakeTestModel {
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class SqlserverClientTestModel extends CakeTestModel {
-
 /**
  * name property
  *
@@ -221,14 +218,12 @@ class SqlserverClientTestModel extends CakeTestModel {
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class SqlserverTestResultIterator extends ArrayIterator {
-
 /**
  * closeCursor method
  *
  * @return void
  */
-	public function closeCursor() {
-	}
+	public function closeCursor() {}
 
 /**
  * fetch method
@@ -243,7 +238,6 @@ class SqlserverTestResultIterator extends ArrayIterator {
 		$this->next();
 		return $current;
 	}
-
 }
 
 /**
@@ -414,7 +408,7 @@ class SqlserverTest extends CakeTestCase {
  */
 	public function testDescribe() {
 		$SqlserverTableDescription = new SqlserverTestResultIterator(array(
-			(object)array(
+			(object) array(
 				'Default' => '((0))',
 				'Field' => 'count',
 				'Key' => 0,
@@ -422,7 +416,7 @@ class SqlserverTest extends CakeTestCase {
 				'Null' => 'NO',
 				'Type' => 'integer'
 			),
-			(object)array(
+			(object) array(
 				'Default' => '',
 				'Field' => 'body',
 				'Key' => 0,
@@ -430,7 +424,7 @@ class SqlserverTest extends CakeTestCase {
 				'Null' => 'YES',
 				'Type' => 'nvarchar'
 			),
-			(object)array(
+			(object) array(
 				'Default' => '',
 				'Field' => 'published',
 				'Key' => 0,
@@ -439,7 +433,7 @@ class SqlserverTest extends CakeTestCase {
 				'Null' => 'YES',
 				'Size' => ''
 			),
-			(object)array(
+			(object) array(
 				'Default' => '',
 				'Field' => 'id',
 				'Key' => 1,
