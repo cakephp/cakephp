@@ -19,7 +19,7 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
-require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
+require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
  * ContainableTest class
@@ -3553,8 +3553,10 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$this->skipIf(
 			!isset($config->test) || !isset($config->test2),
-			'Primary and secondary test databases not configured, skipping cross-database join tests.'
-			. ' To run these tests, you must define $test and $test2 in your database configuration.'
+			'Primary and secondary test databases not configured, ' .
+			'skipping cross-database join tests. ' .
+			' To run these tests, you must define $test and $test2 ' .
+			'in your database configuration.'
 		);
 
 		$db = ConnectionManager::getDataSource('test2');
