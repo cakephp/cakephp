@@ -159,13 +159,11 @@ class MultibyteTest extends CakeTestCase {
 								65265, 65266, 65267, 65268, 65269, 65270, 65271, 65272, 65273, 65274, 65275, 65276);
 		$this->assertEquals($expected, $result);
 
-
 		$string = 'ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ';
 		$result = Multibyte::utf8($string);
 		$expected = array(65345, 65346, 65347, 65348, 65349, 65350, 65351, 65352, 65353, 65354, 65355, 65356, 65357, 65358, 65359, 65360,
 								65361, 65362, 65363, 65364, 65365, 65366, 65367, 65368, 65369, 65370);
 		$this->assertEquals($expected, $result);
-
 
 		$string = '｡｢｣､･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸ';
 		$result = Multibyte::utf8($string);
@@ -340,7 +338,6 @@ class MultibyteTest extends CakeTestCase {
 								11457, 11459, 11461, 11463, 11465, 11467, 11469, 11471, 11473, 11475, 11477, 11479, 11481, 11483, 11485, 11487,
 								11489, 11491);
 		$this->assertEquals($expected, $result);
-
 
 		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$result = Multibyte::utf8($string);
@@ -6566,57 +6563,7 @@ class MultibyteTest extends CakeTestCase {
 		$result = mb_strtolower($string);
 		$expected = 'ἀι';
 		$this->assertEquals($expected, $result);
-/*
-	The tests below are flaky across different platforms.
 
-		$string = 'ԀԂԄԆԈԊԌԎԐԒ';
-		$result = mb_strtolower($string);
-		$expected = 'ԁԃԅԇԉԋԍԏԑԓ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
-		$result = mb_strtolower($string);
-		$expected = 'աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẖẗẘẙẚẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ';
-		$result = mb_strtolower($string);
-		$expected = 'ḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ΩKÅ';
-		$result = mb_strtolower($string);
-		$expected = 'ωkå';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ΩKÅ';
-		$result = mb_strtolower($string);
-		$expected = 'ωkå';
-		$this->assertEquals($expected, $result);
-
-/*
-mb_strtolower does not work for these strings.
-
-		$string = 'ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅬⅭⅮⅯↃ';
-		$result = mb_strtolower($string);
-		$expected = 'ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅺⅻⅼⅽⅾⅿↄ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ';
-		$result = mb_strtolower($string);
-		$expected = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ⰀⰁⰂⰃⰄⰅⰆⰇⰈⰉⰊⰋⰌⰍⰎⰏⰐⰑⰒⰓⰔⰕⰖⰗⰘⰙⰚⰛⰜⰝⰞⰟⰠⰡⰢⰣⰤⰥⰦⰧⰨⰩⰪⰫⰬⰭⰮ';
-		$result = mb_strtolower($string);
-		$expected = 'ⰰⰱⰲⰳⰴⰵⰶⰷⰸⰹⰺⰻⰼⰽⰾⰿⱀⱁⱂⱃⱄⱅⱆⱇⱈⱉⱊⱋⱌⱍⱎⱏⱐⱑⱒⱓⱔⱕⱖⱗⱘⱙⱚⱛⱜⱝⱞ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ⲀⲂⲄⲆⲈⲊⲌⲎⲐⲒⲔⲖⲘⲚⲜⲞⲠⲢⲤⲦⲨⲪⲬⲮⲰⲲⲴⲶⲸⲺⲼⲾⳀⳂⳄⳆⳈⳊⳌⳎⳐⳒⳔⳖⳘⳚⳜⳞⳠⳢ';
-		$result = mb_strtolower($string);
-		$expected = 'ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓⲕⲗⲙⲛⲝⲟⲡⲣⲥⲧⲩⲫⲭⲯⲱⲳⲵⲷⲹⲻⲽⲿⳁⳃⳅⳇⳉⳋⳍⳏⳑⳓⳕⳗⳙⳛⳝⳟⳡⳣ';
-		$this->assertEquals($expected, $result);
-*/
 		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$result = mb_strtolower($string);
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
@@ -7696,29 +7643,6 @@ mb_strtolower does not work for these strings.
 		$expected = 'ΩKÅ';
 		$this->assertEquals($expected, $result);
 
-/*
-mb_strtoupper does not work for these strings.
-
-		$string = 'ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅺⅻⅼⅽⅾⅿↄ';
-		$result = mb_strtoupper($string);
-		$expected = 'ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅬⅭⅮⅯↃ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ';
-		$result = mb_strtoupper($string);
-		$expected = 'ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ⰰⰱⰲⰳⰴⰵⰶⰷⰸⰹⰺⰻⰼⰽⰾⰿⱀⱁⱂⱃⱄⱅⱆⱇⱈⱉⱊⱋⱌⱍⱎⱏⱐⱑⱒⱓⱔⱕⱖⱗⱘⱙⱚⱛⱜⱝⱞ';
-		$result = mb_strtoupper($string);
-		$expected = 'ⰀⰁⰂⰃⰄⰅⰆⰇⰈⰉⰊⰋⰌⰍⰎⰏⰐⰑⰒⰓⰔⰕⰖⰗⰘⰙⰚⰛⰜⰝⰞⰟⰠⰡⰢⰣⰤⰥⰦⰧⰨⰩⰪⰫⰬⰭⰮ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓⲕⲗⲙⲛⲝⲟⲡⲣⲥⲧⲩⲫⲭⲯⲱⲳⲵⲷⲹⲻⲽⲿⳁⳃⳅⳇⳉⳋⳍⳏⳑⳓⳕⳗⳙⳛⳝⳟⳡⳣ';
-		$result = mb_strtoupper($string);
-		$expected = 'ⲀⲂⲄⲆⲈⲊⲌⲎⲐⲒⲔⲖⲘⲚⲜⲞⲠⲢⲤⲦⲨⲪⲬⲮⲰⲲⲴⲶⲸⲺⲼⲾⳀⳂⳄⳆⳈⳊⳌⳎⳐⳒⳔⳖⳘⳚⳜⳞⳠⳢ';
-		$this->assertEquals($expected, $result);
-*/
 		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$result = mb_strtoupper($string);
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';

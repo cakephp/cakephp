@@ -67,7 +67,6 @@ class L10nTest extends CakeTestCase {
 		$l10n->get('');
 		$this->assertEquals($l10n->lang, 'en-us');
 
-
 		// Using $this->default
 		$l10n = new L10n();
 
@@ -83,7 +82,7 @@ class L10nTest extends CakeTestCase {
  * @return void
  */
 	public function testGetAutoLanguage() {
-		$__SERVER = $_SERVER;
+		$serverBackup = $_SERVER;
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 
 		$l10n = new L10n();
@@ -107,7 +106,7 @@ class L10nTest extends CakeTestCase {
 		$this->assertEquals($l10n->languagePath, array('eng', 'eng', 'eng'));
 		$this->assertEquals($l10n->locale, 'eng');
 
-		$_SERVER = $__SERVER;
+		$_SERVER = $serverBackup;
 	}
 
 /**
@@ -895,7 +894,7 @@ class L10nTest extends CakeTestCase {
 		$result = $l10n->catalog(array('cy'));
 		$expected = array(
 			'cy' => array('language' => 'Welsh', 'locale' => 'cym', 'localeFallback' => 'cym', 'charset' => 'utf-8',
-'direction' => 'ltr')
+			'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
