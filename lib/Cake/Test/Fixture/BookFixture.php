@@ -39,7 +39,7 @@ class BookFixture extends CakeTestFixture {
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'isbn' => array('type' => 'string', 'length' => 13),
-		'title' => array('type' => 'string', 'length' =>  255),
+		'title' => array('type' => 'string', 'length' => 255),
 		'author' => array('type' => 'string', 'length' => 255),
 		'year' => array('type' => 'integer', 'null' => true),
 		'pages' => array('type' => 'integer', 'null' => true)

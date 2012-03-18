@@ -40,7 +40,7 @@ class UuidTagFixture extends CakeTestFixture {
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => 255),
 		'created' => array('type' => 'datetime')
-);
+	);
 
 /**
  * records property
