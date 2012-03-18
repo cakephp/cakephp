@@ -711,6 +711,102 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * testHABTMKeepExistingAlternateDataFormat
+ *
+ * @return void
+ */
+	public function testHABTMKeepExistingAlternateDataFormat() {
+		$this->loadFixtures('Site', 'Domain', 'DomainsSite');
+
+		$Site = new Site();
+
+		$expected = array(
+			array(
+				'DomainsSite' => array(
+					'id' => 1,
+					'site_id' => 1,
+					'domain_id' => 1,
+					'active' => true,
+					'created' => '2007-03-17 01:16:23'
+				)
+			),
+			array(
+				'DomainsSite' => array(
+					'id' => 2,
+					'site_id' => 1,
+					'domain_id' => 2,
+					'active' => true,
+					'created' => '2007-03-17 01:16:23'
+				)
+			)
+		);
+		$result = $Site->DomainsSite->find('all', array(
+			'conditions' => array('DomainsSite.site_id' => 1),
+			'fields' => array(
+				'DomainsSite.id',
+				'DomainsSite.site_id',
+				'DomainsSite.domain_id',
+				'DomainsSite.active',
+				'DomainsSite.created'
+			),
+			'order' => 'DomainsSite.id'
+		));
+		$this->assertEquals($expected, $result);
+
+		$time = date('Y-m-d H:i:s');
+		$data = array(
+			'Site' => array(
+				'id' => 1
+			),
+			'Domain' => array(
+				array(
+					'site_id' => 1,
+					'domain_id'	=> 3,
+					'created' => $time,
+				),
+				array(
+					'id' => 2,
+					'site_id' => 1,
+					'domain_id'	=> 2
+				),
+			)
+		);
+		$Site->save($data);
+		$expected = array(
+			array(
+				'DomainsSite' => array(
+					'id' => 2,
+					'site_id' => 1,
+					'domain_id' => 2,
+					'active' => true,
+					'created' => '2007-03-17 01:16:23'
+				)
+			),
+			array(
+				'DomainsSite' => array(
+					'id' => 7,
+					'site_id' => 1,
+					'domain_id' => 3,
+					'active' => false,
+					'created' => $time
+				)
+			)
+		);
+		$result = $Site->DomainsSite->find('all', array(
+			'conditions' => array('DomainsSite.site_id' => 1),
+			'fields' => array(
+				'DomainsSite.id',
+				'DomainsSite.site_id',
+				'DomainsSite.domain_id',
+				'DomainsSite.active',
+				'DomainsSite.created'
+			),
+			'order' => 'DomainsSite.id'
+		));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test HABM operations without clobbering existing records #275
  *
  * @return void
