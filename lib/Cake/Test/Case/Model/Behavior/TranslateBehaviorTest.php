@@ -22,7 +22,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
-require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
+require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
  * TranslateBehaviorTest class
@@ -350,7 +350,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = array('deu', 'eng', 'cze');
-
 
 		$result = $TestModel->read(null, 1);
 		$expected = array(

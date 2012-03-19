@@ -27,18 +27,19 @@ App::uses('DboSource', 'Model/Datasource');
 class DboMock extends DboSource {
 
 /**
-* Returns the $field without modifications
-*/
+ * Returns the $field without modifications
+ */
 	public function name($field) {
 		return $field;
 	}
 
 /**
-* Returns true to fake a database connection
-*/
+ * Returns true to fake a database connection
+ */
 	public function connect() {
 		return true;
 	}
+
 }
 
 /**
@@ -149,8 +150,8 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testPkInHabtmLinkModelArticleB() {
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
-		$TestModel2 = new ArticleB();
-		$this->assertEquals($TestModel2->ArticlesTag->primaryKey, 'article_id');
+		$TestModel = new ArticleB();
+		$this->assertEquals($TestModel->ArticlesTag->primaryKey, 'article_id');
 	}
 
 /**
@@ -176,7 +177,7 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testPkInHabtmLinkModel method
  *
-	 * @return void
+ * @return void
  */
 	public function testPkInHabtmLinkModel() {
 		//Test Nonconformant Models
@@ -186,18 +187,17 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		//test conformant models with no PK in the join table
 		$this->loadFixtures('Article', 'Tag');
-		$TestModel2 = new Article();
-		$this->assertEquals($TestModel2->ArticlesTag->primaryKey, 'article_id');
+		$TestModel = new Article();
+		$this->assertEquals($TestModel->ArticlesTag->primaryKey, 'article_id');
 
 		//test conformant models with PK in join table
-		$TestModel3 = new Portfolio();
-		$this->assertEquals($TestModel3->ItemsPortfolio->primaryKey, 'id');
+		$TestModel = new Portfolio();
+		$this->assertEquals($TestModel->ItemsPortfolio->primaryKey, 'id');
 
 		//test conformant models with PK in join table - join table contains extra field
 		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB');
-		$TestModel4 = new JoinA();
-		$this->assertEquals($TestModel4->JoinAsJoinB->primaryKey, 'id');
-
+		$TestModel = new JoinA();
+		$this->assertEquals($TestModel->JoinAsJoinB->primaryKey, 'id');
 	}
 
 /**
@@ -645,7 +645,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = 3; // 3 domains belonging to cakephp
 		$this->assertEquals($expected, count($results['Domain']));
 
-
 		$Site->id = 2;
 		$results = $Site->read();
 		$expected = 2; // 2 domains belonging to markstory
@@ -708,6 +707,102 @@ class ModelIntegrationTest extends BaseModelTest {
 		unset($results['Domain'][0]['DomainsSite']['updated']);
 		unset($activated['DomainsSite']['updated']);
 		$this->assertEquals($activated['DomainsSite'], $results['Domain'][0]['DomainsSite']);
+	}
+
+/**
+ * testHABTMKeepExistingAlternateDataFormat
+ *
+ * @return void
+ */
+	public function testHABTMKeepExistingAlternateDataFormat() {
+		$this->loadFixtures('Site', 'Domain', 'DomainsSite');
+
+		$Site = new Site();
+
+		$expected = array(
+			array(
+				'DomainsSite' => array(
+					'id' => 1,
+					'site_id' => 1,
+					'domain_id' => 1,
+					'active' => true,
+					'created' => '2007-03-17 01:16:23'
+				)
+			),
+			array(
+				'DomainsSite' => array(
+					'id' => 2,
+					'site_id' => 1,
+					'domain_id' => 2,
+					'active' => true,
+					'created' => '2007-03-17 01:16:23'
+				)
+			)
+		);
+		$result = $Site->DomainsSite->find('all', array(
+			'conditions' => array('DomainsSite.site_id' => 1),
+			'fields' => array(
+				'DomainsSite.id',
+				'DomainsSite.site_id',
+				'DomainsSite.domain_id',
+				'DomainsSite.active',
+				'DomainsSite.created'
+			),
+			'order' => 'DomainsSite.id'
+		));
+		$this->assertEquals($expected, $result);
+
+		$time = date('Y-m-d H:i:s');
+		$data = array(
+			'Site' => array(
+				'id' => 1
+			),
+			'Domain' => array(
+				array(
+					'site_id' => 1,
+					'domain_id'	=> 3,
+					'created' => $time,
+				),
+				array(
+					'id' => 2,
+					'site_id' => 1,
+					'domain_id'	=> 2
+				),
+			)
+		);
+		$Site->save($data);
+		$expected = array(
+			array(
+				'DomainsSite' => array(
+					'id' => 2,
+					'site_id' => 1,
+					'domain_id' => 2,
+					'active' => true,
+					'created' => '2007-03-17 01:16:23'
+				)
+			),
+			array(
+				'DomainsSite' => array(
+					'id' => 7,
+					'site_id' => 1,
+					'domain_id' => 3,
+					'active' => false,
+					'created' => $time
+				)
+			)
+		);
+		$result = $Site->DomainsSite->find('all', array(
+			'conditions' => array('DomainsSite.site_id' => 1),
+			'fields' => array(
+				'DomainsSite.id',
+				'DomainsSite.site_id',
+				'DomainsSite.domain_id',
+				'DomainsSite.active',
+				'DomainsSite.created'
+			),
+			'order' => 'DomainsSite.id'
+		));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2249,7 +2344,6 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testMultischemaFixture() {
-
 		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(!isset($config['test']) || !isset($config['test2']),
@@ -2279,7 +2373,6 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testMultischemaFixtureWithThreeDatabases() {
-
 		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(

@@ -190,8 +190,9 @@ class CookieComponent extends Component {
 	public function startup(Controller $controller) {
 		$this->_expire($this->time);
 
+		$this->_values[$this->name] = array();
 		if (isset($_COOKIE[$this->name])) {
-			$this->_values = $this->_decrypt($_COOKIE[$this->name]);
+			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
 		}
 	}
 
@@ -215,6 +216,10 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
 	public function write($key, $value = null, $encrypt = true, $expires = null) {
+		if (empty($this->_values[$this->name])) {
+			$this->read();
+		}
+
 		if (is_null($encrypt)) {
 			$encrypt = true;
 		}
@@ -227,14 +232,14 @@ class CookieComponent extends Component {
 
 		foreach ($key as $name => $value) {
 			if (strpos($name, '.') === false) {
-				$this->_values[$name] = $value;
+				$this->_values[$this->name][$name] = $value;
 				$this->_write("[$name]", $value);
 			} else {
 				$names = explode('.', $name, 2);
-				if (!isset($this->_values[$names[0]])) {
-					$this->_values[$names[0]] = array();
+				if (!isset($this->_values[$this->name][$names[0]])) {
+					$this->_values[$this->name][$names[0]] = array();
 				}
-				$this->_values[$names[0]] = Set::insert($this->_values[$names[0]], $names[1], $value);
+				$this->_values[$this->name][$names[0]] = Set::insert($this->_values[$this->name][$names[0]], $names[1], $value);
 				$this->_write('[' . implode('][', $names) . ']', $value);
 			}
 		}
@@ -252,26 +257,28 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
-		if (empty($this->_values) && isset($_COOKIE[$this->name])) {
-			$this->_values = $this->_decrypt($_COOKIE[$this->name]);
+		if (empty($this->_values[$this->name]) && isset($_COOKIE[$this->name])) {
+			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
 		}
-
+		if (empty($this->_values[$this->name])) {
+			$this->_values[$this->name] = array();
+		}
 		if (is_null($key)) {
-			return $this->_values;
+			return $this->_values[$this->name];
 		}
 
 		if (strpos($key, '.') !== false) {
 			$names = explode('.', $key, 2);
 			$key = $names[0];
 		}
-		if (!isset($this->_values[$key])) {
+		if (!isset($this->_values[$this->name][$key])) {
 			return null;
 		}
 
 		if (!empty($names[1])) {
-			return Set::extract($this->_values[$key], $names[1]);
+			return Set::extract($this->_values[$this->name][$key], $names[1]);
 		}
-		return $this->_values[$key];
+		return $this->_values[$this->name][$key];
 	}
 
 /**
@@ -288,22 +295,22 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
-		if (empty($this->_values)) {
+		if (empty($this->_values[$this->name])) {
 			$this->read();
 		}
 		if (strpos($key, '.') === false) {
-			if (isset($this->_values[$key]) && is_array($this->_values[$key])) {
-				foreach ($this->_values[$key] as $idx => $val) {
+			if (isset($this->_values[$this->name][$key]) && is_array($this->_values[$this->name][$key])) {
+				foreach ($this->_values[$this->name][$key] as $idx => $val) {
 					$this->_delete("[$key][$idx]");
 				}
 			}
 			$this->_delete("[$key]");
-			unset($this->_values[$key]);
+			unset($this->_values[$this->name][$key]);
 			return;
 		}
 		$names = explode('.', $key, 2);
-		if (isset($this->_values[$names[0]])) {
-			$this->_values[$names[0]] = Set::remove($this->_values[$names[0]], $names[1]);
+		if (isset($this->_values[$this->name][$names[0]])) {
+			$this->_values[$this->name][$names[0]] = Set::remove($this->_values[$this->name][$names[0]], $names[1]);
 		}
 		$this->_delete('[' . implode('][', $names) . ']');
 	}
@@ -319,17 +326,17 @@ class CookieComponent extends Component {
  */
 	public function destroy() {
 		if (isset($_COOKIE[$this->name])) {
-			$this->_values = $this->_decrypt($_COOKIE[$this->name]);
+			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
 		}
 
-		foreach ($this->_values as $name => $value) {
+		foreach ($this->_values[$this->name] as $name => $value) {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
-					unset($this->_values[$name][$key]);
+					unset($this->_values[$this->name][$name][$key]);
 					$this->_delete("[$name][$key]");
 				}
 			}
-			unset($this->_values[$name]);
+			unset($this->_values[$this->name][$name]);
 			$this->_delete("[$name]");
 		}
 	}
@@ -503,5 +510,5 @@ class CookieComponent extends Component {
 		}
 		return $array;
 	}
-
 }
+

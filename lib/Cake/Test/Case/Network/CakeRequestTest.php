@@ -22,6 +22,7 @@ App::uses('Xml', 'Utility');
 App::uses('CakeRequest', 'Network');
 
 class CakeRequestTest extends CakeTestCase {
+
 /**
  * setup callback
  *
@@ -106,7 +107,6 @@ class CakeRequestTest extends CakeTestCase {
 		$expected = array('one' => 'something', 'two' => 'else');
 		$this->assertEquals($expected, $request->query);
 		$this->assertEquals('some/path?one=something&two=else', $request->url);
-
 	}
 
 /**
@@ -160,7 +160,6 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals($request->here, '/');
 		$this->assertFalse(isset($request->random));
 	}
-
 
 /**
  * test parsing POST data into the object.
@@ -437,7 +436,6 @@ class CakeRequestTest extends CakeTestCase {
 		);
 		$this->assertEquals($request->data, $expected);
 
-
 		$_FILES = array(
 			'data' => array(
 				'name' => array('birth_cert' => 'born on.txt'),
@@ -471,7 +469,6 @@ class CakeRequestTest extends CakeTestCase {
 		);
 		$request = new CakeRequest('some/path');
 		$this->assertEquals($request->params['form'], $_FILES);
-
 	}
 
 /**
@@ -682,7 +679,7 @@ class CakeRequestTest extends CakeTestCase {
  * @expectedException CakeException
  * @return void
  */
-	public function test__callExceptionOnUnknownMethod() {
+	public function testMagicCallExceptionOnUnknownMethod() {
 		$request = new CakeRequest('some/path');
 		$request->IamABanana();
 	}
@@ -725,7 +722,7 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__get() {
+	public function testMagicget() {
 		$request = new CakeRequest('some/path');
 		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
 
@@ -740,7 +737,7 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__isset() {
+	public function testMagicisset() {
 		$request = new CakeRequest('some/path');
 		$request->params = array(
 			'controller' => 'posts',
@@ -800,7 +797,7 @@ class CakeRequestTest extends CakeTestCase {
 
 		$_SERVER['TEST_VAR'] = 'wrong';
 		$this->assertFalse($request->is('compare'), 'Value mis-match failed.');
-		
+
 		$request->addDetector('compareCamelCase', array('env' => 'TEST_VAR', 'value' => 'foo'));
 
 		$_SERVER['TEST_VAR'] = 'foo';
@@ -945,7 +942,6 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals($request->webroot, '/1.2.x.x/');
 		$this->assertEquals($request->url, 'posts/view/1');
 
-
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
 		$_SERVER['PHP_SELF'] = '/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/add';
@@ -961,7 +957,6 @@ class CakeRequestTest extends CakeTestCase {
 
 		$this->assertEquals('', $request->base);
 		$this->assertEquals('/', $request->webroot);
-
 
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
 		$_SERVER['PHP_SELF'] = '/app/webroot/index.php';
@@ -1703,7 +1698,6 @@ XML;
 			$result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
 		);
 	}
-
 
 /**
  * Test is('requested') and isRequested()

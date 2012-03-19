@@ -22,6 +22,7 @@ App::uses('JqueryEngineHelper', 'View/Helper');
 App::uses('View', 'View');
 
 class JqueryEngineHelperTest extends CakeTestCase {
+
 /**
  * setUp
  *

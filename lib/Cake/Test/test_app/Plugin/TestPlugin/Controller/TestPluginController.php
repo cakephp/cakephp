@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TestPluginController extends TestPluginAppController {
+
 	public $uses = array();
 
 	public function index() {
@@ -26,4 +27,5 @@ class TestPluginController extends TestPluginAppController {
 	public function add() {
 		$this->autoRender = false;
 	}
+
 }

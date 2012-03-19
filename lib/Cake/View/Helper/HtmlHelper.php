@@ -671,9 +671,9 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbs($separator = '&raquo;', $startText = false) {
-		if (!empty($this->_crumbs)) {
+		$crumbs = $this->_prepareCrumbs($startText);
+		if (!empty($crumbs)) {
 			$out = array();
-			$crumbs = $this->_prepareCrumbs($startText);
 			foreach ($crumbs as $crumb) {
 				if (!empty($crumb[1])) {
 					$out[] = $this->link($crumb[0], $crumb[1], $crumb[2]);
@@ -701,9 +701,9 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbList($options = array(), $startText = false) {
-		if (!empty($this->_crumbs)) {
+		$crumbs = $this->_prepareCrumbs($startText);
+		if (!empty($crumbs)) {
 			$result = '';
-			$crumbs = $this->_prepareCrumbs($startText);
 			$crumbCount = count($crumbs);
 			$ulOptions = $options;
 			foreach ($crumbs as $which => $crumb) {

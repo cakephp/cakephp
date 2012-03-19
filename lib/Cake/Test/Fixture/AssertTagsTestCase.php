@@ -86,7 +86,7 @@ class AssertTagsTestCase extends CakeTestCase {
 		$this->assertTags($input, $pattern);
 	}
 
- /**
+/**
  * testBadAssertTags
  *
  * @return void

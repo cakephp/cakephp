@@ -19,6 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Comment extends AppModel {
+
 	public $useTable = 'comments';
+
 	public $name = 'Comment';
+
 }

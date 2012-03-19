@@ -40,9 +40,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the request object constructor
-*
-*/
+ * Tests the request object constructor
+ *
+ */
 	public function testConstruct() {
 		$response = new CakeResponse();
 		$this->assertNull($response->body());
@@ -64,9 +64,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the body method
-*
-*/
+ * Tests the body method
+ *
+ */
 	public function testBody() {
 		$response = new CakeResponse();
 		$this->assertNull($response->body());
@@ -76,9 +76,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the charset method
-*
-*/
+ * Tests the charset method
+ *
+ */
 	public function testCharset() {
 		$response = new CakeResponse();
 		$this->assertEquals($response->charset(), 'UTF-8');
@@ -88,10 +88,10 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the statusCode method
-*
-* @expectedException CakeException
-*/
+ * Tests the statusCode method
+ *
+ * @expectedException CakeException
+ */
 	public function testStatusCode() {
 		$response = new CakeResponse();
 		$this->assertEquals($response->statusCode(), 200);
@@ -104,9 +104,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the type method
-*
-*/
+ * Tests the type method
+ *
+ */
 	public function testType() {
 		$response = new CakeResponse();
 		$this->assertEquals($response->type(), 'text/html');
@@ -125,9 +125,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the header method
-*
-*/
+ * Tests the header method
+ *
+ */
 	public function testHeader() {
 		$response = new CakeResponse();
 		$headers = array();
@@ -169,9 +169,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the send method
-*
-*/
+ * Tests the send method
+ *
+ */
 	public function testSend() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header(array(
@@ -195,9 +195,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the send method and changing the content type
-*
-*/
+ * Tests the send method and changing the content type
+ *
+ */
 	public function testSendChangingContentYype() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->type('mp3');
@@ -214,9 +214,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the send method and changing the content type
-*
-*/
+ * Tests the send method and changing the content type
+ *
+ */
 	public function testSendChangingContentType() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->type('mp3');
@@ -233,9 +233,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the send method and changing the content type
-*
-*/
+ * Tests the send method and changing the content type
+ *
+ */
 	public function testSendWithLocation() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header('Location', 'http://www.example.com');
@@ -245,14 +245,14 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(2))
 			->method('_sendHeader')->with('Location', 'http://www.example.com');
 		$response->expects($this->at(3))
-			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');		
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 	}
 
 /**
-* Tests the disableCache method
-*
-*/
+ * Tests the disableCache method
+ *
+ */
 	public function testDisableCache() {
 		$response = new CakeResponse();
 		$expected = array(
@@ -265,9 +265,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the cache method
-*
-*/
+ * Tests the cache method
+ *
+ */
 	public function testCache() {
 		$response = new CakeResponse();
 		$since = time();
@@ -336,15 +336,15 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the httpCodes method
-*
-*/
+ * Tests the httpCodes method
+ *
+ */
 	public function testHttpCodes() {
 		$response = new CakeResponse();
 		$result = $response->httpCodes();
 		$this->assertEquals(count($result), 39);
 
-		$result =  $response->httpCodes(100);
+		$result = $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
 		$this->assertEquals($expected, $result);
 
@@ -353,7 +353,7 @@ class CakeResponseTest extends CakeTestCase {
 			1729 => 'Hardy-Ramanujan Located'
 		);
 
-		$result =  $response->httpCodes($codes);
+		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
 		$this->assertEquals(count($response->httpCodes()), 41);
 
@@ -372,9 +372,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the download method
-*
-*/
+ * Tests the download method
+ *
+ */
 	public function testDownload() {
 		$response = new CakeResponse();
 		$expected = array(
@@ -385,9 +385,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the mapType method
-*
-*/
+ * Tests the mapType method
+ *
+ */
 	public function testMapType() {
 		$response = new CakeResponse();
 		$this->assertEquals('wav', $response->mapType('audio/x-wav'));
@@ -401,9 +401,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the outputCompressed method
-*
-*/
+ * Tests the outputCompressed method
+ *
+ */
 	public function testOutputCompressed() {
 		$response = new CakeResponse();
 
@@ -438,9 +438,9 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
-* Tests the send and setting of Content-Length
-*
-*/
+ * Tests the send and setting of Content-Length
+ *
+ */
 	public function testSendContentLength() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$response->body('the response body');
@@ -479,7 +479,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->header('Content-Length', 1);
 		$response->expects($this->never())->method('outputCompressed');
 		$response->expects($this->once())->method('_sendContent')->with($body);
-			$response->expects($this->at(1))
+		$response->expects($this->at(1))
 				->method('_sendHeader')->with('Content-Length', 1);
 		$response->send();
 
@@ -652,7 +652,6 @@ class CakeResponseTest extends CakeTestCase {
 			->method('_sendHeader')->with('Cache-Control', 'public');
 		$response->send();
 
-
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$response->sharable(false);
 		$headers = $response->header();
@@ -765,7 +764,6 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(1))
 			->method('_sendHeader')->with('Cache-Control', 's-maxage=3600, must-revalidate');
 		$response->send();
-
 	}
 
 /**
@@ -835,7 +833,7 @@ class CakeResponseTest extends CakeTestCase {
  **/
 	public function testCheckNotModifiedByEtagStar() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->etag('something');
 		$response->expects($this->once())->method('notModified');
 		$response->checkNotModified(new CakeRequest);
@@ -848,7 +846,7 @@ class CakeResponseTest extends CakeTestCase {
  **/
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->etag('something', true);
 		$response->expects($this->once())->method('notModified');
 		$this->assertTrue($response->checkNotModified(new CakeRequest));
@@ -862,7 +860,7 @@ class CakeResponseTest extends CakeTestCase {
 	public function testCheckNotModifiedByEtagAndTime() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->etag('something', true);
 		$response->modified('2012-01-01 00:00:00');
 		$response->expects($this->once())->method('notModified');
@@ -877,7 +875,7 @@ class CakeResponseTest extends CakeTestCase {
 	public function testCheckNotModifiedByEtagAndTimeMismatch() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->etag('something', true);
 		$response->modified('2012-01-01 00:00:01');
 		$response->expects($this->never())->method('notModified');
@@ -892,13 +890,12 @@ class CakeResponseTest extends CakeTestCase {
 	public function testCheckNotModifiedByEtagMismatch() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->etag('something', true);
 		$response->modified('2012-01-01 00:00:00');
 		$response->expects($this->never())->method('notModified');
 		$this->assertFalse($response->checkNotModified(new CakeRequest));
 	}
-
 
 /**
  * Test checkNotModified method
@@ -907,7 +904,7 @@ class CakeResponseTest extends CakeTestCase {
  **/
 	public function testCheckNotModifiedByTime() {
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->modified('2012-01-01 00:00:00');
 		$response->expects($this->once())->method('notModified');
 		$this->assertTrue($response->checkNotModified(new CakeRequest));
@@ -921,7 +918,7 @@ class CakeResponseTest extends CakeTestCase {
 	public function testCheckNotModifiedNoHints() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-		$response =  $this->getMock('CakeResponse', array('notModified'));
+		$response = $this->getMock('CakeResponse', array('notModified'));
 		$response->expects($this->never())->method('notModified');
 		$this->assertFalse($response->checkNotModified(new CakeRequest));
 	}

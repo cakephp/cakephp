@@ -17,5 +17,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class PluggedHelperHelper extends AppHelper {
+
 	public $helpers = array('TestPlugin.OtherHelper');
 }

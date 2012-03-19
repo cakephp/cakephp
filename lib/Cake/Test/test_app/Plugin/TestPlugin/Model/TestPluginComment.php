@@ -1,9 +1,6 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Test App Comment Model
- *
- *
  *
  * PHP 5
  *
@@ -23,6 +20,9 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class TestPluginComment extends TestPluginAppModel {
+
 	public $useTable = 'test_plugin_comments';
+
 	public $name = 'TestPluginComment';
+
 }

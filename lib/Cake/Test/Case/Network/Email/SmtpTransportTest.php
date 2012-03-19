@@ -52,7 +52,6 @@ class SmtpTestTransport extends SmtpTransport {
  * @return void
  */
 	protected function _generateSocket() {
-		return;
 	}
 
 /**
