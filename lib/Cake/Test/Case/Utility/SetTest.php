@@ -106,7 +106,6 @@ class SetTest extends CakeTestCase {
 		$this->assertSame(array(), Set::filter(array()));
 	}
 
-
 /**
  * testNumericArrayCheck method
  *
@@ -196,11 +195,6 @@ class SetTest extends CakeTestCase {
 		$r = Set::merge('foo', 'bar');
 		$this->assertEquals($r, array('foo', 'bar'));
 
-		if (substr(PHP_VERSION, 0, 1) >= 5) {
-			$r = eval('class StaticSetCaller{static function merge($a, $b){return Set::merge($a, $b);}} return StaticSetCaller::merge("foo", "bar");');
-			$this->assertEquals($r, array('foo', 'bar'));
-		}
-
 		$r = Set::merge('foo', array('user' => 'bob', 'no-bar'), 'bar');
 		$this->assertEquals($r, array('foo', 'user' => 'bob', 'no-bar', 'bar'));
 
@@ -236,7 +230,7 @@ class SetTest extends CakeTestCase {
 		$a = array('Tree', 'CounterCache',
 				'Upload' => array('folder' => 'products',
 					'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')));
-		$b =  array('Cacheable' => array('enabled' => false),
+		$b = array('Cacheable' => array('enabled' => false),
 				'Limit',
 				'Bindable',
 				'Validator',
@@ -384,14 +378,14 @@ class SetTest extends CakeTestCase {
  * @return void
  */
 	public function testSortString() {
-		$to_sort = array(
+		$toSort = array(
 			'four' => array('number' => 4, 'some' => 'foursome'),
 			'six' => array('number' => 6, 'some' => 'sixsome'),
 			'five' => array('number' => 5, 'some' => 'fivesome'),
 			'two' => array('number' => 2, 'some' => 'twosome'),
 			'three' => array('number' => 3, 'some' => 'threesome')
 		);
-		$sorted = Set::sort($to_sort, '{s}.number', 'asc');
+		$sorted = Set::sort($toSort, '{s}.number', 'asc');
 		$expected = array(
 			'two' => array('number' => 2, 'some' => 'twosome'),
 			'three' => array('number' => 3, 'some' => 'threesome'),
@@ -1044,7 +1038,7 @@ class SetTest extends CakeTestCase {
 			array('A2', 'B2')
 		);
 		$expected = array('A1', 'A2');
-		$result =  Set::extract('/0', $data);
+		$result = Set::extract('/0', $data);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -1431,7 +1425,7 @@ class SetTest extends CakeTestCase {
 			),
 			'Comment' => array(
 				'keep' => array(
-					'Attachment' =>  array(
+					'Attachment' => array(
 						'fields' => array(
 							0 => 'attachment',
 						),
@@ -1443,7 +1437,7 @@ class SetTest extends CakeTestCase {
 			),
 			'Article' => array(
 				'keep' => array(
-					'Comment' =>  array(
+					'Comment' => array(
 						'fields' => array(
 							0 => 'comment',
 							1 => 'published',
@@ -1461,8 +1455,6 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
 		$this->assertEquals(Set::extract('/Article/keep/Comment/fields', $r), array('comment', 'published'));
 		$this->assertEquals(Set::extract('/Article/keep/User/fields', $r), array('user'));
-
-
 	}
 
 /**
@@ -1471,7 +1463,6 @@ class SetTest extends CakeTestCase {
  * @return void
  */
 	public function testSetExtractReturnsEmptyArray() {
-
 		$this->assertEquals(Set::extract(array(), '/Post/id'), array());
 
 		$this->assertEquals(Set::extract('/Post/id', array()), array());
@@ -1482,7 +1473,6 @@ class SetTest extends CakeTestCase {
 		)), array());
 
 		$this->assertEquals(Set::extract(array(), 'Message.flash'), null);
-
 	}
 
 /**
@@ -1832,7 +1822,6 @@ class SetTest extends CakeTestCase {
 		$b = array('name' => 'bob', 'address' => 'home');
 		$result = Set::diff($a, $b);
 		$this->assertEquals($result, $b);
-
 
 		$a = array('name' => 'bob', 'address' => 'home');
 		$b = array();
@@ -2226,7 +2215,7 @@ class SetTest extends CakeTestCase {
 		$comment2->published = 'Y';
 		$comment2->created = '2007-03-18 10:47:23';
 		$comment2->updated = '2007-03-18 10:49:31';
-		$class->User->Comment =  array($comment, $comment2);
+		$class->User->Comment = array($comment, $comment2);
 		$result = Set::reverse($class);
 		$this->assertEquals($expected, $result);
 
@@ -2238,7 +2227,11 @@ class SetTest extends CakeTestCase {
 		$class->Profile->name = 'Joe Mamma';
 
 		$result = Set::reverse($class);
-		$expected = array('User' => array('id' => '100'), 'someString' => 'this is some string', 'Profile' => array('name' => 'Joe Mamma'));
+		$expected = array(
+			'User' => array('id' => '100'),
+			'someString' => 'this is some string',
+			'Profile' => array('name' => 'Joe Mamma')
+		);
 		$this->assertEquals($expected, $result);
 
 		$class = new stdClass;
@@ -2646,7 +2639,6 @@ class SetTest extends CakeTestCase {
 
 		$piece->_name_ = 'Piece';
 
-
 		$piece2 = new stdClass();
 		$piece2->id = 2;
 		$piece2->title = 'Moonlight Sonata 2';
@@ -2766,7 +2758,6 @@ class SetTest extends CakeTestCase {
 		$expected = array('ModelOne' => array('id' => 1001, 'field_one' => 'a1.m1.f1', 'field_two' => 'a1.m1.f2', 'field_three' => 'a3.m1.f3'));
 		$this->assertEquals($expected, $result);
 
-
 		$array1 = array(
 				0 => array('ModelOne' => array('id' => 1001, 'field_one' => 's1.0.m1.f1', 'field_two' => 's1.0.m1.f2')),
 				1 => array('ModelTwo' => array('id' => 1002, 'field_one' => 's1.1.m2.f2', 'field_two' => 's1.1.m2.f2')));
@@ -2790,7 +2781,7 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($result, $array1);
 
 		$result = Set::pushDiff($array1, $array2);
-		$this->assertEquals($result, $array1+$array2);
+		$this->assertEquals($result, $array1 + $array2);
 	}
 
 /**
@@ -2809,7 +2800,6 @@ class SetTest extends CakeTestCase {
 		$expected = 9;
 		$this->assertEquals($expected, $result);
 
-
 		$result = Set::apply('/Movie/rating', $data, 'array_product');
 		$expected = 15;
 		$this->assertEquals($expected, $result);
@@ -2822,14 +2812,13 @@ class SetTest extends CakeTestCase {
 		$expected = array('MOVIE 3', 'MOVIE 1', 'MOVIE 2');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::apply('/Movie/rating', $data, array('SetTest', '_method'), array('type' => 'reduce'));
+		$result = Set::apply('/Movie/rating', $data, array('SetTest', 'method'), array('type' => 'reduce'));
 		$expected = 9;
 		$this->assertEquals($expected, $result);
 
 		$result = Set::apply('/Movie/rating', $data, 'strtoupper', array('type' => 'non existing type'));
 		$expected = null;
 		$this->assertEquals($expected, $result);
-
 	}
 
 /**
@@ -2837,7 +2826,7 @@ class SetTest extends CakeTestCase {
  *
  * @return void
  */
-	static function _method($val1, $val2) {
+	public static function method($val1, $val2) {
 		$val1 += $val2;
 		return $val1;
 	}
@@ -2905,7 +2894,7 @@ class SetTest extends CakeTestCase {
 			)
 		));
 		$this->assertEquals($expected, $result);
-		$string ='<data><post title="Title of this post" description="cool"/></data>';
+		$string = '<data><post title="Title of this post" description="cool"/></data>';
 
 		$xml = Xml::build($string);
 		$result = Set::reverse($xml);
@@ -3583,7 +3572,7 @@ class SetTest extends CakeTestCase {
 		);
 
 		$result = Set::nest($input, array('idPath' => '/id', 'parentPath' => '/parent_id'));
-		foreach($result as &$row) {
+		foreach ($result as &$row) {
 			if (empty($row['children'])) {
 				unset($row['children']);
 			}
