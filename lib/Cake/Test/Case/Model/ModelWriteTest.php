@@ -6560,4 +6560,56 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testSaveAllDeepHasManyBelongsTo method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepHasManyBelongsTo() {
+		$this->loadFixtures('Article', 'Comment', 'User');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'I will not save'),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array(
+					'comment' => 'belongsto', 'published' => 'Y',
+					'User' => array('user' => 'findme', 'password' => 'somepass')
+				)
+			)
+		), array('deep' => true));
+
+		$result = $TestModel->Comment->User->find('first', array(
+			'conditions' => array('User.user' => 'findme'),
+			'fields' => array('id', 'user', 'password')
+		));
+		$expected = array(
+			'User' => array(
+				'id' => 5,
+				'user' => 'findme',
+				'password' => 'somepass',
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.user_id' => 5),
+			'fields' => array('id', 'comment', 'published', 'user_id')
+		));
+		$expected = array(
+			'Comment' => array(
+				'id' => 2,
+				'comment' => 'belongsto',
+				'published' => 'Y',
+				'user_id' => 5
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 }
