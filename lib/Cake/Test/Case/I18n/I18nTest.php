@@ -1338,7 +1338,7 @@ class I18nTest extends CakeTestCase {
 		Configure::write('Config.language', 'rule_13_mo');
 		$this->assertRulesThirteen();
 	}
-	
+
 /**
  * testPoRulesThirteen method
  *
@@ -1427,7 +1427,7 @@ class I18nTest extends CakeTestCase {
 		Configure::write('Config.language', 'rule_14_mo');
 		$this->assertRulesFourteen();
 	}
-	
+
 /**
  * testPoRulesFourteen method
  *

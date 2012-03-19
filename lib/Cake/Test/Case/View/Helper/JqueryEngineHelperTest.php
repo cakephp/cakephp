@@ -84,7 +84,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Jquery->event('click', '$(this).hide();');
-		$expected = '$("#myLink").bind("click", function (event) {$(this).hide();'."\n".'return false;});';
+		$expected = '$("#myLink").bind("click", function (event) {$(this).hide();' . "\n" . 'return false;});';
 		$this->assertEquals($expected, $result);
 	}
 
