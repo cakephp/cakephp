@@ -6605,4 +6605,52 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testUpdateAllBoolean
+ *
+ * return @void
+ */
+	public function testUpdateAllBoolean() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+		$result = $TestModel->updateAll(array('published' => true));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('first', array('fields' => array('id', 'published')));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * testUpdateAllBooleanConditions
+ *
+ * return @void
+ */
+	public function testUpdateAllBooleanConditions() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+
+		$result = $TestModel->updateAll(array('published' => true), array('Item.id' => 1));
+		$this->assertTrue($result);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'published'),
+			'conditions' => array('Item.id' => 1)));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * testUpdateBoolean
+ *
+ * return @void
+ */
+	public function testUpdateBoolean() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+
+		$result = $TestModel->save(array('published' => true, 'id' => 1));
+		$this->assertTrue((boolean)$result);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'published'),
+			'conditions' => array('Item.id' => 1)));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
 }
