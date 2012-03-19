@@ -260,7 +260,6 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * test that delete() updates the correct records counterCache() records.
  *
@@ -688,7 +687,6 @@ class ModelDeleteTest extends BaseModelTest {
  * @return void
  */
 	public function testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable() {
-
 		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
 		$ThePaper = new ThePaper();
 		$ThePaper->id = 1;
@@ -792,25 +790,26 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertEquals(count($before[0]['Tag']), 2, 'Tag count for Article.id = 1 is incorrect, should be 2 %s');
 
 		// From now on, Tag #1 is only associated with Post #1
-		$submitted_data = array(
+		$submittedData = array(
 			"Tag" => array("id" => 1, 'tag' => 'tag1'),
 			"Article" => array(
 				"Article" => array(1)
 			)
 		);
-		$Tag->save($submitted_data);
+		$Tag->save($submittedData);
 
 		// One more submission (The other way around) to make sure the reverse save looks good.
-		$submitted_data = array(
+		$submittedData = array(
 			"Article" => array("id" => 2, 'title' => 'second article'),
 			"Tag" => array(
 				"Tag" => array(2, 3)
 			)
 		);
+
 		// ERROR:
 		// Postgresql: DELETE FROM "articles_tags" WHERE tag_id IN ('1', '3')
 		// MySQL: DELETE `ArticlesTag` FROM `articles_tags` AS `ArticlesTag` WHERE `ArticlesTag`.`article_id` = 2 AND `ArticlesTag`.`tag_id` IN (1, 3)
-		$Article->save($submitted_data);
+		$Article->save($submittedData);
 
 		// Want to make sure Article #1 has Tag #1 and Tag #2 still.
 		$after = $Article->find("all", array(

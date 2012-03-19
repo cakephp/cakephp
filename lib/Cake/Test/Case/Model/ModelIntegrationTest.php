@@ -27,18 +27,19 @@ App::uses('DboSource', 'Model/Datasource');
 class DboMock extends DboSource {
 
 /**
-* Returns the $field without modifications
-*/
+ * Returns the $field without modifications
+ */
 	public function name($field) {
 		return $field;
 	}
 
 /**
-* Returns true to fake a database connection
-*/
+ * Returns true to fake a database connection
+ */
 	public function connect() {
 		return true;
 	}
+
 }
 
 /**
@@ -149,8 +150,8 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testPkInHabtmLinkModelArticleB() {
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
-		$TestModel2 = new ArticleB();
-		$this->assertEquals($TestModel2->ArticlesTag->primaryKey, 'article_id');
+		$TestModel = new ArticleB();
+		$this->assertEquals($TestModel->ArticlesTag->primaryKey, 'article_id');
 	}
 
 /**
@@ -176,7 +177,7 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testPkInHabtmLinkModel method
  *
-	 * @return void
+ * @return void
  */
 	public function testPkInHabtmLinkModel() {
 		//Test Nonconformant Models
@@ -186,18 +187,17 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		//test conformant models with no PK in the join table
 		$this->loadFixtures('Article', 'Tag');
-		$TestModel2 = new Article();
-		$this->assertEquals($TestModel2->ArticlesTag->primaryKey, 'article_id');
+		$TestModel = new Article();
+		$this->assertEquals($TestModel->ArticlesTag->primaryKey, 'article_id');
 
 		//test conformant models with PK in join table
-		$TestModel3 = new Portfolio();
-		$this->assertEquals($TestModel3->ItemsPortfolio->primaryKey, 'id');
+		$TestModel = new Portfolio();
+		$this->assertEquals($TestModel->ItemsPortfolio->primaryKey, 'id');
 
 		//test conformant models with PK in join table - join table contains extra field
 		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB');
-		$TestModel4 = new JoinA();
-		$this->assertEquals($TestModel4->JoinAsJoinB->primaryKey, 'id');
-
+		$TestModel = new JoinA();
+		$this->assertEquals($TestModel->JoinAsJoinB->primaryKey, 'id');
 	}
 
 /**
@@ -644,7 +644,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$results = $Site->read();
 		$expected = 3; // 3 domains belonging to cakephp
 		$this->assertEquals($expected, count($results['Domain']));
-
 
 		$Site->id = 2;
 		$results = $Site->read();
@@ -2345,7 +2344,6 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testMultischemaFixture() {
-
 		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(!isset($config['test']) || !isset($config['test2']),
@@ -2375,7 +2373,6 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testMultischemaFixtureWithThreeDatabases() {
-
 		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(

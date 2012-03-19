@@ -51,7 +51,7 @@ class ModelValidationTest extends BaseModelTest {
 				'required' => true
 			),
 			'or' => true,
-			'ignore_on_same' => 'id'
+			'ignoreOnSame' => 'id'
 		);
 		$this->assertEquals($TestModel->validatorParams, $expected);
 

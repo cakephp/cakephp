@@ -208,8 +208,8 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testLoadDataSource() {
 		$connections = array(
-			array('classname' => 'Mysql', 'filename' =>  'Mysql', 'package' => 'Database'),
-			array('classname' => 'Postgres', 'filename' =>  'Postgres', 'package' => 'Database'),
+			array('classname' => 'Mysql', 'filename' => 'Mysql', 'package' => 'Database'),
+			array('classname' => 'Postgres', 'filename' => 'Postgres', 'package' => 'Database'),
 			array('classname' => 'Sqlite', 'filename' => 'Sqlite', 'package' => 'Database'),
 		);
 

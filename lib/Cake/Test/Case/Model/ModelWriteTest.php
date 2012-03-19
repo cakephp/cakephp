@@ -109,7 +109,6 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEquals($testResult['Article']['title'], $data['Article']['title']);
 		$this->assertEquals($testResult['Article']['created'], '2008-01-01 00:00:00');
-
 	}
 
 /**
@@ -403,7 +402,7 @@ class ModelWriteTest extends BaseModelTest {
 			$column = '';
 		}
 		$column .= $this->db->buildColumn(array('name' => 'child_count', 'type' => 'integer'));
-		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . ' ADD ' . $column);
+		$this->db->query('ALTER TABLE ' . $this->db->fullTableName('category_threads') . ' ADD ' . $column);
 		$this->db->flushMethodCache();
 		$Category = new CategoryThread();
 		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
@@ -617,7 +616,6 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->saveField('title', '', true);
 		$this->assertFalse($result);
 
-
 		$TestModel->recursive = -1;
 		$TestModel->id = 1;
 		$result = $TestModel->saveField('user_id', 9999);
@@ -629,7 +627,6 @@ class ModelWriteTest extends BaseModelTest {
 			'user_id' => '9999',
 		));
 		$this->assertEquals($expected, $result);
-
 
 		$this->loadFixtures('Node', 'Dependency');
 		$Node = new Node();
@@ -1512,12 +1509,16 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			'Tag' => array(
 				'Tag' => array(1, 2, 3)
-		));
-		$result =  $TestModel->create()
+			)
+		);
+		$result = $TestModel->create()
 				&& $TestModel->save($data, true, array('user_id', 'title', 'published'));
 		$this->assertFalse(empty($result));
 
-		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
+		$TestModel->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
 		$result = $TestModel->read();
 		$expected = array(
 			'Article' => array(
@@ -1549,7 +1550,6 @@ class ModelWriteTest extends BaseModelTest {
 					'updated' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
-
 
 		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
 		$TestModel = new JoinA();
@@ -2754,7 +2754,6 @@ class ModelWriteTest extends BaseModelTest {
 		unset($result[6]['Comment']['created'], $result[6]['Comment']['updated']);
 		$this->assertEquals($result[6]['Comment'], $expected);
 
-
 		$expected = array(
 			'id' => '2',
 			'comment_id' => '7',
@@ -2877,7 +2876,6 @@ class ModelWriteTest extends BaseModelTest {
 				'attachment' => 'some_file.zip'
 		)));
 		$this->assertEquals($expected, $result);
-
 
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
 		$data = array(
@@ -4545,7 +4543,6 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/Comment/article_id', $result);
 		$this->assertEquals($result[0], 4);
 
-
 		$model->deleteAll(true);
 		$data = array(
 			'Article' => array(
@@ -4801,7 +4798,6 @@ class ModelWriteTest extends BaseModelTest {
 		unset($result[6]['Comment']['updated'], $result[6]['Comment']['created']);
 		$this->assertEquals($result[6]['Comment'], $expected);
 
-
 		$expected = array(
 			'id' => '2',
 			'comment_id' => '7',
@@ -4985,7 +4981,6 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$this->assertEquals($expected, $result);
 
-
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
 		$data = array(
 			'Comment' => array(
@@ -5155,7 +5150,6 @@ class ModelWriteTest extends BaseModelTest {
 		), array('validate' => true, 'atomic' => false));
 
 		$this->assertSame($result, array(true, false));
-
 	}
 
 /**
@@ -5850,7 +5844,6 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/Comment/article_id', $result);
 		$this->assertEquals($result[0], 4);
 
-
 		$model->deleteAll(true);
 		$data = array(
 			'Article' => array(
@@ -6335,7 +6328,7 @@ class ModelWriteTest extends BaseModelTest {
 				'id' => '4',
 				'author_id' => '5',
 				'title' => 'Post without body',
-				'body' => NULL,
+				'body' => null,
 				'published' => 'N',
 				'created' => $ts,
 				'updated' => $ts,
@@ -6343,7 +6336,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Author' => array (
 				'id' => '5',
 				'user' => 'bob',
-				'password' => NULL,
+				'password' => null,
 				'created' => $ts,
 				'updated' => $ts,
 				'test' => 'working',
