@@ -6301,7 +6301,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new Post();
 
 		$result = $TestModel->find('all');
-		$this->assertCount(3, $result);
+		$this->assertEqual(3, count($result));
 		$this->assertFalse(isset($result[3]));
 		$ts = date('Y-m-d H:i:s');
 
@@ -6342,7 +6342,7 @@ class ModelWriteTest extends BaseModelTest {
 			),
 		);
 		$this->assertEquals($expected, $result[3]);
-		$this->assertCount(4, $result);
+		$this->assertEqual(4, count($result));
 		$this->assertEquals('', $result[3]['Post']['body']);
 		$this->assertEquals('working', $result[3]['Author']['test']);
 
@@ -6473,7 +6473,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->recursive = 2;
 
 		$result = $TestModel->find('all');
-		$this->assertCount(3, $result);
+		$this->assertEqual(3, count($result));
 		$this->assertFalse(isset($result[3]));
 		$ts = date('Y-m-d H:i:s');
 
