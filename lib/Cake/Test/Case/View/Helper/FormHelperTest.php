@@ -106,15 +106,18 @@ class Contact extends CakeTestModel {
 		'imrequired' => array('rule' => array('between', 5, 30), 'allowEmpty' => false),
 		'imrequiredonupdate' => array('notEmpty' => array('rule' => 'alphaNumeric', 'on' => 'update')),
 		'imrequiredoncreate' => array('required' => array('rule' => 'alphaNumeric', 'on' => 'create')),
-		'imrequiredonboth' => array('required' => array('rule' => 'alphaNumeric')),
+		'imrequiredonboth' => array(
+			'required' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
+			'check' => array('rule' => 'alphaNumeric')
+		),
 		'string_required' => 'notEmpty',
 		'imalsorequired' => array('rule' => 'alphaNumeric', 'allowEmpty' => false),
 		'imrequiredtoo' => array('rule' => 'notEmpty'),
 		'required_one' => array('required' => array('rule' => array('notEmpty'))),
 		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric', 'allowEmpty' => true),
 		'imalsonotrequired' => array(
-			'alpha' => array('rule' => 'alphaNumeric','allowEmpty' => true),
-			'between' => array('rule' => array('between', 5, 30)),
+			'alpha' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
+			'between' => array('rule' => array('between', 5, 30), 'allowEmpty' => true),
 		),
 		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
 	);
