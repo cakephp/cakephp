@@ -109,7 +109,6 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEquals($testResult['Article']['title'], $data['Article']['title']);
 		$this->assertEquals($testResult['Article']['created'], '2008-01-01 00:00:00');
-
 	}
 
 /**
@@ -403,7 +402,7 @@ class ModelWriteTest extends BaseModelTest {
 			$column = '';
 		}
 		$column .= $this->db->buildColumn(array('name' => 'child_count', 'type' => 'integer'));
-		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . ' ADD ' . $column);
+		$this->db->query('ALTER TABLE ' . $this->db->fullTableName('category_threads') . ' ADD ' . $column);
 		$this->db->flushMethodCache();
 		$Category = new CategoryThread();
 		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
@@ -617,7 +616,6 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->saveField('title', '', true);
 		$this->assertFalse($result);
 
-
 		$TestModel->recursive = -1;
 		$TestModel->id = 1;
 		$result = $TestModel->saveField('user_id', 9999);
@@ -629,7 +627,6 @@ class ModelWriteTest extends BaseModelTest {
 			'user_id' => '9999',
 		));
 		$this->assertEquals($expected, $result);
-
 
 		$this->loadFixtures('Node', 'Dependency');
 		$Node = new Node();
@@ -1006,7 +1003,10 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'title')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'title'),
+			'order' => array('Article.id' => 'ASC')
+		));
 		$expected = array(
 			array('Article' => array('id' => 1, 'title' => 'First Article')),
 			array('Article' => array('id' => 2, 'title' => 'Second Article')),
@@ -1509,12 +1509,16 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			'Tag' => array(
 				'Tag' => array(1, 2, 3)
-		));
-		$result =  $TestModel->create()
+			)
+		);
+		$result = $TestModel->create()
 				&& $TestModel->save($data, true, array('user_id', 'title', 'published'));
 		$this->assertFalse(empty($result));
 
-		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
+		$TestModel->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
 		$result = $TestModel->read();
 		$expected = array(
 			'Article' => array(
@@ -1546,7 +1550,6 @@ class ModelWriteTest extends BaseModelTest {
 					'updated' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
-
 
 		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
 		$TestModel = new JoinA();
@@ -2027,13 +2030,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		$articles = $Article->find('all', array(
 			'fields' => array('id','title'),
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array('Article.id' => 'ASC')
 		));
-
-		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
-
-		$this->assertEquals($articles, array(
+		$expected = array(
 			array('Article' => array(
 				'id' => 1,
 				'title' => 'First Article'
@@ -2045,9 +2045,15 @@ class ModelWriteTest extends BaseModelTest {
 			array('Article' => array(
 				'id' => 3,
 				'title' => 'Third Article'
-		))));
+		)));
+		$this->assertEquals($expected, $articles);
 
-		$this->assertEquals($comments, array(
+		$comments = $Comment->find('all', array(
+			'fields' => array('id','article_id','user_id','comment','published'),
+			'recursive' => -1,
+			'order' => array('Comment.id' => 'ASC')
+		));
+		$expected = array(
 			array('Comment' => array(
 				'id' => 1,
 				'article_id' => 1,
@@ -2089,7 +2095,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user_id' => 2,
 				'comment' => 'Second Comment for Second Article',
 				'published' => 'Y'
-		))));
+		)));
+		$this->assertEquals($expected, $comments);
 
 		$data = array(
 			'Comment' => array(
@@ -2102,24 +2109,18 @@ class ModelWriteTest extends BaseModelTest {
 				'id' => 2,
 				'title' => 'Second Article Modified'
 		));
-
 		$result = $Comment->create($data);
-
 		$this->assertFalse(empty($result));
+
 		$result = $Comment->save();
 		$this->assertFalse(empty($result));
 
 		$articles = $Article->find('all', array(
 			'fields' => array('id','title'),
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array('Article.id' => 'ASC')
 		));
-
-		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'),
-			'recursive' => -1
-		));
-
-		$this->assertEquals($articles, array(
+		$expected = array(
 			array('Article' => array(
 				'id' => 1,
 				'title' => 'First Article'
@@ -2131,9 +2132,16 @@ class ModelWriteTest extends BaseModelTest {
 			array('Article' => array(
 				'id' => 3,
 				'title' => 'Third Article'
-		))));
+		)));
 
-		$this->assertEquals($comments, array(
+		$this->assertEquals($expected, $articles);
+
+		$comments = $Comment->find('all', array(
+			'fields' => array('id','article_id','user_id','comment','published'),
+			'recursive' => -1,
+			'order' => array('Comment.id' => 'ASC')
+		));
+		$expected = array(
 			array('Comment' => array(
 				'id' => 1,
 				'article_id' => 1,
@@ -2182,8 +2190,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user_id' => 4,
 				'comment' => 'Brand New Comment',
 				'published' => 'N'
-	))));
-
+		)));
+		$this->assertEquals($expected, $comments);
 	}
 
 /**
@@ -2197,7 +2205,7 @@ class ModelWriteTest extends BaseModelTest {
 		$SecondaryArticle = new Article();
 
 		$result = $Article->field('title', array('id' => 1));
-		$this->assertEquals($result, 'First Article');
+		$this->assertEquals('First Article', $result);
 
 		$data = array(
 			'Article' => array(
@@ -2222,10 +2230,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		$articles = $Article->find('all', array(
 			'fields' => array('id','title'),
-			'recursive' => -1
+			'recursive' => -1,
+			'order' => array('Article.id' => 'ASC')
 		));
-
-		$this->assertEquals($articles, array(
+		$expected = array(
 			array('Article' => array(
 				'id' => 1,
 				'title' => 'First Article'
@@ -2241,7 +2249,9 @@ class ModelWriteTest extends BaseModelTest {
 			array('Article' => array(
 				'id' => 4,
 				'title' => 'Brand New Article'
-		))));
+		)));
+
+		$this->assertEquals($expected, $articles);
 	}
 
 /**
@@ -2255,7 +2265,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Secondary = new PrimaryModel();
 
 		$result = $Primary->field('primary_name', array('id' => 1));
-		$this->assertEquals($result, 'Primary Name Existing');
+		$this->assertEquals('Primary Name Existing', $result);
 
 		$data = array(
 			'PrimaryModel' => array(
@@ -2270,16 +2280,16 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$result = $Primary->field('primary_name', array('id' => 1));
-		$this->assertEquals($result, 'Primary Name Existing');
+		$this->assertEquals('Primary Name Existing', $result);
 
 		$result = $Primary->getInsertID();
 		$this->assertTrue(!empty($result));
 
 		$result = $Primary->field('primary_name', array('id' => $result));
-		$this->assertEquals($result, 'Primary Name New');
+		$this->assertEquals('Primary Name New', $result);
 
 		$result = $Primary->find('count');
-		$this->assertEquals($result, 2);
+		$this->assertEquals(2, $result);
 	}
 
 /**
@@ -2744,7 +2754,6 @@ class ModelWriteTest extends BaseModelTest {
 		unset($result[6]['Comment']['created'], $result[6]['Comment']['updated']);
 		$this->assertEquals($result[6]['Comment'], $expected);
 
-
 		$expected = array(
 			'id' => '2',
 			'comment_id' => '7',
@@ -2867,7 +2876,6 @@ class ModelWriteTest extends BaseModelTest {
 				'attachment' => 'some_file.zip'
 		)));
 		$this->assertEquals($expected, $result);
-
 
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
 		$data = array(
@@ -3068,7 +3076,8 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->User->field('id', array('user' => 'newuser', 'password' => 'newuserpass'));
 		$this->assertEquals(5, $result);
@@ -3090,7 +3099,8 @@ class ModelWriteTest extends BaseModelTest {
 			'Third new comment',
 			'Fourth new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->Attachment->field('id', array('attachment' => 'deepsaved'));
 		$this->assertEquals(2, $result);
@@ -3841,7 +3851,8 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$this->assertEquals(Set::extract($result['Comment'], '{n}.comment'), $expected);
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->saveAll(
 			array(
@@ -3864,7 +3875,8 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$this->assertEquals(Set::extract($result['Comment'], '{n}.comment'), $expected);
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 
 		$TestModel->beforeSaveReturn = false;
 		$result = $TestModel->saveAll(
@@ -3888,7 +3900,8 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$this->assertEquals(Set::extract($result['Comment'], '{n}.comment'), $expected);
+		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -4530,7 +4543,6 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/Comment/article_id', $result);
 		$this->assertEquals($result[0], 4);
 
-
 		$model->deleteAll(true);
 		$data = array(
 			'Article' => array(
@@ -4786,7 +4798,6 @@ class ModelWriteTest extends BaseModelTest {
 		unset($result[6]['Comment']['updated'], $result[6]['Comment']['created']);
 		$this->assertEquals($result[6]['Comment'], $expected);
 
-
 		$expected = array(
 			'id' => '2',
 			'comment_id' => '7',
@@ -4970,7 +4981,6 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$this->assertEquals($expected, $result);
 
-
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
 		$data = array(
 			'Comment' => array(
@@ -5140,7 +5150,6 @@ class ModelWriteTest extends BaseModelTest {
 		), array('validate' => true, 'atomic' => false));
 
 		$this->assertSame($result, array(true, false));
-
 	}
 
 /**
@@ -5835,7 +5844,6 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/Comment/article_id', $result);
 		$this->assertEquals($result[0], 4);
 
-
 		$model->deleteAll(true);
 		$data = array(
 			'Article' => array(
@@ -6320,7 +6328,7 @@ class ModelWriteTest extends BaseModelTest {
 				'id' => '4',
 				'author_id' => '5',
 				'title' => 'Post without body',
-				'body' => NULL,
+				'body' => null,
 				'published' => 'N',
 				'created' => $ts,
 				'updated' => $ts,
@@ -6328,7 +6336,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Author' => array (
 				'id' => '5',
 				'user' => 'bob',
-				'password' => NULL,
+				'password' => null,
 				'created' => $ts,
 				'updated' => $ts,
 				'test' => 'working',
@@ -6545,4 +6553,233 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testSaveAllDeepHasManyBelongsTo method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepHasManyBelongsTo() {
+		$this->loadFixtures('Article', 'Comment', 'User');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'The title'),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array(
+					'comment' => 'belongsto', 'published' => 'Y',
+					'User' => array('user' => 'findme', 'password' => 'somepass')
+				)
+			)
+		), array('deep' => true));
+
+		$result = $TestModel->Comment->User->find('first', array(
+			'conditions' => array('User.user' => 'findme'),
+			'fields' => array('id', 'user', 'password')
+		));
+		$expected = array(
+			'User' => array(
+				'id' => 5,
+				'user' => 'findme',
+				'password' => 'somepass',
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.user_id' => 5),
+			'fields' => array('id', 'comment', 'published', 'user_id')
+		));
+		$expected = array(
+			'Comment' => array(
+				'id' => 2,
+				'comment' => 'belongsto',
+				'published' => 'Y',
+				'user_id' => 5
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSaveAllDeepHasManyhasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepHasManyHasMany() {
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'The title'),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array(
+					'comment' => 'hasmany', 'published' => 'Y', 'user_id' => 5,
+					'Attachment' => array(
+						array('attachment' => 'first deep attachment'),
+						array('attachment' => 'second deep attachment'),
+					)
+				)
+			)
+		), array('deep' => true));
+
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.comment' => 'hasmany'),
+			'fields' => array('id', 'comment', 'published', 'user_id'),
+			'recursive' => -1
+		));
+		$expected = array(
+			'Comment' => array(
+				'id' => 2,
+				'comment' => 'hasmany',
+				'published' => 'Y',
+				'user_id' => 5
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->Comment->Attachment->find('all', array(
+			'fields' => array('attachment', 'comment_id'),
+			'order' => array('Attachment.id' => 'ASC')
+		));
+		$expected = array(
+			array('Attachment' => array('attachment' => 'first deep attachment', 'comment_id' => 2)),
+			array('Attachment' => array('attachment' => 'second deep attachment', 'comment_id' => 2)),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSaveAllDeepOrderHasManyHasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepOrderHasManyHasMany() {
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'Comment has its data after Attachment'),
+			'Comment' => array(
+				array(
+					'Attachment' => array(
+						array('attachment' => 'attachment should be created with comment_id'),
+						array('attachment' => 'comment should be created with article_id'),
+					),
+					'comment' => 'after associated data',
+					'user_id' => 1
+				)
+			)
+		), array('deep' => true));
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.article_id' => 2),
+		));
+
+		$this->assertEquals(2, $result['Comment']['article_id']);
+		$this->assertEquals(2, count($result['Attachment']));
+	}
+
+/**
+ * testSaveAllDeepEmptyHasManyHasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepEmptyHasManyHasMany() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 3, 'title' => 'Comment has no data'),
+			'Comment' => array(
+				array(
+					'Attachment' => array(
+						array('attachment' => 'attachment should be created with comment_id'),
+						array('attachment' => 'comment should be created with article_id'),
+					),
+				)
+			)
+		), array('deep' => true));
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.article_id' => 3),
+		));
+
+		$this->assertEquals(3, $result['Comment']['article_id']);
+		$this->assertEquals(2, count($result['Attachment']));
+	}
+
+/**
+ * testUpdateAllBoolean
+ *
+ * return @void
+ */
+	public function testUpdateAllBoolean() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+		$result = $TestModel->updateAll(array('published' => true));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('first', array('fields' => array('id', 'published')));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * testUpdateAllBooleanConditions
+ *
+ * return @void
+ */
+	public function testUpdateAllBooleanConditions() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+
+		$result = $TestModel->updateAll(array('published' => true), array('Item.id' => 1));
+		$this->assertTrue($result);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'published'),
+			'conditions' => array('Item.id' => 1)));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * testUpdateBoolean
+ *
+ * return @void
+ */
+	public function testUpdateBoolean() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+
+		$result = $TestModel->save(array('published' => true, 'id' => 1));
+		$this->assertTrue((boolean)$result);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'published'),
+			'conditions' => array('Item.id' => 1)));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
 }

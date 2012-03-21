@@ -32,13 +32,6 @@ class SessionFixture extends CakeTestFixture {
 	public $name = 'Session';
 
 /**
- * table property.
- *
- * @var string
- */
-	// public $table = 'sessions';
-
-/**
  * fields property
  *
  * @var array

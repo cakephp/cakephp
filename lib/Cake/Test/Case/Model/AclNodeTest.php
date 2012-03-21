@@ -198,6 +198,7 @@ class DbAroUserTest extends CakeTestModel {
 			return array('DbAroTest' => array('DbAroTest.model' => 'AuthUser', 'DbAroTest.foreign_key' => 2));
 		}
 	}
+
 }
 
 /**
@@ -218,6 +219,7 @@ class TestDbAcl extends DbAcl {
 		$this->Aco = new DbAcoTest();
 		$this->Aro->Permission = new DbPermissionTest();
 	}
+
 }
 
 /**
@@ -332,7 +334,6 @@ class AclNodeTest extends CakeTestCase {
 		$result = Set::extract($Aro->node($Model), '{n}.DbAroTest.id');
 		$expected = array(4, 2, 1);
 		$this->assertEquals($expected, $result);
-
 	}
 
 /**

@@ -160,7 +160,7 @@ class TestHttpSocket extends HttpSocket {
  * @param string $token Token to escape
  * @return string Escaped token
  */
-	public function EscapeToken($token, $chars = null) {
+	public function escapeToken($token, $chars = null) {
 		return parent::_escapeToken($token, $chars);
 	}
 
@@ -761,7 +761,6 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertInstanceOf('CustomResponse', $response);
 		$this->assertEquals($response->first10, 'HTTP/1.x 2');
 	}
- 
 
 /**
  * testRequestWithRedirect method
@@ -777,11 +776,11 @@ class HttpSocketTest extends CakeTestCase {
 		$serverResponse2 = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>You have been redirected</h1>";
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
 		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
-	
+
 		$response = $this->Socket->request($request);
 		$this->assertEquals('<h1>You have been redirected</h1>', $response->body());
 	}
-	
+
 	public function testRequestWithRedirectAsInt() {
 		$request = array(
 			'uri' => 'http://localhost/oneuri',
@@ -791,11 +790,11 @@ class HttpSocketTest extends CakeTestCase {
 		$serverResponse2 = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>You have been redirected</h1>";
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
 		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
-	
+
 		$response = $this->Socket->request($request);
 		$this->assertEquals(1, $this->Socket->request['redirect']);
 	}
-	
+
 	public function testRequestWithRedirectAsIntReachingZero() {
 		$request = array(
 			'uri' => 'http://localhost/oneuri',
@@ -805,13 +804,12 @@ class HttpSocketTest extends CakeTestCase {
 		$serverResponse2 = "HTTP/1.x 302 Found\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\nLocation: http://localhost/anotheruri\r\n\r\n";
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
 		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
-	
+
 		$response = $this->Socket->request($request);
 		$this->assertEquals(0, $this->Socket->request['redirect']);
 		$this->assertEquals(302, $response->code);
 		$this->assertEquals('http://localhost/anotheruri', $response->getHeader('Location'));
 	}
-	
 
 /**
  * testProxy method
@@ -1496,7 +1494,6 @@ class HttpSocketTest extends CakeTestCase {
 
 		$r = $this->Socket->buildHeader(array('Test@Field' => "My value"));
 		$this->assertEquals($r, "Test\"@\"Field: My value\r\n");
-
 	}
 
 /**
@@ -1561,7 +1558,7 @@ class HttpSocketTest extends CakeTestCase {
 			$escapedToken = $this->Socket->escapeToken($token);
 			$expectedToken = 'My-special-"' . $char . '"-Token';
 
-			$this->assertEquals($escapedToken, $expectedToken, 'Test token escaping for ASCII '.ord($char));
+			$this->assertEquals($escapedToken, $expectedToken, 'Test token escaping for ASCII ' . ord($char));
 		}
 
 		$token = 'Extreme-:Token-	-"@-test';

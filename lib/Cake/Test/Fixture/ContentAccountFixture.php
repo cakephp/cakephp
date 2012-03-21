@@ -30,6 +30,7 @@ class ContentAccountFixture extends CakeTestFixture {
  * @var string 'Aco'
  */
 	public $name = 'ContentAccount';
+
 	public $table = 'ContentAccounts';
 
 /**
@@ -39,8 +40,8 @@ class ContentAccountFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'iContentAccountsId' => array('type' => 'integer', 'key' => 'primary'),
-		'iContentId'		=> array('type' => 'integer'),
-		'iAccountId'		=> array('type' => 'integer')
+		'iContentId' => array('type' => 'integer'),
+		'iAccountId' => array('type' => 'integer')
 	);
 
 /**

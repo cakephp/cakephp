@@ -17,8 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TestsAppsPostsController extends AppController {
+
 	public $name = 'TestsAppsPosts';
+
 	public $uses = array('Post');
+
 	public $viewPath = 'TestsApps';
 
 	public function add() {

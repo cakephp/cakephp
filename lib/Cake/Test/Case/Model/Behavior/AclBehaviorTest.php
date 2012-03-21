@@ -27,10 +27,10 @@ App::uses('DbAcl', 'Model');
 
 
 /**
-* Test Person class - self joined model
-*
-* @package       Cake.Test.Case.Model.Behavior
-*/
+ * Test Person class - self joined model
+ *
+ * @package       Cake.Test.Case.Model.Behavior
+ */
 class AclPerson extends CakeTestModel {
 
 /**
@@ -98,13 +98,14 @@ class AclPerson extends CakeTestModel {
 			return array('AclPerson' => array('id' => $motherId));
 		}
 	}
+
 }
 
 /**
-* AclUser class
-*
-* @package       Cake.Test.Case.Model.Behavior
-*/
+ * AclUser class
+ *
+ * @package       Cake.Test.Case.Model.Behavior
+ */
 class AclUser extends CakeTestModel {
 
 /**
@@ -135,13 +136,14 @@ class AclUser extends CakeTestModel {
 	public function parentNode() {
 		return null;
 	}
+
 }
 
 /**
-* AclPost class
-*
-* @package       Cake.Test.Case.Model.Behavior
-*/
+ * AclPost class
+ *
+ * @package       Cake.Test.Case.Model.Behavior
+ */
 class AclPost extends CakeTestModel {
 
 /**
@@ -172,13 +174,14 @@ class AclPost extends CakeTestModel {
 	public function parentNode() {
 		return null;
 	}
+
 }
 
 /**
-* AclBehaviorTest class
-*
-* @package       Cake.Test.Case.Model.Behavior
-*/
+ * AclBehaviorTest class
+ *
+ * @package       Cake.Test.Case.Model.Behavior
+ */
 class AclBehaviorTest extends CakeTestCase {
 
 /**
@@ -342,7 +345,7 @@ class AclBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result['Aro']['parent_id'], 7);
 
 		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8), 'Aro');
-		$this->assertEquals(sizeof($node), 2);
+		$this->assertEquals(count($node), 2);
 		$this->assertEquals($node[0]['Aro']['parent_id'], 7);
 		$this->assertEquals($node[1]['Aro']['parent_id'], null);
 	}
@@ -361,7 +364,6 @@ class AclBehaviorTest extends CakeTestCase {
 			)
 		);
 		$this->Aro->save($aroData);
-
 
 		$acoData = array(
 			'Aco' => array(

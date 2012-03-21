@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -28,6 +27,7 @@
  * @package       Cake.Test.Fixture
  */
 class TranslateWithPrefixFixture extends CakeTestFixture {
+
 /**
  * name property
  *

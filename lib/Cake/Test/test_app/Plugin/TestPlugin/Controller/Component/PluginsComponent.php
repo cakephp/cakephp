@@ -17,5 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class PluginsComponent extends Component {
+
 	public $components = array('TestPlugin.Other');
+
 }

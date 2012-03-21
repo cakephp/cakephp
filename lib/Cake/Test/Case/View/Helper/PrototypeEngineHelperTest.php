@@ -22,6 +22,7 @@ App::uses('JsHelper', 'View/Helper');
 App::uses('PrototypeEngineHelper', 'View/Helper');
 
 class PrototypeEngineHelperTest extends CakeTestCase {
+
 /**
  * setUp
  *

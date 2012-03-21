@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ################################################################################
 #
 # Bake is a shell script for running CakePHP bake script

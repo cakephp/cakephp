@@ -23,8 +23,11 @@ App::uses('DatabaseSession', 'Model/Datasource/Session');
 class_exists('CakeSession');
 
 class SessionTestModel extends Model {
+
 	public $name = 'SessionTestModel';
+
 	public $useTable = 'sessions';
+
 }
 
 /**

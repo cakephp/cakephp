@@ -68,7 +68,6 @@ class NumberHelperTest extends CakeTestCase {
 		unset($this->View);
 	}
 
-
 /**
  * test CakeNumber class methods are called correctly
  */

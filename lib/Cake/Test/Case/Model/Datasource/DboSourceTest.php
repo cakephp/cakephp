@@ -27,6 +27,7 @@ class MockPDO extends PDO {
 
 	public function __construct() {
 	}
+
 }
 
 class MockDataSource extends DataSource {
@@ -49,6 +50,7 @@ class DboTestSource extends DboSource {
 	public function setConnection($conn) {
 		$this->_connection = $conn;
 	}
+
 }
 
 /**
@@ -108,7 +110,6 @@ class DboSourceTest extends CakeTestCase {
 		parent::tearDown();
 		unset($this->Model);
 	}
-
 
 /**
  * test that booleans and null make logical condition strings.
@@ -420,7 +421,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEquals($data, $expected);
 	}
 
-
 /**
  * testMagicMethodQuerying method
  *
@@ -491,7 +491,6 @@ class DboSourceTest extends CakeTestCase {
 	public function testDirectCallThrowsException() {
 		$result = $this->db->query('directCall', array(), $this->Model);
 	}
-
 
 /**
  * testValue method
@@ -659,7 +658,6 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('query' => 'Error 1', 'affected' => '', 'numRows' => '', 'took' => '');
 	}
 
-
 /**
  * test getting the query log as an array, setting bind params.
  *
@@ -676,7 +674,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEquals($log['log'][1], $expected);
 	}
 
-
 /**
  * test that query() returns boolean values from operations like CREATE TABLE
  *
@@ -692,7 +689,6 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->query($query);
 		$this->assertTrue($result, 'Query did not return a boolean');
 	}
-
 
 /**
  * test order to generate query order clause for virtual fields
@@ -715,8 +711,6 @@ class DboSourceTest extends CakeTestCase {
 		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
 		$this->assertEquals($expected, $result);
 	}
-
-
 
 /**
  * test the permutations of fullTableName()
@@ -783,7 +777,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
 		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
 	}
-
 
 /**
  * Test that group works without a model

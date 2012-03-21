@@ -353,5 +353,5 @@ class ConfigureTest extends CakeTestCase {
 		$reader = new StdClass();
 		Configure::config('test', $reader);
 	}
-}
 
+}
