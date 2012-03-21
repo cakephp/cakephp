@@ -6662,11 +6662,11 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * testSaveAllDeepEmptyHasManyHasMany method
+ * testSaveAllDeepOrderHasManyHasMany method
  *
  * return @void
  */
-	public function testSaveAllDeepEmptyHasManyHasMany() {
+	public function testSaveAllDeepOrderHasManyHasMany() {
 		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
 		$TestModel = new Article();
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
@@ -6685,7 +6685,8 @@ class ModelWriteTest extends BaseModelTest {
 						array('attachment' => 'attachment should be created with comment_id'),
 						array('attachment' => 'comment should be created with article_id'),
 					),
-					'comment' => 'after associated data'
+					'comment' => 'after associated data',
+					'user_id' => 1
 				)
 			)
 		), array('deep' => true));
@@ -6695,6 +6696,24 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEquals(2, $result['Comment']['article_id']);
 		$this->assertEquals(2, count($result['Attachment']));
+	}
+
+/**
+ * testSaveAllDeepEmptyHasManyHasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepEmptyHasManyHasMany() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
 
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 3, 'title' => 'Comment has no data'),
