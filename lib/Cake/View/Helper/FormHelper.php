@@ -1360,6 +1360,7 @@ class FormHelper extends AppHelper {
 			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
+		unset($attributes['empty']);
 
 		$legend = false;
 		if (isset($attributes['legend'])) {
