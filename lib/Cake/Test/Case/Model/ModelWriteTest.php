@@ -6567,7 +6567,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->truncate(new Comment());
 
 		$result = $TestModel->saveAll(array(
-			'Article' => array('id' => 2, 'title' => 'I will not save'),
+			'Article' => array('id' => 2, 'title' => 'The title'),
 			'Comment' => array(
 				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
 				array(
@@ -6613,7 +6613,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllDeepHasManyHasMany() {
 		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
 		$TestModel = new Article();
-		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
 		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
 		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
 
@@ -6622,7 +6622,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->truncate(new Attachment());
 
 		$result = $TestModel->saveAll(array(
-			'Article' => array('id' => 2, 'title' => 'I will not save'),
+			'Article' => array('id' => 2, 'title' => 'The title'),
 			'Comment' => array(
 				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
 				array(
@@ -6659,6 +6659,60 @@ class ModelWriteTest extends BaseModelTest {
 			array('Attachment' => array('attachment' => 'second deep attachment', 'comment_id' => 2)),
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSaveAllDeepEmptyHasManyHasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepEmptyHasManyHasMany() {
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'Comment has its data after Attachment'),
+			'Comment' => array(
+				array(
+					'Attachment' => array(
+						array('attachment' => 'attachment should be created with comment_id'),
+						array('attachment' => 'comment should be created with article_id'),
+					),
+					'comment' => 'after associated data'
+				)
+			)
+		), array('deep' => true));
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.article_id' => 2),
+		));
+
+		$this->assertEquals(2, $result['Comment']['article_id']);
+		$this->assertEquals(2, count($result['Attachment']));
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 3, 'title' => 'Comment has no data'),
+			'Comment' => array(
+				array(
+					'Attachment' => array(
+						array('attachment' => 'attachment should be created with comment_id'),
+						array('attachment' => 'comment should be created with article_id'),
+					),
+				)
+			)
+		), array('deep' => true));
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.article_id' => 3),
+		));
+
+		$this->assertEquals(3, $result['Comment']['article_id']);
+		$this->assertEquals(2, count($result['Attachment']));
 	}
 
 /**
