@@ -1353,6 +1353,14 @@ class FormHelper extends AppHelper {
 	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 
+		$showEmpty = $this->_extractOption('empty', $attributes);
+		if ($showEmpty) {
+			$showEmpty = ($showEmpty === true) ? __('empty') : $showEmpty;
+			$options = array_reverse($options, true);
+			$options[''] = $showEmpty;
+			$options = array_reverse($options, true);
+		}
+
 		$legend = false;
 		if (isset($attributes['legend'])) {
 			$legend = $attributes['legend'];
