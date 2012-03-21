@@ -2042,6 +2042,7 @@ class Model extends Object implements CakeEventListener {
 			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
 				return $validates;
 			}
+			$options['validate'] = true;
 		}
 
 		if ($options['atomic']) {
@@ -2172,6 +2173,7 @@ class Model extends Object implements CakeEventListener {
 			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
 				return $validates;
 			}
+			$options['validate'] = true;
 		}
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
@@ -2193,10 +2195,11 @@ class Model extends Object implements CakeEventListener {
 					$validates = ($saved === true || (is_array($saved) && !in_array(false, $saved, true)));
 				}
 				if ($validates) {
-					if (!empty($data[$this->alias])) {
-						$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
+					$key = $this->belongsTo[$association]['foreignKey'];
+					if (isset($data[$this->alias])) {
+						$data[$this->alias][$key] = $this->{$association}->id;
 					} else {
-						$data[$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
+						$data = array_merge(array($key => $this->{$association}->id), $data, array($key => $this->{$association}->id));
 					}
 				} else {
 					$validationErrors[$association] = $this->{$association}->validationErrors;
@@ -2216,9 +2219,14 @@ class Model extends Object implements CakeEventListener {
 			}
 			if (isset($associations[$association])) {
 				$type = $associations[$association];
+				$key = $this->{$type}[$association]['foreignKey'];
 				switch ($type) {
 					case 'hasOne':
-						$values[$this->{$type}[$association]['foreignKey']] = $this->id;
+						if (isset($values[$association])) {
+							$values[$association][$key] = $this->id;
+						} else {
+							$values = array_merge(array($key => $this->id), $values, array($key => $this->id));
+						}
 						$validates = $this->{$association}->create(null) !== null;
 						$saved = false;
 						if ($validates) {
@@ -2236,7 +2244,11 @@ class Model extends Object implements CakeEventListener {
 					break;
 					case 'hasMany':
 						foreach ($values as $i => $value) {
-							$values[$i][$this->{$type}[$association]['foreignKey']] = $this->id;
+							if (isset($values[$i][$association])) {
+								$values[$i][$association][$key] = $this->id;
+							} else {
+								$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
+							}
 						}
 						$_return = $this->{$association}->saveMany($values, array_merge($options, array('atomic' => false)));
 						if (in_array(false, $_return, true)) {

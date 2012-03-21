@@ -6566,7 +6566,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->truncate(new Comment());
 
 		$result = $TestModel->saveAll(array(
-			'Article' => array('id' => 2, 'title' => 'I will not save'),
+			'Article' => array('id' => 2, 'title' => 'The title'),
 			'Comment' => array(
 				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
 				array(
@@ -6604,4 +6604,181 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testSaveAllDeepHasManyhasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepHasManyHasMany() {
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'The title'),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array(
+					'comment' => 'hasmany', 'published' => 'Y', 'user_id' => 5,
+					'Attachment' => array(
+						array('attachment' => 'first deep attachment'),
+						array('attachment' => 'second deep attachment'),
+					)
+				)
+			)
+		), array('deep' => true));
+
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.comment' => 'hasmany'),
+			'fields' => array('id', 'comment', 'published', 'user_id'),
+			'recursive' => -1
+		));
+		$expected = array(
+			'Comment' => array(
+				'id' => 2,
+				'comment' => 'hasmany',
+				'published' => 'Y',
+				'user_id' => 5
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->Comment->Attachment->find('all', array(
+			'fields' => array('attachment', 'comment_id'),
+			'order' => array('Attachment.id' => 'ASC')
+		));
+		$expected = array(
+			array('Attachment' => array('attachment' => 'first deep attachment', 'comment_id' => 2)),
+			array('Attachment' => array('attachment' => 'second deep attachment', 'comment_id' => 2)),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSaveAllDeepOrderHasManyHasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepOrderHasManyHasMany() {
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2, 'title' => 'Comment has its data after Attachment'),
+			'Comment' => array(
+				array(
+					'Attachment' => array(
+						array('attachment' => 'attachment should be created with comment_id'),
+						array('attachment' => 'comment should be created with article_id'),
+					),
+					'comment' => 'after associated data',
+					'user_id' => 1
+				)
+			)
+		), array('deep' => true));
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.article_id' => 2),
+		));
+
+		$this->assertEquals(2, $result['Comment']['article_id']);
+		$this->assertEquals(2, count($result['Attachment']));
+	}
+
+/**
+ * testSaveAllDeepEmptyHasManyHasMany method
+ *
+ * return @void
+ */
+	public function testSaveAllDeepEmptyHasManyHasMany() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
+		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')), false);
+		$TestModel->Comment->bindModel(array('hasMany' => array('Attachment')), false);
+
+		$this->db->truncate($TestModel);
+		$this->db->truncate(new Comment());
+		$this->db->truncate(new Attachment());
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 3, 'title' => 'Comment has no data'),
+			'Comment' => array(
+				array(
+					'Attachment' => array(
+						array('attachment' => 'attachment should be created with comment_id'),
+						array('attachment' => 'comment should be created with article_id'),
+					),
+				)
+			)
+		), array('deep' => true));
+		$result = $TestModel->Comment->find('first', array(
+			'conditions' => array('Comment.article_id' => 3),
+		));
+
+		$this->assertEquals(3, $result['Comment']['article_id']);
+		$this->assertEquals(2, count($result['Attachment']));
+	}
+
+/**
+ * testUpdateAllBoolean
+ *
+ * return @void
+ */
+	public function testUpdateAllBoolean() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+		$result = $TestModel->updateAll(array('published' => true));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('first', array('fields' => array('id', 'published')));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * testUpdateAllBooleanConditions
+ *
+ * return @void
+ */
+	public function testUpdateAllBooleanConditions() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+
+		$result = $TestModel->updateAll(array('published' => true), array('Item.id' => 1));
+		$this->assertTrue($result);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'published'),
+			'conditions' => array('Item.id' => 1)));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * testUpdateBoolean
+ *
+ * return @void
+ */
+	public function testUpdateBoolean() {
+		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
+		$TestModel = new Item();
+
+		$result = $TestModel->save(array('published' => true, 'id' => 1));
+		$this->assertTrue((boolean)$result);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'published'),
+			'conditions' => array('Item.id' => 1)));
+		$this->assertEquals(true, $result['Item']['published']);
+	}
 }

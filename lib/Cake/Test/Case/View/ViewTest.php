@@ -178,19 +178,6 @@ class TestView extends View {
 	}
 
 /**
- * _render wrapper for testing (temporary).
- *
- * @param string $___viewFn
- * @param string $___dataForView
- * @param string $loadHelpers
- * @param string $cached
- * @return void
- */
-	public function render_($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
-		return $this->_render($___viewFn, $___dataForView, $loadHelpers, $cached);
-	}
-
-/**
  * Test only function to return instance scripts.
  *
  * @return array Scripts
@@ -774,7 +761,7 @@ class ViewTest extends CakeTestCase {
  *
  * @return void
  */
-	public function test__get() {
+	public function testMagicGet() {
 		$View = new View($this->PostsController);
 		$View->loadHelper('Html');
 		$this->assertInstanceOf('HtmlHelper', $View->Html);
