@@ -25,6 +25,7 @@ App::uses('String', 'Utility');
 App::uses('Hash', 'Utility');
 App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
+App::uses('ModelValidator', 'Model');
 App::uses('ConnectionManager', 'Model');
 App::uses('Xml', 'Utility');
 App::uses('CakeEvent', 'Event');
@@ -619,6 +620,13 @@ class Model extends Object implements CakeEventListener {
 	protected $_eventManager = null;
 
 /**
+ * Instance of the ModelValidator
+ *
+ * @var ModelValidator
+ */
+	protected $_validator = null;
+
+/**
  * Constructor. Binds the model's database table to the object.
  *
  * If `$id` is an array it can be used to pass several options into the model.
@@ -723,6 +731,7 @@ class Model extends Object implements CakeEventListener {
 
 		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
+		$this->setValidator();
 	}
 
 /**
@@ -969,9 +978,8 @@ class Model extends Object implements CakeEventListener {
 						$value = array();
 
 						if (strpos($assoc, '.') !== false) {
-							list($plugin, $assoc) = pluginSplit($assoc);
-							$this->{$type}[$assoc] = array('className' => $plugin . '.' . $assoc);
-						} else {
+							list($plugin, $assoc) = pluginSplit($assoc, true);
+							$this->{$type}[$assoc] = array('className' => $plugin . $assoc);						} else {
 							$this->{$type}[$assoc] = $value;
 						}
 					}
@@ -1445,7 +1453,7 @@ class Model extends Object implements CakeEventListener {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
-		$this->validationErrors = array();
+		$this->validationErrors = $this->getValidator()->validationErrors = array();
 
 		if ($data !== null && $data !== false) {
 			foreach ($this->schema() as $field => $properties) {
@@ -2032,7 +2040,7 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$options = array_merge(array('validate' => 'first', 'atomic' => true, 'deep' => false), $options);
-		$this->validationErrors = $validationErrors = array();
+		$validationErrors = array();
 
 		if (empty($data) && $options['validate'] !== false) {
 			$result = $this->save($data, $options);
@@ -2108,30 +2116,7 @@ class Model extends Object implements CakeEventListener {
  *    depending on whether each record validated successfully.
  */
 	public function validateMany($data, $options = array()) {
-		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
-		$this->validationErrors = $validationErrors = $return = array();
-		foreach ($data as $key => $record) {
-			if ($options['deep']) {
-				$validates = $this->validateAssociated($record, $options);
-			} else {
-				$validates = $this->create($record) && $this->validates($options);
-			}
-			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
-				$validationErrors[$key] = $this->validationErrors;
-				$validates = false;
-			} else {
-				$validates = true;
-			}
-			$return[$key] = $validates;
-		}
-		$this->validationErrors = $validationErrors;
-		if (!$options['atomic']) {
-			return $return;
-		}
-		if (empty($this->validationErrors)) {
-			return true;
-		}
-		return false;
+		return $this->getValidator()->validateMany($data, $options);
 	}
 
 /**
@@ -2166,7 +2151,7 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$options = array_merge(array('validate' => 'first', 'atomic' => true, 'deep' => false), $options);
-		$this->validationErrors = $validationErrors = array();
+		$validationErrors = array();
 
 		if (empty($data) && $options['validate'] !== false) {
 			$result = $this->save($data, $options);
@@ -2306,53 +2291,7 @@ class Model extends Object implements CakeEventListener {
  *    depending on whether each record validated successfully.
  */
 	public function validateAssociated($data, $options = array()) {
-		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
-		$this->validationErrors = $validationErrors = $return = array();
-		if (!($this->create($data) && $this->validates($options))) {
-			$validationErrors[$this->alias] = $this->validationErrors;
-			$return[$this->alias] = false;
-		} else {
-			$return[$this->alias] = true;
-		}
-		$associations = $this->getAssociated();
-		foreach ($data as $association => $values) {
-			$validates = true;
-			if (isset($associations[$association])) {
-				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
-					if ($options['deep']) {
-						$validates = $this->{$association}->validateAssociated($values, $options);
-					} else {
-						$validates = $this->{$association}->create($values) !== null && $this->{$association}->validates($options);
-					}
-					if (is_array($validates)) {
-						if (in_array(false, $validates, true)) {
-							$validates = false;
-						} else {
-							$validates = true;
-						}
-					}
-					$return[$association] = $validates;
-				} elseif ($associations[$association] === 'hasMany') {
-					$validates = $this->{$association}->validateMany($values, $options);
-					$return[$association] = $validates;
-				}
-				if (!$validates || (is_array($validates) && in_array(false, $validates, true))) {
-					$validationErrors[$association] = $this->{$association}->validationErrors;
-				}
-			}
-		}
-
-		$this->validationErrors = $validationErrors;
-		if (isset($validationErrors[$this->alias])) {
-			$this->validationErrors = $validationErrors[$this->alias];
-		}
-		if (!$options['atomic']) {
-			return $return;
-		}
-		if ($return[$this->alias] === false || !empty($this->validationErrors)) {
-			return false;
-		}
-		return true;
+		return $this->getValidator()->validateAssociated($data, $options);
 	}
 
 /**
@@ -3039,14 +2978,7 @@ class Model extends Object implements CakeEventListener {
  * @return boolean True if there are no errors
  */
 	public function validates($options = array()) {
-		$errors = $this->invalidFields($options);
-		if (empty($errors) && $errors !== false) {
-			$errors = $this->_validateWithModels($options);
-		}
-		if (is_array($errors)) {
-			return count($errors) === 0;
-		}
-		return $errors;
+		return $this->getValidator()->validates($options);
 	}
 
 /**
@@ -3057,203 +2989,7 @@ class Model extends Object implements CakeEventListener {
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {
-		$event = new CakeEvent('Model.beforeValidate', $this, array($options));
-		list($event->break, $event->breakOn) = array(true, false);
-		$this->getEventManager()->dispatch($event);
-		if ($event->isStopped()) {
-			return false;
-		}
-
-		if (!isset($this->validate) || empty($this->validate)) {
-			return $this->validationErrors;
-		}
-
-		$data = $this->data;
-		$methods = array_map('strtolower', get_class_methods($this));
-		$behaviorMethods = array_keys($this->Behaviors->methods());
-
-		if (isset($data[$this->alias])) {
-			$data = $data[$this->alias];
-		} elseif (!is_array($data)) {
-			$data = array();
-		}
-
-		$exists = null;
-
-		$_validate = $this->validate;
-		$whitelist = $this->whitelist;
-
-		if (!empty($options['fieldList'])) {
-			if (!empty($options['fieldList'][$this->alias]) && is_array($options['fieldList'][$this->alias])) {
-				$whitelist = $options['fieldList'][$this->alias];
-			} else {
-				$whitelist = $options['fieldList'];
-			}
-		}
-
-		if (!empty($whitelist)) {
-			$validate = array();
-			foreach ((array)$whitelist as $f) {
-				if (!empty($this->validate[$f])) {
-					$validate[$f] = $this->validate[$f];
-				}
-			}
-			$this->validate = $validate;
-		}
-
-		$validationDomain = $this->validationDomain;
-		if (empty($validationDomain)) {
-			$validationDomain = 'default';
-		}
-
-		foreach ($this->validate as $fieldName => $ruleSet) {
-			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
-				$ruleSet = array($ruleSet);
-			}
-			$default = array(
-				'allowEmpty' => null,
-				'required' => null,
-				'rule' => 'blank',
-				'last' => true,
-				'on' => null
-			);
-
-			foreach ($ruleSet as $index => $validator) {
-				if (!is_array($validator)) {
-					$validator = array('rule' => $validator);
-				}
-				$validator = array_merge($default, $validator);
-
-				if (!empty($validator['on']) || in_array($validator['required'], array('create', 'update'), true)) {
-					if ($exists === null) {
-						$exists = $this->exists();
-					}
-					if ($validator['on'] == 'create' && $exists || $validator['on'] == 'update' && !$exists) {
-						continue;
-					}
-					if ($validator['required'] === 'create' && !$exists || $validator['required'] === 'update' && $exists) {
-						$validator['required'] = true;
-					}
-				}
-
-				$valid = true;
-				$requiredFail = (
-					(!isset($data[$fieldName]) && $validator['required'] === true) ||
-					(
-						isset($data[$fieldName]) && (empty($data[$fieldName]) &&
-						!is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false
-					)
-				);
-
-				if (!$requiredFail && array_key_exists($fieldName, $data)) {
-					if (empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
-						break;
-					}
-					if (is_array($validator['rule'])) {
-						$rule = $validator['rule'][0];
-						unset($validator['rule'][0]);
-						$ruleParams = array_merge(array($data[$fieldName]), array_values($validator['rule']));
-					} else {
-						$rule = $validator['rule'];
-						$ruleParams = array($data[$fieldName]);
-					}
-
-					if (in_array(strtolower($rule), $methods)) {
-						$ruleParams[] = $validator;
-						$ruleParams[0] = array($fieldName => $ruleParams[0]);
-						$valid = $this->dispatchMethod($rule, $ruleParams);
-					} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
-						$ruleParams[] = $validator;
-						$ruleParams[0] = array($fieldName => $ruleParams[0]);
-						$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
-					} elseif (method_exists('Validation', $rule)) {
-						$valid = call_user_func_array(array('Validation', $rule), $ruleParams);
-					} elseif (!is_array($validator['rule'])) {
-						$valid = preg_match($rule, $data[$fieldName]);
-					} elseif (Configure::read('debug') > 0) {
-						trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $rule, $fieldName), E_USER_WARNING);
-					}
-				}
-
-				if ($requiredFail || !$valid || (is_string($valid) && strlen($valid) > 0)) {
-					if (is_string($valid)) {
-						$message = $valid;
-					} elseif (isset($validator['message'])) {
-						$args = null;
-						if (is_array($validator['message'])) {
-							$message = $validator['message'][0];
-							$args = array_slice($validator['message'], 1);
-						} else {
-							$message = $validator['message'];
-						}
-						if (is_array($validator['rule']) && $args === null) {
-							$args = array_slice($ruleSet[$index]['rule'], 1);
-						}
-						if (!empty($args)) {
-							foreach ($args as $k => $arg) {
-								$args[$k] = __d($validationDomain, $arg);
-							}
-						}
-						$message = __d($validationDomain, $message, $args);
-					} elseif (is_string($index)) {
-						if (is_array($validator['rule'])) {
-							$args = array_slice($ruleSet[$index]['rule'], 1);
-							$message = __d($validationDomain, $index, $args);
-						} else {
-							$message = __d($validationDomain, $index);
-						}
-					} elseif (!$requiredFail && is_numeric($index) && count($ruleSet) > 1) {
-						$message = $index + 1;
-					} else {
-						$message = __d('cake_dev', 'This field cannot be left blank');
-					}
-
-					$this->invalidate($fieldName, $message);
-					if ($validator['last']) {
-						break;
-					}
-				}
-			}
-		}
-		$this->validate = $_validate;
-		return $this->validationErrors;
-	}
-
-/**
- * Runs validation for hasAndBelongsToMany associations that have 'with' keys
- * set. And data in the set() data set.
- *
- * @param array $options Array of options to use on Validation of with models
- * @return boolean Failure of validation on with models.
- * @see Model::validates()
- */
-	protected function _validateWithModels($options) {
-		$valid = true;
-		foreach ($this->hasAndBelongsToMany as $assoc => $association) {
-			if (empty($association['with']) || !isset($this->data[$assoc])) {
-				continue;
-			}
-			list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
-			$data = $this->data[$assoc];
-
-			$newData = array();
-			foreach ((array)$data as $row) {
-				if (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
-					$newData[] = $row;
-				} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
-					$newData[] = $row[$join];
-				}
-			}
-			if (empty($newData)) {
-				continue;
-			}
-			foreach ($newData as $data) {
-				$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $this->id;
-				$this->{$join}->create($data);
-				$valid = ($valid && $this->{$join}->validates($options));
-			}
-		}
-		return $valid;
+		return $this->getValidator()->invalidFields($options);
 	}
 
 /**
@@ -3266,10 +3002,7 @@ class Model extends Object implements CakeEventListener {
  * @return void
  */
 	public function invalidate($field, $value = true) {
-		if (!is_array($this->validationErrors)) {
-			$this->validationErrors = array();
-		}
-		$this->validationErrors[$field][] = $value;
+		$this->getValidator()->invalidate($field, $value);
 	}
 
 /**
@@ -3614,6 +3347,80 @@ class Model extends Object implements CakeEventListener {
 		} else {
 			//Will use for query cache deleting
 		}
+	}
+
+/**
+ * Creates a ModelValidator instance from Model::validatorClass
+ *
+ * @return void
+ * @throws MissingValidatorException
+ * @throws InvalidValidatorException
+ */
+	public function setValidator($validator = null) {
+		if (is_object($validator) && $this->_isValidValidator($validator)) {
+			$this->_validator = $validator;
+			return $this;
+		}
+
+		if (is_null($validator) && is_null($this->validatorClass)) {
+			$this->validatorClass = ModelValidator::DEFAULT_VALIDATOR;
+		} elseif (is_string($validator)) {
+			$this->validatorClass = $validator;
+		}
+
+		if (!$this->_loadValidator($this->validatorClass)) {
+			throw new MissingValidatorException(array($this->validatorClass));
+		}
+
+		if (!$this->_isValidValidator($this->_validator)) {
+			$this->_validator = null;
+			throw new InvalidValidatorException(array($this->validatorClass, ModelValidator::DEFAULT_VALIDATOR));
+		}
+
+		return $this;
+	}
+
+/**
+ * Returns the currently set ModelValidator instance
+ *
+ * @return ModelValidator
+ */
+	public function getValidator() {
+		return $this->_validator;
+	}
+
+/**
+ * Tries to load a validator and returns true if the class could be found, false otherwise.
+ *
+ * @param string $validatorClass The class to be loaded
+ * @return boolean True if the class was found, false otherwise
+ */
+	protected function _loadValidator($validatorClass) {
+		list($plugin, $class) = pluginSplit($validatorClass, true);
+		unset($validatorClass);
+
+		$location = $plugin . 'Model';
+		App::uses($class, $location);
+
+		if (!class_exists($class, true)) {
+			return false;
+		}
+		$this->_validator = new $class($this);
+
+		return true;
+	}
+
+/**
+ * Checks if the passed in validator instance is either an instance or subclass of ModelValidator.
+ *
+ * @param $validator
+ * @return boolean True if the instance is valid, false otherwise
+ */
+	protected function _isValidValidator($validator) {
+		if (!($validator instanceof ModelValidator) && !is_subclass_of($validator, ModelValidator::DEFAULT_VALIDATOR)) {
+			return false;
+		}
+		return true;
 	}
 
 }

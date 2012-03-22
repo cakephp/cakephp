@@ -387,7 +387,7 @@ class AnotherTestController extends ControllerTestAppController {
 
 /**
  * merge parent
- * 
+ *
  * @var string
  */
 	protected $_mergeParent = 'ControllerTestAppController';

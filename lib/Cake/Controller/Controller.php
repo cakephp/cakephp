@@ -528,7 +528,7 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Merge components, helpers, and uses vars from 
+ * Merge components, helpers, and uses vars from
  * Controller::$_mergeParent and PluginAppController.
  *
  * @return void

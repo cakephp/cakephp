@@ -48,7 +48,8 @@ class ModelValidationTest extends BaseModelTest {
 				'on' => null,
 				'last' => true,
 				'allowEmpty' => false,
-				'required' => true
+				'required' => true,
+				'message' => null
 			),
 			'or' => true,
 			'ignoreOnSame' => 'id'
@@ -84,7 +85,8 @@ class ModelValidationTest extends BaseModelTest {
 				'on' => null,
 				'last' => true,
 				'allowEmpty' => false,
-				'required' => true
+				'required' => true,
+				'message' => null
 			),
 			'six' => 6
 		);
@@ -110,7 +112,8 @@ class ModelValidationTest extends BaseModelTest {
 				'on' => null,
 				'last' => true,
 				'allowEmpty' => false,
-				'required' => true
+				'required' => true,
+				'message' => null
 			)
 		);
 		$this->assertEquals($expected, $TestModel->validatorParams);
@@ -346,6 +349,7 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->create($data);
 		$this->assertEquals($data, $result);
 		$result = $TestModel->validates();
+
 		$this->assertTrue($result);
 
 		$data = array('TestValidate' => array(
