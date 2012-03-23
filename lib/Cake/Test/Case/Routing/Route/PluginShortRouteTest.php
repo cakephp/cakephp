@@ -47,9 +47,9 @@ class PluginShortRouteTestCase extends  CakeTestCase {
 		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
 
 		$result = $route->parse('/foo');
-		$this->assertEquals($result['plugin'], 'foo');
-		$this->assertEquals($result['controller'], 'foo');
-		$this->assertEquals($result['action'], 'index');
+		$this->assertEquals('foo', $result['plugin']);
+		$this->assertEquals('foo', $result['controller']);
+		$this->assertEquals('index', $result['action']);
 
 		$result = $route->parse('/wrong');
 		$this->assertFalse($result, 'Wrong plugin name matched %s');
@@ -67,6 +67,6 @@ class PluginShortRouteTestCase extends  CakeTestCase {
 		$this->assertFalse($result, 'plugin controller mismatch was converted. %s');
 
 		$result = $route->match(array('plugin' => 'foo', 'controller' => 'foo', 'action' => 'index'));
-		$this->assertEquals($result, '/foo');
+		$this->assertEquals('/foo', $result);
 	}
 }

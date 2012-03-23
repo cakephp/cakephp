@@ -52,27 +52,27 @@ class MootoolsEngineHelperTest extends CakeTestCase {
  */
 	public function testSelector() {
 		$result = $this->Moo->get('#content');
-		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo, $result);
 		$this->assertEquals($this->Moo->selection, '$("content")');
 
 		$result = $this->Moo->get('a .remove');
-		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo, $result);
 		$this->assertEquals($this->Moo->selection, '$$("a .remove")');
 
 		$result = $this->Moo->get('document');
-		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo, $result);
 		$this->assertEquals($this->Moo->selection, "$(document)");
 
 		$result = $this->Moo->get('window');
-		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo, $result);
 		$this->assertEquals($this->Moo->selection, "$(window)");
 
 		$result = $this->Moo->get('ul');
-		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo, $result);
 		$this->assertEquals($this->Moo->selection, '$$("ul")');
 
 		$result = $this->Moo->get('#some_long-id.class');
-		$this->assertEquals($result, $this->Moo);
+		$this->assertEquals($this->Moo, $result);
 		$this->assertEquals($this->Moo->selection, '$$("#some_long-id.class")');
 	}
 

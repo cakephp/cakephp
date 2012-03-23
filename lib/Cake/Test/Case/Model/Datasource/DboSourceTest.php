@@ -118,22 +118,22 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testBooleanNullConditionsParsing() {
 		$result = $this->testDb->conditions(true);
-		$this->assertEquals($result, ' WHERE 1 = 1', 'true conditions failed %s');
+		$this->assertEquals(' WHERE 1 = 1', $result, 'true conditions failed %s');
 
 		$result = $this->testDb->conditions(false);
-		$this->assertEquals($result, ' WHERE 0 = 1', 'false conditions failed %s');
+		$this->assertEquals(' WHERE 0 = 1', $result, 'false conditions failed %s');
 
 		$result = $this->testDb->conditions(null);
-		$this->assertEquals($result, ' WHERE 1 = 1', 'null conditions failed %s');
+		$this->assertEquals(' WHERE 1 = 1', $result, 'null conditions failed %s');
 
 		$result = $this->testDb->conditions(array());
-		$this->assertEquals($result, ' WHERE 1 = 1', 'array() conditions failed %s');
+		$this->assertEquals(' WHERE 1 = 1', $result, 'array() conditions failed %s');
 
 		$result = $this->testDb->conditions('');
-		$this->assertEquals($result, ' WHERE 1 = 1', '"" conditions failed %s');
+		$this->assertEquals(' WHERE 1 = 1', $result, '"" conditions failed %s');
 
 		$result = $this->testDb->conditions(' ', '"  " conditions failed %s');
-		$this->assertEquals($result, ' WHERE 1 = 1');
+		$this->assertEquals(' WHERE 1 = 1', $result);
 	}
 
 /**
@@ -175,7 +175,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Topic', 'hasOne');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array('Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
@@ -198,7 +198,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'User2', 'belongsTo');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array(
 			'Article2' => array(
@@ -213,7 +213,7 @@ class DboSourceTest extends CakeTestCase {
 			'Comment' => array()
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array(
 			'Article' => array(
@@ -246,7 +246,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array(
 			'Article' => array(
@@ -291,7 +291,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array(
 			'Article' => array(
@@ -346,7 +346,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Comment', 'hasMany');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array(
 			'Article' => array(
@@ -387,7 +387,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 
 		$data = array(
 			'Article' => array(
@@ -418,7 +418,7 @@ class DboSourceTest extends CakeTestCase {
 			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasOne');
-		$this->assertEquals($data, $expected);
+		$this->assertEquals($expected, $data);
 	}
 
 /**
@@ -502,7 +502,7 @@ class DboSourceTest extends CakeTestCase {
 			$this->markTestSkipped('Cannot run this test with SqlServer');
 		}
 		$result = $this->db->value('{$__cakeForeignKey__$}');
-		$this->assertEquals($result, '{$__cakeForeignKey__$}');
+		$this->assertEquals('{$__cakeForeignKey__$}', $result);
 
 		$result = $this->db->value(array('first', 2, 'third'));
 		$expected = array('\'first\'', 2, '\'third\'');
@@ -517,7 +517,7 @@ class DboSourceTest extends CakeTestCase {
 	public function testReconnect() {
 		$this->testDb->reconnect(array('prefix' => 'foo'));
 		$this->assertTrue($this->testDb->connected);
-		$this->assertEquals($this->testDb->config['prefix'], 'foo');
+		$this->assertEquals('foo', $this->testDb->config['prefix']);
 	}
 
 /**
@@ -587,10 +587,10 @@ class DboSourceTest extends CakeTestCase {
 	public function testCacheMethod() {
 		$this->testDb->cacheMethods = true;
 		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
-		$this->assertEquals($result, 'stuff');
+		$this->assertEquals('stuff', $result);
 
 		$result = $this->testDb->cacheMethod('name', 'some-key');
-		$this->assertEquals($result, 'stuff');
+		$this->assertEquals('stuff', $result);
 
 		$result = $this->testDb->cacheMethod('conditions', 'some-key');
 		$this->assertNull($result);
@@ -600,7 +600,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->testDb->cacheMethods = false;
 		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
-		$this->assertEquals($result, 'stuff');
+		$this->assertEquals('stuff', $result);
 
 		$result = $this->testDb->cacheMethod('name', 'some-key');
 		$this->assertNull($result);
@@ -652,9 +652,9 @@ class DboSourceTest extends CakeTestCase {
 		$log = $this->testDb->getLog();
 		$expected = array('query' => 'Query 1', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
 
-		$this->assertEquals($log['log'][0], $expected);
+		$this->assertEquals($expected, $log['log'][0]);
 		$expected = array('query' => 'Query 2', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEquals($log['log'][1], $expected);
+		$this->assertEquals($expected, $log['log'][1]);
 		$expected = array('query' => 'Error 1', 'affected' => '', 'numRows' => '', 'took' => '');
 	}
 
@@ -669,9 +669,9 @@ class DboSourceTest extends CakeTestCase {
 
 		$log = $this->testDb->getLog();
 		$expected = array('query' => 'Query 1', 'params' => array(1,2,'abc'), 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEquals($log['log'][0], $expected);
+		$this->assertEquals($expected, $log['log'][0]);
 		$expected = array('query' => 'Query 2', 'params' => array('field1' => 1, 'field2' => 'abc'), 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEquals($log['log'][1], $expected);
+		$this->assertEquals($expected, $log['log'][1]);
 	}
 
 /**
@@ -720,16 +720,16 @@ class DboSourceTest extends CakeTestCase {
 	public function testFullTablePermutations() {
 		$Article = ClassRegistry::init('Article');
 		$result = $this->testDb->fullTableName($Article, false, false);
-		$this->assertEquals($result, 'articles');
+		$this->assertEquals('articles', $result);
 
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false, false);
-		$this->assertEquals($result, 'tbl_articles');
+		$this->assertEquals('tbl_articles', $result);
 
 		$Article->useTable = $Article->table = 'with spaces';
 		$Article->tablePrefix = '';
 		$result = $this->testDb->fullTableName($Article, true, false);
-		$this->assertEquals($result, '`with spaces`');
+		$this->assertEquals('`with spaces`', $result);
 
 		$this->loadFixtures('Article');
 		$Article->useTable = $Article->table = 'articles';

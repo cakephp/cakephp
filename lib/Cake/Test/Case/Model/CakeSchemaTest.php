@@ -510,11 +510,11 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaName() {
 		$Schema = new CakeSchema();
-		$this->assertEquals(strtolower($Schema->name), strtolower(APP_DIR));
+		$this->assertEquals(strtolower(APP_DIR), strtolower($Schema->name));
 
 		Configure::write('App.dir', 'Some.name.with.dots');
 		$Schema = new CakeSchema();
-		$this->assertEquals($Schema->name, 'SomeNameWithDots');
+		$this->assertEquals('SomeNameWithDots', $Schema->name);
 
 		Configure::write('App.dir', 'app');
 	}
@@ -809,7 +809,7 @@ class CakeSchemaTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $compare);
 		$this->assertNull($New->getVar('comments'));
-		$this->assertEquals($New->getVar('_foo'), array('bar'));
+		$this->assertEquals(array('bar'), $New->getVar('_foo'));
 
 		$tables = array(
 			'missing' => array(
@@ -1026,7 +1026,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaLoading() {
 		$Other = $this->Schema->load(array('name' => 'MyOtherApp', 'path' => TMP . 'tests'));
-		$this->assertEquals($Other->name, 'MyOtherApp');
+		$this->assertEquals('MyOtherApp', $Other->name);
 		$this->assertEquals($Other->tables, $this->Schema->tables);
 	}
 
@@ -1041,8 +1041,8 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		CakePlugin::load('TestPlugin');
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
-		$this->assertEquals($Other->name, 'TestPluginApp');
-		$this->assertEquals(array_keys($Other->tables), array('test_plugin_acos'));
+		$this->assertEquals('TestPluginApp', $Other->name);
+		$this->assertEquals(array('test_plugin_acos'), array_keys($Other->tables));
 
 		App::build();
 	}

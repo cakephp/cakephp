@@ -91,10 +91,10 @@ class SessionHelperTest extends CakeTestCase {
  */
 	public function testRead() {
 		$result = $this->Session->read('Deeply.nested.key');
-		$this->assertEquals($result, 'value');
+		$this->assertEquals('value', $result);
 
 		$result = $this->Session->read('test');
-		$this->assertEquals($result, 'info');
+		$this->assertEquals('info', $result);
 	}
 
 /**

@@ -602,9 +602,7 @@ class CakeSession {
 				$_SESSION = array();
 			}
 		} elseif (!isset($_SESSION)) {
-			session_cache_limiter ("must-revalidate");
 			session_start();
-			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 		} else {
 			session_start();
 		}

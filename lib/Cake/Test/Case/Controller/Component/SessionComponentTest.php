@@ -190,15 +190,15 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Test'));
 
 		$this->assertTrue($Session->write('Test', 'some value'));
-		$this->assertEquals($Session->read('Test'), 'some value');
+		$this->assertEquals('some value', $Session->read('Test'));
 		$this->assertFalse($Session->write('Test.key', 'some value'));
 		$Session->delete('Test');
 
 		$this->assertTrue($Session->write('Test.key.path', 'some value'));
-		$this->assertEquals($Session->read('Test.key.path'), 'some value');
-		$this->assertEquals($Session->read('Test.key'), array('path' => 'some value'));
+		$this->assertEquals('some value', $Session->read('Test.key.path'));
+		$this->assertEquals(array('path' => 'some value'), $Session->read('Test.key'));
 		$this->assertTrue($Session->write('Test.key.path2', 'another value'));
-		$this->assertEquals($Session->read('Test.key'), array('path' => 'some value', 'path2' => 'another value'));
+		$this->assertEquals(array('path' => 'some value', 'path2' => 'another value'), $Session->read('Test.key'));
 		$Session->delete('Test');
 
 		$array = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
@@ -208,7 +208,7 @@ class SessionComponentTest extends CakeTestCase {
 
 		$this->assertFalse($Session->write(array('Test'), 'some value'));
 		$this->assertTrue($Session->write(array('Test' => 'some value')));
-		$this->assertEquals($Session->read('Test'), 'some value');
+		$this->assertEquals('some value', $Session->read('Test'));
 		$Session->delete('Test');
 	}
 
@@ -252,16 +252,16 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message');
-		$this->assertEquals($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message', 'test', array('name' => 'Joel Moss'));
-		$this->assertEquals($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')), $Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message', 'default', array(), 'myFlash');
-		$this->assertEquals($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash'));
 
 		$Session->setFlash('This is a test message', 'non_existing_layout');
-		$this->assertEquals($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash'));
 
 		$Session->delete('Message');
 	}
@@ -287,7 +287,7 @@ class SessionComponentTest extends CakeTestCase {
 		$Session = new SessionComponent($this->ComponentCollection);
 
 		$Session->write('Test', 'some value');
-		$this->assertEquals($Session->read('Test'), 'some value');
+		$this->assertEquals('some value', $Session->read('Test'));
 		$Session->destroy('Test');
 		$this->assertNull($Session->read('Test'));
 	}

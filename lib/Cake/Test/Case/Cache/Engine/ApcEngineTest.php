@@ -60,7 +60,7 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'apc');
 		$expecting = '';
-		$this->assertEquals($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 'apc');
@@ -68,7 +68,7 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'apc');
 		$expecting = $data;
-		$this->assertEquals($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		Cache::delete('test', 'apc');
 	}

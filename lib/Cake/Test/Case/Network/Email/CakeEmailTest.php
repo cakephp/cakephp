@@ -1394,20 +1394,20 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testConfigCharset() {
 		$email = new CakeEmail();
-		$this->assertEquals($email->charset, Configure::read('App.encoding'));
-		$this->assertEquals($email->headerCharset, Configure::read('App.encoding'));
+		$this->assertEquals(Configure::read('App.encoding'), $email->charset);
+		$this->assertEquals(Configure::read('App.encoding'), $email->headerCharset);
 
 		$email = new CakeEmail(array('charset' => 'iso-2022-jp', 'headerCharset' => 'iso-2022-jp-ms'));
-		$this->assertEquals($email->charset, 'iso-2022-jp');
-		$this->assertEquals($email->headerCharset, 'iso-2022-jp-ms');
+		$this->assertEquals('iso-2022-jp', $email->charset);
+		$this->assertEquals('iso-2022-jp-ms', $email->headerCharset);
 
 		$email = new CakeEmail(array('charset' => 'iso-2022-jp'));
-		$this->assertEquals($email->charset, 'iso-2022-jp');
-		$this->assertEquals($email->headerCharset, 'iso-2022-jp');
+		$this->assertEquals('iso-2022-jp', $email->charset);
+		$this->assertEquals('iso-2022-jp', $email->headerCharset);
 
 		$email = new CakeEmail(array('headerCharset' => 'iso-2022-jp-ms'));
-		$this->assertEquals($email->charset, Configure::read('App.encoding'));
-		$this->assertEquals($email->headerCharset, 'iso-2022-jp-ms');
+		$this->assertEquals(Configure::read('App.encoding'), $email->charset);
+		$this->assertEquals('iso-2022-jp-ms', $email->headerCharset);
 	}
 
 /**

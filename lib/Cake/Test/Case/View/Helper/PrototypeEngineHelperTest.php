@@ -52,27 +52,27 @@ class PrototypeEngineHelperTest extends CakeTestCase {
  */
 	public function testSelector() {
 		$result = $this->Proto->get('#content');
-		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto, $result);
 		$this->assertEquals($this->Proto->selection, '$("content")');
 
 		$result = $this->Proto->get('a .remove');
-		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto, $result);
 		$this->assertEquals($this->Proto->selection, '$$("a .remove")');
 
 		$result = $this->Proto->get('document');
-		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto, $result);
 		$this->assertEquals($this->Proto->selection, "$(document)");
 
 		$result = $this->Proto->get('window');
-		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto, $result);
 		$this->assertEquals($this->Proto->selection, "$(window)");
 
 		$result = $this->Proto->get('ul');
-		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto, $result);
 		$this->assertEquals($this->Proto->selection, '$$("ul")');
 
 		$result = $this->Proto->get('#some_long-id.class');
-		$this->assertEquals($result, $this->Proto);
+		$this->assertEquals($this->Proto, $result);
 		$this->assertEquals($this->Proto->selection, '$$("#some_long-id.class")');
 	}
 

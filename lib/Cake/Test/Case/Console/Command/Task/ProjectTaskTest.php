@@ -276,7 +276,7 @@ class ProjectTaskTest extends CakeTestCase {
 	public function testGetPrefix() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$result = $this->Task->getPrefix();
-		$this->assertEquals($result, 'admin_');
+		$this->assertEquals('admin_', $result);
 
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
@@ -284,7 +284,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
-		$this->assertEquals($result, 'super_duper_admin_');
+		$this->assertEquals('super_duper_admin_', $result);
 
 		$File = new File($this->Task->configPath . 'core.php');
 		$File->delete();
@@ -322,7 +322,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();
-		$this->assertEquals($result, 'ninja_');
+		$this->assertEquals('ninja_', $result);
 	}
 
 /**

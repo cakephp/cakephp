@@ -128,10 +128,10 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testSessionPath() {
 		TestCakeSession::init('/index.php');
-		$this->assertEquals(TestCakeSession::$path, '/');
+		$this->assertEquals('/', TestCakeSession::$path);
 
 		TestCakeSession::init('/sub_dir/index.php');
-		$this->assertEquals(TestCakeSession::$path, '/sub_dir/');
+		$this->assertEquals('/sub_dir/', TestCakeSession::$path);
 	}
 
 /**
@@ -141,7 +141,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testCakeSessionPathEmpty() {
 		TestCakeSession::init('');
-		$this->assertEquals(TestCakeSession::$path, '/', 'Session path is empty, with "" as $base needs to be /');
+		$this->assertEquals('/', TestCakeSession::$path, 'Session path is empty, with "" as $base needs to be /');
 	}
 
 /**
@@ -151,7 +151,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testCakeSessionPathContainsQuestion() {
 		TestCakeSession::init('/index.php?');
-		$this->assertEquals(TestCakeSession::$path, '/');
+		$this->assertEquals('/', TestCakeSession::$path);
 	}
 
 /**
@@ -162,7 +162,7 @@ class CakeSessionTest extends CakeTestCase {
 	public function testSetHost() {
 		TestCakeSession::init();
 		TestCakeSession::setHost('cakephp.org');
-		$this->assertEquals(TestCakeSession::$host, 'cakephp.org');
+		$this->assertEquals('cakephp.org', TestCakeSession::$host);
 	}
 
 /**
@@ -173,7 +173,7 @@ class CakeSessionTest extends CakeTestCase {
 	public function testSetHostWithPort() {
 		TestCakeSession::init();
 		TestCakeSession::setHost('cakephp.org:443');
-		$this->assertEquals(TestCakeSession::$host, 'cakephp.org');
+		$this->assertEquals('cakephp.org', TestCakeSession::$host);
 	}
 
 /**
@@ -240,7 +240,7 @@ class CakeSessionTest extends CakeTestCase {
 
 		TestCakeSession::write('This.is.a.deep.array.my.friend', 'value');
 		$result = TestCakeSession::read('This.is.a.deep.array.my.friend');
-		$this->assertEquals($result, 'value');
+		$this->assertEquals('value', $result);
 	}
 
 /**
@@ -355,7 +355,7 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::destroy();
 
 		$this->assertFalse(TestCakeSession::check('bulletProof'));
-		$this->assertNotEquals($id, TestCakeSession::id());
+		$this->assertNotEquals(TestCakeSession::id(), $id);
 	}
 
 /**

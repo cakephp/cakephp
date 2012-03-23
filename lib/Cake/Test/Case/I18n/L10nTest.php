@@ -31,49 +31,49 @@ class L10nTest extends CakeTestCase {
  * @return void
  */
 	public function testGet() {
-		$l10n = new L10n();
+		$localize = new L10n();
 
 		// Catalog Entry
-		$l10n->get('en');
+		$localize->get('en');
 
-		$this->assertEquals($l10n->language, 'English');
-		$this->assertEquals($l10n->languagePath, array('eng', 'eng'));
-		$this->assertEquals($l10n->locale, 'eng');
+		$this->assertEquals('English', $localize->language);
+		$this->assertEquals(array('eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('eng', $localize->locale);
 
 		// Map Entry
-		$l10n->get('eng');
+		$localize->get('eng');
 
-		$this->assertEquals($l10n->language, 'English');
-		$this->assertEquals($l10n->languagePath, array('eng', 'eng'));
-		$this->assertEquals($l10n->locale, 'eng');
+		$this->assertEquals('English', $localize->language);
+		$this->assertEquals(array('eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('eng', $localize->locale);
 
 		// Catalog Entry
-		$l10n->get('en-ca');
+		$localize->get('en-ca');
 
-		$this->assertEquals($l10n->language, 'English (Canadian)');
-		$this->assertEquals($l10n->languagePath, array('en_ca', 'eng'));
-		$this->assertEquals($l10n->locale, 'en_ca');
+		$this->assertEquals('English (Canadian)', $localize->language);
+		$this->assertEquals(array('en_ca', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_ca', $localize->locale);
 
 		// Default Entry
 		define('DEFAULT_LANGUAGE', 'en-us');
 
-		$l10n->get('use_default');
+		$localize->get('use_default');
 
-		$this->assertEquals($l10n->language, 'English (United States)');
-		$this->assertEquals($l10n->languagePath, array('en_us', 'eng'));
-		$this->assertEquals($l10n->locale, 'en_us');
+		$this->assertEquals('English (United States)', $localize->language);
+		$this->assertEquals(array('en_us', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_us', $localize->locale);
 
-		$l10n->get('es');
-		$l10n->get('');
-		$this->assertEquals($l10n->lang, 'en-us');
+		$localize->get('es');
+		$localize->get('');
+		$this->assertEquals('en-us', $localize->lang);
 
 		// Using $this->default
-		$l10n = new L10n();
+		$localize = new L10n();
 
-		$l10n->get('use_default');
-		$this->assertEquals($l10n->language, 'English (United States)');
-		$this->assertEquals($l10n->languagePath, array('en_us', 'eng', 'eng'));
-		$this->assertEquals($l10n->locale, 'en_us');
+		$localize->get('use_default');
+		$this->assertEquals('English (United States)', $localize->language);
+		$this->assertEquals(array('en_us', 'eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_us', $localize->locale);
 	}
 
 /**
@@ -85,26 +85,26 @@ class L10nTest extends CakeTestCase {
 		$serverBackup = $_SERVER;
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 
-		$l10n = new L10n();
-		$l10n->get();
+		$localize = new L10n();
+		$localize->get();
 
-		$this->assertEquals($l10n->language, 'English (Canadian)');
-		$this->assertEquals($l10n->languagePath, array('en_ca', 'eng', 'eng'));
-		$this->assertEquals($l10n->locale, 'en_ca');
+		$this->assertEquals('English (Canadian)', $localize->language);
+		$this->assertEquals(array('en_ca', 'eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_ca', $localize->locale);
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx';
-		$l10n->get();
+		$localize->get();
 
-		$this->assertEquals($l10n->language, 'Spanish (Mexican)');
-		$this->assertEquals($l10n->languagePath, array('es_mx', 'spa', 'eng'));
-		$this->assertEquals($l10n->locale, 'es_mx');
+		$this->assertEquals('Spanish (Mexican)', $localize->language);
+		$this->assertEquals(array('es_mx', 'spa', 'eng'), $localize->languagePath);
+		$this->assertEquals('es_mx', $localize->locale);
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en_xy,en_ca';
-		$l10n->get();
+		$localize->get();
 
-		$this->assertEquals($l10n->language, 'English');
-		$this->assertEquals($l10n->languagePath, array('eng', 'eng', 'eng'));
-		$this->assertEquals($l10n->locale, 'eng');
+		$this->assertEquals('English', $localize->language);
+		$this->assertEquals(array('eng', 'eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('eng', $localize->locale);
 
 		$_SERVER = $serverBackup;
 	}
@@ -115,325 +115,325 @@ class L10nTest extends CakeTestCase {
  * @return void
  */
 	public function testMap() {
-		$l10n = new L10n();
+		$localize = new L10n();
 
-		$result = $l10n->map(array('afr', 'af'));
+		$result = $localize->map(array('afr', 'af'));
 		$expected = array('afr' => 'af', 'af' => 'afr');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('alb', 'sq'));
+		$result = $localize->map(array('alb', 'sq'));
 		$expected = array('alb' => 'sq', 'sq' => 'alb');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ara', 'ar'));
+		$result = $localize->map(array('ara', 'ar'));
 		$expected = array('ara' => 'ar', 'ar' => 'ara');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('hye', 'hy'));
+		$result = $localize->map(array('hye', 'hy'));
 		$expected = array('hye' => 'hy', 'hy' => 'hye');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('baq', 'eu'));
+		$result = $localize->map(array('baq', 'eu'));
 		$expected = array('baq' => 'eu', 'eu' => 'baq');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('baq', 'eu'));
+		$result = $localize->map(array('baq', 'eu'));
 		$expected = array('baq' => 'eu', 'eu' => 'baq');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('bos', 'bs'));
+		$result = $localize->map(array('bos', 'bs'));
 		$expected = array('bos' => 'bs', 'bs' => 'bos');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('bul', 'bg'));
+		$result = $localize->map(array('bul', 'bg'));
 		$expected = array('bul' => 'bg', 'bg' => 'bul');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('bel', 'be'));
+		$result = $localize->map(array('bel', 'be'));
 		$expected = array('bel' => 'be', 'be' => 'bel');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('cat', 'ca'));
+		$result = $localize->map(array('cat', 'ca'));
 		$expected = array('cat' => 'ca', 'ca' => 'cat');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('chi', 'zh'));
+		$result = $localize->map(array('chi', 'zh'));
 		$expected = array('chi' => 'zh', 'zh' => 'chi');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('zho', 'zh'));
+		$result = $localize->map(array('zho', 'zh'));
 		$expected = array('zho' => 'zh', 'zh' => 'chi');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('hrv', 'hr'));
+		$result = $localize->map(array('hrv', 'hr'));
 		$expected = array('hrv' => 'hr', 'hr' => 'hrv');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ces', 'cs'));
+		$result = $localize->map(array('ces', 'cs'));
 		$expected = array('ces' => 'cs', 'cs' => 'cze');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('cze', 'cs'));
+		$result = $localize->map(array('cze', 'cs'));
 		$expected = array('cze' => 'cs', 'cs' => 'cze');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('dan', 'da'));
+		$result = $localize->map(array('dan', 'da'));
 		$expected = array('dan' => 'da', 'da' => 'dan');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('dut', 'nl'));
+		$result = $localize->map(array('dut', 'nl'));
 		$expected = array('dut' => 'nl', 'nl' => 'dut');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('nld', 'nl'));
+		$result = $localize->map(array('nld', 'nl'));
 		$expected = array('nld' => 'nl', 'nl' => 'dut');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('nld'));
+		$result = $localize->map(array('nld'));
 		$expected = array('nld' => 'nl');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('eng', 'en'));
+		$result = $localize->map(array('eng', 'en'));
 		$expected = array('eng' => 'en', 'en' => 'eng');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('est', 'et'));
+		$result = $localize->map(array('est', 'et'));
 		$expected = array('est' => 'et', 'et' => 'est');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('fao', 'fo'));
+		$result = $localize->map(array('fao', 'fo'));
 		$expected = array('fao' => 'fo', 'fo' => 'fao');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('fas', 'fa'));
+		$result = $localize->map(array('fas', 'fa'));
 		$expected = array('fas' => 'fa', 'fa' => 'fas');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('per', 'fa'));
+		$result = $localize->map(array('per', 'fa'));
 		$expected = array('per' => 'fa', 'fa' => 'fas');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('fin', 'fi'));
+		$result = $localize->map(array('fin', 'fi'));
 		$expected = array('fin' => 'fi', 'fi' => 'fin');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('fra', 'fr'));
+		$result = $localize->map(array('fra', 'fr'));
 		$expected = array('fra' => 'fr', 'fr' => 'fre');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('fre', 'fr'));
+		$result = $localize->map(array('fre', 'fr'));
 		$expected = array('fre' => 'fr', 'fr' => 'fre');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('gla', 'gd'));
+		$result = $localize->map(array('gla', 'gd'));
 		$expected = array('gla' => 'gd', 'gd' => 'gla');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('glg', 'gl'));
+		$result = $localize->map(array('glg', 'gl'));
 		$expected = array('glg' => 'gl', 'gl' => 'glg');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('deu', 'de'));
+		$result = $localize->map(array('deu', 'de'));
 		$expected = array('deu' => 'de', 'de' => 'deu');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ger', 'de'));
+		$result = $localize->map(array('ger', 'de'));
 		$expected = array('ger' => 'de', 'de' => 'deu');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ell', 'el'));
+		$result = $localize->map(array('ell', 'el'));
 		$expected = array('ell' => 'el', 'el' => 'gre');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('gre', 'el'));
+		$result = $localize->map(array('gre', 'el'));
 		$expected = array('gre' => 'el', 'el' => 'gre');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('heb', 'he'));
+		$result = $localize->map(array('heb', 'he'));
 		$expected = array('heb' => 'he', 'he' => 'heb');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('hin', 'hi'));
+		$result = $localize->map(array('hin', 'hi'));
 		$expected = array('hin' => 'hi', 'hi' => 'hin');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('hun', 'hu'));
+		$result = $localize->map(array('hun', 'hu'));
 		$expected = array('hun' => 'hu', 'hu' => 'hun');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ice', 'is'));
+		$result = $localize->map(array('ice', 'is'));
 		$expected = array('ice' => 'is', 'is' => 'ice');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('isl', 'is'));
+		$result = $localize->map(array('isl', 'is'));
 		$expected = array('isl' => 'is', 'is' => 'ice');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ind', 'id'));
+		$result = $localize->map(array('ind', 'id'));
 		$expected = array('ind' => 'id', 'id' => 'ind');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('gle', 'ga'));
+		$result = $localize->map(array('gle', 'ga'));
 		$expected = array('gle' => 'ga', 'ga' => 'gle');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ita', 'it'));
+		$result = $localize->map(array('ita', 'it'));
 		$expected = array('ita' => 'it', 'it' => 'ita');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('jpn', 'ja'));
+		$result = $localize->map(array('jpn', 'ja'));
 		$expected = array('jpn' => 'ja', 'ja' => 'jpn');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('kor', 'ko'));
+		$result = $localize->map(array('kor', 'ko'));
 		$expected = array('kor' => 'ko', 'ko' => 'kor');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('lav', 'lv'));
+		$result = $localize->map(array('lav', 'lv'));
 		$expected = array('lav' => 'lv', 'lv' => 'lav');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('lit', 'lt'));
+		$result = $localize->map(array('lit', 'lt'));
 		$expected = array('lit' => 'lt', 'lt' => 'lit');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('mac', 'mk'));
+		$result = $localize->map(array('mac', 'mk'));
 		$expected = array('mac' => 'mk', 'mk' => 'mac');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('mkd', 'mk'));
+		$result = $localize->map(array('mkd', 'mk'));
 		$expected = array('mkd' => 'mk', 'mk' => 'mac');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('may', 'ms'));
+		$result = $localize->map(array('may', 'ms'));
 		$expected = array('may' => 'ms', 'ms' => 'may');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('msa', 'ms'));
+		$result = $localize->map(array('msa', 'ms'));
 		$expected = array('msa' => 'ms', 'ms' => 'may');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('mlt', 'mt'));
+		$result = $localize->map(array('mlt', 'mt'));
 		$expected = array('mlt' => 'mt', 'mt' => 'mlt');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('nor', 'no'));
+		$result = $localize->map(array('nor', 'no'));
 		$expected = array('nor' => 'no', 'no' => 'nor');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('nob', 'nb'));
+		$result = $localize->map(array('nob', 'nb'));
 		$expected = array('nob' => 'nb', 'nb' => 'nob');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('nno', 'nn'));
+		$result = $localize->map(array('nno', 'nn'));
 		$expected = array('nno' => 'nn', 'nn' => 'nno');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('pol', 'pl'));
+		$result = $localize->map(array('pol', 'pl'));
 		$expected = array('pol' => 'pl', 'pl' => 'pol');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('por', 'pt'));
+		$result = $localize->map(array('por', 'pt'));
 		$expected = array('por' => 'pt', 'pt' => 'por');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('roh', 'rm'));
+		$result = $localize->map(array('roh', 'rm'));
 		$expected = array('roh' => 'rm', 'rm' => 'roh');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ron', 'ro'));
+		$result = $localize->map(array('ron', 'ro'));
 		$expected = array('ron' => 'ro', 'ro' => 'rum');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('rum', 'ro'));
+		$result = $localize->map(array('rum', 'ro'));
 		$expected = array('rum' => 'ro', 'ro' => 'rum');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('rus', 'ru'));
+		$result = $localize->map(array('rus', 'ru'));
 		$expected = array('rus' => 'ru', 'ru' => 'rus');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('smi', 'sz'));
+		$result = $localize->map(array('smi', 'sz'));
 		$expected = array('smi' => 'sz', 'sz' => 'smi');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('scc', 'sr'));
+		$result = $localize->map(array('scc', 'sr'));
 		$expected = array('scc' => 'sr', 'sr' => 'scc');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('srp', 'sr'));
+		$result = $localize->map(array('srp', 'sr'));
 		$expected = array('srp' => 'sr', 'sr' => 'scc');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('slk', 'sk'));
+		$result = $localize->map(array('slk', 'sk'));
 		$expected = array('slk' => 'sk', 'sk' => 'slo');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('slo', 'sk'));
+		$result = $localize->map(array('slo', 'sk'));
 		$expected = array('slo' => 'sk', 'sk' => 'slo');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('slv', 'sl'));
+		$result = $localize->map(array('slv', 'sl'));
 		$expected = array('slv' => 'sl', 'sl' => 'slv');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('wen', 'sb'));
+		$result = $localize->map(array('wen', 'sb'));
 		$expected = array('wen' => 'sb', 'sb' => 'wen');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('spa', 'es'));
+		$result = $localize->map(array('spa', 'es'));
 		$expected = array('spa' => 'es', 'es' => 'spa');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('swe', 'sv'));
+		$result = $localize->map(array('swe', 'sv'));
 		$expected = array('swe' => 'sv', 'sv' => 'swe');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('tha', 'th'));
+		$result = $localize->map(array('tha', 'th'));
 		$expected = array('tha' => 'th', 'th' => 'tha');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('tso', 'ts'));
+		$result = $localize->map(array('tso', 'ts'));
 		$expected = array('tso' => 'ts', 'ts' => 'tso');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('tsn', 'tn'));
+		$result = $localize->map(array('tsn', 'tn'));
 		$expected = array('tsn' => 'tn', 'tn' => 'tsn');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('tur', 'tr'));
+		$result = $localize->map(array('tur', 'tr'));
 		$expected = array('tur' => 'tr', 'tr' => 'tur');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ukr', 'uk'));
+		$result = $localize->map(array('ukr', 'uk'));
 		$expected = array('ukr' => 'uk', 'uk' => 'ukr');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('urd', 'ur'));
+		$result = $localize->map(array('urd', 'ur'));
 		$expected = array('urd' => 'ur', 'ur' => 'urd');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('ven', 've'));
+		$result = $localize->map(array('ven', 've'));
 		$expected = array('ven' => 've', 've' => 'ven');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('vie', 'vi'));
+		$result = $localize->map(array('vie', 'vi'));
 		$expected = array('vie' => 'vi', 'vi' => 'vie');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('xho', 'xh'));
+		$result = $localize->map(array('xho', 'xh'));
 		$expected = array('xho' => 'xh', 'xh' => 'xho');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('cy', 'cym'));
+		$result = $localize->map(array('cy', 'cym'));
 		$expected = array('cym' => 'cy', 'cy' => 'cym');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('yid', 'yi'));
+		$result = $localize->map(array('yid', 'yi'));
 		$expected = array('yid' => 'yi', 'yi' => 'yid');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->map(array('zul', 'zu'));
+		$result = $localize->map(array('zul', 'zu'));
 		$expected = array('zul' => 'zu', 'zu' => 'zul');
 		$this->assertEquals($expected, $result);
 	}
@@ -444,15 +444,15 @@ class L10nTest extends CakeTestCase {
  * @return void
  */
 	public function testCatalog() {
-		$l10n = new L10n();
+		$localize = new L10n();
 
-		$result = $l10n->catalog(array('af'));
+		$result = $localize->catalog(array('af'));
 		$expected = array(
 			'af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ar', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly', 'ar-ma',
+		$result = $localize->catalog(array('ar', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly', 'ar-ma',
 			'ar-om', 'ar-qa', 'ar-sa', 'ar-sy', 'ar-tn', 'ar-ye'));
 		$expected = array(
 			'ar' => array('language' => 'Arabic', 'locale' => 'ara', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
@@ -475,43 +475,43 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('be'));
+		$result = $localize->catalog(array('be'));
 		$expected = array(
 			'be' => array('language' => 'Byelorussian', 'locale' => 'bel', 'localeFallback' => 'bel', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('bg'));
+		$result = $localize->catalog(array('bg'));
 		$expected = array(
 			'bg' => array('language' => 'Bulgarian', 'locale' => 'bul', 'localeFallback' => 'bul', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('bs'));
+		$result = $localize->catalog(array('bs'));
 		$expected = array(
 			'bs' => array('language' => 'Bosnian', 'locale' => 'bos', 'localeFallback' => 'bos', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ca'));
+		$result = $localize->catalog(array('ca'));
 		$expected = array(
 			'ca' => array('language' => 'Catalan', 'locale' => 'cat', 'localeFallback' => 'cat', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('cs'));
+		$result = $localize->catalog(array('cs'));
 		$expected = array(
 			'cs' => array('language' => 'Czech', 'locale' => 'cze', 'localeFallback' => 'cze', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('da'));
+		$result = $localize->catalog(array('da'));
 		$expected = array(
 			'da' => array('language' => 'Danish', 'locale' => 'dan', 'localeFallback' => 'dan', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('de', 'de-at', 'de-ch', 'de-de', 'de-li', 'de-lu'));
+		$result = $localize->catalog(array('de', 'de-at', 'de-ch', 'de-de', 'de-li', 'de-lu'));
 		$expected = array(
 			'de' => array('language' => 'German (Standard)', 'locale' => 'deu', 'localeFallback' => 'deu', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'de-at' => array('language' => 'German (Austria)', 'locale' => 'de_at', 'localeFallback' => 'deu', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -522,14 +522,14 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('e', 'el'));
+		$result = $localize->catalog(array('e', 'el'));
 		$expected = array(
 			'e' => array('language' => 'Greek', 'locale' => 'gre', 'localeFallback' => 'gre', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'el' => array('language' => 'Greek', 'locale' => 'gre', 'localeFallback' => 'gre', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('en', 'en-au', 'en-bz', 'en-ca', 'en-gb', 'en-ie', 'en-jm', 'en-nz', 'en-tt', 'en-us', 'en-za'));
+		$result = $localize->catalog(array('en', 'en-au', 'en-bz', 'en-ca', 'en-gb', 'en-ie', 'en-jm', 'en-nz', 'en-tt', 'en-us', 'en-za'));
 		$expected = array(
 			'en' => array('language' => 'English', 'locale' => 'eng', 'localeFallback' => 'eng', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'en-au' => array('language' => 'English (Australian)', 'locale' => 'en_au', 'localeFallback' => 'eng', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -545,7 +545,7 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('es', 'es-ar', 'es-bo', 'es-cl', 'es-co', 'es-cr', 'es-do', 'es-ec', 'es-es', 'es-gt', 'es-hn',
+		$result = $localize->catalog(array('es', 'es-ar', 'es-bo', 'es-cl', 'es-co', 'es-cr', 'es-do', 'es-ec', 'es-es', 'es-gt', 'es-hn',
 			'es-mx', 'es-ni', 'es-pa', 'es-pe', 'es-pr', 'es-py', 'es-sv', 'es-uy', 'es-ve'));
 		$expected = array(
 			'es' => array('language' => 'Spanish (Spain - Traditional)', 'locale' => 'spa', 'localeFallback' => 'spa', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -571,37 +571,37 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('et'));
+		$result = $localize->catalog(array('et'));
 		$expected = array(
 			'et' => array('language' => 'Estonian', 'locale' => 'est', 'localeFallback' => 'est', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('eu'));
+		$result = $localize->catalog(array('eu'));
 		$expected = array(
 			'eu' => array('language' => 'Basque', 'locale' => 'baq', 'localeFallback' => 'baq', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('fa'));
+		$result = $localize->catalog(array('fa'));
 		$expected = array(
 			'fa' => array('language' => 'Farsi', 'locale' => 'per', 'localeFallback' => 'per', 'charset' => 'utf-8', 'direction' => 'rtl')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('fi'));
+		$result = $localize->catalog(array('fi'));
 		$expected = array(
 			'fi' => array('language' => 'Finnish', 'locale' => 'fin', 'localeFallback' => 'fin', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('fo'));
+		$result = $localize->catalog(array('fo'));
 		$expected = array(
 			'fo' => array('language' => 'Faeroese', 'locale' => 'fao', 'localeFallback' => 'fao', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('fr', 'fr-be', 'fr-ca', 'fr-ch', 'fr-fr', 'fr-lu'));
+		$result = $localize->catalog(array('fr', 'fr-be', 'fr-ca', 'fr-ch', 'fr-fr', 'fr-lu'));
 		$expected = array(
 			'fr' => array('language' => 'French (Standard)', 'locale' => 'fre', 'localeFallback' => 'fre', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'fr-be' => array('language' => 'French (Belgium)', 'locale' => 'fr_be', 'localeFallback' => 'fre', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -612,82 +612,82 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ga'));
+		$result = $localize->catalog(array('ga'));
 		$expected = array(
 			'ga' => array('language' => 'Irish', 'locale' => 'gle', 'localeFallback' => 'gle', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('gd', 'gd-ie'));
+		$result = $localize->catalog(array('gd', 'gd-ie'));
 		$expected = array(
 			'gd' => array('language' => 'Gaelic (Scots)', 'locale' => 'gla', 'localeFallback' => 'gla', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'gd-ie' => array('language' => 'Gaelic (Irish)', 'locale' => 'gd_ie', 'localeFallback' => 'gla', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('gl'));
+		$result = $localize->catalog(array('gl'));
 		$expected = array(
 			'gl' => array('language' => 'Galician', 'locale' => 'glg', 'localeFallback' => 'glg', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('he'));
+		$result = $localize->catalog(array('he'));
 		$expected = array(
 			'he' => array('language' => 'Hebrew', 'locale' => 'heb', 'localeFallback' => 'heb', 'charset' => 'utf-8', 'direction' => 'rtl')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('hi'));
+		$result = $localize->catalog(array('hi'));
 		$expected = array(
 			'hi' => array('language' => 'Hindi', 'locale' => 'hin', 'localeFallback' => 'hin', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('hr'));
+		$result = $localize->catalog(array('hr'));
 		$expected = array(
 			'hr' => array('language' => 'Croatian', 'locale' => 'hrv', 'localeFallback' => 'hrv', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('hu'));
+		$result = $localize->catalog(array('hu'));
 		$expected = array(
 			'hu' => array('language' => 'Hungarian', 'locale' => 'hun', 'localeFallback' => 'hun', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('hy'));
+		$result = $localize->catalog(array('hy'));
 		$expected = array(
 			'hy' => array('language' => 'Armenian - Armenia', 'locale' => 'hye', 'localeFallback' => 'hye', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('id', 'in'));
+		$result = $localize->catalog(array('id', 'in'));
 		$expected = array(
 			'id' => array('language' => 'Indonesian', 'locale' => 'ind', 'localeFallback' => 'ind', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'in' => array('language' => 'Indonesian', 'locale' => 'ind', 'localeFallback' => 'ind', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('is'));
+		$result = $localize->catalog(array('is'));
 		$expected = array(
 			'is' => array('language' => 'Icelandic', 'locale' => 'ice', 'localeFallback' => 'ice', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('it', 'it-ch'));
+		$result = $localize->catalog(array('it', 'it-ch'));
 		$expected = array(
 			'it' => array('language' => 'Italian', 'locale' => 'ita', 'localeFallback' => 'ita', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'it-ch' => array('language' => 'Italian (Swiss) ', 'locale' => 'it_ch', 'localeFallback' => 'ita', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ja'));
+		$result = $localize->catalog(array('ja'));
 		$expected = array(
 			'ja' => array('language' => 'Japanese', 'locale' => 'jpn', 'localeFallback' => 'jpn', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ko', 'ko-kp', 'ko-kr'));
+		$result = $localize->catalog(array('ko', 'ko-kp', 'ko-kr'));
 		$expected = array(
 			'ko' => array('language' => 'Korean', 'locale' => 'kor', 'localeFallback' => 'kor', 'charset' => 'kr', 'direction' => 'ltr'),
 			'ko-kp' => array('language' => 'Korea (North)', 'locale' => 'ko_kp', 'localeFallback' => 'kor', 'charset' => 'kr', 'direction' => 'ltr'),
@@ -695,7 +695,7 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('koi8-r', 'ru', 'ru-mo'));
+		$result = $localize->catalog(array('koi8-r', 'ru', 'ru-mo'));
 		$expected = array(
 			'koi8-r' => array('language' => 'Russian', 'locale' => 'koi8_r', 'localeFallback' => 'rus', 'charset' => 'koi8-r', 'direction' => 'ltr'),
 			'ru' => array('language' => 'Russian', 'locale' => 'rus', 'localeFallback' => 'rus', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -703,38 +703,38 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('lt'));
+		$result = $localize->catalog(array('lt'));
 		$expected = array(
 			'lt' => array('language' => 'Lithuanian', 'locale' => 'lit', 'localeFallback' => 'lit', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('lv'));
+		$result = $localize->catalog(array('lv'));
 		$expected = array(
 			'lv' => array('language' => 'Latvian', 'locale' => 'lav', 'localeFallback' => 'lav', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('mk', 'mk-mk'));
+		$result = $localize->catalog(array('mk', 'mk-mk'));
 		$expected = array(
 			'mk' => array('language' => 'FYRO Macedonian', 'locale' => 'mk', 'localeFallback' => 'mac', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'mk-mk' => array('language' => 'Macedonian', 'locale' => 'mk_mk', 'localeFallback' => 'mac', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ms'));
+		$result = $localize->catalog(array('ms'));
 		$expected = array(
 			'ms' => array('language' => 'Malaysian', 'locale' => 'may', 'localeFallback' => 'may', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('mt'));
+		$result = $localize->catalog(array('mt'));
 		$expected = array(
 			'mt' => array('language' => 'Maltese', 'locale' => 'mlt', 'localeFallback' => 'mlt', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('n', 'nl', 'nl-be'));
+		$result = $localize->catalog(array('n', 'nl', 'nl-be'));
 		$expected = array(
 			'n' => array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'nl' => array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -742,175 +742,175 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog('nl');
+		$result = $localize->catalog('nl');
 		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog('nld');
+		$result = $localize->catalog('nld');
 		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog('dut');
+		$result = $localize->catalog('dut');
 		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('nb'));
+		$result = $localize->catalog(array('nb'));
 		$expected = array(
 			'nb' => array('language' => 'Norwegian Bokmal', 'locale' => 'nob', 'localeFallback' => 'nor', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('nn', 'no'));
+		$result = $localize->catalog(array('nn', 'no'));
 		$expected = array(
 			'nn' => array('language' => 'Norwegian Nynorsk', 'locale' => 'nno', 'localeFallback' => 'nor', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'no' => array('language' => 'Norwegian', 'locale' => 'nor', 'localeFallback' => 'nor', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('p', 'pl'));
+		$result = $localize->catalog(array('p', 'pl'));
 		$expected = array(
 			'p' => array('language' => 'Polish', 'locale' => 'pol', 'localeFallback' => 'pol', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'pl' => array('language' => 'Polish', 'locale' => 'pol', 'localeFallback' => 'pol', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('pt', 'pt-br'));
+		$result = $localize->catalog(array('pt', 'pt-br'));
 		$expected = array(
 			'pt' => array('language' => 'Portuguese (Portugal)', 'locale' => 'por', 'localeFallback' => 'por', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'pt-br' => array('language' => 'Portuguese (Brazil)', 'locale' => 'pt_br', 'localeFallback' => 'por', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('rm'));
+		$result = $localize->catalog(array('rm'));
 		$expected = array(
 			'rm' => array('language' => 'Rhaeto-Romanic', 'locale' => 'roh', 'localeFallback' => 'roh', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ro', 'ro-mo'));
+		$result = $localize->catalog(array('ro', 'ro-mo'));
 		$expected = array(
 			'ro' => array('language' => 'Romanian', 'locale' => 'rum', 'localeFallback' => 'rum', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'ro-mo' => array('language' => 'Romanian (Moldavia)', 'locale' => 'ro_mo', 'localeFallback' => 'rum', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sb'));
+		$result = $localize->catalog(array('sb'));
 		$expected = array(
 			'sb' => array('language' => 'Sorbian', 'locale' => 'wen', 'localeFallback' => 'wen', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sk'));
+		$result = $localize->catalog(array('sk'));
 		$expected = array(
 			'sk' => array('language' => 'Slovak', 'locale' => 'slo', 'localeFallback' => 'slo', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sl'));
+		$result = $localize->catalog(array('sl'));
 		$expected = array(
 			'sl' => array('language' => 'Slovenian', 'locale' => 'slv', 'localeFallback' => 'slv', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sq'));
+		$result = $localize->catalog(array('sq'));
 		$expected = array(
 			'sq' => array('language' => 'Albanian', 'locale' => 'alb', 'localeFallback' => 'alb', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sr'));
+		$result = $localize->catalog(array('sr'));
 		$expected = array(
 			'sr' => array('language' => 'Serbian', 'locale' => 'scc', 'localeFallback' => 'scc', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sv', 'sv-fi'));
+		$result = $localize->catalog(array('sv', 'sv-fi'));
 		$expected = array(
 			'sv' => array('language' => 'Swedish', 'locale' => 'swe', 'localeFallback' => 'swe', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'sv-fi' => array('language' => 'Swedish (Finland)', 'locale' => 'sv_fi', 'localeFallback' => 'swe', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sx'));
+		$result = $localize->catalog(array('sx'));
 		$expected = array(
 			'sx' => array('language' => 'Sutu', 'locale' => 'sx', 'localeFallback' => 'sx', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('sz'));
+		$result = $localize->catalog(array('sz'));
 		$expected = array(
 			'sz' => array('language' => 'Sami (Lappish)', 'locale' => 'smi', 'localeFallback' => 'smi', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('th'));
+		$result = $localize->catalog(array('th'));
 		$expected = array(
 			'th' => array('language' => 'Thai', 'locale' => 'tha', 'localeFallback' => 'tha', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('tn'));
+		$result = $localize->catalog(array('tn'));
 		$expected = array(
 			'tn' => array('language' => 'Tswana', 'locale' => 'tsn', 'localeFallback' => 'tsn', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('tr'));
+		$result = $localize->catalog(array('tr'));
 		$expected = array(
 			'tr' => array('language' => 'Turkish', 'locale' => 'tur', 'localeFallback' => 'tur', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ts'));
+		$result = $localize->catalog(array('ts'));
 		$expected = array(
 			'ts' => array('language' => 'Tsonga', 'locale' => 'tso', 'localeFallback' => 'tso', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('uk'));
+		$result = $localize->catalog(array('uk'));
 		$expected = array(
 			'uk' => array('language' => 'Ukrainian', 'locale' => 'ukr', 'localeFallback' => 'ukr', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ur'));
+		$result = $localize->catalog(array('ur'));
 		$expected = array(
 			'ur' => array('language' => 'Urdu', 'locale' => 'urd', 'localeFallback' => 'urd', 'charset' => 'utf-8', 'direction' => 'rtl')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('ve'));
+		$result = $localize->catalog(array('ve'));
 		$expected = array(
 			've' => array('language' => 'Venda', 'locale' => 'ven', 'localeFallback' => 'ven', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('vi'));
+		$result = $localize->catalog(array('vi'));
 		$expected = array(
 			'vi' => array('language' => 'Vietnamese', 'locale' => 'vie', 'localeFallback' => 'vie', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('cy'));
+		$result = $localize->catalog(array('cy'));
 		$expected = array(
 			'cy' => array('language' => 'Welsh', 'locale' => 'cym', 'localeFallback' => 'cym', 'charset' => 'utf-8',
 			'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('xh'));
+		$result = $localize->catalog(array('xh'));
 		$expected = array(
 			'xh' => array('language' => 'Xhosa', 'locale' => 'xho', 'localeFallback' => 'xho', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('yi'));
+		$result = $localize->catalog(array('yi'));
 		$expected = array(
 			'yi' => array('language' => 'Yiddish', 'locale' => 'yid', 'localeFallback' => 'yid', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('zh', 'zh-cn', 'zh-hk', 'zh-sg', 'zh-tw'));
+		$result = $localize->catalog(array('zh', 'zh-cn', 'zh-hk', 'zh-sg', 'zh-tw'));
 		$expected = array(
 			'zh' => array('language' => 'Chinese', 'locale' => 'chi', 'localeFallback' => 'chi', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'zh-cn' => array('language' => 'Chinese (PRC)', 'locale' => 'zh_cn', 'localeFallback' => 'chi', 'charset' => 'GB2312', 'direction' => 'ltr'),
@@ -920,13 +920,13 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('zu'));
+		$result = $localize->catalog(array('zu'));
 		$expected = array(
 			'zu' => array('language' => 'Zulu', 'locale' => 'zul', 'localeFallback' => 'zul', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('en-nz', 'es-do', 'sz', 'ar-lb', 'zh-hk', 'pt-br'));
+		$result = $localize->catalog(array('en-nz', 'es-do', 'sz', 'ar-lb', 'zh-hk', 'pt-br'));
 		$expected = array(
 			'en-nz' => array('language' => 'English (New Zealand)', 'locale' => 'en_nz', 'localeFallback' => 'eng', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'es-do' => array('language' => 'Spanish (Dominican Republic)', 'locale' => 'es_do', 'localeFallback' => 'spa', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -937,7 +937,7 @@ class L10nTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $l10n->catalog(array('eng', 'deu', 'zho', 'rum', 'zul', 'yid'));
+		$result = $localize->catalog(array('eng', 'deu', 'zho', 'rum', 'zul', 'yid'));
 		$expected = array(
 			'eng' => array('language' => 'English', 'locale' => 'eng', 'localeFallback' => 'eng', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'deu' => array('language' => 'German (Standard)', 'locale' => 'deu', 'localeFallback' => 'deu', 'charset' => 'utf-8', 'direction' => 'ltr'),

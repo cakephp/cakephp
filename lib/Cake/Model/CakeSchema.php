@@ -20,6 +20,7 @@
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('ConnectionManager', 'Model');
+App::uses('File', 'Utility');
 
 /**
  * Base Class for Schema management

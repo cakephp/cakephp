@@ -90,7 +90,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEquals($Task->path, APP . 'Test' . DS . 'Fixture' . DS);
+		$this->assertEquals(APP . 'Test' . DS . 'Fixture' . DS, $Task->path);
 	}
 
 /**
