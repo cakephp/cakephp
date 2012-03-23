@@ -255,10 +255,10 @@ class CakeTestFixture {
  * @return boolean
  */
 	public function truncate($db) {
-		$fullDebug = $db->fullDebug;
-		$db->fullDebug = false;
+		$log = $db->log;
+		$db->log = false;
 		$return = $db->truncate($this->table);
-		$db->fullDebug = $fullDebug;
+		$db->log = $log;
 		return $return;
 	}
 

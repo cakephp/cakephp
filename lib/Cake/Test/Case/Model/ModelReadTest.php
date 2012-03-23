@@ -5829,8 +5829,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('CategoryThread');
 		$TestModel = new CategoryThread();
 
-		$fullDebug = $this->db->fullDebug;
-		$this->db->fullDebug = true;
+		$log = $this->db->log;
+		$this->db->log = true;
 		$TestModel->recursive = 6;
 		$TestModel->id = 7;
 		$result = $TestModel->read();
@@ -5880,7 +5880,7 @@ class ModelReadTest extends BaseModelTest {
 									'updated' => '2007-03-18 15:32:31'
 		)))))));
 
-		$this->db->fullDebug = $fullDebug;
+		$this->db->log = $log;
 		$this->assertEquals($expected, $result);
 	}
 
@@ -5893,8 +5893,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('CategoryThread');
 		$TestModel = new CategoryThread();
 
-		$fullDebug = $this->db->fullDebug;
-		$this->db->fullDebug = true;
+		$log = $this->db->log;
+		$this->db->log = true;
 		$TestModel->recursive = 6;
 		$result = $TestModel->find('first', array('conditions' => array('CategoryThread.id' => 7)));
 
@@ -5944,7 +5944,7 @@ class ModelReadTest extends BaseModelTest {
 									'updated' => '2007-03-18 15:32:31'
 		)))))));
 
-		$this->db->fullDebug = $fullDebug;
+		$this->db->log = $log;
 		$this->assertEquals($expected, $result);
 	}
 
@@ -5957,8 +5957,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('CategoryThread');
 		$TestModel = new CategoryThread();
 
-		$fullDebug = $this->db->fullDebug;
-		$this->db->fullDebug = true;
+		$log = $this->db->log;
+		$this->db->log = true;
 		$TestModel->recursive = 6;
 		$result = $TestModel->find('all', null, null, 'CategoryThread.id ASC');
 		$expected = array(
@@ -6164,7 +6164,7 @@ class ModelReadTest extends BaseModelTest {
 									'updated' => '2007-03-18 15:32:31'
 		))))))));
 
-		$this->db->fullDebug = $fullDebug;
+		$this->db->log = $log;
 		$this->assertEquals($expected, $result);
 	}
 
@@ -6784,11 +6784,11 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($result, 4);
 
 		$this->db->getLog(false, true);
-		$fullDebug = $this->db->fullDebug;
-		$this->db->fullDebug = true;
+		$log = $this->db->log;
+		$this->db->log = true;
 		$TestModel->order = 'User.id';
 		$result = $TestModel->find('count');
-		$this->db->fullDebug = $fullDebug;
+		$this->db->log = $log;
 		$this->assertEquals($result, 4);
 
 		$log = $this->db->getLog();
