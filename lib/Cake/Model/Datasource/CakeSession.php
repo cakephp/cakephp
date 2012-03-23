@@ -601,8 +601,6 @@ class CakeSession {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
 			}
-		} elseif (!isset($_SESSION)) {
-			session_start();
 		} else {
 			session_start();
 		}
