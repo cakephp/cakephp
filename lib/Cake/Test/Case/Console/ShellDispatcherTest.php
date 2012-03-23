@@ -450,7 +450,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->args = array('mock_with_main');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
-		$this->assertEquals($Dispatcher->args, array());
+		$this->assertEquals(array(), $Dispatcher->args);
 	}
 
 /**
@@ -498,7 +498,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->args = array('mock_with_main_not_a');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
-		$this->assertEquals($Dispatcher->args, array());
+		$this->assertEquals(array(), $Dispatcher->args);
 
 		$Shell = new MockWithMainNotAShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
@@ -531,7 +531,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->args = array('mock_without_main_not_a');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
-		$this->assertEquals($Dispatcher->args, array());
+		$this->assertEquals(array(), $Dispatcher->args);
 
 		$Shell = new MockWithoutMainNotAShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
@@ -553,24 +553,24 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher = new TestShellDispatcher();
 
 		$Dispatcher->args = array('a', 'b', 'c');
-		$this->assertEquals($Dispatcher->shiftArgs(), 'a');
+		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array('b', 'c'));
 
 		$Dispatcher->args = array('a' => 'b', 'c', 'd');
-		$this->assertEquals($Dispatcher->shiftArgs(), 'b');
+		$this->assertEquals('b', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array('c', 'd'));
 
 		$Dispatcher->args = array('a', 'b' => 'c', 'd');
-		$this->assertEquals($Dispatcher->shiftArgs(), 'a');
+		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array('b' => 'c', 'd'));
 
 		$Dispatcher->args = array(0 => 'a',  2 => 'b', 30 => 'c');
-		$this->assertEquals($Dispatcher->shiftArgs(), 'a');
+		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array(0 => 'b', 1 => 'c'));
 
 		$Dispatcher->args = array();
 		$this->assertNull($Dispatcher->shiftArgs());
-		$this->assertSame($Dispatcher->args, array());
+		$this->assertSame(array(), $Dispatcher->args);
 	}
 
 }

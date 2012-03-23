@@ -79,7 +79,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
-		$this->assertEquals($this->Tree->children(), array());
+		$this->assertEquals(array(), $this->Tree->children());
 
 		$this->Tree->id = 1;
 		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
@@ -89,7 +89,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->assertTrue($this->Tree->delete());
-		$this->assertEquals($this->Tree->find('count'), 11);
+		$this->assertEquals(11, $this->Tree->find('count'));
 	}
 
 /**
@@ -115,7 +115,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
-		$this->assertEquals($this->Tree->children(), array());
+		$this->assertEquals(array(), $this->Tree->children());
 
 		$this->Tree->id = 1;
 		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
@@ -125,7 +125,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->assertTrue($this->Tree->delete());
-		$this->assertEquals($this->Tree->find('count'), 11);
+		$this->assertEquals(11, $this->Tree->find('count'));
 	}
 
 /**
@@ -140,8 +140,8 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 
 		$this->Ad->id = 4;
 		$result = $this->Ad->children();
-		$this->assertEquals(Set::extract('/Ad/id', $result), array(6, 5));
-		$this->assertEquals(Set::extract('/Campaign/id', $result), array(2, 2));
+		$this->assertEquals(array(6, 5), Set::extract('/Ad/id', $result));
+		$this->assertEquals(array(2, 2), Set::extract('/Campaign/id', $result));
 	}
 
 /**
@@ -156,8 +156,8 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 
 		$this->Ad->id = 4;
 		$result = $this->Ad->children();
-		$this->assertEquals(Set::extract('/Ad/id', $result), array(5, 6));
-		$this->assertEquals(Set::extract('/Campaign/id', $result), array(2, 2));
+		$this->assertEquals(array(5, 6), Set::extract('/Ad/id', $result));
+		$this->assertEquals(array(2, 2), Set::extract('/Campaign/id', $result));
 	}
 
 /**

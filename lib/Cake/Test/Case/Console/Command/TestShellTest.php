@@ -310,7 +310,7 @@ class TestShellTest extends CakeTestCase {
 
 		$this->Shell->expects($this->once())->method('_run');
 		$this->Shell->available();
-		$this->assertEquals($this->Shell->args, array('core', 'AllBehaviors'));
+		$this->assertEquals(array('core', 'AllBehaviors'), $this->Shell->args);
 	}
 
 /**

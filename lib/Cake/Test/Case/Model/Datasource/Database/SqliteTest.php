@@ -171,13 +171,13 @@ class SqliteTest extends CakeTestCase {
 		$db->execute("CREATE TABLE test_list (id VARCHAR(255));");
 
 		$db->cacheSources = true;
-		$this->assertEquals($db->listSources(), array('test_list'));
+		$this->assertEquals(array('test_list'), $db->listSources());
 		$db->cacheSources = false;
 
 		$fileName = '_' . preg_replace('/[^A-Za-z0-9_\-+]/', '_', TMP . $dbName) . '_list';
 
 		$result = Cache::read($fileName, '_cake_model_');
-		$this->assertEquals($result, array('test_list'));
+		$this->assertEquals(array('test_list'), $result);
 
 		Cache::delete($fileName, '_cake_model_');
 		Configure::write('Cache.disable', true);
@@ -327,7 +327,7 @@ class SqliteTest extends CakeTestCase {
 			'default' => null,
 			'key' => 'primary',
 		);
-		$this->assertEquals($result['id'], $expected);
+		$this->assertEquals($expected, $result['id']);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
 
 		$tableName = 'uuid_tests';
@@ -341,7 +341,7 @@ class SqliteTest extends CakeTestCase {
 			'default' => null,
 			'key' => 'primary',
 		);
-		$this->assertEquals($result['id'], $expected);
+		$this->assertEquals($expected, $result['id']);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
 	}
 

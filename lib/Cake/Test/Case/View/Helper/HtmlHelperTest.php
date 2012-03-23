@@ -472,7 +472,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testStyle() {
 		$result = $this->Html->style('display: none;');
-		$this->assertEquals($result, 'display: none;');
+		$this->assertEquals('display: none;', $result);
 
 		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'));
 		$expected = 'display:none; margin:10px;';
@@ -535,7 +535,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[0], $expected);
 		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
-		$this->assertEquals(count($result), 2);
+		$this->assertEquals(2, count($result));
 
 		$this->View->expects($this->at(0))
 			->method('append')
@@ -590,7 +590,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[0], $expected);
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
-		$this->assertEquals(count($result), 2);
+		$this->assertEquals(2, count($result));
 
 		CakePlugin::unload('TestPlugin');
 	}
@@ -1647,13 +1647,13 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testUseTag() {
 		$result = $this->Html->useTag('unknowntag');
-		$this->assertEquals($result, '');
+		$this->assertEquals('', $result);
 
 		$result = $this->Html->useTag('formend');
 		$this->assertTags($result, '/form');
 
 		$result = $this->Html->useTag('form', 'url', ' test');
-		$this->assertEquals($result, '<form action="url" test>');
+		$this->assertEquals('<form action="url" test>', $result);
 
 		$result = $this->Html->useTag('form', 'example.com', array('test' => 'ok'));
 		$this->assertTags($result, array('form' => array('test' => 'ok', 'action' => 'example.com')));
@@ -1853,16 +1853,16 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 		$tags = $this->Html->getAttribute('_tags');
-		$this->assertEquals($tags['form'], 'start form');
-		$this->assertEquals($tags['formend'], 'finish form');
-		$this->assertEquals($tags['selectend'], '</select>');
+		$this->assertEquals('start form', $tags['form']);
+		$this->assertEquals('finish form', $tags['formend']);
+		$this->assertEquals('</select>', $tags['selectend']);
 
 		$result = $this->Html->loadConfig(array('htmlhelper_minimized.ini', 'ini'), $path);
 		$expected = array(
 			'minimizedAttributeFormat' => 'format'
 		);
 		$this->assertEquals($expected, $result);
-		$this->assertEquals($this->Html->getAttribute('_minimizedAttributeFormat'), 'format');
+		$this->assertEquals('format', $this->Html->getAttribute('_minimizedAttributeFormat'));
 	}
 
 /**
@@ -1900,10 +1900,10 @@ class HtmlHelperTest extends CakeTestCase {
 			foreach (array('true', true, 1, '1', $attribute) as $value) {
 				$attrs = array($attribute => $value);
 				$expected = ' ' . $attribute . '="' . $attribute . '"';
-				$this->assertEquals($helper->parseAttributes($attrs), $expected, '%s Failed on ' . $value);
+				$this->assertEquals($expected, $helper->parseAttributes($attrs), '%s Failed on ' . $value);
 			}
 		}
-		$this->assertEquals($helper->parseAttributes(array('compact')), ' compact="compact"');
+		$this->assertEquals(' compact="compact"', $helper->parseAttributes(array('compact')));
 
 		$attrs = array('class' => array('foo', 'bar'));
 		$expected = ' class="foo bar"';
@@ -1911,9 +1911,9 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$helper = new Html5TestHelper($this->View);
 		$expected = ' require';
-		$this->assertEquals($helper->parseAttributes(array('require')), $expected);
-		$this->assertEquals($helper->parseAttributes(array('require' => true)), $expected);
-		$this->assertEquals($helper->parseAttributes(array('require' => false)), '');
+		$this->assertEquals($expected, $helper->parseAttributes(array('require')));
+		$this->assertEquals($expected, $helper->parseAttributes(array('require' => true)));
+		$this->assertEquals('', $helper->parseAttributes(array('require' => false)));
 	}
 
 }

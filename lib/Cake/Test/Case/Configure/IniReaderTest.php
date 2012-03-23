@@ -77,7 +77,7 @@ class IniReaderTest extends CakeTestCase {
 			'some_key' => 'some_value',
 			'bool_key' => true
 		);
-		$this->assertEquals($config, $expected);
+		$this->assertEquals($expected, $config);
 	}
 
 /**
