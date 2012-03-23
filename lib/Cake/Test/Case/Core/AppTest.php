@@ -346,7 +346,7 @@ class AppTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = App::objects('NonExistingType');
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 
 		App::build(array(
 			'plugins' => array(
@@ -413,9 +413,9 @@ class AppTest extends CakeTestCase {
 		$this->assertTrue(in_array('OtherComponent', $result));
 
 		$result = App::objects('TestPluginTwo.behavior');
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 		$result = App::objects('TestPluginTwo.Model/Behavior');
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 
 		$result = App::objects('model', null, false);
 		$this->assertTrue(in_array('Comment', $result));
@@ -441,11 +441,11 @@ class AppTest extends CakeTestCase {
 
 		$path = App::pluginPath('TestPlugin');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals($path, $expected);
+		$this->assertEquals($expected, $path);
 
 		$path = App::pluginPath('TestPluginTwo');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals($path, $expected);
+		$this->assertEquals($expected, $path);
 		App::build();
 	}
 
@@ -460,11 +460,11 @@ class AppTest extends CakeTestCase {
 		));
 		$path = App::themePath('test_theme');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEquals($path, $expected);
+		$this->assertEquals($expected, $path);
 
 		$path = App::themePath('TestTheme');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEquals($path, $expected);
+		$this->assertEquals($expected, $path);
 
 		App::build();
 	}
@@ -748,7 +748,7 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals($text, 'this is the test asset css file');
+		$this->assertEquals('this is the test asset css file', $text);
 
 		$result = App::import('Vendor', 'TestPlugin.sample/SamplePlugin');
 		$this->assertTrue($result);
@@ -762,31 +762,31 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'SomeNameInSubfolder', array('file' => 'somename/some.name.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals($text, 'This is a file with dot in file name');
+		$this->assertEquals('This is a file with dot in file name', $text);
 
 		ob_start();
 		$result = App::import('Vendor', 'TestHello', array('file' => 'Test' . DS . 'hello.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals($text, 'This is the hello.php file in Test directory');
+		$this->assertEquals('This is the hello.php file in Test directory', $text);
 
 		ob_start();
 		$result = App::import('Vendor', 'MyTest', array('file' => 'Test' . DS . 'MyTest.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals($text, 'This is the MyTest.php file');
+		$this->assertEquals('This is the MyTest.php file', $text);
 
 		ob_start();
 		$result = App::import('Vendor', 'Welcome');
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals($text, 'This is the welcome.php file in vendors directory');
+		$this->assertEquals('This is the welcome.php file in vendors directory', $text);
 
 		ob_start();
 		$result = App::import('Vendor', 'TestPlugin.Welcome');
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals($text, 'This is the welcome.php file in test_plugin/vendors directory');
+		$this->assertEquals('This is the welcome.php file in test_plugin/vendors directory', $text);
 	}
 
 /**

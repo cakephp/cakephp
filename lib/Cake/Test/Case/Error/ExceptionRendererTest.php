@@ -211,7 +211,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals($result, 'widget thing is missing');
+		$this->assertEquals('widget thing is missing', $result);
 	}
 
 /**
@@ -230,7 +230,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals($result, 'widget thing is missing', 'Method declared in subclass converted to error400');
+		$this->assertEquals('widget thing is missing', $result, 'Method declared in subclass converted to error400');
 	}
 
 /**

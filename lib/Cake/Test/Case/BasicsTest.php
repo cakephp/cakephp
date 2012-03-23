@@ -77,7 +77,7 @@ class BasicsTest extends CakeTestCase {
 		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$result = array_diff_key($one, $two);
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 	}
 
 /**
@@ -282,7 +282,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'basics_test'));
 
 		$result = cache('basics_test');
-		$this->assertEquals($result, 'simple cache write');
+		$this->assertEquals('simple cache write', $result);
 		@unlink(CACHE . 'basics_test');
 
 		cache('basics_test', 'expired', '+1 second');
@@ -874,7 +874,7 @@ EXPECTED;
 				),
 			'g' => 'test'
 		);
-		$this->assertEquals(stripslashes_deep($nested), $expected);
+		$this->assertEquals($expected, stripslashes_deep($nested));
 	}
 
 /**
@@ -909,7 +909,7 @@ EXPECTED;
 				),
 			'g' => "te'''st"
 			);
-		$this->assertEquals(stripslashes_deep($nested), $expected);
+		$this->assertEquals($expected, stripslashes_deep($nested));
 	}
 
 /**
@@ -919,24 +919,24 @@ EXPECTED;
  */
 	public function testPluginSplit() {
 		$result = pluginSplit('Something.else');
-		$this->assertEquals($result, array('Something', 'else'));
+		$this->assertEquals(array('Something', 'else'), $result);
 
 		$result = pluginSplit('Something.else.more.dots');
-		$this->assertEquals($result, array('Something', 'else.more.dots'));
+		$this->assertEquals(array('Something', 'else.more.dots'), $result);
 
 		$result = pluginSplit('Somethingelse');
-		$this->assertEquals($result, array(null, 'Somethingelse'));
+		$this->assertEquals(array(null, 'Somethingelse'), $result);
 
 		$result = pluginSplit('Something.else', true);
-		$this->assertEquals($result, array('Something.', 'else'));
+		$this->assertEquals(array('Something.', 'else'), $result);
 
 		$result = pluginSplit('Something.else.more.dots', true);
-		$this->assertEquals($result, array('Something.', 'else.more.dots'));
+		$this->assertEquals(array('Something.', 'else.more.dots'), $result);
 
 		$result = pluginSplit('Post', false, 'Blog');
-		$this->assertEquals($result, array('Blog', 'Post'));
+		$this->assertEquals(array('Blog', 'Post'), $result);
 
 		$result = pluginSplit('Blog.Post', false, 'Ultimate');
-		$this->assertEquals($result, array('Blog', 'Post'));
+		$this->assertEquals(array('Blog', 'Post'), $result);
 	}
 }

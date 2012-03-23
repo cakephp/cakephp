@@ -9029,7 +9029,7 @@ class MultibyteTest extends CakeTestCase {
 	public function testMultibyteMimeEncode() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$result = Multibyte::mimeEncode($string);
-		$this->assertEquals($result, $string);
+		$this->assertEquals($string, $result);
 
 		$string = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ';
 		$result = Multibyte::mimeEncode($string);
@@ -9198,7 +9198,7 @@ class MultibyteTest extends CakeTestCase {
 
 		$string = 'Hello, World!';
 		$result = Multibyte::mimeEncode($string);
-		$this->assertEquals($result, $string);
+		$this->assertEquals($string, $result);
 
 		$string = 'čini';
 		$result = Multibyte::mimeEncode($string);

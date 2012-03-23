@@ -285,7 +285,7 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertNull($result);
 
 		$result = $Aco->node('');
-		$this->assertEquals($result, null);
+		$this->assertEquals(null, $result);
 	}
 
 /**
@@ -296,7 +296,7 @@ class AclNodeTest extends CakeTestCase {
 	public function testNodeWithDuplicatePathSegments() {
 		$Aco = new DbAcoTest();
 		$nodes = $Aco->node('ROOT/Users');
-		$this->assertEquals($nodes[0]['DbAcoTest']['parent_id'], 1, 'Parent id does not point at ROOT. %s');
+		$this->assertEquals(1, $nodes[0]['DbAcoTest']['parent_id'], 'Parent id does not point at ROOT. %s');
 	}
 
 /**

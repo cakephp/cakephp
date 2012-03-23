@@ -253,14 +253,14 @@ class ConnectionManagerTest extends CakeTestCase {
 		$this->assertEquals($name, ConnectionManager::getSourceName($connection));
 
 		$source = ConnectionManager::create(null, array());
-		$this->assertEquals($source, null);
+		$this->assertEquals(null, $source);
 
 		$source = ConnectionManager::create('another_test', array());
-		$this->assertEquals($source, null);
+		$this->assertEquals(null, $source);
 
 		$config = array('classname' => 'DboMysql', 'filename' => 'dbo' . DS . 'dbo_mysql');
 		$source = ConnectionManager::create(null, $config);
-		$this->assertEquals($source, null);
+		$this->assertEquals(null, $source);
 	}
 
 /**

@@ -52,19 +52,19 @@ class JqueryEngineHelperTest extends CakeTestCase {
  */
 	public function testSelector() {
 		$result = $this->Jquery->get('#content');
-		$this->assertEquals($result, $this->Jquery);
+		$this->assertEquals($this->Jquery, $result);
 		$this->assertEquals($this->Jquery->selection, '$("#content")');
 
 		$result = $this->Jquery->get('document');
-		$this->assertEquals($result, $this->Jquery);
+		$this->assertEquals($this->Jquery, $result);
 		$this->assertEquals($this->Jquery->selection, '$(document)');
 
 		$result = $this->Jquery->get('window');
-		$this->assertEquals($result, $this->Jquery);
+		$this->assertEquals($this->Jquery, $result);
 		$this->assertEquals($this->Jquery->selection, '$(window)');
 
 		$result = $this->Jquery->get('ul');
-		$this->assertEquals($result, $this->Jquery);
+		$this->assertEquals($this->Jquery, $result);
 		$this->assertEquals($this->Jquery->selection, '$("ul")');
 	}
 

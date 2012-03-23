@@ -312,7 +312,7 @@ class TestTaskTest extends CakeTestCase {
 		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
 			'app.test_task_article', 'app.test_task_tag');
 
-		$this->assertEquals(sort($result), sort($expected));
+		$this->assertEquals(sort($expected), sort($result));
 	}
 
 /**
@@ -368,7 +368,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(1));
 
 		$result = $this->Task->getClassName('Model');
-		$this->assertEquals($result, 'MyCustomClass');
+		$this->assertEquals('MyCustomClass', $result);
 
 		$result = $this->Task->getClassName('Model');
 		$options = App::objects('model');

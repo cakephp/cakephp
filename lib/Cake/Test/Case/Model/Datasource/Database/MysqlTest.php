@@ -203,8 +203,8 @@ class MysqlTest extends CakeTestCase {
 		));
 
 		$result = $this->model->schema();
-		$this->assertEquals($result['bool']['type'], 'boolean');
-		$this->assertEquals($result['small_int']['type'], 'integer');
+		$this->assertEquals('boolean', $result['bool']['type']);
+		$this->assertEquals('integer', $result['small_int']['type']);
 
 		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'small_int' => 5)));
 		$result = $this->model->find('first');
@@ -529,7 +529,7 @@ class MysqlTest extends CakeTestCase {
 
 		//Test that the string is syntactically correct
 		$query = $this->Dbo->getConnection()->prepare($result);
-		$this->assertEquals($result, $query->queryString);
+		$this->assertEquals($query->queryString, $result);
 
 		$schemaB = new CakeSchema(array(
 			'name' => 'AlterTest2',
@@ -555,7 +555,7 @@ class MysqlTest extends CakeTestCase {
 
 		//Test that the string is syntactically correct
 		$query = $this->Dbo->getConnection()->prepare($result);
-		$this->assertEquals($result, $query->queryString);
+		$this->assertEquals($query->queryString, $result);
 
 		// Change three indexes, delete one and add another one
 		$schemaC = new CakeSchema(array(
@@ -585,10 +585,10 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('ADD KEY compound_idx (`group2`, `group1`);', $result);
 
 		$query = $this->Dbo->getConnection()->prepare($result);
-		$this->assertEquals($result, $query->queryString);
+		$this->assertEquals($query->queryString, $result);
 
 		// Compare us to ourself.
-		$this->assertEquals($schemaC->compare($schemaC), array());
+		$this->assertEquals(array(), $schemaC->compare($schemaC));
 
 		// Drop the indexes
 		$result = $this->Dbo->alterSchema($schemaA->compare($schemaC));
@@ -600,7 +600,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('DROP KEY id_name_idx;', $result);
 
 		$query = $this->Dbo->getConnection()->prepare($result);
-		$this->assertEquals($result, $query->queryString);
+		$this->assertEquals($query->queryString, $result);
 	}
 
 /**
@@ -617,7 +617,7 @@ class MysqlTest extends CakeTestCase {
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
-		$this->assertEquals($result['BinaryTest']['data'], $data);
+		$this->assertEquals($data, $result['BinaryTest']['data']);
 	}
 
 /**
@@ -662,9 +662,9 @@ class MysqlTest extends CakeTestCase {
 
 		$this->Dbo->rawQuery($result);
 		$result = $this->Dbo->listDetailedSources($this->Dbo->fullTableName('altertest', false, false));
-		$this->assertEquals($result['Collation'], 'utf8_general_ci');
-		$this->assertEquals($result['Engine'], 'InnoDB');
-		$this->assertEquals($result['charset'], 'utf8');
+		$this->assertEquals('utf8_general_ci', $result['Collation']);
+		$this->assertEquals('InnoDB', $result['Engine']);
+		$this->assertEquals('utf8', $result['charset']);
 
 		$this->Dbo->rawQuery($this->Dbo->dropSchema($schemaA));
 	}
@@ -759,9 +759,9 @@ class MysqlTest extends CakeTestCase {
 	public function testGetCharsetName() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$result = $this->Dbo->getCharsetName('utf8_unicode_ci');
-		$this->assertEquals($result, 'utf8');
+		$this->assertEquals('utf8', $result);
 		$result = $this->Dbo->getCharsetName('cp1250_general_ci');
-		$this->assertEquals($result, 'cp1250');
+		$this->assertEquals('cp1250', $result);
 	}
 
 /**
@@ -833,9 +833,9 @@ class MysqlTest extends CakeTestCase {
 		$result = $model->getDataSource()->describe($model);
 		$this->Dbo->execute($this->Dbo->dropSchema($schema));
 
-		$this->assertEquals($result['stringy']['collate'], 'cp1250_general_ci');
-		$this->assertEquals($result['stringy']['charset'], 'cp1250');
-		$this->assertEquals($result['other_col']['comment'], 'Test Comment');
+		$this->assertEquals('cp1250_general_ci', $result['stringy']['collate']);
+		$this->assertEquals('cp1250', $result['stringy']['charset']);
+		$this->assertEquals('Test Comment', $result['other_col']['comment']);
 	}
 
 /**
@@ -860,7 +860,7 @@ class MysqlTest extends CakeTestCase {
 			->will($this->returnValue(null));
 
 		$tables = $db->listSources();
-		$this->assertEquals($tables, array('cake_table', 'another_table'));
+		$this->assertEquals(array('cake_table', 'another_table'), $tables);
 	}
 
 /**
@@ -926,9 +926,9 @@ class MysqlTest extends CakeTestCase {
 			->method('getDataSource')
 			->will($this->returnValue($test));
 
-		$this->assertEquals($this->Model->escapeField(), '`Article`.`id`');
+		$this->assertEquals('`Article`.`id`', $this->Model->escapeField());
 		$result = $test->fields($this->Model, null, $this->Model->escapeField());
-		$this->assertEquals($result, array('`Article`.`id`'));
+		$this->assertEquals(array('`Article`.`id`'), $result);
 
 		$test->expects($this->at(0))->method('execute')
 			->with('SELECT `Article`.`id` FROM ' . $test->fullTableName('articles') . ' AS `Article`   WHERE 1 = 1');
@@ -941,10 +941,10 @@ class MysqlTest extends CakeTestCase {
 
 		$test->startQuote = '[';
 		$test->endQuote = ']';
-		$this->assertEquals($this->Model->escapeField(), '[Article].[id]');
+		$this->assertEquals('[Article].[id]', $this->Model->escapeField());
 
 		$result = $test->fields($this->Model, null, $this->Model->escapeField());
-		$this->assertEquals($result, array('[Article].[id]'));
+		$this->assertEquals(array('[Article].[id]'), $result);
 
 		$test->expects($this->at(0))->method('execute')
 			->with('SELECT [Article].[id] FROM ' . $test->fullTableName('articles') . ' AS [Article]   WHERE 1 = 1');
@@ -1033,7 +1033,7 @@ class MysqlTest extends CakeTestCase {
 			'callbacks' => null
 		);
 		$queryData['joins'][0]['table'] = $this->Dbo->fullTableName($queryData['joins'][0]['table']);
-		$this->assertEquals($queryData, $expected);
+		$this->assertEquals($expected, $queryData);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertRegExp('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
@@ -1045,7 +1045,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Model->belongsTo['TestModel4Parent']['type'] = 'INNER';
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $_queryData, $params['external'], $resultSet);
 		$this->assertTrue($result);
-		$this->assertEquals($_queryData['joins'][0]['type'], 'INNER');
+		$this->assertEquals('INNER', $_queryData['joins'][0]['type']);
 	}
 
 /**
@@ -1275,7 +1275,7 @@ class MysqlTest extends CakeTestCase {
 		$testModel5Table = $this->Dbo->fullTableName($this->Model->TestModel5);
 		$result = $this->Dbo->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN ' . $testModel5Table . ' AS `TestModel5` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
-		$this->assertEquals(trim($result), trim($expected));
+		$this->assertEquals(trim($expected), trim($result));
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertRegExp('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -1336,7 +1336,7 @@ class MysqlTest extends CakeTestCase {
 		$testModel4Table = $this->Dbo->fullTableName($this->Model->TestModel4, true, true);
 		$result = $this->Dbo->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN ' . $testModel4Table . ' AS `TestModel4` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
-		$this->assertEquals(trim($result), trim($expected));
+		$this->assertEquals(trim($expected), trim($result));
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertRegExp('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -1368,7 +1368,7 @@ class MysqlTest extends CakeTestCase {
 		$testModel4Table = $this->Dbo->fullTableName($this->Model->TestModel4, true, true);
 		$result = $this->Dbo->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN ' . $testModel4Table . ' AS `TestModel4` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
-		$this->assertEquals(trim($result), trim($expected));
+		$this->assertEquals(trim($expected), trim($result));
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertRegExp('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -2431,13 +2431,13 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'round( (3.55441 * fooField), 3 ) AS test');
-		$this->assertEquals($result, array('round( (3.55441 * fooField), 3 ) AS test'));
+		$this->assertEquals(array('round( (3.55441 * fooField), 3 ) AS test'), $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating');
-		$this->assertEquals($result, array('ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating'));
+		$this->assertEquals(array('ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating'), $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'ROUND(Rating.rate_total / Rating.rate_count,2) AS rating');
-		$this->assertEquals($result, array('ROUND(Rating.rate_total / Rating.rate_count,2) AS rating'));
+		$this->assertEquals(array('ROUND(Rating.rate_total / Rating.rate_count,2) AS rating'), $result);
 
 		$result = $this->Dbo->fields($this->Model, 'Post', "Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name");
 		$expected = array("`Node`.`created`", "CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name");
@@ -2696,38 +2696,38 @@ class MysqlTest extends CakeTestCase {
 	public function testCalculations() {
 		$this->Model = new TestModel();
 		$result = $this->Dbo->calculate($this->Model, 'count');
-		$this->assertEquals($result, 'COUNT(*) AS `count`');
+		$this->assertEquals('COUNT(*) AS `count`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'count', array('id'));
-		$this->assertEquals($result, 'COUNT(`id`) AS `count`');
+		$this->assertEquals('COUNT(`id`) AS `count`', $result);
 
 		$result = $this->Dbo->calculate(
 			$this->Model,
 			'count',
 			array($this->Dbo->expression('DISTINCT id'))
 		);
-		$this->assertEquals($result, 'COUNT(DISTINCT id) AS `count`');
+		$this->assertEquals('COUNT(DISTINCT id) AS `count`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'count', array('id', 'id_count'));
-		$this->assertEquals($result, 'COUNT(`id`) AS `id_count`');
+		$this->assertEquals('COUNT(`id`) AS `id_count`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'count', array('Model.id', 'id_count'));
-		$this->assertEquals($result, 'COUNT(`Model`.`id`) AS `id_count`');
+		$this->assertEquals('COUNT(`Model`.`id`) AS `id_count`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'max', array('id'));
-		$this->assertEquals($result, 'MAX(`id`) AS `id`');
+		$this->assertEquals('MAX(`id`) AS `id`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'max', array('Model.id', 'id'));
-		$this->assertEquals($result, 'MAX(`Model`.`id`) AS `id`');
+		$this->assertEquals('MAX(`Model`.`id`) AS `id`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
-		$this->assertEquals($result, 'MAX(`Model`.`id`) AS `id`');
+		$this->assertEquals('MAX(`Model`.`id`) AS `id`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'min', array('`Model`.`id`', 'id'));
-		$this->assertEquals($result, 'MIN(`Model`.`id`) AS `id`');
+		$this->assertEquals('MIN(`Model`.`id`) AS `id`', $result);
 
 		$result = $this->Dbo->calculate($this->Model, 'min', 'left');
-		$this->assertEquals($result, 'MIN(`left`) AS `left`');
+		$this->assertEquals('MIN(`left`) AS `left`', $result);
 	}
 
 /**
@@ -3160,7 +3160,7 @@ class MysqlTest extends CakeTestCase {
 		$qs = $this->Dbo->startQuote;
 		$qe = $this->Dbo->endQuote;
 
-		$this->assertEquals($result[0], "{$qs}Article{$qe}.{$qs}id{$qe}");
+		$this->assertEquals("{$qs}Article{$qe}.{$qs}id{$qe}", $result[0]);
 		$this->assertRegExp('/Article__distance/', $result[1]);
 		$this->assertRegExp('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result[1]);
 		$this->assertRegExp('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result[1]);
@@ -3249,156 +3249,156 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testIntrospectType() {
-		$this->assertEquals($this->Dbo->introspectType(0), 'integer');
-		$this->assertEquals($this->Dbo->introspectType(2), 'integer');
-		$this->assertEquals($this->Dbo->introspectType('2'), 'string');
-		$this->assertEquals($this->Dbo->introspectType('2.2'), 'string');
-		$this->assertEquals($this->Dbo->introspectType(2.2), 'float');
-		$this->assertEquals($this->Dbo->introspectType('stringme'), 'string');
-		$this->assertEquals($this->Dbo->introspectType('0stringme'), 'string');
+		$this->assertEquals('integer', $this->Dbo->introspectType(0));
+		$this->assertEquals('integer', $this->Dbo->introspectType(2));
+		$this->assertEquals('string', $this->Dbo->introspectType('2'));
+		$this->assertEquals('string', $this->Dbo->introspectType('2.2'));
+		$this->assertEquals('float', $this->Dbo->introspectType(2.2));
+		$this->assertEquals('string', $this->Dbo->introspectType('stringme'));
+		$this->assertEquals('string', $this->Dbo->introspectType('0stringme'));
 
 		$data = array(2.2);
-		$this->assertEquals($this->Dbo->introspectType($data), 'float');
+		$this->assertEquals('float', $this->Dbo->introspectType($data));
 
 		$data = array('2.2');
-		$this->assertEquals($this->Dbo->introspectType($data), 'float');
+		$this->assertEquals('float', $this->Dbo->introspectType($data));
 
 		$data = array(2);
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		$data = array('2');
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		$data = array('string');
-		$this->assertEquals($this->Dbo->introspectType($data), 'string');
+		$this->assertEquals('string', $this->Dbo->introspectType($data));
 
 		$data = array(2.2, '2.2');
-		$this->assertEquals($this->Dbo->introspectType($data), 'float');
+		$this->assertEquals('float', $this->Dbo->introspectType($data));
 
 		$data = array(2, '2');
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		$data = array('string one', 'string two');
-		$this->assertEquals($this->Dbo->introspectType($data), 'string');
+		$this->assertEquals('string', $this->Dbo->introspectType($data));
 
 		$data = array('2.2', 3);
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		$data = array('2.2', '0stringme');
-		$this->assertEquals($this->Dbo->introspectType($data), 'string');
+		$this->assertEquals('string', $this->Dbo->introspectType($data));
 
 		$data = array(2.2, 3);
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		$data = array(2.2, '0stringme');
-		$this->assertEquals($this->Dbo->introspectType($data), 'string');
+		$this->assertEquals('string', $this->Dbo->introspectType($data));
 
 		$data = array(2, 'stringme');
-		$this->assertEquals($this->Dbo->introspectType($data), 'string');
+		$this->assertEquals('string', $this->Dbo->introspectType($data));
 
 		$data = array(2, '2.2', 'stringgme');
-		$this->assertEquals($this->Dbo->introspectType($data), 'string');
+		$this->assertEquals('string', $this->Dbo->introspectType($data));
 
 		$data = array(2, '2.2');
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		$data = array(2, 2.2);
-		$this->assertEquals($this->Dbo->introspectType($data), 'integer');
+		$this->assertEquals('integer', $this->Dbo->introspectType($data));
 
 		// null
 		$result = $this->Dbo->value(null, 'boolean');
-		$this->assertEquals($result, 'NULL');
+		$this->assertEquals('NULL', $result);
 
 		// EMPTY STRING
 		$result = $this->Dbo->value('', 'boolean');
-		$this->assertEquals($result, "'0'");
+		$this->assertEquals("'0'", $result);
 
 		// BOOLEAN
 		$result = $this->Dbo->value('true', 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		$result = $this->Dbo->value('false', 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		$result = $this->Dbo->value(true, 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		$result = $this->Dbo->value(false, 'boolean');
-		$this->assertEquals($result, "'0'");
+		$this->assertEquals("'0'", $result);
 
 		$result = $this->Dbo->value(1, 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		$result = $this->Dbo->value(0, 'boolean');
-		$this->assertEquals($result, "'0'");
+		$this->assertEquals("'0'", $result);
 
 		$result = $this->Dbo->value('abc', 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		$result = $this->Dbo->value(1.234, 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		$result = $this->Dbo->value('1.234e05', 'boolean');
-		$this->assertEquals($result, "'1'");
+		$this->assertEquals("'1'", $result);
 
 		// NUMBERS
 		$result = $this->Dbo->value(123, 'integer');
-		$this->assertEquals($result, 123);
+		$this->assertEquals(123, $result);
 
 		$result = $this->Dbo->value('123', 'integer');
-		$this->assertEquals($result, '123');
+		$this->assertEquals('123', $result);
 
 		$result = $this->Dbo->value('0123', 'integer');
-		$this->assertEquals($result, "'0123'");
+		$this->assertEquals("'0123'", $result);
 
 		$result = $this->Dbo->value('0x123ABC', 'integer');
-		$this->assertEquals($result, "'0x123ABC'");
+		$this->assertEquals("'0x123ABC'", $result);
 
 		$result = $this->Dbo->value('0x123', 'integer');
-		$this->assertEquals($result, "'0x123'");
+		$this->assertEquals("'0x123'", $result);
 
 		$result = $this->Dbo->value(1.234, 'float');
-		$this->assertEquals($result, 1.234);
+		$this->assertEquals(1.234, $result);
 
 		$result = $this->Dbo->value('1.234', 'float');
-		$this->assertEquals($result, '1.234');
+		$this->assertEquals('1.234', $result);
 
 		$result = $this->Dbo->value(' 1.234 ', 'float');
-		$this->assertEquals($result, "' 1.234 '");
+		$this->assertEquals("' 1.234 '", $result);
 
 		$result = $this->Dbo->value('1.234e05', 'float');
-		$this->assertEquals($result, "'1.234e05'");
+		$this->assertEquals("'1.234e05'", $result);
 
 		$result = $this->Dbo->value('1.234e+5', 'float');
-		$this->assertEquals($result, "'1.234e+5'");
+		$this->assertEquals("'1.234e+5'", $result);
 
 		$result = $this->Dbo->value('1,234', 'float');
-		$this->assertEquals($result, "'1,234'");
+		$this->assertEquals("'1,234'", $result);
 
 		$result = $this->Dbo->value('FFF', 'integer');
-		$this->assertEquals($result, "'FFF'");
+		$this->assertEquals("'FFF'", $result);
 
 		$result = $this->Dbo->value('abc', 'integer');
-		$this->assertEquals($result, "'abc'");
+		$this->assertEquals("'abc'", $result);
 
 		// STRINGS
 		$result = $this->Dbo->value('123', 'string');
-		$this->assertEquals($result, "'123'");
+		$this->assertEquals("'123'", $result);
 
 		$result = $this->Dbo->value(123, 'string');
-		$this->assertEquals($result, "'123'");
+		$this->assertEquals("'123'", $result);
 
 		$result = $this->Dbo->value(1.234, 'string');
-		$this->assertEquals($result, "'1.234'");
+		$this->assertEquals("'1.234'", $result);
 
 		$result = $this->Dbo->value('abc', 'string');
-		$this->assertEquals($result, "'abc'");
+		$this->assertEquals("'abc'", $result);
 
 		$result = $this->Dbo->value(' abc ', 'string');
-		$this->assertEquals($result, "' abc '");
+		$this->assertEquals("' abc '", $result);
 
 		$result = $this->Dbo->value('a bc', 'string');
-		$this->assertEquals($result, "'a bc'");
+		$this->assertEquals("'a bc'", $result);
 	}
 
 /**

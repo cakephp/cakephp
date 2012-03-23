@@ -59,7 +59,7 @@ class WincacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'wincache');
 		$expecting = '';
-		$this->assertEquals($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 'wincache');
@@ -67,7 +67,7 @@ class WincacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test', 'wincache');
 		$expecting = $data;
-		$this->assertEquals($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		Cache::delete('test', 'wincache');
 	}

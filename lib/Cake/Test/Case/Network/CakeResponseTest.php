@@ -46,9 +46,9 @@ class CakeResponseTest extends CakeTestCase {
 	public function testConstruct() {
 		$response = new CakeResponse();
 		$this->assertNull($response->body());
-		$this->assertEquals($response->charset(), 'UTF-8');
-		$this->assertEquals($response->type(), 'text/html');
-		$this->assertEquals($response->statusCode(), 200);
+		$this->assertEquals('UTF-8', $response->charset());
+		$this->assertEquals('text/html', $response->type());
+		$this->assertEquals(200, $response->statusCode());
 
 		$options = array(
 			'body' => 'This is the body',
@@ -57,10 +57,10 @@ class CakeResponseTest extends CakeTestCase {
 			'status' => '203'
 		);
 		$response = new CakeResponse($options);
-		$this->assertEquals($response->body(), 'This is the body');
-		$this->assertEquals($response->charset(), 'my-custom-charset');
-		$this->assertEquals($response->type(), 'audio/mpeg');
-		$this->assertEquals($response->statusCode(), 203);
+		$this->assertEquals('This is the body', $response->body());
+		$this->assertEquals('my-custom-charset', $response->charset());
+		$this->assertEquals('audio/mpeg', $response->type());
+		$this->assertEquals(203, $response->statusCode());
 	}
 
 /**
@@ -71,8 +71,8 @@ class CakeResponseTest extends CakeTestCase {
 		$response = new CakeResponse();
 		$this->assertNull($response->body());
 		$response->body('Response body');
-		$this->assertEquals($response->body(), 'Response body');
-		$this->assertEquals($response->body('Changed Body'), 'Changed Body');
+		$this->assertEquals('Response body', $response->body());
+		$this->assertEquals('Changed Body', $response->body('Changed Body'));
 	}
 
 /**
@@ -81,10 +81,10 @@ class CakeResponseTest extends CakeTestCase {
  */
 	public function testCharset() {
 		$response = new CakeResponse();
-		$this->assertEquals($response->charset(), 'UTF-8');
+		$this->assertEquals('UTF-8', $response->charset());
 		$response->charset('iso-8859-1');
-		$this->assertEquals($response->charset(), 'iso-8859-1');
-		$this->assertEquals($response->charset('UTF-16'), 'UTF-16');
+		$this->assertEquals('iso-8859-1', $response->charset());
+		$this->assertEquals('UTF-16', $response->charset('UTF-16'));
 	}
 
 /**
@@ -94,10 +94,10 @@ class CakeResponseTest extends CakeTestCase {
  */
 	public function testStatusCode() {
 		$response = new CakeResponse();
-		$this->assertEquals($response->statusCode(), 200);
+		$this->assertEquals(200, $response->statusCode());
 		$response->statusCode(404);
-		$this->assertEquals($response->statusCode(), 404);
-		$this->assertEquals($response->statusCode(500), 500);
+		$this->assertEquals(404, $response->statusCode());
+		$this->assertEquals(500, $response->statusCode(500));
 
 		//Throws exception
 		$response->statusCode(1001);
@@ -109,17 +109,17 @@ class CakeResponseTest extends CakeTestCase {
  */
 	public function testType() {
 		$response = new CakeResponse();
-		$this->assertEquals($response->type(), 'text/html');
+		$this->assertEquals('text/html', $response->type());
 		$response->type('pdf');
-		$this->assertEquals($response->type(), 'application/pdf');
-		$this->assertEquals($response->type('application/crazy-mime'), 'application/crazy-mime');
-		$this->assertEquals($response->type('json'), 'application/json');
-		$this->assertEquals($response->type('wap'), 'text/vnd.wap.wml');
-		$this->assertEquals($response->type('xhtml-mobile'), 'application/vnd.wap.xhtml+xml');
-		$this->assertEquals($response->type('csv'), 'text/csv');
+		$this->assertEquals('application/pdf', $response->type());
+		$this->assertEquals('application/crazy-mime', $response->type('application/crazy-mime'));
+		$this->assertEquals('application/json', $response->type('json'));
+		$this->assertEquals('text/vnd.wap.wml', $response->type('wap'));
+		$this->assertEquals('application/vnd.wap.xhtml+xml', $response->type('xhtml-mobile'));
+		$this->assertEquals('text/csv', $response->type('csv'));
 
 		$response->type(array('keynote' => 'application/keynote'));
-		$this->assertEquals($response->type('keynote'), 'application/keynote');
+		$this->assertEquals('application/keynote', $response->type('keynote'));
 
 		$this->assertFalse($response->type('wackytype'));
 	}
@@ -261,7 +261,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
 		);
 		$response->disableCache();
-		$this->assertEquals($response->header(), $expected);
+		$this->assertEquals($expected, $response->header());
 	}
 
 /**
@@ -280,7 +280,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Cache-Control' => 'public, max-age=' . ($time->format('U') - time())
 		);
 		$response->cache($since);
-		$this->assertEquals($response->header(), $expected);
+		$this->assertEquals($expected, $response->header());
 
 		$response = new CakeResponse();
 		$since = time();
@@ -292,7 +292,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time())
 		);
 		$response->cache($since, $time);
-		$this->assertEquals($response->header(), $expected);
+		$this->assertEquals($expected, $response->header());
 
 		$response = new CakeResponse();
 		$since = time();
@@ -304,7 +304,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Cache-Control' => 'public, max-age=0'
 		);
 		$response->cache($since, $time);
-		$this->assertEquals($response->header(), $expected);
+		$this->assertEquals($expected, $response->header());
 	}
 
 /**
@@ -342,7 +342,7 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHttpCodes() {
 		$response = new CakeResponse();
 		$result = $response->httpCodes();
-		$this->assertEquals(count($result), 39);
+		$this->assertEquals(39, count($result));
 
 		$result = $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
@@ -355,7 +355,7 @@ class CakeResponseTest extends CakeTestCase {
 
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(count($response->httpCodes()), 41);
+		$this->assertEquals(41, count($response->httpCodes()));
 
 		$result = $response->httpCodes(1337);
 		$expected = array(1337 => 'Undefined Unicorn');
@@ -364,7 +364,7 @@ class CakeResponseTest extends CakeTestCase {
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(count($response->httpCodes()), 41);
+		$this->assertEquals(41, count($response->httpCodes()));
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
@@ -381,7 +381,7 @@ class CakeResponseTest extends CakeTestCase {
 			'Content-Disposition' => 'attachment; filename="myfile.mp3"'
 		);
 		$response->download('myfile.mp3');
-		$this->assertEquals($response->header(), $expected);
+		$this->assertEquals($expected, $response->header());
 	}
 
 /**

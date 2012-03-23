@@ -80,7 +80,7 @@ class XcacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test');
 		$expecting = '';
-		$this->assertEquals($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data);
@@ -88,7 +88,7 @@ class XcacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test');
 		$expecting = $data;
-		$this->assertEquals($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		Cache::delete('test');
 	}

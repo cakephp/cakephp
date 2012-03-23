@@ -87,24 +87,24 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$TestModel->translateTable = 'another_i18n';
 		$TestModel->Behaviors->attach('Translate', array('title'));
 		$translateModel = $TestModel->Behaviors->Translate->translateModel($TestModel);
-		$this->assertEquals($translateModel->name, 'I18nModel');
-		$this->assertEquals($translateModel->useTable, 'another_i18n');
+		$this->assertEquals('I18nModel', $translateModel->name);
+		$this->assertEquals('another_i18n', $translateModel->useTable);
 
 		$TestModel = new User();
 		$TestModel->Behaviors->attach('Translate', array('title'));
 		$translateModel = $TestModel->Behaviors->Translate->translateModel($TestModel);
-		$this->assertEquals($translateModel->name, 'I18nModel');
-		$this->assertEquals($translateModel->useTable, 'i18n');
+		$this->assertEquals('I18nModel', $translateModel->name);
+		$this->assertEquals('i18n', $translateModel->useTable);
 
 		$TestModel = new TranslatedArticle();
 		$translateModel = $TestModel->Behaviors->Translate->translateModel($TestModel);
-		$this->assertEquals($translateModel->name, 'TranslateArticleModel');
-		$this->assertEquals($translateModel->useTable, 'article_i18n');
+		$this->assertEquals('TranslateArticleModel', $translateModel->name);
+		$this->assertEquals('article_i18n', $translateModel->useTable);
 
 		$TestModel = new TranslatedItem();
 		$translateModel = $TestModel->Behaviors->Translate->translateModel($TestModel);
-		$this->assertEquals($translateModel->name, 'TranslateTestModel');
-		$this->assertEquals($translateModel->useTable, 'i18n');
+		$this->assertEquals('TranslateTestModel', $translateModel->name);
+		$this->assertEquals('i18n', $translateModel->useTable);
 	}
 
 /**
@@ -442,10 +442,10 @@ class TranslateBehaviorTest extends CakeTestCase {
 			Configure::write('debug', 0);
 
 			$result = $TestModel->find('list', array('recursive' => 1, 'callbacks' => false));
-			$this->assertEquals($result, array());
+			$this->assertEquals(array(), $result);
 
 			$result = $TestModel->find('list', array('recursive' => 1, 'callbacks' => 'after'));
-			$this->assertEquals($result, array());
+			$this->assertEquals(array(), $result);
 			Configure::write('debug', $debug);
 		}
 
@@ -668,7 +668,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		));
 		$TestModel->create();
 		$this->assertFalse($TestModel->save($data));
-		$this->assertEquals($TestModel->validationErrors['title'], array('This field cannot be left blank'));
+		$this->assertEquals(array('This field cannot be left blank'), $TestModel->validationErrors['title']);
 
 		$TestModel->locale = 'eng';
 		$TestModel->validate['title'] = '/Only this title/';

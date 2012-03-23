@@ -180,7 +180,7 @@ class ObjectCollectionTest extends CakeTestCase {
 		$result = $this->Objects->set('Second', new SecondGenericObject($this->Objects));
 		$this->assertInstanceOf('SecondGenericObject', $result['Second'], 'set failed');
 
-		$this->assertEquals(count($result), 2);
+		$this->assertEquals(2, count($result));
 	}
 
 /**
