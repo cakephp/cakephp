@@ -90,28 +90,28 @@ class SanitizeTest extends CakeTestCase {
  */
 	public function testEscapeAlphaNumeric() {
 		$resultAlpha = Sanitize::escape('abc', 'test');
-		$this->assertEquals($resultAlpha, 'abc');
+		$this->assertEquals('abc', $resultAlpha);
 
 		$resultNumeric = Sanitize::escape('123', 'test');
-		$this->assertEquals($resultNumeric, '123');
+		$this->assertEquals('123', $resultNumeric);
 
 		$resultNumeric = Sanitize::escape(1234, 'test');
-		$this->assertEquals($resultNumeric, 1234);
+		$this->assertEquals(1234, $resultNumeric);
 
 		$resultNumeric = Sanitize::escape(1234.23, 'test');
-		$this->assertEquals($resultNumeric, 1234.23);
+		$this->assertEquals(1234.23, $resultNumeric);
 
 		$resultNumeric = Sanitize::escape('#1234.23', 'test');
-		$this->assertEquals($resultNumeric, '#1234.23');
+		$this->assertEquals('#1234.23', $resultNumeric);
 
 		$resultNull = Sanitize::escape(null, 'test');
-		$this->assertEquals($resultNull, null);
+		$this->assertEquals(null, $resultNull);
 
 		$resultNull = Sanitize::escape(false, 'test');
-		$this->assertEquals($resultNull, false);
+		$this->assertEquals(false, $resultNull);
 
 		$resultNull = Sanitize::escape(true, 'test');
-		$this->assertEquals($resultNull, true);
+		$this->assertEquals(true, $resultNull);
 	}
 
 /**
@@ -168,7 +168,7 @@ class SanitizeTest extends CakeTestCase {
 		$string = '';
 		$expected = '';
 		$result = Sanitize::clean($string, array('connection' => 'test'));
-		$this->assertEquals($string, $expected);
+		$this->assertEquals($expected, $string);
 
 		$data = array(
 			'Grant' => array(
@@ -191,7 +191,7 @@ class SanitizeTest extends CakeTestCase {
 			)
 		);
 		$result = Sanitize::clean($data, array('connection' => 'test'));
-		$this->assertEquals($result, $data);
+		$this->assertEquals($data, $result);
 	}
 
 /**
@@ -217,7 +217,7 @@ class SanitizeTest extends CakeTestCase {
 
 		$string = 'The "lazy" dog \'jumped\'';
 		$result = Sanitize::html($string, array('quotes' => ENT_NOQUOTES));
-		$this->assertEquals($result, $string);
+		$this->assertEquals($string, $result);
 
 		$string = 'The "lazy" dog \'jumped\' & flew over the moon. If (1+1) = 2 <em>is</em> true, (2-1) = 1 is also true';
 		$expected = 'The &quot;lazy&quot; dog &#039;jumped&#039; &amp; flew over the moon. If (1+1) = 2 &lt;em&gt;is&lt;/em&gt; true, (2-1) = 1 is also true';
@@ -249,7 +249,7 @@ class SanitizeTest extends CakeTestCase {
 		$text = 'I    love  ßá†ö√    letters.';
 		$result = Sanitize::stripWhitespace($text);
 		$expected = 'I love ßá†ö√ letters.';
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

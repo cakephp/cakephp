@@ -573,7 +573,7 @@ class AuthComponentTest extends CakeTestCase {
 		);
 		$objects = $this->Controller->Auth->constructAuthorize();
 		$result = $objects[0];
-		$this->assertEquals($result->settings['actionPath'], 'controllers/');
+		$this->assertEquals('controllers/', $result->settings['actionPath']);
 	}
 
 /**
@@ -604,7 +604,7 @@ class AuthComponentTest extends CakeTestCase {
 		);
 		$objects = $this->Controller->Auth->constructAuthenticate();
 		$result = $objects[0];
-		$this->assertEquals($result->settings['userModel'], 'AuthUser');
+		$this->assertEquals('AuthUser', $result->settings['userModel']);
 	}
 
 /**
@@ -737,7 +737,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->allow('action_name', 'anotherAction');
-		$this->assertEquals($this->Controller->Auth->allowedActions, array('action_name', 'anotherAction'));
+		$this->assertEquals(array('action_name', 'anotherAction'), $this->Controller->Auth->allowedActions);
 	}
 
 /**
@@ -938,7 +938,7 @@ class AuthComponentTest extends CakeTestCase {
 		);
 
 		$this->Auth->startup($this->Controller);
-		$this->assertEquals($this->Controller->testUrl, '/admin/auth_test/login');
+		$this->assertEquals('/admin/auth_test/login', $this->Controller->testUrl);
 
 		Configure::write('Routing.prefixes', $pref);
 	}
@@ -1076,7 +1076,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->logoutRedirect = '/';
 		$result = $this->Auth->logout();
 
-		$this->assertEquals($result, '/');
+		$this->assertEquals('/', $result);
 		$this->assertNull($this->Auth->Session->read('Auth.AuthUser'));
 		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
 	}

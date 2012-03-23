@@ -36,44 +36,44 @@ class L10nTest extends CakeTestCase {
 		// Catalog Entry
 		$localize->get('en');
 
-		$this->assertEquals($localize->language, 'English');
-		$this->assertEquals($localize->languagePath, array('eng', 'eng'));
-		$this->assertEquals($localize->locale, 'eng');
+		$this->assertEquals('English', $localize->language);
+		$this->assertEquals(array('eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('eng', $localize->locale);
 
 		// Map Entry
 		$localize->get('eng');
 
-		$this->assertEquals($localize->language, 'English');
-		$this->assertEquals($localize->languagePath, array('eng', 'eng'));
-		$this->assertEquals($localize->locale, 'eng');
+		$this->assertEquals('English', $localize->language);
+		$this->assertEquals(array('eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('eng', $localize->locale);
 
 		// Catalog Entry
 		$localize->get('en-ca');
 
-		$this->assertEquals($localize->language, 'English (Canadian)');
-		$this->assertEquals($localize->languagePath, array('en_ca', 'eng'));
-		$this->assertEquals($localize->locale, 'en_ca');
+		$this->assertEquals('English (Canadian)', $localize->language);
+		$this->assertEquals(array('en_ca', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_ca', $localize->locale);
 
 		// Default Entry
 		define('DEFAULT_LANGUAGE', 'en-us');
 
 		$localize->get('use_default');
 
-		$this->assertEquals($localize->language, 'English (United States)');
-		$this->assertEquals($localize->languagePath, array('en_us', 'eng'));
-		$this->assertEquals($localize->locale, 'en_us');
+		$this->assertEquals('English (United States)', $localize->language);
+		$this->assertEquals(array('en_us', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_us', $localize->locale);
 
 		$localize->get('es');
 		$localize->get('');
-		$this->assertEquals($localize->lang, 'en-us');
+		$this->assertEquals('en-us', $localize->lang);
 
 		// Using $this->default
 		$localize = new L10n();
 
 		$localize->get('use_default');
-		$this->assertEquals($localize->language, 'English (United States)');
-		$this->assertEquals($localize->languagePath, array('en_us', 'eng', 'eng'));
-		$this->assertEquals($localize->locale, 'en_us');
+		$this->assertEquals('English (United States)', $localize->language);
+		$this->assertEquals(array('en_us', 'eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_us', $localize->locale);
 	}
 
 /**
@@ -88,23 +88,23 @@ class L10nTest extends CakeTestCase {
 		$localize = new L10n();
 		$localize->get();
 
-		$this->assertEquals($localize->language, 'English (Canadian)');
-		$this->assertEquals($localize->languagePath, array('en_ca', 'eng', 'eng'));
-		$this->assertEquals($localize->locale, 'en_ca');
+		$this->assertEquals('English (Canadian)', $localize->language);
+		$this->assertEquals(array('en_ca', 'eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('en_ca', $localize->locale);
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx';
 		$localize->get();
 
-		$this->assertEquals($localize->language, 'Spanish (Mexican)');
-		$this->assertEquals($localize->languagePath, array('es_mx', 'spa', 'eng'));
-		$this->assertEquals($localize->locale, 'es_mx');
+		$this->assertEquals('Spanish (Mexican)', $localize->language);
+		$this->assertEquals(array('es_mx', 'spa', 'eng'), $localize->languagePath);
+		$this->assertEquals('es_mx', $localize->locale);
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en_xy,en_ca';
 		$localize->get();
 
-		$this->assertEquals($localize->language, 'English');
-		$this->assertEquals($localize->languagePath, array('eng', 'eng', 'eng'));
-		$this->assertEquals($localize->locale, 'eng');
+		$this->assertEquals('English', $localize->language);
+		$this->assertEquals(array('eng', 'eng', 'eng'), $localize->languagePath);
+		$this->assertEquals('eng', $localize->locale);
 
 		$_SERVER = $serverBackup;
 	}

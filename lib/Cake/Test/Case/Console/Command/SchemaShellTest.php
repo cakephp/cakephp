@@ -135,18 +135,18 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
 		$this->assertTrue(is_a($this->Shell->Schema, 'CakeSchema'));
-		$this->assertEquals(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
-		$this->assertEquals($this->Shell->Schema->file, 'schema.php');
+		$this->assertEquals(strtolower(APP_DIR), strtolower($this->Shell->Schema->name));
+		$this->assertEquals('schema.php', $this->Shell->Schema->file);
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(
 			'name' => 'TestSchema'
 		);
 		$this->Shell->startup();
-		$this->assertEquals($this->Shell->Schema->name, 'TestSchema');
-		$this->assertEquals($this->Shell->Schema->file, 'test_schema.php');
-		$this->assertEquals($this->Shell->Schema->connection, 'default');
-		$this->assertEquals($this->Shell->Schema->path, APP . 'Config' . DS . 'Schema');
+		$this->assertEquals('TestSchema', $this->Shell->Schema->name);
+		$this->assertEquals('test_schema.php', $this->Shell->Schema->file);
+		$this->assertEquals('default', $this->Shell->Schema->connection);
+		$this->assertEquals(APP . 'Config' . DS . 'Schema', $this->Shell->Schema->path);
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(
@@ -155,10 +155,10 @@ class SchemaShellTest extends CakeTestCase {
 			'path' => '/test/path'
 		);
 		$this->Shell->startup();
-		$this->assertEquals(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
-		$this->assertEquals($this->Shell->Schema->file, 'other_file.php');
-		$this->assertEquals($this->Shell->Schema->connection, 'test');
-		$this->assertEquals($this->Shell->Schema->path, '/test/path');
+		$this->assertEquals(strtolower(APP_DIR), strtolower($this->Shell->Schema->name));
+		$this->assertEquals('other_file.php', $this->Shell->Schema->file);
+		$this->assertEquals('test', $this->Shell->Schema->connection);
+		$this->assertEquals('/test/path', $this->Shell->Schema->path);
 	}
 
 /**
@@ -459,7 +459,7 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->startup();
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Config' . DS . 'Schema';
-		$this->assertEquals($this->Shell->Schema->path, $expected);
+		$this->assertEquals($expected, $this->Shell->Schema->path);
 		CakePlugin::unload();
 	}
 

@@ -144,7 +144,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Collection->init($this->Controller);
 		$RequestHandler = new RequestHandlerComponent($Collection, $settings);
-		$this->assertEquals($RequestHandler->ajaxLayout, 'test_ajax');
+		$this->assertEquals('test_ajax', $RequestHandler->ajaxLayout);
 	}
 
 /**
@@ -156,7 +156,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertNull($this->RequestHandler->ext);
 		$this->Controller->request->params['ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
-		$this->assertEquals($this->RequestHandler->ext, 'rss');
+		$this->assertEquals('rss', $this->RequestHandler->ext);
 	}
 
 /**
@@ -277,7 +277,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->initialize($this->Controller);
 		$this->Controller->beforeFilter();
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertEquals($this->Controller->params['isAjax'], true);
+		$this->assertEquals(true, $this->Controller->params['isAjax']);
 	}
 
 /**
@@ -290,7 +290,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->Controller->request->params['ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertEquals($this->Controller->ext, '.ctp');
+		$this->assertEquals('.ctp', $this->Controller->ext);
 	}
 
 /**
@@ -307,7 +307,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->Controller->request->params['ext'] = 'js';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertNotEquals($this->Controller->layout, 'ajax');
+		$this->assertNotEquals('ajax', $this->Controller->layout);
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
@@ -386,7 +386,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$this->Controller->viewPath = 'request_handler_test\\rss';
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals($this->Controller->viewPath, 'request_handler_test' . DS . 'js');
+		$this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewPath);
 	}
 
 /**
@@ -485,7 +485,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testRequestClientTypes() {
 		$_SERVER['HTTP_X_PROTOTYPE_VERSION'] = '1.5';
-		$this->assertEquals($this->RequestHandler->getAjaxVersion(), '1.5');
+		$this->assertEquals('1.5', $this->RequestHandler->getAjaxVersion());
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH'], $_SERVER['HTTP_X_PROTOTYPE_VERSION']);
 		$this->assertFalse($this->RequestHandler->getAjaxVersion());
@@ -517,10 +517,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
-		$this->assertEquals($this->RequestHandler->requestedWith(), 'json');
+		$this->assertEquals('json', $this->RequestHandler->requestedWith());
 
 		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
-		$this->assertEquals($result, 'json');
+		$this->assertEquals('json', $result);
 
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
@@ -553,7 +553,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public function testResponseContentType() {
 		$this->assertEquals('html', $this->RequestHandler->responseType());
 		$this->assertTrue($this->RequestHandler->respondAs('atom'));
-		$this->assertEquals($this->RequestHandler->responseType(), 'atom');
+		$this->assertEquals('atom', $this->RequestHandler->responseType());
 	}
 
 /**
@@ -657,22 +657,22 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testPrefers() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
-		$this->assertNotEquals($this->RequestHandler->prefers(), 'rss');
+		$this->assertNotEquals('rss', $this->RequestHandler->prefers());
 		$this->RequestHandler->ext = 'rss';
-		$this->assertEquals($this->RequestHandler->prefers(), 'rss');
+		$this->assertEquals('rss', $this->RequestHandler->prefers());
 		$this->assertFalse($this->RequestHandler->prefers('xml'));
-		$this->assertEquals($this->RequestHandler->prefers(array('js', 'xml', 'xhtml')), 'xml');
+		$this->assertEquals('xml', $this->RequestHandler->prefers(array('js', 'xml', 'xhtml')));
 		$this->assertFalse($this->RequestHandler->prefers(array('red', 'blue')));
-		$this->assertEquals($this->RequestHandler->prefers(array('js', 'json', 'xhtml')), 'xhtml');
+		$this->assertEquals('xhtml', $this->RequestHandler->prefers(array('js', 'json', 'xhtml')));
 		$this->assertTrue($this->RequestHandler->prefers(array('rss')), 'Should return true if input matches ext.');
 		$this->assertFalse($this->RequestHandler->prefers(array('html')), 'No match with ext, return false.');
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$this->_init();
-		$this->assertEquals($this->RequestHandler->prefers(), 'xml');
+		$this->assertEquals('xml', $this->RequestHandler->prefers());
 
 		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';
-		$this->assertEquals($this->RequestHandler->prefers(), 'html');
+		$this->assertEquals('html', $this->RequestHandler->prefers());
 		$this->assertFalse($this->RequestHandler->prefers('rss'));
 	}
 
@@ -685,7 +685,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'text/x-mobile,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5';
 		$this->RequestHandler->setContent('mobile', 'text/x-mobile');
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertEquals($this->RequestHandler->prefers(), 'mobile');
+		$this->assertEquals('mobile', $this->RequestHandler->prefers());
 	}
 
 /**
@@ -789,7 +789,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 			array('controller' => 'request_handler_test', 'action' => 'param_method', 'first', 'second')
 		);
 		$result = ob_get_clean();
-		$this->assertEquals($result, 'one: first two: second');
+		$this->assertEquals('one: first two: second', $result);
 	}
 
 /**

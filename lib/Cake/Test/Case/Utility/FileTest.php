@@ -141,7 +141,7 @@ class FileTest extends CakeTestCase {
 		$this->File->lock = true;
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
-		$this->assertEquals($result, trim($expecting));
+		$this->assertEquals(trim($expecting), $result);
 		$this->File->lock = null;
 
 		$data = $expecting;

@@ -470,7 +470,7 @@ class ModelTaskTest extends CakeTestCase {
 			->will($this->onConsecutiveCalls('y', 2));
 
 		$result = $this->Task->findDisplayField($fields);
-		$this->assertEquals($result, 'tagname');
+		$this->assertEquals('tagname', $result);
 	}
 
 /**
@@ -619,7 +619,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -716,7 +716,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(6))->method('out')->with('3. three');
 		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(2));
 		$result = $this->Task->inOptions($options, 'Pick a number');
-		$this->assertEquals($result, 1);
+		$this->assertEquals(1, $result);
 	}
 
 /**

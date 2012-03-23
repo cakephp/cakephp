@@ -41,7 +41,7 @@ class BasicAuthenticationTest extends CakeTestCase {
 		);
 
 		BasicAuthentication::authentication($http, $auth);
-		$this->assertEquals($http->request['header']['Authorization'], 'Basic bWFyazpzZWNyZXQ=');
+		$this->assertEquals('Basic bWFyazpzZWNyZXQ=', $http->request['header']['Authorization']);
 	}
 
 /**
@@ -58,7 +58,7 @@ class BasicAuthenticationTest extends CakeTestCase {
 		);
 
 		BasicAuthentication::proxyAuthentication($http, $proxy);
-		$this->assertEquals($http->request['header']['Proxy-Authorization'], 'Basic bWFyazpzZWNyZXQ=');
+		$this->assertEquals('Basic bWFyazpzZWNyZXQ=', $http->request['header']['Proxy-Authorization']);
 	}
 
 }
