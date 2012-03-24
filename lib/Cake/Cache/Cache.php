@@ -250,11 +250,12 @@ class Cache {
  *
  * Permanently remove all expired and deleted data
  *
- * @param string $config The config name you wish to have garbage collected. Defaults to 'default'
+ * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
+ * @param integer $expires [optional] An expires timestamp. Defaults to NULL
  * @return void
  */
-	public static function gc($config = 'default') {
-		self::$_engines[$config]->gc();
+	public static function gc($config = 'default', $expires = null) {
+		self::$_engines[$config]->gc($expires);
 	}
 
 /**

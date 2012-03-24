@@ -353,7 +353,7 @@ class SqliteTest extends CakeTestCase {
 	public function testVirtualFieldWithFunction() {
 		$this->loadFixtures('User');
 		$User = ClassRegistry::init('User');
-		$User->virtualFields = array('name' => 'SUBSTR(User.user, 5)');
+		$User->virtualFields = array('name' => 'SUBSTR(User.user, 5, LENGTH(User.user) - 4)');
 
 		$result = $User->find('first', array(
 			'conditions' => array('User.user' => 'garrett')
