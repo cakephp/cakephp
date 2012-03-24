@@ -6078,52 +6078,39 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
 		$this->assertEquals(array(6, 4, 5, 2), $result);
 	}
-	
+
 	public function testToggleBoolFields() {
-		$this->loadFixtures('CounterCachePost');
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
 		$Post = new CounterCachePost();
 		$Post->unbindModel(array('belongsTo' => array('User')), true);
-		
+
 		$true = array('Post' => array('published' => true, 'id' => 2));
 		$false = array('Post' => array('published' => false, 'id' => 2));
 		$fields = array('Post.published', 'Post.id');
 		$updateConditions = array('Post.id' => 2);
-		
+
 		// check its true
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
 		$this->assertEqual($result, $true);
-		
+
 		// Testing without the alias
-		$this->assertTrue($Post->updateAll(array('published' => '1 - published'), $updateConditions));
+		$this->assertTrue($Post->updateAll(array('published' => 'NOT published'), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
 		$this->assertEqual($result, $false);
-		
-		$this->assertTrue($Post->updateAll(array('published' => '1 - published'), $updateConditions));
+
+		$this->assertTrue($Post->updateAll(array('published' => 'NOT published'), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
 		$this->assertEqual($result, $true);
-		
+
+		$db = ConnectionManager::getDataSource('test');
+		$alias = $db->name('Post.published');
+
 		// Testing with the alias
-		$this->assertTrue($Post->updateAll(array('Post.published' => '1 - Post.published'), $updateConditions));
+		$this->assertTrue($Post->updateAll(array('Post.published' => "NOT $alias"), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
 		$this->assertEqual($result, $false);
-		
-		$this->assertTrue($Post->updateAll(array('Post.published' => '1 - Post.published'), $updateConditions));
-		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $true);
-		
-		$this->assertTrue($Post->updateAll(array('Post.published = 1 - Post.published'), $updateConditions));
-		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $false);
-		
-		$this->assertTrue($Post->updateAll(array('Post.published = 1 - Post.published'), $updateConditions));
-		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $true);
-		
-		$this->assertTrue($Post->updateAll(array('Post.published' => '! Post.published'), $updateConditions));
-		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $false);
-		
-		$this->assertTrue($Post->updateAll(array('Post.published' => 'NOT Post.published'), $updateConditions));
+
+		$this->assertTrue($Post->updateAll(array('Post.published' => "NOT $alias"), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
 		$this->assertEqual($result, $true);
 	}
