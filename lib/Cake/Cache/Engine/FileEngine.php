@@ -87,10 +87,11 @@ class FileEngine extends CacheEngine {
 
 /**
  * Garbage collection. Permanently remove all expired and deleted data
- *
+ * 
+ * @param integer $expires [optional] An expires timestamp, invalidataing all data before.
  * @return boolean True if garbage collection was successful, false on failure
  */
-	public function gc() {
+	public function gc($expires = null) {
 		return $this->clear(true);
 	}
 

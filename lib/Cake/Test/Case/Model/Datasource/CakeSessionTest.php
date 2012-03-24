@@ -18,6 +18,8 @@
  */
 
 App::uses('CakeSession', 'Model/Datasource');
+App::uses('DatabaseSession', 'Model/Datasource/Session');
+App::uses('CacheSession', 'Model/Datasource/Session');
 
 class TestCakeSession extends CakeSession {
 
@@ -29,6 +31,20 @@ class TestCakeSession extends CakeSession {
 		self::_setHost($host);
 	}
 
+}
+
+class TestCacheSession extends CacheSession {
+
+	protected function _writeSession() {
+		return true;
+	}
+}
+
+class TestDatabaseSession extends DatabaseSession {
+
+	protected function _writeSession() {
+		return true;
+	}
 }
 
 /**
@@ -92,7 +108,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function teardown() {
 		if (TestCakeSession::started()) {
-			TestCakeSession::clear();
+			session_write_close();
 		}
 		unset($_SESSION);
 		parent::teardown();
@@ -550,6 +566,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testReadAndWriteWithCacheStorage() {
 		Configure::write('Session.defaults', 'cache');
+		Configure::write('Session.handler.engine', 'TestCacheSession');
 
 		TestCakeSession::init();
 		TestCakeSession::destroy();
@@ -585,6 +602,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testReadAndWriteWithCustomCacheConfig() {
 		Configure::write('Session.defaults', 'cache');
+		Configure::write('Session.handler.engine', 'TestCacheSession');
 		Configure::write('Session.handler.config', 'session_test');
 
 		Cache::config('session_test', array(
@@ -609,6 +627,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testReadAndWriteWithDatabaseStorage() {
 		Configure::write('Session.defaults', 'database');
+		Configure::write('Session.handler.engine', 'TestDatabaseSession');
 		Configure::write('Session.handler.table', 'sessions');
 		Configure::write('Session.handler.model', 'Session');
 		Configure::write('Session.handler.database', 'test');
@@ -651,6 +670,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testSessionTimeout() {
 		Configure::write('debug', 2);
+		Configure::write('Session.defaults', 'cake');
 		Configure::write('Session.autoRegenerate', false);
 
 		$timeoutSeconds = Configure::read('Session.timeout') * 60;
@@ -683,7 +703,7 @@ class CakeSessionTest extends CakeTestCase {
 	public function testCookieTimeoutFallback() {
 		$_SESSION = null;
 		Configure::write('Session', array(
-			'defaults' => 'php',
+			'defaults' => 'cake',
 			'timeout' => 400,
 		));
 		TestCakeSession::start();
@@ -692,7 +712,7 @@ class CakeSessionTest extends CakeTestCase {
 
 		$_SESSION = null;
 		Configure::write('Session', array(
-			'defaults' => 'php',
+			'defaults' => 'cake',
 			'timeout' => 400,
 			'cookieTimeout' => 600
 		));
