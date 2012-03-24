@@ -79,10 +79,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  */
 	public function close() {
-		$probability = mt_rand(1, 150);
-		if ($probability <= 3) {
-			$this->gc();
-		}
 		return true;
 	}
 
@@ -145,15 +141,21 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 	}
 
 /**
+ * Writes and closes a session
+ * 
+ * @return void 
+ */
+	protected function _writeSession() {
+		session_write_close();
+	}
+
+/**
  * Closes the session before the objects handling it become unavailable
  *
  * @return void
  */
 	public function __destruct() {
-		try {
-			session_write_close();
-		} catch (Exception $e) {
-		}
+		$this->_writeSession();
 	}
 
 }

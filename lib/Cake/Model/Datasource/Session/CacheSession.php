@@ -43,10 +43,6 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  */
 	public function close() {
-		$probability = mt_rand(1, 150);
-		if ($probability <= 3) {
-			Cache::gc();
-		}
 		return true;
 	}
 
@@ -74,7 +70,7 @@ class CacheSession implements CakeSessionHandlerInterface {
 /**
  * Method called on the destruction of a database session.
  *
- * @param integer $id ID that uniquely identifies session in database
+ * @param integer $id ID that uniquely identifies session in cache
  * @return boolean True for successful delete, false otherwise.
  */
 	public function destroy($id) {
@@ -82,13 +78,22 @@ class CacheSession implements CakeSessionHandlerInterface {
 	}
 
 /**
- * Helper function called on gc for database sessions.
+ * Helper function called on gc for cache sessions.
  *
  * @param integer $expires Timestamp (defaults to current time)
  * @return boolean Success
  */
 	public function gc($expires = null) {
-		return Cache::gc();
+		return Cache::gc(Configure::read('Session.handler.config'), $expires);
+	}
+
+/**
+ * Writes and closes a session
+ * 
+ * @return void 
+ */
+	protected function _writeSession() {
+		session_write_close();
 	}
 
 /**
@@ -97,7 +102,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return void
  */
 	public function __destruct() {
-		session_write_close();
+		$this->_writeSession();
 	}
 
 }
