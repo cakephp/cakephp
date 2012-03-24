@@ -108,7 +108,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function teardown() {
 		if (TestCakeSession::started()) {
-			TestCakeSession::clear();
+			session_write_close();
 		}
 		unset($_SESSION);
 		parent::teardown();
