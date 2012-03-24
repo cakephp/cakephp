@@ -6091,16 +6091,16 @@ class ModelWriteTest extends BaseModelTest {
 
 		// check its true
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $true);
+		$this->assertEquals($true, $result);
 
 		// Testing without the alias
 		$this->assertTrue($Post->updateAll(array('published' => 'NOT published'), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $false);
+		$this->assertEquals($false, $result);
 
 		$this->assertTrue($Post->updateAll(array('published' => 'NOT published'), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $true);
+		$this->assertEquals($true, $result);
 
 		$db = ConnectionManager::getDataSource('test');
 		$alias = $db->name('Post.published');
@@ -6108,11 +6108,11 @@ class ModelWriteTest extends BaseModelTest {
 		// Testing with the alias
 		$this->assertTrue($Post->updateAll(array('Post.published' => "NOT $alias"), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $false);
+		$this->assertEquals($false, $result);
 
 		$this->assertTrue($Post->updateAll(array('Post.published' => "NOT $alias"), $updateConditions));
 		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
-		$this->assertEqual($result, $true);
+		$this->assertEquals($true, $result);
 	}
 
 /**
