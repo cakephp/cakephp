@@ -222,4 +222,18 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::write('test_groups', 'value3', 'apc_groups'));
 		$this->assertEquals('value3', Cache::read('test_groups', 'apc_groups'));
 	}
+
+/**
+ * Tests that deleteing from a groups-enabled config is possible
+ *
+ * @return void
+ */
+	public function testGroupDelete() {
+		Cache::config('apc_groups', array('engine' => 'Apc', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
+		$this->assertTrue(Cache::delete('test_groups', 'apc_groups'));
+
+		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
+	}
 }
