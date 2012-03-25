@@ -28,6 +28,14 @@ abstract class CacheEngine {
 	public $settings = array();
 
 /**
+ * Contains the compiled string with all groups
+ * prefixes to be prepeded to every key in this cache engine
+ *
+ * @var string
+ **/
+	protected $groupPrefix = null;
+
+/**
  * Initialize the cache engine
  *
  * Called automatically by the cache frontend
@@ -37,10 +45,14 @@ abstract class CacheEngine {
  */
 	public function init($settings = array()) {
 		$this->settings = array_merge(
-			array('prefix' => 'cake_', 'duration' => 3600, 'probability' => 100),
+			array('prefix' => 'cake_', 'duration' => 3600, 'probability' => 100, 'groups' => array()),
 			$this->settings,
 			$settings
 		);
+		if (!empty($this->settings['groups'])) {
+			sort($this->settings['groups']);
+			$this->groupPrefix = str_repeat('%s_', count($this->settings['groups']));
+		}
 		if (!is_numeric($this->settings['duration'])) {
 			$this->settings['duration'] = strtotime($this->settings['duration']) - time();
 		}
@@ -109,6 +121,17 @@ abstract class CacheEngine {
 	abstract public function clear($check);
 
 /**
+ * Does whatever initialization for each group is required
+ * and returns the `group value` for each of them, this is
+ * the token representing each group in the cache key
+ *
+ * @return array
+ **/
+ 	public function groups() {
+ 		return $this->settings['groups'];
+ 	}
+
+/**
  * Cache Engine settings
  *
  * @return array settings
@@ -127,8 +150,14 @@ abstract class CacheEngine {
 		if (empty($key)) {
 			return false;
 		}
+
+		$prefix = '';
+		if (!empty($this->groupPrefix)) {
+			$prefix = vsprintf($this->groupPrefix, $this->groups());
+		}
+
 		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));
-		return $key;
+		return $prefix . $key;
 	}
 
 }

@@ -127,4 +127,30 @@ class ApcEngine extends CacheEngine {
 		return true;
 	}
 
+/**
+ * Returns the `group value` for each of the configured groups
+ * If the group initial value was not found, then it initializes
+ * the group accordingly.
+ *
+ * @return array
+ **/
+	public function groups() {
+		$groups = apc_fetch($this->settings['groups']);
+
+		if (count($groups) !== count($this->settings['groups'])) {
+			foreach ($this->settings['groups'] as $group) {
+				if (!isset($groups[$group])) {
+					apc_store($group, 1);
+					$groups[$group] = 1;
+				}
+			}
+			ksort($groups);
+		}
+
+		$result = array();
+		foreach ($groups as $group => $value) {
+			$result[] = $group . $value;
+		}
+		return $result;
+	}
 }
