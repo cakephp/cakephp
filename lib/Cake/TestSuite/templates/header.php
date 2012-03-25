@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>CakePHP Test Suite 2.1</title>
+		<title>CakePHP Test Suite 2.2</title>
 		<style type="text/css">
 			body h2 {color: #777;}
 			h3 {font-size: 170%; padding-top: 1em}
@@ -143,4 +143,4 @@
 				<h1>CakePHP: the rapid development php framework</h1>
 			</div>
 			<div id="content">
-			<h2>CakePHP Test Suite 2.1</h2>
+			<h2>CakePHP Test Suite 2.2</h2>
