@@ -433,4 +433,22 @@ class MemcacheEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::write('test_groups', 'value3', 'memcache_groups'));
 		$this->assertEquals('value3', Cache::read('test_groups', 'memcache_groups'));
 	}
+
+/**
+ * Tests that deleteing from a groups-enabled config is possible
+ *
+ * @return void
+ */
+	public function testGroupDelete() {
+		Cache::config('memcache_groups', array(
+			'engine' => 'Memcache',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b')
+		));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'memcache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'memcache_groups'));
+		$this->assertTrue(Cache::delete('test_groups', 'memcache_groups'));
+
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+	}
 }
