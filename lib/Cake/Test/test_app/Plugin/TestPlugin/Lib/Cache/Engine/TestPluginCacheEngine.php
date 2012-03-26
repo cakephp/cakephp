@@ -36,4 +36,6 @@ class TestPluginCacheEngine extends CacheEngine {
 	public function clear($check) {
 	}
 
+	public function clearGroup($group) {
+	}
 }
