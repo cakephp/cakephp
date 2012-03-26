@@ -53,6 +53,7 @@ class FileEngineTest extends CakeTestCase {
 		parent::tearDown();
 		Cache::clear(false, 'file_test');
 		Cache::drop('file_test');
+		Cache::drop('file_groups');
 	}
 
 /**
@@ -391,6 +392,34 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
+	}
+
+/**
+ * Tests that configuring groups for stored keys return the correct values when read/written
+ *
+ * @return void
+ */
+	public function testGroupsReadWrite() {
+		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
+
+		$this->assertTrue(Cache::write('test_groups2', 'value2', 'file_groups'));
+		$this->assertTrue(Cache::write('test_groups3', 'value3', 'file_groups'));
+	}
+
+	/**
+ * Tests that deleteing from a groups-enabled config is possible
+ *
+ * @return void
+ */
+	public function testGroupDelete() {
+		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
+		$this->assertTrue(Cache::delete('test_groups', 'file_groups'));
+
+		$this->assertFalse(Cache::read('test_groups', 'file_groups'));
 	}
 
 }
