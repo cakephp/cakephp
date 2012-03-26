@@ -156,7 +156,7 @@ class ApcEngine extends CacheEngine {
 
 /**
  * Increments the group value to simulate deletion of all keys under a group
- * old values will remain in sotrage until they expire.
+ * old values will remain in storage until they expire.
  *
  * @return boolean success
  **/
