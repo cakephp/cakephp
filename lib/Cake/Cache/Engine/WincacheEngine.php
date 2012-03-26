@@ -134,4 +134,43 @@ class WincacheEngine extends CacheEngine {
 		return true;
 	}
 
+/**
+ * Returns the `group value` for each of the configured groups
+ * If the group initial value was not found, then it initializes
+ * the group accordingly.
+ *
+ * @return array
+ **/
+	public function groups() {
+		$groups = wincache_ucache_get($this->settings['groups']);
+
+		if (count($groups) !== count($this->settings['groups'])) {
+			foreach ($this->settings['groups'] as $group) {
+				if (!isset($groups[$group])) {
+					wincache_ucache_set($group, 1);
+					$groups[$group] = 1;
+				}
+			}
+			ksort($groups);
+		}
+
+		$result = array();
+		foreach ($groups as $group => $value) {
+			$result[] = $group . $value;
+		}
+		return $result;
+	}
+
+/**
+ * Increments the group value to simulate deletion of all keys under a group
+ * old values will remain in sotrage until they expire.
+ *
+ * @return boolean success
+ **/
+	public function clearGroup($group) {
+		wincache_ucache_inc($group, 1, $success);
+		return $success;
+	}
+
+
 }

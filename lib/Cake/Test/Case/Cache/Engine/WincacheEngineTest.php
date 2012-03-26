@@ -46,6 +46,7 @@ class WincacheEngineTest extends CakeTestCase {
 	public function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('wincache');
+		Cache::drop('wincache_groups');
 		Cache::config('default');
 	}
 
@@ -187,5 +188,59 @@ class WincacheEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'wincache'));
 		$this->assertEquals('safe', wincache_ucache_get('not_cake'));
+	}
+
+/**
+ * Tests that configuring groups for stored keys return the correct values when read/written
+ * Shows that altering the group value is equivalent to deleting all keys under the same
+ * group
+ *
+ * @return void
+ */
+	public function testGroupsReadWrite() {
+		Cache::config('wincache_groups', array('engine' => 'Wincache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
+
+		wincache_ucache_inc('group_a');
+		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'wincache_groups'));
+		$this->assertEquals('value2', Cache::read('test_groups', 'wincache_groups'));
+
+		wincache_ucache_inc('group_b');
+		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
+		$this->assertTrue(Cache::write('test_groups', 'value3', 'wincache_groups'));
+		$this->assertEquals('value3', Cache::read('test_groups', 'wincache_groups'));
+	}
+
+/**
+ * Tests that deleteing from a groups-enabled config is possible
+ *
+ * @return void
+ */
+	public function testGroupDelete() {
+		Cache::config('wincache_groups', array('engine' => 'Wincache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
+		$this->assertTrue(Cache::delete('test_groups', 'wincache_groups'));
+
+		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
+	}
+
+/**
+ * Test clearing a cache group
+ *
+ * @return void
+ **/
+	public function testGroupClear() {
+		Cache::config('wincache_groups', array('engine' => 'Wincache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+
+		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_a', 'wincache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
+
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'wincache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'wincache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
 	}
 }
