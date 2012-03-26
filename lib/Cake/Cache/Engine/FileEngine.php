@@ -351,7 +351,20 @@ class FileEngine extends CacheEngine {
 		return $key;
 	}
 
+/**
+ * Recursively deletes all files under any directory named as $group
+ *
+ * @return boolean success
+ **/
 	public function clearGroup($group) {
-
+		$directoryIterator = new RecursiveDirectoryIterator($this->settings['path']);
+		$contents = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::CHILD_FIRST);
+		foreach ($contents as $object) {
+			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
+			if ($object->isFile() && $containsGroup) {
+				unlink($object->getPathName());
+			}
+		}
+		return true;
 	}
 }
