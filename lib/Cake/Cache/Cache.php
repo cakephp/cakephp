@@ -454,6 +454,22 @@ class Cache {
 	}
 
 /**
+ * Delete all keys from the cache belonging to the same group.
+ *
+ * @param string $group name of the group to be cleared
+ * @param string $config name of the configuration to use. Defaults to 'default'
+ * @return boolean True if the cache group was successfully cleared, false otherwise
+ */
+	public static function clearGroup($group, $config = 'default') {
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		$success = self::$_engines[$config]->clearGroup($group);
+		self::set(null, $config);
+		return $success;
+	}
+
+/**
  * Check if Cache has initialized a working config for the given name.
  *
  * @param string $config name of the configuration to use. Defaults to 'default'

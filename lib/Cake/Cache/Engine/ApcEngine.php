@@ -153,4 +153,16 @@ class ApcEngine extends CacheEngine {
 		}
 		return $result;
 	}
+
+/**
+ * Increments the group value to simulate deletion of all keys under a group
+ * old values will remain in sotrage until they expire.
+ *
+ * @return boolean success
+ **/
+	public function clearGroup($group) {
+		apc_inc($group, 1, $success);
+		return $success;
+	}
+
 }

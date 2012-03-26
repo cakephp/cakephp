@@ -236,4 +236,21 @@ class ApcEngineTest extends CakeTestCase {
 
 		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
 	}
+
+/**
+ * Test clearing a cache group
+ *
+ * @return void
+ **/
+	public function testGroupClear() {
+		Cache::config('apc_groups', array('engine' => 'Apc', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+
+		$this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
+		$this->assertTrue(Cache::clearGroup('group_a', 'apc_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
+
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'apc_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'apc_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
+	}
 }

@@ -121,6 +121,16 @@ abstract class CacheEngine {
 	abstract public function clear($check);
 
 /**
+ * Clears all values belonging to a group. Is upt to the implementing engine
+ * to decide whether actually deete the keys or just simulate it to acheive
+ * the same result.
+ *
+ * @param string $groups name of the group to be cleared
+ * @return void
+ **/
+	abstract public function clearGroup($group);
+
+/**
  * Does whatever initialization for each group is required
  * and returns the `group value` for each of them, this is
  * the token representing each group in the cache key
