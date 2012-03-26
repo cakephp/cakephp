@@ -6078,6 +6078,42 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(array(6, 4, 5, 2), $result);
 	}
 
+	public function testToggleBoolFields() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$Post = new CounterCachePost();
+		$Post->unbindModel(array('belongsTo' => array('User')), true);
+
+		$true = array('Post' => array('published' => true, 'id' => 2));
+		$false = array('Post' => array('published' => false, 'id' => 2));
+		$fields = array('Post.published', 'Post.id');
+		$updateConditions = array('Post.id' => 2);
+
+		// check its true
+		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
+		$this->assertEquals($true, $result);
+
+		// Testing without the alias
+		$this->assertTrue($Post->updateAll(array('published' => 'NOT published'), $updateConditions));
+		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
+		$this->assertEquals($false, $result);
+
+		$this->assertTrue($Post->updateAll(array('published' => 'NOT published'), $updateConditions));
+		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
+		$this->assertEquals($true, $result);
+
+		$db = ConnectionManager::getDataSource('test');
+		$alias = $db->name('Post.published');
+
+		// Testing with the alias
+		$this->assertTrue($Post->updateAll(array('Post.published' => "NOT $alias"), $updateConditions));
+		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
+		$this->assertEquals($false, $result);
+
+		$this->assertTrue($Post->updateAll(array('Post.published' => "NOT $alias"), $updateConditions));
+		$result = $Post->find('first', array('conditions' => $updateConditions, 'fields' => $fields));
+		$this->assertEquals($true, $result);
+	}
+
 /**
  * TestFindAllWithoutForeignKey
  *

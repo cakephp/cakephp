@@ -41,12 +41,12 @@ class String {
 				);
 			}
 			$node = explode(':', $node);
-			$ipv6 = '';
+			$ipSix = '';
 
 			foreach ($node as $id) {
-				$ipv6 .= str_pad(base_convert($id, 16, 2), 16, 0, STR_PAD_LEFT);
+				$ipSix .= str_pad(base_convert($id, 16, 2), 16, 0, STR_PAD_LEFT);
 			}
-			$node = base_convert($ipv6, 2, 10);
+			$node = base_convert($ipSix, 2, 10);
 
 			if (strlen($node) < 38) {
 				$node = null;

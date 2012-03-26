@@ -98,7 +98,8 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 		App::uses($componentClass, $plugin . 'Controller/Component');
 		if (!class_exists($componentClass)) {
 			throw new MissingComponentException(array(
-				'class' => $componentClass
+				'class' => $componentClass,
+				'plugin' => substr($plugin, 0, -1)
 			));
 		}
 		$this->_loaded[$alias] = new $componentClass($this, $settings);

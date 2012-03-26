@@ -527,4 +527,19 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->Case->testAction('/tests_apps/redirect_to', $options);
 	}
 
+/**
+ * Tests that Components storing response or request objects internally during construct
+ * will always have a fresh reference to those object available
+ *
+ * @return void
+ * @see http://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/2705-requesthandler-weird-behavior
+ */
+	public function testComponentsSameRequestAndResponse() {
+		$this->Case->generate('TestsApps');
+		$options = array('method' => 'get');
+		$this->Case->testAction('/tests_apps/index', $options);
+		$this->assertSame($this->Case->controller->response, $this->Case->controller->RequestHandler->response);
+		$this->assertSame($this->Case->controller->request, $this->Case->controller->RequestHandler->request);
+	}
+
 }
