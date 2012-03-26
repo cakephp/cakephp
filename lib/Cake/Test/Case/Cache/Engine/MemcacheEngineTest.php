@@ -451,4 +451,25 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
 	}
+
+/**
+ * Test clearing a cache group
+ *
+ * @return void
+ **/
+	public function testGroupClear() {
+		Cache::config('memcache_groups', array(
+			'engine' => 'Memcache',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b')
+		));
+
+		$this->assertTrue(Cache::write('test_groups', 'value', 'memcache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_a', 'memcache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'memcache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'memcache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+	}
 }
