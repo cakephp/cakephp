@@ -122,6 +122,9 @@ class FolderTest extends CakeTestCase {
 
 		$result = $Folder->inPath(DS . 'non-existing' . $inside);
 		$this->assertFalse($result);
+
+		$result = $Folder->inPath($path . DS . 'Model', true);
+		$this->assertTrue($result);
 	}
 
 /**
