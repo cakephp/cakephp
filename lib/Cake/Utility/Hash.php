@@ -270,7 +270,7 @@ class Hash {
 					$_list =& $_list[$key];
 				}
 				if (!is_array($_list)) {
-					return array();
+					$_list = array();
 				}
 			}
 			if ($op === 'remove') {
