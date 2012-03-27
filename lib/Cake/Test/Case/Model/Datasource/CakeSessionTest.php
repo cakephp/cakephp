@@ -282,6 +282,22 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * Test overwriting a string value as if it were an array.
+ *
+ * @return void
+ */
+	public function testWriteOverwriteStringValue() {
+		TestCakeSession::write('Some.string', 'value');
+		$this->assertEquals('value', TestCakeSession::read('Some.string'));
+
+		TestCakeSession::write('Some.string.array', array('values'));
+		$this->assertEquals(
+			array('values'),
+			TestCakeSession::read('Some.string.array')
+		);
+	}
+
+/**
  * testId method
  *
  * @return void
