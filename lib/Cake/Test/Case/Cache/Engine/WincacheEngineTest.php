@@ -198,16 +198,21 @@ class WincacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Cache::config('wincache_groups', array('engine' => 'Wincache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('wincache_groups', array(
+			'engine' => 'Wincache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
 
-		wincache_ucache_inc('group_a');
+		wincache_ucache_inc('test_group_a');
 		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value2', 'wincache_groups'));
 		$this->assertEquals('value2', Cache::read('test_groups', 'wincache_groups'));
 
-		wincache_ucache_inc('group_b');
+		wincache_ucache_inc('test_group_b');
 		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value3', 'wincache_groups'));
 		$this->assertEquals('value3', Cache::read('test_groups', 'wincache_groups'));
@@ -219,7 +224,12 @@ class WincacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Cache::config('wincache_groups', array('engine' => 'Wincache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('wincache_groups', array(
+			'engine' => 'Wincache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
 		$this->assertTrue(Cache::delete('test_groups', 'wincache_groups'));
@@ -233,7 +243,12 @@ class WincacheEngineTest extends CakeTestCase {
  * @return void
  **/
 	public function testGroupClear() {
-		Cache::config('wincache_groups', array('engine' => 'Wincache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('wincache_groups', array(
+			'engine' => 'Wincache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 
 		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
 		$this->assertTrue(Cache::clearGroup('group_a', 'wincache_groups'));
