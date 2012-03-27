@@ -150,15 +150,13 @@ class WincacheEngine extends CacheEngine {
  * @return array
  **/
 	public function groups() {
-		$groups = $this->_compiledGroupNames;
-		if (empty($groups)) {
+		if (empty($this->_compiledGroupNames)) {
 			foreach ($this->settings['groups'] as $group) {
-				$groups[] = $this->settings['prefix'] . $group;
+				$this->_compiledGroupNames[] = $this->settings['prefix'] . $group;
 			}
-			$this->_compiledGroupNames = $groups;
 		}
-		$groups = wincache_ucache_get($groups);
 
+		$groups = wincache_ucache_get($this->_compiledGroupNames);
 		if (count($groups) !== count($this->settings['groups'])) {
 			foreach ($this->_compiledGroupNames as $group) {
 				if (!isset($groups[$group])) {
@@ -170,8 +168,9 @@ class WincacheEngine extends CacheEngine {
 		}
 
 		$result = array();
-		foreach ($groups as $group => $value) {
-			$result[] = $group . $value;
+		$groups = array_values($groups);
+		foreach ($this->settings['groups'] as $i => $group) {
+			$result[] = $group . $groups[$i];
 		}
 		return $result;
 	}
