@@ -1701,6 +1701,28 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * Test that insert() can insert data over a string value.
+ *
+ * @return void
+ */
+	public function testInsertOverwriteStringValue() {
+		$data = array(
+			'Some' => array(
+				'string' => 'value'
+			)
+		);
+		$result = Set::insert($data, 'Some.string.value', array('values'));
+		$expected = array(
+			'Some' => array(
+				'string' => array(
+					'value' => array( 'values')
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testRemove method
  *
  * @return void
