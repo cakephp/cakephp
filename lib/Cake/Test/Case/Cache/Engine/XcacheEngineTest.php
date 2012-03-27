@@ -207,16 +207,21 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Cache::config('xcache_groups', array('engine' => 'Xcache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('xcache_groups', array(
+			'engine' => 'Xcache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'xcache_groups'));
 
-		xcache_inc('group_a', 1);
+		xcache_inc('test_group_a', 1);
 		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value2', 'xcache_groups'));
 		$this->assertEquals('value2', Cache::read('test_groups', 'xcache_groups'));
 
-		xcache_inc('group_b', 1);
+		xcache_inc('test_group_b', 1);
 		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value3', 'xcache_groups'));
 		$this->assertEquals('value3', Cache::read('test_groups', 'xcache_groups'));
@@ -228,7 +233,12 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Cache::config('xcache_groups', array('engine' => 'Xcache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('xcache_groups', array(
+			'engine' => 'Xcache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'xcache_groups'));
 		$this->assertTrue(Cache::delete('test_groups', 'xcache_groups'));
@@ -242,7 +252,12 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  **/
 	public function testGroupClear() {
-		Cache::config('xcache_groups', array('engine' => 'Xcache', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('xcache_groups', array(
+			'engine' => 'Xcache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 
 		$this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
 		$this->assertTrue(Cache::clearGroup('group_a', 'xcache_groups'));

@@ -147,10 +147,10 @@ class XcacheEngine extends CacheEngine {
 	public function groups() {
 		$result = array();
 		foreach ($this->settings['groups'] as $group) {
-			$value = xcache_get($group);
+			$value = xcache_get($this->settings['prefix'] . $group);
 			if (!$value) {
 				$value = 1;
-				xcache_set($group, $value, 0);
+				xcache_set($this->settings['prefix'] . $group, $value, 0);
 			}
 			$result[] = $group . $value;
 		}
@@ -164,7 +164,7 @@ class XcacheEngine extends CacheEngine {
  * @return boolean success
  **/
 	public function clearGroup($group) {
-		return (bool) xcache_inc($group, 1);
+		return (bool) xcache_inc($this->settings['prefix'] . $group, 1);
 	}
 
 /**
