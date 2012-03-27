@@ -322,7 +322,7 @@ class Folder {
  * Returns true if the File is in given path.
  *
  * @param string $path The path to check that the current pwd() resides with in.
- * @param boolean $reverse
+ * @param boolean $reverse Reverse the search, check that pwd() resides within $path.
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::inPath
  */
