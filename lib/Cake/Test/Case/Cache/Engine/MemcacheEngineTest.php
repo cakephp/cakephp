@@ -413,12 +413,13 @@ class MemcacheEngineTest extends CakeTestCase {
 		Cache::config('memcache_groups', array(
 			'engine' => 'Memcache',
 			'duration' => 3600,
-			'groups' => array('group_a', 'group_b')
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
 		));
 		Cache::config('memcache_helper', array(
 			'engine' => 'Memcache',
 			'duration' => 3600,
-			'prefix' => ''
+			'prefix' => 'test_'
 		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'memcache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'memcache_groups'));

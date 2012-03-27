@@ -28,6 +28,14 @@
 class MemcacheEngine extends CacheEngine {
 
 /**
+ * Contains the compiled group names
+ * (prefixed witht the global configuration prefix)
+ *
+ * @var array
+ **/
+	protected $_compiledGroupNames = array();
+
+/**
  * Memcache wrapper.
  *
  * @var Memcache
@@ -243,9 +251,17 @@ class MemcacheEngine extends CacheEngine {
  * @return array
  **/
 	public function groups() {
-		$groups = $this->_Memcache->get($this->settings['groups']);
-		if (count($groups) !== count($this->settings['groups'])) {
+		$groups = $this->_compiledGroupNames;
+		if (empty($groups)) {
 			foreach ($this->settings['groups'] as $group) {
+				$groups[] = $this->settings['prefix'] . $group;
+			}
+			$this->_compiledGroupNames = $groups;
+		}
+
+		$groups = $this->_Memcache->get($groups);
+		if (count($groups) !== count($this->settings['groups'])) {
+			foreach ($this->_compiledGroupNames as $group) {
 				if (!isset($groups[$group])) {
 					$this->_Memcache->set($group, 1, false, 0);
 					$groups[$group] = 1;
@@ -269,6 +285,6 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean success
  **/
 	public function clearGroup($group) {
-		return (bool) $this->_Memcache->increment($group);
+		return (bool) $this->_Memcache->increment($this->settings['prefix'] . $group);
 	}
 }
