@@ -26,6 +26,14 @@
 class ApcEngine extends CacheEngine {
 
 /**
+ * Contains the compiled group names
+ * (prefixed witht the global configuration prefix)
+ *
+ * @var array
+ **/
+	protected $_compiledGroupNames = array();
+
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -135,10 +143,17 @@ class ApcEngine extends CacheEngine {
  * @return array
  **/
 	public function groups() {
-		$groups = apc_fetch($this->settings['groups']);
-
-		if (count($groups) !== count($this->settings['groups'])) {
+		$groups = $this->_compiledGroupNames;
+		if (empty($groups)) {
 			foreach ($this->settings['groups'] as $group) {
+				$groups[] = $this->settings['prefix'] . $group;
+			}
+			$this->_compiledGroupNames = $groups;
+		}
+
+		$groups = apc_fetch($groups);
+		if (count($groups) !== count($this->settings['groups'])) {
+			foreach ($this->_compiledGroupNames as $group) {
 				if (!isset($groups[$group])) {
 					apc_store($group, 1);
 					$groups[$group] = 1;
@@ -161,7 +176,7 @@ class ApcEngine extends CacheEngine {
  * @return boolean success
  **/
 	public function clearGroup($group) {
-		apc_inc($group, 1, $success);
+		apc_inc($this->settings['prefix'] . $group, 1, $success);
 		return $success;
 	}
 

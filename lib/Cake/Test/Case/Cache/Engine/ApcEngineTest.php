@@ -208,16 +208,21 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Cache::config('apc_groups', array('engine' => 'Apc', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('apc_groups', array(
+			'engine' => 'Apc',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
 
-		apc_inc('group_a');
+		apc_inc('test_group_a');
 		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value2', 'apc_groups'));
 		$this->assertEquals('value2', Cache::read('test_groups', 'apc_groups'));
 
-		apc_inc('group_b');
+		apc_inc('test_group_b');
 		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value3', 'apc_groups'));
 		$this->assertEquals('value3', Cache::read('test_groups', 'apc_groups'));
@@ -229,7 +234,12 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Cache::config('apc_groups', array('engine' => 'Apc', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('apc_groups', array(
+			'engine' => 'Apc',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
 		$this->assertTrue(Cache::delete('test_groups', 'apc_groups'));
@@ -243,7 +253,12 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  **/
 	public function testGroupClear() {
-		Cache::config('apc_groups', array('engine' => 'Apc', 'duration' => 0, 'groups' => array('group_a', 'group_b')));
+		Cache::config('apc_groups', array(
+			'engine' => 'Apc',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
 
 		$this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
 		$this->assertTrue(Cache::clearGroup('group_a', 'apc_groups'));
