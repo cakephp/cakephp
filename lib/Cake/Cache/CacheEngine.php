@@ -126,9 +126,11 @@ abstract class CacheEngine {
  * the same result.
  *
  * @param string $groups name of the group to be cleared
- * @return void
+ * @return boolean
  **/
-	abstract public function clearGroup($group);
+	public function clearGroup($group) {
+		return false;
+	}
 
 /**
  * Does whatever initialization for each group is required
