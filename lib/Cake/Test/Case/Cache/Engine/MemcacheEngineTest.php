@@ -92,6 +92,7 @@ class MemcacheEngineTest extends CakeTestCase {
 			'compress' => false,
 			'engine' => 'Memcache',
 			'persistent' => true,
+			'groups' => array()
 		);
 		$this->assertEquals($expecting, $settings);
 	}
