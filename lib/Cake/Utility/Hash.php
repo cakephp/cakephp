@@ -19,10 +19,10 @@ App::uses('String', 'Utility');
  * Library of array functions for manipulating and extracting data
  * from arrays or 'sets' of data.
  *
- * `Hash` provides an improved interface and more consistent and 
+ * `Hash` provides an improved interface, more consistent and
  * predictable set of features over `Set`.  While it lacks the spotty
  * support for pseudo Xpath, its more fully featured dot notation provides
- * the similar features in a more consistent way.
+ * similar features in a more consistent implementation.
  *
  * @package       Cake.Utility
  */
@@ -30,8 +30,8 @@ class Hash {
 
 /**
  * Get a single value specified by $path out of $data.
- * Does not support the full dot notation feature set, 
- * but is faster for simple operations.
+ * Does not support the full dot notation feature set,
+ * but is faster for simple read operations.
  *
  * @param array $data Array of data to operate on.
  * @param mixed $path The path being searched for. Either a dot
@@ -53,7 +53,7 @@ class Hash {
 			} else {
 				return null;
 			}
-			
+
 		}
 		return $data;
 	}
@@ -63,10 +63,9 @@ class Hash {
  * The path expression is a dot separated expression, that can contain a set
  * of patterns and expressions:
  *
- * - `{n}` Matches any numeric key.
+ * - `{n}` Matches any numeric key, or integer.
  * - `{s}` Matches any string key.
- * - `[id]` Matches elements with an `id` index.
- * - `[id>2]` Matches elements that have an `id` index greater than 2.  
+ * - `Foo` Matches any key with the exact same value.
  *
  * There are a number of attribute operators:
  *
@@ -80,11 +79,11 @@ class Hash {
  * - `{n}.User.name` Get the name of every user in the set of users.
  * - `{n}.User[id]` Get the name of every user with an id key.
  * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
- * - `{n}.User[username=/^paul/]` Get User elements with username containing `^paul`.
+ * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
  *
  * @param array $data The data to extract from.
  * @param string $path The path to extract.
- * @return array An array of the extracted values.  Returns an empty array 
+ * @return array An array of the extracted values.  Returns an empty array
  *   if there are no matches.
  */
 	public static function extract(array $data, $path) {
@@ -94,7 +93,7 @@ class Hash {
 
 		// Simple paths.
 		if (!preg_match('/[{\[]/', $path)) {
-			return (array) self::get($data, $path);
+			return (array)self::get($data, $path);
 		}
 
 		if (strpos('[', $path) === false) {
@@ -107,7 +106,7 @@ class Hash {
 
 		$context = array($_key => array($data));
 
-		do  {
+		do {
 			$token = array_shift($tokens);
 			$next = array();
 
@@ -125,7 +124,7 @@ class Hash {
 					}
 				}
 			}
-	
+
 			// Filter for attributes.
 			if ($conditions) {
 				$filter = array();
@@ -163,12 +162,12 @@ class Hash {
 	}
 
 /**
- * Checks whether or not $data matches the selector
+ * Checks whether or not $data matches the attribute patterns
  *
  * @param array $data Array of data to match.
- * @param string $selector The selector to match.
+ * @param string $selector The patterns to match.
  * @return boolean Fitness of expression.
- */ 
+ */
 	protected static function _matches(array $data, $selector) {
 		preg_match_all(
 			'/(\[ (?<attr>[^=><!]+?) (\s* (?<op>[><!]?[=]|[><]) \s* (?<val>[^\]]+) )? \])/x',
@@ -220,7 +219,8 @@ class Hash {
 	}
 
 /**
- * Insert $values into an array with the given $path.
+ * Insert $values into an array with the given $path. You can use
+ * `{n}` and `{s}` elements to insert $data multiple times.
  *
  * @param array $data The data to insert into.
  * @param string $path The path to insert at.
@@ -289,6 +289,8 @@ class Hash {
 
 /**
  * Remove data matching $path from the $data array.
+ * You can use `{n}` and `{s}` to remove multiple elements
+ * from $data.
  *
  * @param array $data The data to operate on
  * @param string $path A path expression to use to remove.
@@ -312,7 +314,6 @@ class Hash {
 		}
 		return $data;
 	}
-
 
 /**
  * Creates an associative array using `$keyPath` as the path to build its keys, and optionally
@@ -411,10 +412,10 @@ class Hash {
 		$data = $extracted;
 		$count = count($data[0]);
 
-		$count2 = count($data);
+		$countTwo = count($data);
 		for ($j = 0; $j < $count; $j++) {
 			$args = array();
-			for ($i = 0; $i < $count2; $i++) {
+			for ($i = 0; $i < $countTwo; $i++) {
 				if (array_key_exists($j, $data[$i])) {
 					$args[] = $data[$i][$j];
 				}
@@ -584,7 +585,7 @@ class Hash {
 /**
  * This function can be thought of as a hybrid between PHP's `array_merge` and `array_merge_recursive`.
  *
- * The difference between this method and the built-in ones, is that if an array key contains another array, then 
+ * The difference between this method and the built-in ones, is that if an array key contains another array, then
  * Hash::merge() will behave in a recursive fashion (unlike `array_merge`).  But it will not act recursively for
  * keys that contain scalar values (unlike `array_merge_recursive`).
  *
@@ -600,7 +601,7 @@ class Hash {
 		$return = current($args);
 
 		while (($arg = next($args)) !== false) {
-			foreach ((array)$arg as $key => $val)	 {
+			foreach ((array)$arg as $key => $val) {
 				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
 					$return[$key] = self::merge($return[$key], $val);
 				} elseif (is_int($key)) {
@@ -626,14 +627,14 @@ class Hash {
 		}
 		$values = array_values($data);
 		$str = implode('', $values);
-		return (bool) ctype_digit($str);
+		return (bool)ctype_digit($str);
 	}
 
 /**
- * Counts the dimensions of an array. 
+ * Counts the dimensions of an array.
  * Only considers the dimension of the first element in the array.
  *
- * If you have an un-even or hetrogenous array, consider using Hash::maxDimensions() 
+ * If you have an un-even or hetrogenous array, consider using Hash::maxDimensions()
  * to get the dimensions of the array.
  *
  * @param array $array Array to count dimensions on
@@ -660,7 +661,7 @@ class Hash {
 /**
  * Counts the dimensions of *all* array elements. Useful for finding the maximum
  * number of dimensions in a mixed array.
- * 
+ *
  * @param array $data Array to count dimensions on
  * @return integer The maximum number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::maxDimensions
@@ -756,7 +757,7 @@ class Hash {
 			if ($numeric) {
 				$sorted[] = $data[$k];
 				continue;
-			} 
+			}
 			if (isset($originalKeys[$k])) {
 				$sorted[$originalKeys[$k]] = $data[$originalKeys[$k]];
 			} else {

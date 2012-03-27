@@ -17,7 +17,7 @@ App::uses('Hash', 'Utility');
 class HashTest extends CakeTestCase {
 
 	public static function articleData() {
-		return  array(
+		return array(
 			array(
 				'Article' => array(
 					'id' => '1',
@@ -225,7 +225,6 @@ class HashTest extends CakeTestCase {
 		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
 		$result = Hash::dimensions($data);
 		$this->assertEquals($result, 2);
-
 	}
 
 /**
@@ -360,7 +359,6 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-
 		$b = array(
 			0 => array('name' => 'me'),
 			1 => array('name' => 'about')
@@ -376,7 +374,6 @@ class HashTest extends CakeTestCase {
 		$b = array('name' => 'bob', 'address' => 'home');
 		$result = Hash::diff($a, $b);
 		$this->assertEquals($result, $b);
-
 
 		$a = array('name' => 'bob', 'address' => 'home');
 		$b = array();
@@ -453,7 +450,7 @@ class HashTest extends CakeTestCase {
 			'cakephp',
 			'ice-cream'
 		);
-		$result = Hash::merge($a, $b); 
+		$result = Hash::merge($a, $b);
 		$this->assertEquals($expected, $result);
 
 		$c = array(
@@ -478,7 +475,7 @@ class HashTest extends CakeTestCase {
 				'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')
 			)
 		);
-		$b =  array(
+		$b = array(
 			'Cacheable' => array('enabled' => false),
 			'Limit',
 			'Bindable',
@@ -659,7 +656,7 @@ class HashTest extends CakeTestCase {
 		$data = self::articleData();
 		$result = Hash::extract($data, '{n}.Article.title');
 		$expected = array(
-			'First Article', 'Second Article', 
+			'First Article', 'Second Article',
 			'Third Article', 'Fourth Article',
 			'Fifth Article'
 		);
@@ -728,7 +725,7 @@ class HashTest extends CakeTestCase {
 		$expected = array('John', 'Bob', 'Tony');
 		$this->assertEquals($expected, $result);
 	}
-	
+
 /**
  * Test the {s} selector.
  *
@@ -883,7 +880,7 @@ class HashTest extends CakeTestCase {
 			array('test5', 'test6')
 		);
 		$this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
-		
+
 		$data['Level1']['Level2'] = array('test1', 'test2');
 		$this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
 	}
@@ -1039,14 +1036,14 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testSortString() {
-		$to_sort = array(
+		$toSort = array(
 			'four' => array('number' => 4, 'some' => 'foursome'),
 			'six' => array('number' => 6, 'some' => 'sixsome'),
 			'five' => array('number' => 5, 'some' => 'fivesome'),
 			'two' => array('number' => 2, 'some' => 'twosome'),
 			'three' => array('number' => 3, 'some' => 'threesome')
 		);
-		$sorted = Hash::sort($to_sort, '{s}.number', 'asc');
+		$sorted = Hash::sort($toSort, '{s}.number', 'asc');
 		$expected = array(
 			'two' => array('number' => 2, 'some' => 'twosome'),
 			'three' => array('number' => 3, 'some' => 'threesome'),
@@ -1290,7 +1287,6 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-
 		$result = Hash::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
 		$expected = array(
 			1 => array(
@@ -1450,7 +1446,7 @@ class HashTest extends CakeTestCase {
 	public function testMap() {
 		$data = self::articleData();
 
-		$result = Hash::map($data, '{n}.Article.id', array($this, '_mapCallback'));
+		$result = Hash::map($data, '{n}.Article.id', array($this, 'mapCallback'));
 		$expected = array(2, 4, 6, 8, 10);
 		$this->assertEquals($expected, $result);
 	}
@@ -1470,7 +1466,7 @@ class HashTest extends CakeTestCase {
 	public function testReduce() {
 		$data = self::articleData();
 
-		$result = Hash::reduce($data, '{n}.Article.id', array($this, '_reduceCallback'));
+		$result = Hash::reduce($data, '{n}.Article.id', array($this, 'reduceCallback'));
 		$this->assertEquals(15, $result);
 	}
 
@@ -1480,7 +1476,7 @@ class HashTest extends CakeTestCase {
  * @param mixed $value
  * @return mixed.
  */
-	public function _mapCallback($value) {
+	public function mapCallback($value) {
 		return $value * 2;
 	}
 
@@ -1491,7 +1487,7 @@ class HashTest extends CakeTestCase {
  * @param mixed $two
  * @return mixed.
  */
-	public function _reduceCallback($one, $two) {
+	public function reduceCallback($one, $two) {
 		return $one + $two;
 	}
 
@@ -1903,7 +1899,7 @@ class HashTest extends CakeTestCase {
 		);
 
 		$result = Hash::nest($input, array('idPath' => '{n}.id', 'parentPath' => '{n}.parent_id'));
-		foreach($result as &$row) {
+		foreach ($result as &$row) {
 			if (empty($row['children'])) {
 				unset($row['children']);
 			}
@@ -1936,10 +1932,10 @@ class HashTest extends CakeTestCase {
 
 		$result = Hash::mergeDiff($array1, array());
 		$this->assertEquals($result, $array1);
-	
+
 		$result = Hash::mergeDiff(array(), $array1);
 		$this->assertEquals($result, $array1);
-	
+
 		$array3 = array(
 			'ModelOne' => array(
 				'id' => 1003,
@@ -2009,7 +2005,7 @@ class HashTest extends CakeTestCase {
 		$this->assertEquals($result, $array1);
 
 		$result = Hash::mergeDiff($array1, $array2);
-		$this->assertEquals($result, $array1+$array2);
+		$this->assertEquals($result, $array1 + $array2);
 	}
 
 /**
