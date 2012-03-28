@@ -1867,7 +1867,6 @@ class ModelIntegrationTest extends BaseModelTest {
 				'doomed' => true
 		))));
 
-		$ts = date('Y-m-d H:i:s');
 		$TestModel->save();
 
 		$TestModel->hasAndBelongsToMany['SomethingElse']['order'] = 'SomethingElse.id ASC';
@@ -1921,7 +1920,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					)
 				)
 			);
-		$this->assertTrue($result['Something']['updated'] >= $ts);
+		$this->assertEquals(self::date(), $result['Something']['updated']);
 		unset($result['Something']['updated']);
 		$this->assertEquals($expected, $result);
 	}

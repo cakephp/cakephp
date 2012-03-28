@@ -53,5 +53,18 @@ class CakeTestModel extends Model {
 		}
 		return $queryData;
 	}
+/**
+ * Overriding save() to set CakeTestSuiteDispatcher::date() as formatter for created, modified and updated fields
+ *
+ * @param array $data
+ * @param mixed $validate
+ * @param array $fieldList
+ */
+
+	public function save($data = null, $validate = true, $fieldList = array()) {
+		$db = $this->getDataSource();
+		$db->columns['datetime']['formatter'] = 'CakeTestSuiteDispatcher::date';
+		return parent::save($data, $validate, $fieldList);
+	}
 
 }
