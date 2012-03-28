@@ -308,7 +308,7 @@ function env($key) {
 			if (!strpos($name, '.php')) {
 				$offset = 4;
 			}
-			return substr($filename, 0, strlen($filename) - (strlen($name) + $offset));
+			return substr($filename, 0, -(strlen($name) + $offset));
 			break;
 		case 'PHP_SELF':
 			return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
