@@ -6575,7 +6575,12 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testCreateWithInputDefaults() {
 		$this->Form->create('User', array(
-			'inputDefaults' => array('div' => false, 'label' => false)
+			'inputDefaults' => array(
+				'div' => false,
+				'label' => false,
+				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
+				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
+			)
 		));
 		$result = $this->Form->input('username');
 		$expected = array(
@@ -6589,6 +6594,13 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'UserUsername'), 'username', '/label',
 			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
 			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'label' => array('for' => 'UserUsername'), 'Username', '/label',
 		);
 		$this->assertTags($result, $expected);
 	}
