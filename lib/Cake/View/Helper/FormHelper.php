@@ -786,7 +786,7 @@ class FormHelper extends AppHelper {
 				$text = $fieldName;
 			}
 			if (substr($text, -3) == '_id') {
-				$text = substr($text, 0, strlen($text) - 3);
+				$text = substr($text, 0, -3);
 			}
 			$text = __(Inflector::humanize(Inflector::underscore($text)));
 		}

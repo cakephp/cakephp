@@ -304,7 +304,7 @@ class ContainableBehavior extends ModelBehavior {
 					$option = 'fields';
 					$val = array($key);
 					if ($key{0} == '(') {
-						$val = preg_split('/\s*,\s*/', substr(substr($key, 1), 0, -1));
+						$val = preg_split('/\s*,\s*/', substr($key, 1, -1));
 					} elseif (preg_match('/ASC|DESC$/', $key)) {
 						$option = 'order';
 						$val = $Model->{$name}->alias . '.' . $key;
