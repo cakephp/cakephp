@@ -44,6 +44,57 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
+ * Tries to lazy load a helper based on its name, if it cannot be found
+ * in the application folder, then it tries looking under the current plugin
+ * if any
+ *
+ * @param string $helper The helper name to be loaded
+ * @return boolean wheter the helper could be loaded or not
+ **/
+	public function __isset($helper) {
+		if (parent::__isset($helper)) {
+			return true;
+		}
+		if (!$this->_loadSandbox($helper)) {
+			return $this->_View->plugin && $this->_loadSandbox($this->_View->plugin . '.' . $helper);
+		}
+		return true;
+	}
+
+/**
+ * Provide public read access to the loaded objects
+ *
+ * @param string $name Name of property to read
+ * @return mixed
+ */
+	public function __get($name) {
+		if ($result = parent::__get($name)) {
+			return $result;
+		}
+		if ($this->__isset($name)) {
+			return $this->_loaded[$name];
+		}
+		return null;
+	}
+
+/**
+ * Auxiliary function used for lazy loading helpers
+ * catches any MissingHelperException and converts it into
+ * a boolean return
+ *
+ * @param string $helper The helper name to be loaded
+ * @return boolean wheter the helper could be loaded or not
+ **/
+	protected function _loadSandbox($helper) {
+		try {
+			$this->load($helper);
+		} catch (MissingHelperException $e) {
+			return false;
+		}
+		return true;
+	}
+
+/**
  * Loads/constructs a helper.  Will return the instance in the registry if it already exists.
  * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you
  * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
