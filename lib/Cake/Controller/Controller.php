@@ -316,7 +316,7 @@ class Controller extends Object implements CakeEventListener {
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
-			$this->name = substr(get_class($this), 0, strlen(get_class($this)) - 10);
+			$this->name = substr(get_class($this), 0, -10);
 		}
 
 		if ($this->viewPath == null) {
