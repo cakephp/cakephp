@@ -95,7 +95,7 @@ class Controller extends Object implements CakeEventListener {
  * @var mixed A single name as a string or a list of names as an array.
  * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
-	public $helpers = array('Session', 'Html', 'Form');
+	public $helpers = array();
 
 /**
  * An instance of a CakeRequest object that contains information about the current request.
