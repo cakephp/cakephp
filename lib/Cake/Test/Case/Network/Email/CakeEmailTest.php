@@ -81,6 +81,7 @@ class EmailConfig {
 		'to' => array('test@example.com' => 'Testname'),
 		'subject' => 'Test mail subject',
 		'transport' => 'Debug',
+		'theme' => 'TestTheme',
 	);
 
 }
@@ -569,6 +570,19 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testTheme method
+ *
+ * @return void
+ */
+	public function testTheme() {
+		$this->assertSame(null, $this->CakeEmail->theme());
+
+		$this->CakeEmail->theme('default');
+		$expected = 'default';
+		$this->assertSame($expected, $this->CakeEmail->theme());
+	}
+
+/**
  * testViewVars method
  *
  * @return void
@@ -678,6 +692,9 @@ class CakeEmailTest extends CakeTestCase {
 
 		$result = $this->CakeEmail->subject();
 		$this->assertEquals($configs->test['subject'], $result);
+
+		$result = $this->CakeEmail->theme();
+		$this->assertEquals($configs->test['theme'], $result);
 
 		$result = $this->CakeEmail->transport();
 		$this->assertEquals($configs->test['transport'], $result);
@@ -959,6 +976,28 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderThemed method
+ *
+ * @return void
+ */
+	public function testSendRenderThemed() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->theme('TestTheme');
+		$this->CakeEmail->template('themed', 'default');
+		$result = $this->CakeEmail->send();
+
+		$this->assertContains('In TestTheme', $result['message']);
+		$this->assertContains('Message-ID: ', $result['headers']);
+		$this->assertContains('To: ', $result['headers']);
+	}
+
+/**
  * testSendRenderWithVars method
  *
  * @return void
@@ -1057,6 +1096,12 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
 		$this->assertContains('Into TestPlugin.', $result['message']);
 		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
+
+		// test plugin template overridden by theme
+		$this->CakeEmail->theme('TestTheme');
+		$result = $this->CakeEmail->send();
+
+		$this->assertContains('Into TestPlugin. (themed)', $result['message']);
 
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$result = $this->CakeEmail->template('custom', 'TestPlugin.plug_default')->send();
@@ -1215,10 +1260,12 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testReset() {
 		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->theme('TestTheme');
 		$this->assertSame($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 
 		$this->CakeEmail->reset();
 		$this->assertSame($this->CakeEmail->to(), array());
+		$this->assertSame(null, $this->CakeEmail->theme());
 	}
 
 /**

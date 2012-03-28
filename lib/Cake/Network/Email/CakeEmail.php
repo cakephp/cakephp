@@ -184,6 +184,13 @@ class CakeEmail {
 	protected $_viewVars = array();
 
 /**
+ * Theme for the View
+ *
+ * @var array
+ */
+	protected $_theme = null;
+
+/**
  * Helpers to be used in the render
  *
  * @var array
@@ -777,6 +784,20 @@ class CakeEmail {
 	}
 
 /**
+ * Theme to use when rendering
+ *
+ * @param string $theme
+ * @return mixed
+ */
+	public function theme($theme = null) {
+		if ($theme === null) {
+			return $this->_theme;
+		}
+		$this->_theme = $theme;
+		return $this;
+	}
+
+/**
  * Helpers to be used in render
  *
  * @param array $helpers
@@ -1078,7 +1099,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat'
+			'transport', 'emailFormat', 'theme',
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1123,6 +1144,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_viewRender = 'View';
 		$this->_viewVars = array();
+		$this->_theme = null;
 		$this->_helpers = array('Html');
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
@@ -1482,6 +1504,9 @@ class CakeEmail {
 			$View->plugin = $templatePlugin;
 		} elseif ($layoutPlugin) {
 			$View->plugin = $layoutPlugin;
+		}
+		if ($this->_theme) {
+			$View->theme = $this->_theme;
 		}
 
 		foreach ($types as $type) {
