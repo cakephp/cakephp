@@ -804,8 +804,8 @@ class AuthComponentTest extends CakeTestCase {
 		$expected = Router::normalize('/admin');
 		$this->assertEquals($expected, $this->Auth->redirect());
 
-		//Ticket #4750
-		//named params
+		// Ticket #4750
+		// Named Parameters
 		$this->Controller->request = $this->Auth->request;
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/index/year:2008/month:feb';
@@ -817,7 +817,7 @@ class AuthComponentTest extends CakeTestCase {
 		$expected = Router::normalize('posts/index/year:2008/month:feb');
 		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 
-		//passed args
+		// Passed Arguments
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/view/1';
 		$this->Auth->request->addParams(Router::parse($url));
@@ -848,7 +848,7 @@ class AuthComponentTest extends CakeTestCase {
 
 		$_GET = $_back;
 
-		//external authed action
+		// External Authed Action
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/edit/1';
@@ -863,7 +863,7 @@ class AuthComponentTest extends CakeTestCase {
 		$expected = Router::normalize('/posts/edit/1');
 		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 
-		//external direct login link
+		// External Direct Login Link
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Auth->Session->delete('Auth');
 		$url = '/AuthTest/login';
@@ -880,7 +880,40 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that no redirects or authorization tests occur on the loginAction
+ * Default to loginRedirect, if set, on authError.
+ *
+ * @return void
+ */
+	public function testDefaultToLoginRedirect() {
+		$_SERVER['HTTP_REFERER'] = false;
+		$_ENV['HTTP_REFERER'] = false;
+		putenv('HTTP_REFERER=');
+
+		$url = '/party/on';
+		$this->Auth->request = $CakeRequest = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->login(array('username' => 'mariano', 'password' => 'cake'));
+		$this->Auth->loginRedirect = array(
+			'controller' => 'something', 'action' => 'else',
+		);
+
+		$CakeResponse = new CakeResponse();
+		$Controller = $this->getMock(
+			'Controller',
+			array('on', 'redirect'),
+			array($CakeRequest, $CakeResponse)
+		);
+
+		$expected = Router::url($this->Auth->loginRedirect, true);
+		$Controller->expects($this->once())
+			->method('redirect')
+			->with($this->equalTo($expected));
+		$this->Auth->startup($Controller);
+	}
+
+/**
+ * Test that no redirects or authorization tests occur on the loginAction
  *
  * @return void
  */
