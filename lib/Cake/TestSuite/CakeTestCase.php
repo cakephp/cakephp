@@ -63,6 +63,20 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	protected $_pathRestore = array();
 
 /**
+ * Tests not to skip after calling $this->skipAllButThis()
+ *
+ * @var array
+ */
+	protected static $_skipAllButThese = array();
+
+/**
+ * Message to display if using skipAllButThese()
+ *
+ * @var string
+ */
+	protected static $_skipAllButTheseMessage = '';
+
+/**
  * Runs the test case and collects the results in a TestResult object.
  * If no TestResult object is passed a new one will be created.
  * This method is run for each test method in this class
@@ -89,6 +103,11 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	public function startTest($method) {
+		if (!empty(self::$_skipAllButThese)) {
+			if (!in_array($method, self::$_skipAllButThese)) {
+				$this->markTestSkipped(self::$_skipAllButTheseMessage);
+			}
+		}
 	}
 
 /**
@@ -112,6 +131,18 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 			$this->markTestSkipped($message);
 		}
 		return $shouldSkip;
+	}
+
+/**
+ * Tell the test suite to skip all tests except the tests indicated
+ *
+ * @param array $dontSkip Array of test function names to not skip
+ * @param string $message Message to display when test is skipped
+ * @return void
+ */
+	public static function skipAllButThese($dontSkip = array(), $message = '') {
+		self::$_skipAllButThese = array_merge(self::$_skipAllButThese, $dontSkip);
+		self::$_skipAllButTheseMessage = $message;
 	}
 
 /**
