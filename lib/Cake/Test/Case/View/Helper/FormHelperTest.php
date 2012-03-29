@@ -3551,6 +3551,80 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+
+/**
+ * test adding an empty option for radio buttons
+ *
+ * @return void
+ */
+	public function testRadioAddEmptyOption() {
+		
+		// $options['empty'] = true
+		$result = $this->Form->input('Model.1.field', array(
+				'type' => 'radio',
+				'options' => array('option A'),
+				'empty' => true,
+				'hiddenField' => false
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+				'fieldset' => array(),
+					'legend' => array(),
+						'Field',
+					'/legend',
+					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '', 'id' => 'Model1Field')),
+					array('label' => array('for' => 'Model1Field')),
+						__('empty'),
+					'/label',
+					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+					array('label' => array('for' => 'Model1Field0')),
+						'option A',
+					'/label',
+				'/fieldset',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		// $options['empty'] = 'CustomEmptyLabel'
+		$result = $this->Form->input('Model.1.field', array(
+				'type' => 'radio',
+				'options' => array('option A'),
+				'empty' => 'CustomEmptyLabel',
+				'hiddenField' => false
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+				'fieldset' => array(),
+					'legend' => array(),
+						'Field',
+					'/legend',
+					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '', 'id' => 'Model1Field')),
+					array('label' => array('for' => 'Model1Field')),
+						'CustomEmptyLabel',
+					'/label',
+					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+					array('label' => array('for' => 'Model1Field0')),
+						'option A',
+					'/label',
+				'/fieldset',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		// $options['empty'] = false
+		$result = $this->Form->input('Model.1.field', array(
+				'type' => 'radio',
+				'options' => array('option A'),
+				'empty' => false,
+				'hiddenField' => false
+			)
+		);
+		$this->assertTextNotContains('"Model1Field"', $result);
+
+	}
+
 /**
  * testSelect method
  *
