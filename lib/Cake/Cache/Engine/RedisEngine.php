@@ -77,9 +77,9 @@ class RedisEngine extends CacheEngine {
 		try {
 			$this->_Redis = new Redis();
 			if (empty($this->settings['persistent'])) {
-				$return  = $this->_Redis->connect($this->settings['server']);
+				$return = $this->_Redis->connect($this->settings['server']);
 			} else {
-				$return  = $this->_Redis->pconnect($this->settings['server']);
+				$return = $this->_Redis->pconnect($this->settings['server']);
 			}
 		} catch (RedisException $e) {
 			return false;
