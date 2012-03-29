@@ -55,9 +55,20 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 		if (parent::__isset($helper)) {
 			return true;
 		}
-		if (!$this->_loadSandbox($helper)) {
-			return $this->_View->plugin && $this->_loadSandbox($this->_View->plugin . '.' . $helper);
+
+		try {
+			$this->load($helper);
+		} catch (MissingHelperException $exception) {
+			if ($this->_View->plugin) {
+				$this->load($this->_View->plugin . '.' . $helper);
+				return true;
+			}
 		}
+
+		if (!empty($exception)) {
+			throw $exception;
+		}
+
 		return true;
 	}
 
@@ -75,23 +86,6 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 			return $this->_loaded[$name];
 		}
 		return null;
-	}
-
-/**
- * Auxiliary function used for lazy loading helpers
- * catches any MissingHelperException and converts it into
- * a boolean return
- *
- * @param string $helper The helper name to be loaded
- * @return boolean wheter the helper could be loaded or not
- **/
-	protected function _loadSandbox($helper) {
-		try {
-			$this->load($helper);
-		} catch (MissingHelperException $e) {
-			return false;
-		}
-		return true;
 	}
 
 /**

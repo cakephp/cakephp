@@ -87,6 +87,16 @@ class HelperCollectionTest extends CakeTestCase {
 	}
 
 /**
+ * test lazy loading of helpers
+ *
+ * @expectedException MissingHelperException
+ * @return void
+ */
+	public function testLazyLoadException() {
+		$result = $this->Helpers->NotAHelper;
+	}
+
+/**
  * Tests loading as an alias
  *
  * @return void
