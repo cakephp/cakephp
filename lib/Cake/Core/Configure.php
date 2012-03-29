@@ -345,5 +345,6 @@ class Configure {
 		if (!empty($exception['handler'])) {
 			set_exception_handler($exception['handler']);
 		}
+		register_shutdown_function('ErrorHandler::handleFatalError');
 	}
 }

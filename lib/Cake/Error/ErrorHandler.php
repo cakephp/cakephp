@@ -184,6 +184,44 @@ class ErrorHandler {
 	}
 
 /**
+ * Generate an error page when some fatal error happens.
+ *
+ * Use Configure::write('Error.handleFatalError', false) to disable this feature
+ *
+ * @return void
+ */
+	public static function handleFatalError() {
+		if (Configure::read('Error.handleFatalError') !== true) {
+			return;
+		}
+
+		$lastError = error_get_last();
+		if (!is_array($lastError)) {
+			return;
+		}
+
+		list($error, $log) = self::mapErrorCode($lastError['type']);
+		if ($log !== LOG_ERROR) {
+			return;
+		}
+
+		$logMessage = $error . ' (' . $lastError['type'] . '): ' . $lastError['message'] . ' in [' . $lastError['file'] . ', line ' . $lastError['line'] . ']';
+		CakeLog::write($log, $logMessage);
+
+		$exceptionHandler = Configure::read('Exception.handler');
+		if (!is_callable($exceptionHandler)) {
+			return;
+		}
+
+		ob_clean();
+		if (Configure::read('debug')) {
+			call_user_func($exceptionHandler, new FatalErrorException($lastError['message'], 500, $lastError['file'], $lastError['line']));
+		} else {
+			call_user_func($exceptionHandler, new InternalErrorException());
+		}
+	}
+
+/**
  * Map an error code into an Error word, and log location.
  *
  * @param integer $code Error code to map
