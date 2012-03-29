@@ -114,7 +114,7 @@ class RedisEngine extends CacheEngine {
  */
 	public function read($key) {
 		$value = $this->_Redis->get($key);
-		if (is_numeric($value)) {
+		if (ctype_digit($value)) {
 			$value = (int) $value;
 		}
 		if ($value !== false && is_string($value)) {
