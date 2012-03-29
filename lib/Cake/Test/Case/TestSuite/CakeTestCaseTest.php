@@ -28,7 +28,11 @@ App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
  * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestCaseTest extends CakeTestCase {
-
+/**
+ * setUpBeforeClass
+ *
+ * @return void
+ */
 	public static function setUpBeforeClass() {
 		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
 		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';
