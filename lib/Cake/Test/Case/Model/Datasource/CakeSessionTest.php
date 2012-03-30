@@ -477,7 +477,7 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
- * testReadAndWriteWithDatabaseStorage method
+ * testReadAndWriteWithCakeStorage method
  *
  * @return void
  */
@@ -560,7 +560,7 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
- * testReadAndWriteWithDatabaseStorage method
+ * testReadAndWriteWithCacheStorage method
  *
  * @return void
  */
@@ -630,7 +630,17 @@ class CakeSessionTest extends CakeTestCase {
 		Configure::write('Session.handler.database', 'test');
 
 		TestCakeSession::init();
+		$this->assertNull(TestCakeSession::id());
+
 		TestCakeSession::start();
+		$expected = session_id();
+		$this->assertEquals($expected, TestCakeSession::id());
+
+		TestCakeSession::renew();
+		$this->assertFalse($expected == TestCakeSession::id());
+
+		$expected = session_id();
+		$this->assertEquals($expected, TestCakeSession::id());
 
 		TestCakeSession::write('SessionTestCase', 0);
 		$this->assertEquals(0, TestCakeSession::read('SessionTestCase'));
