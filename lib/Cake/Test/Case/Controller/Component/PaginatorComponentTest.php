@@ -331,6 +331,11 @@ class PaginatorComponentTest extends CakeTestCase {
 		$this->assertSame($Controller->params['paging']['PaginatorControllerPost']['pageCount'], 3);
 		$this->assertSame($Controller->params['paging']['PaginatorControllerPost']['prevPage'], false);
 		$this->assertSame($Controller->params['paging']['PaginatorControllerPost']['nextPage'], true);
+
+		$Controller->Paginator->settings = array('conditions' => array('PaginatorAuthor.user' => 'mariano'));
+		$Controller->Paginator->paginate('PaginatorControllerPost');
+
+		$this->assertSame(2, $Controller->params['paging']['PaginatorControllerPost']['count']);
 	}
 
 /**
