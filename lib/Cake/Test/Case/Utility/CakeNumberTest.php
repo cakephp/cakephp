@@ -73,6 +73,54 @@ class CakeNumberTest extends CakeTestCase {
 	}
 
 /**
+ * testMultibyteFormat
+ *
+ * @return void
+ */
+	public function testMultibyteFormat() {
+		$value = '5199100.0006';
+		$result = $this->Number->format($value, array(
+			'thousands'	=> '&nbsp;',
+			'decimals'	=> '&amp;',
+			'places'	=> 3,
+			'escape'	=> false,
+			'before'	=> '',
+		));
+		$expected = '5&nbsp;199&nbsp;100&amp;001';
+		$this->assertEqual($expected, $result);
+
+		$value = 1000.45;
+		$result = $this->Number->format($value, array(
+			'thousands'	=> ',,',
+			'decimals'	=> '.a',
+			'escape'	=> false,
+		));
+		$expected = '$1,,000.a45';
+		$this->assertEqual($expected, $result);
+
+		$value = 519919827593784.00;
+		$this->Number->addFormat('RUR', array(
+			'thousands'		=> 'ø€ƒ‡™',
+			'decimals'		=> '(§.§)',
+			'escape'		=> false,
+			'wholeSymbol'	=> '€',
+			'wholePosition'	=> 'after',
+		));
+		$result = $this->Number->currency($value, 'RUR');
+		$expected = '519ø€ƒ‡™919ø€ƒ‡™827ø€ƒ‡™593ø€ƒ‡™784(§.§)00€';
+		$this->assertEquals($expected, $result);
+
+		$value = '13371337.1337';
+		$result = CakeNumber::format($value, array(
+			'thousands'	=> '- |-| /-\ >< () |2 -',
+			'decimals'	=> '- £€€† -',
+			'before'	=> ''
+		));
+		$expected = '13- |-| /-\ &gt;&lt; () |2 -371- |-| /-\ &gt;&lt; () |2 -337- £€€† -13';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test currency method.
  *
  * @return void
