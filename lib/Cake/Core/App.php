@@ -881,7 +881,8 @@ class App {
 /**
  * Object destructor.
  *
- * Writes cache file if changes have been made to the $_map
+ * Writes cache file if changes have been made to the $_map. Also, check if a fatal
+ * error happened and call the handler.
  *
  * @return void
  */
@@ -892,6 +893,31 @@ class App {
 		if (self::$_objectCacheChange) {
 			Cache::write('object_map', self::$_objects, '_cake_core_');
 		}
+
+		self::_checkFatalError();
+	}
+
+/**
+ * Check if a fatal error happened and trigger the configured handler if configured
+ *
+ * @return void
+ */
+	protected static function _checkFatalError() {
+		$lastError = error_get_last();
+		if (!is_array($lastError)) {
+			return;
+		}
+
+		list(, $log) = ErrorHandler::mapErrorCode($lastError['type']);
+		if ($log !== LOG_ERROR) {
+			return;
+		}
+
+		$fatalErrorHandler = Configure::read('Error.handleFatalError');
+		if (!is_callable($fatalErrorHandler)) {
+			return;
+		}
+		call_user_func($fatalErrorHandler, $lastError);
 	}
 
 }

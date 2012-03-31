@@ -41,20 +41,20 @@
  *
  * Options:
  *
+ * - `handleFatalError` - callback - The callback to handle fatal errors. You can set this to any
+ *    callback type, including anonymous functions.
  * - `handler` - callback - The callback to handle errors. You can set this to any callback type,
  *    including anonymous functions.
  * - `level` - int - The level of errors you are interested in capturing.
  * - `trace` - boolean - Include stack traces for errors in log files.
- * - `handleFatalError` - boolean - Enable the CakePHP fatal error handler, generating custom
- *    pages for fatal errors instead of show broke pages.
  *
  * @see ErrorHandler for more information on error handling and configuration.
  */
 	Configure::write('Error', array(
+		'handleFatalError' => 'ErrorHandler::handleFatalError',
 		'handler' => 'ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
-		'trace' => true,
-		'handleFatalError' => true
+		'trace' => true
 	));
 
 /**
