@@ -150,6 +150,7 @@ class ExceptionRenderer {
 			$controller = new CakeErrorController($request, $response);
 		} catch (Exception $e) {
 			$controller = new Controller($request, $response);
+			$controller->layout = 'error';
 			$controller->viewPath = 'Errors';
 		}
 		return $controller;
