@@ -45,6 +45,12 @@ class Set {
  */
 	public static function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
+		if (empty($args[1])) {
+			return (array)$args[0];
+		}
+		if (!is_array($args[0])) {
+			$args[0] = (array)$args[0];
+		}
 		return call_user_func_array('Hash::merge', $args);
 	}
 
