@@ -194,7 +194,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
- * test handleException generating a page.
+ * test handleException generating log.
  *
  * @return void
  */
@@ -236,6 +236,59 @@ class ErrorHandlerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEquals('Rendered by test plugin', $result);
 		CakePlugin::unload();
+	}
+
+/**
+ * test handleFatalError generating a page.
+ *
+ * @return void
+ */
+	public function testHandleFatalErrorPage() {
+		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
+
+		$originalDebugLevel = Configure::read('debug');
+		$line = __LINE__;
+		$error = array('type' => E_ERROR, 'message' => 'Something wrong', 'file' => __FILE__, 'line' => $line);
+
+		ob_start();
+		Configure::write('debug', 1);
+		ErrorHandler::handleFatalError($error);
+		$result = ob_get_clean();
+		$this->assertContains('Something wrong', $result, 'message missing.');
+		$this->assertContains(__FILE__, $result, 'filename missing.');
+		$this->assertContains((string)$line, $result, 'line missing.');
+
+		ob_start();
+		Configure::write('debug', 0);
+		ErrorHandler::handleFatalError($error);
+		$result = ob_get_clean();
+		$this->assertNotContains('Something wrong', $result, 'message must not appear.');
+		$this->assertNotContains(__FILE__, $result, 'filename must not appear.');
+		$this->assertContains('An Internal Error Has Occurred', $result);
+
+		Configure::write('debug', $originalDebugLevel);
+	}
+
+/**
+ * test handleException generating log.
+ *
+ * @return void
+ */
+	public function testHandleFatalErrorLog() {
+		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
+
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+		$error = array('type' => E_ERROR, 'message' => 'Something wrong', 'file' => __FILE__, 'line' => __LINE__);
+
+		ob_start();
+		ErrorHandler::handleFatalError($error);
+		ob_clean();
+
+		$log = file(LOGS . 'error.log');
+		$this->assertContains(__FILE__, $log[0], 'missing filename');
+		$this->assertContains('[FatalErrorException] Something wrong', $log[1], 'message missing.');
 	}
 
 }
