@@ -1121,7 +1121,7 @@ class HashTest extends CakeTestCase {
 				'string' => 'value'
 			)
 		);
-		$result = Set::insert($data, 'Some.string.value', array('values'));
+		$result = Hash::insert($data, 'Some.string.value', array('values'));
 		$expected = array(
 			'Some' => array(
 				'string' => array(
@@ -1492,7 +1492,7 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
- * test Set nest with a normal model result set. For kicks rely on Set nest detecting the key names
+ * test Hash nest with a normal model result set. For kicks rely on Hash nest detecting the key names
  * automatically
  *
  * @return void
@@ -1640,7 +1640,7 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
- * test Set nest with a normal model result set, and a nominated root id
+ * test Hash nest with a normal model result set, and a nominated root id
  *
  * @return void
  */
@@ -1750,7 +1750,7 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
- * test Set nest with a 1d array - this method should be able to handle any type of array input
+ * test Hash nest with a 1d array - this method should be able to handle any type of array input
  *
  * @return void
  */
@@ -1857,7 +1857,7 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
- * test Set nest with no specified parent data.
+ * test Hash nest with no specified parent data.
  *
  * The result should be the same as the input.
  * For an easier comparison, unset all the empty children arrays from the result
