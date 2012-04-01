@@ -895,4 +895,13 @@ class Postgres extends DboSource {
 		return $this->config['schema'];
 	}
 
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	protected function _supportNestedTransaction() {
+		return version_compare($this->getVersion(), '8.0', '>=');
+	}
+
 }

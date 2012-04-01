@@ -2018,6 +2018,15 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	protected function _supportNestedTransaction() {
+		return false;
+	}
+
+/**
  * Begin a transaction
  *
  * @return boolean True on success, false on fail
@@ -2025,15 +2034,33 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	public function begin() {
-		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
-			if ($this->fullDebug && empty($this->_transactionNesting)) {
-				$this->logQuery('BEGIN');
+		if ($this->_transactionStarted) {
+			if ($this->_supportNestedTransaction()) {
+				return $this->_beginNested();
 			}
-			$this->_transactionStarted = true;
 			$this->_transactionNesting++;
-			return true;
+			return $this->_transactionStarted;
 		}
-		return false;
+
+		$this->_transactionNesting = 0;
+		if ($this->fullDebug) {
+			$this->logQuery('BEGIN');
+		}
+		return $this->_transactionStarted = $this->_connection->beginTransaction();
+	}
+
+/**
+ * Begin a nested transaction
+ *
+ * @return boolean
+ */
+	protected function _beginNested() {
+		$query = 'SAVEPOINT LEVEL' . ++$this->_transactionNesting;
+		if ($this->fullDebug) {
+			$this->logQuery($query);
+		}
+		$this->_connection->exec($query);
+		return true;
 	}
 
 /**
@@ -2044,19 +2071,38 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	public function commit() {
-		if ($this->_transactionStarted) {
-			$this->_transactionNesting--;
-			if ($this->_transactionNesting <= 0) {
-				$this->_transactionStarted = false;
-				$this->_transactionNesting = 0;
-				if ($this->fullDebug) {
-					$this->logQuery('COMMIT');
-				}
-				return $this->_connection->commit();
-			}
-			return true;
+		if (!$this->_transactionStarted) {
+			return false;
 		}
-		return false;
+
+		if ($this->_transactionNesting === 0) {
+			if ($this->fullDebug) {
+				$this->logQuery('COMMIT');
+			}
+			$this->_transactionStarted = false;
+			return $this->_connection->commit();
+		}
+
+		if ($this->_supportNestedTransaction()) {
+			return $this->_commitNested();
+		}
+
+		$this->_transactionNesting--;
+		return true;
+	}
+
+/**
+ * Commit a nested transaction
+ *
+ * @return boolean
+ */
+	protected function _commitNested() {
+		$query = 'RELEASE SAVEPOINT LEVEL' . $this->_transactionNesting--;
+		if ($this->fullDebug) {
+			$this->logQuery($query);
+		}
+		$this->_connection->exec($query);
+		return true;
 	}
 
 /**
@@ -2067,15 +2113,38 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	public function rollback() {
-		if ($this->_transactionStarted && $this->_connection->rollBack()) {
+		if (!$this->_transactionStarted) {
+			return false;
+		}
+
+		if ($this->_transactionNesting === 0) {
 			if ($this->fullDebug) {
 				$this->logQuery('ROLLBACK');
 			}
 			$this->_transactionStarted = false;
-			$this->_transactionNesting = 0;
-			return true;
+			return $this->_connection->rollBack();
 		}
-		return false;
+
+		if ($this->_supportNestedTransaction()) {
+			return $this->_rollbackNested();
+		}
+
+		$this->_transactionNesting--;
+		return true;
+	}
+
+/**
+ * Rollback a nested transaction
+ *
+ * @return boolean
+ */
+	protected function _rollbackNested() {
+		$query = 'ROLLBACK TO SAVEPOINT LEVEL' . $this->_transactionNesting--;
+		if ($this->fullDebug) {
+			$this->logQuery($query);
+		}
+		$this->_connection->exec($query);
+		return true;
 	}
 
 /**

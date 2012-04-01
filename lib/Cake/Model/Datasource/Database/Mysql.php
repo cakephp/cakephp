@@ -676,4 +676,13 @@ class Mysql extends DboSource {
 		return $this->config['database'];
 	}
 
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	protected function _supportNestedTransaction() {
+		return version_compare($this->getVersion(), '4.1', '>=');
+	}
+
 }

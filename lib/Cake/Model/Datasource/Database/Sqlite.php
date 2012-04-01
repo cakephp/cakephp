@@ -559,4 +559,13 @@ class Sqlite extends DboSource {
 		return "main"; // Sqlite Datasource does not support multidb
 	}
 
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	protected function _supportNestedTransaction() {
+		return version_compare($this->getVersion(), '3.6.8', '>=');
+	}
+
 }
