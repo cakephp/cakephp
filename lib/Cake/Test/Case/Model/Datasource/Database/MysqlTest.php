@@ -45,7 +45,7 @@ class MysqlTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
 		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test',
-		'core.binary_test'
+		'core.binary_test', 'app.address'
 	);
 
 /**
@@ -3579,4 +3579,40 @@ class MysqlTest extends CakeTestCase {
 			->with("TRUNCATE TABLE `$schema`.`tbl_articles`");
 		$this->Dbo->truncate('articles');
 	}
+
+/**
+ * Test nested transaction
+ *
+ * @return void
+ */
+	public function testNestedTransaction() {
+		$obj = new ReflectionMethod($this->Dbo, '_supportNestedTransaction');
+		$obj->setAccessible(true);
+		$this->skipIf($obj->invoke($this->Dbo) === false, 'The MySQL server do not support nested transaction');
+
+		$this->loadFixtures('Address');
+		$model = ClassRegistry::init('Address');
+		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();
+		$model->cacheQueries = false;
+		$this->Dbo->cacheMethods = false;
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->commit());
+		$this->assertEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
+	}
+
 }
