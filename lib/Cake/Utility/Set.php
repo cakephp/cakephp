@@ -686,7 +686,7 @@ class Set {
 				$_list =& $_list[$key];
 			}
 			if (!is_array($_list)) {
-				return array();
+				$_list = array();
 			}
 		}
 		return $list;
@@ -1032,6 +1032,36 @@ class Set {
 			} else {
 				$result[$path . $key] = $val;
 			}
+		}
+		return $result;
+	}
+
+/**
+ * Expand/unflattens an string to an array
+ *
+ * For example, unflattens an array that was collapsed with `Set::flatten()`
+ * into a multi-dimensional array. So, `array('0.Foo.Bar' => 'Far')` becomes
+ * `array(array('Foo' => array('Bar' => 'Far')))`.
+ *
+ * @param array $data Flattened array
+ * @param string $separator The delimiter used
+ * @return array
+ */
+	public static function expand($data, $separator = '.') {
+		$result = array();
+		foreach ($data as $flat => $value) {
+			$keys = explode($separator, $flat);
+			$keys = array_reverse($keys);
+			$child = array(
+				$keys[0] => $value
+			);
+			array_shift($keys);
+			foreach ($keys as $k) {
+				$child = array(
+					$k => $child
+				);
+			}
+			$result = Set::merge($result, $child);
 		}
 		return $result;
 	}

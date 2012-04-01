@@ -1423,7 +1423,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
 
-		$this->assertTextEquals($cached, $out);
+		$this->assertTextEquals($out, $cached);
 
 		$filename = $this->__cachePath($request->here());
 		unlink($filename);

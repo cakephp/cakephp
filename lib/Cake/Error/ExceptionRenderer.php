@@ -280,6 +280,7 @@ class ExceptionRenderer {
 		$this->controller->subDir = '';
 		$this->controller->viewPath = 'Errors/';
 		$this->controller->viewClass = 'View';
+		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 
 		$this->controller->render($template);

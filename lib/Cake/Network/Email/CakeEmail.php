@@ -184,6 +184,13 @@ class CakeEmail {
 	protected $_viewVars = array();
 
 /**
+ * Theme for the View
+ *
+ * @var array
+ */
+	protected $_theme = null;
+
+/**
  * Helpers to be used in the render
  *
  * @var array
@@ -458,6 +465,37 @@ class CakeEmail {
 	public function addBcc($email, $name = null) {
 		return $this->_addEmail('_bcc', $email, $name);
 	}
+
+/**
+ * Charset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function charset($charset = null) {
+		if ($charset === null) {
+			return $this->charset;
+		}
+		$this->charset = $charset;
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $charset;
+		}
+		return $this->charset;
+	}
+
+/**
+ * HeaderCharset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function headerCharset($charset = null) {
+		if ($charset === null) {
+			return $this->headerCharset;
+		}
+		return $this->headerCharset = $charset;
+	}
+
 
 /**
  * Set email
@@ -742,6 +780,20 @@ class CakeEmail {
 			return $this->_viewVars;
 		}
 		$this->_viewVars = array_merge($this->_viewVars, (array)$viewVars);
+		return $this;
+	}
+
+/**
+ * Theme to use when rendering
+ *
+ * @param string $theme
+ * @return mixed
+ */
+	public function theme($theme = null) {
+		if ($theme === null) {
+			return $this->_theme;
+		}
+		$this->_theme = $theme;
 		return $this;
 	}
 
@@ -1047,7 +1099,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat'
+			'transport', 'emailFormat', 'theme',
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1092,6 +1144,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_viewRender = 'View';
 		$this->_viewVars = array();
+		$this->_theme = null;
 		$this->_helpers = array('Html');
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
@@ -1115,6 +1168,9 @@ class CakeEmail {
 		if ($internalEncoding) {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
+		}
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $this->charset;
 		}
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
@@ -1448,6 +1504,9 @@ class CakeEmail {
 			$View->plugin = $templatePlugin;
 		} elseif ($layoutPlugin) {
 			$View->plugin = $layoutPlugin;
+		}
+		if ($this->_theme) {
+			$View->theme = $this->_theme;
 		}
 
 		foreach ($types as $type) {

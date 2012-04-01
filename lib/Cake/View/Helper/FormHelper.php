@@ -249,8 +249,9 @@ class FormHelper extends AppHelper {
 			}
 
 			foreach ($validateProperties as $rule => $validateProp) {
-				if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
-					return false;
+				$isRequired = $this->_isRequiredRule($validateProp);
+				if ($isRequired === false) {
+					continue;
 				}
 				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
 				$required = $rule || empty($validateProp);
@@ -260,6 +261,34 @@ class FormHelper extends AppHelper {
 			}
 		}
 		return $required;
+	}
+
+/**
+ * Checks if the field is required by the 'on' key in validation properties.
+ * If no 'on' key is present in validation props, this method returns true.
+ *
+ * @param array $validateProp
+ * @return mixed. Boolean for required
+ */
+	protected function _isRequiredRule($validateProp) {
+		if (isset($validateProp['on'])) {
+			if (
+				($validateProp['on'] == 'create' && $this->requestType != 'post') ||
+				($validateProp['on'] == 'update' && $this->requestType != 'put')
+			) {
+				return false;
+			}
+		}
+		if (
+			isset($validateProp['allowEmpty']) &&
+			$validateProp['allowEmpty'] === true
+		) {
+			return false;
+		}
+		if (isset($validateProp['required']) && empty($validateProp['required'])) {
+			return false;
+		}
+		return true;
 	}
 
 /**

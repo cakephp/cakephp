@@ -195,6 +195,23 @@ class DboSource extends DataSource {
 	);
 
 /**
+ * Default fields that are used by the DBO
+ *
+ * @var array
+ */	
+	protected $_queryDefaults = array(
+		'conditions' => array(),
+		'fields' => null,
+		'table' => null,
+		'alias' => null,
+		'order' => null,
+		'limit' => null,
+		'joins' => array(),
+		'group' => null,
+		'offset' => null
+	);
+
+/**
  * Separator string for virtualField composition
  *
  * @var string
@@ -1665,7 +1682,7 @@ class DboSource extends DataSource {
  * @see DboSource::renderStatement()
  */
 	public function buildStatement($query, $model) {
-		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
+		$query = array_merge($this->_queryDefaults, $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
 			for ($i = 0; $i < $count; $i++) {

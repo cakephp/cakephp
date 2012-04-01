@@ -180,7 +180,7 @@ class CakeSession {
 		if (self::started()) {
 			return true;
 		}
-		CakeSession::init();
+		self::init();
 		$id = self::id();
 		session_write_close();
 		self::_configureSession();
