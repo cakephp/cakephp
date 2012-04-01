@@ -276,15 +276,14 @@ class Hash {
 			} elseif ($op === 'remove') {
 				if ($i === $last) {
 					unset($_list[$key]);
-				} else {
-					if (!isset($_list[$key])) {
-						return $data;
-					}
-					$_list =& $_list[$key];
+					return $data;
 				}
+				if (!isset($_list[$key])) {
+					return $data;
+				}
+				$_list =& $_list[$key];
 			}
 		}
-		return $data;
 	}
 
 /**
