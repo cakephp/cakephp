@@ -51,7 +51,7 @@ class DboTestSource extends DboSource {
 		$this->_connection = $conn;
 	}
 
-	protected function _supportNestedTransaction() {
+	public function supportNestedTransaction() {
 		return true;
 	}
 
