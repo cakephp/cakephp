@@ -914,6 +914,9 @@ class App {
 		}
 
 		$fatalErrorHandler = Configure::read('Error.fatalErrorHandler');
+		if ($fatalErrorHandler === null) {
+			$fatalErrorHandler = 'ErrorHandler::handleFatalError';
+		}
 		if (!is_callable($fatalErrorHandler)) {
 			return;
 		}
