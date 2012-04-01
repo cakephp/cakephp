@@ -900,7 +900,7 @@ class Postgres extends DboSource {
  *
  * @return boolean
  */
-	protected function _supportNestedTransaction() {
+	public function supportNestedTransaction() {
 		return version_compare($this->getVersion(), '8.0', '>=');
 	}
 

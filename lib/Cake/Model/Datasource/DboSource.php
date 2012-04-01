@@ -2022,7 +2022,7 @@ class DboSource extends DataSource {
  *
  * @return boolean
  */
-	protected function _supportNestedTransaction() {
+	public function supportNestedTransaction() {
 		return false;
 	}
 
@@ -2035,7 +2035,7 @@ class DboSource extends DataSource {
  */
 	public function begin() {
 		if ($this->_transactionStarted) {
-			if ($this->_supportNestedTransaction()) {
+			if ($this->supportNestedTransaction()) {
 				return $this->_beginNested();
 			}
 			$this->_transactionNesting++;
@@ -2083,7 +2083,7 @@ class DboSource extends DataSource {
 			return $this->_connection->commit();
 		}
 
-		if ($this->_supportNestedTransaction()) {
+		if ($this->supportNestedTransaction()) {
 			return $this->_commitNested();
 		}
 
@@ -2125,7 +2125,7 @@ class DboSource extends DataSource {
 			return $this->_connection->rollBack();
 		}
 
-		if ($this->_supportNestedTransaction()) {
+		if ($this->supportNestedTransaction()) {
 			return $this->_rollbackNested();
 		}
 

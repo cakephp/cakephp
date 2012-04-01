@@ -681,7 +681,7 @@ class Mysql extends DboSource {
  *
  * @return boolean
  */
-	protected function _supportNestedTransaction() {
+	public function supportNestedTransaction() {
 		return version_compare($this->getVersion(), '4.1', '>=');
 	}
 
