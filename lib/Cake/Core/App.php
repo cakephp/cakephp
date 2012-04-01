@@ -913,7 +913,7 @@ class App {
 			return;
 		}
 
-		$fatalErrorHandler = Configure::read('Error.handleFatalError');
+		$fatalErrorHandler = Configure::read('Error.fatalErrorHandler');
 		if (!is_callable($fatalErrorHandler)) {
 			return;
 		}
