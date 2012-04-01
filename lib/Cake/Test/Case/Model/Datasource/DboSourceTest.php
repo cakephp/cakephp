@@ -51,6 +51,10 @@ class DboTestSource extends DboSource {
 		$this->_connection = $conn;
 	}
 
+	protected function _supportNestedTransaction() {
+		return true;
+	}
+
 }
 
 /**
@@ -839,6 +843,31 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('query' => 'ROLLBACK', 'params' => array(), 'affected' => '', 'numRows' => '', 'took' => '');
 		$log = $db->getLog();
 		$this->assertEquals($expected, $log['log'][0]);
+	}
+
+/**
+ * Test nested transaction calls
+ *
+ * @return void
+ */
+	public function testTransactionNested() {
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+
+		$conn->expects($this->at(0))->method('beginTransaction')->will($this->returnValue(true));
+		$conn->expects($this->at(1))->method('exec')->with($this->equalTo('SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(2))->method('exec')->with($this->equalTo('RELEASE SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(3))->method('exec')->with($this->equalTo('SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(4))->method('exec')->with($this->equalTo('ROLLBACK TO SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(5))->method('commit')->will($this->returnValue(true));
+
+		$db->begin();
+		$db->begin();
+		$db->commit();
+		$db->begin();
+		$db->rollback();
+		$db->commit();
 	}
 
 /**
