@@ -149,7 +149,7 @@ class CakeNumber {
 			extract($options);
 		}
 
-		$out = $before . self::_number_format($number, $places, $decimals, $thousands) . $after;
+		$out = $before . self::_numberFormat($number, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
 			return h($out);
@@ -166,7 +166,7 @@ class CakeNumber {
  * @param string $thousands
  * @return string
  */
-	protected static function _number_format($number, $places = 0, $decimals = '.', $thousands = ',') {
+	protected static function _numberFormat($number, $places = 0, $decimals = '.', $thousands = ',') {
 		if (!isset(self::$_numberFormatSupport)) {
 			self::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
 		}
