@@ -47,8 +47,6 @@ class ErrorHandlerTest extends CakeTestCase {
 		$request = new CakeRequest(null, false);
 		$request->base = '';
 		Router::setRequestInfo($request);
-		$this->_debug = Configure::read('debug');
-		$this->_error = Configure::read('Error');
 		Configure::write('debug', 2);
 	}
 
@@ -58,9 +56,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('debug', $this->_debug);
-		Configure::write('Error', $this->_error);
-		App::build();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}

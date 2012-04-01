@@ -6585,7 +6585,8 @@ class FormHelperTest extends CakeTestCase {
 			'inputDefaults' => array(
 				'div' => false,
 				'label' => false,
-				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error'))
+				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
+				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
 			)
 		));
 		$result = $this->Form->input('username');
@@ -6603,15 +6604,10 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$User = ClassRegistry::getObject('User');
-		$User->validationErrors['username'] = array('empty');
-		$result = $this->Form->input('username', array('div' => true, 'label' => 'username', 'error' => array('empty' => __('Required'))));
+		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
 		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'UserUsername'), 'username', '/label',
-			'input' => array('class' => 'form-error', 'type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
-			'small' => array('class' => 'error'), 'Required', '/small',
-			'/div'
+			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'label' => array('for' => 'UserUsername'), 'Username', '/label',
 		);
 		$this->assertTags($result, $expected);
 	}

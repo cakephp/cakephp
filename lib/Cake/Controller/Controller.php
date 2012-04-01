@@ -13,9 +13,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Include files
- */
 App::uses('CakeResponse', 'Network');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ComponentCollection', 'Controller');
@@ -316,7 +313,7 @@ class Controller extends Object implements CakeEventListener {
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
-			$this->name = substr(get_class($this), 0, strlen(get_class($this)) - 10);
+			$this->name = substr(get_class($this), 0, -10);
 		}
 
 		if ($this->viewPath == null) {
