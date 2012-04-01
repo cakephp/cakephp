@@ -256,25 +256,25 @@ class Hash {
 		$_list =& $data;
 
 		$count = count($path);
+		$last = $count - 1;
 		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
 			if ($op === 'insert') {
-				if ($i === $count - 1 && is_array($_list)) {
+				if ($i === $last) {
 					$_list[$key] = $values;
-				} else {
-					if (!isset($_list[$key])) {
-						$_list[$key] = array();
-					}
-					$_list =& $_list[$key];
+					return $data;
 				}
+				if (!isset($_list[$key])) {
+					$_list[$key] = array();
+				}
+				$_list =& $_list[$key];
 				if (!is_array($_list)) {
 					$_list = array();
 				}
-			}
-			if ($op === 'remove') {
-				if ($i === count($path) - 1) {
+			} elseif ($op === 'remove') {
+				if ($i === $last) {
 					unset($_list[$key]);
 				} else {
 					if (!isset($_list[$key])) {
