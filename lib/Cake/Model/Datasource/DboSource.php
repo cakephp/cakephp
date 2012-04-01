@@ -184,17 +184,6 @@ class DboSource extends DataSource {
 	protected $_transactionNesting = 0;
 
 /**
- * Index of basic SQL commands
- *
- * @var array
- */
-	protected $_commands = array(
-		'begin' => 'BEGIN',
-		'commit' => 'COMMIT',
-		'rollback' => 'ROLLBACK'
-	);
-
-/**
  * Default fields that are used by the DBO
  *
  * @var array
@@ -294,10 +283,19 @@ class DboSource extends DataSource {
 /**
  * Get the underlying connection object.
  *
- * @return PDOConnection
+ * @return PDO
  */
 	public function getConnection() {
 		return $this->_connection;
+	}
+
+/**
+ * Gets the version string of the database server
+ *
+ * @return string The database version
+ */
+	public function getVersion() {
+		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 
 /**

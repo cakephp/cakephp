@@ -34,17 +34,6 @@ class Postgres extends DboSource {
 	public $description = "PostgreSQL DBO Driver";
 
 /**
- * Index of basic SQL commands
- *
- * @var array
- */
-	protected $_commands = array(
-		'begin'    => 'BEGIN',
-		'commit'   => 'COMMIT',
-		'rollback' => 'ROLLBACK'
-	);
-
-/**
  * Base driver configuration settings.  Merged with user settings.
  *
  * @var array
