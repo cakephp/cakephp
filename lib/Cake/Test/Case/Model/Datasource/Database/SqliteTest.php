@@ -389,10 +389,6 @@ class SqliteTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
-		$obj = new ReflectionMethod($this->Dbo, '_supportNestedTransaction');
-		$obj->setAccessible(true);
-		$this->skipIf($obj->invoke($this->Dbo) === false, 'The Sqlite version do not support nested transaction');
-
 		$this->loadFixtures('User');
 		$model = new User();
 		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();

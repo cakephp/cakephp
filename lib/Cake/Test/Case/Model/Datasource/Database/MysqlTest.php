@@ -3586,10 +3586,6 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
-		$obj = new ReflectionMethod($this->Dbo, '_supportNestedTransaction');
-		$obj->setAccessible(true);
-		$this->skipIf($obj->invoke($this->Dbo) === false, 'The MySQL server do not support nested transaction');
-
 		$this->loadFixtures('Address');
 		$model = ClassRegistry::init('Address');
 		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();

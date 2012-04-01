@@ -915,10 +915,6 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
-		$obj = new ReflectionMethod($this->Dbo, '_supportNestedTransaction');
-		$obj->setAccessible(true);
-		$this->skipIf($obj->invoke($this->Dbo) === false, 'The Postgres server do not support nested transaction');
-
 		$this->loadFixtures('Article');
 		$model = new Article();
 		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();
