@@ -3491,7 +3491,7 @@ class MysqlTest extends CakeTestCase {
 	}
 	
 /**
- * @expectedException MissingDriverException
+ * @expectedException MissingConnectionException
  * @return void
  */
 	public function testExceptionOnMissingDriver() {

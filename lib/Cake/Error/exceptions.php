@@ -339,17 +339,6 @@ class MissingConnectionException extends CakeException {
 
 }
 
- /**
- * Used when a driver is missing
- *
- * @package       Cake.Error
- */
-class MissingDriverException extends CakeException {
-
-       protected $_messageTemplate = 'Driver %s is missing, not loaded, or could not be found.';
-
-}
-
 /**
  * Used when a Task cannot be found.
  *
