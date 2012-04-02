@@ -174,10 +174,14 @@ class Mysql extends DboSource {
  * @return boolean
  */
 	public function enabled() {
-		if(!in_array('mysql', PDO::getAvailableDrivers())) {
+		if(!$this->_PdoMysqlInstalled()) {
 			throw new MissingDriverException(array('class' => 'MySql PDO'));
 		}
 		return true;
+	}
+	
+	protected function _PdoMysqlInstalled() {
+		return in_array('mysql', PDO::getAvailableDrivers());
 	}
 
 /**

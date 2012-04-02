@@ -3487,6 +3487,22 @@ class MysqlTest extends CakeTestCase {
 			'password' => 'inyurdatabase',
 			'database' => 'imaginary'
 		));
+
+	}
+	
+/**
+ * @expectedException MissingDriverException
+ * @return void
+ */
+	public function testExceptionOnMissingDriver() {
+		
+		$test = ConnectionManager::getDatasource('test');
+
+		$this->Dbo = $this->getMock('Mysql', array('_PdoMysqlInstalled'), array($test->config));
+
+		$this->Dbo->expects($this->once())->method('_PdoMysqlInstalled')->will($this->returnValue(false));
+				
+		$this->Dbo->enabled();
 	}
 
 /**
