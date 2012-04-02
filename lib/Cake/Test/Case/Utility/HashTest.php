@@ -976,7 +976,7 @@ class HashTest extends CakeTestCase {
 			0 => array('Shirt' => array('color' => 'black')),
 			1 => array('Person' => array('name' => 'Jeff')),
 		);
-		$a = Hash::sort($a, '{n}.Person.name', 'ASC');
+		$a = Hash::sort($a, '{n}.Person.name', 'ASC', 'STRING');
 		$this->assertEquals($a, $b);
 
 		$names = array(
@@ -989,7 +989,7 @@ class HashTest extends CakeTestCase {
 			array('employees' => array(array('name' => array()))),
 			array('employees' => array(array('name' => array())))
 		);
-		$result = Hash::sort($names, '{n}.employees.0.name', 'asc', 1);
+		$result = Hash::sort($names, '{n}.employees.0.name', 'asc');
 		$expected = array(
 			array('employees' => array(
 				array('name' => array('first' => 'John', 'last' => 'Doe')))
@@ -999,6 +999,74 @@ class HashTest extends CakeTestCase {
 			),
 			array('employees' => array(array('name' => array()))),
 			array('employees' => array(array('name' => array())))
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test sort() with numeric option.
+ *
+ * @return void
+ */
+	public function testSortNumeric() {
+		$items = array(
+			array('Item' => array('price' => '155,000')),
+			array('Item' => array('price' => '139,000')),
+			array('Item' => array('price' => '275,622')),
+			array('Item' => array('price' => '230,888')),
+			array('Item' => array('price' => '66,000')),
+		);
+		$result = Hash::sort($items, '{n}.Item.price', 'asc', 'numeric');
+		$expected = array(
+			array('Item' => array('price' => '66,000')),
+			array('Item' => array('price' => '139,000')),
+			array('Item' => array('price' => '155,000')),
+			array('Item' => array('price' => '230,888')),
+			array('Item' => array('price' => '275,622')),
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Hash::sort($items, '{n}.Item.price', 'desc', 'numeric');
+		$expected = array(
+			array('Item' => array('price' => '275,622')),
+			array('Item' => array('price' => '230,888')),
+			array('Item' => array('price' => '155,000')),
+			array('Item' => array('price' => '139,000')),
+			array('Item' => array('price' => '66,000')),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test natural sorting.
+ *
+ * @return void
+ */
+	public function testSortNatural() {
+		$items = array(
+			array('Item' => array('image' => 'img1.jpg')),
+			array('Item' => array('image' => 'img99.jpg')),
+			array('Item' => array('image' => 'img12.jpg')),
+			array('Item' => array('image' => 'img10.jpg')),
+			array('Item' => array('image' => 'img2.jpg')),
+		);
+		$result = Hash::sort($items, '{n}.Item.image', 'desc', 'natural');
+		$expected = array(
+			array('Item' => array('image' => 'img99.jpg')),
+			array('Item' => array('image' => 'img12.jpg')),
+			array('Item' => array('image' => 'img10.jpg')),
+			array('Item' => array('image' => 'img2.jpg')),
+			array('Item' => array('image' => 'img1.jpg')),
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Hash::sort($items, '{n}.Item.image', 'asc', 'natural');
+		$expected = array(
+			array('Item' => array('image' => 'img1.jpg')),
+			array('Item' => array('image' => 'img2.jpg')),
+			array('Item' => array('image' => 'img10.jpg')),
+			array('Item' => array('image' => 'img12.jpg')),
+			array('Item' => array('image' => 'img99.jpg')),
 		);
 		$this->assertEquals($expected, $result);
 	}

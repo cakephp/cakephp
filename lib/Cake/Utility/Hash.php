@@ -717,13 +717,25 @@ class Hash {
 /**
  * Sorts an array by any value, determined by a Set-compatible path
  *
+ * ### Sort directions
+ *
+ * - `asc` Sort ascending.
+ * - `desc` Sort descending.
+ *
+ * ## Sort types
+ *
+ * - `numeric` Sort by numeric value.
+ * - `regular` Sort by numeric value.
+ * - `string` Sort by numeric value.
+ *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
- * @param string $dir Direction of sorting - either ascending (ASC), or descending (DESC)
+ * @param string $dir See directions above.
+ * @param string $type See direction types above. Defaults to 'regular'.
  * @return array Sorted array of data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
  */
-	public static function sort(array $data, $path, $dir) {
+	public static function sort(array $data, $path, $dir, $type = 'regular') {
 		$originalKeys = array_keys($data);
 		$numeric = is_numeric(implode('', $originalKeys));
 		if ($numeric) {
@@ -743,12 +755,22 @@ class Hash {
 		$values = self::extract($result, '{n}.value');
 
 		$dir = strtolower($dir);
+		$type = strtolower($type);
 		if ($dir === 'asc') {
 			$dir = SORT_ASC;
-		} elseif ($dir === 'desc') {
+		} else {
 			$dir = SORT_DESC;
 		}
-		array_multisort($values, $dir, $keys, $dir);
+		if ($type === 'numeric') {
+			$type = SORT_NUMERIC;
+		} elseif ($type === 'string') {
+			$type = SORT_STRING;
+		} elseif ($type === 'natural') {
+			$type = SORT_NATURAL;
+		} else {
+			$type = SORT_REGULAR;
+		}
+		array_multisort($values, $dir, $type, $keys, $dir, $type);
 		$sorted = array();
 		$keys = array_unique($keys);
 
