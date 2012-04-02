@@ -175,7 +175,7 @@ class Mysql extends DboSource {
  */
 	public function enabled() {
 		if (!$this->_PdoMysqlInstalled()) {
-			throw new MissingConnectionException('The PDO driver for mysql is missing, not loaded, or could not be found.');
+			throw new PDOException('The PDO driver for mysql is missing, not loaded, or could not be found.');
 		}
 		return true;
 	}
