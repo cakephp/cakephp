@@ -836,4 +836,42 @@ class DboSourceTest extends CakeTestCase {
 		$log = $db->getLog();
 		$this->assertEquals($expected, $log['log'][0]);
 	}
+
+/**
+ * data provider for testBuildJoinStatement
+ *
+ * @return array
+ */
+	public static function joinStatements($schema) {
+		return array(
+			array(array(
+				'type' => 'LEFT',
+				'alias' => 'PostsTag',
+				'table' => 'posts_tags',
+				'conditions' => array('PostsTag.post_id = Post.id')
+			), 'LEFT JOIN cakephp.posts_tags AS PostsTag ON (PostsTag.post_id = Post.id)'),
+			array(array(
+				'type' => 'LEFT',
+				'alias' => 'Stock',
+				'table' => '(SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id)',
+				'conditions' => 'Stock.article_id = Article.id'
+			), 'LEFT JOIN (SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id) AS Stock ON (Stock.article_id = Article.id)')
+		);
+	}
+
+/**
+ * Test buildJoinStatement()
+ * ensure that schemaName is not added when table value is a subquery
+ *
+ * @dataProvider joinStatements
+ * @return void
+ */
+	public function testBuildJoinStatement($join, $expected) {
+		$db = $this->getMock('DboTestSource', array('getSchemaName'));
+		$db->expects($this->any())
+			->method('getSchemaName')
+			->will($this->returnValue('cakephp'));
+		$result = $db->buildJoinStatement($join);
+		$this->assertEquals($expected, $result);
+	}
 }

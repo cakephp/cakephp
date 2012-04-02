@@ -1651,7 +1651,8 @@ class DboSource extends DataSource {
 			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
 		}
 		if (!empty($data['table'])) {
-			$data['table'] = $this->fullTableName($data['table']);
+			$schema = !(is_string($data['table']) && strpos($data['table'], '(') === 0);
+			$data['table'] = $this->fullTableName($data['table'], true, $schema);
 		}
 		return $this->renderJoinStatement($data);
 	}
