@@ -1237,8 +1237,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_TEXT));
 
 		$message = $this->CakeEmail->message();
-		$this->assertContains('Content-Type: text/plain; charset=UTF-8', $message);
-		$this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
+		$this->assertContains('Content-Type: text/plain; charset=utf-8', $message);
+		$this->assertContains('Content-Type: text/html; charset=utf-8', $message);
 
 		// UTF-8 is 8bit
 		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
@@ -1267,6 +1267,20 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($this->CakeEmail->to(), array());
 		$this->assertSame(null, $this->CakeEmail->theme());
 	}
+
+/**
+ * testReset with charset
+ *
+ * @return void
+ */
+	public function testResetWithCharset() {
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$this->CakeEmail->reset();
+
+		$this->assertSame($this->CakeEmail->charset, 'utf-8', $this->CakeEmail->charset);
+		$this->assertSame($this->CakeEmail->headerCharset, null, $this->CakeEmail->headerCharset);
+	}
+
 
 /**
  * testWrap method
