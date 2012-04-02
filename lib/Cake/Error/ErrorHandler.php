@@ -158,6 +158,9 @@ class ErrorHandler {
 		}
 		$errorConfig = Configure::read('Error');
 		list($error, $log) = self::mapErrorCode($code);
+		if ($log === LOG_ERROR) {
+			return self::handleFatalError($code, $description, $file, $line);
+		}
 
 		$debug = Configure::read('debug');
 		if ($debug) {
@@ -186,24 +189,28 @@ class ErrorHandler {
 /**
  * Generate an error page when some fatal error happens.
  *
- * @param array $error Array with error information. See `error_get_last()` function
- * @return void
+ * @param integer $code Code of error
+ * @param string $description Error description
+ * @param string $file File on which error occurred
+ * @param integer $line Line that triggered the error
+ * @return boolean
  */
-	public static function handleFatalError($error) {
-		$logMessage = 'Fatal Error (' . $error['type'] . '): ' . $error['message'] . ' in [' . $error['file'] . ', line ' . $error['line'] . ']';
+	public static function handleFatalError($code, $description, $file, $line) {
+		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		CakeLog::write(LOG_ERROR, $logMessage);
 
 		$exceptionHandler = Configure::read('Exception.handler');
 		if (!is_callable($exceptionHandler)) {
-			return;
+			return false;
 		}
 
 		ob_clean();
 		if (Configure::read('debug')) {
-			call_user_func($exceptionHandler, new FatalErrorException($error['message'], 500, $error['file'], $error['line']));
+			call_user_func($exceptionHandler, new FatalErrorException($description, 500, $file, $line));
 		} else {
 			call_user_func($exceptionHandler, new InternalErrorException());
 		}
+		return false;
 	}
 
 /**

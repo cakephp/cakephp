@@ -913,14 +913,11 @@ class App {
 			return;
 		}
 
-		$fatalErrorHandler = Configure::read('Error.fatalErrorHandler');
-		if ($fatalErrorHandler === null) {
-			$fatalErrorHandler = 'ErrorHandler::handleFatalError';
-		}
-		if (!is_callable($fatalErrorHandler)) {
+		$errorHandler = Configure::read('Error.handler');
+		if (!is_callable($errorHandler)) {
 			return;
 		}
-		call_user_func($fatalErrorHandler, $lastError);
+		call_user_func($errorHandler, $lastError['type'], $lastError['message'], $lastError['file'], $lastError['line'], array());
 	}
 
 }

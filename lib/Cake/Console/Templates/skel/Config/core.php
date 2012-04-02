@@ -41,8 +41,6 @@
  *
  * Options:
  *
- * - `fatalErrorHandler` - callback - The callback to handle fatal errors. You can set this to any
- *    callable type, including anonymous functions. Setting it to false will disable the feature.
  * - `handler` - callback - The callback to handle errors. You can set this to any callable type,
  *    including anonymous functions.
  * - `level` - int - The level of errors you are interested in capturing.
@@ -51,7 +49,6 @@
  * @see ErrorHandler for more information on error handling and configuration.
  */
 	Configure::write('Error', array(
-		'fatalErrorHandler' => 'ErrorHandler::handleFatalError',
 		'handler' => 'ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true

@@ -89,7 +89,6 @@ class ErrorHandlerTest extends CakeTestCase {
 		return array(
 			array(E_USER_NOTICE, 'Notice'),
 			array(E_USER_WARNING, 'Warning'),
-			array(E_USER_ERROR, 'Fatal Error'),
 		);
 	}
 
@@ -248,11 +247,10 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$originalDebugLevel = Configure::read('debug');
 		$line = __LINE__;
-		$error = array('type' => E_ERROR, 'message' => 'Something wrong', 'file' => __FILE__, 'line' => $line);
 
 		ob_start();
 		Configure::write('debug', 1);
-		ErrorHandler::handleFatalError($error);
+		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
 		$result = ob_get_clean();
 		$this->assertContains('Something wrong', $result, 'message missing.');
 		$this->assertContains(__FILE__, $result, 'filename missing.');
@@ -260,7 +258,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		ob_start();
 		Configure::write('debug', 0);
-		ErrorHandler::handleFatalError($error);
+		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
 		$result = ob_get_clean();
 		$this->assertNotContains('Something wrong', $result, 'message must not appear.');
 		$this->assertNotContains(__FILE__, $result, 'filename must not appear.');
@@ -280,10 +278,9 @@ class ErrorHandlerTest extends CakeTestCase {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
-		$error = array('type' => E_ERROR, 'message' => 'Something wrong', 'file' => __FILE__, 'line' => __LINE__);
 
 		ob_start();
-		ErrorHandler::handleFatalError($error);
+		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
 		ob_clean();
 
 		$log = file(LOGS . 'error.log');
