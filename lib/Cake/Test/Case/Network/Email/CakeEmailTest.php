@@ -1281,7 +1281,6 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($this->CakeEmail->headerCharset, null, $this->CakeEmail->headerCharset);
 	}
 
-
 /**
  * testWrap method
  *
@@ -1512,11 +1511,12 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains(mb_convert_encoding('ってテーブルを作ってやってたらう','ISO-2022-JP'), $result['message']);
 	}
 
-	private function checkContentTransferEncoding($message, $charset) {
+	public function checkContentTransferEncoding($message, $charset) {
 		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;
 		$result['html'] = false;
-		for ($i = 0; $i < count($message); ++$i) {
+		$length = count($message);
+		for ($i = 0; $i < $length; ++$i) {
 			if ($message[$i] == $boundary) {
 				$flag = false;
 				$type = '';
@@ -1558,7 +1558,6 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
-
 /**
  * Tests charset setter/getter
  *
@@ -1573,7 +1572,6 @@ class CakeEmailTest extends CakeTestCase {
 
 		$charset = $this->CakeEmail->charset('Shift_JIS');
 		$this->assertSame($charset, 'Shift_JIS');
-
 	}
 
 /**
@@ -1591,7 +1589,6 @@ class CakeEmailTest extends CakeTestCase {
 		$charset = $this->CakeEmail->headerCharset('Shift_JIS');
 		$this->assertSame($charset, 'Shift_JIS');
 	}
-
 
 /**
  * Tests for compatible check.
@@ -1646,10 +1643,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
 		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
 		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
-
 	}
 
-	private function _getEmailByOldStyleCharset($charset, $headerCharset) {
+	protected function _getEmailByOldStyleCharset($charset, $headerCharset) {
 		$email = new CakeEmail(array('transport' => 'Debug'));
 
 		if (! empty($charset)) {
@@ -1668,7 +1664,7 @@ class CakeEmailTest extends CakeTestCase {
 		return $email;
 	}
 
-	private function _getEmailByNewStyleCharset($charset, $headerCharset) {
+	protected function _getEmailByNewStyleCharset($charset, $headerCharset) {
 		$email = new CakeEmail(array('transport' => 'Debug'));
 
 		if (! empty($charset)) {
@@ -1686,6 +1682,5 @@ class CakeEmailTest extends CakeTestCase {
 
 		return $email;
 	}
-
 
 }

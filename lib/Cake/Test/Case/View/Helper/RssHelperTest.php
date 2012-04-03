@@ -642,8 +642,9 @@ class RssHelperTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Rss->item(null, $item);
-		if (!function_exists('finfo_open') && 
-				(function_exists('mime_content_type') && false === mime_content_type($tmpFile))) {
+		if (!function_exists('finfo_open') &&
+			(function_exists('mime_content_type') && false === mime_content_type($tmpFile))
+		) {
 			$type = false;
 		} else {
 			$type = 'text/plain';

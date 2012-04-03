@@ -231,6 +231,7 @@ class PaginatorAuthor extends CakeTestModel {
  * @package       Cake.Test.Case.Controller.Component
  */
 class PaginatorCustomPost extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -261,12 +262,12 @@ class PaginatorCustomPost extends CakeTestModel {
  *
  * @return array
  */
-	public function _findPublished($state, $query, $results = array()) {
-        if ($state === 'before') {
-            $query['conditions']['published'] = 'Y';
-            return $query;
-        }
-        return $results;
+	protected function _findPublished($state, $query, $results = array()) {
+		if ($state === 'before') {
+			$query['conditions']['published'] = 'Y';
+			return $query;
+		}
+		return $results;
 	}
 
 /**
@@ -274,7 +275,7 @@ class PaginatorCustomPost extends CakeTestModel {
  *
  * @return array
  */
-	public function _findTotals($state, $query, $results = array()) {
+	protected function _findTotals($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['fields'] = array('author_id');
 			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
@@ -292,7 +293,7 @@ class PaginatorCustomPost extends CakeTestModel {
  *
  * @return array
  */
-	public function _findTotalsOperation($state, $query, $results = array()) {
+	protected function _findTotalsOperation($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
 				unset($query['limit']);
