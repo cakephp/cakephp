@@ -108,7 +108,7 @@ class Permission extends AppModel {
 		$acoIDs = Set::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
 
 		$count = count($aroPath);
-		for ($i = 0 ; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			$permAlias = $this->alias;
 
 			$perms = $this->find('all', array(

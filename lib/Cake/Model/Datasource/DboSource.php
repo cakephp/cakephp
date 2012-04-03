@@ -198,7 +198,7 @@ class DboSource extends DataSource {
  * Default fields that are used by the DBO
  *
  * @var array
- */	
+ */
 	protected $_queryDefaults = array(
 		'conditions' => array(),
 		'fields' => null,

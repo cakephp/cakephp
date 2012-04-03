@@ -38,6 +38,7 @@ class TestCacheSession extends CacheSession {
 	protected function _writeSession() {
 		return true;
 	}
+
 }
 
 class TestDatabaseSession extends DatabaseSession {
@@ -45,6 +46,7 @@ class TestDatabaseSession extends DatabaseSession {
 	protected function _writeSession() {
 		return true;
 	}
+
 }
 
 /**
