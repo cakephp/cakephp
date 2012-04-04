@@ -1043,6 +1043,9 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testSortNatural() {
+		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+            $this->markTestSkipped('SORT_NATURAL is available since PHP 5.4.');
+        }
 		$items = array(
 			array('Item' => array('image' => 'img1.jpg')),
 			array('Item' => array('image' => 'img99.jpg')),
