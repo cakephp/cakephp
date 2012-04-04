@@ -617,7 +617,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 2');
 
 		$log = $this->testDb->getLog(false, false);
-		$result = Set::extract($log['log'], '/query');
+		$result = Hash::extract($log['log'], '{n}.query');
 		$expected = array('Query 1', 'Query 2');
 		$this->assertEquals($expected, $result);
 
@@ -836,10 +836,10 @@ class DboSourceTest extends CakeTestCase {
 		$log = $db->getLog();
 		$this->assertEquals($expected, $log['log'][0]);
 	}
-	
+
 /**
- * Test build statement with some fields missing 
- * 
+ * Test build statement with some fields missing
+ *
  * @return void
  */
 	public function testBuildStatementDefaults() {
@@ -850,13 +850,13 @@ class DboSourceTest extends CakeTestCase {
 			array(
 				'fields' => array('DISTINCT(AssetsTag.asset_id)'),
 				'table' => "assets_tags",
-				'alias'=>"AssetsTag",                                          
+				'alias'=>"AssetsTag",
 				'conditions' => array("Tag.name"=>'foo bar'),
-				'limit' => null,         
+				'limit' => null,
 				'group' => "AssetsTag.asset_id"
 			),
 			$this->Model
 		);
 	}
-	
+
 }
