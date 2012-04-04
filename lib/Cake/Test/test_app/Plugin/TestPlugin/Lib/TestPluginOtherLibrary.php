@@ -16,4 +16,5 @@
  * @since         CakePHP(tm) v 2.0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class TestPluginOtherLibrary {}
+class TestPluginOtherLibrary {
+}

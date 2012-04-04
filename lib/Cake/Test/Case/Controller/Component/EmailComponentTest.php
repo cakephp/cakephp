@@ -647,7 +647,7 @@ HTMLBLOC;
 		$this->assertEquals(trim($matches[1]), $subject);
 
 		$result = mb_internal_encoding();
-		$this->assertEquals($result, 'ISO-8859-1');
+		$this->assertEquals('ISO-8859-1', $result);
 
 		mb_internal_encoding($restore);
 	}

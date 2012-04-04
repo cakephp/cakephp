@@ -716,7 +716,7 @@ class FormHelperTest extends CakeTestCase {
 	public function testCreateClearingFields() {
 		$this->Form->fields = array('model_id');
 		$this->Form->create('Contact');
-		$this->assertEquals($this->Form->fields, array());
+		$this->assertEquals(array(), $this->Form->fields);
 	}
 
 /**
@@ -737,23 +737,23 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testDuplicateFieldNameResolution() {
 		$result = $this->Form->create('ValidateUser');
-		$this->assertEquals($this->Form->entity(), array('ValidateUser'));
+		$this->assertEquals(array('ValidateUser'), $this->Form->entity());
 
 		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEquals($this->Form->entity(), array('ValidateItem', 'name'));
+		$this->assertEquals(array('ValidateItem', 'name'), $this->Form->entity());
 
 		$result = $this->Form->input('ValidateUser.name');
-		$this->assertEquals($this->Form->entity(), array('ValidateUser', 'name'));
+		$this->assertEquals(array('ValidateUser', 'name'), $this->Form->entity());
 		$this->assertRegExp('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertRegExp('/type="text"/', $result);
 
 		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEquals($this->Form->entity(), array('ValidateItem', 'name'));
+		$this->assertEquals(array('ValidateItem', 'name'), $this->Form->entity());
 		$this->assertRegExp('/name="data\[ValidateItem\]\[name\]"/', $result);
 		$this->assertRegExp('/<textarea/', $result);
 
 		$result = $this->Form->input('name');
-		$this->assertEquals($this->Form->entity(), array('ValidateUser', 'name'));
+		$this->assertEquals(array('ValidateUser', 'name'), $this->Form->entity());
 		$this->assertRegExp('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertRegExp('/type="text"/', $result);
 	}
@@ -765,7 +765,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testNoCheckboxLocking() {
 		$this->Form->request['_Token'] = array('key' => 'foo');
-		$this->assertSame($this->Form->fields, array());
+		$this->assertSame(array(), $this->Form->fields);
 
 		$this->Form->checkbox('check', array('value' => '1'));
 		$this->assertSame($this->Form->fields, array('check'));
@@ -1096,6 +1096,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Address');
 		$this->Form->input('Address.primary.1');
 		$this->assertEquals('Address.primary', $this->Form->fields[0]);
+
+		$this->Form->input('Address.secondary.1.0');
+		$this->assertEquals('Address.secondary', $this->Form->fields[1]);
 	}
 
 /**
@@ -1326,14 +1329,14 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testFormSecuredFileInput() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
-		$this->assertEquals($this->Form->fields, array());
+		$this->assertEquals(array(), $this->Form->fields);
 
 		$result = $this->Form->file('Attachment.file');
 		$expected = array(
 			'Attachment.file.name', 'Attachment.file.type', 'Attachment.file.tmp_name',
 			'Attachment.file.error', 'Attachment.file.size'
 		);
-		$this->assertEquals($this->Form->fields, $expected);
+		$this->assertEquals($expected, $this->Form->fields);
 	}
 
 /**
@@ -1343,16 +1346,16 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testFormSecuredMultipleSelect() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
-		$this->assertEquals($this->Form->fields, array());
+		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'one', '2' => 'two');
 
 		$this->Form->select('Model.select', $options);
 		$expected = array('Model.select');
-		$this->assertEquals($this->Form->fields, $expected);
+		$this->assertEquals($expected, $this->Form->fields);
 
 		$this->Form->fields = array();
 		$this->Form->select('Model.select', $options, array('multiple' => true));
-		$this->assertEquals($this->Form->fields, $expected);
+		$this->assertEquals($expected, $this->Form->fields);
 	}
 
 /**
@@ -1362,12 +1365,12 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testFormSecuredRadio() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
-		$this->assertEquals($this->Form->fields, array());
+		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
 
 		$this->Form->radio('Test.test', $options);
 		$expected = array('Test.test');
-		$this->assertEquals($this->Form->fields, $expected);
+		$this->assertEquals($expected, $this->Form->fields);
 	}
 
 /**
@@ -1611,7 +1614,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error(
 			'OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Error, not registered');
+		$this->assertEquals('Error, not registered', $result);
 
 		unset($this->UserForm->OpenidUrl, $this->UserForm);
 	}
@@ -1650,17 +1653,17 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error(
 			'ValidateUser.email', 'Invalid email', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Invalid email');
+		$this->assertEquals('Invalid email', $result);
 
 		$result = $this->Form->error(
 			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Invalid name');
+		$this->assertEquals('Invalid name', $result);
 
 		$result = $this->Form->error(
 			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Invalid city');
+		$this->assertEquals('Invalid city', $result);
 
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
@@ -1703,12 +1706,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error(
 			'ValidateUser.email', 'Invalid email', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Invalid email');
+		$this->assertEquals('Invalid email', $result);
 
 		$result = $this->Form->error(
 			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Invalid name');
+		$this->assertEquals('Invalid name', $result);
 
 		$result = $this->Form->error(
 			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
@@ -1717,7 +1720,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error(
 			'ValidateItem.description', 'Invalid description', array('wrap' => false)
 		);
-		$this->assertEquals($result, 'Invalid description');
+		$this->assertEquals('Invalid description', $result);
 
 		unset($this->ValidateUser->ValidateProfile->ValidateItem);
 		unset($this->ValidateUser->ValidateProfile);
@@ -2982,11 +2985,11 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field Field', '/div'));
 
 		$result = $this->Form->error('Contact.field', null, array('wrap' => false));
-		$this->assertEquals($result, 'Error in field Field');
+		$this->assertEquals('Error in field Field', $result);
 
 		$Contact->validationErrors['field'] = array("This field contains invalid input");
 		$result = $this->Form->error('Contact.field', null, array('wrap' => false));
-		$this->assertEquals($result, 'This field contains invalid input');
+		$this->assertEquals('This field contains invalid input', $result);
 
 		$Contact->validationErrors['field'] = array("This field contains invalid input");
 		$result = $this->Form->error('Contact.field', null, array('wrap' => 'span'));
@@ -2996,13 +2999,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('span' => array('class' => 'error-message'), 'There is an error fool!', '/span'));
 
 		$result = $this->Form->error('Contact.field', "<strong>Badness!</strong>", array('wrap' => false));
-		$this->assertEquals($result, '&lt;strong&gt;Badness!&lt;/strong&gt;');
+		$this->assertEquals('&lt;strong&gt;Badness!&lt;/strong&gt;', $result);
 
 		$result = $this->Form->error('Contact.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => true));
-		$this->assertEquals($result, '&lt;strong&gt;Badness!&lt;/strong&gt;');
+		$this->assertEquals('&lt;strong&gt;Badness!&lt;/strong&gt;', $result);
 
 		$result = $this->Form->error('Contact.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => false));
-		$this->assertEquals($result, '<strong>Badness!</strong>');
+		$this->assertEquals('<strong>Badness!</strong>', $result);
 
 		$Contact->validationErrors['field'] = array("email");
 		$result = $this->Form->error('Contact.field', array('attributes' => array('class' => 'field-error'), 'email' => 'No good!'));
@@ -4168,13 +4171,13 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testSelectMultipleCheckboxSecurity() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
-		$this->assertEquals($this->Form->fields, array());
+		$this->assertEquals(array(), $this->Form->fields);
 
 		$result = $this->Form->select(
 			'Model.multi_field', array('1' => 'first', '2' => 'second', '3' => 'third'),
 			array('multiple' => 'checkbox')
 		);
-		$this->assertEquals($this->Form->fields, array('Model.multi_field'));
+		$this->assertEquals(array('Model.multi_field'), $this->Form->fields);
 
 		$result = $this->Form->secure($this->Form->fields);
 		$key = 'f7d573650a295b94e0938d32b323fde775e5f32b%3A';
@@ -6575,7 +6578,8 @@ class FormHelperTest extends CakeTestCase {
 			'inputDefaults' => array(
 				'div' => false,
 				'label' => false,
-				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error'))
+				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
+				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
 			)
 		));
 		$result = $this->Form->input('username');
@@ -6593,15 +6597,10 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$User = ClassRegistry::getObject('User');
-		$User->validationErrors['username'] = array('empty');
-		$result = $this->Form->input('username', array('div' => true, 'label' => 'username', 'error' => array('empty' => __('Required'))));
+		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
 		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'UserUsername'), 'username', '/label',
-			'input' => array('class' => 'form-error', 'type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
-			'small' => array('class' => 'error'), 'Required', '/small',
-			'/div'
+			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'label' => array('for' => 'UserUsername'), 'Username', '/label',
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -7335,7 +7334,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testFormEnd() {
-		$this->assertEquals($this->Form->end(), '</form>');
+		$this->assertEquals('</form>', $this->Form->end());
 
 		$result = $this->Form->end('');
 		$expected = array(

@@ -62,9 +62,9 @@ class ControllerTestDispatcher extends Dispatcher {
 			if (isset($object->response)) {
 				$object->response = $response;
 			}
-		}
-		if (isset($object->request)) {
-			$object->request = $request;
+			if (isset($object->request)) {
+				$object->request = $request;
+			}
 		}
 		return $this->testController;
 	}

@@ -120,38 +120,38 @@ class XmlTest extends CakeTestCase {
 		$xml = '<tag>value</tag>';
 		$obj = Xml::build($xml);
 		$this->assertTrue($obj instanceof SimpleXMLElement);
-		$this->assertEquals((string)$obj->getName(), 'tag');
-		$this->assertEquals((string)$obj, 'value');
+		$this->assertEquals('tag', (string)$obj->getName());
+		$this->assertEquals('value', (string)$obj);
 
 		$xml = '<?xml version="1.0" encoding="UTF-8"?><tag>value</tag>';
 		$this->assertEquals($obj, Xml::build($xml));
 
 		$obj = Xml::build($xml, array('return' => 'domdocument'));
 		$this->assertTrue($obj instanceof DOMDocument);
-		$this->assertEquals($obj->firstChild->nodeName, 'tag');
-		$this->assertEquals($obj->firstChild->nodeValue, 'value');
+		$this->assertEquals('tag', $obj->firstChild->nodeName);
+		$this->assertEquals('value', $obj->firstChild->nodeValue);
 
 		$xml = CAKE . 'Test' . DS . 'Fixture' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
-		$this->assertEquals($obj->getName(), 'tags');
-		$this->assertEquals(count($obj), 2);
+		$this->assertEquals('tags', $obj->getName());
+		$this->assertEquals(2, count($obj));
 
 		$this->assertEquals(Xml::build($xml), Xml::build(file_get_contents($xml)));
 
 		$obj = Xml::build($xml, array('return' => 'domdocument'));
-		$this->assertEquals($obj->firstChild->nodeName, 'tags');
+		$this->assertEquals('tags', $obj->firstChild->nodeName);
 
 		$this->assertEquals(Xml::build($xml, array('return' => 'domdocument')), Xml::build(file_get_contents($xml), array('return' => 'domdocument')));
 		$this->assertEquals(Xml::build($xml, array('return' => 'simplexml')), Xml::build($xml, 'simplexml'));
 
 		$xml = array('tag' => 'value');
 		$obj = Xml::build($xml);
-		$this->assertEquals($obj->getName(), 'tag');
-		$this->assertEquals((string)$obj, 'value');
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('value', (string)$obj);
 
 		$obj = Xml::build($xml, array('return' => 'domdocument'));
-		$this->assertEquals($obj->firstChild->nodeName, 'tag');
-		$this->assertEquals($obj->firstChild->nodeValue, 'value');
+		$this->assertEquals('tag', $obj->firstChild->nodeName);
+		$this->assertEquals('value', $obj->firstChild->nodeValue);
 
 		$obj = Xml::build($xml, array('return' => 'domdocument', 'encoding' => null));
 		$this->assertNotRegExp('/encoding/', $obj->saveXML());
@@ -203,18 +203,18 @@ class XmlTest extends CakeTestCase {
 	public function testFromArray() {
 		$xml = array('tag' => 'value');
 		$obj = Xml::fromArray($xml);
-		$this->assertEquals($obj->getName(), 'tag');
-		$this->assertEquals((string)$obj, 'value');
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('value', (string)$obj);
 
 		$xml = array('tag' => null);
 		$obj = Xml::fromArray($xml);
-		$this->assertEquals($obj->getName(), 'tag');
-		$this->assertEquals((string)$obj, '');
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('', (string)$obj);
 
 		$xml = array('tag' => array('@' => 'value'));
 		$obj = Xml::fromArray($xml);
-		$this->assertEquals($obj->getName(), 'tag');
-		$this->assertEquals((string)$obj, 'value');
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('value', (string)$obj);
 
 		$xml = array(
 			'tags' => array(
@@ -232,15 +232,15 @@ class XmlTest extends CakeTestCase {
 		);
 		$obj = Xml::fromArray($xml, 'attributes');
 		$this->assertTrue($obj instanceof SimpleXMLElement);
-		$this->assertEquals($obj->getName(), 'tags');
-		$this->assertEquals(count($obj), 2);
+		$this->assertEquals('tags', $obj->getName());
+		$this->assertEquals(2, count($obj));
 		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>';
 		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
 		$obj = Xml::fromArray($xml);
 		$this->assertTrue($obj instanceof SimpleXMLElement);
-		$this->assertEquals($obj->getName(), 'tags');
-		$this->assertEquals(count($obj), 2);
+		$this->assertEquals('tags', $obj->getName());
+		$this->assertEquals(2, count($obj));
 		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag><id>1</id><name>defect</name></tag><tag><id>2</id><name>enhancement</name></tag></tags>';
 		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
@@ -249,8 +249,8 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$obj = Xml::fromArray($xml);
-		$this->assertEquals($obj->getName(), 'tags');
-		$this->assertEquals((string)$obj, '');
+		$this->assertEquals('tags', $obj->getName());
+		$this->assertEquals('', (string)$obj);
 
 		$xml = array(
 			'tags' => array(
@@ -263,7 +263,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$obj = Xml::fromArray($xml, 'tags');
-		$this->assertEquals(count($obj), 6);
+		$this->assertEquals(6, count($obj));
 		$this->assertSame((string)$obj->bool, '1');
 		$this->assertSame((string)$obj->int, '1');
 		$this->assertSame((string)$obj->float, '10.2');
@@ -387,7 +387,7 @@ class XmlTest extends CakeTestCase {
 	public function testToArray() {
 		$xml = '<tag>name</tag>';
 		$obj = Xml::build($xml);
-		$this->assertEquals(Xml::toArray($obj), array('tag' => 'name'));
+		$this->assertEquals(array('tag' => 'name'), Xml::toArray($obj));
 
 		$xml = CAKE . 'Test' . DS . 'Fixture' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
@@ -405,7 +405,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray($obj), $expected);
+		$this->assertEquals($expected, Xml::toArray($obj));
 
 		$array = array(
 			'tags' => array(
@@ -437,8 +437,8 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray(Xml::fromArray($array, 'attributes')), $expected);
-		$this->assertEquals(Xml::toArray(Xml::fromArray($array, array('return' => 'domdocument', 'format' => 'attributes'))), $expected);
+		$this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+		$this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, array('return' => 'domdocument', 'format' => 'attributes'))));
 		$this->assertEquals(Xml::toArray(Xml::fromArray($array)), $array);
 		$this->assertEquals(Xml::toArray(Xml::fromArray($array, array('return' => 'domdocument'))), $array);
 
@@ -474,8 +474,8 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray(Xml::fromArray($array, 'attributes')), $expected);
-		$this->assertEquals(Xml::toArray(Xml::fromArray($array, array('format' => 'attributes', 'return' => 'domdocument'))), $expected);
+		$this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+		$this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, array('format' => 'attributes', 'return' => 'domdocument'))));
 
 		$xml = '<root>';
 		$xml .= '<tag id="1">defect</tag>';
@@ -490,7 +490,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray($obj), $expected);
+		$this->assertEquals($expected, Xml::toArray($obj));
 
 		$xml = '<root>';
 		$xml .= '<table xmlns="http://www.w3.org/TR/html4/"><tr><td>Apples</td><td>Bananas</td></tr></table>';
@@ -508,7 +508,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray($obj), $expected);
+		$this->assertEquals($expected, Xml::toArray($obj));
 
 		$xml = '<root xmlns:cake="http://www.cakephp.org/">';
 		$xml .= '<tag>defect</tag>';
@@ -522,7 +522,7 @@ class XmlTest extends CakeTestCase {
 				'cake:bug' => 1
 			)
 		);
-		$this->assertEquals(Xml::toArray($obj), $expected);
+		$this->assertEquals($expected, Xml::toArray($obj));
 	}
 
 /**
@@ -533,12 +533,12 @@ class XmlTest extends CakeTestCase {
 	public function testRss() {
 		$rss = file_get_contents(CAKE . 'Test' . DS . 'Fixture' . DS . 'rss.xml');
 		$rssAsArray = Xml::toArray(Xml::build($rss));
-		$this->assertEquals($rssAsArray['rss']['@version'], '2.0');
-		$this->assertEquals(count($rssAsArray['rss']['channel']['item']), 2);
+		$this->assertEquals('2.0', $rssAsArray['rss']['@version']);
+		$this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
 
 		$atomLink = array('@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml');
 		$this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);
-		$this->assertEquals($rssAsArray['rss']['channel']['link'], 'http://bakery.cakephp.org/');
+		$this->assertEquals('http://bakery.cakephp.org/', $rssAsArray['rss']['channel']['link']);
 
 		$expected = array(
 			'title' => 'Alertpay automated sales via IPN',
@@ -673,7 +673,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray($xmlRequest), $expected);
+		$this->assertEquals($expected, Xml::toArray($xmlRequest));
 
 		$xmlResponse = Xml::build(CAKE . 'Test' . DS . 'Fixture' . DS . 'soap_response.xml');
 		$expected = array(
@@ -686,7 +686,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray($xmlResponse), $expected);
+		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
 		$xml = array(
 			'soap:Envelope' => array(
@@ -726,7 +726,7 @@ class XmlTest extends CakeTestCase {
 				'tag' => 'Tag without ns'
 			)
 		);
-		$this->assertEquals(Xml::toArray($xmlResponse), $expected);
+		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
 		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:tag id="1" /><tag><id>1</id></tag></root>');
 		$expected = array(
@@ -739,7 +739,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals(Xml::toArray($xmlResponse), $expected);
+		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
 		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:attr>1</ns:attr></root>');
 		$expected = array(
@@ -747,10 +747,10 @@ class XmlTest extends CakeTestCase {
 				'ns:attr' => '1'
 			)
 		);
-		$this->assertEquals(Xml::toArray($xmlResponse), $expected);
+		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
 		$xmlResponse = Xml::build('<root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>');
-		$this->assertEquals(Xml::toArray($xmlResponse), $expected);
+		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
 		$xml = array(
 			'root' => array(
@@ -864,7 +864,7 @@ class XmlTest extends CakeTestCase {
 		$expected .= '<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>';
 		$expected .= '<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>';
 		$expected .= '</data>';
-		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
+		$this->assertEquals($expected, str_replace(array("\r", "\n"), '', $obj->asXML()));
 
 		//multiple model results - without a records key it would fatal error
 		$data = $user->find('all', array('limit' => 2));
@@ -883,7 +883,7 @@ class XmlTest extends CakeTestCase {
 		$expected .= '</records>';
 		$expected .= '</data>';
 		$result = $obj->asXML();
-		$this->assertEquals(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
+		$this->assertEquals($expected, str_replace(array("\r", "\n"), '', $obj->asXML()));
 	}
 
 /**

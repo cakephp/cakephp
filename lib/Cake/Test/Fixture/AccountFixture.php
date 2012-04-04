@@ -30,6 +30,7 @@ class AccountFixture extends CakeTestFixture {
  * @var string 'Aco'
  */
 	public $name = 'Account';
+
 	public $table = 'Accounts';
 
 /**

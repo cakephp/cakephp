@@ -604,12 +604,8 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$last = end($field);
-		if (is_numeric($last) || empty($last)) {
-			array_pop($field);
-		}
-
 		$field = implode('.', $field);
+		$field = preg_replace('/(\.\d+)+$/', '', $field);
 
 		if ($lock) {
 			if (!in_array($field, $this->fields)) {
@@ -790,7 +786,7 @@ class FormHelper extends AppHelper {
 				$text = $fieldName;
 			}
 			if (substr($text, -3) == '_id') {
-				$text = substr($text, 0, strlen($text) - 3);
+				$text = substr($text, 0, -3);
 			}
 			$text = __(Inflector::humanize(Inflector::underscore($text)));
 		}
@@ -940,7 +936,7 @@ class FormHelper extends AppHelper {
 	public function input($fieldName, $options = array()) {
 		$this->setEntity($fieldName);
 
-		$options = Set::merge(
+		$options = array_merge(
 			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
 			$this->_inputDefaults,
 			$options

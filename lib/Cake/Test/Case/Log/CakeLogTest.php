@@ -102,7 +102,7 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = CakeLog::configured();
-		$this->assertEquals($result, array('default'));
+		$this->assertEquals(array('default'), $result);
 		unlink(LOGS . 'error.log');
 	}
 
@@ -117,7 +117,7 @@ class CakeLogTest extends CakeTestCase {
 			'path' => LOGS
 		));
 		$result = CakeLog::configured();
-		$this->assertEquals($result, array('file'));
+		$this->assertEquals(array('file'), $result);
 
 		if (file_exists(LOGS . 'error.log')) {
 			@unlink(LOGS . 'error.log');
@@ -141,11 +141,11 @@ class CakeLogTest extends CakeTestCase {
 			'path' => LOGS
 		));
 		$result = CakeLog::configured();
-		$this->assertEquals($result, array('file'));
+		$this->assertEquals(array('file'), $result);
 
 		CakeLog::drop('file');
 		$result = CakeLog::configured();
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 	}
 
 /**

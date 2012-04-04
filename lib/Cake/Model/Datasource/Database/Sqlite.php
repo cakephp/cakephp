@@ -166,7 +166,9 @@ class Sqlite extends DboSource {
 			return $cache;
 		}
 		$fields = array();
-		$result = $this->_execute('PRAGMA table_info(' . $table . ')');
+		$result = $this->_execute(
+			'PRAGMA table_info(' . $this->value($table, 'string') . ')'
+		);
 
 		foreach ($result as $column) {
 			$column = (array)$column;

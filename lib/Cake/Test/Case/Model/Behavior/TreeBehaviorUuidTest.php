@@ -21,7 +21,7 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
-require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
+require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
  * TreeBehaviorUuidTest class
@@ -68,12 +68,12 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->Tree->id = null;
 
 		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
-		$parent_id = $parent[$modelClass]['id'];
+		$parentId = $parent[$modelClass]['id'];
 
 		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
-		$this->Tree->id= $data[$modelClass]['id'];
-		$this->Tree->saveField($parentField, $parent_id);
-		$direct = $this->Tree->children($parent_id, true, array('name', $leftField, $rightField));
+		$this->Tree->id = $data[$modelClass]['id'];
+		$this->Tree->saveField($parentField, $parentId);
+		$direct = $this->Tree->children($parentId, true, array('name', $leftField, $rightField));
 		$expects = array(array($modelClass => array('name' => '1.1', $leftField => 2, $rightField => 5)),
 			array($modelClass => array('name' => '1.2', $leftField => 6, $rightField => 11)),
 			array($modelClass => array('name' => '1.1.1', $leftField => 12, $rightField => 13)));
@@ -94,14 +94,14 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->Tree->id = null;
 
 		$parent = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
-		$parent_id = $parent[$modelClass]['id'];
+		$parentId = $parent[$modelClass]['id'];
 
 		$data = $this->Tree->find('first', array('fields' => array('id'), 'conditions' => array($modelClass . '.name' => '1.1.1')));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->whitelist = array($parentField, 'name', 'description');
-		$this->Tree->saveField($parentField, $parent_id);
+		$this->Tree->saveField($parentField, $parentId);
 
-		$result = $this->Tree->children($parent_id, true, array('name', $leftField, $rightField));
+		$result = $this->Tree->children($parentId, true, array('name', $leftField, $rightField));
 		$expected = array(array($modelClass => array('name' => '1.1', $leftField => 2, $rightField => 5)),
 			array($modelClass => array('name' => '1.2', $leftField => 6, $rightField => 11)),
 			array($modelClass => array('name' => '1.1.1', $leftField => 12, $rightField => 13)));

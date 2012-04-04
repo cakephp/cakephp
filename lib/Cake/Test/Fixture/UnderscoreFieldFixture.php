@@ -30,7 +30,8 @@ class UnderscoreFieldFixture extends CakeTestFixture {
  * @var string 'UnderscoreField'
  */
 	public $name = 'UnderscoreField';
-	/**
+
+/**
  * fields property
  *
  * @var array
@@ -43,7 +44,8 @@ class UnderscoreFieldFixture extends CakeTestFixture {
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'another_field' => array('type' => 'integer', 'length' => 3),
 	);
-	/**
+
+/**
  * records property
  *
  * @var array

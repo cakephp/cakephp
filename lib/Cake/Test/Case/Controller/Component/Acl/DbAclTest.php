@@ -245,8 +245,8 @@ class DbAclTest extends CakeTestCase {
 			'parent_id' => $parent['AroTwoTest']['id']
 		));
 		$result = $this->Acl->Aro->findByAlias('Subordinate', null, null, -1);
-		$this->assertEquals($result['AroTwoTest']['lft'], 16);
-		$this->assertEquals($result['AroTwoTest']['rght'], 17);
+		$this->assertEquals(16, $result['AroTwoTest']['lft']);
+		$this->assertEquals(17, $result['AroTwoTest']['rght']);
 	}
 
 /**
@@ -387,7 +387,7 @@ class DbAclTest extends CakeTestCase {
 
 		$result = $this->Acl->Aro->Permission->find('all', array('conditions' => array('AroTwoTest.alias' => 'Samir')));
 		$expected = '-1';
-		$this->assertEquals($result[0]['PermissionTwoTest']['_delete'], $expected);
+		$this->assertEquals($expected, $result[0]['PermissionTwoTest']['_delete']);
 
 		$this->assertFalse($this->Acl->deny('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}

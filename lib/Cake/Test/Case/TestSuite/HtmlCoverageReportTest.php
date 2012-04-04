@@ -21,6 +21,7 @@ App::uses('HtmlCoverageReport', 'TestSuite/Coverage');
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
 class HtmlCoverageReportTest extends CakeTestCase {
+
 /**
  * setUp
  *
@@ -127,7 +128,6 @@ class HtmlCoverageReportTest extends CakeTestCase {
 		}
 	}
 
-
 /**
  * Test that coverage works with phpunit 3.6 as the data formats from coverage are totally different.
  *
@@ -197,7 +197,6 @@ class HtmlCoverageReportTest extends CakeTestCase {
 			4 => array(array('id' => 'HtmlCoverageReportTest::testOther')),
 			5 => -1
 		);
-
 
 		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
 

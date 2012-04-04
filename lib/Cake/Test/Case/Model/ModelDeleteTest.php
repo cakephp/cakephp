@@ -70,7 +70,7 @@ class ModelDeleteTest extends BaseModelTest {
 					'item_id' => 5,
 					'portfolio_id' => 1
 		)));
-		$this->assertEquals($result['Item'], $expected);
+		$this->assertEquals($expected, $result['Item']);
 
 		$result = $Portfolio->ItemsPortfolio->find('all', array(
 			'conditions' => array('ItemsPortfolio.portfolio_id' => 1)
@@ -112,7 +112,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $Portfolio->ItemsPortfolio->find('all', array(
 			'conditions' => array('ItemsPortfolio.portfolio_id' => 1)
 		));
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 	}
 
 /**
@@ -260,7 +260,6 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * test that delete() updates the correct records counterCache() records.
  *
@@ -272,10 +271,10 @@ class ModelDeleteTest extends BaseModelTest {
 
 		$User->Post->delete(3);
 		$result = $User->read(null, 301);
-		$this->assertEquals($result['User']['post_count'], 0);
+		$this->assertEquals(0, $result['User']['post_count']);
 
 		$result = $User->read(null, 66);
-		$this->assertEquals($result['User']['post_count'], 2);
+		$this->assertEquals(2, $result['User']['post_count']);
 	}
 
 /**
@@ -461,13 +460,13 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertFalse($result);
 
 		$result = $TestModel->find('count');
-		$this->assertEquals($result, 2);
+		$this->assertEquals(2, $result);
 
 		$result = $TestModel->Comment->find('count');
-		$this->assertEquals($result, 4);
+		$this->assertEquals(4, $result);
 
 		$result = $TestModel->Comment->Attachment->find('count');
-		$this->assertEquals($result, 0);
+		$this->assertEquals(0, $result);
 	}
 
 /**
@@ -480,12 +479,12 @@ class ModelDeleteTest extends BaseModelTest {
 		$TestModel = new Article10();
 
 		$result = $TestModel->find('all');
-		$this->assertEquals(count($result[0]['Comment']), 4);
-		$this->assertEquals(count($result[1]['Comment']), 2);
-		$this->assertEquals($TestModel->Comment->find('count'), 6);
+		$this->assertEquals(4, count($result[0]['Comment']));
+		$this->assertEquals(2, count($result[1]['Comment']));
+		$this->assertEquals(6, $TestModel->Comment->find('count'));
 
 		$TestModel->delete(1);
-		$this->assertEquals($TestModel->Comment->find('count'), 2);
+		$this->assertEquals(2, $TestModel->Comment->find('count'));
 	}
 
 /**
@@ -674,12 +673,12 @@ class ModelDeleteTest extends BaseModelTest {
 		$joinedBs = $JoinA->JoinAsJoinB->find('count', array(
 			'conditions' => array('JoinAsJoinB.join_a_id' => 1)
 		));
-		$this->assertEquals($joinedBs, 0, 'JoinA/JoinB link records left over. %s');
+		$this->assertEquals(0, $joinedBs, 'JoinA/JoinB link records left over. %s');
 
 		$joinedBs = $JoinA->JoinAsJoinC->find('count', array(
 			'conditions' => array('JoinAsJoinC.join_a_id' => 1)
 		));
-		$this->assertEquals($joinedBs, 0, 'JoinA/JoinC link records left over. %s');
+		$this->assertEquals(0, $joinedBs, 'JoinA/JoinC link records left over. %s');
 	}
 
 /**
@@ -688,7 +687,6 @@ class ModelDeleteTest extends BaseModelTest {
  * @return void
  */
 	public function testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable() {
-
 		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
 		$ThePaper = new ThePaper();
 		$ThePaper->id = 1;
@@ -708,7 +706,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'name' => 'Device 3',
 				'typ' => '2'
 		));
-		$this->assertEquals($result['Monkey'], $expected);
+		$this->assertEquals($expected, $result['Monkey']);
 
 		$ThePaper = new ThePaper();
 		$ThePaper->id = 2;
@@ -728,7 +726,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'name' => 'Device 3',
 				'typ' => '2'
 		));
-		$this->assertEquals($result['Monkey'], $expected);
+		$this->assertEquals($expected, $result['Monkey']);
 
 		$ThePaper->delete(1);
 		$result = $ThePaper->findById(2);
@@ -745,7 +743,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'name' => 'Device 3',
 				'typ' => '2'
 		));
-		$this->assertEquals($result['Monkey'], $expected);
+		$this->assertEquals($expected, $result['Monkey']);
 	}
 
 /**
@@ -789,28 +787,29 @@ class ModelDeleteTest extends BaseModelTest {
 		$before = $Article->find("all", array(
 			"conditions" => array("Article.id" => 1),
 		));
-		$this->assertEquals(count($before[0]['Tag']), 2, 'Tag count for Article.id = 1 is incorrect, should be 2 %s');
+		$this->assertEquals(2, count($before[0]['Tag']), 'Tag count for Article.id = 1 is incorrect, should be 2 %s');
 
 		// From now on, Tag #1 is only associated with Post #1
-		$submitted_data = array(
+		$submittedData = array(
 			"Tag" => array("id" => 1, 'tag' => 'tag1'),
 			"Article" => array(
 				"Article" => array(1)
 			)
 		);
-		$Tag->save($submitted_data);
+		$Tag->save($submittedData);
 
 		// One more submission (The other way around) to make sure the reverse save looks good.
-		$submitted_data = array(
+		$submittedData = array(
 			"Article" => array("id" => 2, 'title' => 'second article'),
 			"Tag" => array(
 				"Tag" => array(2, 3)
 			)
 		);
+
 		// ERROR:
 		// Postgresql: DELETE FROM "articles_tags" WHERE tag_id IN ('1', '3')
 		// MySQL: DELETE `ArticlesTag` FROM `articles_tags` AS `ArticlesTag` WHERE `ArticlesTag`.`article_id` = 2 AND `ArticlesTag`.`tag_id` IN (1, 3)
-		$Article->save($submitted_data);
+		$Article->save($submittedData);
 
 		// Want to make sure Article #1 has Tag #1 and Tag #2 still.
 		$after = $Article->find("all", array(

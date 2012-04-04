@@ -19,7 +19,7 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
-require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
+require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 
 /**
@@ -70,7 +70,7 @@ class TreeBehaviorAfterTest extends CakeTestCase {
 
 		$expected = array('AfterTree' => array('name' => 'Six and One Half', 'parent_id' => 6, 'lft' => 11, 'rght' => 12, 'id' => 8));
 		$result = $this->Tree->find('all');
-		$this->assertEquals($result[7], $expected);
+		$this->assertEquals($expected, $result[7]);
 	}
 }
 

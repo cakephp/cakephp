@@ -656,12 +656,15 @@ class Sqlserver extends DboSource {
 /**
  * Generate a database-native column schema string
  *
- * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ * @param array $column An array structured like the 
+ *   following: array('name'=>'value', 'type'=>'value'[, options]),
  *   where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {
-		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
+		$result = parent::buildColumn($column);
+		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', $result);
+		$result = preg_replace('/(bit)\([0-9]+\)/i', '$1', $result);
 		if (strpos($result, 'DEFAULT NULL') !== false) {
 			if (isset($column['default']) && $column['default'] === '') {
 				$result = str_replace('DEFAULT NULL', "DEFAULT ''", $result);

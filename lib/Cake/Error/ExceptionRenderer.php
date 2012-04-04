@@ -142,7 +142,7 @@ class ExceptionRenderer {
  */
 	protected function _getController($exception) {
 		App::uses('CakeErrorController', 'Controller');
-		if (!$request = Router::getRequest(false)) {
+		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
 		}
 		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));

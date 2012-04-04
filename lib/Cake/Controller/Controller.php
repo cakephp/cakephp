@@ -13,9 +13,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Include files
- */
 App::uses('CakeResponse', 'Network');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ComponentCollection', 'Controller');
@@ -265,7 +262,7 @@ class Controller extends Object implements CakeEventListener {
 	public $methods = array();
 
 /**
- * This controller's primary model class name, the Inflector::classify()'ed version of
+ * This controller's primary model class name, the Inflector::singularize()'ed version of
  * the controller's $name property.
  *
  * Example: For a controller named 'Comments', the modelClass would be 'Comment'
@@ -316,7 +313,7 @@ class Controller extends Object implements CakeEventListener {
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
-			$this->name = substr(get_class($this), 0, strlen(get_class($this)) - 10);
+			$this->name = substr(get_class($this), 0, -10);
 		}
 
 		if ($this->viewPath == null) {
@@ -363,9 +360,6 @@ class Controller extends Object implements CakeEventListener {
 			foreach ($this->uses as $modelClass) {
 				list($plugin, $class) = pluginSplit($modelClass, true);
 				if ($name === $class) {
-					if (!$plugin) {
-						$plugin = $this->plugin ? $this->plugin . '.' : null;
-					}
 					return $this->loadModel($modelClass);
 				}
 			}

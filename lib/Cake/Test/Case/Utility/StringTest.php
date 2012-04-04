@@ -236,34 +236,34 @@ class StringTest extends CakeTestCase {
 		$result = String::cleanInsert(':incomplete', array(
 			'clean' => true, 'before' => ':', 'after' => ''
 		));
-		$this->assertEquals($result, '');
+		$this->assertEquals('', $result);
 
 		$result = String::cleanInsert(':incomplete', array(
 			'clean' => array('method' => 'text', 'replacement' => 'complete'),
 			'before' => ':', 'after' => '')
 		);
-		$this->assertEquals($result, 'complete');
+		$this->assertEquals('complete', $result);
 
 		$result = String::cleanInsert(':in.complete', array(
 			'clean' => true, 'before' => ':', 'after' => ''
 		));
-		$this->assertEquals($result, '');
+		$this->assertEquals('', $result);
 
 		$result = String::cleanInsert(':in.complete and', array(
 			'clean' => true, 'before' => ':', 'after' => '')
 		);
-		$this->assertEquals($result, '');
+		$this->assertEquals('', $result);
 
 		$result = String::cleanInsert(':in.complete or stuff', array(
 			'clean' => true, 'before' => ':', 'after' => ''
 		));
-		$this->assertEquals($result, 'stuff');
+		$this->assertEquals('stuff', $result);
 
 		$result = String::cleanInsert(
 			'<p class=":missing" id=":missing">Text here</p>',
 			array('clean' => 'html', 'before' => ':', 'after' => '')
 		);
-		$this->assertEquals($result, '<p>Text here</p>');
+		$this->assertEquals('<p>Text here</p>', $result);
 	}
 
 /**
@@ -275,7 +275,7 @@ class StringTest extends CakeTestCase {
 	public function testAutoIgnoreBadInsertData() {
 		$data = array('foo' => 'alpha', 'bar' => 'beta', 'fale' => array());
 		$result = String::insert('(:foo > :bar || :fale!)', $data, array('clean' => 'text'));
-		$this->assertEquals($result, '(alpha > beta || !)');
+		$this->assertEquals('(alpha > beta || !)', $result);
 	}
 
 /**
@@ -458,7 +458,7 @@ podeís adquirirla.</span></p>
 		$text = 'This is a test text';
 		$phrases = null;
 		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
-		$this->assertEquals($result, $text);
+		$this->assertEquals($text, $result);
 
 		$text = 'This is a (test) text';
 		$phrases = '(test';
@@ -485,10 +485,10 @@ podeís adquirirla.</span></p>
 		$options = array('format' => '<b>\1</b>', 'html' => true);
 
 		$expected = '<p><b>strong</b>bow isn&rsquo;t real cider</p>';
-		$this->assertEquals($this->Text->highlight($text1, 'strong', $options), $expected);
+		$this->assertEquals($expected, $this->Text->highlight($text1, 'strong', $options));
 
 		$expected = '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>';
-		$this->assertEquals($this->Text->highlight($text2, 'strong', $options), $expected);
+		$this->assertEquals($expected, $this->Text->highlight($text2, 'strong', $options));
 
 		$this->assertEquals($this->Text->highlight($text3, 'strong', $options), $text3);
 
@@ -618,28 +618,28 @@ podeís adquirirla.</span></p>
  */
 	public function testListGeneration() {
 		$result = $this->Text->toList(array());
-		$this->assertEquals($result, '');
+		$this->assertEquals('', $result);
 
 		$result = $this->Text->toList(array('One'));
-		$this->assertEquals($result, 'One');
+		$this->assertEquals('One', $result);
 
 		$result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
-		$this->assertEquals($result, 'Larry, Curly and Moe');
+		$this->assertEquals('Larry, Curly and Moe', $result);
 
 		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
-		$this->assertEquals($result, 'Dusty, Lucky y Ned');
+		$this->assertEquals('Dusty, Lucky y Ned', $result);
 
 		$result = $this->Text->toList(array(1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'y');
-		$this->assertEquals($result, 'Dusty, Lucky y Ned');
+		$this->assertEquals('Dusty, Lucky y Ned', $result);
 
 		$result = $this->Text->toList(array(1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'and', ' + ');
-		$this->assertEquals($result, 'Dusty + Lucky and Ned');
+		$this->assertEquals('Dusty + Lucky and Ned', $result);
 
 		$result = $this->Text->toList(array('name1' => 'Dusty', 'name2' => 'Lucky'));
-		$this->assertEquals($result, 'Dusty and Lucky');
+		$this->assertEquals('Dusty and Lucky', $result);
 
 		$result = $this->Text->toList(array('test_0' => 'banana', 'test_1' => 'apple', 'test_2' => 'lemon'));
-		$this->assertEquals($result, 'banana, apple and lemon');
+		$this->assertEquals('banana, apple and lemon', $result);
 	}
 
 }

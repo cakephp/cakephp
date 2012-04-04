@@ -77,7 +77,7 @@ class BasicsTest extends CakeTestCase {
 		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$result = array_diff_key($one, $two);
-		$this->assertEquals($result, array());
+		$this->assertEquals(array(), $result);
 	}
 
 /**
@@ -282,7 +282,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'basics_test'));
 
 		$result = cache('basics_test');
-		$this->assertEquals($result, 'simple cache write');
+		$this->assertEquals('simple cache write', $result);
 		@unlink(CACHE . 'basics_test');
 
 		cache('basics_test', 'expired', '+1 second');
@@ -685,7 +685,7 @@ class BasicsTest extends CakeTestCase {
 		ob_start();
 		debug('this-is-a-test', false);
 		$result = ob_get_clean();
-$expectedText = <<<EXPECTED
+		$expectedText = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
 'this-is-a-test'
@@ -697,7 +697,7 @@ EXPECTED;
 		ob_start();
 		debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
-$expectedHtml = <<<EXPECTED
+		$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -709,9 +709,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', true, true);
+		debug('<div>this-is-a-test</div>', true, true);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+		$expected = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -723,9 +723,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', true, false);
+		debug('<div>this-is-a-test</div>', true, false);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+		$expected = <<<EXPECTED
 <div class="cake-debug-output">
 
 <pre class="cake-debug">
@@ -737,9 +737,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', null);
+		debug('<div>this-is-a-test</div>', null);
 		$result = ob_get_clean();
-$expectedHtml = <<<EXPECTED
+		$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
@@ -747,7 +747,7 @@ $expectedHtml = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-$expectedText = <<<EXPECTED
+		$expectedText = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
@@ -761,9 +761,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', null, false);
+		debug('<div>this-is-a-test</div>', null, false);
 		$result = ob_get_clean();
-$expectedHtml = <<<EXPECTED
+		$expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
 
 <pre class="cake-debug">
@@ -771,7 +771,7 @@ $expectedHtml = <<<EXPECTED
 </pre>
 </div>
 EXPECTED;
-$expectedText = <<<EXPECTED
+		$expectedText = <<<EXPECTED
 
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
@@ -785,9 +785,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', false);
+		debug('<div>this-is-a-test</div>', false);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+		$expected = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
@@ -797,9 +797,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', false, true);
+		debug('<div>this-is-a-test</div>', false, true);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+		$expected = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
@@ -809,9 +809,9 @@ EXPECTED;
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			debug('<div>this-is-a-test</div>', false, false);
+		debug('<div>this-is-a-test</div>', false, false);
 		$result = ob_get_clean();
-$expected = <<<EXPECTED
+		$expected = <<<EXPECTED
 
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
@@ -828,13 +828,13 @@ EXPECTED;
  */
 	public function testPr() {
 		ob_start();
-			pr('this is a test');
+		pr('this is a test');
 		$result = ob_get_clean();
 		$expected = "<pre>this is a test</pre>";
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-			pr(array('this' => 'is', 'a' => 'test'));
+		pr(array('this' => 'is', 'a' => 'test'));
 		$result = ob_get_clean();
 		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
 		$this->assertEquals($expected, $result);
@@ -874,7 +874,7 @@ EXPECTED;
 				),
 			'g' => 'test'
 		);
-		$this->assertEquals(stripslashes_deep($nested), $expected);
+		$this->assertEquals($expected, stripslashes_deep($nested));
 	}
 
 /**
@@ -909,7 +909,7 @@ EXPECTED;
 				),
 			'g' => "te'''st"
 			);
-		$this->assertEquals(stripslashes_deep($nested), $expected);
+		$this->assertEquals($expected, stripslashes_deep($nested));
 	}
 
 /**
@@ -919,24 +919,24 @@ EXPECTED;
  */
 	public function testPluginSplit() {
 		$result = pluginSplit('Something.else');
-		$this->assertEquals($result, array('Something', 'else'));
+		$this->assertEquals(array('Something', 'else'), $result);
 
 		$result = pluginSplit('Something.else.more.dots');
-		$this->assertEquals($result, array('Something', 'else.more.dots'));
+		$this->assertEquals(array('Something', 'else.more.dots'), $result);
 
 		$result = pluginSplit('Somethingelse');
-		$this->assertEquals($result, array(null, 'Somethingelse'));
+		$this->assertEquals(array(null, 'Somethingelse'), $result);
 
 		$result = pluginSplit('Something.else', true);
-		$this->assertEquals($result, array('Something.', 'else'));
+		$this->assertEquals(array('Something.', 'else'), $result);
 
 		$result = pluginSplit('Something.else.more.dots', true);
-		$this->assertEquals($result, array('Something.', 'else.more.dots'));
+		$this->assertEquals(array('Something.', 'else.more.dots'), $result);
 
 		$result = pluginSplit('Post', false, 'Blog');
-		$this->assertEquals($result, array('Blog', 'Post'));
+		$this->assertEquals(array('Blog', 'Post'), $result);
 
 		$result = pluginSplit('Blog.Post', false, 'Ultimate');
-		$this->assertEquals($result, array('Blog', 'Post'));
+		$this->assertEquals(array('Blog', 'Post'), $result);
 	}
 }

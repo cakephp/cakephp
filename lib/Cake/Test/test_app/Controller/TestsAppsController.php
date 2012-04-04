@@ -17,8 +17,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TestsAppsController extends AppController {
+
 	public $name = 'TestsApps';
+
 	public $uses = array();
+
+	public $components = array('RequestHandler');
 
 	public function index() {
 		$var = '';
@@ -40,4 +44,5 @@ class TestsAppsController extends AppController {
 	public function redirect_to() {
 		$this->redirect('http://cakephp.org');
 	}
+
 }

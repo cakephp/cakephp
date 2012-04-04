@@ -38,7 +38,7 @@ class CdFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'title' => array('type' => 'string', 'length' =>  255),
+		'title' => array('type' => 'string', 'length' => 255),
 		'artist' => array('type' => 'string', 'length' => 255, 'null' => true),
 		'genre' => array('type' => 'string', 'length' => 255, 'null' => true)
 	);

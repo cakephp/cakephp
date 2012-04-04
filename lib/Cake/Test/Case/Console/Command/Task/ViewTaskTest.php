@@ -712,12 +712,12 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$result = $this->Task->getTemplate('add');
-		$this->assertEquals($result, 'form');
+		$this->assertEquals('form', $result);
 
 		Configure::write('Routing.prefixes', array('admin'));
 
 		$result = $this->Task->getTemplate('admin_add');
-		$this->assertEquals($result, 'form');
+		$this->assertEquals('form', $result);
 
 		$this->Task->Template->templatePaths = array(
 			'test' => CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Templates' . DS . 'test' . DS
@@ -725,7 +725,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Template->params['theme'] = 'test';
 
 		$result = $this->Task->getTemplate('admin_edit');
-		$this->assertEquals($result, 'admin_edit');
+		$this->assertEquals('admin_edit', $result);
 	}
 
 }

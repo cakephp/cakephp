@@ -57,7 +57,7 @@ class CacheTest extends CakeTestCase {
 	public function testConfig() {
 		$settings = array('engine' => 'File', 'path' => TMP . 'tests', 'prefix' => 'cake_test_');
 		$results = Cache::config('new', $settings);
-		$this->assertEquals($results, Cache::config('new'));
+		$this->assertEquals(Cache::config('new'), $results);
 		$this->assertTrue(isset($results['engine']));
 		$this->assertTrue(isset($results['settings']));
 	}
@@ -93,11 +93,11 @@ class CacheTest extends CakeTestCase {
 
 		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
 		$result = Cache::config('libEngine', $settings);
-		$this->assertEquals($result, Cache::config('libEngine'));
+		$this->assertEquals(Cache::config('libEngine'), $result);
 
 		$settings = array('engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_');
 		$result = Cache::config('pluginLibEngine', $settings);
-		$this->assertEquals($result, Cache::config('pluginLibEngine'));
+		$this->assertEquals(Cache::config('pluginLibEngine'), $result);
 
 		Cache::drop('libEngine');
 		Cache::drop('pluginLibEngine');
@@ -161,10 +161,10 @@ class CacheTest extends CakeTestCase {
 		$_cacheConfigTests = Cache::config('tests');
 
 		$result = Cache::config('sessions', array('engine' => 'File', 'path' => TMP . 'sessions'));
-		$this->assertEquals($result['settings'], Cache::settings('sessions'));
+		$this->assertEquals(Cache::settings('sessions'), $result['settings']);
 
 		$result = Cache::config('tests', array('engine' => 'File', 'path' => TMP . 'tests'));
-		$this->assertEquals($result['settings'], Cache::settings('tests'));
+		$this->assertEquals(Cache::settings('tests'), $result['settings']);
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
 		Cache::config('tests', $_cacheConfigTests['settings']);
@@ -180,17 +180,17 @@ class CacheTest extends CakeTestCase {
 
 		Cache::write('value_one', 'I am cached', 'test_name');
 		$result = Cache::read('value_one', 'test_name');
-		$this->assertEquals($result, 'I am cached');
+		$this->assertEquals('I am cached', $result);
 
 		$result = Cache::read('value_one');
-		$this->assertEquals($result, null);
+		$this->assertEquals(null, $result);
 
 		Cache::write('value_one', 'I am in default config!');
 		$result = Cache::read('value_one');
-		$this->assertEquals($result, 'I am in default config!');
+		$this->assertEquals('I am in default config!', $result);
 
 		$result = Cache::read('value_one', 'test_name');
-		$this->assertEquals($result, 'I am cached');
+		$this->assertEquals('I am cached', $result);
 
 		Cache::delete('value_one', 'test_name');
 		Cache::delete('value_one', 'default');
@@ -384,7 +384,7 @@ class CacheTest extends CakeTestCase {
 
 		Cache::set(array('duration' => '+1 year'));
 		$data = Cache::read('test_cache');
-		$this->assertEquals($data, 'this is just a simple test of the cache system');
+		$this->assertEquals('this is just a simple test of the cache system', $data);
 
 		Cache::delete('test_cache');
 

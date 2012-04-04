@@ -47,8 +47,6 @@ class ErrorHandlerTest extends CakeTestCase {
 		$request = new CakeRequest(null, false);
 		$request->base = '';
 		Router::setRequestInfo($request);
-		$this->_debug = Configure::read('debug');
-		$this->_error = Configure::read('Error');
 		Configure::write('debug', 2);
 	}
 
@@ -58,9 +56,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('debug', $this->_debug);
-		Configure::write('Error', $this->_error);
-		App::build();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
@@ -148,7 +143,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$out .= '';
 
 		$result = file(LOGS . 'debug.log');
-		$this->assertEquals(count($result), 1);
+		$this->assertEquals(1, count($result));
 		$this->assertRegExp(
 			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
@@ -239,7 +234,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
-		$this->assertEquals($result, 'Rendered by test plugin');
+		$this->assertEquals('Rendered by test plugin', $result);
 		CakePlugin::unload();
 	}
 

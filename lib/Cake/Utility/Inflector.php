@@ -515,9 +515,9 @@ class Inflector {
  */
 	public static function variable($string) {
 		if (!($result = self::_cache(__FUNCTION__, $string))) {
-			$string2 = Inflector::camelize(Inflector::underscore($string));
-			$replace = strtolower(substr($string2, 0, 1));
-			$result = preg_replace('/\\w/', $replace, $string2, 1);
+			$camelized = Inflector::camelize(Inflector::underscore($string));
+			$replace = strtolower(substr($camelized, 0, 1));
+			$result = preg_replace('/\\w/', $replace, $camelized, 1);
 			self::_cache(__FUNCTION__, $string, $result);
 		}
 		return $result;

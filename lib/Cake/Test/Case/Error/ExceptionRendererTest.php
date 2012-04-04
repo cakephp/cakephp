@@ -165,8 +165,6 @@ class ExceptionRendererTest extends CakeTestCase {
 		$request = new CakeRequest(null, false);
 		$request->base = '';
 		Router::setRequestInfo($request);
-		$this->_debug = Configure::read('debug');
-		$this->_error = Configure::read('Error');
 		Configure::write('debug', 2);
 	}
 
@@ -176,9 +174,6 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('debug', $this->_debug);
-		Configure::write('Error', $this->_error);
-		App::build();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
@@ -211,7 +206,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals($result, 'widget thing is missing');
+		$this->assertEquals('widget thing is missing', $result);
 	}
 
 /**
@@ -230,7 +225,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals($result, 'widget thing is missing', 'Method declared in subclass converted to error400');
+		$this->assertEquals('widget thing is missing', $result, 'Method declared in subclass converted to error400');
 	}
 
 /**

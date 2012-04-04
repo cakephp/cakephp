@@ -398,8 +398,8 @@ class TestTask extends BakeTask {
 	protected function _addFixture($name) {
 		$parent = get_parent_class($name);
 		$prefix = 'app.';
-		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, - 8)) == 'appmodel') {
-			$pluginName = substr($parent, 0, strlen($parent) - 8);
+		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, -8)) == 'appmodel') {
+			$pluginName = substr($parent, 0, -8);
 			$prefix = 'plugin.' . Inflector::underscore($pluginName) . '.';
 		}
 		$fixture = $prefix . Inflector::underscore($name);
@@ -452,7 +452,7 @@ class TestTask extends BakeTask {
 			$construct = "new $fullClassName();\n";
 		}
 		if ($type == 'controller') {
-			$className = substr($fullClassName, 0, strlen($fullClassName) - 10);
+			$className = substr($fullClassName, 0, -10);
 			$construct = "new Test$fullClassName();\n";
 			$post = "\$this->{$className}->constructClasses();\n";
 		}

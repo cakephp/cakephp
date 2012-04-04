@@ -48,6 +48,13 @@ class TreeBehavior extends ModelBehavior {
 	);
 
 /**
+ * Used to preserve state between delete callbacks.
+ *
+ * @var array
+ */
+	protected $_deletedRow = null;
+
+/**
  * Initiate Tree behavior
  *
  * @param Model $Model instance of model
@@ -107,13 +114,13 @@ class TreeBehavior extends ModelBehavior {
 	}
 
 /**
- * Before delete method. Called before all deletes
+ * Stores the record about to be deleted.
  *
- * Will delete the current node and all children using the deleteAll method and sync the table
+ * This is used to delete child nodes in the afterDelete.
  *
  * @param Model $Model Model instance
  * @param boolean $cascade
- * @return boolean true to continue, false to abort the delete
+ * @return boolean
  */
 	public function beforeDelete(Model $Model, $cascade = true) {
 		extract($this->settings[$Model->alias]);
@@ -121,6 +128,22 @@ class TreeBehavior extends ModelBehavior {
 			'conditions' => array($Model->alias . '.' . $Model->primaryKey => $Model->id),
 			'fields' => array($Model->alias . '.' . $left, $Model->alias . '.' . $right),
 			'recursive' => -1)));
+		$this->_deletedRow = $data;
+		return true;
+	}
+
+/**
+ * After delete method.
+ *
+ * Will delete the current node and all children using the deleteAll method and sync the table
+ *
+ * @param Model $Model Model instance
+ * @return boolean true to continue, false to abort the delete
+ */
+	public function afterDelete(Model $Model) {
+		extract($this->settings[$Model->alias]);
+		$data = $this->_deletedRow;
+		$this->_deletedRow = null;
 
 		if (!$data[$right] || !$data[$left]) {
 			return true;
@@ -607,7 +630,7 @@ class TreeBehavior extends ModelBehavior {
 				$rght = $count++;
 				$Model->create(false);
 				$Model->id = $array[$Model->alias][$Model->primaryKey];
-				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
+				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false, 'validate' => false));
 			}
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$Model->create(false);
@@ -744,7 +767,7 @@ class TreeBehavior extends ModelBehavior {
 			$Model->id = $id;
 			return $Model->save(
 				array($left => $edge + 1, $right => $edge + 2, $parent => null),
-				array('callbacks' => false)
+				array('callbacks' => false, 'validate' => false)
 			);
 		}
 	}
