@@ -746,6 +746,10 @@ class DboSourceTest extends CakeTestCase {
 		$Article->schemaName = null;
 		$result = $noschema->fullTableName($Article, false, true);
 		$this->assertEquals('articles', $result);
+
+		$this->testDb->config['prefix'] = 't_';
+		$result = $this->testDb->fullTableName('post_tag', false, false);
+		$this->assertEquals('t_post_tag', $result);
 	}
 
 /**
