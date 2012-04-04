@@ -1113,7 +1113,7 @@ class DboSource extends DataSource {
  * @return array Array of results that have been filtered through $model->afterFind
  */
 	protected function _filterResults(&$results, Model $model, $filtered = array()) {
-		$current = current($results);
+		$current = reset($results);
 		if (!is_array($current)) {
 			return array();
 		}

@@ -675,7 +675,6 @@ class MergeVarPluginComment extends MergeVarPluginAppModel {
 	public $useTable = 'comments';
 }
 
-
 /**
  * Attachment class
  *
@@ -696,6 +695,41 @@ class Attachment extends CakeTestModel {
  * @var array
  */
 	public $belongsTo = array('Comment');
+}
+
+/**
+ * ModifiedAttachment class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ModifiedAttachment extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'ModifiedAttachment'
+ */
+	public $name = 'ModifiedAttachment';
+
+/**
+ * useTable property
+ *
+ * @var string 'attachments'
+ */
+	public $useTable = 'attachments';
+
+/**
+ * afterFind callback
+ *
+ * @return void
+ */
+	public function afterFind($results, $primary = false) {
+		if (isset($results['id'])) {
+			$results['callback'] = 'Fired';
+		}
+		return $results;
+	}
+
 }
 
 /**
