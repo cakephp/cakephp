@@ -727,6 +727,7 @@ class Hash {
  * - `numeric` Sort by numeric value.
  * - `regular` Sort by numeric value.
  * - `string` Sort by numeric value.
+ * - `natural` Sort by natural order. Requires PHP 5.4 or greater.
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
