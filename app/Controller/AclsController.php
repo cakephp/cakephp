@@ -5,7 +5,7 @@ App::uses('AppController', 'Controller');
  *
  * @property AclRole $AclRole
  */
-class AclRolesController extends AppController {
+class AclsController extends AppController {
 	public $helpers = array('Html', 'Form', 'Js');
 
 
@@ -15,8 +15,8 @@ class AclRolesController extends AppController {
  * @return void
  */
 	public function index() {
-		$this->AclRole->recursive = 0;
-		$this->set('aclRoles', $this->paginate());
+		$this->Acl->recursive = 0;
+		$this->set('acls', $this->paginate());
 	}
 
 /**
@@ -26,11 +26,11 @@ class AclRolesController extends AppController {
  * @return void
  */
 	public function view($id = null) {
-		$this->AclRole->id = $id;
-		if (!$this->AclRole->exists()) {
+		$this->Acl->id = $id;
+		if (!$this->Acl->exists()) {
 			throw new NotFoundException(__('Invalid acl role'));
 		}
-		$this->set('aclRole', $this->AclRole->read(null, $id));
+		$this->set('acl', $this->Acl->read(null, $id));
 	}
 
 /**
@@ -40,18 +40,18 @@ class AclRolesController extends AppController {
  */
 	public function add() {
 		if ($this->request->is('post')) {
-			$this->AclRole->create();
-			if ($this->AclRole->save($this->request->data)) {
+			$this->Acl->create();
+			if ($this->Acl->save($this->request->data)) {
 				$this->Session->setFlash(__('The acl role has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The acl role could not be saved. Please, try again.'));
 			}
 		}
-		$acls = $this->AclRole->Acl->find('list');
-		$aclFunctions = $this->AclRole->AclFunction->find('list');
-		$roles = $this->AclRole->Role->find('list');
-		$this->set(compact('acls', 'aclFunctions', 'roles'));
+		$aclControllers = $this->Acl->AclController->find('list');
+		$aclFunctions = $this->Acl->AclFunction->find('list');
+		$roles = $this->Acl->Role->find('list');
+		$this->set(compact('aclControllers', 'aclFunctions', 'roles'));
 	}
 
 /**
@@ -61,24 +61,24 @@ class AclRolesController extends AppController {
  * @return void
  */
 	public function edit($id = null) {
-		$this->AclRole->id = $id;
-		if (!$this->AclRole->exists()) {
-			throw new NotFoundException(__('Invalid acl role'));
+		$this->Acl->id = $id;
+		if (!$this->Acl->exists()) {
+			throw new NotFoundException(__('Invalid acl'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->AclRole->save($this->request->data)) {
-				//$this->Session->setFlash(__('The acl role has been saved'));
+			if ($this->Acl->save($this->request->data)) {
+				//$this->Session->setFlash(__('The acl has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The acl role could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The acl could not be saved. Please, try again.'));
 			}
 		} else {
-			$this->request->data = $this->AclRole->read(null, $id);
+			$this->request->data = $this->Acl->read(null, $id);
 		}
-		$acls = $this->AclRole->Acl->find('list');
-		$aclFunctions = $this->AclRole->AclFunction->find('list');
-		$roles = $this->AclRole->Role->find('list');
-		$this->set(compact('acls', 'aclFunctions', 'roles'));
+		$aclControllers = $this->Acl->AclController->find('list');
+		$aclFunctions = $this->Acl->AclFunction->find('list');
+		$roles = $this->Acl->Role->find('list');
+		$this->set(compact('aclControllers', 'aclFunctions', 'roles'));
 	}
 
 /**
@@ -91,15 +91,15 @@ class AclRolesController extends AppController {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		$this->AclRole->id = $id;
-		if (!$this->AclRole->exists()) {
-			throw new NotFoundException(__('Invalid acl role'));
+		$this->Acl->id = $id;
+		if (!$this->Acl->exists()) {
+			throw new NotFoundException(__('Invalid acl'));
 		}
-		if ($this->AclRole->delete()) {
-			$this->Session->setFlash(__('Acl role deleted'));
+		if ($this->Acl->delete()) {
+			$this->Session->setFlash(__('Acl deleted'));
 			$this->redirect(array('action' => 'index'));
 		}
-		$this->Session->setFlash(__('Acl role was not deleted'));
+		$this->Session->setFlash(__('Acl was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
 /**
@@ -108,8 +108,8 @@ class AclRolesController extends AppController {
  * @return void
  */
 	public function admin_index() {
-		$this->AclRole->recursive = 0;
-		$this->set('aclRoles', $this->paginate());
+		$this->Acl->recursive = 0;
+		$this->set('acls', $this->paginate());
 	}
 
 /**
@@ -119,11 +119,11 @@ class AclRolesController extends AppController {
  * @return void
  */
 	public function admin_view($id = null) {
-		$this->AclRole->id = $id;
-		if (!$this->AclRole->exists()) {
-			throw new NotFoundException(__('Invalid acl role'));
+		$this->Acl->id = $id;
+		if (!$this->Acl->exists()) {
+			throw new NotFoundException(__('Invalid acl'));
 		}
-		$this->set('aclRole', $this->AclRole->read(null, $id));
+		$this->set('acl', $this->Acl->read(null, $id));
 	}
 
 /**
@@ -133,18 +133,18 @@ class AclRolesController extends AppController {
  */
 	public function admin_add() {
 		if ($this->request->is('post')) {
-			$this->AclRole->create();
-			if ($this->AclRole->save($this->request->data)) {
-				$this->Session->setFlash(__('The acl role has been saved'));
+			$this->Acl->create();
+			if ($this->Acl->save($this->request->data)) {
+				$this->Session->setFlash(__('The acl has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The acl role could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The acl could not be saved. Please, try again.'));
 			}
 		}
-		$acls = $this->AclRole->Acl->find('list');
-		$aclFunctions = $this->AclRole->AclFunction->find('list');
+		$aclControllers = $this->Acl->AclController->find('list');
+		$aclFunctions = $this->Acl->AclFunction->find('list');
 		$roles = $this->AclRole->Role->find('list');
-		$this->set(compact('acls', 'aclFunctions', 'roles'));
+		$this->set(compact('aclControllers', 'aclFunctions', 'roles'));
 	}
 
 /**
@@ -154,24 +154,24 @@ class AclRolesController extends AppController {
  * @return void
  */
 	public function admin_edit($id = null) {
-		$this->AclRole->id = $id;
-		if (!$this->AclRole->exists()) {
-			throw new NotFoundException(__('Invalid acl role'));
+		$this->Acl->id = $id;
+		if (!$this->Acl->exists()) {
+			throw new NotFoundException(__('Invalid acl'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->AclRole->save($this->request->data)) {
-				$this->Session->setFlash(__('The acl role has been saved'));
+			if ($this->Acl->save($this->request->data)) {
+				$this->Session->setFlash(__('The acl has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The acl role could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The acl could not be saved. Please, try again.'));
 			}
 		} else {
-			$this->request->data = $this->AclRole->read(null, $id);
+			$this->request->data = $this->Acl->read(null, $id);
 		}
-		$acls = $this->AclRole->Acl->find('list');
-		$aclFunctions = $this->AclRole->AclFunction->find('list');
-		$roles = $this->AclRole->Role->find('list');
-		$this->set(compact('acls', 'aclFunctions', 'roles'));
+		$aclControllers = $this->Acl->Acl->find('list');
+		$aclFunctions = $this->Acl->AclFunction->find('list');
+		$roles = $this->Acl->Role->find('list');
+		$this->set(compact('aclControllers', 'aclFunctions', 'roles'));
 	}
 
 /**
@@ -184,15 +184,15 @@ class AclRolesController extends AppController {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		$this->AclRole->id = $id;
-		if (!$this->AclRole->exists()) {
-			throw new NotFoundException(__('Invalid acl role'));
+		$this->Acl->id = $id;
+		if (!$this->Acl->exists()) {
+			throw new NotFoundException(__('Invalid acl'));
 		}
-		if ($this->AclRole->delete()) {
-			$this->Session->setFlash(__('Acl role deleted'));
+		if ($this->Acl->delete()) {
+			$this->Session->setFlash(__('Acl deleted'));
 			$this->redirect(array('action' => 'index'));
 		}
-		$this->Session->setFlash(__('Acl role was not deleted'));
+		$this->Session->setFlash(__('Acl was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
 }
