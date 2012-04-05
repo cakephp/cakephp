@@ -81,7 +81,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		'userModel' => 'User',
 		'scope' => array(),
 		'recursive' => 0,
-		'contain' => array(),
+		'contain' => null,
 		'realm' => '',
 		'qop' => 'auth',
 		'nonce' => '',
