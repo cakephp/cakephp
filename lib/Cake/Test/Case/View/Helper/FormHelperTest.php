@@ -6610,6 +6610,21 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'UserUsername'), 'Username', '/label',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->create('User', array(
+			'inputDefaults' => array(
+				'div' => false,
+				'label' => array('class' => 'nice', 'for' => 'changed'),
+			)
+		));
+		$result = $this->Form->input('username', array('div' => true));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'changed', 'class' => 'nice'), 'Username', '/label',
+			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

@@ -5020,6 +5020,39 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * testDeeperAssociationAfterFind method
+ *
+ * @return void
+ */
+	public function testDeeperAssociationAfterFind() {
+		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment', 'Article');
+
+		$Post = new Post();
+		$Post->bindModel(array(
+			'hasMany' => array(
+				'Comment' => array(
+					'className' => 'ModifiedComment',
+					'foreignKey' => 'article_id',
+				)
+		)));
+		$Post->Comment->bindModel(array(
+			'hasOne' => array(
+				'Attachment' => array(
+					'className' => 'ModifiedAttachment',
+				)
+		)));
+
+		$result = $Post->find('first', array(
+			'conditions' => array('Post.id' => 2),
+			'recursive' => 2
+		));
+		$this->assertTrue(isset($result['Comment'][0]['callback']));
+		$this->assertEquals('Fire', $result['Comment'][0]['callback']);
+		$this->assertTrue(isset($result['Comment'][0]['Attachment']['callback']));
+		$this->assertEquals('Fired', $result['Comment'][0]['Attachment']['callback']);
+	}
+
+/**
  * Tests that callbacks can be properly disabled
  *
  * @return void

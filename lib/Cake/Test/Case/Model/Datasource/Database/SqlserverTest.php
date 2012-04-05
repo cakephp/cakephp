@@ -543,6 +543,16 @@ class SqlserverTest extends CakeTestCase {
 		$result = $this->db->buildColumn($column);
 		$expected = '[body] nvarchar(MAX)';
 		$this->assertEquals($expected, $result);
+
+		$column = array(
+			'name' => 'checked',
+			'type' => 'boolean',
+			'length' => 10,
+			'default' => '1'
+		);
+		$result = $this->db->buildColumn($column);
+		$expected = "[checked] bit DEFAULT '1'";
+		$this->assertEquals($expected, $result);
 	}
 
 /**

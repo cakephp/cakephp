@@ -99,8 +99,8 @@ class AclComponent extends Component {
  * Pass-thru function for ACL check instance.  Check methods
  * are used to check whether or not an ARO can access an ACO
  *
- * @param string $aro ARO The requesting object identifier.
- * @param string $aco ACO The controlled object identifier.
+ * @param mixed $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param mixed $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
  */
@@ -112,8 +112,8 @@ class AclComponent extends Component {
  * Pass-thru function for ACL allow instance. Allow methods
  * are used to grant an ARO access to an ACO.
  *
- * @param string $aro ARO The requesting object identifier.
- * @param string $aco ACO The controlled object identifier.
+ * @param mixed $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param mixed $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
  */
@@ -125,8 +125,8 @@ class AclComponent extends Component {
  * Pass-thru function for ACL deny instance. Deny methods
  * are used to remove permission from an ARO to access an ACO.
  *
- * @param string $aro ARO The requesting object identifier.
- * @param string $aco ACO The controlled object identifier.
+ * @param mixed $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param mixed $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
  */
@@ -138,8 +138,8 @@ class AclComponent extends Component {
  * Pass-thru function for ACL inherit instance. Inherit methods
  * modify the permission for an ARO to be that of its parent object.
  *
- * @param string $aro ARO The requesting object identifier.
- * @param string $aco ACO The controlled object identifier.
+ * @param mixed $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param mixed $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
  */
@@ -150,8 +150,8 @@ class AclComponent extends Component {
 /**
  * Pass-thru function for ACL grant instance. An alias for AclComponent::allow()
  *
- * @param string $aro ARO The requesting object identifier.
- * @param string $aco ACO The controlled object identifier.
+ * @param mixed $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param mixed $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
  * @deprecated
@@ -164,8 +164,8 @@ class AclComponent extends Component {
 /**
  * Pass-thru function for ACL grant instance. An alias for AclComponent::deny()
  *
- * @param string $aro ARO The requesting object identifier.
- * @param string $aco ACO The controlled object identifier.
+ * @param mixed $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param mixed $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
  * @deprecated

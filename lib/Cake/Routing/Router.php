@@ -617,7 +617,8 @@ class Router {
  */
 	public static function getRequest($current = false) {
 		if ($current) {
-			return self::$_requests[count(self::$_requests) - 1];
+			$i = count(self::$_requests) - 1;
+			return isset(self::$_requests[$i]) ? self::$_requests[$i] : null;
 		}
 		return isset(self::$_requests[0]) ? self::$_requests[0] : null;
 	}
