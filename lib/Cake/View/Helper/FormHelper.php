@@ -795,6 +795,16 @@ class FormHelper extends AppHelper {
 			$options = array('class' => $options);
 		}
 
+		if(!isset($options['class'])) {
+			if(isset($this->_inputDefaults['label'])) {
+				if(is_string($this->_inputDefaults['label'])) {
+					$options['class'] = $this->_inputDefaults['label'];
+				} else {
+					$options = array_merge($this->_inputDefaults['label'], $options);
+				}
+			}
+		}
+
 		if (isset($options['for'])) {
 			$labelFor = $options['for'];
 			unset($options['for']);
