@@ -1,4 +1,23 @@
 <div class="acls form">
+<?php
+
+$this->Js->get('#AclAclControllerId')->event('change',
+        $this->Js->request(array(
+                'controller'=>'acl_functions',
+                'action'=>'ajax_list'
+                ), array(
+                'update'=>'#AclAclFunctionId',
+                'async' => true,
+                'method' => 'post',
+                'dataExpression'=>true,
+                'data'=> $this->Js->serializeForm(array(
+                        'isForm' => true,
+                        'inline' => true
+                        ))
+                ))
+        );
+?>
+
 <?php echo $this->Form->create('Acl');?>
 	<fieldset>
 		<legend><?php echo __('Add Acl'); ?></legend>
