@@ -2749,12 +2749,12 @@ class Model extends Object implements CakeEventListener {
 		if ($state === 'before') {
 			$db = $this->getDataSource();
 			$query['order'] = false;
-			if (!method_exists($db, 'calculate') || !method_exists($db, 'expression')) {
+			if (!method_exists($db, 'calculate')) {
 				return $query;
 			}
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
-			} elseif (is_string($query['fields']) && !preg_match('/count/i', $query['fields'])) {
+			} elseif (method_exists($db, 'expression') && is_string($query['fields']) && !preg_match('/count/i', $query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count', array(
 					$db->expression($query['fields']), 'count'
 				));
