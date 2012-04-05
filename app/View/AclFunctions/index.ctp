@@ -3,7 +3,7 @@
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id');?></th>
-			<th><?php echo $this->Paginator->sort('acl_id');?></th>
+			<th><?php echo $this->Paginator->sort('acl_controller_id');?></th>
 			<th><?php echo $this->Paginator->sort('function');?></th>
 			<th class="actions"><?php echo __('Actions');?></th>
 	</tr>
@@ -12,7 +12,7 @@
 	<tr>
 		<td><?php echo h($aclFunction['AclFunction']['id']); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($aclFunction['Acl']['controller'], array('controller' => 'acls', 'action' => 'view', $aclFunction['Acl']['id'])); ?>
+			<?php echo $this->Html->link($aclFunction['AclController']['controller'], array('controller' => 'acl_controllers', 'action' => 'view', $aclFunction['AclController']['id'])); ?>
 		</td>
 		<td><?php echo h($aclFunction['AclFunction']['function']); ?>&nbsp;</td>
 		<td class="actions">
@@ -42,9 +42,9 @@
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('New Acl Function'), array('action' => 'add')); ?></li>
+		<li><?php echo $this->Html->link(__('List Acl Controllers'), array('controller' => 'acl_controllers', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Acl Controller'), array('controller' => 'acl_controllers', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Acls'), array('controller' => 'acls', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Acl'), array('controller' => 'acls', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Acl Roles'), array('controller' => 'acl_roles', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Acl Role'), array('controller' => 'acl_roles', 'action' => 'add')); ?> </li>
 	</ul>
 </div>

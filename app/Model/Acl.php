@@ -3,8 +3,9 @@ App::uses('AppModel', 'Model');
 /**
  * Acl Model
  *
+ * @property AclController $AclController
  * @property AclFunction $AclFunction
- * @property AclRole $AclRole
+ * @property Role $Role
  */
 class Acl extends AppModel {
 /**
@@ -12,42 +13,36 @@ class Acl extends AppModel {
  *
  * @var string
  */
-	public $displayField = 'controller';
+	public $displayField = 'role_id';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**
- * hasMany associations
+ * belongsTo associations
  *
  * @var array
  */
-	public $hasMany = array(
+	public $belongsTo = array(
+		'AclController' => array(
+			'className' => 'AclController',
+			'foreignKey' => 'acl_controller_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
 		'AclFunction' => array(
 			'className' => 'AclFunction',
-			'foreignKey' => 'acl_id',
-			'dependent' => false,
+			'foreignKey' => 'acl_function_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
+			'order' => ''
 		),
-		'AclRole' => array(
-			'className' => 'AclRole',
-			'foreignKey' => 'acl_id',
-			'dependent' => false,
+		'Role' => array(
+			'className' => 'Role',
+			'foreignKey' => 'role_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
+			'order' => ''
 		)
 	);
-
 }

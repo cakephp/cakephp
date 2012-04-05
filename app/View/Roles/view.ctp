@@ -25,35 +25,35 @@
 		<li><?php echo $this->Form->postLink(__('Delete Role'), array('action' => 'delete', $role['Role']['id']), null, __('Are you sure you want to delete # %s?', $role['Role']['id'])); ?> </li>
 		<li><?php echo $this->Html->link(__('List Roles'), array('action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Role'), array('action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Acl Roles'), array('controller' => 'acl_roles', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Acl Role'), array('controller' => 'acl_roles', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Acls'), array('controller' => 'acls', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Acl'), array('controller' => 'acls', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
 	</ul>
 </div>
 <div class="related">
-	<h3><?php echo __('Related Acl Roles');?></h3>
-	<?php if (!empty($role['AclRole'])):?>
+	<h3><?php echo __('Related Acls');?></h3>
+	<?php if (!empty($role['Acl'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
-		<th><?php echo __('Acl Id'); ?></th>
+		<th><?php echo __('Acl Controller Id'); ?></th>
 		<th><?php echo __('Acl Function Id'); ?></th>
 		<th><?php echo __('Role Id'); ?></th>
 		<th class="actions"><?php echo __('Actions');?></th>
 	</tr>
 	<?php
 		$i = 0;
-		foreach ($role['AclRole'] as $aclRole): ?>
+		foreach ($role['Acl'] as $acl): ?>
 		<tr>
-			<td><?php echo $aclRole['id'];?></td>
-			<td><?php echo $aclRole['acl_id'];?></td>
-			<td><?php echo $aclRole['acl_function_id'];?></td>
-			<td><?php echo $aclRole['role_id'];?></td>
+			<td><?php echo $acl['id'];?></td>
+			<td><?php echo $acl['acl_controller_id'];?></td>
+			<td><?php echo $acl['acl_function_id'];?></td>
+			<td><?php echo $acl['role_id'];?></td>
 			<td class="actions">
-				<?php echo $this->Html->link(__('View'), array('controller' => 'acl_roles', 'action' => 'view', $aclRole['id'])); ?>
-				<?php echo $this->Html->link(__('Edit'), array('controller' => 'acl_roles', 'action' => 'edit', $aclRole['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'acl_roles', 'action' => 'delete', $aclRole['id']), null, __('Are you sure you want to delete # %s?', $aclRole['id'])); ?>
+				<?php echo $this->Html->link(__('View'), array('controller' => 'acls', 'action' => 'view', $acl['id'])); ?>
+				<?php echo $this->Html->link(__('Edit'), array('controller' => 'acls', 'action' => 'edit', $acl['id'])); ?>
+				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'acls', 'action' => 'delete', $acl['id']), null, __('Are you sure you want to delete # %s?', $acl['id'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
@@ -62,7 +62,7 @@
 
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__('New Acl Role'), array('controller' => 'acl_roles', 'action' => 'add'));?> </li>
+			<li><?php echo $this->Html->link(__('New Acl'), array('controller' => 'acls', 'action' => 'add'));?> </li>
 		</ul>
 	</div>
 </div>

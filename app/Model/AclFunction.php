@@ -3,8 +3,8 @@ App::uses('AppModel', 'Model');
 /**
  * AclFunction Model
  *
+ * @property AclController $AclController
  * @property Acl $Acl
- * @property AclRole $AclRole
  */
 class AclFunction extends AppModel {
 /**
@@ -21,11 +21,10 @@ class AclFunction extends AppModel {
  *
  * @var array
  */
-//TODO need to add where acl_id = ACL.id
 	public $belongsTo = array(
-		'Acl' => array(
-			'className' => 'Acl',
-			'foreignKey' => 'acl_id',
+		'AclController' => array(
+			'className' => 'AclController',
+			'foreignKey' => 'acl_controller_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
@@ -38,8 +37,8 @@ class AclFunction extends AppModel {
  * @var array
  */
 	public $hasMany = array(
-		'AclRole' => array(
-			'className' => 'AclRole',
+		'Acl' => array(
+			'className' => 'Acl',
 			'foreignKey' => 'acl_function_id',
 			'dependent' => false,
 			'conditions' => '',

@@ -3,7 +3,7 @@ App::uses('AppModel', 'Model');
 /**
  * Role Model
  *
- * @property AclRole $AclRole
+ * @property Acl $Acl
  * @property User $User
  */
 class Role extends AppModel {
@@ -22,8 +22,8 @@ class Role extends AppModel {
  * @var array
  */
 	public $hasMany = array(
-		'AclRole' => array(
-			'className' => 'AclRole',
+		'Acl' => array(
+			'className' => 'Acl',
 			'foreignKey' => 'role_id',
 			'dependent' => false,
 			'conditions' => '',
@@ -49,7 +49,7 @@ class Role extends AppModel {
 			'joinTable' => 'roles_users',
 			'foreignKey' => 'role_id',
 			'associationForeignKey' => 'user_id',
-			'unique' => true,
+			'unique' => 'keepExisting',
 			'conditions' => '',
 			'fields' => '',
 			'order' => '',

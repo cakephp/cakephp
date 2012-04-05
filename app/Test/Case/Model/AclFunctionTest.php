@@ -1,5 +1,4 @@
 <?php
-/* AclFunction Test cases generated on: 2012-01-31 21:59:27 : 1328068767*/
 App::uses('AclFunction', 'Model');
 
 /**
@@ -12,7 +11,7 @@ class AclFunctionTestCase extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('app.acl_function', 'app.acl', 'app.acl_role');
+	public $fixtures = array('app.acl_function', 'app.acl', 'app.acl_role', 'app.role', 'app.user', 'app.roles_user');
 
 /**
  * setUp method
@@ -21,7 +20,6 @@ class AclFunctionTestCase extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-
 		$this->AclFunction = ClassRegistry::init('AclFunction');
 	}
 

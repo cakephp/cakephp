@@ -1,5 +1,4 @@
 <?php
-/* Roles Test cases generated on: 2012-01-31 22:07:34 : 1328069254*/
 App::uses('RolesController', 'Controller');
 
 /**
@@ -36,7 +35,7 @@ class RolesControllerTestCase extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('app.role', 'app.acl_role', 'app.acl', 'app.acl_function', 'app.user', 'app.roles_user');
+	public $fixtures = array('app.role', 'app.acl', 'app.acl_controller', 'app.acl_function', 'app.user', 'app.roles_user');
 
 /**
  * setUp method
@@ -45,7 +44,6 @@ class RolesControllerTestCase extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-
 		$this->Roles = new TestRolesController();
 		$this->Roles->constructClasses();
 	}
@@ -69,7 +67,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testIndex() {
 
 	}
-
 /**
  * testView method
  *
@@ -78,7 +75,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testView() {
 
 	}
-
 /**
  * testAdd method
  *
@@ -87,7 +83,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testAdd() {
 
 	}
-
 /**
  * testEdit method
  *
@@ -96,7 +91,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testEdit() {
 
 	}
-
 /**
  * testDelete method
  *
@@ -105,7 +99,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testDelete() {
 
 	}
-
 /**
  * testAdminIndex method
  *
@@ -114,7 +107,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testAdminIndex() {
 
 	}
-
 /**
  * testAdminView method
  *
@@ -123,7 +115,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testAdminView() {
 
 	}
-
 /**
  * testAdminAdd method
  *
@@ -132,7 +123,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testAdminAdd() {
 
 	}
-
 /**
  * testAdminEdit method
  *
@@ -141,7 +131,6 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testAdminEdit() {
 
 	}
-
 /**
  * testAdminDelete method
  *
@@ -150,5 +139,4 @@ class RolesControllerTestCase extends CakeTestCase {
 	public function testAdminDelete() {
 
 	}
-
 }

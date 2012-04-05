@@ -1,5 +1,4 @@
 <?php
-/* Role Test cases generated on: 2012-01-31 22:05:35 : 1328069135*/
 App::uses('Role', 'Model');
 
 /**
@@ -21,7 +20,6 @@ class RoleTestCase extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-
 		$this->Role = ClassRegistry::init('Role');
 	}
 
