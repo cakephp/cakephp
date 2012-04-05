@@ -29,9 +29,9 @@ class AclFunctionsController extends AppController {
 	public function ajax_list() {
 		$this->AclFunction->recursive = 0;
 		//$acl_id = '4'; //this is for testing
-		$acl_id = $this->request->data[AclRole][acl_id];
+		$acl_id = $this->request->data[AclController][acl_controller_id];
 		$ajaxFunctions = $this->AclFunction->find('list', array(
-			'conditions' => array('AclFunction.acl_id' => $acl_id) 
+			'conditions' => array('AclFunction.acl_id' => $acl_controller_id) 
 		));
 
 		$this->set('ajaxFunctions', $ajaxFunctions);
@@ -68,8 +68,8 @@ class AclFunctionsController extends AppController {
 				$this->Session->setFlash(__('The acl function could not be saved. Please, try again.'));
 			}
 		}
-		$acls = $this->AclFunction->Acl->find('list');
-		$this->set(compact('acls'));
+		$aclControllers = $this->AclFunction->AclController->find('list');
+		$this->set(compact('aclControllers'));
 	}
 
 /**
@@ -93,8 +93,8 @@ class AclFunctionsController extends AppController {
 		} else {
 			$this->request->data = $this->AclFunction->read(null, $id);
 		}
-		$acls = $this->AclFunction->Acl->find('list');
-		$this->set(compact('acls'));
+		$aclControllers = $this->AclFunction->AclController->find('list');
+		$this->set(compact('aclControllers'));
 	}
 
 /**
@@ -157,8 +157,8 @@ class AclFunctionsController extends AppController {
 				$this->Session->setFlash(__('The acl function could not be saved. Please, try again.'));
 			}
 		}
-		$acls = $this->AclFunction->Acl->find('list');
-		$this->set(compact('acls'));
+		$aclControllers = $this->AclFunction->AclController->find('list');
+		$this->set(compact('aclControllers'));
 	}
 
 /**
@@ -182,8 +182,8 @@ class AclFunctionsController extends AppController {
 		} else {
 			$this->request->data = $this->AclFunction->read(null, $id);
 		}
-		$acls = $this->AclFunction->Acl->find('list');
-		$this->set(compact('acls'));
+		$aclControllers = $this->AclFunction->AclController->find('list');
+		$this->set(compact('aclControllers'));
 	}
 
 /**
