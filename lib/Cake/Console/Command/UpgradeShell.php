@@ -137,10 +137,12 @@ class UpgradeShell extends AppShell {
 			list($plugins) = $Folder->read();
 			foreach ($plugins as $plugin) {
 				chdir($cwd . DS . 'plugins' . DS . $plugin);
+				$this->out(__d('cake_console', 'Upgrading locations for plugin %s', $plugin));
 				$this->locations();
 			}
 			$this->_files = array();
 			chdir($cwd);
+			$this->out(__d('cake_console', 'Upgrading locations for app directory'));
 		}
 		$moves = array(
 			'config' => 'Config',
