@@ -36,6 +36,13 @@ class CakeEventManager {
 	public static $defaultPriority = 10;
 
 /**
+ * The default pass params value for new attached listeners
+ *
+ * @var boolean
+ */
+	public $defaultPassParams = false;
+
+/**
  * The globally available instance, used for dispatching events attached from any scope
  *
  * @var CakeEventManager
@@ -107,7 +114,7 @@ class CakeEventManager {
 			$this->_attachSubscriber($callable);
 			return;
 		}
-		$options = $options + array('priority' => self::$defaultPriority, 'passParams' => false);
+		$options = $options + array('priority' => self::$defaultPriority, 'passParams' => $this->defaultPassParams);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,
 			'passParams' => $options['passParams'],
