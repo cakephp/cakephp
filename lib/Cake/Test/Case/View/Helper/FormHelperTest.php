@@ -3558,15 +3558,12 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testRadioAddEmptyOption() {
-		
-		// $options['empty'] = true
 		$result = $this->Form->input('Model.1.field', array(
-				'type' => 'radio',
-				'options' => array('option A'),
-				'empty' => true,
-				'hiddenField' => false
-			)
-		);
+			'type' => 'radio',
+			'options' => array('option A'),
+			'empty' => true,
+			'hiddenField' => false
+		));
 		$expected = array(
 			'div' => array('class' => 'input radio'),
 				'fieldset' => array(),
@@ -3586,14 +3583,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		// $options['empty'] = 'CustomEmptyLabel'
 		$result = $this->Form->input('Model.1.field', array(
-				'type' => 'radio',
-				'options' => array('option A'),
-				'empty' => 'CustomEmptyLabel',
-				'hiddenField' => false
-			)
-		);
+			'type' => 'radio',
+			'options' => array('option A'),
+			'empty' => 'CustomEmptyLabel',
+			'hiddenField' => false
+		));
 		$expected = array(
 			'div' => array('class' => 'input radio'),
 				'fieldset' => array(),
@@ -3613,16 +3608,13 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 		
-		// $options['empty'] = false
 		$result = $this->Form->input('Model.1.field', array(
-				'type' => 'radio',
-				'options' => array('option A'),
-				'empty' => false,
-				'hiddenField' => false
-			)
-		);
+			'type' => 'radio',
+			'options' => array('option A'),
+			'empty' => false,
+			'hiddenField' => false
+		));
 		$this->assertTextNotContains('"Model1Field"', $result);
-
 	}
 
 /**
