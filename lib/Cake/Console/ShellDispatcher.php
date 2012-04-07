@@ -134,7 +134,7 @@ class ShellDispatcher {
 			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'Config' . DS . 'core.php';
 			App::build();
 		}
-		
+
 		$this->setErrorHandlers();
 
 		if (!defined('FULL_BASE_URL')) {

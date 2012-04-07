@@ -496,7 +496,6 @@ class CakeEmail {
 		return $this->headerCharset = $charset;
 	}
 
-
 /**
  * Set email
  *
