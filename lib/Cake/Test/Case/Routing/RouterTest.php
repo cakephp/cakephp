@@ -527,7 +527,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals('/posts/index/0', $result);
 
 		$result = Router::url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2', '#' => 'unencoded string %'));
-		$expected = '/posts/index/0?var=test&var2=test2#unencoded+string+%25';
+		$expected = '/posts/index/0?var=test&var2=test2#unencoded string %';
 		$this->assertEquals($expected, $result);
 	}
 

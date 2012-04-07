@@ -778,7 +778,7 @@ class Router {
 				unset($url['?']);
 			}
 			if (isset($url['#'])) {
-				$frag = '#' . urlencode($url['#']);
+				$frag = '#' . $url['#'];
 				unset($url['#']);
 			}
 			if (isset($url['ext'])) {
