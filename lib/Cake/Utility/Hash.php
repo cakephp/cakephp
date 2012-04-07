@@ -379,7 +379,7 @@ class Hash {
 /**
  * Returns a formated series of values extracted from `$data`, using
  * `$format` as the format and `$paths` as the values to extract.
- * 
+ *
  * Usage:
  *
  * {{{
@@ -486,7 +486,7 @@ class Hash {
  * Recursively filters a data set.
  *
  * @param array $data Either an array to filter, or value when in callback
- * @param callable $callback A function to filter the data with.  Defaults to 
+ * @param callable $callback A function to filter the data with.  Defaults to
  *   `self::_filter()` Which strips out all non-zero empty values.
  * @return array Filtered array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::filter
@@ -757,6 +757,9 @@ class Hash {
 
 		$dir = strtolower($dir);
 		$type = strtolower($type);
+		if ($type == 'natural' && version_compare(PHP_VERSION, '5.4.0', '<')) {
+			$type == 'regular';
+		}
 		if ($dir === 'asc') {
 			$dir = SORT_ASC;
 		} else {

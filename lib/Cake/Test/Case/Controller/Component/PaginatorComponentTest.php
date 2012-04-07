@@ -619,7 +619,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->request->params['named'] = array('sort' => 'offset_test', 'direction' => 'asc');
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(array(2, 3, 4), Set::extract($result, '{n}.PaginatorControllerPost.offset_test'));
+		$this->assertEquals(array(2, 3, 4), Hash::extract($result, '{n}.PaginatorControllerPost.offset_test'));
 	}
 
 /**
@@ -986,7 +986,7 @@ class PaginatorComponentTest extends CakeTestCase {
 		$this->assertTrue(!empty($result));
 
 		$result = $Controller->paginate();
-		$this->assertEquals(Set::extract($result, '{n}.PaginatorCustomPost.id'), array(1, 2, 3, 4));
+		$this->assertEquals(array(1, 2, 3, 4), Hash::extract($result, '{n}.PaginatorCustomPost.id'));
 
 		$result = $Controller->params['paging']['PaginatorCustomPost'];
 		$this->assertEquals(4, $result['current']);
@@ -994,7 +994,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->paginate = array('published');
 		$result = $Controller->paginate();
-		$this->assertEquals(Set::extract($result, '{n}.PaginatorCustomPost.id'), array(1, 2, 3));
+		$this->assertEquals(array(1, 2, 3), Hash::extract($result, '{n}.PaginatorCustomPost.id'));
 
 		$result = $Controller->params['paging']['PaginatorCustomPost'];
 		$this->assertEquals(3, $result['current']);
@@ -1002,7 +1002,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->paginate = array('published', 'limit' => 2);
 		$result = $Controller->paginate();
-		$this->assertEquals(Set::extract($result, '{n}.PaginatorCustomPost.id'), array(1, 2));
+		$this->assertEquals(array(1, 2), Hash::extract($result, '{n}.PaginatorCustomPost.id'));
 
 		$result = $Controller->params['paging']['PaginatorCustomPost'];
 		$this->assertEquals(2, $result['current']);

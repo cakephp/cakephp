@@ -80,7 +80,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEquals(2, count($result['SomethingElse']));
 
-		$doomed = Set::extract('/JoinThing/doomed', $result['SomethingElse']);
+		$doomed = Hash::extract($result['SomethingElse'], '{n}.JoinThing.doomed');
 		$this->assertTrue(in_array(true, $doomed));
 		$this->assertTrue(in_array(false, $doomed));
 	}
@@ -5028,19 +5028,19 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Author');
 		$TestModel = new ModifiedAuthor();
 
-		$result = Set::extract($TestModel->find('all'), '/Author/user');
+		$result = Hash::extract($TestModel->find('all'), '{n}.Author.user');
 		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::extract($TestModel->find('all', array('callbacks' => 'after')), '/Author/user');
+		$result = Hash::extract($TestModel->find('all', array('callbacks' => 'after')), '{n}.Author.user');
 		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::extract($TestModel->find('all', array('callbacks' => 'before')), '/Author/user');
+		$result = Hash::extract($TestModel->find('all', array('callbacks' => 'before')), '{n}.Author.user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::extract($TestModel->find('all', array('callbacks' => false)), '/Author/user');
+		$result = Hash::extract($TestModel->find('all', array('callbacks' => false)), '{n}.Author.user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEquals($expected, $result);
 	}
