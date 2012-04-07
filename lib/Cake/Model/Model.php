@@ -2874,7 +2874,7 @@ class Model extends Object implements CakeEventListener {
 			$return = array();
 			if (isset($results[0])) {
 				$prevVal = Hash::get($results[0], $field);
-				$query['conditions'][$field . ' >='] = $prevVal[0];
+				$query['conditions'][$field . ' >='] = $prevVal;
 				$query['conditions'][$field . ' !='] = $value;
 				$query['limit'] = 2;
 			} else {
@@ -2883,14 +2883,14 @@ class Model extends Object implements CakeEventListener {
 				$query['limit'] = 1;
 			}
 			$query['order'] = $field . ' ASC';
-			$return2 = $this->find('all', $query);
+			$neighbors = $this->find('all', $query);
 			if (!array_key_exists('prev', $return)) {
-				$return['prev'] = $return2[0];
+				$return['prev'] = $neighbors[0];
 			}
-			if (count($return2) === 2) {
-				$return['next'] = $return2[1];
-			} elseif (count($return2) === 1 && !$return['prev']) {
-				$return['next'] = $return2[0];
+			if (count($neighbors) === 2) {
+				$return['next'] = $neighbors[1];
+			} elseif (count($neighbors) === 1 && !$return['prev']) {
+				$return['next'] = $neighbors[0];
 			} else {
 				$return['next'] = null;
 			}
