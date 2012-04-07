@@ -223,13 +223,17 @@ class Permission extends AppModel {
 		if (empty($obj['Aro']) || empty($obj['Aco'])) {
 			return false;
 		}
+		$aro = Hash::extract($obj, 'Aro.0.' . $this->Aro->alias . '.id');
+		$aco = Hash::extract($obj, 'Aco.0.' . $this->Aco->alias . '.id');
+		$aro = current($aro);
+		$aco = current($aco);
 
 		return array(
-			'aro' => current(Hash::extract($obj, 'Aro.0.' . $this->Aro->alias . '.id')),
-			'aco' => current(Hash::extract($obj, 'Aco.0.' . $this->Aco->alias . '.id')),
+			'aro' => $aro,
+			'aco' => $aco,
 			'link' => $this->find('all', array('conditions' => array(
-				$this->alias . '.aro_id' => current(Hash::extract($obj, 'Aro.0.' . $this->Aro->alias . '.id')),
-				$this->alias . '.aco_id' => current(Hash::extract($obj, 'Aco.0.' . $this->Aco->alias . '.id'))
+				$this->alias . '.aro_id' => $aro,
+				$this->alias . '.aco_id' => $aco
 			)))
 		);
 	}
