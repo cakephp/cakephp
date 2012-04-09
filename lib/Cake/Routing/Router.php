@@ -23,6 +23,7 @@ use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Route\Route;
+use Cake\Routing\RouteCollection;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -43,11 +44,11 @@ use Cake\Utility\Inflector;
 class Router {
 
 /**
- * Array of routes connected with Router::connect()
+ * RouteCollection object containing all the connected routes.
  *
- * @var array
+ * @var Cake\Routing\RouteCollection
  */
-	public static $routes = array();
+	public static $_routes;
 
 /**
  * List of action prefixes used in connected routes.
@@ -263,7 +264,7 @@ class Router {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @see routes
- * @return array Array of routes
+ * @return void
  * @throws RouterException
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
@@ -293,8 +294,7 @@ class Router {
 		if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
 			$defaults = $defaults['redirect'];
 		}
-		static::$routes[] = new $routeClass($route, $defaults, $options);
-		return static::$routes;
+		static::$_routes->add(new $routeClass($route, $defaults, $options));
 	}
 
 /**
@@ -415,15 +415,8 @@ class Router {
 
 		extract(static::_parseExtension($url));
 
-		for ($i = 0, $len = count(static::$routes); $i < $len; $i++) {
-			$route =& static::$routes[$i];
+		$out = static::$_routes->parse($url);
 
-			if (($r = $route->parse($url)) !== false) {
-				static::$_currentRoute[] =& $route;
-				$out = $r;
-				break;
-			}
-		}
 		if (isset($out['prefix'])) {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
 		}
@@ -487,6 +480,16 @@ class Router {
 			$requestObj->addParams($request[0])->addPaths($request[1]);
 			static::$_requests[] = $requestObj;
 		}
+	}
+
+/**
+ * Set the route collection object Router should use.
+ *
+ * @param Cake\Routing\RouteCollection $routes
+ * @return void
+ */
+	public static function setRouteCollection(RouteCollection $routes) {
+		self::$_routes = $routes;
 	}
 
 /**
@@ -579,6 +582,7 @@ class Router {
 			}
 		}
 		static::_setPrefixes();
+		static::$_routes = new RouteCollection();
 	}
 
 /**
@@ -589,16 +593,7 @@ class Router {
  * @return boolean Returns false if no route exists at the position specified by $which.
  */
 	public static function promote($which = null) {
-		if ($which === null) {
-			$which = count(static::$routes) - 1;
-		}
-		if (!isset(static::$routes[$which])) {
-			return false;
-		}
-		$route =& static::$routes[$which];
-		unset(static::$routes[$which]);
-		array_unshift(static::$routes, $route);
-		return true;
+		return static::$_routes->promote($which);
 	}
 
 /**
@@ -698,22 +693,9 @@ class Router {
 
 			$url += array('controller' => $params['controller'], 'plugin' => $params['plugin']);
 
-			$match = false;
+			$output = self::$_routes->match($url, $params);
 
-			for ($i = 0, $len = count(static::$routes); $i < $len; $i++) {
-				$originalUrl = $url;
-
-				if (isset(static::$routes[$i]->options['persist'], $params)) {
-					$url = static::$routes[$i]->persistParams($url, $params);
-				}
-
-				if ($match = static::$routes[$i]->match($url)) {
-					$output = trim($match, '/');
-					break;
-				}
-				$url = $originalUrl;
-			}
-			if ($match === false) {
+			if ($output === false) {
 				$output = static::_handleNoRoute($url);
 			}
 		} else {
@@ -923,6 +905,7 @@ class Router {
  * Returns the route matching the current request URL.
  *
  * @return Cake\Routing\Route\Route Matching route object.
+ * @todo Remove? Not really that useful.
  */
 	public static function &requestRoute() {
 		return static::$_currentRoute[0];
@@ -932,6 +915,7 @@ class Router {
  * Returns the route matching the current request (useful for requestAction traces)
  *
  * @return Cake\Routing\Route\Route Matching route object.
+ * @todo Remove? Not really that useful.
  */
 	public static function &currentRoute() {
 		return static::$_currentRoute[count(static::$_currentRoute) - 1];
@@ -943,6 +927,7 @@ class Router {
  * @param string $base Base URL
  * @param string $plugin Plugin name
  * @return string base url with plugin name removed if present
+ * @todo Remove? Not really that useful.
  */
 	public static function stripPlugin($base, $plugin = null) {
 		if ($plugin != null) {
