@@ -25,7 +25,6 @@ use Cake\Network\Response;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Set;
 
 /**
  * Parses the request URL into controller, action, and parameters.  Uses the connected routes
@@ -38,11 +37,6 @@ use Cake\Utility\Set;
  * Connecting routes is done using Router::connect().  When parsing incoming requests or reverse matching
  * parameters, routes are enumerated in the order they were connected.  You can modify the order of connected
  * routes using Router::promote().  For more information on routes and how to connect them see Router::connect().
- *
- * ### Named parameters
- *
- * Named parameters allow you to embed key:value pairs into path segments.  This allows you create hash
- * structures using urls.  You can define how named parameters work in your application using Router::connectNamed()
  *
  * @package       Cake.Routing
  */
@@ -100,18 +94,6 @@ class Router {
 		'Day' => Router::DAY,
 		'ID' => Router::ID,
 		'UUID' => Router::UUID
-	);
-
-/**
- * Stores all information necessary to decide what named arguments are parsed under what conditions.
- *
- * @var string
- */
-	protected static $_namedConfig = array(
-		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
-		'greedyNamed' => true,
-		'separator' => ':',
-		'rules' => false,
 	);
 
 /**
@@ -260,7 +242,7 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
- * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
+ * $options offers four 'special' keys. `pass`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
  * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
@@ -272,9 +254,6 @@ class Router {
  *
  * `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  * via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
- *
- * `named` is used to configure named parameters at the route level. This key uses the same options
- * as Router::connectNamed()
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
@@ -340,7 +319,7 @@ class Router {
  *
  * - `status` Sets the HTTP status (default 301)
  * - `persist` Passes the params to the redirected route, if it can.  This is useful with greedy routes,
- *   routes that end in `*` are greedy.  As you can remap urls and not loose any passed/named args.
+ *   routes that end in `*` are greedy.  As you can remap urls and not loose any passed args.
  *
  * @param string $route A string describing the template of the route
  * @param array $url A url to redirect to. Can be a string or a Cake array-based url
@@ -356,100 +335,6 @@ class Router {
 			$url = array('redirect' => $url);
 		}
 		return static::connect($route, $url, $options);
-	}
-
-/**
- * Specifies what named parameters CakePHP should be parsing out of incoming urls. By default
- * CakePHP will parse every named parameter out of incoming URLs.  However, if you want to take more
- * control over how named parameters are parsed you can use one of the following setups:
- *
- * Do not parse any named parameters:
- *
- * {{{ Router::connectNamed(false); }}}
- *
- * Parse only default parameters used for CakePHP's pagination:
- *
- * {{{ Router::connectNamed(false, array('default' => true)); }}}
- *
- * Parse only the page parameter if its value is a number:
- *
- * {{{ Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); }}}
- *
- * Parse only the page parameter no matter what.
- *
- * {{{ Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); }}}
- *
- * Parse only the page parameter if the current action is 'index'.
- *
- * {{{
- * Router::connectNamed(
- *    array('page' => array('action' => 'index')),
- *    array('default' => false, 'greedy' => false)
- * );
- * }}}
- *
- * Parse only the page parameter if the current action is 'index' and the controller is 'pages'.
- *
- * {{{
- * Router::connectNamed(
- *    array('page' => array('action' => 'index', 'controller' => 'pages')),
- *    array('default' => false, 'greedy' => false)
- * );
- * }}}
- *
- * ### Options
- *
- * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will
- *    parse only the connected named params.
- * - `default` Set this to true to merge in the default set of named parameters.
- * - `reset` Set to true to clear existing rules and start fresh.
- * - `separator` Change the string used to separate the key & value in a named parameter.  Defaults to `:`
- *
- * @param array $named A list of named parameters. Key value pairs are accepted where values are
- *    either regex strings to match, or arrays as seen above.
- * @param array $options Allows to control all settings: separator, greedy, reset, default
- * @return array
- */
-	public static function connectNamed($named, $options = array()) {
-		if (isset($options['separator'])) {
-			static::$_namedConfig['separator'] = $options['separator'];
-			unset($options['separator']);
-		}
-
-		if ($named === true || $named === false) {
-			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
-			$named = array();
-		} else {
-			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
-		}
-
-		if ($options['reset'] == true || static::$_namedConfig['rules'] === false) {
-			static::$_namedConfig['rules'] = array();
-		}
-
-		if ($options['default']) {
-			$named = array_merge($named, static::$_namedConfig['default']);
-		}
-
-		foreach ($named as $key => $val) {
-			if (is_numeric($key)) {
-				static::$_namedConfig['rules'][$val] = true;
-			} else {
-				static::$_namedConfig['rules'][$key] = $val;
-			}
-		}
-		static::$_namedConfig['greedyNamed'] = $options['greedy'];
-		return static::$_namedConfig;
-	}
-
-/**
- * Gets the current named parameter configuration values.
- *
- * @return array
- * @see Router::$_namedConfig
- */
-	public static function namedConfig() {
-		return static::$_namedConfig;
 	}
 
 /**
@@ -737,7 +622,7 @@ class Router {
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action',
- *   and/or 'plugin', in addition to named arguments (keyed array elements),
+ *   and/or 'plugin'.
  *   and standard URL arguments (indexed array elements)
  * @param bool|array $full If (bool) true, the full base URL will be prepended to the result.
  *   If an array accepts the following keys
@@ -878,7 +763,7 @@ class Router {
  * @see Router::url()
  */
 	protected static function _handleNoRoute($url) {
-		$named = $args = array();
+		$args = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
 			static::$_prefixes
@@ -892,12 +777,10 @@ class Router {
 			$key = $keys[$i];
 			if (is_numeric($keys[$i])) {
 				$args[] = $url[$key];
-			} else {
-				$named[$key] = $url[$key];
 			}
 		}
 
-		list($args, $named) = array(Hash::filter($args), Hash::filter($named));
+		$args = Hash::filter($args);
 		foreach (static::$_prefixes as $prefix) {
 			$prefixed = $prefix . '_';
 			if (!empty($url[$prefix]) && strpos($url['action'], $prefixed) === 0) {
@@ -906,7 +789,7 @@ class Router {
 			}
 		}
 
-		if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
+		if (empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
 			$url['action'] = null;
 		}
 
@@ -926,19 +809,6 @@ class Router {
 
 		if (!empty($args)) {
 			$output .= '/' . implode('/', array_map('rawurlencode', $args));
-		}
-
-		if (!empty($named)) {
-			foreach ($named as $name => $value) {
-				if (is_array($value)) {
-					$flattend = Hash::flatten($value, '][');
-					foreach ($flattend as $namedKey => $namedValue) {
-						$output .= '/' . $name . "[$namedKey]" . static::$_namedConfig['separator'] . rawurlencode($namedValue);
-					}
-				} else {
-					$output .= '/' . $name . static::$_namedConfig['separator'] . rawurlencode($value);
-				}
-			}
 		}
 		return $output;
 	}
@@ -984,7 +854,7 @@ class Router {
 
 /**
  * Reverses a parsed parameter array into a string. Works similarly to Router::url(), but
- * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
+ * Since parsed URL's contain additional 'pass' as well as 'url.url' keys.
  * Those keys need to be specially handled in order to reverse a params array into a string url.
  *
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
@@ -1003,14 +873,13 @@ class Router {
 			$url = $params['url'];
 		}
 		$pass = isset($params['pass']) ? $params['pass'] : array();
-		$named = isset($params['named']) ? $params['named'] : array();
 
 		unset(
-			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
+			$params['pass'], $params['paging'], $params['models'], $params['url'], $url['url'],
 			$params['autoRender'], $params['bare'], $params['requested'], $params['return'],
 			$params['_Token']
 		);
-		$params = array_merge($params, $pass, $named);
+		$params = array_merge($params, $pass);
 		if (!empty($url)) {
 			$params['?'] = $url;
 		}

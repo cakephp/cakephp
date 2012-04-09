@@ -79,10 +79,5 @@ foreach ($prefixes as $prefix) {
 Router::connect('/:controller', array('action' => 'index'));
 Router::connect('/:controller/:action/*');
 
-$namedConfig = Router::namedConfig();
-if ($namedConfig['rules'] === false) {
-	Router::connectNamed(true);
-}
-
-unset($namedConfig, $params, $indexParams, $prefix, $prefixes, $shortParams, $match,
+unset($params, $indexParams, $prefix, $prefixes, $shortParams, $match,
 	$pluginPattern, $plugins, $key, $value);
