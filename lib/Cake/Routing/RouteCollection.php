@@ -17,12 +17,12 @@ class RouteCollection {
  * @return void
  */
 	public function add(Route $route) {
-		$this->_routes[] = $route;
 		$name = $route->getName();
 		if (!isset($this->_routeTable[$name])) {
 			$this->_routeTable[$name] = array();
 		}
 		$this->_routeTable[$name][] = $route;
+		$this->_routes[] = $route;
 	}
 
 /**

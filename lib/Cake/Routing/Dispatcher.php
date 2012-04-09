@@ -211,7 +211,7 @@ class Dispatcher implements EventListener {
 	public function parseParams($event) {
 		$request = $event->data['request'];
 		Router::setRequestInfo($request);
-		if (count(Router::$routes) == 0) {
+		if (Router::getRequest(false) === $request) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
 			$this->_loadRoutes();
