@@ -615,6 +615,9 @@ class RouteTest extends TestCase {
  * @return void
  */
 	public function testGetName() {
+		$route = new Route('/foo/bar', array(), array('_name' => 'testing'));
+		$this->assertEquals('testing', $route->getName());
+
 		$route = new Route('/:controller/:action');
 		$this->assertEquals('_controller::_action', $route->getName());
 

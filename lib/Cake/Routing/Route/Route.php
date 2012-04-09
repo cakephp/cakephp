@@ -91,6 +91,9 @@ class Route {
 /**
  * Constructor for a Route
  *
+ * Using $options['_name'] a specific name can be given to a route.
+ * Otherwise a route name will be generated.
+ *
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
  * @param array $options Array of additional options for the Route
@@ -99,6 +102,9 @@ class Route {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
+		if (isset($this->options['_name'])) {
+			$this->_name = $this->options['_name'];
+		}
 	}
 
 /**
@@ -185,7 +191,10 @@ class Route {
  * @return string.
  */
 	public function getName() {
-		if (empty($this->_name)) {
+		if (!empty($this->_name)) {
+			return $this->_name;
+		}
+		if (!$this->compiled()) {
 			$this->compile();
 		}
 		$name = '';

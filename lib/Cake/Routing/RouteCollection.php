@@ -67,4 +67,5 @@ class RouteCollection {
 		array_unshift($this->_routes, $route);
 		return true;
 	}
+
 }
