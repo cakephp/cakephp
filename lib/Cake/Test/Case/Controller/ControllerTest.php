@@ -289,6 +289,7 @@ class TestController extends ControllerTestAppController {
 		return 'I am from the controller.';
 	}
 
+	//@codingStandardsIgnoreStart
 	protected function protected_m() {
 	}
 
@@ -297,6 +298,7 @@ class TestController extends ControllerTestAppController {
 
 	public function _hidden() {
 	}
+	//@codingStandardsIgnoreEnd
 
 	public function admin_add() {
 	}
