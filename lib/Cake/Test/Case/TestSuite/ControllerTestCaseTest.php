@@ -32,11 +32,11 @@ require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
  * @package       Cake.Test.Case.TestSuite
  */
 if (!class_exists('AppController', false)) {
-	/**
-	 * AppController class
-	 *
-	 * @package       Cake.Test.Case.TestSuite
-	 */
+/**
+ * AppController class
+ *
+ * @package       Cake.Test.Case.TestSuite
+ */
 	class AppController extends Controller {
 
 	/**
