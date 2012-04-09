@@ -21,6 +21,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
+
 use Cake\Core\Plugin;
 use Cake\Routing\Router;
 
