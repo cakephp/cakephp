@@ -137,7 +137,7 @@ class DboSource extends DataSource {
 /**
  * Caches serialized results of executed queries
  *
- * @var array Maximum number of queries in the queries log.
+ * @var array Cache of results from executed sql queries.
  */
 	protected $_queryCache = array();
 
