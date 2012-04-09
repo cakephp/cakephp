@@ -14,7 +14,6 @@
 namespace Cake\Routing\Route;
 
 use Cake\Routing\Router;
-use Cake\Utility\Hash;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -70,6 +69,13 @@ class Route {
  * @var string
  */
 	protected $_compiledRoute = null;
+
+/**
+ * The name for a route.  Fetch with Route::getName();
+ *
+ * @var string
+ */
+	protected $_name = null;
 
 /**
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
@@ -165,10 +171,38 @@ class Route {
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 
-		//remove defaults that are also keys. They can cause match failures
+		// remove defaults that are also keys. They can cause match failures
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+	}
+
+/**
+ * Get the standardized plugin.controller::action name
+ * for a route. This will compile a route if it has not
+ * already been compiled.
+ *
+ * @return string.
+ */
+	public function getName() {
+		if (empty($this->_name)) {
+			$this->compile();
+		}
+		$name = '';
+		if (isset($this->defaults['plugin'])) {
+			$name .= strtolower($this->defaults['plugin']) . '.';
+		}
+		$parts = array();
+		foreach (array('controller', 'action') as $key) {
+			if (isset($this->defaults[$key])) {
+				$parts[] = $this->defaults[$key];
+			}
+			if (in_array($key, $this->keys, true)) {
+				$parts[] = '_' . $key;
+			}
+		}
+		$name .= strtolower(implode('::', $parts));
+		return $this->_name = $name;
 	}
 
 /**
