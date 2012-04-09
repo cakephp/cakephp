@@ -4,20 +4,52 @@ namespace Cake\Routing;
 use Cake\Routing\Route\Route;
 
 class RouteCollection {
-	
+
 	protected $_routes = array();
 
 	protected $_routeTable = array();
 
+/**
+ * Add a route to the collection.
+ *
+ * Appends the route to the list of routes, and the route hashtable.
+ * @param Cake\Routing\Route\Route $route The route to add
+ * @return void
+ */
 	public function add(Route $route) {
 		$this->_routes[] = $route;
+		$name = $route->getName();
+		if (!isset($this->_routeTable[$name])) {
+			$this->_routeTable[$name] = array();
+		}
+		$this->_routeTable[$name][] = $route;
 	}
 
+/**
+ * Reverse route or match a $url array with the defined routes.
+ * Returns either the string URL generate by the route, or false on failure.
+ *
+ * @param array $url The url to match.
+ * @param array $params The current request parameters, used for persistent parameters.
+ * @return void
+ * @TODO Remove persistent params?  Are they even useful?
+ */
 	public function match($url, $params = null) {
+		$names = $this->_getNames($url);
+		foreach ($names as $name) {
+			if (isset($this->_routeTable[$name])) {
+				$routes = $this->_routeTable[$name];
+				return $this->_matchRoutes($routes, $url, $params);
+			}
+		}
+		return $this->_matchRoutes($this->_routes, $url, $params);
+	}
+
+	protected function _matchRoutes($routes, $url, $params) {
 		$output = false;
-		for ($i = 0, $len = count($this->_routes); $i < $len; $i++) {
+		for ($i = 0, $len = count($routes); $i < $len; $i++) {
 			$originalUrl = $url;
-			$route =& $this->_routes[$i];
+			$route =& $routes[$i];
 
 			if (isset($route->options['persist'], $params)) {
 				$url = $route->persistParams($url, $params);
@@ -32,6 +64,49 @@ class RouteCollection {
 		return $output;
 	}
 
+/**
+ * Get the set of names from the $url.  Accepts both older style array urls,
+ * and newer style urls containing '_name'
+ *
+ * @param array $url The url to match.
+ * @return string The name of the url
+ */
+	protected function _getNames($url) {
+		$name = false;
+		if (isset($url['_name'])) {
+			$name = $url['_name'];
+		}
+		$plugin = false;
+		if (isset($url['plugin'])) {
+			$plugin = $url['plugin'];
+		}
+		$fallbacks = array(
+			'%2s::%3s',
+			'%2s::_action',
+			'_controller::_action'
+		);
+		if ($plugin) {
+			$fallbacks = array(
+				'%1s.%2s::%3s',
+				'%1s.%2s::_action',
+				'_controller::_action'
+			);
+		}
+		foreach ($fallbacks as $i => $template) {
+			$fallbacks[$i] = sprintf($template, $plugin, $url['controller'], $url['action']);
+		}
+		if ($name) {
+			array_unshift($fallbacks, $name);
+		}
+		return $fallbacks;
+	}
+
+/**
+ * Takes the URL string and iterates the routes until one is able to parse the route.
+ *
+ * @param string $url Url to parse.
+ * @return array An array of request parameters parsed from the url.
+ */
 	public function parse($url) {
 		$out = array();
 		for ($i = 0, $len = count($this->_routes); $i < $len; $i++) {
