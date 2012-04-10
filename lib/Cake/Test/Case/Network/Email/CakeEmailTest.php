@@ -1241,7 +1241,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('Content-Type: text/html; charset=utf-8', $message);
 
 		// UTF-8 is 8bit
-		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
+		$this->assertTrue($this->_checkContentTransferEncoding($message, '8bit'));
 
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$this->CakeEmail->send();
@@ -1250,7 +1250,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
 
 		// ISO-2022-JP is 7bit
-		$this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
+		$this->assertTrue($this->_checkContentTransferEncoding($message, '7bit'));
 	}
 
 /**
@@ -1511,7 +1511,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains(mb_convert_encoding('ってテーブルを作ってやってたらう','ISO-2022-JP'), $result['message']);
 	}
 
-	public function checkContentTransferEncoding($message, $charset) {
+	protected function _checkContentTransferEncoding($message, $charset) {
 		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;
 		$result['html'] = false;
@@ -1541,6 +1541,7 @@ class CakeEmailTest extends CakeTestCase {
 /**
  * Test CakeEmail::_encode function
  *
+ * @return void
  */
 	public function testEncode() {
 		$this->skipIf(!function_exists('mb_convert_encoding'));

@@ -54,14 +54,16 @@ class ShellTestShell extends Shell {
 		$this->stopped = $status;
 	}
 
-	public function do_something() {
+	protected function _secret() {
 	}
 
-	protected function _secret() {
+	//@codingStandardsIgnoreStart
+	public function do_something() {
 	}
 
 	protected function no_access() {
 	}
+	//@codingStandardsIgnoreEnd
 
 	public function mergeVars($properties, $class, $normalize = true) {
 		return $this->_mergeVars($properties, $class, $normalize);
