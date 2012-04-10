@@ -81,14 +81,14 @@ class RouteCollection {
 			$plugin = $url['plugin'];
 		}
 		$fallbacks = array(
-			'%2s::%3s',
-			'%2s::_action',
+			'%2$s::%3$s',
+			'%2$s::_action',
 			'_controller::_action'
 		);
 		if ($plugin) {
 			$fallbacks = array(
-				'%1s.%2s::%3s',
-				'%1s.%2s::_action',
+				'%1$s.%2$s::%3$s',
+				'%1$s.%2$s::_action',
 				'_controller::_action'
 			);
 		}
