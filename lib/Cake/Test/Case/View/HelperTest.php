@@ -625,6 +625,17 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetUrl('style', array('ext' => '.css'));
 		$this->assertEqual('style.css', $result);
 
+		$result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
+		$this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
+	}
+
+/**
+ * Test assetUrl with plugins.
+ *
+ * @return void
+ */
+	public function testAssetUrlPlugin() {
+		$this->Helper->webroot = '';
 		CakePlugin::load('TestPlugin');
 
 		$result = $this->Helper->assetUrl('TestPlugin.style', array('ext' => '.css'));
@@ -634,13 +645,19 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual('TestPlugin.style.css', $result);
 
 		CakePlugin::unload('TestPlugin');
+	}
 
+/**
+ * test assetUrl and Asset.timestamp = force
+ *
+ * @return void
+ */
+	public function testAssetUrlTimestampForce() {
+		$this->Helper->webroot = '';
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Helper->assetUrl('cake.generic.css', array('pathPrefix' => CSS_URL));
 		$this->assertRegExp('/' . preg_quote(CSS_URL . 'cake.generic.css?', '/') . '[0-9]+/', $result);
-
-		Configure::write('Asset.timestamp', $_timestamp);
 	}
 
 /**

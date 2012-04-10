@@ -355,6 +355,9 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
 
+		$result = $this->Html->image('test.gif?one=two&three=four');
+		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
+
 		$result = $this->Html->image('test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);
 		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
@@ -513,6 +516,10 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->css('screen.css?1234');
 		$expected['link']['href'] = 'preg:/.*css\/screen\.css\?1234/';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('screen.css?with=param&other=param');
+		$expected['link']['href'] = 'css/screen.css?with=param&amp;other=param';
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('http://whatever.com/screen.css?1234');
@@ -784,6 +791,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->script('test.json.js?foo=bar');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('test.json.js?foo=bar&other=test');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar&amp;other=test')
 		);
 		$this->assertTags($result, $expected);
 
