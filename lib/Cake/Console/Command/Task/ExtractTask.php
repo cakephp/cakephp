@@ -463,6 +463,8 @@ class ExtractTask extends AppShell {
  * @return void
  */
 	protected function _buildFiles() {
+		$paths = $this->_paths;
+		$paths[] = realpath(APP) . DS;
 		foreach ($this->_translations as $domain => $translations) {
 			foreach ($translations as $msgid => $details) {
 				$plural = $details['msgid_plural'];
@@ -473,7 +475,7 @@ class ExtractTask extends AppShell {
 					$occurrences[] = $file . ':' . implode(';', $lines);
 				}
 				$occurrences = implode("\n#: ", $occurrences);
-				$header = '#: ' . str_replace($this->_paths, '', $occurrences) . "\n";
+				$header = '#: ' . str_replace($paths, '', $occurrences) . "\n";
 
 				if ($plural === false) {
 					$sentence = "msgid \"{$msgid}\"\n";
