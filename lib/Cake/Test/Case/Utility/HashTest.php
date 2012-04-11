@@ -1984,30 +1984,30 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testMergeDiff() {
-		$array1 = array(
+		$first = array(
 			'ModelOne' => array(
 				'id' => 1001,
 				'field_one' => 'a1.m1.f1',
 				'field_two' => 'a1.m1.f2'
 			)
 		);
-		$array2 = array(
+		$second = array(
 			'ModelTwo' => array(
 				'id' => 1002,
 				'field_one' => 'a2.m2.f1',
 				'field_two' => 'a2.m2.f2'
 			)
 		);
-		$result = Hash::mergeDiff($array1, $array2);
-		$this->assertEquals($result, $array1 + $array2);
+		$result = Hash::mergeDiff($first, $second);
+		$this->assertEquals($result, $first + $second);
 
-		$result = Hash::mergeDiff($array1, array());
-		$this->assertEquals($result, $array1);
+		$result = Hash::mergeDiff($first, array());
+		$this->assertEquals($result, $first);
 
-		$result = Hash::mergeDiff(array(), $array1);
-		$this->assertEquals($result, $array1);
+		$result = Hash::mergeDiff(array(), $first);
+		$this->assertEquals($result, $first);
 
-		$array3 = array(
+		$third = array(
 			'ModelOne' => array(
 				'id' => 1003,
 				'field_one' => 'a3.m1.f1',
@@ -2015,7 +2015,7 @@ class HashTest extends CakeTestCase {
 				'field_three' => 'a3.m1.f3'
 			)
 		);
-		$result = Hash::mergeDiff($array1, $array3);
+		$result = Hash::mergeDiff($first, $third);
 		$expected = array(
 			'ModelOne' => array(
 				'id' => 1001,
@@ -2026,19 +2026,19 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$array1 = array(
+		$first = array(
 			0 => array('ModelOne' => array('id' => 1001, 'field_one' => 's1.0.m1.f1', 'field_two' => 's1.0.m1.f2')),
 			1 => array('ModelTwo' => array('id' => 1002, 'field_one' => 's1.1.m2.f2', 'field_two' => 's1.1.m2.f2'))
 		);
-		$array2 = array(
+		$second = array(
 			0 => array('ModelOne' => array('id' => 1001, 'field_one' => 's2.0.m1.f1', 'field_two' => 's2.0.m1.f2')),
 			1 => array('ModelTwo' => array('id' => 1002, 'field_one' => 's2.1.m2.f2', 'field_two' => 's2.1.m2.f2'))
 		);
 
-		$result = Hash::mergeDiff($array1, $array2);
-		$this->assertEquals($result, $array1);
+		$result = Hash::mergeDiff($first, $second);
+		$this->assertEquals($result, $first);
 
-		$array3 = array(
+		$third = array(
 			0 => array(
 				'ModelThree' => array(
 					'id' => 1003,
@@ -2048,7 +2048,7 @@ class HashTest extends CakeTestCase {
 			)
 		);
 
-		$result = Hash::mergeDiff($array1, $array3);
+		$result = Hash::mergeDiff($first, $third);
 		$expected = array(
 			0 => array(
 				'ModelOne' => array(
@@ -2072,11 +2072,11 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Hash::mergeDiff($array1, null);
-		$this->assertEquals($result, $array1);
+		$result = Hash::mergeDiff($first, null);
+		$this->assertEquals($result, $first);
 
-		$result = Hash::mergeDiff($array1, $array2);
-		$this->assertEquals($result, $array1 + $array2);
+		$result = Hash::mergeDiff($first, $second);
+		$this->assertEquals($result, $first + $second);
 	}
 
 /**

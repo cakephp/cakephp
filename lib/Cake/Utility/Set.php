@@ -38,12 +38,12 @@ class Set {
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array
  * parameters into arrays.
  *
- * @param array $arr1 Array to be merged
- * @param array $arr2 Array to merge with
+ * @param array $data Array to be merged
+ * @param array $merge Array to merge with
  * @return array Merged array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::merge
  */
-	public static function merge($arr1, $arr2 = null) {
+	public static function merge($data, $merge = null) {
 		$args = func_get_args();
 		if (empty($args[1])) {
 			return (array)$args[0];
