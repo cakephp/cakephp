@@ -15,6 +15,10 @@
 
 App::uses('Hash', 'Utility');
 App::uses('ConfigReaderInterface', 'Configure');
+/**
+ * Compatibility with 2.1, which expects Configure to load Set.
+ */
+App::uses('Set', 'Utility');
 
 /**
  * Configuration class. Used for managing runtime configuration information.
