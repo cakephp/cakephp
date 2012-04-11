@@ -891,7 +891,7 @@ class Router {
 			}
 		}
 
-		list($args, $named) = array(Set::filter($args, true), Set::filter($named, true));
+		list($args, $named) = array(Hash::filter($args), Hash::filter($named));
 		foreach (self::$_prefixes as $prefix) {
 			if (!empty($url[$prefix])) {
 				$url['action'] = str_replace($prefix . '_', '', $url['action']);
@@ -924,7 +924,7 @@ class Router {
 		if (!empty($named)) {
 			foreach ($named as $name => $value) {
 				if (is_array($value)) {
-					$flattend = Set::flatten($value, '][');
+					$flattend = Hash::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {
 						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
 					}

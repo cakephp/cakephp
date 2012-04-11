@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Hash', 'Utility');
 
 /**
  * This component is used to handle automatic model data pagination.  The primary way to use this
@@ -194,7 +195,7 @@ class PaginatorComponent extends Component {
 			'pageCount' => $pageCount,
 			'order' => $order,
 			'limit' => $limit,
-			'options' => Set::diff($options, $defaults),
+			'options' => Hash::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);
 		if (!isset($this->Controller->request['paging'])) {

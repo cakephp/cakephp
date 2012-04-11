@@ -321,7 +321,7 @@ class ContainableBehavior extends ModelBehavior {
 					$key = $option;
 					$optionKey = true;
 					if (!empty($newChildren)) {
-						$children = Set::merge($children, $newChildren);
+						$children = Hash::merge($children, $newChildren);
 					}
 				}
 				if ($optionKey && isset($children[$key])) {

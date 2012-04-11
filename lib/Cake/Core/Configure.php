@@ -13,8 +13,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 App::uses('ConfigReaderInterface', 'Configure');
+/**
+ * Compatibility with 2.1, which expects Configure to load Set.
+ */
+App::uses('Set', 'Utility');
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -127,12 +131,7 @@ class Configure {
 		}
 
 		foreach ($config as $name => $value) {
-			$pointer = &self::$_values;
-			foreach (explode('.', $name) as $key) {
-				$pointer = &$pointer[$key];
-			}
-			$pointer = $value;
-			unset($pointer);
+			self::$_values = Hash::insert(self::$_values, $name, $value);
 		}
 
 		if (isset($config['debug']) && function_exists('ini_set')) {
@@ -163,18 +162,7 @@ class Configure {
 		if ($var === null) {
 			return self::$_values;
 		}
-		if (isset(self::$_values[$var])) {
-			return self::$_values[$var];
-		}
-		$pointer = &self::$_values;
-		foreach (explode('.', $var) as $key) {
-			if (isset($pointer[$key])) {
-				$pointer = &$pointer[$key];
-			} else {
-				return null;
-			}
-		}
-		return $pointer;
+		return Hash::get(self::$_values, $var);
 	}
 
 /**
@@ -193,11 +181,7 @@ class Configure {
 	public static function delete($var = null) {
 		$keys = explode('.', $var);
 		$last = array_pop($keys);
-		$pointer = &self::$_values;
-		foreach ($keys as $key) {
-			$pointer = &$pointer[$key];
-		}
-		unset($pointer[$last]);
+		self::$_values = Hash::remove(self::$_values, $var);
 	}
 
 /**
@@ -286,7 +270,7 @@ class Configure {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
 				if (($c = self::read($key)) && is_array($values[$key]) && is_array($c)) {
-					$values[$key] = Set::merge($c, $values[$key]);
+					$values[$key] = Hash::merge($c, $values[$key]);
 				}
 			}
 		}

@@ -617,7 +617,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 2');
 
 		$log = $this->testDb->getLog(false, false);
-		$result = Set::extract($log['log'], '/query');
+		$result = Hash::extract($log['log'], '{n}.query');
 		$expected = array('Query 1', 'Query 2');
 		$this->assertEquals($expected, $result);
 
@@ -900,4 +900,5 @@ class DboSourceTest extends CakeTestCase {
 		$result = $db->buildJoinStatement($join);
 		$this->assertEquals($expected, $result);
 	}
+
 }

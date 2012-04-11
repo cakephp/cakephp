@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AclInterface', 'Controller/Component/Acl');
+App::uses('Hash', 'Utility');
 
 /**
  * DbAcl implements an ACL control system in the database.  ARO's and ACO's are

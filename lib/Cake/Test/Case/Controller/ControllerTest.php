@@ -104,7 +104,7 @@ class ControllerPost extends CakeTestModel {
 	public function find($type = 'first', $options = array()) {
 		if ($type == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
-			$options = Set::merge($options, compact('conditions'));
+			$options = Hash::merge($options, compact('conditions'));
 			return parent::find('all', $options);
 		}
 		return parent::find($type, $options);
@@ -900,7 +900,7 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertEquals(0, count(array_diff_key($TestController->helpers, array_flip($helpers))));
 		$this->assertEquals(0, count(array_diff($TestController->uses, $uses)));
-		$this->assertEquals(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
+		$this->assertEquals(count(array_diff_assoc(Hash::normalize($TestController->components), Hash::normalize($components))), 0);
 
 		$expected = array('ControllerComment', 'ControllerAlias', 'ControllerPost');
 		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
@@ -1277,7 +1277,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
 		$this->assertEquals($expected, $Controller->paginate);
 
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$results = Hash::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEquals(array(1, 2, 3), $results);
 
 		$Controller->passedArgs = array();

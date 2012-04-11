@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AclNode', 'Model');
+App::uses('Hash', 'Utility');
 
 /**
  * ACL behavior
@@ -131,7 +132,7 @@ class AclBehavior extends ModelBehavior {
 			$types = array($types);
 		}
 		foreach ($types as $type) {
-			$node = Set::extract($this->node($model, null, $type), "0.{$type}.id");
+			$node = Hash::extract($this->node($model, null, $type), "0.{$type}.id");
 			if (!empty($node)) {
 				$model->{$type}->delete($node);
 			}

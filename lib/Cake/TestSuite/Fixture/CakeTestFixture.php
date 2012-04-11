@@ -142,7 +142,7 @@ class CakeTestFixture {
 				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
 
 				if ($records !== false && !empty($records)) {
-					$this->records = Set::extract($records, '{n}.' . $model->alias);
+					$this->records = Hash::extract($records, '{n}.' . $model->alias);
 				}
 			}
 		}
