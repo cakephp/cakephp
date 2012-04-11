@@ -972,12 +972,21 @@ class HttpSocketTest extends CakeTestCase {
 			->method('request')
 			->with(array('method' => 'GET', 'uri' => 'https://secure.example.com/test.php?one=two'));
 
+		$this->RequestSocket->expects($this->at(6))
+			->method('request')
+			->with(array('method' => 'GET', 'uri' => 'https://example.com/oauth/access?clientid=123&redirect_uri=http%3A%2F%2Fexample.com&code=456'));
+
 		$this->RequestSocket->get('http://www.google.com/');
 		$this->RequestSocket->get('http://www.google.com/', array('foo' => 'bar'));
 		$this->RequestSocket->get('http://www.google.com/', 'foo=bar');
 		$this->RequestSocket->get('http://www.google.com/?foo=bar', array('foobar' => '42', 'foo' => '23'));
 		$this->RequestSocket->get('http://www.google.com/', null, array('version' => '1.0'));
 		$this->RequestSocket->get('https://secure.example.com/test.php', array('one' => 'two'));
+		$this->RequestSocket->get('https://example.com/oauth/access', array(
+			'clientid' => '123',
+			'redirect_uri' => 'http://example.com',
+			'code' => 456
+		));
 	}
 
 /**
