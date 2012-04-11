@@ -418,6 +418,7 @@ class CakeTimeTest extends CakeTestCase {
 				$yourTime = new DateTime('now', $yourTimezone);
 				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
 				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));
+				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $timezone));
 			}
 		}
 	}
@@ -623,6 +624,12 @@ class CakeTimeTest extends CakeTestCase {
 		$expected = time();
 		$result = $this->Time->fromString(time(), $yourTimezone);
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Time->fromString(time(), $timezoneServer->getName());
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Time->fromString(time(), $timezoneServer);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -642,6 +649,11 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$timezone = date('Z', time());
+		$result = $this->Time->fromString('+1 hour', $timezone);
+		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
+		$this->assertEquals($expected, $result);
+
+		$timezone = date_default_timezone_get();
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
 		$this->assertEquals($expected, $result);

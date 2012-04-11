@@ -137,12 +137,12 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::convert()
  *
  * @param string $serverTime UNIX timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return integer UNIX timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function convert($serverTime, $userOffset) {
-		return $this->_engine->convert($serverTime, $userOffset);
+	public function convert($serverTime, $timezone) {
+		return $this->_engine->convert($serverTime, $timezone);
 	}
 
 /**
@@ -159,37 +159,37 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::fromString()
  *
  * @param string $dateString Datetime string
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Parsed timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function fromString($dateString, $userOffset = null) {
-		return $this->_engine->fromString($dateString, $userOffset);
+	public function fromString($dateString, $timezone = null) {
+		return $this->_engine->fromString($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::nice()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function nice($dateString = null, $userOffset = null, $format = null) {
-		return $this->_engine->nice($dateString, $userOffset, $format);
+	public function nice($dateString = null, $timezone = null, $format = null) {
+		return $this->_engine->nice($dateString, $timezone, $format);
 	}
 
 /**
  * @see CakeTime::niceShort()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Described, relative date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function niceShort($dateString = null, $userOffset = null) {
-		return $this->_engine->niceShort($dateString, $userOffset);
+	public function niceShort($dateString = null, $timezone = null) {
+		return $this->_engine->niceShort($dateString, $timezone);
 	}
 
 /**
@@ -198,12 +198,12 @@ class TimeHelper extends AppHelper {
  * @param string $begin Datetime string or Unix timestamp
  * @param string $end Datetime string or Unix timestamp
  * @param string $fieldName Name of database field to compare with
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Partial SQL string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
-		return $this->_engine->daysAsSql($begin, $end, $fieldName, $userOffset);
+	public function daysAsSql($begin, $end, $fieldName, $timezone = null) {
+		return $this->_engine->daysAsSql($begin, $end, $fieldName, $timezone);
 	}
 
 /**
@@ -211,85 +211,85 @@ class TimeHelper extends AppHelper {
  *
  * @param string $dateString Datetime string or Unix timestamp
  * @param string $fieldName Name of database field to compare with
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Partial SQL string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
-		return $this->_engine->dayAsSql($dateString, $fieldName, $userOffset);
+	public function dayAsSql($dateString, $fieldName, $timezone = null) {
+		return $this->_engine->dayAsSql($dateString, $fieldName, $timezone);
 	}
 
 /**
  * @see CakeTime::isToday()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean True if datetime string is today
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isToday($dateString, $userOffset = null) {
-		return $this->_engine->isToday($dateString, $userOffset);
+	public function isToday($dateString, $timezone = null) {
+		return $this->_engine->isToday($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::isThisWeek()
  *
  * @param string $dateString
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean True if datetime string is within current week
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isThisWeek($dateString, $userOffset = null) {
-		return $this->_engine->isThisWeek($dateString, $userOffset);
+	public function isThisWeek($dateString, $timezone = null) {
+		return $this->_engine->isThisWeek($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::isThisMonth()
  *
  * @param string $dateString
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean True if datetime string is within current month
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isThisMonth($dateString, $userOffset = null) {
-		return $this->_engine->isThisMonth($dateString, $userOffset);
+	public function isThisMonth($dateString, $timezone = null) {
+		return $this->_engine->isThisMonth($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::isThisYear()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean True if datetime string is within current year
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isThisYear($dateString, $userOffset = null) {
-		return $this->_engine->isThisYear($dateString, $userOffset);
+	public function isThisYear($dateString, $timezone = null) {
+		return $this->_engine->isThisYear($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::wasYesterday()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean True if datetime string was yesterday
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  *
  */
-	public function wasYesterday($dateString, $userOffset = null) {
-		return $this->_engine->wasYesterday($dateString, $userOffset);
+	public function wasYesterday($dateString, $timezone = null) {
+		return $this->_engine->wasYesterday($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::isTomorrow()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean True if datetime string was yesterday
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function isTomorrow($dateString, $userOffset = null) {
-		return $this->_engine->isTomorrow($dateString, $userOffset);
+	public function isTomorrow($dateString, $timezone = null) {
+		return $this->_engine->isTomorrow($dateString, $timezone);
 	}
 
 /**
@@ -308,36 +308,36 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::toUnix()
  *
  * @param string $dateString Datetime string to be represented as a Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return integer Unix timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toUnix($dateString, $userOffset = null) {
-		return $this->_engine->toUnix($dateString, $userOffset);
+	public function toUnix($dateString, $timezone = null) {
+		return $this->_engine->toUnix($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::toAtom()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toAtom($dateString, $userOffset = null) {
-		return $this->_engine->toAtom($dateString, $userOffset);
+	public function toAtom($dateString, $timezone = null) {
+		return $this->_engine->toAtom($dateString, $timezone);
 	}
 
 /**
  * @see CakeTime::toRSS()
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function toRSS($dateString, $userOffset = null) {
-		return $this->_engine->toRSS($dateString, $userOffset);
+	public function toRSS($dateString, $timezone = null) {
+		return $this->_engine->toRSS($dateString, $timezone);
 	}
 
 /**
@@ -358,12 +358,12 @@ class TimeHelper extends AppHelper {
  * @param mixed $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
  * @param mixed $dateString the datestring or unix timestamp to compare
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
-	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
-		return $this->_engine->wasWithinLast($timeInterval, $dateString, $userOffset);
+	public function wasWithinLast($timeInterval, $dateString, $timezone = null) {
+		return $this->_engine->wasWithinLast($timeInterval, $dateString, $timezone);
 	}
 
 /**
@@ -383,12 +383,12 @@ class TimeHelper extends AppHelper {
  * @param string $format date format string (or a DateTime string)
  * @param string $date Datetime string (or a date format string)
  * @param boolean $invalid flag to ignore results of fromString == false
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function format($format, $date = null, $invalid = false, $userOffset = null) {
-		return $this->_engine->format($format, $date, $invalid, $userOffset);
+	public function format($format, $date = null, $invalid = false, $timezone = null) {
+		return $this->_engine->format($format, $date, $invalid, $timezone);
 	}
 
 /**
@@ -397,12 +397,12 @@ class TimeHelper extends AppHelper {
  * @param string $date Datetime string
  * @param string $format strftime format string.
  * @param boolean $invalid flag to ignore results of fromString == false
- * @param integer $userOffset User's offset from GMT (in hours)
+ * @param mixed $timezone User's timezone string or DateTimeZone object
  * @return string Formatted and translated date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
-		return $this->_engine->i18nFormat($date, $format, $invalid, $userOffset);
+	public function i18nFormat($date, $format = null, $invalid = false, $timezone = null) {
+		return $this->_engine->i18nFormat($date, $format, $invalid, $timezone);
 	}
 
 }
