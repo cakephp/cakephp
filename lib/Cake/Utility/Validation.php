@@ -527,9 +527,10 @@ class Validation {
  *
  * @param mixed $check Value to check
  * @param mixed $options Options for the check.
+ * @param boolean $strict Defaults to true, set to false to disable strict type check
  * @return boolean Success
  */
-	public static function multiple($check, $options = array()) {
+	public static function multiple($check, $options = array(), $strict = true) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options = array_merge($defaults, $options);
 		$check = array_filter((array)$check);
@@ -544,7 +545,7 @@ class Validation {
 		}
 		if ($options['in'] && is_array($options['in'])) {
 			foreach ($check as $val) {
-				if (!in_array($val, $options['in'], true)) {
+				if (!in_array($val, $options['in'], $strict)) {
 					return false;
 				}
 			}
@@ -716,10 +717,11 @@ class Validation {
  *
  * @param string $check Value to check
  * @param array $list List to check against
+ * @param boolean $strict Defaults to true, set to false to disable strict type check
  * @return boolean Success
  */
-	public static function inList($check, $list) {
-		return in_array($check, $list, true);
+	public static function inList($check, $list, $strict = true) {
+		return in_array($check, $list, $strict);
 	}
 
 /**

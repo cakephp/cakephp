@@ -1822,6 +1822,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::inList('three', array('one', 'two')));
 		$this->assertFalse(Validation::inList('1one', array(0, 1, 2, 3)));
 		$this->assertFalse(Validation::inList('one', array(0, 1, 2, 3)));
+		$this->assertFalse(Validation::inList('2', array(1, 2, 3)));
+		$this->assertTrue(Validation::inList('2', array(1, 2, 3), false));
 	}
 
 /**
@@ -1932,6 +1934,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::multiple(array('foo', 'bar', 'baz', 'squirrel'), array('min' => 10)));
 
 		$this->assertTrue(Validation::multiple(array(0, 5, 9), array('in' => range(0, 10), 'max' => 5)));
+		$this->assertFalse(Validation::multiple(array('0', '5', '9'), array('in' => range(0, 10), 'max' => 5)));
+		$this->assertTrue(Validation::multiple(array('0', '5', '9'), array('in' => range(0, 10), 'max' => 5), false));
 		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 6, 2, 1), array('in' => range(0, 10), 'max' => 5)));
 		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 11), array('in' => range(0, 10), 'max' => 5)));
 
