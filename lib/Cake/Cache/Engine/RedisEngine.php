@@ -77,9 +77,9 @@ class RedisEngine extends CacheEngine {
 		try {
 			$this->_Redis = new Redis();
 			if (empty($this->settings['persistent'])) {
-				$return  = $this->_Redis->connect($this->settings['server']);
+				$return = $this->_Redis->connect($this->settings['server']);
 			} else {
-				$return  = $this->_Redis->pconnect($this->settings['server']);
+				$return = $this->_Redis->pconnect($this->settings['server']);
 			}
 		} catch (RedisException $e) {
 			return false;
@@ -114,7 +114,7 @@ class RedisEngine extends CacheEngine {
  */
 	public function read($key) {
 		$value = $this->_Redis->get($key);
-		if (is_numeric($value)) {
+		if (ctype_digit($value)) {
 			$value = (int) $value;
 		}
 		if ($value !== false && is_string($value)) {
