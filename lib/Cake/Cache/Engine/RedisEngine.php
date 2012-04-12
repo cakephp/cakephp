@@ -200,7 +200,7 @@ class RedisEngine extends CacheEngine {
  * @return boolean success
  **/
 	public function clearGroup($group) {
-		return (bool) $this->_Redis->incr($this->settings['prefix'] . $group);
+		return (bool)$this->_Redis->incr($this->settings['prefix'] . $group);
 	}
 
 /**
