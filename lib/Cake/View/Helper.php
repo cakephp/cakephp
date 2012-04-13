@@ -139,6 +139,19 @@ class Helper extends Object {
 		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
 		'autoplay', 'controls', 'loop', 'muted'
 	);
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_attributeFormat = '%s="%s"';
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s="%s"';
 
 /**
  * Default Constructor
