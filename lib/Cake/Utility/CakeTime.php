@@ -243,6 +243,10 @@ class CakeTime {
 			$date = strtotime($dateString);
 		}
 
+		if ($timezone === null) {
+			$timezone = Configure::read('Config.timezone');
+		}
+
 		if ($timezone !== null) {
 			return self::convert($date, $timezone);
 		}

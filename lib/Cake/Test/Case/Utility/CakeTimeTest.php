@@ -630,6 +630,11 @@ class CakeTimeTest extends CakeTestCase {
 
 		$result = $this->Time->fromString(time(), $timezoneServer);
 		$this->assertEquals($expected, $result);
+
+		Configure::write('Config.timezone', $timezoneServer->getName());
+		$result = $this->Time->fromString(time());
+		$this->assertEquals($expected, $result);
+		Configure::delete('Config.timezone');
 	}
 
 /**
