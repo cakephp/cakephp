@@ -39,6 +39,8 @@ class CakeRequest implements ArrayAccess {
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
+		'named' => array(),
+		'pass' => array(),
 	);
 
 /**
