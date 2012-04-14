@@ -70,6 +70,15 @@ class DboSource extends DataSource {
 	public $cacheMethods = true;
 
 /**
+ * Flag to support nested transactions. If it is set to false, you will be able to use
+ * the transaction methods (begin/commit/rollback), but just the global transaction will
+ * be executed.
+ *
+ * @var boolean
+ */
+	public $nestedTransaction = true;
+
+/**
  * Print full query debug info?
  *
  * @var boolean
