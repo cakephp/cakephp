@@ -517,3 +517,30 @@ class XmlException extends CakeException {
  */
 class ConsoleException extends CakeException {
 }
+
+/**
+ * Represents a fatal error
+ *
+ * @package       Cake.Error
+ */
+class FatalErrorException extends CakeException {
+
+/**
+ * Constructor
+ *
+ * @param string $message
+ * @param integer $code
+ * @param string $file
+ * @param integer $line
+ */
+	public function __construct($message, $code = 500, $file = null, $line = null) {
+		parent::__construct($message, $code);
+		if ($file) {
+			$this->file = $file;
+		}
+		if ($line) {
+			$this->line = $line;
+		}
+	}
+
+}
