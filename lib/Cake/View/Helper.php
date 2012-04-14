@@ -139,6 +139,7 @@ class Helper extends Object {
 		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
 		'autoplay', 'controls', 'loop', 'muted'
 	);
+
 /**
  * Format to attribute
  *
