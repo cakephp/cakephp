@@ -1319,7 +1319,9 @@ class Model extends Object implements CakeEventListener {
 		$cols = $this->schema();
 		$model = null;
 
-		$column = str_replace(array($db->startQuote, $db->endQuote), '', $column);
+		$startQuote = isset($db->startQuote) ? $db->startQuote : null;
+		$endQuote = isset($db->endQuote) ? $db->endQuote : null;
+		$column = str_replace(array($startQuote, $endQuote), '', $column);
 
 		if (strpos($column, '.')) {
 			list($model, $column) = explode('.', $column);
