@@ -999,13 +999,12 @@ class ViewTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGetViewFileNameSubdirWithPluginAndViewPath()
-	{
+	public function testGetViewFileNameSubdirWithPluginAndViewPath() {
 		$this->PostsController->plugin = 'TestPlugin';
 		$this->PostsController->viewPath = 'Elements';
 		$this->PostsController->name = 'Posts';
 		$View = new TestView($this->PostsController);
-		
+
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' .
 			DS . 'View' . DS . 'Elements' . DS . 'sub_dir' . DS . 'sub_element.ctp';
 		$this->assertEquals($expected, $View->getViewFileName('sub_dir/sub_element'));
