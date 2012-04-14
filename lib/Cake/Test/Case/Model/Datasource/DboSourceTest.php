@@ -865,12 +865,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn->expects($this->at(4))->method('exec')->with($this->equalTo('ROLLBACK TO SAVEPOINT LEVEL1'))->will($this->returnValue(true));
 		$conn->expects($this->at(5))->method('commit')->will($this->returnValue(true));
 
-		$db->begin();
-		$db->begin();
-		$db->commit();
-		$db->begin();
-		$db->rollback();
-		$db->commit();
+		$this->_runTransactions($db);
 	}
 
 /**
@@ -889,12 +884,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn->expects($this->never())->method('exec');
 		$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
 
-		$db->begin();
-		$db->begin();
-		$db->commit();
-		$db->begin();
-		$db->rollback();
-		$db->commit();
+		$this->_runTransactions($db);
 	}
 
 /**
@@ -912,6 +902,16 @@ class DboSourceTest extends CakeTestCase {
 		$conn->expects($this->never())->method('exec');
 		$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
 
+		$this->_runTransactions($db);
+	}
+
+/**
+ * Nested transaction calls
+ *
+ * @param DboTestSource $db
+ * @return void
+ */
+	protected function _runTransactions($db) {
 		$db->begin();
 		$db->begin();
 		$db->commit();
