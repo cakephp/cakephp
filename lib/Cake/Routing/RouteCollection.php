@@ -53,7 +53,7 @@ class RouteCollection {
 				return $this->_matchRoutes($this->_routeTable[$name], $url, $requestContext);
 			}
 		}
-		throw new Cake\Error\Exception('Could not find matching route for "%s"', var_export($url, true));
+		return $this->_matchRoutes($this->_routes, $url, $requestContext);
 	}
 
 /**
