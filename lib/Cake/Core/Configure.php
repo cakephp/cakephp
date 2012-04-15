@@ -327,6 +327,15 @@ class Configure {
 	}
 
 /**
+ * Clear all values stored in Configure.
+ *
+ * @return boolean success.
+ */
+	public static function clear() {
+		self::$_values = array();
+		return true;
+	}
+/**
  * Set the error and exception handlers.
  * 
  * @param array $error The Error handling configuration.

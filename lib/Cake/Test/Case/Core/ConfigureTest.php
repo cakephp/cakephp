@@ -354,4 +354,15 @@ class ConfigureTest extends CakeTestCase {
 		Configure::config('test', $reader);
 	}
 
+/**
+ * Test that clear wipes all values.
+ *
+ * @return void
+ */
+	public function testClear() {
+		Configure::write('test', 'value');
+		$this->assertTrue(Configure::clear());
+		$this->assertNull(Configure::read('debug'));
+		$this->assertNull(Configure::read('test'));
+	}
 }
