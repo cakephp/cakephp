@@ -194,9 +194,6 @@ class Route {
 		if (!empty($this->_name)) {
 			return $this->_name;
 		}
-		if (!$this->compiled()) {
-			$this->compile();
-		}
 		$name = '';
 		if (isset($this->defaults['plugin'])) {
 			$name .= strtolower($this->defaults['plugin']) . '.';
@@ -206,7 +203,8 @@ class Route {
 			if (isset($this->defaults[$key])) {
 				$parts[] = $this->defaults[$key];
 			}
-			if (in_array($key, $this->keys, true)) {
+			$var = ':' . $key;
+			if (strpos($this->template, $var) !== false) {
 				$parts[] = '_' . $key;
 			}
 		}
