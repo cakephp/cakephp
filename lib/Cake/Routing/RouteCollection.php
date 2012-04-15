@@ -5,9 +5,21 @@ use Cake\Routing\Route\Route;
 
 class RouteCollection {
 
-	protected $_routes = array();
-
+/**
+ * A hash table of routes indexed by route names.
+ * Used for reverse routing.
+ *
+ * @var array
+ */
 	protected $_routeTable = array();
+
+/**
+ * A list of routes connected, in the order they were connected.
+ * Used for parsing incoming urls.
+ *
+ * @var array
+ */
+	protected $_routes = array();
 
 /**
  * Add a route to the collection.
@@ -30,29 +42,36 @@ class RouteCollection {
  * Returns either the string URL generate by the route, or false on failure.
  *
  * @param array $url The url to match.
- * @param array $params The current request parameters, used for persistent parameters.
+ * @param array $requestContext The current request parameters, used for persistent parameters.
  * @return void
  * @TODO Remove persistent params?  Are they even useful?
  */
-	public function match($url, $params = null) {
+	public function match($url, $requestContext = null) {
 		$names = $this->_getNames($url);
 		foreach ($names as $name) {
 			if (isset($this->_routeTable[$name])) {
-				$routes = $this->_routeTable[$name];
-				return $this->_matchRoutes($routes, $url, $params);
+				return $this->_matchRoutes($this->_routeTable[$name], $url, $requestContext);
 			}
 		}
-		return $this->_matchRoutes($this->_routes, $url, $params);
+		throw new Cake\Error\Exception('Could not find matching route for "%s"', var_export($url, true));
 	}
 
-	protected function _matchRoutes($routes, $url, $params) {
+/**
+ * Matches a set of routes with a given $url and $params
+ *
+ * @param array $routes An array of routes to match against.
+ * @param array $url The url to match.
+ * @param array $requestContext The current request parameters, used for persistent parameters.
+ * @return mixed Either false on failure, or a string on success.
+ */
+	protected function _matchRoutes($routes, $url, $requestContext) {
 		$output = false;
 		for ($i = 0, $len = count($routes); $i < $len; $i++) {
 			$originalUrl = $url;
 			$route =& $routes[$i];
 
-			if (isset($route->options['persist'], $params)) {
-				$url = $route->persistParams($url, $params);
+			if (isset($route->options['persist'], $requestContext)) {
+				$url = $route->persistParams($url, $requestContext);
 			}
 
 			if ($match = $route->match($url)) {
