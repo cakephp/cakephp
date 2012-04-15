@@ -27,6 +27,9 @@ App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
 App::uses('View', 'View');
 App::uses('Debugger', 'Utility');
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventManager', 'Event');
+App::uses('CakeEventListener', 'Event');
 
 /**
  * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
@@ -35,7 +38,9 @@ App::uses('Debugger', 'Utility');
  *
  * @package       Cake.Routing
  */
-class Dispatcher {
+class Dispatcher implements CakeEventListener {
+
+	protected $_eventManager;
 
 /**
  * Constructor.
@@ -46,6 +51,25 @@ class Dispatcher {
 		if ($base !== false) {
 			Configure::write('App.base', $base);
 		}
+	}
+
+	public function getEventManager() {
+		if (!$this->_eventManager) {
+			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager->attach($this);
+		}
+		return $this->_eventManager;
+	}
+
+
+	public function implementedEvents() {
+		return array(
+			'Dispatcher.before' => array(
+				array('callable' => array($this, 'asset')),
+				array('callable' => array($this, 'cached')),
+				array('callable' => array($this, 'parseParams')),
+			)
+		);
 	}
 
 /**
@@ -67,12 +91,16 @@ class Dispatcher {
  * @throws MissingControllerException When the controller is missing.
  */
 	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
-		if ($this->asset($request->url, $response) || $this->cached($request->here())) {
+		$beforeEvent = new CakeEvent('Dispatcher.before', $this, compact('request', 'response', 'additionalParams'));
+		$this->getEventManager()->dispatch($beforeEvent);
+
+		$request = $beforeEvent->data['request'];
+		if ($beforeEvent->result instanceof CakeResponse) {
+			$beforeEvent->result->send();
 			return;
 		}
 
 		Router::setRequestInfo($request);
-		$request = $this->parseParams($request, $additionalParams);
 		$controller = $this->_getController($request, $response);
 
 		if (!($controller instanceof Controller)) {
@@ -82,7 +110,14 @@ class Dispatcher {
 			));
 		}
 
-		return $this->_invoke($controller, $request, $response);
+		$response = $this->_invoke($controller, $request, $response);
+		if (isset($request->params['return'])) {
+			return $response->body();
+		}
+
+		$afterEvent = new CakeEvent('Dispatcher.after', $this, compact('request', 'response'));
+		$this->getEventManager()->dispatch($afterEvent);
+		$afterEvent->data['response']->send();
 	}
 
 /**
@@ -93,7 +128,7 @@ class Dispatcher {
  * @param Controller $controller Controller to invoke
  * @param CakeRequest $request The request object to invoke the controller for.
  * @param CakeResponse $response The response object to receive the output
- * @return void
+ * @return CakeResponse te resulting response object
  */
 	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
 		$controller->constructClasses();
@@ -113,22 +148,18 @@ class Dispatcher {
 		}
 		$controller->shutdownProcess();
 
-		if (isset($request->params['return'])) {
-			return $response->body();
-		}
-		$response->send();
+		return $response;
 	}
 
 /**
  * Applies Routing and additionalParameters to the request to be dispatched.
  * If Routes have not been loaded they will be loaded, and app/Config/routes.php will be run.
  *
- * @param CakeRequest $request CakeRequest object to mine for parameter information.
- * @param array $additionalParams An array of additional parameters to set to the request.
- *   Useful when Object::requestAction() is involved
- * @return CakeRequest The request object with routing params set.
+ * @param CakeEvent $event containing the request, response and additional params
+ * @return void
  */
-	public function parseParams(CakeRequest $request, $additionalParams = array()) {
+	public function parseParams($event) {
+		$request = $event->data['request'];
 		if (count(Router::$routes) == 0) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
@@ -138,10 +169,9 @@ class Dispatcher {
 		$params = Router::parse($request->url);
 		$request->addParams($params);
 
-		if (!empty($additionalParams)) {
-			$request->addParams($additionalParams);
+		if (!empty($event->data['additionalParams'])) {
+			$request->addParams($event->data['additionalParams']);
 		}
-		return $request;
 	}
 
 /**
@@ -200,12 +230,13 @@ class Dispatcher {
 	}
 
 /**
- * Outputs cached dispatch view cache
+ * Checks whether the response was cached and set the body accordingly.
  *
- * @param string $path Requested URL path with any query string parameters
- * @return string|boolean False if is not cached or output
+ * @param CakeEvent $event containing the request and response object
+ * @return CakeResponse with cached content if found, null otherwise
  */
-	public function cached($path) {
+	public function cached($event) {
+		$path = $event->data['request']->here();
 		if (Configure::read('Cache.check') === true) {
 			if ($path == '/') {
 				$path = 'home';
@@ -220,23 +251,29 @@ class Dispatcher {
 			if (file_exists($filename)) {
 				$controller = null;
 				$view = new View($controller);
-				return $view->renderCache($filename, microtime(true));
+				$result = $view->renderCache($filename, microtime(true));
+				if ($result !== false) {
+					$event->data['response']->body($result);
+					return $event->data['response'];
+				}
 			}
 		}
-		return false;
 	}
 
 /**
  * Checks if a requested asset exists and sends it to the browser
  *
- * @param string $url Requested URL
- * @param CakeResponse $response The response object to put the file contents in.
- * @return boolean True on success if the asset file was found and sent
+ * @param CakeEvent $event containing the request and response object
+ * @return CakeResponse if the client is requesting a recognized asset, null otherwise
  */
-	public function asset($url, CakeResponse $response) {
+	public function asset($event) {
+		$url = $event->data['request']->url;
+		$response = $event->data['response'];
+
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
-			return false;
+			return;
 		}
+
 		$filters = Configure::read('Asset.filter');
 		$isCss = (
 			strpos($url, 'ccss/') === 0 ||
@@ -246,17 +283,21 @@ class Dispatcher {
 			strpos($url, 'cjs/') === 0 ||
 			preg_match('#^/((theme/[^/]+)/cjs/)|(([^/]+)(?<!js)/cjs)/#i', $url)
 		);
+
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
 			$response->statusCode(404);
-			$response->send();
-			return true;
+			$event->stopPropagation();
+			return $response;
 		} elseif ($isCss) {
 			include WWW_ROOT . DS . $filters['css'];
-			return true;
+			$event->stopPropagation();
+			return $response;
 		} elseif ($isJs) {
 			include WWW_ROOT . DS . $filters['js'];
-			return true;
+			$event->stopPropagation();
+			return $response;
 		}
+
 		$pathSegments = explode('.', $url);
 		$ext = array_pop($pathSegments);
 		$parts = explode('/', $url);
@@ -283,10 +324,10 @@ class Dispatcher {
 		}
 
 		if ($assetFile !== null) {
+			$event->stopPropagation();
 			$this->_deliverAsset($response, $assetFile, $ext);
-			return true;
+			return $response;
 		}
-		return false;
 	}
 
 /**

@@ -557,8 +557,7 @@ class View extends Object {
 					header('Content-type: text/xml');
 				}
 				$commentLength = strlen('<!--cachetime:' . $match['1'] . '-->');
-				echo substr($out, $commentLength);
-				return true;
+				return substr($out, $commentLength);
 			}
 		}
 	}
