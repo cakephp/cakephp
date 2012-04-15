@@ -97,14 +97,14 @@ class RedirectRouteTest extends  TestCase {
 		$route = new RedirectRoute('/my_controllers/:action/*', array('controller' => 'tags', 'action' => 'add'), array('persist' => true));
 		$route->stop = false;
 		$route->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		$result = $route->parse('/my_controllers/do_something/passme/named:param');
+		$result = $route->parse('/my_controllers/do_something/passme');
 		$header = $route->response->header();
-		$this->assertEquals(Router::url('/tags/add/passme/named:param', true), $header['Location']);
+		$this->assertEquals(Router::url('/tags/add/passme', true), $header['Location']);
 
 		$route = new RedirectRoute('/my_controllers/:action/*', array('controller' => 'tags', 'action' => 'add'));
 		$route->stop = false;
 		$route->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		$result = $route->parse('/my_controllers/do_something/passme/named:param');
+		$result = $route->parse('/my_controllers/do_something/passme');
 		$header = $route->response->header();
 		$this->assertEquals(Router::url('/tags/add', true), $header['Location']);
 	}

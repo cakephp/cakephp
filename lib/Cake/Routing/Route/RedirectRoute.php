@@ -80,7 +80,7 @@ class RedirectRoute extends Route {
 			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
-			$redirect += array('named' => $params['named'], 'pass' => $params['pass'], 'url' => array());
+			$redirect += array('pass' => $params['pass'], 'url' => array());
 			$redirect = Router::reverse($redirect);
 		}
 		$status = 301;
