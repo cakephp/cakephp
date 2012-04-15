@@ -40,6 +40,11 @@ App::uses('CakeEventListener', 'Event');
  */
 class Dispatcher implements CakeEventListener {
 
+/**
+ * Event manager, used to handle dispatcher filters
+ *
+ * @var CakeEventMaanger
+ **/
 	protected $_eventManager;
 
 /**
@@ -53,6 +58,12 @@ class Dispatcher implements CakeEventListener {
 		}
 	}
 
+/**
+ * Returns the CakeEventManager instance or creates one if none was
+ * creted. Attaches the default listeners and filters
+ *
+ * @return CakeEventmanger
+ **/
 	public function getEventManager() {
 		if (!$this->_eventManager) {
 			$this->_eventManager = new CakeEventManager();
@@ -61,7 +72,11 @@ class Dispatcher implements CakeEventListener {
 		return $this->_eventManager;
 	}
 
-
+/**
+ * Returns the list of events this object listents to.
+ *
+ * @return array
+ **/
 	public function implementedEvents() {
 		return array(
 			'Dispatcher.before' => array(
