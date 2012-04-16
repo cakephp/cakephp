@@ -5237,11 +5237,28 @@ class ModelWriteTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+		$TestModel->validate = $TestModel->Comment->validate = array('user_id' => array('notEmpty' => array('rule' => 'notEmpty', 'required' => true)));
+
+		//empty hasMany data is ignored in save
 		$result = $TestModel->saveAssociated(array(
-			'Article' => array('title' => 'title', 'author_id' => 1),
+			'Article' => array('title' => 'title', 'user_id' => 1),
 			'Comment' => array()
 		), array('validate' => true));
 		$this->assertTrue($result);
+
+		$result = $TestModel->saveAssociated(array(
+			'Article' => array('title' => 'title', 'user_id' => 1),
+			'Comment' => array()
+		), array('validate' => true, 'atomic' => false));
+		$this->assertEquals(array('Article' => true), $result);
+
+		//empty primary data is not ignored
+		$result = $TestModel->saveAssociated(array('Article' => array()), array('validate' => true));
+		$this->assertFalse($result);
+
+		$result = $TestModel->saveAssociated(array('Article' => array()), array('validate' => true, 'atomic' => false));
+		$this->assertEquals(array('Article' => false), $result);
+
 	}
 
 /**
