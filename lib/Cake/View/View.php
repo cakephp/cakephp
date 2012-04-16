@@ -648,7 +648,7 @@ class View extends Object {
 
 /**
  * Fetch the content for a block. If a block is
- * empty or undefined '' will be returnned.
+ * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
  * @return The block content or '' if the block does not exist.
