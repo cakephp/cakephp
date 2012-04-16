@@ -68,6 +68,7 @@ class Dispatcher implements CakeEventListener {
 		if (!$this->_eventManager) {
 			$this->_eventManager = new CakeEventManager();
 			$this->_eventManager->attach($this);
+			$this->_attachFilters($this->_eventManager);
 		}
 		return $this->_eventManager;
 	}
@@ -88,6 +89,41 @@ class Dispatcher implements CakeEventListener {
 	}
 
 /**
+ * Attaches all event listeners for this dispatcher instance. Loads the
+ * dispatcher filters from the configured locations.
+ *
+ * @param CakeEventManager $manager
+ * @return void
+ **/
+	protected function _attachFilters($manager) {
+		$filters = Configure::read('Dispatcher.filters');
+		if (empty($filters)) {
+			return;
+		}
+
+		foreach ($filters as $filter) {
+			if (is_string($filter)) {
+				$filter = array('callable' => $filter);
+			}
+			if (is_string($filter['callable'])) {
+				list($plugin, $callable) = pluginSplit($filter['callable'], true);
+				App::uses($callable, $plugin . 'Routing/Filter');
+				if (!class_exists($callable)) {
+					throw new MissingDispatcherFilterException($callable);
+				}
+				$manager->attach(new $callable);
+			} else {
+				$on = strtolower($filter['on']);
+				$options = array();
+				if (isset($filter['priority'])) {
+					$options['priority'] = $filter['priority'];
+				}
+				$manager->attach($filter['callable'], 'Dispatcher.' . $on, $options);
+			}
+		}
+	}
+
+/**
  * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
  * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
@@ -102,7 +138,7 @@ class Dispatcher implements CakeEventListener {
  * @param CakeRequest $request Request object to dispatch.
  * @param CakeResponse $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
- * @return boolean Success
+ * @return string|void if `$request['return']` is set then it returns response body, null otherwise
  * @throws MissingControllerException When the controller is missing.
  */
 	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
@@ -111,7 +147,10 @@ class Dispatcher implements CakeEventListener {
 
 		$request = $beforeEvent->data['request'];
 		if ($beforeEvent->result instanceof CakeResponse) {
-			$beforeEvent->result->send();
+			if (isset($request->params['return'])) {
+				return $response->body();
+			}
+			$response->send();
 			return;
 		}
 

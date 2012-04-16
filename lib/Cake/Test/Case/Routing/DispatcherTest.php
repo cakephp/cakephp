@@ -63,6 +63,27 @@ class TestDispatcher extends Dispatcher {
 		return parent::_invoke($controller, $request, $response);
 	}
 
+/**
+ * Helper function to test single method attaching for dispatcher filters
+ *
+ * @param CakeEvent
+ * @return void
+ **/
+	public function filterTest($event) {
+		$event->data['request']->params['eventName'] = $event->name();
+	}
+
+/**
+ * Helper function to test single method attaching for dispatcher filters
+ *
+ * @param CakeEvent
+ * @return void
+ **/
+	public function filterTest2($event) {
+		$event->stopPropagation();
+		return $event->data['response'];
+	}
+
 }
 
 /**
@@ -563,6 +584,7 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('App', $this->_app);
 		Configure::write('Cache', $this->_cache);
 		Configure::write('debug', $this->_debug);
+		Configure::write('Dispatcher.filters', array());
 	}
 
 /**
@@ -760,6 +782,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
+
 
 /**
  * testDispatch method
@@ -1165,6 +1188,129 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEquals('index', $Dispatcher->controller->params['action']);
 
 		App::build();
+	}
+
+/**
+ * Tests that it is possible to attach filter classes to the dispatch cycle
+ *
+ * @return void
+ **/
+	public function testDispatcherFilterSuscriber() {
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+
+		CakePlugin::load('TestPlugin');
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => 'TestPlugin.TestDispatcherFilter')
+		));
+		$dispatcher = new TestDispatcher();
+		$request = new CakeRequest('/');
+		$request->params['altered'] = false;
+		$response = $this->getMock('CakeResponse', array('send'));
+
+		$dispatcher->dispatch($request, $response);
+		$this->assertTrue($request->params['altered']);
+		$this->assertEquals(304, $response->statusCode());
+
+		Configure::write('Dispatcher.filters', array(
+			'TestPlugin.Test2DispatcherFilter',
+			'TestPlugin.TestDispatcherFilter'
+		));
+		$dispatcher = new TestDispatcher();
+		$request = new CakeRequest('/');
+		$request->params['altered'] = false;
+		$response = $this->getMock('CakeResponse', array('send'));
+
+		$dispatcher->dispatch($request, $response);
+		$this->assertFalse($request->params['altered']);
+		$this->assertEquals(500, $response->statusCode());
+		$this->assertNull($dispatcher->controller);
+	}
+
+/**
+ * Tests that attaching an inexistent class as filter will throw an exception
+ *
+ * @expectedException MissingDispatcherFilterException
+ * @return void
+ **/
+	public function testDispatcherFilterSuscriberMissing() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+
+		CakePlugin::load('TestPlugin');
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => 'TestPlugin.NotAFilter')
+		));
+		$dispatcher = new TestDispatcher();
+		$request = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$dispatcher->dispatch($request, $response);
+	}
+
+
+/**
+ * Tests it is possible to attach single callables as filters
+ *
+ * @return void
+ **/
+	public function testDispatcherFilterCallable() {
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		), App::RESET);
+
+		$dispatcher = new TestDispatcher();
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => array($dispatcher, 'filterTest'), 'on' => 'before')
+		));
+
+		$request = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$dispatcher->dispatch($request, $response);
+		$this->assertEquals('Dispatcher.before', $request->params['eventName']);
+
+		$dispatcher = new TestDispatcher();
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => array($dispatcher, 'filterTest'), 'on' => 'after')
+		));
+
+		$request = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$dispatcher->dispatch($request, $response);
+		$this->assertEquals('Dispatcher.after', $request->params['eventName']);
+
+		// Test that it is possible to skip the route connection process
+		$dispatcher = new TestDispatcher();
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => array($dispatcher, 'filterTest2'), 'on' => 'before', 'priority' => 1)
+		));
+
+		$request = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$dispatcher->dispatch($request, $response);
+		$this->assertEmpty($dispatcher->controller);
+		$this->assertEquals(array('controller' => null, 'action' => null, 'plugin' => null), $request->params);
+
+		$dispatcher = new TestDispatcher();
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => array($dispatcher, 'filterTest2'), 'on' => 'before', 'priority' => 1)
+		));
+
+		$request = new CakeRequest('/');
+		$request->params['return'] = true;
+		$response = $this->getMock('CakeResponse', array('send'));
+		$response->body('this is a body');
+		$result = $dispatcher->dispatch($request, $response);
+		$this->assertEquals('this is a body', $result);
+
+		$request = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$response->expects($this->once())->method('send');
+		$response->body('this is a body');
+		$result = $dispatcher->dispatch($request, $response);
+		$this->assertNull($result);
 	}
 
 /**
