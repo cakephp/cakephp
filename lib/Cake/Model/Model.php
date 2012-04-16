@@ -2036,6 +2036,9 @@ class Model extends Object implements CakeEventListener {
 
 		if (empty($data) && $options['validate'] !== false) {
 			$result = $this->save($data, $options);
+			if (!$options['atomic']) {
+				return array(!empty($result));
+			}
 			return !empty($result);
 		}
 
@@ -2167,6 +2170,9 @@ class Model extends Object implements CakeEventListener {
 
 		if (empty($data) && $options['validate'] !== false) {
 			$result = $this->save($data, $options);
+			if (!$options['atomic']) {
+				return array(!empty($result));
+			}
 			return !empty($result);
 		}
 

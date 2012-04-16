@@ -5229,6 +5229,22 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testSaveAssociatedHasManyEmpty method
+ *
+ * @return void
+ */
+	public function testSaveAssociatedHasManyEmpty() {
+		$this->loadFixtures('Article', 'Comment');
+		$TestModel = new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+		$result = $TestModel->saveAssociated(array(
+			'Article' => array('title' => 'title', 'author_id' => 1),
+			'Comment' => array()
+		), array('validate' => true));
+		$this->assertTrue($result);
+	}
+
+/**
  * testSaveAssociatedHasManyValidation method
  *
  * @return void
