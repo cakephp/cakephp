@@ -174,10 +174,10 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
-		parent::tearDown();
 	}
 
 /**

@@ -425,9 +425,8 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		CakePlugin::unload();
-		App::build();
 		parent::tearDown();
+		CakePlugin::unload();
 	}
 
 /**

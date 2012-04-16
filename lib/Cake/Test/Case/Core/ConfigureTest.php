@@ -33,9 +33,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->_cacheDisable = Configure::read('Cache.disable');
-		$this->_debug = Configure::read('debug');
-
+		parent::setUp();
 		Configure::write('Cache.disable', true);
 		App::build();
 		App::objects('plugin', null, true);
@@ -47,6 +45,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
 		}
@@ -65,8 +64,6 @@ class ConfigureTest extends CakeTestCase {
 		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'test.php')) {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.php');
 		}
-		Configure::write('debug', $this->_debug);
-		Configure::write('Cache.disable', $this->_cacheDisable);
 		Configure::drop('test');
 	}
 

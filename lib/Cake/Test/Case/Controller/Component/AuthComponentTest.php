@@ -306,9 +306,6 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_server = $_SERVER;
-		$this->_env = $_ENV;
-
 		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('Security.cipherSeed', 770011223369876);
 
@@ -339,8 +336,6 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		$_SERVER = $this->_server;
-		$_ENV = $this->_env;
 
 		TestAuthComponent::clearUser();
 		$this->Auth->Session->delete('Auth');

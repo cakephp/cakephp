@@ -34,20 +34,10 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::build(array(
 			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		));
-		$this->_language = Configure::read('Config.language');
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		App::build();
-		Configure::write('Config.language', $this->_language);
 	}
 
 /**

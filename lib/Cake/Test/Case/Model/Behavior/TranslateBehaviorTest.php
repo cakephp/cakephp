@@ -50,15 +50,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 	);
 
 /**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		ClassRegistry::flush();
-	}
-
-/**
  * Test that count queries with conditions get the correct joins
  *
  * @return void

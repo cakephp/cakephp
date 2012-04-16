@@ -32,10 +32,10 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		if (!function_exists('xcache_set')) {
 			$this->markTestSkipped('Xcache is not installed or configured properly');
 		}
-		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('xcache', array('engine' => 'Xcache', 'prefix' => 'cake_'));
 	}
@@ -46,8 +46,8 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('Cache.disable', $this->_cacheDisable);
-		Cache::config('default');
+		parent::tearDown();
+		Cache::drop('xcache');
 	}
 
 /**

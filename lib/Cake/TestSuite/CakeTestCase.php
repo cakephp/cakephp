@@ -127,6 +127,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (empty($this->_configure)) {
 			$this->_configure = Configure::read();
 		}
+		if (empty($this->_configure['App'])) {
+			fwrite(STDERR, get_class($this) . '::' . $this->getName() . " did not have any configure vars\n");
+		}
 		if (empty($this->_pathRestore)) {
 			$this->_pathRestore = App::paths();
 		}
@@ -146,8 +149,10 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (class_exists('ClassRegistry', false)) {
 			ClassRegistry::flush();
 		}
-		Configure::clear();
-		Configure::write($this->_configure);
+		if (!empty($this->_configure)) {
+			Configure::clear();
+			Configure::write($this->_configure);
+		}
 		if (isset($_GET['debug']) && $_GET['debug']) {
 			ob_flush();
 		}

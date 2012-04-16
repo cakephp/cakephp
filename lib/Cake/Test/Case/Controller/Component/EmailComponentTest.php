@@ -148,13 +148,12 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->_appEncoding = Configure::read('App.encoding');
+		parent::setUp();
+
 		Configure::write('App.encoding', 'UTF-8');
 
 		$this->Controller = new EmailTestController();
-
 		$this->Controller->Components->init($this->Controller);
-
 		$this->Controller->EmailTest->initialize($this->Controller, array());
 
 		self::$sentDate = date(DATE_RFC2822);
@@ -162,17 +161,6 @@ class EmailComponentTest extends CakeTestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		Configure::write('App.encoding', $this->_appEncoding);
-		App::build();
-		ClassRegistry::flush();
 	}
 
 /**
