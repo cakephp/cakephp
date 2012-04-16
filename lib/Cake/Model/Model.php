@@ -2044,7 +2044,7 @@ class Model extends Object implements CakeEventListener {
 			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
 				return $validates;
 			}
-			$options['validate'] = true;
+			$options['validate'] = false;
 		}
 
 		if ($options['atomic']) {
@@ -2175,7 +2175,7 @@ class Model extends Object implements CakeEventListener {
 			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
 				return $validates;
 			}
-			$options['validate'] = true;
+			$options['validate'] = false;
 		}
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
