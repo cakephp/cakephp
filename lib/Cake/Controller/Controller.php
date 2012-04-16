@@ -614,7 +614,7 @@ class Controller extends Object implements CakeEventListener {
 	public function implementedEvents() {
 		return array(
 			'Controller.initialize' => 'beforeFilter',
-			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRender' => array('callable' => 'beforeRender', 'priority' => 1),
 			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
 			'Controller.shutdown' => 'afterFilter'
 		);
