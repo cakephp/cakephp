@@ -1269,7 +1269,7 @@ class DispatcherTest extends CakeTestCase {
 		$request = new CakeRequest('/');
 		$response = $this->getMock('CakeResponse', array('send'));
 		$dispatcher->dispatch($request, $response);
-		$this->assertEquals('Dispatcher.before', $request->params['eventName']);
+		$this->assertEquals('Dispatcher.beforeDispatch', $request->params['eventName']);
 
 		$dispatcher = new TestDispatcher();
 		Configure::write('Dispatcher.filters', array(
@@ -1279,7 +1279,7 @@ class DispatcherTest extends CakeTestCase {
 		$request = new CakeRequest('/');
 		$response = $this->getMock('CakeResponse', array('send'));
 		$dispatcher->dispatch($request, $response);
-		$this->assertEquals('Dispatcher.after', $request->params['eventName']);
+		$this->assertEquals('Dispatcher.afterDispatch', $request->params['eventName']);
 
 		// Test that it is possible to skip the route connection process
 		$dispatcher = new TestDispatcher();

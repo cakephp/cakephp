@@ -20,11 +20,11 @@ App::uses('DispatcherFilter', 'Routing');
 
 class TestDispatcherFilter extends DispatcherFilter {
 
-	public function preDispatch($event) {
+	public function beforeDispatch($event) {
 		$event->data['request']->params['altered'] = true;
 	}
 
-	public function postDispatch($event) {
+	public function afterDispatch($event) {
 		$event->data['response']->statusCode(304);
 	}
 

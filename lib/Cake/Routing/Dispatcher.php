@@ -80,7 +80,7 @@ class Dispatcher implements CakeEventListener {
  **/
 	public function implementedEvents() {
 		return array(
-			'Dispatcher.before' => array(
+			'Dispatcher.beforeDispatch' => array(
 				array('callable' => array($this, 'asset')),
 				array('callable' => array($this, 'cached')),
 				array('callable' => array($this, 'parseParams')),
@@ -116,9 +116,9 @@ class Dispatcher implements CakeEventListener {
 				$on = strtolower($filter['on']);
 				$options = array();
 				if (isset($filter['priority'])) {
-					$options['priority'] = $filter['priority'];
+					$options = array('priority' => $filter['priority']);
 				}
-				$manager->attach($filter['callable'], 'Dispatcher.' . $on, $options);
+				$manager->attach($filter['callable'], 'Dispatcher.' . $on . 'Dispatch', $options);
 			}
 		}
 	}
@@ -142,7 +142,7 @@ class Dispatcher implements CakeEventListener {
  * @throws MissingControllerException When the controller is missing.
  */
 	public function dispatch(CakeRequest $request, CakeResponse $response, $additionalParams = array()) {
-		$beforeEvent = new CakeEvent('Dispatcher.before', $this, compact('request', 'response', 'additionalParams'));
+		$beforeEvent = new CakeEvent('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
 		$this->getEventManager()->dispatch($beforeEvent);
 
 		$request = $beforeEvent->data['request'];
@@ -169,7 +169,7 @@ class Dispatcher implements CakeEventListener {
 			return $response->body();
 		}
 
-		$afterEvent = new CakeEvent('Dispatcher.after', $this, compact('request', 'response'));
+		$afterEvent = new CakeEvent('Dispatcher.afterDispatch', $this, compact('request', 'response'));
 		$this->getEventManager()->dispatch($afterEvent);
 		$afterEvent->data['response']->send();
 	}

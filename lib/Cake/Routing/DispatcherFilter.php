@@ -45,8 +45,8 @@ abstract class DispatcherFilter implements CakeEventListener {
  **/
 	public function implementedEvents() {
 		return array(
-			'Dispatcher.before' => array('callable' => 'preDispatch', 'priority' => $this->priority),
-			'Dispatcher.after' => array('callable' => 'postDispatch', 'priority' => $this->priority),
+			'Dispatcher.beforeDispatch' => array('callable' => 'beforeDispatch', 'priority' => $this->priority),
+			'Dispatcher.afterDispatch' => array('callable' => 'afterDispatch', 'priority' => $this->priority),
 		);
 	}
 
@@ -66,7 +66,7 @@ abstract class DispatcherFilter implements CakeEventListener {
  *	keys in the data property.
  * @return CakeResponse|boolean
  **/
-	public function preDispatch($event) {
+	public function beforeDispatch($event) {
 	}
 
 /**
@@ -81,5 +81,5 @@ abstract class DispatcherFilter implements CakeEventListener {
  *	keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
  **/
-	public function postDispatch($event) {}
+	public function afterDispatch($event) {}
 }

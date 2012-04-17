@@ -20,13 +20,13 @@ App::uses('DispatcherFilter', 'Routing');
 
 class Test2DispatcherFilter extends DispatcherFilter {
 
-	public function preDispatch($event) {
+	public function beforeDispatch($event) {
 		$event->data['response']->statusCode(500);
 		$event->stopPropagation();
 		return $event->data['response'];
 	}
 
-	public function postDispatch($event) {
+	public function afterDispatch($event) {
 		$event->data['response']->statusCode(200);
 	}
 
