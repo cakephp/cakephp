@@ -313,6 +313,7 @@ class AuthComponent extends Component {
 		} else {
 			if (!$this->_getUser()) {
 				if (!$request->is('ajax')) {
+					$this->flash['params'] = array('class'=>'error-message');
 					$this->flash($this->authError);
 					$this->Session->write('Auth.redirect', $request->here());
 					$controller->redirect($loginAction);
@@ -330,7 +331,8 @@ class AuthComponent extends Component {
 		if (empty($this->authorize) || $this->isAuthorized($this->user())) {
 			return true;
 		}
-
+		
+		$this->flash['params'] = array('class'=>'error-message');
 		$this->flash($this->authError);
 		$controller->redirect($controller->referer('/'), null, true);
 		return false;
