@@ -1357,6 +1357,7 @@ class DispatcherTest extends CakeTestCase {
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
+		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
 
 		$Dispatcher = new TestDispatcher();
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -1377,7 +1378,7 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * Data provider for asset()
+ * Data provider for asset filter
  *
  * - theme assets.
  * - plugin assets.
@@ -1475,6 +1476,7 @@ class DispatcherTest extends CakeTestCase {
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		CakePlugin::load(array('TestPlugin', 'PluginJs'));
+		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
 
 		$Dispatcher = new TestDispatcher();
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -1503,57 +1505,13 @@ class DispatcherTest extends CakeTestCase {
 			'js' => '',
 			'css' => null
 		));
+		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
 
 		$request = new CakeRequest('ccss/cake.generic.css');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertSame($response, $Dispatcher->asset($event));
+		$Dispatcher->dispatch($request, $response);
 		$this->assertEquals('404', $response->statusCode());
-		$this->assertTrue($event->isStopped());
 	}
 
-/**
- * test that asset filters work for theme and plugin assets
- *
- * @return void
- */
-	public function testAssetFilterForThemeAndPlugins() {
-		$Dispatcher = new TestDispatcher();
-		$response = $this->getMock('CakeResponse', array('_sendHeader'));
-		Configure::write('Asset.filter', array(
-			'js' => '',
-			'css' => ''
-		));
-
-		$request = new CakeRequest('theme/test_theme/ccss/cake.generic.css');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertSame($response, $Dispatcher->asset($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new CakeRequest('theme/test_theme/cjs/debug_kit.js');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertSame($response, $Dispatcher->asset($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new CakeRequest('test_plugin/ccss/cake.generic.css');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertSame($response, $Dispatcher->asset($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new CakeRequest('test_plugin/cjs/debug_kit.js');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertSame($response, $Dispatcher->asset($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new CakeRequest('css/ccss/debug_kit.css');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertNull($Dispatcher->asset($event));
-		$this->assertFalse($event->isStopped());
-
-		$request = new CakeRequest('js/cjs/debug_kit.js');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
-		$this->assertNull($Dispatcher->asset($event));
-		$this->assertFalse($event->isStopped());
-	}
 
 /**
  * Data provider for cached actions.
@@ -1606,8 +1564,11 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher->dispatch($request, $response);
 		$out = $response->body();
 
-		$event = new CakeEvent('DispatcherTest', $dispatcher, array('request' => $request, 'response' => $response));
-		$response = $dispatcher->cached($event);
+		Configure::write('Dispatcher.filters', array('CacheDispatcher'));
+		$request = new CakeRequest($url);
+		$response = $this->getMock('CakeResponse', array('send'));
+		$dispatcher = new TestDispatcher();
+		$dispatcher->dispatch($request, $response);
 		$cached = $response->body();
 
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);

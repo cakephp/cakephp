@@ -23,7 +23,7 @@ App::uses('CakeEventListener', 'Event');
  * event listener with the ability to alter the request or response as needed before it is handled
  * by a controller or after the response body has already been built.
  *
- * @package Cake.Event
+ * @package Cake.Routing
  */
 abstract class DispatcherFilter implements CakeEventListener {
 
