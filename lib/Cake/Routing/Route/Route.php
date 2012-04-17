@@ -184,7 +184,7 @@ class Route {
 	}
 
 /**
- * Get the standardized plugin.controller::action name
+ * Get the standardized plugin.controller:action name
  * for a route. This will compile a route if it has not
  * already been compiled.
  *
@@ -200,7 +200,7 @@ class Route {
 		}
 		foreach (array('controller', 'action') as $key) {
 			if ($key === 'action') {
-				$name .= '::';
+				$name .= ':';
 			}
 			if (isset($this->defaults[$key])) {
 				$name .= strtolower($this->defaults[$key]);

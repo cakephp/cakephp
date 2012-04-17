@@ -100,15 +100,15 @@ class RouteCollection {
 			$plugin = $url['plugin'];
 		}
 		$fallbacks = array(
-			'%2$s::%3$s',
-			'%2$s::_action',
+			'%2$s:%3$s',
+			'%2$s:_action',
 			'_controller::_action'
 		);
 		if ($plugin) {
 			$fallbacks = array(
-				'%1$s.%2$s::%3$s',
-				'%1$s.%2$s::_action',
-				'_controller::_action'
+				'%1$s.%2$s:%3$s',
+				'%1$s.%2$s:_action',
+				'_controller:_action'
 			);
 		}
 		foreach ($fallbacks as $i => $template) {
