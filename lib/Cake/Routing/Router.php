@@ -692,12 +692,7 @@ class Router {
 			}
 
 			$url += array('controller' => $params['controller'], 'plugin' => $params['plugin']);
-
 			$output = self::$_routes->match($url, $params);
-
-			if ($output === false) {
-				$output = static::_handleNoRoute($url);
-			}
 		} else {
 			if (
 				(strpos($url, '://') !== false ||
@@ -734,65 +729,6 @@ class Router {
 			}
 		}
 		return $output . $extension . static::queryString($q, array(), $escape) . $frag;
-	}
-
-/**
- * A special fallback method that handles url arrays that cannot match
- * any defined routes.
- *
- * @param array $url A url that didn't match any routes
- * @return string A generated url for the array
- * @see Router::url()
- */
-	protected static function _handleNoRoute($url) {
-		$args = array();
-		$skip = array_merge(
-			array('bare', 'action', 'controller', 'plugin', 'prefix'),
-			static::$_prefixes
-		);
-
-		$keys = array_values(array_diff(array_keys($url), $skip));
-		$count = count($keys);
-
-		// Remove this once parsed URL parameters can be inserted into 'pass'
-		for ($i = 0; $i < $count; $i++) {
-			$key = $keys[$i];
-			if (is_numeric($keys[$i])) {
-				$args[] = $url[$key];
-			}
-		}
-
-		$args = Hash::filter($args);
-		foreach (static::$_prefixes as $prefix) {
-			$prefixed = $prefix . '_';
-			if (!empty($url[$prefix]) && strpos($url['action'], $prefixed) === 0) {
-				$url['action'] = substr($url['action'], strlen($prefixed) * -1);
-				break;
-			}
-		}
-
-		if (empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
-			$url['action'] = null;
-		}
-
-		$urlOut = array_filter(array($url['controller'], $url['action']));
-
-		if (isset($url['plugin'])) {
-			array_unshift($urlOut, $url['plugin']);
-		}
-
-		foreach (static::$_prefixes as $prefix) {
-			if (isset($url[$prefix])) {
-				array_unshift($urlOut, $prefix);
-				break;
-			}
-		}
-		$output = implode('/', $urlOut);
-
-		if (!empty($args)) {
-			$output .= '/' . implode('/', array_map('rawurlencode', $args));
-		}
-		return $output;
 	}
 
 /**

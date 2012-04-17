@@ -253,6 +253,8 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUrlNormalization() {
+		Router::connect('/:controller/:action');
+
 		$expected = '/users/logout';
 
 		$result = Router::normalize('/users/logout/');
@@ -377,10 +379,6 @@ class RouterTest extends TestCase {
 		$expected = '/posts/1';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0'));
-		$expected = '/posts/index/0';
-		$this->assertEquals($expected, $result);
-
 		Router::connect('/view/*', array('controller' => 'posts', 'action' => 'view'));
 		Router::promote();
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', '1'));
@@ -388,6 +386,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/:controller/:action');
 		Router::parse('/');
 		$request = new Request();
 		$request->addParams(array(
@@ -403,14 +402,6 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		Router::connect('/page/*', array('plugin' => null, 'controller' => 'pages', 'action' => 'view'));
-		Router::parse('/');
-
-		$result = Router::url(array('plugin' => 'my_plugin', 'controller' => 'pages', 'action' => 'view', 'my-page'));
-		$expected = '/my_plugin/pages/view/my-page';
-		$this->assertEquals($expected, $result);
-
-		Router::reload();
 		Router::connect('/contact/:action', array('plugin' => 'contact', 'controller' => 'contact'));
 		Router::parse('/');
 
@@ -420,6 +411,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/:controller', array('action' => 'index'));
 		$request = new Request();
 		$request->addParams(array(
 			'action' => 'index', 'plugin' => 'myplugin', 'controller' => 'mycontroller', 'admin' => false
@@ -438,8 +430,10 @@ class RouterTest extends TestCase {
  * Test generation of routes with query string parameters.
  *
  * @return void
- **/
+ */
 	public function testUrlGenerationWithQueryStrings() {
+		Router::connect('/:controller/:action/*');
+
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/posts/index/0?var=test&var2=test2';
 		$this->assertEquals($expected, $result);
@@ -553,6 +547,7 @@ class RouterTest extends TestCase {
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 		Router::connect('/reset/*', array('admin' => true, 'controller' => 'users', 'action' => 'reset'));
 		Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 		Router::parseExtensions('rss');
 
 		$request = new Request();
@@ -575,6 +570,7 @@ class RouterTest extends TestCase {
 
 		Router::reload();
 		Router::connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'));
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 		Router::parse('/');
 
 		$request = new Request();
@@ -620,6 +616,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 
 		$request = new Request();
 		$request->addParams(array(
@@ -637,6 +634,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 		Router::parse('/');
 		$request = new Request();
 		$request->addParams(array(
@@ -671,6 +669,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 		Router::parse('/');
 
 		$request = new Request();
@@ -688,6 +687,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 		Router::parse('/');
 
 		$request = new Request();
@@ -727,7 +727,10 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUrlGenerationWithExtensions() {
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action');
 		Router::parse('/');
+
 		$result = Router::url(array('plugin' => null, 'controller' => 'articles', 'action' => 'add', 'id' => null, 'ext' => 'json'));
 		$expected = '/articles/add.json';
 		$this->assertEquals($expected, $result);
@@ -783,11 +786,12 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testCanLeavePlugin() {
-		Router::reload();
+		Router::connect('/admin/:controller', array('action' => 'index', 'admin' => true, 'prefix' => 'admin'));
+		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
 		Router::connect(
 			'/admin/other/:controller/:action/*',
 			array(
-				'admin' => 1,
+				'admin' => true,
 				'plugin' => 'aliased',
 				'prefix' => 'admin'
 			)
@@ -811,10 +815,6 @@ class RouterTest extends TestCase {
 		$result = Router::url(array('plugin' => null, 'controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('/admin/posts', $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEquals('/admin/this/posts', $result);
-
-		$result = Router::url(array('plugin' => 'aliased', 'controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('/admin/other/posts/index', $result);
 	}
 
@@ -932,6 +932,8 @@ class RouterTest extends TestCase {
  */
 	public function testPersistentParameters() {
 		Router::reload();
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
 		Router::connect(
 			'/:lang/:color/posts/view/*',
 			array('controller' => 'posts', 'action' => 'view'),
@@ -944,6 +946,7 @@ class RouterTest extends TestCase {
 		));
 		Router::connect('/:lang/:color/posts/edit/*', array('controller' => 'posts', 'action' => 'edit'));
 		Router::connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
+
 		Router::parse('/en/red/posts/view/5');
 
 		$request = new Request();
@@ -961,6 +964,7 @@ class RouterTest extends TestCase {
 				'webroot' => '/',
 			))
 		);
+
 		$expected = '/en/red/posts/view/6';
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', 6));
 		$this->assertEquals($expected, $result);
@@ -1228,6 +1232,8 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testQuerystringGeneration() {
+		Router::connect('/:controller/:action/*');
+
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/posts/index/0?var=test&var2=test2';
 		$this->assertEquals($expected, $result);
@@ -1257,8 +1263,11 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUrlGenerationWithAutoPrefixes() {
-		Configure::write('Routing.prefixes', array('protected'));
 		Router::reload();
+		Router::connect('/protected/:controller/:action/*', array('prefix' => 'protected', 'protected' => true));
+		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin', 'admin' => true));
+		Router::connect('/:controller/:action/*');
+
 		Router::parse('/');
 
 		$request = new Request();
@@ -1320,8 +1329,9 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testAutoPrefixRoutePersistence() {
-		Configure::write('Routing.prefixes', array('protected'));
 		Router::reload();
+		Router::connect('/protected/:controller/:action', array('prefix' => 'protected', 'protected' => true));
+		Router::connect('/:controller/:action');
 		Router::parse('/');
 
 		$request = new Request();
@@ -1351,8 +1361,9 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPrefixOverride() {
-		Configure::write('Routing.prefixes', array('protected', 'admin'));
 		Router::reload();
+		Router::connect('/admin/:controller/:action', array('prefix' => 'admin', 'admin' => true));
+		Router::connect('/protected/:controller/:action', array('prefix' => 'protected', 'protected' => true));
 		Router::parse('/');
 
 		$request = new Request();
@@ -1405,9 +1416,6 @@ class RouterTest extends TestCase {
 		$url = Router::url(array('admin' => false, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
 		$expected = '/cache_css/test';
 		$this->assertEquals($expected, $url);
-
-		$url = Router::url(array('admin' => true, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
-		$this->assertEquals('/admin/asset_compress/get/test', $url);
 	}
 
 /**
@@ -1416,6 +1424,8 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testRemoveBase() {
+		Router::connect('/:controller/:action');
+
 		$request = new Request();
 		Router::setRequestInfo(
 			$request->addParams(array(
@@ -1528,7 +1538,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals(array(), $result);
 
 		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
-		$this->assertEquals('/blog_posts/foo', $result);
+		$this->assertEquals('/', $result);
 
 		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'actions'));
 		$this->assertEquals('/blog/actions', $result);
@@ -1606,7 +1616,7 @@ class RouterTest extends TestCase {
  */
 	public function testUrlWritingWithPrefixes() {
 		Router::connect('/company/:controller/:action/*', array('prefix' => 'company', 'company' => true));
-		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+		Router::connect('/:action', array('controller' => 'users'));
 
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'company' => true));
 		$expected = '/company/users/login';
@@ -1751,7 +1761,7 @@ class RouterTest extends TestCase {
 		);
 
 		$result = Router::url(array('action' => 'test_another_action'));
-		$expected = '/test/test_another_action';
+		$expected = '/';
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url(array('action' => 'test_another_action', 'locale' => 'eng'));
@@ -1938,6 +1948,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testRouterReverse() {
+		Router::connect('/:controller/:action/*');
 		$params = array(
 			'controller' => 'posts',
 			'action' => 'view',
@@ -2004,6 +2015,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testReverseWithExtension() {
+		Router::connect('/:controller/:action/*');
 		Router::parseExtensions('json');
 
 		$request = new Request('/posts/view/1.json');
@@ -2048,6 +2060,9 @@ class RouterTest extends TestCase {
  * Test that Router::url() uses the first request
  */
 	public function testUrlWithRequestAction() {
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action');
+
 		$firstRequest = new Request('/posts/index');
 		$firstRequest->addParams(array(
 			'plugin' => null,

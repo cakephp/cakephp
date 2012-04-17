@@ -50,7 +50,10 @@ class RouteCollection {
 		$names = $this->_getNames($url);
 		foreach ($names as $name) {
 			if (isset($this->_routeTable[$name])) {
-				return $this->_matchRoutes($this->_routeTable[$name], $url, $requestContext);
+				$output = $this->_matchRoutes($this->_routeTable[$name], $url, $requestContext);
+				if ($output) {
+					return $output;
+				}
 			}
 		}
 		return $this->_matchRoutes($this->_routes, $url, $requestContext);
