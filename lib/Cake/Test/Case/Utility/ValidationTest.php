@@ -1498,6 +1498,9 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::decimal('+1234'));
 		$this->assertTrue(Validation::decimal(1234.56));
 		$this->assertTrue(Validation::decimal(1234.00));
+		$this->assertTrue(Validation::decimal(.0));
+		$this->assertTrue(Validation::decimal(.00));
+		$this->assertTrue(Validation::decimal(.01));
 
 		$this->assertFalse(Validation::decimal('string'));
 	}
