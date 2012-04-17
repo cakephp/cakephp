@@ -103,6 +103,8 @@ class ValidationTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
+		$this->_appLocale = setlocale(LC_ALL, "0");
+		setlocale(LC_ALL, 'en_US');
 	}
 
 /**
@@ -113,6 +115,7 @@ class ValidationTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Configure::write('App.encoding', $this->_appEncoding);
+		setlocale(LC_ALL, $this->_appLocale);
 	}
 
 /**
@@ -1490,10 +1493,16 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::decimal('+0123.45e6'));
 		$this->assertTrue(Validation::decimal('-0123.45e6'));
 		$this->assertTrue(Validation::decimal('0123.45e6'));
+		$this->assertTrue(Validation::decimal('1234'));
+		$this->assertTrue(Validation::decimal('-1234'));
+		$this->assertTrue(Validation::decimal('+1234'));
+		$this->assertTrue(Validation::decimal(1234.56));
+		$this->assertTrue(Validation::decimal(1234.00));
+		$this->assertTrue(Validation::decimal(.0));
+		$this->assertTrue(Validation::decimal(.00));
+		$this->assertTrue(Validation::decimal(.01));
+
 		$this->assertFalse(Validation::decimal('string'));
-		$this->assertFalse(Validation::decimal('1234'));
-		$this->assertFalse(Validation::decimal('-1234'));
-		$this->assertFalse(Validation::decimal('+1234'));
 	}
 
 /**
