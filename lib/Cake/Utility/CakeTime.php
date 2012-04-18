@@ -472,6 +472,23 @@ class CakeTime {
 	}
 
 /**
+ * Returns a formatted date in server's timezone.
+ *
+ * @param string $dateString Datetime string
+ * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string $format date format string
+ * @return mixed Formatted date
+ */
+	public static function toServer($dateString, $timezone = null, $format = 'Y-m-d H:i:s') {
+		if ($timezone === null) {
+			$timezone = Configure::read('Config.timezone');
+		}
+		$time = new DateTime($dateString, new DateTimeZone($timezone));
+		$time->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		return $time->format($format);
+	}
+
+/**
  * Returns a date formatted for Atom RSS feeds.
  *
  * @param string $dateString Datetime string or Unix timestamp

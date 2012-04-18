@@ -395,6 +395,27 @@ class CakeTimeTest extends CakeTestCase {
 	}
 
 /**
+ * testToServer method
+ *
+ * @return void
+ */
+	public function testToServer() {
+		$tzBackup = date_default_timezone_get();
+
+		date_default_timezone_set('UTC');
+		$serverTime = new DateTime('now');
+
+		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+		foreach ($timezones as $timezone) {
+			$result = $this->Time->toServer($serverTime->format('Y-m-d H:i:s'), $timezone, 'U');
+			$tz = new DateTimeZone($timezone);
+			$this->assertEquals($serverTime->format('U'), $result + $tz->getOffset($serverTime));
+		}
+
+		date_default_timezone_set($tzBackup);
+	}
+
+/**
  * testToAtom method
  *
  * @return void
