@@ -684,21 +684,21 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::destroy();
 		TestCakeSession::write('Test', 'some value');
 
-		$this->assertEquals(time() + $timeoutSeconds, CakeSession::$sessionTime);
+		$this->assertWithinMargin(time() + $timeoutSeconds, CakeSession::$sessionTime, 1);
 		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertEquals(CakeSession::$sessionTime, $_SESSION['Config']['time']);
-		$this->assertEquals(time(), CakeSession::$time);
-		$this->assertEquals(time() + $timeoutSeconds, $_SESSION['Config']['time']);
+		$this->assertWithinMargin(CakeSession::$sessionTime, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(time(), CakeSession::$time, 1);
+		$this->assertWithinMargin(time() + $timeoutSeconds, $_SESSION['Config']['time'], 1);
 
 		Configure::write('Session.harden', true);
 		TestCakeSession::destroy();
 
 		TestCakeSession::write('Test', 'some value');
-		$this->assertEquals(time() + $timeoutSeconds, CakeSession::$sessionTime);
+		$this->assertWithinMargin(time() + $timeoutSeconds, CakeSession::$sessionTime, 1);
 		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertEquals(CakeSession::$sessionTime, $_SESSION['Config']['time']);
-		$this->assertEquals(time(), CakeSession::$time);
-		$this->assertEquals(CakeSession::$time + $timeoutSeconds, $_SESSION['Config']['time']);
+		$this->assertWithinMargin(CakeSession::$sessionTime, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(time(), CakeSession::$time, 1);
+		$this->assertWithinMargin(CakeSession::$time + $timeoutSeconds, $_SESSION['Config']['time'], 1);
 	}
 
 /**
