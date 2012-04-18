@@ -468,13 +468,19 @@ class PaginatorHelper extends AppHelper {
 			${$key} = $options[$key];
 			unset($options[$key]);
 		}
-		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
+		$__page = $paging['page'] + ($which == 'Prev' ? $step * -1 : $step);
+		if($__page > $paging['pageCount']){
+			$__page = $paging['pageCount'];
+		}elseif($__page < 1){
+			$__page = 1;
+		}
+		$url = array_merge(array('page' => $__page), $url);
 
 		if ($this->{$check}($model)) {
 			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape'))), compact('class'));
 		} else {
 			unset($options['rel']);
-			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
+			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape'))), compact('class'));
 		}
 	}
 
@@ -749,7 +755,7 @@ class PaginatorHelper extends AppHelper {
 					if ($class) {
 						$currentClass .= ' ' . $class;
 					}
-					$out .= $this->Html->tag($tag, $i, array('class' => $currentClass));
+					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), array('class' => $currentClass));
 				} else {
 					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
 				}
