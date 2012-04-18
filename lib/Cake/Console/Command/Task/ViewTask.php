@@ -71,6 +71,13 @@ class ViewTask extends BakeTask {
 	public $noTemplateActions = array('delete');
 
 /**
+ * Tables to skip when running all()
+ *
+ * @var array
+ */
+	public $skipTables = array('cake_sessions', 'i18n');
+
+/**
  * Override initialize
  *
  * @return void
@@ -174,6 +181,9 @@ class ViewTask extends BakeTask {
 		}
 		$this->interactive = false;
 		foreach ($tables as $table) {
+			if (in_array($table, $this->skipTables)) {
+				continue;
+			}
 			$model = $this->_modelName($table);
 			$this->controllerName = $this->_controllerName($model);
 			App::uses($model, 'Model');

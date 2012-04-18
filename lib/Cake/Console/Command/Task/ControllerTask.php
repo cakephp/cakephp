@@ -42,6 +42,13 @@ class ControllerTask extends BakeTask {
 	public $path = null;
 
 /**
+ * Tables to skip when running all()
+ *
+ * @var array
+ */
+	public $skipTables = array('cake_sessions', 'i18n');
+
+/**
  * Override initialize
  *
  * @return void
@@ -106,6 +113,9 @@ class ControllerTask extends BakeTask {
 		ClassRegistry::config('Model', array('ds' => $this->connection));
 		$unitTestExists = $this->_checkUnitTest();
 		foreach ($this->__tables as $table) {
+			if (in_array($table, $this->skipTables)) {
+				continue;
+			}
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
 			App::uses($model, 'Model');
