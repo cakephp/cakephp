@@ -853,9 +853,12 @@ class CakeEmail {
  * Domain as top level (the part after @)
  *
  * @param string $domain Manually set the domain for CLI mailing
- * @return CakeEmail $this
+ * @return mixed
  */
 	public function domain($domain = null) {
+		if ($domain === null) {
+			return $this->_domain;
+		}
 		$this->_domain = $domain;
 		return $this;
 	}
