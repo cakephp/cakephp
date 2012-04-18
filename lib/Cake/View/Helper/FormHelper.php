@@ -1545,7 +1545,7 @@ class FormHelper extends AppHelper {
 /**
  * Create a `<button>` tag with a surrounding `<form>` that submits via POST.
  *
- * This method creates a `<form>` element. So do not use this method in some opened form.
+ * This method creates a `<form>` element. So do not use this method in an already opened form.
  * Instead use FormHelper::submit() or FormHelper::button() to create buttons inside opened forms.
  *
  * ### Options:
@@ -1560,7 +1560,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
-		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
+		$out = $this->create(false, array('id' => false, 'url' => $url));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
 				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
