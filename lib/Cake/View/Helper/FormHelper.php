@@ -143,6 +143,11 @@ class FormHelper extends AppHelper {
 				'class' => $plugin . $this->request->params['models'][$model]['className'],
 				'alias' => $model
 			));
+		} elseif (ClassRegistry::isKeySet($this->defaultModel)) {
+			$defaultObject = ClassRegistry::getObject($this->defaultModel);
+			if (in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
+				$object = $defaultObject->{$model};
+			}
 		} else {
 			$object = ClassRegistry::init($model, true);
 		}
@@ -319,12 +324,13 @@ class FormHelper extends AppHelper {
 			$options = $model;
 			$model = null;
 		}
+
 		if (empty($model) && $model !== false && !empty($this->request->params['models'])) {
 			$model = key($this->request->params['models']);
-			$this->defaultModel = $model;
 		} elseif (empty($model) && empty($this->request->params['models'])) {
 			$model = false;
 		}
+		$this->defaultModel = $model;
 
 		$key = null;
 		if ($model !== false) {
@@ -366,7 +372,7 @@ class FormHelper extends AppHelper {
 			$options['action'] = $this->request->here(false);
 		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
-				if (!empty($model) && $model != $this->defaultModel) {
+				if (!empty($model)) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
 				} elseif (!empty($this->request->params['controller'])) {
 					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
