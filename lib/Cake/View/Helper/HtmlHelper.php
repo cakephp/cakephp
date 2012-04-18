@@ -103,20 +103,6 @@ class HtmlHelper extends AppHelper {
 	);
 
 /**
- * Format to attribute
- *
- * @var string
- */
-	protected $_attributeFormat = '%s="%s"';
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_minimizedAttributeFormat = '%s="%s"';
-
-/**
  * Breadcrumbs.
  *
  * @var array

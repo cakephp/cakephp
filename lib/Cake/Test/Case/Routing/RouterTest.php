@@ -2157,7 +2157,8 @@ class RouterTest extends CakeTestCase {
 
 		$expected = array(
 			'plugin' => null, 'controller' => false, 'action' => false,
-			'param1' => '1', 'param2' => '2'
+			'named' => array(), 'pass' => array(),
+			'param1' => '1', 'param2' => '2',
 		);
 		$this->assertEquals(Router::getParams(), $expected);
 		$this->assertEquals(Router::getParam('controller'), false);
@@ -2168,7 +2169,10 @@ class RouterTest extends CakeTestCase {
 
 		$params = array('controller' => 'pages', 'action' => 'display');
 		Router::setRequestInfo(array($params, $paths));
-		$expected = array('plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$expected = array(
+			'plugin' => null, 'controller' => 'pages', 'action' => 'display',
+			'named' => array(), 'pass' => array(),
+		);
 		$this->assertEquals(Router::getParams(), $expected);
 		$this->assertEquals(Router::getParams(true), $expected);
 	}

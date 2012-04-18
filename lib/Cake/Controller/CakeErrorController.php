@@ -54,7 +54,7 @@ class CakeErrorController extends AppController {
 			$this->components[] = 'RequestHandler';
 		}
 		$this->constructClasses();
-		$this->Components->trigger('initialize', array(&$this));
+		$this->startupProcess();
 
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
 		if (isset($this->RequestHandler)) {

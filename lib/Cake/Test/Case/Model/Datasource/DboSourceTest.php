@@ -61,13 +61,6 @@ class DboTestSource extends DboSource {
 class DboSourceTest extends CakeTestCase {
 
 /**
- * debug property
- *
- * @var mixed null
- */
-	public $debug = null;
-
-/**
  * autoFixtures property
  *
  * @var bool false
@@ -102,7 +95,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
  * @return void
  */

@@ -141,6 +141,20 @@ class Helper extends Object {
 	);
 
 /**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_attributeFormat = '%s="%s"';
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s="%s"';
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.

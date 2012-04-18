@@ -648,7 +648,7 @@ class View extends Object {
 
 /**
  * Fetch the content for a block. If a block is
- * empty or undefined '' will be returnned.
+ * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
  * @return The block content or '' if the block does not exist.
@@ -954,7 +954,7 @@ class View extends Object {
 				$name = trim($name, DS);
 			} elseif ($name[0] === '.') {
 				$name = substr($name, 3);
-			} elseif (!$plugin) {
+			} elseif (!$plugin || $this->viewPath !== $this->name) {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}

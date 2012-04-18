@@ -471,17 +471,7 @@ class TranslateBehavior extends ModelBehavior {
 				);
 			}
 
-			if (array_key_exists($field, $this->settings[$model->alias])) {
-				unset($this->settings[$model->alias][$field]);
-			} elseif (in_array($field, $this->settings[$model->alias])) {
-				$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
-			}
-
-			if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
-				unset($this->runtime[$model->alias]['fields'][$field]);
-			} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
-				$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
-			}
+			$this->_updateSettings($model, $field);
 
 			if (is_null($association)) {
 				if ($reset) {
@@ -519,6 +509,25 @@ class TranslateBehavior extends ModelBehavior {
 	}
 
 /**
+ * Update runtime setting for a given field.
+ *
+ * @param string $field The field to update.
+ */
+	protected function _updateSettings(Model $model, $field) {
+		if (array_key_exists($field, $this->settings[$model->alias])) {
+			unset($this->settings[$model->alias][$field]);
+		} elseif (in_array($field, $this->settings[$model->alias])) {
+			$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
+		}
+
+		if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
+			unset($this->runtime[$model->alias]['fields'][$field]);
+		} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
+			$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
+		}
+	}
+
+/**
  * Unbind translation for fields, optionally unbinds hasMany association for
  * fake field
  *
@@ -550,17 +559,7 @@ class TranslateBehavior extends ModelBehavior {
 				$association = $value;
 			}
 
-			if (array_key_exists($field, $this->settings[$model->alias])) {
-				unset($this->settings[$model->alias][$field]);
-			} elseif (in_array($field, $this->settings[$model->alias])) {
-				$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
-			}
-
-			if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
-				unset($this->runtime[$model->alias]['fields'][$field]);
-			} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
-				$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
-			}
+			$this->_updateSettings($model, $field);
 
 			if (!is_null($association) && (isset($model->hasMany[$association]) || isset($model->__backAssociation['hasMany'][$association]))) {
 				$associations[] = $association;
