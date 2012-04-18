@@ -412,6 +412,11 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->getHeaders();
 		$expected = '@' . (env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n')) . '>';
 		$this->assertTextContains($expected, $result['Message-ID']);
+		
+		$this->CakeEmail->domain('example.org');
+		$result = $this->CakeEmail->getHeaders();
+		$expected = '@example.org>';
+		$this->assertTextContains($expected, $result['Message-ID']);
 	}
 
 /**
