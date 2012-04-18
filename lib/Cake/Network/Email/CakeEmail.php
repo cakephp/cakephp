@@ -853,8 +853,7 @@ class CakeEmail {
  * Domain as top level (the part after @)
  *
  * @param string $domain Manually set the domain for CLI mailing
- * @return mixed
- * @throws SocketException
+ * @return CakeEmail $this
  */
 	public function domain($domain = null) {
 		$this->_domain = $domain;
