@@ -814,8 +814,6 @@ class RouterTest extends TestCase {
 		);
 		$result = Router::url(array('plugin' => null, 'controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('/admin/posts', $result);
-
-		$this->assertEquals('/admin/other/posts/index', $result);
 	}
 
 /**

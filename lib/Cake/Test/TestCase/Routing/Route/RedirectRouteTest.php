@@ -50,6 +50,9 @@ class RedirectRouteTest extends  TestCase {
  * @return void
  */
 	public function testParsing() {
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
+
 		$route = new RedirectRoute('/home', array('controller' => 'posts'));
 		$route->stop = false;
 		$route->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
