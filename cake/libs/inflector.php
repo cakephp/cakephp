@@ -93,6 +93,7 @@ class Inflector {
 			'ox' => 'oxen',
 			'penis' => 'penises',
 			'person' => 'people',
+			'personnel' => 'personnel',
 			'sex' => 'sexes',
 			'soliloquy' => 'soliloquies',
 			'testis' => 'testes',
