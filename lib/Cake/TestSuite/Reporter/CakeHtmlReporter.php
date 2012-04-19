@@ -33,10 +33,22 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintHeader() {
 		$this->_headerSent = true;
+		$this->sendContentType();
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
 		echo "<ul class='tests'>\n";
+	}
+
+/**
+ * Set the content-type header so it is in the correct encoding.
+ *
+ * @return void
+ */
+	public function sendContentType() {
+		if (!headers_sent()) {
+			header('Content-Type: text/html; charset=' . Configure::read('App.encoding'));
+		}
 	}
 
 /**
