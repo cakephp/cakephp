@@ -44,6 +44,10 @@ class AssetDispatcherTest extends CakeTestCase {
 			'js' => '',		
 			'css' => ''
 		));
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		), APP::RESET);
 
 		$request = new CakeRequest('theme/test_theme/ccss/cake.generic.css');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
@@ -74,5 +78,51 @@ class AssetDispatcherTest extends CakeTestCase {
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
+	}
+
+/**
+ * Tests that $response->checkNotModified() is called and bypasses
+ * file dispatching
+ *
+ * @return void
+ **/
+	public function testNotModified() {
+		$filter = new AssetDispatcher();
+		Configure::write('Asset.filter', array(
+			'js' => '',		
+			'css' => ''
+		));
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		));
+		$time = filemtime(App::themePath('TestTheme') . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
+		$time = new DateTime(date('Y-m-d H:i:s', $time), new DateTimeZone('UTC'));
+
+		$response = $this->getMock('CakeResponse', array('send', 'checkNotModified'));
+		$request = new CakeRequest('theme/test_theme/img/cake.power.gif');
+
+		$response->expects($this->once())->method('checkNotModified')
+			->with($request)
+			->will($this->returnValue(true));
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+
+		ob_start();
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		ob_end_clean();
+		$this->assertEquals(200, $response->statusCode());
+		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader', 'checkNotModified'));
+		$request = new CakeRequest('theme/test_theme/img/cake.power.gif');
+
+		$response->expects($this->once())->method('checkNotModified')
+			->with($request)
+			->will($this->returnValue(true));
+		$response->expects($this->never())->method('send');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 	}
 }

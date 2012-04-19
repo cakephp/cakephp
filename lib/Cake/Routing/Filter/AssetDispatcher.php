@@ -80,7 +80,10 @@ class AssetDispatcher extends DispatcherFilter {
 
 		if ($assetFile !== null) {
 			$event->stopPropagation();
-			$this->_deliverAsset($response, $assetFile, $ext);
+			$response->modified(filemtime($assetFile));
+			if (!$response->checkNotModified($event->data['request'])) {
+				$this->_deliverAsset($response, $assetFile, $ext);
+			}
 			return $response;
 		}
 	}
