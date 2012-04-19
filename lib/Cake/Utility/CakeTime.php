@@ -205,13 +205,41 @@ class CakeTime {
 		if (is_numeric($timezone)) {
 			$userOffset = $timezone * (60 * 60);
 		} else {
-			if (!is_object($timezone)) {
-				$timezone = new DateTimeZone($timezone);
-			}
+			$timezone = self::timezone($timezone);
 			$userOffset = $timezone->getOffset(new DateTime('@' . $gmtTime));
 		}
 		$userTime = $gmtTime + $userOffset;
 		return (int)$userTime;
+	}
+
+/**
+ * Returns a timezone object from a string or the user's timezone object
+ *
+ * @param mixed $timezone Timezone string or DateTimeZone object
+ * 	If null it tries to get timezone from 'Config.timezone' config var
+ * @return DateTimeZone Timezone object
+ */
+	public function timezone($timezone = null) {
+		static $tz = null;
+
+		if (is_object($timezone)) {
+			if ($tz === null || $tz->getName() !== $timezone->getName()) {
+				$tz = $timezone;
+			}
+		} else {
+			if ($timezone === null) {
+				$timezone = Configure::read('Config.timezone');
+				if ($timezone === null) {
+					$timezone = date_default_timezone_get();
+				}
+			}
+
+			if ($tz === null || $tz->getName() !== $timezone) {
+				$tz = new DateTimeZone($timezone);
+			}
+		}
+
+		return $tz;
 	}
 
 /**
@@ -480,11 +508,12 @@ class CakeTime {
  * @return mixed Formatted date
  */
 	public static function toServer($dateString, $timezone = null, $format = 'Y-m-d H:i:s') {
-		if ($timezone === null) {
-			$timezone = Configure::read('Config.timezone');
+		$timezone = self::timezone($timezone);
+		$time = new DateTime($dateString, $timezone);
+		$serverTimezone = date_default_timezone_get();
+		if ($serverTimezone !== $timezone->getName()) {
+			$time->setTimezone(new DateTimeZone($serverTimezone));
 		}
-		$time = new DateTime($dateString, new DateTimeZone($timezone));
-		$time->setTimezone(new DateTimeZone(date_default_timezone_get()));
 		return $time->format($format);
 	}
 
