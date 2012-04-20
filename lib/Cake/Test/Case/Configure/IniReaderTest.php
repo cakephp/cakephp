@@ -125,4 +125,34 @@ class IniReaderTest extends CakeTestCase {
 		$config = $reader->read('nested');
 		$this->assertTrue($config['bools']['test_on']);
 	}
+
+/**
+ * test dump method.
+ *
+ * @return void
+ */
+	public function testDump() {
+		$reader = new IniReader($this->path);
+		$data = array(
+			'One' => array(
+				'two' => 'value',
+				'three' => array(
+					'four' => 'value four'
+				)
+			),
+			'Asset' => array(
+				'timestamp' => 'force'
+			),
+		);
+		$result = $reader->dump($data);
+		$expected = <<<INI
+[One]
+two = value
+three.four = value four
+[Asset]
+timestamp = force
+INI;
+		$this->assertEquals($expected, $result);
+	}
+
 }

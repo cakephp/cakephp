@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Hash', 'Utility');
 
 /**
- * Ini file configuration parser.  Since IniReader uses parse_ini_file underneath,
- * you should be aware that this class shares the same behavior, especially with
- * regards to boolean and null values.
+ * Ini file configuration engine.
  *
- * In addition to the native parse_ini_file features, IniReader also allows you
+ * Since IniReader uses parse_ini_file underneath, you should be aware that this
+ * class shares the same behavior, especially with regards to boolean and null values.
+ *
+ * In addition to the native `parse_ini_file` features, IniReader also allows you
  * to create nested array structures through usage of `.` delimited names.  This allows
  * you to create nested arrays structures in an ini config file. For example:
  *
@@ -135,4 +137,25 @@ class IniReader implements ConfigReaderInterface {
 		return $values;
 	}
 
+/**
+ * Dumps the state of Configure data into an ini formatted string.
+ *
+ * @param array $data The data to convert to ini file.
+ * @return string The converted configuration as an ini string
+ */
+	public function dump($data) {
+		$result = array();
+		foreach ($data as $key => $value) {
+			if ($key[0] != '[') {
+				$result[] = "[$key]";
+			}
+			if (is_array($value)) {
+				$keyValues = Hash::flatten($value, '.');
+				foreach ($keyValues as $k => $v) {
+					$result[] = "$k = " . trim(var_export($v, true), "'");
+				}
+			}
+		}
+		return join("\n", $result);
+	}
 }
