@@ -389,6 +389,38 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testDomain method
+ *
+ * @return void
+ */
+	public function testDomain() {
+		$result = $this->CakeEmail->domain();
+		$expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
+		$this->assertSame($expected, $result);
+		
+		$this->CakeEmail->domain('example.org');
+		$result = $this->CakeEmail->domain();
+		$expected = 'example.org';
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testMessageIdWithDomain method
+ *
+ * @return void
+ */	
+	public function testMessageIdWithDomain() {
+		$result = $this->CakeEmail->getHeaders();
+		$expected = '@' . (env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n')) . '>';
+		$this->assertTextContains($expected, $result['Message-ID']);
+		
+		$this->CakeEmail->domain('example.org');
+		$result = $this->CakeEmail->getHeaders();
+		$expected = '@example.org>';
+		$this->assertTextContains($expected, $result['Message-ID']);
+	}
+
+/**
  * testSubject method
  *
  * @return void
