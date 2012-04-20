@@ -279,6 +279,28 @@ class Configure {
 	}
 
 /**
+ * Dump data currently in Configure into $filename.  The serialization format
+ * is decided by the config reader attached as $config.  For example, if the
+ * 'default' adapter is a PhpReader, the generated file will be a PHP configuration
+ * file loadable by the PhpReader.
+ *
+ * @param string $filename The filename to save content into.
+ * @param string $config The name of the configured adapter to dump data with.
+ * @return void
+ * @throws ConfigureException if the adapter does not implement a `dump` method.
+ */
+	public static function dump($filename, $config = 'default') {
+		if (empty(self::$_readers[$config])) {
+			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+		}
+		if (!method_exists(self::$_readers[$config], 'dump')) {
+			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
+		}
+		$content = self::$_readers[$config]->dump(self::$_values);
+		return file_put_contents($filename, $content);
+	}
+
+/**
  * Used to determine the current version of CakePHP.
  *
  * Usage `Configure::version();`
