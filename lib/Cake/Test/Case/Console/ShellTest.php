@@ -544,7 +544,7 @@ class ShellTest extends CakeTestCase {
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
+		$this->assertTextEquals(file_get_contents($file), $contents);
 	}
 
 /**
@@ -596,10 +596,14 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileNoPermissions() {
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on windows.');
+		
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'no_perms';
-
-		mkdir($path);
+		
+		if (!is_dir($path)) {
+			mkdir($path);
+		}
 		chmod($path, 0444);
 
 		$this->Shell->createFile($file, 'testing');
@@ -759,7 +763,7 @@ This is the song that never ends.
 This is the song that never ends.
 This is the song that never ends.
 TEXT;
-		$this->assertEquals($expected, $result, 'Text not wrapped.');
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
 		$result = $this->Shell->wrapText($text, array('indent' => '  ', 'width' => 33));
 		$expected = <<<TEXT
@@ -767,7 +771,7 @@ TEXT;
   This is the song that never ends.
   This is the song that never ends.
 TEXT;
-		$this->assertEquals($expected, $result, 'Text not wrapped.');
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
 
 /**
