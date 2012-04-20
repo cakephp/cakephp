@@ -96,4 +96,46 @@ class PhpReaderTest extends CakeTestCase {
 		$this->assertTrue(isset($result['plugin_load']));
 		CakePlugin::unload();
 	}
+
+/**
+ * Test dumping data to PHP format.
+ *
+ * @return void
+ */
+	public function testDump() {
+		$reader = new PhpReader($this->path);
+		$data = array(
+			'One' => array(
+				'two' => 'value',
+				'three' => array(
+					'four' => 'value four'
+				),
+				'null' => null
+			),
+			'Asset' => array(
+				'timestamp' => 'force'
+			),
+		);
+		$result = $reader->dump($data);
+		$expected = <<<PHP
+<?php
+\$config = array (
+  'One' => 
+  array (
+    'two' => 'value',
+    'three' => 
+    array (
+      'four' => 'value four',
+    ),
+    'null' => NULL,
+  ),
+  'Asset' => 
+  array (
+    'timestamp' => 'force',
+  ),
+);
+PHP;
+		$this->assertEquals($expected, $result);
+	}
+
 }

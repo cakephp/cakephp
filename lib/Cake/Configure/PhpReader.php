@@ -87,4 +87,15 @@ class PhpReader implements ConfigReaderInterface {
 		return $config;
 	}
 
+/**
+ * Converts the provided $data into a string of PHP code that can
+ * be used saved into a file and loaded later.
+ *
+ * @param array $data Data to dump.
+ * @return string String or PHP code.
+ */
+	public function dump($data) {
+		return '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
+	}
+
 }
