@@ -485,6 +485,7 @@ class Router {
 					array(
 						'plugin' => $plugin,
 						'controller' => $urlName,
+						'prefix' => str_replace('/', '', $prefix),
 						'action' => $params['action'],
 						'[method]' => $params['method']
 					),
