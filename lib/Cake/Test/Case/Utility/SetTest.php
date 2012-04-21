@@ -3034,7 +3034,7 @@ class SetTest extends CakeTestCase {
 		$data = array('My', 'Array', 'To', 'Flatten');
 		$flat = Set::flatten($data);
 		$result = Set::expand($flat);
-		$this->assertEqual($data, $result);
+		$this->assertEquals($data, $result);
 	}
 
 /**

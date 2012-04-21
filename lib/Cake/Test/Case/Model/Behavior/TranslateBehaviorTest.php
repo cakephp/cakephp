@@ -64,7 +64,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'I18n__content.locale' => 'eng'
 			)
 		));
-		$this->assertEqual(3, $result);
+		$this->assertEquals(3, $result);
 	}
 
 /**
