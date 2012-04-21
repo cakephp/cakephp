@@ -25,7 +25,7 @@ App::uses('Router', 'Routing');
  *
  * @package       Cake.Test.Case.Routing.Route
  */
-class PluginShortRouteTestCase extends  CakeTestCase {
+class PluginShortRouteTest extends  CakeTestCase {
 
 /**
  * setUp method

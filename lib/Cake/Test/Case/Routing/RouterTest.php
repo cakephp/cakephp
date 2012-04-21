@@ -2551,8 +2551,8 @@ class RouterTest extends CakeTestCase {
 		$routeClass = 'TestDefaultRouteClass';
 		Router::defaultRouteClass($routeClass);
 
-		$this->assertEqual($routeClass, Router::defaultRouteClass());
-		$this->assertEqual($routeClass, Router::defaultRouteClass(null));
+		$this->assertEquals($routeClass, Router::defaultRouteClass());
+		$this->assertEquals($routeClass, Router::defaultRouteClass(null));
 	}
 
 /**

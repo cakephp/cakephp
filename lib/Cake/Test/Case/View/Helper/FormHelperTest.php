@@ -1492,12 +1492,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->setEntity('Contact.1.email');
 		$result = $this->Form->tagIsInvalid();
 		$expected = false;
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$this->Form->setEntity('Contact.0.name');
 		$result = $this->Form->tagIsInvalid();
 		$expected = false;
-		$this->assertIdentical($expected, $result);
+		$this->assertSame($expected, $result);
 	}
 
 /**
