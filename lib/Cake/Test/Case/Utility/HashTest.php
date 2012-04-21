@@ -2107,7 +2107,7 @@ class HashTest extends CakeTestCase {
 				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
 			)
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'0/Post/id' => 1,
