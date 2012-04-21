@@ -192,7 +192,7 @@ class CakeTime {
 	}
 
 /**
- * Converts given time (in server's time zone) to user's local time, given his/her offset from GMT.
+ * Converts given time (in server's time zone) to user's local time, given his/her timezone.
  *
  * @param string $serverTime UNIX timestamp
  * @param mixed $timezone User's timezone string or DateTimeZone object
