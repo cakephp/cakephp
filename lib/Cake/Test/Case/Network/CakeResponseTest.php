@@ -943,7 +943,7 @@ class CakeResponseTest extends CakeTestCase {
 			'secure' => false,
 			'httpOnly' => false);
 		$result = $response->cookie('CakeTestCookie[Testing]');
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$cookie = array(
 			'name' => 'CakeTestCookie[Testing2]',
@@ -975,7 +975,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		$result = $response->cookie();
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$cookie = $expected['CakeTestCookie[Testing]'];
 		$cookie['value'] = 'test';
@@ -1002,7 +1002,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		$result = $response->cookie();
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }

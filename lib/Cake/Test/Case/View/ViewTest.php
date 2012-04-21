@@ -640,8 +640,8 @@ class ViewTest extends CakeTestCase {
 		$this->assertEquals('this is the plugin element using params[plugin]', $result);
 
 		$result = $this->View->element('test_plugin.plugin_element');
-		$this->assertPattern('/Not Found:/', $result);
-		$this->assertPattern('/test_plugin.plugin_element/', $result);
+		$this->assertRegExp('/Not Found:/', $result);
+		$this->assertRegExp('/test_plugin.plugin_element/', $result);
 
 		$this->View->plugin = 'TestPlugin';
 		$result = $this->View->element('test_plugin_element');
@@ -1040,7 +1040,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertRegExp('/Posts(\/|\\\)index.ctp/', $result);
 
 		$result = $View->getViewFileName('TestPlugin.index');
-		$this->assertPattern('/Posts(\/|\\\)index.ctp/', $result);
+		$this->assertRegExp('/Posts(\/|\\\)index.ctp/', $result);
 
 		$result = $View->getViewFileName('/Pages/home');
 		$this->assertRegExp('/Pages(\/|\\\)home.ctp/', $result);
