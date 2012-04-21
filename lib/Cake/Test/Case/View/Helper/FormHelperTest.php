@@ -3551,7 +3551,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
-
 /**
  * test adding an empty option for radio buttons
  *
@@ -3607,7 +3606,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->input('Model.1.field', array(
 			'type' => 'radio',
 			'options' => array('option A'),

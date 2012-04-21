@@ -397,7 +397,7 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->domain();
 		$expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
 		$this->assertSame($expected, $result);
-		
+
 		$this->CakeEmail->domain('example.org');
 		$result = $this->CakeEmail->domain();
 		$expected = 'example.org';
@@ -408,12 +408,12 @@ class CakeEmailTest extends CakeTestCase {
  * testMessageIdWithDomain method
  *
  * @return void
- */	
+ */
 	public function testMessageIdWithDomain() {
 		$result = $this->CakeEmail->getHeaders();
 		$expected = '@' . (env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n')) . '>';
 		$this->assertTextContains($expected, $result['Message-ID']);
-		
+
 		$this->CakeEmail->domain('example.org');
 		$result = $this->CakeEmail->getHeaders();
 		$expected = '@example.org>';

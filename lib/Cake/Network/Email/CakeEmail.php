@@ -139,7 +139,7 @@ class CakeEmail {
  * @var mixed True to generate, False to ignore, String with value
  */
 	protected $_messageId = true;
-	
+
 /**
  * Domain for messageId generation.
  * Needs to be manually set for CLI mailing as env('HTTP_HOST') is empty
@@ -320,7 +320,7 @@ class CakeEmail {
 		if (empty($this->_domain)) {
 			$this->_domain = php_uname('n');
 		}
-		
+
 		if ($config) {
 			$this->config($config);
 		}
@@ -913,7 +913,7 @@ class CakeEmail {
 		$this->_domain = $domain;
 		return $this;
 	}
-	
+
 /**
  * Add attachments to the email message
  *

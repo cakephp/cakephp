@@ -5258,7 +5258,6 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->saveAssociated(array('Article' => array()), array('validate' => true, 'atomic' => false));
 		$this->assertEquals(array('Article' => false), $result);
-
 	}
 
 /**
