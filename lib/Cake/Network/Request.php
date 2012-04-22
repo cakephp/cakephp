@@ -625,6 +625,15 @@ class Request implements \ArrayAccess {
 	}
 
 /**
+ * Get the port the request was handled on.
+ *
+ * @return string
+ */
+	public function port() {
+		return env('SERVER_PORT');
+	}
+
+/**
  * Get the domain name and include $tldLength segments of the tld.
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.

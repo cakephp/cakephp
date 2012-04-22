@@ -707,6 +707,18 @@ class RequestTest extends TestCase {
 	}
 
 /**
+ * test port retrieval.
+ *
+ * @return void
+ */
+	public function testPort() {
+		$_SERVER['SERVER_PORT'] = '80';
+		$request = new Request('some/path', false);
+
+		$this->assertEquals('80', $request->port());
+	}
+
+/**
  * test domain retrieval.
  *
  * @return void
