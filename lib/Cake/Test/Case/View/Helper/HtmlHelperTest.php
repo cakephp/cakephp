@@ -1263,33 +1263,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, null);
-		$expected = array(
-			'<ul',
-			'<li', 'Item 1', '/li',
-			'<li', 'Item 2',
-			'<ul', '<li', 'Item 2.1', '/li', '/ul',
-			'/li',
-			'<li', 'Item 3', '/li',
-			'<li', 'Item 4',
-			'<ul',
-			'<li', 'Item 4.1', '/li',
-			'<li', 'Item 4.2', '/li',
-			'<li', 'Item 4.3',
-			'<ul',
-			'<li', 'Item 4.3.1', '/li',
-			'<li', 'Item 4.3.2', '/li',
-			'/ul',
-			'/li',
-			'/ul',
-			'/li',
-			'<li', 'Item 5',
-			'<ul',
-			'<li', 'Item 5.1', '/li',
-			'<li', 'Item 5.2', '/li',
-			'/ul',
-			'/li',
-			'/ul'
-		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array(), array(), 'ol');
@@ -1323,33 +1296,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, 'ol');
-		$expected = array(
-			'<ol',
-			'<li', 'Item 1', '/li',
-			'<li', 'Item 2',
-			'<ol', '<li', 'Item 2.1', '/li', '/ol',
-			'/li',
-			'<li', 'Item 3', '/li',
-			'<li', 'Item 4',
-			'<ol',
-			'<li', 'Item 4.1', '/li',
-			'<li', 'Item 4.2', '/li',
-			'<li', 'Item 4.3',
-			'<ol',
-			'<li', 'Item 4.3.1', '/li',
-			'<li', 'Item 4.3.2', '/li',
-			'/ol',
-			'/li',
-			'/ol',
-			'/li',
-			'<li', 'Item 5',
-			'<ol',
-			'<li', 'Item 5.1', '/li',
-			'<li', 'Item 5.2', '/li',
-			'/ol',
-			'/li',
-			'/ol'
-		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array('class' => 'list'));
