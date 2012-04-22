@@ -284,20 +284,20 @@ class Configure {
  * 'default' adapter is a PhpReader, the generated file will be a PHP configuration
  * file loadable by the PhpReader.
  *
- * @param string $filename The filename to save content into.
+ * @param string $key The identifier to create in the config adapter.
+ *   This could be a filename or a cache key depending on the adapter being used.
  * @param string $config The name of the configured adapter to dump data with.
- * @return void
+ * @return boolean success
  * @throws ConfigureException if the adapter does not implement a `dump` method.
  */
-	public static function dump($filename, $config = 'default') {
+	public static function dump($key, $config = 'default') {
 		if (empty(self::$_readers[$config])) {
 			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists(self::$_readers[$config], 'dump')) {
 			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
-		$content = self::$_readers[$config]->dump(self::$_values);
-		return file_put_contents($filename, $content);
+		return (bool)self::$_readers[$config]->dump($key, self::$_values);
 	}
 
 /**

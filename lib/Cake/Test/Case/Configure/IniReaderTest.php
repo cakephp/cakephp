@@ -144,7 +144,9 @@ class IniReaderTest extends CakeTestCase {
 				'timestamp' => 'force'
 			),
 		);
-		$result = $reader->dump($data);
+		$result = $reader->dump('test.ini', $data);
+		$this->assertTrue($result > 0);
+
 		$expected = <<<INI
 [One]
 two = value
@@ -152,6 +154,10 @@ three.four = value four
 [Asset]
 timestamp = force
 INI;
+		$file = $this->path . 'test.ini';
+		$result = file_get_contents($file);
+		unlink($file);
+
 		$this->assertEquals($expected, $result);
 	}
 

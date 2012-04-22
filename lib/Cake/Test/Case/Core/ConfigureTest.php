@@ -378,7 +378,7 @@ class ConfigureTest extends CakeTestCase {
 	public function testDump() {
 		Configure::config('test_reader', new PhpReader(TMP));
 
-		$result = Configure::dump(TMP . 'config_test.php', 'test_reader');
+		$result = Configure::dump('config_test.php', 'test_reader');
 		$this->assertTrue($result > 0);
 		$result = file_get_contents(TMP . 'config_test.php');
 		$this->assertContains('<?php', $result);

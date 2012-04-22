@@ -140,10 +140,11 @@ class IniReader implements ConfigReaderInterface {
 /**
  * Dumps the state of Configure data into an ini formatted string.
  *
+ * @param string $filename The filename on $this->_path to save into.
  * @param array $data The data to convert to ini file.
- * @return string The converted configuration as an ini string
+ * @return int Bytes saved.
  */
-	public function dump($data) {
+	public function dump($filename, $data) {
 		$result = array();
 		foreach ($data as $key => $value) {
 			if ($key[0] != '[') {
@@ -156,6 +157,7 @@ class IniReader implements ConfigReaderInterface {
 				}
 			}
 		}
-		return join("\n", $result);
+		$contents = join("\n", $result);
+		return file_put_contents($this->_path . $filename, $contents);
 	}
 }

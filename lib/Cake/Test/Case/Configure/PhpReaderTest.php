@@ -116,7 +116,8 @@ class PhpReaderTest extends CakeTestCase {
 				'timestamp' => 'force'
 			),
 		);
-		$result = $reader->dump($data);
+		$result = $reader->dump('test.php', $data);
+		$this->assertTrue($result > 0);
 		$expected = <<<PHP
 <?php
 \$config = array (
@@ -135,7 +136,10 @@ class PhpReaderTest extends CakeTestCase {
   ),
 );
 PHP;
-		$this->assertEquals($expected, $result);
+		$file = $this->path . 'test.php';
+		$contents = file_get_contents($file);
+		@unlink($contents);
+		$this->assertEquals($expected, $contents);
 	}
 
 }
