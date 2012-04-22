@@ -1083,9 +1083,7 @@ class ViewTest extends CakeTestCase {
 		$f = fopen($path, 'w+');
 		fwrite($f, $cacheText);
 		fclose($f);
-		ob_start();
-		$View->renderCache($path, '+1 second');
-		$result = ob_get_clean();
+		$result = $View->renderCache($path, '+1 second');
 
 		$this->assertRegExp('/^some cacheText/', $result);
 
