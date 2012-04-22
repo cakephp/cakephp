@@ -749,6 +749,21 @@ class RequestTest extends TestCase {
 	}
 
 /**
+ * Test scheme() method.
+ *
+ * @return void
+ */
+	public function testScheme() {
+		$_SERVER['HTTPS'] = 'on';
+		$request = new Request('some/path', false);
+
+		$this->assertEquals('https', $request->scheme());
+
+		unset($_SERVER['HTTPS']);
+		$this->assertEquals('http', $request->scheme());
+	}
+
+/**
  * test getting subdomains for a host.
  *
  * @return void

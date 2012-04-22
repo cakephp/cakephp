@@ -643,6 +643,17 @@ class Request implements \ArrayAccess {
 	}
 
 /**
+ * Get the current url scheme used for the request.
+ *
+ * e.g. 'http', or 'https'
+ *
+ * @return string The scheme used for the request.
+ */
+	public function scheme() {
+		return env('HTTPS') ? 'https' : 'http';
+	}
+
+/**
  * Get the domain name and include $tldLength segments of the tld.
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
